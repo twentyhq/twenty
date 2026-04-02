@@ -234,7 +234,7 @@ export class AgentChatService {
   async promoteQueuedMessage(
     messageId: string,
     threadId: string,
-  ): Promise<string> {
+  ): Promise<string | null> {
     const turn = this.turnRepository.create({
       threadId,
       agentId: null,
@@ -242,7 +242,7 @@ export class AgentChatService {
 
     const savedTurn = await this.turnRepository.save(turn);
 
-    await this.messageRepository.update(
+    const result = await this.messageRepository.update(
       { id: messageId, threadId, status: AgentMessageStatus.QUEUED },
       {
         status: AgentMessageStatus.SENT,
@@ -250,6 +250,12 @@ export class AgentChatService {
         turnId: savedTurn.id,
       },
     );
+
+    if ((result.affected ?? 0) === 0) {
+      await this.turnRepository.delete(savedTurn.id);
+
+      return null;
+    }
 
     return savedTurn.id;
   }

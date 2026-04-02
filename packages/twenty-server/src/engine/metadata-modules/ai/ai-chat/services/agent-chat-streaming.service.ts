@@ -139,6 +139,10 @@ export class AgentChatStreamingService {
       threadId,
     );
 
+    if (turnId === null) {
+      return;
+    }
+
     await this.eventPublisherService.publish({
       threadId,
       workspaceId,

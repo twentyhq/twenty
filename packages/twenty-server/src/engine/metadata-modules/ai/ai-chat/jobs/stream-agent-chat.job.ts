@@ -109,19 +109,20 @@ export class StreamAgentChatJob {
         .execute()
         .catch(() => {});
 
-      // Auto-flush the next queued message for this thread
-      await this.agentChatStreamingService
-        .flushNextQueuedMessage(
-          data.threadId,
-          data.userWorkspaceId,
-          data.workspaceId,
-          data.hasTitle,
-        )
-        .catch((error) => {
-          this.logger.error(
-            `Failed to flush queued message for thread ${data.threadId}: ${error instanceof Error ? error.message : String(error)}`,
-          );
-        });
+      if (!abortController.signal.aborted) {
+        await this.agentChatStreamingService
+          .flushNextQueuedMessage(
+            data.threadId,
+            data.userWorkspaceId,
+            data.workspaceId,
+            data.hasTitle,
+          )
+          .catch((error) => {
+            this.logger.error(
+              `Failed to flush queued message for thread ${data.threadId}: ${error instanceof Error ? error.message : String(error)}`,
+            );
+          });
+      }
     }
   }
 
