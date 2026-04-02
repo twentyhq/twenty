@@ -39,7 +39,7 @@ export class CreateAppCommand {
 
     try {
       const exampleOptions = this.resolveExampleOptions(
-        options.mode ?? 'exhaustive',
+        options.mode ?? 'minimal',
       );
 
       await this.validateDirectory(appDirectory);
@@ -163,7 +163,7 @@ export class CreateAppCommand {
         includeExampleNavigationMenuItem: false,
         includeExampleSkill: false,
         includeExampleAgent: false,
-        includeExampleIntegrationTest: false,
+        includeExampleIntegrationTest: true,
       };
     }
 
