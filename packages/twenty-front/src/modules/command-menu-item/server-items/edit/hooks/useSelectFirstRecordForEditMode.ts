@@ -1,7 +1,7 @@
-import { commandMenuEditAutoSelectedRecordIdState } from '@/command-menu-item/server-items/edit/states/commandMenuEditAutoSelectedRecordIdState';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { getRecordIndexId } from '@/command-menu-item/server-items/edit/utils/getRecordIndexId';
-import { unselectRecord } from '@/command-menu-item/server-items/edit/utils/unselectRecord';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
+import { useResetRecordIndexSelection } from '@/object-record/record-index/hooks/useResetRecordIndexSelection';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
@@ -12,6 +12,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useSelectFirstRecordForEditMode = () => {
   const store = useStore();
+  const { resetRecordIndexSelection } = useResetRecordIndexSelection(
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
 
   const selectFirstRecordForEditMode = useCallback(() => {
     const recordIndexId = getRecordIndexId(store);
@@ -20,13 +23,7 @@ export const useSelectFirstRecordForEditMode = () => {
       return;
     }
 
-    const previousRecordId = store.get(
-      commandMenuEditAutoSelectedRecordIdState.atom,
-    );
-
-    if (isDefined(previousRecordId)) {
-      unselectRecord(store, previousRecordId, recordIndexId);
-    }
+    resetRecordIndexSelection();
 
     const allRecordIds = store.get(
       recordIndexAllRecordIdsComponentSelector.selectorFamily({
@@ -37,8 +34,6 @@ export const useSelectFirstRecordForEditMode = () => {
     const firstRecordId = allRecordIds[0];
 
     if (!isDefined(firstRecordId)) {
-      store.set(commandMenuEditAutoSelectedRecordIdState.atom, null);
-
       return;
     }
 
@@ -66,9 +61,7 @@ export const useSelectFirstRecordForEditMode = () => {
         break;
       }
     }
-
-    store.set(commandMenuEditAutoSelectedRecordIdState.atom, firstRecordId);
-  }, [store]);
+  }, [store, resetRecordIndexSelection]);
 
   return { selectFirstRecordForEditMode };
 };

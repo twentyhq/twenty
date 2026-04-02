@@ -1,14 +1,14 @@
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
 import { useSelectFirstRecordForEditMode } from '@/command-menu-item/server-items/edit/hooks/useSelectFirstRecordForEditMode';
-import { useUnselectEditModeRecord } from '@/command-menu-item/server-items/edit/hooks/useUnselectEditModeRecord';
-import { commandMenuItemEditSelectionModeState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditSelectionModeState';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { mainContextStoreHasSelectedRecordsSelector } from '@/context-store/states/selectors/mainContextStoreHasSelectedRecordsSelector';
+import { useResetRecordIndexSelection } from '@/object-record/record-index/hooks/useResetRecordIndexSelection';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import {
@@ -50,25 +50,22 @@ export const CommandMenuItemEditRecordSelectionDropdown = () => {
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
 
-  const commandMenuItemEditSelectionMode = useAtomStateValue(
-    commandMenuItemEditSelectionModeState,
-  );
-  const setCommandMenuItemEditSelectionMode = useSetAtomState(
-    commandMenuItemEditSelectionModeState,
+  const mainContextStoreHasSelectedRecords = useAtomStateValue(
+    mainContextStoreHasSelectedRecordsSelector,
   );
 
   const { selectFirstRecordForEditMode } = useSelectFirstRecordForEditMode();
-  const { unselectEditModeRecord } = useUnselectEditModeRecord();
+  const { resetRecordIndexSelection } = useResetRecordIndexSelection(
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
 
-  const isNoneSelected = commandMenuItemEditSelectionMode === 'none';
+  const isNoneSelected = !mainContextStoreHasSelectedRecords;
 
   const handleSelectMode = (mode: 'none' | 'selection') => {
-    setCommandMenuItemEditSelectionMode(mode);
-
     if (mode === 'selection') {
       selectFirstRecordForEditMode();
     } else {
-      unselectEditModeRecord();
+      resetRecordIndexSelection();
     }
 
     closeDropdown(DROPDOWN_ID);
