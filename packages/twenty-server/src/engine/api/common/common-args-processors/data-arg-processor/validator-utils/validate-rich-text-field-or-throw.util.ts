@@ -10,10 +10,12 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
-const DANGEROUS_URL_PATTERN = /(javascript|vbscript):/i;
+// Matches "url":"javascript:..." or "href":"javascript:..." in serialized JSON
+const DANGEROUS_URL_IN_JSON_PATTERN =
+  /"(?:url|href)"\s*:\s*"\\?\s*(?:javascript|vbscript)\s*:/i;
 
 const hasDangerousUrl = (json: string): boolean => {
-  return DANGEROUS_URL_PATTERN.test(json);
+  return DANGEROUS_URL_IN_JSON_PATTERN.test(json);
 };
 
 const validateBlocknoteFieldOrThrow = (
