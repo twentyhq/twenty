@@ -4,12 +4,8 @@ import {
   FieldMetadataType,
 } from 'twenty-shared/types';
 
-import {
-  ApplicationException,
-  ApplicationExceptionCode,
-} from 'src/engine/core-modules/application/application.exception';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { isSearchableFieldType } from 'src/engine/workspace-manager/utils/is-searchable-field.util';
+import { isDefined, isSearchableFieldType } from 'twenty-shared/utils';
 
 export const computeSearchVectorUniversalSettingsFromObjectManifest = ({
   objectManifest,
@@ -22,18 +18,11 @@ export const computeSearchVectorUniversalSettingsFromObjectManifest = ({
       objectManifest.labelIdentifierFieldMetadataUniversalIdentifier,
   );
 
-  if (!labelIdentifierField) {
-    throw new ApplicationException(
-      `Label identifier field with universalIdentifier "${objectManifest.labelIdentifierFieldMetadataUniversalIdentifier}" not found in object "${objectManifest.nameSingular}"`,
-      ApplicationExceptionCode.INVALID_INPUT,
-    );
-  }
-
-  if (!isSearchableFieldType(labelIdentifierField.type)) {
-    throw new ApplicationException(
-      `Label identifier field "${labelIdentifierField.name}" on object "${objectManifest.nameSingular}" has type "${labelIdentifierField.type}" which is not searchable`,
-      ApplicationExceptionCode.INVALID_INPUT,
-    );
+  if (
+    !isDefined(labelIdentifierField) ||
+    !isSearchableFieldType(labelIdentifierField.type)
+  ) {
+    return null;
   }
 
   return {
