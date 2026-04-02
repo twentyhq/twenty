@@ -66,7 +66,9 @@ jobs:
         run: |
           CI_VERSION="0.0.0-ci.$(date +%s)"
           echo "CI_VERSION=$CI_VERSION" >> $GITHUB_ENV
-          npx nx run-many -t set-local-version -p $PUBLISHABLE_PACKAGES --releaseVersion=$CI_VERSION
+          for pkg in $PUBLISHABLE_PACKAGES; do
+            npx nx run $pkg:set-local-version --releaseVersion=$CI_VERSION
+          done
 
       - name: Build packages
         run: |
