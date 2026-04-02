@@ -127,9 +127,7 @@ export const SettingsToolIcon = ({
 
   // System tools: icon from server, color derived from object metadata
   const MainIcon = isDefined(icon) ? getIcon(icon) : IconCode;
-  const OperationIcon = isDefined(toolName)
-    ? getOperationIcon(toolName)
-    : null;
+  const OperationIcon = isDefined(toolName) ? getOperationIcon(toolName) : null;
 
   const objectMetadata = isDefined(objectName)
     ? objectMetadataItems.find((item) => item.nameSingular === objectName)
