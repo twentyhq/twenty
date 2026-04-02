@@ -6,9 +6,12 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { RequireFeatureFlag } from 'src/engine/core-modules/feature-flag/decorators/require-feature-flag.decorator';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -38,9 +41,10 @@ export class AgentChatSubscriptionResolver {
       return payload.onAgentChatEvent.threadId === variables.threadId;
     },
   })
+  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI))
   async onAgentChatEvent(
-    @Args('threadId') threadId: string,
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {

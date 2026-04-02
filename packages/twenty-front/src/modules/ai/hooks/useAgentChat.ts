@@ -105,19 +105,14 @@ export const useAgentChat = (
       status: 'sent',
     };
 
-    const atomKey = {
+    const messagesAtom = agentChatMessagesComponentFamilyState.atomFamily({
       instanceId: AGENT_CHAT_INSTANCE_ID,
       familyKey: { threadId },
-    };
+    });
 
-    const currentMessages = store.get(
-      agentChatMessagesComponentFamilyState.atomFamily(atomKey),
-    );
+    const currentMessages = store.get(messagesAtom);
 
-    store.set(agentChatMessagesComponentFamilyState.atomFamily(atomKey), [
-      ...currentMessages,
-      optimisticUserMessage,
-    ]);
+    store.set(messagesAtom, [...currentMessages, optimisticUserMessage]);
 
     setAgentChatUploadedFiles([]);
 
@@ -140,12 +135,10 @@ export const useAgentChat = (
       });
 
       if (data?.sendChatMessage?.queued) {
-        const latestMessages = store.get(
-          agentChatMessagesComponentFamilyState.atomFamily(atomKey),
-        );
+        const latestMessages = store.get(messagesAtom);
 
         store.set(
-          agentChatMessagesComponentFamilyState.atomFamily(atomKey),
+          messagesAtom,
           latestMessages.filter((message) => message.id !== messageId),
         );
       }
@@ -160,12 +153,16 @@ export const useAgentChat = (
         return null;
       });
     } catch {
-      const latestMessages = store.get(
-        agentChatMessagesComponentFamilyState.atomFamily(atomKey),
-      );
+      setAgentChatInput(contentToSend);
+      setAgentChatDraftsByThreadId((prev) => ({
+        ...prev,
+        [draftKey]: contentToSend,
+      }));
+
+      const latestMessages = store.get(messagesAtom);
 
       store.set(
-        agentChatMessagesComponentFamilyState.atomFamily(atomKey),
+        messagesAtom,
         latestMessages.filter((message) => message.id !== messageId),
       );
     }

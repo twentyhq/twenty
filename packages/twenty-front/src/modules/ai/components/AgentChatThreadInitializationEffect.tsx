@@ -1,5 +1,5 @@
 import { useAtomValue, useStore } from 'jotai';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -12,9 +12,11 @@ import { agentChatThreadsSelector } from '@/ai/states/agentChatThreadsSelector';
 import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
+import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -34,15 +36,15 @@ export const AgentChatThreadInitializationEffect = () => {
   const storeEntry = useAtomValue(
     metadataStoreState.atomFamily('agentChatThreads'),
   );
-  // oxlint-disable-next-line twenty/no-state-useref
-  const hasInitializedRef = useRef(false);
+  const [hasInitializedAgentChatThreads, setHasInitializedAgentChatThreads] =
+    useAtomState(hasInitializedAgentChatThreadsState);
 
   useEffect(() => {
     setAgentChatThreadsLoading(storeEntry.status === 'empty');
   }, [storeEntry.status, setAgentChatThreadsLoading]);
 
   useEffect(() => {
-    if (hasInitializedRef.current || isDefined(currentAIChatThread)) {
+    if (hasInitializedAgentChatThreads || isDefined(currentAIChatThread)) {
       return;
     }
 
@@ -50,7 +52,7 @@ export const AgentChatThreadInitializationEffect = () => {
       return;
     }
 
-    hasInitializedRef.current = true;
+    setHasInitializedAgentChatThreads(true);
 
     const sortedThreads = agentChatThreads.toSorted(
       (a: FlatAgentChatThread, b: FlatAgentChatThread) =>
@@ -97,6 +99,8 @@ export const AgentChatThreadInitializationEffect = () => {
   }, [
     agentChatThreads,
     currentAIChatThread,
+    hasInitializedAgentChatThreads,
+    setHasInitializedAgentChatThreads,
     storeEntry.status,
     setCurrentAIChatThread,
     setAgentChatInput,
