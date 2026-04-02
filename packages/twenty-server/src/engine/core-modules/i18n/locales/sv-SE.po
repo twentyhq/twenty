@@ -5595,6 +5595,11 @@ msgstr ""
 msgid "Please check your connection settings. Make sure the server host, port, and password are correct."
 msgstr "Kontrollera dina anslutningsinställningar. Se till att servervärd, port och lösenord är korrekta."
 
+#. js-lingui-id: PdKZim
+#: src/engine/core-modules/admin-panel/admin-panel.exception.ts
+msgid "Please choose an end date and time after the start date and time."
+msgstr ""
+
 #. js-lingui-id: mqzu5F
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
 msgid "Please confirm your updated email"
@@ -6270,6 +6275,11 @@ msgstr "Vissa av de valda behörigheterna är ogiltiga. Vänligen försök igen 
 #. js-lingui-id: aPJopM
 #: src/engine/metadata-modules/user-role/user-role.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
+msgstr ""
+
+#. js-lingui-id: fWsBTs
+#: src/engine/core-modules/admin-panel/admin-panel.exception.ts
+msgid "Something went wrong. Please try again."
 msgstr ""
 
 #. js-lingui-id: Oa7nLQ
@@ -8423,6 +8433,12 @@ msgstr "Arbetsyta hittades inte för prenumerationshändelse."
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Workspace not found."
 msgstr "Arbetsyta hittades inte."
+
+#. js-lingui-id: osscRx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/workspace-datasource/exceptions/workspace-datasource.exception.ts
+msgid "Workspace schema changes are temporarily locked."
+msgstr ""
 
 #. js-lingui-id: 7wxAZI
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts

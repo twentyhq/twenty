@@ -1,5 +1,7 @@
 import { SettingsAdminTabSkeletonLoader } from '@/settings/admin-panel/components/SettingsAdminTabSkeletonLoader';
 import { SettingsAdminHealthStatusListCard } from '@/settings/admin-panel/health-status/components/SettingsAdminHealthStatusListCard';
+import { SettingsAdminMaintenanceModeFetchEffect } from '@/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceModeFetchEffect';
+import { SettingsAdminMaintenanceMode } from '@/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode';
 import { t } from '@lingui/core/macro';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
@@ -22,6 +24,7 @@ export const SettingsAdminHealthStatus = () => {
 
   return (
     <>
+      <SettingsAdminMaintenanceModeFetchEffect />
       <Section>
         <H2Title
           title={t`Health Status`}
@@ -32,6 +35,7 @@ export const SettingsAdminHealthStatus = () => {
           loading={loadingHealthStatus}
         />
       </Section>
+      <SettingsAdminMaintenanceMode />
     </>
   );
 };
