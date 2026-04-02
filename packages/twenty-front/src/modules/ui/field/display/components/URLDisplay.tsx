@@ -2,6 +2,7 @@ import { type MouseEvent } from 'react';
 
 import { LinkType, RoundedLink, SocialLink } from 'twenty-ui/navigation';
 import { checkUrlType } from '~/utils/checkUrlType';
+import { isSafeUrl } from '~/utils/isSafeUrl';
 import { EllipsisDisplay } from './EllipsisDisplay';
 
 type URLDisplayProps = {
@@ -13,11 +14,12 @@ export const URLDisplay = ({ value }: URLDisplayProps) => {
     event.stopPropagation();
   };
 
-  const absoluteUrl = value
+  const rawUrl = value
     ? value.startsWith('http')
       ? value
       : 'https://' + value
     : '';
+  const absoluteUrl = isSafeUrl(rawUrl) ? rawUrl : '';
 
   const displayedValue = value ?? '';
 

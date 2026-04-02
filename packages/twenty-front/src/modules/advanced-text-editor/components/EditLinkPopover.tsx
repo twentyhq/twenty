@@ -10,6 +10,7 @@ import { type Editor } from '@tiptap/core';
 import { useId, useState, type FocusEvent, type FormEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLink, IconPencil } from 'twenty-ui/display';
+import { isSafeUrl } from '~/utils/isSafeUrl';
 
 type EditLinkPopoverProps = {
   defaultValue: string | undefined;
@@ -33,14 +34,20 @@ export const EditLinkPopover = ({
   ) => {
     event.preventDefault();
 
-    if (!isDefined(value)) {
+    if (!isDefined(value) || !isNonEmptyString(value)) {
       editor.chain().focus().extendMarkRange('link').unsetLink().run();
     } else {
+      const href = value.startsWith('http') ? value : `https://${value}`;
+
+      if (!isSafeUrl(href)) {
+        return;
+      }
+
       editor
         .chain()
         .focus()
         .extendMarkRange('link')
-        .setLink({ href: value })
+        .setLink({ href })
         .run();
     }
 

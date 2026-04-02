@@ -14,6 +14,7 @@ import { lazy, Suspense, useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
+import { isSafeUrl } from '~/utils/isSafeUrl';
 
 const TextWithRecordLinks = ({ text }: { text: string }) => {
   const parts: React.ReactNode[] = [];
@@ -99,13 +100,13 @@ const MarkdownRenderer = lazy(async () => {
           li: ({ children }) => (
             <li>{processChildrenForRecordLinks(children)}</li>
           ),
-          a: ({ children, href, title, target, rel, node: _node }) => (
+          a: ({ children, href, title, node: _node }) => (
             <a
               className="markdown-link"
-              href={href}
+              href={href && isSafeUrl(href) ? href : undefined}
               title={title}
-              target={target}
-              rel={rel}
+              target="_blank"
+              rel="noopener noreferrer"
             >
               {processChildrenForRecordLinks(children)}
             </a>
