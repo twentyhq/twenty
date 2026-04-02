@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Filter args validation - ARRAY Gql filter input - failure ARRAY field type - should fail with filter : {"arrayField":{"containsIlike":[]}} 1`] = `"Invalid filter value for operator "containsIlike" on field "arrayField": expected String, got array"`;
+exports[`Filter args validation - ARRAY Gql filter input - failure ARRAY field type - should fail with filter : {"arrayField":{"containsIlike":[]}} 1`] = `"Filter operator "containsIlike" requires a string value for field "arrayField", got array"`;
 
-exports[`Filter args validation - ARRAY Gql filter input - failure ARRAY field type - should fail with filter : {"arrayField":{"containsIlike":{}}} 1`] = `"Invalid filter value for operator "containsIlike" on field "arrayField": expected String, got object"`;
+exports[`Filter args validation - ARRAY Gql filter input - failure ARRAY field type - should fail with filter : {"arrayField":{"containsIlike":{}}} 1`] = `"Filter operator "containsIlike" requires a string value for field "arrayField", got object"`;
 
-exports[`Filter args validation - ARRAY Gql filter input - failure ARRAY field type - should fail with filter : {"arrayField":{"containsIlike":2}} 1`] = `"Invalid filter value for operator "containsIlike" on field "arrayField": expected String, got number"`;
+exports[`Filter args validation - ARRAY Gql filter input - failure ARRAY field type - should fail with filter : {"arrayField":{"containsIlike":2}} 1`] = `"Filter operator "containsIlike" requires a string value for field "arrayField", got number"`;
 
-exports[`Filter args validation - ARRAY Gql filter input - failure ARRAY field type - should fail with filter : {"arrayField":{"containsIlike":true}} 1`] = `"Invalid filter value for operator "containsIlike" on field "arrayField": expected String, got boolean"`;
+exports[`Filter args validation - ARRAY Gql filter input - failure ARRAY field type - should fail with filter : {"arrayField":{"containsIlike":true}} 1`] = `"Filter operator "containsIlike" requires a string value for field "arrayField", got boolean"`;
 
 exports[`Filter args validation - ARRAY Rest filter input - failure ARRAY field type - should fail with filter : "arrayField[containsAny]:\\"[]\\"" 1`] = `
 [
