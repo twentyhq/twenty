@@ -156,7 +156,10 @@ export class AgentChatStreamingService {
       event: { type: 'message-persisted', messageId: nextQueued.id },
     });
 
-    const uiMessages = await this.loadMessagesFromDB(threadId, userWorkspaceId);
+    const [uiMessages, thread] = await Promise.all([
+      this.loadMessagesFromDB(threadId, userWorkspaceId),
+      this.threadRepository.findOneByOrFail({ id: threadId }),
+    ]);
 
     const streamId = generateId();
 
@@ -172,6 +175,7 @@ export class AgentChatStreamingService {
         lastUserMessageText: messageText,
         lastUserMessageParts: [{ type: 'text', text: messageText }],
         hasTitle,
+        conversationSizeTokens: thread.conversationSize,
         existingTurnId: turnId,
       },
     );
