@@ -113,10 +113,7 @@ export const SettingsDatePickerInput = ({
     }
   };
 
-  const handleDateTimeClose = (newDateTime: Temporal.ZonedDateTime | null) => {
-    if (isDefined(newDateTime)) {
-      onChange(new Date(newDateTime.epochMilliseconds));
-    }
+  const handleDateTimeClose = (_newDateTime: Temporal.ZonedDateTime | null) => {
     handleClose();
   };
 
