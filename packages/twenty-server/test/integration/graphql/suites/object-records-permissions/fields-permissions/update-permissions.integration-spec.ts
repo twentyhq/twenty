@@ -331,7 +331,7 @@ describe('Field update permissions restrictions', () => {
           predicates: [
             {
               fieldMetadataId: restrictedCompanyFieldId,
-              operand: RowLevelPermissionPredicateOperand.IS_NOT_NULL,
+              operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
             },
           ],
           predicateGroups: [],

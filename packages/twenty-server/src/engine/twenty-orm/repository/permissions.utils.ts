@@ -161,9 +161,7 @@ export const validateOperationIsPermittedOrThrow = ({
 
         const updatedColumnsWithoutRlsFields = updatedColumns.filter(
           (column) =>
-            !rlsFieldMetadataIds.has(
-              columnNameToFieldMetadataIdMap[column],
-            ),
+            !rlsFieldMetadataIds.has(columnNameToFieldMetadataIdMap[column]),
         );
 
         if (updatedColumnsWithoutRlsFields.length > 0) {

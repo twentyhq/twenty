@@ -308,7 +308,7 @@ describe('Restricted fields', () => {
           predicates: [
             {
               fieldMetadataId: phonesFieldId,
-              operand: RowLevelPermissionPredicateOperand.IS_NOT_NULL,
+              operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
             },
           ],
           predicateGroups: [],
@@ -438,7 +438,7 @@ describe('Restricted fields', () => {
           predicates: [
             {
               fieldMetadataId: phonesFieldId,
-              operand: RowLevelPermissionPredicateOperand.IS_NOT_NULL,
+              operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
             },
           ],
           predicateGroups: [],
