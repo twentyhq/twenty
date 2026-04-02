@@ -324,9 +324,9 @@ export class FieldPermissionService {
     }
 
     if (
-      (fieldPermission.canUpdateFieldValue !== null &&
+      (isDefined(fieldPermission.canUpdateFieldValue) &&
         fieldPermission.canUpdateFieldValue !== false) ||
-      (fieldPermission.canReadFieldValue !== null &&
+      (isDefined(fieldPermission.canReadFieldValue) &&
         fieldPermission.canReadFieldValue !== false)
     ) {
       throw new PermissionsException(
