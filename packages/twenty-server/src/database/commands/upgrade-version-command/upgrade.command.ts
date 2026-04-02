@@ -83,38 +83,47 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       workspaceIteratorService,
     );
 
-    const commands_1200: VersionCommands = [
-      this.identifyPermissionFlagMetadataCommand,
-      this
-        .makePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-      this.identifyObjectPermissionMetadataCommand,
-      this
-        .makeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-      this.identifyFieldPermissionMetadataCommand,
-      this
-        .makeFieldPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-      this.backfillNavigationMenuItemTypeCommand,
-      this.migrateRichTextToTextCommand,
-      this.deleteOrphanNavigationMenuItemsCommand,
-      this.backfillCommandMenuItemsCommand,
-      this.seedCliApplicationRegistrationCommand,
-      this.migrateMessagingInfrastructureToMetadataCommand,
-      this.backfillSelectFieldOptionIdsCommand,
-      this.updateStandardIndexViewNamesCommand,
-      this.makeWorkflowSearchableCommand,
-    ];
+    const commands_1200: VersionCommands = {
+      instanceCommands: [],
+      workspaceCommands: [
+        this.identifyPermissionFlagMetadataCommand,
+        this
+          .makePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+        this.identifyObjectPermissionMetadataCommand,
+        this
+          .makeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+        this.identifyFieldPermissionMetadataCommand,
+        this
+          .makeFieldPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+        this.backfillNavigationMenuItemTypeCommand,
+        this.migrateRichTextToTextCommand,
+        this.deleteOrphanNavigationMenuItemsCommand,
+        this.backfillCommandMenuItemsCommand,
+        this.seedCliApplicationRegistrationCommand,
+        this.migrateMessagingInfrastructureToMetadataCommand,
+        this.backfillSelectFieldOptionIdsCommand,
+        this.updateStandardIndexViewNamesCommand,
+        this.makeWorkflowSearchableCommand,
+      ],
+    };
 
-    const commands_1210: VersionCommands = [
-      this.addGlobalKeyValuePairUniqueIndexCommand,
-      this.backfillDatasourceToWorkspaceCommand,
-      this.backfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
-      this.deduplicateEngineCommandsCommand,
-      this.migrateAiAgentTextToJsonResponseFormatCommand,
-      this.updateEditLayoutCommandMenuItemLabelCommand,
-    ];
+    const commands_1210: VersionCommands = {
+      instanceCommands: [],
+      workspaceCommands: [
+        this.addGlobalKeyValuePairUniqueIndexCommand,
+        this.backfillDatasourceToWorkspaceCommand,
+        this.backfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
+        this.deduplicateEngineCommandsCommand,
+        this.migrateAiAgentTextToJsonResponseFormatCommand,
+        this.updateEditLayoutCommandMenuItemLabelCommand,
+      ],
+    };
 
     this.allCommands = {
-      '1.19.0': [],
+      '1.19.0': {
+        instanceCommands: [],
+        workspaceCommands: [],
+      },
       '1.20.0': commands_1200,
       '1.21.0': commands_1210,
     };

@@ -4,16 +4,17 @@ import chalk from 'chalk';
 import { CommandRunner, Option } from 'nest-commander';
 import { SemVer } from 'semver';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { MigrationInterface, Repository } from 'typeorm';
 
-import {
-  type RunOnWorkspaceArgs,
-  WorkspaceCommandRunner,
-} from 'src/database/commands/command-runners/workspace.command-runner';
+import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import {
   type WorkspaceIteratorContext,
   WorkspaceIteratorService,
 } from 'src/database/commands/command-runners/workspace-iterator.service';
+import {
+  type RunOnWorkspaceArgs,
+  WorkspaceCommandRunner,
+} from 'src/database/commands/command-runners/workspace.command-runner';
 import { CoreMigrationRunnerService } from 'src/database/commands/core-migration-runner/services/core-migration-runner.service';
 import { CommandLogger } from 'src/database/commands/logger';
 import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
@@ -25,7 +26,14 @@ import {
   compareVersionMajorAndMinor,
 } from 'src/utils/version/compare-version-minor-and-major';
 
-export type VersionCommands = WorkspaceCommandRunner[];
+export type VersionCommands = {
+  // Note: for the moment only typeorm migrations are supported, later will supported GlobalCommandRunner too
+  instanceCommands: MigrationInterface[];
+  workspaceCommands: (
+    | WorkspaceCommandRunner
+    | ActiveOrSuspendedWorkspaceCommandRunner
+  )[];
+};
 export type AllCommands = Record<UpgradeCommandVersion, VersionCommands>;
 
 export type UpgradeCommandOptions = {
@@ -166,7 +174,21 @@ Please roll back to that version and run the upgrade command again.`,
         );
       }
 
-      await this.coreMigrationRunnerService.run();
+      for (const instanceCommand of versionContext.commands.instanceCommands) {
+        const migrationName = instanceCommand.constructor.name;
+        const result =
+          await this.coreMigrationRunnerService.runSingleMigration(
+            migrationName,
+          );
+
+        if (result.status === 'fail' && result.error !== 'already-executed') {
+          this.logger.error(
+            `Core migration ${migrationName} failed with error: ${result.error}`,
+          );
+
+          return;
+        }
+      }
 
       const iteratorReport = await this.workspaceIteratorService.iterate({
         workspaceIds:
@@ -222,7 +244,8 @@ Please roll back to that version and run the upgrade command again.`,
           'Initialized upgrade context with:',
           `- currentVersion (migrating to): ${currentAppVersion}`,
           `- fromWorkspaceVersion: ${fromWorkspaceVersion}`,
-          `- ${commands.length} commands`,
+          `- ${commands.instanceCommands.length} instance commands`,
+          `- ${commands.workspaceCommands.length} workspace commands`,
         ].join('\n   '),
       ),
     );
@@ -258,8 +281,8 @@ Please roll back to that version and run the upgrade command again.`,
         );
       }
       case 'equal': {
-        for (const command of commands) {
-          await command.runOnWorkspace({
+        for (const workspaceCommand of commands.workspaceCommands) {
+          await workspaceCommand.runOnWorkspace({
             options: options as RunOnWorkspaceArgs['options'],
             workspaceId,
             dataSource: iteratorContext.dataSource,

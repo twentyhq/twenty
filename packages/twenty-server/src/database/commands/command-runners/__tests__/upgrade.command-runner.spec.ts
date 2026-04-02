@@ -8,7 +8,9 @@ import {
 import { type Repository } from 'typeorm';
 
 import {
+  UpgradeCommandOptions,
   UpgradeCommandRunner,
+  VersionCommands,
   type AllCommands,
 } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -31,7 +33,13 @@ const PREVIOUS_VERSION =
 
 class BasicUpgradeCommandRunner extends UpgradeCommandRunner {
   allCommands = Object.fromEntries(
-    UPGRADE_COMMAND_SUPPORTED_VERSIONS.map((version) => [version, []]),
+    UPGRADE_COMMAND_SUPPORTED_VERSIONS.map((version) => [
+      version,
+      {
+        instanceCommands: [],
+        workspaceCommands: [],
+      } as const satisfies VersionCommands,
+    ]),
   ) as unknown as AllCommands;
 }
 
@@ -124,7 +132,11 @@ const buildUpgradeCommandModule = async ({
       WorkspaceVersionService,
       {
         provide: CoreMigrationRunnerService,
-        useValue: { run: jest.fn().mockResolvedValue(undefined) },
+        useValue: {
+          runSingleMigration: jest
+            .fn()
+            .mockResolvedValue({ status: 'success' }),
+        },
       },
       {
         provide: WorkspaceIteratorService,
@@ -294,11 +306,9 @@ describe('UpgradeCommandRunner', () => {
       async ({ context: { input } }) => {
         await buildModuleAndSetupSpies(input);
 
-        // @ts-expect-error legacy noImplicitAny
-        const passedParams = [];
-        const options = {};
+        const passedParams: string[] = [];
+        const options: UpgradeCommandOptions = {};
 
-        // @ts-expect-error legacy noImplicitAny
         await upgradeCommandRunner.run(passedParams, options);
 
         expect(workspaceRepository.update).toHaveBeenCalledWith(
