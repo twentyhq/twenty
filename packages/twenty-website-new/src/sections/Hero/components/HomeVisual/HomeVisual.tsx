@@ -41,12 +41,12 @@ import {
   IconX,
 } from '@tabler/icons-react';
 import {
+  useEffect,
   useMemo,
   useRef,
   useState,
   type ReactNode,
   type PointerEvent as ReactPointerEvent,
-  type WheelEvent as ReactWheelEvent,
 } from 'react';
 import type {
   HeroCellEntity,
@@ -1014,6 +1014,20 @@ function findActiveItem(
     }
 
     if (entry.label === activeLabel) {
+      const entryHasTable =
+        (entry.columns?.length ?? 0) > 0 || (entry.rows?.length ?? 0) > 0;
+
+      if (!entryHasTable && entry.children && entry.children.length > 0) {
+        const firstChildWithTable = entry.children.find(
+          (child) =>
+            (child.columns?.length ?? 0) > 0 || (child.rows?.length ?? 0) > 0,
+        );
+
+        if (firstChildWithTable) {
+          return firstChildWithTable;
+        }
+      }
+
       return entry;
     }
   }
@@ -1308,16 +1322,21 @@ function SidebarItemComponent({
   interactive = true,
   item,
   onSelect,
+  selectedLabel,
 }: {
   depth?: number;
   interactive?: boolean;
   item: HeroSidebarItem;
   onSelect?: (label: string) => void;
+  selectedLabel?: string;
 }) {
+  const rowActive =
+    interactive && selectedLabel !== undefined && item.label === selectedLabel;
+
   return (
     <>
       <SidebarItemRow
-        $active={interactive ? item.active : false}
+        $active={rowActive}
         $depth={depth}
         onClick={interactive ? () => onSelect?.(item.label) : undefined}
         style={{ cursor: interactive ? 'pointer' : 'default' }}
@@ -1343,6 +1362,7 @@ function SidebarItemComponent({
               interactive={interactive}
               item={child}
               onSelect={onSelect}
+              selectedLabel={selectedLabel}
             />
           ))}
         </SidebarChildStack>
@@ -1554,16 +1574,6 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
 
-  const sidebarItems = useMemo(() => {
-    return visual.workspaceNav.map((entry) => {
-      if (isFolder(entry)) {
-        return entry;
-      }
-
-      return { ...entry, active: entry.label === activeLabel };
-    });
-  }, [activeLabel, visual.workspaceNav]);
-
   const activeItem = useMemo(
     () => findActiveItem(visual.workspaceNav, activeLabel),
     [activeLabel, visual.workspaceNav],
@@ -1644,21 +1654,35 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
     endDragging();
   };
 
-  const handleWheel = (event: ReactWheelEvent<HTMLDivElement>) => {
-    if (!viewportRef.current) {
+  useEffect(() => {
+    const node = viewportRef.current;
+
+    if (!node) {
       return;
     }
 
-    if (
-      viewportRef.current.scrollWidth <= viewportRef.current.clientWidth ||
-      Math.abs(event.deltaY) <= Math.abs(event.deltaX)
-    ) {
-      return;
-    }
+    const onWheel: EventListener = (event) => {
+      if (!(event instanceof WheelEvent)) {
+        return;
+      }
 
-    viewportRef.current.scrollLeft += event.deltaY;
-    event.preventDefault();
-  };
+      if (
+        node.scrollWidth <= node.clientWidth ||
+        Math.abs(event.deltaY) <= Math.abs(event.deltaX)
+      ) {
+        return;
+      }
+
+      node.scrollLeft += event.deltaY;
+      event.preventDefault();
+    };
+
+    node.addEventListener('wheel', onWheel, { passive: false });
+
+    return () => {
+      node.removeEventListener('wheel', onWheel);
+    };
+  }, []);
 
   const renderSidebarEntry = (entry: HeroSidebarEntry) => {
     if (isFolder(entry)) {
@@ -1673,6 +1697,7 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
             children: entry.items,
           }}
           onSelect={setActiveLabel}
+          selectedLabel={activeLabel}
         />
       );
     }
@@ -1680,11 +1705,9 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
     return (
       <SidebarItemComponent
         key={entry.id}
-        item={{
-          ...entry,
-          active: entry.label === activeLabel,
-        }}
+        item={entry}
         onSelect={setActiveLabel}
+        selectedLabel={activeLabel}
       />
     );
   };
@@ -1755,7 +1778,7 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
                 ) : null}
                 <SidebarSection>
                   <SidebarSectionLabel>Workspace</SidebarSectionLabel>
-                  {sidebarItems.map(renderSidebarEntry)}
+                  {visual.workspaceNav.map(renderSidebarEntry)}
                 </SidebarSection>
               </SidebarScroll>
             </SidebarPanel>
@@ -1834,7 +1857,6 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
                     onPointerLeave={endDragging}
                     onPointerMove={handlePointerMove}
                     onPointerUp={handlePointerUp}
-                    onWheel={handleWheel}
                   >
                     <TableCanvas $width={totalTableWidth}>
                       <HeaderRow>

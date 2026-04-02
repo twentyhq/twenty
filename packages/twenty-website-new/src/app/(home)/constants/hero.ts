@@ -537,7 +537,7 @@ export const HERO_DATA: HeroHomeDataType = {
         children: [
           {
             id: 'workflow-list',
-            label: 'Workflows',
+            label: 'All Workflows',
             icon: { kind: 'tabler', name: 'settingsAutomation', tone: 'gray' },
             viewLabel: 'All Workflows',
             viewCount: 2,
