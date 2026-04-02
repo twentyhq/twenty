@@ -3,6 +3,7 @@ import { join } from 'path';
 import { v4 } from 'uuid';
 
 import createTwentyAppPackageJson from 'package.json';
+import chalk from 'chalk';
 
 const SRC_FOLDER = 'src';
 
@@ -17,6 +18,7 @@ export const copyBaseApplicationProject = async ({
   appDescription: string;
   appDirectory: string;
 }) => {
+  console.log(chalk.gray('Generating application project...'));
   await fs.copy(join(__dirname, './constants/template'), appDirectory);
 
   await generateUniversalIdentifiers({

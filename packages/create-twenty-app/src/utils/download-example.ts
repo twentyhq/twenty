@@ -54,23 +54,92 @@ const resolveSource = (source: string): ResolvedGitHubSource => {
   };
 };
 
+// Uses the GitHub Contents API to list directories — fast and doesn't download the repo
+const fetchGitHubDirectoryContents = async (
+  owner: string,
+  repo: string,
+  path: string,
+  ref: string,
+): Promise<{ name: string; type: string }[] | null> => {
+  const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${ref}`;
+
+  const response = await fetch(apiUrl, {
+    headers: { Accept: 'application/vnd.github.v3+json' },
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  const data = await response.json();
+
+  if (!Array.isArray(data)) {
+    return null;
+  }
+
+  return data as { name: string; type: string }[];
+};
+
 const listAvailableExamples = async (
-  examplesDir: string,
+  owner: string,
+  repo: string,
+  ref: string,
 ): Promise<string[]> => {
-  if (!(await fs.pathExists(examplesDir))) {
+  const contents = await fetchGitHubDirectoryContents(
+    owner,
+    repo,
+    TWENTY_EXAMPLES_PATH,
+    ref,
+  );
+
+  if (!contents) {
     return [];
   }
 
-  const entries = await fs.readdir(examplesDir, { withFileTypes: true });
+  return contents
+    .filter((entry) => entry.type === 'dir')
+    .map((entry) => entry.name);
+};
 
-  return entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name);
+const validateExampleExists = async (
+  source: ResolvedGitHubSource,
+  originalSource: string,
+): Promise<void> => {
+  const { owner, repo, ref, path } = source;
+
+  const contents = await fetchGitHubDirectoryContents(owner, repo, path, ref);
+
+  if (contents !== null) {
+    return;
+  }
+
+  if (!isUrl(originalSource)) {
+    const availableExamples = await listAvailableExamples(owner, repo, ref);
+
+    throw new Error(
+      `Example "${originalSource}" not found.\n\n` +
+        (availableExamples.length > 0
+          ? `Available examples:\n${availableExamples.map((name) => `  - ${name}`).join('\n')}\n\n`
+          : '') +
+        `Browse all examples: ${TWENTY_EXAMPLES_URL}`,
+    );
+  }
+
+  throw new Error(
+    `Example not found: "${path}" does not exist in ${owner}/${repo} (ref: ${ref})`,
+  );
 };
 
 export const downloadExample = async (
   source: string,
   targetDirectory: string,
 ): Promise<void> => {
-  const { owner, repo, ref, path } = resolveSource(source);
+  const resolved = resolveSource(source);
+  const { owner, repo, ref, path } = resolved;
+
+  // Validate the example exists before downloading (fast API call)
+  await validateExampleExists(resolved, source);
+
   const tarballUrl = `https://codeload.github.com/${owner}/${repo}/tar.gz/${ref}`;
 
   const tempDir = join(
@@ -119,30 +188,8 @@ export const downloadExample = async (
       : join(tempDir, extractedDir);
 
     if (!(await fs.pathExists(sourcePath))) {
-      if (!isUrl(source)) {
-        const availableExamples = await listAvailableExamples(
-          join(tempDir, extractedDir, TWENTY_EXAMPLES_PATH),
-        );
-
-        throw new Error(
-          `Example "${source}" not found.\n\n` +
-            (availableExamples.length > 0
-              ? `Available examples:\n${availableExamples.map((name) => `  - ${name}`).join('\n')}\n\n`
-              : '') +
-            `Browse all examples: ${TWENTY_EXAMPLES_URL}`,
-        );
-      }
-
       throw new Error(
-        `Example not found: "${path}" does not exist in ${owner}/${repo} (ref: ${ref})`,
-      );
-    }
-
-    const stat = await fs.stat(sourcePath);
-
-    if (!stat.isDirectory()) {
-      throw new Error(
-        `Example path "${path}" is not a directory in ${owner}/${repo}`,
+        `Example directory not found in archive: "${path}"`,
       );
     }
 

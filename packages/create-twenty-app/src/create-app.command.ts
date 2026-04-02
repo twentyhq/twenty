@@ -11,6 +11,7 @@ import * as path from 'path';
 import { basename } from 'path';
 import {
   authLoginOAuth,
+  ConfigService,
   detectLocalServer,
   serverStart,
   type ServerStartResult,
@@ -41,7 +42,19 @@ export class CreateAppCommand {
       await fs.ensureDir(appDirectory);
 
       if (options.example) {
-        await downloadExample(options.example, appDirectory);
+        const exampleSucceeded = await this.tryDownloadExample(
+          options.example,
+          appDirectory,
+        );
+
+        if (!exampleSucceeded) {
+          await copyBaseApplicationProject({
+            appName,
+            appDisplayName,
+            appDescription,
+            appDirectory,
+          });
+        }
       } else {
         await copyBaseApplicationProject({
           appName,
@@ -160,6 +173,38 @@ export class CreateAppCommand {
     }
   }
 
+  private async tryDownloadExample(
+    example: string,
+    appDirectory: string,
+  ): Promise<boolean> {
+    try {
+      await downloadExample(example, appDirectory);
+
+      return true;
+    } catch (error) {
+      console.error(
+        chalk.red(
+          `\n${error instanceof Error ? error.message : 'Failed to download example.'}`,
+        ),
+      );
+
+      const { useTemplate } = await inquirer.prompt([
+        {
+          type: 'confirm',
+          name: 'useTemplate',
+          message: 'Would you like to create a default template app instead?',
+          default: true,
+        },
+      ]);
+
+      if (!useTemplate) {
+        process.exit(1);
+      }
+
+      return false;
+    }
+  }
+
   private logCreationInfo({
     appDirectory,
     appName,
@@ -206,7 +251,7 @@ export class CreateAppCommand {
     if (!shouldAuthenticate) {
       console.log(
         chalk.gray(
-          'Authentication skipped. Run `yarn twenty remote add` manually.',
+          'Authentication skipped. Run `yarn twenty remote add --local` manually.',
         ),
       );
 
@@ -219,10 +264,14 @@ export class CreateAppCommand {
         remote: 'local',
       });
 
-      if (!result.success) {
+      if (result.success) {
+        const configService = new ConfigService();
+
+        await configService.setDefaultRemote('local');
+      } else {
         console.log(
           chalk.yellow(
-            'Authentication failed. Run `yarn twenty remote add` manually.',
+            'Authentication failed. Run `yarn twenty remote add --local` manually.',
           ),
         );
       }
