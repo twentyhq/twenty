@@ -45,7 +45,7 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
   padding: ${({ isUser }) =>
     isUser ? `0 ${themeCssVariables.spacing[2]}` : '0'};
   white-space: normal;
-  width: fit-content;
+  width: ${({ isUser }) => (isUser ? 'fit-content' : '100%')};
   /* Pre-wrap within the whole container turns every newline between block
      elements into extra spacing; keep normal flow and only pre-wrap code. */
   word-wrap: break-word;

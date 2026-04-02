@@ -5,7 +5,6 @@ import { INFORMATIVE_ICONS } from '@/icons';
 import type { ProductStepperContentProps } from '@/sections/ProductStepper/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import { useEffect, useRef } from 'react';
 
 const ContentRoot = styled.div`
   display: grid;
@@ -15,6 +14,9 @@ const ContentRoot = styled.div`
 
   @media (min-width: ${theme.breakpoints.md}px) {
     gap: ${theme.spacing(10)};
+    height: max-content;
+    position: sticky;
+    top: calc(50vh - 150px);
   }
 `;
 
@@ -81,6 +83,7 @@ const StepsColumn = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   min-width: 0;
+  gap: ${theme.spacing(8)};
 
   @media (min-width: ${theme.breakpoints.md}px) {
     max-width: 520px;
@@ -88,45 +91,44 @@ const StepsColumn = styled.div`
 `;
 
 const StepBlock = styled.div`
-  align-content: center;
   display: grid;
   grid-template-columns: 1fr;
-  min-height: 80vh;
-  opacity: 0.3;
+  opacity: 1;
   row-gap: ${theme.spacing(4)};
   transition: opacity 0.4s ease;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    min-height: 100vh;
     row-gap: ${theme.spacing(6)};
-  }
-
-  &[data-active='true'] {
-    opacity: 1;
+    opacity: var(--step-opacity, 1);
+    transform: var(--step-translate-y, translateY(0));
+    pointer-events: var(--step-pointer-events, auto);
   }
 `;
 
 const IntroBlock = styled.div`
-  align-content: center;
   display: grid;
   grid-template-columns: 1fr;
-  min-height: 80vh;
   row-gap: ${theme.spacing(4)};
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    min-height: 100vh;
-  }
 `;
 
 type ProgressRailProps = {
   activeStepIndex: number;
+  scrollProgress: number;
   stepCount: number;
 };
 
 function ProductProgressRail({
   activeStepIndex,
+  scrollProgress,
   stepCount,
 }: ProgressRailProps) {
+  const globalProgress = scrollProgress * (stepCount - 1);
+
+  const fillPercentage =
+    globalProgress >= stepCount - 1
+      ? 100
+      : (globalProgress - activeStepIndex) * 100;
+
   const nodes = [];
 
   for (let index = 0; index < stepCount; index += 1) {
@@ -134,7 +136,7 @@ function ProductProgressRail({
       nodes.push(
         <StepIndicatorRow key={`step-${index}`}>
           <PillBackground>
-            <PillFill style={{ height: '100%' }} />
+            <PillFill style={{ height: `${fillPercentage}%` }} />
           </PillBackground>
           <ActiveLabel>{String(index + 1).padStart(2, '0')}</ActiveLabel>
         </StepIndicatorRow>,
@@ -179,53 +181,14 @@ export function Content({
   body,
   eyebrow,
   heading,
-  onStepSelect,
+  scrollProgress,
   steps,
 }: ProductStepperContentProps) {
-  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-  useEffect(() => {
-    stepRefs.current = stepRefs.current.slice(0, steps.length);
-  }, [steps.length]);
-
-  useEffect(() => {
-    const elements = stepRefs.current.filter(Boolean) as HTMLDivElement[];
-    if (elements.length === 0) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const candidates = entries.filter(
-          (entry) => entry.isIntersecting && entry.intersectionRatio > 0.15,
-        );
-        if (candidates.length === 0) {
-          return;
-        }
-
-        const best = candidates.reduce((previous, current) =>
-          current.intersectionRatio > previous.intersectionRatio
-            ? current
-            : previous,
-        );
-        const indexAttribute = best.target.getAttribute('data-step-index');
-        const index = indexAttribute === null ? NaN : Number(indexAttribute);
-        if (!Number.isNaN(index)) {
-          onStepSelect(index);
-        }
-      },
-      { root: null, threshold: [0, 0.15, 0.3, 0.5, 0.75, 1] },
-    );
-
-    elements.forEach((element) => observer.observe(element));
-
-    return () => observer.disconnect();
-  }, [onStepSelect, steps]);
-
   return (
     <ContentRoot>
       <ProductProgressRail
         activeStepIndex={activeStepIndex}
+        scrollProgress={scrollProgress}
         stepCount={steps.length}
       />
       <StepsColumn>
@@ -236,19 +199,43 @@ export function Content({
         </IntroBlock>
         {steps.map((step, index) => {
           const Icon = INFORMATIVE_ICONS[step.icon];
-          const isActive = index === activeStepIndex;
+          const isActive = index <= activeStepIndex;
           const iconColor = isActive
             ? theme.colors.highlight[100]
             : theme.colors.secondary.text[100];
 
+          let opacity = 1;
+          let translateY = 0;
+
+          if (index > 0) {
+            const globalProgress = scrollProgress * (steps.length - 1);
+            const start = index - 1;
+            const progress = globalProgress - start;
+
+            if (progress >= 1) {
+              opacity = 1;
+              translateY = 0;
+            } else if (progress > 0) {
+              opacity = 0.4 + 0.6 * progress;
+              translateY = 40 * (1 - progress);
+            } else {
+              const p = Math.max(0, progress + 1);
+              opacity = 0.4 * p;
+              translateY = 40 + 40 * (1 - p);
+            }
+          }
+
           return (
             <StepBlock
               data-active={String(isActive)}
-              data-step-index={index}
               key={index}
-              ref={(element) => {
-                stepRefs.current[index] = element;
-              }}
+              style={
+                {
+                  '--step-opacity': opacity,
+                  '--step-translate-y': `${translateY}px`,
+                  '--step-pointer-events': opacity > 0 ? 'auto' : 'none',
+                } as React.CSSProperties
+              }
             >
               <StepRowHeader>
                 <StepIconBox data-active={String(isActive)}>

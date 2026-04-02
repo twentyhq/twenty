@@ -41,6 +41,7 @@ export const transformPageLayoutTabEntityToFlatPageLayoutTab = ({
     id: pageLayoutTabEntity.id,
     title: pageLayoutTabEntity.title,
     position: pageLayoutTabEntity.position,
+    isActive: pageLayoutTabEntity.isActive,
     pageLayoutId: pageLayoutTabEntity.pageLayoutId,
     workspaceId: pageLayoutTabEntity.workspaceId,
     universalIdentifier: pageLayoutTabEntity.universalIdentifier,

@@ -1732,9 +1732,14 @@ enum FeatureFlagKey {
   IS_DIRECT_GRAPHQL_EXECUTION_ENABLED
   IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED
   IS_CONNECTED_ACCOUNT_MIGRATED
-  IS_GRAPHQL_QUERY_TIMING_ENABLED
   IS_RECORD_TABLE_WIDGET_ENABLED
   IS_DATASOURCE_MIGRATED
+}
+
+type ClientConfigMaintenanceMode {
+  startAt: DateTime!
+  endAt: DateTime!
+  link: String
 }
 
 type ClientConfig {
@@ -1765,6 +1770,8 @@ type ClientConfig {
   calendarBookingPageId: String
   isCloudflareIntegrationEnabled: Boolean!
   isClickHouseConfigured: Boolean!
+  isWorkspaceSchemaDDLLocked: Boolean!
+  maintenance: ClientConfigMaintenanceMode
 }
 
 type UsageBreakdownItem {
@@ -1959,6 +1966,12 @@ type AdminPanelHealthServiceData {
   errorMessage: String
   details: String
   queues: [AdminPanelWorkerQueueHealth!]
+}
+
+type MaintenanceMode {
+  startAt: DateTime!
+  endAt: DateTime!
+  link: String
 }
 
 type ModelsDevModelSuggestion {
@@ -2267,6 +2280,33 @@ type FieldConnection {
   edges: [FieldEdge!]!
 }
 
+type AuthToken {
+  token: String!
+  expiresAt: DateTime!
+}
+
+type ApplicationTokenPair {
+  applicationAccessToken: AuthToken!
+  applicationRefreshToken: AuthToken!
+}
+
+type FrontComponent {
+  id: UUID!
+  name: String!
+  description: String
+  sourceComponentPath: String!
+  builtComponentPath: String!
+  componentName: String!
+  builtComponentChecksum: String!
+  universalIdentifier: UUID
+  applicationId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  isHeadless: Boolean!
+  usesSdkClient: Boolean!
+  applicationTokenPair: ApplicationTokenPair
+}
+
 type LogicFunctionLogs {
   """Execution Logs"""
   logs: String!
@@ -2287,11 +2327,6 @@ type VerifyTwoFactorAuthenticationMethod {
 
 type AuthorizeApp {
   redirectUrl: String!
-}
-
-type AuthToken {
-  token: String!
-  expiresAt: DateTime!
 }
 
 type AuthTokenPair {
@@ -2400,11 +2435,6 @@ type DevelopmentApplication {
 type WorkspaceMigration {
   applicationUniversalIdentifier: String!
   actions: JSON!
-}
-
-type ApplicationTokenPair {
-  applicationAccessToken: AuthToken!
-  applicationRefreshToken: AuthToken!
 }
 
 type File {
@@ -2526,23 +2556,6 @@ type PostgresCredentials {
   workspaceId: UUID!
 }
 
-type FrontComponent {
-  id: UUID!
-  name: String!
-  description: String
-  sourceComponentPath: String!
-  builtComponentPath: String!
-  componentName: String!
-  builtComponentChecksum: String!
-  universalIdentifier: UUID
-  applicationId: UUID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  isHeadless: Boolean!
-  usesSdkClient: Boolean!
-  applicationTokenPair: ApplicationTokenPair
-}
-
 type CommandMenuItem {
   id: UUID!
   workflowVersionId: UUID
@@ -2567,20 +2580,15 @@ enum EngineComponentKey {
   NAVIGATE_TO_NEXT_RECORD
   NAVIGATE_TO_PREVIOUS_RECORD
   CREATE_NEW_RECORD
-  DELETE_SINGLE_RECORD
-  DELETE_MULTIPLE_RECORDS
-  RESTORE_SINGLE_RECORD
-  RESTORE_MULTIPLE_RECORDS
-  DESTROY_SINGLE_RECORD
-  DESTROY_MULTIPLE_RECORDS
+  DELETE_RECORDS
+  RESTORE_RECORDS
+  DESTROY_RECORDS
   ADD_TO_FAVORITES
   REMOVE_FROM_FAVORITES
   EXPORT_NOTE_TO_PDF
-  EXPORT_FROM_RECORD_INDEX
-  EXPORT_FROM_RECORD_SHOW
+  EXPORT_RECORDS
   UPDATE_MULTIPLE_RECORDS
   MERGE_MULTIPLE_RECORDS
-  EXPORT_MULTIPLE_RECORDS
   IMPORT_RECORDS
   EXPORT_VIEW
   SEE_DELETED_RECORDS
@@ -2623,6 +2631,15 @@ enum EngineComponentKey {
   VIEW_PREVIOUS_AI_CHATS
   TRIGGER_WORKFLOW_VERSION
   FRONT_COMPONENT_RENDERER
+  DELETE_SINGLE_RECORD
+  DELETE_MULTIPLE_RECORDS
+  RESTORE_SINGLE_RECORD
+  RESTORE_MULTIPLE_RECORDS
+  DESTROY_SINGLE_RECORD
+  DESTROY_MULTIPLE_RECORDS
+  EXPORT_FROM_RECORD_INDEX
+  EXPORT_FROM_RECORD_SHOW
+  EXPORT_MULTIPLE_RECORDS
 }
 
 enum CommandMenuItemAvailabilityType {
@@ -2636,6 +2653,7 @@ type ToolIndexEntry {
   description: String!
   category: String!
   objectName: String
+  icon: String
   inputSchema: JSON
 }
 
@@ -3221,6 +3239,7 @@ type Query {
   getModelsDevProviders: [ModelsDevProviderSuggestion!]!
   getModelsDevSuggestions(providerType: String!): [ModelsDevModelSuggestion!]!
   getAdminAiUsageByWorkspace(periodStart: DateTime, periodEnd: DateTime): [UsageBreakdownItem!]!
+  getMaintenanceMode: MaintenanceMode
   getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   getPostgresCredentials: PostgresCredentials
   findManyPublicDomains: [PublicDomain!]!
@@ -3541,6 +3560,8 @@ type Mutation {
   removeAiProvider(providerName: String!): Boolean!
   addModelToProvider(providerName: String!, modelConfig: JSON!): Boolean!
   removeModelFromProvider(providerName: String!, modelName: String!): Boolean!
+  setMaintenanceMode(startAt: DateTime!, endAt: DateTime!, link: String): Boolean!
+  clearMaintenanceMode: Boolean!
   enablePostgresProxy: PostgresCredentials!
   disablePostgresProxy: PostgresCredentials!
   createPublicDomain(domain: String!): PublicDomain!

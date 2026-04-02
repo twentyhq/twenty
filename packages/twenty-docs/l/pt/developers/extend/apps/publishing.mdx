@@ -18,13 +18,13 @@ Ambos os caminhos começam na mesma etapa de **build**.
 
 ## Compilando seu app
 
-Run the build command to compile your app and generate a distribution-ready `manifest.json`:
+Execute o comando build para compilar seu app e gerar um `manifest.json` pronto para distribuição:
 
 ```bash filename="Terminal"
 yarn twenty build
 ```
 
-This compiles TypeScript sources, transpiles logic functions and front components, and writes everything to `.twenty/output/`. Add `--tarball` to also produce a `.tgz` package for manual distribution or the deploy command.
+Isso compila seu código-fonte em TypeScript, transpila funções de lógica e componentes de front-end e grava tudo em `.twenty/output/`. Adicione `--tarball` para também gerar um pacote `.tgz` para distribuição manual ou para o comando de deploy.
 
 ## Implantando em um servidor (tarball)
 
@@ -61,7 +61,7 @@ Aplicativos em tarball não são listados no marketplace público, então outros
 O link de compartilhamento usa a URL base do servidor (sem qualquer subdomínio de espaço de trabalho), para funcionar em qualquer espaço de trabalho no servidor.
 
 <Warning>
-Sharing private apps is an Enterprise feature. Go to [Settings > Admin Panel > Enterprise](/settings/admin-panel#enterprise) to enable it.
+Compartilhar apps privados é um recurso do plano Enterprise. Vá para [Configurações > Painel de Administração > Enterprise](/settings/admin-panel#enterprise) para ativá-lo.
 </Warning>
 
 ### Gerenciamento de versões
@@ -69,7 +69,7 @@ Sharing private apps is an Enterprise feature. Go to [Settings > Admin Panel > E
 Para lançar uma atualização:
 
 1. Atualize o campo `version` no seu `package.json`
-2. Run `yarn twenty deploy` (or `yarn twenty deploy --remote production`)
+2. Execute `yarn twenty deploy` (ou `yarn twenty deploy --remote production`)
 3. Os espaços de trabalho que têm o aplicativo instalado verão a atualização disponível em suas configurações
 
 {/* TODO: add screenshot of the Upgrade button */}
@@ -81,7 +81,7 @@ Publicar no npm torna seu aplicativo descobrível no Marketplace da Twenty. Qual
 ### Requisitos
 
 * Uma conta no [npm](https://www.npmjs.com)
-* The `twenty-app` keyword in your `package.json` `keywords` array (already included when you scaffold with `create-twenty-app`)
+* A palavra-chave `twenty-app` no array `keywords` do seu `package.json` (já incluída quando você cria o projeto com `create-twenty-app`)
 
 ```json filename="package.json"
 {
@@ -93,7 +93,7 @@ Publicar no npm torna seu aplicativo descobrível no Marketplace da Twenty. Qual
 
 ### Metadados do Marketplace
 
-The `defineApplication()` config supports optional fields that control how your app appears in the marketplace. Use `logoUrl` and `screenshots` to reference images from the `public/` folder:
+A configuração `defineApplication()` oferece suporte a campos opcionais que controlam como seu app aparece no marketplace. Use `logoUrl` e `screenshots` para referenciar imagens da pasta `public/`:
 
 ```ts src/application-config.ts
 export default defineApplication({
@@ -109,9 +109,9 @@ export default defineApplication({
 });
 ```
 
-See the [defineApplication accordion](/l/pt/developers/extend/apps/building#defineentity-functions) in the Building Apps page for the full list of marketplace fields (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, etc.).
+Veja o [acordeão de defineApplication](/l/pt/developers/extend/apps/building#defineentity-functions) na página Building Apps para a lista completa de campos do marketplace (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, etc.).
 
-### Publish
+### Publicar
 
 ```bash filename="Terminal"
 yarn twenty publish
@@ -127,7 +127,7 @@ yarn twenty publish --tag beta
 
 O servidor Twenty sincroniza seu catálogo do marketplace a partir do registro do npm **a cada hora**.
 
-You can trigger the sync immediately instead of waiting:
+Você pode acionar a sincronização imediatamente em vez de esperar:
 
 ```bash filename="Terminal"
 yarn twenty catalog-sync
@@ -135,7 +135,7 @@ yarn twenty catalog-sync
 # yarn twenty catalog-sync --remote production
 ```
 
-The metadata shown in the marketplace comes from your `defineApplication()` config — fields like `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl`, and `termsUrl`.
+Os metadados exibidos no marketplace vêm da sua configuração `defineApplication()` — campos como `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` e `termsUrl`.
 
 <Note>
 Se o seu aplicativo não definir um `aboutDescription` em `defineApplication()`, o marketplace usará automaticamente o `README.md` do seu pacote no npm como conteúdo da página Sobre. Isso significa que você pode manter um único README tanto para o npm quanto para o marketplace da Twenty. Se quiser uma descrição diferente no marketplace, defina explicitamente `aboutDescription`.
@@ -143,7 +143,7 @@ Se o seu aplicativo não definir um `aboutDescription` em `defineApplication()`,
 
 ### Publicação via CI
 
-Use this GitHub Actions workflow to publish automatically on every release (uses [OIDC](https://docs.npmjs.com/trusted-publishers)):
+Use este workflow do GitHub Actions para publicar automaticamente a cada release (usa [OIDC](https://docs.npmjs.com/trusted-publishers)):
 
 ```yaml filename=".github/workflows/publish.yml"
 name: Publish
@@ -178,13 +178,13 @@ Para outros sistemas de CI (GitLab CI, CircleCI etc.), aplicam-se os mesmos trê
 
 ## Instalando aplicativos
 
-Once an app is published (npm) or deployed (tarball), workspaces can install it through the UI.
+Depois que um app é publicado (npm) ou implantado (tarball), os espaços de trabalho podem instalá-lo pela interface do usuário.
 
-Go to the **Settings > Applications** page in Twenty, where both marketplace and tarball-deployed apps can be browsed and installed.
+Vá para a página **Configurações > Aplicações** no Twenty, onde é possível navegar e instalar tanto apps do marketplace quanto apps implantados por tarball.
 
 {/* TODO: add screenshot of the UI when the app is registered */}
 
-You can also install apps from the command line:
+Você também pode instalar apps pela linha de comando:
 
 ```bash filename="Terminal"
 yarn twenty install

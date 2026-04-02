@@ -8,6 +8,7 @@ export const WorkspaceMigrationRunnerExceptionCode = {
   INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
   EXECUTION_FAILED: 'EXECUTION_FAILED',
   APPLICATION_NOT_FOUND: 'APPLICATION_NOT_FOUND',
+  DDL_LOCKED: 'DDL_LOCKED',
 } as const;
 
 const getWorkspaceMigrationRunnerExceptionUserFriendlyMessage = (
@@ -20,6 +21,8 @@ const getWorkspaceMigrationRunnerExceptionUserFriendlyMessage = (
       return msg`Migration execution failed.`;
     case WorkspaceMigrationRunnerExceptionCode.APPLICATION_NOT_FOUND:
       return msg`Application not found.`;
+    case WorkspaceMigrationRunnerExceptionCode.DDL_LOCKED:
+      return msg`Workspace schema changes are temporarily locked.`;
     default:
       assertUnreachable(code);
   }
