@@ -31,6 +31,7 @@ const StyledForm = styled.form`
   align-items: center;
   display: flex;
   flex-direction: column;
+  max-width: 100%;
   width: 100%;
 `;
 
