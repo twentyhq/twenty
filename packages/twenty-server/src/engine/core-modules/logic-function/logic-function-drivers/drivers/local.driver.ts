@@ -28,6 +28,16 @@ export interface LocalDriverOptions {
   sdkClientArchiveService: SdkClientArchiveService;
 }
 
+const pathExists = async (targetPath: string): Promise<boolean> => {
+  try {
+    await fs.access(targetPath);
+
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 export class LocalDriver implements LogicFunctionDriver {
   private readonly logicFunctionResourceService: LogicFunctionResourceService;
   private readonly sdkClientArchiveService: SdkClientArchiveService;
@@ -67,10 +77,7 @@ export class LocalDriver implements LogicFunctionDriver {
     const depsLayerPath = this.getDepsLayerPath(flatApplication);
     const depsNodeModulesPath = join(depsLayerPath, 'node_modules');
 
-    const nodeModulesExist = await fs
-      .access(depsNodeModulesPath)
-      .then(() => true)
-      .catch(() => false);
+    const nodeModulesExist = await pathExists(depsNodeModulesPath);
 
     if (nodeModulesExist) {
       return;
@@ -100,10 +107,7 @@ export class LocalDriver implements LogicFunctionDriver {
     });
     const sdkNodeModulesPath = join(sdkLayerPath, 'node_modules');
 
-    const nodeModulesExist = await fs
-      .access(sdkNodeModulesPath)
-      .then(() => true)
-      .catch(() => false);
+    const nodeModulesExist = await pathExists(sdkNodeModulesPath);
 
     if (nodeModulesExist && !flatApplication.isSdkLayerStale) {
       return;
