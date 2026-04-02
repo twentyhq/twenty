@@ -4,24 +4,24 @@ description: Defina objetos, funções de lógica, componentes de front-end e mu
 ---
 
 <Warning>
-  Apps are currently in alpha. The feature works but is still evolving.
+  Os aplicativos estão atualmente em testes alfa. O recurso é funcional, mas ainda está evoluindo.
 </Warning>
 
-The `twenty-sdk` package provides typed building blocks to create your app. This page covers every entity type and API client available in the SDK.
+O pacote `twenty-sdk` fornece blocos de construção tipados para criar seu app. Esta página cobre todos os tipos de entidade e clientes de API disponíveis no SDK.
 
-## DefineEntity functions
+## Funções DefineEntity
 
-The SDK provides functions to define your app entities. You must use `export default defineEntity({...})` for the SDK to detect your entities. Essas funções validam sua configuração em tempo de compilação e oferecem autocompletar na IDE e segurança de tipos.
+O SDK fornece funções para definir as entidades do seu app. Você deve usar `export default defineEntity({...})` para que o SDK detecte suas entidades. Essas funções validam sua configuração em tempo de compilação e oferecem autocompletar na IDE e segurança de tipos.
 
 <Note>
-  **File organization is up to you.**
-  Entity detection is AST-based — the SDK finds `export default defineEntity(...)` calls regardless of where the file lives. Grouping files by type (e.g., `logic-functions/`, `roles/`) is just a convention, not a requirement.
+  **A organização de arquivos fica a seu critério.**
+  A detecção de entidades é baseada em AST — o SDK encontra chamadas a `export default defineEntity(...)` independentemente de onde o arquivo esteja. Agrupar arquivos por tipo (por exemplo, `logic-functions/`, `roles/`) é apenas uma convenção, não um requisito.
 </Note>
 
 <AccordionGroup>
 <Accordion title="defineRole" description="Configura permissões de papéis e acesso a objetos">
 
-Roles encapsulate permissions on your workspace's objects and actions.
+Papéis encapsulam permissões sobre os objetos e ações do seu espaço de trabalho.
 
 ```ts restricted-company-role.ts
 import {
@@ -69,12 +69,12 @@ export default defineRole({
 </Accordion>
 <Accordion title="defineApplication" description="Configurar metadados do aplicativo (obrigatório, um por app)">
 
-Every app must have exactly one `defineApplication` call that describes:
+Todo app deve ter exatamente uma chamada a `defineApplication` que descreve:
 
-* **Identity**: identifiers, display name, and description.
-* **Permissions**: which role its functions and front components use.
-* **(Optional) Variables**: key–value pairs exposed to your functions as environment variables.
-* **(Optional) Pre-install / post-install functions**: logic functions that run before or after installation.
+* **Identidade**: identificadores, nome de exibição e descrição.
+* **Permissões**: qual papel é usado por suas funções e componentes de front-end.
+* **Variáveis (opcional)**: pares chave–valor expostos às suas funções como variáveis de ambiente.
+* **(Opcional) Funções de pré-instalação/pós-instalação**: funções de lógica que são executadas antes ou depois da instalação.
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
@@ -98,21 +98,21 @@ export default defineApplication({
 ```
 
 Notas:
-* `universalIdentifier` fields are deterministic IDs you own. Generate them once and keep them stable across syncs.
-* `applicationVariables` become environment variables for your functions and front components (e.g., `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
-* `defaultRoleUniversalIdentifier` must reference a role defined with `defineRole()` (see above).
-* Pre-install and post-install functions are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
+* Os campos `universalIdentifier` são IDs determinísticos que você controla. Gere-os uma vez e mantenha-os estáveis entre sincronizações.
+* `applicationVariables` tornam-se variáveis de ambiente para suas funções e componentes de front-end (por exemplo, `DEFAULT_RECIPIENT_NAME` fica disponível como `process.env.DEFAULT_RECIPIENT_NAME`).
+* `defaultRoleUniversalIdentifier` deve fazer referência a um papel definido com `defineRole()` (veja acima).
+* As funções de pré-instalação e pós-instalação são detectadas automaticamente durante a construção do manifesto — você não precisa referenciá-las em `defineApplication()`.
 
 #### Metadados do Marketplace
 
-If you plan to [publish your app](/l/pt/developers/extend/apps/publishing), these optional fields control how it appears in the marketplace:
+Se você planeja [publicar seu app](/l/pt/developers/extend/apps/publishing), estes campos opcionais controlam como seu app aparece no marketplace:
 
 | Campo              | Descrição                                                                                                         |
 | ------------------ | ----------------------------------------------------------------------------------------------------------------- |
 | `autor`            | Nome do autor ou da empresa                                                                                       |
 | `categoria`        | Categoria do app para filtragem no marketplace                                                                    |
-| `logoUrl`          | Path to your app logo (e.g., `public/logo.png`)                                                                   |
-| `screenshots`      | Array of screenshot paths (e.g., `public/screenshot-1.png`)                                                       |
+| `logoUrl`          | Caminho para o logo do seu app (por exemplo, `public/logo.png`)                                                   |
+| `screenshots`      | Array de caminhos de capturas de tela (por exemplo, `public/screenshot-1.png`)                                    |
 | `aboutDescription` | Descrição em markdown mais longa para a aba "Sobre". Se omitido, o marketplace usa o `README.md` do pacote no npm |
 | `websiteUrl`       | Link para seu site                                                                                                |
 | `termsUrl`         | Link para os Termos de Serviço                                                                                    |
@@ -121,15 +121,15 @@ If you plan to [publish your app](/l/pt/developers/extend/apps/publishing), thes
 
 #### Papéis e permissões
 
-The `defaultRoleUniversalIdentifier` in `application-config.ts` designates the default role used by your app's logic functions and front components. See `defineRole` above for details.
+O campo `defaultRoleUniversalIdentifier` em `application-config.ts` designa o papel padrão usado pelas funções de lógica e pelos componentes de front-end do seu app. Veja `defineRole` acima para detalhes.
 
-* The runtime token injected as `TWENTY_APP_ACCESS_TOKEN` is derived from this role.
-* The typed client is restricted to the permissions granted to that role.
-* Follow least-privilege: create a dedicated role with only the permissions your functions need.
+* O token em tempo de execução injetado como `TWENTY_APP_ACCESS_TOKEN` é derivado desse papel.
+* O cliente tipado é restrito às permissões concedidas a esse papel.
+* Siga o princípio do menor privilégio: crie um papel dedicado com apenas as permissões de que suas funções precisam.
 
-##### Default function role
+##### Papel de função padrão
 
-When you scaffold a new app, the CLI creates a default role file:
+Ao criar um novo app com o scaffold, a CLI cria um arquivo de papel padrão:
 
 ```ts src/roles/default-role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
@@ -155,16 +155,16 @@ export default defineRole({
 });
 ```
 
-This role's `universalIdentifier` is referenced in `application-config.ts` as `defaultRoleUniversalIdentifier`:
+O `universalIdentifier` desse papel é referenciado em `application-config.ts` como `defaultRoleUniversalIdentifier`:
 
-* **\*.role.ts** defines what the role can do.
+* **\*.role.ts** define o que o papel pode fazer.
 * **application-config.ts** aponta para esse papel para que suas funções herdem suas permissões.
 
 Notas:
 * Comece pelo papel gerado pelo scaffold e depois restrinja-o progressivamente seguindo o princípio do menor privilégio.
-* Replace `objectPermissions` and `fieldPermissions` with the objects and fields your functions actually need.
-* `permissionFlags` controlam o acesso a recursos em nível de plataforma. Keep them minimal.
-* See a working example: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+* Substitua `objectPermissions` e `fieldPermissions` pelos objetos e campos de que suas funções realmente precisam.
+* `permissionFlags` controlam o acesso a recursos em nível de plataforma. Mantenha-os no mínimo necessário.
+* Veja um exemplo funcional: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
 
 </Accordion>
 <Accordion title="defineObject" description="Define objetos personalizados com campos">
@@ -256,7 +256,7 @@ mas isso não é recomendado.
 </Note>
 
 </Accordion>
-<Accordion title="defineField — Standard fields" description="Estender objetos existentes com campos adicionais">
+<Accordion title="defineField — Campos padrão" description="Estender objetos existentes com campos adicionais">
 
 Use `defineField()` para adicionar campos a objetos que não são seus — como objetos padrão do Twenty (Person, Company, etc.). ou a objetos de outros apps. Ao contrário dos campos inline em `defineObject()`, os campos independentes exigem um `objectUniversalIdentifier` para especificar qual objeto eles estendem:
 
@@ -284,7 +284,7 @@ Pontos-chave:
 * `defineField()` é a única forma de adicionar campos a objetos que você não criou com `defineObject()`.
 
 </Accordion>
-<Accordion title="defineField — Relation fields" description="Connect objects together with bidirectional relations">
+<Accordion title="defineField — Campos de relação" description="Conecte objetos com relações bidirecionais">
 
 As relações conectam objetos entre si. No Twenty, as relações são sempre **bidirecionais** — você define ambos os lados, e cada lado faz referência ao outro.
 
@@ -443,7 +443,7 @@ export default defineObject({
 });
 ```
 </Accordion>
-<Accordion title="defineLogicFunction" description="Define logic functions and their triggers">
+<Accordion title="defineLogicFunction" description="Defina funções de lógica e seus gatilhos">
 
 Cada arquivo de função usa `defineLogicFunction()` para exportar uma configuração com um handler e gatilhos opcionais.
 
@@ -487,15 +487,15 @@ export default defineLogicFunction({
 });
 ```
 
-Available trigger types:
-* **httpRoute**: Exposes your function on an HTTP path and method **under the `/s/` endpoint**:
-> e.g. `path: '/post-card/create'` is callable at `https://your-twenty-server.com/s/post-card/create`
+Tipos de gatilho disponíveis:
+* **httpRoute**: Expõe sua função em um caminho e método HTTP **no endpoint `/s/`**:
+> por exemplo, `path: '/post-card/create'` é acessível em `https://your-twenty-server.com/s/post-card/create`
 * **cron**: Executa sua função em um agendamento usando uma expressão CRON.
 * **databaseEvent**: Executa em eventos do ciclo de vida de objetos do espaço de trabalho. Quando a operação do evento é `updated`, campos específicos a serem observados podem ser especificados no array `updatedFields`. Se deixar indefinido ou vazio, qualquer atualização acionará a função.
-> e.g. `person.updated`, `*.created`, `company.*`
+> por exemplo, `person.updated`, `*.created`, `company.*`
 
 <Note>
-You can also manually execute a function using the CLI:
+Você também pode executar manualmente uma função usando a CLI:
 
 ```bash filename="Terminal"
 yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
@@ -505,7 +505,7 @@ yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
 yarn twenty exec -y e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
-You can watch logs with:
+Você pode acompanhar os logs com:
 
 ```bash filename="Terminal"
 yarn twenty logs
@@ -514,9 +514,8 @@ yarn twenty logs
 
 #### Payload de gatilho de rota
 
-When a route trigger invokes your logic function, it receives a `RoutePayload` object that follows the
-[AWS HTTP API v2 format](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html).
-Import the `RoutePayload` type from `twenty-sdk`:
+Quando um gatilho de rota invoca sua função de lógica, ela recebe um objeto `RoutePayload` que segue o [formato HTTP API v2 da AWS](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html).
+Importe o tipo `RoutePayload` de `twenty-sdk`:
 
 ```ts
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
@@ -533,9 +532,9 @@ O tipo `RoutePayload` tem a seguinte estrutura:
 
   | Propriedade                  | Tipo                                  | Descrição                                                              | Exemplo                                                                    |
   | ---------------------------- | ------------------------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-  | `headers`                    | `Record<string, string \| undefined>` | Cabeçalhos HTTP (apenas aqueles listados em `forwardedRequestHeaders`) | see section below                                                          |
+  | `headers`                    | `Record<string, string \| undefined>` | Cabeçalhos HTTP (apenas aqueles listados em `forwardedRequestHeaders`) | veja a seção abaixo                                                        |
   | `queryStringParameters`      | `Record<string, string \| undefined>` | Parâmetros de query string (valores múltiplos unidos por vírgulas)     | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
-  | `pathParameters`             | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern                       | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+  | `pathParameters`             | `Record<string, string \| undefined>` | Parâmetros de caminho extraídos do padrão de rota                      | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
   | `body`                       | `object \| null`                      | Corpo da requisição analisado (JSON)                                   | `{ id: 1 }` -> `{ id: 1 }`                                                 |
   | `isBase64Encoded`            | `boolean`                             | Se o corpo está codificado em base64                                   |                                                                            |
   | `requestContext.http.method` | `string`                              | Método HTTP (GET, POST, PUT, PATCH, DELETE)                            |                                                                            |
@@ -545,7 +544,7 @@ O tipo `RoutePayload` tem a seguinte estrutura:
 #### forwardedRequestHeaders
 
 Por padrão, os cabeçalhos HTTP das requisições recebidas **não** são repassados para sua função de lógica por motivos de segurança.
-To access specific headers, list them in the `forwardedRequestHeaders` array:
+Para acessar cabeçalhos específicos, liste-os explicitamente no array `forwardedRequestHeaders`:
 
 ```ts
 export default defineLogicFunction({
@@ -561,7 +560,7 @@ export default defineLogicFunction({
 });
 ```
 
-In your handler, access the forwarded headers like this:
+No seu handler, acesse os cabeçalhos encaminhados assim:
 
 ```ts
 const handler = async (event: RoutePayload) => {
@@ -574,14 +573,14 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-Os nomes dos cabeçalhos são normalizados para minúsculas. Access them using lowercase keys (e.g., `event.headers['content-type']`).
+Os nomes dos cabeçalhos são normalizados para minúsculas. Acesse-os usando chaves em minúsculas (por exemplo, `event.headers['content-type']`).
 </Note>
 
-#### Exposing a function as a tool
+#### Expor uma função como ferramenta
 
-Funções lógicas podem ser expostas como **ferramentas** para agentes de IA e fluxos de trabalho. When marked as a tool, a function becomes discoverable by Twenty's AI features and can be used in workflow automations.
+Funções lógicas podem ser expostas como **ferramentas** para agentes de IA e fluxos de trabalho. Quando marcada como ferramenta, uma função fica detectável pelos recursos de IA do Twenty e pode ser usada em automações de fluxos de trabalho.
 
-To mark a logic function as a tool, set `isTool: true`:
+Para marcar uma função de lógica como ferramenta, defina `isTool: true`:
 
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
@@ -617,8 +616,8 @@ export default defineLogicFunction({
 
 Pontos-chave:
 
-* You can combine `isTool` with triggers — a function can be both a tool (callable by AI agents) and triggered by events at the same time.
-* **`toolInputSchema`** (optional): A JSON Schema object describing the parameters your function accepts. The schema is computed automatically from source code static analysis, but you can set it explicitly:
+* Você pode combinar `isTool` com gatilhos — uma função pode ser ao mesmo tempo uma ferramenta (chamável por agentes de IA) e acionada por eventos.
+* **`toolInputSchema`** (opcional): Um objeto JSON Schema que descreve os parâmetros que sua função aceita. O schema é calculado automaticamente a partir da análise estática do código-fonte, mas você pode defini-lo explicitamente:
 
 ```ts
 export default defineLogicFunction({
@@ -715,11 +714,11 @@ Pontos-chave:
 </Accordion>
 <Accordion title="defineFrontComponent" description="Definir componentes de front-end para UI personalizada">
 
-Front components are React components that render directly inside Twenty's UI. They run in an **isolated Web Worker** using Remote DOM — your code is sandboxed but renders natively in the page, not in an iframe.
+Componentes de front-end são componentes React que renderizam diretamente dentro da UI do Twenty. Eles são executados em um Web Worker isolado usando Remote DOM — seu código é sandboxed, mas renderiza nativamente na página, não em um iframe.
 
-#### Basic example
+#### Exemplo básico
 
-The quickest way to see a front component in action is to register it as a **command**. Adding a `command` field with `isPinned: true` makes it appear as a quick-action button in the top-right corner of the page — no page layout needed:
+A maneira mais rápida de ver um componente de front-end em ação é registrá-lo como um **comando**. Adicionar um campo `command` com `isPinned: true` faz com que ele apareça como um botão de ação rápida no canto superior direito da página — não é necessário layout de página:
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk';
@@ -749,24 +748,24 @@ export default defineFrontComponent({
 });
 ```
 
-After syncing with `yarn twenty dev`, the quick action appears in the top-right corner of the page:
+Após sincronizar com `yarn twenty dev`, a ação rápida aparece no canto superior direito da página:
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Quick action button in the top-right corner" />
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Botão de ação rápida no canto superior direito" />
 </div>
 
-Click it to render the component inline.
+Clique nele para renderizar o componente inline.
 
 {/* TODO: add screenshot of the rendered front component */}
 
-#### Configuration fields
+#### Campos de configuração
 
 | Campo                 | Obrigatório | Descrição                                                                           |
 | --------------------- | ----------- | ----------------------------------------------------------------------------------- |
-| `universalIdentifier` | Sim         | Stable unique ID for this component                                                 |
-| `component`           | Sim         | A React component function                                                          |
-| `name`                | Não         | Display name                                                                        |
-| `description`         | Não         | Description of what the component does                                              |
+| `universalIdentifier` | Sim         | ID único e estável para este componente                                             |
+| `component`           | Sim         | Uma função de componente React                                                      |
+| `name`                | Não         | Nome de Exibição                                                                    |
+| `description`         | Não         | Descrição do que o componente faz                                                   |
 | `isHeadless`          | Não         | Set to `true` if the component has no visible UI (see below)                        |
 | `command`             | Não         | Register the component as a command (see [command options](#command-options) below) |
 
