@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ComponentType, useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -107,6 +108,7 @@ export const SettingsToolParameterTable = ({
             {entries.map(([paramName, property], index) => {
               const infoIconId = `param-info-${index}`;
               const TypeIcon = TYPE_ICON_MAP[property.type ?? ''];
+
               return (
                 <TableRow
                   key={paramName}
@@ -120,7 +122,9 @@ export const SettingsToolParameterTable = ({
                     <OverflowingTextWithTooltip text={paramName} />
                   </TableCell>
                   <TableCell gap={themeCssVariables.spacing[1]}>
-                    {TypeIcon && <TypeIcon size={theme.icon.size.md} />}
+                    {isDefined(TypeIcon) && (
+                      <TypeIcon size={theme.icon.size.md} />
+                    )}
                     {getDisplayType(property)}
                   </TableCell>
                   <TableCell color={themeCssVariables.font.color.tertiary}>

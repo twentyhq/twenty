@@ -2654,6 +2654,7 @@ type ToolIndexEntry {
   description: String!
   category: String!
   objectName: String
+  icon: String
   inputSchema: JSON
 }
 

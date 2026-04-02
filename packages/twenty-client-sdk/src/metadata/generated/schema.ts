@@ -2297,6 +2297,7 @@ export interface ToolIndexEntry {
     description: Scalars['String']
     category: Scalars['String']
     objectName?: Scalars['String']
+    icon?: Scalars['String']
     inputSchema?: Scalars['JSON']
     __typename: 'ToolIndexEntry'
 }
@@ -5475,6 +5476,7 @@ export interface ToolIndexEntryGenqlSelection{
     description?: boolean | number
     category?: boolean | number
     objectName?: boolean | number
+    icon?: boolean | number
     inputSchema?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
