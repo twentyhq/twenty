@@ -18,13 +18,13 @@ description: Распространяйте своё приложение Twenty
 
 ## Сборка вашего приложения
 
-Run the build command to compile your app and generate a distribution-ready `manifest.json`:
+Выполните команду сборки, чтобы скомпилировать приложение и сгенерировать готовый к распространению `manifest.json`:
 
 ```bash filename="Terminal"
 yarn twenty build
 ```
 
-This compiles TypeScript sources, transpiles logic functions and front components, and writes everything to `.twenty/output/`. Add `--tarball` to also produce a `.tgz` package for manual distribution or the deploy command.
+Это компилирует исходные файлы TypeScript, транспилирует функции логики и фронтенд-компоненты и записывает всё в `.twenty/output/`. Добавьте `--tarball`, чтобы также создать пакет `.tgz` для ручного распространения или для команды deploy.
 
 ## Развертывание на сервер (tarball)
 
@@ -61,7 +61,7 @@ yarn twenty deploy
 Ссылка общего доступа использует базовый URL сервера (без какого-либо поддомена рабочего пространства), поэтому она работает для любого рабочего пространства на сервере.
 
 <Warning>
-Sharing private apps is an Enterprise feature. Go to [Settings > Admin Panel > Enterprise](/settings/admin-panel#enterprise) to enable it.
+Возможность делиться частными приложениями — функция Enterprise. Перейдите в [Настройки > Панель администратора > Enterprise](/settings/admin-panel#enterprise), чтобы включить её.
 </Warning>
 
 ### Управление версиями
@@ -69,7 +69,7 @@ Sharing private apps is an Enterprise feature. Go to [Settings > Admin Panel > E
 Чтобы выпустить обновление:
 
 1. Обновите значение поля `version` в файле `package.json`
-2. Run `yarn twenty deploy` (or `yarn twenty deploy --remote production`)
+2. Выполните `yarn twenty deploy` (или `yarn twenty deploy --remote production`)
 3. Рабочие пространства, в которых установлено приложение, увидят доступное обновление в своих настройках
 
 {/* TODO: add screenshot of the Upgrade button */}
@@ -81,7 +81,7 @@ Sharing private apps is an Enterprise feature. Go to [Settings > Admin Panel > E
 ### Требования
 
 * Учётная запись [npm](https://www.npmjs.com)
-* The `twenty-app` keyword in your `package.json` `keywords` array (already included when you scaffold with `create-twenty-app`)
+* Ключевое слово `twenty-app` в массиве `keywords` вашего `package.json` (уже добавлено при создании проекта с помощью `create-twenty-app`)
 
 ```json filename="package.json"
 {
@@ -93,7 +93,7 @@ Sharing private apps is an Enterprise feature. Go to [Settings > Admin Panel > E
 
 ### Метаданные маркетплейса
 
-The `defineApplication()` config supports optional fields that control how your app appears in the marketplace. Use `logoUrl` and `screenshots` to reference images from the `public/` folder:
+Конфигурация `defineApplication()` поддерживает необязательные поля, которые определяют, как ваше приложение отображается в маркетплейсе. Используйте `logoUrl` и `screenshots`, чтобы ссылаться на изображения из папки `public/`:
 
 ```ts src/application-config.ts
 export default defineApplication({
@@ -109,9 +109,9 @@ export default defineApplication({
 });
 ```
 
-See the [defineApplication accordion](/l/ru/developers/extend/apps/building#defineentity-functions) in the Building Apps page for the full list of marketplace fields (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, etc.).
+См. [аккордеон defineApplication](/l/ru/developers/extend/apps/building#defineentity-functions) на странице «Создание приложений» для полного списка полей маркетплейса (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl` и т. д.).
 
-### Publish
+### Публикация
 
 ```bash filename="Terminal"
 yarn twenty publish
@@ -127,7 +127,7 @@ yarn twenty publish --tag beta
 
 Сервер Twenty синхронизирует каталог маркетплейса из реестра npm **каждый час**.
 
-You can trigger the sync immediately instead of waiting:
+Вы можете запустить синхронизацию немедленно, вместо ожидания:
 
 ```bash filename="Terminal"
 yarn twenty catalog-sync
@@ -135,7 +135,7 @@ yarn twenty catalog-sync
 # yarn twenty catalog-sync --remote production
 ```
 
-The metadata shown in the marketplace comes from your `defineApplication()` config — fields like `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl`, and `termsUrl`.
+Метаданные, отображаемые в маркетплейсе, берутся из конфигурации `defineApplication()` — из таких полей, как `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` и `termsUrl`.
 
 <Note>
 Если ваше приложение не определяет `aboutDescription` в `defineApplication()`, маркетплейс автоматически использует `README.md` вашего пакета из npm в качестве содержимого страницы «О приложении». Это означает, что вы можете поддерживать единый README как для npm, так и для маркетплейса Twenty. Если вы хотите другое описание в маркетплейсе, явно задайте `aboutDescription`.
@@ -143,7 +143,7 @@ The metadata shown in the marketplace comes from your `defineApplication()` conf
 
 ### Публикация через CI
 
-Use this GitHub Actions workflow to publish automatically on every release (uses [OIDC](https://docs.npmjs.com/trusted-publishers)):
+Используйте этот workflow GitHub Actions, чтобы публиковать автоматически при каждом релизе (использует [OIDC](https://docs.npmjs.com/trusted-publishers)):
 
 ```yaml filename=".github/workflows/publish.yml"
 name: Publish
@@ -178,13 +178,13 @@ jobs:
 
 ## Установка приложений
 
-Once an app is published (npm) or deployed (tarball), workspaces can install it through the UI.
+После публикации приложения (npm) или его развертывания (tarball) рабочие пространства могут установить его через интерфейс.
 
-Go to the **Settings > Applications** page in Twenty, where both marketplace and tarball-deployed apps can be browsed and installed.
+Перейдите на страницу **Настройки > Приложения** в Twenty, где можно просматривать и устанавливать как приложения из маркетплейса, так и развернутые через tarball.
 
 {/* TODO: add screenshot of the UI when the app is registered */}
 
-You can also install apps from the command line:
+Вы также можете устанавливать приложения из командной строки:
 
 ```bash filename="Terminal"
 yarn twenty install

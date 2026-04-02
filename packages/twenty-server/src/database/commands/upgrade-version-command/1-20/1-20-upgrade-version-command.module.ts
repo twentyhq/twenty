@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { BackfillCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-command-menu-items.command';
 import { BackfillNavigationMenuItemTypeCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-navigation-menu-item-type.command';
 import { BackfillSelectFieldOptionIdsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-select-field-option-ids.command';
@@ -55,6 +56,7 @@ import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-commo
     WorkspaceMigrationModule,
     FeatureFlagModule,
     WorkflowCommonModule,
+    WorkspaceIteratorModule,
   ],
   providers: [
     IdentifyPermissionFlagMetadataCommand,

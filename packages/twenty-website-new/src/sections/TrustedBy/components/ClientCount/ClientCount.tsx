@@ -1,29 +1,23 @@
-import { UsersIcon } from '@/icons';
-import { theme } from "@/theme";
-import { styled } from "@linaria/react";
-import { ClientCountShape } from "./ClientCountShape";
+import { theme } from '@/theme';
+import { styled } from '@linaria/react';
+import NextImage from 'next/image';
 
 const StyledBlock = styled.div`
   display: flex;
   align-items: center;
   gap: ${theme.spacing(2)};
-  padding-top: ${theme.spacing(1)};
-  padding-right: ${theme.spacing(3.75)};
-  padding-bottom: ${theme.spacing(1)};
-  padding-left: ${theme.spacing(1)};
-  border-radius: ${theme.radius(2)};
+  height: 48px;
+  padding: ${theme.spacing(1)} ${theme.spacing(3.75)} ${theme.spacing(1)}
+    ${theme.spacing(1)};
   position: relative;
   overflow: clip;
   flex-shrink: 0;
+  width: 157px;
 `;
 
 const ShapeWrapper = styled.div`
   position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  height: 48px;
-  width: 234px;
+  inset: 0;
   z-index: 0;
 `;
 
@@ -34,12 +28,14 @@ const IconWrapper = styled.div`
   width: 40px;
   height: 40px;
   background-color: ${theme.colors.primary.text[5]};
-  border-radius: ${theme.radius(1)};
+  border-radius: 2px;
   position: relative;
   overflow: clip;
+  z-index: 1;
 `;
 
 const StyledText = styled.p`
+  font-family: ${theme.font.family.sans};
   font-weight: ${theme.font.weight.medium};
   font-size: ${theme.font.size(4)};
   line-height: ${theme.lineHeight(5.5)};
@@ -57,10 +53,23 @@ export function ClientCount({ label }: ClientCountProps) {
   return (
     <StyledBlock>
       <ShapeWrapper>
-        <ClientCountShape strokeColor={theme.colors.highlight[70]} />
+        <NextImage
+          alt=""
+          fill
+          sizes="157px"
+          src="/images/home/logo-bar/others-shape.svg"
+          unoptimized
+          style={{ objectFit: 'fill' }}
+        />
       </ShapeWrapper>
       <IconWrapper>
-        <UsersIcon size={22} fillColor={theme.colors.highlight[100]} />
+        <NextImage
+          alt=""
+          height={21}
+          src="/images/home/logo-bar/others-icon.svg"
+          unoptimized
+          width={22}
+        />
       </IconWrapper>
       <StyledText>{label}</StyledText>
     </StyledBlock>

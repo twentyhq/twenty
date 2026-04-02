@@ -9,15 +9,15 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
-import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
-import {
   AgentMessageRole,
   AgentMessageStatus,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts';
+import {
+  AgentException,
+  AgentExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
@@ -99,6 +99,7 @@ export class AgentChatStreamingService {
         lastUserMessageText: text,
         lastUserMessageParts: [{ type: 'text', text }],
         hasTitle: !!thread.title,
+        conversationSizeTokens: thread.conversationSize,
         existingTurnId: savedUserMessage.turnId ?? undefined,
       },
     );
@@ -155,7 +156,10 @@ export class AgentChatStreamingService {
       event: { type: 'message-persisted', messageId: nextQueued.id },
     });
 
-    const uiMessages = await this.loadMessagesFromDB(threadId, userWorkspaceId);
+    const [uiMessages, thread] = await Promise.all([
+      this.loadMessagesFromDB(threadId, userWorkspaceId),
+      this.threadRepository.findOneByOrFail({ id: threadId }),
+    ]);
 
     const streamId = generateId();
 
@@ -171,6 +175,7 @@ export class AgentChatStreamingService {
         lastUserMessageText: messageText,
         lastUserMessageParts: [{ type: 'text', text: messageText }],
         hasTitle,
+        conversationSizeTokens: thread.conversationSize,
         existingTurnId: turnId,
       },
     );

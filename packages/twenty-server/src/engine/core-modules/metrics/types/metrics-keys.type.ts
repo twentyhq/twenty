@@ -35,4 +35,5 @@ export enum MetricsKeys {
   JobFailed = 'job/failed',
   JobWaiting = 'job/waiting',
   GraphqlSchemaBuild = 'graphql/schema-build',
+  GraphqlIntrospectionDirectExecution = 'graphql-introspection/direct-execution',
 }

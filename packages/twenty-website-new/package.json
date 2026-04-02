@@ -14,6 +14,7 @@
     "@linaria/react": "^7.0.1",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
+    "@tabler/icons-react": "^3.41.1",
     "@wyw-in-js/babel-preset": "^0.8.1",
     "lottie-react": "^2.4.1",
     "next": "16.1.7",
