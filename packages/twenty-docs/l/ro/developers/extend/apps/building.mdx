@@ -4,24 +4,24 @@ description: Definiți obiecte, funcții logice, componente front-end și multe 
 ---
 
 <Warning>
-  Apps are currently in alpha. The feature works but is still evolving.
+  Aplicațiile sunt în prezent în testare alfa. Caracteristica funcționează, dar este încă în dezvoltare.
 </Warning>
 
-The `twenty-sdk` package provides typed building blocks to create your app. This page covers every entity type and API client available in the SDK.
+Pachetul `twenty-sdk` oferă blocuri de construcție tipizate pentru a crea aplicația. Această pagină acoperă toate tipurile de entități și clienții API disponibili în SDK.
 
-## DefineEntity functions
+## Funcții DefineEntity
 
-The SDK provides functions to define your app entities. You must use `export default defineEntity({...})` for the SDK to detect your entities. Aceste funcții validează configurația în timpul build-ului și oferă completare automată în IDE și siguranța tipurilor.
+SDK-ul oferă funcții pentru definirea entităților aplicației. Trebuie să folosiți `export default defineEntity({...})` pentru ca SDK-ul să detecteze entitățile. Aceste funcții validează configurația în timpul build-ului și oferă completare automată în IDE și siguranța tipurilor.
 
 <Note>
-  **File organization is up to you.**
-  Entity detection is AST-based — the SDK finds `export default defineEntity(...)` calls regardless of where the file lives. Grouping files by type (e.g., `logic-functions/`, `roles/`) is just a convention, not a requirement.
+  **Organizarea fișierelor ține de dvs.**
+  Detectarea entităților este bazată pe AST — SDK-ul găsește apelurile `export default defineEntity(...)` indiferent unde se află fișierul. Gruparea fișierelor după tip (de exemplu, `logic-functions/`, `roles/`) este doar o convenție pentru organizarea codului, nu o cerință.
 </Note>
 
 <AccordionGroup>
 <Accordion title="defineRole" description="Configurați permisiunile rolurilor și accesul la obiecte">
 
-Roles encapsulate permissions on your workspace's objects and actions.
+Rolurile încapsulează permisiuni asupra obiectelor și acțiunilor din spațiul dvs. de lucru.
 
 ```ts restricted-company-role.ts
 import {
@@ -69,12 +69,12 @@ export default defineRole({
 </Accordion>
 <Accordion title="defineApplication" description="Configurați metadatele aplicației (obligatoriu, una per aplicație)">
 
-Every app must have exactly one `defineApplication` call that describes:
+Fiecare aplicație trebuie să aibă exact un apel `defineApplication` care descrie:
 
-* **Identity**: identifiers, display name, and description.
-* **Permissions**: which role its functions and front components use.
-* **(Optional) Variables**: key–value pairs exposed to your functions as environment variables.
-* **(Optional) Pre-install / post-install functions**: logic functions that run before or after installation.
+* **Identitate**: identificatori, nume de afișare și descriere.
+* **Permisiuni**: ce rol folosesc funcțiile și componentele front-end ale acesteia.
+* **(Opțional) Variabile**: perechi cheie–valoare expuse funcțiilor ca variabile de mediu.
+* **(Opțional) funcții de pre-instalare / post-instalare**: funcții logice care rulează înainte sau după instalare.
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
@@ -98,21 +98,21 @@ export default defineApplication({
 ```
 
 Notițe:
-* `universalIdentifier` fields are deterministic IDs you own. Generate them once and keep them stable across syncs.
-* `applicationVariables` become environment variables for your functions and front components (e.g., `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
-* `defaultRoleUniversalIdentifier` must reference a role defined with `defineRole()` (see above).
-* Pre-install and post-install functions are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
+* Câmpurile `universalIdentifier` sunt ID-uri deterministe pe care le dețineți. Generați-le o singură dată și mențineți-le stabile între sincronizări.
+* `applicationVariables` devin variabile de mediu pentru funcțiile și componentele front-end (de exemplu, `DEFAULT_RECIPIENT_NAME` este disponibil ca `process.env.DEFAULT_RECIPIENT_NAME`).
+* `defaultRoleUniversalIdentifier` trebuie să facă referire la un rol definit cu `defineRole()` (vezi mai sus).
+* Funcțiile de pre-instalare și post-instalare sunt detectate automat în timpul construirii manifestului — nu trebuie să le referiți în `defineApplication()`.
 
 #### Metadate pentru marketplace
 
-If you plan to [publish your app](/l/ro/developers/extend/apps/publishing), these optional fields control how it appears in the marketplace:
+Dacă intenționați să [publicați aplicația](/l/ro/developers/extend/apps/publishing), aceste câmpuri opționale controlează modul în care apare în marketplace:
 
 | Câmp               | Descriere                                                                                                                      |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
 | `autor`            | Numele autorului sau al companiei                                                                                              |
 | `categorie`        | Categoria aplicației pentru filtrarea în marketplace                                                                           |
-| `logoUrl`          | Path to your app logo (e.g., `public/logo.png`)                                                                                |
-| `screenshots`      | Array of screenshot paths (e.g., `public/screenshot-1.png`)                                                                    |
+| `logoUrl`          | Calea către logo-ul aplicației (de ex., `public/logo.png`)                                                                     |
+| `screenshots`      | Array de căi către capturi de ecran (de ex., `public/screenshot-1.png`)                                                        |
 | `aboutDescription` | Descriere markdown mai lungă pentru fila "About". Dacă este omis, marketplace-ul folosește `README.md` al pachetului de pe npm |
 | `websiteUrl`       | Link către site-ul dvs.                                                                                                        |
 | `termsUrl`         | Link către termenii de serviciu                                                                                                |
@@ -121,15 +121,15 @@ If you plan to [publish your app](/l/ro/developers/extend/apps/publishing), thes
 
 #### Roluri și permisiuni
 
-The `defaultRoleUniversalIdentifier` in `application-config.ts` designates the default role used by your app's logic functions and front components. See `defineRole` above for details.
+Câmpul `defaultRoleUniversalIdentifier` din `application-config.ts` desemnează rolul implicit utilizat de funcțiile logice și componentele front-end ale aplicației. Consultați `defineRole` mai sus pentru detalii.
 
-* The runtime token injected as `TWENTY_APP_ACCESS_TOKEN` is derived from this role.
-* The typed client is restricted to the permissions granted to that role.
-* Follow least-privilege: create a dedicated role with only the permissions your functions need.
+* Tokenul de runtime injectat ca `TWENTY_APP_ACCESS_TOKEN` este derivat din acest rol.
+* Clientul tipizat este restricționat la permisiunile acordate acelui rol.
+* Respectați principiul celui mai mic privilegiu: creați un rol dedicat doar cu permisiunile de care au nevoie funcțiile.
 
-##### Default function role
+##### Rol implicit pentru funcții
 
-When you scaffold a new app, the CLI creates a default role file:
+Când generați o aplicație nouă, CLI creează un fișier de rol implicit:
 
 ```ts src/roles/default-role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
@@ -155,16 +155,16 @@ export default defineRole({
 });
 ```
 
-This role's `universalIdentifier` is referenced in `application-config.ts` as `defaultRoleUniversalIdentifier`:
+`universalIdentifier` al acestui rol este apoi referențiat în `application-config.ts` ca `defaultRoleUniversalIdentifier`.
 
-* **\*.role.ts** defines what the role can do.
+* **\*.role.ts** definește ce poate face rolul.
 * **application-config.ts** indică acel rol, astfel încât funcțiile moștenesc permisiunile lui.
 
 Notițe:
 * Porniți de la rolul generat, apoi restrângeți-l progresiv urmând principiul celui mai mic privilegiu.
-* Replace `objectPermissions` and `fieldPermissions` with the objects and fields your functions actually need.
-* `permissionFlags` controlează accesul la capabilități la nivelul platformei. Keep them minimal.
-* See a working example: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+* Înlocuiți `objectPermissions` și `fieldPermissions` cu obiectele și câmpurile de care au nevoie efectiv funcțiile.
+* `permissionFlags` controlează accesul la capabilități la nivelul platformei. Mențineți-le la minimum.
+* Vedeți un exemplu funcțional: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
 
 </Accordion>
 <Accordion title="defineObject" description="Definiți obiecte personalizate cu câmpuri">
@@ -256,7 +256,7 @@ dar acest lucru nu este recomandat.
 </Note>
 
 </Accordion>
-<Accordion title="defineField — Standard fields" description="Extindeți obiectele existente cu câmpuri suplimentare">
+<Accordion title="defineField — Câmpuri standard" description="Extindeți obiectele existente cu câmpuri suplimentare">
 
 Utilizați `defineField()` pentru a adăuga câmpuri la obiecte pe care nu le dețineți — cum ar fi obiectele standard Twenty (Person, Company etc.). sau obiecte din alte aplicații. Spre deosebire de câmpurile inline din `defineObject()`, câmpurile independente necesită un `objectUniversalIdentifier` pentru a specifica obiectul pe care îl extind:
 
@@ -284,7 +284,7 @@ Puncte cheie:
 * `defineField()` este singura modalitate de a adăuga câmpuri la obiecte pe care nu le-ați creat cu `defineObject()`.
 
 </Accordion>
-<Accordion title="defineField — Relation fields" description="Connect objects together with bidirectional relations">
+<Accordion title="defineField — Câmpuri de relație" description="Conectați obiectele între ele cu relații bidirecționale">
 
 Relațiile conectează obiectele între ele. În Twenty, relațiile sunt întotdeauna bidirecționale — definiți ambele părți, iar fiecare parte o referențiază pe cealaltă.
 
@@ -443,7 +443,7 @@ export default defineObject({
 });
 ```
 </Accordion>
-<Accordion title="defineLogicFunction" description="Define logic functions and their triggers">
+<Accordion title="defineLogicFunction" description="Definiți funcții logice și declanșatoarele acestora">
 
 Fiecare fișier de funcție folosește `defineLogicFunction()` pentru a exporta o configurație cu un handler și declanșatoare opționale.
 
@@ -487,15 +487,15 @@ export default defineLogicFunction({
 });
 ```
 
-Available trigger types:
-* **httpRoute**: Exposes your function on an HTTP path and method **under the `/s/` endpoint**:
-> e.g. `path: '/post-card/create'` is callable at `https://your-twenty-server.com/s/post-card/create`
+Tipuri de declanșatoare disponibile:
+* **httpRoute**: Expune funcția pe o cale și metodă HTTP **sub endpoint-ul `/s/`**:
+> de ex. `path: '/post-card/create'` este apelabil la `https://your-twenty-server.com/s/post-card/create`
 * **cron**: Rulează funcția pe un program folosind o expresie CRON.
 * **databaseEvent**: Rulează la evenimentele ciclului de viață ale obiectelor din spațiul de lucru. Când operațiunea evenimentului este `updated`, câmpurile specifice de urmărit pot fi specificate în array-ul `updatedFields`. Dacă este lăsat nedefinit sau gol, orice actualizare va declanșa funcția.
-> e.g. `person.updated`, `*.created`, `company.*`
+> de ex. `person.updated`, `*.created`, `company.*`
 
 <Note>
-You can also manually execute a function using the CLI:
+Puteți, de asemenea, să executați manual o funcție folosind CLI:
 
 ```bash filename="Terminal"
 yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
@@ -505,7 +505,7 @@ yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
 yarn twenty exec -y e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
-You can watch logs with:
+Puteți urmări jurnalele cu:
 
 ```bash filename="Terminal"
 yarn twenty logs
@@ -514,9 +514,9 @@ yarn twenty logs
 
 #### Payload-ul declanșatorului de rută
 
-When a route trigger invokes your logic function, it receives a `RoutePayload` object that follows the
+Când un declanșator de rută invocă funcția logică, aceasta primește un obiect `RoutePayload` care urmează
 [AWS HTTP API v2 format](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html).
-Import the `RoutePayload` type from `twenty-sdk`:
+Importați tipul `RoutePayload` din `twenty-sdk`:
 
 ```ts
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
@@ -533,9 +533,9 @@ Tipul `RoutePayload` are următoarea structură:
 
   | Proprietate                  | Tip                                   | Descriere                                                      | Exemplu                                                                    |
   | ---------------------------- | ------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------------------------- |
-  | `headers`                    | `Record<string, string \| undefined>` | Anteturi HTTP (doar cele listate în `forwardedRequestHeaders`) | see section below                                                          |
+  | `headers`                    | `Record<string, string \| undefined>` | Anteturi HTTP (doar cele listate în `forwardedRequestHeaders`) | consultați secțiunea de mai jos                                            |
   | `queryStringParameters`      | `Record<string, string \| undefined>` | Parametri query string (valorile multiple unite cu virgule)    | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
-  | `pathParameters`             | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern               | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+  | `pathParameters`             | `Record<string, string \| undefined>` | Parametri de cale extrași din modelul rutei                    | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
   | `body`                       | `object \| null`                      | Corpul cererii analizat (JSON)                                 | `{ id: 1 }` -> `{ id: 1 }`                                                 |
   | `isBase64Encoded`            | `boolean`                             | Indică dacă corpul este codificat în base64                    |                                                                            |
   | `requestContext.http.method` | `string`                              | Metoda HTTP (GET, POST, PUT, PATCH, DELETE)                    |                                                                            |
@@ -545,7 +545,7 @@ Tipul `RoutePayload` are următoarea structură:
 #### forwardedRequestHeaders
 
 În mod implicit, anteturile HTTP din cererile de intrare **nu** sunt transmise funcției dvs. de logică din motive de securitate.
-To access specific headers, list them in the `forwardedRequestHeaders` array:
+Pentru a accesa anumite anteturi, listează-le explicit în array-ul `forwardedRequestHeaders`:
 
 ```ts
 export default defineLogicFunction({
@@ -561,7 +561,7 @@ export default defineLogicFunction({
 });
 ```
 
-In your handler, access the forwarded headers like this:
+În handler, accesați anteturile transmise mai departe astfel:
 
 ```ts
 const handler = async (event: RoutePayload) => {
@@ -574,14 +574,14 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-Numele anteturilor sunt normalizate la litere mici. Access them using lowercase keys (e.g., `event.headers['content-type']`).
+Numele anteturilor sunt normalizate la litere mici. Accesați-le folosind chei cu litere mici (de exemplu, `event.headers['content-type']`).
 </Note>
 
-#### Exposing a function as a tool
+#### Expunerea unei funcții ca instrument
 
-Funcțiile logice pot fi expuse ca **instrumente** pentru agenți de IA și fluxuri de lucru. When marked as a tool, a function becomes discoverable by Twenty's AI features and can be used in workflow automations.
+Funcțiile logice pot fi expuse ca **instrumente** pentru agenți de IA și fluxuri de lucru. Când este marcată ca instrument, o funcție poate fi descoperită de funcționalitățile de IA ale Twenty și poate fi utilizată în automatizări ale fluxurilor de lucru.
 
-To mark a logic function as a tool, set `isTool: true`:
+Pentru a marca o funcție logică drept instrument, setați `isTool: true`:
 
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
@@ -617,8 +617,8 @@ export default defineLogicFunction({
 
 Puncte cheie:
 
-* You can combine `isTool` with triggers — a function can be both a tool (callable by AI agents) and triggered by events at the same time.
-* **`toolInputSchema`** (optional): A JSON Schema object describing the parameters your function accepts. The schema is computed automatically from source code static analysis, but you can set it explicitly:
+* Puteți combina `isTool` cu declanșatoare — o funcție poate fi atât un instrument (apelabilă de agenții AI), cât și declanșată de evenimente în același timp.
+* **`toolInputSchema`** (opțional): Un obiect JSON Schema care descrie parametrii pe care îi acceptă funcția dvs. Schema este calculată automat prin analiză statică a codului sursă, dar o puteți seta explicit:
 
 ```ts
 export default defineLogicFunction({
@@ -715,11 +715,11 @@ Puncte cheie:
 </Accordion>
 <Accordion title="defineFrontComponent" description="Definiți componente Front pentru interfața de utilizator personalizată">
 
-Front components are React components that render directly inside Twenty's UI. They run in an **isolated Web Worker** using Remote DOM — your code is sandboxed but renders natively in the page, not in an iframe.
+Componentele front-end sunt componente React care se afișează direct în interfața Twenty. Rulează într-un **Web Worker** izolat folosind Remote DOM — codul este izolat (sandboxed), dar se redă nativ în pagină, nu într-un iframe.
 
-#### Basic example
+#### Exemplu de bază
 
-The quickest way to see a front component in action is to register it as a **command**. Adding a `command` field with `isPinned: true` makes it appear as a quick-action button in the top-right corner of the page — no page layout needed:
+Cel mai rapid mod de a vedea o componentă front-end în acțiune este să o înregistrați ca o **comandă**. Adăugarea unui câmp `command` cu `isPinned: true` o face să apară ca un buton de acțiune rapidă în colțul din dreapta sus al paginii — nu este nevoie de layout de pagină:
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk';
@@ -749,34 +749,34 @@ export default defineFrontComponent({
 });
 ```
 
-After syncing with `yarn twenty dev`, the quick action appears in the top-right corner of the page:
+După sincronizarea cu `yarn twenty dev`, acțiunea rapidă apare în colțul din dreapta sus al paginii:
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Quick action button in the top-right corner" />
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Buton de acțiune rapidă în colțul din dreapta sus" />
 </div>
 
-Click it to render the component inline.
+Faceți clic pe el pentru a afișa componenta inline.
 
 {/* TODO: add screenshot of the rendered front component */}
 
-#### Configuration fields
+#### Câmpuri de configurare
 
-| Câmp                  | Obligatoriu | Descriere                                                                           |
-| --------------------- | ----------- | ----------------------------------------------------------------------------------- |
-| `universalIdentifier` | Da          | Stable unique ID for this component                                                 |
-| `component`           | Da          | A React component function                                                          |
-| `name`                | Nu          | Display name                                                                        |
-| `description`         | Nu          | Description of what the component does                                              |
-| `isHeadless`          | Nu          | Set to `true` if the component has no visible UI (see below)                        |
-| `command`             | Nu          | Register the component as a command (see [command options](#command-options) below) |
+| Câmp                  | Obligatoriu | Descriere                                                                                        |
+| --------------------- | ----------- | ------------------------------------------------------------------------------------------------ |
+| `universalIdentifier` | Da          | ID unic stabil pentru această componentă                                                         |
+| `component`           | Da          | O funcție de componentă React                                                                    |
+| `name`                | Nu          | Nume afișat                                                                                      |
+| `description`         | Nu          | Descriere a ceea ce face componenta                                                              |
+| `isHeadless`          | Nu          | Setați la `true` dacă componenta nu are UI vizibilă (vezi mai jos)                               |
+| `command`             | Nu          | Înregistrați componenta ca o comandă (consultați [opțiunile comenzii](#command-options) mai jos) |
 
-#### Placing a front component on a page
+#### Plasarea unei componente front-end pe o pagină
 
-Beyond commands, you can embed a front component directly into a record page by adding it as a widget in a **page layout**. See the [definePageLayout](#definepagelayout) section for details.
+Dincolo de comenzi, puteți încorpora o componentă front-end direct într-o pagină de înregistrare adăugând-o ca widget într-un **layout de pagină**. Consultați secțiunea [definePageLayout](#definepagelayout) pentru detalii.
 
-#### Headless components (`isHeadless: true`)
+#### Componente headless (`isHeadless: true`)
 
-Headless components render no visible UI but still run React logic. This is useful for **effect components** — components that perform side effects when mounted, such as syncing data, starting a timer, listening to events, or triggering a notification.
+Componentele headless nu redau nicio interfață vizibilă, dar rulează în continuare logica React. Acest lucru este util pentru **componente de efect** — componente care execută efecte secundare la montare, cum ar fi sincronizarea datelor, pornirea unui cronometru, ascultarea evenimentelor sau declanșarea unei notificări.
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent, useRecordId, enqueueSnackbar } from 'twenty-sdk';
@@ -801,11 +801,11 @@ export default defineFrontComponent({
 });
 ```
 
-Because the component returns `null`, Twenty skips rendering a container for it — no empty space appears in the layout. The component still has access to all hooks and the host communication API.
+Deoarece componenta returnează `null`, Twenty omite redarea unui container pentru ea — nu apare spațiu gol în layout. Componenta are în continuare acces la toate hook-urile și la API-ul de comunicare cu gazda.
 
-#### Accessing runtime context
+#### Accesarea contextului de rulare
 
-Inside your component, use SDK hooks to access the current user, record, and component instance:
+În interiorul componentei, folosiți hook-urile SDK pentru a accesa utilizatorul curent, înregistrarea curentă și instanța componentei:
 
 ```tsx src/front-components/record-info.tsx
 import {
@@ -836,47 +836,47 @@ export default defineFrontComponent({
 });
 ```
 
-Available hooks:
+Hook-uri disponibile:
 
-| Hook                                          | Returns            | Descriere                                                  |
-| --------------------------------------------- | ------------------ | ---------------------------------------------------------- |
-| `useUserId()`                                 | `string` or `null` | The current user's ID                                      |
-| `useRecordId()`                               | `string` or `null` | The current record's ID (when placed on a record page)     |
-| `useFrontComponentId()`                       | `string`           | This component instance's ID                               |
-| `useFrontComponentExecutionContext(selector)` | variază            | Access the full execution context with a selector function |
+| Hook                                          | Returnează          | Descriere                                                                   |
+| --------------------------------------------- | ------------------- | --------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` sau `null` | ID-ul utilizatorului curent                                                 |
+| `useRecordId()`                               | `string` sau `null` | ID-ul înregistrării curente (când este plasată pe o pagină de înregistrare) |
+| `useFrontComponentId()`                       | `string`            | ID-ul acestei instanțe de componentă                                        |
+| `useFrontComponentExecutionContext(selector)` | variază             | Accesați întregul context de execuție cu o funcție selector                 |
 
-#### Host communication API
+#### API-ul de comunicare cu gazda
 
-Front components can trigger navigation, modals, and notifications using functions from `twenty-sdk`:
+Componentele front-end pot declanșa navigare, ferestre modale și notificări folosind funcții din `twenty-sdk`:
 
-| Funcție                                         | Descriere                     |
-| ----------------------------------------------- | ----------------------------- |
-| `navigate(to, params?, queryParams?, options?)` | Navigate to a page in the app |
-| `openSidePanelPage(params)`                     | Open a side panel             |
-| `closeSidePanel()`                              | Close the side panel          |
-| `openCommandConfirmationModal(params)`          | Show a confirmation dialog    |
-| `enqueueSnackbar(params)`                       | Show a toast notification     |
-| `unmountFrontComponent()`                       | Unmount the component         |
-| `updateProgress(progress)`                      | Update a progress indicator   |
+| Funcție                                         | Descriere                           |
+| ----------------------------------------------- | ----------------------------------- |
+| `navigate(to, params?, queryParams?, options?)` | Navigați la o pagină din aplicație  |
+| `openSidePanelPage(params)`                     | Deschideți un panou lateral         |
+| `closeSidePanel()`                              | Închideți panoul lateral            |
+| `openCommandConfirmationModal(params)`          | Afișați un dialog de confirmare     |
+| `enqueueSnackbar(params)`                       | Afișați o notificare tip toast      |
+| `unmountFrontComponent()`                       | Demontați componenta                |
+| `updateProgress(progress)`                      | Actualizați un indicator de progres |
 
-#### Command options
+#### Opțiuni pentru comandă
 
-Adding a `command` field to `defineFrontComponent` registers the component in the command menu (Cmd+K). If `isPinned` is `true`, it also appears as a quick-action button in the top-right corner of the page.
+Adăugarea unui câmp `command` la `defineFrontComponent` înregistrează componenta în meniul de comenzi (Cmd+K). Dacă `isPinned` este `true`, apare și ca buton de acțiune rapidă în colțul din dreapta sus al paginii.
 
-| Câmp                                    | Obligatoriu | Descriere                                                                                                                                                                      |
-| --------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `universalIdentifier`                   | Da          | Stable unique ID for the command                                                                                                                                               |
-| `label`                                 | Da          | Full label shown in the command menu (Cmd+K)                                                                                                                                   |
-| `shortLabel`                            | Nu          | Shorter label displayed on the pinned quick-action button                                                                                                                      |
-| `icon`                                  | Nu          | Icon name displayed next to the label (e.g. `'IconBolt'`, `'IconSend'`)                                                                                                        |
-| `isPinned`                              | Nu          | When `true`, shows the command as a quick-action button in the top-right corner of the page                                                                                    |
-| `availabilityType`                      | Nu          | Controls where the command appears: `'GLOBAL'` (always available), `'RECORD_SELECTION'` (only when records are selected), or `'FALLBACK'` (shown when no other commands match) |
-| `availabilityObjectUniversalIdentifier` | Nu          | Restrict the command to pages of a specific object type (e.g. only on Company records)                                                                                         |
-| `conditionalAvailabilityExpression`     | Nu          | A boolean expression to dynamically control whether the command is visible (see below)                                                                                         |
+| Câmp                                    | Obligatoriu | Descriere                                                                                                                                                                                        |
+| --------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `universalIdentifier`                   | Da          | ID unic stabil pentru comandă                                                                                                                                                                    |
+| `label`                                 | Da          | Etichetă completă afișată în meniul de comenzi (Cmd+K)                                                                                                                                           |
+| `shortLabel`                            | Nu          | Etichetă mai scurtă afișată pe butonul de acțiune rapidă fixat                                                                                                                                   |
+| `icon`                                  | Nu          | Numele pictogramei afișat lângă etichetă (de ex. `'IconBolt'`, `'IconSend'`)                                                                                                                     |
+| `isPinned`                              | Nu          | Când este `true`, afișează comanda ca buton de acțiune rapidă în colțul din dreapta sus al paginii                                                                                               |
+| `availabilityType`                      | Nu          | Controlează unde apare comanda: `'GLOBAL'` (mereu disponibilă), `'RECORD_SELECTION'` (doar când sunt selectate înregistrări) sau `'FALLBACK'` (afișată când nicio altă comandă nu se potrivește) |
+| `availabilityObjectUniversalIdentifier` | Nu          | Restricționați comanda la paginile unui anumit tip de obiect (de ex., doar pe înregistrările Company)                                                                                            |
+| `conditionalAvailabilityExpression`     | Nu          | O expresie booleană pentru a controla dinamic dacă comanda este vizibilă (vezi mai jos)                                                                                                          |
 
-#### Conditional availability expressions
+#### Expresii de disponibilitate condițională
 
-The `conditionalAvailabilityExpression` field lets you control when a command is visible based on the current page context. Import typed variables and operators from `twenty-sdk` to build expressions:
+Câmpul `conditionalAvailabilityExpression` vă permite să controlați când este vizibilă o comandă în funcție de contextul paginii curente. Importați variabile tipizate și operatori din `twenty-sdk` pentru a construi expresii:
 
 ```tsx
 import {
@@ -905,45 +905,45 @@ export default defineFrontComponent({
 });
 ```
 
-**Context variables** — these represent the current state of the page:
+**Variabile de context** — acestea reprezintă starea curentă a paginii:
 
-| Variabilă                      | Tip       | Descriere                                                        |
-| ------------------------------ | --------- | ---------------------------------------------------------------- |
-| `pageType`                     | `string`  | Current page type (e.g. `'RecordIndexPage'`, `'RecordShowPage'`) |
-| `isInSidePanel`                | `boolean` | Whether the component is rendered in a side panel                |
-| `numberOfSelectedRecords`      | `number`  | Number of currently selected records                             |
-| `isSelectAll`                  | `boolean` | Whether "select all" is active                                   |
-| `selectedRecords`              | `array`   | The selected record objects                                      |
-| `favoriteRecordIds`            | `array`   | IDs of favorited records                                         |
-| `objectPermissions`            | `object`  | Permissions for the current object type                          |
-| `targetObjectReadPermissions`  | `object`  | Read permissions for the target object                           |
-| `targetObjectWritePermissions` | `object`  | Write permissions for the target object                          |
-| `featureFlags`                 | `object`  | Active feature flags                                             |
-| `objectMetadataItem`           | `object`  | Metadata of the current object type                              |
-| `hasAnySoftDeleteFilterOnView` | `boolean` | Whether the current view has a soft-delete filter                |
+| Variabilă                      | Tip       | Descriere                                                              |
+| ------------------------------ | --------- | ---------------------------------------------------------------------- |
+| `pageType`                     | `string`  | Tipul paginii curente (de ex. `'RecordIndexPage'`, `'RecordShowPage'`) |
+| `isInSidePanel`                | `boolean` | Dacă componenta este redată într-un panou lateral                      |
+| `numberOfSelectedRecords`      | `number`  | Numărul de înregistrări selectate în prezent                           |
+| `isSelectAll`                  | `boolean` | Dacă "select all" este activ                                           |
+| `selectedRecords`              | `array`   | Obiectele înregistrărilor selectate                                    |
+| `favoriteRecordIds`            | `array`   | ID-urile înregistrărilor marcate ca favorite                           |
+| `objectPermissions`            | `object`  | Permisiuni pentru tipul de obiect curent                               |
+| `targetObjectReadPermissions`  | `object`  | Permisiuni de citire pentru obiectul țintă                             |
+| `targetObjectWritePermissions` | `object`  | Permisiuni de scriere pentru obiectul țintă                            |
+| `featureFlags`                 | `object`  | Steaguri de caracteristici active                                      |
+| `objectMetadataItem`           | `object`  | Metadatele tipului de obiect curent                                    |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | Dacă vizualizarea curentă are un filtru soft-delete                    |
 
-**Operators** — combine variables into boolean expressions:
+**Operatori** — combinați variabilele în expresii booleene:
 
-| Operator                            | Descriere                                                         |
-| ----------------------------------- | ----------------------------------------------------------------- |
-| `isDefined(value)`                  | `true` if the value is not null/undefined                         |
-| `isNonEmptyString(value)`           | `true` if the value is a non-empty string                         |
-| `includes(array, value)`            | `true` if the array contains the value                            |
-| `includesEvery(array, prop, value)` | `true` if every item's property includes the value                |
-| `every(array, prop)`                | `true` if the property is truthy on every item                    |
-| `everyDefined(array, prop)`         | `true` if the property is defined on every item                   |
-| `everyEquals(array, prop, value)`   | `true` if the property equals the value on every item             |
-| `some(array, prop)`                 | `true` if the property is truthy on at least one item             |
-| `someDefined(array, prop)`          | `true` if the property is defined on at least one item            |
-| `someEquals(array, prop, value)`    | `true` if the property equals the value on at least one item      |
-| `someNonEmptyString(array, prop)`   | `true` if the property is a non-empty string on at least one item |
-| `none(array, prop)`                 | `true` if the property is falsy on every item                     |
-| `noneDefined(array, prop)`          | `true` if the property is undefined on every item                 |
-| `noneEquals(array, prop, value)`    | `true` if the property does not equal the value on any item       |
+| Operator                            | Descriere                                                               |
+| ----------------------------------- | ----------------------------------------------------------------------- |
+| `isDefined(value)`                  | `true` dacă valoarea nu este null/undefined                             |
+| `isNonEmptyString(value)`           | `true` dacă valoarea este un șir nevid                                  |
+| `includes(array, value)`            | `true` dacă array-ul conține valoarea                                   |
+| `includesEvery(array, prop, value)` | `true` dacă proprietatea fiecărui element include valoarea              |
+| `every(array, prop)`                | `true` dacă proprietatea este truthy pentru fiecare element             |
+| `everyDefined(array, prop)`         | `true` dacă proprietatea este definită pentru fiecare element           |
+| `everyEquals(array, prop, value)`   | `true` dacă proprietatea este egală cu valoarea pentru fiecare element  |
+| `some(array, prop)`                 | `true` dacă proprietatea este truthy pe cel puțin un element            |
+| `someDefined(array, prop)`          | `true` dacă proprietatea este definită pe cel puțin un element          |
+| `someEquals(array, prop, value)`    | `true` dacă proprietatea este egală cu valoarea pe cel puțin un element |
+| `someNonEmptyString(array, prop)`   | `true` dacă proprietatea este un șir nevid pe cel puțin un element      |
+| `none(array, prop)`                 | `true` dacă proprietatea este falsy pentru fiecare element              |
+| `noneDefined(array, prop)`          | `true` dacă proprietatea este nedefinită pentru fiecare element         |
+| `noneEquals(array, prop, value)`    | `true` dacă proprietatea nu este egală cu valoarea pe niciun element    |
 
-#### Public assets
+#### Resurse publice
 
-Front components can access files from the app's `public/` directory using `getPublicAssetUrl`:
+Componentele front-end pot accesa fișiere din directorul `public/` al aplicației folosind `getPublicAssetUrl`:
 
 ```tsx
 import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk';
@@ -957,18 +957,18 @@ export default defineFrontComponent({
 });
 ```
 
-See the [public assets section](#accessing-public-assets-with-getpublicasseturl) for details.
+Consultați [secțiunea despre resurse publice](#accessing-public-assets-with-getpublicasseturl) pentru detalii.
 
 #### Stilizare
 
-Front components support multiple styling approaches. You can use:
+Componentele front-end acceptă mai multe abordări de stilizare. Puteți folosi:
 
-* **Inline styles** — `style={{ color: 'red' }}`
-* **Twenty UI components** — import from `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar, and more)
-* **Emotion** — CSS-in-JS with `@emotion/react`
-* **Styled-components** — `styled.div` patterns
-* **Tailwind CSS** — utility classes
-* **Any CSS-in-JS library** compatible with React
+* **Stiluri inline** — `style={{ color: 'red' }}`
+* **Componente Twenty UI** — import din `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar și altele)
+* **Emotion** — CSS-in-JS cu `@emotion/react`
+* **Styled-components** — pattern-uri `styled.div`
+* **Tailwind CSS** — clase utilitare
+* **Orice bibliotecă CSS-in-JS** compatibilă cu React
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk';
@@ -1022,9 +1022,9 @@ Puncte cheie:
 * `description` (opțional) oferă context suplimentar despre scopul abilității.
 
 </Accordion>
-<Accordion title="defineAgent" description="Define AI agents with custom prompts">
+<Accordion title="defineAgent" description="Definiți agenți AI cu prompturi personalizate">
 
-Agents are AI assistants that live inside your workspace. Use `defineAgent()` to create agents with a custom system prompt:
+Agenții sunt asistenți AI care există în interiorul spațiului dvs. de lucru. Utilizați `defineAgent()` pentru a crea agenți cu un prompt de sistem personalizat:
 
 ```ts src/agents/example-agent.ts
 import { defineAgent } from 'twenty-sdk';
@@ -1040,17 +1040,17 @@ export default defineAgent({
 ```
 
 Puncte cheie:
-* `name` is the unique identifier string for the agent (kebab-case recommended).
-* `label` is the display name shown in the UI.
-* `prompt` is the system prompt that defines the agent's behavior.
-* `description` (optional) provides context about what the agent does.
+* `name` este un șir identificator unic pentru agent (se recomandă kebab-case).
+* `label` este numele de afișare din interfața cu utilizatorul (UI).
+* `prompt` conține promptul de sistem — acesta este textul de instrucțiuni care definește comportamentul agentului.
+* `description` (opțional) oferă context suplimentar despre scopul agentului.
 * `icon` (opțional) setează pictograma afișată în UI.
-* `modelId` (optional) overrides the default AI model used by the agent.
+* `modelId` (opțional) suprascrie modelul AI implicit utilizat de agent.
 
 </Accordion>
 <Accordion title="defineView" description="Definește vizualizări salvate pentru obiecte">
 
-Views are saved configurations for how records of an object are displayed — including which fields are visible, their order, and any filters or groups applied. Use `defineView()` to ship pre-configured views with your app:
+Vizualizările sunt configurații salvate despre cum sunt afișate înregistrările unui obiect — inclusiv ce câmpuri sunt vizibile, ordinea lor și orice filtre sau grupuri aplicate. Utilizați `defineView()` pentru a livra vizualizări preconfigurate împreună cu aplicația:
 
 ```ts src/views/example-view.ts
 import { defineView, ViewKey } from 'twenty-sdk';
@@ -1077,16 +1077,16 @@ export default defineView({
 ```
 
 Puncte cheie:
-* `objectUniversalIdentifier` specifies which object this view applies to.
-* `key` determines the view type (e.g., `ViewKey.INDEX` for the main list view).
-* `fields` controls which columns appear and their order. Each field references a `fieldMetadataUniversalIdentifier`.
-* You can also define `filters`, `filterGroups`, `groups`, and `fieldGroups` for more advanced configurations.
-* `position` controls the ordering when multiple views exist for the same object.
+* `objectUniversalIdentifier` specifică la ce obiect se aplică această vizualizare.
+* `key` determină tipul vizualizării (de ex., `ViewKey.INDEX` pentru vizualizarea principală de listă).
+* `fields` controlează ce coloane apar și ordinea acestora. Fiecare câmp face referire la un `fieldMetadataUniversalIdentifier`.
+* Puteți defini, de asemenea, `filters`, `filterGroups`, `groups` și `fieldGroups` pentru configurații mai avansate.
+* `position` controlează ordonarea atunci când există mai multe vizualizări pentru același obiect.
 
 </Accordion>
 <Accordion title="defineNavigationMenuItem" description="Definește linkuri de navigare în bara laterală">
 
-Navigation menu items add custom entries to the workspace sidebar. Use `defineNavigationMenuItem()` to link to views, external URLs, or objects:
+Elementele de meniu de navigare adaugă intrări personalizate în bara laterală a spațiului de lucru. Utilizați `defineNavigationMenuItem()` pentru a lega la vizualizări, URL-uri externe sau obiecte:
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
 import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk';
@@ -1104,15 +1104,15 @@ export default defineNavigationMenuItem({
 ```
 
 Puncte cheie:
-* `type` determines what the menu item links to: `NavigationMenuItemType.VIEW` for a saved view, or `NavigationMenuItemType.LINK` for an external URL.
-* For view links, set `viewUniversalIdentifier`. For external links, set `link`.
-* `position` controls the ordering in the sidebar.
-* `icon` and `color` (optional) customize the appearance.
+* `type` determină la ce face trimitere elementul de meniu: `NavigationMenuItemType.VIEW` pentru o vizualizare salvată sau `NavigationMenuItemType.LINK` pentru un URL extern.
+* Pentru link-uri către vizualizări, setați `viewUniversalIdentifier`. Pentru link-uri externe, setați `link`.
+* `position` controlează ordonarea în bara laterală.
+* `icon` și `color` (opțional) personalizează aspectul.
 
 </Accordion>
-<Accordion title="definePageLayout" description="Define custom page layouts for record views">
+<Accordion title="definePageLayout" description="Definiți machete de pagină personalizate pentru vizualizările de înregistrare">
 
-Page layouts let you customize how a record detail page looks — which tabs appear, what widgets are inside each tab, and how they are arranged. Use `definePageLayout()` to ship custom layouts with your app:
+Machetele de pagină vă permit să personalizați aspectul unei pagini de detalii a unei înregistrări — ce file apar, ce widgeturi sunt în fiecare filă și cum sunt aranjate. Utilizați `definePageLayout()` pentru a livra machete personalizate împreună cu aplicația:
 
 ```ts src/page-layouts/example-record-page-layout.ts
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk';
@@ -1149,33 +1149,33 @@ export default definePageLayout({
 ```
 
 Puncte cheie:
-* `type` is typically `'RECORD_PAGE'` to customize the detail view of a specific object.
-* `objectUniversalIdentifier` specifies which object this layout applies to.
-* Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode` (`CANVAS` for free-form layout).
-* Each `widget` inside a tab can render a front component, a relation list, or other built-in widget types.
-* `position` on tabs controls their order. Use higher values (e.g., 50) to place custom tabs after built-in ones.
+* `type` este de obicei `'RECORD_PAGE'` pentru a personaliza vizualizarea de detaliu a unui obiect specific.
+* `objectUniversalIdentifier` specifică la ce obiect se aplică această machetă.
+* Fiecare `tab` definește o secțiune a paginii cu un `title`, `position` și `layoutMode` (`CANVAS` pentru layout liber).
+* Fiecare `widget` dintr-o filă poate reda o componentă frontend, o listă de relații sau alte tipuri de widgeturi integrate.
+* `position` pe file le controlează ordinea. Folosiți valori mai mari (de ex., 50) pentru a plasa filele personalizate după cele integrate.
 
 </Accordion>
 </AccordionGroup>
 
-## Public assets (`public/` folder)
+## Resurse publice (folderul `public/`)
 
-The `public/` folder at the root of your app holds static files — images, icons, fonts, or any other assets your app needs at runtime. These files are automatically included in builds, synced during dev mode, and uploaded to the server.
+Folderul `public/` din rădăcina aplicației conține fișiere statice — imagini, pictograme, fonturi sau orice alte resurse de care are nevoie aplicația la rulare. Aceste fișiere sunt incluse automat în build-uri, sincronizate în timpul modului de dezvoltare și încărcate pe server.
 
-Files placed in `public/` are:
+Fișierele plasate în `public/` sunt:
 
-* **Publicly accessible** — once synced to the server, assets are served at a public URL. No authentication is needed to access them.
-* **Available in front components** — use asset URLs to display images, icons, or any media inside your React components.
-* **Available in logic functions** — reference asset URLs in emails, API responses, or any server-side logic.
-* **Used for marketplace metadata** — the `logoUrl` and `screenshots` fields in `defineApplication()` reference files from this folder (e.g., `public/logo.png`). These are displayed in the marketplace when your app is published.
-* **Auto-synced in dev mode** — when you add, update, or delete a file in `public/`, it is synced to the server automatically. No restart needed.
-* **Included in builds** — `yarn twenty build` bundles all public assets into the distribution output.
+* **Accesibile public** — odată sincronizate pe server, resursele sunt servite la un URL public. Nu este necesară autentificarea pentru a le accesa.
+* **Disponibile în componentele frontend** — folosiți URL-urile resurselor pentru a afișa imagini, pictograme sau orice media în componentele React.
+* **Disponibile în funcțiile logice** — referiți URL-urile resurselor în e-mailuri, răspunsuri API sau orice logică pe server.
+* **Utilizate pentru metadatele marketplace-ului** — câmpurile `logoUrl` și `screenshots` din `defineApplication()` fac referire la fișiere din acest folder (de ex., `public/logo.png`). Acestea sunt afișate în marketplace când aplicația este publicată.
+* **Sincronizate automat în modul de dezvoltare** — când adăugați, actualizați sau ștergeți un fișier în `public/`, acesta este sincronizat automat cu serverul. Nu este nevoie de repornire.
+* **Incluse în build-uri** — `yarn twenty build` împachetează toate resursele publice în outputul de distribuție.
 
-### Accessing public assets with `getPublicAssetUrl`
+### Accesarea resurselor publice cu `getPublicAssetUrl`
 
-Use the `getPublicAssetUrl` helper from `twenty-sdk` to get the full URL of a file in your `public/` directory. It works in both **logic functions** and **front components**.
+Utilizați helperul `getPublicAssetUrl` din `twenty-sdk` pentru a obține URL-ul complet al unui fișier din directorul `public/`. Funcționează atât în funcții logice, cât și în componente frontend.
 
-**In a logic function:**
+**Într-o funcție logică:**
 
 ```ts src/logic-functions/send-invoice.ts
 import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk';
@@ -1200,7 +1200,7 @@ export default defineLogicFunction({
 });
 ```
 
-**In a front component:**
+**Într-o componentă frontend:**
 
 ```tsx src/front-components/company-card.tsx
 import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk';
@@ -1212,19 +1212,19 @@ export default defineFrontComponent(() => {
 });
 ```
 
-The `path` argument is relative to your app's `public/` folder. Both `getPublicAssetUrl('logo.png')` and `getPublicAssetUrl('public/logo.png')` resolve to the same URL — the `public/` prefix is stripped automatically if present.
+Argumentul `path` este relativ la folderul `public/` al aplicației. Atât `getPublicAssetUrl('logo.png')`, cât și `getPublicAssetUrl('public/logo.png')` se rezolvă la același URL — prefixul `public/` este eliminat automat dacă este prezent.
 
-## Using npm packages
+## Utilizarea pachetelor npm
 
-You can install and use any npm package in your app. Both logic functions and front components are bundled with [esbuild](https://esbuild.github.io/), which inlines all dependencies into the output — no `node_modules` are needed at runtime.
+Puteți instala și utiliza orice pachet npm în aplicația dvs. Atât funcțiile logice, cât și componentele frontend sunt împachetate cu [esbuild](https://esbuild.github.io/), care integrează toate dependențele în output — nu sunt necesare `node_modules` la rulare.
 
-### Installing a package
+### Instalarea unui pachet
 
 ```bash filename="Terminal"
 yarn add axios
 ```
 
-Then import it in your code:
+Apoi importați-l în codul dvs.:
 
 ```ts src/logic-functions/fetch-data.ts
 import { defineLogicFunction } from 'twenty-sdk';
@@ -1245,7 +1245,7 @@ export default defineLogicFunction({
 });
 ```
 
-The same works for front components:
+Același lucru funcționează și pentru componentele frontend:
 
 ```tsx src/front-components/chart.tsx
 import { defineFrontComponent } from 'twenty-sdk';
@@ -1262,27 +1262,27 @@ export default defineFrontComponent({
 });
 ```
 
-### How bundling works
+### Cum funcționează împachetarea
 
-The build step (`yarn twenty dev` or `yarn twenty build`) uses esbuild to produce a single self-contained file per logic function and per front component. All imported packages are inlined into the bundle.
+Pasul de build (`yarn twenty dev` sau `yarn twenty build`) folosește esbuild pentru a produce un singur fișier autonom per funcție logică și per componentă frontend. Toate pachetele importate sunt integrate în bundle.
 
-**Logic functions** run in a Node.js environment. Node built-in modules (`fs`, `path`, `crypto`, `http`, etc.) are available and do not need to be installed.
+**Funcțiile logice** rulează într-un mediu Node.js. Modulele built-in Node (`fs`, `path`, `crypto`, `http` etc.) sunt disponibile și nu trebuie instalate.
 
-**Front components** run in a Web Worker. Node built-in modules are **not** available — only browser APIs and npm packages that work in a browser environment.
+**Componentele frontend** rulează într-un Web Worker. Modulele built-in Node nu sunt disponibile — doar API-urile de browser și pachetele npm care funcționează într-un mediu de browser.
 
-Both environments have `twenty-client-sdk/core` and `twenty-client-sdk/metadata` available as pre-provided modules — these are not bundled but resolved at runtime by the server.
+Ambele medii au `twenty-client-sdk/core` și `twenty-client-sdk/metadata` disponibile ca module pre-furnizate — acestea nu sunt incluse în bundle, ci sunt rezolvate la rulare de către server.
 
-## Scaffolding entities with `yarn twenty add`
+## Generarea scheletului entităților cu `yarn twenty add`
 
-Instead of creating entity files by hand, you can use the interactive scaffolder:
+În loc să creați manual fișiere de entități, puteți folosi generatorul interactiv (scaffolder):
 
 ```bash filename="Terminal"
 yarn twenty add
 ```
 
-This prompts you to pick an entity type and walks you through the required fields. It generates a ready-to-use file with a stable `universalIdentifier` and the correct `defineEntity()` call.
+Acesta vă solicită să alegeți un tip de entitate și vă ghidează prin câmpurile necesare. Generează un fișier gata de utilizare, cu un `universalIdentifier` stabil și apelul corect `defineEntity()`.
 
-You can also pass the entity type directly to skip the first prompt:
+Puteți de asemenea să transmiteți direct tipul de entitate pentru a sări peste primul prompt:
 
 ```bash filename="Terminal"
 yarn twenty add object
@@ -1290,44 +1290,44 @@ yarn twenty add logicFunction
 yarn twenty add frontComponent
 ```
 
-### Available entity types
+### Tipuri de entități disponibile
 
-| Tipul entității      | Comandă                              | Generated file                        |
-| -------------------- | ------------------------------------ | ------------------------------------- |
-| Obiect               | `yarn twenty add object`             | `src/objects/<name>.ts`               |
-| Câmp                 | `yarn twenty add field`              | `src/fields/<name>.ts`                |
-| Logic function       | `yarn twenty add logicFunction`      | `src/logic-functions/<name>.ts`       |
-| Front component      | `yarn twenty add frontComponent`     | `src/front-components/<name>.tsx`     |
-| Rol                  | `yarn twenty add role`               | `src/roles/<name>.ts`                 |
-| Abilitate            | `yarn twenty add skill`              | `src/skills/<name>.ts`                |
-| Agent                | `yarn twenty add agent`              | `src/agents/<name>.ts`                |
-| Vizualizare          | `yarn twenty add view`               | `src/views/<name>.ts`                 |
-| Navigation menu item | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/<name>.ts` |
-| Page layout          | `yarn twenty add pageLayout`         | `src/page-layouts/<name>.ts`          |
+| Tipul entității              | Comandă                              | Fișier generat                        |
+| ---------------------------- | ------------------------------------ | ------------------------------------- |
+| Obiect                       | `yarn twenty add object`             | `src/objects/<name>.ts`               |
+| Câmp                         | `yarn twenty add field`              | `src/fields/<name>.ts`                |
+| Funcție logică               | `yarn twenty add logicFunction`      | `src/logic-functions/<name>.ts`       |
+| Componentă frontend          | `yarn twenty add frontComponent`     | `src/front-components/<name>.tsx`     |
+| Rol                          | `yarn twenty add role`               | `src/roles/<name>.ts`                 |
+| Abilitate                    | `yarn twenty add skill`              | `src/skills/<name>.ts`                |
+| Agent                        | `yarn twenty add agent`              | `src/agents/<name>.ts`                |
+| Vizualizare                  | `yarn twenty add view`               | `src/views/<name>.ts`                 |
+| Element de meniu de navigare | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/<name>.ts` |
+| Machetă de pagină            | `yarn twenty add pageLayout`         | `src/page-layouts/<name>.ts`          |
 
-### What the scaffolder generates
+### Ce generează scaffolder-ul
 
-Each entity type has its own template. For example, `yarn twenty add object` asks for:
+Fiecare tip de entitate are propriul său șablon. De exemplu, `yarn twenty add object` solicită:
 
-1. **Name (singular)** — e.g., `invoice`
-2. **Name (plural)** — e.g., `invoices`
-3. **Label (singular)** — auto-populated from the name (e.g., `Invoice`)
-4. **Label (plural)** — auto-populated (e.g., `Invoices`)
-5. **Create a view and navigation item?** — if you answer yes, the scaffolder also generates a matching view and sidebar link for the new object.
+1. **Nume (singular)** — de ex., `invoice`
+2. **Nume (plural)** — de ex., `invoices`
+3. **Etichetă (singular)** — completată automat din nume (de ex., `Invoice`)
+4. **Etichetă (plural)** — completată automat (de ex., `Invoices`)
+5. **Creați o vizualizare și un element de navigare?** — dacă răspundeți afirmativ, scaffolder-ul generează, de asemenea, o vizualizare corespunzătoare și un link în bara laterală pentru noul obiect.
 
-Other entity types have simpler prompts — most only ask for a name.
+Alte tipuri de entități au prompturi mai simple — majoritatea cer doar un nume.
 
-The `field` entity type is more detailed: it asks for the field name, label, type (from a list of all available field types like `TEXT`, `NUMBER`, `SELECT`, `RELATION`, etc.), and the target object's `universalIdentifier`.
+Tipul de entitate `field` este mai detaliat: solicită numele câmpului, eticheta, tipul (dintr-o listă cu toate tipurile de câmp disponibile precum `TEXT`, `NUMBER`, `SELECT`, `RELATION` etc.) și `universalIdentifier` al obiectului țintă.
 
-### Custom output path
+### Cale de output personalizată
 
-Use the `--path` flag to place the generated file in a custom location:
+Utilizați opțiunea `--path` pentru a plasa fișierul generat într-o locație personalizată:
 
 ```bash filename="Terminal"
 yarn twenty add logicFunction --path src/custom-folder
 ```
 
-## Typed API clients (twenty-client-sdk)
+## Clienți API tipizați (twenty-client-sdk)
 
 Pachetul `twenty-client-sdk` oferă doi clienți GraphQL tipați pentru a interacționa cu API-ul Twenty din funcțiile de logică și componentele Front.
 
@@ -1337,9 +1337,9 @@ Pachetul `twenty-client-sdk` oferă doi clienți GraphQL tipați pentru a intera
 | `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — configurarea spațiului de lucru, încărcări de fișiere | Nu, este livrat preconstruit |
 
 <AccordionGroup>
-<Accordion title="CoreApiClient" description="Query and mutate workspace data (records, objects)">
+<Accordion title="CoreApiClient" description="Interogați și modificați datele spațiului de lucru (înregistrări, obiecte)">
 
-`CoreApiClient` este clientul principal pentru interogarea și modificarea datelor din spațiul de lucru. It is **generated from your workspace schema** during `yarn twenty dev` or `yarn twenty build`, so it is fully typed to match your objects and fields.
+`CoreApiClient` este clientul principal pentru interogarea și modificarea datelor din spațiul de lucru. Este generat din schema spațiului de lucru în timpul `yarn twenty dev` sau `yarn twenty build`, astfel încât este complet tipizat pentru a corespunde obiectelor și câmpurilor dvs.
 
 ```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -1379,12 +1379,12 @@ const { createCompany } = await client.mutation({
 Clientul folosește o sintaxă de tip selection-set: transmiteți `true` pentru a include un câmp, folosiți `__args` pentru argumente și imbricați obiecte pentru relații. Obțineți autocompletare și verificare a tipurilor complete, pe baza schemei spațiului dvs. de lucru.
 
 <Note>
-**CoreApiClient is generated at dev/build time.** If you use it without running `yarn twenty dev` or `yarn twenty build` first, it throws an error. The generation happens automatically — the CLI introspects your workspace's GraphQL schema and generates a typed client using `@genql/cli`.
+**CoreApiClient este generat în timpul dev/build.** Dacă îl utilizați fără a rula mai întâi `yarn twenty dev` sau `yarn twenty build`, va arunca o eroare. Generarea are loc automat — CLI inspectează schema GraphQL a spațiului dvs. de lucru și generează un client tipizat folosind `@genql/cli`.
 </Note>
 
 #### Folosirea CoreSchema pentru adnotări de tip
 
-`CoreSchema` provides TypeScript types matching your workspace objects — useful for typing component state or function parameters:
+`CoreSchema` oferă tipuri TypeScript care corespund obiectelor din spațiul dvs. de lucru — utile pentru tiparea stării componentelor sau a parametrilor funcțiilor:
 
 ```ts
 import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
@@ -1406,7 +1406,7 @@ setCompany(result.company);
 ```
 
 </Accordion>
-<Accordion title="MetadataApiClient" description="Workspace config, applications, and file uploads">
+<Accordion title="MetadataApiClient" description="Configurația spațiului de lucru, aplicații și încărcări de fișiere">
 
 `MetadataApiClient` este livrat preconstruit împreună cu SDK-ul (nu este necesară generarea). Interoghează endpointul `/metadata` pentru configurarea spațiului de lucru, aplicații și încărcări de fișiere.
 
@@ -1462,7 +1462,7 @@ console.log(uploadedFile);
 | ---------------------------------- | -------- | ------------------------------------------------------------------ |
 | `fileBuffer`                       | `Buffer` | Conținutul brut al fișierului                                      |
 | `filename`                         | `string` | Numele fișierului (folosit pentru stocare și afișare)              |
-| `contentType`                      | `string` | MIME type (defaults to `application/octet-stream` if omitted)      |
+| `contentType`                      | `string` | Tipul MIME (implicit `application/octet-stream` dacă este omis)    |
 | `fieldMetadataUniversalIdentifier` | `string` | `universalIdentifier` al câmpului de tip fișier de pe obiectul tău |
 
 Puncte cheie:
@@ -1476,24 +1476,24 @@ Puncte cheie:
   Când codul dvs. rulează pe Twenty (funcții de logică sau componente Front), platforma injectează acreditările ca variabile de mediu:
 
   * `TWENTY_API_URL` — URL-ul de bază al API-ului Twenty
-  * `TWENTY_APP_ACCESS_TOKEN` — Short-lived key scoped to your application's default function role
+  * `TWENTY_APP_ACCESS_TOKEN` — Cheie cu durată scurtă, limitată la rolul implicit de funcție al aplicației
 
   Nu trebuie să le transmiteți clienților — aceștia citesc automat din `process.env`. Permisiunile cheii API sunt determinate de rolul referențiat în `defaultRoleUniversalIdentifier` din `application-config.ts`.
 </Note>
 
-## Testing your app
+## Testarea aplicației
 
-The SDK provides programmatic APIs that let you build, deploy, install, and uninstall your app from test code. Combined with [Vitest](https://vitest.dev/) and the typed API clients, you can write integration tests that verify your app works end-to-end against a real Twenty server.
+SDK-ul oferă API-uri programatice care vă permit să construiți, să distribuiți, să instalați și să dezinstalați aplicația din codul de test. Combinat cu [Vitest](https://vitest.dev/) și clienții API tipizați, puteți scrie teste de integrare care verifică faptul că aplicația funcționează cap-coadă împotriva unui server Twenty real.
 
 ### Configurare
 
-The scaffolded app already includes Vitest. If you set it up manually, install the dependencies:
+Aplicația generată (scaffolded) include deja Vitest. Dacă o configurați manual, instalați dependențele:
 
 ```bash filename="Terminal"
 yarn add -D vitest vite-tsconfig-paths
 ```
 
-Create a `vitest.config.ts` at the root of your app:
+Creați un `vitest.config.ts` în rădăcina aplicației:
 
 ```ts vitest.config.ts
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -1519,7 +1519,7 @@ export default defineConfig({
 });
 ```
 
-Create a setup file that verifies the server is reachable before tests run:
+Creați un fișier de configurare care verifică faptul că serverul este accesibil înainte de rularea testelor:
 
 ```ts src/__tests__/setup-test.ts
 import * as fs from 'fs';
@@ -1559,22 +1559,22 @@ beforeAll(async () => {
 });
 ```
 
-### Programmatic SDK APIs
+### API-uri SDK programatice
 
-The `twenty-sdk/cli` subpath exports functions you can call directly from test code:
+Subruta `twenty-sdk/cli` exportă funcții pe care le puteți apela direct din codul de test:
 
-| Funcție        | Descriere                                   |
-| -------------- | ------------------------------------------- |
-| `appBuild`     | Build the app and optionally pack a tarball |
-| `appDeploy`    | Upload a tarball to the server              |
-| `appInstall`   | Install the app on the active workspace     |
-| `appUninstall` | Uninstall the app from the active workspace |
+| Funcție        | Descriere                                                 |
+| -------------- | --------------------------------------------------------- |
+| `appBuild`     | Construiți aplicația și, opțional, împachetați un tarball |
+| `appDeploy`    | Încărcați un tarball pe server                            |
+| `appInstall`   | Instalați aplicația în spațiul de lucru activ             |
+| `appUninstall` | Dezinstalați aplicația din spațiul de lucru activ         |
 
-Each function returns a result object with `success: boolean` and either `data` or `error`.
+Fiecare funcție returnează un obiect rezultat cu `success: boolean` și fie `data`, fie `error`.
 
-### Writing an integration test
+### Scrierea unui test de integrare
 
-Here is a full example that builds, deploys, and installs the app, then verifies it appears in the workspace:
+Iată un exemplu complet care construiește, distribuie și instalează aplicația, apoi verifică faptul că aceasta apare în spațiul de lucru:
 
 ```ts src/__tests__/app-install.integration-test.ts
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config';
@@ -1637,37 +1637,37 @@ describe('App installation', () => {
 });
 ```
 
-### Running tests
+### Rularea testelor
 
-Make sure your local Twenty server is running, then:
+Asigurați-vă că serverul Twenty local rulează, apoi:
 
 ```bash filename="Terminal"
 yarn test
 ```
 
-Or in watch mode during development:
+Sau în modul watch în timpul dezvoltării:
 
 ```bash filename="Terminal"
 yarn test:watch
 ```
 
-### Type checking
+### Verificarea tipurilor
 
-You can also run type checking on your app without running tests:
+Puteți rula și verificarea tipurilor pe aplicație fără a rula testele:
 
 ```bash filename="Terminal"
 yarn twenty typecheck
 ```
 
-This runs `tsc --noEmit` and reports any type errors.
+Aceasta rulează `tsc --noEmit` și raportează orice erori de tip.
 
 ## Referință CLI
 
-Beyond `dev`, `build`, `add`, and `typecheck`, the CLI provides commands for executing functions, viewing logs, and managing app installations.
+Dincolo de `dev`, `build`, `add` și `typecheck`, CLI oferă comenzi pentru executarea funcțiilor, vizualizarea jurnalelor și gestionarea instalărilor de aplicații.
 
-### Executing functions (`yarn twenty exec`)
+### Executarea funcțiilor (`yarn twenty exec`)
 
-Run a logic function manually without triggering it via HTTP, cron, or database event:
+Rulați manual o funcție logică fără a o declanșa prin HTTP, cron sau eveniment de bază de date:
 
 ```bash filename="Terminal"
 # Execute by function name
@@ -1684,9 +1684,9 @@ yarn twenty exec --preInstall
 yarn twenty exec --postInstall
 ```
 
-### Viewing function logs (`yarn twenty logs`)
+### Vizualizarea jurnalelor funcțiilor (`yarn twenty logs`)
 
-Stream execution logs for your app's logic functions:
+Transmiteți în flux jurnalele de execuție pentru funcțiile logice ale aplicației:
 
 ```bash filename="Terminal"
 # Stream all function logs
@@ -1700,12 +1700,12 @@ yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 <Note>
-This is different from `yarn twenty server logs`, which shows the Docker container logs. `yarn twenty logs` shows your app's function execution logs from the Twenty server.
+Acest lucru este diferit de `yarn twenty server logs`, care afișează jurnalele containerului Docker. `yarn twenty logs` afișează jurnalele de execuție ale funcțiilor aplicației de pe serverul Twenty.
 </Note>
 
-### Uninstalling an app (`yarn twenty uninstall`)
+### Dezinstalarea unei aplicații (`yarn twenty uninstall`)
 
-Remove your app from the active workspace:
+Eliminați aplicația din spațiul de lucru activ:
 
 ```bash filename="Terminal"
 yarn twenty uninstall

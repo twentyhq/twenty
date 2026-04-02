@@ -924,24 +924,24 @@ export default defineFrontComponent({
 
 **Operátory** — kombinují proměnné do logických výrazů:
 
-| Operátor                            | Popis                                                                |
-| ----------------------------------- | -------------------------------------------------------------------- |
-| `isDefined(value)`                  | `true`, pokud hodnota není null/undefined                            |
-| `isNonEmptyString(value)`           | `true`, pokud je hodnota neprázdný řetězec                           |
-| `includes(array, value)`            | `true`, pokud pole obsahuje danou hodnotu                            |
-| `includesEvery(array, prop, value)` | `true`, pokud vlastnost každé položky zahrnuje danou hodnotu         |
-| `every(array, prop)`                | `true`, pokud je vlastnost u každé položky pravdivá (truthy)         |
-| `everyDefined(array, prop)`         | `true`, pokud je vlastnost definována u každé položky                |
-| `everyEquals(array, prop, value)`   | `true`, pokud se vlastnost rovná hodnotě u každé položky             |
-| `some(array, prop)`                 | `true`, pokud je vlastnost pravdivá (truthy) alespoň u jedné položky |
-| `someDefined(array, prop)`          | `true`, pokud je vlastnost definována alespoň u jedné položky        |
-| `someEquals(array, prop, value)`    | `true`, pokud se vlastnost rovná hodnotě alespoň u jedné položky     |
-| `someNonEmptyString(array, prop)`   | `true`, pokud je vlastnost neprázdný řetězec alespoň u jedné položky |
-| `none(array, prop)`                 | `true`, pokud je vlastnost u všech položek nepravdivá (falsy)        |
-| `noneDefined(array, prop)`          | `true`, pokud je vlastnost u všech položek nedefinovaná              |
-| `noneEquals(array, prop, value)`    | `true`, pokud se vlastnost nerovná hodnotě u žádné položky           |
+| Operátor                            | Popis                                                                          |
+| ----------------------------------- | ------------------------------------------------------------------------------ |
+| `isDefined(value)`                  | `true`, pokud hodnota není null/undefined                                      |
+| `isNonEmptyString(value)`           | `true`, pokud je hodnota neprázdný řetězec                                     |
+| `includes(array, value)`            | `true`, pokud pole obsahuje danou hodnotu                                      |
+| `includesEvery(array, prop, value)` | `true`, pokud vlastnost každé položky zahrnuje danou hodnotu                   |
+| `every(array, prop)`                | `true`, pokud je vlastnost u každé položky pravdivá (truthy)                   |
+| `everyDefined(array, prop)`         | `true`, pokud je vlastnost definována u každé položky                          |
+| `everyEquals(array, prop, value)`   | `true`, pokud se vlastnost rovná hodnotě u každé položky                       |
+| `some(array, prop)`                 | `true`, pokud je vlastnost pravdivá (truthy) alespoň u jedné položky           |
+| `someDefined(array, prop)`          | `true`, pokud je vlastnost definována alespoň u jedné položky                  |
+| `someEquals(array, prop, value)`    | `true`, pokud se vlastnost rovná hodnotě alespoň u jedné položky               |
+| `someNonEmptyString(array, prop)`   | `true`, pokud má vlastnost alespoň u jedné položky hodnotu neprázdného řetězce |
+| `none(array, prop)`                 | `true`, pokud je vlastnost u všech položek nepravdivá (falsy)                  |
+| `noneDefined(array, prop)`          | `true`, pokud je vlastnost u všech položek nedefinovaná                        |
+| `noneEquals(array, prop, value)`    | `true`, pokud se vlastnost nerovná hodnotě u žádné položky                     |
 
-#### Veřejná aktiva
+#### Veřejné soubory
 
 Frontendové komponenty mohou přistupovat k souborům ze složky aplikace `public/` pomocí `getPublicAssetUrl`:
 
@@ -957,7 +957,7 @@ export default defineFrontComponent({
 });
 ```
 
-Podrobnosti viz [sekce veřejných aktiv](#accessing-public-assets-with-getpublicasseturl).
+Podrobnosti viz [sekci veřejných souborů](#accessing-public-assets-with-getpublicasseturl).
 
 #### Styling
 

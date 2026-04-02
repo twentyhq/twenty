@@ -1299,7 +1299,7 @@ yarn twenty add frontComponent
 | مكوّن أمامي        | `yarn twenty add frontComponent`     | `src/front-components/<name>.tsx`     |
 | دور                | `yarn twenty add role`               | `src/roles/<name>.ts`                 |
 | مهارة              | `yarn twenty add skill`              | `src/skills/<name>.ts`                |
-| Agent              | `yarn twenty add agent`              | `src/agents/<name>.ts`                |
+| وكيل               | `yarn twenty add agent`              | `src/agents/<name>.ts`                |
 | عرض                | `yarn twenty add view`               | `src/views/<name>.ts`                 |
 | عنصر قائمة التنقّل | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/<name>.ts` |
 | تخطيط الصفحة       | `yarn twenty add pageLayout`         | `src/page-layouts/<name>.ts`          |
@@ -1436,7 +1436,7 @@ const { objects } = await metadataClient.query({
 
 #### رفع الملفات
 
-`MetadataApiClient` includes an `uploadFile` method for attaching files to file-type fields:
+يتضمن `MetadataApiClient` طريقة `uploadFile` لإرفاق الملفات بالحقول من نوع الملف:
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
