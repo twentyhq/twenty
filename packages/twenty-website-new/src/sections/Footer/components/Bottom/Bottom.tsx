@@ -38,14 +38,18 @@ const Credit = styled.div`
   }
 `;
 
-type BottomProps = { children?: ReactNode };
+type BottomProps = {
+  children?: ReactNode;
+  copyright: string;
+  credit: string;
+};
 
-export function Bottom({ children }: BottomProps) {
+export function Bottom({ children, copyright, credit }: BottomProps) {
   return (
     <BottomGrid>
-      <Copyright>© 2026 – Twenty</Copyright>
+      <Copyright>{copyright}</Copyright>
       {children}
-      <Credit>Design by Ardent.</Credit>
+      <Credit>{credit}</Credit>
     </BottomGrid>
   );
 }

@@ -2,15 +2,19 @@ import { FAQ_DATA } from '@/app/(home)/constants/faq';
 import { MENU_DATA } from '@/app/(home)/constants/menu';
 import { TRUSTED_BY_DATA } from '@/app/(home)/constants/trusted-by';
 import { DEMO_DATA } from '@/app/product/constants/demo';
+import { FEATURE_DATA } from '@/app/product/constants/feature';
 import { HERO_DATA } from '@/app/product/constants/hero';
+import { STEPPER_DATA } from '@/app/product/constants/stepper';
 import { TABS_DATA } from '@/app/product/constants/tabs';
 import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/product/constants/three-cards';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { Demo } from '@/sections/Demo/components';
+import { Feature } from '@/sections/Feature/components';
 import { Faq } from '@/sections/Faq/components';
 import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
+import { ProductStepper } from '@/sections/ProductStepper/components';
 import { Tabs } from '@/sections/Tabs/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
@@ -64,6 +68,17 @@ export default function ProductPage() {
         <Tabs.TabGroup tabs={TABS_DATA.tabs} />
       </Tabs.Root>
 
+      <Feature.Root backgroundColor={theme.colors.primary.background[100]}>
+        <Feature.Intro align="center" page={Pages.Product}>
+          <Eyebrow
+            colorScheme="primary"
+            heading={FEATURE_DATA.eyebrow.heading}
+          />
+          <Heading segments={FEATURE_DATA.heading} size="lg" weight="light" />
+        </Feature.Intro>
+        <Feature.Tiles mask={FEATURE_DATA.mask} tiles={FEATURE_DATA.tiles} />
+      </Feature.Root>
+
       <ThreeCards.Root backgroundColor={theme.colors.primary.background[100]}>
         <ThreeCards.Intro page={Pages.Product} align="left">
           <Eyebrow
@@ -82,12 +97,12 @@ export default function ProductPage() {
         />
       </ThreeCards.Root>
 
-      {/* <ProductStepper.Flow
+      <ProductStepper.Flow
         body={STEPPER_DATA.body}
         eyebrow={STEPPER_DATA.eyebrow}
         heading={STEPPER_DATA.heading}
         steps={STEPPER_DATA.steps}
-      /> */}
+      />
 
       <Demo.Root>
         <Eyebrow colorScheme="primary" heading={DEMO_DATA.eyebrow.heading} />

@@ -1,5 +1,7 @@
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 import { type IconComponentProps } from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type ModelsDevProviderLogoProps = {
   logoUrl: string;
@@ -30,7 +32,9 @@ export const ModelsDevProviderLogo = ({
   className,
   style,
 }: ModelsDevProviderLogoProps) => {
+  const { theme } = useContext(ThemeContext);
   const pixelSize = resolvePixelSize(size);
+  const isLightTheme = theme.name === 'light';
 
   return (
     <StyledLogo
@@ -38,7 +42,10 @@ export const ModelsDevProviderLogo = ({
       className={className}
       height={pixelSize}
       src={logoUrl}
-      style={style}
+      style={{
+        ...style,
+        filter: isLightTheme ? 'none' : 'invert(1)',
+      }}
       width={pixelSize}
     />
   );

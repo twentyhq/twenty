@@ -1,3 +1,4 @@
+import { FOOTER_DATA } from '@/app/(home)/constants/footer';
 import { Footer } from '@/sections/Footer/components';
 import { theme } from '@/theme';
 import { cssVariables } from '@/theme/css-variables';
@@ -69,11 +70,14 @@ export default function RootLayout({
         className={`${cssVariables} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable}`}
       >
         <StyledMain>{children}</StyledMain>
-        <Footer.Root>
+        <Footer.Root illustration={FOOTER_DATA.illustration}>
           <Footer.Logo />
-          <Footer.Nav />
-          <Footer.Bottom>
-            <Footer.Social />
+          <Footer.Nav groups={FOOTER_DATA.navGroups} />
+          <Footer.Bottom
+            copyright={FOOTER_DATA.bottom.copyright}
+            credit={FOOTER_DATA.bottom.credit}
+          >
+            <Footer.Social links={FOOTER_DATA.socialLinks} />
           </Footer.Bottom>
         </Footer.Root>
       </body>

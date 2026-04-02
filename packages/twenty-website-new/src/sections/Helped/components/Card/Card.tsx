@@ -1,4 +1,4 @@
-import { Body, Heading, LinkButton } from '@/design-system/components';
+import { Body, Heading, LazyEmbed, LinkButton } from '@/design-system/components';
 import { CLIENT_ICONS } from '@/icons';
 import { HelpedCardShape } from '@/sections/Helped/HelpedCardShape';
 import type { HeadingCardType } from '@/sections/Helped/types/HeadingCard';
@@ -43,7 +43,7 @@ const VisualShell = styled.div`
   width: 100%;
 `;
 
-const StyledIframe = styled.iframe`
+const StyledIframe = styled(LazyEmbed)`
   border: none;
   height: 200%;
   left: 51.5%;

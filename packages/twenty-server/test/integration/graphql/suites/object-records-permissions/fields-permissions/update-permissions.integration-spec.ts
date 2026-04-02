@@ -16,6 +16,8 @@ import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/su
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -30,33 +32,13 @@ const COMPANY_GQL_FIELDS_WITHOUT_EMPLOYEES = `
       id
       name
 `;
-const expectEmployeesIsAccessible = ({
-  response,
-  operationName,
-  expectedEmployees,
-}: {
-  response: any;
-  operationName:
-    | 'createCompanies'
-    | 'createCompany'
-    | 'updateCompanies'
-    | 'updateCompany';
-  expectedEmployees?: number;
-}) => {
-  expect(response.body.errors).toBeUndefined();
-  expect(response.body.data).toBeDefined();
-
-  const result =
-    operationName === 'createCompany' || operationName === 'updateCompany'
-      ? response.body.data[operationName]
-      : response.body.data[operationName]?.[0];
-
-  expect(result).toBeDefined();
-  if (typeof expectedEmployees === 'number') {
-    expect(result.employees).toBe(expectedEmployees);
-  } else {
-    expect(typeof result.employees).toBe('number');
-  }
+const expectPermissionDeniedError = (response: any) => {
+  expect(response.body.errors).toBeDefined();
+  expect(response.body.errors.length).toBeGreaterThan(0);
+  expect(response.body.errors[0].message).toBe(
+    PermissionsExceptionMessage.PERMISSION_DENIED,
+  );
+  expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
 };
 
 describe('Field update permissions restrictions', () => {
@@ -364,11 +346,7 @@ describe('Field update permissions restrictions', () => {
       const response =
         await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
-      expectEmployeesIsAccessible({
-        response,
-        operationName: 'createCompanies',
-        expectedEmployees: 15,
-      });
+      expectPermissionDeniedError(response);
     });
 
     it('2. createOne with restricted field in RLS predicate', async () => {
@@ -381,14 +359,10 @@ describe('Field update permissions restrictions', () => {
       const response =
         await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
-      expectEmployeesIsAccessible({
-        response,
-        operationName: 'createCompany',
-        expectedEmployees: 25,
-      });
+      expectPermissionDeniedError(response);
     });
   });
-  describe('should allow employees field in update operation responses', () => {
+  describe('should block read-restricted field in update operation responses', () => {
     beforeEach(async () => {
       await restrictReadAccessToCompanyEmployee(
         customRoleId,
@@ -409,10 +383,7 @@ describe('Field update permissions restrictions', () => {
       const response =
         await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
-      expectEmployeesIsAccessible({
-        response,
-        operationName: 'updateCompanies',
-      });
+      expectPermissionDeniedError(response);
     });
 
     it('2. updateOne requesting restricted field in response', async () => {
@@ -426,10 +397,7 @@ describe('Field update permissions restrictions', () => {
       const response =
         await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
-      expectEmployeesIsAccessible({
-        response,
-        operationName: 'updateCompany',
-      });
+      expectPermissionDeniedError(response);
     });
   });
 
