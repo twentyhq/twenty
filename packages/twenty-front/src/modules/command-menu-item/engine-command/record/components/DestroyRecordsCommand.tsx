@@ -1,7 +1,6 @@
 import { HeadlessConfirmationModalEngineCommandEffect } from '@/command-menu-item/engine-command/components/HeadlessConfirmationModalEngineCommandEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
-import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useIncrementalDestroyManyRecords } from '@/object-record/hooks/useIncrementalDestroyManyRecords';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
@@ -21,17 +20,12 @@ export const DestroyRecordsCommand = () => {
   }
 
   const isSingleRecord = selectedRecords.length === 1;
-  const recordId = selectedRecords[0]?.id;
 
   const navigateApp = useNavigateApp();
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
   const { removeSelectedRecordsFromRecordBoard } =
     useRemoveSelectedRecordsFromRecordBoard(recordIndexId);
-
-  const { destroyOneRecord } = useDestroyOneRecord({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
 
   const noMatchFilter: RecordGqlOperationFilter = { id: { in: [] } };
 
@@ -55,18 +49,16 @@ export const DestroyRecordsCommand = () => {
     removeSelectedRecordsFromRecordBoard();
     resetTableRowSelection();
 
-    if (isSingleRecord && isDefined(recordId)) {
-      await destroyOneRecord(recordId);
+    if (!isDefined(graphqlFilter)) {
+      throw new Error('Cannot destroy records without a valid filter');
+    }
+
+    await incrementalDestroyManyRecords();
+
+    if (isSingleRecord) {
       navigateApp(AppPath.RecordIndexPage, {
         objectNamePlural: objectMetadataItem.namePlural,
       });
-    } else {
-      if (!isDefined(graphqlFilter)) {
-        throw new Error(
-          'Cannot destroy multiple records without a valid filter',
-        );
-      }
-      await incrementalDestroyManyRecords();
     }
   };
 

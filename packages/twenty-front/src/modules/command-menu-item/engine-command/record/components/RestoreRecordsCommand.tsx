@@ -20,7 +20,6 @@ export const RestoreRecordsCommand = () => {
   }
 
   const isSingleRecord = selectedRecords.length === 1;
-  const recordId = selectedRecords[0]?.id;
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
   const { removeSelectedRecordsFromRecordBoard } =
@@ -51,28 +50,18 @@ export const RestoreRecordsCommand = () => {
   const handleExecute = async () => {
     removeSelectedRecordsFromRecordBoard();
 
-    if (isSingleRecord && isDefined(recordId)) {
-      resetTableRowSelection();
-
-      await restoreManyRecords({
-        idsToRestore: [recordId],
-      });
-    } else {
-      if (!isDefined(graphqlFilter)) {
-        throw new Error(
-          'Cannot restore multiple records without a valid filter',
-        );
-      }
-
-      const recordsToRestore = await fetchAllRecordIds();
-      const recordIdsToRestore = recordsToRestore.map((record) => record.id);
-
-      resetTableRowSelection();
-
-      await restoreManyRecords({
-        idsToRestore: recordIdsToRestore,
-      });
+    if (!isDefined(graphqlFilter)) {
+      throw new Error('Cannot restore records without a valid filter');
     }
+
+    const recordsToRestore = await fetchAllRecordIds();
+    const recordIdsToRestore = recordsToRestore.map((record) => record.id);
+
+    resetTableRowSelection();
+
+    await restoreManyRecords({
+      idsToRestore: recordIdsToRestore,
+    });
   };
 
   const title = isSingleRecord ? t`Restore Record` : t`Restore Records`;
