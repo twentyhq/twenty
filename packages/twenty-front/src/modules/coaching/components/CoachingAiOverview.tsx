@@ -262,16 +262,21 @@ export const CoachingAiOverview = ({
         {recentFive.length > 0 && (
           <StyledRecentSessions>
             <StyledSessionLabel>Letzte 5 Sessions:</StyledSessionLabel>
-            {recentFive.map((session) => (
-              <StyledSessionItem key={session.id}>
-                <StyledSessionDate>
-                  {formatSessionDate(
-                    session.sessionDatetime as string | null,
-                  )}
-                </StyledSessionDate>
-                {String(session.sessionTitle ?? '—')}
-              </StyledSessionItem>
-            ))}
+            {recentFive.map((session) => {
+              const title = String(session.sessionTitle ?? '').trim();
+              const sessionId = String(session.sessionId ?? '').trim();
+              const label = title || sessionId || '—';
+              return (
+                <StyledSessionItem key={session.id}>
+                  <StyledSessionDate>
+                    {formatSessionDate(
+                      session.sessionDatetime as string | null,
+                    )}
+                  </StyledSessionDate>
+                  {label}
+                </StyledSessionItem>
+              );
+            })}
           </StyledRecentSessions>
         )}
       </StyledOverviewContent>
