@@ -10,7 +10,9 @@ import {
 import { saveAs } from 'file-saver';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
-jest.mock('file-saver');
+jest.mock('file-saver', () => ({
+  saveAs: jest.fn(),
+}));
 
 jest.useFakeTimers();
 

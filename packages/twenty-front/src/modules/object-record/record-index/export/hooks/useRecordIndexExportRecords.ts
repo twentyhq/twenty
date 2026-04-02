@@ -147,7 +147,7 @@ const UTF8_BOM = '\uFEFF';
 
 const downloader = (mimeType: string, generator: GenerateExport) => {
   return (filename: string, data: GenerateExportOptions) => {
-    const blob = new Blob([UTF8_BOM + generator(data)], { type: mimeType });
+    const blob = new Blob([UTF8_BOM, generator(data)], { type: mimeType });
     saveAs(blob, filename);
   };
 };
