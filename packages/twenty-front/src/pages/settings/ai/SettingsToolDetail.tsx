@@ -17,7 +17,7 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { H2Title, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -33,7 +33,7 @@ import { SettingsToolParameterTable } from '~/pages/settings/ai/components/Setti
 const DELETE_TOOL_MODAL_ID = 'delete-tool-modal';
 
 export const SettingsToolDetail = () => {
-  const { toolName, logicFunctionId } = useParams();
+  const { toolIdentifier } = useParams();
   const { theme } = useContext(ThemeContext);
   const navigate = useNavigate();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
@@ -47,11 +47,11 @@ export const SettingsToolDetail = () => {
     null,
   );
 
-  const isCustomTool = isDefined(logicFunctionId);
+  const isCustomTool = isDefined(toolIdentifier) && isValidUuid(toolIdentifier);
 
   const { logicFunction, loading: logicFunctionLoading } =
     useGetOneLogicFunction({
-      id: logicFunctionId ?? '',
+      id: toolIdentifier ?? '',
       skip: !isCustomTool,
     });
 
@@ -61,13 +61,13 @@ export const SettingsToolDetail = () => {
   );
 
   const systemTool = toolIndexData?.getToolIndex.find(
-    (entry) => entry.name === toolName,
+    (entry) => entry.name === toolIdentifier,
   );
 
   const { data: schemaData, loading: schemaLoading } = useQuery(
     GetToolInputSchemaDocument,
     {
-      variables: { toolName: toolName ?? '' },
+      variables: { toolName: toolIdentifier ?? '' },
       skip: isCustomTool || !isDefined(systemTool),
     },
   );
@@ -86,7 +86,7 @@ export const SettingsToolDetail = () => {
 
   const isReadOnly = !isCustomTool || isManaged;
 
-  const name = isCustomTool ? logicFunction?.name : toolName;
+  const name = isCustomTool ? logicFunction?.name : toolIdentifier;
   const description = isCustomTool
     ? logicFunction?.description
     : systemTool?.description;

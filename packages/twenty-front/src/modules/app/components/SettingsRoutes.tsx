@@ -553,11 +553,7 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsAIUsageUserDetail />}
         />
         <Route
-          path={SettingsPath.AISystemToolDetail}
-          element={<SettingsToolDetail />}
-        />
-        <Route
-          path={SettingsPath.AICustomToolDetail}
+          path={SettingsPath.AIToolDetail}
           element={<SettingsToolDetail />}
         />
         <Route

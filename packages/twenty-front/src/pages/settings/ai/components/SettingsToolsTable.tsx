@@ -2,13 +2,12 @@ import { styled } from '@linaria/react';
 import { gql } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useContext, useState } from 'react';
+import { type ReactNode, useContext, useMemo, useState } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
-import { type LogicFunction } from '@/logic-functions/types/LogicFunction';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -30,7 +29,7 @@ import { Section } from 'twenty-ui/layout';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { type ToolIndexEntry } from '~/generated-metadata/graphql';
+import { ToolCategory } from 'twenty-shared/ai';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { SettingsToolIcon } from './SettingsToolIcon';
 import {
@@ -38,8 +37,15 @@ import {
   TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
 } from './SettingsToolTableRow';
 
-type CustomToolItem = { kind: 'custom'; tool: LogicFunction };
-type SystemToolItem = { kind: 'system'; tool: ToolIndexEntry };
+type ToolItem = {
+  identifier: string;
+  name: string;
+  description?: string | null;
+  category?: string;
+  objectName?: string | null;
+  icon?: string | null;
+  applicationId?: string | null;
+};
 
 const FIND_MANY_APPLICATIONS_FOR_TOOL_TABLE = gql`
   query FindManyApplicationsForToolTable {
@@ -106,23 +112,36 @@ export const SettingsToolsTable = () => {
   const isManaged = (applicationId?: string | null) =>
     isDefined(applicationId) && applicationId !== workspaceCustomApplicationId;
 
-  const getCustomToolLink = (tool: LogicFunction) =>
-    getSettingsPath(SettingsPath.AICustomToolDetail, {
-      logicFunctionId: tool.id,
+  const isCustom = (item: ToolItem) => isDefined(item.applicationId);
+
+  const getToolLink = (item: ToolItem) =>
+    getSettingsPath(SettingsPath.AIToolDetail, {
+      toolIdentifier: item.identifier,
     });
 
-  const getSystemToolLink = (tool: ToolIndexEntry) =>
-    getSettingsPath(SettingsPath.AISystemToolDetail, {
-      toolName: tool.name,
-    });
-
-  const customTools: CustomToolItem[] = logicFunctions
-    .filter((fn) => fn.isTool === true)
-    .map((tool) => ({ kind: 'custom', tool }));
-
-  const systemTools: SystemToolItem[] = toolIndex
-    .filter((systemTool) => systemTool.category !== 'LOGIC_FUNCTION')
-    .map((tool) => ({ kind: 'system', tool }));
+  const allTools: ToolItem[] = useMemo(
+    () => [
+      ...logicFunctions
+        .filter((fn) => fn.isTool === true)
+        .map((fn) => ({
+          identifier: fn.id,
+          name: fn.name,
+          description: fn.description,
+          applicationId: fn.applicationId,
+        })),
+      ...toolIndex
+        .filter((tool) => tool.category !== ToolCategory.LOGIC_FUNCTION)
+        .map((tool) => ({
+          identifier: tool.name,
+          name: tool.name,
+          description: tool.description,
+          category: tool.category,
+          objectName: tool.objectName,
+          icon: tool.icon,
+        })),
+    ],
+    [logicFunctions, toolIndex],
+  );
 
   const applicationById = new Map(
     (applicationsData?.findManyApplications ?? []).map((application) => [
@@ -136,31 +155,29 @@ export const SettingsToolsTable = () => {
     ),
   );
 
-  const filteredTools = [...customTools, ...systemTools]
+  const filteredTools = allTools
     .filter((item) => {
       const searchNormalized = normalizeSearchText(searchTerm);
 
       const matchesSearch =
-        normalizeSearchText(item.tool.name).includes(searchNormalized) ||
-        normalizeSearchText(item.tool.description ?? '').includes(
-          searchNormalized,
-        );
+        normalizeSearchText(item.name).includes(searchNormalized) ||
+        normalizeSearchText(item.description ?? '').includes(searchNormalized);
 
       if (!matchesSearch) {
         return false;
       }
 
-      if (item.kind === 'system') {
+      if (!isCustom(item)) {
         return showStandardTools;
       }
 
-      if (isManaged(item.tool.applicationId)) {
+      if (isManaged(item.applicationId)) {
         return showManagedTools;
       }
 
       return showCustomTools;
     })
-    .sort((a, b) => a.tool.name.localeCompare(b.tool.name));
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   const showSkeleton = toolIndexLoading && !toolIndexError;
 
@@ -238,35 +255,32 @@ export const SettingsToolsTable = () => {
               </SkeletonTheme>
             ))
           : filteredTools.map((item) => {
-              const application =
-                item.kind === 'custom' && isDefined(item.tool.applicationId)
-                  ? applicationById.get(item.tool.applicationId)
-                  : undefined;
+              const application = isDefined(item.applicationId)
+                ? applicationById.get(item.applicationId)
+                : undefined;
               const marketplaceApp = isDefined(application)
                 ? marketplaceAppByUniversalIdentifier.get(
                     application.universalIdentifier,
                   )
                 : undefined;
 
-              const appLabel =
-                item.kind === 'custom'
-                  ? (application?.name ?? t`Custom`)
-                  : t`Standard`;
+              const appLabel = isCustom(item)
+                ? (application?.name ?? t`Custom`)
+                : t`Standard`;
 
               return (
                 <SettingsToolTableRow
-                  key={item.kind === 'custom' ? item.tool.id : item.tool.name}
+                  key={item.identifier}
                   leftIcon={
                     <SettingsToolIcon
-                      kind={item.kind}
-                      category={
-                        item.kind === 'system' ? item.tool.category : undefined
-                      }
+                      icon={item.icon}
+                      toolName={item.name}
+                      objectName={item.objectName ?? undefined}
                       application={application}
                       marketplaceApp={marketplaceApp}
                     />
                   }
-                  name={item.tool.name}
+                  name={item.name}
                   appLabel={appLabel}
                   action={
                     <IconChevronRight
@@ -274,11 +288,7 @@ export const SettingsToolsTable = () => {
                       stroke={theme.icon.stroke.sm}
                     />
                   }
-                  link={
-                    item.kind === 'custom'
-                      ? getCustomToolLink(item.tool)
-                      : getSystemToolLink(item.tool)
-                  }
+                  link={getToolLink(item)}
                 />
               );
             })}
