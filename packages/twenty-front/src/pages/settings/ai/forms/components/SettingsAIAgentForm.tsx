@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
+import { SettingsAgentModelCapabilities } from '@/ai/components/SettingsAgentModelCapabilities';
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
@@ -9,7 +10,6 @@ import { TextArea } from '@/ui/input/components/TextArea';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
-import { SettingsAgentModelCapabilities } from '~/pages/settings/ai/components/SettingsAgentModelCapabilities';
 import { type SettingsAIAgentFormValues } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
 
 const StyledFormContainer = styled.div`
@@ -50,7 +50,7 @@ export const SettingsAIAgentForm = ({
 }: SettingsAIAgentFormProps) => {
   const { t } = useLingui();
 
-  const modelOptions = useAiModelOptions();
+  const { options: modelOptions } = useAiModelOptions();
 
   const noModelsAvailable = modelOptions.length === 0;
 

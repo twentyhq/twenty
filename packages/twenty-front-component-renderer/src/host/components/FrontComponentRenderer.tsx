@@ -1,6 +1,7 @@
 import { FrontComponentErrorEffect } from '@/remote/components/FrontComponentErrorEffect';
-import { FrontComponentHostCommunicationApiEffect } from '@/remote/components/FrontComponentHostCommunicationApiEffect';
+import { FrontComponentInitializeHostCommunicationApiEffect } from '@/remote/components/FrontComponentInitializeHostCommunicationApiEffect';
 import { FrontComponentUpdateContextEffect } from '@/remote/components/FrontComponentUpdateContextEffect';
+import { FrontComponentUpdateHostCommunicationApiEffect } from '@/remote/components/FrontComponentUpdateHostCommunicationApiEffect';
 import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
 import { type SdkClientUrls } from '@/types/HostToWorkerRenderContext';
 import { type WorkerExports } from '@/types/WorkerExports';
@@ -55,7 +56,6 @@ export const FrontComponentRenderer = ({
         apiUrl={apiUrl}
         sdkClientUrls={sdkClientUrls}
         frontComponentId={executionContext.frontComponentId}
-        frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
         setReceiver={setReceiver}
         setThread={setThread}
         setError={setError}
@@ -63,7 +63,6 @@ export const FrontComponentRenderer = ({
     );
   }, [
     componentUrl,
-    frontComponentHostCommunicationApi,
     setError,
     setReceiver,
     setThread,
@@ -102,7 +101,13 @@ export const FrontComponentRenderer = ({
 
       {isDefined(thread) && (
         <>
-          <FrontComponentHostCommunicationApiEffect thread={thread} />
+          <FrontComponentUpdateHostCommunicationApiEffect
+            thread={thread}
+            frontComponentHostCommunicationApi={
+              frontComponentHostCommunicationApi
+            }
+          />
+          <FrontComponentInitializeHostCommunicationApiEffect thread={thread} />
           <FrontComponentUpdateContextEffect
             thread={thread}
             executionContext={executionContext}

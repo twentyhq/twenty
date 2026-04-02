@@ -19,6 +19,7 @@ import {
 } from '@/auth/states/signInUpStepState';
 import { getAvailableWorkspacePathAndSearchParams } from '@/auth/utils/availableWorkspacesUtils';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -136,6 +137,7 @@ const StyledForgotPasswordLinkContainer = styled.div`
 export const SignInUpGlobalScopeForm = () => {
   const { theme } = useContext(ThemeContext);
   const authProviders = useAtomStateValue(authProvidersState);
+  const isDDLLocked = useAtomStateValue(isDDLLockedState);
   const signInUpStep = useAtomStateValue(signInUpStepState);
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
   const { signOut } = useAuth();
@@ -206,19 +208,21 @@ export const SignInUpGlobalScopeForm = () => {
                 </StyledWorkspaceItem>
               </UndecoratedLink>
             ))}
-            <StyledWorkspaceItem onClick={() => createWorkspace()}>
-              <StyledWorkspaceContent>
-                <StyledWorkspaceLogo>
-                  <IconPlus size={theme.icon.size.lg} />
-                </StyledWorkspaceLogo>
-                <StyledWorkspaceTextContainer>
-                  <StyledWorkspaceName>{t`Create a workspace`}</StyledWorkspaceName>
-                </StyledWorkspaceTextContainer>
-                <StyledChevronIcon>
-                  <IconChevronRight size={theme.icon.size.md} />
-                </StyledChevronIcon>
-              </StyledWorkspaceContent>
-            </StyledWorkspaceItem>
+            {!isDDLLocked && (
+              <StyledWorkspaceItem onClick={() => createWorkspace()}>
+                <StyledWorkspaceContent>
+                  <StyledWorkspaceLogo>
+                    <IconPlus size={theme.icon.size.lg} />
+                  </StyledWorkspaceLogo>
+                  <StyledWorkspaceTextContainer>
+                    <StyledWorkspaceName>{t`Create a workspace`}</StyledWorkspaceName>
+                  </StyledWorkspaceTextContainer>
+                  <StyledChevronIcon>
+                    <IconChevronRight size={theme.icon.size.md} />
+                  </StyledChevronIcon>
+                </StyledWorkspaceContent>
+              </StyledWorkspaceItem>
+            )}
           </StyledWorkspaceContainer>
           <StyledActionLinkContainer>
             <ClickToActionLink onClick={signOut}>

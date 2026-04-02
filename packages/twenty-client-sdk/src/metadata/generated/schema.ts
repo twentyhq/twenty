@@ -1422,7 +1422,14 @@ export interface PublicFeatureFlag {
     __typename: 'PublicFeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_AI_ENABLED' | 'IS_MARKETPLACE_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_DRAFT_EMAIL_ENABLED' | 'IS_USAGE_ANALYTICS_ENABLED' | 'IS_RICH_TEXT_V1_MIGRATED' | 'IS_DIRECT_GRAPHQL_EXECUTION_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED' | 'IS_CONNECTED_ACCOUNT_MIGRATED' | 'IS_GRAPHQL_QUERY_TIMING_ENABLED' | 'IS_RECORD_TABLE_WIDGET_ENABLED' | 'IS_DATASOURCE_MIGRATED'
+export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_AI_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_MARKETPLACE_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_DRAFT_EMAIL_ENABLED' | 'IS_USAGE_ANALYTICS_ENABLED' | 'IS_RICH_TEXT_V1_MIGRATED' | 'IS_DIRECT_GRAPHQL_EXECUTION_ENABLED' | 'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED' | 'IS_CONNECTED_ACCOUNT_MIGRATED' | 'IS_GRAPHQL_QUERY_TIMING_ENABLED' | 'IS_RECORD_TABLE_WIDGET_ENABLED' | 'IS_DATASOURCE_MIGRATED'
+
+export interface ClientConfigMaintenanceMode {
+    startAt: Scalars['DateTime']
+    endAt: Scalars['DateTime']
+    link?: Scalars['String']
+    __typename: 'ClientConfigMaintenanceMode'
+}
 
 export interface ClientConfig {
     appVersion?: Scalars['String']
@@ -1452,6 +1459,8 @@ export interface ClientConfig {
     calendarBookingPageId?: Scalars['String']
     isCloudflareIntegrationEnabled: Scalars['Boolean']
     isClickHouseConfigured: Scalars['Boolean']
+    isWorkspaceSchemaDDLLocked: Scalars['Boolean']
+    maintenance?: ClientConfigMaintenanceMode
     __typename: 'ClientConfig'
 }
 
@@ -1619,6 +1628,13 @@ export interface AdminPanelHealthServiceData {
     details?: Scalars['String']
     queues?: AdminPanelWorkerQueueHealth[]
     __typename: 'AdminPanelHealthServiceData'
+}
+
+export interface MaintenanceMode {
+    startAt: Scalars['DateTime']
+    endAt: Scalars['DateTime']
+    link?: Scalars['String']
+    __typename: 'MaintenanceMode'
 }
 
 export interface ModelsDevModelSuggestion {
@@ -2272,7 +2288,7 @@ export interface CommandMenuItem {
     __typename: 'CommandMenuItem'
 }
 
-export type EngineComponentKey = 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'CREATE_NEW_RECORD' | 'DELETE_SINGLE_RECORD' | 'DELETE_MULTIPLE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RESTORE_MULTIPLE_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'ADD_TO_FAVORITES' | 'REMOVE_FROM_FAVORITES' | 'EXPORT_NOTE_TO_PDF' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'UPDATE_MULTIPLE_RECORDS' | 'MERGE_MULTIPLE_RECORDS' | 'EXPORT_MULTIPLE_RECORDS' | 'IMPORT_RECORDS' | 'EXPORT_VIEW' | 'SEE_DELETED_RECORDS' | 'CREATE_NEW_VIEW' | 'HIDE_DELETED_RECORDS' | 'GO_TO_PEOPLE' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_NOTES' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EDIT_DASHBOARD_LAYOUT' | 'SAVE_DASHBOARD_LAYOUT' | 'CANCEL_DASHBOARD_LAYOUT' | 'DUPLICATE_DASHBOARD' | 'GO_TO_WORKFLOWS' | 'ACTIVATE_WORKFLOW' | 'DEACTIVATE_WORKFLOW' | 'DISCARD_DRAFT_WORKFLOW' | 'TEST_WORKFLOW' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_RUNS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'DUPLICATE_WORKFLOW' | 'GO_TO_RUNS' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'STOP_WORKFLOW_RUN' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'ASK_AI' | 'VIEW_PREVIOUS_AI_CHATS' | 'TRIGGER_WORKFLOW_VERSION' | 'FRONT_COMPONENT_RENDERER'
+export type EngineComponentKey = 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'CREATE_NEW_RECORD' | 'DELETE_RECORDS' | 'RESTORE_RECORDS' | 'DESTROY_RECORDS' | 'ADD_TO_FAVORITES' | 'REMOVE_FROM_FAVORITES' | 'EXPORT_NOTE_TO_PDF' | 'EXPORT_RECORDS' | 'UPDATE_MULTIPLE_RECORDS' | 'MERGE_MULTIPLE_RECORDS' | 'IMPORT_RECORDS' | 'EXPORT_VIEW' | 'SEE_DELETED_RECORDS' | 'CREATE_NEW_VIEW' | 'HIDE_DELETED_RECORDS' | 'GO_TO_PEOPLE' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_NOTES' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EDIT_DASHBOARD_LAYOUT' | 'SAVE_DASHBOARD_LAYOUT' | 'CANCEL_DASHBOARD_LAYOUT' | 'DUPLICATE_DASHBOARD' | 'GO_TO_WORKFLOWS' | 'ACTIVATE_WORKFLOW' | 'DEACTIVATE_WORKFLOW' | 'DISCARD_DRAFT_WORKFLOW' | 'TEST_WORKFLOW' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_RUNS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'DUPLICATE_WORKFLOW' | 'GO_TO_RUNS' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'STOP_WORKFLOW_RUN' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'ASK_AI' | 'VIEW_PREVIOUS_AI_CHATS' | 'TRIGGER_WORKFLOW_VERSION' | 'FRONT_COMPONENT_RENDERER' | 'DELETE_SINGLE_RECORD' | 'DELETE_MULTIPLE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RESTORE_MULTIPLE_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS'
 
 export type CommandMenuItemAvailabilityType = 'GLOBAL' | 'RECORD_SELECTION' | 'FALLBACK'
 
@@ -2448,10 +2464,12 @@ export interface AgentChatThread {
 export interface AgentMessage {
     id: Scalars['UUID']
     threadId: Scalars['UUID']
-    turnId: Scalars['UUID']
+    turnId?: Scalars['UUID']
     agentId?: Scalars['UUID']
     role: Scalars['String']
+    status: Scalars['String']
     parts: AgentMessagePart[]
+    processedAt?: Scalars['DateTime']
     createdAt: Scalars['DateTime']
     __typename: 'AgentMessage'
 }
@@ -2467,6 +2485,25 @@ export interface AISystemPromptPreview {
     sections: AISystemPromptSection[]
     estimatedTokenCount: Scalars['Int']
     __typename: 'AISystemPromptPreview'
+}
+
+export interface ChatStreamCatchupChunks {
+    chunks: Scalars['JSON'][]
+    maxSeq: Scalars['Int']
+    __typename: 'ChatStreamCatchupChunks'
+}
+
+export interface SendChatMessageResult {
+    messageId: Scalars['String']
+    queued: Scalars['Boolean']
+    streamId?: Scalars['String']
+    __typename: 'SendChatMessageResult'
+}
+
+export interface AgentChatEvent {
+    threadId: Scalars['String']
+    event: Scalars['JSON']
+    __typename: 'AgentChatEvent'
 }
 
 export interface AgentChatThreadEdge {
@@ -2713,6 +2750,7 @@ export interface Query {
     minimalMetadata: MinimalMetadata
     chatThread: AgentChatThread
     chatMessages: AgentMessage[]
+    chatStreamCatchupChunks: ChatStreamCatchupChunks
     getAISystemPromptPreview: AISystemPromptPreview
     skills: Skill[]
     skill?: Skill
@@ -2754,6 +2792,7 @@ export interface Query {
     getModelsDevProviders: ModelsDevProviderSuggestion[]
     getModelsDevSuggestions: ModelsDevModelSuggestion[]
     getAdminAiUsageByWorkspace: UsageBreakdownItem[]
+    getMaintenanceMode?: MaintenanceMode
     getUsageAnalytics: UsageAnalytics
     getPostgresCredentials?: PostgresCredentials
     findManyPublicDomains: PublicDomain[]
@@ -2899,6 +2938,9 @@ export interface Mutation {
     updateWebhook: Webhook
     deleteWebhook: Webhook
     createChatThread: AgentChatThread
+    sendChatMessage: SendChatMessageResult
+    stopAgentChatStream: Scalars['Boolean']
+    deleteQueuedChatMessage: Scalars['Boolean']
     createSkill: Skill
     updateSkill: Skill
     deleteSkill: Skill
@@ -2966,6 +3008,8 @@ export interface Mutation {
     removeAiProvider: Scalars['Boolean']
     addModelToProvider: Scalars['Boolean']
     removeModelFromProvider: Scalars['Boolean']
+    setMaintenanceMode: Scalars['Boolean']
+    clearMaintenanceMode: Scalars['Boolean']
     enablePostgresProxy: PostgresCredentials
     disablePostgresProxy: PostgresCredentials
     createPublicDomain: PublicDomain
@@ -3001,6 +3045,7 @@ export type FileFolder = 'ProfilePicture' | 'WorkspaceLogo' | 'Attachment' | 'Pe
 export interface Subscription {
     onEventSubscription?: EventSubscription
     logicFunctionLogs: LogicFunctionLogs
+    onAgentChatEvent: AgentChatEvent
     __typename: 'Subscription'
 }
 
@@ -4482,6 +4527,14 @@ export interface PublicFeatureFlagGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ClientConfigMaintenanceModeGenqlSelection{
+    startAt?: boolean | number
+    endAt?: boolean | number
+    link?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ClientConfigGenqlSelection{
     appVersion?: boolean | number
     authProviders?: AuthProvidersGenqlSelection
@@ -4510,6 +4563,8 @@ export interface ClientConfigGenqlSelection{
     calendarBookingPageId?: boolean | number
     isCloudflareIntegrationEnabled?: boolean | number
     isClickHouseConfigured?: boolean | number
+    isWorkspaceSchemaDDLLocked?: boolean | number
+    maintenance?: ClientConfigMaintenanceModeGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4681,6 +4736,14 @@ export interface AdminPanelHealthServiceDataGenqlSelection{
     errorMessage?: boolean | number
     details?: boolean | number
     queues?: AdminPanelWorkerQueueHealthGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface MaintenanceModeGenqlSelection{
+    startAt?: boolean | number
+    endAt?: boolean | number
+    link?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5598,7 +5661,9 @@ export interface AgentMessageGenqlSelection{
     turnId?: boolean | number
     agentId?: boolean | number
     role?: boolean | number
+    status?: boolean | number
     parts?: AgentMessagePartGenqlSelection
+    processedAt?: boolean | number
     createdAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5615,6 +5680,28 @@ export interface AISystemPromptSectionGenqlSelection{
 export interface AISystemPromptPreviewGenqlSelection{
     sections?: AISystemPromptSectionGenqlSelection
     estimatedTokenCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ChatStreamCatchupChunksGenqlSelection{
+    chunks?: boolean | number
+    maxSeq?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface SendChatMessageResultGenqlSelection{
+    messageId?: boolean | number
+    queued?: boolean | number
+    streamId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentChatEventGenqlSelection{
+    threadId?: boolean | number
+    event?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5868,6 +5955,7 @@ export interface QueryGenqlSelection{
     minimalMetadata?: MinimalMetadataGenqlSelection
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     getAISystemPromptPreview?: AISystemPromptPreviewGenqlSelection
     skills?: SkillGenqlSelection
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -5915,6 +6003,7 @@ export interface QueryGenqlSelection{
     getModelsDevProviders?: ModelsDevProviderSuggestionGenqlSelection
     getModelsDevSuggestions?: (ModelsDevModelSuggestionGenqlSelection & { __args: {providerType: Scalars['String']} })
     getAdminAiUsageByWorkspace?: (UsageBreakdownItemGenqlSelection & { __args?: {periodStart?: (Scalars['DateTime'] | null), periodEnd?: (Scalars['DateTime'] | null)} })
+    getMaintenanceMode?: MaintenanceModeGenqlSelection
     getUsageAnalytics?: (UsageAnalyticsGenqlSelection & { __args?: {input?: (UsageAnalyticsInput | null)} })
     getPostgresCredentials?: PostgresCredentialsGenqlSelection
     findManyPublicDomains?: PublicDomainGenqlSelection
@@ -6079,6 +6168,9 @@ export interface MutationGenqlSelection{
     updateWebhook?: (WebhookGenqlSelection & { __args: {input: UpdateWebhookInput} })
     deleteWebhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     createChatThread?: AgentChatThreadGenqlSelection
+    sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], text: Scalars['String'], messageId: Scalars['UUID'], browsingContext?: (Scalars['JSON'] | null), modelId?: (Scalars['String'] | null)} })
+    stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
+    deleteQueuedChatMessage?: { __args: {messageId: Scalars['UUID']} }
     createSkill?: (SkillGenqlSelection & { __args: {input: CreateSkillInput} })
     updateSkill?: (SkillGenqlSelection & { __args: {input: UpdateSkillInput} })
     deleteSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -6146,6 +6238,8 @@ export interface MutationGenqlSelection{
     removeAiProvider?: { __args: {providerName: Scalars['String']} }
     addModelToProvider?: { __args: {providerName: Scalars['String'], modelConfig: Scalars['JSON']} }
     removeModelFromProvider?: { __args: {providerName: Scalars['String'], modelName: Scalars['String']} }
+    setMaintenanceMode?: { __args: {startAt: Scalars['DateTime'], endAt: Scalars['DateTime'], link?: (Scalars['String'] | null)} }
+    clearMaintenanceMode?: boolean | number
     enablePostgresProxy?: PostgresCredentialsGenqlSelection
     disablePostgresProxy?: PostgresCredentialsGenqlSelection
     createPublicDomain?: (PublicDomainGenqlSelection & { __args: {domain: Scalars['String']} })
@@ -6496,6 +6590,7 @@ export interface WorkspaceMigrationDeleteActionInput {type: WorkspaceMigrationAc
 export interface SubscriptionGenqlSelection{
     onEventSubscription?: (EventSubscriptionGenqlSelection & { __args: {eventStreamId: Scalars['String']} })
     logicFunctionLogs?: (LogicFunctionLogsGenqlSelection & { __args: {input: LogicFunctionLogsInput} })
+    onAgentChatEvent?: (AgentChatEventGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7447,6 +7542,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const ClientConfigMaintenanceMode_possibleTypes: string[] = ['ClientConfigMaintenanceMode']
+    export const isClientConfigMaintenanceMode = (obj?: { __typename?: any } | null): obj is ClientConfigMaintenanceMode => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isClientConfigMaintenanceMode"')
+      return ClientConfigMaintenanceMode_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const ClientConfig_possibleTypes: string[] = ['ClientConfig']
     export const isClientConfig = (obj?: { __typename?: any } | null): obj is ClientConfig => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isClientConfig"')
@@ -7603,6 +7706,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isAdminPanelHealthServiceData = (obj?: { __typename?: any } | null): obj is AdminPanelHealthServiceData => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAdminPanelHealthServiceData"')
       return AdminPanelHealthServiceData_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const MaintenanceMode_possibleTypes: string[] = ['MaintenanceMode']
+    export const isMaintenanceMode = (obj?: { __typename?: any } | null): obj is MaintenanceMode => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMaintenanceMode"')
+      return MaintenanceMode_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -8423,6 +8534,30 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const ChatStreamCatchupChunks_possibleTypes: string[] = ['ChatStreamCatchupChunks']
+    export const isChatStreamCatchupChunks = (obj?: { __typename?: any } | null): obj is ChatStreamCatchupChunks => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isChatStreamCatchupChunks"')
+      return ChatStreamCatchupChunks_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const SendChatMessageResult_possibleTypes: string[] = ['SendChatMessageResult']
+    export const isSendChatMessageResult = (obj?: { __typename?: any } | null): obj is SendChatMessageResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSendChatMessageResult"')
+      return SendChatMessageResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentChatEvent_possibleTypes: string[] = ['AgentChatEvent']
+    export const isAgentChatEvent = (obj?: { __typename?: any } | null): obj is AgentChatEvent => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatEvent"')
+      return AgentChatEvent_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const AgentChatThreadEdge_possibleTypes: string[] = ['AgentChatThreadEdge']
     export const isAgentChatThreadEdge = (obj?: { __typename?: any } | null): obj is AgentChatThreadEdge => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatThreadEdge"')
@@ -8949,12 +9084,12 @@ export const enumFeatureFlagKey = {
    IS_UNIQUE_INDEXES_ENABLED: 'IS_UNIQUE_INDEXES_ENABLED' as const,
    IS_JSON_FILTER_ENABLED: 'IS_JSON_FILTER_ENABLED' as const,
    IS_AI_ENABLED: 'IS_AI_ENABLED' as const,
+   IS_COMMAND_MENU_ITEM_ENABLED: 'IS_COMMAND_MENU_ITEM_ENABLED' as const,
    IS_MARKETPLACE_ENABLED: 'IS_MARKETPLACE_ENABLED' as const,
    IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED: 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' as const,
    IS_PUBLIC_DOMAIN_ENABLED: 'IS_PUBLIC_DOMAIN_ENABLED' as const,
    IS_EMAILING_DOMAIN_ENABLED: 'IS_EMAILING_DOMAIN_ENABLED' as const,
    IS_JUNCTION_RELATIONS_ENABLED: 'IS_JUNCTION_RELATIONS_ENABLED' as const,
-   IS_COMMAND_MENU_ITEM_ENABLED: 'IS_COMMAND_MENU_ITEM_ENABLED' as const,
    IS_DRAFT_EMAIL_ENABLED: 'IS_DRAFT_EMAIL_ENABLED' as const,
    IS_USAGE_ANALYTICS_ENABLED: 'IS_USAGE_ANALYTICS_ENABLED' as const,
    IS_RICH_TEXT_V1_MIGRATED: 'IS_RICH_TEXT_V1_MIGRATED' as const,
@@ -9061,20 +9196,15 @@ export const enumEngineComponentKey = {
    NAVIGATE_TO_NEXT_RECORD: 'NAVIGATE_TO_NEXT_RECORD' as const,
    NAVIGATE_TO_PREVIOUS_RECORD: 'NAVIGATE_TO_PREVIOUS_RECORD' as const,
    CREATE_NEW_RECORD: 'CREATE_NEW_RECORD' as const,
-   DELETE_SINGLE_RECORD: 'DELETE_SINGLE_RECORD' as const,
-   DELETE_MULTIPLE_RECORDS: 'DELETE_MULTIPLE_RECORDS' as const,
-   RESTORE_SINGLE_RECORD: 'RESTORE_SINGLE_RECORD' as const,
-   RESTORE_MULTIPLE_RECORDS: 'RESTORE_MULTIPLE_RECORDS' as const,
-   DESTROY_SINGLE_RECORD: 'DESTROY_SINGLE_RECORD' as const,
-   DESTROY_MULTIPLE_RECORDS: 'DESTROY_MULTIPLE_RECORDS' as const,
+   DELETE_RECORDS: 'DELETE_RECORDS' as const,
+   RESTORE_RECORDS: 'RESTORE_RECORDS' as const,
+   DESTROY_RECORDS: 'DESTROY_RECORDS' as const,
    ADD_TO_FAVORITES: 'ADD_TO_FAVORITES' as const,
    REMOVE_FROM_FAVORITES: 'REMOVE_FROM_FAVORITES' as const,
    EXPORT_NOTE_TO_PDF: 'EXPORT_NOTE_TO_PDF' as const,
-   EXPORT_FROM_RECORD_INDEX: 'EXPORT_FROM_RECORD_INDEX' as const,
-   EXPORT_FROM_RECORD_SHOW: 'EXPORT_FROM_RECORD_SHOW' as const,
+   EXPORT_RECORDS: 'EXPORT_RECORDS' as const,
    UPDATE_MULTIPLE_RECORDS: 'UPDATE_MULTIPLE_RECORDS' as const,
    MERGE_MULTIPLE_RECORDS: 'MERGE_MULTIPLE_RECORDS' as const,
-   EXPORT_MULTIPLE_RECORDS: 'EXPORT_MULTIPLE_RECORDS' as const,
    IMPORT_RECORDS: 'IMPORT_RECORDS' as const,
    EXPORT_VIEW: 'EXPORT_VIEW' as const,
    SEE_DELETED_RECORDS: 'SEE_DELETED_RECORDS' as const,
@@ -9116,7 +9246,16 @@ export const enumEngineComponentKey = {
    ASK_AI: 'ASK_AI' as const,
    VIEW_PREVIOUS_AI_CHATS: 'VIEW_PREVIOUS_AI_CHATS' as const,
    TRIGGER_WORKFLOW_VERSION: 'TRIGGER_WORKFLOW_VERSION' as const,
-   FRONT_COMPONENT_RENDERER: 'FRONT_COMPONENT_RENDERER' as const
+   FRONT_COMPONENT_RENDERER: 'FRONT_COMPONENT_RENDERER' as const,
+   DELETE_SINGLE_RECORD: 'DELETE_SINGLE_RECORD' as const,
+   DELETE_MULTIPLE_RECORDS: 'DELETE_MULTIPLE_RECORDS' as const,
+   RESTORE_SINGLE_RECORD: 'RESTORE_SINGLE_RECORD' as const,
+   RESTORE_MULTIPLE_RECORDS: 'RESTORE_MULTIPLE_RECORDS' as const,
+   DESTROY_SINGLE_RECORD: 'DESTROY_SINGLE_RECORD' as const,
+   DESTROY_MULTIPLE_RECORDS: 'DESTROY_MULTIPLE_RECORDS' as const,
+   EXPORT_FROM_RECORD_INDEX: 'EXPORT_FROM_RECORD_INDEX' as const,
+   EXPORT_FROM_RECORD_SHOW: 'EXPORT_FROM_RECORD_SHOW' as const,
+   EXPORT_MULTIPLE_RECORDS: 'EXPORT_MULTIPLE_RECORDS' as const
 }
 
 export const enumCommandMenuItemAvailabilityType = {

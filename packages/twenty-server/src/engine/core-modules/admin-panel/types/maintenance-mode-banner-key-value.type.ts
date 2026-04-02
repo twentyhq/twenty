@@ -1,0 +1,6 @@
+export const MAINTENANCE_MODE_BANNER_DISMISSED_KEY =
+  'MAINTENANCE_MODE_BANNER_DISMISSED';
+
+export type MaintenanceModeBannerKeyValueTypeMap = {
+  [MAINTENANCE_MODE_BANNER_DISMISSED_KEY]: boolean;
+};

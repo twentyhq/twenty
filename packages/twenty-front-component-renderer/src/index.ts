@@ -1,8 +1,9 @@
 export { FrontComponentRenderer } from './host/components/FrontComponentRenderer';
 export { componentRegistry } from './host/generated/host-component-registry';
 export { FrontComponentErrorEffect } from './remote/components/FrontComponentErrorEffect';
-export { FrontComponentHostCommunicationApiEffect } from './remote/components/FrontComponentHostCommunicationApiEffect';
+export { FrontComponentInitializeHostCommunicationApiEffect } from './remote/components/FrontComponentInitializeHostCommunicationApiEffect';
 export { FrontComponentUpdateContextEffect } from './remote/components/FrontComponentUpdateContextEffect';
+export { FrontComponentUpdateHostCommunicationApiEffect } from './remote/components/FrontComponentUpdateHostCommunicationApiEffect';
 export { FrontComponentWorkerEffect } from './remote/components/FrontComponentWorkerEffect';
 export {
   HtmlA,

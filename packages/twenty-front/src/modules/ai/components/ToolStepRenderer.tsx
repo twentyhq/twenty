@@ -8,13 +8,13 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
-import { getToolIcon } from '@/ai/utils/getToolIcon';
+import { ToolOutputMessageSchema } from '@/ai/schemas/toolOutputMessageSchema';
+import { ToolOutputResultSchema } from '@/ai/schemas/toolOutputResultSchema';
 import {
   getToolDisplayMessage,
   resolveToolInput,
 } from '@/ai/utils/getToolDisplayMessage';
-import { ToolOutputMessageSchema } from '@/ai/schemas/toolOutputMessageSchema';
-import { ToolOutputResultSchema } from '@/ai/schemas/toolOutputResultSchema';
+import { getToolIcon } from '@/ai/utils/getToolIcon';
 import { useLingui } from '@lingui/react/macro';
 import { type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
@@ -152,9 +152,15 @@ export const ToolStepRenderer = ({
   const isExpandable = isDefined(output) || hasError;
   const ToolIcon = getToolIcon(toolName);
 
+  const outputResult = ToolOutputResultSchema.safeParse(output);
+  const unwrappedOutput =
+    rawToolName === 'execute_tool' && outputResult.success
+      ? outputResult.data.result
+      : output;
+
   if (toolName === 'code_interpreter') {
     const codeInput = toolInput as { code?: string } | undefined;
-    const codeOutput = output as {
+    const codeOutput = unwrappedOutput as {
       result?: {
         stdout?: string;
         stderr?: string;
@@ -168,7 +174,7 @@ export const ToolStepRenderer = ({
       };
     } | null;
 
-    const isRunning = !output && !hasError && isStreaming;
+    const isRunning = !unwrappedOutput && !hasError && isStreaming;
 
     return (
       <CodeExecutionDisplay
@@ -209,12 +215,6 @@ export const ToolStepRenderer = ({
       </StyledContainer>
     );
   }
-
-  const outputResult = ToolOutputResultSchema.safeParse(output);
-  const unwrappedOutput =
-    rawToolName === 'execute_tool' && outputResult.success
-      ? outputResult.data.result
-      : output;
 
   const unwrappedResult = ToolOutputResultSchema.safeParse(unwrappedOutput);
   const unwrappedMessage = ToolOutputMessageSchema.safeParse(unwrappedOutput);

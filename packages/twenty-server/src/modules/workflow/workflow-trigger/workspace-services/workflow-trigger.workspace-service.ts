@@ -1,9 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ActorMetadata, FeatureFlagKey } from 'twenty-shared/types';
+import { type ActorMetadata } from 'twenty-shared/types';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -50,7 +49,6 @@ export class WorkflowTriggerWorkspaceService {
     private readonly automatedTriggerWorkspaceService: AutomatedTriggerWorkspaceService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly commandMenuItemService: CommandMenuItemService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async runWorkflowVersion({
@@ -391,16 +389,6 @@ export class WorkflowTriggerWorkspaceService {
       return;
     }
 
-    const isCommandMenuItemEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-        workspaceId,
-      );
-
-    if (!isCommandMenuItemEnabled) {
-      return;
-    }
-
     const trigger = workflowVersion.trigger as WorkflowManualTrigger;
 
     const { availabilityType, availabilityObjectMetadataId } =
@@ -453,16 +441,6 @@ export class WorkflowTriggerWorkspaceService {
     assertWorkflowVersionTriggerIsDefined(workflowVersion);
 
     if (workflowVersion.trigger.type !== WorkflowTriggerType.MANUAL) {
-      return;
-    }
-
-    const isCommandMenuItemEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-        workspaceId,
-      );
-
-    if (!isCommandMenuItemEnabled) {
       return;
     }
 

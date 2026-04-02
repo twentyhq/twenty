@@ -7,6 +7,7 @@ export const GET_CHAT_MESSAGES = gql`
       threadId
       turnId
       role
+      status
       createdAt
       parts {
         id
@@ -36,6 +37,10 @@ export const GET_CHAT_MESSAGES = gql`
         providerMetadata
         createdAt
       }
+    }
+    chatStreamCatchupChunks(threadId: $threadId) {
+      chunks
+      maxSeq
     }
   }
 `;

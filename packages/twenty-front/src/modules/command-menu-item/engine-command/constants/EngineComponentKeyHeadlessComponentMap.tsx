@@ -1,25 +1,21 @@
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
 import { HeadlessOpenSidePanelPageEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessOpenSidePanelPageEngineCommand';
-import { DeleteMultipleRecordsCommand } from '@/command-menu-item/engine-command/record/multiple-records/components/DeleteMultipleRecordsCommand';
-import { DestroyMultipleRecordsCommand } from '@/command-menu-item/engine-command/record/multiple-records/components/DestroyMultipleRecordsCommand';
-import { ExportMultipleRecordsCommand } from '@/command-menu-item/engine-command/record/multiple-records/components/ExportMultipleRecordsCommand';
 import { MergeMultipleRecordsCommand } from '@/command-menu-item/engine-command/record/multiple-records/components/MergeMultipleRecordsCommand';
-import { RestoreMultipleRecordsCommand } from '@/command-menu-item/engine-command/record/multiple-records/components/RestoreMultipleRecordsCommand';
 import { UpdateMultipleRecordsCommand } from '@/command-menu-item/engine-command/record/multiple-records/components/UpdateMultipleRecordsCommand';
 import { CreateNewIndexRecordNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/CreateNewIndexRecordNoSelectionRecordCommand';
 import { CreateNewViewNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/CreateNewViewNoSelectionRecordCommand';
 import { HideDeletedRecordsNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/HideDeletedRecordsNoSelectionRecordCommand';
 import { ImportRecordsNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/ImportRecordsNoSelectionRecordCommand';
 import { SeeDeletedRecordsNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/SeeDeletedRecordsNoSelectionRecordCommand';
+import { DeleteRecordsCommand } from '@/command-menu-item/engine-command/record/components/DeleteRecordsCommand';
+import { DestroyRecordsCommand } from '@/command-menu-item/engine-command/record/components/DestroyRecordsCommand';
+import { ExportRecordsCommand } from '@/command-menu-item/engine-command/record/components/ExportRecordsCommand';
+import { RestoreRecordsCommand } from '@/command-menu-item/engine-command/record/components/RestoreRecordsCommand';
 import { AddToFavoritesSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/AddToFavoritesSingleRecordCommand';
-import { DeleteSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/DeleteSingleRecordCommand';
-import { DestroySingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/DestroySingleRecordCommand';
 import { ExportNoteSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/ExportNoteSingleRecordCommand';
-import { ExportSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/ExportSingleRecordCommand';
 import { NavigateToNextRecordSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/NavigateToNextRecordSingleRecordCommand';
 import { NavigateToPreviousRecordSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/NavigateToPreviousRecordSingleRecordCommand';
 import { RemoveFromFavoritesSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/RemoveFromFavoritesSingleRecordCommand';
-import { RestoreSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/RestoreSingleRecordCommand';
 import { CancelDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/CancelDashboardSingleRecordCommand';
 import { DuplicateDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand';
 import { EditDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/EditDashboardSingleRecordCommand';
@@ -57,18 +53,9 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.CREATE_NEW_RECORD]: (
     <CreateNewIndexRecordNoSelectionRecordCommand />
   ),
-  [EngineComponentKey.DELETE_SINGLE_RECORD]: <DeleteSingleRecordCommand />,
-  [EngineComponentKey.DELETE_MULTIPLE_RECORDS]: (
-    <DeleteMultipleRecordsCommand />
-  ),
-  [EngineComponentKey.RESTORE_SINGLE_RECORD]: <RestoreSingleRecordCommand />,
-  [EngineComponentKey.RESTORE_MULTIPLE_RECORDS]: (
-    <RestoreMultipleRecordsCommand />
-  ),
-  [EngineComponentKey.DESTROY_SINGLE_RECORD]: <DestroySingleRecordCommand />,
-  [EngineComponentKey.DESTROY_MULTIPLE_RECORDS]: (
-    <DestroyMultipleRecordsCommand />
-  ),
+  [EngineComponentKey.DELETE_RECORDS]: <DeleteRecordsCommand />,
+  [EngineComponentKey.RESTORE_RECORDS]: <RestoreRecordsCommand />,
+  [EngineComponentKey.DESTROY_RECORDS]: <DestroyRecordsCommand />,
   [EngineComponentKey.ADD_TO_FAVORITES]: <AddToFavoritesSingleRecordCommand />,
   [EngineComponentKey.REMOVE_FROM_FAVORITES]: (
     <RemoveFromFavoritesSingleRecordCommand />
@@ -107,20 +94,14 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
     <NavigateToPreviousRecordSingleRecordCommand />
   ),
   [EngineComponentKey.EXPORT_NOTE_TO_PDF]: <ExportNoteSingleRecordCommand />,
-  [EngineComponentKey.EXPORT_FROM_RECORD_INDEX]: (
-    <ExportMultipleRecordsCommand />
-  ),
-  [EngineComponentKey.EXPORT_FROM_RECORD_SHOW]: <ExportSingleRecordCommand />,
-  [EngineComponentKey.EXPORT_MULTIPLE_RECORDS]: (
-    <ExportMultipleRecordsCommand />
-  ),
+  [EngineComponentKey.EXPORT_RECORDS]: <ExportRecordsCommand />,
   [EngineComponentKey.UPDATE_MULTIPLE_RECORDS]: (
     <UpdateMultipleRecordsCommand />
   ),
   [EngineComponentKey.IMPORT_RECORDS]: (
     <ImportRecordsNoSelectionRecordCommand />
   ),
-  [EngineComponentKey.EXPORT_VIEW]: <ExportMultipleRecordsCommand />,
+  [EngineComponentKey.EXPORT_VIEW]: <ExportRecordsCommand />,
   [EngineComponentKey.SEE_DELETED_RECORDS]: (
     <SeeDeletedRecordsNoSelectionRecordCommand />
   ),
@@ -259,4 +240,15 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.FRONT_COMPONENT_RENDERER]: (
     <HeadlessFrontComponentRendererEngineCommand />
   ),
+
+  // Deprecated keys kept for backward compatibility until migration runs
+  [EngineComponentKey.DELETE_SINGLE_RECORD]: <DeleteRecordsCommand />,
+  [EngineComponentKey.DELETE_MULTIPLE_RECORDS]: <DeleteRecordsCommand />,
+  [EngineComponentKey.RESTORE_SINGLE_RECORD]: <RestoreRecordsCommand />,
+  [EngineComponentKey.RESTORE_MULTIPLE_RECORDS]: <RestoreRecordsCommand />,
+  [EngineComponentKey.DESTROY_SINGLE_RECORD]: <DestroyRecordsCommand />,
+  [EngineComponentKey.DESTROY_MULTIPLE_RECORDS]: <DestroyRecordsCommand />,
+  [EngineComponentKey.EXPORT_FROM_RECORD_INDEX]: <ExportRecordsCommand />,
+  [EngineComponentKey.EXPORT_FROM_RECORD_SHOW]: <ExportRecordsCommand />,
+  [EngineComponentKey.EXPORT_MULTIPLE_RECORDS]: <ExportRecordsCommand />,
 };
