@@ -10,7 +10,13 @@ import {
   StyledSkeletonContainer,
   StyledTableScrollContainer,
 } from '@/ai/components/LazyMarkdownRendererStyledComponents';
-import { cloneElement, isValidElement, lazy, Suspense, useContext } from 'react';
+import {
+  cloneElement,
+  isValidElement,
+  lazy,
+  Suspense,
+  useContext,
+} from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
