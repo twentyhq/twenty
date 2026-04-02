@@ -2787,10 +2787,12 @@ type AgentChatThread {
 type AgentMessage {
   id: UUID!
   threadId: UUID!
-  turnId: UUID!
+  turnId: UUID
   agentId: UUID
   role: String!
+  status: String!
   parts: [AgentMessagePart!]!
+  processedAt: DateTime
   createdAt: DateTime!
 }
 
@@ -2803,6 +2805,22 @@ type AISystemPromptSection {
 type AISystemPromptPreview {
   sections: [AISystemPromptSection!]!
   estimatedTokenCount: Int!
+}
+
+type ChatStreamCatchupChunks {
+  chunks: [JSON!]!
+  maxSeq: Int!
+}
+
+type SendChatMessageResult {
+  messageId: String!
+  queued: Boolean!
+  streamId: String
+}
+
+type AgentChatEvent {
+  threadId: String!
+  event: JSON!
 }
 
 type AgentChatThreadEdge {
@@ -3152,6 +3170,7 @@ type Query {
   minimalMetadata: MinimalMetadata!
   chatThread(id: UUID!): AgentChatThread!
   chatMessages(threadId: UUID!): [AgentMessage!]!
+  chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
   getAISystemPromptPreview: AISystemPromptPreview!
   skills: [Skill!]!
   skill(id: UUID!): Skill
@@ -3452,6 +3471,9 @@ type Mutation {
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   deleteWebhook(id: UUID!): Webhook!
   createChatThread: AgentChatThread!
+  sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String): SendChatMessageResult!
+  stopAgentChatStream(threadId: UUID!): Boolean!
+  deleteQueuedChatMessage(messageId: UUID!): Boolean!
   createSkill(input: CreateSkillInput!): Skill!
   updateSkill(input: UpdateSkillInput!): Skill!
   deleteSkill(id: UUID!): Skill!
@@ -4541,6 +4563,7 @@ enum FileFolder {
 type Subscription {
   onEventSubscription(eventStreamId: String!): EventSubscription
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
+  onAgentChatEvent(threadId: UUID!): AgentChatEvent!
 }
 
 input LogicFunctionLogsInput {
