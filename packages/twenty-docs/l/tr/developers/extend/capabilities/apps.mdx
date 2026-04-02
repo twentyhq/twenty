@@ -4,22 +4,22 @@ description: Twenty özelleştirmelerini kod olarak oluşturun ve yönetin.
 ---
 
 <Warning>
-Apps are currently in alpha. The feature works but is still evolving.
+Uygulamalar şu anda alfa aşamasında. Özellik işlevsel ancak hâlâ gelişmekte.
 </Warning>
 
-## What are apps?
+## Uygulamalar Nedir?
 
-Apps let you extend Twenty with custom objects, fields, logic functions, front components, AI skills, and more — all managed as code. Instead of configuring everything through the UI, you define your data model and logic in TypeScript and deploy it to one or more workspaces.
+Uygulamalar, Twenty'yi özel nesneler, alanlar, mantık işlevleri, ön yüz bileşenleri, yapay zekâ yetenekleri ve daha fazlasıyla genişletmenizi sağlar — tümü kod olarak yönetilir. Her şeyi UI üzerinden yapılandırmak yerine, veri modelinizi ve mantığınızı TypeScript'te tanımlar ve bunu bir veya daha fazla çalışma alanına dağıtırsınız.
 
 **Oluşturabilecekleriniz:**
 
-* **Custom objects and fields** — extend your data model with new entities or add fields to existing objects like Company or Person
-* **Logic functions** — server-side functions triggered by database events, cron schedules, or HTTP routes
-* **Front components** — React components that render inside Twenty's UI (record pages, command menu, side panels)
-* **AI skills and agents** — extend Twenty's AI with custom capabilities
-* **Views and navigation** — preconfigured saved views and sidebar links
+* **Özel nesneler ve alanlar** — veri modelinizi yeni varlıklarla genişletin veya Şirket ya da Kişi gibi mevcut nesnelere alanlar ekleyin
+* **Mantık işlevleri** — veritabanı olayları, cron zamanlamaları veya HTTP rotaları tarafından tetiklenen sunucu tarafı işlevler
+* **Ön yüz bileşenleri** — Twenty'nin kullanıcı arayüzünde (kayıt sayfaları, komut menüsü, yan paneller) görüntülenen React bileşenleri
+* **Yapay zekâ yetenekleri ve ajanları** — Twenty'nin yapay zekâsını özel yeteneklerle genişletin
+* **Görünümler ve gezinme** — önceden yapılandırılmış kaydedilmiş görünümler ve kenar çubuğu bağlantıları
 
-## Quick start
+## Hızlı Başlangıç
 
 ```bash filename="Terminal"
 npx create-twenty-app@latest my-twenty-app
@@ -27,55 +27,55 @@ cd my-twenty-app
 yarn twenty dev
 ```
 
-This scaffolds a new app, optionally starts a local Twenty server, and begins watching your files for changes. See the [Getting Started](/l/tr/developers/extend/apps/getting-started) guide for the full walkthrough.
+Bu, yeni bir uygulamanın iskeletini oluşturur, isteğe bağlı olarak yerel bir Twenty sunucusunu başlatır ve dosyalarınızdaki değişiklikleri izlemeye başlar. Tam adım adım anlatım için [Başlarken](/l/tr/developers/extend/apps/getting-started) kılavuzuna bakın.
 
-## Detailed guides
+## Ayrıntılı kılavuzlar
 
-| Guide                                                      | Açıklama                                                                                                                                    |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Getting Started](/l/tr/developers/extend/apps/getting-started) | Scaffold an app, set up a local server, project structure, CI                                                                               |
-| [Building Apps](/l/tr/developers/extend/apps/building)          | Entity definitions (`defineObject`, `defineLogicFunction`, `defineFrontComponent`, etc.), API clients, npm packages, public assets, testing |
-| [Publishing](/l/tr/developers/extend/apps/publishing)           | Deploy to a server, publish to npm, marketplace                                                                                             |
+| Kılavuz                                                | Açıklama                                                                                                                                    |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Başlarken](/l/tr/developers/extend/apps/getting-started)   | Bir uygulamanın iskeletini oluşturun, yerel bir sunucu kurun, proje yapısı, CI                                                              |
+| [Uygulama Oluşturma](/l/tr/developers/extend/apps/building) | Varlık tanımları (`defineObject`, `defineLogicFunction`, `defineFrontComponent` vb.), API istemcileri, npm paketleri, genel varlıklar, test |
+| [Yayınlama](/l/tr/developers/extend/apps/publishing)        | Bir sunucuya dağıtın, npm'e ve pazaryerine yayınlayın                                                                                       |
 
-## Key concepts
+## Temel Kavramlar
 
 ### Varlık algılama
 
-The SDK detects entities by scanning your TypeScript files for `export default define<Entity>({...})` calls. File naming and folder structure are flexible — detection is AST-based, not path-based.
+SDK, TypeScript dosyalarınızı `export default define<Entity>({...})` çağrılarını tarayarak varlıkları algılar. Dosya adlandırması ve klasör yapısı esnektir — algılama AST tabanlıdır, yol tabanlı değildir.
 
-### Available entity types
+### Kullanılabilir varlık türleri
 
-| Fonksiyon                          | Amaç                                         |
-| ---------------------------------- | -------------------------------------------- |
-| `defineApplication()`              | Application metadata (required, one per app) |
-| `defineObject()`                   | Custom objects with fields                   |
-| `defineField()`                    | Fields on existing objects                   |
-| `defineLogicFunction()`            | Server-side logic with triggers              |
-| `defineFrontComponent()`           | React components in Twenty's UI              |
-| `defineRole()`                     | Permission roles                             |
-| `defineView()`                     | Saved view configurations                    |
-| `defineNavigationMenuItem()`       | Sidebar navigation links                     |
-| `defineSkill()`                    | AI agent skills                              |
-| `defineAgent()`                    | AI agents with prompts                       |
-| `definePageLayout()`               | Custom record page layouts                   |
-| `definePreInstallLogicFunction()`  | Runs before app installation                 |
-| `definePostInstallLogicFunction()` | Runs after app installation                  |
+| Fonksiyon                          | Amaç                                                       |
+| ---------------------------------- | ---------------------------------------------------------- |
+| `defineApplication()`              | Uygulama meta verileri (zorunlu, uygulama başına bir adet) |
+| `defineObject()`                   | Alanlara sahip özel nesneler                               |
+| `defineField()`                    | Mevcut nesnelerde alanlar                                  |
+| `defineLogicFunction()`            | Tetikleyicilerle sunucu tarafı mantık                      |
+| `defineFrontComponent()`           | Twenty'nin kullanıcı arayüzündeki React bileşenleri        |
+| `defineRole()`                     | İzin rolleri                                               |
+| `defineView()`                     | Kaydedilmiş görünüm yapılandırmaları                       |
+| `defineNavigationMenuItem()`       | Kenar çubuğu gezinme bağlantıları                          |
+| `defineSkill()`                    | Yapay zekâ ajanı yetenekleri                               |
+| `defineAgent()`                    | İstemlerle yapay zekâ ajanları                             |
+| `definePageLayout()`               | Özel kayıt sayfası düzenleri                               |
+| `definePreInstallLogicFunction()`  | Uygulama kurulmadan önce çalışır                           |
+| `definePostInstallLogicFunction()` | Uygulama kurulduktan sonra çalışır                         |
 
-### Development workflow
+### Geliştirme iş akışı
 
-1. **`yarn twenty dev`** — watches source files, rebuilds on change, syncs to the server, generates typed API clients
-2. **`yarn twenty build`** — produces a distributable build
-3. **`yarn twenty deploy`** — deploys to a remote Twenty server
-4. **`yarn twenty add`** — scaffolds a new entity interactively
+1. **`yarn twenty dev`** — kaynak dosyaları izler, değişiklikte yeniden derler, sunucuyla senkronize eder, tipli API istemcileri üretir
+2. **`yarn twenty build`** — dağıtılabilir bir derleme üretir
+3. **`yarn twenty deploy`** — uzak bir Twenty sunucusuna dağıtır
+4. **`yarn twenty add`** — etkileşimli olarak yeni bir varlık iskeleti oluşturur
 
 ### CLI başvurusu
 
 ```bash filename="Terminal"
-yarn twenty help          # List all commands
-yarn twenty server start  # Start local dev server
-yarn twenty remote add    # Connect to a Twenty server
-yarn twenty exec -n fn    # Execute a logic function
-yarn twenty logs -n fn    # Stream function logs
+yarn twenty help          # Tüm komutları listele
+yarn twenty server start  # Yerel geliştirme sunucusunu başlat
+yarn twenty remote add    # Bir Twenty sunucusuna bağlan
+yarn twenty exec -n fn    # Bir mantık fonksiyonunu çalıştır
+yarn twenty logs -n fn    # Fonksiyon günlüklerini izle
 ```
 
-See the [Getting Started](/l/tr/developers/extend/apps/getting-started) guide for the full CLI reference.
+Tam CLI başvuru rehberi için [Başlarken](/l/tr/developers/extend/apps/getting-started) kılavuzuna bakın.

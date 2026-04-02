@@ -4,22 +4,22 @@ description: Создавайте и управляйте настройками
 ---
 
 <Warning>
-Apps are currently in alpha. The feature works but is still evolving.
+Приложения сейчас проходят альфа-тестирование. Функция работает, но продолжает развиваться.
 </Warning>
 
-## What are apps?
+## Что такое приложения?
 
-Apps let you extend Twenty with custom objects, fields, logic functions, front components, AI skills, and more — all managed as code. Instead of configuring everything through the UI, you define your data model and logic in TypeScript and deploy it to one or more workspaces.
+Приложения позволяют расширять Twenty с помощью пользовательских объектов, полей, логических функций, фронтенд-компонентов, навыков ИИ и многого другого — всё это управляется как код. Вместо настройки всего через интерфейс вы определяете модель данных и логику на TypeScript и развёртываете её в одном или нескольких рабочих пространствах.
 
 **Что вы можете создать:**
 
-* **Custom objects and fields** — extend your data model with new entities or add fields to existing objects like Company or Person
-* **Logic functions** — server-side functions triggered by database events, cron schedules, or HTTP routes
-* **Front components** — React components that render inside Twenty's UI (record pages, command menu, side panels)
-* **AI skills and agents** — extend Twenty's AI with custom capabilities
-* **Views and navigation** — preconfigured saved views and sidebar links
+* **Пользовательские объекты и поля** — расширяйте модель данных новыми сущностями или добавляйте поля к существующим объектам, таким как Company или Person
+* **Логические функции** — серверные функции, запускаемые событиями базы данных, расписаниями cron или HTTP-маршрутами
+* **Фронтенд-компоненты** — компоненты React, которые отображаются в интерфейсе Twenty (страницы записей, командное меню, боковые панели)
+* **Навыки и агенты ИИ** — расширяйте ИИ Twenty пользовательскими возможностями
+* **Представления и навигация** — преднастроенные сохранённые представления и ссылки боковой панели
 
-## Quick start
+## Быстрый старт
 
 ```bash filename="Terminal"
 npx create-twenty-app@latest my-twenty-app
@@ -27,55 +27,55 @@ cd my-twenty-app
 yarn twenty dev
 ```
 
-This scaffolds a new app, optionally starts a local Twenty server, and begins watching your files for changes. See the [Getting Started](/l/ru/developers/extend/apps/getting-started) guide for the full walkthrough.
+Это создаёт каркас нового приложения, при необходимости запускает локальный сервер Twenty и начинает отслеживать изменения в ваших файлах. См. руководство [Начало работы](/l/ru/developers/extend/apps/getting-started) для полного пошагового разбора.
 
-## Detailed guides
+## Подробные руководства
 
-| Руководство                                                | Описание                                                                                                                                    |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Getting Started](/l/ru/developers/extend/apps/getting-started) | Scaffold an app, set up a local server, project structure, CI                                                                               |
-| [Building Apps](/l/ru/developers/extend/apps/building)          | Entity definitions (`defineObject`, `defineLogicFunction`, `defineFrontComponent`, etc.), API clients, npm packages, public assets, testing |
-| [Publishing](/l/ru/developers/extend/apps/publishing)           | Deploy to a server, publish to npm, marketplace                                                                                             |
+| Руководство                                              | Описание                                                                                                                                               |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [Начало работы](/l/ru/developers/extend/apps/getting-started) | Создание каркаса приложения, настройка локального сервера, структура проекта, CI                                                                       |
+| [Создание приложений](/l/ru/developers/extend/apps/building)  | Определения сущностей (`defineObject`, `defineLogicFunction`, `defineFrontComponent` и т. д.), клиенты API, пакеты npm, публичные ассеты, тестирование |
+| [Публикация](/l/ru/developers/extend/apps/publishing)         | Развёртывание на сервер, публикация в npm и маркетплейсе                                                                                               |
 
-## Key concepts
+## Ключевые понятия
 
 ### Обнаружение сущностей
 
-The SDK detects entities by scanning your TypeScript files for `export default define<Entity>({...})` calls. File naming and folder structure are flexible — detection is AST-based, not path-based.
+SDK обнаруживает сущности, сканируя ваши файлы TypeScript в поисках вызовов `export default define<Entity>({...})`. Имена файлов и структура папок гибкие — обнаружение основано на AST, а не на путях.
 
-### Available entity types
+### Доступные типы сущностей
 
-| Функция                            | Назначение                                   |
-| ---------------------------------- | -------------------------------------------- |
-| `defineApplication()`              | Application metadata (required, one per app) |
-| `defineObject()`                   | Custom objects with fields                   |
-| `defineField()`                    | Fields on existing objects                   |
-| `defineLogicFunction()`            | Server-side logic with triggers              |
-| `defineFrontComponent()`           | React components in Twenty's UI              |
-| `defineRole()`                     | Permission roles                             |
-| `defineView()`                     | Saved view configurations                    |
-| `defineNavigationMenuItem()`       | Sidebar navigation links                     |
-| `defineSkill()`                    | AI agent skills                              |
-| `defineAgent()`                    | AI agents with prompts                       |
-| `definePageLayout()`               | Custom record page layouts                   |
-| `definePreInstallLogicFunction()`  | Runs before app installation                 |
-| `definePostInstallLogicFunction()` | Runs after app installation                  |
+| Функция                            | Назначение                                                   |
+| ---------------------------------- | ------------------------------------------------------------ |
+| `defineApplication()`              | Метаданные приложения (обязательно, по одному на приложение) |
+| `defineObject()`                   | Пользовательские объекты с полями                            |
+| `defineField()`                    | Поля в существующих объектах                                 |
+| `defineLogicFunction()`            | Серверная логика с триггерами                                |
+| `defineFrontComponent()`           | Компоненты React в интерфейсе Twenty                         |
+| `defineRole()`                     | Роли доступа                                                 |
+| `defineView()`                     | Конфигурации сохранённых представлений                       |
+| `defineNavigationMenuItem()`       | Ссылки боковой панели навигации                              |
+| `defineSkill()`                    | Навыки агента ИИ                                             |
+| `defineAgent()`                    | ИИ-агенты с промптами                                        |
+| `definePageLayout()`               | Пользовательские макеты страниц записей                      |
+| `definePreInstallLogicFunction()`  | Выполняется перед установкой приложения                      |
+| `definePostInstallLogicFunction()` | Выполняется после установки приложения                       |
 
-### Development workflow
+### Рабочий процесс разработки
 
-1. **`yarn twenty dev`** — watches source files, rebuilds on change, syncs to the server, generates typed API clients
-2. **`yarn twenty build`** — produces a distributable build
-3. **`yarn twenty deploy`** — deploys to a remote Twenty server
-4. **`yarn twenty add`** — scaffolds a new entity interactively
+1. **`yarn twenty dev`** — следит за исходными файлами, пересобирает при изменениях, синхронизируется с сервером, генерирует типизированные клиенты API
+2. **`yarn twenty build`** — создаёт дистрибутивную сборку
+3. **`yarn twenty deploy`** — развёртывает на удалённый сервер Twenty
+4. **`yarn twenty add`** — интерактивно создаёт каркас новой сущности
 
 ### Справочник по CLI
 
 ```bash filename="Terminal"
-yarn twenty help          # List all commands
-yarn twenty server start  # Start local dev server
-yarn twenty remote add    # Connect to a Twenty server
-yarn twenty exec -n fn    # Execute a logic function
-yarn twenty logs -n fn    # Stream function logs
+yarn twenty help          # Показать все команды
+yarn twenty server start  # Запустить локальный сервер разработки
+yarn twenty remote add    # Подключиться к серверу Twenty
+yarn twenty exec -n fn    # Выполнить логическую функцию
+yarn twenty logs -n fn    # Транслировать логи функции
 ```
 
-See the [Getting Started](/l/ru/developers/extend/apps/getting-started) guide for the full CLI reference.
+См. руководство [Начало работы](/l/ru/developers/extend/apps/getting-started) для полной справки по CLI.

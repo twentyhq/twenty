@@ -4,22 +4,22 @@ description: 以代码的形式构建并管理 Twenty 自定义项。
 ---
 
 <Warning>
-Apps are currently in alpha. The feature works but is still evolving.
+应用目前处于 Alpha 阶段。 该功能可用，但仍在演进中。
 </Warning>
 
-## What are apps?
+## 什么是应用？
 
-Apps let you extend Twenty with custom objects, fields, logic functions, front components, AI skills, and more — all managed as code. Instead of configuring everything through the UI, you define your data model and logic in TypeScript and deploy it to one or more workspaces.
+应用可通过自定义对象、字段、逻辑函数、前端组件、AI 技能等来扩展 Twenty——全部以代码进行管理。 无需通过 UI 配置所有内容，你可以用 TypeScript 定义数据模型和逻辑，并将其部署到一个或多个工作空间。
 
 **你可以构建的内容:**
 
-* **Custom objects and fields** — extend your data model with new entities or add fields to existing objects like Company or Person
-* **Logic functions** — server-side functions triggered by database events, cron schedules, or HTTP routes
-* **Front components** — React components that render inside Twenty's UI (record pages, command menu, side panels)
-* **AI skills and agents** — extend Twenty's AI with custom capabilities
-* **Views and navigation** — preconfigured saved views and sidebar links
+* **自定义对象和字段** — 使用新实体扩展你的数据模型，或为现有对象（如 Company 或 Person）添加字段
+* **逻辑函数** — 由数据库事件、定时任务（cron）或 HTTP 路由触发的服务端函数
+* **前端组件** — 在 Twenty 的 UI 中渲染的 React 组件（记录页面、命令菜单、侧边面板）
+* **AI 技能和智能体** — 通过自定义能力扩展 Twenty 的 AI
+* **视图和导航** — 预配置的已保存视图和侧边栏链接
 
-## Quick start
+## 快速开始
 
 ```bash filename="Terminal"
 npx create-twenty-app@latest my-twenty-app
@@ -27,55 +27,55 @@ cd my-twenty-app
 yarn twenty dev
 ```
 
-This scaffolds a new app, optionally starts a local Twenty server, and begins watching your files for changes. See the [Getting Started](/l/zh/developers/extend/apps/getting-started) guide for the full walkthrough.
+这将搭建一个新的应用，可选地启动本地 Twenty 服务器，并开始监视你的文件变更。 请参阅[开始使用](/l/zh/developers/extend/apps/getting-started)指南，查看完整演练。
 
-## Detailed guides
+## 详细指南
 
-| Guide                                                      | 描述                                                                                                                                          |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Getting Started](/l/zh/developers/extend/apps/getting-started) | Scaffold an app, set up a local server, project structure, CI                                                                               |
-| [Building Apps](/l/zh/developers/extend/apps/building)          | Entity definitions (`defineObject`, `defineLogicFunction`, `defineFrontComponent`, etc.), API clients, npm packages, public assets, testing |
-| [Publishing](/l/zh/developers/extend/apps/publishing)           | Deploy to a server, publish to npm, marketplace                                                                                             |
+| 指南                                              | 描述                                                                                        |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| [开始使用](/l/zh/developers/extend/apps/getting-started) | 搭建应用、设置本地服务器、项目结构、CI                                                                      |
+| [构建应用](/l/zh/developers/extend/apps/building)        | 实体定义（`defineObject`、`defineLogicFunction`、`defineFrontComponent` 等）、API 客户端、npm 包、公共资源、测试 |
+| [发布](/l/zh/developers/extend/apps/publishing)        | 部署到服务器、发布到 npm、应用市场                                                                       |
 
-## Key concepts
+## 关键概念
 
 ### 实体检测
 
-The SDK detects entities by scanning your TypeScript files for `export default define<Entity>({...})` calls. File naming and folder structure are flexible — detection is AST-based, not path-based.
+SDK 通过扫描你的 TypeScript 文件中的 `export default define<Entity>({...})` 调用来检测实体。 文件命名和文件夹结构是灵活的 — 检测基于 AST，而非基于路径。
 
-### Available entity types
+### 可用的实体类型
 
-| 函数                                 | 目的                                           |
-| ---------------------------------- | -------------------------------------------- |
-| `defineApplication()`              | Application metadata (required, one per app) |
-| `defineObject()`                   | Custom objects with fields                   |
-| `defineField()`                    | Fields on existing objects                   |
-| `defineLogicFunction()`            | Server-side logic with triggers              |
-| `defineFrontComponent()`           | React components in Twenty's UI              |
-| `defineRole()`                     | Permission roles                             |
-| `defineView()`                     | Saved view configurations                    |
-| `defineNavigationMenuItem()`       | Sidebar navigation links                     |
-| `defineSkill()`                    | AI agent skills                              |
-| `defineAgent()`                    | AI agents with prompts                       |
-| `definePageLayout()`               | Custom record page layouts                   |
-| `definePreInstallLogicFunction()`  | Runs before app installation                 |
-| `definePostInstallLogicFunction()` | Runs after app installation                  |
+| 函数                                 | 目的                      |
+| ---------------------------------- | ----------------------- |
+| `defineApplication()`              | 应用元数据（必需，每个应用一个）        |
+| `defineObject()`                   | 带字段的自定义对象               |
+| `defineField()`                    | 现有对象上的字段                |
+| `defineLogicFunction()`            | 带触发器的服务端逻辑              |
+| `defineFrontComponent()`           | Twenty 的 UI 中的 React 组件 |
+| `defineRole()`                     | 权限角色                    |
+| `defineView()`                     | 已保存视图配置                 |
+| `defineNavigationMenuItem()`       | 侧边栏导航链接                 |
+| `defineSkill()`                    | AI 智能体技能                |
+| `defineAgent()`                    | 带提示词的 AI 智能体            |
+| `definePageLayout()`               | 自定义记录页面布局               |
+| `definePreInstallLogicFunction()`  | 在应用安装之前运行               |
+| `definePostInstallLogicFunction()` | 在应用安装之后运行               |
 
-### Development workflow
+### 开发工作流程
 
-1. **`yarn twenty dev`** — watches source files, rebuilds on change, syncs to the server, generates typed API clients
-2. **`yarn twenty build`** — produces a distributable build
-3. **`yarn twenty deploy`** — deploys to a remote Twenty server
-4. **`yarn twenty add`** — scaffolds a new entity interactively
+1. **`yarn twenty dev`** — 监视源文件、更改时重新构建、同步到服务器、生成类型化的 API 客户端
+2. **`yarn twenty build`** — 生成可分发的构建产物
+3. **`yarn twenty deploy`** — 部署到远程 Twenty 服务器
+4. **`yarn twenty add`** — 交互式生成一个新实体
 
 ### CLI 参考
 
 ```bash filename="Terminal"
-yarn twenty help          # List all commands
-yarn twenty server start  # Start local dev server
-yarn twenty remote add    # Connect to a Twenty server
-yarn twenty exec -n fn    # Execute a logic function
-yarn twenty logs -n fn    # Stream function logs
+yarn twenty help          # 列出所有命令
+yarn twenty server start  # 启动本地开发服务器
+yarn twenty remote add    # 连接到 Twenty 服务器
+yarn twenty exec -n fn    # 执行逻辑函数
+yarn twenty logs -n fn    # 实时查看函数日志
 ```
 
-See the [Getting Started](/l/zh/developers/extend/apps/getting-started) guide for the full CLI reference.
+请参阅[开始使用](/l/zh/developers/extend/apps/getting-started)指南以获取完整的 CLI 参考。
