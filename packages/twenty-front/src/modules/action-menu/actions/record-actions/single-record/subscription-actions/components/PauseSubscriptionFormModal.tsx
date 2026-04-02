@@ -42,6 +42,9 @@ export const PauseSubscriptionFormModal = ({
   recordId,
   objectNameSingular,
 }: PauseSubscriptionFormModalProps) => {
+  const [pauseStartDate, setPauseStartDate] = useState(
+    new Date().toISOString().split('T')[0],
+  );
   const [pauseDaysInput, setPauseDaysInput] = useState('');
   const [reason, setReason] = useState('');
   const [notes, setNotes] = useState('');
@@ -116,7 +119,7 @@ export const PauseSubscriptionFormModal = ({
       await createChangeRequest({
         subscriptionId: recordId,
         periodType: 'PAUSE',
-        startDate: new Date().toISOString(),
+        startDate: new Date(pauseStartDate).toISOString(),
         duration: pauseDays,
         reason,
         notes,
@@ -208,6 +211,14 @@ export const PauseSubscriptionFormModal = ({
               {MAX_TOTAL_PAUSE_DAYS} days.
             </StyledError>
           )}
+
+          <TextInput
+            label="Pause Start Date"
+            type="date"
+            value={pauseStartDate}
+            onChange={(value) => setPauseStartDate(value)}
+            fullWidth
+          />
 
           <TextInput
             label="Pause Duration (Days)"
