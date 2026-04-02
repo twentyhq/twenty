@@ -62,6 +62,7 @@ export const mapUIMessagePartsToDBParts = (
             providerMetadata: part.providerMetadata ?? null,
           };
         case 'step-start':
+        case 'data-compaction':
           return basePart;
         case 'data-routing-status':
           return {
@@ -73,11 +74,6 @@ export const mapUIMessagePartsToDBParts = (
           // Code execution parts are streamed during execution but don't need
           // to be persisted - the final result is captured in the tool part
           return null;
-        case 'data-compaction':
-          return {
-            ...basePart,
-            textContent: String(part.data.prunedMessageCount),
-          };
         case 'data-thread-title':
           // Thread title is a transient notification for the client
           return null;

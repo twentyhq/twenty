@@ -46,8 +46,9 @@ export const mapDBPartToUIMessagePart = (
         providerMetadata: part.providerMetadata ?? undefined,
       };
     case 'step-start':
+    case 'data-compaction':
       return {
-        type: 'step-start',
+        type: part.type,
       };
     case 'data-routing-status':
       return {
@@ -55,13 +56,6 @@ export const mapDBPartToUIMessagePart = (
         data: {
           text: part.textContent!,
           state: part.state!,
-        },
-      };
-    case 'data-compaction':
-      return {
-        type: part.type,
-        data: {
-          prunedMessageCount: Number(part.textContent),
         },
       };
     default:

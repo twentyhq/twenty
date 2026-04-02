@@ -88,5 +88,5 @@ export type DataMessagePart = {
   };
   'code-execution': CodeExecutionData;
   'thread-title': { title: string };
-  compaction: { prunedMessageCount: number };
+  compaction: Record<string, never>;
 };

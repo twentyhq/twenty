@@ -65,7 +65,7 @@ export type ChatExecutionOptions = {
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
   browsingContext: BrowsingContextType | null;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
-  onCompaction?: (event: { prunedMessageCount: number }) => void;
+  onCompaction?: () => void;
   modelId?: string;
   abortSignal?: AbortSignal;
   conversationSizeTokens: number;
@@ -246,10 +246,7 @@ export class ChatExecutionService {
     }
 
     if (pruningResult.wasPruned) {
-      const prunedCount =
-        rawModelMessages.length - pruningResult.messages.length;
-
-      onCompaction?.({ prunedMessageCount: prunedCount });
+      onCompaction?.();
     }
 
     const modelMessages = pruningResult.messages;

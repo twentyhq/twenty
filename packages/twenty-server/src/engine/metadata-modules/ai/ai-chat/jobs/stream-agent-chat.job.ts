@@ -164,7 +164,7 @@ export class StreamAgentChatJob {
       };
       let lastStepConversationSize = 0;
       let totalCacheCreationTokens = 0;
-      let compactionEvent: { prunedMessageCount: number } | null = null;
+      let didCompact = false;
 
       abortSignal.addEventListener('abort', () => resolve(), { once: true });
 
@@ -180,14 +180,11 @@ export class StreamAgentChatJob {
             });
           };
 
-          const onCompaction = (event: { prunedMessageCount: number }) => {
-            compactionEvent = event;
+          const onCompaction = () => {
+            didCompact = true;
             writer.write({
               type: 'data-compaction' as const,
               id: `compaction-${data.threadId}`,
-              data: {
-                prunedMessageCount: event.prunedMessageCount,
-              },
             });
           };
 
@@ -239,16 +236,13 @@ export class StreamAgentChatJob {
               },
               onFinish: async ({ responseMessage }) => {
                 try {
-                  const messageToSave = compactionEvent
+                  const messageToSave = didCompact
                     ? {
                         ...responseMessage,
                         parts: [
                           {
                             type: 'data-compaction' as const,
-                            data: {
-                              prunedMessageCount:
-                                compactionEvent.prunedMessageCount,
-                            },
+                            data: {},
                           },
                           ...responseMessage.parts,
                         ],
