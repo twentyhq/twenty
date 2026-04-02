@@ -21,18 +21,17 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 import { DirectExecutionService } from 'src/engine/api/graphql/direct-execution/direct-execution.service';
 import { useDirectExecution } from 'src/engine/api/graphql/direct-execution/hooks/use-direct-execution.hook';
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
+import { type FlatAuthContextUser } from 'src/engine/core-modules/auth/types/flat-auth-context-user.type';
 import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { useSentryTracing } from 'src/engine/core-modules/exception-handler/hooks/use-sentry-tracing';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers } from 'src/engine/core-modules/graphql/hooks/use-disable-introspection-and-suggestions-for-unauthenticated-users.hook';
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
-import { useGraphQLQueryTiming } from 'src/engine/core-modules/graphql/hooks/use-graphql-query-timing.hook';
 import { useValidateGraphqlQueryComplexity } from 'src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type FlatAuthContextUser } from 'src/engine/core-modules/auth/types/flat-auth-context-user.type';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 import { handleExceptionAndConvertToGraphQLError } from 'src/engine/utils/global-exception-handler.util';
@@ -62,9 +61,6 @@ export class GraphQLConfigService
     const isDebugMode =
       this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT;
     const plugins = [
-      useGraphQLQueryTiming({
-        featureFlagService: this.featureFlagService,
-      }),
       useDirectExecution({
         directExecutionService: this.directExecutionService,
         featureFlagService: this.featureFlagService,

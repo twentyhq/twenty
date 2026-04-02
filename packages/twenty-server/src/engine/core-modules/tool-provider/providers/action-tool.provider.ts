@@ -18,6 +18,7 @@ import {
   type ToolDescriptor,
   type ToolIndexEntry,
 } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool';
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
@@ -41,6 +42,7 @@ export class ActionToolProvider implements ToolProvider {
     private readonly searchHelpCenterTool: SearchHelpCenterTool,
     private readonly codeInterpreterTool: CodeInterpreterTool,
     private readonly navigateAppTool: NavigateAppTool,
+    private readonly codeInterpreterService: CodeInterpreterService,
     private readonly permissionsService: PermissionsService,
     private readonly toolExecutorService: ToolExecutorService,
   ) {
@@ -128,11 +130,12 @@ export class ActionToolProvider implements ToolProvider {
     );
 
     const hasCodeInterpreterPermission =
-      await this.permissionsService.hasToolPermission(
+      this.codeInterpreterService.isEnabled() &&
+      (await this.permissionsService.hasToolPermission(
         context.rolePermissionConfig,
         context.workspaceId,
         PermissionFlagType.CODE_INTERPRETER_TOOL,
-      );
+      ));
 
     if (hasCodeInterpreterPermission) {
       descriptors.push(

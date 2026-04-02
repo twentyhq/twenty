@@ -2,6 +2,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
+import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
@@ -11,6 +12,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { styled } from '@linaria/react';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { H2Title, IconArchive, IconTrash } from 'twenty-ui/display';
@@ -56,7 +58,10 @@ export const ObjectSettings = ({
   const { enqueueSuccessSnackBar } = useSnackBar();
   const { openModal, closeModal } = useModal();
 
-  const isReadOnly = isObjectMetadataReadOnly({ objectMetadataItem });
+  const isDDLLocked = useAtomStateValue(isDDLLockedState);
+
+  const isReadOnly =
+    isObjectMetadataReadOnly({ objectMetadataItem }) || isDDLLocked;
 
   const handleDisable = async () => {
     const result = await updateOneObjectMetadataItem({

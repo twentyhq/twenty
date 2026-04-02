@@ -6,6 +6,7 @@ import { IconDotsVertical } from 'twenty-ui/display';
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
+import { isCodeInterpreterToolPart } from '@/ai/utils/isCodeInterpreterToolPart';
 import { styled } from '@linaria/react';
 import { isToolUIPart, type ToolUIPart } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
@@ -92,16 +93,13 @@ export const AIChatAssistantMessageRenderer = ({
   isLastMessageStreaming: boolean;
   hasError?: boolean;
 }) => {
-  // Filter out data-code-execution parts when tool-code_interpreter exists
-  // (the tool part contains the final result, data-code-execution is for streaming updates)
-  // Also filter out data-thread-title (consumed by useAgentChat, not rendered)
-  const hasCodeInterpreterTool = messageParts.some(
-    (part) => part.type === 'tool-code_interpreter',
+  const hasCodeExecutionData = messageParts.some(
+    (part) => part.type === 'data-code-execution',
   );
   const filteredParts = messageParts.filter(
     (part) =>
       part.type !== 'data-thread-title' &&
-      (!hasCodeInterpreterTool || part.type !== 'data-code-execution'),
+      !(hasCodeExecutionData && isCodeInterpreterToolPart(part)),
   );
   const renderItems = groupContiguousThinkingStepParts(filteredParts);
 

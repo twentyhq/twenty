@@ -1,5 +1,5 @@
-import { ArrowRightUpIcon } from '@/icons';
-import { SOCIAL_LINKS } from '@/sections/Footer/constants/social-links';
+import { ArrowRightUpIcon, SOCIAL_ICONS } from '@/icons';
+import type { FooterSocialLinkType } from '@/sections/Footer/types';
 import { theme } from '@/theme';
 import { Separator } from '@base-ui/react/separator';
 import { styled } from '@linaria/react';
@@ -49,34 +49,46 @@ const SocialItem = styled.a`
   }
 `;
 
-export function Social() {
+type SocialProps = {
+  links: FooterSocialLinkType[];
+};
+
+export function Social({ links }: SocialProps) {
+  const drawerLinks = links.filter(
+    (item) => item.showInDrawer && SOCIAL_ICONS[item.icon],
+  );
+
   return (
     <SocialContainer aria-label="Social media">
-      {SOCIAL_LINKS.filter((item) => item.showInDrawer).map((item, index) => (
-        <React.Fragment key={item.href}>
-          {index > 0 && <SocialDivider orientation="vertical" />}
-          <SocialItem
-            href={item.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={item.ariaLabel}
-          >
-            <item.icon
-              size={14}
-              fillColor={theme.colors.secondary.background[100]}
-              aria-hidden
-            />
-            {item.label}
-            {item.label != null && (
-              <ArrowRightUpIcon
-                size={8}
-                strokeColor={theme.colors.highlight[100]}
+      {drawerLinks.map((item, index) => {
+        const IconComponent = SOCIAL_ICONS[item.icon];
+
+        return (
+          <React.Fragment key={item.href}>
+            {index > 0 && <SocialDivider orientation="vertical" />}
+            <SocialItem
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={item.ariaLabel}
+            >
+              <IconComponent
+                size={14}
+                fillColor={theme.colors.secondary.background[100]}
                 aria-hidden
               />
-            )}
-          </SocialItem>
-        </React.Fragment>
-      ))}
+              {item.label}
+              {item.label != null && (
+                <ArrowRightUpIcon
+                  size={8}
+                  strokeColor={theme.colors.highlight[100]}
+                  aria-hidden
+                />
+              )}
+            </SocialItem>
+          </React.Fragment>
+        );
+      })}
     </SocialContainer>
   );
 }

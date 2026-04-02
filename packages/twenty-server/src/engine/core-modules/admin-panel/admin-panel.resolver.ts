@@ -10,6 +10,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
+import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { AdminAIModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
@@ -55,9 +56,11 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 import { AdminPanelHealthServiceDataDTO } from './dtos/admin-panel-health-service-data.dto';
+import { MaintenanceModeDTO } from './dtos/maintenance-mode.dto';
 import { ModelsDevModelSuggestionDTO } from './dtos/models-dev-model-suggestion.dto';
 import { ModelsDevProviderSuggestionDTO } from './dtos/models-dev-provider-suggestion.dto';
 import { QueueMetricsDataDTO } from './dtos/queue-metrics-data.dto';
+import { SetMaintenanceModeInput } from './dtos/set-maintenance-mode.input';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -82,6 +85,7 @@ export class AdminPanelResolver {
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly modelsDevCatalogService: ModelsDevCatalogService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
+    private readonly maintenanceModeService: MaintenanceModeService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
@@ -550,5 +554,43 @@ export class AdminPanelResolver {
       ...item,
       label: nameMap.get(item.key),
     }));
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Query(() => MaintenanceModeDTO, { nullable: true })
+  async getMaintenanceMode(): Promise<MaintenanceModeDTO | null> {
+    const value = await this.maintenanceModeService.getMaintenanceMode();
+
+    if (!isDefined(value)) {
+      return null;
+    }
+
+    return {
+      startAt: new Date(value.startAt),
+      endAt: new Date(value.endAt),
+      link: value.link,
+    };
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async setMaintenanceMode(
+    @Args() { startAt, endAt, link }: SetMaintenanceModeInput,
+  ): Promise<boolean> {
+    await this.maintenanceModeService.setMaintenanceMode({
+      startAt: startAt.toISOString(),
+      endAt: endAt.toISOString(),
+      link,
+    });
+
+    return true;
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async clearMaintenanceMode(): Promise<boolean> {
+    await this.maintenanceModeService.clearMaintenanceMode();
+
+    return true;
   }
 }

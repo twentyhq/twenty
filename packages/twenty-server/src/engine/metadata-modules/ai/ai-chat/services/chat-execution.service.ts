@@ -19,6 +19,7 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
+import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
@@ -84,6 +85,7 @@ export class ChatExecutionService {
     private readonly aiBillingService: AiBillingService,
     private readonly agentActorContextService: AgentActorContextService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
+    private readonly codeInterpreterService: CodeInterpreterService,
     private readonly systemPromptBuilder: SystemPromptBuilderService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly sdkProviderFactory: SdkProviderFactoryService,
@@ -185,19 +187,24 @@ export class ChatExecutionService {
       ),
     };
 
-    const { processedMessages, extractedFiles } =
-      extractCodeInterpreterFiles(messages);
+    let processedMessages: UIMessage[] = messages;
 
     let storedFiles: Array<{
       filename: string;
       fileId: string;
     }> = [];
 
-    if (extractedFiles.length > 0) {
-      storedFiles = await this.storeExtractedFiles(
-        extractedFiles,
-        workspace.id,
-      );
+    if (this.codeInterpreterService.isEnabled()) {
+      const extracted = extractCodeInterpreterFiles(messages);
+
+      processedMessages = extracted.processedMessages;
+
+      if (extracted.extractedFiles.length > 0) {
+        storedFiles = await this.storeExtractedFiles(
+          extracted.extractedFiles,
+          workspace.id,
+        );
+      }
     }
 
     const systemPrompt = this.systemPromptBuilder.buildFullPrompt(

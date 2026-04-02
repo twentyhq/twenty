@@ -15,7 +15,7 @@ export { invalidAvatarUrlsAtomV2 } from './avatar/components/states/invalidAvata
 export { AVATAR_PROPERTIES_BY_SIZE } from './avatar/constants/AvatarPropertiesBySize';
 export type { AvatarSize } from './avatar/types/AvatarSize';
 export type { AvatarType } from './avatar/types/AvatarType';
-export type { BannerVariant } from './banner/components/Banner';
+export type { BannerColor, BannerVariant } from './banner/components/Banner';
 export { Banner } from './banner/components/Banner';
 export type { SidePanelInformationBannerProps } from './banner/components/SidePanelInformationBanner';
 export { SidePanelInformationBanner } from './banner/components/SidePanelInformationBanner';

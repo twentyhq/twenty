@@ -4,6 +4,7 @@ import { TRUSTED_BY_DATA } from '@/app/(home)/constants/trusted-by';
 import { ENGAGEMENT_BAND_DATA } from '@/app/partner/constants/engagement-band';
 import { HERO_DATA } from '@/app/partner/constants/hero';
 import { TESTIMONIALS_DATA } from '@/app/partner/constants/testimonials';
+import { SIGNOFF_DATA } from '@/app/partner/constants/signoff';
 import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/partner/constants/three-cards-illustration';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
@@ -11,6 +12,7 @@ import { EngagementBand } from '@/sections/EngagementBand/components';
 import { Faq } from '@/sections/Faq/components';
 import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
+import { Signoff } from '@/sections/Signoff/components';
 import { Testimonials } from '@/sections/Testimonials/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
@@ -116,6 +118,30 @@ export default function PartnerPage() {
           testimonials={TESTIMONIALS_DATA.testimonials}
         />
       </Testimonials.Root>
+
+      <Signoff.Root
+        backgroundColor={theme.colors.primary.background[100]}
+        color={theme.colors.primary.text[100]}
+      >
+        <Signoff.Heading segments={SIGNOFF_DATA.heading} />
+        <Signoff.Body body={SIGNOFF_DATA.body} />
+        <Signoff.Cta>
+          <LinkButton
+            color="secondary"
+            href="https://app.twenty.com/welcome"
+            label="Become a partner"
+            type="anchor"
+            variant="outlined"
+          />
+          <LinkButton
+            color="secondary"
+            href="https://twenty.com/contact"
+            label="Talk to us"
+            type="anchor"
+            variant="contained"
+          />
+        </Signoff.Cta>
+      </Signoff.Root>
 
       <Faq.Root illustration={FAQ_DATA.illustration}>
         <Faq.Intro>
