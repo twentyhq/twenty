@@ -1,4 +1,4 @@
-import { TrustedByDataType } from '@/sections/TrustedBy/types';
+import { type TrustedByDataType } from '@/sections/TrustedBy/types';
 
 export const TRUSTED_BY_DATA: TrustedByDataType = {
   clientCountLabel: { text: '+10k others' },

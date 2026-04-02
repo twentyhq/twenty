@@ -1,4 +1,4 @@
-import { TrustedByLogosType } from '@/sections/TrustedBy/types';
+import type { TrustedByLogosType } from '@/sections/TrustedBy/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';

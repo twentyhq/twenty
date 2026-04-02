@@ -1,6 +1,6 @@
 import {
-  TrustedByClientCountLabelType,
-  TrustedByLogosType,
+  type TrustedByClientCountLabelType,
+  type TrustedByLogosType,
 } from '@/sections/TrustedBy/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';

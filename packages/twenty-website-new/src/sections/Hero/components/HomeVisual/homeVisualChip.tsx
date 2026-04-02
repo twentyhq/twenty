@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { themeCssVariables } from '../../../../../../twenty-ui/src/theme-constants/themeCssVariables';
+
+import { VISUAL_TOKENS } from './homeVisualTokens';
 
 export enum ChipVariant {
   Highlighted = 'highlighted',
@@ -23,25 +24,25 @@ export type ChipProps = {
 const StyledContainer = styled.div<
   Pick<ChipProps, 'clickable' | 'isBold' | 'maxWidth' | 'variant'>
 >`
-  --chip-horizontal-padding: ${themeCssVariables.spacing[1]};
-  --chip-vertical-padding: ${themeCssVariables.spacing[1]};
+  --chip-horizontal-padding: ${VISUAL_TOKENS.spacing[1]};
+  --chip-vertical-padding: ${VISUAL_TOKENS.spacing[1]};
 
   align-items: center;
   background-color: ${({ variant }) =>
     variant === ChipVariant.Static
-      ? themeCssVariables.background.transparent.lighter
+      ? VISUAL_TOKENS.background.transparent.lighter
       : variant === ChipVariant.Highlighted
-        ? themeCssVariables.background.transparent.light
-      : 'inherit'};
+        ? VISUAL_TOKENS.background.transparent.light
+        : 'inherit'};
   border: ${({ variant }) =>
     variant === ChipVariant.Static
-      ? `1px solid ${themeCssVariables.border.color.strong}`
+      ? `1px solid ${VISUAL_TOKENS.border.color.strong}`
       : 'none'};
   border-radius: ${({ variant }) =>
     variant === ChipVariant.Rounded || variant === ChipVariant.Static
-      ? themeCssVariables.border.radius.pill
-      : themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.primary};
+      ? VISUAL_TOKENS.border.radius.pill
+      : VISUAL_TOKENS.border.radius.sm};
+  color: ${VISUAL_TOKENS.font.color.primary};
   cursor: ${({ clickable, variant }) =>
     variant === ChipVariant.Transparent
       ? 'inherit'
@@ -49,7 +50,7 @@ const StyledContainer = styled.div<
         ? 'pointer'
         : 'inherit'};
   display: inline-flex;
-  gap: ${themeCssVariables.spacing[1]};
+  gap: ${VISUAL_TOKENS.spacing[1]};
   height: 20px;
   justify-content: flex-start;
   max-width: ${({ maxWidth }) =>
@@ -60,40 +61,40 @@ const StyledContainer = styled.div<
   padding: var(--chip-vertical-padding) var(--chip-horizontal-padding);
   padding-left: ${({ variant }) =>
     variant === ChipVariant.Transparent
-      ? themeCssVariables.spacing[0]
+      ? VISUAL_TOKENS.spacing[0]
       : variant === ChipVariant.Static
-        ? themeCssVariables.spacing[2]
-      : 'var(--chip-horizontal-padding)'};
+        ? VISUAL_TOKENS.spacing[2]
+        : 'var(--chip-horizontal-padding)'};
   padding-right: ${({ variant }) =>
     variant === ChipVariant.Static
-      ? themeCssVariables.spacing[2]
+      ? VISUAL_TOKENS.spacing[2]
       : 'var(--chip-horizontal-padding)'};
   user-select: none;
 
   font-weight: ${({ isBold }) =>
     isBold
-      ? themeCssVariables.font.weight.medium
-      : themeCssVariables.font.weight.regular};
+      ? VISUAL_TOKENS.font.weight.medium
+      : VISUAL_TOKENS.font.weight.regular};
 
   &:hover {
     background-color: ${({ variant }) =>
       variant === ChipVariant.Regular
-        ? themeCssVariables.background.transparent.light
+        ? VISUAL_TOKENS.background.transparent.light
         : variant === ChipVariant.Highlighted
-          ? themeCssVariables.background.transparent.medium
+          ? VISUAL_TOKENS.background.transparent.medium
           : variant === ChipVariant.Static
-            ? themeCssVariables.background.transparent.light
+            ? VISUAL_TOKENS.background.transparent.light
             : 'inherit'};
   }
 
   &:active {
     background-color: ${({ variant }) =>
       variant === ChipVariant.Regular
-        ? themeCssVariables.background.transparent.medium
+        ? VISUAL_TOKENS.background.transparent.medium
         : variant === ChipVariant.Highlighted
-          ? themeCssVariables.background.transparent.strong
+          ? VISUAL_TOKENS.background.transparent.strong
           : variant === ChipVariant.Static
-            ? themeCssVariables.background.transparent.light
+            ? VISUAL_TOKENS.background.transparent.light
             : 'inherit'};
   }
 

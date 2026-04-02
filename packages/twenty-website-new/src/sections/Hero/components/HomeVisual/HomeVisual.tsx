@@ -3,12 +3,12 @@
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
-  IconBrandLinkedin,
-  IconBrandApple,
   IconBook,
   IconBox,
-  IconBuildingSkyscraper,
+  IconBrandApple,
+  IconBrandLinkedin,
   IconBuildingFactory2,
+  IconBuildingSkyscraper,
   IconCalendarEvent,
   IconCheck,
   IconCheckbox,
@@ -25,6 +25,7 @@ import {
   IconMessageCircle,
   IconMessageCirclePlus,
   IconMoneybag,
+  IconNotes,
   IconPencil,
   IconPlayerPlay,
   IconPlus,
@@ -33,7 +34,6 @@ import {
   IconSettingsAutomation,
   IconTarget,
   IconTargetArrow,
-  IconNotes,
   IconUser,
   IconUserCircle,
   IconUsers,
@@ -41,56 +41,55 @@ import {
   IconX,
 } from '@tabler/icons-react';
 import {
+  useMemo,
   useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
   type WheelEvent as ReactWheelEvent,
 } from 'react';
-import {
-  HOME_VISUAL_ACTIONS,
-  HOME_VISUAL_BREADCRUMB_LABEL,
-  HOME_VISUAL_COLUMNS,
-  HOME_VISUAL_FAVORITES,
-  HOME_VISUAL_OTHER,
-  HOME_VISUAL_ROWS,
-  HOME_VISUAL_TABLE_TOTAL_WIDTH,
-  HOME_VISUAL_VIEW_COUNT,
-  HOME_VISUAL_VIEW_LABEL,
-  HOME_VISUAL_WORKSPACE,
-  HOME_VISUAL_WORKSPACE_NAME,
-  type HomeVisualBrand,
-  type HomeVisualColumnKey,
-  type HomeVisualPersonToken,
-  type HomeVisualRow,
-  type HomeVisualSidebarIcon,
-  type HomeVisualSidebarItem,
-} from './homeVisualMockData';
+import type {
+  HeroCellEntity,
+  HeroCellPerson,
+  HeroCellRelation,
+  HeroCellValue,
+  HeroColumnDef,
+  HeroRowDef,
+  HeroSidebarEntry,
+  HeroSidebarFolder,
+  HeroSidebarIcon,
+  HeroSidebarItem,
+  HeroVisualType,
+} from '../../types/HeroHomeData';
 import { Chip, ChipVariant } from './homeVisualChip';
 import { HomeVisualButton } from './homeVisualButton';
-import { themeCssVariables } from '../../../../../../twenty-ui/src/theme-constants/themeCssVariables';
+import { VISUAL_TOKENS } from './homeVisualTokens';
 
-const APP_FONT = themeCssVariables.font.family;
+const APP_FONT = VISUAL_TOKENS.font.family;
+const DEFAULT_TABLE_WIDTH = 1700;
 
 const COLORS = {
-  accent: themeCssVariables.accent.accent9,
-  accentBorder: themeCssVariables.border.color.blue,
-  accentSurface: themeCssVariables.accent.primary,
-  accentSurfaceSoft: themeCssVariables.background.transparent.blue,
-  background: themeCssVariables.background.primary,
-  backgroundSecondary: themeCssVariables.background.secondary,
-  border: themeCssVariables.border.color.medium,
-  borderLight: themeCssVariables.border.color.light,
-  borderStrong: themeCssVariables.border.color.strong,
+  accent: VISUAL_TOKENS.accent.accent9,
+  accentBorder: VISUAL_TOKENS.border.color.blue,
+  accentSurface: VISUAL_TOKENS.accent.primary,
+  accentSurfaceSoft: VISUAL_TOKENS.background.transparent.blue,
+  background: VISUAL_TOKENS.background.primary,
+  backgroundSecondary: VISUAL_TOKENS.background.secondary,
+  border: VISUAL_TOKENS.border.color.medium,
+  borderLight: VISUAL_TOKENS.border.color.light,
+  borderStrong: VISUAL_TOKENS.border.color.strong,
   shadow: '0 14px 34px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04)',
-  text: themeCssVariables.font.color.primary,
-  textSecondary: themeCssVariables.font.color.secondary,
-  textTertiary: themeCssVariables.font.color.tertiary,
-  textLight: themeCssVariables.font.color.light,
-  whiteOverlay: themeCssVariables.background.transparent.primary,
+  text: VISUAL_TOKENS.font.color.primary,
+  textSecondary: VISUAL_TOKENS.font.color.secondary,
+  textTertiary: VISUAL_TOKENS.font.color.tertiary,
+  textLight: VISUAL_TOKENS.font.color.light,
+  whiteOverlay: VISUAL_TOKENS.background.transparent.primary,
 };
 
-const SIDEBAR_TONES = {
+const SIDEBAR_TONES: Record<
+  string,
+  { background: string; border: string; color: string }
+> = {
   amber: { background: '#fff4d6', border: '#ffd49b', color: '#9a6700' },
   blue: { background: '#d9e2fc', border: '#c6d4f9', color: '#3557c6' },
   gray: { background: '#ebebeb', border: '#d6d6d6', color: '#666666' },
@@ -100,9 +99,13 @@ const SIDEBAR_TONES = {
   purple: { background: '#e0e7ff', border: '#c7d2fe', color: '#4f46e5' },
   teal: { background: '#c7ebe5', border: '#b3e3dc', color: '#10302b' },
   violet: { background: '#ebe5ff', border: '#d8cbff', color: '#5b3fd1' },
-} as const;
+  red: { background: '#fee2e2', border: '#fecaca', color: '#b91c1c' },
+};
 
-const PERSON_TONES = {
+const PERSON_TONES: Record<
+  string,
+  { background: string; color: string }
+> = {
   amber: { background: '#f6e6d7', color: '#7a4f2a' },
   blue: { background: '#dbeafe', color: '#1d4ed8' },
   gray: { background: '#e5e7eb', color: '#4b5563' },
@@ -111,16 +114,12 @@ const PERSON_TONES = {
   purple: { background: '#ede9fe', color: '#6d28d9' },
   red: { background: '#fee2e2', color: '#b91c1c' },
   teal: { background: '#ccfbf1', color: '#0f766e' },
-} as const;
+};
 
-const COLUMN_WIDTH = HOME_VISUAL_COLUMNS.reduce(
-  (sum, column) => sum + column.width,
-  0,
-);
-
-const FILLER_WIDTH = Math.max(HOME_VISUAL_TABLE_TOTAL_WIDTH - COLUMN_WIDTH, 0);
 const TABLER_STROKE = 1.6;
 const NAVIGATION_TABLER_STROKE = 2;
+
+// -- Styled Components --
 
 const StyledHomeVisual = styled.div`
   isolation: isolate;
@@ -150,7 +149,7 @@ const Frame = styled.div`
       rgba(0, 0, 0, 0.035),
       rgba(0, 0, 0, 0) 55%
     ),
-    ${themeCssVariables.background.noisy};
+    ${VISUAL_TOKENS.background.noisy};
   background-position:
     center top,
     center;
@@ -176,7 +175,7 @@ const AppLayout = styled.div`
   }
 `;
 
-const Sidebar = styled.aside`
+const SidebarPanel = styled.aside`
   background: transparent;
   border-right: 1px solid rgba(0, 0, 0, 0.04);
   display: grid;
@@ -437,6 +436,26 @@ const BranchLine = styled.div`
   width: 1px;
 `;
 
+const SidebarAvatar = styled.div<{
+  $background: string;
+  $color: string;
+  $shape?: 'circle' | 'square';
+}>`
+  align-items: center;
+  background: ${({ $background }) => $background};
+  border-radius: ${({ $shape }) => ($shape === 'square' ? '4px' : '999px')};
+  color: ${({ $color }) => $color};
+  display: flex;
+  flex: 0 0 auto;
+  font-family: ${APP_FONT};
+  font-size: 10px;
+  font-weight: ${theme.font.weight.medium};
+  height: 16px;
+  justify-content: center;
+  line-height: 1;
+  width: 16px;
+`;
+
 const RightPane = styled.div`
   display: grid;
   gap: 12px;
@@ -449,7 +468,7 @@ const RightPane = styled.div`
   }
 `;
 
-const Navbar = styled.div`
+const NavbarBar = styled.div`
   align-items: center;
   background: transparent;
   display: flex;
@@ -521,7 +540,7 @@ const IndexSurface = styled.div`
   overflow: hidden;
 `;
 
-const Viewbar = styled.div`
+const ViewbarBar = styled.div`
   align-items: center;
   background: ${COLORS.background};
   border-bottom: 1px solid ${COLORS.borderLight};
@@ -572,6 +591,7 @@ const ViewActions = styled.div`
 
 const ViewAction = styled.span`
   align-items: center;
+  border-radius: 4px;
   color: ${COLORS.textSecondary};
   display: flex;
   font-family: ${APP_FONT};
@@ -580,7 +600,6 @@ const ViewAction = styled.span`
   height: 24px;
   line-height: 1.4;
   padding: 4px 8px;
-  border-radius: 4px;
   white-space: nowrap;
 `;
 
@@ -738,7 +757,7 @@ const CheckboxBox = styled.div<{ $checked?: boolean }>`
   width: 14px;
 `;
 
-const CompanyCellLayout = styled.div`
+const EntityCellLayout = styled.div`
   align-items: center;
   display: flex;
   gap: 4px;
@@ -778,7 +797,7 @@ const RightAlignedText = styled(InlineText)`
   width: 100%;
 `;
 
-const PersonAvatar = styled.div<{
+const PersonAvatarCircle = styled.div<{
   $background: string;
   $color: string;
   $square?: boolean;
@@ -813,11 +832,10 @@ const BooleanRow = styled.div`
 
 const HoverActions = styled.div<{ $visible: boolean }>`
   align-items: center;
-  backdrop-filter: blur(20px);
   background: ${COLORS.backgroundSecondary};
   border: 1px solid ${COLORS.border};
   border-radius: 4px;
-  box-shadow: ${themeCssVariables.boxShadow.light};
+  box-shadow: ${VISUAL_TOKENS.boxShadow.light};
   display: flex;
   gap: 2px;
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
@@ -854,29 +872,9 @@ const HeaderFillContent = styled.div`
   padding: 0 8px;
 `;
 
-const SidebarAvatar = styled.div<{
-  $background: string;
-  $color: string;
-  $shape?: 'circle' | 'square';
-}>`
-  align-items: center;
-  background: ${({ $background }) => $background};
-  border-radius: ${({ $shape }) => ($shape === 'square' ? '4px' : '999px')};
-  color: ${({ $color }) => $color};
-  display: flex;
-  flex: 0 0 auto;
-  font-family: ${APP_FONT};
-  font-size: 10px;
-  font-weight: ${theme.font.weight.medium};
-  height: 16px;
-  justify-content: center;
-  line-height: 1;
-  width: 16px;
-`;
-
 const TagChip = styled.div`
   align-items: center;
-  background: ${themeCssVariables.background.transparent.light};
+  background: ${VISUAL_TOKENS.background.transparent.light};
   border-radius: 4px;
   color: ${COLORS.textSecondary};
   display: inline-flex;
@@ -909,27 +907,41 @@ const FaviconImage = styled.img`
   width: 100%;
 `;
 
-const failedFaviconUrls = new Set<string>();
+// -- Icon helpers --
 
-const BRAND_FAVICON_DOMAINS: Partial<Record<HomeVisualBrand, string>> = {
-  accel: 'accel.com',
-  airbnb: 'airbnb.com',
-  anthropic: 'anthropic.com',
-  apple: 'apple.com',
-  claude: 'claude.ai',
-  figma: 'figma.com',
-  'founders-fund': 'foundersfund.com',
-  github: 'github.com',
-  google: 'google.com',
-  linkedin: 'linkedin.com',
-  mailchimp: 'mailchimp.com',
-  notion: 'notion.com',
-  qonto: 'qonto.com',
-  sequoia: 'sequoia.com',
-  segment: 'segment.com',
-  slack: 'slack.com',
-  stripe: 'stripe.com',
+const TABLER_ICON_MAP: Record<string, typeof IconBuildingSkyscraper> = {
+  book: IconBook,
+  box: IconBox,
+  buildingSkyscraper: IconBuildingSkyscraper,
+  checkbox: IconCheckbox,
+  folder: IconFolder,
+  notes: IconNotes,
+  playerPlay: IconPlayerPlay,
+  settings: IconSettings,
+  settingsAutomation: IconSettingsAutomation,
+  targetArrow: IconTargetArrow,
+  user: IconUser,
+  versions: IconVersions,
 };
+
+const HEADER_ICON_MAP: Record<string, typeof IconBuildingSkyscraper> = {
+  added: IconCalendarEvent,
+  accountOwner: IconUserCircle,
+  address: IconMap2,
+  arr: IconMoneybag,
+  createdBy: IconCreativeCommonsSa,
+  employees: IconUsers,
+  icp: IconTarget,
+  industry: IconBuildingFactory2,
+  linkedin: IconBrandLinkedin,
+  mainContact: IconUser,
+  opportunities: IconTargetArrow,
+  url: IconLink,
+};
+
+// -- Utility functions --
+
+const failedFaviconUrls = new Set<string>();
 
 function getInitials(value: string) {
   return value
@@ -941,6 +953,57 @@ function getInitials(value: string) {
     .toUpperCase();
 }
 
+function sanitizeURL(link: string | null | undefined) {
+  return link
+    ? link.replace(/(https?:\/\/)|(www\.)/g, '').replace(/\/$/, '')
+    : '';
+}
+
+function getLogoUrlFromDomainName(domainName?: string): string | undefined {
+  const sanitizedDomain = sanitizeURL(domainName);
+
+  return sanitizedDomain
+    ? `https://twenty-icons.com/${sanitizedDomain}`
+    : undefined;
+}
+
+function isFolder(entry: HeroSidebarEntry): entry is HeroSidebarFolder {
+  return 'items' in entry;
+}
+
+function findActiveItem(
+  entries: HeroSidebarEntry[],
+  activeLabel: string,
+): HeroSidebarItem | undefined {
+  for (const entry of entries) {
+    if (isFolder(entry)) {
+      for (const child of entry.items) {
+        if (child.label === activeLabel) {
+          return child;
+        }
+      }
+
+      continue;
+    }
+
+    if (entry.label === activeLabel) {
+      return entry;
+    }
+
+    if (entry.children) {
+      for (const child of entry.children) {
+        if (child.label === activeLabel) {
+          return child;
+        }
+      }
+    }
+  }
+
+  return undefined;
+}
+
+// -- Small icon wrappers --
+
 type MiniIconProps = {
   color?: string;
   size?: number;
@@ -951,14 +1014,28 @@ function ChevronDownMini({
   color = COLORS.textTertiary,
   size = 14,
 }: MiniIconProps) {
-  return <IconChevronDown aria-hidden color={color} size={size} stroke={TABLER_STROKE} />;
+  return (
+    <IconChevronDown
+      aria-hidden
+      color={color}
+      size={size}
+      stroke={TABLER_STROKE}
+    />
+  );
 }
 
 function SearchMini({
   color = COLORS.textTertiary,
   size = 16,
 }: MiniIconProps) {
-  return <IconSearch aria-hidden color={color} size={size} stroke={TABLER_STROKE} />;
+  return (
+    <IconSearch
+      aria-hidden
+      color={color}
+      size={size}
+      stroke={TABLER_STROKE}
+    />
+  );
 }
 
 function CollapseSidebarMini({
@@ -979,7 +1056,14 @@ function HomeMini({
   color = COLORS.textSecondary,
   size = 16,
 }: MiniIconProps) {
-  return <IconHome2 aria-hidden color={color} size={size} stroke={TABLER_STROKE} />;
+  return (
+    <IconHome2
+      aria-hidden
+      color={color}
+      size={size}
+      stroke={TABLER_STROKE}
+    />
+  );
 }
 
 function CommentMini({
@@ -1010,219 +1094,40 @@ function MessageCirclePlusMini({
   );
 }
 
-function FolderMini({
-  color = COLORS.textSecondary,
-  size = 14,
-  stroke = TABLER_STROKE,
-}: MiniIconProps) {
-  return <IconFolder aria-hidden color={color} size={size} stroke={stroke} />;
-}
-
-function BuildingMini({
-  color = COLORS.textSecondary,
-  size = 14,
-  stroke = TABLER_STROKE,
+function LinkMini({
+  color = COLORS.textTertiary,
+  size = 16,
 }: MiniIconProps) {
   return (
-    <IconBuildingSkyscraper
+    <IconLink
       aria-hidden
       color={color}
       size={size}
-      stroke={stroke}
+      stroke={TABLER_STROKE}
     />
   );
-}
-
-function UserMini({
-  color = COLORS.textSecondary,
-  size = 14,
-  stroke = TABLER_STROKE,
-}: MiniIconProps) {
-  return <IconUser aria-hidden color={color} size={size} stroke={stroke} />;
-}
-
-function TargetArrowMini({
-  color = COLORS.textSecondary,
-  size = 14,
-  stroke = TABLER_STROKE,
-}: MiniIconProps) {
-  return (
-    <IconTargetArrow aria-hidden color={color} size={size} stroke={stroke} />
-  );
-}
-
-function CheckboxMini({
-  color = COLORS.textSecondary,
-  size = 14,
-  stroke = TABLER_STROKE,
-}: MiniIconProps) {
-  return <IconCheckbox aria-hidden color={color} size={size} stroke={stroke} />;
-}
-
-function NotesMini({
-  color = COLORS.textSecondary,
-  size = 14,
-  stroke = TABLER_STROKE,
-}: MiniIconProps) {
-  return <IconNotes aria-hidden color={color} size={size} stroke={stroke} />;
-}
-
-function SettingsMini({
-  color = COLORS.textSecondary,
-  size = 14,
-  stroke = TABLER_STROKE,
-}: MiniIconProps) {
-  return <IconSettings aria-hidden color={color} size={size} stroke={stroke} />;
-}
-
-function SettingsAutomationMini({
-  color = COLORS.textSecondary,
-  size = 14,
-  stroke = TABLER_STROKE,
-}: MiniIconProps) {
-  return (
-    <IconSettingsAutomation
-      aria-hidden
-      color={color}
-      size={size}
-      stroke={stroke}
-    />
-  );
-}
-
-function VersionsMini({
-  color = COLORS.textSecondary,
-  size = 14,
-  stroke = TABLER_STROKE,
-}: MiniIconProps) {
-  return <IconVersions aria-hidden color={color} size={size} stroke={stroke} />;
-}
-
-function BookMini({
-  color = COLORS.textSecondary,
-  size = 14,
-  stroke = TABLER_STROKE,
-}: MiniIconProps) {
-  return <IconBook aria-hidden color={color} size={size} stroke={stroke} />;
-}
-
-function BoxMini({
-  color = COLORS.textSecondary,
-  size = 14,
-  stroke = TABLER_STROKE,
-}: MiniIconProps) {
-  return <IconBox aria-hidden color={color} size={size} stroke={stroke} />;
-}
-
-function PlayerPlayMini({
-  color = COLORS.textSecondary,
-  size = 14,
-  stroke = TABLER_STROKE,
-}: MiniIconProps) {
-  return <IconPlayerPlay aria-hidden color={color} size={size} stroke={stroke} />;
 }
 
 function ListMini({
   color = COLORS.textSecondary,
   size = 16,
 }: MiniIconProps) {
-  return <IconList aria-hidden color={color} size={size} stroke={TABLER_STROKE} />;
+  return (
+    <IconList
+      aria-hidden
+      color={color}
+      size={size}
+      stroke={TABLER_STROKE}
+    />
+  );
 }
 
 function PlusMini({
   color = COLORS.textSecondary,
   size = 14,
 }: MiniIconProps) {
-  return <IconPlus aria-hidden color={color} size={size} stroke={TABLER_STROKE} />;
-}
-
-function LinkMini({
-  color = COLORS.textTertiary,
-  size = 16,
-}: MiniIconProps) {
-  return <IconLink aria-hidden color={color} size={size} stroke={TABLER_STROKE} />;
-}
-
-function CreatedByMini({
-  color = COLORS.textTertiary,
-  size = 16,
-}: MiniIconProps) {
   return (
-    <IconCreativeCommonsSa
-      aria-hidden
-      color={color}
-      size={size}
-      stroke={TABLER_STROKE}
-    />
-  );
-}
-
-function MapMini({
-  color = COLORS.textTertiary,
-  size = 16,
-}: MiniIconProps) {
-  return <IconMap2 aria-hidden color={color} size={size} stroke={TABLER_STROKE} />;
-}
-
-function UserCircleMini({
-  color = COLORS.textTertiary,
-  size = 16,
-}: MiniIconProps) {
-  return (
-    <IconUserCircle aria-hidden color={color} size={size} stroke={TABLER_STROKE} />
-  );
-}
-
-function TargetCircleMini({
-  color = COLORS.textTertiary,
-  size = 16,
-}: MiniIconProps) {
-  return <IconTarget aria-hidden color={color} size={size} stroke={TABLER_STROKE} />;
-}
-
-function MoneybagMini({
-  color = COLORS.textTertiary,
-  size = 16,
-}: MiniIconProps) {
-  return <IconMoneybag aria-hidden color={color} size={size} stroke={TABLER_STROKE} />;
-}
-
-function BrandLinkedinMini({
-  color = COLORS.textTertiary,
-  size = 16,
-}: MiniIconProps) {
-  return (
-    <IconBrandLinkedin aria-hidden color={color} size={size} stroke={TABLER_STROKE} />
-  );
-}
-
-function BuildingFactoryMini({
-  color = COLORS.textTertiary,
-  size = 16,
-}: MiniIconProps) {
-  return (
-    <IconBuildingFactory2
-      aria-hidden
-      color={color}
-      size={size}
-      stroke={TABLER_STROKE}
-    />
-  );
-}
-
-function UsersMini({
-  color = COLORS.textTertiary,
-  size = 16,
-}: MiniIconProps) {
-  return <IconUsers aria-hidden color={color} size={size} stroke={TABLER_STROKE} />;
-}
-
-function CalendarEventMini({
-  color = COLORS.textTertiary,
-  size = 16,
-}: MiniIconProps) {
-  return (
-    <IconCalendarEvent
+    <IconPlus
       aria-hidden
       color={color}
       size={size}
@@ -1235,77 +1140,80 @@ function CheckMini({
   color = COLORS.text,
   size = 12,
 }: MiniIconProps) {
-  return <IconCheck aria-hidden color={color} size={size} stroke={TABLER_STROKE} />;
+  return (
+    <IconCheck
+      aria-hidden
+      color={color}
+      size={size}
+      stroke={TABLER_STROKE}
+    />
+  );
 }
 
 function CloseMini({
   color = COLORS.text,
   size = 12,
 }: MiniIconProps) {
-  return <IconX aria-hidden color={color} size={size} stroke={TABLER_STROKE} />;
+  return (
+    <IconX
+      aria-hidden
+      color={color}
+      size={size}
+      stroke={TABLER_STROKE}
+    />
+  );
 }
 
 function PencilMini({
   color = COLORS.textSecondary,
   size = 14,
 }: MiniIconProps) {
-  return <IconPencil aria-hidden color={color} size={size} stroke={TABLER_STROKE} />;
+  return (
+    <IconPencil
+      aria-hidden
+      color={color}
+      size={size}
+      stroke={TABLER_STROKE}
+    />
+  );
 }
 
 function CopyMini({
   color = COLORS.textSecondary,
   size = 14,
 }: MiniIconProps) {
-  return <IconCopy aria-hidden color={color} size={size} stroke={TABLER_STROKE} />;
+  return (
+    <IconCopy
+      aria-hidden
+      color={color}
+      size={size}
+      stroke={TABLER_STROKE}
+    />
+  );
 }
 
-function getSidebarTone(
-  tone: keyof typeof SIDEBAR_TONES,
-): (typeof SIDEBAR_TONES)[keyof typeof SIDEBAR_TONES] {
-  return SIDEBAR_TONES[tone];
-}
+// -- Favicon logo component --
 
-function sanitizeURL(link: string | null | undefined) {
-  return link
-    ? link.replace(/(https?:\/\/)|(www\.)/g, '').replace(/\/$/, '')
-    : '';
-}
-
-function getLogoUrlFromDomainName(domainName?: string): string | undefined {
-  const sanitizedDomain = sanitizeURL(domainName);
-
-  return sanitizedDomain
-    ? `https://twenty-icons.com/${sanitizedDomain}`
-    : undefined;
-}
-
-function BrandLogo({
-  brand,
+function FaviconLogo({
   domain,
   label,
   size = 14,
 }: {
-  brand: HomeVisualBrand;
   domain?: string;
   label?: string;
   size?: number;
 }) {
-  const faviconUrl = getLogoUrlFromDomainName(
-    domain ?? BRAND_FAVICON_DOMAINS[brand],
-  );
-  const [localFailedFaviconUrl, setLocalFailedFaviconUrl] = useState<
-    string | null
-  >(null);
+  const faviconUrl = getLogoUrlFromDomainName(domain);
+  const [localFailedUrl, setLocalFailedUrl] = useState<string | null>(null);
   const showFavicon =
     faviconUrl !== undefined &&
     !failedFaviconUrls.has(faviconUrl) &&
-    localFailedFaviconUrl !== faviconUrl;
-  const radius = size <= 14 ? 4 : 4;
+    localFailedUrl !== faviconUrl;
 
   const baseStyle = {
     width: `${size}px`,
     height: `${size}px`,
-    borderRadius: `${radius}px`,
+    borderRadius: '4px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1325,336 +1233,25 @@ function BrandLogo({
           alt={label ? `${label} logo` : ''}
           onError={() => {
             failedFaviconUrls.add(faviconUrl);
-            setLocalFailedFaviconUrl(faviconUrl);
+            setLocalFailedUrl(faviconUrl);
           }}
         />
       </div>
     );
   }
 
-  if (brand === 'anthropic') {
-    return (
-      <div style={{ ...baseStyle, background: '#111111', color: '#ffffff' }}>
-        A
-      </div>
-    );
-  }
-
-  if (brand === 'linkedin') {
-    return (
-      <div style={{ ...baseStyle, background: '#0a66c2', color: '#ffffff' }}>
-        in
-      </div>
-    );
-  }
-
-  if (brand === 'slack') {
-    return (
-      <div
-        style={{
-          ...baseStyle,
-          background: '#3f0f40',
-          position: 'relative',
-        }}
-      >
-        <span
-          style={{
-            position: 'absolute',
-            width: '3px',
-            height: '8px',
-            background: '#36c5f0',
-            borderRadius: '2px',
-            transform: 'translateX(-2px)',
-          }}
-        />
-        <span
-          style={{
-            position: 'absolute',
-            width: '8px',
-            height: '3px',
-            background: '#2eb67d',
-            borderRadius: '2px',
-            transform: 'translateY(-2px)',
-          }}
-        />
-        <span
-          style={{
-            position: 'absolute',
-            width: '3px',
-            height: '8px',
-            background: '#e01e5a',
-            borderRadius: '2px',
-            transform: 'translateX(2px)',
-          }}
-        />
-        <span
-          style={{
-            position: 'absolute',
-            width: '8px',
-            height: '3px',
-            background: '#ecb22e',
-            borderRadius: '2px',
-            transform: 'translateY(2px)',
-          }}
-        />
-      </div>
-    );
-  }
-
-  if (brand === 'notion') {
-    return (
-      <div
-        style={{
-          ...baseStyle,
-          background: '#ffffff',
-          border: '1px solid #111111',
-          color: '#111111',
-        }}
-      >
-        N
-      </div>
-    );
-  }
-
-  if (brand === 'figma') {
-    return (
-      <div
-        style={{
-          ...baseStyle,
-          background: '#111111',
-          position: 'relative',
-        }}
-      >
-        <span
-          style={{
-            position: 'absolute',
-            top: '2px',
-            left: '3px',
-            width: '4px',
-            height: '4px',
-            background: '#f24e1e',
-            borderRadius: '50%',
-          }}
-        />
-        <span
-          style={{
-            position: 'absolute',
-            top: '6px',
-            left: '3px',
-            width: '4px',
-            height: '4px',
-            background: '#a259ff',
-            borderRadius: '50%',
-          }}
-        />
-        <span
-          style={{
-            position: 'absolute',
-            top: '10px',
-            left: '3px',
-            width: '4px',
-            height: '4px',
-            background: '#1abcfe',
-            borderRadius: '50%',
-          }}
-        />
-        <span
-          style={{
-            position: 'absolute',
-            top: '2px',
-            left: '7px',
-            width: '4px',
-            height: '4px',
-            background: '#ff7262',
-            borderRadius: '50%',
-          }}
-        />
-        <span
-          style={{
-            position: 'absolute',
-            top: '6px',
-            left: '7px',
-            width: '4px',
-            height: '4px',
-            background: '#0acf83',
-            borderRadius: '50%',
-          }}
-        />
-      </div>
-    );
-  }
-
-  if (brand === 'github') {
-    return (
-      <div
-        style={{
-          ...baseStyle,
-          background: '#111111',
-          borderRadius: '50%',
-          color: '#ffffff',
-        }}
-      >
-        G
-      </div>
-    );
-  }
-
-  if (brand === 'airbnb') {
-    return (
-      <div style={{ ...baseStyle, background: '#ff5a5f', color: '#ffffff' }}>
-        A
-      </div>
-    );
-  }
-
-  if (brand === 'stripe') {
-    return (
-      <div style={{ ...baseStyle, background: '#635bff', color: '#ffffff' }}>
-        S
-      </div>
-    );
-  }
-
-  if (brand === 'sequoia') {
-    return (
-      <div style={{ ...baseStyle, background: '#1a936f', color: '#ffffff' }}>
-        S
-      </div>
-    );
-  }
-
-  if (brand === 'segment') {
-    return (
-      <div
-        style={{
-          ...baseStyle,
-          background: '#e6faf5',
-          borderRadius: '50%',
-          border: '1px solid #8ad6c2',
-          color: '#28a67a',
-        }}
-      >
-        S
-      </div>
-    );
-  }
-
-  if (brand === 'mailchimp') {
-    return (
-      <div style={{ ...baseStyle, background: '#ffe01b', color: '#111111' }}>
-        C
-      </div>
-    );
-  }
-
-  if (brand === 'accel') {
-    return (
-      <div style={{ ...baseStyle, background: '#5b2fb7', color: '#ffffff' }}>
-        A
-      </div>
-    );
-  }
-
-  if (brand === 'founders-fund') {
-    return (
-      <div
-        style={{
-          ...baseStyle,
-          background:
-            'linear-gradient(180deg, #ff6b6b 0%, #ff6b6b 33%, #ffffff 33%, #ffffff 66%, #4ecdc4 66%, #4ecdc4 100%)',
-          border: '1px solid #d6d6d6',
-        }}
-      />
-    );
-  }
-
-  if (brand === 'google') {
-    return (
-      <div
-        style={{
-          ...baseStyle,
-          background: '#ffffff',
-          borderRadius: '50%',
-          border: '1px solid #d6d6d6',
-          color: '#4285f4',
-          fontSize: size <= 14 ? '9px' : '10px',
-        }}
-      >
-        G
-      </div>
-    );
-  }
-
-  if (brand === 'page-layout') {
-    return (
-      <div
-        style={{
-          ...baseStyle,
-          background: '#d7f4df',
-          border: '1px solid #bfe9cd',
-          position: 'relative',
-        }}
-      >
-        <span
-          style={{
-            position: 'absolute',
-            inset: '3px',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            gridTemplateRows: 'repeat(2, 1fr)',
-            gap: '1px',
-          }}
-        >
-          <span style={{ background: '#4f9f6c', borderRadius: '1px' }} />
-          <span style={{ background: '#4f9f6c', borderRadius: '1px' }} />
-          <span style={{ background: '#4f9f6c', borderRadius: '1px' }} />
-          <span style={{ background: '#4f9f6c', borderRadius: '1px' }} />
-        </span>
-      </div>
-    );
-  }
-
-  if (brand === 'claude') {
-    return (
-      <div
-        style={{
-          ...baseStyle,
-          background: '#f1f1f1',
-          borderRadius: '4px',
-          color: '#222222',
-          fontSize: '9px',
-        }}
-      >
-        AI
-      </div>
-    );
-  }
-
-  if (brand === 'ben-chestnut') {
-    return (
-      <div
-        style={{
-          ...baseStyle,
-          background: 'linear-gradient(180deg, #f5d6c6, #d8a98a)',
-          borderRadius: '50%',
-          color: '#6c3b1d',
-        }}
-      >
-        B
-      </div>
-    );
-  }
+  const initials = label ? getInitials(label) : '?';
 
   return (
     <div style={{ ...baseStyle, background: '#ebebeb', color: '#666666' }}>
-      {brand.slice(0, 1).toUpperCase()}
+      {initials.slice(0, 1)}
     </div>
   );
 }
 
-function renderSidebarIcon(
-  icon: HomeVisualSidebarIcon,
-): ReactNode {
+// -- Sidebar icon rendering --
+
+function renderSidebarIcon(icon: HeroSidebarIcon): ReactNode {
   if (icon.kind === 'brand') {
     return (
       <SidebarIconSurface
@@ -1662,7 +1259,17 @@ function renderSidebarIcon(
         $border="transparent"
         $color={COLORS.textSecondary}
       >
-        <BrandLogo brand={icon.brand} size={16} />
+        <FaviconLogo
+          domain={
+            icon.brand === 'claude'
+              ? 'claude.ai'
+              : icon.brand === 'stripe'
+                ? 'stripe.com'
+                : undefined
+          }
+          label={icon.brand}
+          size={16}
+        />
         {icon.overlay === 'link' ? (
           <div
             style={{
@@ -1686,7 +1293,7 @@ function renderSidebarIcon(
   }
 
   if (icon.kind === 'avatar') {
-    const tone = SIDEBAR_TONES[icon.tone];
+    const tone = SIDEBAR_TONES[icon.tone] ?? SIDEBAR_TONES.gray;
 
     return (
       <SidebarAvatar
@@ -1694,14 +1301,21 @@ function renderSidebarIcon(
         $color={tone.color}
         $shape={icon.shape}
       >
-        <span style={{ fontFamily: APP_FONT, fontSize: '10px', fontWeight: 500 }}>
+        <span
+          style={{
+            fontFamily: APP_FONT,
+            fontSize: '10px',
+            fontWeight: 500,
+          }}
+        >
           {icon.label}
         </span>
       </SidebarAvatar>
     );
   }
 
-  const tone = getSidebarTone(icon.tone);
+  const tone = SIDEBAR_TONES[icon.tone] ?? SIDEBAR_TONES.gray;
+  const TablerIcon = TABLER_ICON_MAP[icon.name];
 
   return (
     <SidebarIconSurface
@@ -1709,44 +1323,13 @@ function renderSidebarIcon(
       $border={tone.border}
       $color={tone.color}
     >
-      {icon.name === 'folder' ? (
-        <FolderMini color={tone.color} stroke={NAVIGATION_TABLER_STROKE} />
-      ) : null}
-      {icon.name === 'buildingSkyscraper' ? (
-        <BuildingMini color={tone.color} stroke={NAVIGATION_TABLER_STROKE} />
-      ) : null}
-      {icon.name === 'book' ? (
-        <BookMini color={tone.color} stroke={NAVIGATION_TABLER_STROKE} />
-      ) : null}
-      {icon.name === 'box' ? (
-        <BoxMini color={tone.color} stroke={NAVIGATION_TABLER_STROKE} />
-      ) : null}
-      {icon.name === 'checkbox' ? (
-        <CheckboxMini color={tone.color} stroke={NAVIGATION_TABLER_STROKE} />
-      ) : null}
-      {icon.name === 'notes' ? (
-        <NotesMini color={tone.color} stroke={NAVIGATION_TABLER_STROKE} />
-      ) : null}
-      {icon.name === 'playerPlay' ? (
-        <PlayerPlayMini color={tone.color} stroke={NAVIGATION_TABLER_STROKE} />
-      ) : null}
-      {icon.name === 'settings' ? (
-        <SettingsMini color={tone.color} stroke={NAVIGATION_TABLER_STROKE} />
-      ) : null}
-      {icon.name === 'settingsAutomation' ? (
-        <SettingsAutomationMini
+      {TablerIcon ? (
+        <TablerIcon
+          aria-hidden
           color={tone.color}
+          size={14}
           stroke={NAVIGATION_TABLER_STROKE}
         />
-      ) : null}
-      {icon.name === 'targetArrow' ? (
-        <TargetArrowMini color={tone.color} stroke={NAVIGATION_TABLER_STROKE} />
-      ) : null}
-      {icon.name === 'user' ? (
-        <UserMini color={tone.color} stroke={NAVIGATION_TABLER_STROKE} />
-      ) : null}
-      {icon.name === 'versions' ? (
-        <VersionsMini color={tone.color} stroke={NAVIGATION_TABLER_STROKE} />
       ) : null}
       {icon.overlay === 'link' ? (
         <div
@@ -1770,32 +1353,49 @@ function renderSidebarIcon(
   );
 }
 
-function SidebarItem({
+// -- Sidebar item component --
+
+function SidebarItemComponent({
   depth = 0,
+  interactive = true,
   item,
+  onSelect,
 }: {
   depth?: number;
-  item: HomeVisualSidebarItem;
+  interactive?: boolean;
+  item: HeroSidebarItem;
+  onSelect?: (label: string) => void;
 }) {
   return (
     <>
-      <SidebarItemRow $active={item.active} $depth={depth}>
+      <SidebarItemRow
+        $active={interactive ? item.active : false}
+        $depth={depth}
+        onClick={interactive ? () => onSelect?.(item.label) : undefined}
+        style={{ cursor: interactive ? 'pointer' : 'default' }}
+      >
         {renderSidebarIcon(item.icon)}
         <SidebarItemText>
           <SidebarItemLabel>{item.label}</SidebarItemLabel>
           {item.meta ? <SidebarItemMeta>· {item.meta}</SidebarItemMeta> : null}
         </SidebarItemText>
-        {item.showChevron || item.children?.length ? (
+        {item.showChevron || (item.children && item.children.length > 0) ? (
           <SidebarChevron>
             <ChevronDownMini color={COLORS.textTertiary} size={12} />
           </SidebarChevron>
         ) : null}
       </SidebarItemRow>
-      {item.children?.length ? (
+      {item.children && item.children.length > 0 ? (
         <SidebarChildStack>
           <BranchLine />
           {item.children.map((child) => (
-            <SidebarItem key={child.id} item={child} depth={depth + 1} />
+            <SidebarItemComponent
+              key={child.id}
+              depth={depth + 1}
+              interactive={interactive}
+              item={child}
+              onSelect={onSelect}
+            />
           ))}
         </SidebarChildStack>
       ) : null}
@@ -1803,73 +1403,30 @@ function SidebarItem({
   );
 }
 
-function HeaderFieldIcon({ column }: { column: HomeVisualColumnKey }) {
-  if (column === 'url') {
-    return <LinkMini />;
-  }
+// -- Cell rendering components --
 
-  if (column === 'createdBy') {
-    return <CreatedByMini />;
-  }
-
-  if (column === 'address') {
-    return <MapMini />;
-  }
-
-  if (column === 'accountOwner') {
-    return <UserCircleMini />;
-  }
-
-  if (column === 'icp') {
-    return <TargetCircleMini />;
-  }
-
-  if (column === 'arr') {
-    return <MoneybagMini />;
-  }
-
-  if (column === 'linkedin') {
-    return <BrandLinkedinMini />;
-  }
-
-  if (column === 'industry') {
-    return <BuildingFactoryMini />;
-  }
-
-  if (column === 'mainContact') {
-    return <UserMini color={COLORS.textTertiary} size={16} />;
-  }
-
-  if (column === 'employees') {
-    return <UsersMini />;
-  }
-
-  if (column === 'opportunities') {
-    return <TargetArrowMini color={COLORS.textTertiary} size={16} />;
-  }
-
-  return <CalendarEventMini />;
-}
-
-function PersonToken({
+function PersonTokenCell({
   token,
   hovered = false,
   withCopyAction = true,
 }: {
-  token: HomeVisualPersonToken;
+  token: HeroCellPerson;
   hovered?: boolean;
   withCopyAction?: boolean;
 }) {
-  const tone = PERSON_TONES[token.tone];
-  const square = token.kind === 'api' || token.kind === 'system' || token.kind === 'workflow';
+  const tone = PERSON_TONES[token.tone ?? 'gray'] ?? PERSON_TONES.gray;
+  const square =
+    token.kind === 'api' ||
+    token.kind === 'system' ||
+    token.kind === 'workflow';
 
   return (
     <div style={{ minWidth: 0, position: 'relative', width: '100%' }}>
       <CellChip
         clickable={false}
-        label={token.label}
+        label={token.name}
         leftComponent={
-          <PersonAvatar
+          <PersonAvatarCircle
             $background={tone.background}
             $color={tone.color}
             $square={square}
@@ -1877,9 +1434,9 @@ function PersonToken({
             {token.avatarUrl ? (
               <AvatarImage alt="" src={token.avatarUrl} />
             ) : (
-              token.shortLabel ?? getInitials(token.label)
+              token.shortLabel ?? getInitials(token.name)
             )}
-          </PersonAvatar>
+          </PersonAvatarCircle>
         }
       />
       <HoverActions $visible={hovered}>
@@ -1896,96 +1453,73 @@ function PersonToken({
   );
 }
 
-function CompanyCell({
+function EntityCellComponent({
+  cell,
   hovered,
-  row,
+  isFirstColumn,
 }: {
+  cell: HeroCellEntity;
   hovered: boolean;
-  row: HomeVisualRow;
+  isFirstColumn: boolean;
 }) {
+  if (isFirstColumn) {
+    return (
+      <EntityCellLayout>
+        <CheckboxContainer>
+          <CheckboxBox />
+        </CheckboxContainer>
+        <CellChip
+          clickable={false}
+          label={cell.name}
+          leftComponent={
+            <FaviconLogo domain={cell.domain} label={cell.name} />
+          }
+          variant={ChipVariant.Highlighted}
+        />
+        <HoverActions $visible={hovered}>
+          <MiniAction aria-hidden="true">
+            <PencilMini />
+          </MiniAction>
+        </HoverActions>
+      </EntityCellLayout>
+    );
+  }
+
   return (
-    <CompanyCellLayout>
-      <CheckboxContainer>
-        <CheckboxBox />
-      </CheckboxContainer>
-      <CellChip
-        clickable={false}
-        label={row.companyLabel}
-        leftComponent={
-          <BrandLogo brand={row.companyBrand} label={row.companyLabel} />
-        }
-        variant={ChipVariant.Highlighted}
-      />
-      <HoverActions $visible={hovered}>
-        <MiniAction aria-hidden="true">
-          <PencilMini />
-        </MiniAction>
-      </HoverActions>
-    </CompanyCellLayout>
+    <CellChip
+      clickable={false}
+      label={cell.name}
+      leftComponent={<FaviconLogo domain={cell.domain} label={cell.name} />}
+    />
   );
 }
 
-function UrlCell({ value }: { value: string }) {
-  return <CellChip clickable={false} label={value} variant={ChipVariant.Static} />;
-}
-
-function LinkedinCell({
+function RelationCellComponent({
+  cell,
   hovered,
-  value,
 }: {
+  cell: HeroCellRelation;
   hovered: boolean;
-  value: string;
-}) {
-  return (
-    <div style={{ minWidth: 0, position: 'relative', width: '100%' }}>
-      <CellChip clickable={false} label={value} variant={ChipVariant.Static} />
-      <HoverActions $visible={hovered}>
-        <MiniAction aria-hidden="true">
-          <PencilMini />
-        </MiniAction>
-      </HoverActions>
-    </div>
-  );
-}
-
-function IcpCell({ value }: { value: boolean }) {
-  return (
-    <BooleanRow>
-      {value ? <CheckMini size={11} /> : <CloseMini size={11} />}
-      <InlineText>{value ? 'True' : 'False'}</InlineText>
-    </BooleanRow>
-  );
-}
-
-function IndustryCell({ value }: { value: string }) {
-  return <TagChip>{value}</TagChip>;
-}
-
-function OpportunitiesCell({
-  hovered,
-  tokens,
-}: {
-  hovered: boolean;
-  tokens: HomeVisualPersonToken[];
 }) {
   return (
     <div style={{ minWidth: 0, position: 'relative', width: '100%' }}>
       <MultiChipStack>
-        {tokens.map((token) => {
-          const tone = PERSON_TONES[token.tone];
+        {cell.items.map((item) => {
+          const tone =
+            PERSON_TONES[item.tone ?? 'gray'] ?? PERSON_TONES.gray;
 
           return (
             <CellChip
-              key={token.label}
+              key={item.name}
               clickable={false}
-              label={token.label}
+              label={item.name}
               leftComponent={
-                <PersonAvatar
+                <PersonAvatarCircle
                   $background={tone.background}
                   $color={tone.color}
                 >
-                  {token.shortLabel ?? getInitials(token.label)}
-                </PersonAvatar>
+                  {item.shortLabel ?? getInitials(item.name)}
+                </PersonAvatarCircle>
               }
             />
           );
@@ -2003,42 +1537,58 @@ function OpportunitiesCell({
   );
 }
 
-function renderCell(
-  column: HomeVisualColumnKey,
-  row: HomeVisualRow,
+function renderCellValue(
+  cell: HeroCellValue,
   hovered: boolean,
-) {
-  switch (column) {
-    case 'company':
-      return <CompanyCell hovered={hovered} row={row} />;
-    case 'url':
-      return <UrlCell value={row.url} />;
-    case 'createdBy':
-      return <PersonToken hovered={hovered} token={row.createdBy} />;
-    case 'address':
-      return <InlineText>{row.address}</InlineText>;
-    case 'accountOwner':
-      return <PersonToken hovered={hovered} token={row.accountOwner} />;
-    case 'icp':
-      return <IcpCell value={row.icp} />;
-    case 'arr':
-      return <RightAlignedText>{row.arr}</RightAlignedText>;
-    case 'linkedin':
-      return <LinkedinCell hovered={hovered} value={row.linkedin} />;
-    case 'industry':
-      return <IndustryCell value={row.industry} />;
-    case 'mainContact':
-      return <PersonToken hovered={hovered} token={row.mainContact} />;
-    case 'employees':
-      return <RightAlignedText>{row.employees}</RightAlignedText>;
-    case 'opportunities':
-      return <OpportunitiesCell hovered={hovered} tokens={row.opportunities} />;
-    case 'added':
-      return <InlineText>{row.added}</InlineText>;
+  isFirstColumn: boolean,
+): ReactNode {
+  switch (cell.type) {
+    case 'text':
+      return <InlineText>{cell.value}</InlineText>;
+    case 'number':
+      return <RightAlignedText>{cell.value}</RightAlignedText>;
+    case 'link':
+      return (
+        <div style={{ minWidth: 0, position: 'relative', width: '100%' }}>
+          <CellChip
+            clickable={false}
+            label={cell.value}
+            variant={ChipVariant.Static}
+          />
+          <HoverActions $visible={hovered}>
+            <MiniAction aria-hidden="true">
+              <PencilMini />
+            </MiniAction>
+          </HoverActions>
+        </div>
+      );
+    case 'boolean':
+      return (
+        <BooleanRow>
+          {cell.value ? <CheckMini size={11} /> : <CloseMini size={11} />}
+          <InlineText>{cell.value ? 'True' : 'False'}</InlineText>
+        </BooleanRow>
+      );
+    case 'tag':
+      return <TagChip>{cell.value}</TagChip>;
+    case 'person':
+      return <PersonTokenCell hovered={hovered} token={cell} />;
+    case 'entity':
+      return (
+        <EntityCellComponent
+          cell={cell}
+          hovered={hovered}
+          isFirstColumn={isFirstColumn}
+        />
+      );
+    case 'relation':
+      return <RelationCellComponent cell={cell} hovered={hovered} />;
   }
 }
 
-export function HomeVisual() {
+// -- Main component --
+
+export function HomeVisual({ visual }: { visual: HeroVisualType }) {
   const shellRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef({
@@ -2048,18 +1598,58 @@ export function HomeVisual() {
     startX: 0,
   });
 
+  const defaultActiveLabel =
+    visual.workspaceNav.find(
+      (entry) => !isFolder(entry) && entry.active,
+    )?.label ??
+    visual.workspaceNav[0]?.label ??
+    '';
+
+  const [activeLabel, setActiveLabel] = useState(defaultActiveLabel);
   const [dragging, setDragging] = useState(false);
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
 
-  const handleShellPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+  const sidebarItems = useMemo(() => {
+    return visual.workspaceNav.map((entry) => {
+      if (isFolder(entry)) {
+        return entry;
+      }
+
+      return { ...entry, active: entry.label === activeLabel };
+    });
+  }, [activeLabel, visual.workspaceNav]);
+
+  const activeItem = useMemo(
+    () => findActiveItem(visual.workspaceNav, activeLabel),
+    [activeLabel, visual.workspaceNav],
+  );
+
+  const columns: HeroColumnDef[] = activeItem?.columns ?? [];
+  const rows: HeroRowDef[] = activeItem?.rows ?? [];
+  const viewLabel = activeItem?.viewLabel ?? activeLabel;
+  const viewCount = activeItem?.viewCount ?? rows.length;
+  const totalTableWidth = visual.tableWidth ?? DEFAULT_TABLE_WIDTH;
+  const actions = visual.actions ?? [];
+
+  const columnWidth = columns.reduce(
+    (sum, column) => sum + column.width,
+    0,
+  );
+  const fillerWidth = Math.max(totalTableWidth - columnWidth, 0);
+
+  const handleShellPointerMove = (
+    event: ReactPointerEvent<HTMLDivElement>,
+  ) => {
     if (event.pointerType !== 'mouse' || dragging || !shellRef.current) {
       return;
     }
 
     const bounds = shellRef.current.getBoundingClientRect();
-    const horizontal = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
-    const vertical = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
+    const horizontal =
+      ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
+    const vertical =
+      ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
 
     setTilt({
       x: Number((-vertical * 2.2).toFixed(2)),
@@ -2071,8 +1661,14 @@ export function HomeVisual() {
     setTilt({ x: 0, y: 0 });
   };
 
-  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (event.pointerType !== 'mouse' || event.button !== 0 || !viewportRef.current) {
+  const handlePointerDown = (
+    event: ReactPointerEvent<HTMLDivElement>,
+  ) => {
+    if (
+      event.pointerType !== 'mouse' ||
+      event.button !== 0 ||
+      !viewportRef.current
+    ) {
       return;
     }
 
@@ -2088,13 +1684,16 @@ export function HomeVisual() {
     event.preventDefault();
   };
 
-  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+  const handlePointerMove = (
+    event: ReactPointerEvent<HTMLDivElement>,
+  ) => {
     if (!dragRef.current.active || !viewportRef.current) {
       return;
     }
 
     viewportRef.current.scrollLeft =
-      dragRef.current.startScrollLeft - (event.clientX - dragRef.current.startX);
+      dragRef.current.startScrollLeft -
+      (event.clientX - dragRef.current.startX);
   };
 
   const endDragging = () => {
@@ -2103,8 +1702,13 @@ export function HomeVisual() {
     setDragging(false);
   };
 
-  const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!viewportRef.current || dragRef.current.pointerId !== event.pointerId) {
+  const handlePointerUp = (
+    event: ReactPointerEvent<HTMLDivElement>,
+  ) => {
+    if (
+      !viewportRef.current ||
+      dragRef.current.pointerId !== event.pointerId
+    ) {
       return;
     }
 
@@ -2128,6 +1732,35 @@ export function HomeVisual() {
     event.preventDefault();
   };
 
+  const renderSidebarEntry = (entry: HeroSidebarEntry) => {
+    if (isFolder(entry)) {
+      return (
+        <SidebarItemComponent
+          key={entry.id}
+          item={{
+            id: entry.id,
+            label: entry.label,
+            icon: entry.icon,
+            showChevron: entry.showChevron,
+            children: entry.items,
+          }}
+          onSelect={setActiveLabel}
+        />
+      );
+    }
+
+    return (
+      <SidebarItemComponent
+        key={entry.id}
+        item={{
+          ...entry,
+          active: entry.label === activeLabel,
+        }}
+        onSelect={setActiveLabel}
+      />
+    );
+  };
+
   return (
     <StyledHomeVisual>
       <ShellScene
@@ -2140,13 +1773,20 @@ export function HomeVisual() {
       >
         <Frame>
           <AppLayout>
-            <Sidebar>
+            <SidebarPanel>
               <SidebarTopBar>
                 <WorkspaceMenu>
                   <WorkspaceIcon>
-                    <IconBrandApple aria-hidden color="#ffffff" size={11} stroke={2} />
+                    <IconBrandApple
+                      aria-hidden
+                      color="#ffffff"
+                      size={11}
+                      stroke={2}
+                    />
                   </WorkspaceIcon>
-                  <WorkspaceLabel>{HOME_VISUAL_WORKSPACE_NAME}</WorkspaceLabel>
+                  <WorkspaceLabel>
+                    {visual.workspace.name}
+                  </WorkspaceLabel>
                   <ChevronDownMini color={COLORS.textLight} size={12} />
                 </WorkspaceMenu>
                 <SidebarTopActions>
@@ -2175,37 +1815,37 @@ export function HomeVisual() {
               </SidebarControls>
 
               <SidebarScroll>
-                <SidebarSection>
-                  <SidebarSectionLabel>Favorites</SidebarSectionLabel>
-                  {HOME_VISUAL_FAVORITES.map((item) => (
-                    <SidebarItem key={item.id} item={item} />
-                  ))}
-                </SidebarSection>
-
+                {visual.favoritesNav && visual.favoritesNav.length > 0 ? (
+                  <SidebarSection>
+                    <SidebarSectionLabel>Favorites</SidebarSectionLabel>
+                    {visual.favoritesNav.map((item) => (
+                      <SidebarItemComponent
+                        key={item.id}
+                        interactive={false}
+                        item={item}
+                      />
+                    ))}
+                  </SidebarSection>
+                ) : null}
                 <SidebarSection>
                   <SidebarSectionLabel>Workspace</SidebarSectionLabel>
-                  {HOME_VISUAL_WORKSPACE.map((item) => (
-                    <SidebarItem key={item.id} item={item} />
-                  ))}
-                </SidebarSection>
-
-                <SidebarSection>
-                  <SidebarSectionLabel>Other</SidebarSectionLabel>
-                  {HOME_VISUAL_OTHER.map((item) => (
-                    <SidebarItem key={item.id} item={item} />
-                  ))}
+                  {sidebarItems.map(renderSidebarEntry)}
                 </SidebarSection>
               </SidebarScroll>
-            </Sidebar>
+            </SidebarPanel>
 
             <RightPane>
-              <Navbar>
+              <NavbarBar>
                 <Breadcrumb>
                   <BreadcrumbTag>
                     <AccentIconSurface>
-                      <BuildingMini color={COLORS.accent} size={14} />
+                      <IconBuildingSkyscraper
+                        aria-hidden
+                        color={COLORS.accent}
+                        size={14}
+                      />
                     </AccentIconSurface>
-                    <CrumbLabel>{HOME_VISUAL_BREADCRUMB_LABEL}</CrumbLabel>
+                    <CrumbLabel>{activeLabel}</CrumbLabel>
                   </BreadcrumbTag>
                 </Breadcrumb>
 
@@ -2223,28 +1863,28 @@ export function HomeVisual() {
                     aria-label="Command menu"
                   />
                 </NavbarActions>
-              </Navbar>
+              </NavbarBar>
 
               <IndexSurface>
-                <Viewbar>
+                <ViewbarBar>
                   <ViewSwitcher aria-hidden="true">
                     <ListMini />
-                    <ViewName>{HOME_VISUAL_VIEW_LABEL}</ViewName>
+                    <ViewName>{viewLabel}</ViewName>
                     <TinyDot />
-                    <ViewCount>{HOME_VISUAL_VIEW_COUNT}</ViewCount>
+                    <ViewCount>{viewCount}</ViewCount>
                     <ChevronDownMini color={COLORS.textLight} />
                   </ViewSwitcher>
                   <ViewActions>
-                    {HOME_VISUAL_ACTIONS.map((action) => (
+                    {actions.map((action) => (
                       <ViewAction key={action}>{action}</ViewAction>
                     ))}
                   </ViewActions>
-                </Viewbar>
+                </ViewbarBar>
 
                 <TableShell>
                   <GripRail aria-hidden="true">
                     <GripCell />
-                    {HOME_VISUAL_ROWS.map((row) => (
+                    {rows.map((row) => (
                       <GripCell key={`grip-${row.id}`} />
                     ))}
                     <GripCell />
@@ -2253,7 +1893,7 @@ export function HomeVisual() {
                   <TableViewport
                     ref={viewportRef}
                     $dragging={dragging}
-                    aria-label="Interactive preview of the Companies table"
+                    aria-label={`Interactive preview of the ${activeLabel} table`}
                     onPointerCancel={endDragging}
                     onPointerDown={handlePointerDown}
                     onPointerLeave={endDragging}
@@ -2261,47 +1901,53 @@ export function HomeVisual() {
                     onPointerUp={handlePointerUp}
                     onWheel={handleWheel}
                   >
-                    <TableCanvas $width={HOME_VISUAL_TABLE_TOTAL_WIDTH}>
+                    <TableCanvas $width={totalTableWidth}>
                       <HeaderRow>
-                        {HOME_VISUAL_COLUMNS.map((column) => (
+                        {columns.map((column) => (
                           <TableCell
-                            key={column.key}
+                            key={column.id}
                             $align={column.align}
                             $header
-                            $sticky={column.key === 'company'}
+                            $sticky={column.isFirstColumn}
                             $width={column.width}
                           >
                             <HeaderCellContent>
-                              {column.key === 'company' ? (
+                              {column.isFirstColumn ? (
                                 <>
                                   <CheckboxContainer>
                                     <CheckboxBox />
                                   </CheckboxContainer>
-                                  <BuildingMini color={COLORS.textTertiary} size={16} />
+                                  {renderHeaderIcon(column.id)}
                                   <HeaderLabel>{column.label}</HeaderLabel>
                                   <EdgePlus aria-hidden="true">
-                                    <PlusMini color={COLORS.textTertiary} size={12} />
+                                    <PlusMini
+                                      color={COLORS.textTertiary}
+                                      size={12}
+                                    />
                                   </EdgePlus>
                                 </>
                               ) : (
                                 <>
-                                  <HeaderFieldIcon column={column.key} />
+                                  {renderHeaderIcon(column.id)}
                                   <HeaderLabel>{column.label}</HeaderLabel>
                                 </>
                               )}
                             </HeaderCellContent>
                           </TableCell>
                         ))}
-                        <EmptyFillCell $header $width={FILLER_WIDTH}>
-                          {FILLER_WIDTH > 0 ? (
+                        <EmptyFillCell $header $width={fillerWidth}>
+                          {fillerWidth > 0 ? (
                             <HeaderFillContent>
-                              <PlusMini color={COLORS.textTertiary} size={16} />
+                              <PlusMini
+                                color={COLORS.textTertiary}
+                                size={16}
+                              />
                             </HeaderFillContent>
                           ) : null}
                         </EmptyFillCell>
                       </HeaderRow>
 
-                      {HOME_VISUAL_ROWS.map((row) => {
+                      {rows.map((row) => {
                         const hovered = hoveredRowId === row.id;
 
                         return (
@@ -2314,37 +1960,58 @@ export function HomeVisual() {
                               )
                             }
                           >
-                            {HOME_VISUAL_COLUMNS.map((column) => (
-                              <TableCell
-                                key={`${row.id}-${column.key}`}
-                                $align={column.align}
-                                $hovered={hovered}
-                                $sticky={column.key === 'company'}
-                                $width={column.width}
-                              >
-                                {renderCell(column.key, row, hovered)}
-                              </TableCell>
-                            ))}
-                            <EmptyFillCell $hovered={hovered} $width={FILLER_WIDTH} />
+                            {columns.map((column) => {
+                              const cell = row.cells[column.id];
+
+                              return (
+                                <TableCell
+                                  key={`${row.id}-${column.id}`}
+                                  $align={column.align}
+                                  $hovered={hovered}
+                                  $sticky={column.isFirstColumn}
+                                  $width={column.width}
+                                >
+                                  {cell
+                                    ? renderCellValue(
+                                        cell,
+                                        hovered,
+                                        !!column.isFirstColumn,
+                                      )
+                                    : null}
+                                </TableCell>
+                              );
+                            })}
+                            <EmptyFillCell
+                              $hovered={hovered}
+                              $width={fillerWidth}
+                            />
                           </DataRow>
                         );
                       })}
 
                       <FooterRow>
-                        <TableCell $sticky $width={HOME_VISUAL_COLUMNS[0].width}>
-                          <FooterFirstContent>
-                            <MutedText>Calculate</MutedText>
-                            <ChevronDownMini color={COLORS.textTertiary} size={14} />
-                          </FooterFirstContent>
-                        </TableCell>
-                        {HOME_VISUAL_COLUMNS.slice(1).map((column) => (
+                        {columns.length > 0 ? (
                           <TableCell
-                            key={`footer-${column.key}`}
+                            $sticky={columns[0].isFirstColumn}
+                            $width={columns[0].width}
+                          >
+                            <FooterFirstContent>
+                              <MutedText>Calculate</MutedText>
+                              <ChevronDownMini
+                                color={COLORS.textTertiary}
+                                size={14}
+                              />
+                            </FooterFirstContent>
+                          </TableCell>
+                        ) : null}
+                        {columns.slice(1).map((column) => (
+                          <TableCell
+                            key={`footer-${column.id}`}
                             $align={column.align}
                             $width={column.width}
                           />
                         ))}
-                        <EmptyFillCell $footer $width={FILLER_WIDTH} />
+                        <EmptyFillCell $footer $width={fillerWidth} />
                       </FooterRow>
                     </TableCanvas>
                   </TableViewport>
@@ -2355,5 +2022,29 @@ export function HomeVisual() {
         </Frame>
       </ShellScene>
     </StyledHomeVisual>
+  );
+}
+
+function renderHeaderIcon(columnId: string): ReactNode {
+  const Icon = HEADER_ICON_MAP[columnId];
+
+  if (Icon) {
+    return (
+      <Icon
+        aria-hidden
+        color={COLORS.textTertiary}
+        size={16}
+        stroke={TABLER_STROKE}
+      />
+    );
+  }
+
+  return (
+    <IconCalendarEvent
+      aria-hidden
+      color={COLORS.textTertiary}
+      size={16}
+      stroke={TABLER_STROKE}
+    />
   );
 }

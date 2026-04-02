@@ -1,6 +1,6 @@
-import { TrustedByClientCountLabelType } from './TrustedByClientCountLabel';
-import { TrustedByLogosType } from './TrustedByLogos';
-import { TrustedBySeparatorType } from './TrustedBySeparator';
+import type { TrustedByClientCountLabelType } from './TrustedByClientCountLabel';
+import type { TrustedByLogosType } from './TrustedByLogos';
+import type { TrustedBySeparatorType } from './TrustedBySeparator';
 
 export type TrustedByDataType = {
   clientCountLabel: TrustedByClientCountLabelType;

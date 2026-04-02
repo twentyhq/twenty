@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import type { CSSProperties, ComponentType, ComponentProps } from 'react';
-import { themeCssVariables } from '../../../../../../twenty-ui/src/theme-constants/themeCssVariables';
+
+import { VISUAL_TOKENS } from './homeVisualTokens';
 
 type HomeVisualButtonIcon = ComponentType<{
   className?: string;
@@ -20,27 +21,27 @@ type HomeVisualButtonProps = {
 const StyledButton = styled.button`
   align-items: center;
   background: transparent;
-  border: 1px solid ${themeCssVariables.background.transparent.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.secondary};
+  border: 1px solid ${VISUAL_TOKENS.background.transparent.medium};
+  border-radius: ${VISUAL_TOKENS.border.radius.sm};
+  color: ${VISUAL_TOKENS.font.color.secondary};
   cursor: default;
   display: inline-flex;
   flex-direction: row;
-  font-family: ${themeCssVariables.font.family};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${themeCssVariables.spacing[1]};
+  font-family: ${VISUAL_TOKENS.font.family};
+  font-size: ${VISUAL_TOKENS.font.size.md};
+  font-weight: ${VISUAL_TOKENS.font.weight.medium};
+  gap: ${VISUAL_TOKENS.spacing[1]};
   height: 24px;
-  padding: 0 ${themeCssVariables.spacing[2]};
+  padding: 0 ${VISUAL_TOKENS.spacing[2]};
   transition: background 0.1s ease;
   white-space: nowrap;
 
   &:hover {
-    background: ${themeCssVariables.background.transparent.light};
+    background: ${VISUAL_TOKENS.background.transparent.light};
   }
 
   &:active {
-    background: ${themeCssVariables.background.transparent.light};
+    background: ${VISUAL_TOKENS.background.transparent.light};
   }
 `;
 
@@ -57,15 +58,15 @@ const StyledLabel = styled.div`
 `;
 
 const StyledSeparator = styled.div`
-  background: ${themeCssVariables.background.transparent.light};
-  border-radius: ${themeCssVariables.border.radius.pill};
+  background: ${VISUAL_TOKENS.background.transparent.light};
+  border-radius: ${VISUAL_TOKENS.border.radius.pill};
   height: 100%;
   width: 1px;
 `;
 
 const StyledShortcutLabel = styled.div`
-  color: ${themeCssVariables.font.color.light};
-  font-weight: ${themeCssVariables.font.weight.medium};
+  color: ${VISUAL_TOKENS.font.color.light};
+  font-weight: ${VISUAL_TOKENS.font.weight.medium};
   white-space: nowrap;
 `;
 
@@ -90,8 +91,8 @@ export const HomeVisualButton = ({
       {Icon ? (
         <StyledIconWrapper>
           <Icon
-            size={themeCssVariables.icon.size.sm}
-            stroke={themeCssVariables.icon.stroke.sm}
+            size={VISUAL_TOKENS.icon.size.sm}
+            stroke={VISUAL_TOKENS.icon.stroke.sm}
           />
         </StyledIconWrapper>
       ) : null}
