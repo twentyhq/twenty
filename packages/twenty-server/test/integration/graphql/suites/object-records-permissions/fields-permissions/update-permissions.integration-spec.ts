@@ -12,7 +12,9 @@ import { updateManyOperationFactory } from 'test/integration/graphql/utils/updat
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
 import { upsertFieldPermissions } from 'test/integration/graphql/utils/upsert-field-permissions.util';
+import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -314,16 +316,41 @@ describe('Field update permissions restrictions', () => {
   //   });
   // });
 
-  describe('should allow employees field when creating', () => {
+  describe('should allow employees field when creating if field is in RLS predicate', () => {
     beforeEach(async () => {
       await restrictUpdateAccessToCompanyEmployee(
         customRoleId,
         companyObjectId,
         restrictedCompanyFieldId,
       );
+
+      await upsertRowLevelPermissionPredicates({
+        input: {
+          roleId: customRoleId,
+          objectMetadataId: companyObjectId,
+          predicates: [
+            {
+              fieldMetadataId: restrictedCompanyFieldId,
+              operand: RowLevelPermissionPredicateOperand.IS_NOT_NULL,
+            },
+          ],
+          predicateGroups: [],
+        },
+      });
     });
 
-    it('1. createMany with restricted field', async () => {
+    afterEach(async () => {
+      await upsertRowLevelPermissionPredicates({
+        input: {
+          roleId: customRoleId,
+          objectMetadataId: companyObjectId,
+          predicates: [],
+          predicateGroups: [],
+        },
+      });
+    });
+
+    it('1. createMany with restricted field in RLS predicate', async () => {
       const graphqlOperation = createManyOperationFactory({
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',
@@ -344,7 +371,7 @@ describe('Field update permissions restrictions', () => {
       });
     });
 
-    it('2. createOne with restricted field', async () => {
+    it('2. createOne with restricted field in RLS predicate', async () => {
       const graphqlOperation = createOneOperationFactory({
         objectMetadataSingularName: 'company',
         gqlFields: COMPANY_GQL_FIELDS_WITH_EMPLOYEES,

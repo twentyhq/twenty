@@ -3,9 +3,11 @@ import { TEST_COMPANY_1_ID } from 'test/integration/constants/test-company-ids.c
 import { TEST_PERSON_1_ID } from 'test/integration/constants/test-person-ids.constants';
 import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 import { upsertFieldPermissions } from 'test/integration/graphql/utils/upsert-field-permissions.util';
+import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
+import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 
 describe('Restricted fields', () => {
   let personCity: string;
@@ -253,7 +255,7 @@ describe('Restricted fields', () => {
   });
 
   describe('createOne', () => {
-    it('should allow create even when user has restricted update permissions on phones field', async () => {
+    it('should block create when restricted field is not in any RLS predicate', async () => {
       await upsertFieldPermissions({
         roleId: memberRoleId,
         fieldPermissions: [
@@ -278,6 +280,53 @@ describe('Restricted fields', () => {
           },
         },
       })
+        .expect(400)
+        .expect((res) => {
+          expect(res.body.messages[0]).toContain(
+            'Entity performing the request does not have permission',
+          );
+        });
+    });
+
+    it('should allow create when restricted field is referenced in an RLS predicate', async () => {
+      await upsertFieldPermissions({
+        roleId: memberRoleId,
+        fieldPermissions: [
+          {
+            objectMetadataId: personObjectId,
+            fieldMetadataId: phonesFieldId,
+            canReadFieldValue: null,
+            canUpdateFieldValue: false,
+          },
+        ],
+      });
+
+      await upsertRowLevelPermissionPredicates({
+        input: {
+          roleId: memberRoleId,
+          objectMetadataId: personObjectId,
+          predicates: [
+            {
+              fieldMetadataId: phonesFieldId,
+              operand: RowLevelPermissionPredicateOperand.IS_NOT_NULL,
+            },
+          ],
+          predicateGroups: [],
+        },
+      });
+
+      await makeRestAPIRequest({
+        method: 'post',
+        path: `/people`,
+        bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        body: {
+          phones: {
+            primaryPhoneNumber: '555123456',
+            primaryPhoneCountryCode: 'US',
+            primaryPhoneCallingCode: '+1',
+          },
+        },
+      })
         .expect(201)
         .expect((res) => {
           const createdPerson = res.body.data.createPerson;
@@ -285,6 +334,15 @@ describe('Restricted fields', () => {
           expect(createdPerson).toBeDefined();
           expect(createdPerson.phones.primaryPhoneNumber).toBe('555123456');
         });
+
+      await upsertRowLevelPermissionPredicates({
+        input: {
+          roleId: memberRoleId,
+          objectMetadataId: personObjectId,
+          predicates: [],
+          predicateGroups: [],
+        },
+      });
     });
 
     it('should allow create when user has no restricted update permissions', async () => {
@@ -325,7 +383,7 @@ describe('Restricted fields', () => {
   });
 
   describe('createMany', () => {
-    it('should allow createMany even when user has restricted update permissions on phones field', async () => {
+    it('should block createMany when restricted field is not in any RLS predicate', async () => {
       await upsertFieldPermissions({
         roleId: memberRoleId,
         fieldPermissions: [
@@ -352,6 +410,55 @@ describe('Restricted fields', () => {
           },
         ],
       })
+        .expect(400)
+        .expect((res) => {
+          expect(res.body.messages[0]).toContain(
+            'Entity performing the request does not have permission',
+          );
+        });
+    });
+
+    it('should allow createMany when restricted field is referenced in an RLS predicate', async () => {
+      await upsertFieldPermissions({
+        roleId: memberRoleId,
+        fieldPermissions: [
+          {
+            objectMetadataId: personObjectId,
+            fieldMetadataId: phonesFieldId,
+            canReadFieldValue: null,
+            canUpdateFieldValue: false,
+          },
+        ],
+      });
+
+      await upsertRowLevelPermissionPredicates({
+        input: {
+          roleId: memberRoleId,
+          objectMetadataId: personObjectId,
+          predicates: [
+            {
+              fieldMetadataId: phonesFieldId,
+              operand: RowLevelPermissionPredicateOperand.IS_NOT_NULL,
+            },
+          ],
+          predicateGroups: [],
+        },
+      });
+
+      await makeRestAPIRequest({
+        method: 'post',
+        path: `/batch/people`,
+        bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        body: [
+          {
+            phones: {
+              primaryPhoneNumber: '555123456',
+              primaryPhoneCountryCode: 'US',
+              primaryPhoneCallingCode: '+1',
+            },
+          },
+        ],
+      })
         .expect(201)
         .expect((res) => {
           const createdPeople = res.body.data.createPeople;
@@ -359,6 +466,15 @@ describe('Restricted fields', () => {
           expect(createdPeople).toHaveLength(1);
           expect(createdPeople[0].phones.primaryPhoneNumber).toBe('555123456');
         });
+
+      await upsertRowLevelPermissionPredicates({
+        input: {
+          roleId: memberRoleId,
+          objectMetadataId: personObjectId,
+          predicates: [],
+          predicateGroups: [],
+        },
+      });
     });
 
     it('should allow createMany when user has no restricted update permissions', async () => {
