@@ -1,5 +1,7 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { buildRelationSubFieldColumnDefinition } from '@/views/utils/buildRelationSubFieldColumnDefinition';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -10,9 +12,11 @@ import { type ViewField } from '@/views/types/ViewField';
 export const mapViewFieldsToColumnDefinitions = ({
   columnDefinitions,
   viewFields,
+  objectMetadataItems,
 }: {
   columnDefinitions: ColumnDefinition<FieldMetadata>[];
   viewFields: ViewField[];
+  objectMetadataItems?: EnrichedObjectMetadataItem[];
 }): ColumnDefinition<FieldMetadata>[] => {
   let labelIdentifierFieldMetadataId = '';
 
@@ -27,6 +31,25 @@ export const mapViewFieldsToColumnDefinitions = ({
         columnDefinitionsByFieldMetadataId[viewField.fieldMetadataId];
 
       if (isUndefinedOrNull(correspondingColumnDefinition)) return null;
+
+      // OMNIA-CUSTOM: Handle relation sub-field columns
+      if (viewField.subFieldName && objectMetadataItems) {
+        const subFieldColDef = buildRelationSubFieldColumnDefinition({
+          relationColumnDefinition: correspondingColumnDefinition,
+          subFieldName: viewField.subFieldName,
+          objectMetadataItems,
+        });
+
+        if (!subFieldColDef) return null;
+
+        return {
+          ...subFieldColDef,
+          position: viewField.position,
+          size: viewField.size ?? subFieldColDef.size,
+          isVisible: viewField.isVisible,
+          viewFieldId: viewField.id,
+        } as ColumnDefinition<FieldMetadata>;
+      }
 
       const { isLabelIdentifier } = correspondingColumnDefinition;
 

@@ -9,7 +9,11 @@ import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objec
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { type FieldViolation } from '@/object-record/record-field/ui/hooks/useRecordRequiredFieldViolations';
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
-import { newlyCreatedRecordIdsState } from '@/object-record/record-side-panel/states/newlyCreatedRecordIdsState';
+import {
+  newlyCreatedRecordIdsState,
+  persistNewlyCreatedRecordIds,
+} from '@/object-record/record-side-panel/states/newlyCreatedRecordIdsState';
+import { draftRecordIdsState } from '@/object-record/record-side-panel/states/draftRecordIdsState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useStore } from 'jotai';
@@ -148,6 +152,30 @@ export const useCommandMenuCloseWithValidation = () => {
     [store],
   );
 
+  const discardDraftIfNeeded = useCallback(
+    (recordId: string): boolean => {
+      const draftMap = store.get(draftRecordIdsState.atom);
+      if (!draftMap.has(recordId)) return false;
+
+      // Remove from draft tracking
+      const updatedDraftMap = new Map(draftMap);
+      updatedDraftMap.delete(recordId);
+      store.set(draftRecordIdsState.atom, updatedDraftMap);
+
+      // Remove from record store
+      store.set(recordStoreFamilyState.atomFamily(recordId), null);
+
+      // Remove from newly created tracking
+      const createdMap = new Map(store.get(newlyCreatedRecordIdsState.atom));
+      createdMap.delete(recordId);
+      store.set(newlyCreatedRecordIdsState.atom, createdMap);
+      persistNewlyCreatedRecordIds(createdMap);
+
+      return true;
+    },
+    [store],
+  );
+
   const closeWithValidation = useCallback(() => {
     const recordInfo = getCurrentRecordInfo();
 
@@ -157,6 +185,13 @@ export const useCommandMenuCloseWithValidation = () => {
     }
 
     const { recordId, objectNameSingular } = recordInfo;
+
+    // Discard draft without validation
+    if (discardDraftIfNeeded(recordId)) {
+      closeSidePanelMenu();
+      return;
+    }
+
     const newlyCreatedMap = store.get(newlyCreatedRecordIdsState.atom);
 
     if (!newlyCreatedMap.has(recordId)) {
@@ -180,6 +215,7 @@ export const useCommandMenuCloseWithValidation = () => {
     openModal(REQUIRED_FIELDS_VALIDATION_MODAL_ID);
   }, [
     closeSidePanelMenu,
+    discardDraftIfNeeded,
     getCurrentRecordInfo,
     getViolationsForRecord,
     openModal,
@@ -195,6 +231,13 @@ export const useCommandMenuCloseWithValidation = () => {
     }
 
     const { recordId, objectNameSingular } = recordInfo;
+
+    // Discard draft without validation
+    if (discardDraftIfNeeded(recordId)) {
+      goBackFromSidePanel();
+      return;
+    }
+
     const newlyCreatedMap = store.get(newlyCreatedRecordIdsState.atom);
 
     if (!newlyCreatedMap.has(recordId)) {
@@ -217,6 +260,7 @@ export const useCommandMenuCloseWithValidation = () => {
     });
     openModal(REQUIRED_FIELDS_VALIDATION_MODAL_ID);
   }, [
+    discardDraftIfNeeded,
     goBackFromSidePanel,
     getCurrentRecordInfo,
     getViolationsForRecord,

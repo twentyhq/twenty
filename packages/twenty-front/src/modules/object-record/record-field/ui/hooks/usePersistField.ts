@@ -25,6 +25,10 @@ import { isFieldRawJson } from '@/object-record/record-field/ui/types/guards/isF
 import { isFieldRawJsonValue } from '@/object-record/record-field/ui/types/guards/isFieldRawJsonValue';
 import { isFieldSelect } from '@/object-record/record-field/ui/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/ui/types/guards/isFieldSelectValue';
+import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { draftRecordIdsState } from '@/object-record/record-side-panel/states/draftRecordIdsState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
@@ -183,6 +187,87 @@ export const usePersistField = ({
 
       if (isValuePersistable) {
         const fieldName = fieldDefinition.metadata.fieldName;
+
+        // Draft guard: store-only write, skip GraphQL mutation
+        const isDraft = store.get(draftRecordIdsState.atom).has(recordId);
+        if (isDraft) {
+          if (fieldIsRelationManyToOne) {
+            const relationId = valueToPersist?.id ?? null;
+            store.set(
+              recordStoreFamilySelector.selectorFamily({
+                recordId,
+                fieldName: getForeignKeyNameFromRelationFieldName(fieldName),
+              }),
+              relationId,
+            );
+
+            // Read the full related record so the display shows the label.
+            // Try the main record store first, then fall back to the picker's
+            // search record store which has the label from the search query.
+            let fullRelatedRecord = isDefined(relationId)
+              ? store.get(recordStoreFamilyState.atomFamily(relationId))
+              : null;
+            if (!isDefined(fullRelatedRecord) && isDefined(relationId)) {
+              const searchRecord = store.get(
+                searchRecordStoreFamilyState.atomFamily(relationId),
+              );
+              if (isDefined(searchRecord)) {
+                fullRelatedRecord = {
+                  id: relationId,
+                  name: searchRecord.label,
+                } as unknown as ObjectRecord;
+              }
+            }
+
+            store.set(
+              recordStoreFamilySelector.selectorFamily({ recordId, fieldName }),
+              fullRelatedRecord ?? valueToPersist,
+            );
+          } else {
+            store.set(
+              recordStoreFamilySelector.selectorFamily({ recordId, fieldName }),
+              valueToPersist,
+            );
+          }
+
+          // Derive policy display name when carrier or product changes
+          const draftMeta = store.get(draftRecordIdsState.atom).get(recordId);
+          if (
+            draftMeta?.objectNameSingular === 'policy' &&
+            (fieldName === 'carrier' || fieldName === 'product')
+          ) {
+            const record = store.get(
+              recordStoreFamilyState.atomFamily(recordId),
+            );
+            const carrierName = (
+              (record?.carrier as { name?: string })?.name ?? ''
+            ).trim();
+            const productName = (
+              (record?.product as { name?: string })?.name ?? ''
+            ).trim();
+
+            let derivedName: string | null = null;
+            if (carrierName && productName) {
+              derivedName = `${carrierName} - ${productName}`;
+            } else if (carrierName) {
+              derivedName = `${carrierName} - Unknown`;
+            } else if (productName) {
+              derivedName = `Unknown - ${productName}`;
+            }
+
+            if (derivedName !== null) {
+              store.set(
+                recordStoreFamilySelector.selectorFamily({
+                  recordId,
+                  fieldName: 'name',
+                }),
+                derivedName,
+              );
+            }
+          }
+
+          return;
+        }
 
         const currentValue = store.get(
           recordStoreFamilySelector.selectorFamily({ recordId, fieldName }),

@@ -9,12 +9,12 @@ import { IconPlus } from 'twenty-ui/display';
 export const RecordTableEmptyStateNoGroupNoRecordAtAll = () => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
-  const { createNewIndexRecord } = useCreateNewIndexRecord({
+  const { openDraftInSidePanel } = useCreateNewIndexRecord({
     objectMetadataItem,
   });
 
   const handleButtonClick = () => {
-    createNewIndexRecord();
+    openDraftInSidePanel();
   };
 
   const objectLabelSingular = useObjectLabel(objectMetadataItem);

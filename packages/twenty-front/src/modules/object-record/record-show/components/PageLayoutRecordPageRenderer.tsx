@@ -1,5 +1,7 @@
 import { RecordPageSidePanelCommandMenu } from '@/command-menu-item/components/RecordPageSidePanelCommandMenu';
+import { RecordShowSidePanelCreateRecordButton } from '@/command-menu-item/components/RecordShowSidePanelCreateRecordButton';
 import { RecordShowSidePanelOpenRecordButton } from '@/command-menu-item/components/RecordShowSidePanelOpenRecordButton';
+import { draftRecordIdsState } from '@/object-record/record-side-panel/states/draftRecordIdsState';
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
@@ -12,6 +14,7 @@ import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordId
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { styled } from '@linaria/react';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PageLayoutType } from '~/generated-metadata/graphql';
@@ -42,6 +45,9 @@ export const PageLayoutRecordPageRenderer = ({
   targetRecordIdentifier: TargetRecordIdentifier;
   isInSidePanel: boolean;
 }) => {
+  const draftRecordIds = useAtomStateValue(draftRecordIdsState);
+  const isDraft = draftRecordIds.has(targetRecordIdentifier.id);
+
   const recordDeletedAt = useAtomFamilySelectorValue(
     recordStoreFamilySelector,
     {
@@ -102,12 +108,21 @@ export const PageLayoutRecordPageRenderer = ({
           <SidePanelFooter
             actions={[
               <RecordPageSidePanelCommandMenu />,
-              <RecordShowSidePanelOpenRecordButton
-                objectNameSingular={
-                  targetRecordIdentifier.targetObjectNameSingular
-                }
-                recordId={targetRecordIdentifier.id}
-              />,
+              isDraft ? (
+                <RecordShowSidePanelCreateRecordButton
+                  objectNameSingular={
+                    targetRecordIdentifier.targetObjectNameSingular
+                  }
+                  recordId={targetRecordIdentifier.id}
+                />
+              ) : (
+                <RecordShowSidePanelOpenRecordButton
+                  objectNameSingular={
+                    targetRecordIdentifier.targetObjectNameSingular
+                  }
+                  recordId={targetRecordIdentifier.id}
+                />
+              ),
             ]}
           />
         )}

@@ -42,7 +42,7 @@ export const RecordTableBodyLoading = () => {
               <RecordTableCellCheckbox />
               {visibleRecordFields.map((recordField, index) => (
                 <RecordTableCellLoading
-                  key={recordField.fieldMetadataItemId}
+                  key={`${recordField.fieldMetadataItemId}${recordField.subFieldName ? `.${recordField.subFieldName}` : ''}`}
                   recordFieldIndex={index}
                 />
               ))}

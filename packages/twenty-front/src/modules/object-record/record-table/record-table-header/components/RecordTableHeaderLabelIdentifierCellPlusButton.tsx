@@ -26,12 +26,12 @@ export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
     isLayoutCustomizationModeEnabledState,
   );
 
-  const { createNewIndexRecord } = useCreateNewIndexRecord({
+  const { openDraftInSidePanel } = useCreateNewIndexRecord({
     objectMetadataItem,
   });
 
   const handlePlusButtonClick = () => {
-    createNewIndexRecord({
+    openDraftInSidePanel({
       position: 'first',
     });
   };

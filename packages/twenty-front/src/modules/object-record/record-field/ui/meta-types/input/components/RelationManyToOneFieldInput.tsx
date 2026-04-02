@@ -5,17 +5,20 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { useAddNewRecordAndOpenSidePanel } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenSidePanel';
+import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
+import { useStore } from 'jotai';
 import { useContext } from 'react';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconForbid } from 'twenty-ui/display';
@@ -36,6 +39,7 @@ export const RelationManyToOneFieldInput = () => {
     );
   }
   const { onSubmit, onCancel } = useContext(FieldInputEventContext);
+  const store = useStore();
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
@@ -43,12 +47,33 @@ export const RelationManyToOneFieldInput = () => {
 
   const handleMorphItemSelected = (
     selectedMorphItem: RecordPickerPickableMorphItem | null | undefined,
-  ) =>
+  ) => {
+    // Pre-store the picked record in the Jotai store so draft persistence
+    // can read the full record (with name/label) instead of just { id }.
+    if (isDefined(selectedMorphItem)) {
+      const existingRecord = store.get(
+        recordStoreFamilyState.atomFamily(selectedMorphItem.recordId),
+      );
+      if (!isDefined(existingRecord)) {
+        const searchRecord = store.get(
+          searchRecordStoreFamilyState.atomFamily(selectedMorphItem.recordId),
+        );
+        store.set(
+          recordStoreFamilyState.atomFamily(selectedMorphItem.recordId),
+          {
+            id: selectedMorphItem.recordId,
+            name: searchRecord?.label ?? '',
+          } as unknown as ObjectRecord,
+        );
+      }
+    }
+
     onSubmit?.({
       newValue: isDefined(selectedMorphItem)
         ? { id: selectedMorphItem.recordId }
         : null,
     });
+  };
 
   const { objectMetadataItem: relationObjectMetadataItem } =
     useObjectMetadataItem({
@@ -90,12 +115,8 @@ export const RelationManyToOneFieldInput = () => {
     instanceId,
   );
 
-  const handleCreateNew = async (searchInput?: string) => {
-    const newRecordId = await createNewRecordAndOpenSidePanel?.(searchInput);
-
-    if (isDefined(newRecordId)) {
-      setSingleRecordPickerSelectedId(newRecordId);
-    }
+  const handleCreateNew = (searchInput?: string) => {
+    createNewRecordAndOpenSidePanel?.(searchInput);
   };
 
   if (recordFieldInputLayoutDirectionLoading) {

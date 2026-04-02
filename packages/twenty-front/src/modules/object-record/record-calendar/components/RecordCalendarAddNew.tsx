@@ -30,7 +30,7 @@ export const RecordCalendarAddNew = ({
   const { theme } = useContext(ThemeContext);
   const { userTimezone } = useUserTimezone();
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
-  const { createNewIndexRecord } = useCreateNewIndexRecord({
+  const { openDraftInSidePanel } = useCreateNewIndexRecord({
     objectMetadataItem,
   });
 
@@ -72,8 +72,8 @@ export const RecordCalendarAddNew = ({
   return (
     <StyledButtonContainer>
       <Button
-        onClick={async () => {
-          await createNewIndexRecord({
+        onClick={() => {
+          openDraftInSidePanel({
             [calendarFieldMetadataItem.name]: cardDate
               .toZonedDateTime(userTimezone)
               .toInstant()

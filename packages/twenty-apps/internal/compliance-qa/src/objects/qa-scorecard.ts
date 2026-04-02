@@ -277,7 +277,7 @@ export default defineObject({
     // === Rich Text Detail Fields ===
     {
       universalIdentifier: SCORE_DETAILS_FIELD_ID,
-      type: FieldType.RICH_TEXT_V2,
+      type: FieldType.RICH_TEXT,
       name: 'scoreDetails',
       label: 'Score Details',
       description:
@@ -286,7 +286,7 @@ export default defineObject({
     },
     {
       universalIdentifier: RED_FLAG_DETAILS_FIELD_ID,
-      type: FieldType.RICH_TEXT_V2,
+      type: FieldType.RICH_TEXT,
       name: 'redFlagDetails',
       label: 'Red Flag Details',
       description: 'Detailed explanations for any red flag violations',
@@ -294,7 +294,7 @@ export default defineObject({
     },
     {
       universalIdentifier: TRANSCRIPT_FIELD_ID,
-      type: FieldType.RICH_TEXT_V2,
+      type: FieldType.RICH_TEXT,
       name: 'transcript',
       label: 'Transcript',
       description: 'Full transcript used for analysis',
@@ -302,7 +302,7 @@ export default defineObject({
     },
     {
       universalIdentifier: RECOMMENDATIONS_FIELD_ID,
-      type: FieldType.RICH_TEXT_V2,
+      type: FieldType.RICH_TEXT,
       name: 'recommendations',
       label: 'Recommendations',
       description: 'AI-generated coaching suggestions for the agent',

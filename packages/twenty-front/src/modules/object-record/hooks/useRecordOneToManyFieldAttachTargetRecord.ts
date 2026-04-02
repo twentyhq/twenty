@@ -1,6 +1,11 @@
+import { type Reference } from '@apollo/client';
+
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
+import { getRefName } from '@/object-record/cache/utils/getRefName';
+import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
@@ -17,12 +22,14 @@ export const useRecordOneToManyFieldAttachTargetRecord = () => {
 
   const recordOneToManyFieldAttachTargetRecord = async ({
     sourceObjectNameSingular,
+    sourceFieldName,
     targetObjectNameSingular,
     targetGQLFieldName,
     sourceRecordId,
     targetRecordId,
   }: {
     sourceObjectNameSingular: string;
+    sourceFieldName: string;
     targetObjectNameSingular: string;
     targetGQLFieldName: string;
     sourceRecordId: string;
@@ -99,6 +106,48 @@ export const useRecordOneToManyFieldAttachTargetRecord = () => {
         objectPermissionsByObjectMetadataId,
       });
     }
+
+    // Update the source record's Apollo cache to include the newly attached
+    // target in its one-to-many edges (mirrors detach which removes from edges).
+    modifyRecordFromCache({
+      objectMetadataItem: sourceObjectMetadataItem,
+      cache: apolloCoreClient.cache,
+      fieldModifiers: {
+        [sourceFieldName]: (
+          fieldNameOnRecordObjectConnection,
+          { readField },
+        ) => {
+          const edges = readField<{ node: Reference }[]>(
+            'edges',
+            fieldNameOnRecordObjectConnection,
+          );
+
+          const targetRef = getRefName(
+            targetObjectNameSingular,
+            targetRecordId,
+          );
+
+          // Avoid duplicates
+          if (
+            edges?.some((edge) => edge.node.__ref === targetRef)
+          ) {
+            return fieldNameOnRecordObjectConnection;
+          }
+
+          const newEdge = {
+            __typename: getEdgeTypename(targetObjectNameSingular),
+            node: { __ref: targetRef },
+            cursor: '',
+          };
+
+          return {
+            ...fieldNameOnRecordObjectConnection,
+            edges: [...(edges ?? []), newEdge],
+          };
+        },
+      },
+      recordId: sourceRecordId,
+    });
 
     await updateOneRecord({
       objectNameSingular: targetObjectNameSingular,

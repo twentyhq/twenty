@@ -44,7 +44,7 @@ export const RecordBoardColumnNewRecordButton = () => {
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
-  const { createNewIndexRecord } = useCreateNewIndexRecord({
+  const { openDraftInSidePanel } = useCreateNewIndexRecord({
     objectMetadataItem: objectMetadataItem,
   });
 
@@ -62,8 +62,8 @@ export const RecordBoardColumnNewRecordButton = () => {
 
   return (
     <StyledNewButton
-      onClick={async () => {
-        await createNewIndexRecord({
+      onClick={() => {
+        openDraftInSidePanel({
           position: 'last',
           [selectFieldMetadataItem.name]: columnDefinition.value,
         });

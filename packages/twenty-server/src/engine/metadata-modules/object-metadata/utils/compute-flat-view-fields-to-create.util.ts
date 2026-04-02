@@ -42,6 +42,7 @@ export const computeFlatViewFieldsToCreate = ({
       position: index,
       aggregateOperation: null,
       universalOverrides: null,
+      subFieldName: null,
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
     }));
 

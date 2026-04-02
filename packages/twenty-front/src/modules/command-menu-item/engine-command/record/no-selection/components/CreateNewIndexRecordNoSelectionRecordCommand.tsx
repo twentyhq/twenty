@@ -13,14 +13,14 @@ export const CreateNewIndexRecordNoSelectionRecordCommand = () => {
     );
   }
 
-  const { createNewIndexRecord } = useCreateNewIndexRecord({
+  const { openDraftInSidePanel } = useCreateNewIndexRecord({
     objectMetadataItem,
     instanceId: recordIndexId,
   });
 
   return (
     <HeadlessEngineCommandWrapperEffect
-      execute={() => createNewIndexRecord({ position: 'first' })}
+      execute={() => openDraftInSidePanel({ position: 'first' })}
     />
   );
 };

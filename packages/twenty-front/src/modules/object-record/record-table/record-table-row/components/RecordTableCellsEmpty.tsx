@@ -11,7 +11,7 @@ export const RecordTableCellsEmpty = () => {
   return visibleRecordFields.map((recordField, index) => (
     <RecordTableCellStyleWrapper
       isSelected={isSelected}
-      key={recordField.fieldMetadataItemId}
+      key={`${recordField.fieldMetadataItemId}${recordField.subFieldName ? `.${recordField.subFieldName}` : ''}`}
       widthClassName={getRecordTableColumnFieldWidthClassName(index)}
     />
   ));

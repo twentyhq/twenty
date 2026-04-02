@@ -1141,6 +1141,64 @@ check_file_exists \
   "packages/twenty-front/src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiffRelationValue.tsx" \
   "Relation diff value component must exist"
 
+# ==========================================================
+# Draft Record Creation (side panel draft instead of instant empty record)
+# ==========================================================
+
+check_file_exists \
+  "packages/twenty-front/src/modules/object-record/record-side-panel/states/draftRecordIdsState.ts" \
+  "Draft record IDs state must exist"
+check_file_exists \
+  "packages/twenty-front/src/modules/command-menu-item/components/RecordShowSidePanelCreateRecordButton.tsx" \
+  "Side panel Create button must exist"
+check_file_contains \
+  "packages/twenty-front/src/modules/object-record/record-table/hooks/useCreateNewIndexRecord.ts" \
+  "openDraftInSidePanel" \
+  "Index record creation must use draft approach"
+check_file_contains \
+  "packages/twenty-front/src/modules/object-record/record-field/ui/hooks/usePersistField.ts" \
+  "draftRecordIdsState" \
+  "usePersistField must have draft guard"
+check_file_contains \
+  "packages/twenty-front/src/modules/object-record/record-show/components/RecordShowEffect.tsx" \
+  "draftRecordIdsState" \
+  "RecordShowEffect must skip fetch for drafts"
+check_file_contains \
+  "packages/twenty-front/src/modules/object-record/record-show/components/PageLayoutRecordPageRenderer.tsx" \
+  "RecordShowSidePanelCreateRecordButton" \
+  "Side panel footer must conditionally show Create button for drafts"
+check_file_contains \
+  "packages/twenty-front/src/modules/command-menu/hooks/useCommandMenuCloseWithValidation.ts" \
+  "draftRecordIdsState" \
+  "Close validation must handle draft discard"
+check_file_contains \
+  "packages/twenty-front/src/modules/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenSidePanel.ts" \
+  "draftRecordIdsState" \
+  "Relation create must use draft approach"
+check_file_contains \
+  "packages/twenty-front/src/modules/command-menu-item/record/single-record/components/CreateRelatedRecordCommand.tsx" \
+  "draftRecordIdsState" \
+  "Command palette create related must use draft approach"
+
+echo ""
+echo "--- Relation Sub-Field Table Columns ---"
+check_file_contains \
+  "packages/twenty-server/src/engine/metadata-modules/view-field/entities/view-field.entity.ts" \
+  "subFieldName" \
+  "ViewFieldEntity must have subFieldName column for relation sub-field columns"
+check_file_contains \
+  "packages/twenty-front/src/modules/views/utils/mapViewFieldsToColumnDefinitions.ts" \
+  "buildRelationSubFieldColumnDefinition" \
+  "mapViewFieldsToColumnDefinitions must handle sub-field ViewFields"
+check_file_contains \
+  "packages/twenty-front/src/modules/object-record/record-field/ui/components/FieldDisplay.tsx" \
+  "RelationSubFieldDisplay" \
+  "FieldDisplay must route sub-field columns to RelationSubFieldDisplay"
+check_file_contains \
+  "packages/twenty-front/src/modules/views/components/ViewFieldsHiddenDropdownSection.tsx" \
+  "expandedRelationFieldId" \
+  "Column picker must support relation sub-field expansion"
+
 echo ""
 
 # ==========================================================

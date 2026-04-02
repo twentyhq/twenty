@@ -29,18 +29,24 @@ export const useChangeRecordFieldVisibility = (
   const changeRecordFieldVisibility = async ({
     fieldMetadataId,
     isVisible,
+    subFieldName,
   }: {
     fieldMetadataId: string;
     isVisible: boolean;
+    subFieldName?: string;
   }) => {
     const lastPosition =
       currentRecordFields.toSorted(sortByProperty('position', 'desc'))?.[0]
         ?.position ?? 0;
 
     const shouldShowFieldMetadataItem = isVisible === true;
+
+    // OMNIA-CUSTOM: Match by both fieldMetadataId and subFieldName
     const correspondingRecordField = currentRecordFields.find(
       (recordFieldToFind) =>
-        recordFieldToFind.fieldMetadataItemId === fieldMetadataId,
+        recordFieldToFind.fieldMetadataItemId === fieldMetadataId &&
+        (recordFieldToFind.subFieldName ?? undefined) ===
+          (subFieldName ?? undefined),
     );
 
     const noExistingRecordField = !isDefined(correspondingRecordField);
@@ -49,9 +55,10 @@ export const useChangeRecordFieldVisibility = (
       const recordFieldToUpsert: RecordField = {
         id: v4(),
         fieldMetadataItemId: fieldMetadataId,
-        size: 100,
+        size: subFieldName ? 150 : 100,
         isVisible: shouldShowFieldMetadataItem,
         position: lastPosition + 1,
+        subFieldName: subFieldName ?? undefined,
       };
 
       upsertRecordField(recordFieldToUpsert);

@@ -257,12 +257,15 @@ export class FlatViewFieldValidatorService {
         universalIdentifiers: flatView.viewFieldUniversalIdentifiers,
         flatEntityMaps: optimisticFlatViewFieldMaps,
       });
+    // OMNIA-CUSTOM: Include subFieldName in uniqueness check for relation sub-field columns
     const equivalentExistingFlatViewFieldExists = otherFlatViewFields.some(
       (flatViewField) =>
         flatViewField.viewUniversalIdentifier ===
           flatViewFieldToValidate.viewUniversalIdentifier &&
         flatViewField.fieldMetadataUniversalIdentifier ===
-          flatViewFieldToValidate.fieldMetadataUniversalIdentifier,
+          flatViewFieldToValidate.fieldMetadataUniversalIdentifier &&
+        (flatViewField.subFieldName ?? null) ===
+          (flatViewFieldToValidate.subFieldName ?? null),
     );
 
     if (equivalentExistingFlatViewFieldExists) {

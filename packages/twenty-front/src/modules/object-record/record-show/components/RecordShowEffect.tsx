@@ -1,9 +1,11 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { draftRecordIdsState } from '@/object-record/record-side-panel/states/draftRecordIdsState';
 import { buildFindOneRecordForShowPageOperationSignature } from '@/object-record/record-show/graphql/operations/factories/findOneRecordForShowPageOperationSignatureFactory';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -28,11 +30,15 @@ export const RecordShowEffect = ({
 
   const store = useStore();
 
+  const draftRecordIds = useAtomStateValue(draftRecordIdsState);
+  const isDraft = draftRecordIds.has(recordId);
+
   const { record, loading } = useFindOneRecord({
     objectRecordId: recordId,
     objectNameSingular,
     recordGqlFields: FIND_ONE_RECORD_FOR_SHOW_PAGE_OPERATION_SIGNATURE.fields,
     withSoftDeleted: true,
+    skip: isDraft,
   });
 
   const setRecordStore = useCallback(

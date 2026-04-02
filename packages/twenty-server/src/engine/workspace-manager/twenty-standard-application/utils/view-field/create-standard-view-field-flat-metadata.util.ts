@@ -122,6 +122,7 @@ export const createStandardViewFieldFlatMetadata = <
     aggregateOperation,
     overrides: null,
     universalOverrides: null,
+    subFieldName: null,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

@@ -55,7 +55,7 @@ export const RecordTableAggregateFooter = ({
       {visibleRecordFields.map((recordField, index) => {
         return (
           <RecordTableColumnAggregateFooterCellContext.Provider
-            key={`${recordField.fieldMetadataItemId}${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
+            key={`${recordField.fieldMetadataItemId}${recordField.subFieldName ? `.${recordField.subFieldName}` : ''}${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
             value={{
               viewFieldId: recordField.id || '',
               fieldMetadataId: recordField.fieldMetadataItemId,

@@ -44,7 +44,7 @@ export const RecordTableHeader = () => {
       {recordFieldsWithoutLabelIdentifierAndFirstOne.map(
         (recordField, index) => (
           <RecordTableHeaderCell
-            key={recordField.fieldMetadataItemId}
+            key={`${recordField.fieldMetadataItemId}${recordField.subFieldName ? `.${recordField.subFieldName}` : ''}`}
             recordField={recordField}
             recordFieldIndex={index + 2}
           />

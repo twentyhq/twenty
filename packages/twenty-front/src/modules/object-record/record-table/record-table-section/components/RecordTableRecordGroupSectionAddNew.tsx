@@ -25,7 +25,7 @@ export const RecordTableRecordGroupSectionAddNew = () => {
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const { createNewIndexRecord } = useCreateNewIndexRecord({
+  const { openDraftInSidePanel } = useCreateNewIndexRecord({
     objectMetadataItem,
   });
 
@@ -56,7 +56,7 @@ export const RecordTableRecordGroupSectionAddNew = () => {
           return;
         }
 
-        createNewIndexRecord({
+        openDraftInSidePanel({
           position: 'last',
           [fieldMetadataItem.name]: recordGroupDefinition?.value,
         });

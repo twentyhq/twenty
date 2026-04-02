@@ -5,16 +5,19 @@ import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSide
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { draftRecordIdsState } from '@/object-record/record-side-panel/states/draftRecordIdsState';
 import { viewableRecordIdState } from '@/object-record/record-side-panel/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-side-panel/states/viewableRecordNameSingularState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelPayload';
 import { getOperationName } from '~/utils/getOperationName';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import { useStore } from 'jotai';
 
 type useAddNewRecordAndOpenSidePanelProps = {
   fieldMetadataItem: FieldMetadataItem;
@@ -38,15 +41,13 @@ export const useAddNewRecordAndOpenSidePanel = ({
     viewableRecordNameSingularState,
   );
 
-  const { createOneRecord } = useCreateOneRecord({
-    objectNameSingular: relationObjectMetadataNameSingular,
-  });
-
   const { updateOneRecord } = useUpdateOneRecord();
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const apolloCoreClient = useApolloCoreClient();
+
+  const store = useStore();
 
   if (
     relationObjectMetadataNameSingular === 'workspaceMember' ||
@@ -56,18 +57,24 @@ export const useAddNewRecordAndOpenSidePanel = ({
       createNewRecordAndOpenSidePanel: undefined,
     };
   }
+
   const relationFieldMetadataItemRelationType =
     relationFieldMetadataItem.settings?.relationType;
 
   return {
-    createNewRecordAndOpenSidePanel: async (searchInput?: string) => {
+    createNewRecordAndOpenSidePanel: (searchInput?: string) => {
       const newRecordId = v4();
 
-      const createRecordPayload = buildRecordLabelPayload({
+      const labelPayload = buildRecordLabelPayload({
         id: newRecordId,
         searchInput,
         objectMetadataItem: relationObjectMetadataItem,
       });
+
+      const seedValues: Record<string, unknown> = {
+        id: newRecordId,
+        ...labelPayload,
+      };
 
       if (relationFieldMetadataItemRelationType === RelationType.MANY_TO_ONE) {
         const gqlField =
@@ -81,36 +88,52 @@ export const useAddNewRecordAndOpenSidePanel = ({
                 targetObjectMetadataNamePlural: objectMetadataItem.namePlural,
               });
 
-        createRecordPayload[`${gqlField}Id`] = recordId;
+        seedValues[`${gqlField}Id`] = recordId;
       }
 
-      await createOneRecord(createRecordPayload);
+      // Seed draft in record store
+      store.set(
+        recordStoreFamilyState.atomFamily(newRecordId),
+        seedValues as ObjectRecord,
+      );
 
-      if (relationFieldMetadataItemRelationType === RelationType.ONE_TO_MANY) {
-        await updateOneRecord({
-          objectNameSingular:
-            objectMetadataItem.nameSingular ?? 'workspaceMember',
-          idToUpdate: recordId,
-          updateOneRecordInput: {
-            [`${fieldMetadataItem.name}Id`]: newRecordId,
-          },
-        });
-      }
+      // Track as draft
+      const draftMap = new Map(store.get(draftRecordIdsState.atom));
+      draftMap.set(newRecordId, {
+        objectNameSingular: relationObjectMetadataNameSingular,
+        objectMetadataItem: relationObjectMetadataItem,
+        hiddenFieldNames: new Set(['position']),
+        extraRecordInput: {},
+        onRecordCreated: async (createdRecord) => {
+          if (
+            relationFieldMetadataItemRelationType === RelationType.ONE_TO_MANY
+          ) {
+            await updateOneRecord({
+              objectNameSingular:
+                objectMetadataItem.nameSingular ?? 'workspaceMember',
+              idToUpdate: recordId,
+              updateOneRecordInput: {
+                [`${fieldMetadataItem.name}Id`]: createdRecord.id,
+              },
+            });
+          }
 
-      setViewableRecordId(newRecordId);
-      setViewableRecordNameSingular(relationObjectMetadataNameSingular);
+          setViewableRecordId(createdRecord.id);
+          setViewableRecordNameSingular(relationObjectMetadataNameSingular);
 
-      apolloCoreClient.refetchQueries({
-        include: [getOperationName(SEARCH_QUERY) ?? ''],
+          apolloCoreClient.refetchQueries({
+            include: [getOperationName(SEARCH_QUERY) ?? ''],
+          });
+        },
       });
+      store.set(draftRecordIdsState.atom, draftMap);
 
+      // Open side panel with draft
       openRecordInSidePanel({
         recordId: newRecordId,
         objectNameSingular: relationObjectMetadataNameSingular,
         isNewRecord: true,
       });
-
-      return newRecordId;
     },
   };
 };

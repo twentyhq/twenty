@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
@@ -60,9 +61,30 @@ export const RecordTableColumnHead = ({
   );
 
   const { getIcon } = useIcons();
-  const Icon = getIcon(
-    correspondingFieldMetadataItem.foundFieldMetadataItem?.icon,
-  );
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  // OMNIA-CUSTOM: For sub-field columns, resolve the label from the target object
+  let headerLabel =
+    correspondingFieldMetadataItem.foundFieldMetadataItem?.label ?? '';
+  let headerIcon =
+    correspondingFieldMetadataItem.foundFieldMetadataItem?.icon;
+
+  if (recordField.subFieldName && correspondingFieldMetadataItem.foundFieldMetadataItem) {
+    const targetObjName = correspondingFieldMetadataItem.foundFieldMetadataItem
+      .relation?.targetObjectMetadata?.nameSingular;
+    const targetObj = objectMetadataItems.find(
+      (o) => o.nameSingular === targetObjName,
+    );
+    const subField = targetObj?.fields.find(
+      (f) => f.name === recordField.subFieldName && f.isActive,
+    );
+    if (subField) {
+      headerLabel = `${headerLabel} / ${subField.label}`;
+      headerIcon = subField.icon ?? headerIcon;
+    }
+  }
+
+  const Icon = getIcon(headerIcon);
 
   const isLabelIdentifier = useAtomFamilySelectorValue(
     isFieldMetadataItemLabelIdentifierSelector,
@@ -82,7 +104,7 @@ export const RecordTableColumnHead = ({
         <Icon size={theme.icon.size.md} />
       </StyledIcon>
       <StyledText>
-        {correspondingFieldMetadataItem.foundFieldMetadataItem?.label}
+        {headerLabel}
       </StyledText>
     </StyledTitle>
   );

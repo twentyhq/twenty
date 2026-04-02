@@ -302,13 +302,7 @@ export const RelationOneToManyFieldInput = () => {
         return;
       }
 
-      const newRecordId = await createNewRecordAndOpenSidePanel?.(searchInput);
-
-      if (isDefined(newRecordId)) {
-        updatePickerState(newRecordId, relationObjectMetadataItem.id, [
-          relationObjectMetadataItem,
-        ]);
-      }
+      createNewRecordAndOpenSidePanel?.(searchInput);
     },
     [
       createNewRecordAndOpenSidePanel,

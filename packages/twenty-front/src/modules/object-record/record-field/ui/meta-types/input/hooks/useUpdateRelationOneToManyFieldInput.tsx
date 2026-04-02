@@ -87,6 +87,7 @@ export const useUpdateRelationOneToManyFieldInput = () => {
         await recordOneToManyFieldAttachTargetRecord({
           sourceObjectNameSingular:
             fieldDefinition.metadata.objectMetadataNameSingular,
+          sourceFieldName: fieldDefinition.metadata.fieldName,
           targetObjectNameSingular:
             fieldDefinition.metadata.relationObjectMetadataNameSingular,
           targetGQLFieldName,
@@ -106,6 +107,7 @@ export const useUpdateRelationOneToManyFieldInput = () => {
       }
     },
     [
+      fieldDefinition.metadata.fieldName,
       fieldDefinition.metadata.objectMetadataNameSingular,
       fieldDefinition.metadata.relationObjectMetadataNameSingular,
       fieldDefinition.metadata.targetFieldMetadataName,

@@ -34,7 +34,7 @@ export type ViewFieldOverrides = {
 @Index('IDX_VIEW_FIELD_FIELD_METADATA_ID', ['fieldMetadataId'])
 @Index(
   'IDX_VIEW_FIELD_FIELD_METADATA_ID_VIEW_ID_UNIQUE',
-  ['fieldMetadataId', 'viewId'],
+  ['fieldMetadataId', 'viewId', 'subFieldName'],
   {
     unique: true,
     where: '"deletedAt" IS NULL',
@@ -72,6 +72,11 @@ export class ViewFieldEntity
     default: null,
   })
   aggregateOperation: AggregateOperations | null;
+
+  // OMNIA-CUSTOM: When set, this ViewField represents a sub-field of a relation
+  // (e.g., subFieldName="dateOfBirth" on a "lead" relation field).
+  @Column({ nullable: true, type: 'varchar' })
+  subFieldName: string | null;
 
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;

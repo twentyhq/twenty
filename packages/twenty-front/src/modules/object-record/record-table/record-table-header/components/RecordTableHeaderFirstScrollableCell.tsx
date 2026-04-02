@@ -77,7 +77,7 @@ export const RecordTableHeaderFirstScrollableCell = () => {
   return (
     <RecordTableHeaderCellContainer
       className={cx('header-cell', getRecordTableColumnFieldWidthClassName(1))}
-      key={recordField.fieldMetadataItemId}
+      key={`${recordField.fieldMetadataItemId}${recordField.subFieldName ? `.${recordField.subFieldName}` : ''}`}
       shouldDisplayBorderBottom={shouldDisplayBorderBottom}
       zIndex={TABLE_Z_INDEX.headerColumns.headerColumnsNormal}
       isResizing={isResizingAnyColumn}

@@ -82,7 +82,7 @@ export const RecordTableHeaderFirstCell = () => {
   return (
     <RecordTableHeaderCellContainer
       className={cx('header-cell', getRecordTableColumnFieldWidthClassName(0))}
-      key={recordField.fieldMetadataItemId}
+      key={`${recordField.fieldMetadataItemId}${recordField.subFieldName ? `.${recordField.subFieldName}` : ''}`}
       onMouseEnter={() => setIconIsVisible(true)}
       onMouseLeave={() => setIconIsVisible(false)}
       shouldDisplayBorderBottom={shouldDisplayBorderBottom}

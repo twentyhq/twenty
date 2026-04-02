@@ -4,6 +4,7 @@ import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-met
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -117,9 +118,15 @@ export const useLoadRecordIndexStates = () => {
             };
           });
 
+      // OMNIA-CUSTOM: Pass objectMetadataItems so sub-field ViewFields can be resolved
+      const allObjectMetadataItems = store.get(
+        objectMetadataItemsWithFieldsSelector.atom,
+      ) as EnrichedObjectMetadataItem[];
+
       const newFieldDefinitions = mapViewFieldsToColumnDefinitions({
         viewFields: view.viewFields,
         columnDefinitions,
+        objectMetadataItems: allObjectMetadataItems,
       });
 
       const recordFields = view.viewFields

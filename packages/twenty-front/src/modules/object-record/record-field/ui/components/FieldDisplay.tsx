@@ -39,6 +39,7 @@ import { FullNameFieldDisplay } from '@/object-record/record-field/ui/meta-types
 import { JsonFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/JsonFieldDisplay';
 import { MultiSelectFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/MultiSelectFieldDisplay';
 import { NumberFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/NumberFieldDisplay';
+import { RelationSubFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/RelationSubFieldDisplay';
 import { RelationToOneFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/RelationToOneFieldDisplay';
 import { SelectFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/SelectFieldDisplay';
 import { TextFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/TextFieldDisplay';
@@ -70,6 +71,15 @@ export const FieldDisplay = () => {
 
   if (isDefined(isForbidden) && isForbidden) {
     return <ForbiddenFieldDisplay />;
+  }
+
+  // OMNIA-CUSTOM: Relation sub-field columns render the sub-field value
+  const subFieldName = (
+    fieldDefinition.metadata as Record<string, unknown>
+  ).subFieldName as string | undefined;
+
+  if (subFieldName) {
+    return <RelationSubFieldDisplay />;
   }
 
   return isChipDisplay ? (

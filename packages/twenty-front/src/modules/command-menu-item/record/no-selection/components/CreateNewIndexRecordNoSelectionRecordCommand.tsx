@@ -5,13 +5,13 @@ import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useC
 export const CreateNewIndexRecordNoSelectionRecordCommand = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const { createNewIndexRecord } = useCreateNewIndexRecord({
+  const { openDraftInSidePanel } = useCreateNewIndexRecord({
     objectMetadataItem,
   });
 
   return (
     <Command
-      onClick={() => createNewIndexRecord({ position: 'first' })}
+      onClick={() => openDraftInSidePanel({ position: 'first' })}
       closeSidePanelOnCommandMenuListExecution={false}
     />
   );

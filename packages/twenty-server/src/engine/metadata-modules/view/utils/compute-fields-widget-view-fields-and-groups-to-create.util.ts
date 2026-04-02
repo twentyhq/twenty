@@ -86,6 +86,7 @@ export const computeFieldsWidgetViewFieldsAndGroupsToCreate = ({
       position: index,
       aggregateOperation: null,
       universalOverrides: null,
+      subFieldName: null,
       applicationUniversalIdentifier,
     });
   });
@@ -125,6 +126,7 @@ export const computeFieldsWidgetViewFieldsAndGroupsToCreate = ({
         position: index,
         aggregateOperation: null,
         universalOverrides: null,
+        subFieldName: null,
         applicationUniversalIdentifier,
       });
     });

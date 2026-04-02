@@ -64,11 +64,18 @@ export const useSaveCurrentViewFields = () => {
               size: viewFieldToCreateOrUpdate.size,
               aggregateOperation: viewFieldToCreateOrUpdate.aggregateOperation,
               viewId: currentViewId,
+              // OMNIA-CUSTOM: Include subFieldName for relation sub-field columns
+              ...(viewFieldToCreateOrUpdate.subFieldName
+                ? { subFieldName: viewFieldToCreateOrUpdate.subFieldName }
+                : {}),
             };
+            // OMNIA-CUSTOM: Match by fieldMetadataId + subFieldName pair
             const existingField = currentViewFields.find(
               (currentViewField) =>
                 currentViewField.fieldMetadataId ===
-                createViewFieldInput.fieldMetadataId,
+                  createViewFieldInput.fieldMetadataId &&
+                (currentViewField.subFieldName ?? undefined) ===
+                  (viewFieldToCreateOrUpdate.subFieldName ?? undefined),
             );
 
             if (isUndefinedOrNull(existingField)) {

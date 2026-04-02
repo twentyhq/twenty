@@ -435,6 +435,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       isOverridable: true,
     },
+    subFieldName: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: false,
+    },
     deletedAt: {
       toCompare: true,
       toStringify: false,

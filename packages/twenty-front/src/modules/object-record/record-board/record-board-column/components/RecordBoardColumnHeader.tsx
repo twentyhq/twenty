@@ -97,7 +97,7 @@ export const RecordBoardColumnHeader = () => {
     hasAnySoftDeleteFilterOnViewComponentSelector,
   );
 
-  const { createNewIndexRecord } = useCreateNewIndexRecord({
+  const { openDraftInSidePanel } = useCreateNewIndexRecord({
     objectMetadataItem: objectMetadataItem,
   });
 
@@ -115,8 +115,8 @@ export const RecordBoardColumnHeader = () => {
 
   const dropdownId = `record-board-column-dropdown-${columnDefinition.id}`;
 
-  const handleCreateNewRecordClick = async () => {
-    await createNewIndexRecord({
+  const handleCreateNewRecordClick = () => {
+    openDraftInSidePanel({
       position: 'first',
       [selectFieldMetadataItem.name]: columnDefinition.value,
     });

@@ -33,8 +33,40 @@ export const RecordTableCellFieldContextGeneric = ({
     fieldDefinitionByFieldMetadataItemId,
   } = useRecordIndexContextOrThrow();
 
-  const fieldDefinition =
+  let fieldDefinition =
     fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
+
+  // OMNIA-CUSTOM: For sub-field columns, override the field definition to inject
+  // subFieldName into metadata so FieldDisplay routes to RelationSubFieldDisplay.
+  // We also look up the sub-field's type/label from the target object metadata.
+  if (recordField.subFieldName && fieldDefinition) {
+    const targetObjectNameSingular = (
+      fieldDefinition.metadata as Record<string, unknown>
+    ).relationObjectMetadataNameSingular as string | undefined;
+
+    const targetObjectMetadata = targetObjectNameSingular
+      ? objectMetadataItems.find(
+          (item) => item.nameSingular === targetObjectNameSingular,
+        )
+      : undefined;
+
+    const subFieldMeta = targetObjectMetadata?.fields.find(
+      (f) => f.name === recordField.subFieldName && f.isActive,
+    );
+
+    fieldDefinition = {
+      ...fieldDefinition,
+      fieldMetadataId: `${fieldDefinition.fieldMetadataId}.${recordField.subFieldName}`,
+      label: `${fieldDefinition.label} / ${subFieldMeta?.label ?? recordField.subFieldName}`,
+      type: (subFieldMeta?.type ?? fieldDefinition.type) as any,
+      isUIReadOnly: true,
+      metadata: {
+        ...fieldDefinition.metadata,
+        subFieldName: recordField.subFieldName,
+        isUIReadOnly: true,
+      } as any,
+    };
+  }
 
   const updateRecord = useContext(RecordUpdateContext);
 

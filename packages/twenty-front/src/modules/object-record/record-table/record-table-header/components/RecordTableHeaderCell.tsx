@@ -71,7 +71,7 @@ export const RecordTableHeaderCell = ({
         'header-cell',
         getRecordTableColumnFieldWidthClassName(recordFieldIndex),
       )}
-      key={recordField.fieldMetadataItemId}
+      key={`${recordField.fieldMetadataItemId}${recordField.subFieldName ? `.${recordField.subFieldName}` : ''}`}
       shouldDisplayBorderBottom={shouldDisplayBorderBottom}
       isResizing={isResizingAnyColumn}
     >

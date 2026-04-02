@@ -5,6 +5,7 @@ import {
   IsEnum,
   IsNumber,
   IsOptional,
+  IsString,
   IsUUID,
 } from 'class-validator';
 import { AggregateOperations } from 'twenty-shared/types';
@@ -50,6 +51,11 @@ export class CreateViewFieldInput {
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
   viewFieldGroupId?: string;
+
+  @IsOptional()
+  @IsString()
+  @Field(() => String, { nullable: true })
+  subFieldName?: string;
 
   @HideField()
   universalIdentifier?: string;

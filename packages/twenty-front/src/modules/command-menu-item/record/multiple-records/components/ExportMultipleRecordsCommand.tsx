@@ -84,7 +84,15 @@ export const ExportMultipleRecordsCommand = () => {
     recordIndexId,
   );
 
-  const visibleFieldNames = visibleRecordFields
+  // OMNIA-CUSTOM: Separate direct fields from sub-field columns
+  const directRecordFields = visibleRecordFields.filter(
+    (f: RecordField) => !f.subFieldName,
+  );
+  const subFieldRecordFields = visibleRecordFields.filter(
+    (f: RecordField) => !!f.subFieldName,
+  );
+
+  const visibleFieldNames = directRecordFields
     .map((field: RecordField) => {
       const fieldMetadataItem = objectMetadataItem.fields.find(
         (f) => f.id === field.fieldMetadataItemId,
@@ -94,7 +102,7 @@ export const ExportMultipleRecordsCommand = () => {
     })
     .filter(Boolean);
 
-  const columns = visibleRecordFields
+  const columns = directRecordFields
     .map((field: RecordField) => {
       const fieldMetadataItem = objectMetadataItem.fields.find(
         (f) => f.id === field.fieldMetadataItemId,
@@ -131,6 +139,39 @@ export const ExportMultipleRecordsCommand = () => {
       selectedFieldPaths: erf.exportableSubFields.map((sf) => sf.fieldPath),
     }));
 
+    // OMNIA-CUSTOM: Merge sub-field columns into relation configs
+    for (const subField of subFieldRecordFields) {
+      const relationFieldMeta = objectMetadataItem.fields.find(
+        (f) => f.id === subField.fieldMetadataItemId,
+      );
+
+      if (!relationFieldMeta || !subField.subFieldName) continue;
+
+      const existingConfig = relationConfigs.find(
+        (rc) => rc.relationFieldName === relationFieldMeta.name,
+      );
+
+      if (existingConfig) {
+        if (
+          !existingConfig.selectedFieldPaths.includes(subField.subFieldName)
+        ) {
+          existingConfig.selectedFieldPaths.push(subField.subFieldName);
+        }
+      } else {
+        const targetNameSingular =
+          relationFieldMeta.relation?.targetObjectMetadata?.nameSingular;
+
+        if (targetNameSingular) {
+          relationConfigs.push({
+            relationFieldName: relationFieldMeta.name,
+            relationFieldLabel: relationFieldMeta.label,
+            targetObjectNameSingular: targetNameSingular,
+            selectedFieldPaths: [subField.subFieldName],
+          });
+        }
+      }
+    }
+
     try {
       const { data } = await apolloClient.mutate<StartExportJobResponse>({
         mutation: START_EXPORT_JOB,
@@ -163,12 +204,12 @@ export const ExportMultipleRecordsCommand = () => {
     }
   }, [
     apolloClient,
-    objectMetadataItem.nameSingular,
-    objectMetadataItem.namePlural,
+    objectMetadataItem,
     columns,
     queryFilter,
     findManyRecordsParams.orderBy,
     exportableRelationFields,
+    subFieldRecordFields,
     startTracking,
     closeCommandMenu,
     enqueueErrorSnackBar,
