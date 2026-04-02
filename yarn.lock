@@ -195,20 +195,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ai-sdk/react@npm:3.0.99":
-  version: 3.0.99
-  resolution: "@ai-sdk/react@npm:3.0.99"
-  dependencies:
-    "@ai-sdk/provider-utils": "npm:4.0.15"
-    ai: "npm:6.0.97"
-    swr: "npm:^2.2.5"
-    throttleit: "npm:2.1.0"
-  peerDependencies:
-    react: ^18 || ~19.0.1 || ~19.1.2 || ^19.2.1
-  checksum: 10c0/e8ee12df235e13ef238ffd4a78c34b53c989ab5803cfe26453458bb7ecf001e15e9afb303f294d8f1c189f31260db4726a34615657ac94ffd7e058172549fd43
-  languageName: node
-  linkType: hard
-
 "@ai-sdk/xai@npm:^3.0.57":
   version: 3.0.74
   resolution: "@ai-sdk/xai@npm:3.0.74"
@@ -55145,13 +55131,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resumable-stream@npm:^2.2.12":
-  version: 2.2.12
-  resolution: "resumable-stream@npm:2.2.12"
-  checksum: 10c0/6fa3ddb31d7d88e720c8313532799e7e913dec31890fd1132d4a324718fe55eeb82782c4a571c3be3f6ce8e0396253eb5b775983f035a6a88d01a886154420c2
-  languageName: node
-  linkType: hard
-
 "retext-latin@npm:^4.0.0":
   version: 4.0.0
   resolution: "retext-latin@npm:4.0.0"
@@ -58280,18 +58259,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swr@npm:^2.2.5":
-  version: 2.3.6
-  resolution: "swr@npm:2.3.6"
-  dependencies:
-    dequal: "npm:^2.0.3"
-    use-sync-external-store: "npm:^1.4.0"
-  peerDependencies:
-    react: ^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/9534f350982e36a3ae0a13da8c0f7da7011fc979e77f306e60c4e5db0f9b84f17172c44f973441ba56bb684b69b0d9838ab40011a6b6b3e32d0cd7f3d5405f99
-  languageName: node
-  linkType: hard
-
 "symbol-observable@npm:4.0.0":
   version: 4.0.0
   resolution: "symbol-observable@npm:4.0.0"
@@ -58689,13 +58656,6 @@ __metadata:
   dependencies:
     real-require: "npm:^0.2.0"
   checksum: 10c0/c36118379940b77a6ef3e6f4d5dd31e97b8210c3f7b9a54eb8fe6358ab173f6d0acfaf69b9c3db024b948c0c5fd2a7df93e2e49151af02076b35ada3205ec9a6
-  languageName: node
-  linkType: hard
-
-"throttleit@npm:2.1.0":
-  version: 2.1.0
-  resolution: "throttleit@npm:2.1.0"
-  checksum: 10c0/1696ae849522cea6ba4f4f3beac1f6655d335e51b42d99215e196a718adced0069e48deaaf77f7e89f526ab31de5b5c91016027da182438e6f9280be2f3d5265
   languageName: node
   linkType: hard
 
@@ -59634,7 +59594,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-front@workspace:packages/twenty-front"
   dependencies:
-    "@ai-sdk/react": "npm:3.0.99"
     "@apollo/client": "npm:^4.0.0"
     "@blocknote/mantine": "npm:^0.47.1"
     "@blocknote/react": "npm:^0.47.1"
@@ -59991,7 +59950,6 @@ __metadata:
     react-dom: "npm:18.3.1"
     redis: "npm:^4.7.0"
     reflect-metadata: "npm:0.2.2"
-    resumable-stream: "npm:^2.2.12"
     rimraf: "npm:^5.0.5"
     rxjs: "npm:7.8.1"
     semver: "npm:7.6.3"
