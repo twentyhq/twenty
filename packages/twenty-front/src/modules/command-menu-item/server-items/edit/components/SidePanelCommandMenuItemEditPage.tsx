@@ -6,7 +6,10 @@ import { CommandMenuItemEditRecordSelectionDropdown } from '@/command-menu-item/
 import { CommandMenuItemOptionsDropdown } from '@/command-menu-item/server-items/edit/components/CommandMenuItemOptionsDropdown';
 import { useReorderCommandMenuItemsInDraft } from '@/command-menu-item/server-items/edit/hooks/useReorderCommandMenuItemsInDraft';
 import { useResetCommandMenuItemsDraft } from '@/command-menu-item/server-items/edit/hooks/useResetCommandMenuItemsDraft';
-import { commandMenuItemEditSelectionModeState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditSelectionModeState';
+import {
+  type CommandMenuItemEditSelectionMode,
+  commandMenuItemEditSelectionModeState,
+} from '@/command-menu-item/server-items/edit/states/commandMenuItemEditSelectionModeState';
 import { useUpdateCommandMenuItemInDraft } from '@/command-menu-item/server-items/edit/hooks/useUpdateCommandMenuItemInDraft';
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
@@ -20,6 +23,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { type DropResult } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { CommandMenuContextApiPageType } from 'twenty-shared/types';
 import {
   interpolateCommandMenuItemLabel,
   isDefined,
@@ -80,9 +84,17 @@ export const SidePanelCommandMenuItemEditPage = () => {
   const currentObjectMetadataItemId =
     commandMenuContextApi.objectMetadataItem.id;
 
+  const isRecordPage =
+    commandMenuContextApi.pageType ===
+    CommandMenuContextApiPageType.RECORD_PAGE;
+
   const commandMenuItemEditSelectionMode = useAtomStateValue(
     commandMenuItemEditSelectionModeState,
   );
+
+  const effectiveSelectionMode: CommandMenuItemEditSelectionMode = isRecordPage
+    ? 'selection'
+    : commandMenuItemEditSelectionMode;
 
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
 
@@ -98,7 +110,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
 
   const allowedAvailabilityTypes = new Set<CommandMenuItemAvailabilityType>([
     CommandMenuItemAvailabilityType.GLOBAL,
-    commandMenuItemEditSelectionMode === 'selection'
+    effectiveSelectionMode === 'selection'
       ? CommandMenuItemAvailabilityType.RECORD_SELECTION
       : CommandMenuItemAvailabilityType.FALLBACK,
   ]);
@@ -237,7 +249,9 @@ export const SidePanelCommandMenuItemEditPage = () => {
   return (
     <StyledContainer data-click-outside-id={COMMAND_MENU_CLICK_OUTSIDE_ID}>
       <StyledViewbar>
-        <CommandMenuItemEditRecordSelectionDropdown />
+        <CommandMenuItemEditRecordSelectionDropdown
+          isRecordPage={isRecordPage}
+        />
       </StyledViewbar>
       <StyledContent>
         <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>

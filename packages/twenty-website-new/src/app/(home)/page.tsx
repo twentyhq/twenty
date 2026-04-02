@@ -48,10 +48,7 @@ export default function HomePage() {
             variant="contained"
           />
         </Hero.Cta>
-        <Hero.HomeVisual
-          background={HERO_DATA.background}
-          foreground={HERO_DATA.foreground}
-        />
+        <Hero.HomeVisual visual={HERO_DATA.visual} />
       </Hero.Root>
 
       <TrustedBy.Root>
