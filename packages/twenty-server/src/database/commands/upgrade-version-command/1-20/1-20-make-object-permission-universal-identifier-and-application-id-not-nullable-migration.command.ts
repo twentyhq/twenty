@@ -1,32 +1,27 @@
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { DataSource, type Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
+import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { makeObjectPermissionUniversalIdentifierAndApplicationIdNotNullQueries } from 'src/database/typeorm/core/migrations/utils/1773317160558-make-object-permission-universal-identifier-and-application-id-not-null.util';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
 @Command({
   name: 'upgrade:1-20:make-object-permission-universal-identifier-and-application-id-not-nullable-migration',
   description:
     'Set NOT NULL on objectPermission universalIdentifier and applicationId, add unique index and FK (run identify-object-permission-metadata first)',
 })
-export class MakeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+export class MakeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   private hasRunOnce = false;
 
   constructor(
-    @InjectRepository(WorkspaceEntity)
-    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
-    protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
-    protected readonly dataSourceService: DataSourceService,
+    protected readonly workspaceIteratorService: WorkspaceIteratorService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
+    super(workspaceIteratorService);
   }
 
   override async runOnWorkspace({

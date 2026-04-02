@@ -9,7 +9,7 @@ import {
   type ToolProviderContext,
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
-import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import { ToolCategory } from 'twenty-shared/ai';
 import {
   type ToolDescriptor,
   type ToolIndexEntry,

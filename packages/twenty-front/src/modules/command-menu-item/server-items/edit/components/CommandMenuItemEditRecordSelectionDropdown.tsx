@@ -21,15 +21,16 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const DROPDOWN_ID = 'command-menu-edit-record-selection-dropdown';
 
-const StyledClickableArea = styled.div`
+const StyledClickableArea = styled.div<{ disabled?: boolean }>`
   align-items: center;
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   height: 24px;
+  opacity: ${({ disabled }) => (disabled ? '0.5' : '1')};
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[1]};
 `;
@@ -46,7 +47,13 @@ const StyledDropdownMenuContainer = styled.div`
   width: 100%;
 `;
 
-export const CommandMenuItemEditRecordSelectionDropdown = () => {
+type CommandMenuItemEditRecordSelectionDropdownProps = {
+  isRecordPage?: boolean;
+};
+
+export const CommandMenuItemEditRecordSelectionDropdown = ({
+  isRecordPage = false,
+}: CommandMenuItemEditRecordSelectionDropdownProps) => {
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
 
@@ -79,8 +86,10 @@ export const CommandMenuItemEditRecordSelectionDropdown = () => {
   return (
     <Dropdown
       dropdownId={DROPDOWN_ID}
+      disableClickForClickableComponent={isRecordPage}
       clickableComponent={
         <StyledClickableArea
+          disabled={isRecordPage}
           data-click-outside-id={COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
         >
           <TriggerIcon size={16} />

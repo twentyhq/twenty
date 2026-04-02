@@ -10,7 +10,7 @@ import {
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
-import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import { ToolCategory } from 'twenty-shared/ai';
 import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-serialization/compact-tool-output.util';
 import { NativeModelToolProvider } from 'src/engine/core-modules/tool-provider/providers/native-model-tool.provider';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';

@@ -8,4 +8,7 @@ export abstract class OverridableEntity<
 > extends SyncableEntity {
   @Column({ type: 'jsonb', nullable: true })
   overrides: JsonbProperty<TOverrides> | null;
+
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
 }

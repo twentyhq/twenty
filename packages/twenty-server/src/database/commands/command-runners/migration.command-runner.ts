@@ -52,11 +52,11 @@ export abstract class MigrationCommandRunner extends CommandRunner {
 
     try {
       await this.runMigrationCommand(passedParams, options);
+
+      this.logger.log(chalk.blue('Command completed!'));
     } catch (error) {
       this.logger.error(chalk.red(`Command failed`));
       throw error;
-    } finally {
-      this.logger.log(chalk.blue('Command completed!'));
     }
   }
 

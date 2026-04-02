@@ -1,31 +1,23 @@
-import { InjectRepository } from '@nestjs/typeorm';
-
 import { Command } from 'nest-commander';
-import { Repository } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
+import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 
 @Command({
   name: 'upgrade:1-20:seed-cli-application-registration',
   description:
     'Seed the Twenty CLI application registration for OAuth-based CLI login',
 })
-export class SeedCliApplicationRegistrationCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+export class SeedCliApplicationRegistrationCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   private hasRun = false;
 
   constructor(
-    @InjectRepository(WorkspaceEntity)
-    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
-    protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
-    protected readonly dataSourceService: DataSourceService,
+    protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
+    super(workspaceIteratorService);
   }
 
   override async runOnWorkspace({

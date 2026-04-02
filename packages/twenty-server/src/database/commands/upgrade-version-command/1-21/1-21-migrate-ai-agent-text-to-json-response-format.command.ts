@@ -1,14 +1,10 @@
-import { InjectRepository } from '@nestjs/typeorm';
-
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
+import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -45,17 +41,15 @@ const TEXT_AGENT_DEFAULT_OUTPUT_SCHEMA = {
   description:
     'Migrate AI agents with text response format to JSON with a default response field',
 })
-export class MigrateAiAgentTextToJsonResponseFormatCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+export class MigrateAiAgentTextToJsonResponseFormatCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(
-    @InjectRepository(WorkspaceEntity)
-    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
-    protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
-    protected readonly dataSourceService: DataSourceService,
+    protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {
-    super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
+    super(workspaceIteratorService);
   }
 
   override async runOnWorkspace({

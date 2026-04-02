@@ -6,8 +6,8 @@ import { CommandMenuItemOptionsDropdown } from '@/command-menu-item/server-items
 import { useReorderCommandMenuItemsInDraft } from '@/command-menu-item/server-items/edit/hooks/useReorderCommandMenuItemsInDraft';
 import { useResetCommandMenuItemsDraft } from '@/command-menu-item/server-items/edit/hooks/useResetCommandMenuItemsDraft';
 import { useUpdateCommandMenuItemInDraft } from '@/command-menu-item/server-items/edit/hooks/useUpdateCommandMenuItemInDraft';
-import { mainContextStoreHasSelectedRecordsSelector } from '@/context-store/states/selectors/mainContextStoreHasSelectedRecordsSelector';
 import { commandMenuItemsDraftState } from '@/command-menu-item/server-items/edit/states/commandMenuItemsDraftState';
+import { mainContextStoreHasSelectedRecordsSelector } from '@/context-store/states/selectors/mainContextStoreHasSelectedRecordsSelector';
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -20,6 +20,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { type DropResult } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { CommandMenuContextApiPageType } from 'twenty-shared/types';
 import {
   interpolateCommandMenuItemLabel,
   isDefined,
@@ -79,6 +80,10 @@ export const SidePanelCommandMenuItemEditPage = () => {
 
   const currentObjectMetadataItemId =
     commandMenuContextApi.objectMetadataItem.id;
+
+  const isRecordPage =
+    commandMenuContextApi.pageType ===
+    CommandMenuContextApiPageType.RECORD_PAGE;
 
   const mainContextStoreHasSelectedRecords = useAtomStateValue(
     mainContextStoreHasSelectedRecordsSelector,
@@ -237,7 +242,9 @@ export const SidePanelCommandMenuItemEditPage = () => {
   return (
     <StyledContainer data-click-outside-id={COMMAND_MENU_CLICK_OUTSIDE_ID}>
       <StyledViewbar>
-        <CommandMenuItemEditRecordSelectionDropdown />
+        <CommandMenuItemEditRecordSelectionDropdown
+          isRecordPage={isRecordPage}
+        />
       </StyledViewbar>
       <StyledContent>
         <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
