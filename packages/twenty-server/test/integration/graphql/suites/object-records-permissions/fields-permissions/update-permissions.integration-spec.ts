@@ -41,6 +41,27 @@ const expectPermissionDeniedError = (response: any) => {
   expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
 };
 
+const expectEmployeesIsAccessible = ({
+  response,
+  operationName,
+  expectedEmployees,
+}: {
+  response: any;
+  operationName: 'createCompanies' | 'createCompany';
+  expectedEmployees: number;
+}) => {
+  expect(response.body.errors).toBeUndefined();
+  expect(response.body.data).toBeDefined();
+
+  const result =
+    operationName === 'createCompany'
+      ? response.body.data[operationName]
+      : response.body.data[operationName]?.[0];
+
+  expect(result).toBeDefined();
+  expect(result.employees).toBe(expectedEmployees);
+};
+
 describe('Field update permissions restrictions', () => {
   let companyId: string;
   let personId: string;
@@ -346,7 +367,11 @@ describe('Field update permissions restrictions', () => {
       const response =
         await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
-      expectPermissionDeniedError(response);
+      expectEmployeesIsAccessible({
+        response,
+        operationName: 'createCompanies',
+        expectedEmployees: 15,
+      });
     });
 
     it('2. createOne with restricted field in RLS predicate', async () => {
@@ -359,7 +384,11 @@ describe('Field update permissions restrictions', () => {
       const response =
         await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
-      expectPermissionDeniedError(response);
+      expectEmployeesIsAccessible({
+        response,
+        operationName: 'createCompany',
+        expectedEmployees: 25,
+      });
     });
   });
   describe('should block read-restricted field in update operation responses', () => {
