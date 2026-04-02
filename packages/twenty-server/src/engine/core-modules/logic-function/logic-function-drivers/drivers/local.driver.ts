@@ -100,12 +100,12 @@ export class LocalDriver implements LogicFunctionDriver {
     });
     const sdkNodeModulesPath = join(sdkLayerPath, 'node_modules');
 
-    const layerExists = await fs
-      .access(sdkLayerPath)
+    const nodeModulesExist = await fs
+      .access(sdkNodeModulesPath)
       .then(() => true)
       .catch(() => false);
 
-    if (layerExists && !flatApplication.isSdkLayerStale) {
+    if (nodeModulesExist && !flatApplication.isSdkLayerStale) {
       return;
     }
 
