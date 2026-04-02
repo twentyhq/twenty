@@ -14,16 +14,23 @@ export type UploadFilesOrchestratorStepOutput = {
 export class UploadFilesOrchestratorStep {
   private state: OrchestratorState;
   private notify: () => void;
+  private verbose: boolean;
+  private uploadedCount = 0;
+  private failedCount = 0;
+  private totalQueued = 0;
 
   constructor({
     state,
     notify,
+    verbose,
   }: {
     state: OrchestratorState;
     notify: () => void;
+    verbose?: boolean;
   }) {
     this.state = state;
     this.notify = notify;
+    this.verbose = verbose ?? false;
   }
 
   get isInitialized(): boolean {
@@ -58,11 +65,14 @@ export class UploadFilesOrchestratorStep {
     }
 
     step.status = 'in_progress';
+    this.totalQueued++;
 
-    this.state.addEvent({
-      message: `Uploading ${builtPath}`,
-      status: 'info',
-    });
+    if (this.verbose) {
+      this.state.addEvent({
+        message: `Uploading ${builtPath}`,
+        status: 'info',
+      });
+    }
     this.state.updateEntityStatus(sourcePath, 'uploading');
     this.notify();
 
@@ -70,12 +80,17 @@ export class UploadFilesOrchestratorStep {
       .uploadFile({ builtPath, fileFolder })
       .then((result) => {
         if (result.success) {
-          this.state.addEvent({
-            message: `Successfully uploaded ${builtPath}`,
-            status: 'success',
-          });
+          this.uploadedCount++;
+
+          if (this.verbose) {
+            this.state.addEvent({
+              message: `Successfully uploaded ${builtPath}`,
+              status: 'success',
+            });
+          }
           this.state.updateEntityStatus(sourcePath, 'success');
         } else {
+          this.failedCount++;
           this.state.addEvent({
             message: `Failed to upload ${builtPath}: ${result.error}`,
             status: 'error',
@@ -83,6 +98,7 @@ export class UploadFilesOrchestratorStep {
         }
       })
       .catch((error) => {
+        this.failedCount++;
         this.state.addEvent({
           message: `Upload failed for ${builtPath}: ${error}`,
           status: 'error',
@@ -92,6 +108,7 @@ export class UploadFilesOrchestratorStep {
         step.output.activeUploads.delete(uploadPromise);
 
         if (step.output.activeUploads.size === 0) {
+          this.logUploadSummary();
           step.status = 'done';
           this.notify();
         }
@@ -109,6 +126,34 @@ export class UploadFilesOrchestratorStep {
 
     step.status = 'done';
     this.notify();
+  }
+
+  private logUploadSummary(): void {
+    if (this.totalQueued === 0) {
+      this.resetCounters();
+
+      return;
+    }
+
+    if (this.failedCount > 0) {
+      this.state.addEvent({
+        message: `Uploaded ${this.uploadedCount}/${this.totalQueued} files (${this.failedCount} failed)`,
+        status: 'error',
+      });
+    }
+
+    this.state.addEvent({
+      message: `Successfully uploaded ${this.uploadedCount} file${this.uploadedCount !== 1 ? 's' : ''}`,
+      status: 'success',
+    });
+
+    this.resetCounters();
+  }
+
+  private resetCounters(): void {
+    this.uploadedCount = 0;
+    this.failedCount = 0;
+    this.totalQueued = 0;
   }
 
   private uploadPendingFiles(): void {
