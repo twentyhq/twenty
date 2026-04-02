@@ -1012,6 +1012,7 @@ msgstr "Not ekle"
 
 #. js-lingui-id: dEO3Zx
 #: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
 msgstr "Nesne Ekle"
 
@@ -5473,10 +5474,20 @@ msgstr "Atlama seçeneklerini etkinleştir"
 msgid "Enable model-specific features"
 msgstr "Modelde özgül özellikleri etkinleştir"
 
+#. js-lingui-id: IrI9pg
+#: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
+msgid "End date"
+msgstr ""
+
 #. js-lingui-id: VFv2ZC
 #: src/pages/settings/security/event-logs/components/EventLogFilters.tsx
 msgid "End Date"
 msgstr "Bitiş Tarihi"
+
+#. js-lingui-id: Fqu/aC
+#: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
+msgid "End date must be after start date."
+msgstr ""
 
 #. js-lingui-id: k1i50B
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
@@ -6402,6 +6413,11 @@ msgstr ""
 #: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
 msgid "Failed to save workspace instructions"
 msgstr "Çalışma alanı talimatları kaydedilemedi"
+
+#. js-lingui-id: aj02T8
+#: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
+msgid "Failed to set maintenance mode."
+msgstr ""
 
 #. js-lingui-id: LVcnN8
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
@@ -7402,6 +7418,11 @@ msgstr "eğer"
 msgid "If disabled, use advanced search filters to find these records"
 msgstr ""
 
+#. js-lingui-id: bTDz/2
+#: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
+msgid "If there's no link, no button will appear."
+msgstr ""
+
 #. js-lingui-id: ZfP/Ap
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote.tsx
 msgid "If this is unexpected, please verify your settings."
@@ -8278,6 +8299,7 @@ msgstr "Düzenler"
 
 #. js-lingui-id: zwWKhA
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
+#: src/modules/information-banner/components/maintenance/InformationBannerMaintenance.tsx
 msgid "Learn more"
 msgstr "Daha fazla bilgi edinin"
 
@@ -8388,6 +8410,7 @@ msgstr "Çizgi Grafiği"
 
 #. js-lingui-id: yzF66j
 #: src/modules/side-panel/components/SidePanelLinkInfo.tsx
+#: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Link"
 msgstr "Bağlantı"
@@ -8637,6 +8660,16 @@ msgstr "döngü"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Mail Account"
 msgstr "Mail Hesabı"
+
+#. js-lingui-id: 6Dd2PM
+#: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
+msgid "Maintenance"
+msgstr ""
+
+#. js-lingui-id: /hmUGb
+#: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
+msgid "Maintenance mode"
+msgstr ""
 
 #. js-lingui-id: MOLprz
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -10876,6 +10909,12 @@ msgstr "Plan"
 msgid "Plan switching has been cancelled."
 msgstr "Plan değişikliği iptal edildi."
 
+#. js-lingui-id: QLv09h
+#: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
+#: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
+msgid "Planned for {formattedStartDate}"
+msgstr ""
+
 #. js-lingui-id: VUi6Nf
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Please check your cron expression syntax."
@@ -12028,6 +12067,16 @@ msgstr "Yeni bir uygulamanın iskeletini oluşturun, ardından geliştirmek, yay
 msgid "Schedule"
 msgstr "Program"
 
+#. js-lingui-id: Ys/D8h
+#: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
+msgid "Schedule a maintenance window and notify all users"
+msgstr ""
+
+#. js-lingui-id: f5yMQc
+#: src/modules/information-banner/components/maintenance/InformationBannerMaintenance.tsx
+msgid "Scheduled maintenance: {startFormatted} — {endFormatted}"
+msgstr ""
+
 #. js-lingui-id: QJ8HBJ
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Schema"
@@ -12492,7 +12541,7 @@ msgid "Select column..."
 msgstr "Sütun seç..."
 
 #. js-lingui-id: U+WOF9
-#: src/pages/settings/security/event-logs/components/EventLogDatePickerInput.tsx
+#: src/modules/settings/components/SettingsDatePickerInput.tsx
 msgid "Select date & time"
 msgstr "Tarih ve saat seçin"
 
@@ -12885,6 +12934,11 @@ msgstr "Giriş yapın veya bir hesap oluşturun"
 msgid "Sign up"
 msgstr "Kaydol"
 
+#. js-lingui-id: mHC57v
+#: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
+msgid "Sign-up is temporarily unavailable during maintenance."
+msgstr ""
+
 #. js-lingui-id: BZdVGR
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Single edit"
@@ -13198,6 +13252,11 @@ msgstr "Kurumsal özellikleri yeniden etkinleştirmek için yeni bir kurumsal ab
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Start a new enterprise subscription."
 msgstr "Yeni bir kurumsal abonelik başlatın."
+
+#. js-lingui-id: WAjFYI
+#: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
+msgid "Start date"
+msgstr ""
 
 #. js-lingui-id: D3iCkb
 #: src/pages/settings/security/event-logs/components/EventLogFilters.tsx
