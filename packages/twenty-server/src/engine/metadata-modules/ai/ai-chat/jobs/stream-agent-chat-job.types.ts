@@ -17,4 +17,5 @@ export type StreamAgentChatJobData = {
   lastUserMessageParts: ExtendedUIMessagePart[];
   hasTitle: boolean;
   existingTurnId?: string;
+  conversationSizeTokens: number;
 };
