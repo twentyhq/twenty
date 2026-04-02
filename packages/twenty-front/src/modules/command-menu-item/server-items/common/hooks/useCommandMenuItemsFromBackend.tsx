@@ -152,9 +152,9 @@ export const useCommandMenuItemsFromBackend = (
     isPinned: boolean;
     typeOverride?: CommandMenuItemType;
   }): CommandMenuItemConfig | null => {
-    if (isDefined(item.engineComponentKey)) {
-      return buildCommandItemFromEngineKey({
-        item,
+    if (isDefined(item.frontComponentId)) {
+      return buildCommandMenuItemFromFrontComponent({
+        item: item as CommandMenuItemWithFrontComponent,
         type: typeOverride,
         scope,
         isPinned,
@@ -163,9 +163,9 @@ export const useCommandMenuItemsFromBackend = (
       });
     }
 
-    if (isDefined(item.frontComponentId)) {
-      return buildCommandMenuItemFromFrontComponent({
-        item: item as CommandMenuItemWithFrontComponent,
+    if (isDefined(item.engineComponentKey)) {
+      return buildCommandItemFromEngineKey({
+        item,
         type: typeOverride,
         scope,
         isPinned,

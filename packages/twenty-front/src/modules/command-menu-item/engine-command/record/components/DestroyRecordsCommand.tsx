@@ -5,33 +5,36 @@ import { useIncrementalDestroyManyRecords } from '@/object-record/hooks/useIncre
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { t } from '@lingui/core/macro';
-import { type RecordGqlOperationFilter } from 'twenty-shared/types';
+import { AppPath, type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 
-export const DestroyMultipleRecordsCommand = () => {
-  const { recordIndexId, objectMetadataItem, graphqlFilter } =
+export const DestroyRecordsCommand = () => {
+  const { recordIndexId, objectMetadataItem, selectedRecords, graphqlFilter } =
     useHeadlessCommandContextApi();
 
-  if (
-    !isDefined(recordIndexId) ||
-    !isDefined(objectMetadataItem) ||
-    !isDefined(graphqlFilter)
-  ) {
+  if (!isDefined(recordIndexId) || !isDefined(objectMetadataItem)) {
     throw new Error(
-      'Record index ID, object metadata item, and graphql filter are required to destroy multiple records',
+      'Record index ID and object metadata are required to destroy records',
     );
   }
+
+  const isSingleRecord = selectedRecords.length === 1;
+
+  const navigateApp = useNavigateApp();
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
   const { removeSelectedRecordsFromRecordBoard } =
     useRemoveSelectedRecordsFromRecordBoard(recordIndexId);
 
+  const noMatchFilter: RecordGqlOperationFilter = { id: { in: [] } };
+
   const deletedAtFilter: RecordGqlOperationFilter = {
     deletedAt: { is: 'NOT_NULL' },
   };
 
-  const combinedFilter = {
-    ...graphqlFilter,
+  const combinedFilter: RecordGqlOperationFilter = {
+    ...(graphqlFilter ?? noMatchFilter),
     ...deletedAtFilter,
   };
 
@@ -44,17 +47,36 @@ export const DestroyMultipleRecordsCommand = () => {
 
   const handleExecute = async () => {
     removeSelectedRecordsFromRecordBoard();
-
     resetTableRowSelection();
 
+    if (!isDefined(graphqlFilter)) {
+      throw new Error('Cannot destroy records without a valid filter');
+    }
+
     await incrementalDestroyManyRecords();
+
+    if (isSingleRecord) {
+      navigateApp(AppPath.RecordIndexPage, {
+        objectNamePlural: objectMetadataItem.namePlural,
+      });
+    }
   };
+
+  const objectLabel = isSingleRecord
+    ? objectMetadataItem.labelSingular
+    : objectMetadataItem.labelPlural;
+
+  const title = t`Permanently Destroy ${objectLabel}`;
+  const subtitle = isSingleRecord
+    ? t`Are you sure you want to destroy this ${objectMetadataItem.labelSingular}? It cannot be recovered anymore.`
+    : t`Are you sure you want to destroy these ${objectMetadataItem.labelPlural}? They won't be recoverable anymore.`;
+  const confirmButtonText = `${t`Permanently Destroy`} ${objectLabel}`;
 
   return (
     <HeadlessConfirmationModalEngineCommandEffect
-      title={t`Permanently Destroy Records`}
-      subtitle={t`Are you sure you want to destroy these records? They won't be recoverable anymore.`}
-      confirmButtonText={t`Destroy Records`}
+      title={title}
+      subtitle={subtitle}
+      confirmButtonText={confirmButtonText}
       execute={handleExecute}
     />
   );

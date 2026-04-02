@@ -2,34 +2,37 @@ import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-c
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/common/hooks/useRemoveNavigationMenuItemByTargetRecordId';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
+import { useIncrementalDeleteManyRecords } from '@/object-record/hooks/useIncrementalDeleteManyRecords';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-export const DeleteSingleRecordCommand = () => {
-  const { recordIndexId, objectMetadataItem, selectedRecords } =
+export const DeleteRecordsCommand = () => {
+  const { recordIndexId, objectMetadataItem, selectedRecords, graphqlFilter } =
     useHeadlessCommandContextApi();
 
-  const recordId = selectedRecords[0]?.id;
-
-  if (
-    !isDefined(recordId) ||
-    !isDefined(recordIndexId) ||
-    !isDefined(objectMetadataItem)
-  ) {
+  if (!isDefined(recordIndexId) || !isDefined(objectMetadataItem)) {
     throw new Error(
-      'Record ID, record index ID, and object metadata are required to delete single record',
+      'Record index ID and object metadata are required to delete records',
     );
   }
+
+  const recordId = selectedRecords[0]?.id;
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
 
   const { removeSelectedRecordsFromRecordBoard } =
     useRemoveSelectedRecordsFromRecordBoard(recordIndexId);
 
-  const { deleteOneRecord } = useDeleteOneRecord({
+  const noMatchFilter: RecordGqlOperationFilter = { id: { in: [] } };
+
+  const { incrementalDeleteManyRecords } = useIncrementalDeleteManyRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
+    filter: graphqlFilter ?? noMatchFilter,
+    pageSize: DEFAULT_QUERY_PAGE_SIZE,
+    delayInMsBetweenMutations: 50,
   });
 
   const { navigationMenuItems, workspaceNavigationMenuItems } =
@@ -40,19 +43,24 @@ export const DeleteSingleRecordCommand = () => {
 
   const handleExecute = async () => {
     removeSelectedRecordsFromRecordBoard();
-
     resetTableRowSelection();
 
-    const foundNavigationMenuItem = [
-      ...navigationMenuItems,
-      ...workspaceNavigationMenuItems,
-    ].find((item) => item.targetRecordId === recordId);
+    if (isDefined(recordId)) {
+      const foundNavigationMenuItem = [
+        ...navigationMenuItems,
+        ...workspaceNavigationMenuItems,
+      ].find((item) => item.targetRecordId === recordId);
 
-    if (isDefined(foundNavigationMenuItem)) {
-      removeNavigationMenuItemsByTargetRecordIds([recordId]);
+      if (isDefined(foundNavigationMenuItem)) {
+        removeNavigationMenuItemsByTargetRecordIds([recordId]);
+      }
     }
 
-    await deleteOneRecord(recordId);
+    if (!isDefined(graphqlFilter)) {
+      throw new Error('Cannot delete records without a valid filter');
+    }
+
+    await incrementalDeleteManyRecords();
   };
 
   return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;

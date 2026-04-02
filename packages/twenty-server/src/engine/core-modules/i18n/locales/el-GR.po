@@ -5593,6 +5593,11 @@ msgstr ""
 msgid "Please check your connection settings. Make sure the server host, port, and password are correct."
 msgstr "Παρακαλώ ελέγξτε τις ρυθμίσεις της σύνδεσής σας. Βεβαιωθείτε ότι ο διακομιστής, η θύρα και ο κωδικός πρόσβασης είναι σωστά."
 
+#. js-lingui-id: PdKZim
+#: src/engine/core-modules/admin-panel/admin-panel.exception.ts
+msgid "Please choose an end date and time after the start date and time."
+msgstr ""
+
 #. js-lingui-id: mqzu5F
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
 msgid "Please confirm your updated email"
@@ -6267,6 +6272,11 @@ msgstr "Μερικές από τις άδειες που επιλέξατε δε
 #: src/engine/metadata-modules/user-role/user-role.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Δεν ήταν δυνατή η εύρεση ορισμένων συμμετοχών στον χώρο εργασίας. Ίσως να μην έχουν πλέον πρόσβαση σε αυτόν τον χώρο εργασίας."
+
+#. js-lingui-id: fWsBTs
+#: src/engine/core-modules/admin-panel/admin-panel.exception.ts
+msgid "Something went wrong. Please try again."
+msgstr ""
 
 #. js-lingui-id: Oa7nLQ
 #: src/engine/core-modules/application/application.exception.ts
@@ -8417,6 +8427,12 @@ msgstr "Δεν βρέθηκε χώρος εργασίας για συμβάν σ
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Workspace not found."
 msgstr "Ο χώρος εργασίας δεν βρέθηκε."
+
+#. js-lingui-id: osscRx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/workspace-datasource/exceptions/workspace-datasource.exception.ts
+msgid "Workspace schema changes are temporarily locked."
+msgstr ""
 
 #. js-lingui-id: 7wxAZI
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
