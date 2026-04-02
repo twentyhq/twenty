@@ -33,13 +33,13 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { DashboardToolsModule } from 'src/modules/dashboard/tools/dashboard-tools.module';
 import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
-import { AgentChatController } from './controllers/agent-chat.controller';
 import { AgentChatThreadDTO } from './dtos/agent-chat-thread.dto';
 import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
 import { StreamAgentChatJob } from './jobs/stream-agent-chat.job';
 import { AgentChatResolver } from './resolvers/agent-chat.resolver';
+import { AgentChatSubscriptionResolver } from './resolvers/agent-chat-subscription.resolver';
 import { AgentChatCancelSubscriberService } from './services/agent-chat-cancel-subscriber.service';
-import { AgentChatResumableStreamService } from './services/agent-chat-resumable-stream.service';
+import { AgentChatEventPublisherService } from './services/agent-chat-event-publisher.service';
 import { AgentChatStreamingService } from './services/agent-chat-streaming.service';
 import { AgentChatService } from './services/agent-chat.service';
 import { AgentTitleGenerationService } from './services/agent-title-generation.service';
@@ -101,11 +101,11 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     DashboardToolsModule,
     WorkflowToolsModule,
   ],
-  controllers: [AgentChatController],
   providers: [
     AgentChatCancelSubscriberService,
+    AgentChatEventPublisherService,
     AgentChatResolver,
-    AgentChatResumableStreamService,
+    AgentChatSubscriptionResolver,
     AgentChatService,
     AgentChatStreamingService,
     AgentTitleGenerationService,

@@ -189,23 +189,22 @@ export const AIChatMessage = ({
           <AIChatErrorRenderer error={error} />
         )}
       </StyledMessageContainer>
-      {agentChatMessage.parts.length > 0 &&
-        agentChatMessage.metadata?.createdAt && (
-          <StyledMessageFooter className="message-footer">
-            <StyledMessageTimestamp>
-              {beautifyPastDateRelativeToNow(
-                agentChatMessage.metadata?.createdAt,
-                localeCatalog,
-              )}
-            </StyledMessageTimestamp>
-            <LightCopyIconButton
-              copyText={
-                agentChatMessage.parts.find((part) => part.type === 'text')
-                  ?.text ?? ''
-              }
-            />
-          </StyledMessageFooter>
-        )}
+      {agentChatMessage.parts.length > 0 && (
+        <StyledMessageFooter className="message-footer">
+          <StyledMessageTimestamp>
+            {beautifyPastDateRelativeToNow(
+              agentChatMessage.metadata?.createdAt ?? new Date(),
+              localeCatalog,
+            )}
+          </StyledMessageTimestamp>
+          <LightCopyIconButton
+            copyText={
+              agentChatMessage.parts.find((part) => part.type === 'text')
+                ?.text ?? ''
+            }
+          />
+        </StyledMessageFooter>
+      )}
     </StyledMessageBubble>
   );
 };

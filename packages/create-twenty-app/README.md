@@ -12,164 +12,49 @@
 
 </div>
 
-Create Twenty App is the official scaffolding CLI for building apps on top of [Twenty CRM](https://twenty.com). It sets up a ready‑to‑run project that works seamlessly with the [twenty-sdk](https://www.npmjs.com/package/twenty-sdk).
-
-- Zero‑config project bootstrap
-- Preconfigured scripts for auth, dev mode (watch & sync), uninstall, and function management
-- Strong TypeScript support and typed client generation
-
-## Documentation
-
-See Twenty application documentation https://docs.twenty.com/developers/extend/capabilities/apps
-
-## Prerequisites
-
-- Node.js 24+ (recommended) and Yarn 4
-- Docker (for the local Twenty dev server)
+The official scaffolding CLI for building apps on top of [Twenty CRM](https://twenty.com). Sets up a ready-to-run project with [twenty-sdk](https://www.npmjs.com/package/twenty-sdk).
 
 ## Quick start
 
 ```bash
-# Scaffold a new app — the CLI will offer to start a local Twenty server
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
-
-# The scaffolder can automatically:
-# 1. Start a local Twenty server (Docker)
-# 2. Open the browser to log in (tim@apple.dev / tim@apple.dev)
-# 3. Authenticate your app via OAuth
-
-# Or do it manually:
-yarn twenty server start          # Start local Twenty server
-yarn twenty remote add http://localhost:2020 --as local  # Authenticate via OAuth
-
-# Start dev mode: watches, builds, and syncs local changes to your workspace
-# (also auto-generates typed CoreApiClient — MetadataApiClient ships pre-built — both available via `twenty-client-sdk`)
 yarn twenty dev
-
-# Watch your application's function logs
-yarn twenty logs
-
-# Execute a function with a JSON payload
-yarn twenty exec -n my-function -p '{"key": "value"}'
-
-# Execute the pre-install function
-yarn twenty exec --preInstall
-
-# Execute the post-install function
-yarn twenty exec --postInstall
-
-# Build the app for distribution
-yarn twenty build
-
-# Publish the app to npm or directly to a Twenty server
-yarn twenty publish
-
-# Uninstall the application from the current workspace
-yarn twenty uninstall
 ```
+
+The scaffolder will:
+
+1. Create a new project with TypeScript, linting, and a preconfigured `twenty` CLI
+2. Optionally start a local Twenty server (Docker)
+3. Open the browser for OAuth authentication
+4. Scaffold example entities and an integration test
 
 ## Scaffolding modes
 
-Control which example files are included when creating a new app:
+| Flag           | Behavior                                                                                                       |
+| -------------- | -------------------------------------------------------------------------------------------------------------- |
+| `--minimal`    | **(default)** Creates only core files (`application-config.ts`, `default-role.ts`, pre/post-install functions) |
+| `--exhaustive` | Creates all example entities                                                                                   |
 
-| Flag               | Behavior                                                                |
-| ------------------ | ----------------------------------------------------------------------- |
-| `-e, --exhaustive` | **(default)** Creates all example files                                 |
-| `-m, --minimal`    | Creates only core files (`application-config.ts` and `default-role.ts`) |
+Other flags:
 
-```bash
-# Default: all examples included
-npx create-twenty-app@latest my-app
+- `--name <name>` — set the app name (skips the prompt)
+- `--display-name <displayName>` — set the display name (skips the prompt)
+- `--description <description>` — set the description (skips the prompt)
+- `--skip-local-instance` — skip the local server setup prompt
 
-# Minimal: only core files
-npx create-twenty-app@latest my-app -m
-```
+## Documentation
 
-## What gets scaffolded
+Full documentation is available at **[docs.twenty.com/developers/extend/apps](https://docs.twenty.com/developers/extend/apps/getting-started)**:
 
-**Core files (always created):**
-
-- `application-config.ts` — Application metadata configuration
-- `roles/default-role.ts` — Default role for logic functions
-- `logic-functions/pre-install.ts` — Pre-install logic function (runs before app installation)
-- `logic-functions/post-install.ts` — Post-install logic function (runs after app installation)
-- TypeScript configuration, Oxlint, package.json, .gitignore
-- A prewired `twenty` script that delegates to the `twenty` CLI from twenty-sdk
-
-**Example files (controlled by scaffolding mode):**
-
-- `objects/example-object.ts` — Example custom object with a text field
-- `fields/example-field.ts` — Example standalone field extending the example object
-- `logic-functions/hello-world.ts` — Example logic function with HTTP trigger
-- `front-components/hello-world.tsx` — Example front component
-- `views/example-view.ts` — Example saved view for the example object
-- `navigation-menu-items/example-navigation-menu-item.ts` — Example sidebar navigation link
-- `skills/example-skill.ts` — Example AI agent skill definition
-- `__tests__/app-install.integration-test.ts` — Integration test that builds, installs, and verifies the app (includes `vitest.config.ts`, `tsconfig.spec.json`, and a setup file)
-
-## Local server
-
-The scaffolder can start a local Twenty dev server for you (all-in-one Docker image with PostgreSQL, Redis, server, and worker on port 2020). These commands only apply to the Docker-based dev server — they do not manage a Twenty instance started from source (e.g. `npx nx start twenty-server` on port 3000). You can also manage it manually:
-
-```bash
-yarn twenty server start     # Start (pulls image if needed)
-yarn twenty server status    # Check if it's healthy
-yarn twenty server logs      # Stream logs
-yarn twenty server stop      # Stop (data is preserved)
-yarn twenty server reset     # Wipe all data and start fresh
-```
-
-The server is pre-seeded with a workspace and user (`tim@apple.dev` / `tim@apple.dev`).
-
-## Next steps
-
-- Run `yarn twenty help` to see all available commands.
-- Use `yarn twenty remote add <url>` to authenticate with your Twenty workspace via OAuth.
-- Explore the generated project and add your first entity with `yarn twenty add` (logic functions, front components, objects, roles, views, navigation menu items, skills).
-- Use `yarn twenty dev` while you iterate — it watches, builds, and syncs changes to your workspace in real time.
-- `CoreApiClient` is auto-generated by `yarn twenty dev`. `MetadataApiClient` (for workspace configuration and file uploads via `/metadata`) ships pre-built with the SDK. Both are available via `import { CoreApiClient } from 'twenty-client-sdk/core'` and `import { MetadataApiClient } from 'twenty-client-sdk/metadata'`.
-
-## Build and publish your application
-
-Once your app is ready, build and publish it using the CLI:
-
-```bash
-# Build the app (output goes to .twenty/output/)
-yarn twenty build
-
-# Build and create a tarball (.tgz) for distribution
-yarn twenty build --tarball
-
-# Publish to npm (requires npm login)
-yarn twenty publish
-
-# Publish with a dist-tag (e.g. beta, next)
-yarn twenty publish --tag beta
-
-# Deploy directly to a Twenty server (builds, uploads, and installs in one step)
-yarn twenty deploy
-```
-
-### Publish to the Twenty marketplace
-
-You can also contribute your application to the curated marketplace:
-
-```bash
-git clone https://github.com/twentyhq/twenty.git
-cd twenty
-git checkout -b feature/my-awesome-app
-```
-
-- Copy your app folder into `twenty/packages/twenty-apps`.
-- Commit your changes and open a pull request on https://github.com/twentyhq/twenty
-
-Our team reviews contributions for quality, security, and reusability before merging.
+- [Getting Started](https://docs.twenty.com/developers/extend/apps/getting-started) — step-by-step setup, project structure, server management, CI
+- [Building Apps](https://docs.twenty.com/developers/extend/apps/building) — entity definitions, API clients, testing
+- [Publishing](https://docs.twenty.com/developers/extend/apps/publishing) — deploy, npm publish, marketplace
 
 ## Troubleshooting
 
 - Server not starting: check Docker is running (`docker info`), then try `yarn twenty server logs`.
-- Auth not working: make sure you're logged in to Twenty in the browser first, then run `yarn twenty remote add <url>`.
+- Auth not working: make sure you are logged in to Twenty in the browser, then run `yarn twenty remote add`.
 - Types not generated: ensure `yarn twenty dev` is running — it auto-generates the typed client.
 
 ## Contributing

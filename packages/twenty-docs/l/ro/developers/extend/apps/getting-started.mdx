@@ -9,68 +9,137 @@ Aplicațiile sunt în prezent în testare alfa. Caracteristica funcționează, d
 
 Aplicațiile vă permit să extindeți Twenty cu obiecte personalizate, câmpuri, funcții logice, abilități IA și componente UI — toate gestionate ca cod.
 
-**Ce puteți construi:**
-
-* Obiecte, câmpuri, vizualizări și elemente de navigare personalizate pentru a defini modelul dumneavoastră de date
-* Funcții logice declanșate de rute HTTP, programări cron sau evenimente din baza de date
-* Componente front-end care se afișează direct în interfața Twenty
-* Abilități care extind capabilitățile agenților AI ai Twenty
-* Implementați o aplicație în mai multe spații de lucru
-
 ## Cerințe
 
-* Node.js 24+
-* Yarn 4
-* Docker (sau o instanță Twenty locală în execuție)
+Înainte de a începe, asigurați-vă că următoarele sunt instalate pe calculatorul dvs.:
 
-## Începeți
+* **Node.js 24+** — [Descărcați aici](https://nodejs.org/)
+* **Yarn 4** — Vine împreună cu Node.js prin Corepack. Activați-l rulând `corepack enable`
+* **Docker** — [Descărcați aici](https://www.docker.com/products/docker-desktop/). Necesar pentru a rula o instanță Twenty locală. Nu este necesar dacă aveți deja un server Twenty care rulează.
 
-Creați o aplicație nouă folosind generatorul oficial, apoi autentificați-vă și începeți să dezvoltați:
+## Pasul 1: Creați scheletul aplicației
+
+Deschideți un terminal și rulați:
 
 ```bash filename="Terminal"
-# Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
 ```
 
-> Folosiți opțiunea `--minimal` pentru a genera o instalare minimă
+Vi se va cere să introduceți un nume și o descriere pentru aplicația dvs. Apăsați **Enter** pentru a accepta valorile implicite.
 
-De aici puteți:
+Aceasta creează un folder nou numit `my-twenty-app` cu tot ce aveți nevoie.
+
+<Note>
+Generatorul de schelet acceptă următoarele opțiuni:
+
+* `--minimal` — generează doar fișierele esențiale, fără exemple (implicit)
+* `--exhaustive` — generează toate entitățile de exemplu
+* `--name <name>` — setează numele aplicației (omite solicitarea)
+* `--display-name <displayName>` — setează numele afișat (omite solicitarea)
+* `--description <description>` — setează descrierea (omite solicitarea)
+* `--skip-local-instance` — omite solicitarea de configurare a serverului local
+</Note>
+
+## Pasul 2: Configurați o instanță Twenty locală
+
+Generatorul de schelet va întreba:
+
+> **Doriți să configurați o instanță Twenty locală?**
+
+* **Tastați `yes`** (recomandat) — Aceasta descarcă imaginea Docker `twenty-app-dev` și pornește un server Twenty local pe portul `2020`. Asigurați-vă că Docker rulează înainte de a continua.
+* **Tastați `no`** — Alegeți această opțiune dacă aveți deja un server Twenty care rulează local.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Porniți instanța locală?" />
+</div>
+
+## Pasul 3: Autentificați-vă în spațiul dvs. de lucru
+
+În continuare, se va deschide o fereastră de browser cu pagina de autentificare Twenty. Autentificați-vă cu contul demo preconfigurat:
+
+* **E-mail:** `tim@apple.dev`
+* **Parolă:** `tim@apple.dev`
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/login.png" alt="Ecranul de autentificare Twenty" />
+</div>
+
+## Pasul 4: Autorizați aplicația
+
+După autentificare, veți vedea un ecran de autorizare. Acest lucru permite aplicației dvs. să interacționeze cu spațiul dvs. de lucru.
+
+Faceți clic pe **Authorize** pentru a continua.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/authorize.png" alt="Ecranul de autorizare Twenty CLI" />
+</div>
+
+După autorizare, terminalul va confirma că totul este configurat.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="Aplicația a fost creată cu succes" />
+</div>
+
+## Pasul 5: Începeți dezvoltarea
+
+Intrați în noul folder al aplicației și porniți serverul de dezvoltare:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
-yarn twenty add
-
-# Watch your application's function logs
-yarn twenty function:logs
-
-# Execute a function by name
-yarn twenty function:execute -n my-function -p '{"name": "test"}'
-
-# Execute the pre-install function
-yarn twenty function:execute --preInstall
-
-# Execute the post-install function
-yarn twenty function:execute --postInstall
-
-# Uninstall the application from the current workspace
-yarn twenty uninstall
-
-# Display commands' help
-yarn twenty help
+cd my-twenty-app
+yarn twenty dev
 ```
 
-Consultați și: paginile de referință CLI pentru [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) și [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
+Acesta monitorizează fișierele sursă, reconstruiește la fiecare modificare și sincronizează automat aplicația cu serverul Twenty local. Ar trebui să vedeți în terminal un panou de stare în timp real.
 
-## Structura proiectului (generată)
+Pentru un output mai detaliat (jurnale de build, cereri de sincronizare, urme ale erorilor), folosiți opțiunea `--verbose`:
 
-Când rulați `npx create-twenty-app@latest my-twenty-app`, generatorul:
+```bash filename="Terminal"
+yarn twenty dev --verbose
+```
 
-* Copiază o aplicație de bază minimală în `my-twenty-app/`
-* Adaugă o dependență locală `twenty-sdk` și configurația Yarn 4
-* Creează fișiere de configurare și scripturi conectate la CLI-ul `twenty`
-* Generează fișierele de bază (configurația aplicației, rolul implicit al funcțiilor, funcțiile de pre-instalare și post-instalare) plus fișiere de exemplu în funcție de modul de generare a scheletului.
+<Warning>
+Modul de dezvoltare este disponibil doar pe instanțele Twenty care rulează în modul development (`NODE_ENV=development`). Instanțele de producție resping cererile de sincronizare pentru dezvoltare. Folosiți `yarn twenty deploy` pentru a implementa pe serverele de producție — vedeți [Publicarea aplicațiilor](/l/ro/developers/extend/apps/publishing) pentru detalii.
+</Warning>
 
-O aplicație proaspăt generată cu modul implicit `--exhaustive` arată astfel:
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/dev.jpg" alt="Ieșirea terminalului în modul de dezvoltare" />
+</div>
+
+## Pasul 6: Vedeți aplicația în Twenty
+
+Deschideți [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer) în browser. Navigați la **Settings > Apps** și selectați fila **Developer**. Ar trebui să vedeți aplicația listată la **Your Apps**:
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="Lista Your Apps care afișează My twenty app" />
+</div>
+
+Faceți clic pe **My twenty app** pentru a deschide **înregistrarea aplicației**. O înregistrare este un element la nivel de server care descrie aplicația — numele, identificatorul unic, acreditările OAuth și sursa (locală, npm sau arhivă tar). Aceasta există pe server, nu în interiorul unui spațiu de lucru anume. Când instalați o aplicație într-un spațiu de lucru, Twenty creează o aplicație la nivelul spațiului de lucru care face referire la această înregistrare. O singură înregistrare poate fi instalată în mai multe spații de lucru pe același server.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="Detalii despre înregistrarea aplicației" />
+</div>
+
+Faceți clic pe **View installed app** pentru a vedea aplicația instalată. Fila **About** afișează versiunea curentă și opțiunile de administrare:
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="Aplicație instalată — fila About" />
+</div>
+
+Comutați la fila **Content** pentru a vedea tot ceea ce oferă aplicația — obiecte, câmpuri, funcții logice și agenți:
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-4.png" alt="Aplicație instalată — fila Content" />
+</div>
+
+Totul este gata! Editați orice fișier din `src/`, iar modificările vor fi preluate automat.
+
+Accesați [Construirea aplicațiilor](/l/ro/developers/extend/apps/building) pentru un ghid detaliat despre crearea de obiecte, funcții logice, componente front-end, abilități și altele.
+
+---
+
+## Structura proiectului
+
+Generatorul de schelet generează următoarea structură de fișiere (afișată cu modul `--exhaustive`, care include exemple pentru fiecare tip de entitate):
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -83,124 +152,238 @@ my-twenty-app/
     install-state.gz
   .oxlintrc.json
   tsconfig.json
+  tsconfig.spec.json                  # TypeScript config for tests
+  vitest.config.ts                    # Vitest test runner configuration
+  LLMS.md
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  .github/
+    └── workflows/
+        └── ci.yml                      # GitHub Actions CI workflow
+  public/                             # Public assets (images, fonts, etc.)
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts             # Required — main application configuration
+  ├── __tests__/
+  │   ├── setup-test.ts                   # Test setup (server health check, config)
+  │   └── app-install.integration-test.ts # Example integration test
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts                 # Default role for logic functions
   ├── objects/
-  │   └── example-object.ts             # Example custom object definition
+  │   └── example-object.ts               # Example custom object definition
   ├── fields/
-  │   └── example-field.ts              # Example standalone field definition
+  │   └── example-field.ts                # Example standalone field definition
   ├── logic-functions/
-  │   ├── hello-world.ts                # Example logic function
-  │   ├── pre-install.ts                # Pre-install logic function
-  │   └── post-install.ts               # Post-install logic function
+  │   ├── hello-world.ts                  # Example logic function
+  │   ├── create-hello-world-company.ts   # Example logic function using CoreApiClient
+  │   ├── pre-install.ts                  # Runs before installation
+  │   └── post-install.ts                 # Runs after installation
   ├── front-components/
-  │   └── hello-world.tsx               # Example front component
+  │   └── hello-world.tsx                 # Example front component
+  ├── page-layouts/
+  │   └── example-record-page-layout.ts   # Example page layout with front component
   ├── views/
-  │   └── example-view.ts                # Example saved view definition
+  │   └── example-view.ts                 # Example saved view definition
   ├── navigation-menu-items/
   │   └── example-navigation-menu-item.ts # Example sidebar navigation link
-  └── skills/
-      └── example-skill.ts                # Example AI agent skill definition
+  ├── skills/
+  │   └── example-skill.ts                # Example AI agent skill definition
+  └── agents/
+      └── example-agent.ts                # Example AI agent definition
 ```
 
-Cu `--minimal`, sunt create doar fișierele de bază (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` și `logic-functions/post-install.ts`).
+În mod implicit (`--minimal`), sunt create doar fișierele de bază: `application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` și `logic-functions/post-install.ts`. Folosiți `--exhaustive` pentru a include toate fișierele de exemplu prezentate mai sus.
 
-Pe scurt:
+### Fișiere cheie
 
-* **package.json**: Declară numele aplicației, versiunea, motoarele (Node 24+, Yarn 4) și adaugă `twenty-sdk` plus un script `twenty` care deleagă către CLI-ul local `twenty`. Rulați `yarn twenty help` pentru a lista toate comenzile disponibile.
-* **.gitignore**: Ignoră artefacte comune precum `node_modules`, `.yarn`, `.twenty/`, `dist/`, `build/`, foldere de coverage, fișiere jurnal și fișiere `.env*`.
-* **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Blochează și configurează lanțul de instrumente Yarn 4 folosit de proiect.
-* **.nvmrc**: Fixează versiunea Node.js așteptată de proiect.
-* **.oxlintrc.json** și **tsconfig.json**: Oferă linting și configurație TypeScript pentru fișierele TypeScript ale aplicației.
-* **README.md**: Un README scurt în rădăcina aplicației, cu instrucțiuni de bază.
-* **public/**: Un folder pentru stocarea resurselor publice (imagini, fonturi, fișiere statice) care vor fi servite împreună cu aplicația dvs. Fișierele plasate aici sunt încărcate în timpul sincronizării și sunt accesibile la rulare.
-* **src/**: Locul principal unde vă definiți aplicația sub formă de cod
+| Fișier / Folder              | Scop                                                                                                                                                            |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `package.json`               | Declară numele aplicației, versiunea și dependențele. Include un script `twenty` astfel încât să puteți rula `yarn twenty help` pentru a vedea toate comenzile. |
+| `src/application-config.ts`  | **Necesar.** Fișierul principal de configurare pentru aplicație.                                                                                                |
+| `src/roles/`                 | Definește roluri care controlează la ce pot avea acces funcțiile logice.                                                                                        |
+| `src/logic-functions/`       | Funcții pe server declanșate de rute, programări cron sau evenimente din baza de date.                                                                          |
+| `src/front-components/`      | Componente React care se afișează în interfața Twenty.                                                                                                          |
+| `src/objects/`               | Definiții de obiecte personalizate pentru a extinde modelul de date.                                                                                            |
+| `src/fields/`                | Câmpuri personalizate adăugate obiectelor existente.                                                                                                            |
+| `src/views/`                 | Configurații pentru vizualizări salvate.                                                                                                                        |
+| `src/navigation-menu-items/` | Linkuri personalizate în bara laterală de navigare.                                                                                                             |
+| `src/skills/`                | Abilități care extind capabilitățile agenților AI ai Twenty.                                                                                                    |
+| `src/agents/`                | Agenți AI cu prompturi personalizate.                                                                                                                           |
+| `src/page-layouts/`          | Machete de pagină personalizate pentru vizualizările de înregistrare.                                                                                           |
+| `src/__tests__/`             | Teste de integrare (configurare + test exemplu).                                                                                                                |
+| `public/`                    | Resurse statice (imagini, fonturi) servite împreună cu aplicația.                                                                                               |
 
-### Detectarea entităților
+## Gestionarea remote-urilor
 
-SDK-ul detectează entitățile analizând fișierele TypeScript pentru apeluri **`export default define<Entity>({...})`**. Fiecare tip de entitate are o funcție ajutătoare corespunzătoare, exportată din `twenty-sdk`:
-
-| Funcție ajutătoare               | Tipul entității                                                |
-| -------------------------------- | -------------------------------------------------------------- |
-| `defineObject`                   | Definiții de obiecte personalizate                             |
-| `defineLogicFunction`            | Definiții de funcții de logică                                 |
-| `definePreInstallLogicFunction`  | Funcție logică de pre-instalare (rulează înainte de instalare) |
-| `definePostInstallLogicFunction` | Funcție logică post-instalare (rulează după instalare)         |
-| `defineFrontComponent`           | Definiții ale componentelor de interfață                       |
-| `defineRole`                     | Definiții de rol                                               |
-| `defineField`                    | Extensii de câmp pentru obiectele existente                    |
-| `defineView`                     | Definiții pentru vizualizări salvate                           |
-| `defineNavigationMenuItem`       | Definiții pentru elemente de meniu de navigare                 |
-| `defineSkill`                    | Definiții ale abilităților agentului IA                        |
-
-<Note>
-**Denumirea fișierelor este flexibilă.** Detectarea entităților se bazează pe AST — SDK-ul scanează fișierele sursă pentru tiparul `export default define<Entity>({...})`. Puteți organiza fișierele și folderele cum doriți. Gruparea după tipul de entitate (de exemplu, `logic-functions/`, `roles/`) este doar o convenție pentru organizarea codului, nu o cerință.
-</Note>
-
-Exemplu de entitate detectată:
-
-```typescript
-// This file can be named anything and placed anywhere in src/
-import { defineObject, FieldType } from 'twenty-sdk';
-
-export default defineObject({
-  universalIdentifier: '...',
-  nameSingular: 'postCard',
-  // ... rest of config
-});
-```
-
-Comenzile ulterioare vor adăuga mai multe fișiere și foldere:
-
-* `yarn twenty dev` va genera automat `CoreApiClient` tipizat (pentru datele spațiului de lucru prin `/graphql`) în `node_modules/twenty-client-sdk/`. `MetadataApiClient` (pentru configurarea spațiului de lucru și încărcarea fișierelor prin `/metadata`) este livrat preconstruit și este disponibil imediat. Importați-le din `twenty-client-sdk/core` și `twenty-client-sdk/metadata`, respectiv.
-* `yarn twenty add` va adăuga fișiere de definire a entităților în `src/` pentru obiectele personalizate, funcțiile, componentele front-end, rolurile, abilitățile și altele.
-
-## Autentificare
-
-Prima dată când rulați `yarn twenty auth:login`, vi se vor solicita:
-
-* URL-ul API (implicit http://localhost:3000 sau profilul spațiului de lucru curent)
-* Cheie API
-
-Acreditările dvs. sunt stocate per utilizator în `~/.twenty/config.json`. Puteți menține mai multe profiluri și comuta între ele.
-
-### Gestionarea spațiilor de lucru
+Un „remote” este un server Twenty la care se conectează aplicația. În timpul configurării, generatorul de schelet creează automat unul pentru dvs. Puteți adăuga mai multe remote-uri sau comuta între ele oricând.
 
 ```bash filename="Terminal"
-# Login interactively (recommended)
-yarn twenty auth:login
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote add
 
-# Login to a specific workspace profile
-yarn twenty auth:login --workspace my-custom-workspace
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote add --local
 
-# List all configured workspaces
-yarn twenty auth:list
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
 
-# Switch the default workspace (interactive)
-yarn twenty auth:switch
+# List all configured remotes
+yarn twenty remote list
 
-# Switch to a specific workspace
-yarn twenty auth:switch production
-
-# Check current authentication status
-yarn twenty auth:status
+# Switch the active remote
+yarn twenty remote switch <name>
 ```
 
-După ce ați schimbat spațiul de lucru cu `yarn twenty auth:switch`, toate comenzile ulterioare vor folosi implicit acel spațiu de lucru. Îl puteți totuși suprascrie temporar cu `--workspace <name>`.
+Acreditările dvs. sunt stocate în `~/.twenty/config.json`.
+
+## Server local de dezvoltare (`yarn twenty server`)
+
+CLI-ul poate gestiona un server Twenty local care rulează în Docker. Acesta este același server pornit automat când creați scheletul unei aplicații cu `create-twenty-app`, dar îl puteți gestiona și manual.
+
+### Pornirea serverului
+
+```bash filename="Terminal"
+yarn twenty server start
+```
+
+Aceasta descarcă imaginea Docker `twentycrm/twenty-app-dev:latest` (dacă nu este deja prezentă), creează un container numit `twenty-app-dev` și îl pornește pe portul **2020**. CLI-ul așteaptă până când serverul trece verificarea de integritate înainte de a reveni.
+
+Sunt create două volume Docker pentru a păstra datele între reporniri:
+
+* `twenty-app-dev-data` — bază de date PostgreSQL
+* `twenty-app-dev-storage` — stocare fișiere
+
+Dacă portul 2020 este deja utilizat, puteți porni pe un alt port:
+
+```bash filename="Terminal"
+yarn twenty server start --port 3030
+```
+
+CLI-ul configurează automat `NODE_PORT` și `SERVER_URL` interne ale containerului pentru a se potrivi cu portul ales, astfel încât funcțiile logice, OAuth și toată rețeaua internă să funcționeze corect.
+
+După pornire, serverul este înregistrat automat ca remote `local` în configurația CLI.
+
+### Verificarea stării serverului
+
+```bash filename="Terminal"
+yarn twenty server status
+```
+
+Afișează dacă serverul rulează, URL-ul său și acreditările implicite de autentificare (`tim@apple.dev` / `tim@apple.dev`).
+
+### Vizualizarea jurnalelor serverului
+
+```bash filename="Terminal"
+yarn twenty server logs
+```
+
+Transmite în flux jurnalele containerului. Folosiți `--lines` pentru a controla câte linii recente să fie afișate:
+
+```bash filename="Terminal"
+yarn twenty server logs --lines 100
+```
+
+### Oprirea serverului
+
+```bash filename="Terminal"
+yarn twenty server stop
+```
+
+Oprește containerul. Datele dvs. sunt păstrate în volumele Docker — următoarea comandă `start` reia de unde ați rămas.
+
+### Resetarea serverului
+
+```bash filename="Terminal"
+yarn twenty server reset
+```
+
+Elimină containerul **și** șterge ambele volume Docker, ștergând toate datele. Următoarea comandă `start` creează o instanță nouă.
+
+<Note>
+  Serverul necesită ca **Docker** să ruleze. Dacă vedeți eroarea "Docker not running", asigurați-vă că Docker Desktop (sau demonul Docker) este pornit.
+</Note>
+
+### Referință pentru comenzi
+
+| Comandă                                | Descriere                                                     |
+| -------------------------------------- | ------------------------------------------------------------- |
+| `yarn twenty server start`             | Pornește serverul local (descarcă imaginea dacă este necesar) |
+| `yarn twenty server start --port 3030` | Pornește pe un port personalizat                              |
+| `yarn twenty server stop`              | Oprește serverul (păstrează datele)                           |
+| `yarn twenty server status`            | Afișează starea serverului, URL-ul și acreditările            |
+| `yarn twenty server logs`              | Transmite în flux jurnalele serverului                        |
+| `yarn twenty server logs --lines 100`  | Afișează ultimele 100 de linii de jurnal                      |
+| `yarn twenty server reset`             | Șterge toate datele și pornește de la zero                    |
+
+## CI cu GitHub Actions
+
+Scaffolderul generează un workflow GitHub Actions gata de utilizare în `.github/workflows/ci.yml`. Rulează automat testele de integrare la fiecare push pe `main` și la pull request-uri.
+
+Workflow-ul:
+
+1. Preia codul
+2. Pornește un server Twenty temporar folosind acțiunea `twentyhq/twenty/.github/actions/spawn-twenty-docker-image`
+3. Instalează dependențele cu `yarn install --immutable`
+4. Rulează `yarn test` cu `TWENTY_API_URL` și `TWENTY_API_KEY` injectate din rezultatele acțiunii
+
+```yaml .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+
+env:
+  TWENTY_VERSION: latest
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Spawn Twenty instance
+        id: twenty
+        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
+        with:
+          twenty-version: ${{ env.TWENTY_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run integration tests
+        run: yarn test
+        env:
+          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
+          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
+```
+
+Nu trebuie să configurați niciun secret — acțiunea `spawn-twenty-docker-image` pornește un server Twenty efemer direct în runner și oferă detaliile de conectare. Secretul `GITHUB_TOKEN` este furnizat automat de GitHub.
+
+Pentru a fixa o versiune Twenty specifică în loc de `latest`, modificați variabila de mediu `TWENTY_VERSION` din partea de sus a workflow-ului.
 
 ## Configurare manuală (fără generator)
 
-Deși recomandăm utilizarea `create-twenty-app` pentru cea mai bună experiență de început, puteți configura și un proiect manual. Nu instalați CLI-ul global. În schimb, adăugați `twenty-sdk` ca dependență locală și conectați un singur script în package.json-ul dvs.:
+Dacă preferați să configurați totul manual în loc să folosiți `create-twenty-app`, o puteți face în doi pași.
+
+**1. Adăugați `twenty-sdk` și `twenty-client-sdk` ca dependențe:**
 
 ```bash filename="Terminal"
-yarn add -D twenty-sdk
+yarn add twenty-sdk twenty-client-sdk
 ```
 
-Apoi adăugați un script `twenty`:
+**2. Adăugați un script `twenty` în `package.json`:**
 
 ```json filename="package.json"
 {
@@ -210,25 +393,19 @@ Apoi adăugați un script `twenty`:
 }
 ```
 
-Acum poți rula toate comenzile prin `yarn twenty <command>`, de ex. `yarn twenty dev`, `yarn twenty help`, etc.
+Acum puteți rula `yarn twenty dev`, `yarn twenty help` și toate celelalte comenzi.
 
-## Cum să folosești o instanță Twenty locală
-
-Dacă rulezi deja local o instanță Twenty (de exemplu prin `npx nx start twenty-server`), te poți conecta la ea în loc să folosești Docker:
-
-```bash filename="Terminal"
-# During scaffolding — skip Docker, connect to your running instance
-npx create-twenty-app@latest my-app --port 3000
-
-# Or after scaffolding — add a remote pointing to your instance
-yarn twenty remote add --local --port 3000
-```
+<Note>
+Nu instalați `twenty-sdk` global. Folosiți-l întotdeauna ca dependență locală de proiect, astfel încât fiecare proiect să își poată fixa propria versiune.
+</Note>
 
 ## Depanare
 
-* Erori de autentificare: rulați `yarn twenty auth:login` și asigurați-vă că cheia API are permisiunile necesare.
-* Nu se poate conecta la server: verificați URL-ul API și că serverul Twenty este accesibil.
-* Tipuri sau client lipsă/învechite: repornește `yarn twenty dev` — acesta generează automat clientul tipizat.
-* Modul dev nu sincronizează: asigură-te că `yarn twenty dev` rulează și că modificările nu sunt ignorate de mediul tău.
+Dacă întâmpinați probleme:
 
-Canal de ajutor pe Discord: https://discord.com/channels/1130383047699738754/1130386664812982322
+* Asigurați-vă că Docker rulează înainte de a porni scaffolderul cu o instanță locală.
+* Asigurați-vă că folosiți **Node.js 24+** (`node -v` pentru verificare).
+* Asigurați-vă că **Corepack este activat** (`corepack enable`) astfel încât Yarn 4 să fie disponibil.
+* Încercați să ștergeți `node_modules` și să rulați din nou `yarn install` dacă dependențele par deteriorate.
+
+Încă aveți probleme? Cereți ajutor pe [Discordul Twenty](https://discord.com/channels/1130383047699738754/1130386664812982322).

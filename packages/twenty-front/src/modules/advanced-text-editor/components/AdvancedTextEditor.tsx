@@ -29,7 +29,7 @@ const StyledEditorContainer = styled.div<{
     box-sizing: border-box;
     color: ${({ readonly }) =>
       readonly
-        ? themeCssVariables.font.color.light
+        ? themeCssVariables.font.color.secondary
         : themeCssVariables.font.color.primary};
     font-family: ${themeCssVariables.font.family};
     font-size: ${themeCssVariables.font.size.sm};

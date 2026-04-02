@@ -14,18 +14,18 @@ import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/r
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import {
   CommandMenuContextApiPageType,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, resolveObjectMetadataLabel } from 'twenty-shared/utils';
 
 export const useCommandMenuContextApi = (): CommandMenuContextApi => {
   const store = useStore();
@@ -138,6 +138,13 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
       permissions.canUpdate;
   }
 
+  const objectMetadataLabel = isDefined(objectMetadataItem)
+    ? resolveObjectMetadataLabel({
+        objectMetadataItem: objectMetadataItem,
+        numberOfSelectedRecords: contextStoreNumberOfSelectedRecords,
+      })
+    : '';
+
   return {
     pageType,
     isInSidePanel,
@@ -152,5 +159,6 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
     targetObjectReadPermissions,
     targetObjectWritePermissions,
     objectMetadataItem: objectMetadataItem ?? {},
+    objectMetadataLabel,
   };
 };

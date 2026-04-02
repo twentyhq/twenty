@@ -175,6 +175,36 @@ export const usePageLayoutHeaderInfo = ({
       };
     }
 
+    case SidePanelPages.PageLayoutFieldSettings: {
+      if (!isDefined(pageLayoutEditingWidgetId)) {
+        return null;
+      }
+
+      const widgetInEditMode = draftPageLayout.tabs
+        .flatMap((tab) => tab.widgets)
+        .find((widget) => widget.id === pageLayoutEditingWidgetId);
+
+      if (!isDefined(widgetInEditMode)) {
+        return null;
+      }
+
+      const title = isDefined(editedTitle)
+        ? editedTitle
+        : isDefined(widgetInEditMode.title) && widgetInEditMode.title !== ''
+          ? widgetInEditMode.title
+          : '';
+
+      return {
+        headerIcon: IconList,
+        headerIconColor: iconColor,
+        headerType: t`Field Widget`,
+        title,
+        isReadonly: false,
+        tab: undefined,
+        widgetInEditMode,
+      };
+    }
+
     case SidePanelPages.PageLayoutRecordTableSettings: {
       if (!isDefined(pageLayoutEditingWidgetId)) {
         return null;
