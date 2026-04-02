@@ -29,7 +29,6 @@
     "workerDirectory": "public"
   },
   "dependencies": {
-    "@ai-sdk/react": "3.0.99",
     "@apollo/client": "^4.0.0",
     "@blocknote/mantine": "^0.47.1",
     "@blocknote/react": "^0.47.1",

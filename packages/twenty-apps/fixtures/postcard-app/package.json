@@ -9,7 +9,9 @@
   },
   "packageManager": "yarn@4.9.2",
   "scripts": {
-    "twenty": "twenty"
+    "twenty": "twenty",
+    "lint": "oxlint -c .oxlintrc.json .",
+    "lint:fix": "oxlint --fix -c .oxlintrc.json ."
   },
   "dependencies": {
     "twenty-sdk": "latest",
