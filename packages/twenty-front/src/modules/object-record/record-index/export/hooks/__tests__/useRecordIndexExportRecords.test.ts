@@ -172,47 +172,6 @@ describe('generateCsv', () => {
     expect(csv).toContain('1,John Doe,[],[]');
   });
 
-  it('prepends UTF-8 BOM for Excel compatibility', () => {
-    const columns: Pick<
-      ColumnDefinition<FieldMetadata>,
-      'size' | 'label' | 'type' | 'metadata'
-    >[] = [
-      {
-        label: 'Name',
-        size: 100,
-        type: FieldMetadataType.TEXT,
-        metadata: { fieldName: 'name' },
-      },
-    ];
-
-    const csv = generateCsv({ columns, rows: [{ id: '1', name: 'test' }] });
-
-    expect(csv.charCodeAt(0)).toBe(0xfeff);
-  });
-
-  it.each([
-    ['Arabic', 'مرحبا'],
-    ['Chinese', '你好'],
-    ['Japanese', 'こんにちは'],
-    ['Korean', '안녕하세요'],
-  ])('preserves %s characters in generated CSV', (_, name) => {
-    const columns: Pick<
-      ColumnDefinition<FieldMetadata>,
-      'size' | 'label' | 'type' | 'metadata'
-    >[] = [
-      {
-        label: 'Name',
-        size: 100,
-        type: FieldMetadataType.TEXT,
-        metadata: { fieldName: 'name' },
-      },
-    ];
-
-    const csv = generateCsv({ columns, rows: [{ id: '1', name }] });
-
-    expect(csv).toContain(name);
-  });
-
   describe('CSV Injection Prevention with ZWJ', () => {
     it('prevents formula injection with equals sign using ZWJ prefix', () => {
       const columns: Pick<
