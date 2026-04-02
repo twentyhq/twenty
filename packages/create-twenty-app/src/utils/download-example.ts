@@ -188,9 +188,7 @@ export const downloadExample = async (
       : join(tempDir, extractedDir);
 
     if (!(await fs.pathExists(sourcePath))) {
-      throw new Error(
-        `Example directory not found in archive: "${path}"`,
-      );
+      throw new Error(`Example directory not found in archive: "${path}"`);
     }
 
     await fs.copy(sourcePath, targetDirectory);

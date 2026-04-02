@@ -30,13 +30,13 @@ The scaffolder will:
 
 ## Options
 
-| Flag | Description |
-| --- | --- |
-| `--example <name-or-url>` | Initialize from an example (name or GitHub URL) |
-| `--name <name>` | Set the app name (skips the prompt) |
-| `--display-name <displayName>` | Set the display name (skips the prompt) |
-| `--description <description>` | Set the description (skips the prompt) |
-| `--skip-local-instance` | Skip the local server setup prompt |
+| Flag                           | Description                                     |
+| ------------------------------ | ----------------------------------------------- |
+| `--example <name-or-url>`      | Initialize from an example (name or GitHub URL) |
+| `--name <name>`                | Set the app name (skips the prompt)             |
+| `--display-name <displayName>` | Set the display name (skips the prompt)         |
+| `--description <description>`  | Set the description (skips the prompt)          |
+| `--skip-local-instance`        | Skip the local server setup prompt              |
 
 By default (no flags), a minimal app is generated with core files and an integration test. Use `--example` to start from a richer example:
 
