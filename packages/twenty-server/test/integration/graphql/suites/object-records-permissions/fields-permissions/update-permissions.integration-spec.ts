@@ -58,7 +58,6 @@ describe('Field update permissions restrictions', () => {
         {
           objectMetadataId: companyObjectId,
           fieldMetadataId: restrictedCompanyFieldId,
-          canReadFieldValue: null,
           canUpdateFieldValue: false,
         },
       ],
@@ -77,7 +76,6 @@ describe('Field update permissions restrictions', () => {
           objectMetadataId: companyObjectId,
           fieldMetadataId: restrictedCompanyFieldId,
           canReadFieldValue: false,
-          canUpdateFieldValue: null,
         },
       ],
     });
