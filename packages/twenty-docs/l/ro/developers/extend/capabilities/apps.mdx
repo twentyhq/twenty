@@ -4,22 +4,22 @@ description: Construiți și gestionați personalizările Twenty sub formă de c
 ---
 
 <Warning>
-Apps are currently in alpha. The feature works but is still evolving.
+Aplicațiile sunt în prezent în testare alfa. Caracteristica funcționează, dar este încă în dezvoltare.
 </Warning>
 
-## What are apps?
+## Ce sunt aplicațiile?
 
-Apps let you extend Twenty with custom objects, fields, logic functions, front components, AI skills, and more — all managed as code. Instead of configuring everything through the UI, you define your data model and logic in TypeScript and deploy it to one or more workspaces.
+Aplicațiile vă permit să extindeți Twenty cu obiecte personalizate, câmpuri, funcții logice, componente front-end, abilități IA și altele — toate gestionate ca cod. În loc să configurați totul prin interfața de utilizator (UI), vă definiți modelul de date și logica în TypeScript și le implementați în unul sau mai multe spații de lucru.
 
 **Ce puteți construi:**
 
-* **Custom objects and fields** — extend your data model with new entities or add fields to existing objects like Company or Person
-* **Logic functions** — server-side functions triggered by database events, cron schedules, or HTTP routes
-* **Front components** — React components that render inside Twenty's UI (record pages, command menu, side panels)
-* **AI skills and agents** — extend Twenty's AI with custom capabilities
-* **Views and navigation** — preconfigured saved views and sidebar links
+* **Obiecte și câmpuri personalizate** — extindeți modelul de date cu entități noi sau adăugați câmpuri la obiecte existente, precum Companie sau Persoană
+* **Funcții logice** — funcții pe partea de server declanșate de evenimente ale bazei de date, programări cron sau rute HTTP
+* **Componente front-end** — componente React care se afișează în interfața Twenty (pagini de înregistrări, meniul de comenzi, panouri laterale)
+* **Abilități și agenți IA** — extindeți IA din Twenty cu capabilități personalizate
+* **Vizualizări și navigare** — vizualizări salvate preconfigurate și linkuri în bara laterală
 
-## Quick start
+## Pornire rapidă
 
 ```bash filename="Terminal"
 npx create-twenty-app@latest my-twenty-app
@@ -27,55 +27,55 @@ cd my-twenty-app
 yarn twenty dev
 ```
 
-This scaffolds a new app, optionally starts a local Twenty server, and begins watching your files for changes. See the [Getting Started](/l/ro/developers/extend/apps/getting-started) guide for the full walkthrough.
+Aceasta creează scheletul unei aplicații noi, pornește opțional un server Twenty local și începe să monitorizeze fișierele pentru modificări. Consultați ghidul [Începeți](/l/ro/developers/extend/apps/getting-started) pentru prezentarea completă.
 
-## Detailed guides
+## Ghiduri detaliate
 
-| Ghid                                                       | Descriere                                                                                                                                   |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Getting Started](/l/ro/developers/extend/apps/getting-started) | Scaffold an app, set up a local server, project structure, CI                                                                               |
-| [Building Apps](/l/ro/developers/extend/apps/building)          | Entity definitions (`defineObject`, `defineLogicFunction`, `defineFrontComponent`, etc.), API clients, npm packages, public assets, testing |
-| [Publishing](/l/ro/developers/extend/apps/publishing)           | Deploy to a server, publish to npm, marketplace                                                                                             |
+| Ghid                                                     | Descriere                                                                                                                                          |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Începeți](/l/ro/developers/extend/apps/getting-started)      | Creați scheletul unei aplicații, configurați un server local, structură de proiect, CI                                                             |
+| [Crearea aplicațiilor](/l/ro/developers/extend/apps/building) | Definiții ale entităților (`defineObject`, `defineLogicFunction`, `defineFrontComponent` etc.), clienți API, pachete npm, resurse publice, testare |
+| [Publicare](/l/ro/developers/extend/apps/publishing)          | Implementare pe un server, publicare pe npm, marketplace                                                                                           |
 
-## Key concepts
+## Concepte cheie
 
 ### Detectarea entităților
 
-The SDK detects entities by scanning your TypeScript files for `export default define<Entity>({...})` calls. File naming and folder structure are flexible — detection is AST-based, not path-based.
+SDK-ul detectează entitățile scanând fișierele TypeScript pentru apeluri `export default define<Entity>({...})`. Denumirea fișierelor și structura folderelor sunt flexibile — detectarea este bazată pe AST, nu pe căi.
 
-### Available entity types
+### Tipuri de entități disponibile
 
-| Funcție                            | Scop                                         |
-| ---------------------------------- | -------------------------------------------- |
-| `defineApplication()`              | Application metadata (required, one per app) |
-| `defineObject()`                   | Custom objects with fields                   |
-| `defineField()`                    | Fields on existing objects                   |
-| `defineLogicFunction()`            | Server-side logic with triggers              |
-| `defineFrontComponent()`           | React components in Twenty's UI              |
-| `defineRole()`                     | Permission roles                             |
-| `defineView()`                     | Saved view configurations                    |
-| `defineNavigationMenuItem()`       | Sidebar navigation links                     |
-| `defineSkill()`                    | AI agent skills                              |
-| `defineAgent()`                    | AI agents with prompts                       |
-| `definePageLayout()`               | Custom record page layouts                   |
-| `definePreInstallLogicFunction()`  | Runs before app installation                 |
-| `definePostInstallLogicFunction()` | Runs after app installation                  |
+| Funcție                            | Scop                                                     |
+| ---------------------------------- | -------------------------------------------------------- |
+| `defineApplication()`              | Metadate ale aplicației (obligatoriu, una per aplicație) |
+| `defineObject()`                   | Obiecte personalizate cu câmpuri                         |
+| `defineField()`                    | Câmpuri pe obiecte existente                             |
+| `defineLogicFunction()`            | Logică pe partea de server cu declanșatoare              |
+| `defineFrontComponent()`           | Componente React în interfața Twenty                     |
+| `defineRole()`                     | Roluri de permisiuni                                     |
+| `defineView()`                     | Configurații pentru vizualizări salvate                  |
+| `defineNavigationMenuItem()`       | Linkuri de navigare în bara laterală                     |
+| `defineSkill()`                    | Abilități ale agentului IA                               |
+| `defineAgent()`                    | Agenți IA cu prompturi                                   |
+| `definePageLayout()`               | Dispuneri personalizate pentru paginile de înregistrare  |
+| `definePreInstallLogicFunction()`  | Rulează înainte de instalarea aplicației                 |
+| `definePostInstallLogicFunction()` | Rulează după instalarea aplicației                       |
 
-### Development workflow
+### Flux de lucru pentru dezvoltare
 
-1. **`yarn twenty dev`** — watches source files, rebuilds on change, syncs to the server, generates typed API clients
-2. **`yarn twenty build`** — produces a distributable build
-3. **`yarn twenty deploy`** — deploys to a remote Twenty server
-4. **`yarn twenty add`** — scaffolds a new entity interactively
+1. **`yarn twenty dev`** — monitorizează fișierele sursă, reconstruiește la modificări, sincronizează cu serverul, generează clienți API tipizați
+2. **`yarn twenty build`** — produce o versiune distribuibilă
+3. **`yarn twenty deploy`** — implementează pe un server Twenty la distanță
+4. **`yarn twenty add`** — generează interactiv o entitate nouă
 
 ### Referință CLI
 
 ```bash filename="Terminal"
-yarn twenty help          # List all commands
-yarn twenty server start  # Start local dev server
-yarn twenty remote add    # Connect to a Twenty server
-yarn twenty exec -n fn    # Execute a logic function
-yarn twenty logs -n fn    # Stream function logs
+yarn twenty help          # Listează toate comenzile
+yarn twenty server start  # Pornește serverul local de dezvoltare
+yarn twenty remote add    # Conectează-te la un server Twenty
+yarn twenty exec -n fn    # Execută o funcție logică
+yarn twenty logs -n fn    # Transmite în flux jurnalele funcției
 ```
 
-See the [Getting Started](/l/ro/developers/extend/apps/getting-started) guide for the full CLI reference.
+Consultați ghidul [Începeți](/l/ro/developers/extend/apps/getting-started) pentru referința completă CLI.

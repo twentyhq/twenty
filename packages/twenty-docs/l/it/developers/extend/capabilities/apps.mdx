@@ -4,22 +4,22 @@ description: Crea e gestisci le personalizzazioni di Twenty come codice.
 ---
 
 <Warning>
-Apps are currently in alpha. The feature works but is still evolving.
+Le app sono attualmente in fase alfa. La funzionalità funziona ma è ancora in evoluzione.
 </Warning>
 
-## What are apps?
+## Cosa sono le app?
 
-Apps let you extend Twenty with custom objects, fields, logic functions, front components, AI skills, and more — all managed as code. Instead of configuring everything through the UI, you define your data model and logic in TypeScript and deploy it to one or more workspaces.
+Le app ti consentono di estendere Twenty con oggetti, campi, funzioni logiche, componenti front-end, competenze IA e altro ancora — il tutto gestito come codice. Invece di configurare tutto tramite l'interfaccia utente, definisci in TypeScript il modello dati e la logica e li distribuisci in uno o più spazi di lavoro.
 
 **Cosa puoi creare:**
 
-* **Custom objects and fields** — extend your data model with new entities or add fields to existing objects like Company or Person
-* **Logic functions** — server-side functions triggered by database events, cron schedules, or HTTP routes
-* **Front components** — React components that render inside Twenty's UI (record pages, command menu, side panels)
-* **AI skills and agents** — extend Twenty's AI with custom capabilities
-* **Views and navigation** — preconfigured saved views and sidebar links
+* **Oggetti e campi personalizzati** — estendi il tuo modello dati con nuove entità o aggiungi campi a oggetti esistenti come Company o Person
+* **Funzioni logiche** — funzioni lato server attivate da eventi del database, pianificazioni cron o route HTTP
+* **Componenti front-end** — componenti React che vengono renderizzati nell'interfaccia utente di Twenty (pagine dei record, menu dei comandi, pannelli laterali)
+* **Competenze e agenti IA** — estendi l'IA di Twenty con funzionalità personalizzate
+* **Viste e navigazione** — viste salvate preconfigurate e link nella barra laterale
 
-## Quick start
+## Avvio rapido
 
 ```bash filename="Terminal"
 npx create-twenty-app@latest my-twenty-app
@@ -27,46 +27,46 @@ cd my-twenty-app
 yarn twenty dev
 ```
 
-This scaffolds a new app, optionally starts a local Twenty server, and begins watching your files for changes. See the [Getting Started](/l/it/developers/extend/apps/getting-started) guide for the full walkthrough.
+Questo genera lo scheletro di una nuova app, avvia facoltativamente un server Twenty locale e inizia a monitorare i tuoi file per le modifiche. Consulta la [Guida introduttiva](/l/it/developers/extend/apps/getting-started) per l'intera procedura.
 
-## Detailed guides
+## Guide dettagliate
 
-| Guide                                                      | Descrizione                                                                                                                                 |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Getting Started](/l/it/developers/extend/apps/getting-started) | Scaffold an app, set up a local server, project structure, CI                                                                               |
-| [Building Apps](/l/it/developers/extend/apps/building)          | Entity definitions (`defineObject`, `defineLogicFunction`, `defineFrontComponent`, etc.), API clients, npm packages, public assets, testing |
-| [Publishing](/l/it/developers/extend/apps/publishing)           | Deploy to a server, publish to npm, marketplace                                                                                             |
+| Guide                                                         | Descrizione                                                                                                                                  |
+| ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Guida introduttiva](/l/it/developers/extend/apps/getting-started) | Crea lo scheletro di un'app, configura un server locale, struttura del progetto, CI                                                          |
+| [Creare app](/l/it/developers/extend/apps/building)                | Definizioni di entità (`defineObject`, `defineLogicFunction`, `defineFrontComponent`, ecc.), client API, pacchetti npm, asset pubblici, test |
+| [Pubblicazione](/l/it/developers/extend/apps/publishing)           | Distribuisci su un server, pubblica su npm, marketplace                                                                                      |
 
-## Key concepts
+## Concetti chiave
 
 ### Rilevamento delle entità
 
-The SDK detects entities by scanning your TypeScript files for `export default define<Entity>({...})` calls. File naming and folder structure are flexible — detection is AST-based, not path-based.
+L'SDK rileva le entità scansionando i tuoi file TypeScript alla ricerca di chiamate a `export default define<Entity>({...})`. La denominazione dei file e la struttura delle cartelle sono flessibili — il rilevamento è basato sull'AST, non sui percorsi.
 
-### Available entity types
+### Tipi di entità disponibili
 
-| Funzione                           | Scopo                                        |
-| ---------------------------------- | -------------------------------------------- |
-| `defineApplication()`              | Application metadata (required, one per app) |
-| `defineObject()`                   | Custom objects with fields                   |
-| `defineField()`                    | Fields on existing objects                   |
-| `defineLogicFunction()`            | Server-side logic with triggers              |
-| `defineFrontComponent()`           | React components in Twenty's UI              |
-| `defineRole()`                     | Permission roles                             |
-| `defineView()`                     | Saved view configurations                    |
-| `defineNavigationMenuItem()`       | Sidebar navigation links                     |
-| `defineSkill()`                    | AI agent skills                              |
-| `defineAgent()`                    | AI agents with prompts                       |
-| `definePageLayout()`               | Custom record page layouts                   |
-| `definePreInstallLogicFunction()`  | Runs before app installation                 |
-| `definePostInstallLogicFunction()` | Runs after app installation                  |
+| Funzione                           | Scopo                                                  |
+| ---------------------------------- | ------------------------------------------------------ |
+| `defineApplication()`              | Metadati dell'applicazione (obbligatorio, uno per app) |
+| `defineObject()`                   | Oggetti personalizzati con campi                       |
+| `defineField()`                    | Campi su oggetti esistenti                             |
+| `defineLogicFunction()`            | Logica lato server con trigger                         |
+| `defineFrontComponent()`           | Componenti React nell'interfaccia utente di Twenty     |
+| `defineRole()`                     | Ruoli di autorizzazione                                |
+| `defineView()`                     | Configurazioni di viste salvate                        |
+| `defineNavigationMenuItem()`       | Link di navigazione della barra laterale               |
+| `defineSkill()`                    | Competenze dell'agente IA                              |
+| `defineAgent()`                    | Agenti IA con prompt                                   |
+| `definePageLayout()`               | Layout personalizzati delle pagine dei record          |
+| `definePreInstallLogicFunction()`  | Viene eseguito prima dell'installazione dell'app       |
+| `definePostInstallLogicFunction()` | Viene eseguito dopo l'installazione dell'app           |
 
-### Development workflow
+### Flusso di lavoro di sviluppo
 
-1. **`yarn twenty dev`** — watches source files, rebuilds on change, syncs to the server, generates typed API clients
-2. **`yarn twenty build`** — produces a distributable build
-3. **`yarn twenty deploy`** — deploys to a remote Twenty server
-4. **`yarn twenty add`** — scaffolds a new entity interactively
+1. **`yarn twenty dev`** — osserva i file sorgente, ricompila alle modifiche, sincronizza con il server, genera client API tipizzati
+2. **`yarn twenty build`** — produce una build distribuibile
+3. **`yarn twenty deploy`** — distribuisce su un server Twenty remoto
+4. **`yarn twenty add`** — crea lo scheletro di una nuova entità in modo interattivo
 
 ### Riferimento CLI
 
@@ -78,4 +78,4 @@ yarn twenty exec -n fn    # Execute a logic function
 yarn twenty logs -n fn    # Stream function logs
 ```
 
-See the [Getting Started](/l/it/developers/extend/apps/getting-started) guide for the full CLI reference.
+Consulta la [Guida introduttiva](/l/it/developers/extend/apps/getting-started) per il riferimento completo della CLI.

@@ -4,22 +4,22 @@ description: أنشئ وأدِر تخصيصات Twenty على هيئة كود.
 ---
 
 <Warning>
-Apps are currently in alpha. The feature works but is still evolving.
+التطبيقات حاليًا في مرحلة الألفا. الميزة تعمل لكنها لا تزال قيد التطور.
 </Warning>
 
-## What are apps?
+## ما هي التطبيقات؟
 
-Apps let you extend Twenty with custom objects, fields, logic functions, front components, AI skills, and more — all managed as code. Instead of configuring everything through the UI, you define your data model and logic in TypeScript and deploy it to one or more workspaces.
+تتيح لك التطبيقات توسيع Twenty باستخدام كائنات وحقول مخصّصة ووظائف منطقية ومكوّنات الواجهة الأمامية ومهارات الذكاء الاصطناعي وغير ذلك — جميعها تُدار ككود. بدلًا من تكوين كل شيء عبر واجهة المستخدم، تعرّف نموذج بياناتك ومنطقك في TypeScript وتقوم بنشره إلى مساحة عمل واحدة أو أكثر.
 
 **ما الذي يمكنك بناؤه:**
 
-* **Custom objects and fields** — extend your data model with new entities or add fields to existing objects like Company or Person
-* **Logic functions** — server-side functions triggered by database events, cron schedules, or HTTP routes
-* **Front components** — React components that render inside Twenty's UI (record pages, command menu, side panels)
-* **AI skills and agents** — extend Twenty's AI with custom capabilities
-* **Views and navigation** — preconfigured saved views and sidebar links
+* **الكائنات والحقول المخصّصة** — وسّع نموذج بياناتك بكيانات جديدة أو أضف حقولًا إلى الكائنات الموجودة مثل Company أو Person
+* **الوظائف المنطقية** — وظائف على جانب الخادم يتم تشغيلها بواسطة أحداث قاعدة البيانات، أو جداول cron، أو مسارات HTTP
+* **مكوّنات الواجهة الأمامية** — مكوّنات React تُعرَض داخل واجهة مستخدم Twenty (صفحات السجل، قائمة الأوامر، اللوحات الجانبية)
+* **مهارات ووكلاء الذكاء الاصطناعي** — وسّع ذكاء Twenty الاصطناعي بقدرات مخصّصة
+* **العروض والتنقّل** — عروض محفوظة مُعدّة مسبقًا وروابط الشريط الجانبي
 
-## Quick start
+## البدء السريع
 
 ```bash filename="Terminal"
 npx create-twenty-app@latest my-twenty-app
@@ -27,55 +27,55 @@ cd my-twenty-app
 yarn twenty dev
 ```
 
-This scaffolds a new app, optionally starts a local Twenty server, and begins watching your files for changes. See the [Getting Started](/l/ar/developers/extend/apps/getting-started) guide for the full walkthrough.
+يُنشئ هذا هيكل تطبيق جديدًا، ويبدأ اختياريًا خادم Twenty محليًا، ويبدأ في مراقبة ملفاتك لاكتشاف التغييرات. اطّلع على دليل [البدء](/l/ar/developers/extend/apps/getting-started) للحصول على شرح كامل.
 
-## Detailed guides
+## أدلة تفصيلية
 
-| Guide                                                      | الوصف                                                                                                                                       |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Getting Started](/l/ar/developers/extend/apps/getting-started) | Scaffold an app, set up a local server, project structure, CI                                                                               |
-| [Building Apps](/l/ar/developers/extend/apps/building)          | Entity definitions (`defineObject`, `defineLogicFunction`, `defineFrontComponent`, etc.), API clients, npm packages, public assets, testing |
-| [Publishing](/l/ar/developers/extend/apps/publishing)           | Deploy to a server, publish to npm, marketplace                                                                                             |
+| دليل                                               | الوصف                                                                                                                              |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| [البدء](/l/ar/developers/extend/apps/getting-started)   | إنشاء هيكل تطبيق، إعداد خادم محلي، بنية المشروع، التكامل المستمر                                                                   |
+| [بناء التطبيقات](/l/ar/developers/extend/apps/building) | تعريفات الكيانات (`defineObject`, `defineLogicFunction`, `defineFrontComponent`، إلخ)، عملاء API، حزم npm، الأصول العامة، الاختبار |
+| [النشر](/l/ar/developers/extend/apps/publishing)        | النشر إلى خادم، النشر إلى npm، السوق                                                                                               |
 
-## Key concepts
+## المفاهيم الأساسية
 
 ### اكتشاف الكيانات
 
-The SDK detects entities by scanning your TypeScript files for `export default define<Entity>({...})` calls. File naming and folder structure are flexible — detection is AST-based, not path-based.
+يكتشف SDK الكيانات عبر فحص ملفات TypeScript لديك بحثًا عن استدعاءات `export default define<Entity>({...})`. تسمية الملفات وبنية المجلدات مرنة — يعتمد الاكتشاف على AST وليس على المسارات.
 
-### Available entity types
+### أنواع الكيانات المتاحة
 
-| دالة                               | الغرض                                        |
-| ---------------------------------- | -------------------------------------------- |
-| `defineApplication()`              | Application metadata (required, one per app) |
-| `defineObject()`                   | Custom objects with fields                   |
-| `defineField()`                    | Fields on existing objects                   |
-| `defineLogicFunction()`            | Server-side logic with triggers              |
-| `defineFrontComponent()`           | React components in Twenty's UI              |
-| `defineRole()`                     | Permission roles                             |
-| `defineView()`                     | Saved view configurations                    |
-| `defineNavigationMenuItem()`       | Sidebar navigation links                     |
-| `defineSkill()`                    | AI agent skills                              |
-| `defineAgent()`                    | AI agents with prompts                       |
-| `definePageLayout()`               | Custom record page layouts                   |
-| `definePreInstallLogicFunction()`  | Runs before app installation                 |
-| `definePostInstallLogicFunction()` | Runs after app installation                  |
+| دالة                               | الغرض                                            |
+| ---------------------------------- | ------------------------------------------------ |
+| `defineApplication()`              | بيانات التعريف للتطبيق (مطلوبة، واحدة لكل تطبيق) |
+| `defineObject()`                   | كائنات مخصّصة مع حقول                            |
+| `defineField()`                    | حقول على الكائنات الموجودة                       |
+| `defineLogicFunction()`            | منطق على جانب الخادم مع مشغّلات                  |
+| `defineFrontComponent()`           | مكوّنات React ضمن واجهة مستخدم Twenty            |
+| `defineRole()`                     | أدوار الصلاحيات                                  |
+| `defineView()`                     | تكوينات العروض المحفوظة                          |
+| `defineNavigationMenuItem()`       | روابط التنقّل في الشريط الجانبي                  |
+| `defineSkill()`                    | مهارات وكيل الذكاء الاصطناعي                     |
+| `defineAgent()`                    | وكلاء ذكاء اصطناعي مع موجّهات                    |
+| `definePageLayout()`               | تخطيطات صفحات السجل المخصّصة                     |
+| `definePreInstallLogicFunction()`  | يعمل قبل تثبيت التطبيق                           |
+| `definePostInstallLogicFunction()` | يعمل بعد تثبيت التطبيق                           |
 
-### Development workflow
+### سير عمل التطوير
 
-1. **`yarn twenty dev`** — watches source files, rebuilds on change, syncs to the server, generates typed API clients
-2. **`yarn twenty build`** — produces a distributable build
-3. **`yarn twenty deploy`** — deploys to a remote Twenty server
-4. **`yarn twenty add`** — scaffolds a new entity interactively
+1. **`yarn twenty dev`** — يراقب ملفات المصدر، ويعيد البناء عند التغيير، ويُزامن مع الخادم، ويولّد عملاء API بأنواع محددة
+2. **`yarn twenty build`** — ينتج إصدارًا قابلًا للتوزيع
+3. **`yarn twenty deploy`** — ينشر إلى خادم Twenty بعيد
+4. **`yarn twenty add`** — ينشئ هيكلًا لكيان جديد تفاعليًا
 
 ### مرجع CLI
 
 ```bash filename="Terminal"
-yarn twenty help          # List all commands
-yarn twenty server start  # Start local dev server
-yarn twenty remote add    # Connect to a Twenty server
-yarn twenty exec -n fn    # Execute a logic function
-yarn twenty logs -n fn    # Stream function logs
+yarn twenty help          # عرض جميع الأوامر
+yarn twenty server start  # بدء خادم التطوير المحلي
+yarn twenty remote add    # الاتصال بخادم Twenty
+yarn twenty exec -n fn    # تنفيذ دالة المنطق
+yarn twenty logs -n fn    # بث سجلات الدالة
 ```
 
-See the [Getting Started](/l/ar/developers/extend/apps/getting-started) guide for the full CLI reference.
+اطّلع على دليل [البدء](/l/ar/developers/extend/apps/getting-started) للاطلاع على مرجع CLI الكامل.

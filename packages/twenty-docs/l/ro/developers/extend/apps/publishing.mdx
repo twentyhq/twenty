@@ -18,13 +18,13 @@ Ambele căi pornesc din aceeași etapă de **build**.
 
 ## Construirea aplicației
 
-Run the build command to compile your app and generate a distribution-ready `manifest.json`:
+Rulează comanda `build` pentru a compila aplicația și a genera un `manifest.json` pregătit pentru distribuire:
 
 ```bash filename="Terminal"
 yarn twenty build
 ```
 
-This compiles TypeScript sources, transpiles logic functions and front components, and writes everything to `.twenty/output/`. Add `--tarball` to also produce a `.tgz` package for manual distribution or the deploy command.
+Aceasta compilează sursele TypeScript, transpilează funcțiile de logică și componentele de front-end și scrie totul în `.twenty/output/`. Adaugă `--tarball` pentru a produce și un pachet `.tgz` pentru distribuire manuală sau pentru comanda de deploy.
 
 ## Implementare pe un server (tarball)
 
@@ -61,7 +61,7 @@ Aplicațiile tarball nu sunt listate în marketplace-ul public, astfel încât a
 Linkul de partajare folosește URL-ul de bază al serverului (fără niciun subdomeniu de spațiu de lucru), astfel încât funcționează pentru orice spațiu de lucru de pe server.
 
 <Warning>
-Sharing private apps is an Enterprise feature. Go to [Settings > Admin Panel > Enterprise](/settings/admin-panel#enterprise) to enable it.
+Partajarea aplicațiilor private este o funcționalitate Enterprise. Mergi la [Setări > Panou de administrare > Enterprise](/settings/admin-panel#enterprise) pentru a o activa.
 </Warning>
 
 ### Gestionarea versiunilor
@@ -69,7 +69,7 @@ Sharing private apps is an Enterprise feature. Go to [Settings > Admin Panel > E
 Pentru a lansa o actualizare:
 
 1. Actualizează câmpul `version` din `package.json`
-2. Run `yarn twenty deploy` (or `yarn twenty deploy --remote production`)
+2. Rulează `yarn twenty deploy` (sau `yarn twenty deploy --remote production`)
 3. Spațiile de lucru care au aplicația instalată vor vedea actualizarea disponibilă în setările lor
 
 {/* TODO: add screenshot of the Upgrade button */}
@@ -81,7 +81,7 @@ Publicarea pe npm face ca aplicația ta să poată fi descoperită în marketpla
 ### Cerințe
 
 * Un cont [npm](https://www.npmjs.com)
-* The `twenty-app` keyword in your `package.json` `keywords` array (already included when you scaffold with `create-twenty-app`)
+* Cuvântul cheie `twenty-app` din array-ul `keywords` al fișierului `package.json` (deja inclus când inițializezi proiectul cu `create-twenty-app`)
 
 ```json filename="package.json"
 {
@@ -93,7 +93,7 @@ Publicarea pe npm face ca aplicația ta să poată fi descoperită în marketpla
 
 ### Metadate pentru marketplace
 
-The `defineApplication()` config supports optional fields that control how your app appears in the marketplace. Use `logoUrl` and `screenshots` to reference images from the `public/` folder:
+Configurația `defineApplication()` acceptă câmpuri opționale care controlează modul în care aplicația ta apare în marketplace. Folosește `logoUrl` și `screenshots` pentru a face referire la imaginile din folderul `public/`:
 
 ```ts src/application-config.ts
 export default defineApplication({
@@ -109,9 +109,9 @@ export default defineApplication({
 });
 ```
 
-See the [defineApplication accordion](/l/ro/developers/extend/apps/building#defineentity-functions) in the Building Apps page for the full list of marketplace fields (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, etc.).
+Vezi [acordeonul defineApplication](/l/ro/developers/extend/apps/building#defineentity-functions) din pagina Building Apps pentru lista completă de câmpuri ale marketplace-ului (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, etc.).
 
-### Publish
+### Publicare
 
 ```bash filename="Terminal"
 yarn twenty publish
@@ -125,9 +125,9 @@ yarn twenty publish --tag beta
 
 ### Cum funcționează descoperirea în marketplace
 
-The Twenty server syncs its marketplace catalog from the npm registry **every hour**.
+Serverul Twenty sincronizează catalogul marketplace-ului din registrul npm **la fiecare oră**.
 
-You can trigger the sync immediately instead of waiting:
+Poți declanșa sincronizarea imediat, în loc să aștepți:
 
 ```bash filename="Terminal"
 yarn twenty catalog-sync
@@ -135,7 +135,7 @@ yarn twenty catalog-sync
 # yarn twenty catalog-sync --remote production
 ```
 
-The metadata shown in the marketplace comes from your `defineApplication()` config — fields like `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl`, and `termsUrl`.
+Metadatele afișate în marketplace provin din configurația `defineApplication()` — câmpuri precum `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` și `termsUrl`.
 
 <Note>
 Dacă aplicația ta nu definește un `aboutDescription` în `defineApplication()`, piața va folosi automat fișierul `README.md` al pachetului tău de pe npm drept conținut pentru pagina Despre. Acest lucru înseamnă că poți menține un singur README atât pentru npm, cât și pentru piața Twenty. Dacă vrei o descriere diferită în piață, setează explicit `aboutDescription`.
@@ -143,7 +143,7 @@ Dacă aplicația ta nu definește un `aboutDescription` în `defineApplication()
 
 ### Publicare CI
 
-Use this GitHub Actions workflow to publish automatically on every release (uses [OIDC](https://docs.npmjs.com/trusted-publishers)):
+Folosește acest workflow GitHub Actions pentru a publica automat la fiecare release (folosește [OIDC](https://docs.npmjs.com/trusted-publishers)):
 
 ```yaml filename=".github/workflows/publish.yml"
 name: Publish
@@ -178,13 +178,13 @@ Pentru alte sisteme CI (GitLab CI, CircleCI etc.), se aplică aceleași trei com
 
 ## Instalarea aplicațiilor
 
-Once an app is published (npm) or deployed (tarball), workspaces can install it through the UI.
+După ce o aplicație este publicată (npm) sau implementată (tarball), spațiile de lucru o pot instala prin interfața utilizatorului (UI).
 
-Go to the **Settings > Applications** page in Twenty, where both marketplace and tarball-deployed apps can be browsed and installed.
+Mergi la pagina **Setări > Aplicații** din Twenty, unde pot fi parcurse și instalate atât aplicațiile din marketplace, cât și cele implementate prin tarball.
 
 {/* TODO: add screenshot of the UI when the app is registered */}
 
-You can also install apps from the command line:
+Poți instala aplicații și din linia de comandă:
 
 ```bash filename="Terminal"
 yarn twenty install

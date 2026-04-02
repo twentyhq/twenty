@@ -4,22 +4,22 @@ description: Vytvářejte a spravujte přizpůsobení Twenty jako kód.
 ---
 
 <Warning>
-Apps are currently in alpha. The feature works but is still evolving.
+Aplikace jsou aktuálně v alfa fázi. Funkce funguje, ale stále se vyvíjí.
 </Warning>
 
-## What are apps?
+## Co jsou aplikace?
 
-Apps let you extend Twenty with custom objects, fields, logic functions, front components, AI skills, and more — all managed as code. Instead of configuring everything through the UI, you define your data model and logic in TypeScript and deploy it to one or more workspaces.
+Aplikace vám umožňují rozšířit Twenty o vlastní objekty, pole, logické funkce, front-endové komponenty, AI schopnosti a další — vše je spravováno jako kód. Místo konfigurace všeho přes uživatelské rozhraní definujete v TypeScriptu svůj datový model a logiku a nasadíte je do jednoho nebo více pracovních prostorů.
 
 **Co můžete vytvořit:**
 
-* **Custom objects and fields** — extend your data model with new entities or add fields to existing objects like Company or Person
-* **Logic functions** — server-side functions triggered by database events, cron schedules, or HTTP routes
-* **Front components** — React components that render inside Twenty's UI (record pages, command menu, side panels)
-* **AI skills and agents** — extend Twenty's AI with custom capabilities
-* **Views and navigation** — preconfigured saved views and sidebar links
+* **Vlastní objekty a pole** — rozšiřte svůj datový model o nové entity nebo přidejte pole k existujícím objektům, jako jsou Společnost nebo Osoba
+* **Logické funkce** — serverové funkce spouštěné událostmi v databázi, plány cronu nebo HTTP routami
+* **Front-endové komponenty** — komponenty Reactu, které se vykreslují v uživatelském rozhraní Twenty (stránky záznamů, příkazová nabídka, postranní panely)
+* **Dovednosti AI a agenti** — rozšiřte AI v Twenty o vlastní možnosti
+* **Zobrazení a navigace** — předkonfigurovaná uložená zobrazení a odkazy v postranním panelu
 
-## Quick start
+## Rychlý start
 
 ```bash filename="Terminal"
 npx create-twenty-app@latest my-twenty-app
@@ -27,46 +27,46 @@ cd my-twenty-app
 yarn twenty dev
 ```
 
-This scaffolds a new app, optionally starts a local Twenty server, and begins watching your files for changes. See the [Getting Started](/l/cs/developers/extend/apps/getting-started) guide for the full walkthrough.
+Tímto se vytvoří kostra nové aplikace, volitelně se spustí lokální server Twenty a začne sledovat změny ve vašich souborech. Podrobný postup najdete v průvodci [Začínáme](/l/cs/developers/extend/apps/getting-started).
 
-## Detailed guides
+## Podrobné návody
 
-| Guide                                                      | Popis                                                                                                                                       |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Getting Started](/l/cs/developers/extend/apps/getting-started) | Scaffold an app, set up a local server, project structure, CI                                                                               |
-| [Building Apps](/l/cs/developers/extend/apps/building)          | Entity definitions (`defineObject`, `defineLogicFunction`, `defineFrontComponent`, etc.), API clients, npm packages, public assets, testing |
-| [Publishing](/l/cs/developers/extend/apps/publishing)           | Deploy to a server, publish to npm, marketplace                                                                                             |
+| Průvodce                                            | Popis                                                                                                                                    |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| [Začínáme](/l/cs/developers/extend/apps/getting-started) | Vytvoření kostry aplikace, nastavení lokálního serveru, struktura projektu, CI                                                           |
+| [Tvorba aplikací](/l/cs/developers/extend/apps/building) | Definice entit (`defineObject`, `defineLogicFunction`, `defineFrontComponent` atd.), klienti API, balíčky npm, veřejná aktiva, testování |
+| [Publikování](/l/cs/developers/extend/apps/publishing)   | Nasazení na server, publikování na npm, tržiště                                                                                          |
 
-## Key concepts
+## Klíčové pojmy
 
 ### Detekce entit
 
-The SDK detects entities by scanning your TypeScript files for `export default define<Entity>({...})` calls. File naming and folder structure are flexible — detection is AST-based, not path-based.
+SDK detekuje entity prohledáváním vašich souborů TypeScript a hledá volání `export default define<Entity>({...})`. Pojmenování souborů a struktura složek jsou flexibilní — detekce je založená na AST, nikoli na cestách.
 
-### Available entity types
+### Dostupné typy entit
 
-| Funkce                             | Účel                                         |
-| ---------------------------------- | -------------------------------------------- |
-| `defineApplication()`              | Application metadata (required, one per app) |
-| `defineObject()`                   | Custom objects with fields                   |
-| `defineField()`                    | Fields on existing objects                   |
-| `defineLogicFunction()`            | Server-side logic with triggers              |
-| `defineFrontComponent()`           | React components in Twenty's UI              |
-| `defineRole()`                     | Permission roles                             |
-| `defineView()`                     | Saved view configurations                    |
-| `defineNavigationMenuItem()`       | Sidebar navigation links                     |
-| `defineSkill()`                    | AI agent skills                              |
-| `defineAgent()`                    | AI agents with prompts                       |
-| `definePageLayout()`               | Custom record page layouts                   |
-| `definePreInstallLogicFunction()`  | Runs before app installation                 |
-| `definePostInstallLogicFunction()` | Runs after app installation                  |
+| Funkce                             | Účel                                             |
+| ---------------------------------- | ------------------------------------------------ |
+| `defineApplication()`              | Metadata aplikace (povinné, jedno na aplikaci)   |
+| `defineObject()`                   | Vlastní objekty s poli                           |
+| `defineField()`                    | Pole u existujících objektů                      |
+| `defineLogicFunction()`            | Serverová logika se spouštěči                    |
+| `defineFrontComponent()`           | Komponenty Reactu v uživatelském rozhraní Twenty |
+| `defineRole()`                     | Role oprávnění                                   |
+| `defineView()`                     | Konfigurace uložených zobrazení                  |
+| `defineNavigationMenuItem()`       | Odkazy postranní navigace                        |
+| `defineSkill()`                    | Dovednosti agenta AI                             |
+| `defineAgent()`                    | AI agenti s prompty                              |
+| `definePageLayout()`               | Vlastní rozvržení stránek záznamu                |
+| `definePreInstallLogicFunction()`  | Spouští se před instalací aplikace               |
+| `definePostInstallLogicFunction()` | Spouští se po instalaci aplikace                 |
 
-### Development workflow
+### Vývojový postup
 
-1. **`yarn twenty dev`** — watches source files, rebuilds on change, syncs to the server, generates typed API clients
-2. **`yarn twenty build`** — produces a distributable build
-3. **`yarn twenty deploy`** — deploys to a remote Twenty server
-4. **`yarn twenty add`** — scaffolds a new entity interactively
+1. **`yarn twenty dev`** — sleduje zdrojové soubory, při změně znovu sestaví, synchronizuje se serverem a generuje typované klienty API
+2. **`yarn twenty build`** — vytvoří distribuovatelný build
+3. **`yarn twenty deploy`** — nasadí na vzdálený server Twenty
+4. **`yarn twenty add`** — interaktivně vytvoří kostru nové entity
 
 ### Referenční dokumentace CLI
 
@@ -78,4 +78,4 @@ yarn twenty exec -n fn    # Execute a logic function
 yarn twenty logs -n fn    # Stream function logs
 ```
 
-See the [Getting Started](/l/cs/developers/extend/apps/getting-started) guide for the full CLI reference.
+Úplný přehled příkazů CLI najdete v průvodci [Začínáme](/l/cs/developers/extend/apps/getting-started).

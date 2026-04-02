@@ -18,13 +18,13 @@ Obě cesty začínají stejným krokem **build**.
 
 ## Sestavení vaší aplikace
 
-Run the build command to compile your app and generate a distribution-ready `manifest.json`:
+Spusťte příkaz build ke zkompilování své aplikace a k vygenerování souboru `manifest.json` připraveného k distribuci:
 
 ```bash filename="Terminal"
 yarn twenty build
 ```
 
-This compiles TypeScript sources, transpiles logic functions and front components, and writes everything to `.twenty/output/`. Add `--tarball` to also produce a `.tgz` package for manual distribution or the deploy command.
+Tím se zkompilují zdrojové soubory TypeScriptu, transpilují logické funkce a frontendové komponenty a vše se zapíše do `.twenty/output/`. Přidejte `--tarball`, abyste také vytvořili balíček `.tgz` pro ruční distribuci nebo příkaz deploy.
 
 ## Nasazení na server (tarball)
 
@@ -61,7 +61,7 @@ Aplikace ve formě tarball nejsou uvedeny ve veřejném tržišti, takže je ost
 Odkaz ke sdílení používá základní adresu URL serveru (bez jakékoli subdomény pracovního prostoru), takže funguje pro libovolný pracovní prostor na serveru.
 
 <Warning>
-Sharing private apps is an Enterprise feature. Go to [Settings > Admin Panel > Enterprise](/settings/admin-panel#enterprise) to enable it.
+Sdílení soukromých aplikací je funkce Enterprise. Přejděte do [Nastavení > Admin Panel > Enterprise](/settings/admin-panel#enterprise) a povolte ji.
 </Warning>
 
 ### Správa verzí
@@ -69,7 +69,7 @@ Sharing private apps is an Enterprise feature. Go to [Settings > Admin Panel > E
 Chcete-li vydat aktualizaci:
 
 1. Zvyšte hodnotu pole `version` v souboru `package.json`
-2. Run `yarn twenty deploy` (or `yarn twenty deploy --remote production`)
+2. Spusťte `yarn twenty deploy` (nebo `yarn twenty deploy --remote production`)
 3. Pracovní prostory, které mají aplikaci nainstalovanou, uvidí dostupnou aktualizaci ve svém nastavení
 
 {/* TODO: add screenshot of the Upgrade button */}
@@ -81,7 +81,7 @@ Publikování na npm zajistí, že bude vaše aplikace dohledatelná v Marketpla
 ### Požadavky
 
 * Účet na [npm](https://www.npmjs.com)
-* The `twenty-app` keyword in your `package.json` `keywords` array (already included when you scaffold with `create-twenty-app`)
+* Klíčové slovo `twenty-app` ve vašem poli `keywords` v souboru `package.json` (již je zahrnuto, když založíte projekt pomocí `create-twenty-app`)
 
 ```json filename="package.json"
 {
@@ -93,7 +93,7 @@ Publikování na npm zajistí, že bude vaše aplikace dohledatelná v Marketpla
 
 ### Metadata tržiště
 
-The `defineApplication()` config supports optional fields that control how your app appears in the marketplace. Use `logoUrl` and `screenshots` to reference images from the `public/` folder:
+Konfigurace `defineApplication()` podporuje volitelná pole, která určují, jak se vaše aplikace zobrazuje v tržišti. Použijte `logoUrl` a `screenshots` k odkazování na obrázky ze složky `public/`:
 
 ```ts src/application-config.ts
 export default defineApplication({
@@ -109,9 +109,9 @@ export default defineApplication({
 });
 ```
 
-See the [defineApplication accordion](/l/cs/developers/extend/apps/building#defineentity-functions) in the Building Apps page for the full list of marketplace fields (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, etc.).
+Podívejte se na [sekci defineApplication](/l/cs/developers/extend/apps/building#defineentity-functions) na stránce Building Apps pro úplný seznam polí tržiště (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl` atd.).
 
-### Publish
+### Publikování
 
 ```bash filename="Terminal"
 yarn twenty publish
@@ -127,7 +127,7 @@ yarn twenty publish --tag beta
 
 Server Twenty synchronizuje svůj katalog tržiště z registru npm **každou hodinu**.
 
-You can trigger the sync immediately instead of waiting:
+Synchronizaci můžete spustit okamžitě místo čekání:
 
 ```bash filename="Terminal"
 yarn twenty catalog-sync
@@ -135,7 +135,7 @@ yarn twenty catalog-sync
 # yarn twenty catalog-sync --remote production
 ```
 
-The metadata shown in the marketplace comes from your `defineApplication()` config — fields like `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl`, and `termsUrl`.
+Metadata zobrazená v tržišti pocházejí z vaší konfigurace `defineApplication()` — z polí jako `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` a `termsUrl`.
 
 <Note>
 Pokud vaše aplikace nedefinuje `aboutDescription` v `defineApplication()`, tržiště automaticky použije soubor `README.md` vašeho balíčku z npm jako obsah stránky O aplikaci. To znamená, že můžete spravovat jediný soubor README jak pro npm, tak pro tržiště Twenty. Pokud chcete v tržišti jiný popis, explicitně nastavte `aboutDescription`.
@@ -143,7 +143,7 @@ Pokud vaše aplikace nedefinuje `aboutDescription` v `defineApplication()`, trž
 
 ### Publikování pomocí CI
 
-Use this GitHub Actions workflow to publish automatically on every release (uses [OIDC](https://docs.npmjs.com/trusted-publishers)):
+Použijte tento pracovní postup GitHub Actions k automatickému publikování při každém vydání (používá [OIDC](https://docs.npmjs.com/trusted-publishers)):
 
 ```yaml filename=".github/workflows/publish.yml"
 name: Publish
@@ -178,13 +178,13 @@ Pro jiné systémy CI (GitLab CI, CircleCI atd.) platí stejné tři příkazy: 
 
 ## Instalace aplikací
 
-Once an app is published (npm) or deployed (tarball), workspaces can install it through the UI.
+Jakmile je aplikace publikována (npm) nebo nasazena (tarball), mohou ji pracovní prostory nainstalovat prostřednictvím uživatelského rozhraní.
 
-Go to the **Settings > Applications** page in Twenty, where both marketplace and tarball-deployed apps can be browsed and installed.
+Přejděte na stránku **Nastavení > Aplikace** v Twenty, kde lze procházet a instalovat jak aplikace z tržiště, tak aplikace nasazené jako tarball.
 
 {/* TODO: add screenshot of the UI when the app is registered */}
 
-You can also install apps from the command line:
+Aplikace můžete nainstalovat také z příkazového řádku:
 
 ```bash filename="Terminal"
 yarn twenty install
