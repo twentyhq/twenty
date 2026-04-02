@@ -3,13 +3,13 @@ import { existsSync } from 'fs';
 import { join } from 'path';
 import { inspect } from 'util';
 import { runCliCommand } from '@/cli/__tests__/integration/utils/run-cli-command.util';
-import { POSTCARD_APP_PATH } from '@/cli/__tests__/apps/fixture-paths';
+import { RICH_APP_PATH } from '@/cli/__tests__/apps/fixture-paths';
 
 inspect.defaultOptions.depth = 10;
 
-describe('Application: install delete and reinstall postcard-app', () => {
-  const applicationName = 'postcard-app';
-  const appPath = POSTCARD_APP_PATH;
+describe('Application: install delete and reinstall rich-app', () => {
+  const applicationName = 'rich-app';
+  const appPath = RICH_APP_PATH;
 
   beforeAll(async () => {
     expect(existsSync(appPath)).toBe(true);

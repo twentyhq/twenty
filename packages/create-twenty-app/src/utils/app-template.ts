@@ -21,6 +21,8 @@ export const copyBaseApplicationProject = async ({
   console.log(chalk.gray('Generating application project...'));
   await fs.copy(join(__dirname, './constants/template'), appDirectory);
 
+  await renameGitignore({ appDirectory });
+
   await generateUniversalIdentifiers({
     appDisplayName,
     appDescription,
@@ -28,6 +30,18 @@ export const copyBaseApplicationProject = async ({
   });
 
   await updatePackageJson({ appName, appDirectory });
+};
+
+const renameGitignore = async ({
+  appDirectory,
+}: {
+  appDirectory: string;
+}) => {
+  const gitignorePath = join(appDirectory, 'gitignore');
+
+  if (await fs.pathExists(gitignorePath)) {
+    await fs.rename(gitignorePath, join(appDirectory, '.gitignore'));
+  }
 };
 
 const generateUniversalIdentifiers = async ({

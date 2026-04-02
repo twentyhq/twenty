@@ -1,12 +1,12 @@
 import { runAppDevInProcess } from '@/cli/__tests__/integration/utils/run-app-dev-in-process.util';
-import { POSTCARD_APP_PATH } from '@/cli/__tests__/apps/fixture-paths';
+import { RICH_APP_PATH } from '@/cli/__tests__/apps/fixture-paths';
 
 import { defineEntitiesTests } from './tests/entities.tests';
 import { defineManifestTests } from './tests/manifest.tests';
 
-describe('postcard-app dev', () => {
+describe('rich-app dev', () => {
   beforeAll(async () => {
-    const result = await runAppDevInProcess({ appPath: POSTCARD_APP_PATH });
+    const result = await runAppDevInProcess({ appPath: RICH_APP_PATH });
 
     if (!result.success) {
       const diagnostics = JSON.stringify(
@@ -21,6 +21,6 @@ describe('postcard-app dev', () => {
     }
   }, 60000);
 
-  defineManifestTests(POSTCARD_APP_PATH);
-  defineEntitiesTests(POSTCARD_APP_PATH);
+  defineManifestTests(RICH_APP_PATH);
+  defineEntitiesTests(RICH_APP_PATH);
 });
