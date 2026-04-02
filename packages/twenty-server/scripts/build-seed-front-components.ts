@@ -41,6 +41,7 @@ const build = async () => {
       jsx: 'automatic',
       sourcemap: false,
       metafile: false,
+      minify: true,
       logLevel: 'info',
       outdir,
       alias,
