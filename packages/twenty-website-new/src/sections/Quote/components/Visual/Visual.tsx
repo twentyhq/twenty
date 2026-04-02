@@ -1,3 +1,4 @@
+import { LazyEmbed } from '@/design-system/components';
 import type { IllustrationType } from '@/design-system/components/Illustration/types/Illustration';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -17,7 +18,7 @@ const VisualContainer = styled.div`
   }
 `;
 
-const StyledIframe = styled.iframe`
+const StyledIframe = styled(LazyEmbed)`
   border: none;
   height: 200%;
   left: 51.5%;

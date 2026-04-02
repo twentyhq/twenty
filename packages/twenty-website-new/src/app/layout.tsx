@@ -1,3 +1,4 @@
+import { WebsitePerfHud } from '@/design-system/components';
 import { Footer } from '@/sections/Footer/components';
 import { theme } from '@/theme';
 import { cssVariables } from '@/theme/css-variables';
@@ -76,6 +77,7 @@ export default function RootLayout({
             <Footer.Social />
           </Footer.Bottom>
         </Footer.Root>
+        <WebsitePerfHud />
       </body>
     </html>
   );

@@ -1,4 +1,4 @@
-import { Body, Heading, LinkButton } from '@/design-system/components';
+import { Body, Heading, LazyEmbed, LinkButton } from '@/design-system/components';
 import { CheckIcon } from '@/icons/informative/Check';
 import type { PlanCardType } from '@/sections/Plans/types';
 import { theme } from '@/theme';
@@ -49,7 +49,7 @@ const PriceLine = styled.div`
   white-space: nowrap;
 `;
 
-const CardIllustration = styled.iframe`
+const CardIllustration = styled(LazyEmbed)`
   background-color: ${theme.colors.primary.background[100]};
   border: none;
   display: none;

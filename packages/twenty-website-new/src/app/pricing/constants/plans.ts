@@ -5,13 +5,13 @@ const ORGANIZATION_HEADING = {
 };
 
 const PRO_ILLUSTRATION = {
-  src: 'https://app.endlesstools.io/embed/207b0732-c6ef-414e-add5-462e68689a2e',
-  title: 'Endless Tools Editor',
+  src: '/illustrations/pricing/Price/pro.glb',
+  title: 'Pro plan illustration',
 };
 
 const ORGANIZATION_ILLUSTRATION = {
-  src: 'https://app.endlesstools.io/embed/588638be-e22e-4467-b701-3f36e900613d',
-  title: 'Endless Tools Editor',
+  src: '/illustrations/pricing/Price/organization.glb',
+  title: 'Organization plan illustration',
 };
 
 const PRO_FEATURES_TITLE = { text: 'Key Features' };

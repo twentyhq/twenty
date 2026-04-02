@@ -14,7 +14,7 @@ export const STEPPER_DATA: WhyTwentyStepperDataType = {
     },
   ],
   illustration: {
-    src: 'https://app.endlesstools.io/embed/ddc485f9-cc8e-422b-a076-5430eb84e21a',
-    title: 'Endless Tools Editor',
+    src: '/illustrations/why-twenty/stepper/logo.glb',
+    title: 'Vision illustration',
   },
 };

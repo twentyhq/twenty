@@ -6,3 +6,5 @@ export { Eyebrow } from './Eyebrow/Eyebrow';
 export { Heading } from './Heading/Heading';
 export { IconButton } from './IconButton/IconButton';
 export { Image } from './Image/Image';
+export { LazyEmbed } from './LazyEmbed/LazyEmbed';
+export { WebsitePerfHud } from './WebsitePerfHud/WebsitePerfHud';

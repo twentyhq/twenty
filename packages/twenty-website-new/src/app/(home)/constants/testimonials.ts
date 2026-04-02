@@ -52,7 +52,7 @@ export const TESTIMONIALS_DATA: TestimonialsDataType = {
     },
   ],
   illustration: {
-    src: 'https://app.endlesstools.io/embed/61c7255f-cf10-46f6-ac99-91047fd76d75',
-    title: 'Endless Tools Editor',
+    src: '/illustrations/home/testimonials/testimonials.glb',
+    title: 'Testimonials illustration',
   },
 };
