@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { getIntrospectionQuery, buildClientSchema, printSchema } from 'graphql';
+import { buildClientSchema, getIntrospectionQuery, printSchema } from 'graphql';
 
 import { generateMetadataClient } from '../src/generate/generate-metadata-client';
 
@@ -36,7 +36,7 @@ const introspectSchema = async (url: string): Promise<string> => {
 };
 
 const main = async () => {
-  const serverUrl = process.env.TWENTY_API_URL ?? 'http://localhost:3000';
+  const serverUrl = process.env.TWENTY_API_URL ?? 'http://localhost:3002';
 
   const schema = await introspectSchema(`${serverUrl}/metadata`);
 

@@ -1,7 +1,6 @@
 import { type Request } from 'express';
 import { DocumentNode, parse } from 'graphql';
 import { type Plugin } from 'graphql-yoga';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { isNull } from '@sniptt/guards';
 import { type DirectExecutionService } from 'src/engine/api/graphql/direct-execution/direct-execution.service';
@@ -23,16 +22,6 @@ export function useDirectExecution(
       const req = (serverContext as unknown as { req: Request }).req;
 
       if (!req.workspace?.id || !req.body?.query) {
-        return;
-      }
-
-      const isDirectExecutionEnabled =
-        await config.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IS_DIRECT_GRAPHQL_EXECUTION_ENABLED,
-          req.workspace.id,
-        );
-
-      if (!isDirectExecutionEnabled) {
         return;
       }
 
