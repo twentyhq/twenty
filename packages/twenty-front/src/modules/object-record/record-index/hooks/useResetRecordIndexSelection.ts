@@ -11,6 +11,8 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+const PLACEHOLDER_RECORD_INDEX_ID = 'placeholder-record-index-id';
+
 export const useResetRecordIndexSelection = (
   contextStoreInstanceId?: string,
 ) => {
@@ -39,7 +41,7 @@ export const useResetRecordIndexSelection = (
         objectNamePlural,
         contextStoreCurrentViewId ?? '',
       )
-    : '';
+    : PLACEHOLDER_RECORD_INDEX_ID;
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
 
