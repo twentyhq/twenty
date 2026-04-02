@@ -42,8 +42,8 @@ import { graphQLBuildFragmentMap } from 'src/engine/api/graphql/direct-execution
 import { graphQLBuildPartialResolveInfo } from 'src/engine/api/graphql/direct-execution/utils/graphql-build-partial-resolve-info.util';
 import { graphQLExtractTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-extract-top-level-fields.util';
 import { graphQLFormatResultFromSelectedFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-format-result-from-selected-fields.util';
-import { ResolverOutput } from 'src/engine/api/graphql/workspace-query-runner/interfaces/resolver-output';
 import { WorkspaceGraphqlSchemaSDLService } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/workspace-graphql-schema-sdl.service';
+import { ResolverOutput } from 'src/engine/api/graphql/workspace-query-runner/interfaces/resolver-output';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 import { CreateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/create-many-resolver.factory';
@@ -65,6 +65,8 @@ import { type WorkspaceResolverBuilderFactoryInterface } from 'src/engine/api/gr
 import { type WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
@@ -90,6 +92,7 @@ export class DirectExecutionService {
     private readonly workspaceGraphqlSchemaSDLService: WorkspaceGraphqlSchemaSDLService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly i18nService: I18nService,
+    private readonly metricsService: MetricsService,
     private readonly findManyResolverFactory: FindManyResolverFactory,
     private readonly findOneResolverFactory: FindOneResolverFactory,
     private readonly findDuplicatesResolverFactory: FindDuplicatesResolverFactory,
@@ -283,6 +286,11 @@ export class DirectExecutionService {
         schema,
         document,
         variableValues: (req.body?.variables as Record<string, unknown>) ?? {},
+      });
+
+      await this.metricsService.incrementCounter({
+        key: MetricsKeys.GraphqlIntrospectionDirectExecution,
+        shouldStoreInCache: false,
       });
 
       return {
