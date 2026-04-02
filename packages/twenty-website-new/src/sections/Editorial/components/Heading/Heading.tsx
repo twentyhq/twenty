@@ -1,6 +1,5 @@
 import { Heading as BaseHeading } from '@/design-system/components';
 import type { HeadingType } from '@/design-system/components/Heading/types/Heading';
-import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
 const HeadingWrap = styled.div`
