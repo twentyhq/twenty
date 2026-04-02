@@ -9,7 +9,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconExternalLink } from 'twenty-ui/display';
-import { isSafeUrl } from '~/utils/isSafeUrl';
+import { getSafeUrl } from '~/utils/getSafeUrl';
 
 const formatMaintenanceDateTime = (
   isoString: string,
@@ -52,7 +52,7 @@ export const InformationBannerMaintenance = () => {
   const message = t`Scheduled maintenance: ${startFormatted} — ${endFormatted}`;
   const rawMaintenanceLink = maintenanceMode.link?.trim();
   const maintenanceLink =
-    isNonEmptyString(rawMaintenanceLink) && isSafeUrl(rawMaintenanceLink)
+    isNonEmptyString(rawMaintenanceLink) && getSafeUrl(rawMaintenanceLink)
       ? rawMaintenanceLink
       : undefined;
 

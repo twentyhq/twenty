@@ -10,7 +10,7 @@ import { type Editor } from '@tiptap/core';
 import { useId, useState, type FocusEvent, type FormEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLink, IconPencil } from 'twenty-ui/display';
-import { getSafeUrl } from '~/utils/isSafeUrl';
+import { getSafeUrl } from '~/utils/getSafeUrl';
 
 type EditLinkPopoverProps = {
   defaultValue: string | undefined;

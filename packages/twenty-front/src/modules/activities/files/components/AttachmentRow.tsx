@@ -15,7 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type AttachmentWithFile } from '@/activities/files/utils/filterAttachmentsWithFile';
 import { FileIcon } from '@/file/components/FileIcon';
-import { isSafeUrl } from '~/utils/isSafeUrl';
+import { getSafeUrl } from '~/utils/getSafeUrl';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
@@ -187,7 +187,7 @@ export const AttachmentRow = ({
             <StyledLinkContainer>
               <StyledLink
                 onClick={handleOpenDocument}
-                href={isSafeUrl(fileUrl) ? fileUrl : undefined}
+                href={getSafeUrl(fileUrl)}
                 target="_blank"
                 rel="noopener noreferrer"
               >

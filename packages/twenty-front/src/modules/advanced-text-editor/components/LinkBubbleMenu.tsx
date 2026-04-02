@@ -5,7 +5,7 @@ import { type Editor } from '@tiptap/core';
 import { useEditorState } from '@tiptap/react';
 import { BubbleMenu } from '@tiptap/react/menus';
 import { IconExternalLink, IconLinkOff } from 'twenty-ui/display';
-import { isSafeUrl } from '~/utils/isSafeUrl';
+import { getSafeUrl } from '~/utils/getSafeUrl';
 
 type LinkBubbleMenuProps = {
   editor: Editor;
@@ -29,7 +29,7 @@ export const LinkBubbleMenu = ({ editor }: LinkBubbleMenuProps) => {
     {
       Icon: IconExternalLink,
       onClick: () => {
-        if (isSafeUrl(state.linkHref)) {
+        if (getSafeUrl(state.linkHref)) {
           window.open(state.linkHref, '_blank', 'noopener,noreferrer');
         }
       },
