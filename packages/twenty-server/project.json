@@ -219,6 +219,14 @@
         "command": "npx nx typeorm -- migration:generate src/database/typeorm/core/migrations/common/{args.migrationName} -d src/database/typeorm/core/core.datasource.ts"
       }
     },
+    "database:migrate:generate:versioned": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "ts-node --transpile-only -P tsconfig.json scripts/generate-versioned-migration.ts {args.migrationName}"
+      }
+    },
     "database:migrate:revert": {
       "executor": "nx:run-commands",
       "dependsOn": ["^build"],

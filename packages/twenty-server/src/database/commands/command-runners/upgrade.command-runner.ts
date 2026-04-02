@@ -4,7 +4,7 @@ import chalk from 'chalk';
 import { CommandRunner, Option } from 'nest-commander';
 import { SemVer } from 'semver';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { MigrationInterface, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import {
@@ -16,6 +16,7 @@ import {
   WorkspaceCommandRunner,
 } from 'src/database/commands/command-runners/workspace.command-runner';
 import { CoreMigrationRunnerService } from 'src/database/commands/core-migration-runner/services/core-migration-runner.service';
+import { VersionedMigrationRegistryService } from 'src/database/commands/core-migration-runner/services/versioned-migration-registry.service';
 import { CommandLogger } from 'src/database/commands/logger';
 import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
@@ -26,14 +27,10 @@ import {
   compareVersionMajorAndMinor,
 } from 'src/utils/version/compare-version-minor-and-major';
 
-export type VersionCommands = {
-  // Note: for the moment only typeorm migrations are supported, later will supported GlobalCommandRunner too
-  instanceCommands: MigrationInterface[];
-  workspaceCommands: (
-    | WorkspaceCommandRunner
-    | ActiveOrSuspendedWorkspaceCommandRunner
-  )[];
-};
+export type VersionCommands = (
+  | WorkspaceCommandRunner
+  | ActiveOrSuspendedWorkspaceCommandRunner
+)[];
 export type AllCommands = Record<UpgradeCommandVersion, VersionCommands>;
 
 export type UpgradeCommandOptions = {
@@ -47,7 +44,8 @@ export type UpgradeCommandOptions = {
 type VersionContext = {
   fromWorkspaceVersion: SemVer;
   currentAppVersion: SemVer;
-  commands: VersionCommands;
+  currentVersionMajorMinor: UpgradeCommandVersion;
+  workspaceCommands: VersionCommands;
 };
 
 export abstract class UpgradeCommandRunner extends CommandRunner {
@@ -61,6 +59,7 @@ export abstract class UpgradeCommandRunner extends CommandRunner {
     protected readonly coreEngineVersionService: CoreEngineVersionService,
     protected readonly workspaceVersionService: WorkspaceVersionService,
     protected readonly coreMigrationRunnerService: CoreMigrationRunnerService,
+    protected readonly versionedMigrationRegistryService: VersionedMigrationRegistryService,
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
   ) {
     super();
@@ -174,7 +173,12 @@ Please roll back to that version and run the upgrade command again.`,
         );
       }
 
-      for (const instanceCommand of versionContext.commands.instanceCommands) {
+      const instanceCommands =
+        this.versionedMigrationRegistryService.getInstanceCommandsForVersion(
+          versionContext.currentVersionMajorMinor,
+        );
+
+      for (const instanceCommand of instanceCommands) {
         const migrationName = instanceCommand.constructor.name;
         const result =
           await this.coreMigrationRunnerService.runSingleMigration(
@@ -227,9 +231,9 @@ Please roll back to that version and run the upgrade command again.`,
     const currentAppVersion = this.coreEngineVersionService.getCurrentVersion();
     const currentVersionMajorMinor =
       `${currentAppVersion.major}.${currentAppVersion.minor}.0` as UpgradeCommandVersion;
-    const commands = this.allCommands[currentVersionMajorMinor];
+    const workspaceCommands = this.allCommands[currentVersionMajorMinor];
 
-    if (!isDefined(commands)) {
+    if (!isDefined(workspaceCommands)) {
       throw new Error(
         `No command found for version ${currentAppVersion}. Please check the commands record.`,
       );
@@ -238,19 +242,29 @@ Please roll back to that version and run the upgrade command again.`,
     const fromWorkspaceVersion =
       this.coreEngineVersionService.getPreviousVersion();
 
+    const instanceCommands =
+      this.versionedMigrationRegistryService.getInstanceCommandsForVersion(
+        currentVersionMajorMinor,
+      );
+
     this.logger.log(
       chalk.blue(
         [
           'Initialized upgrade context with:',
           `- currentVersion (migrating to): ${currentAppVersion}`,
           `- fromWorkspaceVersion: ${fromWorkspaceVersion}`,
-          `- ${commands.instanceCommands.length} instance commands`,
-          `- ${commands.workspaceCommands.length} workspace commands`,
+          `- ${instanceCommands.length} instance commands (from registry)`,
+          `- ${workspaceCommands.length} workspace commands`,
         ].join('\n   '),
       ),
     );
 
-    return { fromWorkspaceVersion, currentAppVersion, commands };
+    return {
+      fromWorkspaceVersion,
+      currentAppVersion,
+      currentVersionMajorMinor,
+      workspaceCommands,
+    };
   }
 
   private async runOnWorkspace(
@@ -259,7 +273,7 @@ Please roll back to that version and run the upgrade command again.`,
     versionContext: VersionContext,
   ): Promise<void> {
     const { workspaceId, index, total } = iteratorContext;
-    const { fromWorkspaceVersion, currentAppVersion, commands } =
+    const { fromWorkspaceVersion, currentAppVersion, workspaceCommands } =
       versionContext;
 
     this.logger.log(
@@ -281,7 +295,7 @@ Please roll back to that version and run the upgrade command again.`,
         );
       }
       case 'equal': {
-        for (const workspaceCommand of commands.workspaceCommands) {
+        for (const workspaceCommand of workspaceCommands) {
           await workspaceCommand.runOnWorkspace({
             options: options as RunOnWorkspaceArgs['options'],
             workspaceId,

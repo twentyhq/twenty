@@ -10,11 +10,11 @@ import { type Repository } from 'typeorm';
 import {
   UpgradeCommandOptions,
   UpgradeCommandRunner,
-  VersionCommands,
   type AllCommands,
 } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { CoreMigrationRunnerService } from 'src/database/commands/core-migration-runner/services/core-migration-runner.service';
+import { VersionedMigrationRegistryService } from 'src/database/commands/core-migration-runner/services/versioned-migration-registry.service';
 import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
@@ -33,13 +33,7 @@ const PREVIOUS_VERSION =
 
 class BasicUpgradeCommandRunner extends UpgradeCommandRunner {
   allCommands = Object.fromEntries(
-    UPGRADE_COMMAND_SUPPORTED_VERSIONS.map((version) => [
-      version,
-      {
-        instanceCommands: [],
-        workspaceCommands: [],
-      } as const satisfies VersionCommands,
-    ]),
+    UPGRADE_COMMAND_SUPPORTED_VERSIONS.map((version) => [version, []]),
   ) as unknown as AllCommands;
 }
 
@@ -82,6 +76,7 @@ const buildUpgradeCommandModule = async ({
           coreEngineVersionService: CoreEngineVersionService,
           workspaceVersionService: WorkspaceVersionService,
           coreMigrationRunnerService: CoreMigrationRunnerService,
+          versionedMigrationRegistryService: VersionedMigrationRegistryService,
           workspaceIteratorService: WorkspaceIteratorService,
         ) => {
           return new commandRunner(
@@ -89,6 +84,7 @@ const buildUpgradeCommandModule = async ({
             coreEngineVersionService,
             workspaceVersionService,
             coreMigrationRunnerService,
+            versionedMigrationRegistryService,
             workspaceIteratorService,
           );
         },
@@ -97,6 +93,7 @@ const buildUpgradeCommandModule = async ({
           CoreEngineVersionService,
           WorkspaceVersionService,
           CoreMigrationRunnerService,
+          VersionedMigrationRegistryService,
           WorkspaceIteratorService,
         ],
       },
@@ -136,6 +133,12 @@ const buildUpgradeCommandModule = async ({
           runSingleMigration: jest
             .fn()
             .mockResolvedValue({ status: 'success' }),
+        },
+      },
+      {
+        provide: VersionedMigrationRegistryService,
+        useValue: {
+          getInstanceCommandsForVersion: jest.fn().mockReturnValue([]),
         },
       },
       {
