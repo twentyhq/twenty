@@ -7,7 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
-import { SettingsCard } from '@/settings/components/SettingsCard';
+
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsLogicFunctionLabelContainer } from '@/settings/logic-functions/components/SettingsLogicFunctionLabelContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -18,10 +18,10 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title, IconCode, IconTrash } from 'twenty-ui/display';
+import { H2Title, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import {
@@ -94,9 +94,6 @@ export const SettingsToolDetail = () => {
   const inputSchema = isCustomTool
     ? logicFunction?.toolInputSchema
     : schemaData?.getToolInputSchema;
-
-  const hasInputSchema =
-    isDefined(inputSchema) && Object.keys(inputSchema).length > 0;
 
   const functionLink = isCustomTool
     ? isDefined(logicFunction?.applicationId)
@@ -213,6 +210,18 @@ export const SettingsToolDetail = () => {
           <>
             <Section>
               <H2Title
+                title={t`Parameters`}
+                description={t`Input parameters accepted by this tool`}
+              />
+              <SettingsToolParameterTable
+                schemaProperties={inputSchema?.properties ?? {}}
+                requiredFields={inputSchema?.required}
+                functionLink={functionLink}
+              />
+            </Section>
+
+            <Section>
+              <H2Title
                 title={t`Description`}
                 description={t`Define what this tool does`}
               />
@@ -225,39 +234,7 @@ export const SettingsToolDetail = () => {
                 disabled={isReadOnly}
               />
             </Section>
-            <Section>
-              <H2Title
-                title={t`Parameters`}
-                description={t`Input parameters accepted by this tool`}
-              />
-              {hasInputSchema ? (
-                <SettingsToolParameterTable
-                  schemaProperties={inputSchema.properties}
-                  requiredFields={inputSchema.required}
-                />
-              ) : (
-                <div>{t`No parameters`}</div>
-              )}
-            </Section>
-            {isCustomTool && isDefined(functionLink) && (
-              <Section>
-                <H2Title
-                  title={t`Function`}
-                  description={t`The logic function powering this tool`}
-                />
-                <UndecoratedLink to={functionLink}>
-                  <SettingsCard
-                    Icon={
-                      <IconCode
-                        size={theme.icon.size.md}
-                        stroke={theme.icon.stroke.sm}
-                      />
-                    }
-                    title={t`Open in editor`}
-                  />
-                </UndecoratedLink>
-              </Section>
-            )}
+
             {isCustomTool && !isManaged && (
               <Section>
                 <H2Title
