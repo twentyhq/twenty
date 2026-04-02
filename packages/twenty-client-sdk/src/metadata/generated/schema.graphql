@@ -3011,7 +3011,7 @@ type MessageFolder {
   name: String
   isSentFolder: Boolean!
   isSynced: Boolean!
-  parentFolderId: UUID
+  parentFolderId: String
   externalId: String
   pendingSyncAction: MessageFolderPendingSyncAction!
   messageChannelId: UUID!
