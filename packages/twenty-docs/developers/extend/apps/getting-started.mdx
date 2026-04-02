@@ -36,11 +36,8 @@ This creates a new folder called `my-twenty-app` with everything you need.
 <Note>
 The scaffolder supports these flags:
 
-- `--example <name-or-url>` — initialize from an example (name or GitHub URL)
-- `--name <name>` — set the app name (skips the prompt)
-- `--display-name <displayName>` — set the display name (skips the prompt)
-- `--description <description>` — set the description (skips the prompt)
-- `--skip-local-instance` — skip the local server setup prompt
+- `--example <name-or-url>` — (optional) initialize from an example (name or GitHub URL)
+
 </Note>
 
 ### Set up a local Twenty instance
@@ -142,7 +139,7 @@ Head over to [Building Apps](/developers/extend/apps/building) for a detailed gu
 
 ## Project structure
 
-The scaffolder generates the following file structure (shown with `--exhaustive` mode, which includes examples for every entity type):
+The scaffolder generates the following file structure:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -151,49 +148,33 @@ my-twenty-app/
   .gitignore
   .nvmrc
   .yarnrc.yml
-  .yarn/
-    install-state.gz
   .oxlintrc.json
   tsconfig.json
-  tsconfig.spec.json                  # TypeScript config for tests
-  vitest.config.ts                    # Vitest test runner configuration
+  tsconfig.spec.json                          # TypeScript config for tests
+  vitest.config.ts                            # Vitest test runner configuration
   LLMS.md
   README.md
   .github/
     └── workflows/
-        └── ci.yml                      # GitHub Actions CI workflow
-  public/                             # Public assets (images, fonts, etc.)
+        └── ci.yml                            # GitHub Actions CI workflow
+  public/                                     # Public assets (images, fonts, etc.)
   src/
-  ├── application-config.ts             # Required — main application configuration
-  ├── __tests__/
-  │   ├── setup-test.ts                   # Test setup (server health check, config)
-  │   └── app-install.integration-test.ts # Example integration test
-  ├── roles/
-  │   └── default-role.ts                 # Default role for logic functions
-  ├── objects/
-  │   └── example-object.ts               # Example custom object definition
-  ├── fields/
-  │   └── example-field.ts                # Example standalone field definition
-  ├── logic-functions/
-  │   ├── hello-world.ts                  # Example logic function
-  │   ├── create-hello-world-company.ts   # Example logic function using CoreApiClient
-  │   ├── pre-install.ts                  # Runs before installation
-  │   └── post-install.ts                 # Runs after installation
-  ├── front-components/
-  │   └── hello-world.tsx                 # Example front component
-  ├── page-layouts/
-  │   └── example-record-page-layout.ts   # Example page layout with front component
-  ├── views/
-  │   └── example-view.ts                 # Example saved view definition
-  ├── navigation-menu-items/
-  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
-  ├── skills/
-  │   └── example-skill.ts                # Example AI agent skill definition
-  └── agents/
-      └── example-agent.ts                # Example AI agent definition
+  ├── application-config.ts                   # Required — main application configuration
+  ├── default-role.ts                         # Default role for logic functions
+  ├── constants/
+  │   └── universal-identifiers.ts            # Auto-generated UUIDs and app metadata
+  └── __tests__/
+      ├── setup-test.ts                       # Test setup (server health check, config)
+      └── app-install.integration-test.ts     # Integration test
 ```
 
-By default (`--minimal`), only the core files are created: `application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts`, and `logic-functions/post-install.ts`. Use `--exhaustive` to include all the example files shown above.
+To start from a more complete example with custom objects, fields, logic functions, front components, and more, use the `--example` flag:
+
+```bash filename="Terminal"
+npx create-twenty-app@latest my-twenty-app --example <name-or-url>
+```
+
+Examples are sourced from the [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples) directory on GitHub. You can also pass any GitHub URL as the example value.
 
 ### Key files
 
@@ -201,16 +182,8 @@ By default (`--minimal`), only the core files are created: `application-config.t
 |---|---|
 | `package.json` | Declares your app name, version, and dependencies. Includes a `twenty` script so you can run `yarn twenty help` to see all commands. |
 | `src/application-config.ts` | **Required.** The main configuration file for your app. |
-| `src/roles/` | Defines roles that control what your logic functions can access. |
-| `src/logic-functions/` | Server-side functions triggered by routes, cron schedules, or database events. |
-| `src/front-components/` | React components that render inside Twenty's UI. |
-| `src/objects/` | Custom object definitions to extend your data model. |
-| `src/fields/` | Custom fields added to existing objects. |
-| `src/views/` | Saved view configurations. |
-| `src/navigation-menu-items/` | Custom links in the sidebar navigation. |
-| `src/skills/` | Skills that extend Twenty's AI agents. |
-| `src/agents/` | AI agents with custom prompts. |
-| `src/page-layouts/` | Custom page layouts for record views. |
+| `src/default-role.ts` | Default role that controls what your logic functions can access. |
+| `src/constants/universal-identifiers.ts` | Auto-generated UUIDs and app metadata (display name, description). |
 | `src/__tests__/` | Integration tests (setup + example test). |
 | `public/` | Static assets (images, fonts) served with your app. |
 

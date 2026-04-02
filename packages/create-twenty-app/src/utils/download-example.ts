@@ -7,6 +7,7 @@ const TWENTY_REPO_OWNER = 'twentyhq';
 const TWENTY_REPO_NAME = 'twenty';
 const TWENTY_DEFAULT_REF = 'main';
 const TWENTY_EXAMPLES_PATH = 'packages/twenty-apps/examples';
+const TWENTY_EXAMPLES_URL = `https://github.com/${TWENTY_REPO_OWNER}/${TWENTY_REPO_NAME}/tree/${TWENTY_DEFAULT_REF}/${TWENTY_EXAMPLES_PATH}`;
 
 type ResolvedGitHubSource = {
   owner: string;
@@ -51,6 +52,18 @@ const resolveSource = (source: string): ResolvedGitHubSource => {
     ref: TWENTY_DEFAULT_REF,
     path: `${TWENTY_EXAMPLES_PATH}/${source}`,
   };
+};
+
+const listAvailableExamples = async (
+  examplesDir: string,
+): Promise<string[]> => {
+  if (!(await fs.pathExists(examplesDir))) {
+    return [];
+  }
+
+  const entries = await fs.readdir(examplesDir, { withFileTypes: true });
+
+  return entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name);
 };
 
 export const downloadExample = async (
@@ -106,6 +119,20 @@ export const downloadExample = async (
       : join(tempDir, extractedDir);
 
     if (!(await fs.pathExists(sourcePath))) {
+      if (!isUrl(source)) {
+        const availableExamples = await listAvailableExamples(
+          join(tempDir, extractedDir, TWENTY_EXAMPLES_PATH),
+        );
+
+        throw new Error(
+          `Example "${source}" not found.\n\n` +
+            (availableExamples.length > 0
+              ? `Available examples:\n${availableExamples.map((name) => `  - ${name}`).join('\n')}\n\n`
+              : '') +
+            `Browse all examples: ${TWENTY_EXAMPLES_URL}`,
+        );
+      }
+
       throw new Error(
         `Example not found: "${path}" does not exist in ${owner}/${repo} (ref: ${ref})`,
       );
