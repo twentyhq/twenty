@@ -233,11 +233,12 @@ export class ChatExecutionService {
 
     const rawModelMessages = await convertToModelMessages(processedMessages);
 
-    const pruningResult = this.messagePruningService.pruneIfNeeded(
-      rawModelMessages,
-      modelConfig.contextWindowTokens,
-      conversationSizeTokens,
-    );
+    const pruningResult =
+      this.messagePruningService.pruneIfOverContextWindowLimit(
+        rawModelMessages,
+        modelConfig.contextWindowTokens,
+        conversationSizeTokens,
+      );
 
     if (pruningResult.isStillOverLimit) {
       throw new Error(

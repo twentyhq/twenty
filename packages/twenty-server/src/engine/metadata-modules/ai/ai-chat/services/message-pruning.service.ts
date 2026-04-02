@@ -15,7 +15,7 @@ export type PruningResult = {
 export class MessagePruningService {
   private readonly logger = new Logger(MessagePruningService.name);
 
-  pruneIfNeeded(
+  pruneIfOverContextWindowLimit(
     messages: ModelMessage[],
     contextWindowTokens: number,
     conversationSizeTokens: number,
