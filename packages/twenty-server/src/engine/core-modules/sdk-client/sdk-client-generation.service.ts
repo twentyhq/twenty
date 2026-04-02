@@ -48,8 +48,9 @@ export class SdkClientGenerationService {
     applicationId: string;
     applicationUniversalIdentifier: string;
   }): Promise<Buffer> {
-    const workspaceEntity =
-      await this.workspaceRepository.findOneByOrFail({ id: workspaceId });
+    const workspaceEntity = await this.workspaceRepository.findOneByOrFail({
+      id: workspaceId,
+    });
 
     const graphqlSchema = await this.workspaceSchemaFactory.createGraphQLSchema(
       fromWorkspaceEntityToFlat(workspaceEntity),
