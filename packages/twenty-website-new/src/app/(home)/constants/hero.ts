@@ -8,7 +8,7 @@ const PEOPLE_AVATAR_URLS = {
   jeffWilliams:
     'https://twentyhq.github.io/placeholder-images/people/image-22.png',
   katherineAdams:
-    'https://twentyhq.github.io/placeholder-images/people/image-07.png',
+    '/images/home/hero/avatars/katherine-adams.jpg',
   philSchiller:
     'https://twentyhq.github.io/placeholder-images/people/image-14.png',
   timCook:

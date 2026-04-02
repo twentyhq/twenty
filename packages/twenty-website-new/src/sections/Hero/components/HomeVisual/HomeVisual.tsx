@@ -5,7 +5,6 @@ import { styled } from '@linaria/react';
 import {
   IconBook,
   IconBox,
-  IconBrandApple,
   IconBrandLinkedin,
   IconBuildingFactory2,
   IconBuildingSkyscraper,
@@ -66,6 +65,9 @@ import { VISUAL_TOKENS } from './homeVisualTokens';
 
 const APP_FONT = VISUAL_TOKENS.font.family;
 const DEFAULT_TABLE_WIDTH = 1700;
+const APPLE_WORKSPACE_LOGO_SRC = '/images/home/hero/apple-rainbow-logo.svg';
+const TABLE_CELL_HORIZONTAL_PADDING = 8;
+const HOVER_ACTION_EDGE_INSET = 4;
 
 const COLORS = {
   accent: VISUAL_TOKENS.accent.accent9,
@@ -143,16 +145,7 @@ const ShellScene = styled.div`
 const Frame = styled.div`
   aspect-ratio: 1280 / 832;
   background-color: ${COLORS.background};
-  background-image: radial-gradient(
-      circle at top center,
-      rgba(0, 0, 0, 0.035),
-      rgba(0, 0, 0, 0) 55%
-    ),
-    ${VISUAL_TOKENS.background.noisy};
-  background-position:
-    center top,
-    center;
-  background-repeat: no-repeat, repeat;
+  background-image: ${VISUAL_TOKENS.background.noisy};
   border: 1px solid ${COLORS.border};
   border-radius: 8px;
   box-shadow: ${COLORS.shadow};
@@ -161,23 +154,27 @@ const Frame = styled.div`
 `;
 
 const AppLayout = styled.div`
-  display: grid;
-  grid-template-columns: 72px minmax(0, 1fr);
+  display: flex;
   height: 100%;
+  min-height: 0;
   position: relative;
   z-index: 1;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    grid-template-columns: 220px minmax(0, 1fr);
-  }
 `;
 
 const SidebarPanel = styled.aside`
   background: transparent;
   display: grid;
+  flex: 0 0 72px;
   gap: 12px;
   grid-template-rows: auto auto minmax(0, 1fr);
+  min-height: 0;
   padding: 12px 8px;
+  width: 72px;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    flex-basis: 220px;
+    width: 220px;
+  }
 `;
 
 const SidebarTopBar = styled.div`
@@ -199,16 +196,17 @@ const WorkspaceMenu = styled.div`
 
 const WorkspaceIcon = styled.div`
   align-items: center;
-  background: #111111;
-  border-radius: 2px;
-  color: #ffffff;
   display: flex;
-  font-family: ${APP_FONT};
-  font-size: 11px;
-  font-weight: ${theme.font.weight.medium};
+  flex: 0 0 auto;
   height: 16px;
   justify-content: center;
-  width: 16px;
+  width: 14px;
+`;
+
+const WorkspaceIconImage = styled.img`
+  display: block;
+  height: 100%;
+  width: 100%;
 `;
 
 const WorkspaceLabel = styled.span`
@@ -465,9 +463,11 @@ const SidebarAvatar = styled.div<{
 `;
 
 const RightPane = styled.div`
-  display: grid;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
   gap: 12px;
-  grid-template-rows: 32px minmax(0, 1fr);
+  min-height: 0;
   min-width: 0;
   padding: 12px 8px 12px 0;
 
@@ -480,6 +480,8 @@ const NavbarBar = styled.div`
   align-items: center;
   background: transparent;
   display: flex;
+  flex: 0 0 32px;
+  height: 32px;
   justify-content: space-between;
   min-width: 0;
 `;
@@ -584,11 +586,12 @@ const IndexSurface = styled.div`
   background: ${COLORS.background};
   border: 1px solid ${COLORS.border};
   border-radius: 8px;
-  display: grid;
-  grid-template-rows: 40px minmax(0, 1fr);
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
   min-width: 0;
   overflow: hidden;
-  padding-bottom: 12px;
 `;
 
 const ViewbarBar = styled.div`
@@ -597,15 +600,19 @@ const ViewbarBar = styled.div`
   border-bottom: 1px solid ${COLORS.borderLight};
   display: flex;
   justify-content: space-between;
+  min-width: 0;
   padding: 8px 8px 8px 12px;
+  width: 100%;
 `;
 
 const ViewSwitcher = styled.div`
   align-items: center;
   display: flex;
+  flex: 1 1 auto;
   gap: 4px;
   height: 24px;
   min-width: 0;
+  overflow: hidden;
   padding: 0 4px;
 `;
 
@@ -637,7 +644,11 @@ const TinyDot = styled.div`
 const ViewActions = styled.div`
   align-items: center;
   display: flex;
+  flex: 0 0 auto;
   gap: 2px;
+  margin-left: auto;
+  position: relative;
+  z-index: 1;
 `;
 
 const ViewAction = styled.span`
@@ -656,7 +667,11 @@ const ViewAction = styled.span`
 
 const TableShell = styled.div`
   display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
   min-height: 0;
+  overflow: hidden;
+  width: 100%;
 `;
 
 const GripRail = styled.div`
@@ -674,11 +689,14 @@ const GripCell = styled.div`
 
 const TableViewport = styled.div<{ $dragging: boolean }>`
   cursor: ${({ $dragging }) => ($dragging ? 'grabbing' : 'grab')};
+  flex: 1 1 auto;
   min-height: 0;
+  min-width: 0;
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-x: contain;
   scrollbar-width: none;
+  width: 100%;
 
   &::-webkit-scrollbar {
     display: none;
@@ -686,6 +704,10 @@ const TableViewport = styled.div<{ $dragging: boolean }>`
 `;
 
 const TableCanvas = styled.div<{ $width: number }>`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100%;
   min-width: ${({ $width }) => `${$width}px`};
   width: ${({ $width }) => `${$width}px`};
 `;
@@ -727,7 +749,7 @@ const TableCell = styled.div<{
     $align === 'right' ? 'flex-end' : 'flex-start'};
   left: ${({ $sticky }) => ($sticky ? '0' : 'auto')};
   min-width: ${({ $width }) => `${$width}px`};
-  padding: 0 8px;
+  padding: 0 ${TABLE_CELL_HORIZONTAL_PADDING}px;
   position: ${({ $sticky }) => ($sticky ? 'sticky' : 'relative')};
   z-index: ${({ $header, $sticky }) => {
     if ($sticky && $header) {
@@ -812,6 +834,16 @@ const EntityCellLayout = styled.div`
   align-items: center;
   display: flex;
   gap: 4px;
+  height: 100%;
+  min-width: 0;
+  position: relative;
+  width: 100%;
+`;
+
+const CellHoverAnchor = styled.div`
+  align-items: center;
+  display: flex;
+  height: 100%;
   min-width: 0;
   position: relative;
   width: 100%;
@@ -881,24 +913,29 @@ const BooleanRow = styled.div`
   gap: 4px;
 `;
 
-const HoverActions = styled.div<{ $visible: boolean }>`
+const HoverActions = styled.div<{ $rightInset?: number; $visible: boolean }>`
   align-items: center;
-  background: ${COLORS.backgroundSecondary};
-  border: 1px solid ${COLORS.border};
+  background: ${VISUAL_TOKENS.background.transparent.primary};
+  border: 1px solid ${VISUAL_TOKENS.background.transparent.light};
   border-radius: 4px;
+  bottom: 4px;
+  box-sizing: border-box;
   box-shadow: ${VISUAL_TOKENS.boxShadow.light};
   display: flex;
-  gap: 2px;
+  gap: 0;
+  justify-content: center;
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
-  padding: 2px;
+  padding: 0 4px;
   pointer-events: none;
   position: absolute;
-  right: 4px;
+  right: ${({ $rightInset = HOVER_ACTION_EDGE_INSET - TABLE_CELL_HORIZONTAL_PADDING }) =>
+    `${$rightInset}px`};
   top: 4px;
   transform: translateX(${({ $visible }) => ($visible ? '0' : '4px')});
   transition:
     opacity 0.14s ease,
     transform 0.14s ease;
+  width: 24px;
 `;
 
 const MiniAction = styled.div`
@@ -906,9 +943,9 @@ const MiniAction = styled.div`
   border-radius: 2px;
   color: ${COLORS.textSecondary};
   display: flex;
-  height: 20px;
+  height: 16px;
   justify-content: center;
-  width: 20px;
+  width: 16px;
 `;
 
 const FooterFirstContent = styled.div`
@@ -1423,7 +1460,7 @@ function PersonTokenCell({
     token.kind === 'workflow';
 
   return (
-    <div style={{ minWidth: 0, position: 'relative', width: '100%' }}>
+    <CellHoverAnchor>
       <CellChip
         clickable={false}
         label={token.name}
@@ -1448,7 +1485,7 @@ function PersonTokenCell({
           </MiniAction>
         ) : null}
       </HoverActions>
-    </div>
+    </CellHoverAnchor>
   );
 }
 
@@ -1499,7 +1536,7 @@ function RelationCellComponent({
   hovered: boolean;
 }) {
   return (
-    <div style={{ minWidth: 0, position: 'relative', width: '100%' }}>
+    <CellHoverAnchor>
       <MultiChipStack>
         {cell.items.map((item) => {
           const tone = PERSON_TONES[item.tone ?? 'gray'] ?? PERSON_TONES.gray;
@@ -1526,7 +1563,7 @@ function RelationCellComponent({
           <CopyMini />
         </MiniAction>
       </HoverActions>
-    </div>
+    </CellHoverAnchor>
   );
 }
 
@@ -1761,11 +1798,10 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
               <SidebarTopBar>
                 <WorkspaceMenu>
                   <WorkspaceIcon>
-                    <IconBrandApple
-                      aria-hidden
-                      color="#ffffff"
-                      size={11}
-                      stroke={2}
+                    <WorkspaceIconImage
+                      alt=""
+                      aria-hidden="true"
+                      src={APPLE_WORKSPACE_LOGO_SRC}
                     />
                   </WorkspaceIcon>
                   <WorkspaceLabel>{visual.workspace.name}</WorkspaceLabel>
