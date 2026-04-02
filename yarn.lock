@@ -53397,12 +53397,12 @@ __metadata:
   linkType: hard
 
 "react-hotkeys-hook@npm:^4.4.4":
-  version: 4.5.0
-  resolution: "react-hotkeys-hook@npm:4.5.0"
+  version: 4.6.2
+  resolution: "react-hotkeys-hook@npm:4.6.2"
   peerDependencies:
     react: ">=16.8.1"
     react-dom: ">=16.8.1"
-  checksum: 10c0/ae3ee47c623aaece4c21ce8027b0fff18caaee8c6cb22fafcbebbb54cee27ef7d0097145f04da1bd67b5af1d89cb4f983ae6a72b32451de81dca193255187480
+  checksum: 10c0/ef30c49260f47972acea37f3d2cae4de871a6f65bd25ebe0d266586ccf6fb495ed44ba78296dbeed82f3493b1dec8bde5df63e6f0f9a4f99697394e512049f84
   languageName: node
   linkType: hard
 
