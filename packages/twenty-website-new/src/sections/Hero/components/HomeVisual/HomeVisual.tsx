@@ -113,6 +113,10 @@ const PERSON_TONES: Record<string, { background: string; color: string }> = {
 
 const TABLER_STROKE = 1.6;
 const NAVIGATION_TABLER_STROKE = 2;
+const ROW_HOVER_ACTION_DISABLED_COLUMNS = new Set([
+  'createdBy',
+  'accountOwner',
+]);
 
 // -- Styled Components --
 
@@ -170,7 +174,6 @@ const AppLayout = styled.div`
 
 const SidebarPanel = styled.aside`
   background: transparent;
-  border-right: 1px solid rgba(0, 0, 0, 0.04);
   display: grid;
   gap: 12px;
   grid-template-rows: auto auto minmax(0, 1fr);
@@ -246,10 +249,17 @@ const SidebarControls = styled.div`
   display: grid;
   gap: 8px;
   grid-template-columns: auto 1fr;
+  min-width: 0;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+  }
 `;
 
 const SegmentedRail = styled.div`
-  background: rgba(252, 252, 252, 0.8);
+  background: #fcfcfccc;
   border: 1px solid ${COLORS.border};
   border-radius: 40px;
   display: grid;
@@ -261,12 +271,17 @@ const SegmentedRail = styled.div`
 const Segment = styled.div<{ $selected?: boolean }>`
   align-items: center;
   background: ${({ $selected }) =>
-    $selected ? 'rgba(0, 0, 0, 0.04)' : 'transparent'};
+    $selected ? '#0000000a' : 'transparent'};
   border-radius: 16px;
   display: flex;
   height: 22px;
   justify-content: center;
   width: 22px;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    padding: 0 8px;
+    width: 32px;
+  }
 `;
 
 const NewChat = styled.div`
@@ -524,12 +539,13 @@ const DesktopOnlyNavbarAction = styled.div`
   }
 `;
 
-const NavbarDecorativeChip = styled.div`
+const NAVBAR_ACTION_BORDER = 'rgba(0, 0, 0, 0.08)';
+
+const NavbarActionButton = styled.div`
   align-items: center;
   background: transparent;
-  border: 1px solid ${VISUAL_TOKENS.background.transparent.medium};
+  border: 1px solid ${NAVBAR_ACTION_BORDER};
   border-radius: ${VISUAL_TOKENS.border.radius.sm};
-  color: ${VISUAL_TOKENS.font.color.secondary};
   display: inline-flex;
   font-family: ${APP_FONT};
   font-size: ${VISUAL_TOKENS.font.size.md};
@@ -540,21 +556,39 @@ const NavbarDecorativeChip = styled.div`
   white-space: nowrap;
 `;
 
-const NavbarDecorativeIconWrap = styled.span`
+const NavbarActionIconWrap = styled.span<{ $color?: string }>`
   align-items: center;
-  color: currentColor;
+  color: ${({ $color }) => $color ?? VISUAL_TOKENS.font.color.secondary};
   display: flex;
   flex: 0 0 auto;
   justify-content: center;
 `;
 
+const NavbarActionLabel = styled.span<{ $color?: string }>`
+  color: ${({ $color }) => $color ?? VISUAL_TOKENS.font.color.secondary};
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: 1.4;
+  white-space: nowrap;
+`;
+
+const NavbarActionSeparator = styled.div`
+  background: ${VISUAL_TOKENS.background.transparent.medium};
+  border-radius: 56px;
+  height: 100%;
+  width: 1px;
+`;
+
 const IndexSurface = styled.div`
   background: ${COLORS.background};
+  border: 1px solid ${COLORS.border};
   border-radius: 8px;
   display: grid;
   grid-template-rows: 40px minmax(0, 1fr);
   min-width: 0;
   overflow: hidden;
+  padding-bottom: 12px;
 `;
 
 const ViewbarBar = styled.div`
@@ -826,7 +860,7 @@ const PersonAvatarCircle = styled.div<{
   display: flex;
   flex: 0 0 auto;
   font-family: ${APP_FONT};
-  font-size: 9px;
+  font-size: 10px;
   font-weight: ${theme.font.weight.medium};
   height: 14px;
   justify-content: center;
@@ -1413,9 +1447,6 @@ function PersonTokenCell({
             <CopyMini />
           </MiniAction>
         ) : null}
-        <MiniAction aria-hidden="true">
-          <PencilMini />
-        </MiniAction>
       </HoverActions>
     </div>
   );
@@ -1494,9 +1525,6 @@ function RelationCellComponent({
         <MiniAction aria-hidden="true">
           <CopyMini />
         </MiniAction>
-        <MiniAction aria-hidden="true">
-          <PencilMini />
-        </MiniAction>
       </HoverActions>
     </div>
   );
@@ -1506,7 +1534,10 @@ function renderCellValue(
   cell: HeroCellValue,
   hovered: boolean,
   isFirstColumn: boolean,
+  columnId: string,
 ): ReactNode {
+  const showHoverAction = !ROW_HOVER_ACTION_DISABLED_COLUMNS.has(columnId);
+
   switch (cell.type) {
     case 'text':
       return <InlineText>{cell.value}</InlineText>;
@@ -1520,11 +1551,6 @@ function renderCellValue(
             label={cell.value}
             variant={ChipVariant.Static}
           />
-          <HoverActions $visible={hovered}>
-            <MiniAction aria-hidden="true">
-              <PencilMini />
-            </MiniAction>
-          </HoverActions>
         </div>
       );
     case 'boolean':
@@ -1537,17 +1563,24 @@ function renderCellValue(
     case 'tag':
       return <TagChip>{cell.value}</TagChip>;
     case 'person':
-      return <PersonTokenCell hovered={hovered} token={cell} />;
+      return (
+        <PersonTokenCell hovered={hovered && showHoverAction} token={cell} />
+      );
     case 'entity':
       return (
         <EntityCellComponent
           cell={cell}
-          hovered={hovered}
+          hovered={hovered && showHoverAction}
           isFirstColumn={isFirstColumn}
         />
       );
     case 'relation':
-      return <RelationCellComponent cell={cell} hovered={hovered} />;
+      return (
+        <RelationCellComponent
+          cell={cell}
+          hovered={hovered && showHoverAction}
+        />
+      );
   }
 }
 
@@ -1800,26 +1833,30 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
 
                 <NavbarActions aria-hidden>
                   <DesktopOnlyNavbarAction>
-                    <NavbarDecorativeChip>
-                      <NavbarDecorativeIconWrap>
+                    <NavbarActionButton>
+                      <NavbarActionIconWrap>
                         <IconPlus
                           aria-hidden
                           size={VISUAL_TOKENS.icon.size.sm}
                           stroke={VISUAL_TOKENS.icon.stroke.sm}
                         />
-                      </NavbarDecorativeIconWrap>
-                      New Record
-                    </NavbarDecorativeChip>
+                      </NavbarActionIconWrap>
+                      <NavbarActionLabel>New Record</NavbarActionLabel>
+                    </NavbarActionButton>
                   </DesktopOnlyNavbarAction>
-                  <NavbarDecorativeChip>
-                    <NavbarDecorativeIconWrap>
+                  <NavbarActionButton>
+                    <NavbarActionIconWrap>
                       <IconDotsVertical
                         aria-hidden
                         size={VISUAL_TOKENS.icon.size.sm}
                         stroke={VISUAL_TOKENS.icon.stroke.sm}
                       />
-                    </NavbarDecorativeIconWrap>
-                  </NavbarDecorativeChip>
+                    </NavbarActionIconWrap>
+                    <NavbarActionSeparator />
+                    <NavbarActionLabel $color={VISUAL_TOKENS.font.color.light}>
+                      ⌘K
+                    </NavbarActionLabel>
+                  </NavbarActionButton>
                 </NavbarActions>
               </NavbarBar>
 
@@ -1930,6 +1967,7 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
                                         cell,
                                         hovered,
                                         !!column.isFirstColumn,
+                                        column.id,
                                       )
                                     : null}
                                 </TableCell>
