@@ -1,57 +1,43 @@
-import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { useApolloClient } from '@apollo/client/react';
+import { useStore } from 'jotai';
+import { useCallback, useState } from 'react';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
-import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
-import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
-import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
-import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
-import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
-import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
-
-import { AGENT_CHAT_RETRY_EVENT_NAME } from '@/ai/constants/AgentChatRetryEventName';
+import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
+import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
+import { SEND_CHAT_MESSAGE } from '@/ai/graphql/mutations/sendChatMessage';
+import { STOP_AGENT_CHAT_STREAM } from '@/ai/graphql/mutations/stopAgentChatStream';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
+import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
+import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
+import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
-import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
-import { getTokenPair } from '@/apollo/utils/getTokenPair';
-import { renewToken } from '@/auth/services/AuthService';
-import { tokenPairState } from '@/auth/states/tokenPairState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
+import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
-import { useStore } from 'jotai';
-import { useCallback, useMemo, useState } from 'react';
-import { type ExtendedUIMessage } from 'twenty-shared/ai';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 export const useAgentChat = (
-  uiMessages: ExtendedUIMessage[],
   ensureThreadIdForSend: () => Promise<string | null>,
-  onStreamingComplete?: () => void,
 ) => {
-  const setTokenPair = useSetAtomState(tokenPairState);
-  const setAgentChatUsage = useSetAtomState(agentChatUsageState);
-
   const { modelIdForRequest } = useAgentChatModelId();
   const { getBrowsingContext } = useGetBrowsingContext();
-  const setCurrentAIChatThreadTitle = useSetAtomState(
-    currentAIChatThreadTitleState,
-  );
-  const setCurrentAIChatThread = useSetAtomState(currentAIChatThreadState);
   const apolloClient = useApolloClient();
+  const setCurrentAIChatThread = useSetAtomState(currentAIChatThreadState);
   const store = useStore();
 
   const agentChatSelectedFiles = useAtomStateValue(agentChatSelectedFilesState);
-
-  const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
 
   const [, setPendingThreadIdAfterFirstSend] = useState<string | null>(null);
 
@@ -63,183 +49,6 @@ export const useAgentChat = (
   const setAgentChatDraftsByThreadId = useSetAtomState(
     agentChatDraftsByThreadIdState,
   );
-
-  const retryFetchWithRenewedToken = async (
-    input: RequestInfo | URL,
-    init?: RequestInit,
-  ) => {
-    const tokenPair = getTokenPair();
-
-    if (!isDefined(tokenPair)) {
-      return null;
-    }
-
-    try {
-      const renewedTokens = await renewToken(
-        `${REACT_APP_SERVER_BASE_URL}/metadata`,
-        tokenPair,
-      );
-
-      if (!isDefined(renewedTokens)) {
-        setTokenPair(null);
-        return null;
-      }
-
-      const renewedAccessToken =
-        renewedTokens.accessOrWorkspaceAgnosticToken?.token;
-
-      if (!isDefined(renewedAccessToken)) {
-        setTokenPair(null);
-        return null;
-      }
-
-      setTokenPair(renewedTokens);
-
-      const updatedHeaders = new Headers(init?.headers ?? {});
-      updatedHeaders.set('Authorization', `Bearer ${renewedAccessToken}`);
-
-      return fetch(input, {
-        ...init,
-        headers: updatedHeaders,
-      });
-    } catch {
-      setTokenPair(null);
-      return null;
-    }
-  };
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const transport = useMemo(
-    () =>
-      new DefaultChatTransport({
-        api: `${REST_API_BASE_URL}/agent-chat/stream`,
-        headers: () => ({
-          Authorization: `Bearer ${getTokenPair()?.accessOrWorkspaceAgnosticToken.token}`,
-        }),
-        prepareReconnectToStreamRequest: ({ id }) => ({
-          api: `${REST_API_BASE_URL}/agent-chat/${id}/stream`,
-          headers: {
-            Authorization: `Bearer ${getTokenPair()?.accessOrWorkspaceAgnosticToken.token}`,
-          },
-        }),
-        fetch: async (input, init) => {
-          const response = await fetch(input, init);
-
-          if (response.status === 401) {
-            const retriedResponse = await retryFetchWithRenewedToken(
-              input,
-              init,
-            );
-
-            return retriedResponse ?? response;
-          }
-
-          if (!response.ok) {
-            const errorBody = await response.json().catch(() => ({}));
-            const error = new Error(
-              errorBody.messages?.[0] ||
-                `Request failed with status ${response.status}`,
-            ) as Error & { code?: string };
-
-            if (isDefined(errorBody.code)) {
-              error.code = errorBody.code;
-            }
-            throw error;
-          }
-
-          return response;
-        },
-      }),
-    // Intentionally created once — closures inside (getTokenPair, etc.)
-    // read fresh values via function references, not stale captures.
-    [],
-  );
-
-  const {
-    sendMessage,
-    messages,
-    status,
-    error,
-    regenerate,
-    stop,
-    resumeStream,
-  } = useChat({
-    transport,
-    messages: uiMessages,
-    id: currentAIChatThread ?? undefined,
-    experimental_throttle: 100,
-    onFinish: ({ message }) => {
-      type UsageMetadata = {
-        inputTokens: number;
-        outputTokens: number;
-        cachedInputTokens: number;
-        inputCredits: number;
-        outputCredits: number;
-        conversationSize: number;
-      };
-      type ModelMetadata = {
-        contextWindowTokens: number;
-      };
-      const metadata = message.metadata as
-        | { usage?: UsageMetadata; model?: ModelMetadata }
-        | undefined;
-      const usage = metadata?.usage;
-      const model = metadata?.model;
-
-      if (isDefined(usage) && isDefined(model)) {
-        setAgentChatUsage((prev) => ({
-          lastMessage: {
-            inputTokens: usage.inputTokens,
-            outputTokens: usage.outputTokens,
-            cachedInputTokens: usage.cachedInputTokens,
-            inputCredits: usage.inputCredits,
-            outputCredits: usage.outputCredits,
-          },
-          conversationSize: usage.conversationSize,
-          contextWindowTokens: model.contextWindowTokens,
-          inputTokens: (prev?.inputTokens ?? 0) + usage.inputTokens,
-          outputTokens: (prev?.outputTokens ?? 0) + usage.outputTokens,
-          inputCredits: (prev?.inputCredits ?? 0) + usage.inputCredits,
-          outputCredits: (prev?.outputCredits ?? 0) + usage.outputCredits,
-        }));
-      }
-
-      const titlePart = message.parts.find(
-        (part) => part.type === 'data-thread-title',
-      );
-
-      setPendingThreadIdAfterFirstSend((pendingId) => {
-        const threadIdForTitle =
-          pendingId ?? store.get(currentAIChatThreadState.atom);
-        if (isDefined(titlePart) && titlePart.type === 'data-thread-title') {
-          setCurrentAIChatThreadTitle(titlePart.data.title);
-          if (isDefined(threadIdForTitle)) {
-            const threadRef = apolloClient.cache.identify({
-              __typename: 'AgentChatThread',
-              id: threadIdForTitle,
-            });
-            if (isDefined(threadRef)) {
-              apolloClient.cache.modify({
-                id: threadRef,
-                fields: {
-                  title: () => titlePart.data.title,
-                },
-              });
-            }
-          }
-        }
-        if (isDefined(pendingId)) {
-          setCurrentAIChatThread(pendingId);
-        }
-        return null;
-      });
-
-      onStreamingComplete?.();
-    },
-  });
-
-  const isStreaming = status === 'streaming';
-  const isLoading = isStreaming || agentChatSelectedFiles.length > 0;
 
   const handleSendMessage = useCallback(async () => {
     const draftKey =
@@ -254,12 +63,19 @@ export const useAgentChat = (
           ).trim()
         : store.get(agentChatInputState.atom).trim();
 
-    if (contentToSend === '' || isLoading) {
+    if (contentToSend === '') {
+      return;
+    }
+
+    const isLoading = agentChatSelectedFiles.length > 0;
+
+    if (isLoading) {
       return;
     }
 
     const threadId = await ensureThreadIdForSend();
-    if (!threadId) {
+
+    if (!isDefined(threadId)) {
       return;
     }
 
@@ -274,35 +90,95 @@ export const useAgentChat = (
     }));
 
     const browsingContext = getBrowsingContext();
+    const messageId = v4();
 
-    sendMessage(
-      {
-        text: contentToSend,
-        files: agentChatUploadedFiles,
+    const optimisticUserMessage: ExtendedUIMessage = {
+      id: messageId,
+      role: 'user',
+      parts: [
+        { type: 'text' as const, text: contentToSend },
+        ...agentChatUploadedFiles,
+      ],
+      metadata: {
+        createdAt: new Date().toISOString(),
       },
-      {
-        body: {
-          threadId,
-          browsingContext,
-          ...(isDefined(modelIdForRequest) && {
-            modelId: modelIdForRequest,
-          }),
-        },
-      },
-    );
+      status: 'sent',
+    };
+
+    const messagesAtom = agentChatMessagesComponentFamilyState.atomFamily({
+      instanceId: AGENT_CHAT_INSTANCE_ID,
+      familyKey: { threadId },
+    });
+
+    const currentMessages = store.get(messagesAtom);
+
+    store.set(messagesAtom, [...currentMessages, optimisticUserMessage]);
 
     setAgentChatUploadedFiles([]);
+
+    try {
+      const { data } = await apolloClient.mutate<{
+        sendChatMessage: {
+          messageId: string;
+          queued: boolean;
+          streamId?: string;
+        };
+      }>({
+        mutation: SEND_CHAT_MESSAGE,
+        variables: {
+          threadId,
+          text: contentToSend,
+          messageId,
+          browsingContext: browsingContext ?? null,
+          modelId: modelIdForRequest ?? undefined,
+        },
+      });
+
+      if (data?.sendChatMessage?.queued) {
+        const latestMessages = store.get(messagesAtom);
+
+        store.set(
+          messagesAtom,
+          latestMessages.filter((message) => message.id !== messageId),
+        );
+      }
+
+      dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+
+      setPendingThreadIdAfterFirstSend((pendingId) => {
+        if (isDefined(pendingId)) {
+          setCurrentAIChatThread(pendingId);
+        }
+
+        return null;
+      });
+    } catch {
+      setAgentChatInput(contentToSend);
+      setAgentChatDraftsByThreadId((prev) => ({
+        ...prev,
+        [draftKey]: contentToSend,
+      }));
+
+      const latestMessages = store.get(messagesAtom);
+
+      store.set(
+        messagesAtom,
+        latestMessages.filter((message) => message.id !== messageId),
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     store,
-    isLoading,
+    agentChatSelectedFiles,
     ensureThreadIdForSend,
     setAgentChatInput,
     getBrowsingContext,
-    sendMessage,
     agentChatUploadedFiles,
     setAgentChatUploadedFiles,
     setAgentChatDraftsByThreadId,
     modelIdForRequest,
+    setCurrentAIChatThread,
+    apolloClient,
   ]);
 
   useListenToBrowserEvent({
@@ -311,45 +187,27 @@ export const useAgentChat = (
   });
 
   const handleStop = useCallback(async () => {
-    stop();
-
     const threadId = store.get(currentAIChatThreadState.atom);
 
     if (!isDefined(threadId) || !isValidUuid(threadId)) {
       return;
     }
 
-    const tokenPair = getTokenPair();
-
-    if (!isDefined(tokenPair)) {
-      return;
-    }
-
-    fetch(`${REST_API_BASE_URL}/agent-chat/${threadId}/stream`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${tokenPair.accessOrWorkspaceAgnosticToken.token}`,
-      },
-    }).catch(() => {});
-  }, [stop, store]);
+    apolloClient
+      .mutate({
+        mutation: STOP_AGENT_CHAT_STREAM,
+        variables: { threadId },
+      })
+      .catch(() => {});
+  }, [store, apolloClient]);
 
   useListenToBrowserEvent({
     eventName: AGENT_CHAT_STOP_EVENT_NAME,
     onBrowserEvent: handleStop,
   });
 
-  useListenToBrowserEvent({
-    eventName: AGENT_CHAT_RETRY_EVENT_NAME,
-    onBrowserEvent: regenerate,
-  });
-
   return {
-    messages,
     handleSendMessage,
     handleStop,
-    resumeStream,
-    isLoading,
-    error,
-    status,
   };
 };

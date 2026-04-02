@@ -55,11 +55,12 @@ export const main = async (
   params: { companyId: string },
 ) => {
   const { companyId } = params;
-
-  // Replace with your Twenty GraphQL endpoint
+  // Replace with your Twenty GraphQL endpoints (/metadata for metadata and files or /graphql for your records)
   // Cloud: https://api.twenty.com/graphql
   // Self-hosted: https://your-domain.com/graphql
-  const graphqlEndpoint = 'https://api.twenty.com/graphql';
+
+  const metadataGraphqlEndpoint = 'https://api.twenty.com/metadata';
+  const dataGraphqlEndpoint = 'https://api.twenty.com/graphql';
 
   // Replace with your API key from Settings → APIs
   const authToken = 'YOUR_API_KEY';
@@ -79,11 +80,40 @@ export const main = async (
   const pdfBlob = await pdfResponse.blob();
   const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
 
-  // Step 2: Upload the file via GraphQL multipart upload
+  const fieldMetadataIdQuery = `
+    query FindUploadFileFieldMetadataId {
+      objects {
+        edges {
+          node {
+            nameSingular
+            fieldsList {
+              id
+              name
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  // Step 2: Find a fieldMetadataId of "Attachment file" field in Attachments object with GraphQL API
+  const response = await fetch(metadataGraphqlEndpoint, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${authToken}`
+      },
+      body: {
+        query: fieldMetadataIdQuery,
+      }
+    });
+  const result = await response.json();
+  const uploadFileFieldMetadataId = result.data.objects.edges.find(object => object.node.nameSingular === 'attachment').node.fieldsList.find(field => field.name === 'file').id;
+
+  // Step 3: Upload the file via GraphQL multipart upload
   const uploadMutation = `
-    mutation UploadFile($file: Upload!, $fileFolder: FileFolder) {
-      uploadFile(file: $file, fileFolder: $fileFolder) {
-        path
+    mutation UploadFilesFieldFile($file: Upload!, $fieldMetadataId: String!) {
+      uploadFilesFieldFile(file: $file, fieldMetadataId: $fieldMetadataId) {
+        id
       }
     }
   `;
@@ -91,12 +121,12 @@ export const main = async (
   const uploadForm = new FormData();
   uploadForm.append('operations', JSON.stringify({
     query: uploadMutation,
-    variables: { file: null, fileFolder: 'Attachment' },
+    variables: { file: null, fieldMetadataId: uploadFileFieldMetadataId },
   }));
   uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
   uploadForm.append('0', pdfFile);
 
-  const uploadResponse = await fetch(graphqlEndpoint, {
+  const uploadResponse = await fetch(metadataGraphqlEndpoint, {
     method: 'POST',
     headers: { Authorization: `Bearer ${authToken}` },
     body: uploadForm,
@@ -108,15 +138,15 @@ export const main = async (
     throw new Error(`Upload failed: ${uploadResult.errors[0].message}`);
   }
 
-  const filePath = uploadResult.data?.uploadFile?.path;
+  const fileId = uploadResult.data?.uploadFilesFieldFile?.id;
 
-  if (!filePath) {
-    throw new Error('No file path returned from upload');
+  if (!fileId) {
+    throw new Error('No file id returned from upload');
   }
 
-  // Step 3: Create the attachment linked to the company
+  // Step 4: Create the attachment linked to the company
   const attachmentMutation = `
-    mutation CreateAttachment($data: AttachmentCreateInput!) {
+    mutation CreateOneAttachment($data: AttachmentCreateInput!) {
       createAttachment(data: $data) {
         id
         name
@@ -124,7 +154,7 @@ export const main = async (
     }
   `;
 
-  const attachmentResponse = await fetch(graphqlEndpoint, {
+  const attachmentResponse = await fetch(dataGraphqlEndpoint, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${authToken}`,
@@ -135,8 +165,13 @@ export const main = async (
       variables: {
         data: {
           name: filename,
-          fullPath: filePath,
-          companyId,
+          targetCompanyId: companyId,
+          file: [
+            {
+              fileId: fileId,
+              label: filename
+            }
+          ]
         },
       },
     }),
@@ -156,14 +191,14 @@ export const main = async (
 
 #### Para anexar a um objeto diferente
 
-Substitua `companyId` pelo campo apropriado:
+Substitua `targetCompanyId` pelo campo apropriado:
 
-| Objeto               | Nome do Campo        |
-| -------------------- | -------------------- |
-| Empresa              | `companyId`          |
-| Pessoa               | `personId`           |
-| Oportunidade         | `opportunityId`      |
-| Objeto personalizado | `yourCustomObjectId` |
+| Objeto               | Nome do Campo              |
+| -------------------- | -------------------------- |
+| Empresa              | `targetCompanyId`          |
+| Pessoa               | `targetPersonId`           |
+| Oportunidade         | `targetOpportunityId`      |
+| Objeto personalizado | `targetYourCustomObjectId` |
 
 Atualize tanto o parâmetro da função como o objeto `variables.data` na mutação de anexo.
 

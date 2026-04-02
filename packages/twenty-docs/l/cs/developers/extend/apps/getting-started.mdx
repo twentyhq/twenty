@@ -4,73 +4,142 @@ description: Vytvořte svou první aplikaci Twenty během několika minut.
 ---
 
 <Warning>
-Aplikace jsou aktuálně v alfa testování. Tato funkce je funkční, ale stále se vyvíjí.
+Aplikace jsou aktuálně v alfa fázi. Funkce funguje, ale stále se vyvíjí.
 </Warning>
 
 Aplikace vám umožňují rozšířit Twenty o vlastní objekty, pole, logické funkce, AI schopnosti a komponenty uživatelského rozhraní — vše je spravováno jako kód.
 
-**Co můžete vytvořit:**
-
-* Vlastní objekty, pole, zobrazení a položky navigace pro utváření vašeho datového modelu
-* Logické funkce spouštěné trasami HTTP, plánovačem cron nebo událostmi databáze
-* Frontendové komponenty, které se vykreslují přímo uvnitř uživatelského rozhraní Twenty
-* Dovednosti, které rozšiřují možnosti AI agentů Twenty
-* Nasazení aplikace napříč více pracovními prostory
-
 ## Předpoklady
 
-* Node.js 24+
-* Yarn 4
-* Docker (nebo běžící lokální instance Twenty)
+Než začnete, ujistěte se, že máte ve svém počítači nainstalováno následující:
 
-## Začínáme
+* **Node.js 24+** — [Stáhnout zde](https://nodejs.org/)
+* **Yarn 4** — Dodává se s Node.js prostřednictvím Corepacku. Povolte jej spuštěním `corepack enable`
+* **Docker** — [Stáhnout zde](https://www.docker.com/products/docker-desktop/). Nutné pro spuštění lokální instance Twenty. Není potřeba, pokud už máte spuštěný server Twenty.
 
-Vytvořte novou aplikaci pomocí oficiálního scaffolderu, poté se ověřte a začněte vyvíjet:
+## Krok 1: Vytvořte kostru své aplikace
+
+Otevřete terminál a spusťte:
 
 ```bash filename="Terminal"
-# Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
 ```
 
-> Použijte volbu `--minimal` k vygenerování minimální instalace
+Budete vyzváni k zadání názvu a popisu své aplikace. Stisknutím **Enter** přijmete výchozí hodnoty.
 
-Odtud můžete:
+Tím se vytvoří nová složka s názvem `my-twenty-app` se vším potřebným.
+
+<Note>
+Generátor kostry podporuje tyto přepínače:
+
+* `--minimal` — vygeneruje pouze nezbytné soubory, bez příkladů (výchozí)
+* `--exhaustive` — vygeneruje všechny ukázkové entity
+* `--name <name>` — nastaví název aplikace (přeskočí výzvu)
+* `--display-name <displayName>` — nastaví zobrazovaný název (přeskočí výzvu)
+* `--description <description>` — nastaví popis (přeskočí výzvu)
+* `--skip-local-instance` — přeskočí výzvu k nastavení lokálního serveru
+</Note>
+
+## Krok 2: Nastavte lokální instanci Twenty
+
+Generátor kostry se zeptá:
+
+> **Chcete nastavit lokální instanci Twenty?**
+
+* **Zadejte `yes`** (doporučeno) — Stáhne image Dockeru `twenty-app-dev` a spustí lokální server Twenty na portu `2020`. Než budete pokračovat, ujistěte se, že Docker běží.
+* **Zadejte `no`** — Zvolte, pokud už máte lokálně spuštěný server Twenty.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Spustit lokální instanci?" />
+</div>
+
+## Krok 3: Přihlaste se do svého pracovního prostoru
+
+Poté se otevře okno prohlížeče se stránkou přihlášení do Twenty. Přihlaste se předpřipraveným demo účtem:
+
+* **E-mail:** `tim@apple.dev`
+* **Heslo:** `tim@apple.dev`
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/login.png" alt="Přihlašovací obrazovka Twenty" />
+</div>
+
+## Krok 4: Autorizujte aplikaci
+
+Po přihlášení uvidíte autorizační obrazovku. Tím umožníte vaší aplikaci pracovat s vaším pracovním prostorem.
+
+Pokračujte kliknutím na **Authorize**.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/authorize.png" alt="Autorizační obrazovka Twenty CLI" />
+</div>
+
+Po autorizaci váš terminál potvrdí, že je vše nastaveno.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="Aplikace byla úspěšně vygenerována" />
+</div>
+
+## Krok 5: Začněte vyvíjet
+
+Přejděte do nové složky aplikace a spusťte vývojový server:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
-yarn twenty add
-
-# Watch your application's function logs
-yarn twenty function:logs
-
-# Execute a function by name
-yarn twenty function:execute -n my-function -p '{"name": "test"}'
-
-# Execute the pre-install function
-yarn twenty function:execute --preInstall
-
-# Execute the post-install function
-yarn twenty function:execute --postInstall
-
-# Uninstall the application from the current workspace
-yarn twenty uninstall
-
-# Display commands' help
-yarn twenty help
+cd my-twenty-app
+yarn twenty dev
 ```
 
-Viz také: referenční stránky CLI pro [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) a [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
+Sleduje zdrojové soubory, při každé změně znovu sestaví a automaticky synchronizuje vaši aplikaci s lokálním serverem Twenty. V terminálu byste měli vidět panel se stavem v reálném čase.
 
-## Struktura projektu (vytvořená scaffolderem)
+Pro podrobnější výstup (protokoly sestavení, požadavky na synchronizaci, stopy chyb) použijte přepínač `--verbose`:
 
-Když spustíte `npx create-twenty-app@latest my-twenty-app`, scaffolder:
+```bash filename="Terminal"
+yarn twenty dev --verbose
+```
 
-* Zkopíruje minimální základní aplikaci do `my-twenty-app/`
-* Přidá lokální závislost `twenty-sdk` a konfiguraci pro Yarn 4
-* Vytvoří konfigurační soubory a skripty napojené na `twenty` CLI
-* Vygeneruje základní soubory (konfigurace aplikace, výchozí role funkcí, předinstalační a postinstalační funkce) a k nim ukázkové soubory podle zvoleného režimu generování kostry
+<Warning>
+Vývojový režim je k dispozici pouze na instancích Twenty běžících v režimu development (`NODE_ENV=development`). Produkční instance odmítají požadavky na vývojovou synchronizaci. Pro nasazení na produkční servery použijte `yarn twenty deploy` — podrobnosti viz [Publikování aplikací](/l/cs/developers/extend/apps/publishing).
+</Warning>
 
-Čerstvě vygenerovaná aplikace s výchozím režimem `--exhaustive` vypadá takto:
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/dev.jpg" alt="Výstup terminálu ve vývojovém režimu" />
+</div>
+
+## Krok 6: Zobrazte svou aplikaci v Twenty
+
+Otevřete ve svém prohlížeči [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer). Přejděte do **Settings > Apps** a vyberte kartu **Developer**. Vaše aplikace by měla být uvedena v části **Your Apps**:
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="Seznam Your Apps zobrazující My twenty app" />
+</div>
+
+Klikněte na **My twenty app** a otevřete její **registraci aplikace**. Registrace je záznam na úrovni serveru, který popisuje vaši aplikaci — její název, jedinečný identifikátor, přihlašovací údaje OAuth a zdroj (lokální, npm nebo tarball). Existuje na serveru, ne uvnitř žádného konkrétního pracovního prostoru. Když nainstalujete aplikaci do pracovního prostoru, Twenty vytvoří **aplikaci** v rozsahu pracovního prostoru, která odkazuje zpět na tuto registraci. Jedna registrace může být nainstalována ve více pracovních prostorech na stejném serveru.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="Podrobnosti registrace aplikace" />
+</div>
+
+Klikněte na **View installed app**, abyste zobrazili nainstalovanou aplikaci. Karta **About** zobrazuje aktuální verzi a možnosti správy:
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="Nainstalovaná aplikace — karta About" />
+</div>
+
+Přepněte na kartu **Content**, abyste viděli vše, co vaše aplikace poskytuje — objekty, pole, logické funkce a agenty:
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-4.png" alt="Nainstalovaná aplikace — karta Content" />
+</div>
+
+Vše je připraveno! Upravte libovolný soubor v `src/` a změny se automaticky projeví.
+
+Přejděte na [Tvorba aplikací](/l/cs/developers/extend/apps/building) pro podrobný průvodce vytvářením objektů, logických funkcí, frontendových komponent, dovedností a dalšího.
+
+---
+
+## Struktura projektu
+
+Generátor kostry vytvoří následující strukturu souborů (zobrazeno v režimu `--exhaustive`, který zahrnuje příklady pro každý typ entity):
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -83,124 +152,238 @@ my-twenty-app/
     install-state.gz
   .oxlintrc.json
   tsconfig.json
+  tsconfig.spec.json                  # TypeScript config for tests
+  vitest.config.ts                    # Vitest test runner configuration
+  LLMS.md
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  .github/
+    └── workflows/
+        └── ci.yml                      # GitHub Actions CI workflow
+  public/                             # Public assets (images, fonts, etc.)
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts             # Required — main application configuration
+  ├── __tests__/
+  │   ├── setup-test.ts                   # Test setup (server health check, config)
+  │   └── app-install.integration-test.ts # Example integration test
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts                 # Default role for logic functions
   ├── objects/
-  │   └── example-object.ts             # Example custom object definition
+  │   └── example-object.ts               # Example custom object definition
   ├── fields/
-  │   └── example-field.ts              # Example standalone field definition
+  │   └── example-field.ts                # Example standalone field definition
   ├── logic-functions/
-  │   ├── hello-world.ts                # Example logic function
-  │   ├── pre-install.ts                # Pre-install logic function
-  │   └── post-install.ts               # Post-install logic function
+  │   ├── hello-world.ts                  # Example logic function
+  │   ├── create-hello-world-company.ts   # Example logic function using CoreApiClient
+  │   ├── pre-install.ts                  # Runs before installation
+  │   └── post-install.ts                 # Runs after installation
   ├── front-components/
-  │   └── hello-world.tsx               # Example front component
+  │   └── hello-world.tsx                 # Example front component
+  ├── page-layouts/
+  │   └── example-record-page-layout.ts   # Example page layout with front component
   ├── views/
-  │   └── example-view.ts                # Example saved view definition
+  │   └── example-view.ts                 # Example saved view definition
   ├── navigation-menu-items/
   │   └── example-navigation-menu-item.ts # Example sidebar navigation link
-  └── skills/
-      └── example-skill.ts                # Example AI agent skill definition
+  ├── skills/
+  │   └── example-skill.ts                # Example AI agent skill definition
+  └── agents/
+      └── example-agent.ts                # Example AI agent definition
 ```
 
-S volbou `--minimal` se vytvoří pouze základní soubory (`application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` a `logic-functions/post-install.ts`).
+Ve výchozím nastavení (`--minimal`) se vytvoří pouze základní soubory: `application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` a `logic-functions/post-install.ts`. Pro zahrnutí všech ukázkových souborů výše použijte `--exhaustive`.
 
-V kostce:
+### Klíčové soubory
 
-* **package.json**: Deklaruje název aplikace, verzi, engines (Node 24+, Yarn 4) a přidává `twenty-sdk` plus skript `twenty`, který deleguje na lokální `twenty` CLI. Spusťte `yarn twenty help` pro výpis všech dostupných příkazů.
-* **.gitignore**: Ignoruje běžné artefakty jako `node_modules`, `.yarn`, `.twenty/`, `dist/`, `build/`, složky s coverage, soubory s logy a soubory `.env*`.
-* **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Zamykají a konfigurují nástrojový řetězec Yarn 4 používaný projektem.
-* **.nvmrc**: Fixuje verzi Node.js požadovanou projektem.
-* **.oxlintrc.json** a **tsconfig.json**: Poskytují lintování a konfiguraci TypeScriptu pro zdrojové soubory vaší aplikace v TypeScriptu.
-* **README.md**: Krátké README v kořeni aplikace se základními pokyny.
-* **public/**: Složka pro ukládání veřejných prostředků (obrázky, písma, statické soubory), které bude vaše aplikace poskytovat. Soubory umístěné zde se během synchronizace nahrají a jsou za běhu dostupné.
-* **src/**: Hlavní místo, kde definujete svou aplikaci jako kód
+| Soubor / Složka              | Účel                                                                                                                                            |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `package.json`               | Definuje název, verzi a závislosti vaší aplikace. Obsahuje skript `twenty`, takže můžete spustit `yarn twenty help` a zobrazit všechny příkazy. |
+| `src/application-config.ts`  | **Povinné.** Hlavní konfigurační soubor vaší aplikace.                                                                                          |
+| `src/roles/`                 | Definuje role, které určují, k čemu mají vaše logické funkce přístup.                                                                           |
+| `src/logic-functions/`       | Serverové funkce spouštěné trasami, plánovačem cron nebo událostmi databáze.                                                                    |
+| `src/front-components/`      | Komponenty Reactu, které se vykreslují uvnitř uživatelského rozhraní Twenty.                                                                    |
+| `src/objects/`               | Vlastní definice objektů pro rozšíření vašeho datového modelu.                                                                                  |
+| `src/fields/`                | Vlastní pole přidaná k existujícím objektům.                                                                                                    |
+| `src/views/`                 | Konfigurace uložených zobrazení.                                                                                                                |
+| `src/navigation-menu-items/` | Vlastní odkazy v postranní navigaci.                                                                                                            |
+| `src/skills/`                | Dovednosti, které rozšiřují možnosti AI agentů Twenty.                                                                                          |
+| `src/agents/`                | AI agenti s vlastními prompty.                                                                                                                  |
+| `src/page-layouts/`          | Vlastní rozvržení stránek pro zobrazení záznamů.                                                                                                |
+| `src/__tests__/`             | Integrační testy (nastavení + ukázkový test).                                                                                                   |
+| `public/`                    | Statická aktiva (obrázky, písma) poskytovaná s vaší aplikací.                                                                                   |
 
-### Detekce entit
+## Správa vzdálených serverů
 
-SDK detekuje entity analýzou vašich souborů TypeScript a hledá volání **`export default define<Entity>({...})`**. Každý typ entity má odpovídající pomocnou funkci exportovanou z `twenty-sdk`:
-
-| Pomocná funkce                   | Typ entity                                                |
-| -------------------------------- | --------------------------------------------------------- |
-| `defineObject`                   | Definice vlastních objektů                                |
-| `defineLogicFunction`            | Definice logických funkcí                                 |
-| `definePreInstallLogicFunction`  | Předinstalační logická funkce (spouští se před instalací) |
-| `definePostInstallLogicFunction` | Postinstalační logická funkce (spouští se po instalaci)   |
-| `defineFrontComponent`           | Definice frontendových komponent                          |
-| `defineRole`                     | Definice rolí                                             |
-| `defineField`                    | Rozšíření polí u existujících objektů                     |
-| `defineView`                     | Definice uložených zobrazení                              |
-| `defineNavigationMenuItem`       | Definice položek navigační nabídky                        |
-| `defineSkill`                    | Definice dovedností agenta AI                             |
-
-<Note>
-**Pojmenování souborů je flexibilní.** Detekce entit je založená na AST — SDK prochází vaše zdrojové soubory a hledá vzor `export default define<Entity>({...})`. Soubory a složky můžete organizovat, jak chcete. Seskupování podle typu entity (např. `logic-functions/`, `roles/`) je pouze konvence pro organizaci kódu, nikoli požadavek.
-</Note>
-
-Příklad detekované entity:
-
-```typescript
-// This file can be named anything and placed anywhere in src/
-import { defineObject, FieldType } from 'twenty-sdk';
-
-export default defineObject({
-  universalIdentifier: '...',
-  nameSingular: 'postCard',
-  // ... rest of config
-});
-```
-
-Pozdější příkazy přidají další soubory a složky:
-
-* `yarn twenty dev` automaticky vygeneruje typovaný `CoreApiClient` (pro data pracovního prostoru přes `/graphql`) do `node_modules/twenty-client-sdk/`. `MetadataApiClient` (pro konfiguraci pracovního prostoru a nahrávání souborů přes `/metadata`) je dodáván předpřipravený a je okamžitě k dispozici. Importujte je z `twenty-client-sdk/core` a `twenty-client-sdk/metadata` v uvedeném pořadí.
-* `yarn twenty add` přidá soubory s definicemi entit do `src/` pro vaše vlastní objekty, funkce, frontové komponenty, role, dovednosti a další.
-
-## Ověření
-
-Při prvním spuštění `yarn twenty auth:login` budete vyzváni k zadání:
-
-* URL API (výchozí je http://localhost:3000 nebo váš aktuální profil pracovního prostoru)
-* Klíč API
-
-Vaše přihlašovací údaje se ukládají pro jednotlivé uživatele do `~/.twenty/config.json`. Můžete spravovat více profilů a přepínat mezi nimi.
-
-### Správa pracovních prostorů
+**Remote** je server Twenty, ke kterému se vaše aplikace připojuje. Během nastavení jej generátor kostry automaticky vytvoří. Můžete kdykoli přidat další vzdálené servery nebo mezi nimi přepínat.
 
 ```bash filename="Terminal"
-# Login interactively (recommended)
-yarn twenty auth:login
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote add
 
-# Login to a specific workspace profile
-yarn twenty auth:login --workspace my-custom-workspace
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote add --local
 
-# List all configured workspaces
-yarn twenty auth:list
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
 
-# Switch the default workspace (interactive)
-yarn twenty auth:switch
+# List all configured remotes
+yarn twenty remote list
 
-# Switch to a specific workspace
-yarn twenty auth:switch production
-
-# Check current authentication status
-yarn twenty auth:status
+# Switch the active remote
+yarn twenty remote switch <name>
 ```
 
-Jakmile přepnete pracovní prostor pomocí `yarn twenty auth:switch`, všechny následující příkazy budou tento pracovní prostor používat jako výchozí. Můžete jej stále dočasně přepsat pomocí `--workspace <name>`.
+Vaše přihlašovací údaje jsou uloženy v `~/.twenty/config.json`.
+
+## Lokální vývojový server (`yarn twenty server`)
+
+CLI může spravovat lokální server Twenty běžící v Dockeru. Jde o stejný server, který se spustí automaticky při vytvoření kostry aplikace pomocí `create-twenty-app`, ale můžete jej spravovat i ručně.
+
+### Spuštění serveru
+
+```bash filename="Terminal"
+yarn twenty server start
+```
+
+Stáhne image Dockeru `twentycrm/twenty-app-dev:latest` (pokud již není k dispozici), vytvoří kontejner s názvem `twenty-app-dev` a spustí jej na portu **2020**. CLI čeká, dokud server neprojde kontrolou stavu, než vrátí řízení.
+
+Vytvoří se dva svazky Dockeru pro zachování dat mezi restartováními:
+
+* `twenty-app-dev-data` — databáze PostgreSQL
+* `twenty-app-dev-storage` — úložiště souborů
+
+Pokud je port 2020 již používán, můžete spustit na jiném portu:
+
+```bash filename="Terminal"
+yarn twenty server start --port 3030
+```
+
+CLI automaticky nakonfiguruje interní `NODE_PORT` a `SERVER_URL` kontejneru tak, aby odpovídaly zvolenému portu, takže logické funkce, OAuth a veškerá ostatní vnitřní síťová komunikace fungují správně.
+
+Po spuštění je server automaticky zaregistrován jako `local` remote ve vaší konfiguraci CLI.
+
+### Kontrola stavu serveru
+
+```bash filename="Terminal"
+yarn twenty server status
+```
+
+Zobrazí, zda server běží, jeho URL a výchozí přihlašovací údaje (`tim@apple.dev` / `tim@apple.dev`).
+
+### Zobrazení protokolů serveru
+
+```bash filename="Terminal"
+yarn twenty server logs
+```
+
+Streamuje protokoly kontejneru. Pomocí `--lines` ovládnete, kolik posledních řádků se má zobrazit:
+
+```bash filename="Terminal"
+yarn twenty server logs --lines 100
+```
+
+### Zastavení serveru
+
+```bash filename="Terminal"
+yarn twenty server stop
+```
+
+Zastaví kontejner. Vaše data jsou zachována ve svazcích Dockeru — další `start` naváže tam, kde jste skončili.
+
+### Resetování serveru
+
+```bash filename="Terminal"
+yarn twenty server reset
+```
+
+Odstraní kontejner **a** smaže oba svazky Dockeru, čímž vymaže všechna data. Další `start` vytvoří čistou instanci.
+
+<Note>
+  Server vyžaduje, aby **Docker** běžel. Pokud vidíte chybu "Docker not running", ujistěte se, že je spuštěný Docker Desktop (nebo démon Dockeru).
+</Note>
+
+### Přehled příkazů
+
+| Příkaz                                 | Popis                                                  |
+| -------------------------------------- | ------------------------------------------------------ |
+| `yarn twenty server start`             | Spustí lokální server (v případě potřeby stáhne image) |
+| `yarn twenty server start --port 3030` | Spustí na vlastním portu                               |
+| `yarn twenty server stop`              | Zastaví server (zachová data)                          |
+| `yarn twenty server status`            | Zobrazí stav serveru, URL a přihlašovací údaje         |
+| `yarn twenty server logs`              | Streamuje protokoly serveru                            |
+| `yarn twenty server logs --lines 100`  | Zobrazí posledních 100 řádků logu                      |
+| `yarn twenty server reset`             | Smaže všechna data a začne znovu                       |
+
+## CI s GitHub Actions
+
+Generátor kostry vytvoří připravený k použití workflow GitHub Actions v `.github/workflows/ci.yml`. Automaticky spouští integrační testy při každém pushi do `main` a u pull requestů.
+
+Workflow:
+
+1. Načte váš kód (checkout).
+2. Spustí dočasný server Twenty pomocí akce `twentyhq/twenty/.github/actions/spawn-twenty-docker-image`
+3. Nainstaluje závislosti pomocí `yarn install --immutable`
+4. Spustí `yarn test` s proměnnými `TWENTY_API_URL` a `TWENTY_API_KEY` vloženými z výstupů akce
+
+```yaml .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+
+env:
+  TWENTY_VERSION: latest
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Spawn Twenty instance
+        id: twenty
+        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
+        with:
+          twenty-version: ${{ env.TWENTY_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run integration tests
+        run: yarn test
+        env:
+          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
+          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
+```
+
+Není potřeba konfigurovat žádné secrets — akce `spawn-twenty-docker-image` spustí efemérní server Twenty přímo v runneru a vypíše podrobnosti připojení. Secret `GITHUB_TOKEN` je poskytován GitHubem automaticky.
+
+Chcete-li připnout konkrétní verzi Twenty místo `latest`, změňte proměnnou prostředí `TWENTY_VERSION` na začátku workflow.
 
 ## Ruční nastavení (bez scaffolderu)
 
-Ačkoli pro nejlepší začátky doporučujeme použít `create-twenty-app`, projekt můžete nastavit i ručně. Neinstalujte CLI globálně. Místo toho přidejte `twenty-sdk` jako lokální závislost a přidejte jeden skript do souboru package.json:
+Pokud dáváte přednost vlastnímu nastavení místo použití `create-twenty-app`, můžete to udělat ve dvou krocích.
+
+**1. Přidejte `twenty-sdk` a `twenty-client-sdk` jako závislosti:**
 
 ```bash filename="Terminal"
-yarn add -D twenty-sdk
+yarn add twenty-sdk twenty-client-sdk
 ```
 
-Poté přidejte skript `twenty`:
+**2. Přidejte skript `twenty` do svého `package.json`:**
 
 ```json filename="package.json"
 {
@@ -210,25 +393,19 @@ Poté přidejte skript `twenty`:
 }
 ```
 
-Nyní můžete spouštět všechny příkazy přes `yarn twenty <command>`, např. `yarn twenty dev`, `yarn twenty help` atd.
+Nyní můžete spouštět `yarn twenty dev`, `yarn twenty help` a všechny ostatní příkazy.
 
-## Jak používat lokální instanci Twenty
-
-Pokud již lokálně provozujete instanci Twenty (např. pomocí `npx nx start twenty-server`), můžete se k ní připojit namísto použití Dockeru:
-
-```bash filename="Terminal"
-# During scaffolding — skip Docker, connect to your running instance
-npx create-twenty-app@latest my-app --port 3000
-
-# Or after scaffolding — add a remote pointing to your instance
-yarn twenty remote add --local --port 3000
-```
+<Note>
+Neinstalujte `twenty-sdk` globálně. Vždy jej používejte jako lokální závislost projektu, aby si každý projekt mohl připnout svou vlastní verzi.
+</Note>
 
 ## Řešení potíží
 
-* Chyby ověření: spusťte `yarn twenty auth:login` a ujistěte se, že váš klíč API má požadovaná oprávnění.
-* Nelze se připojit k serveru: ověřte URL API a že je server Twenty dosažitelný.
-* Typy nebo klient chybí nebo jsou zastaralé: restartujte `yarn twenty dev` — automaticky generuje typovaného klienta.
-* Režim vývoje se nesynchronizuje: ujistěte se, že běží `yarn twenty dev` a že vaše prostředí změny neignoruje.
+Pokud narazíte na potíže:
 
-Kanál podpory na Discordu: https://discord.com/channels/1130383047699738754/1130386664812982322
+* Před spuštěním generátoru kostry s lokální instancí se ujistěte, že **Docker běží**.
+* Ujistěte se, že používáte **Node.js 24+** (ověříte příkazem `node -v`).
+* Ujistěte se, že je **Corepack povolen** (`corepack enable`), aby byl k dispozici Yarn 4.
+* Zkuste smazat `node_modules` a znovu spustit `yarn install`, pokud se zdají závislosti poškozené.
+
+Pořád se nedaří? Požádejte o pomoc na [Discordu Twenty](https://discord.com/channels/1130383047699738754/1130386664812982322).

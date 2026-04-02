@@ -8,6 +8,8 @@ type WorkflowDiagramHandleTargetProps = {
 };
 
 const StyledHandleContainer = styled.div`
+  position: absolute;
+
   & .react-flow__handle {
     border-radius: ${themeCssVariables.border.radius.md};
     height: 100%;
