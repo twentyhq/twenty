@@ -97,7 +97,6 @@ msgstr "(επιλεγμένο: {selectedIconKey})"
 
 #. js-lingui-id: ZBGbuw
 #: src/pages/settings/security/event-logs/components/EventLogJsonCell.tsx
-#: src/pages/settings/ai/components/SettingsSystemToolTableRow.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
@@ -1316,6 +1315,7 @@ msgstr ""
 #. js-lingui-id: jsQZMk
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
+#: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -1883,6 +1883,7 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
+#: src/pages/settings/ai/components/SettingsToolsTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 msgid "App"
 msgstr "Εφαρμογή"
@@ -2007,6 +2008,11 @@ msgstr "Είστε βέβαιοι ότι θέλετε να διαγράψετε 
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 msgid "Are you sure you want to delete this skill? This action cannot be undone."
 msgstr "Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτή τη δεξιότητα; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί."
+
+#. js-lingui-id: 0Cs5HS
+#: src/pages/settings/ai/SettingsToolDetail.tsx
+msgid "Are you sure you want to delete this tool? This action cannot be undone."
+msgstr ""
 
 #. js-lingui-id: EySr+c
 #. placeholder {0}: objectMetadataItem.labelPlural
@@ -2537,11 +2543,6 @@ msgstr "Δημιουργήστε έναν πίνακα ελέγχου που ν�
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Build many-to-many relations"
 msgstr "Δημιουργήστε σχέσεις πολλά-προς-πολλά"
-
-#. js-lingui-id: +7fBMP
-#: src/pages/settings/ai/components/SettingsToolsTable.tsx
-msgid "Built-in"
-msgstr "Ενσωματωμένα"
 
 #. js-lingui-id: uvoIrk
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -3112,7 +3113,6 @@ msgstr "Κωδικοποιήστε τη λειτουργία σας"
 
 #. js-lingui-id: H86f9p
 #: src/pages/settings/security/event-logs/components/EventLogJsonCell.tsx
-#: src/pages/settings/ai/components/SettingsSystemToolTableRow.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
@@ -4059,6 +4059,7 @@ msgstr "Το τρέχον μέλος του χώρου εργασίας δεν �
 #. js-lingui-id: 8Tg/JR
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
+#: src/pages/settings/ai/components/SettingsToolsTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 msgid "Custom"
@@ -4098,11 +4099,6 @@ msgstr "Προσαρμοσμένος πάροχος"
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Custom Providers"
 msgstr "Προσαρμοσμένοι πάροχοι"
-
-#. js-lingui-id: jt16uy
-#: src/pages/settings/ai/components/SettingsToolsTable.tsx
-msgid "Custom tools created in your workspace"
-msgstr "Προσαρμοσμένα εργαλεία που δημιουργήθηκαν στον χώρο εργασίας σας"
 
 #. js-lingui-id: BjGDEB
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -4188,6 +4184,7 @@ msgstr "Ημερήσια χρήση"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -4514,6 +4511,11 @@ msgstr "Ορίστε το όνομα και τις οδηγίες για αυτ�
 msgid "Define user roles and access levels"
 msgstr "Ορίστε ρόλους χρηστών και επίπεδα πρόσβασης"
 
+#. js-lingui-id: ErLA3E
+#: src/pages/settings/ai/SettingsToolDetail.tsx
+msgid "Define what this tool does"
+msgstr ""
+
 #. js-lingui-id: bQkkFU
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
@@ -4543,6 +4545,8 @@ msgstr "διαγραφή"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/ai/SettingsToolDetail.tsx
+#: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/components/SettingsSkillInactiveMenuDropDown.tsx
@@ -4703,10 +4707,20 @@ msgstr "Διαγραφή αυτής της ενσωμάτωσης"
 msgid "Delete this role and assign a new role to its members"
 msgstr "Διαγράψτε αυτόν το ρόλο και αναθέστε έναν νέο ρόλο στα μέλη του"
 
+#. js-lingui-id: UvEQr6
+#: src/pages/settings/ai/SettingsToolDetail.tsx
+msgid "Delete this tool"
+msgstr ""
+
 #. js-lingui-id: KSOhjo
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Delete this webhook"
 msgstr "Διαγραφή αυτού του webhook"
+
+#. js-lingui-id: rQiOWg
+#: src/pages/settings/ai/SettingsToolDetail.tsx
+msgid "Delete Tool"
+msgstr ""
 
 #. js-lingui-id: jPvFKE
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
@@ -4782,6 +4796,7 @@ msgstr "Περιγράψτε τι θέλετε να κάνει το AI..."
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
+#: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
@@ -5429,7 +5444,6 @@ msgstr "Κενό"
 
 #. js-lingui-id: OMbipf
 #: src/pages/settings/security/event-logs/components/EventLogJsonCell.tsx
-#: src/pages/settings/ai/components/SettingsSystemToolTableRow.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
@@ -6150,7 +6164,6 @@ msgstr "Έξοδος από Ρυθμίσεις"
 
 #. js-lingui-id: 1A3EXy
 #: src/pages/settings/security/event-logs/components/EventLogJsonCell.tsx
-#: src/pages/settings/ai/components/SettingsSystemToolTableRow.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
@@ -6305,7 +6318,7 @@ msgid "Failed to add provider"
 msgstr "Αποτυχία προσθήκης παρόχου"
 
 #. js-lingui-id: WM7GKt
-#: src/pages/settings/ai/components/SettingsToolsTable.tsx
+#: src/pages/settings/ai/SettingsAI.tsx
 msgid "Failed to create tool"
 msgstr "Αποτυχία δημιουργίας εργαλείου"
 
@@ -6318,6 +6331,11 @@ msgstr "Αποτυχία διαγραφής εργασιών. Παρακαλώ �
 #: src/pages/settings/ai/components/SettingsAgentSkills.tsx
 msgid "Failed to delete skill"
 msgstr "Αποτυχία διαγραφής δεξιότητας"
+
+#. js-lingui-id: AUprM8
+#: src/pages/settings/ai/SettingsToolDetail.tsx
+msgid "Failed to delete tool"
+msgstr ""
 
 #. js-lingui-id: NUmmdc
 #: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
@@ -7652,10 +7670,10 @@ msgstr ""
 msgid "Input must be in camel case and cannot start with a number"
 msgstr "Η εισαγωγή πρέπει να είναι σε μορφή camel case και δεν μπορεί να ξεκινά με έναν αριθμό"
 
-#. js-lingui-id: ssPbxG
-#: src/pages/settings/ai/components/SettingsSystemToolTableRow.tsx
-msgid "Input Schema"
-msgstr "Σχήμα εισόδου"
+#. js-lingui-id: VmBcTm
+#: src/pages/settings/ai/SettingsToolDetail.tsx
+msgid "Input parameters accepted by this tool"
+msgstr ""
 
 #. js-lingui-id: /6i28D
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
@@ -8542,11 +8560,6 @@ msgstr "Φόρτωση περισσότερα..."
 msgid "Loading retention configuration..."
 msgstr "Φόρτωση ρύθμισης συγκράτησης..."
 
-#. js-lingui-id: +yoeVU
-#: src/pages/settings/ai/components/SettingsSystemToolTableRow.tsx
-msgid "Loading schema..."
-msgstr "Φόρτωση σχήματος..."
-
 #. js-lingui-id: dJl485
 #: src/modules/ai/utils/getToolDisplayMessage.ts
 msgid "Loading skills..."
@@ -8744,6 +8757,11 @@ msgstr "Διαχειριστείτε την εφαρμογή σας"
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Manage your internet accounts."
 msgstr "Διαχειριστείτε τους λογαριασμούς σας στο διαδίκτυο."
+
+#. js-lingui-id: waFx9W
+#: src/pages/settings/ai/components/SettingsToolsTable.tsx
+msgid "Managed"
+msgstr ""
 
 #. js-lingui-id: BWTzAb
 #: src/modules/side-panel/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
@@ -9208,7 +9226,7 @@ msgstr "mySkill"
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
-#: src/pages/settings/ai/components/SettingsToolsTable.tsx
+#: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/workspace/components/NameField.tsx
@@ -9436,7 +9454,7 @@ msgstr "Νέος Κωδικός"
 #. js-lingui-id: gWnSyg
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
-#: src/pages/settings/ai/components/SettingsAgentSkills.tsx
+#: src/pages/settings/ai/SettingsAI.tsx
 msgid "New Skill"
 msgstr "Νέα δεξιότητα"
 
@@ -9456,7 +9474,7 @@ msgid "New task"
 msgstr "Νέα εργασία"
 
 #. js-lingui-id: IQ+GEj
-#: src/pages/settings/ai/components/SettingsToolsTable.tsx
+#: src/pages/settings/ai/SettingsAI.tsx
 msgid "New Tool"
 msgstr "Νέο εργαλείο"
 
@@ -9865,8 +9883,7 @@ msgid "No output available"
 msgstr "Δεν υπάρχει διαθέσιμη έξοδος"
 
 #. js-lingui-id: 20ONq7
-#: src/pages/settings/ai/components/SettingsSystemToolTableRow.tsx
-#: src/pages/settings/ai/components/SettingsSystemToolTableRow.tsx
+#: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
 msgid "No parameters"
 msgstr "Χωρίς παραμέτρους"
 
@@ -10676,6 +10693,11 @@ msgstr ""
 #: src/modules/advanced-text-editor/components/TurnIntoBlockDropdown.tsx
 msgid "Paragraph"
 msgstr "Παράγραφος"
+
+#. js-lingui-id: F18WP3
+#: src/pages/settings/ai/SettingsToolDetail.tsx
+msgid "Parameters"
+msgstr ""
 
 #. js-lingui-id: 8ZsakT
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -11728,6 +11750,7 @@ msgstr "Απέτυχε το αίτημα"
 
 #. js-lingui-id: TMLAx2
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
 msgid "Required"
 msgstr "Απαιτείται"
 
@@ -12134,16 +12157,6 @@ msgstr "Αναζήτηση 1 πεδίου {fieldTypeLabelLowercase}"
 msgid "Search 1 field"
 msgstr "Αναζήτηση 1 πεδίου"
 
-#. js-lingui-id: n9V88v
-#: src/pages/settings/ai/components/SettingsToolsTable.tsx
-msgid "Search a built-in tool..."
-msgstr "Αναζήτηση ενσωματωμένου εργαλείου..."
-
-#. js-lingui-id: V8n1cR
-#: src/pages/settings/ai/components/SettingsToolsTable.tsx
-msgid "Search a custom tool..."
-msgstr "Αναζήτηση προσαρμοσμένου εργαλείου..."
-
 #. js-lingui-id: l1/uy2
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
@@ -12182,6 +12195,11 @@ msgstr "Αναζήτηση αντικειμένου συστήματος..."
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Search a team member..."
 msgstr "Αναζήτηση ενός μέλους..."
+
+#. js-lingui-id: VNmPqQ
+#: src/pages/settings/ai/components/SettingsToolsTable.tsx
+msgid "Search a tool..."
+msgstr ""
 
 #. js-lingui-id: lnDfeK
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
@@ -12448,6 +12466,11 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 msgid "See Fields"
 msgstr "Δείτε Πεδία"
+
+#. js-lingui-id: RpeN29
+#: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
+msgid "See function"
+msgstr ""
 
 #. js-lingui-id: vn4aKq
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
@@ -13232,14 +13255,11 @@ msgid "Stages"
 msgstr "Στάδια"
 
 #. js-lingui-id: TJBHlP
+#: src/pages/settings/ai/components/SettingsToolsTable.tsx
+#: src/pages/settings/ai/components/SettingsToolsTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 msgid "Standard"
 msgstr "Τυπικό"
-
-#. js-lingui-id: mLu2Pd
-#: src/pages/settings/ai/components/SettingsToolsTable.tsx
-msgid "Standard tools available to AI agents"
-msgstr "Τυπικά εργαλεία διαθέσιμα στους πράκτορες AI"
 
 #. js-lingui-id: tXkhj/
 #: src/pages/onboarding/PaymentSuccess.tsx
@@ -14285,9 +14305,14 @@ msgid "Tool calls made"
 msgstr "Κλήσεις εργαλείων που έγιναν"
 
 #. js-lingui-id: SrWh42
-#: src/pages/settings/ai/components/SettingsToolsTable.tsx
+#: src/pages/settings/ai/SettingsAI.tsx
 msgid "Tool created"
 msgstr "Το εργαλείο δημιουργήθηκε"
+
+#. js-lingui-id: i5A3/7
+#: src/pages/settings/ai/SettingsToolDetail.tsx
+msgid "Tool deleted"
+msgstr ""
 
 #. js-lingui-id: OvFVjH
 #: src/modules/ai/components/ToolStepRenderer.tsx
@@ -14301,6 +14326,7 @@ msgstr "Δημιουργία εργαλείου"
 
 #. js-lingui-id: xdA/+p
 #: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/ai/components/SettingsToolsTable.tsx
 msgid "Tools"
 msgstr "Εργαλεία"
 
@@ -14524,8 +14550,7 @@ msgstr "Η εγκατάσταση δύο παραγοντικής ταυτοπο
 #: src/pages/settings/applications/components/SettingsApplicationDataTableRow.tsx
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
-#: src/pages/settings/ai/components/SettingsToolsTable.tsx
-#: src/pages/settings/ai/components/SettingsToolsTable.tsx
+#: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputFieldTypeSelector.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
@@ -14994,6 +15019,7 @@ msgid "Use best models only"
 msgstr "Χρήση μόνο των καλύτερων μοντέλων"
 
 #. js-lingui-id: cVOIgV
+#: src/pages/settings/ai/components/SettingsToolsTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentSkills.tsx
 msgid "Use filter to see existing tools or create your own"
 msgstr ""
@@ -15713,6 +15739,7 @@ msgstr "Ροές Εργασίας"
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -15808,6 +15835,7 @@ msgid "Wrap on record pages"
 msgstr "Ενσωμάτωση στις σελίδες εγγραφής"
 
 #. js-lingui-id: Q9pNST
+#: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -15886,6 +15914,7 @@ msgid "yes"
 msgstr "ναι"
 
 #. js-lingui-id: l75CjT
+#: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Yes"
