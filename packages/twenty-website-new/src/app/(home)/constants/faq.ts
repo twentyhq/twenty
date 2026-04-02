@@ -2,8 +2,8 @@ import { FaqDataType } from '@/sections/Faq/types';
 
 export const FAQ_DATA: FaqDataType = {
   illustration: {
-    src: '/illustrations/home/faq/faq.glb',
-    title: 'FAQ illustration',
+    src: 'https://app.endlesstools.io/embed/0510f6d4-e09b-4470-86f8-7fb8d9db4c45',
+    title: 'Endless Tools Editor',
   },
   eyebrow: {
     heading: {

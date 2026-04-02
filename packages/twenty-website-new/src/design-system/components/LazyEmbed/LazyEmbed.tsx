@@ -1,6 +1,5 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import {
   type ComponentPropsWithoutRef,
   useEffect,
@@ -12,16 +11,6 @@ import {
 const DEFAULT_LOAD_ROOT_MARGIN = '1200px 0px';
 const DEFAULT_UNLOAD_ROOT_MARGIN = '1800px 0px';
 const DEFAULT_UNLOAD_DELAY_MS = 1500;
-const LazyGlbIllustration = dynamic(
-  () =>
-    import('./LazyGlbIllustration').then((mod) => ({
-      default: mod.LazyGlbIllustration,
-    })),
-  {
-    loading: () => null,
-    ssr: false,
-  },
-);
 
 type LazyEmbedProps = Omit<ComponentPropsWithoutRef<'iframe'>, 'loading' | 'src'> & {
   eager?: boolean;
@@ -31,10 +20,6 @@ type LazyEmbedProps = Omit<ComponentPropsWithoutRef<'iframe'>, 'loading' | 'src'
   unloadWhenHidden?: boolean;
   unloadRootMargin?: string;
 };
-
-function isGlbIllustration(src: string) {
-  return src.toLowerCase().endsWith('.glb');
-}
 
 export function LazyEmbed({
   eager = false,
@@ -53,7 +38,6 @@ export function LazyEmbed({
   const [hostNode, setHostNode] = useState<HTMLDivElement | null>(null);
   const [shouldRender, setShouldRender] = useState(eager);
   const unloadTimeoutRef = useRef<number | null>(null);
-  const useGlbRenderer = isGlbIllustration(src);
 
   const wrapperProps = useMemo(
     () => ({
@@ -154,23 +138,19 @@ export function LazyEmbed({
       ref={setHostNode}
     >
       {shouldRender ? (
-        useGlbRenderer ? (
-          <LazyGlbIllustration src={src} />
-        ) : (
-          <iframe
-            {...iframeProps}
-            aria-hidden={ariaHidden}
-            loading={eager ? 'eager' : 'lazy'}
-            src={src}
-            style={{
-              border: 'none',
-              display: 'block',
-              height: '100%',
-              width: '100%',
-            }}
-            tabIndex={tabIndex}
-          />
-        )
+        <iframe
+          {...iframeProps}
+          aria-hidden={ariaHidden}
+          loading={eager ? 'eager' : 'lazy'}
+          src={src}
+          style={{
+            border: 'none',
+            display: 'block',
+            height: '100%',
+            width: '100%',
+          }}
+          tabIndex={tabIndex}
+        />
       ) : null}
     </div>
   );

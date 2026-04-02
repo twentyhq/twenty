@@ -9,7 +9,7 @@ export const HERO_DATA: HeroIllustrationDataType = {
     text: 'Modern interface. AI assistance. All the features you need, ready from day one.',
   },
   illustration: {
-    src: '/illustrations/product/hero/hero.glb',
-    title: 'Product hero illustration',
+    src: 'https://app.endlesstools.io/embed/0bcf3ac2-58cf-4cd5-90bd-e8fada9816a9',
+    title: 'Endless Tools Editor',
   },
 };

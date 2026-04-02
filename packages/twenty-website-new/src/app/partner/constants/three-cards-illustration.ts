@@ -25,8 +25,8 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
       ],
       attribution: undefined,
       illustration: {
-        src: '/illustrations/partner/three-cards-illustration/one.glb',
-        title: 'Technology partners illustration',
+        src: 'https://app.endlesstools.io/embed/627cb43a-5b5f-41a7-9642-26e66b9c4890',
+        title: 'Endless Tools Editor',
       },
     },
     {
@@ -41,8 +41,8 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
       ],
       attribution: undefined,
       illustration: {
-        src: '/illustrations/partner/three-cards-illustration/two.glb',
-        title: 'Content and community partners illustration',
+        src: 'https://app.endlesstools.io/embed/4ef11ab1-d013-46dd-bf2e-cbf913370a8a',
+        title: 'Endless Tools Editor',
       },
     },
     {
@@ -57,8 +57,8 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
       ],
       attribution: undefined,
       illustration: {
-        src: '/illustrations/partner/three-cards-illustration/three.glb',
-        title: 'Solutions partners illustration',
+        src: 'https://app.endlesstools.io/embed/624e9b40-f52c-4da2-9a2e-72d1fb2b5356',
+        title: 'Endless Tools Editor',
       },
     },
   ],

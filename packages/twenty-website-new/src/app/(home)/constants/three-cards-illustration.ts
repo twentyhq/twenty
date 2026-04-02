@@ -23,8 +23,8 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
         company: { text: 'Mid-Market Fintech' },
       },
       illustration: {
-        src: '/illustrations/home/three-cards-illustration/one.glb',
-        title: 'Production grade illustration',
+        src: 'https://app.endlesstools.io/embed/ea42603a-8644-4634-8b7a-9b7bd9a8d899',
+        title: 'Endless Tools Editor',
       },
     },
     {
@@ -38,8 +38,8 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
         company: { text: 'Mid-Market Fintech' },
       },
       illustration: {
-        src: '/illustrations/home/three-cards-illustration/two.glb',
-        title: 'Rapid iteration illustration',
+        src: 'https://app.endlesstools.io/embed/99a4f00e-bb70-4192-82e1-24e9ce8cd136',
+        title: 'Endless Tools Editor',
       },
     },
     {
@@ -53,8 +53,8 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
         company: { text: 'Mid-Market Fintech' },
       },
       illustration: {
-        src: '/illustrations/home/three-cards-illustration/three.glb',
-        title: 'Control illustration',
+        src: 'https://app.endlesstools.io/embed/ba47c943-9565-412e-ae45-4ec092c149aa',
+        title: 'Endless Tools Editor',
       },
     },
   ],

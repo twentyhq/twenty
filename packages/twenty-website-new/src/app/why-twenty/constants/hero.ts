@@ -13,7 +13,7 @@ export const HERO_DATA: HeroWhyTwentyDataType = {
     alt: '',
   },
   illustration: {
-    src: '/illustrations/why-twenty/hero/logo.glb',
-    title: 'Why Twenty hero illustration',
+    src: 'https://app.endlesstools.io/embed/479566da-0f55-44ef-99fe-90350aa88b9c',
+    title: 'Endless Tools Editor',
   },
 };

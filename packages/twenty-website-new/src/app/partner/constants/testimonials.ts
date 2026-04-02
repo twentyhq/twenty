@@ -52,7 +52,7 @@ export const TESTIMONIALS_DATA: TestimonialsDataType = {
     },
   ],
   illustration: {
-    src: '/illustrations/partner/testimonials/testimonials.glb',
-    title: 'Partner testimonials illustration',
+    src: 'https://app.endlesstools.io/embed/48586814-c307-4abd-8eec-0270ef3e91ce',
+    title: 'Endless Tools Editor',
   },
 };

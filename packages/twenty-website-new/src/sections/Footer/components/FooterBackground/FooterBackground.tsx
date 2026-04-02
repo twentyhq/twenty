@@ -1,5 +1,6 @@
 'use client';
 
+import type { IllustrationType } from '@/design-system/components/Illustration/types/Illustration';
 import dynamic from 'next/dynamic';
 import type { ComponentPropsWithoutRef } from 'react';
 
@@ -11,8 +12,15 @@ const FooterBackgroundCanvas = dynamic(
   { ssr: false },
 );
 
-type FooterBackgroundProps = ComponentPropsWithoutRef<'div'>;
+type FooterBackgroundProps = ComponentPropsWithoutRef<'div'> & {
+  illustration: IllustrationType;
+};
 
-export function FooterBackground(props: FooterBackgroundProps) {
-  return <FooterBackgroundCanvas {...props} />;
+export function FooterBackground({
+  illustration,
+  ...rest
+}: FooterBackgroundProps) {
+  return (
+    <FooterBackgroundCanvas {...rest} illustration={illustration} />
+  );
 }
