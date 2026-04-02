@@ -719,7 +719,7 @@ yarn twenty exec --postInstall
 
 #### Basit örnek
 
-Bir ön bileşeni çalışırken görmenin en hızlı yolu, onu bir **komut** olarak kaydetmektir. `isPinned: true` ile bir `command` alanı eklemek, sayfanın sağ üst köşesinde hızlı işlem düğmesi olarak görünmesini sağlar — herhangi bir sayfa düzenine gerek yoktur:
+Bir ön uç bileşenini çalışırken görmenin en hızlı yolu, onu bir komut olarak kaydetmektir. `isPinned: true` ile bir `command` alanı eklemek, sayfanın sağ üst köşesinde hızlı işlem düğmesi olarak görünmesini sağlar — herhangi bir sayfa düzenine gerek yoktur:
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk';
@@ -761,22 +761,22 @@ Bileşeni satır içi işlemek için üzerine tıklayın.
 
 #### Yapılandırma alanları
 
-| Alan                  | Zorunlu | Açıklama                                                                            |
-| --------------------- | ------- | ----------------------------------------------------------------------------------- |
-| `universalIdentifier` | Evet    | Bu bileşen için kararlı benzersiz kimlik                                            |
-| `component`           | Evet    | Bir React bileşen fonksiyonu                                                        |
-| `name`                | Hayır   | Görünen ad                                                                          |
-| `description`         | Hayır   | Bileşenin ne yaptığına dair açıklama                                                |
-| `isHeadless`          | Hayır   | Set to `true` if the component has no visible UI (see below)                        |
-| `command`             | Hayır   | Register the component as a command (see [command options](#command-options) below) |
+| Alan                  | Zorunlu | Açıklama                                                                                   |
+| --------------------- | ------- | ------------------------------------------------------------------------------------------ |
+| `universalIdentifier` | Evet    | Bu bileşen için kalıcı benzersiz kimlik                                                    |
+| `component`           | Evet    | Bir React bileşen fonksiyonu                                                               |
+| `name`                | Hayır   | Görünen Ad                                                                                 |
+| `description`         | Hayır   | Bileşenin ne yaptığına dair açıklama                                                       |
+| `isHeadless`          | Hayır   | Bileşenin görünür bir kullanıcı arayüzü yoksa `true` olarak ayarlayın (aşağıya bakın)      |
+| `command`             | Hayır   | Bileşeni bir komut olarak kaydedin (aşağıda [komut seçeneklerine](#command-options) bakın) |
 
-#### Placing a front component on a page
+#### Bir ön uç bileşenini bir sayfaya yerleştirme
 
-Beyond commands, you can embed a front component directly into a record page by adding it as a widget in a **page layout**. See the [definePageLayout](#definepagelayout) section for details.
+Komutların ötesinde, bir ön uç bileşenini bir **sayfa düzeninde** widget olarak ekleyerek doğrudan bir kayıt sayfasına gömebilirsiniz. Ayrıntılar için [definePageLayout](#definepagelayout) bölümüne bakın.
 
-#### Headless components (`isHeadless: true`)
+#### Headless bileşenler (`isHeadless: true`)
 
-Headless components render no visible UI but still run React logic. This is useful for **effect components** — components that perform side effects when mounted, such as syncing data, starting a timer, listening to events, or triggering a notification.
+Headless bileşenler görünür bir kullanıcı arayüzü oluşturmaz ancak yine de React mantığını çalıştırır. Bu, **etki bileşenleri** için kullanışlıdır — bağlandıklarında veri senkronizasyonu yapmak, bir zamanlayıcı başlatmak, olayları dinlemek veya bir bildirimi tetiklemek gibi yan etkiler gerçekleştiren bileşenler.
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent, useRecordId, enqueueSnackbar } from 'twenty-sdk';
@@ -801,11 +801,11 @@ export default defineFrontComponent({
 });
 ```
 
-Because the component returns `null`, Twenty skips rendering a container for it — no empty space appears in the layout. The component still has access to all hooks and the host communication API.
+Bileşen `null` döndürdüğü için, Twenty bunun için bir kapsayıcı oluşturmayı atlar — düzende boş alan görünmez. Bileşen yine de tüm hook'lara ve host iletişim API'sine erişime sahiptir.
 
-#### Accessing runtime context
+#### Çalışma zamanı bağlamına erişme
 
-Inside your component, use SDK hooks to access the current user, record, and component instance:
+Bileşeninizin içinde, geçerli kullanıcıya, kayda ve bileşen örneğine erişmek için SDK hook'larını kullanın:
 
 ```tsx src/front-components/record-info.tsx
 import {
@@ -836,47 +836,47 @@ export default defineFrontComponent({
 });
 ```
 
-Available hooks:
+Kullanılabilir hook'lar:
 
-| Hook                                          | Returns            | Açıklama                                                   |
-| --------------------------------------------- | ------------------ | ---------------------------------------------------------- |
-| `useUserId()`                                 | `string` or `null` | The current user's ID                                      |
-| `useRecordId()`                               | `string` or `null` | The current record's ID (when placed on a record page)     |
-| `useFrontComponentId()`                       | `string`           | This component instance's ID                               |
-| `useFrontComponentExecutionContext(selector)` | değişir            | Access the full execution context with a selector function |
+| Hook                                          | Döndürür             | Açıklama                                                      |
+| --------------------------------------------- | -------------------- | ------------------------------------------------------------- |
+| `useUserId()`                                 | `string` veya `null` | Geçerli kullanıcının ID'si                                    |
+| `useRecordId()`                               | `string` veya `null` | Geçerli kaydın ID'si (bir kayıt sayfasına yerleştirildiğinde) |
+| `useFrontComponentId()`                       | `string`             | Bu bileşen örneğinin ID'si                                    |
+| `useFrontComponentExecutionContext(selector)` | değişir              | Bir seçici işlevle tam yürütme bağlamına erişin               |
 
-#### Host communication API
+#### Host iletişim API'si
 
-Front components can trigger navigation, modals, and notifications using functions from `twenty-sdk`:
+Ön uç bileşenleri, `twenty-sdk`'deki işlevleri kullanarak gezinmeyi, modalları ve bildirimleri tetikleyebilir:
 
-| Fonksiyon                                       | Açıklama                      |
-| ----------------------------------------------- | ----------------------------- |
-| `navigate(to, params?, queryParams?, options?)` | Navigate to a page in the app |
-| `openSidePanelPage(params)`                     | Open a side panel             |
-| `closeSidePanel()`                              | Yan paneli kapat              |
-| `openCommandConfirmationModal(params)`          | Show a confirmation dialog    |
-| `enqueueSnackbar(params)`                       | Show a toast notification     |
-| `unmountFrontComponent()`                       | Unmount the component         |
-| `updateProgress(progress)`                      | Update a progress indicator   |
+| Fonksiyon                                       | Açıklama                           |
+| ----------------------------------------------- | ---------------------------------- |
+| `navigate(to, params?, queryParams?, options?)` | Uygulamada bir sayfaya git         |
+| `openSidePanelPage(params)`                     | Bir yan panel aç                   |
+| `closeSidePanel()`                              | Yan paneli kapat                   |
+| `openCommandConfirmationModal(params)`          | Bir onay iletişim kutusu göster    |
+| `enqueueSnackbar(params)`                       | Bir toast bildirimi göster         |
+| `unmountFrontComponent()`                       | Bileşeni kaldır (unmount)          |
+| `updateProgress(progress)`                      | Bir ilerleme göstergesini güncelle |
 
-#### Command options
+#### Komut seçenekleri
 
-Adding a `command` field to `defineFrontComponent` registers the component in the command menu (Cmd+K). If `isPinned` is `true`, it also appears as a quick-action button in the top-right corner of the page.
+`defineFrontComponent` içine bir `command` alanı eklemek, bileşeni komut menüsüne (Cmd+K) kaydeder. `isPinned` `true` ise, sayfanın sağ üst köşesinde bir hızlı işlem düğmesi olarak da görünür.
 
-| Alan                                    | Zorunlu | Açıklama                                                                                                                                                                       |
-| --------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `universalIdentifier`                   | Evet    | Stable unique ID for the command                                                                                                                                               |
-| `label`                                 | Evet    | Full label shown in the command menu (Cmd+K)                                                                                                                                   |
-| `shortLabel`                            | Hayır   | Shorter label displayed on the pinned quick-action button                                                                                                                      |
-| `icon`                                  | Hayır   | Icon name displayed next to the label (e.g. `'IconBolt'`, `'IconSend'`)                                                                                                        |
-| `isPinned`                              | Hayır   | When `true`, shows the command as a quick-action button in the top-right corner of the page                                                                                    |
-| `availabilityType`                      | Hayır   | Controls where the command appears: `'GLOBAL'` (always available), `'RECORD_SELECTION'` (only when records are selected), or `'FALLBACK'` (shown when no other commands match) |
-| `availabilityObjectUniversalIdentifier` | Hayır   | Restrict the command to pages of a specific object type (e.g. only on Company records)                                                                                         |
-| `conditionalAvailabilityExpression`     | Hayır   | A boolean expression to dynamically control whether the command is visible (see below)                                                                                         |
+| Alan                                    | Zorunlu | Açıklama                                                                                                                                                                                              |
+| --------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | Evet    | Komut için kararlı benzersiz kimlik                                                                                                                                                                   |
+| `label`                                 | Evet    | Komut menüsünde (Cmd+K) gösterilen tam etiket                                                                                                                                                         |
+| `shortLabel`                            | Hayır   | Sabitlenmiş hızlı işlem düğmesinde görüntülenen daha kısa etiket                                                                                                                                      |
+| `icon`                                  | Hayır   | Etiketin yanında görüntülenen simge adı (örn. `'IconBolt'`, `'IconSend'`)                                                                                                                             |
+| `isPinned`                              | Hayır   | `true` olduğunda, komutu sayfanın sağ üst köşesinde bir hızlı işlem düğmesi olarak gösterir                                                                                                           |
+| `availabilityType`                      | Hayır   | Komutun nerede görüneceğini kontrol eder: `'GLOBAL'` (her zaman kullanılabilir), `'RECORD_SELECTION'` (yalnızca kayıtlar seçiliyken) veya `'FALLBACK'` (başka hiçbir komut eşleşmediğinde gösterilir) |
+| `availabilityObjectUniversalIdentifier` | Hayır   | Komutu belirli bir nesne türünün sayfalarıyla sınırlandırın (örn. yalnızca Company kayıtlarında)                                                                                                      |
+| `conditionalAvailabilityExpression`     | Hayır   | Komutun görünür olup olmadığını dinamik olarak kontrol eden bir boolean ifade (aşağıya bakın)                                                                                                         |
 
-#### Conditional availability expressions
+#### Koşullu kullanılabilirlik ifadeleri
 
-The `conditionalAvailabilityExpression` field lets you control when a command is visible based on the current page context. Import typed variables and operators from `twenty-sdk` to build expressions:
+`conditionalAvailabilityExpression` alanı, geçerli sayfa bağlamına göre bir komutun ne zaman görünür olacağını kontrol etmenizi sağlar. İfadeler oluşturmak için `twenty-sdk`'den türlendirilmiş değişkenleri ve operatörleri içe aktarın:
 
 ```tsx
 import {
@@ -905,45 +905,45 @@ export default defineFrontComponent({
 });
 ```
 
-**Context variables** — these represent the current state of the page:
+**Bağlam değişkenleri** — bunlar sayfanın mevcut durumunu temsil eder:
 
-| Değişken                       | Tür       | Açıklama                                                         |
-| ------------------------------ | --------- | ---------------------------------------------------------------- |
-| `pageType`                     | `string`  | Current page type (e.g. `'RecordIndexPage'`, `'RecordShowPage'`) |
-| `isInSidePanel`                | `boolean` | Whether the component is rendered in a side panel                |
-| `numberOfSelectedRecords`      | `number`  | Number of currently selected records                             |
-| `isSelectAll`                  | `boolean` | Whether "select all" is active                                   |
-| `selectedRecords`              | `array`   | The selected record objects                                      |
-| `favoriteRecordIds`            | `array`   | IDs of favorited records                                         |
-| `objectPermissions`            | `object`  | Permissions for the current object type                          |
-| `targetObjectReadPermissions`  | `object`  | Read permissions for the target object                           |
-| `targetObjectWritePermissions` | `object`  | Write permissions for the target object                          |
-| `featureFlags`                 | `object`  | Active feature flags                                             |
-| `objectMetadataItem`           | `object`  | Metadata of the current object type                              |
-| `hasAnySoftDeleteFilterOnView` | `boolean` | Whether the current view has a soft-delete filter                |
+| Değişken                       | Tür       | Açıklama                                                          |
+| ------------------------------ | --------- | ----------------------------------------------------------------- |
+| `pageType`                     | `string`  | Geçerli sayfa türü (örn. `'RecordIndexPage'`, `'RecordShowPage'`) |
+| `isInSidePanel`                | `boolean` | Bileşenin bir yan panelde oluşturulup oluşturulmadığı             |
+| `numberOfSelectedRecords`      | `number`  | Şu anda seçili kayıt sayısı                                       |
+| `isSelectAll`                  | `boolean` | "tümünü seç" seçeneğinin etkin olup olmadığı                      |
+| `selectedRecords`              | `array`   | Seçili kayıt nesneleri                                            |
+| `favoriteRecordIds`            | `array`   | Favorilere eklenen kayıtların ID'leri                             |
+| `objectPermissions`            | `object`  | Geçerli nesne türü için izinler                                   |
+| `targetObjectReadPermissions`  | `object`  | Hedef nesne için okuma izinleri                                   |
+| `targetObjectWritePermissions` | `object`  | Hedef nesne için yazma izinleri                                   |
+| `featureFlags`                 | `object`  | Etkin özellik bayrakları                                          |
+| `objectMetadataItem`           | `object`  | Geçerli nesne türünün üst verileri                                |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | Geçerli görünümde soft-delete filtresi olup olmadığı              |
 
-**Operators** — combine variables into boolean expressions:
+**Operatörler** — değişkenleri boolean ifadelere dönüştürmek için birleştirin:
 
-| Operator                            | Açıklama                                                          |
-| ----------------------------------- | ----------------------------------------------------------------- |
-| `isDefined(value)`                  | `true` if the value is not null/undefined                         |
-| `isNonEmptyString(value)`           | `true` if the value is a non-empty string                         |
-| `includes(array, value)`            | `true` if the array contains the value                            |
-| `includesEvery(array, prop, value)` | `true` if every item's property includes the value                |
-| `every(array, prop)`                | `true` if the property is truthy on every item                    |
-| `everyDefined(array, prop)`         | `true` if the property is defined on every item                   |
-| `everyEquals(array, prop, value)`   | `true` if the property equals the value on every item             |
-| `some(array, prop)`                 | `true` if the property is truthy on at least one item             |
-| `someDefined(array, prop)`          | `true` if the property is defined on at least one item            |
-| `someEquals(array, prop, value)`    | `true` if the property equals the value on at least one item      |
-| `someNonEmptyString(array, prop)`   | `true` if the property is a non-empty string on at least one item |
-| `none(array, prop)`                 | `true` if the property is falsy on every item                     |
-| `noneDefined(array, prop)`          | `true` if the property is undefined on every item                 |
-| `noneEquals(array, prop, value)`    | `true` if the property does not equal the value on any item       |
+| Operatör                            | Açıklama                                                  |
+| ----------------------------------- | --------------------------------------------------------- |
+| `isDefined(value)`                  | Değer null/undefined değilse `true`                       |
+| `isNonEmptyString(value)`           | Değer boş olmayan bir string ise `true`                   |
+| `includes(array, value)`            | Dizi değeri içeriyorsa `true`                             |
+| `includesEvery(array, prop, value)` | Her bir öğenin özelliği değeri içeriyorsa `true`          |
+| `every(array, prop)`                | Özellik her öğede truthy ise `true`                       |
+| `everyDefined(array, prop)`         | Özellik her öğede tanımlıysa `true`                       |
+| `everyEquals(array, prop, value)`   | Özellik her öğede değere eşitse `true`                    |
+| `some(array, prop)`                 | Özellik en az bir öğede truthy ise `true`                 |
+| `someDefined(array, prop)`          | Özellik en az bir öğede tanımlıysa `true`                 |
+| `someEquals(array, prop, value)`    | Özellik en az bir öğede değere eşitse `true`              |
+| `someNonEmptyString(array, prop)`   | Özellik en az bir öğede boş olmayan bir string ise `true` |
+| `none(array, prop)`                 | Özellik her öğede falsy ise `true`                        |
+| `noneDefined(array, prop)`          | Özellik her öğede tanımsızsa `true`                       |
+| `noneEquals(array, prop, value)`    | Özellik hiçbir öğede değere eşit değilse `true`           |
 
-#### Public assets
+#### Genel varlıklar
 
-Front components can access files from the app's `public/` directory using `getPublicAssetUrl`:
+Ön uç bileşenleri, `getPublicAssetUrl` kullanarak uygulamanın `public/` dizinindeki dosyalara erişebilir:
 
 ```tsx
 import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk';
@@ -957,18 +957,18 @@ export default defineFrontComponent({
 });
 ```
 
-See the [public assets section](#accessing-public-assets-with-getpublicasseturl) for details.
+Ayrıntılar için [genel varlıklar bölümüne](#accessing-public-assets-with-getpublicasseturl) bakın.
 
 #### Stil
 
-Front components support multiple styling approaches. You can use:
+Ön uç bileşenleri birden fazla biçimlendirme yaklaşımını destekler. Şunları kullanabilirsiniz:
 
-* **Inline styles** — `style={{ color: 'red' }}`
-* **Twenty UI components** — import from `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar, and more)
-* **Emotion** — CSS-in-JS with `@emotion/react`
-* **Styled-components** — `styled.div` patterns
-* **Tailwind CSS** — utility classes
-* **Any CSS-in-JS library** compatible with React
+* **Satır içi stiller** — `style={{ color: 'red' }}`
+* **Twenty UI bileşenleri** — `twenty-sdk/ui` içinden içe aktarın (Button, Tag, Status, Chip, Avatar ve daha fazlası)
+* **Emotion** — `@emotion/react` ile CSS-in-JS
+* **Styled-components** — `styled.div` kalıpları
+* **Tailwind CSS** — yardımcı sınıflar
+* **React ile uyumlu herhangi bir CSS-in-JS kitaplığı**
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk';
@@ -1022,9 +1022,9 @@ export default defineSkill({
 * `description` (isteğe bağlı), yeteneğin amacı hakkında ek bağlam sağlar.
 
 </Accordion>
-<Accordion title="defineAgent" description="Define AI agents with custom prompts">
+<Accordion title="defineAgent" description="Özel istemlerle yapay zekâ ajanları tanımlayın">
 
-Agents are AI assistants that live inside your workspace. Use `defineAgent()` to create agents with a custom system prompt:
+Ajanlar, çalışma alanınız içinde bulunan yapay zekâ asistanlarıdır. Özel bir sistem istemiyle ajanlar oluşturmak için `defineAgent()` kullanın:
 
 ```ts src/agents/example-agent.ts
 import { defineAgent } from 'twenty-sdk';
@@ -1040,17 +1040,17 @@ export default defineAgent({
 ```
 
 Önemli noktalar:
-* `name` is the unique identifier string for the agent (kebab-case recommended).
-* `label` is the display name shown in the UI.
-* `prompt` is the system prompt that defines the agent's behavior.
-* `description` (optional) provides context about what the agent does.
+* `name`, ajan için benzersiz bir tanımlayıcı dizedir (kebab-case önerilir).
+* `label`, UI'de gösterilen görünen addır.
+* `prompt`, ajanın davranışını tanımlayan sistem istemidir.
+* `description` (isteğe bağlı), ajanın ne yaptığı hakkında bağlam sağlar.
 * `icon` (isteğe bağlı), UI'de gösterilen simgeyi ayarlar.
-* `modelId` (optional) overrides the default AI model used by the agent.
+* `modelId` (isteğe bağlı), ajanın kullandığı varsayılan yapay zekâ modelini geçersiz kılar.
 
 </Accordion>
 <Accordion title="defineView" description="Nesneler için kaydedilmiş görünümler tanımlayın">
 
-Views are saved configurations for how records of an object are displayed — including which fields are visible, their order, and any filters or groups applied. Use `defineView()` to ship pre-configured views with your app:
+Görünümler, bir nesnenin kayıtlarının nasıl görüntüleneceğine ilişkin kaydedilmiş yapılandırmalardır — hangi alanların görünür olacağını, sıralarını ve uygulanan filtreleri veya grupları içerir. Uygulamanızla önceden yapılandırılmış görünümler sunmak için `defineView()` kullanın:
 
 ```ts src/views/example-view.ts
 import { defineView, ViewKey } from 'twenty-sdk';
@@ -1077,16 +1077,16 @@ export default defineView({
 ```
 
 Önemli noktalar:
-* `objectUniversalIdentifier` specifies which object this view applies to.
-* `key` determines the view type (e.g., `ViewKey.INDEX` for the main list view).
-* `fields` controls which columns appear and their order. Each field references a `fieldMetadataUniversalIdentifier`.
-* You can also define `filters`, `filterGroups`, `groups`, and `fieldGroups` for more advanced configurations.
-* `position` controls the ordering when multiple views exist for the same object.
+* `objectUniversalIdentifier`, bu görünümün hangi nesneye uygulanacağını belirtir.
+* `key`, görünüm türünü belirler (ör. ana liste görünümü için `ViewKey.INDEX`).
+* `fields`, hangi sütunların görüneceğini ve sıralarını kontrol eder. Her alan bir `fieldMetadataUniversalIdentifier` öğesine referans verir.
+* Daha gelişmiş yapılandırmalar için `filters`, `filterGroups`, `groups` ve `fieldGroups` de tanımlayabilirsiniz.
+* `position`, aynı nesne için birden fazla görünüm olduğunda sıralamayı kontrol eder.
 
 </Accordion>
 <Accordion title="defineNavigationMenuItem" description="Kenar çubuğu gezinme bağlantılarını tanımlayın">
 
-Navigation menu items add custom entries to the workspace sidebar. Use `defineNavigationMenuItem()` to link to views, external URLs, or objects:
+Gezinme menüsü öğeleri, çalışma alanı kenar çubuğuna özel girişler ekler. Görünümlere, harici URL'lere veya nesnelere bağlanmak için `defineNavigationMenuItem()` kullanın:
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
 import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk';
@@ -1104,15 +1104,15 @@ export default defineNavigationMenuItem({
 ```
 
 Önemli noktalar:
-* `type` determines what the menu item links to: `NavigationMenuItemType.VIEW` for a saved view, or `NavigationMenuItemType.LINK` for an external URL.
-* For view links, set `viewUniversalIdentifier`. For external links, set `link`.
-* `position` controls the ordering in the sidebar.
-* `icon` and `color` (optional) customize the appearance.
+* `type`, menü öğesinin neye bağlanacağını belirler: kaydedilmiş bir görünüm için `NavigationMenuItemType.VIEW` veya harici bir URL için `NavigationMenuItemType.LINK`.
+* Görünüm bağlantıları için `viewUniversalIdentifier` ayarlayın. Harici bağlantılar için `link` ayarlayın.
+* `position`, kenar çubuğundaki sıralamayı kontrol eder.
+* `icon` ve `color` (isteğe bağlı) görünümü özelleştirir.
 
 </Accordion>
-<Accordion title="definePageLayout" description="Define custom page layouts for record views">
+<Accordion title="definePageLayout" description="Kayıt görünümleri için özel sayfa düzenleri tanımlayın">
 
-Page layouts let you customize how a record detail page looks — which tabs appear, what widgets are inside each tab, and how they are arranged. Use `definePageLayout()` to ship custom layouts with your app:
+Sayfa düzenleri, bir kayıt ayrıntı sayfasının nasıl görüneceğini özelleştirmenizi sağlar — hangi sekmelerin görüneceği, her sekmenin içinde hangi widget'ların olacağı ve bunların nasıl düzenleneceği. Uygulamanızla özel düzenler sunmak için `definePageLayout()` kullanın:
 
 ```ts src/page-layouts/example-record-page-layout.ts
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk';
@@ -1149,33 +1149,33 @@ export default definePageLayout({
 ```
 
 Önemli noktalar:
-* `type` is typically `'RECORD_PAGE'` to customize the detail view of a specific object.
-* `objectUniversalIdentifier` specifies which object this layout applies to.
-* Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode` (`CANVAS` for free-form layout).
-* Each `widget` inside a tab can render a front component, a relation list, or other built-in widget types.
-* `position` on tabs controls their order. Use higher values (e.g., 50) to place custom tabs after built-in ones.
+* `type` genellikle belirli bir nesnenin ayrıntı görünümünü özelleştirmek için `'RECORD_PAGE'` olur.
+* `objectUniversalIdentifier`, bu düzenin hangi nesneye uygulanacağını belirtir.
+* Her `tab`, bir `title`, `position` ve `layoutMode` ile sayfanın bir bölümünü tanımlar (serbest biçimli düzen için `CANVAS`).
+* Bir sekmenin içindeki her `widget`, bir ön uç bileşeni, bir ilişki listesi veya diğer yerleşik widget türlerini oluşturabilir.
+* Sekmelerdeki `position`, sıralarını kontrol eder. Özel sekmeleri yerleşik olanların sonrasına yerleştirmek için daha yüksek değerler kullanın (ör. 50).
 
 </Accordion>
 </AccordionGroup>
 
-## Public assets (`public/` folder)
+## Genel varlıklar (`public/` klasörü)
 
-The `public/` folder at the root of your app holds static files — images, icons, fonts, or any other assets your app needs at runtime. These files are automatically included in builds, synced during dev mode, and uploaded to the server.
+Uygulamanızın kökündeki `public/` klasörü, statik dosyaları barındırır — görseller, simgeler, yazı tipleri veya uygulamanızın çalışma zamanında ihtiyaç duyduğu diğer varlıklar. Bu dosyalar derlemelere otomatik olarak dahil edilir, geliştirme modunda senkronize edilir ve sunucuya yüklenir.
 
-Files placed in `public/` are:
+`public/` içine yerleştirilen dosyalar şunlardır:
 
-* **Publicly accessible** — once synced to the server, assets are served at a public URL. No authentication is needed to access them.
-* **Available in front components** — use asset URLs to display images, icons, or any media inside your React components.
-* **Available in logic functions** — reference asset URLs in emails, API responses, or any server-side logic.
-* **Used for marketplace metadata** — the `logoUrl` and `screenshots` fields in `defineApplication()` reference files from this folder (e.g., `public/logo.png`). These are displayed in the marketplace when your app is published.
-* **Auto-synced in dev mode** — when you add, update, or delete a file in `public/`, it is synced to the server automatically. No restart needed.
-* **Included in builds** — `yarn twenty build` bundles all public assets into the distribution output.
+* **Herkese açık olarak erişilebilir** — sunucuya senkronize edildikten sonra varlıklar genel bir URL'den sunulur. Onlara erişmek için kimlik doğrulama gerekmez.
+* **Ön uç bileşenlerinde kullanılabilir** — React bileşenlerinizin içinde görseller, simgeler veya herhangi bir medyayı göstermek için varlık URL'lerini kullanın.
+* **Mantık işlevlerinde kullanılabilir** — e-postalarda, API yanıtlarında veya herhangi bir sunucu tarafı mantıkta varlık URL'lerine referans verin.
+* **Pazar yeri üst verileri için kullanılır** — `defineApplication()` içindeki `logoUrl` ve `screenshots` alanları bu klasördeki dosyalara referans verir (örn. `public/logo.png`). Bunlar, uygulamanız yayımlandığında pazar yerinde görüntülenir.
+* **Geliştirme modunda otomatik senkronize edilir** — `public/` içinde bir dosya eklediğinizde, güncellediğinizde veya sildiğinizde otomatik olarak sunucuya senkronize edilir. Yeniden başlatma gerekmez.
+* **Derlemelere dahil edilir** — `yarn twenty build`, tüm genel varlıkları dağıtım çıktısına paketler.
 
-### Accessing public assets with `getPublicAssetUrl`
+### `getPublicAssetUrl` ile genel varlıklara erişme
 
-Use the `getPublicAssetUrl` helper from `twenty-sdk` to get the full URL of a file in your `public/` directory. It works in both **logic functions** and **front components**.
+`twenty-sdk` içindeki `getPublicAssetUrl` yardımcı işlevini kullanarak `public/` dizininizdeki bir dosyanın tam URL'sini alın. Hem **mantık işlevlerinde** hem de **ön uç bileşenlerinde** çalışır.
 
-**In a logic function:**
+**Bir mantık işlevinde:**
 
 ```ts src/logic-functions/send-invoice.ts
 import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk';
@@ -1200,7 +1200,7 @@ export default defineLogicFunction({
 });
 ```
 
-**In a front component:**
+**Bir ön uç bileşeninde:**
 
 ```tsx src/front-components/company-card.tsx
 import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk';
@@ -1212,19 +1212,19 @@ export default defineFrontComponent(() => {
 });
 ```
 
-The `path` argument is relative to your app's `public/` folder. Both `getPublicAssetUrl('logo.png')` and `getPublicAssetUrl('public/logo.png')` resolve to the same URL — the `public/` prefix is stripped automatically if present.
+`path` bağımsız değişkeni, uygulamanızın `public/` klasörüne göre görelidir. Hem `getPublicAssetUrl('logo.png')` hem de `getPublicAssetUrl('public/logo.png')` aynı URL'ye çözümlenir — `public/` öneki varsa otomatik olarak kaldırılır.
 
-## Using npm packages
+## npm paketlerini kullanma
 
-You can install and use any npm package in your app. Both logic functions and front components are bundled with [esbuild](https://esbuild.github.io/), which inlines all dependencies into the output — no `node_modules` are needed at runtime.
+Uygulamanızda herhangi bir npm paketini yükleyip kullanabilirsiniz. Hem mantık işlevleri hem de ön uç bileşenleri, tüm bağımlılıkları çıktıya satır içi olarak ekleyen [esbuild](https://esbuild.github.io/) ile paketlenir — çalışma zamanında `node_modules` gerekmez.
 
-### Installing a package
+### Bir paketi yükleme
 
 ```bash filename="Terminal"
 yarn add axios
 ```
 
-Then import it in your code:
+Ardından kodunuza içe aktarın:
 
 ```ts src/logic-functions/fetch-data.ts
 import { defineLogicFunction } from 'twenty-sdk';
@@ -1245,7 +1245,7 @@ export default defineLogicFunction({
 });
 ```
 
-The same works for front components:
+Aynısı ön uç bileşenleri için de geçerlidir:
 
 ```tsx src/front-components/chart.tsx
 import { defineFrontComponent } from 'twenty-sdk';
@@ -1262,27 +1262,27 @@ export default defineFrontComponent({
 });
 ```
 
-### How bundling works
+### Paketleme nasıl çalışır
 
-The build step (`yarn twenty dev` or `yarn twenty build`) uses esbuild to produce a single self-contained file per logic function and per front component. All imported packages are inlined into the bundle.
+Derleme adımı (`yarn twenty dev` veya `yarn twenty build`), her mantık işlevi ve her ön uç bileşeni için tek bir bağımsız dosya üretmek üzere esbuild kullanır. Tüm içe aktarılan paketler pakete satır içi eklenir.
 
-**Logic functions** run in a Node.js environment. Node built-in modules (`fs`, `path`, `crypto`, `http`, etc.) are available and do not need to be installed.
+**Mantık işlevleri**, Node.js ortamında çalışır. Node yerleşik modülleri (`fs`, `path`, `crypto`, `http` vb.) kullanılabilir ve kurulmaları gerekmez.
 
-**Front components** run in a Web Worker. Node built-in modules are **not** available — only browser APIs and npm packages that work in a browser environment.
+**Ön uç bileşenleri**, bir Web Worker içinde çalışır. Node'un yerleşik modülleri **kullanılamaz** — yalnızca tarayıcı ortamında çalışan tarayıcı API'leri ve npm paketleri kullanılabilir.
 
-Both environments have `twenty-client-sdk/core` and `twenty-client-sdk/metadata` available as pre-provided modules — these are not bundled but resolved at runtime by the server.
+Her iki ortamda da `twenty-client-sdk/core` ve `twenty-client-sdk/metadata` önceden sağlanmış modüller olarak mevcuttur — bunlar paketlenmez, ancak çalışma zamanında sunucu tarafından çözülür.
 
-## Scaffolding entities with `yarn twenty add`
+## `yarn twenty add` ile varlıklar için iskelet oluşturma
 
-Instead of creating entity files by hand, you can use the interactive scaffolder:
+Varlık dosyalarını elle oluşturmak yerine etkileşimli iskelet oluşturucuyu kullanabilirsiniz:
 
 ```bash filename="Terminal"
 yarn twenty add
 ```
 
-This prompts you to pick an entity type and walks you through the required fields. It generates a ready-to-use file with a stable `universalIdentifier` and the correct `defineEntity()` call.
+Bu, bir varlık türü seçmenizi ister ve gerekli alanlar boyunca size yol gösterir. Kararlı bir `universalIdentifier` ve doğru `defineEntity()` çağrısıyla kullanıma hazır bir dosya üretir.
 
-You can also pass the entity type directly to skip the first prompt:
+İlk istemi atlamak için varlık türünü doğrudan da geçebilirsiniz:
 
 ```bash filename="Terminal"
 yarn twenty add object
@@ -1290,14 +1290,14 @@ yarn twenty add logicFunction
 yarn twenty add frontComponent
 ```
 
-### Available entity types
+### Kullanılabilir varlık türleri
 
-| Varlık türü          | Komut                                | Generated file                        |
+| Varlık türü          | Komut                                | Oluşturulan dosya                     |
 | -------------------- | ------------------------------------ | ------------------------------------- |
 | Nesne                | `yarn twenty add object`             | `src/objects/<name>.ts`               |
 | Alan                 | `yarn twenty add field`              | `src/fields/<name>.ts`                |
-| Logic function       | `yarn twenty add logicFunction`      | `src/logic-functions/<name>.ts`       |
-| Front component      | `yarn twenty add frontComponent`     | `src/front-components/<name>.tsx`     |
+| Mantık işlevi        | `yarn twenty add logicFunction`      | `src/logic-functions/<name>.ts`       |
+| Ön uç bileşeni       | `yarn twenty add frontComponent`     | `src/front-components/<name>.tsx`     |
 | Rol                  | `yarn twenty add role`               | `src/roles/<name>.ts`                 |
 | Beceri               | `yarn twenty add skill`              | `src/skills/<name>.ts`                |
 | Temsilci             | `yarn twenty add agent`              | `src/agents/<name>.ts`                |

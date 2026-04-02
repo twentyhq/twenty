@@ -760,22 +760,22 @@ Clique nele para renderizar o componente inline.
 
 #### Campos de configuração
 
-| Campo                 | Obrigatório | Descrição                                                                           |
-| --------------------- | ----------- | ----------------------------------------------------------------------------------- |
-| `universalIdentifier` | Sim         | ID único e estável para este componente                                             |
-| `component`           | Sim         | Uma função de componente React                                                      |
-| `name`                | Não         | Nome de Exibição                                                                    |
-| `description`         | Não         | Descrição do que o componente faz                                                   |
-| `isHeadless`          | Não         | Set to `true` if the component has no visible UI (see below)                        |
-| `command`             | Não         | Register the component as a command (see [command options](#command-options) below) |
+| Campo                 | Obrigatório | Descrição                                                                                 |
+| --------------------- | ----------- | ----------------------------------------------------------------------------------------- |
+| `universalIdentifier` | Sim         | ID único e estável para este componente                                                   |
+| `component`           | Sim         | Uma função de componente React                                                            |
+| `name`                | Não         | Nome de Exibição                                                                          |
+| `description`         | Não         | Descrição do que o componente faz                                                         |
+| `isHeadless`          | Não         | Defina como `true` se o componente não tiver interface visível (veja abaixo)              |
+| `command`             | Não         | Registre o componente como um comando (veja [opções de comando](#command-options) abaixo) |
 
-#### Placing a front component on a page
+#### Colocando um componente de front-end em uma página
 
-Beyond commands, you can embed a front component directly into a record page by adding it as a widget in a **page layout**. See the [definePageLayout](#definepagelayout) section for details.
+Além de comandos, você pode incorporar um componente de front-end diretamente em uma página de registro adicionando-o como um widget em um **layout de página**. Veja a seção [definePageLayout](#definepagelayout) para obter detalhes.
 
-#### Headless components (`isHeadless: true`)
+#### Componentes sem interface (`isHeadless: true`)
 
-Headless components render no visible UI but still run React logic. This is useful for **effect components** — components that perform side effects when mounted, such as syncing data, starting a timer, listening to events, or triggering a notification.
+Componentes sem interface não renderizam nenhuma UI visível, mas ainda executam a lógica do React. Isso é útil para **componentes de efeito** — componentes que executam efeitos colaterais quando montados, como sincronizar dados, iniciar um temporizador, ouvir eventos ou disparar uma notificação.
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent, useRecordId, enqueueSnackbar } from 'twenty-sdk';
@@ -800,11 +800,11 @@ export default defineFrontComponent({
 });
 ```
 
-Because the component returns `null`, Twenty skips rendering a container for it — no empty space appears in the layout. The component still has access to all hooks and the host communication API.
+Como o componente retorna `null`, o Twenty ignora renderizar um contêiner para ele — nenhum espaço vazio aparece no layout. O componente ainda tem acesso a todos os hooks e à API de comunicação do host.
 
-#### Accessing runtime context
+#### Acessando o contexto de execução
 
-Inside your component, use SDK hooks to access the current user, record, and component instance:
+Dentro do seu componente, use hooks do SDK para acessar o usuário atual, o registro e a instância do componente:
 
 ```tsx src/front-components/record-info.tsx
 import {
@@ -835,47 +835,47 @@ export default defineFrontComponent({
 });
 ```
 
-Available hooks:
+Hooks disponíveis:
 
-| Hook                                          | Returns            | Descrição                                                  |
-| --------------------------------------------- | ------------------ | ---------------------------------------------------------- |
-| `useUserId()`                                 | `string` or `null` | The current user's ID                                      |
-| `useRecordId()`                               | `string` or `null` | The current record's ID (when placed on a record page)     |
-| `useFrontComponentId()`                       | `string`           | This component instance's ID                               |
-| `useFrontComponentExecutionContext(selector)` | varia              | Access the full execution context with a selector function |
+| Hook                                          | Retorna            | Descrição                                                          |
+| --------------------------------------------- | ------------------ | ------------------------------------------------------------------ |
+| `useUserId()`                                 | `string` ou `null` | O ID do usuário atual                                              |
+| `useRecordId()`                               | `string` ou `null` | O ID do registro atual (quando colocado em uma página de registro) |
+| `useFrontComponentId()`                       | `string`           | O ID desta instância do componente                                 |
+| `useFrontComponentExecutionContext(selector)` | varia              | Acesse o contexto de execução completo com uma função seletora     |
 
-#### Host communication API
+#### API de comunicação do host
 
-Front components can trigger navigation, modals, and notifications using functions from `twenty-sdk`:
+Componentes de front-end podem acionar navegação, modais e notificações usando funções de `twenty-sdk`:
 
-| Função                                          | Descrição                     |
-| ----------------------------------------------- | ----------------------------- |
-| `navigate(to, params?, queryParams?, options?)` | Navigate to a page in the app |
-| `openSidePanelPage(params)`                     | Open a side panel             |
-| `closeSidePanel()`                              | Fecha o painel lateral        |
-| `openCommandConfirmationModal(params)`          | Show a confirmation dialog    |
-| `enqueueSnackbar(params)`                       | Show a toast notification     |
-| `unmountFrontComponent()`                       | Unmount the component         |
-| `updateProgress(progress)`                      | Update a progress indicator   |
+| Função                                          | Descrição                             |
+| ----------------------------------------------- | ------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)` | Navegar para uma página no app        |
+| `openSidePanelPage(params)`                     | Abrir um painel lateral               |
+| `closeSidePanel()`                              | Fecha o painel lateral                |
+| `openCommandConfirmationModal(params)`          | Mostrar um diálogo de confirmação     |
+| `enqueueSnackbar(params)`                       | Mostrar uma notificação do tipo toast |
+| `unmountFrontComponent()`                       | Desmontar o componente                |
+| `updateProgress(progress)`                      | Atualizar um indicador de progresso   |
 
-#### Command options
+#### Opções de comando
 
-Adding a `command` field to `defineFrontComponent` registers the component in the command menu (Cmd+K). If `isPinned` is `true`, it also appears as a quick-action button in the top-right corner of the page.
+Adicionar um campo `command` a `defineFrontComponent` registra o componente no menu de comandos (Cmd+K). Se `isPinned` for `true`, ele também aparece como um botão de ação rápida no canto superior direito da página.
 
-| Campo                                   | Obrigatório | Descrição                                                                                                                                                                      |
-| --------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `universalIdentifier`                   | Sim         | Stable unique ID for the command                                                                                                                                               |
-| `label`                                 | Sim         | Full label shown in the command menu (Cmd+K)                                                                                                                                   |
-| `shortLabel`                            | Não         | Shorter label displayed on the pinned quick-action button                                                                                                                      |
-| `icon`                                  | Não         | Icon name displayed next to the label (e.g. `'IconBolt'`, `'IconSend'`)                                                                                                        |
-| `isPinned`                              | Não         | When `true`, shows the command as a quick-action button in the top-right corner of the page                                                                                    |
-| `availabilityType`                      | Não         | Controls where the command appears: `'GLOBAL'` (always available), `'RECORD_SELECTION'` (only when records are selected), or `'FALLBACK'` (shown when no other commands match) |
-| `availabilityObjectUniversalIdentifier` | Não         | Restrict the command to pages of a specific object type (e.g. only on Company records)                                                                                         |
-| `conditionalAvailabilityExpression`     | Não         | A boolean expression to dynamically control whether the command is visible (see below)                                                                                         |
+| Campo                                   | Obrigatório | Descrição                                                                                                                                                                                            |
+| --------------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | Sim         | ID exclusivo e estável para o comando                                                                                                                                                                |
+| `label`                                 | Sim         | Rótulo completo exibido no menu de comandos (Cmd+K)                                                                                                                                                  |
+| `shortLabel`                            | Não         | Rótulo mais curto exibido no botão fixado de ação rápida                                                                                                                                             |
+| `icon`                                  | Não         | Nome do ícone exibido ao lado do rótulo (por exemplo, `'IconBolt'`, `'IconSend'`)                                                                                                                    |
+| `isPinned`                              | Não         | Quando `true`, mostra o comando como um botão de ação rápida no canto superior direito da página                                                                                                     |
+| `availabilityType`                      | Não         | Controla onde o comando aparece: `'GLOBAL'` (sempre disponível), `'RECORD_SELECTION'` (apenas quando registros estão selecionados) ou `'FALLBACK'` (exibido quando nenhum outro comando corresponde) |
+| `availabilityObjectUniversalIdentifier` | Não         | Restringe o comando a páginas de um tipo específico de objeto (por exemplo, somente em registros de Company)                                                                                         |
+| `conditionalAvailabilityExpression`     | Não         | Uma expressão booleana para controlar dinamicamente se o comando é visível (veja abaixo)                                                                                                             |
 
-#### Conditional availability expressions
+#### Expressões de disponibilidade condicional
 
-The `conditionalAvailabilityExpression` field lets you control when a command is visible based on the current page context. Import typed variables and operators from `twenty-sdk` to build expressions:
+O campo `conditionalAvailabilityExpression` permite controlar quando um comando é visível com base no contexto da página atual. Importe variáveis tipadas e operadores de `twenty-sdk` para construir expressões:
 
 ```tsx
 import {
@@ -904,45 +904,45 @@ export default defineFrontComponent({
 });
 ```
 
-**Context variables** — these represent the current state of the page:
+**Variáveis de contexto** — representam o estado atual da página:
 
-| Variável                       | Tipo      | Descrição                                                        |
-| ------------------------------ | --------- | ---------------------------------------------------------------- |
-| `pageType`                     | `string`  | Current page type (e.g. `'RecordIndexPage'`, `'RecordShowPage'`) |
-| `isInSidePanel`                | `boolean` | Whether the component is rendered in a side panel                |
-| `numberOfSelectedRecords`      | `number`  | Number of currently selected records                             |
-| `isSelectAll`                  | `boolean` | Whether "select all" is active                                   |
-| `selectedRecords`              | `array`   | The selected record objects                                      |
-| `favoriteRecordIds`            | `array`   | IDs of favorited records                                         |
-| `objectPermissions`            | `object`  | Permissions for the current object type                          |
-| `targetObjectReadPermissions`  | `object`  | Read permissions for the target object                           |
-| `targetObjectWritePermissions` | `object`  | Write permissions for the target object                          |
-| `featureFlags`                 | `object`  | Active feature flags                                             |
-| `objectMetadataItem`           | `object`  | Metadata of the current object type                              |
-| `hasAnySoftDeleteFilterOnView` | `boolean` | Whether the current view has a soft-delete filter                |
+| Variável                       | Tipo      | Descrição                                                                   |
+| ------------------------------ | --------- | --------------------------------------------------------------------------- |
+| `pageType`                     | `string`  | Tipo de página atual (por exemplo, `'RecordIndexPage'`, `'RecordShowPage'`) |
+| `isInSidePanel`                | `boolean` | Se o componente é renderizado em um painel lateral                          |
+| `numberOfSelectedRecords`      | `number`  | Número de registros atualmente selecionados                                 |
+| `isSelectAll`                  | `boolean` | Se "selecionar tudo" está ativo                                             |
+| `selectedRecords`              | `array`   | Os objetos de registro selecionados                                         |
+| `favoriteRecordIds`            | `array`   | IDs dos registros marcados como favoritos                                   |
+| `objectPermissions`            | `object`  | Permissões para o tipo de objeto atual                                      |
+| `targetObjectReadPermissions`  | `object`  | Permissões de leitura para o objeto alvo                                    |
+| `targetObjectWritePermissions` | `object`  | Permissões de escrita para o objeto alvo                                    |
+| `featureFlags`                 | `object`  | Flags de recurso ativas                                                     |
+| `objectMetadataItem`           | `object`  | Metadados do tipo de objeto atual                                           |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | Se a visualização atual tem um filtro de soft-delete                        |
 
-**Operators** — combine variables into boolean expressions:
+**Operadores** — combine variáveis em expressões booleanas:
 
-| Operator                            | Descrição                                                         |
-| ----------------------------------- | ----------------------------------------------------------------- |
-| `isDefined(value)`                  | `true` if the value is not null/undefined                         |
-| `isNonEmptyString(value)`           | `true` if the value is a non-empty string                         |
-| `includes(array, value)`            | `true` if the array contains the value                            |
-| `includesEvery(array, prop, value)` | `true` if every item's property includes the value                |
-| `every(array, prop)`                | `true` if the property is truthy on every item                    |
-| `everyDefined(array, prop)`         | `true` if the property is defined on every item                   |
-| `everyEquals(array, prop, value)`   | `true` if the property equals the value on every item             |
-| `some(array, prop)`                 | `true` if the property is truthy on at least one item             |
-| `someDefined(array, prop)`          | `true` if the property is defined on at least one item            |
-| `someEquals(array, prop, value)`    | `true` if the property equals the value on at least one item      |
-| `someNonEmptyString(array, prop)`   | `true` if the property is a non-empty string on at least one item |
-| `none(array, prop)`                 | `true` if the property is falsy on every item                     |
-| `noneDefined(array, prop)`          | `true` if the property is undefined on every item                 |
-| `noneEquals(array, prop, value)`    | `true` if the property does not equal the value on any item       |
+| Operador                            | Descrição                                                              |
+| ----------------------------------- | ---------------------------------------------------------------------- |
+| `isDefined(value)`                  | `true` se o valor não for null/undefined                               |
+| `isNonEmptyString(value)`           | `true` se o valor for uma string não vazia                             |
+| `includes(array, value)`            | `true` se o array contiver o valor                                     |
+| `includesEvery(array, prop, value)` | `true` se a propriedade de cada item incluir o valor                   |
+| `every(array, prop)`                | `true` se a propriedade for truthy em cada item                        |
+| `everyDefined(array, prop)`         | `true` se a propriedade estiver definida em cada item                  |
+| `everyEquals(array, prop, value)`   | `true` se a propriedade for igual ao valor em cada item                |
+| `some(array, prop)`                 | `true` se a propriedade for truthy em pelo menos um item               |
+| `someDefined(array, prop)`          | `true` se a propriedade estiver definida em pelo menos um item         |
+| `someEquals(array, prop, value)`    | `true` se a propriedade for igual ao valor em pelo menos um item       |
+| `someNonEmptyString(array, prop)`   | `true` se a propriedade for uma string não vazia em pelo menos um item |
+| `none(array, prop)`                 | `true` se a propriedade for falsy em cada item                         |
+| `noneDefined(array, prop)`          | `true` se a propriedade for undefined em cada item                     |
+| `noneEquals(array, prop, value)`    | `true` se a propriedade não for igual ao valor em nenhum item          |
 
-#### Public assets
+#### Recursos públicos
 
-Front components can access files from the app's `public/` directory using `getPublicAssetUrl`:
+Componentes de front-end podem acessar arquivos do diretório `public/` do app usando `getPublicAssetUrl`:
 
 ```tsx
 import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk';
@@ -956,18 +956,18 @@ export default defineFrontComponent({
 });
 ```
 
-See the [public assets section](#accessing-public-assets-with-getpublicasseturl) for details.
+Veja a [seção de recursos públicos](#accessing-public-assets-with-getpublicasseturl) para obter detalhes.
 
 #### Estilização
 
-Front components support multiple styling approaches. You can use:
+Componentes de front-end suportam várias abordagens de estilização. Você pode usar:
 
-* **Inline styles** — `style={{ color: 'red' }}`
-* **Twenty UI components** — import from `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar, and more)
-* **Emotion** — CSS-in-JS with `@emotion/react`
-* **Styled-components** — `styled.div` patterns
-* **Tailwind CSS** — utility classes
-* **Any CSS-in-JS library** compatible with React
+* **Estilos inline** — `style={{ color: 'red' }}`
+* **Componentes de UI do Twenty** — importe de `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar e mais)
+* **Emotion** — CSS-in-JS com `@emotion/react`
+* **Styled-components** — padrões `styled.div`
+* **Tailwind CSS** — classes utilitárias
+* **Qualquer biblioteca CSS-in-JS** compatível com React
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk';
@@ -1021,9 +1021,9 @@ Pontos-chave:
 * `description` (opcional) fornece contexto adicional sobre a finalidade da habilidade.
 
 </Accordion>
-<Accordion title="defineAgent" description="Define AI agents with custom prompts">
+<Accordion title="defineAgent" description="Defina agentes de IA com prompts personalizados">
 
-Agents are AI assistants that live inside your workspace. Use `defineAgent()` to create agents with a custom system prompt:
+Agentes são assistentes de IA que vivem dentro do seu espaço de trabalho. Use `defineAgent()` para criar agentes com um prompt de sistema personalizado:
 
 ```ts src/agents/example-agent.ts
 import { defineAgent } from 'twenty-sdk';
@@ -1039,17 +1039,17 @@ export default defineAgent({
 ```
 
 Pontos-chave:
-* `name` is the unique identifier string for the agent (kebab-case recommended).
-* `label` is the display name shown in the UI.
-* `prompt` is the system prompt that defines the agent's behavior.
-* `description` (optional) provides context about what the agent does.
+* `name` é a string de identificador exclusiva do agente (recomenda-se kebab-case).
+* `label` é o nome de exibição mostrado na UI.
+* `prompt` é o prompt do sistema que define o comportamento do agente.
+* `description` (opcional) fornece contexto sobre o que o agente faz.
 * `icon` (opcional) define o ícone exibido na UI.
-* `modelId` (optional) overrides the default AI model used by the agent.
+* `modelId` (opcional) substitui o modelo de IA padrão usado pelo agente.
 
 </Accordion>
 <Accordion title="defineView" description="Define visualizações salvas para objetos">
 
-Views are saved configurations for how records of an object are displayed — including which fields are visible, their order, and any filters or groups applied. Use `defineView()` to ship pre-configured views with your app:
+As visualizações são configurações salvas de como os registros de um objeto são exibidos — incluindo quais campos são visíveis, sua ordem e quaisquer filtros ou grupos aplicados. Use `defineView()` para enviar visualizações pré-configuradas com seu app:
 
 ```ts src/views/example-view.ts
 import { defineView, ViewKey } from 'twenty-sdk';
@@ -1076,16 +1076,16 @@ export default defineView({
 ```
 
 Pontos-chave:
-* `objectUniversalIdentifier` specifies which object this view applies to.
-* `key` determines the view type (e.g., `ViewKey.INDEX` for the main list view).
-* `fields` controls which columns appear and their order. Each field references a `fieldMetadataUniversalIdentifier`.
-* You can also define `filters`, `filterGroups`, `groups`, and `fieldGroups` for more advanced configurations.
-* `position` controls the ordering when multiple views exist for the same object.
+* `objectUniversalIdentifier` especifica a qual objeto esta visualização se aplica.
+* `key` determina o tipo de visualização (por exemplo, `ViewKey.INDEX` para a visualização de lista principal).
+* `fields` controla quais colunas aparecem e sua ordem. Cada campo referencia um `fieldMetadataUniversalIdentifier`.
+* Você também pode definir `filters`, `filterGroups`, `groups` e `fieldGroups` para configurações mais avançadas.
+* `position` controla a ordenação quando existem várias visualizações para o mesmo objeto.
 
 </Accordion>
 <Accordion title="defineNavigationMenuItem" description="Define links de navegação da barra lateral">
 
-Navigation menu items add custom entries to the workspace sidebar. Use `defineNavigationMenuItem()` to link to views, external URLs, or objects:
+Os itens do menu de navegação adicionam entradas personalizadas à barra lateral do espaço de trabalho. Use `defineNavigationMenuItem()` para vincular a visualizações, URLs externas ou objetos:
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
 import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk';
@@ -1103,15 +1103,15 @@ export default defineNavigationMenuItem({
 ```
 
 Pontos-chave:
-* `type` determines what the menu item links to: `NavigationMenuItemType.VIEW` for a saved view, or `NavigationMenuItemType.LINK` for an external URL.
-* For view links, set `viewUniversalIdentifier`. For external links, set `link`.
-* `position` controls the ordering in the sidebar.
-* `icon` and `color` (optional) customize the appearance.
+* `type` determina para o que o item de menu aponta: `NavigationMenuItemType.VIEW` para uma visualização salva ou `NavigationMenuItemType.LINK` para uma URL externa.
+* Para links de visualização, defina `viewUniversalIdentifier`. Para links externos, defina `link`.
+* `position` controla a ordenação na barra lateral.
+* `icon` e `color` (opcionais) personalizam a aparência.
 
 </Accordion>
-<Accordion title="definePageLayout" description="Define custom page layouts for record views">
+<Accordion title="definePageLayout" description="Defina layouts de página personalizados para visualizações de registro">
 
-Page layouts let you customize how a record detail page looks — which tabs appear, what widgets are inside each tab, and how they are arranged. Use `definePageLayout()` to ship custom layouts with your app:
+Layouts de página permitem personalizar como uma página de detalhes do registro se parece — quais abas aparecem, quais widgets estão dentro de cada aba e como eles são organizados. Use `definePageLayout()` para enviar layouts personalizados com seu app:
 
 ```ts src/page-layouts/example-record-page-layout.ts
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk';
@@ -1148,33 +1148,33 @@ export default definePageLayout({
 ```
 
 Pontos-chave:
-* `type` is typically `'RECORD_PAGE'` to customize the detail view of a specific object.
-* `objectUniversalIdentifier` specifies which object this layout applies to.
-* Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode` (`CANVAS` for free-form layout).
-* Each `widget` inside a tab can render a front component, a relation list, or other built-in widget types.
-* `position` on tabs controls their order. Use higher values (e.g., 50) to place custom tabs after built-in ones.
+* `type` geralmente é `'RECORD_PAGE'` para personalizar a visualização de detalhes de um objeto específico.
+* `objectUniversalIdentifier` especifica a qual objeto este layout se aplica.
+* Cada `tab` define uma seção da página com um `title`, `position` e `layoutMode` (`CANVAS` para layout livre).
+* Cada `widget` dentro de uma aba pode renderizar um componente de front-end, uma lista de relações ou outros tipos de widget incorporados.
+* `position` nas abas controla sua ordem. Use valores mais altos (por exemplo, 50) para colocar abas personalizadas após as nativas.
 
 </Accordion>
 </AccordionGroup>
 
-## Public assets (`public/` folder)
+## Recursos públicos (pasta `public/`)
 
-The `public/` folder at the root of your app holds static files — images, icons, fonts, or any other assets your app needs at runtime. These files are automatically included in builds, synced during dev mode, and uploaded to the server.
+A pasta `public/` na raiz do seu app contém arquivos estáticos — imagens, ícones, fontes ou quaisquer outros recursos de que seu app precisa em tempo de execução. Esses arquivos são incluídos automaticamente nas compilações, sincronizados durante o modo de desenvolvimento e enviados para o servidor.
 
-Files placed in `public/` are:
+Arquivos colocados em `public/` são:
 
-* **Publicly accessible** — once synced to the server, assets are served at a public URL. No authentication is needed to access them.
-* **Available in front components** — use asset URLs to display images, icons, or any media inside your React components.
-* **Available in logic functions** — reference asset URLs in emails, API responses, or any server-side logic.
-* **Used for marketplace metadata** — the `logoUrl` and `screenshots` fields in `defineApplication()` reference files from this folder (e.g., `public/logo.png`). These are displayed in the marketplace when your app is published.
-* **Auto-synced in dev mode** — when you add, update, or delete a file in `public/`, it is synced to the server automatically. No restart needed.
-* **Included in builds** — `yarn twenty build` bundles all public assets into the distribution output.
+* **Publicamente acessíveis** — depois de sincronizados com o servidor, os recursos são servidos em uma URL pública. Não é necessária autenticação para acessá-los.
+* **Disponíveis em componentes de front-end** — use URLs de recursos para exibir imagens, ícones ou qualquer mídia dentro de seus componentes React.
+* **Disponíveis em funções lógicas** — referencie URLs de recursos em e-mails, respostas de API ou qualquer lógica no lado do servidor.
+* **Usados para metadados do marketplace** — os campos `logoUrl` e `screenshots` em `defineApplication()` referenciam arquivos desta pasta (por exemplo, `public/logo.png`). Eles são exibidos no marketplace quando seu app é publicado.
+* **Sincronizados automaticamente no modo de desenvolvimento** — quando você adiciona, atualiza ou exclui um arquivo em `public/`, ele é sincronizado automaticamente com o servidor. Não é necessário reiniciar.
+* **Incluídos nas compilações** — `yarn twenty build` agrupa todos os recursos públicos na saída de distribuição.
 
-### Accessing public assets with `getPublicAssetUrl`
+### Acessando recursos públicos com `getPublicAssetUrl`
 
-Use the `getPublicAssetUrl` helper from `twenty-sdk` to get the full URL of a file in your `public/` directory. It works in both **logic functions** and **front components**.
+Use o helper `getPublicAssetUrl` de `twenty-sdk` para obter a URL completa de um arquivo no seu diretório `public/`. Funciona tanto em **funções lógicas** quanto em **componentes de front-end**.
 
-**In a logic function:**
+**Em uma função lógica:**
 
 ```ts src/logic-functions/send-invoice.ts
 import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk';
@@ -1199,7 +1199,7 @@ export default defineLogicFunction({
 });
 ```
 
-**In a front component:**
+**Em um componente de front-end:**
 
 ```tsx src/front-components/company-card.tsx
 import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk';
@@ -1211,19 +1211,19 @@ export default defineFrontComponent(() => {
 });
 ```
 
-The `path` argument is relative to your app's `public/` folder. Both `getPublicAssetUrl('logo.png')` and `getPublicAssetUrl('public/logo.png')` resolve to the same URL — the `public/` prefix is stripped automatically if present.
+O argumento `path` é relativo à pasta `public/` do seu app. Tanto `getPublicAssetUrl('logo.png')` quanto `getPublicAssetUrl('public/logo.png')` resolvem para a mesma URL — o prefixo `public/` é removido automaticamente, se presente.
 
-## Using npm packages
+## Usando pacotes npm
 
-You can install and use any npm package in your app. Both logic functions and front components are bundled with [esbuild](https://esbuild.github.io/), which inlines all dependencies into the output — no `node_modules` are needed at runtime.
+Você pode instalar e usar qualquer pacote npm no seu app. Tanto funções lógicas quanto componentes de front-end são empacotados com [esbuild](https://esbuild.github.io/), que incorpora todas as dependências na saída — nenhum `node_modules` é necessário em tempo de execução.
 
-### Installing a package
+### Instalando um pacote
 
 ```bash filename="Terminal"
 yarn add axios
 ```
 
-Then import it in your code:
+Em seguida, importe-o no seu código:
 
 ```ts src/logic-functions/fetch-data.ts
 import { defineLogicFunction } from 'twenty-sdk';
@@ -1244,7 +1244,7 @@ export default defineLogicFunction({
 });
 ```
 
-The same works for front components:
+O mesmo vale para componentes de front-end:
 
 ```tsx src/front-components/chart.tsx
 import { defineFrontComponent } from 'twenty-sdk';
@@ -1261,27 +1261,27 @@ export default defineFrontComponent({
 });
 ```
 
-### How bundling works
+### Como o empacotamento funciona
 
-The build step (`yarn twenty dev` or `yarn twenty build`) uses esbuild to produce a single self-contained file per logic function and per front component. All imported packages are inlined into the bundle.
+A etapa de build (`yarn twenty dev` ou `yarn twenty build`) usa o esbuild para produzir um único arquivo independente por função lógica e por componente de front-end. Todos os pacotes importados são incorporados ao bundle.
 
-**Logic functions** run in a Node.js environment. Node built-in modules (`fs`, `path`, `crypto`, `http`, etc.) are available and do not need to be installed.
+**Funções lógicas** são executadas em um ambiente Node.js. Módulos nativos do Node (`fs`, `path`, `crypto`, `http`, etc.) estão disponíveis e não precisam ser instalados.
 
-**Front components** run in a Web Worker. Node built-in modules are **not** available — only browser APIs and npm packages that work in a browser environment.
+**Componentes de front-end** são executados em um Web Worker. Módulos nativos do Node **não** estão disponíveis — apenas APIs do navegador e pacotes npm que funcionam em um ambiente de navegador.
 
-Both environments have `twenty-client-sdk/core` and `twenty-client-sdk/metadata` available as pre-provided modules — these are not bundled but resolved at runtime by the server.
+Ambos os ambientes têm `twenty-client-sdk/core` e `twenty-client-sdk/metadata` disponíveis como módulos pré-fornecidos — eles não são empacotados, mas resolvidos em tempo de execução pelo servidor.
 
-## Scaffolding entities with `yarn twenty add`
+## Gerando entidades com `yarn twenty add`
 
-Instead of creating entity files by hand, you can use the interactive scaffolder:
+Em vez de criar arquivos de entidade manualmente, você pode usar o scaffolder interativo:
 
 ```bash filename="Terminal"
 yarn twenty add
 ```
 
-This prompts you to pick an entity type and walks you through the required fields. It generates a ready-to-use file with a stable `universalIdentifier` and the correct `defineEntity()` call.
+Isso solicita que você escolha um tipo de entidade e orienta você pelos campos obrigatórios. Ele gera um arquivo pronto para uso com um `universalIdentifier` estável e a chamada correta de `defineEntity()`.
 
-You can also pass the entity type directly to skip the first prompt:
+Você também pode passar o tipo de entidade diretamente para pular o primeiro prompt:
 
 ```bash filename="Terminal"
 yarn twenty add object
@@ -1289,20 +1289,20 @@ yarn twenty add logicFunction
 yarn twenty add frontComponent
 ```
 
-### Available entity types
+### Tipos de entidade disponíveis
 
-| Tipo de entidade     | Comando                              | Generated file                        |
-| -------------------- | ------------------------------------ | ------------------------------------- |
-| Objeto               | `yarn twenty add object`             | `src/objects/<name>.ts`               |
-| Campo                | `yarn twenty add field`              | `src/fields/<name>.ts`                |
-| Logic function       | `yarn twenty add logicFunction`      | `src/logic-functions/<name>.ts`       |
-| Front component      | `yarn twenty add frontComponent`     | `src/front-components/<name>.tsx`     |
-| Função               | `yarn twenty add role`               | `src/roles/<name>.ts`                 |
-| Habilidade           | `yarn twenty add skill`              | `src/skills/<name>.ts`                |
-| Agente               | `yarn twenty add agent`              | `src/agents/<name>.ts`                |
-| Vista                | `yarn twenty add view`               | `src/views/<name>.ts`                 |
-| Navigation menu item | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/<name>.ts` |
-| Page layout          | `yarn twenty add pageLayout`         | `src/page-layouts/<name>.ts`          |
+| Tipo de entidade        | Comando                              | Arquivo gerado                        |
+| ----------------------- | ------------------------------------ | ------------------------------------- |
+| Objeto                  | `yarn twenty add object`             | `src/objects/<name>.ts`               |
+| Campo                   | `yarn twenty add field`              | `src/fields/<name>.ts`                |
+| Função lógica           | `yarn twenty add logicFunction`      | `src/logic-functions/<name>.ts`       |
+| Componente de front-end | `yarn twenty add frontComponent`     | `src/front-components/<name>.tsx`     |
+| Função                  | `yarn twenty add role`               | `src/roles/<name>.ts`                 |
+| Habilidade              | `yarn twenty add skill`              | `src/skills/<name>.ts`                |
+| Agente                  | `yarn twenty add agent`              | `src/agents/<name>.ts`                |
+| Vista                   | `yarn twenty add view`               | `src/views/<name>.ts`                 |
+| Navigation menu item    | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/<name>.ts` |
+| Page layout             | `yarn twenty add pageLayout`         | `src/page-layouts/<name>.ts`          |
 
 ### What the scaffolder generates
 
