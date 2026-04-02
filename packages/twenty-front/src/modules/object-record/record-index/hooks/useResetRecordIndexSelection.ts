@@ -5,12 +5,17 @@ import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType
 import { useResetRecordBoardSelection } from '@/object-record/record-board/hooks/useResetRecordBoardSelection';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useResetRecordIndexSelection = (
   contextStoreInstanceId?: string,
 ) => {
+  const store = useStore();
+
   const { objectMetadataItem } = useContextStoreObjectMetadataItem(
     contextStoreInstanceId,
   );
@@ -20,7 +25,7 @@ export const useResetRecordIndexSelection = (
     contextStoreInstanceId,
   );
 
-  const contextStoreCurrentViewType = useAtomComponentStateValue(
+  const contextStoreCurrentViewTypeAtom = useAtomComponentStateCallbackState(
     contextStoreCurrentViewTypeComponentState,
     contextStoreInstanceId,
   );
@@ -41,10 +46,14 @@ export const useResetRecordIndexSelection = (
   const { resetRecordBoardSelection } =
     useResetRecordBoardSelection(recordIndexId);
 
-  const resetRecordIndexSelection = () => {
+  const resetRecordIndexSelection = useCallback(() => {
     if (!hasValidContext) {
       return;
     }
+
+    const contextStoreCurrentViewType = store.get(
+      contextStoreCurrentViewTypeAtom,
+    );
 
     switch (contextStoreCurrentViewType) {
       case ContextStoreViewType.Table:
@@ -54,7 +63,13 @@ export const useResetRecordIndexSelection = (
         resetRecordBoardSelection();
         break;
     }
-  };
+  }, [
+    hasValidContext,
+    store,
+    contextStoreCurrentViewTypeAtom,
+    resetTableRowSelection,
+    resetRecordBoardSelection,
+  ]);
 
   return { resetRecordIndexSelection };
 };

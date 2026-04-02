@@ -69,9 +69,9 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
   const isNoneSelected = !mainContextStoreHasSelectedRecords;
 
   const handleSelectMode = (mode: 'none' | 'selection') => {
-    if (mode === 'selection') {
+    if (mode === 'selection' && isNoneSelected) {
       selectFirstRecordForEditMode();
-    } else {
+    } else if (mode === 'none') {
       resetRecordIndexSelection();
     }
 
