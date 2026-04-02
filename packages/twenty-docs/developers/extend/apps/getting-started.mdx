@@ -19,7 +19,9 @@ Before you begin, make sure the following is installed on your machine:
 - **Yarn 4** — Comes with Node.js via Corepack. Enable it by running `corepack enable`
 - **Docker** — [Download here](https://www.docker.com/products/docker-desktop/). Required to run a local Twenty instance. Not needed if you already have a Twenty server running.
 
-## Step 1: Scaffold your app
+## Create your first app
+
+### Scaffold your app
 
 Open a terminal and run:
 
@@ -34,15 +36,14 @@ This creates a new folder called `my-twenty-app` with everything you need.
 <Note>
 The scaffolder supports these flags:
 
-- `--minimal` — scaffold only the essential files, no examples (default)
-- `--exhaustive` — scaffold all example entities
+- `--example <name-or-url>` — initialize from an example (name or GitHub URL)
 - `--name <name>` — set the app name (skips the prompt)
 - `--display-name <displayName>` — set the display name (skips the prompt)
 - `--description <description>` — set the description (skips the prompt)
 - `--skip-local-instance` — skip the local server setup prompt
 </Note>
 
-## Step 2: Set up a local Twenty instance
+### Set up a local Twenty instance
 
 The scaffolder will ask:
 
@@ -55,7 +56,7 @@ The scaffolder will ask:
   <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Should start local instance?" />
 </div>
 
-## Step 3: Sign in to your workspace
+### Sign in to your workspace
 
 Next, a browser window will open with the Twenty login page. Sign in with the pre-seeded demo account:
 
@@ -66,7 +67,7 @@ Next, a browser window will open with the Twenty login page. Sign in with the pr
   <img src="/images/docs/developers/extends/apps/login.png" alt="Twenty login screen" />
 </div>
 
-## Step 4: Authorize the app
+### Authorize the app
 
 After you sign in, you will see an authorization screen. This lets your app interact with your workspace.
 
@@ -82,7 +83,7 @@ Once authorized, your terminal will confirm that everything is set up.
   <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="App scaffolded successfully" />
 </div>
 
-## Step 5: Start developing
+### Start developing
 
 Go into your new app folder and start the development server:
 
@@ -107,7 +108,7 @@ Dev mode is only available on Twenty instances running in development (`NODE_ENV
   <img src="/images/docs/developers/extends/apps/dev.jpg" alt="Dev mode terminal output" />
 </div>
 
-## Step 6: See your app in Twenty
+### See your app in Twenty
 
 Open [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer) in your browser. Navigate to **Settings > Apps** and select the **Developer** tab. You should see your app listed under **Your Apps**:
 
