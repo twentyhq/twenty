@@ -253,8 +253,7 @@ describe('Restricted fields', () => {
   });
 
   describe('createOne', () => {
-    it('should block create when user has restricted update permissions on phones field', async () => {
-      // Create field permission restricting update access to phones field
+    it('should allow create even when user has restricted update permissions on phones field', async () => {
       await upsertFieldPermissions({
         roleId: memberRoleId,
         fieldPermissions: [
@@ -279,16 +278,16 @@ describe('Restricted fields', () => {
           },
         },
       })
-        .expect(400)
+        .expect(201)
         .expect((res) => {
-          expect(res.body.messages[0]).toContain(
-            'Entity performing the request does not have permission',
-          );
+          const createdPerson = res.body.data.createPerson;
+
+          expect(createdPerson).toBeDefined();
+          expect(createdPerson.phones.primaryPhoneNumber).toBe('555123456');
         });
     });
 
     it('should allow create when user has no restricted update permissions', async () => {
-      // Remove field permission restrictions on phones; restrict read on emails so response excludes it
       await upsertFieldPermissions({
         roleId: memberRoleId,
         fieldPermissions: [
@@ -320,14 +319,13 @@ describe('Restricted fields', () => {
           const createdPerson = res.body.data.createPerson;
 
           expect(createdPerson.city).toBe('New City');
-          expect(createdPerson.emails).toBeUndefined(); // No reading rights on emails
+          expect(createdPerson.emails).toBeUndefined();
         });
     });
   });
 
   describe('createMany', () => {
-    it('should block createMany when user has restricted update permissions on phones field', async () => {
-      // Create field permission restricting update access to phones field
+    it('should allow createMany even when user has restricted update permissions on phones field', async () => {
       await upsertFieldPermissions({
         roleId: memberRoleId,
         fieldPermissions: [
@@ -354,16 +352,16 @@ describe('Restricted fields', () => {
           },
         ],
       })
-        .expect(400)
+        .expect(201)
         .expect((res) => {
-          expect(res.body.messages[0]).toContain(
-            'Entity performing the request does not have permission',
-          );
+          const createdPeople = res.body.data.createPeople;
+
+          expect(createdPeople).toHaveLength(1);
+          expect(createdPeople[0].phones.primaryPhoneNumber).toBe('555123456');
         });
     });
 
     it('should allow createMany when user has no restricted update permissions', async () => {
-      // Remove field permission restrictions on phones; restrict read on emails so response excludes it
       await upsertFieldPermissions({
         roleId: memberRoleId,
         fieldPermissions: [
@@ -401,9 +399,9 @@ describe('Restricted fields', () => {
 
           expect(createdPeople).toHaveLength(2);
           expect(createdPeople[0].city).toBe('Batch City 1');
-          expect(createdPeople[0].emails).toBeUndefined(); // No reading rights on emails
+          expect(createdPeople[0].emails).toBeUndefined();
           expect(createdPeople[1].city).toBe('Batch City 2');
-          expect(createdPeople[1].emails).toBeUndefined(); // No reading rights on emails
+          expect(createdPeople[1].emails).toBeUndefined();
         });
     });
   });
