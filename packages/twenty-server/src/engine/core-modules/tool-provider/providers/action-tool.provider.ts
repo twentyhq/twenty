@@ -9,7 +9,7 @@ import {
   type ToolProviderContext,
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
-import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import { ToolCategory } from 'twenty-shared/ai';
 import {
   type StaticToolHandler,
   ToolExecutorService,
@@ -159,6 +159,7 @@ export class ActionToolProvider implements ToolProvider {
       name: toolId,
       description: tool.description,
       category: ToolCategory.ACTION,
+      icon: 'IconPlayerPlay',
       ...(includeSchemas && {
         inputSchema: z.toJSONSchema(tool.inputSchema as z.ZodType),
       }),

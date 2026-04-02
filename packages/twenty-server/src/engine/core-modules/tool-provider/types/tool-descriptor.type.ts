@@ -1,4 +1,4 @@
-import { type ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import { type ToolCategory } from 'twenty-shared/ai';
 
 export type DatabaseCrudOperation =
   | 'find'
@@ -26,6 +26,7 @@ export type ToolIndexEntry = {
   executionRef: ToolExecutionRef;
   objectName?: string;
   operation?: string;
+  icon?: string;
 };
 
 // Full descriptor with schema (on-demand)

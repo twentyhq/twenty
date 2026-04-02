@@ -1,9 +1,8 @@
 import { type ToolSet } from 'ai';
-import { type CodeExecutionData } from 'twenty-shared/ai';
+import { type CodeExecutionData, type ToolCategory } from 'twenty-shared/ai';
 import { type ActorMetadata } from 'twenty-shared/types';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import {
   type ToolDescriptor,
   type ToolIndexEntry,

@@ -1,4 +1,13 @@
-export { CLIENT_ICONS, FlexportIcon, ZapierIcon } from "./clients";
+export { CLIENT_ICONS, FlexportIcon, ZapierIcon } from './clients';
+export { ArrowLeftIcon } from './functional/ArrowLeft';
+export { ArrowRightIcon } from './functional/ArrowRight';
+export { ArrowRightUpIcon } from './functional/ArrowRightUp';
+export { CloseIcon } from './functional/Close';
+export { MenuIcon } from './functional/Menu';
+export { MinusIcon } from './functional/Minus';
+export { PlusIcon } from './functional/Plus';
+export { RectangleFillIcon } from './functional/RectangleFill';
+export { RectangleOutlineIcon } from './functional/RectangleOutline';
 export {
   CheckIcon,
   EditIcon,
@@ -7,17 +16,8 @@ export {
   SearchIcon,
   UsersIcon,
   type InformativeIconProps,
-} from "./informative";
-export { ArrowLeftIcon } from "./functional/ArrowLeft";
-export { ArrowRightIcon } from "./functional/ArrowRight";
-export { ArrowRightUpIcon } from "./functional/ArrowRightUp";
-export { CloseIcon } from "./functional/Close";
-export { MenuIcon } from "./functional/Menu";
-export { MinusIcon } from "./functional/Minus";
-export { PlusIcon } from "./functional/Plus";
-export { RectangleFillIcon } from "./functional/RectangleFill";
-export { RectangleOutlineIcon } from "./functional/RectangleOutline";
-export { Logo } from "./logo/Logo";
+} from './informative';
+export { Logo } from './logo/Logo';
 export {
   DiscordIcon,
   GitHubIcon,

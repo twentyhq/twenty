@@ -5179,6 +5179,9 @@ export default {
             "objectName": [
                 1
             ],
+            "icon": [
+                1
+            ],
             "inputSchema": [
                 15
             ],
