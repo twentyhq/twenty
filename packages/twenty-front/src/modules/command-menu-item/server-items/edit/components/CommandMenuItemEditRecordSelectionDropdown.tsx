@@ -1,4 +1,6 @@
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
+import { useSelectFirstRecordForEditMode } from '@/command-menu-item/server-items/edit/hooks/useSelectFirstRecordForEditMode';
+import { useUnselectEditModeRecord } from '@/command-menu-item/server-items/edit/hooks/useUnselectEditModeRecord';
 import { commandMenuItemEditSelectionModeState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditSelectionModeState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -55,10 +57,20 @@ export const CommandMenuItemEditRecordSelectionDropdown = () => {
     commandMenuItemEditSelectionModeState,
   );
 
+  const { selectFirstRecordForEditMode } = useSelectFirstRecordForEditMode();
+  const { unselectEditModeRecord } = useUnselectEditModeRecord();
+
   const isNoneSelected = commandMenuItemEditSelectionMode === 'none';
 
   const handleSelectMode = (mode: 'none' | 'selection') => {
     setCommandMenuItemEditSelectionMode(mode);
+
+    if (mode === 'selection') {
+      selectFirstRecordForEditMode();
+    } else {
+      unselectEditModeRecord();
+    }
+
     closeDropdown(DROPDOWN_ID);
   };
 

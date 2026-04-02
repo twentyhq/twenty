@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconPencil } from 'twenty-ui/display';
 
+import { useSelectFirstRecordForEditMode } from '@/command-menu-item/server-items/edit/hooks/useSelectFirstRecordForEditMode';
 import { commandMenuItemEditSelectionModeState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditSelectionModeState';
 import { commandMenuItemsDraftState } from '@/command-menu-item/server-items/edit/states/commandMenuItemsDraftState';
 import { commandMenuItemsSelector } from '@/command-menu-item/server-items/common/states/commandMenuItemsSelector';
@@ -19,6 +20,7 @@ import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 export const useEnterLayoutCustomizationMode = () => {
   const store = useStore();
   const { navigateSidePanel } = useNavigateSidePanel();
+  const { selectFirstRecordForEditMode } = useSelectFirstRecordForEditMode();
 
   const enterLayoutCustomizationMode = useCallback(() => {
     const isLayoutCustomizationModeAlreadyEnabled = store.get(
@@ -44,6 +46,8 @@ export const useEnterLayoutCustomizationMode = () => {
 
     store.set(isLayoutCustomizationModeEnabledState.atom, true);
 
+    selectFirstRecordForEditMode();
+
     const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);
     const currentSidePanelPage = store.get(sidePanelPageState.atom);
 
@@ -60,7 +64,7 @@ export const useEnterLayoutCustomizationMode = () => {
         resetNavigationStack: true,
       });
     }
-  }, [navigateSidePanel, store]);
+  }, [navigateSidePanel, selectFirstRecordForEditMode, store]);
 
   return { enterLayoutCustomizationMode };
 };
