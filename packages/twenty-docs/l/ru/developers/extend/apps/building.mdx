@@ -1301,32 +1301,32 @@ yarn twenty add frontComponent
 | Навык                | `yarn twenty add skill`              | `src/skills/<name>.ts`                |
 | Агент                | `yarn twenty add agent`              | `src/agents/<name>.ts`                |
 | Представление        | `yarn twenty add view`               | `src/views/<name>.ts`                 |
-| Navigation menu item | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/<name>.ts` |
-| Page layout          | `yarn twenty add pageLayout`         | `src/page-layouts/<name>.ts`          |
+| Пункт меню навигации | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/<name>.ts` |
+| Макет страницы       | `yarn twenty add pageLayout`         | `src/page-layouts/<name>.ts`          |
 
-### What the scaffolder generates
+### Что генерирует скэффолдер
 
-Each entity type has its own template. For example, `yarn twenty add object` asks for:
+У каждого типа сущности есть свой шаблон. Например, `yarn twenty add object` запрашивает:
 
-1. **Name (singular)** — e.g., `invoice`
-2. **Name (plural)** — e.g., `invoices`
-3. **Label (singular)** — auto-populated from the name (e.g., `Invoice`)
-4. **Label (plural)** — auto-populated (e.g., `Invoices`)
-5. **Create a view and navigation item?** — if you answer yes, the scaffolder also generates a matching view and sidebar link for the new object.
+1. **Имя (единственное число)** — например, `invoice`
+2. **Имя (множественное число)** — например, `invoices`
+3. **Метка (единственное число)** — заполняется автоматически из имени (например, `Invoice`)
+4. **Метка (множественное число)** — заполняется автоматически (например, `Invoices`)
+5. **Создать представление и пункт навигации?** — если вы ответите «да», скэффолдер также сгенерирует соответствующее представление и ссылку в боковой панели для нового объекта.
 
-Other entity types have simpler prompts — most only ask for a name.
+У других типов сущностей подсказки проще — в большинстве случаев запрашивается только имя.
 
-The `field` entity type is more detailed: it asks for the field name, label, type (from a list of all available field types like `TEXT`, `NUMBER`, `SELECT`, `RELATION`, etc.), and the target object's `universalIdentifier`.
+Тип сущности `field` более детализирован: он запрашивает имя поля, метку, тип (из списка всех доступных типов полей, таких как `TEXT`, `NUMBER`, `SELECT`, `RELATION` и т. д.), а также `universalIdentifier` целевого объекта.
 
-### Custom output path
+### Пользовательский путь вывода
 
-Use the `--path` flag to place the generated file in a custom location:
+Используйте флаг `--path`, чтобы поместить сгенерированный файл в пользовательское расположение:
 
 ```bash filename="Terminal"
 yarn twenty add logicFunction --path src/custom-folder
 ```
 
-## Typed API clients (twenty-client-sdk)
+## Типизированные клиенты API (twenty-client-sdk)
 
 Пакет `twenty-client-sdk` предоставляет два типизированных клиента GraphQL для взаимодействия с API Twenty из ваших логических функций и фронт-компонентов.
 
@@ -1336,9 +1336,9 @@ yarn twenty add logicFunction --path src/custom-folder
 | `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — конфигурация рабочего пространства, загрузка файлов | Нет, поставляется в готовом виде |
 
 <AccordionGroup>
-<Accordion title="CoreApiClient" description="Query and mutate workspace data (records, objects)">
+<Accordion title="CoreApiClient" description="Запрос и изменение данных рабочего пространства (записи, объекты)">
 
-`CoreApiClient` — основной клиент для запросов и изменений данных рабочего пространства. It is **generated from your workspace schema** during `yarn twenty dev` or `yarn twenty build`, so it is fully typed to match your objects and fields.
+`CoreApiClient` — основной клиент для запросов и изменений данных рабочего пространства. Он **генерируется из схемы вашего рабочего пространства** во время `yarn twenty dev` или `yarn twenty build`, поэтому полностью типизирован в соответствии с вашими объектами и полями.
 
 ```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -1378,12 +1378,12 @@ const { createCompany } = await client.mutation({
 Клиент использует синтаксис selection-set: передайте `true`, чтобы включить поле, используйте `__args` для аргументов и вкладывайте объекты для отношений. Вы получаете полное автодополнение и проверку типов на основе схемы вашего рабочего пространства.
 
 <Note>
-**CoreApiClient is generated at dev/build time.** If you use it without running `yarn twenty dev` or `yarn twenty build` first, it throws an error. The generation happens automatically — the CLI introspects your workspace's GraphQL schema and generates a typed client using `@genql/cli`.
+**CoreApiClient генерируется на этапе dev/build.** Если вы используете его, не запустив сначала `yarn twenty dev` или `yarn twenty build`, он выбросит ошибку. Генерация происходит автоматически — CLI анализирует GraphQL-схему вашего рабочего пространства и создает типизированный клиент с помощью `@genql/cli`.
 </Note>
 
 #### Использование CoreSchema для аннотаций типов
 
-`CoreSchema` provides TypeScript types matching your workspace objects — useful for typing component state or function parameters:
+`CoreSchema` предоставляет типы TypeScript, соответствующие объектам вашего рабочего пространства — это полезно для типизации состояния компонентов или параметров функций:
 
 ```ts
 import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
@@ -1405,7 +1405,7 @@ setCompany(result.company);
 ```
 
 </Accordion>
-<Accordion title="MetadataApiClient" description="Workspace config, applications, and file uploads">
+<Accordion title="MetadataApiClient" description="Конфигурация рабочего пространства, приложения и загрузка файлов">
 
 `MetadataApiClient` поставляется в готовом виде вместе с SDK (генерация не требуется). Он выполняет запросы к эндпоинту `/metadata` для получения конфигурации рабочего пространства, приложений и загрузки файлов.
 
@@ -1461,7 +1461,7 @@ console.log(uploadedFile);
 | ---------------------------------- | -------- | ------------------------------------------------------------------ |
 | `fileBuffer`                       | `Buffer` | Необработанное содержимое файла                                    |
 | `filename`                         | `строка` | Имя файла (используется для хранения и отображения)                |
-| `contentType`                      | `string` | MIME type (defaults to `application/octet-stream` if omitted)      |
+| `contentType`                      | `string` | Тип MIME (по умолчанию `application/octet-stream`, если не указан) |
 | `fieldMetadataUniversalIdentifier` | `string` | Значение `universalIdentifier` для поля типа файла в вашем объекте |
 
 Основные моменты:
@@ -1475,24 +1475,24 @@ console.log(uploadedFile);
   Когда ваш код выполняется на Twenty (логические функции или фронт-компоненты), платформа предоставляет учётные данные в виде переменных окружения:
 
   * `TWENTY_API_URL` — базовый URL API Twenty
-  * `TWENTY_APP_ACCESS_TOKEN` — Short-lived key scoped to your application's default function role
+  * `TWENTY_APP_ACCESS_TOKEN` — краткоживущий ключ, ограниченный ролью функции по умолчанию вашего приложения
 
   Вам не нужно передавать их клиентам — они автоматически читаются из `process.env`. Права ключа API определяются ролью, указанной в `defaultRoleUniversalIdentifier` в вашем `application-config.ts`.
 </Note>
 
-## Testing your app
+## Тестирование вашего приложения
 
-The SDK provides programmatic APIs that let you build, deploy, install, and uninstall your app from test code. Combined with [Vitest](https://vitest.dev/) and the typed API clients, you can write integration tests that verify your app works end-to-end against a real Twenty server.
+SDK предоставляет программные API, которые позволяют собирать, разворачивать, устанавливать и удалять ваше приложение из тестового кода. В сочетании с [Vitest](https://vitest.dev/) и типизированными клиентами API вы можете писать интеграционные тесты, которые проверяют, что ваше приложение работает сквозным образом на реальном сервере Twenty.
 
 ### Настройка
 
-The scaffolded app already includes Vitest. If you set it up manually, install the dependencies:
+Приложение, созданное скэффолдером, уже включает Vitest. Если вы настраиваете его вручную, установите зависимости:
 
 ```bash filename="Terminal"
 yarn add -D vitest vite-tsconfig-paths
 ```
 
-Create a `vitest.config.ts` at the root of your app:
+Создайте `vitest.config.ts` в корне вашего приложения:
 
 ```ts vitest.config.ts
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -1518,7 +1518,7 @@ export default defineConfig({
 });
 ```
 
-Create a setup file that verifies the server is reachable before tests run:
+Создайте файл инициализации, который проверяет доступность сервера перед запуском тестов:
 
 ```ts src/__tests__/setup-test.ts
 import * as fs from 'fs';
@@ -1558,22 +1558,22 @@ beforeAll(async () => {
 });
 ```
 
-### Programmatic SDK APIs
+### Программные API SDK
 
-The `twenty-sdk/cli` subpath exports functions you can call directly from test code:
+Подпуть `twenty-sdk/cli` экспортирует функции, которые можно вызывать напрямую из тестового кода:
 
-| Функция        | Описание                                    |
-| -------------- | ------------------------------------------- |
-| `appBuild`     | Build the app and optionally pack a tarball |
-| `appDeploy`    | Upload a tarball to the server              |
-| `appInstall`   | Install the app on the active workspace     |
-| `appUninstall` | Uninstall the app from the active workspace |
+| Функция        | Описание                                                   |
+| -------------- | ---------------------------------------------------------- |
+| `appBuild`     | Собрать приложение и при необходимости упаковать tar-архив |
+| `appDeploy`    | Загрузить tar-архив на сервер                              |
+| `appInstall`   | Установить приложение в активное рабочее пространство      |
+| `appUninstall` | Удалить приложение из активного рабочего пространства      |
 
-Each function returns a result object with `success: boolean` and either `data` or `error`.
+Каждая функция возвращает объект результата с `success: boolean` и либо `data`, либо `error`.
 
-### Writing an integration test
+### Написание интеграционного теста
 
-Here is a full example that builds, deploys, and installs the app, then verifies it appears in the workspace:
+Полный пример, который собирает, разворачивает и устанавливает приложение, а затем проверяет, что оно появляется в рабочем пространстве:
 
 ```ts src/__tests__/app-install.integration-test.ts
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config';
@@ -1636,37 +1636,37 @@ describe('App installation', () => {
 });
 ```
 
-### Running tests
+### Запуск тестов
 
-Make sure your local Twenty server is running, then:
+Убедитесь, что ваш локальный сервер Twenty запущен, затем:
 
 ```bash filename="Terminal"
 yarn test
 ```
 
-Or in watch mode during development:
+Или в режиме наблюдения во время разработки:
 
 ```bash filename="Terminal"
 yarn test:watch
 ```
 
-### Type checking
+### Проверка типов
 
-You can also run type checking on your app without running tests:
+Вы также можете запустить проверку типов для своего приложения без запуска тестов:
 
 ```bash filename="Terminal"
 yarn twenty typecheck
 ```
 
-This runs `tsc --noEmit` and reports any type errors.
+Это запускает `tsc --noEmit` и сообщает о любых ошибках типов.
 
 ## Справочник по CLI
 
-Beyond `dev`, `build`, `add`, and `typecheck`, the CLI provides commands for executing functions, viewing logs, and managing app installations.
+Помимо `dev`, `build`, `add` и `typecheck`, CLI предоставляет команды для выполнения функций, просмотра логов и управления установками приложений.
 
-### Executing functions (`yarn twenty exec`)
+### Выполнение функций (`yarn twenty exec`)
 
-Run a logic function manually without triggering it via HTTP, cron, or database event:
+Запустите функцию логики вручную, не вызывая ее через HTTP, cron или событие базы данных:
 
 ```bash filename="Terminal"
 # Execute by function name
@@ -1683,9 +1683,9 @@ yarn twenty exec --preInstall
 yarn twenty exec --postInstall
 ```
 
-### Viewing function logs (`yarn twenty logs`)
+### Просмотр логов функций (`yarn twenty logs`)
 
-Stream execution logs for your app's logic functions:
+Потоковая передача журналов выполнения функций логики вашего приложения:
 
 ```bash filename="Terminal"
 # Stream all function logs
@@ -1699,12 +1699,12 @@ yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 <Note>
-This is different from `yarn twenty server logs`, which shows the Docker container logs. `yarn twenty logs` shows your app's function execution logs from the Twenty server.
+Это отличается от `yarn twenty server logs`, который показывает логи контейнера Docker. `yarn twenty logs` показывает журналы выполнения функций вашего приложения с сервера Twenty.
 </Note>
 
-### Uninstalling an app (`yarn twenty uninstall`)
+### Удаление приложения (`yarn twenty uninstall`)
 
-Remove your app from the active workspace:
+Удалите свое приложение из активного рабочего пространства:
 
 ```bash filename="Terminal"
 yarn twenty uninstall

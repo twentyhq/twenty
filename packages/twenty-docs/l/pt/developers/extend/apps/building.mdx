@@ -1291,42 +1291,42 @@ yarn twenty add frontComponent
 
 ### Tipos de entidade disponíveis
 
-| Tipo de entidade        | Comando                              | Arquivo gerado                        |
-| ----------------------- | ------------------------------------ | ------------------------------------- |
-| Objeto                  | `yarn twenty add object`             | `src/objects/<name>.ts`               |
-| Campo                   | `yarn twenty add field`              | `src/fields/<name>.ts`                |
-| Função lógica           | `yarn twenty add logicFunction`      | `src/logic-functions/<name>.ts`       |
-| Componente de front-end | `yarn twenty add frontComponent`     | `src/front-components/<name>.tsx`     |
-| Função                  | `yarn twenty add role`               | `src/roles/<name>.ts`                 |
-| Habilidade              | `yarn twenty add skill`              | `src/skills/<name>.ts`                |
-| Agente                  | `yarn twenty add agent`              | `src/agents/<name>.ts`                |
-| Vista                   | `yarn twenty add view`               | `src/views/<name>.ts`                 |
-| Navigation menu item    | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/<name>.ts` |
-| Page layout             | `yarn twenty add pageLayout`         | `src/page-layouts/<name>.ts`          |
+| Tipo de entidade          | Comando                              | Arquivo gerado                        |
+| ------------------------- | ------------------------------------ | ------------------------------------- |
+| Objeto                    | `yarn twenty add object`             | `src/objects/<name>.ts`               |
+| Campo                     | `yarn twenty add field`              | `src/fields/<name>.ts`                |
+| Função lógica             | `yarn twenty add logicFunction`      | `src/logic-functions/<name>.ts`       |
+| Componente de front-end   | `yarn twenty add frontComponent`     | `src/front-components/<name>.tsx`     |
+| Função                    | `yarn twenty add role`               | `src/roles/<name>.ts`                 |
+| Habilidade                | `yarn twenty add skill`              | `src/skills/<name>.ts`                |
+| Agente                    | `yarn twenty add agent`              | `src/agents/<name>.ts`                |
+| Vista                     | `yarn twenty add view`               | `src/views/<name>.ts`                 |
+| Item do menu de navegação | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/<name>.ts` |
+| Layout da página          | `yarn twenty add pageLayout`         | `src/page-layouts/<name>.ts`          |
 
-### What the scaffolder generates
+### O que o scaffolder gera
 
-Each entity type has its own template. For example, `yarn twenty add object` asks for:
+Cada tipo de entidade tem seu próprio modelo. Por exemplo, `yarn twenty add object` solicita:
 
-1. **Name (singular)** — e.g., `invoice`
-2. **Name (plural)** — e.g., `invoices`
-3. **Label (singular)** — auto-populated from the name (e.g., `Invoice`)
-4. **Label (plural)** — auto-populated (e.g., `Invoices`)
-5. **Create a view and navigation item?** — if you answer yes, the scaffolder also generates a matching view and sidebar link for the new object.
+1. **Nome (singular)** — por exemplo, `invoice`
+2. **Nome (plural)** — por exemplo, `invoices`
+3. **Rótulo (singular)** — preenchido automaticamente a partir do nome (por exemplo, `Invoice`)
+4. **Rótulo (plural)** — preenchido automaticamente (por exemplo, `Invoices`)
+5. **Criar uma view e um item de navegação?** — se você responder sim, o scaffolder também gera uma view correspondente e um link na barra lateral para o novo objeto.
 
-Other entity types have simpler prompts — most only ask for a name.
+Outros tipos de entidade têm prompts mais simples — a maioria pede apenas um nome.
 
-The `field` entity type is more detailed: it asks for the field name, label, type (from a list of all available field types like `TEXT`, `NUMBER`, `SELECT`, `RELATION`, etc.), and the target object's `universalIdentifier`.
+O tipo de entidade `field` é mais detalhado: ele solicita o nome do campo, rótulo, tipo (a partir de uma lista de todos os tipos de campo disponíveis como `TEXT`, `NUMBER`, `SELECT`, `RELATION`, etc.) e o `universalIdentifier` do objeto de destino.
 
-### Custom output path
+### Caminho de saída personalizado
 
-Use the `--path` flag to place the generated file in a custom location:
+Use a opção `--path` para colocar o arquivo gerado em um local personalizado:
 
 ```bash filename="Terminal"
 yarn twenty add logicFunction --path src/custom-folder
 ```
 
-## Typed API clients (twenty-client-sdk)
+## Clientes de API tipados (twenty-client-sdk)
 
 O pacote `twenty-client-sdk` fornece dois clientes GraphQL tipados para interagir com a API do Twenty a partir das suas funções de lógica e componentes de front-end.
 
@@ -1336,9 +1336,9 @@ O pacote `twenty-client-sdk` fornece dois clientes GraphQL tipados para interagi
 | `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — configuração do espaço de trabalho, upload de arquivos | Não, vem pré-compilado     |
 
 <AccordionGroup>
-<Accordion title="CoreApiClient" description="Query and mutate workspace data (records, objects)">
+<Accordion title="CoreApiClient" description="Consultar e modificar dados do espaço de trabalho (registros, objetos)">
 
-`CoreApiClient` é o cliente principal para consultar e mutar dados do espaço de trabalho. It is **generated from your workspace schema** during `yarn twenty dev` or `yarn twenty build`, so it is fully typed to match your objects and fields.
+`CoreApiClient` é o cliente principal para consultar e mutar dados do espaço de trabalho. Ele é **gerado a partir do schema do seu espaço de trabalho** durante `yarn twenty dev` ou `yarn twenty build`, então é totalmente tipado para corresponder aos seus objetos e campos.
 
 ```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -1378,12 +1378,12 @@ const { createCompany } = await client.mutation({
 O cliente usa uma sintaxe de selection-set: passe `true` para incluir um campo, use `__args` para argumentos e aninhe objetos para relações. Você tem preenchimento automático e verificação de tipos completos com base no schema do seu espaço de trabalho.
 
 <Note>
-**CoreApiClient is generated at dev/build time.** If you use it without running `yarn twenty dev` or `yarn twenty build` first, it throws an error. The generation happens automatically — the CLI introspects your workspace's GraphQL schema and generates a typed client using `@genql/cli`.
+**CoreApiClient é gerado em tempo de dev/build.** Se você usá-lo sem executar primeiro `yarn twenty dev` ou `yarn twenty build`, ele lançará um erro. A geração ocorre automaticamente — a CLI analisa o schema GraphQL do seu espaço de trabalho e gera um cliente tipado usando `@genql/cli`.
 </Note>
 
 #### Usando CoreSchema para anotações de tipo
 
-`CoreSchema` provides TypeScript types matching your workspace objects — useful for typing component state or function parameters:
+`CoreSchema` fornece tipos TypeScript que correspondem aos objetos do seu espaço de trabalho — útil para tipar o estado de componentes ou parâmetros de função:
 
 ```ts
 import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
@@ -1405,7 +1405,7 @@ setCompany(result.company);
 ```
 
 </Accordion>
-<Accordion title="MetadataApiClient" description="Workspace config, applications, and file uploads">
+<Accordion title="MetadataApiClient" description="Configuração do espaço de trabalho, aplicativos e upload de arquivos">
 
 `MetadataApiClient` é fornecido pré-compilado com o SDK (não é necessário gerar). Ele consulta o endpoint `/metadata` para configuração do espaço de trabalho, aplicativos e upload de arquivos.
 
@@ -1461,7 +1461,7 @@ console.log(uploadedFile);
 | ---------------------------------- | -------- | -------------------------------------------------------------- |
 | `fileBuffer`                       | `Buffer` | O conteúdo bruto do arquivo                                    |
 | `filename`                         | `string` | O nome do arquivo (usado para armazenamento e exibição)        |
-| `contentType`                      | `string` | MIME type (defaults to `application/octet-stream` if omitted)  |
+| `contentType`                      | `string` | Tipo MIME (padrão para `application/octet-stream` se omitido)  |
 | `fieldMetadataUniversalIdentifier` | `string` | O `universalIdentifier` do campo do tipo arquivo no seu objeto |
 
 Pontos-chave:
@@ -1475,24 +1475,24 @@ Pontos-chave:
   Quando seu código é executado no Twenty (funções de lógica ou componentes de front-end), a plataforma injeta credenciais como variáveis de ambiente:
 
   * `TWENTY_API_URL` — URL base da API do Twenty
-  * `TWENTY_APP_ACCESS_TOKEN` — Short-lived key scoped to your application's default function role
+  * `TWENTY_APP_ACCESS_TOKEN` — Chave de curta duração com escopo para o papel de função padrão do seu aplicativo
 
   Você **não** precisa passá-las para os clientes — eles leem de `process.env` automaticamente. As permissões da chave de API são determinadas pelo papel referenciado em `defaultRoleUniversalIdentifier` no seu `application-config.ts`.
 </Note>
 
-## Testing your app
+## Testando seu aplicativo
 
-The SDK provides programmatic APIs that let you build, deploy, install, and uninstall your app from test code. Combined with [Vitest](https://vitest.dev/) and the typed API clients, you can write integration tests that verify your app works end-to-end against a real Twenty server.
+O SDK fornece APIs programáticas que permitem compilar, implantar, instalar e desinstalar seu aplicativo a partir de código de teste. Em conjunto com [Vitest](https://vitest.dev/) e os clientes de API tipados, você pode escrever testes de integração que verificam que seu aplicativo funciona de ponta a ponta em um servidor Twenty real.
 
 ### Configuração
 
-The scaffolded app already includes Vitest. If you set it up manually, install the dependencies:
+O aplicativo gerado pelo scaffolder já inclui o Vitest. Se você configurá-lo manualmente, instale as dependências:
 
 ```bash filename="Terminal"
 yarn add -D vitest vite-tsconfig-paths
 ```
 
-Create a `vitest.config.ts` at the root of your app:
+Crie um `vitest.config.ts` na raiz do seu aplicativo:
 
 ```ts vitest.config.ts
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -1518,7 +1518,7 @@ export default defineConfig({
 });
 ```
 
-Create a setup file that verifies the server is reachable before tests run:
+Crie um arquivo de configuração que verifique se o servidor está acessível antes da execução dos testes:
 
 ```ts src/__tests__/setup-test.ts
 import * as fs from 'fs';
@@ -1558,22 +1558,22 @@ beforeAll(async () => {
 });
 ```
 
-### Programmatic SDK APIs
+### APIs programáticas do SDK
 
-The `twenty-sdk/cli` subpath exports functions you can call directly from test code:
+O subcaminho `twenty-sdk/cli` exporta funções que você pode chamar diretamente a partir do código de teste:
 
-| Função         | Descrição                                   |
-| -------------- | ------------------------------------------- |
-| `appBuild`     | Build the app and optionally pack a tarball |
-| `appDeploy`    | Upload a tarball to the server              |
-| `appInstall`   | Install the app on the active workspace     |
-| `appUninstall` | Uninstall the app from the active workspace |
+| Função         | Descrição                                                    |
+| -------------- | ------------------------------------------------------------ |
+| `appBuild`     | Compilar o aplicativo e, opcionalmente, empacotar um tarball |
+| `appDeploy`    | Enviar um tarball para o servidor                            |
+| `appInstall`   | Instalar o aplicativo no espaço de trabalho ativo            |
+| `appUninstall` | Desinstalar o aplicativo do espaço de trabalho ativo         |
 
-Each function returns a result object with `success: boolean` and either `data` or `error`.
+Cada função retorna um objeto de resultado com `success: boolean` e `data` ou `error`.
 
-### Writing an integration test
+### Escrevendo um teste de integração
 
-Here is a full example that builds, deploys, and installs the app, then verifies it appears in the workspace:
+Aqui está um exemplo completo que compila, implanta e instala o aplicativo e, em seguida, verifica se ele aparece no espaço de trabalho:
 
 ```ts src/__tests__/app-install.integration-test.ts
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config';
@@ -1636,37 +1636,37 @@ describe('App installation', () => {
 });
 ```
 
-### Running tests
+### Executando testes
 
-Make sure your local Twenty server is running, then:
+Certifique-se de que seu servidor Twenty local esteja em execução e, em seguida:
 
 ```bash filename="Terminal"
 yarn test
 ```
 
-Or in watch mode during development:
+Ou no modo watch durante o desenvolvimento:
 
 ```bash filename="Terminal"
 yarn test:watch
 ```
 
-### Type checking
+### Verificação de tipos
 
-You can also run type checking on your app without running tests:
+Você também pode executar a verificação de tipos no seu aplicativo sem executar os testes:
 
 ```bash filename="Terminal"
 yarn twenty typecheck
 ```
 
-This runs `tsc --noEmit` and reports any type errors.
+Isso executa `tsc --noEmit` e informa quaisquer erros de tipo.
 
 ## Referência da CLI
 
-Beyond `dev`, `build`, `add`, and `typecheck`, the CLI provides commands for executing functions, viewing logs, and managing app installations.
+Além de `dev`, `build`, `add` e `typecheck`, a CLI fornece comandos para executar funções, visualizar logs e gerenciar instalações de aplicativos.
 
-### Executing functions (`yarn twenty exec`)
+### Executando funções (`yarn twenty exec`)
 
-Run a logic function manually without triggering it via HTTP, cron, or database event:
+Execute manualmente uma função de lógica sem acioná-la via HTTP, cron ou evento de banco de dados:
 
 ```bash filename="Terminal"
 # Execute by function name
@@ -1683,9 +1683,9 @@ yarn twenty exec --preInstall
 yarn twenty exec --postInstall
 ```
 
-### Viewing function logs (`yarn twenty logs`)
+### Visualizando logs de funções (`yarn twenty logs`)
 
-Stream execution logs for your app's logic functions:
+Transmita os logs de execução das funções de lógica do seu aplicativo:
 
 ```bash filename="Terminal"
 # Stream all function logs
@@ -1699,12 +1699,12 @@ yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 <Note>
-This is different from `yarn twenty server logs`, which shows the Docker container logs. `yarn twenty logs` shows your app's function execution logs from the Twenty server.
+Isso é diferente de `yarn twenty server logs`, que mostra os logs do contêiner Docker. `yarn twenty logs` mostra os logs de execução de funções do seu aplicativo a partir do servidor Twenty.
 </Note>
 
-### Uninstalling an app (`yarn twenty uninstall`)
+### Desinstalando um aplicativo (`yarn twenty uninstall`)
 
-Remove your app from the active workspace:
+Remova seu aplicativo do espaço de trabalho ativo:
 
 ```bash filename="Terminal"
 yarn twenty uninstall

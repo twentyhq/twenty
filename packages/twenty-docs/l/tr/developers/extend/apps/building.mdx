@@ -1302,34 +1302,34 @@ yarn twenty add frontComponent
 | Beceri               | `yarn twenty add skill`              | `src/skills/<name>.ts`                |
 | Temsilci             | `yarn twenty add agent`              | `src/agents/<name>.ts`                |
 | Görünüm              | `yarn twenty add view`               | `src/views/<name>.ts`                 |
-| Navigation menu item | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/<name>.ts` |
-| Page layout          | `yarn twenty add pageLayout`         | `src/page-layouts/<name>.ts`          |
+| Gezinme menüsü öğesi | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/<name>.ts` |
+| Sayfa düzeni         | `yarn twenty add pageLayout`         | `src/page-layouts/<name>.ts`          |
 
-### What the scaffolder generates
+### İskelet oluşturucunun ürettikleri
 
-Each entity type has its own template. For example, `yarn twenty add object` asks for:
+Her varlık türünün kendi şablonu vardır. Örneğin, `yarn twenty add object` şunları sorar:
 
-1. **Name (singular)** — e.g., `invoice`
-2. **Name (plural)** — e.g., `invoices`
-3. **Label (singular)** — auto-populated from the name (e.g., `Invoice`)
-4. **Label (plural)** — auto-populated (e.g., `Invoices`)
-5. **Create a view and navigation item?** — if you answer yes, the scaffolder also generates a matching view and sidebar link for the new object.
+1. **Ad (tekil)** — ör. `invoice`
+2. **Ad (çoğul)** — ör. `invoices`
+3. **Etiket (tekil)** — adından otomatik doldurulur (ör. `Invoice`)
+4. **Etiket (çoğul)** — otomatik doldurulur (ör. `Invoices`)
+5. **Bir görünüm ve gezinme öğesi oluşturulsun mu?** — evet derseniz, iskelet oluşturucu yeni nesne için eşleşen bir görünüm ve kenar çubuğu bağlantısı da üretir.
 
-Other entity types have simpler prompts — most only ask for a name.
+Diğer varlık türlerinin istemleri daha basittir — çoğu yalnızca bir ad sorar.
 
-The `field` entity type is more detailed: it asks for the field name, label, type (from a list of all available field types like `TEXT`, `NUMBER`, `SELECT`, `RELATION`, etc.), and the target object's `universalIdentifier`.
+`field` varlık türü daha ayrıntılıdır: alan adını, etiketi, türü (`TEXT`, `NUMBER`, `SELECT`, `RELATION` vb. gibi mevcut tüm alan türlerinin listesinden) ve hedef nesnenin `universalIdentifier` değerini sorar.
 
-### Custom output path
+### Özel çıktı yolu
 
-Use the `--path` flag to place the generated file in a custom location:
+`--path` bayrağını kullanarak oluşturulan dosyayı özel bir konuma yerleştirin:
 
 ```bash filename="Terminal"
 yarn twenty add logicFunction --path src/custom-folder
 ```
 
-## Typed API clients (twenty-client-sdk)
+## Tipli API istemcileri (twenty-client-sdk)
 
-The `twenty-client-sdk` package provides two typed GraphQL clients for interacting with the Twenty API from your logic functions and front components.
+`twenty-client-sdk` paketi, mantık fonksiyonlarınızdan ve ön uç bileşenlerinizden Twenty API ile etkileşim kurmak için tip tanımlı iki GraphQL istemcisi sağlar.
 
 | İstemci             | İçe Aktar                    | Uç nokta                                                      | Oluşturuldu mu?                         |
 | ------------------- | ---------------------------- | ------------------------------------------------------------- | --------------------------------------- |
@@ -1337,9 +1337,9 @@ The `twenty-client-sdk` package provides two typed GraphQL clients for interacti
 | `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — çalışma alanı yapılandırması, dosya yüklemeleri | Hayır, önceden hazırlanmış olarak gelir |
 
 <AccordionGroup>
-<Accordion title="CoreApiClient" description="Query and mutate workspace data (records, objects)">
+<Accordion title="CoreApiClient" description="Çalışma alanı verilerini sorgulayın ve değiştirin (kayıtlar, nesneler)">
 
-`CoreApiClient`, çalışma alanı verilerini sorgulamak ve değiştirmek için ana istemcidir. It is **generated from your workspace schema** during `yarn twenty dev` or `yarn twenty build`, so it is fully typed to match your objects and fields.
+`CoreApiClient`, çalışma alanı verilerini sorgulamak ve değiştirmek için ana istemcidir. `yarn twenty dev` veya `yarn twenty build` sırasında **çalışma alanı şemanızdan oluşturulur**, bu nedenle nesnelerinize ve alanlarınıza uyacak şekilde tamamen tiplenmiştir.
 
 ```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -1379,12 +1379,12 @@ const { createCompany } = await client.mutation({
 İstemci bir seçim kümesi sözdizimi kullanır: Bir alanı dahil etmek için `true` geçin, bağımsız değişkenler için `__args` kullanın ve ilişkiler için nesneleri iç içe yerleştirin. Çalışma alanı şemanıza göre tam otomatik tamamlama ve tip denetimi elde edersiniz.
 
 <Note>
-**CoreApiClient is generated at dev/build time.** If you use it without running `yarn twenty dev` or `yarn twenty build` first, it throws an error. The generation happens automatically — the CLI introspects your workspace's GraphQL schema and generates a typed client using `@genql/cli`.
+**CoreApiClient geliştirme/derleme zamanında oluşturulur.** Bunu önce `yarn twenty dev` veya `yarn twenty build` çalıştırmadan kullanırsanız, bir hata verir. Oluşturma otomatik olarak gerçekleşir — CLI, çalışma alanınızın GraphQL şemasını inceler ve `@genql/cli` kullanarak tiplenmiş bir istemci üretir.
 </Note>
 
 #### Tür açıklamaları için CoreSchema'yı kullanma
 
-`CoreSchema` provides TypeScript types matching your workspace objects — useful for typing component state or function parameters:
+`CoreSchema`, çalışma alanı nesnelerinize uyan TypeScript türleri sağlar — bileşen durumunu veya işlev parametrelerini tiplemek için kullanışlıdır:
 
 ```ts
 import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
@@ -1406,7 +1406,7 @@ setCompany(result.company);
 ```
 
 </Accordion>
-<Accordion title="MetadataApiClient" description="Workspace config, applications, and file uploads">
+<Accordion title="MetadataApiClient" description="Çalışma alanı yapılandırması, uygulamalar ve dosya yüklemeleri">
 
 `MetadataApiClient`, SDK ile birlikte önceden hazırlanmış olarak gelir (oluşturma gerektirmez). Çalışma alanı yapılandırması, uygulamalar ve dosya yüklemeleri için `/metadata` uç noktasını sorgular.
 
@@ -1458,12 +1458,12 @@ console.log(uploadedFile);
 // { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
 ```
 
-| Parametre                          | Tür      | Açıklama                                                      |
-| ---------------------------------- | -------- | ------------------------------------------------------------- |
-| `fileBuffer`                       | `Buffer` | Dosyanın ham içeriği                                          |
-| `filename`                         | `string` | Dosyanın adı (depolama ve görüntüleme için kullanılır)        |
-| `contentType`                      | `string` | MIME type (defaults to `application/octet-stream` if omitted) |
-| `fieldMetadataUniversalIdentifier` | `string` | Nesnenizdeki dosya türü alanının `universalIdentifier` değeri |
+| Parametre                          | Tür      | Açıklama                                                                          |
+| ---------------------------------- | -------- | --------------------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | Dosyanın ham içeriği                                                              |
+| `filename`                         | `string` | Dosyanın adı (depolama ve görüntüleme için kullanılır)                            |
+| `contentType`                      | `string` | MIME türü (belirtilmezse varsayılan olarak `application/octet-stream` kullanılır) |
+| `fieldMetadataUniversalIdentifier` | `string` | Nesnenizdeki dosya türü alanının `universalIdentifier` değeri                     |
 
 Önemli noktalar:
 * Alan için `universalIdentifier` kullanır (çalışma alanına özgü kimliği değil), böylece yükleme kodunuz uygulamanızın yüklü olduğu herhangi bir çalışma alanında çalışır.
@@ -1476,24 +1476,24 @@ console.log(uploadedFile);
   Kodunuz Twenty üzerinde çalıştığında (mantık işlevleri veya ön uç bileşenleri), platform kimlik bilgilerini ortam değişkenleri olarak enjekte eder:
 
   * `TWENTY_API_URL` — Twenty API'nin temel URL'si
-  * `TWENTY_APP_ACCESS_TOKEN` — Short-lived key scoped to your application's default function role
+  * `TWENTY_APP_ACCESS_TOKEN` — Uygulamanızın varsayılan fonksiyon rolü kapsamında kısa ömürlü anahtar
 
   Bunları istemcilere iletmeniz gerekmez — otomatik olarak `process.env`'den okurlar. API anahtarının izinleri, `application-config.ts` içinde `defaultRoleUniversalIdentifier` ile referans verilen role göre belirlenir.
 </Note>
 
-## Testing your app
+## Uygulamanızı test etme
 
-The SDK provides programmatic APIs that let you build, deploy, install, and uninstall your app from test code. Combined with [Vitest](https://vitest.dev/) and the typed API clients, you can write integration tests that verify your app works end-to-end against a real Twenty server.
+SDK, test kodundan uygulamanızı derlemenize, dağıtmanıza, yüklemenize ve kaldırmanıza olanak tanıyan programatik API'ler sağlar. Tiplenmiş API istemcileriyle birlikte [Vitest](https://vitest.dev/) kullanarak, uygulamanızın gerçek bir Twenty sunucusunda uçtan uca çalıştığını doğrulayan entegrasyon testleri yazabilirsiniz.
 
 ### Kurulum
 
-The scaffolded app already includes Vitest. If you set it up manually, install the dependencies:
+İskelet aracıyla oluşturulan uygulama zaten Vitest'i içerir. Manuel kurulum yaparsanız, bağımlılıkları yükleyin:
 
 ```bash filename="Terminal"
 yarn add -D vitest vite-tsconfig-paths
 ```
 
-Create a `vitest.config.ts` at the root of your app:
+Uygulamanızın kök dizininde bir `vitest.config.ts` oluşturun:
 
 ```ts vitest.config.ts
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -1519,7 +1519,7 @@ export default defineConfig({
 });
 ```
 
-Create a setup file that verifies the server is reachable before tests run:
+Testler çalışmadan önce sunucuya erişilebildiğini doğrulayan bir kurulum dosyası oluşturun:
 
 ```ts src/__tests__/setup-test.ts
 import * as fs from 'fs';
@@ -1559,22 +1559,22 @@ beforeAll(async () => {
 });
 ```
 
-### Programmatic SDK APIs
+### Programatik SDK API'leri
 
-The `twenty-sdk/cli` subpath exports functions you can call directly from test code:
+`twenty-sdk/cli` alt yolu, test kodundan doğrudan çağırabileceğiniz fonksiyonları dışa aktarır:
 
-| Fonksiyon      | Açıklama                                    |
-| -------------- | ------------------------------------------- |
-| `appBuild`     | Build the app and optionally pack a tarball |
-| `appDeploy`    | Upload a tarball to the server              |
-| `appInstall`   | Install the app on the active workspace     |
-| `appUninstall` | Uninstall the app from the active workspace |
+| Fonksiyon      | Açıklama                                                          |
+| -------------- | ----------------------------------------------------------------- |
+| `appBuild`     | Uygulamayı derleyin ve isteğe bağlı olarak bir tarball paketleyin |
+| `appDeploy`    | Bir tarball'ı sunucuya yükleyin                                   |
+| `appInstall`   | Uygulamayı etkin çalışma alanına yükleyin                         |
+| `appUninstall` | Uygulamayı etkin çalışma alanından kaldırın                       |
 
-Each function returns a result object with `success: boolean` and either `data` or `error`.
+Her fonksiyon, `success: boolean` ile birlikte `data` veya `error` içeren bir sonuç nesnesi döndürür.
 
-### Writing an integration test
+### Bir entegrasyon testi yazma
 
-Here is a full example that builds, deploys, and installs the app, then verifies it appears in the workspace:
+İşte uygulamayı derleyen, dağıtan ve yükleyen; ardından çalışma alanında göründüğünü doğrulayan tam bir örnek:
 
 ```ts src/__tests__/app-install.integration-test.ts
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config';
@@ -1637,37 +1637,37 @@ describe('App installation', () => {
 });
 ```
 
-### Running tests
+### Testleri çalıştırma
 
-Make sure your local Twenty server is running, then:
+Yerel Twenty sunucunuzun çalıştığından emin olun, ardından:
 
 ```bash filename="Terminal"
 yarn test
 ```
 
-Or in watch mode during development:
+Veya geliştirme sırasında izleme modunda:
 
 ```bash filename="Terminal"
 yarn test:watch
 ```
 
-### Type checking
+### Tip denetimi
 
-You can also run type checking on your app without running tests:
+Ayrıca testleri çalıştırmadan uygulamanızda tip denetimi çalıştırabilirsiniz:
 
 ```bash filename="Terminal"
 yarn twenty typecheck
 ```
 
-This runs `tsc --noEmit` and reports any type errors.
+Bu, `tsc --noEmit` komutunu çalıştırır ve tüm tip hatalarını raporlar.
 
 ## CLI başvurusu
 
-Beyond `dev`, `build`, `add`, and `typecheck`, the CLI provides commands for executing functions, viewing logs, and managing app installations.
+`dev`, `build`, `add` ve `typecheck` dışında CLI, fonksiyonları çalıştırma, günlükleri görüntüleme ve uygulama kurulumlarını yönetme komutları sağlar.
 
-### Executing functions (`yarn twenty exec`)
+### Fonksiyonları çalıştırma (`yarn twenty exec`)
 
-Run a logic function manually without triggering it via HTTP, cron, or database event:
+Bir mantık fonksiyonunu HTTP, cron veya veritabanı olayıyla tetiklemeden manuel olarak çalıştırın:
 
 ```bash filename="Terminal"
 # Execute by function name
@@ -1684,9 +1684,9 @@ yarn twenty exec --preInstall
 yarn twenty exec --postInstall
 ```
 
-### Viewing function logs (`yarn twenty logs`)
+### Fonksiyon günlüklerini görüntüleme (`yarn twenty logs`)
 
-Stream execution logs for your app's logic functions:
+Uygulamanızın mantık fonksiyonlarının yürütme günlüklerini akış olarak alın:
 
 ```bash filename="Terminal"
 # Stream all function logs
@@ -1700,12 +1700,12 @@ yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 <Note>
-This is different from `yarn twenty server logs`, which shows the Docker container logs. `yarn twenty logs` shows your app's function execution logs from the Twenty server.
+Bu, Docker konteyner günlüklerini gösteren `yarn twenty server logs` komutundan farklıdır. `yarn twenty logs`, uygulamanızın fonksiyon yürütme günlüklerini Twenty sunucusundan gösterir.
 </Note>
 
-### Uninstalling an app (`yarn twenty uninstall`)
+### Bir uygulamayı kaldırma (`yarn twenty uninstall`)
 
-Remove your app from the active workspace:
+Uygulamanızı etkin çalışma alanından kaldırın:
 
 ```bash filename="Terminal"
 yarn twenty uninstall
