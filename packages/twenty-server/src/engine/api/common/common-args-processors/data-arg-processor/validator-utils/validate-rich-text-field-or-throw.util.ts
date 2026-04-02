@@ -2,7 +2,6 @@ import { inspect } from 'util';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString, isNull } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
 
 import { validateRawJsonFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util';
 import { validateTextFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util';
@@ -11,67 +10,10 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
-const SAFE_URL_PROTOCOLS = ['http:', 'https:', 'mailto:', 'tel:'];
+const DANGEROUS_URL_PATTERN = /(javascript|vbscript):/i;
 
-const isUnsafeUrl = (url: string): boolean => {
-  if (url.startsWith('/')) {
-    return false;
-  }
-
-  try {
-    const parsed = new URL(url);
-
-    return !SAFE_URL_PROTOCOLS.includes(parsed.protocol);
-  } catch {
-    return true;
-  }
-};
-
-const validateBlocknoteBlockUrlsOrThrow = (
-  blocks: unknown[],
-  fieldName: string,
-): void => {
-  for (const block of blocks) {
-    if (typeof block !== 'object' || block === null) {
-      continue;
-    }
-
-    const blockRecord = block as Record<string, unknown>;
-    const props = blockRecord.props as Record<string, unknown> | undefined;
-
-    if (isDefined(props?.url) && typeof props.url === 'string') {
-      if (isUnsafeUrl(props.url)) {
-        throw new CommonQueryRunnerException(
-          `Unsafe URL protocol in block for field "${fieldName}"`,
-          CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
-          { userFriendlyMessage: msg`URL contains an unsafe protocol.` },
-        );
-      }
-    }
-
-    // Inline content can contain links with href
-    if (Array.isArray(blockRecord.content)) {
-      for (const inlineContent of blockRecord.content) {
-        if (
-          typeof inlineContent === 'object' &&
-          isDefined(inlineContent) &&
-          inlineContent.type === 'link' &&
-          typeof inlineContent.href === 'string' &&
-          isUnsafeUrl(inlineContent.href)
-        ) {
-          throw new CommonQueryRunnerException(
-            `Unsafe URL protocol in inline link for field "${fieldName}"`,
-            CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
-            { userFriendlyMessage: msg`Link contains an unsafe protocol.` },
-          );
-        }
-      }
-    }
-
-    if (Array.isArray(blockRecord.children)) {
-      validateBlocknoteBlockUrlsOrThrow(blockRecord.children, fieldName);
-    }
-  }
+const hasDangerousUrl = (json: string): boolean => {
+  return DANGEROUS_URL_PATTERN.test(json);
 };
 
 const validateBlocknoteFieldOrThrow = (
@@ -102,7 +44,15 @@ const validateBlocknoteFieldOrThrow = (
     );
   }
 
-  validateBlocknoteBlockUrlsOrThrow(parsed, fieldName);
+  if (hasDangerousUrl(textValue)) {
+    throw new CommonQueryRunnerException(
+      `Dangerous URL protocol in blocknote content for field "${fieldName}"`,
+      CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+      {
+        userFriendlyMessage: msg`Content contains a URL with a dangerous protocol.`,
+      },
+    );
+  }
 
   return textValue;
 };
