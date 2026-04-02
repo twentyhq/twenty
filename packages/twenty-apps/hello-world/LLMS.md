@@ -1,6 +1,6 @@
 ## Base documentation
 
-- Documentation: https://docs.twenty.com/developers/extend/capabilities/apps
+- Documentation: https://docs.twenty.com/developers/extend/apps/getting-started
 - Rich app example: https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/fixtures/postcard-app
 
 ## UUID requirement
