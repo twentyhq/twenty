@@ -4,24 +4,24 @@ description: 使用 Twenty SDK 定义对象、逻辑函数、前端组件等。
 ---
 
 <Warning>
-  Apps are currently in alpha. The feature works but is still evolving.
+  应用目前处于 Alpha 阶段。 该功能可用，但仍在演进中。
 </Warning>
 
-The `twenty-sdk` package provides typed building blocks to create your app. This page covers every entity type and API client available in the SDK.
+`twenty-sdk` 包提供类型化的构建块，用于创建你的应用。 本页涵盖 SDK 中可用的所有实体类型和 API 客户端。
 
-## DefineEntity functions
+## DefineEntity 函数
 
-The SDK provides functions to define your app entities. You must use `export default defineEntity({...})` for the SDK to detect your entities. 这些函数会在构建时校验你的配置，并提供 IDE 自动补全和类型安全。
+SDK 提供用于定义你的应用实体的函数。 你必须使用 `export default defineEntity({...})`，这样 SDK 才能检测到你的实体。 这些函数会在构建时校验你的配置，并提供 IDE 自动补全和类型安全。
 
 <Note>
-  **File organization is up to you.**
-  Entity detection is AST-based — the SDK finds `export default defineEntity(...)` calls regardless of where the file lives. Grouping files by type (e.g., `logic-functions/`, `roles/`) is just a convention, not a requirement.
+  **文件组织由你决定。**
+  实体检测基于 AST——无论文件位于何处，SDK 都能找到 `export default defineEntity(...)` 的调用。 按类型对文件分组（例如 `logic-functions/`、`roles/`）只是代码组织的一种约定，并非必需。
 </Note>
 
 <AccordionGroup>
 <Accordion title="defineRole" description="配置角色权限和对象访问">
 
-Roles encapsulate permissions on your workspace's objects and actions.
+角色封装了对你的工作空间对象与操作的权限。
 
 ```ts restricted-company-role.ts
 import {
@@ -69,12 +69,12 @@ export default defineRole({
 </Accordion>
 <Accordion title="defineApplication" description="配置应用元数据（必需，每个应用一个）">
 
-Every app must have exactly one `defineApplication` call that describes:
+每个应用必须且只能有一个 `defineApplication` 调用，用于描述：
 
-* **Identity**: identifiers, display name, and description.
-* **Permissions**: which role its functions and front components use.
-* **(Optional) Variables**: key–value pairs exposed to your functions as environment variables.
-* **(Optional) Pre-install / post-install functions**: logic functions that run before or after installation.
+* **应用的身份**：标识符、显示名称和描述。
+* **权限**：其函数和前端组件所使用的角色。
+* **（可选）变量**：以环境变量形式提供给函数的键值对。
+* **（可选）安装前/安装后函数**：在安装之前或之后运行的逻辑函数。
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
@@ -98,21 +98,21 @@ export default defineApplication({
 ```
 
 备注:
-* `universalIdentifier` fields are deterministic IDs you own. Generate them once and keep them stable across syncs.
-* `applicationVariables` become environment variables for your functions and front components (e.g., `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
-* `defaultRoleUniversalIdentifier` must reference a role defined with `defineRole()` (see above).
-* Pre-install and post-install functions are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
+* `universalIdentifier` 字段是你拥有的确定性 ID。 只需生成一次，并在多次同步过程中保持稳定不变。
+* `applicationVariables` 会变成你的函数和前端组件可用的环境变量（例如，`DEFAULT_RECIPIENT_NAME` 可作为 `process.env.DEFAULT_RECIPIENT_NAME` 使用）。
+* `defaultRoleUniversalIdentifier` 必须引用使用 `defineRole()` 定义的角色（见上文）。
+* 在构建清单时会自动检测安装前/安装后函数——无需在 `defineApplication()` 中引用它们。
 
 #### 应用市场元数据
 
-If you plan to [publish your app](/l/zh/developers/extend/apps/publishing), these optional fields control how it appears in the marketplace:
+如果你计划[发布你的应用](/l/zh/developers/extend/apps/publishing)，这些可选字段将控制你的应用在应用市场中的展示：
 
 | 字段                 | 描述                                                             |
 | ------------------ | -------------------------------------------------------------- |
 | `作者`               | 作者或公司名称                                                        |
 | `类别`               | 用于应用市场筛选的应用类别                                                  |
-| `logoUrl`          | Path to your app logo (e.g., `public/logo.png`)                |
-| `screenshots`      | Array of screenshot paths (e.g., `public/screenshot-1.png`)    |
+| `logoUrl`          | 应用徽标的路径（例如 `public/logo.png`）                                  |
+| `screenshots`      | 截图路径数组（例如 `public/screenshot-1.png`）                           |
 | `aboutDescription` | 用于“关于”选项卡的更长的 Markdown 描述。 如果省略，市场将使用该软件包在 npm 上的 `README.md`。 |
 | `websiteUrl`       | 你的网站链接                                                         |
 | `termsUrl`         | 服务条款链接                                                         |
@@ -121,15 +121,15 @@ If you plan to [publish your app](/l/zh/developers/extend/apps/publishing), thes
 
 #### 角色和权限
 
-The `defaultRoleUniversalIdentifier` in `application-config.ts` designates the default role used by your app's logic functions and front components. See `defineRole` above for details.
+`application-config.ts` 中的 `defaultRoleUniversalIdentifier` 字段指定你的应用的逻辑函数和前端组件所使用的默认角色。 详见上文的 `defineRole`。
 
-* The runtime token injected as `TWENTY_APP_ACCESS_TOKEN` is derived from this role.
-* The typed client is restricted to the permissions granted to that role.
-* Follow least-privilege: create a dedicated role with only the permissions your functions need.
+* 作为 `TWENTY_APP_ACCESS_TOKEN` 注入的运行时令牌来源于该角色。
+* 类型化客户端将受限于该角色授予的权限。
+* 遵循最小权限原则：创建一个仅包含你的函数所需权限的专用角色。
 
-##### Default function role
+##### 默认函数角色
 
-When you scaffold a new app, the CLI creates a default role file:
+当你使用脚手架创建新应用时，CLI 会创建一个默认角色文件：
 
 ```ts src/roles/default-role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
@@ -155,16 +155,16 @@ export default defineRole({
 });
 ```
 
-This role's `universalIdentifier` is referenced in `application-config.ts` as `defaultRoleUniversalIdentifier`:
+该角色的 `universalIdentifier` 会在 `application-config.ts` 中被引用为 `defaultRoleUniversalIdentifier`：
 
-* **\*.role.ts** defines what the role can do.
+* **\*.role.ts** 定义该角色可以执行的操作。
 * **application-config.ts** 指向该角色，使你的函数继承其权限。
 
 备注:
 * 从脚手架生成的角色开始，然后按照最小权限原则逐步收紧权限。
-* Replace `objectPermissions` and `fieldPermissions` with the objects and fields your functions actually need.
-* `permissionFlags` 控制对平台级能力的访问。 Keep them minimal.
-* See a working example: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+* 将 `objectPermissions` 和 `fieldPermissions` 替换为你的函数所需的对象/字段。
+* `permissionFlags` 控制对平台级能力的访问。 尽量保持最小化。
+* 查看一个可运行示例：[`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts)。
 
 </Accordion>
 <Accordion title="defineObject" description="定义带字段的自定义对象">
@@ -256,7 +256,7 @@ export default defineObject({
 </Note>
 
 </Accordion>
-<Accordion title="defineField — Standard fields" description="为现有对象扩展额外字段">
+<Accordion title="defineField — 标准字段" description="为现有对象扩展额外字段">
 
 使用 `defineField()` 向你不拥有的对象添加字段——例如标准的 Twenty 对象（Person、Company 等）。 或来自其他应用的对象。 与在 `defineObject()` 中的内联字段不同，独立字段需要一个 `objectUniversalIdentifier` 来指定它们要扩展的对象：
 
@@ -284,7 +284,7 @@ export default defineField({
 * `defineField()` 是为非通过 `defineObject()` 创建的对象添加字段的唯一方式。
 
 </Accordion>
-<Accordion title="defineField — Relation fields" description="Connect objects together with bidirectional relations">
+<Accordion title="defineField — 关联字段" description="使用双向关系将对象连接在一起">
 
 关系用于将对象彼此连接。 在 Twenty 中，关系始终是双向的——你需要定义两侧，每一侧都引用另一侧。
 
@@ -443,7 +443,7 @@ export default defineObject({
 });
 ```
 </Accordion>
-<Accordion title="defineLogicFunction" description="Define logic functions and their triggers">
+<Accordion title="defineLogicFunction" description="定义逻辑函数及其触发器">
 
 每个函数文件都使用 `defineLogicFunction()` 导出包含处理程序和可选触发器的配置。
 
@@ -487,15 +487,15 @@ export default defineLogicFunction({
 });
 ```
 
-Available trigger types:
-* **httpRoute**: Exposes your function on an HTTP path and method **under the `/s/` endpoint**:
-> e.g. `path: '/post-card/create'` is callable at `https://your-twenty-server.com/s/post-card/create`
+可用的触发器类型：
+* **httpRoute**：在 **`/s/` 端点**下通过 HTTP 路径和方法公开你的函数：
+> 例如 `path: '/post-card/create'` 可在 `https://your-twenty-server.com/s/post-card/create` 调用
 * **cron**：使用 CRON 表达式按计划运行你的函数。
 * **databaseEvent**：在工作空间对象生命周期事件上运行。 当事件操作为 `updated` 时，可以在 `updatedFields` 数组中指定要监听的特定字段。 如果未定义或为空，任何更新都会触发该函数。
-> e.g. `person.updated`, `*.created`, `company.*`
+> 例如 `person.updated`、`*.created`、`company.*`
 
 <Note>
-You can also manually execute a function using the CLI:
+你也可以使用 CLI 手动执行函数：
 
 ```bash filename="Terminal"
 yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
@@ -505,7 +505,7 @@ yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
 yarn twenty exec -y e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
-You can watch logs with:
+你可以通过以下方式查看日志：
 
 ```bash filename="Terminal"
 yarn twenty logs
@@ -514,9 +514,9 @@ yarn twenty logs
 
 #### 路由触发器负载
 
-When a route trigger invokes your logic function, it receives a `RoutePayload` object that follows the
-[AWS HTTP API v2 format](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html).
-Import the `RoutePayload` type from `twenty-sdk`:
+当路由触发器调用你的逻辑函数时，它会接收一个遵循
+[AWS HTTP API v2 格式](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html)的 `RoutePayload` 对象。
+从 `twenty-sdk` 导入 `RoutePayload` 类型：
 
 ```ts
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
@@ -531,21 +531,21 @@ const handler = async (event: RoutePayload) => {
 
 `RoutePayload` 类型具有以下结构：
 
-  | 属性                           | 类型                                    | 描述                                               | 示例                                                                         |
-  | ---------------------------- | ------------------------------------- | ------------------------------------------------ | -------------------------------------------------------------------------- |
-  | `headers`                    | `Record<string, string \| undefined>` | HTTP 请求头（仅限 `forwardedRequestHeaders` 中列出的那些）    | see section below                                                          |
-  | `queryStringParameters`      | `Record<string, string \| undefined>` | 查询字符串参数（多个值以逗号连接）                                | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
-  | `pathParameters`             | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
-  | `body`                       | `object \| null`                      | 已解析的请求体（JSON）                                    | `{ id: 1 }` -> `{ id: 1 }`                                                 |
-  | `isBase64Encoded`            | `boolean`                             | 请求体是否为 base64 编码                                 |                                                                            |
-  | `requestContext.http.method` | `string`                              | HTTP 方法（GET、POST、PUT、PATCH、DELETE）               |                                                                            |
-  | `requestContext.http.path`   | `string`                              | 原始请求路径                                           |                                                                            |
+  | 属性                           | 类型                                    | 描述                                            | 示例                                                                         |
+  | ---------------------------- | ------------------------------------- | --------------------------------------------- | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record<string, string \| undefined>` | HTTP 请求头（仅限 `forwardedRequestHeaders` 中列出的那些） | 见下文                                                                        |
+  | `queryStringParameters`      | `Record<string, string \| undefined>` | 查询字符串参数（多个值以逗号连接）                             | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record<string, string \| undefined>` | 从路由模式中提取的路径参数                                 | `/users/:id`，`/users/123` -> `{ id: '123' }`                               |
+  | `body`                       | `object \| null`                      | 已解析的请求体（JSON）                                 | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `isBase64Encoded`            | `boolean`                             | 请求体是否为 base64 编码                              |                                                                            |
+  | `requestContext.http.method` | `string`                              | HTTP 方法（GET、POST、PUT、PATCH、DELETE）            |                                                                            |
+  | `requestContext.http.path`   | `string`                              | 原始请求路径                                        |                                                                            |
 
 
 #### forwardedRequestHeaders
 
 出于安全原因，默认**不会**将传入请求的 HTTP 请求头传递给你的逻辑函数。
-To access specific headers, list them in the `forwardedRequestHeaders` array:
+如需访问特定请求头，请在 `forwardedRequestHeaders` 数组中显式列出：
 
 ```ts
 export default defineLogicFunction({
@@ -561,7 +561,7 @@ export default defineLogicFunction({
 });
 ```
 
-In your handler, access the forwarded headers like this:
+在你的处理程序中，可以这样访问被转发的请求头：
 
 ```ts
 const handler = async (event: RoutePayload) => {
@@ -574,14 +574,14 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-请求头名称会被规范化为小写。 Access them using lowercase keys (e.g., `event.headers['content-type']`).
+请求头名称会被规范化为小写。 请使用小写键访问它们（例如，`event.headers['content-type']`）。
 </Note>
 
-#### Exposing a function as a tool
+#### 将函数作为工具公开
 
-逻辑函数可以作为供 AI 智能体和工作流使用的**工具**对外提供。 When marked as a tool, a function becomes discoverable by Twenty's AI features and can be used in workflow automations.
+逻辑函数可以作为供 AI 智能体和工作流使用的**工具**对外提供。 当函数被标记为工具时，Twenty 的 AI 功能即可发现它，并可在工作流自动化中使用。
 
-To mark a logic function as a tool, set `isTool: true`:
+要将逻辑函数标记为工具，请设置 `isTool: true`：
 
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
@@ -617,8 +617,8 @@ export default defineLogicFunction({
 
 关键点：
 
-* You can combine `isTool` with triggers — a function can be both a tool (callable by AI agents) and triggered by events at the same time.
-* **`toolInputSchema`** (optional): A JSON Schema object describing the parameters your function accepts. The schema is computed automatically from source code static analysis, but you can set it explicitly:
+* 你可以将 `isTool` 与触发器结合使用——一个函数既可以作为工具（由 AI 代理调用），也可以同时由事件触发。
+* **`toolInputSchema`**（可选）：描述函数可接受参数的 JSON Schema 对象。 该模式会通过对源代码的静态分析自动推导，但你也可以显式设置：
 
 ```ts
 export default defineLogicFunction({
@@ -715,11 +715,11 @@ yarn twenty exec --postInstall
 </Accordion>
 <Accordion title="defineFrontComponent" description="为自定义 UI 定义前端组件">
 
-Front components are React components that render directly inside Twenty's UI. They run in an **isolated Web Worker** using Remote DOM — your code is sandboxed but renders natively in the page, not in an iframe.
+前端组件是直接在 Twenty 的 UI 内渲染的 React 组件。 它们在使用 Remote DOM 的**隔离 Web Worker**中运行——你的代码在沙盒中执行，但会原生渲染到页面中，而非在 iframe 里。
 
-#### Basic example
+#### 基础示例
 
-The quickest way to see a front component in action is to register it as a **command**. Adding a `command` field with `isPinned: true` makes it appear as a quick-action button in the top-right corner of the page — no page layout needed:
+最快体验前端组件运行方式的方法是将其注册为一个**命令**。 添加一个 `command` 字段并设置 `isPinned: true`，即可让它以快速操作按钮的形式出现在页面右上角——无需页面布局：
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk';
@@ -749,24 +749,24 @@ export default defineFrontComponent({
 });
 ```
 
-After syncing with `yarn twenty dev`, the quick action appears in the top-right corner of the page:
+使用 `yarn twenty dev` 同步后，快速操作会出现在页面右上角：
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Quick action button in the top-right corner" />
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="右上角的快速操作按钮" />
 </div>
 
-Click it to render the component inline.
+点击它以内联方式渲染该组件。
 
 {/* TODO: add screenshot of the rendered front component */}
 
-#### Configuration fields
+#### 配置字段
 
 | 字段                    | 必填 | 描述                                                                                  |
 | --------------------- | -- | ----------------------------------------------------------------------------------- |
-| `universalIdentifier` | 是  | Stable unique ID for this component                                                 |
-| `component`           | 是  | A React component function                                                          |
-| `name`                | 否  | Display name                                                                        |
-| `描述`                  | 否  | Description of what the component does                                              |
+| `universalIdentifier` | 是  | 该组件的稳定唯一 ID                                                                         |
+| `component`           | 是  | 一个 React 组件函数                                                                       |
+| `name`                | 否  | 显示名称                                                                                |
+| `描述`                  | 否  | 组件的功能描述                                                                             |
 | `isHeadless`          | 否  | Set to `true` if the component has no visible UI (see below)                        |
 | `命令`                  | 否  | Register the component as a command (see [command options](#command-options) below) |
 

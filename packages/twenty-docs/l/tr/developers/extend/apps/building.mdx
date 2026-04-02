@@ -4,24 +4,24 @@ description: Nesneleri, mantık fonksiyonlarını, ön uç bileşenlerini ve dah
 ---
 
 <Warning>
-  Apps are currently in alpha. The feature works but is still evolving.
+  Uygulamalar şu anda alfa aşamasında. Özellik işlevsel ancak hâlâ gelişmekte.
 </Warning>
 
-The `twenty-sdk` package provides typed building blocks to create your app. This page covers every entity type and API client available in the SDK.
+`twenty-sdk` paketi, uygulamanızı oluşturmak için türlendirilmiş yapı taşları sağlar. Bu sayfa, SDK'da mevcut olan tüm varlık türlerini ve API istemcilerini kapsar.
 
-## DefineEntity functions
+## DefineEntity fonksiyonları
 
-The SDK provides functions to define your app entities. You must use `export default defineEntity({...})` for the SDK to detect your entities. Bu fonksiyonlar, derleme zamanında yapılandırmanızı doğrular ve IDE otomatik tamamlama ile tür güvenliği sağlar.
+SDK, uygulama varlıklarınızı tanımlamak için fonksiyonlar sağlar. SDK'nin varlıklarınızı algılayabilmesi için `export default defineEntity({...})` kullanmanız gerekir. Bu fonksiyonlar, derleme zamanında yapılandırmanızı doğrular ve IDE otomatik tamamlama ile tür güvenliği sağlar.
 
 <Note>
-  **File organization is up to you.**
-  Entity detection is AST-based — the SDK finds `export default defineEntity(...)` calls regardless of where the file lives. Grouping files by type (e.g., `logic-functions/`, `roles/`) is just a convention, not a requirement.
+  **Dosya organizasyonu size kalmış.**
+  Varlık algılama AST tabanlıdır — dosyanın nerede bulunduğundan bağımsız olarak SDK `export default defineEntity(...)` çağrılarını bulur. Dosyaları türe göre gruplamak (örn. `logic-functions/`, `roles/`) bir gereklilik değil, yalnızca bir gelenektir.
 </Note>
 
 <AccordionGroup>
 <Accordion title="defineRole" description="Rol izinlerini ve nesne erişimini yapılandırın">
 
-Roles encapsulate permissions on your workspace's objects and actions.
+Roller, çalışma alanınızdaki nesneler ve eylemler üzerindeki izinleri kapsar.
 
 ```ts restricted-company-role.ts
 import {
@@ -69,12 +69,12 @@ export default defineRole({
 </Accordion>
 <Accordion title="defineApplication" description="Uygulama meta verilerini yapılandırın (zorunlu, uygulama başına bir adet)">
 
-Every app must have exactly one `defineApplication` call that describes:
+Her uygulamanın, şunları tanımlayan tam olarak bir adet `defineApplication` çağrısı olmalıdır:
 
-* **Identity**: identifiers, display name, and description.
-* **Permissions**: which role its functions and front components use.
-* **(Optional) Variables**: key–value pairs exposed to your functions as environment variables.
-* **(Optional) Pre-install / post-install functions**: logic functions that run before or after installation.
+* **Kimlik**: tanımlayıcılar, görünen ad ve açıklama.
+* **İzinler**: işlevlerinin ve ön bileşenlerinin hangi rolü kullandığı.
+* **(İsteğe bağlı) Değişkenler**: fonksiyonlarınıza ortam değişkenleri olarak sunulan anahtar–değer çiftleri.
+* **(İsteğe bağlı) Kurulum öncesi / kurulum sonrası fonksiyonlar**: kurulumdan önce veya sonra çalışan mantık fonksiyonları.
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
@@ -98,21 +98,21 @@ export default defineApplication({
 ```
 
 Notlar:
-* `universalIdentifier` fields are deterministic IDs you own. Generate them once and keep them stable across syncs.
-* `applicationVariables` become environment variables for your functions and front components (e.g., `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
-* `defaultRoleUniversalIdentifier` must reference a role defined with `defineRole()` (see above).
-* Pre-install and post-install functions are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
+* `universalIdentifier` alanları, size ait deterministik kimliklerdir. Bunları bir kez oluşturun ve senkronizasyonlar boyunca kararlı tutun.
+* `applicationVariables`, fonksiyonlarınız ve ön bileşenleriniz için ortam değişkenlerine dönüşür (örn. `DEFAULT_RECIPIENT_NAME`, `process.env.DEFAULT_RECIPIENT_NAME` olarak kullanılabilir).
+* `defaultRoleUniversalIdentifier`, `defineRole()` ile tanımlanmış bir role referans vermelidir (yukarıya bakın).
+* Kurulum öncesi ve kurulum sonrası fonksiyonlar manifest derlemesi sırasında otomatik olarak algılanır — bunlara `defineApplication()` içinde referans vermeniz gerekmez.
 
 #### Pazaryeri meta verileri
 
-If you plan to [publish your app](/l/tr/developers/extend/apps/publishing), these optional fields control how it appears in the marketplace:
+Eğer [uygulamanızı yayımlamayı](/l/tr/developers/extend/apps/publishing) planlıyorsanız, bu isteğe bağlı alanlar uygulamanızın pazaryerinde nasıl görüneceğini kontrol eder:
 
 | Alan               | Açıklama                                                                                                                            |
 | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `author`           | Yazar veya şirket adı                                                                                                               |
 | `category`         | Pazaryerinde filtreleme için uygulama kategorisi                                                                                    |
-| `logoUrl`          | Path to your app logo (e.g., `public/logo.png`)                                                                                     |
-| `screenshots`      | Array of screenshot paths (e.g., `public/screenshot-1.png`)                                                                         |
+| `logoUrl`          | Uygulamanızın logosuna giden yol (örn. `public/logo.png`)                                                                           |
+| `screenshots`      | Ekran görüntüsü yollarının dizisi (örn. `public/screenshot-1.png`)                                                                  |
 | `aboutDescription` | "Hakkında" sekmesi için daha uzun bir markdown açıklaması. Belirtilmezse, pazaryeri npm'deki paketin `README.md` dosyasını kullanır |
 | `websiteUrl`       | Web sitenize bağlantı                                                                                                               |
 | `termsUrl`         | Hizmet Koşulları'na bağlantı                                                                                                        |
@@ -121,15 +121,15 @@ If you plan to [publish your app](/l/tr/developers/extend/apps/publishing), thes
 
 #### Roller ve izinler
 
-The `defaultRoleUniversalIdentifier` in `application-config.ts` designates the default role used by your app's logic functions and front components. See `defineRole` above for details.
+`application-config.ts` içindeki `defaultRoleUniversalIdentifier`, uygulamanızın mantık fonksiyonları ve ön bileşenleri tarafından kullanılan varsayılan rolü belirtir. Ayrıntılar için yukarıdaki `defineRole` bölümüne bakın.
 
-* The runtime token injected as `TWENTY_APP_ACCESS_TOKEN` is derived from this role.
-* The typed client is restricted to the permissions granted to that role.
-* Follow least-privilege: create a dedicated role with only the permissions your functions need.
+* `TWENTY_APP_ACCESS_TOKEN` olarak enjekte edilen çalışma zamanı belirteci bu rolden türetilir.
+* Türlendirilmiş istemci, o role tanınan izinlerle sınırlandırılır.
+* En az ayrıcalık ilkesini izleyin: Yalnızca fonksiyonlarınızın ihtiyaç duyduğu izinlere sahip özel bir rol oluşturun.
 
-##### Default function role
+##### Varsayılan fonksiyon rolü
 
-When you scaffold a new app, the CLI creates a default role file:
+Yeni bir uygulama iskeleti oluşturduğunuzda, CLI varsayılan bir rol dosyası oluşturur:
 
 ```ts src/roles/default-role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
@@ -155,16 +155,16 @@ export default defineRole({
 });
 ```
 
-This role's `universalIdentifier` is referenced in `application-config.ts` as `defaultRoleUniversalIdentifier`:
+Bu rolün `universalIdentifier` değeri, `application-config.ts` içinde `defaultRoleUniversalIdentifier` olarak referans verilir:
 
-* **\*.role.ts** defines what the role can do.
+* **\*.role.ts**, bir rolün neler yapabileceğini tanımlar.
 * **application-config.ts**, fonksiyonlarınızın izinlerini devralması için bu role işaret eder.
 
 Notlar:
 * Oluşturulan rolden başlayın ve en az ayrıcalık ilkesini izleyerek bunu aşamalı olarak kısıtlayın.
-* Replace `objectPermissions` and `fieldPermissions` with the objects and fields your functions actually need.
-* `permissionFlags`, platform düzeyindeki yeteneklere erişimi kontrol eder. Keep them minimal.
-* See a working example: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+* `objectPermissions` ve `fieldPermissions` değerlerini, fonksiyonlarınızın ihtiyaç duyduğu nesneler ve alanlarla değiştirin.
+* `permissionFlags`, platform düzeyindeki yeteneklere erişimi kontrol eder. Bunları asgari düzeyde tutun.
+* Çalışan bir örnek için bkz.: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
 
 </Accordion>
 <Accordion title="defineObject" description="Alanlara sahip özel nesneler tanımlayın">
@@ -256,7 +256,7 @@ ancak bu önerilmez.
 </Note>
 
 </Accordion>
-<Accordion title="defineField — Standard fields" description="Mevcut nesneleri ek alanlarla genişletin">
+<Accordion title="defineField — Standart alanlar" description="Mevcut nesneleri ek alanlarla genişletin">
 
 Sahibi olmadığınız nesnelere alan eklemek için `defineField()` kullanın — standart Twenty nesneleri (Person, Company, vb.) gibi. veya diğer uygulamalardaki nesneler. `defineObject()` içindeki satır içi alanların aksine, bağımsız alanlar hangi nesneyi genişlettiklerini belirtmek için bir `objectUniversalIdentifier` gerektirir:
 
@@ -284,7 +284,7 @@ export default defineField({
 * `defineField()`, `defineObject()` ile oluşturmadığınız nesnelere alan eklemenin tek yoludur.
 
 </Accordion>
-<Accordion title="defineField — Relation fields" description="Connect objects together with bidirectional relations">
+<Accordion title="defineField — İlişki alanları" description="Nesneleri çift yönlü ilişkilerle birbirine bağlayın">
 
 İlişkiler nesneleri birbirine bağlar. Twenty'de ilişkiler her zaman **çift yönlüdür** — her iki tarafı da tanımlarsınız ve her taraf diğerine başvurur.
 
@@ -443,7 +443,7 @@ export default defineObject({
 });
 ```
 </Accordion>
-<Accordion title="defineLogicFunction" description="Define logic functions and their triggers">
+<Accordion title="defineLogicFunction" description="Mantık fonksiyonlarını ve tetikleyicilerini tanımlayın">
 
 Her fonksiyon dosyası, bir işleyici ve isteğe bağlı tetikleyiciler içeren bir yapılandırmayı dışa aktarmak için `defineLogicFunction()` kullanır.
 
@@ -487,15 +487,15 @@ export default defineLogicFunction({
 });
 ```
 
-Available trigger types:
-* **httpRoute**: Exposes your function on an HTTP path and method **under the `/s/` endpoint**:
-> e.g. `path: '/post-card/create'` is callable at `https://your-twenty-server.com/s/post-card/create`
+Kullanılabilir tetikleyici türleri:
+* **httpRoute**: Fonksiyonunuzu bir HTTP yolu ve yöntemiyle **`/s/` uç noktasının altında** kullanıma sunar:
+> örn. `path: '/post-card/create'` `https://your-twenty-server.com/s/post-card/create` adresinden çağrılabilir
 * **cron**: Bir CRON ifadesi kullanarak fonksiyonunuzu bir zamanlamayla çalıştırır.
 * **databaseEvent**: Çalışma alanı nesnesi yaşam döngüsü olaylarında çalışır. Olay işlemi `updated` olduğunda, dinlenecek belirli alanlar `updatedFields` dizisinde belirtilebilir. Tanımsız veya boş bırakılırsa, herhangi bir güncelleme fonksiyonu tetikler.
-> e.g. `person.updated`, `*.created`, `company.*`
+> örn. `person.updated`, `*.created`, `company.*`
 
 <Note>
-You can also manually execute a function using the CLI:
+Bir fonksiyonu CLI kullanarak manuel olarak da çalıştırabilirsiniz:
 
 ```bash filename="Terminal"
 yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
@@ -505,7 +505,7 @@ yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
 yarn twenty exec -y e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
-You can watch logs with:
+Günlükleri şu şekilde izleyebilirsiniz:
 
 ```bash filename="Terminal"
 yarn twenty logs
@@ -514,9 +514,9 @@ yarn twenty logs
 
 #### Rota tetikleyicisi yükü
 
-When a route trigger invokes your logic function, it receives a `RoutePayload` object that follows the
-[AWS HTTP API v2 format](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html).
-Import the `RoutePayload` type from `twenty-sdk`:
+Bir rota tetikleyicisi mantık fonksiyonunuzu çağırdığında,
+[AWS HTTP API v2 formatını](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html) izleyen bir `RoutePayload` nesnesi alır.
+`RoutePayload` türünü `twenty-sdk` içinden içe aktarın:
 
 ```ts
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
@@ -533,9 +533,9 @@ const handler = async (event: RoutePayload) => {
 
   | Özellik                      | Tür                                   | Açıklama                                                                   | Örnek                                                                      |
   | ---------------------------- | ------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-  | `headers`                    | `Record<string, string \| undefined>` | HTTP başlıkları (`forwardedRequestHeaders` içinde listelenenlerle sınırlı) | see section below                                                          |
+  | `headers`                    | `Record<string, string \| undefined>` | HTTP başlıkları (`forwardedRequestHeaders` içinde listelenenlerle sınırlı) | aşağıdaki bölüme bakın                                                     |
   | `queryStringParameters`      | `Record<string, string \| undefined>` | Sorgu dizesi parametreleri (birden çok değer virgülle birleştirilir)       | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
-  | `pathParameters`             | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern                           | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+  | `pathParameters`             | `Record<string, string \| undefined>` | Rota deseninden çıkarılan yol parametreleri                                | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
   | `body`                       | `object \| null`                      | Ayrıştırılmış istek gövdesi (JSON)                                         | `{ id: 1 }` -> `{ id: 1 }`                                                 |
   | `isBase64Encoded`            | `boolean`                             | Gövdenin base64 ile kodlanıp kodlanmadığı                                  |                                                                            |
   | `requestContext.http.method` | `string`                              | HTTP yöntemi (GET, POST, PUT, PATCH, DELETE)                               |                                                                            |
@@ -545,7 +545,7 @@ const handler = async (event: RoutePayload) => {
 #### forwardedRequestHeaders
 
 Varsayılan olarak, güvenlik nedenleriyle gelen isteklerden HTTP başlıkları mantık fonksiyonunuza **aktarılmaz**.
-To access specific headers, list them in the `forwardedRequestHeaders` array:
+Belirli başlıklara erişmek için bunları `forwardedRequestHeaders` dizisinde listeleyin:
 
 ```ts
 export default defineLogicFunction({
@@ -561,7 +561,7 @@ export default defineLogicFunction({
 });
 ```
 
-In your handler, access the forwarded headers like this:
+İşleyicinizde, iletilen başlıklara şu şekilde erişin:
 
 ```ts
 const handler = async (event: RoutePayload) => {
@@ -574,14 +574,14 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-Başlık adları küçük harfe normalize edilir. Access them using lowercase keys (e.g., `event.headers['content-type']`).
+Başlık adları küçük harfe normalize edilir. Onlara küçük harfli anahtarlarla erişin (örneğin, `event.headers['content-type']`).
 </Note>
 
-#### Exposing a function as a tool
+#### Bir fonksiyonu araç olarak sunma
 
-Mantık işlevleri, yapay zeka ajanları ve iş akışları için **araçlar** olarak sunulabilir. When marked as a tool, a function becomes discoverable by Twenty's AI features and can be used in workflow automations.
+Mantık işlevleri, yapay zeka ajanları ve iş akışları için **araçlar** olarak sunulabilir. Bir fonksiyon bir araç olarak işaretlendiğinde, Twenty'nin yapay zeka özellikleri tarafından keşfedilebilir hâle gelir ve iş akışı otomasyonlarında kullanılabilir.
 
-To mark a logic function as a tool, set `isTool: true`:
+Bir mantık fonksiyonunu araç olarak işaretlemek için `isTool: true` olarak ayarlayın:
 
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
@@ -617,8 +617,8 @@ export default defineLogicFunction({
 
 Önemli noktalar:
 
-* You can combine `isTool` with triggers — a function can be both a tool (callable by AI agents) and triggered by events at the same time.
-* **`toolInputSchema`** (optional): A JSON Schema object describing the parameters your function accepts. The schema is computed automatically from source code static analysis, but you can set it explicitly:
+* `isTool` özelliğini tetikleyicilerle birleştirebilirsiniz — bir fonksiyon aynı anda hem bir araç (yapay zeka ajanları tarafından çağrılabilir) olabilir hem de olaylar tarafından tetiklenebilir.
+* **`toolInputSchema`** (isteğe bağlı): Fonksiyonunuzun kabul ettiği parametreleri tanımlayan bir JSON Schema nesnesi. Şema, kaynak kodun statik analizinden otomatik olarak oluşturulur, ancak bunu açıkça belirleyebilirsiniz:
 
 ```ts
 export default defineLogicFunction({
@@ -715,11 +715,11 @@ yarn twenty exec --postInstall
 </Accordion>
 <Accordion title="defineFrontComponent" description="Özel kullanıcı arayüzü için ön uç bileşenlerini tanımlayın">
 
-Front components are React components that render directly inside Twenty's UI. They run in an **isolated Web Worker** using Remote DOM — your code is sandboxed but renders natively in the page, not in an iframe.
+Ön uç bileşenler, Twenty'nin UI'si içinde doğrudan görüntülenen React bileşenleridir. Remote DOM kullanan izole bir Web Worker içinde çalışırlar — kodunuz izole bir ortamda (sandbox) çalışır ancak bir iframe içinde değil, sayfada yerel olarak işlenir.
 
-#### Basic example
+#### Basit örnek
 
-The quickest way to see a front component in action is to register it as a **command**. Adding a `command` field with `isPinned: true` makes it appear as a quick-action button in the top-right corner of the page — no page layout needed:
+Bir ön bileşeni çalışırken görmenin en hızlı yolu, onu bir **komut** olarak kaydetmektir. `isPinned: true` ile bir `command` alanı eklemek, sayfanın sağ üst köşesinde hızlı işlem düğmesi olarak görünmesini sağlar — herhangi bir sayfa düzenine gerek yoktur:
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk';
@@ -749,24 +749,24 @@ export default defineFrontComponent({
 });
 ```
 
-After syncing with `yarn twenty dev`, the quick action appears in the top-right corner of the page:
+`yarn twenty dev` ile senkronize ettikten sonra, hızlı işlem sayfanın sağ üst köşesinde görünür:
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Quick action button in the top-right corner" />
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Sağ üst köşedeki hızlı işlem düğmesi" />
 </div>
 
-Click it to render the component inline.
+Bileşeni satır içi işlemek için üzerine tıklayın.
 
 {/* TODO: add screenshot of the rendered front component */}
 
-#### Configuration fields
+#### Yapılandırma alanları
 
 | Alan                  | Zorunlu | Açıklama                                                                            |
 | --------------------- | ------- | ----------------------------------------------------------------------------------- |
-| `universalIdentifier` | Evet    | Stable unique ID for this component                                                 |
-| `component`           | Evet    | A React component function                                                          |
-| `name`                | Hayır   | Display name                                                                        |
-| `description`         | Hayır   | Description of what the component does                                              |
+| `universalIdentifier` | Evet    | Bu bileşen için kararlı benzersiz kimlik                                            |
+| `component`           | Evet    | Bir React bileşen fonksiyonu                                                        |
+| `name`                | Hayır   | Görünen ad                                                                          |
+| `description`         | Hayır   | Bileşenin ne yaptığına dair açıklama                                                |
 | `isHeadless`          | Hayır   | Set to `true` if the component has no visible UI (see below)                        |
 | `command`             | Hayır   | Register the component as a command (see [command options](#command-options) below) |
 
