@@ -4,41 +4,174 @@ description: Definisci oggetti, funzioni logiche, componenti front-end e molto a
 ---
 
 <Warning>
-Le app sono attualmente in fase alfa. La funzionalità è funzionante ma ancora in evoluzione.
+  Le app sono attualmente in fase alfa. La funzionalità funziona ma è ancora in evoluzione.
 </Warning>
 
-## Usa le risorse dell'SDK (tipi e configurazione)
+Il pacchetto `twenty-sdk` fornisce blocchi costruttivi tipizzati per creare la tua app. Questa pagina copre tutti i tipi di entità e i client API disponibili nell'SDK.
 
-Il pacchetto twenty-sdk fornisce blocchi tipizzati e funzioni helper da usare nella tua app. Di seguito gli elementi principali con cui interagirai più spesso.
+## Funzioni DefineEntity
 
-### Funzioni helper
+L'SDK fornisce funzioni per definire le entità della tua app. Devi usare `export default defineEntity({...})` affinché l'SDK rilevi le tue entità. Queste funzioni convalidano la configurazione in fase di build e offrono il completamento automatico nell'IDE e la sicurezza dei tipi.
 
-L'SDK fornisce funzioni helper per definire le entità della tua app. Come descritto in [Rilevamento delle entità](/l/it/developers/extend/apps/getting-started#entity-detection), devi usare `export default define<Entity>({...})` affinché le tue entità vengano rilevate:
+<Note>
+  **L'organizzazione dei file dipende da te.**
+  Il rilevamento delle entità è basato sull'AST — l'SDK trova le chiamate a `export default defineEntity(...)` indipendentemente da dove si trova il file. Raggruppare i file per tipo (ad es., `logic-functions/`, `roles/`) è solo una convenzione, non un requisito.
+</Note>
 
-| Funzione                         | Scopo                                                                                           |
-| -------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `defineApplication`              | Configura i metadati dell'applicazione (obbligatorio, uno per app)                              |
-| `defineObject`                   | Definisci oggetti personalizzati con campi                                                      |
-| `defineField`                    | Estendi gli oggetti esistenti con campi aggiuntivi oppure definisci campi di relazione autonomi |
-| `defineLogicFunction`            | Definisci funzioni logiche con handler                                                          |
-| `definePreInstallLogicFunction`  | Definisci una funzione logica di pre-installazione (una per app)                                |
-| `definePostInstallLogicFunction` | Definisci una funzione logica di post-installazione (una per app)                               |
-| `defineFrontComponent`           | Definisci componenti front-end per un'interfaccia utente personalizzata                         |
-| `defineRole`                     | Configura i permessi dei ruoli e l'accesso agli oggetti                                         |
-| `defineView`                     | Definisci viste salvate per gli oggetti                                                         |
-| `defineNavigationMenuItem`       | Definisci i link di navigazione della barra laterale                                            |
-| `defineSkill`                    | Definisci le competenze dell'agente IA                                                          |
-| `defineAgent`                    | Definisci gli agenti IA                                                                         |
-| `definePageLayout`               | Definisci layout di pagina personalizzati                                                       |
+<AccordionGroup>
+<Accordion title="defineRole" description="Configura i permessi dei ruoli e l'accesso agli oggetti">
 
-Queste funzioni convalidano la configurazione in fase di build e offrono il completamento automatico nell'IDE e la sicurezza dei tipi.
+I ruoli incapsulano i permessi sugli oggetti e sulle azioni del tuo spazio di lavoro.
 
-### Definizione degli oggetti
+```ts restricted-company-role.ts
+import {
+  defineRole,
+  PermissionFlag,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk';
+
+export default defineRole({
+  universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
+  label: 'My new role',
+  description: 'A role that can be used in your workspace',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlags: [PermissionFlag.APPLICATIONS],
+});
+```
+
+</Accordion>
+<Accordion title="defineApplication" description="Configura i metadati dell'applicazione (obbligatorio, uno per app)">
+
+Ogni app deve avere esattamente una chiamata a `defineApplication` che descrive:
+
+* **Identità**: identificatori, nome visualizzato e descrizione.
+* **Autorizzazioni**: quale ruolo usano le sue funzioni e i componenti front-end.
+* **Variabili (opzionali)**: coppie chiave–valore esposte alle funzioni come variabili d'ambiente.
+* **(Opzionali) Funzioni di pre-installazione/post-installazione**: funzioni logiche che vengono eseguite prima o dopo l'installazione.
+
+```ts src/application-config.ts
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+
+export default defineApplication({
+  universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
+  displayName: 'My Twenty App',
+  description: 'My first Twenty app',
+  icon: 'IconWorld',
+  applicationVariables: {
+    DEFAULT_RECIPIENT_NAME: {
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
+      value: 'Jane Doe',
+      isSecret: false,
+    },
+  },
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Note:
+* I campi `universalIdentifier` sono ID deterministici che possiedi. Generali una volta e mantienili stabili tra una sincronizzazione e l'altra.
+* `applicationVariables` diventano variabili d'ambiente per le tue funzioni e i componenti front-end (ad esempio, `DEFAULT_RECIPIENT_NAME` è disponibile come `process.env.DEFAULT_RECIPIENT_NAME`).
+* `defaultRoleUniversalIdentifier` deve fare riferimento a un ruolo definito con `defineRole()` (vedi sopra).
+* Le funzioni di pre-installazione e post-installazione vengono rilevate automaticamente durante il build del manifesto — non è necessario farvi riferimento in `defineApplication()`.
+
+#### Metadati del marketplace
+
+Se prevedi di [pubblicare la tua app](/l/it/developers/extend/apps/publishing), questi campi opzionali controllano come appare nel marketplace:
+
+| Campo              | Descrizione                                                                                                                         |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `autore`           | Nome dell'autore o dell'azienda                                                                                                     |
+| `categoria`        | Categoria dell'app per il filtraggio nel marketplace                                                                                |
+| `logoUrl`          | Percorso al logo della tua app (ad es., `public/logo.png`)                                                                          |
+| `screenshots`      | Array di percorsi degli screenshot (ad es., `public/screenshot-1.png`)                                                              |
+| `aboutDescription` | Descrizione markdown più lunga per la scheda "Informazioni". Se omesso, il marketplace utilizza il `README.md` del pacchetto da npm |
+| `websiteUrl`       | Link al tuo sito web                                                                                                                |
+| `termsUrl`         | Link ai Termini di servizio                                                                                                         |
+| `emailSupport`     | Indirizzo email di supporto                                                                                                         |
+| `issueReportUrl`   | Link al sistema di tracciamento dei problemi                                                                                        |
+
+#### Ruoli e permessi
+
+Il `defaultRoleUniversalIdentifier` in `application-config.ts` indica il ruolo predefinito utilizzato dalle funzioni logiche e dai componenti front-end della tua app. Vedi `defineRole` sopra per i dettagli.
+
+* Il token di runtime iniettato come `TWENTY_APP_ACCESS_TOKEN` è derivato da questo ruolo.
+* Il client tipizzato è limitato ai permessi concessi a quel ruolo.
+* Segui il principio del privilegio minimo: crea un ruolo dedicato con solo i permessi necessari alle tue funzioni.
+
+##### Ruolo funzione predefinito
+
+Quando esegui lo scaffolding di una nuova app, la CLI crea un file di ruolo predefinito:
+
+```ts src/roles/default-role.ts
+import { defineRole, PermissionFlag } from 'twenty-sdk';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [],
+  fieldPermissions: [],
+  permissionFlags: [],
+});
+```
+
+L'`universalIdentifier` di questo ruolo viene referenziato in `application-config.ts` come `defaultRoleUniversalIdentifier`:
+
+* **\*.role.ts** definisce ciò che il ruolo può fare.
+* **application-config.ts** punta a quel ruolo in modo che le tue funzioni ne ereditino i permessi.
+
+Note:
+* Parti dal ruolo generato dallo scaffolder, quindi restringilo progressivamente seguendo il principio del privilegio minimo.
+* Sostituisci `objectPermissions` e `fieldPermissions` con gli oggetti e i campi di cui le tue funzioni hanno realmente bisogno.
+* `permissionFlags` controllano l'accesso alle funzionalità a livello di piattaforma. Mantienili al minimo.
+* Vedi un esempio funzionante: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+
+</Accordion>
+<Accordion title="defineObject" description="Definisci oggetti personalizzati con campi">
 
 Gli oggetti personalizzati descrivono sia lo schema sia il comportamento per i record nel tuo spazio di lavoro. Usa `defineObject()` per definire oggetti con convalida integrata:
 
-```typescript
-// src/objects/postCard.object.ts
+```ts postCard.object.ts
 import { defineObject, FieldType } from 'twenty-sdk';
 
 enum PostCardStatus {
@@ -122,12 +255,12 @@ Puoi sovrascrivere i campi predefiniti definendo un campo con lo stesso nome nel
 ma non è consigliato.
 </Note>
 
-### Definire campi sugli oggetti esistenti
+</Accordion>
+<Accordion title="defineField — Campi standard" description="Estendi gli oggetti esistenti con campi aggiuntivi">
 
 Usa `defineField()` per aggiungere campi a oggetti che non possiedi — come gli oggetti standard di Twenty (Person, Company, ecc.) o oggetti di altre app. A differenza dei campi inline in `defineObject()`, i campi autonomi richiedono un `objectUniversalIdentifier` per specificare quale oggetto estendono:
 
-```typescript
-// src/fields/company-loyalty-tier.field.ts
+```ts src/fields/company-loyalty-tier.field.ts
 import { defineField, FieldType } from 'twenty-sdk';
 
 export default defineField({
@@ -146,12 +279,12 @@ export default defineField({
 ```
 
 Punti chiave:
-
 * `objectUniversalIdentifier` identifica l'oggetto di destinazione. Per gli oggetti standard, usa `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` esportati da `twenty-sdk`.
 * Quando definisci campi inline in `defineObject()`, **non** hai bisogno di `objectUniversalIdentifier` — viene ereditato dall'oggetto padre.
 * `defineField()` è l'unico modo per aggiungere campi a oggetti che non hai creato con `defineObject()`.
 
-### Relazioni
+</Accordion>
+<Accordion title="defineField — Campi di relazione" description="Collega gli oggetti tra loro con relazioni bidirezionali">
 
 Le relazioni collegano gli oggetti tra loro. In Twenty, le relazioni sono sempre **bidirezionali** — definisci entrambi i lati e ciascun lato fa riferimento all'altro.
 
@@ -177,8 +310,7 @@ Supponiamo che un `PostCard` possa essere inviato a molti record `PostCardRecipi
 
 **Passaggio 1: definisci il lato ONE_TO_MANY su PostCard** (il lato "uno"):
 
-```typescript
-// src/fields/post-card-recipients-on-post-card.field.ts
+```ts src/fields/post-card-recipients-on-post-card.field.ts
 import { defineField, FieldType, RelationType } from 'twenty-sdk';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
@@ -205,8 +337,7 @@ export default defineField({
 
 **Passaggio 2: definisci il lato MANY_TO_ONE su PostCardRecipient** (il lato "molti" — contiene la chiave esterna):
 
-```typescript
-// src/fields/post-card-on-post-card-recipient.field.ts
+```ts src/fields/post-card-on-post-card-recipient.field.ts
 import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
@@ -241,8 +372,7 @@ export default defineField({
 
 Per creare una relazione con un oggetto Twenty integrato (Person, Company, ecc.), usa `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
 
-```typescript
-// src/fields/person-on-self-hosting-user.field.ts
+```ts src/fields/person-on-self-hosting-user.field.ts
 import {
   defineField,
   FieldType,
@@ -289,7 +419,7 @@ export default defineField({
 
 Puoi anche definire i campi di relazione direttamente all'interno di `defineObject()`. In tal caso, ometti `objectUniversalIdentifier` — viene ereditato dall'oggetto padre:
 
-```typescript
+```ts
 export default defineObject({
   universalIdentifier: '...',
   nameSingular: 'postCardRecipient',
@@ -312,137 +442,15 @@ export default defineObject({
   ],
 });
 ```
-
-### Configurazione dell'applicazione (application-config.ts)
-
-Ogni app ha un singolo file `application-config.ts` che descrive:
-
-* **Identità dell'app**: identificatori, nome visualizzato e descrizione.
-* **Come vengono eseguite le sue funzioni**: quale ruolo usano per i permessi.
-* **Variabili (opzionali)**: coppie chiave–valore esposte alle funzioni come variabili d'ambiente.
-* **(Opzionale) funzione di pre-installazione**: una funzione logica che viene eseguita prima che l'app venga installata.
-* **(Opzionale) funzione post-installazione**: una funzione logica che viene eseguita dopo l'installazione dell'app.
-
-Usa `defineApplication()` per definire la configurazione della tua applicazione:
-
-```typescript
-// src/application-config.ts
-import { defineApplication } from 'twenty-sdk';
-import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
-
-export default defineApplication({
-  universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
-  displayName: 'My Twenty App',
-  description: 'My first Twenty app',
-  icon: 'IconWorld',
-  applicationVariables: {
-    DEFAULT_RECIPIENT_NAME: {
-      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
-      description: 'Default recipient name for postcards',
-      value: 'Jane Doe',
-      isSecret: false,
-    },
-  },
-  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
-});
-```
-
-Note:
-
-* I campi `universalIdentifier` sono ID deterministici sotto il tuo controllo; generali una volta e mantienili stabili tra le sincronizzazioni.
-* `applicationVariables` diventano variabili d'ambiente per le tue funzioni (ad esempio, `DEFAULT_RECIPIENT_NAME` è disponibile come `process.env.DEFAULT_RECIPIENT_NAME`).
-* `defaultRoleUniversalIdentifier` deve corrispondere al file del ruolo (vedi sotto).
-* Le funzioni di pre-installazione e post-installazione vengono rilevate automaticamente durante la build del manifesto. Vedi [Funzioni di pre-installazione](#pre-install-functions) e [Funzioni di post-installazione](#post-install-functions).
-
-#### Metadati del marketplace
-
-Se prevedi di [pubblicare la tua app](/l/it/developers/extend/apps/publishing), questi campi opzionali controllano come la tua app appare nel marketplace:
-
-| Campo              | Descrizione                                                                                                                         |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `autore`           | Nome dell'autore o dell'azienda                                                                                                     |
-| `categoria`        | Categoria dell'app per il filtraggio nel marketplace                                                                                |
-| `logoUrl`          | Percorso del logo della tua app (relativo a `./assets/`)                                                                            |
-| `screenshots`      | Array di percorsi degli screenshot (relativi a `./assets/`)                                                                         |
-| `aboutDescription` | Descrizione markdown più lunga per la scheda "Informazioni". Se omesso, il marketplace utilizza il `README.md` del pacchetto da npm |
-| `websiteUrl`       | Link al tuo sito web                                                                                                                |
-| `termsUrl`         | Link ai Termini di servizio                                                                                                         |
-| `emailSupport`     | Indirizzo email di supporto                                                                                                         |
-| `issueReportUrl`   | Link al sistema di tracciamento dei problemi                                                                                        |
-
-#### Ruoli e permessi
-
-Le applicazioni possono definire ruoli che incapsulano i permessi sugli oggetti e sulle azioni del tuo spazio di lavoro. Il campo `defaultRoleUniversalIdentifier` in `application-config.ts` indica il ruolo predefinito utilizzato dalle funzioni logiche della tua app.
-
-* La chiave API di runtime iniettata come `TWENTY_API_KEY` è derivata da questo ruolo funzione predefinito.
-* Il client tipizzato sarà limitato ai permessi concessi a quel ruolo.
-* Segui il principio del privilegio minimo: crea un ruolo dedicato con solo i permessi necessari alle tue funzioni, quindi fai riferimento al suo identificatore universale.
-
-##### Ruolo funzione predefinito (*.role.ts)
-
-Quando generi una nuova app con lo scaffolder, la CLI crea anche un file di ruolo predefinito. Usa `defineRole()` per definire ruoli con convalida integrata:
-
-```typescript
-// src/roles/default-role.ts
-import { defineRole, PermissionFlag } from 'twenty-sdk';
-
-export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
-  'b648f87b-1d26-4961-b974-0908fd991061';
-
-export default defineRole({
-  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
-  label: 'Default function role',
-  description: 'Default role for function Twenty client',
-  canReadAllObjectRecords: false,
-  canUpdateAllObjectRecords: false,
-  canSoftDeleteAllObjectRecords: false,
-  canDestroyAllObjectRecords: false,
-  canUpdateAllSettings: false,
-  canBeAssignedToAgents: false,
-  canBeAssignedToUsers: false,
-  canBeAssignedToApiKeys: false,
-  objectPermissions: [
-    {
-      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
-      canSoftDeleteObjectRecords: false,
-      canDestroyObjectRecords: false,
-    },
-  ],
-  fieldPermissions: [
-    {
-      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
-      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
-      canReadFieldValue: false,
-      canUpdateFieldValue: false,
-    },
-  ],
-  permissionFlags: [PermissionFlag.APPLICATIONS],
-});
-```
-
-L'`universalIdentifier` di questo ruolo viene quindi referenziato in `application-config.ts` come `defaultRoleUniversalIdentifier`. In altre parole:
-
-* **\*.role.ts** definisce ciò che il ruolo funzione predefinito può fare.
-* **application-config.ts** punta a quel ruolo in modo che le tue funzioni ne ereditino i permessi.
-
-Note:
-
-* Parti dal ruolo generato dallo scaffolder, quindi restringilo progressivamente seguendo il principio del privilegio minimo.
-* Sostituisci `objectPermissions` e `fieldPermissions` con gli oggetti/campi di cui le tue funzioni hanno bisogno.
-* `permissionFlags` controllano l'accesso alle funzionalità a livello di piattaforma. Mantienili al minimo; aggiungi solo ciò che ti serve.
-* Vedi un esempio funzionante nell'app Hello World: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
-
-### Configurazione e punto di ingresso della funzione logica
+</Accordion>
+<Accordion title="defineLogicFunction" description="Definisci funzioni logiche e i relativi trigger">
 
 Ogni file di funzione usa `defineLogicFunction()` per esportare una configurazione con un handler e trigger opzionali.
 
-```typescript
-// src/logic-functions/createPostCard.logic-function.ts
+```ts src/logic-functions/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import { CoreApiClient, type Person } from 'twenty-sdk/generated';
+import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
@@ -465,158 +473,55 @@ export default defineLogicFunction({
   name: 'create-new-post-card',
   timeoutSeconds: 2,
   handler,
-  triggers: [
-    // Public HTTP route trigger '/s/post-card/create'
-    {
-      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
-      type: 'route',
-      path: '/post-card/create',
-      httpMethod: 'GET',
-      isAuthRequired: false,
-    },
-    // Cron trigger (CRON pattern)
-    // {
-    //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
-    //   type: 'cron',
-    //   pattern: '0 0 1 1 *',
-    // },
-    // Database event trigger
-    // {
-    //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
-    //   type: 'databaseEvent',
-    //   eventName: 'person.updated',
-    //   updatedFields: ['name'],
-    // },
-  ],
+  httpRouteTriggerSettings: {
+    path: '/post-card/create',
+    httpMethod: 'GET',
+    isAuthRequired: false,
+  },
+  /*databaseEventTriggerSettings: {
+    eventName: 'people.created',
+  },*/
+  /*cronTriggerSettings: {
+    pattern: '0 0 1 1 *',
+  },*/
 });
 ```
 
-Tipi di trigger comuni:
-
-* **route**: Espone la funzione su un percorso e metodo HTTP **sotto l'endpoint `/s/`**:
-
-> es. `path: '/post-card/create',` -> chiamata su `<APP_URL>/s/post-card/create`
-
+Tipi di trigger disponibili:
+* **httpRoute**: Espone la tua funzione su un percorso e metodo HTTP **sotto l'endpoint `/s/`**:
+> ad es. `path: '/post-card/create'` è invocabile su `https://your-twenty-server.com/s/post-card/create`
 * **cron**: Esegue la tua funzione secondo una pianificazione utilizzando un'espressione CRON.
 * **databaseEvent**: Viene eseguito sugli eventi del ciclo di vita degli oggetti dello spazio di lavoro. Quando l'operazione dell'evento è `updated`, è possibile specificare campi specifici da monitorare nell'array `updatedFields`. Se lasciato non definito o vuoto, qualsiasi aggiornamento attiverà la funzione.
+> ad es. `person.updated`, `*.created`, `company.*`
 
-> es. `person.updated`
-
-Note:
-
-* L'array `triggers` è facoltativo. Le funzioni senza trigger possono essere utilizzate come funzioni di utilità richiamate da altre funzioni.
-* Puoi combinare più tipi di trigger in un'unica funzione.
-
-### Funzioni di pre-installazione
-
-Una funzione di pre-installazione è una funzione logica che viene eseguita automaticamente prima che la tua app venga installata in uno spazio di lavoro. È utile per attività di convalida, controlli dei prerequisiti o per preparare lo stato dello spazio di lavoro prima che proceda l'installazione principale.
-
-Quando esegui lo scaffolding di una nuova app con `create-twenty-app`, viene generata una funzione di pre-installazione in `src/logic-functions/pre-install.ts`:
-
-```typescript
-// src/logic-functions/pre-install.ts
-import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
-
-const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
-  console.log('Pre install logic function executed successfully!', payload.previousVersion);
-};
-
-export default definePreInstallLogicFunction({
-  universalIdentifier: '<generated-uuid>',
-  name: 'pre-install',
-  description: 'Runs before installation to prepare the application.',
-  timeoutSeconds: 300,
-  handler,
-});
-```
-
-Puoi anche eseguire manualmente la funzione di pre-installazione in qualsiasi momento utilizzando la CLI:
+<Note>
+Puoi anche eseguire manualmente una funzione utilizzando la CLI:
 
 ```bash filename="Terminal"
-yarn twenty exec --preInstall
+yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
 ```
-
-Punti chiave:
-
-* Le funzioni di pre-installazione utilizzano `definePreInstallLogicFunction()` — una variante specializzata che omette le impostazioni dei trigger (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
-* L'handler riceve un `InstallLogicFunctionPayload` con `{ previousVersion: string }` — la versione dell'app precedentemente installata (oppure una stringa vuota per nuove installazioni).
-* È consentita una sola funzione di pre-installazione per applicazione. La build del manifesto genererà un errore se ne viene rilevata più di una.
-* L'`universalIdentifier` della funzione viene impostato automaticamente come `preInstallLogicFunctionUniversalIdentifier` nel manifesto dell'applicazione durante la build — non è necessario farvi riferimento in `defineApplication()`.
-* Il timeout predefinito è impostato a 300 secondi (5 minuti) per consentire attività di preparazione più lunghe.
-* Le funzioni di pre-installazione non necessitano di trigger — vengono invocate dalla piattaforma prima dell'installazione o manualmente tramite `exec --preInstall`.
-
-### Funzioni post-installazione
-
-Una funzione post-installazione è una funzione logica che viene eseguita automaticamente dopo che la tua app è stata installata in uno spazio di lavoro. Questo è utile per attività di configurazione una tantum come il popolamento di dati predefiniti, la creazione di record iniziali o la configurazione delle impostazioni dello spazio di lavoro.
-
-Quando esegui lo scaffolding di una nuova app con `create-twenty-app`, viene generata automaticamente una funzione di post-installazione in `src/logic-functions/post-install.ts`:
-
-```typescript
-// src/logic-functions/post-install.ts
-import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
-
-const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
-  console.log('Post install logic function executed successfully!', payload.previousVersion);
-};
-
-export default definePostInstallLogicFunction({
-  universalIdentifier: '<generated-uuid>',
-  name: 'post-install',
-  description: 'Runs after installation to set up the application.',
-  timeoutSeconds: 300,
-  handler,
-});
-```
-
-Puoi anche eseguire manualmente la funzione di post-installazione in qualsiasi momento utilizzando la CLI:
 
 ```bash filename="Terminal"
-yarn twenty exec --postInstall
+yarn twenty exec -y e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
-Punti chiave:
+Puoi osservare i log con:
 
-* Le funzioni di post-installazione utilizzano `definePostInstallLogicFunction()` — una variante specializzata che omette le impostazioni dei trigger (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
-* L'handler riceve un `InstallLogicFunctionPayload` con `{ previousVersion: string }` — la versione dell'app precedentemente installata (oppure una stringa vuota per nuove installazioni).
-* È consentita una sola funzione di post-installazione per applicazione. La build del manifesto genererà un errore se ne viene rilevata più di una.
-* L'`universalIdentifier` della funzione viene impostato automaticamente come `postInstallLogicFunctionUniversalIdentifier` nel manifesto dell'applicazione durante la build — non è necessario farvi riferimento in `defineApplication()`.
-* Il timeout predefinito è impostato a 300 secondi (5 minuti) per consentire attività di configurazione più lunghe, come il popolamento dei dati.
-* Le funzioni di post-installazione non necessitano di trigger — vengono invocate dalla piattaforma durante l'installazione o manualmente tramite `exec --postInstall`.
-
-### Payload del trigger di route
-
-<Warning>
-**Modifica non retrocompatibile (v1.16, gennaio 2026):** Il formato del payload del trigger di route è cambiato. Prima della v1.16, i parametri di query, i parametri di percorso e il corpo venivano inviati direttamente come payload. A partire dalla v1.16, sono annidati all'interno di un oggetto `RoutePayload` strutturato.
-
-**Prima della v1.16:**
-```typescript
-const handler = async (params) => {
-  const { param1, param2 } = params; // Direct access
-};
+```bash filename="Terminal"
+yarn twenty logs
 ```
+</Note>
 
-**Dopo la v1.16:**
-```typescript
-const handler = async (event: RoutePayload) => {
-  const { param1, param2 } = event.body; // Access via .body
-  const { queryParam } = event.queryStringParameters;
-  const { id } = event.pathParameters;
-};
-```
+#### Payload del trigger di route
 
-**Per migrare le funzioni esistenti:** Aggiorna l'handler per estrarre i dati da `event.body`, `event.queryStringParameters` o `event.pathParameters` invece che direttamente dall'oggetto `params`.
-</Warning>
+Quando un trigger di tipo route invoca la tua funzione logica, questa riceve un oggetto `RoutePayload` che segue il [formato AWS HTTP API v2](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html).
+Importa il tipo `RoutePayload` da `twenty-sdk`:
 
-Quando un trigger di route invoca la tua funzione logica, questa riceve un oggetto `RoutePayload` che segue il formato AWS HTTP API v2. Importa il tipo da `twenty-sdk`:
-
-```typescript
+```ts
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
 
 const handler = async (event: RoutePayload) => {
-  // Access request data
   const { headers, queryStringParameters, pathParameters, body } = event;
-
-  // HTTP method and path are available in requestContext
   const { method, path } = event.requestContext.http;
 
   return { message: 'Success' };
@@ -625,41 +530,39 @@ const handler = async (event: RoutePayload) => {
 
 Il tipo `RoutePayload` ha la seguente struttura:
 
-| Proprietà                    | Tipo                                  | Descrizione                                                                                      |
-| ---------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `headers`                    | `Record<string, string \| undefined>` | Intestazioni HTTP (solo quelle elencate in `forwardedRequestHeaders`)                            |
-| `queryStringParameters`      | `Record<string, string \| undefined>` | Parametri della query string (valori multipli uniti da virgole)                                  |
-| `pathParameters`             | `Record<string, string \| undefined>` | Parametri di percorso estratti dal pattern della route (ad es., `/users/:id` -> `{ id: '123' }`) |
-| `body`                       | `object \| null`                      | Corpo della richiesta analizzato (JSON)                                                          |
-| `isBase64Encoded`            | `boolean`                             | Indica se il corpo è codificato in base64                                                        |
-| `requestContext.http.method` | `string`                              | Metodo HTTP (GET, POST, PUT, PATCH, DELETE)                                                      |
-| `requestContext.http.path`   | `string`                              | Percorso della richiesta non elaborato                                                           |
+  | Proprietà                    | Tipo                                  | Descrizione                                                           | Esempio                                                                    |
+  | ---------------------------- | ------------------------------------- | --------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record<string, string \| undefined>` | Intestazioni HTTP (solo quelle elencate in `forwardedRequestHeaders`) | vedi la sezione sotto                                                      |
+  | `queryStringParameters`      | `Record<string, string \| undefined>` | Parametri della query string (valori multipli uniti da virgole)       | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record<string, string \| undefined>` | Parametri di percorso estratti dal pattern della route                | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+  | `body`                       | `object \| null`                      | Corpo della richiesta analizzato (JSON)                               | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `isBase64Encoded`            | `boolean`                             | Indica se il corpo è codificato in base64                             |                                                                            |
+  | `requestContext.http.method` | `string`                              | Metodo HTTP (GET, POST, PUT, PATCH, DELETE)                           |                                                                            |
+  | `requestContext.http.path`   | `string`                              | Percorso della richiesta non elaborato                                |                                                                            |
 
-### Inoltro delle intestazioni HTTP
 
-Per impostazione predefinita, le intestazioni HTTP delle richieste in ingresso **non** vengono passate alla tua funzione logica per motivi di sicurezza. Per accedere a intestazioni specifiche, elencale esplicitamente nell'array `forwardedRequestHeaders`:
+#### forwardedRequestHeaders
 
-```typescript
+Per impostazione predefinita, le intestazioni HTTP delle richieste in ingresso **non** vengono passate alla tua funzione logica per motivi di sicurezza.
+Per accedere a intestazioni specifiche, elencale nell'array `forwardedRequestHeaders`:
+
+```ts
 export default defineLogicFunction({
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'webhook-handler',
   handler,
-  triggers: [
-    {
-      universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
-      type: 'route',
-      path: '/webhook',
-      httpMethod: 'POST',
-      isAuthRequired: false,
-      forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
-    },
-  ],
+  httpRouteTriggerSettings: {
+    path: '/webhook',
+    httpMethod: 'POST',
+    isAuthRequired: false,
+    forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+  },
 });
 ```
 
-Nel tuo handler, puoi quindi accedere a queste intestazioni:
+Nel tuo handler, accedi alle intestazioni inoltrate in questo modo:
 
-```typescript
+```ts
 const handler = async (event: RoutePayload) => {
   const signature = event.headers['x-webhook-signature'];
   const contentType = event.headers['content-type'];
@@ -670,22 +573,16 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-  I nomi delle intestazioni vengono normalizzati in minuscolo. Accedile usando chiavi in minuscolo (ad esempio, `event.headers['content-type']`).
+I nomi delle intestazioni vengono normalizzati in minuscolo. Accedile usando chiavi in minuscolo (ad es., `event.headers['content-type']`).
 </Note>
 
-Puoi creare nuove funzioni in due modi:
+#### Esporre una funzione come strumento
 
-* **Generata dallo scaffolder**: Esegui `yarn twenty add` e scegli l'opzione per aggiungere una nuova funzione logica. Questo genera un file iniziale con un handler e una configurazione.
-* **Manuale**: Crea un nuovo file `*.logic-function.ts` e usa `defineLogicFunction()`, seguendo lo stesso schema.
+Le funzioni logiche possono essere esposte come **strumenti** per gli agenti di IA e i flussi di lavoro. Quando una funzione è contrassegnata come strumento, diventa individuabile dalle funzionalità di IA di Twenty e può essere utilizzata nelle automazioni dei flussi di lavoro.
 
-### Contrassegnare una funzione logica come strumento
+Per contrassegnare una funzione logica come strumento, imposta `isTool: true`:
 
-Le funzioni logiche possono essere esposte come **strumenti** per gli agenti di IA e i flussi di lavoro. Quando una funzione è contrassegnata come strumento, diventa individuabile dalle funzionalità di IA di Twenty e può essere selezionata come passaggio nelle automazioni dei flussi di lavoro.
-
-Per contrassegnare una funzione logica come strumento, imposta `isTool: true` e fornisci un `toolInputSchema` che descriva i parametri di input attesi utilizzando [JSON Schema](https://json-schema.org/):
-
-```typescript
-// src/logic-functions/enrich-company.logic-function.ts
+```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
@@ -714,6 +611,17 @@ export default defineLogicFunction({
   timeoutSeconds: 10,
   handler,
   isTool: true,
+});
+```
+
+Punti chiave:
+
+* Puoi combinare `isTool` con i trigger — una funzione può essere sia uno strumento (invocabile dagli agenti IA) sia attivata da eventi allo stesso tempo.
+* **`toolInputSchema`** (opzionale): un oggetto JSON Schema che descrive i parametri accettati dalla funzione. Lo schema viene calcolato automaticamente dall'analisi statica del codice sorgente, ma puoi impostarlo esplicitamente:
+
+```ts
+export default defineLogicFunction({
+  ...,
   toolInputSchema: {
     type: 'object',
     properties: {
@@ -731,60 +639,364 @@ export default defineLogicFunction({
 });
 ```
 
-Punti chiave:
-
-* **`isTool`** (`boolean`, predefinito: `false`): Quando impostato su `true`, la funzione viene registrata come strumento e diventa disponibile per gli agenti IA e le automazioni dei flussi di lavoro.
-* **`toolInputSchema`** (`object`, opzionale): Un oggetto JSON Schema che descrive i parametri accettati dalla funzione. Gli agenti IA utilizzano questo schema per capire quali input si aspetta lo strumento e per convalidare le chiamate. Se omesso, lo schema assume il valore predefinito `{ type: 'object', properties: {} }` (nessun parametro).
-* Le funzioni con `isTool: false` (o non impostato) **non** vengono esposte come strumenti. Possono comunque essere eseguite direttamente o chiamate da altre funzioni, ma non compariranno nell'individuazione degli strumenti.
-* **Denominazione dello strumento**: Quando esposta come strumento, il nome della funzione viene normalizzato automaticamente in `logic_function_<name>` (in minuscolo, i caratteri non alfanumerici vengono sostituiti da trattini bassi). Ad esempio, `enrich-company` diventa `logic_function_enrich_company`.
-* È possibile combinare `isTool` con i trigger — una funzione può essere sia uno strumento (invocabile dagli agenti IA) sia attivata da eventi (cron, eventi del database, routes) contemporaneamente.
-
 <Note>
 **Scrivi una buona `description`.** Gli agenti IA fanno affidamento sul campo `description` della funzione per decidere quando usare lo strumento. Sii specifico su cosa fa lo strumento e quando dovrebbe essere invocato.
 </Note>
 
-### Componenti front-end
+</Accordion>
+<Accordion title="definePreInstallLogicFunction" description="Definisci una funzione logica di pre-installazione (una per app)">
 
-I componenti front-end ti consentono di creare componenti React personalizzati che vengono renderizzati all'interno dell'interfaccia di Twenty. Usa `defineFrontComponent()` per definire componenti con convalida integrata:
+Una funzione di pre-installazione è una funzione logica che viene eseguita automaticamente prima che la tua app venga installata in uno spazio di lavoro. È utile per attività di convalida, controlli dei prerequisiti o per preparare lo stato dello spazio di lavoro prima che proceda l'installazione principale.
 
-```typescript
-// src/front-components/my-widget.tsx
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'e0604b9e-e946-456b-886d-3f27d9a6b324',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Puoi anche eseguire manualmente la funzione di pre-installazione in qualsiasi momento utilizzando la CLI:
+
+```bash filename="Terminal"
+yarn twenty exec --preInstall
+```
+
+Punti chiave:
+* Le funzioni di pre-installazione utilizzano `definePreInstallLogicFunction()` — una variante specializzata che omette le impostazioni dei trigger (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* L'handler riceve un `InstallLogicFunctionPayload` con `{ previousVersion: string }` — la versione dell'app precedentemente installata (oppure una stringa vuota per nuove installazioni).
+* È consentita una sola funzione di pre-installazione per applicazione. La build del manifesto genererà un errore se ne viene rilevata più di una.
+* L'`universalIdentifier` della funzione viene impostato automaticamente come `preInstallLogicFunctionUniversalIdentifier` nel manifesto dell'applicazione durante la build — non è necessario farvi riferimento in `defineApplication()`.
+* Il timeout predefinito è impostato a 300 secondi (5 minuti) per consentire attività di preparazione più lunghe.
+
+</Accordion>
+<Accordion title="definePostInstallLogicFunction" description="Definisci una funzione logica di post-installazione (una per app)">
+
+Una funzione post-installazione è una funzione logica che viene eseguita automaticamente dopo che la tua app è stata installata in uno spazio di lavoro. Questo è utile per attività di configurazione una tantum come il popolamento di dati predefiniti, la creazione di record iniziali o la configurazione delle impostazioni dello spazio di lavoro.
+
+```ts src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+
+const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+  console.log('Post install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'f7a2b9c1-3d4e-5678-abcd-ef9876543210',
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+Puoi anche eseguire manualmente la funzione di post-installazione in qualsiasi momento utilizzando la CLI:
+
+```bash filename="Terminal"
+yarn twenty exec --postInstall
+```
+
+Punti chiave:
+* Le funzioni di post-installazione utilizzano `definePostInstallLogicFunction()` — una variante specializzata che omette le impostazioni dei trigger (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* L'handler riceve un `InstallLogicFunctionPayload` con `{ previousVersion: string }` — la versione dell'app precedentemente installata (oppure una stringa vuota per nuove installazioni).
+* È consentita una sola funzione di post-installazione per applicazione. La build del manifesto genererà un errore se ne viene rilevata più di una.
+* L'`universalIdentifier` della funzione viene impostato automaticamente come `postInstallLogicFunctionUniversalIdentifier` nel manifesto dell'applicazione durante la build — non è necessario farvi riferimento in `defineApplication()`.
+* Il timeout predefinito è impostato a 300 secondi (5 minuti) per consentire attività di configurazione più lunghe, come il popolamento dei dati.
+
+</Accordion>
+<Accordion title="defineFrontComponent" description="Definisci componenti front-end per un'interfaccia utente personalizzata">
+
+I componenti front-end sono componenti React che vengono renderizzati direttamente all'interno della UI di Twenty. Vengono eseguiti in un **Web Worker** isolato utilizzando Remote DOM — il tuo codice è in sandbox ma viene renderizzato in modo nativo nella pagina, non in un iframe.
+
+#### Esempio di base
+
+Il modo più rapido per vedere in azione un componente front-end è registrarlo come **comando**. Aggiungere un campo `command` con `isPinned: true` lo fa apparire come pulsante di azione rapida nell'angolo in alto a destra della pagina — nessun layout di pagina necessario:
+
+```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk';
 
-const MyWidget = () => {
+const HelloWorld = () => {
   return (
     <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-      <h1>My Custom Widget</h1>
-      <p>This is a custom front component for Twenty.</p>
+      <h1>Hello from my app!</h1>
+      <p>This component renders inside Twenty.</p>
     </div>
   );
 };
 
 export default defineFrontComponent({
-  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-  name: 'my-widget',
-  description: 'A custom widget component',
-  component: MyWidget,
+  universalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  name: 'hello-world',
+  description: 'A simple front component',
+  component: HelloWorld,
+  command: {
+    universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
+    shortLabel: 'Hello',
+    label: 'Hello World',
+    icon: 'IconBolt',
+    isPinned: true,
+    availabilityType: 'GLOBAL',
+  },
 });
 ```
 
-Punti chiave:
+Dopo la sincronizzazione con `yarn twenty dev`, l'azione rapida appare nell'angolo in alto a destra della pagina:
 
-* I componenti front-end sono componenti React che eseguono il rendering in contesti isolati all'interno di Twenty.
-* Il campo `component` fa riferimento al tuo componente React.
-* I componenti vengono compilati e sincronizzati automaticamente durante `yarn twenty dev`.
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Pulsante di azione rapida nell'angolo in alto a destra" />
+</div>
 
-Puoi creare nuovi componenti front-end in due modi:
+Fai clic per renderizzare il componente in linea.
 
-* **Generata dallo scaffolder**: Esegui `yarn twenty add` e scegli l'opzione per aggiungere un nuovo componente front-end.
-* **Manuale**: Crea un nuovo file `.tsx` e usa `defineFrontComponent()`, seguendo lo stesso schema.
+{/* TODO: add screenshot of the rendered front component */}
 
-### Abilità
+#### Campi di configurazione
+
+| Campo                 | Obbligatorio | Descrizione                                                                              |
+| --------------------- | ------------ | ---------------------------------------------------------------------------------------- |
+| `universalIdentifier` | Sì           | ID univoco stabile per questo componente                                                 |
+| `component`           | Sì           | Una funzione di componente React                                                         |
+| `name`                | No           | Nome visualizzato                                                                        |
+| `descrizione`         | No           | Descrizione di ciò che fa il componente                                                  |
+| `isHeadless`          | No           | Imposta su `true` se il componente non ha una UI visibile (vedi sotto)                   |
+| `comando`             | No           | Registra il componente come comando (vedi [opzioni del comando](#command-options) sotto) |
+
+#### Posizionare un componente front-end su una pagina
+
+Oltre ai comandi, puoi incorporare un componente front-end direttamente in una pagina di record aggiungendolo come widget in un **layout di pagina**. Vedi la sezione [definePageLayout](#definepagelayout) per i dettagli.
+
+#### Componenti headless (`isHeadless: true`)
+
+I componenti headless non renderizzano alcuna UI visibile ma eseguono comunque la logica React. Questo è utile per i componenti di effetto — componenti che eseguono effetti collaterali quando vengono montati, come sincronizzare dati, avviare un timer, ascoltare eventi o attivare una notifica.
+
+```tsx src/front-components/sync-tracker.tsx
+import { defineFrontComponent, useRecordId, enqueueSnackbar } from 'twenty-sdk';
+import { useEffect } from 'react';
+
+const SyncTracker = () => {
+  const recordId = useRecordId();
+
+  useEffect(() => {
+    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+  }, [recordId]);
+
+  return null;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-tracker',
+  description: 'Tracks record views silently',
+  isHeadless: true,
+  component: SyncTracker,
+});
+```
+
+Poiché il componente restituisce `null`, Twenty evita di renderizzare un contenitore per esso — non appare alcuno spazio vuoto nel layout. Il componente ha comunque accesso a tutti gli hook e all'API di comunicazione con l'host.
+
+#### Accesso al contesto di runtime
+
+All'interno del tuo componente, usa gli hook dell'SDK per accedere all'utente corrente, al record e all'istanza del componente:
+
+```tsx src/front-components/record-info.tsx
+import {
+  defineFrontComponent,
+  useUserId,
+  useRecordId,
+  useFrontComponentId,
+} from 'twenty-sdk';
+
+const RecordInfo = () => {
+  const userId = useUserId();
+  const recordId = useRecordId();
+  const componentId = useFrontComponentId();
+
+  return (
+    <div>
+      <p>User: {userId}</p>
+      <p>Record: {recordId ?? 'No record context'}</p>
+      <p>Component: {componentId}</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f23456789012',
+  name: 'record-info',
+  component: RecordInfo,
+});
+```
+
+Hook disponibili:
+
+| Hook                                          | Restituisce       | Descrizione                                                           |
+| --------------------------------------------- | ----------------- | --------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` o `null` | L'ID dell'utente corrente                                             |
+| `useRecordId()`                               | `string` o `null` | L'ID del record corrente (quando posizionato su una pagina di record) |
+| `useFrontComponentId()`                       | `string`          | L'ID di questa istanza di componente                                  |
+| `useFrontComponentExecutionContext(selector)` | varia             | Accedi all'intero contesto di esecuzione con una funzione selettore   |
+
+#### API di comunicazione con l'host
+
+I componenti front-end possono attivare navigazione, modali e notifiche utilizzando funzioni da `twenty-sdk`:
+
+| Funzione                                        | Descrizione                           |
+| ----------------------------------------------- | ------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)` | Naviga a una pagina dell'app          |
+| `openSidePanelPage(params)`                     | Apri un pannello laterale             |
+| `closeSidePanel()`                              | Chiudi il pannello laterale           |
+| `openCommandConfirmationModal(params)`          | Mostra una finestra di conferma       |
+| `enqueueSnackbar(params)`                       | Mostra una notifica toast             |
+| `unmountFrontComponent()`                       | Smonta il componente                  |
+| `updateProgress(progress)`                      | Aggiorna un indicatore di avanzamento |
+
+#### Opzioni del comando
+
+Aggiungere un campo `command` a `defineFrontComponent` registra il componente nel menu comandi (Cmd+K). Se `isPinned` è `true`, compare anche come pulsante di azione rapida nell'angolo in alto a destra della pagina.
+
+| Campo                                   | Obbligatorio | Descrizione                                                                                                                                                                                          |
+| --------------------------------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | Sì           | ID univoco stabile per il comando                                                                                                                                                                    |
+| `etichetta`                             | Sì           | Etichetta completa mostrata nel menu comandi (Cmd+K)                                                                                                                                                 |
+| `shortLabel`                            | No           | Etichetta breve visualizzata sul pulsante di azione rapida fissato                                                                                                                                   |
+| `icona`                                 | No           | Nome dell'icona visualizzato accanto all'etichetta (ad es. `'IconBolt'`, `'IconSend'`)                                                                                                               |
+| `isPinned`                              | No           | Quando `true`, mostra il comando come pulsante di azione rapida nell'angolo in alto a destra della pagina                                                                                            |
+| `availabilityType`                      | No           | Controlla dove compare il comando: `'GLOBAL'` (sempre disponibile), `'RECORD_SELECTION'` (solo quando sono selezionati dei record) o `'FALLBACK'` (mostrato quando nessun altro comando corrisponde) |
+| `availabilityObjectUniversalIdentifier` | No           | Limita il comando alle pagine di uno specifico tipo di oggetto (ad es. solo sui record Company)                                                                                                      |
+| `conditionalAvailabilityExpression`     | No           | Un'espressione booleana per controllare dinamicamente se il comando è visibile (vedi sotto)                                                                                                          |
+
+#### Espressioni di disponibilità condizionale
+
+Il campo `conditionalAvailabilityExpression` consente di controllare quando un comando è visibile in base al contesto della pagina corrente. Importa variabili tipizzate e operatori da `twenty-sdk` per costruire espressioni:
+
+```tsx
+import {
+  defineFrontComponent,
+  pageType,
+  numberOfSelectedRecords,
+  objectPermissions,
+  everyEquals,
+  isDefined,
+} from 'twenty-sdk';
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'bulk-action',
+  component: BulkAction,
+  command: {
+    universalIdentifier: '...',
+    label: 'Bulk Update',
+    availabilityType: 'RECORD_SELECTION',
+    conditionalAvailabilityExpression: everyEquals(
+      objectPermissions,
+      'canUpdateObjectRecords',
+      true,
+    ),
+  },
+});
+```
+
+**Variabili di contesto** — rappresentano lo stato corrente della pagina:
+
+| Variabile                      | Tipo      | Descrizione                                                              |
+| ------------------------------ | --------- | ------------------------------------------------------------------------ |
+| `pageType`                     | `string`  | Tipo di pagina corrente (ad es. `'RecordIndexPage'`, `'RecordShowPage'`) |
+| `isInSidePanel`                | `boolean` | Indica se il componente è renderizzato in un pannello laterale           |
+| `numberOfSelectedRecords`      | `numero`  | Numero di record attualmente selezionati                                 |
+| `isSelectAll`                  | `boolean` | Indica se "seleziona tutto" è attivo                                     |
+| `selectedRecords`              | `array`   | Gli oggetti dei record selezionati                                       |
+| `favoriteRecordIds`            | `array`   | ID dei record aggiunti ai preferiti                                      |
+| `objectPermissions`            | `oggetto` | Autorizzazioni per il tipo di oggetto corrente                           |
+| `targetObjectReadPermissions`  | `oggetto` | Autorizzazioni di lettura per l'oggetto di destinazione                  |
+| `targetObjectWritePermissions` | `oggetto` | Autorizzazioni di scrittura per l'oggetto di destinazione                |
+| `featureFlags`                 | `oggetto` | Flag delle funzionalità attivi                                           |
+| `objectMetadataItem`           | `oggetto` | Metadati del tipo di oggetto corrente                                    |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | Indica se la vista corrente ha un filtro di soft-delete                  |
+
+**Operatori** — combinano variabili in espressioni booleane:
+
+| Operatore                           | Descrizione                                                          |
+| ----------------------------------- | -------------------------------------------------------------------- |
+| `isDefined(value)`                  | `true` se il valore non è null/undefined                             |
+| `isNonEmptyString(value)`           | `true` se il valore è una stringa non vuota                          |
+| `includes(array, value)`            | `true` se l'array contiene il valore                                 |
+| `includesEvery(array, prop, value)` | `true` se la proprietà di ogni elemento include il valore            |
+| `every(array, prop)`                | `true` se la proprietà è truthy su ogni elemento                     |
+| `everyDefined(array, prop)`         | `true` se la proprietà è definita su ogni elemento                   |
+| `everyEquals(array, prop, value)`   | `true` se la proprietà è uguale al valore su ogni elemento           |
+| `some(array, prop)`                 | `true` se la proprietà è truthy su almeno un elemento                |
+| `someDefined(array, prop)`          | `true` se la proprietà è definita su almeno un elemento              |
+| `someEquals(array, prop, value)`    | `true` se la proprietà è uguale al valore su almeno un elemento      |
+| `someNonEmptyString(array, prop)`   | `true` se la proprietà è una stringa non vuota su almeno un elemento |
+| `none(array, prop)`                 | `true` se la proprietà è falsy su ogni elemento                      |
+| `noneDefined(array, prop)`          | `true` se la proprietà è undefined su ogni elemento                  |
+| `noneEquals(array, prop, value)`    | `true` se la proprietà non è uguale al valore su alcun elemento      |
+
+#### Asset pubblici
+
+I componenti front-end possono accedere ai file dalla directory `public/` dell'app utilizzando `getPublicAssetUrl`:
+
+```tsx
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk';
+
+const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'logo',
+  component: Logo,
+});
+```
+
+Vedi la [sezione sugli asset pubblici](#accessing-public-assets-with-getpublicasseturl) per i dettagli.
+
+#### Stile
+
+I componenti front-end supportano diversi approcci di styling. Puoi usare:
+
+* **Stili inline** — `style={{ color: 'red' }}`
+* **Componenti Twenty UI** — importali da `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar e altro)
+* **Emotion** — CSS-in-JS con `@emotion/react`
+* **Styled-components** — pattern `styled.div`
+* **Tailwind CSS** — classi di utilità
+* **Qualsiasi libreria CSS-in-JS** compatibile con React
+
+```tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { Button, Tag, Status } from 'twenty-sdk/ui';
+
+const StyledWidget = () => {
+  return (
+    <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
+      <Button title="Click me" onClick={() => alert('Clicked!')} />
+      <Tag text="Active" color="green" />
+      <Status color="green" text="Online" />
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-567890123456',
+  name: 'styled-widget',
+  component: StyledWidget,
+});
+```
+
+</Accordion>
+
+<Accordion title="defineSkill" description="Definisci le competenze dell'agente IA">
 
 Le skill definiscono istruzioni e capacità riutilizzabili che gli agenti IA possono utilizzare all'interno del tuo spazio di lavoro. Usa `defineSkill()` per definire skill con convalida integrata:
 
-```typescript
-// src/skills/example-skill.ts
+```ts src/skills/example-skill.ts
 import { defineSkill } from 'twenty-sdk';
 
 export default defineSkill({
@@ -802,32 +1014,333 @@ export default defineSkill({
 ```
 
 Punti chiave:
-
 * `name` è una stringa identificativa univoca per la skill (kebab-case consigliato).
 * `label` è il nome di visualizzazione leggibile mostrato nell'UI.
 * `content` contiene le istruzioni della skill — questo è il testo che l'agente IA utilizza.
 * `icon` (opzionale) imposta l'icona visualizzata nell'UI.
 * `description` (opzionale) fornisce contesto aggiuntivo sullo scopo della skill.
 
-Puoi creare nuove skill in due modi:
+</Accordion>
+<Accordion title="defineAgent" description="Definisci agenti IA con prompt personalizzati">
 
-* **Generata dallo scaffolder**: Esegui `yarn twenty add` e scegli l'opzione per aggiungere una nuova skill.
-* **Manuale**: Crea un nuovo file e usa `defineSkill()`, seguendo lo stesso schema.
+Gli agenti sono assistenti IA che vivono all'interno del tuo spazio di lavoro. Usa `defineAgent()` per creare agenti con un prompt di sistema personalizzato:
 
-### Client API tipizzati (`twenty-client-sdk`)
+```ts src/agents/example-agent.ts
+import { defineAgent } from 'twenty-sdk';
 
-Il pacchetto `twenty-client-sdk` fornisce due client GraphQL tipizzati per interagire con l'API di Twenty dalle tue funzioni logiche e dai componenti front-end:
+export default defineAgent({
+  universalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  name: 'sales-assistant',
+  label: 'Sales Assistant',
+  description: 'Helps the sales team draft outreach emails and research prospects',
+  icon: 'IconRobot',
+  prompt: 'You are a helpful sales assistant. Help users with their questions and tasks.',
+});
+```
+
+Punti chiave:
+* `name` è la stringa identificativa univoca dell'agente (kebab-case consigliato).
+* `label` è il nome visualizzato nell'UI.
+* `prompt` è il prompt di sistema che definisce il comportamento dell'agente.
+* `description` (opzionale) fornisce contesto su ciò che fa l'agente.
+* `icon` (opzionale) imposta l'icona visualizzata nell'UI.
+* `modelId` (opzionale) sostituisce il modello di IA predefinito utilizzato dall'agente.
+
+</Accordion>
+<Accordion title="defineView" description="Definisci viste salvate per gli oggetti">
+
+Le viste sono configurazioni salvate di come vengono visualizzati i record di un oggetto — inclusi quali campi sono visibili, il loro ordine e gli eventuali filtri o raggruppamenti applicati. Usa `defineView()` per fornire viste preconfigurate con la tua app:
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+Punti chiave:
+* `objectUniversalIdentifier` specifica a quale oggetto si applica questa vista.
+* `key` determina il tipo di vista (ad es., `ViewKey.INDEX` per la vista elenco principale).
+* `fields` controlla quali colonne compaiono e il loro ordine. Ogni campo fa riferimento a un `fieldMetadataUniversalIdentifier`.
+* Puoi anche definire `filters`, `filterGroups`, `groups` e `fieldGroups` per configurazioni più avanzate.
+* `position` controlla l'ordinamento quando esistono più viste per lo stesso oggetto.
+
+</Accordion>
+<Accordion title="defineNavigationMenuItem" description="Definisci i link di navigazione della barra laterale">
+
+Le voci del menu di navigazione aggiungono elementi personalizzati alla barra laterale dello spazio di lavoro. Usa `defineNavigationMenuItem()` per collegarti a viste, URL esterni o oggetti:
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Punti chiave:
+* `type` determina a cosa rimanda la voce di menu: `NavigationMenuItemType.VIEW` per una vista salvata o `NavigationMenuItemType.LINK` per un URL esterno.
+* Per i link a viste, imposta `viewUniversalIdentifier`. Per i link esterni, imposta `link`.
+* `position` controlla l'ordinamento nella barra laterale.
+* `icon` e `color` (opzionali) personalizzano l'aspetto.
+
+</Accordion>
+<Accordion title="definePageLayout" description="Definisci layout di pagina personalizzati per le viste dei record">
+
+I layout di pagina ti consentono di personalizzare l'aspetto di una pagina dei dettagli di un record — quali schede compaiono, quali widget sono all'interno di ciascuna scheda e come sono disposti. Usa `definePageLayout()` per fornire layout personalizzati con la tua app:
+
+```ts src/page-layouts/example-record-page-layout.ts
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayout({
+  universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '6ed26b60-a51d-4ad7-86dd-1c04c7f3cac5',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
+});
+```
+
+Punti chiave:
+* `type` è in genere `'RECORD_PAGE'` per personalizzare la vista dei dettagli di un oggetto specifico.
+* `objectUniversalIdentifier` specifica a quale oggetto si applica questo layout.
+* Ogni `tab` definisce una sezione della pagina con un `title`, `position` e `layoutMode` (`CANVAS` per il layout libero).
+* Ogni `widget` all'interno di una scheda può renderizzare un componente front-end, un elenco di relazioni o altri tipi di widget integrati.
+* `position` sulle schede controlla il loro ordine. Usa valori più alti (ad es., 50) per posizionare le schede personalizzate dopo quelle integrate.
+
+</Accordion>
+</AccordionGroup>
+
+## Asset pubblici (cartella `public/`)
+
+La cartella `public/` alla radice della tua app contiene file statici — immagini, icone, font o qualsiasi altro asset di cui la tua app ha bisogno a runtime. Questi file sono inclusi automaticamente nelle build, sincronizzati durante la modalità di sviluppo e caricati sul server.
+
+I file posizionati in `public/` sono:
+
+* **Pubblicamente accessibili** — una volta sincronizzati sul server, gli asset sono serviti a un URL pubblico. Non è necessaria alcuna autenticazione per accedervi.
+* **Disponibili nei componenti front-end** — usa gli URL degli asset per visualizzare immagini, icone o qualsiasi media all'interno dei tuoi componenti React.
+* **Disponibili nelle funzioni logiche** — fai riferimento agli URL degli asset nelle email, nelle risposte API o in qualsiasi logica lato server.
+* **Usati per i metadati del marketplace** — i campi `logoUrl` e `screenshots` in `defineApplication()` fanno riferimento a file di questa cartella (ad es., `public/logo.png`). Questi vengono visualizzati nel marketplace quando la tua app viene pubblicata.
+* **Sincronizzati automaticamente in modalità dev** — quando aggiungi, aggiorni o elimini un file in `public/`, viene sincronizzato automaticamente con il server. Nessun riavvio necessario.
+* **Inclusi nelle build** — `yarn twenty build` raggruppa tutti gli asset pubblici nell'output di distribuzione.
+
+### Accedere agli asset pubblici con `getPublicAssetUrl`
+
+Usa l'helper `getPublicAssetUrl` da `twenty-sdk` per ottenere l'URL completo di un file nella tua directory `public/`. Funziona sia nelle funzioni logiche che nei componenti front-end.
+
+**In una funzione logica:**
+
+```ts src/logic-functions/send-invoice.ts
+import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk';
+
+const handler = async (): Promise<any> => {
+  const logoUrl = getPublicAssetUrl('logo.png');
+  const invoiceUrl = getPublicAssetUrl('templates/invoice.png');
+
+  // Fetch the file content (no auth required — public endpoint)
+  const response = await fetch(invoiceUrl);
+  const buffer = await response.arrayBuffer();
+
+  return { logoUrl, size: buffer.byteLength };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'a1b2c3d4-...',
+  name: 'send-invoice',
+  description: 'Sends an invoice with the app logo',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+**In un componente front-end:**
+
+```tsx src/front-components/company-card.tsx
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk';
+
+export default defineFrontComponent(() => {
+  const logoUrl = getPublicAssetUrl('logo.png');
+
+  return <img src={logoUrl} alt="App logo" />;
+});
+```
+
+L'argomento `path` è relativo alla cartella `public/` della tua app. Sia `getPublicAssetUrl('logo.png')` sia `getPublicAssetUrl('public/logo.png')` risolvono allo stesso URL — il prefisso `public/` viene rimosso automaticamente se presente.
+
+## Uso dei pacchetti npm
+
+Puoi installare e usare qualsiasi pacchetto npm nella tua app. Sia le funzioni logiche sia i componenti front-end vengono impacchettati con [esbuild](https://esbuild.github.io/), che incorpora tutte le dipendenze nell'output — non sono necessari i `node_modules` a runtime.
+
+### Installazione di un pacchetto
+
+```bash filename="Terminal"
+yarn add axios
+```
+
+Quindi importalo nel tuo codice:
+
+```ts src/logic-functions/fetch-data.ts
+import { defineLogicFunction } from 'twenty-sdk';
+import axios from 'axios';
+
+const handler = async (): Promise<any> => {
+  const { data } = await axios.get('https://api.example.com/data');
+
+  return { data };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: '...',
+  name: 'fetch-data',
+  description: 'Fetches data from an external API',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+Lo stesso vale per i componenti front-end:
+
+```tsx src/front-components/chart.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { format } from 'date-fns';
+
+const DateWidget = () => {
+  return <p>Today is {format(new Date(), 'MMMM do, yyyy')}</p>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'date-widget',
+  component: DateWidget,
+});
+```
+
+### Come funziona il bundling
+
+La fase di build (`yarn twenty dev` o `yarn twenty build`) usa esbuild per produrre un singolo file autonomo per ogni funzione logica e per ogni componente front-end. Tutti i pacchetti importati sono incorporati nel bundle.
+
+**Le funzioni logiche** vengono eseguite in un ambiente Node.js. I moduli integrati di Node (`fs`, `path`, `crypto`, `http`, ecc.) sono disponibili e non necessitano di essere installati.
+
+**I componenti front-end** vengono eseguiti in un Web Worker. I moduli integrati di Node non sono disponibili — solo le API del browser e i pacchetti npm che funzionano in un ambiente browser.
+
+Entrambi gli ambienti hanno `twenty-client-sdk/core` e `twenty-client-sdk/metadata` disponibili come moduli preforniti — questi non vengono inclusi nel bundle ma vengono risolti a runtime dal server.
+
+## Creazione di entità con lo scaffolding tramite `yarn twenty add`
+
+Invece di creare manualmente i file delle entità, puoi usare lo scaffolder interattivo:
+
+```bash filename="Terminal"
+yarn twenty add
+```
+
+Questo ti chiede di scegliere un tipo di entità e ti guida attraverso i campi richiesti. Genera un file pronto all'uso con un `universalIdentifier` stabile e la corretta chiamata a `defineEntity()`.
+
+Puoi anche passare direttamente il tipo di entità per saltare il primo prompt:
+
+```bash filename="Terminal"
+yarn twenty add object
+yarn twenty add logicFunction
+yarn twenty add frontComponent
+```
+
+### Tipi di entità disponibili
+
+| Tipo di entità               | Comando                              | File generato                         |
+| ---------------------------- | ------------------------------------ | ------------------------------------- |
+| Oggetto                      | `yarn twenty add object`             | `src/objects/<name>.ts`               |
+| Campo                        | `yarn twenty add field`              | `src/fields/<name>.ts`                |
+| Funzione logica              | `yarn twenty add logicFunction`      | `src/logic-functions/<name>.ts`       |
+| Componente front-end         | `yarn twenty add frontComponent`     | `src/front-components/<name>.tsx`     |
+| Ruolo                        | `yarn twenty add role`               | `src/roles/<name>.ts`                 |
+| Abilità                      | `yarn twenty add skill`              | `src/skills/<name>.ts`                |
+| Agente                       | `yarn twenty add agent`              | `src/agents/<name>.ts`                |
+| Vista                        | `yarn twenty add view`               | `src/views/<name>.ts`                 |
+| Voce del menu di navigazione | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/<name>.ts` |
+| Layout di pagina             | `yarn twenty add pageLayout`         | `src/page-layouts/<name>.ts`          |
+
+### Cosa genera lo scaffolder
+
+Ogni tipo di entità ha il proprio template. Ad esempio, `yarn twenty add object` richiede:
+
+1. **Nome (singolare)** — ad es., `invoice`
+2. **Nome (plurale)** — ad es., `invoices`
+3. **Etichetta (singolare)** — compilata automaticamente dal nome (ad es., `Invoice`)
+4. **Etichetta (plurale)** — compilata automaticamente (ad es., `Invoices`)
+5. **Creare una vista e una voce di navigazione?** — se rispondi sì, lo scaffolder genera anche una vista corrispondente e un link nella barra laterale per il nuovo oggetto.
+
+Gli altri tipi di entità hanno prompt più semplici — la maggior parte chiede solo un nome.
+
+Il tipo di entità `field` è più dettagliato: chiede il nome del campo, l'etichetta, il tipo (da un elenco di tutti i tipi di campo disponibili come `TEXT`, `NUMBER`, `SELECT`, `RELATION`, ecc.) e l'`universalIdentifier` dell'oggetto di destinazione.
+
+### Percorso di output personalizzato
+
+Usa il flag `--path` per posizionare il file generato in una posizione personalizzata:
+
+```bash filename="Terminal"
+yarn twenty add logicFunction --path src/custom-folder
+```
+
+## Client API tipizzati (twenty-client-sdk)
+
+Il pacchetto `twenty-client-sdk` fornisce due client GraphQL tipizzati per interagire con l'API di Twenty dalle tue funzioni logiche e dai componenti front-end.
 
 | Client              | Importa                      | Endpoint                                                                 | Generato?                  |
 | ------------------- | ---------------------------- | ------------------------------------------------------------------------ | -------------------------- |
 | `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — dati dello spazio di lavoro (record, oggetti)               | Sì, in fase di dev/build   |
 | `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — configurazione dello spazio di lavoro, caricamenti di file | No, fornito pronto all'uso |
 
-#### CoreApiClient
+<AccordionGroup>
+<Accordion title="CoreApiClient" description="Esegui query e modifica i dati dello spazio di lavoro (record, oggetti)">
 
 `CoreApiClient` è il client principale per interrogare e modificare i dati dello spazio di lavoro. Viene **generato dallo schema del tuo spazio di lavoro** durante `yarn twenty dev` o `yarn twenty build`, quindi è completamente tipizzato per corrispondere ai tuoi oggetti e campi.
 
-```typescript
+```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const client = new CoreApiClient();
@@ -839,7 +1352,10 @@ const { companies } = await client.query({
       node: {
         id: true,
         name: true,
-        domainName: true,
+        domainName: {
+          primaryLinkLabel: true,
+          primaryLinkUrl: true,
+        },
       },
     },
   },
@@ -862,14 +1378,14 @@ const { createCompany } = await client.mutation({
 Il client utilizza una sintassi a selection-set: passa `true` per includere un campo, usa `__args` per gli argomenti e annida oggetti per le relazioni. Ottieni completamento automatico e controllo dei tipi completi basati sullo schema del tuo spazio di lavoro.
 
 <Note>
-**CoreApiClient viene generato in fase di dev/build.** Se provi a usarlo senza eseguire prima `yarn twenty dev` o `yarn twenty build`, genererà un errore. La generazione avviene automaticamente — la CLI esegue l'introspezione dello schema GraphQL del tuo spazio di lavoro, genera un client tipizzato usando `@genql/cli`, scrive le sorgenti generate in `node_modules/twenty-client-sdk/dist/core/generated/` e sostituisce gli stub in `node_modules/twenty-client-sdk/dist/core.mjs` e `node_modules/twenty-client-sdk/dist/core.cjs`.
+**CoreApiClient viene generato in fase di dev/build.** Se lo usi senza eseguire prima `yarn twenty dev` o `yarn twenty build`, genera un errore. La generazione avviene automaticamente — la CLI esegue l'introspezione dello schema GraphQL del tuo spazio di lavoro e genera un client tipizzato usando `@genql/cli`.
 </Note>
 
 #### Utilizzo di CoreSchema per le annotazioni di tipo
 
-`CoreSchema` fornisce tipi TypeScript corrispondenti agli oggetti del tuo spazio di lavoro, utili per tipizzare lo stato dei componenti o i parametri delle funzioni:
+`CoreSchema` fornisce tipi TypeScript corrispondenti agli oggetti del tuo spazio di lavoro — utile per tipizzare lo stato dei componenti o i parametri delle funzioni:
 
-```typescript
+```ts
 import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
 import { useState } from 'react';
 
@@ -888,44 +1404,41 @@ const result = await client.query({
 setCompany(result.company);
 ```
 
-#### MetadataApiClient
+</Accordion>
+<Accordion title="MetadataApiClient" description="Configurazione dello spazio di lavoro, applicazioni e caricamenti di file">
 
-`MetadataApiClient` è fornito pronto all'uso con l'SDK (nessuna generazione richiesta). Interroga l'endpoint `/metadata` per la configurazione dello spazio di lavoro, le applicazioni e i caricamenti di file:
+`MetadataApiClient` è fornito pronto all'uso con l'SDK (nessuna generazione richiesta). Interroga l'endpoint `/metadata` per la configurazione dello spazio di lavoro, le applicazioni e i caricamenti di file.
 
-```typescript
+```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
 const metadataClient = new MetadataApiClient();
 
-// Query workspace info
-const { currentWorkspace } = await metadataClient.query({
-  currentWorkspace: { id: true, displayName: true },
-});
-
-// List installed applications
-const { findManyApplications } = await metadataClient.query({
-  findManyApplications: {
-    id: true,
-    name: true,
-    version: true,
+// List first 10 objects in the workspace
+const { objects } = await metadataClient.query({
+  objects: {
+    edges: {
+      node: {
+        id: true,
+        nameSingular: true,
+        namePlural: true,
+        labelSingular: true,
+        isCustom: true,
+      },
+    },
+    __args: {
+      filter: {},
+      paging: { first: 10 },
+    },
   },
 });
 ```
 
-#### Credenziali di runtime
-
-Quando il tuo codice viene eseguito su Twenty (funzioni logiche o componenti front-end), la piattaforma inietta le credenziali come variabili d'ambiente:
-
-* `TWENTY_API_URL` — URL di base dell'API di Twenty
-* `TWENTY_API_KEY` — Chiave a breve durata con ambito al ruolo funzione predefinito della tua applicazione
-
-Non è **necessario** passarle ai client — vengono lette automaticamente da `process.env`. I permessi della chiave API sono determinati dal ruolo referenziato in `defaultRoleUniversalIdentifier` nel tuo `application-config.ts`.
-
 #### Caricamento dei file
 
-`MetadataApiClient` include un metodo `uploadFile` per allegare file ai campi di tipo file. Implementa la [specifica delle richieste GraphQL multipart](https://github.com/jaydenseric/graphql-multipart-request-spec):
+`MetadataApiClient` include un metodo `uploadFile` per allegare file ai campi di tipo file:
 
-```typescript
+```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import * as fs from 'fs';
 
@@ -944,18 +1457,258 @@ console.log(uploadedFile);
 // { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
 ```
 
-| Parametro                          | Tipo     | Descrizione                                                              |
-| ---------------------------------- | -------- | ------------------------------------------------------------------------ |
-| `fileBuffer`                       | `Buffer` | Il contenuto grezzo del file                                             |
-| `filename`                         | `string` | Il nome del file (utilizzato per l'archiviazione e la visualizzazione)   |
-| `contentType`                      | `string` | Tipo MIME del file (predefinito su `application/octet-stream` se omesso) |
-| `fieldMetadataUniversalIdentifier` | `string` | L'`universalIdentifier` del campo di tipo file nel tuo oggetto           |
+| Parametro                          | Tipo     | Descrizione                                                            |
+| ---------------------------------- | -------- | ---------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | Il contenuto grezzo del file                                           |
+| `filename`                         | `string` | Il nome del file (utilizzato per l'archiviazione e la visualizzazione) |
+| `contentType`                      | `string` | Tipo MIME (predefinito su `application/octet-stream` se omesso)        |
+| `fieldMetadataUniversalIdentifier` | `string` | L'`universalIdentifier` del campo di tipo file nel tuo oggetto         |
 
 Punti chiave:
-
 * Usa l'`universalIdentifier` del campo (non il suo ID specifico dello spazio di lavoro), quindi il tuo codice di upload funziona in qualsiasi spazio di lavoro in cui la tua app è installata.
 * L'`url` restituito è un URL firmato che puoi usare per accedere al file caricato.
 
-### Esempio Hello World
+</Accordion>
+</AccordionGroup>
 
-Esplora un esempio minimale end-to-end che dimostra oggetti, funzioni logiche, componenti front-end e trigger multipli [qui](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world).
+<Note>
+  Quando il tuo codice viene eseguito su Twenty (funzioni logiche o componenti front-end), la piattaforma inietta le credenziali come variabili d'ambiente:
+
+  * `TWENTY_API_URL` — URL di base dell'API di Twenty
+  * `TWENTY_APP_ACCESS_TOKEN` — Chiave a breve durata con ambito al ruolo funzione predefinito della tua applicazione
+
+  Non è **necessario** passarle ai client — vengono lette automaticamente da `process.env`. I permessi della chiave API sono determinati dal ruolo referenziato in `defaultRoleUniversalIdentifier` nel tuo `application-config.ts`.
+</Note>
+
+## Testare la tua app
+
+L'SDK fornisce API programmatiche che ti consentono di compilare, distribuire, installare e disinstallare la tua app dal codice di test. In combinazione con [Vitest](https://vitest.dev/) e i client API tipizzati, puoi scrivere test di integrazione che verificano che la tua app funzioni end-to-end contro un server Twenty reale.
+
+### Impostazione
+
+L'app generata tramite scaffolding include già Vitest. Se la configuri manualmente, installa le dipendenze:
+
+```bash filename="Terminal"
+yarn add -D vitest vite-tsconfig-paths
+```
+
+Crea un `vitest.config.ts` alla radice della tua app:
+
+```ts vitest.config.ts
+import tsconfigPaths from 'vite-tsconfig-paths';
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  plugins: [
+    tsconfigPaths({
+      projects: ['tsconfig.spec.json'],
+      ignoreConfigErrors: true,
+    }),
+  ],
+  test: {
+    testTimeout: 120_000,
+    hookTimeout: 120_000,
+    include: ['src/**/*.integration-test.ts'],
+    setupFiles: ['src/__tests__/setup-test.ts'],
+    env: {
+      TWENTY_API_URL: 'http://localhost:2020',
+      TWENTY_API_KEY: 'your-api-key',
+    },
+  },
+});
+```
+
+Crea un file di setup che verifichi che il server sia raggiungibile prima dell'esecuzione dei test:
+
+```ts src/__tests__/setup-test.ts
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
+import { beforeAll } from 'vitest';
+
+const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
+const TEST_CONFIG_DIR = path.join(os.tmpdir(), '.twenty-sdk-test');
+
+beforeAll(async () => {
+  // Verify the server is running
+  const response = await fetch(`${TWENTY_API_URL}/healthz`);
+
+  if (!response.ok) {
+    throw new Error(
+      `Twenty server is not reachable at ${TWENTY_API_URL}. ` +
+        'Start the server before running integration tests.',
+    );
+  }
+
+  // Write a temporary config for the SDK
+  fs.mkdirSync(TEST_CONFIG_DIR, { recursive: true });
+
+  fs.writeFileSync(
+    path.join(TEST_CONFIG_DIR, 'config.json'),
+    JSON.stringify({
+      remotes: {
+        local: {
+          apiUrl: process.env.TWENTY_API_URL,
+          apiKey: process.env.TWENTY_API_KEY,
+        },
+      },
+      defaultRemote: 'local',
+    }, null, 2),
+  );
+});
+```
+
+### API programmatiche dell'SDK
+
+Il sottopercorso `twenty-sdk/cli` esporta funzioni che puoi chiamare direttamente dal codice di test:
+
+| Funzione       | Descrizione                                     |
+| -------------- | ----------------------------------------------- |
+| `appBuild`     | Compila l'app e, opzionalmente, crea un tarball |
+| `appDeploy`    | Carica un tarball sul server                    |
+| `appInstall`   | Installa l'app nello spazio di lavoro attivo    |
+| `appUninstall` | Disinstalla l'app dallo spazio di lavoro attivo |
+
+Ogni funzione restituisce un oggetto risultato con `success: boolean` e `data` oppure `error`.
+
+### Scrivere un test di integrazione
+
+Ecco un esempio completo che compila, distribuisce e installa l'app, quindi verifica che compaia nello spazio di lavoro:
+
+```ts src/__tests__/app-install.integration-test.ts
+import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config';
+import { appBuild, appDeploy, appInstall, appUninstall } from 'twenty-sdk/cli';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+
+const APP_PATH = process.cwd();
+
+describe('App installation', () => {
+  beforeAll(async () => {
+    const buildResult = await appBuild({
+      appPath: APP_PATH,
+      tarball: true,
+      onProgress: (message: string) => console.log(`[build] ${message}`),
+    });
+
+    if (!buildResult.success) {
+      throw new Error(`Build failed: ${buildResult.error?.message}`);
+    }
+
+    const deployResult = await appDeploy({
+      tarballPath: buildResult.data.tarballPath!,
+      onProgress: (message: string) => console.log(`[deploy] ${message}`),
+    });
+
+    if (!deployResult.success) {
+      throw new Error(`Deploy failed: ${deployResult.error?.message}`);
+    }
+
+    const installResult = await appInstall({ appPath: APP_PATH });
+
+    if (!installResult.success) {
+      throw new Error(`Install failed: ${installResult.error?.message}`);
+    }
+  });
+
+  afterAll(async () => {
+    await appUninstall({ appPath: APP_PATH });
+  });
+
+  it('should find the installed app in the workspace', async () => {
+    const metadataClient = new MetadataApiClient();
+
+    const result = await metadataClient.query({
+      findManyApplications: {
+        id: true,
+        name: true,
+        universalIdentifier: true,
+      },
+    });
+
+    const installedApp = result.findManyApplications.find(
+      (app: { universalIdentifier: string }) =>
+        app.universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
+    );
+
+    expect(installedApp).toBeDefined();
+  });
+});
+```
+
+### Esecuzione dei test
+
+Assicurati che il tuo server Twenty locale sia in esecuzione, quindi:
+
+```bash filename="Terminal"
+yarn test
+```
+
+Oppure in modalità watch durante lo sviluppo:
+
+```bash filename="Terminal"
+yarn test:watch
+```
+
+### Controllo dei tipi
+
+Puoi anche eseguire il controllo dei tipi sulla tua app senza eseguire i test:
+
+```bash filename="Terminal"
+yarn twenty typecheck
+```
+
+Questo esegue `tsc --noEmit` e riporta eventuali errori di tipo.
+
+## Riferimento CLI
+
+Oltre a `dev`, `build`, `add` e `typecheck`, la CLI fornisce comandi per eseguire funzioni, visualizzare i log e gestire le installazioni delle app.
+
+### Esecuzione delle funzioni (`yarn twenty exec`)
+
+Esegui manualmente una funzione logica senza attivarla tramite HTTP, cron o evento del database:
+
+```bash filename="Terminal"
+# Execute by function name
+yarn twenty exec -n create-new-post-card
+
+# Execute by universalIdentifier
+yarn twenty exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+
+# Pass a JSON payload
+yarn twenty exec -n create-new-post-card -p '{"name": "Hello"}'
+
+# Execute pre-install or post-install functions
+yarn twenty exec --preInstall
+yarn twenty exec --postInstall
+```
+
+### Visualizzazione dei log delle funzioni (`yarn twenty logs`)
+
+Esegui lo streaming dei log di esecuzione per le funzioni logiche della tua app:
+
+```bash filename="Terminal"
+# Stream all function logs
+yarn twenty logs
+
+# Filter by function name
+yarn twenty logs -n create-new-post-card
+
+# Filter by universalIdentifier
+yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+<Note>
+Questo è diverso da `yarn twenty server logs`, che mostra i log del container Docker. `yarn twenty logs` mostra i log di esecuzione delle funzioni della tua app dal server Twenty.
+</Note>
+
+### Disinstallazione di un'app (`yarn twenty uninstall`)
+
+Rimuovi la tua app dallo spazio di lavoro attivo:
+
+```bash filename="Terminal"
+yarn twenty uninstall
+
+# Skip the confirmation prompt
+yarn twenty uninstall --yes
+```

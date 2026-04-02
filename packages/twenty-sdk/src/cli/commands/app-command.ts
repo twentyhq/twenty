@@ -134,6 +134,7 @@ export const registerCommands = (program: Command): void => {
 
   program
     .command('exec [appPath]')
+    .option('--preInstall', 'Execute pre-install logic function if defined')
     .option('--postInstall', 'Execute post-install logic function if defined')
     .option(
       '-p, --payload <payload>',
@@ -153,6 +154,7 @@ export const registerCommands = (program: Command): void => {
       async (
         appPath?: string,
         options?: {
+          preInstall?: boolean;
           postInstall?: boolean;
           payload?: string;
           functionUniversalIdentifier?: string;
@@ -160,13 +162,14 @@ export const registerCommands = (program: Command): void => {
         },
       ) => {
         if (
+          !options?.preInstall &&
           !options?.postInstall &&
           !options?.functionUniversalIdentifier &&
           !options?.functionName
         ) {
           console.error(
             chalk.red(
-              'Error: Either --postInstall or --functionName (-n) or --functionUniversalIdentifier (-u) is required.',
+              'Error: Either --preInstall, --postInstall, --functionName (-n), or --functionUniversalIdentifier (-u) is required.',
             ),
           );
           process.exit(1);
