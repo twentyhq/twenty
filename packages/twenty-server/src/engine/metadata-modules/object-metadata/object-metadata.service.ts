@@ -188,6 +188,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       ]);
     }
 
+    if (isDefined(updateObjectInput.update.isActive)) {
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId,
+        flatMapsKeys: ['flatNavigationMenuItemMaps'],
+      });
+    }
+
     return updatedFlatObjectMetadata;
   }
 
@@ -406,6 +413,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       createObjectInput,
       flatApplication: resolvedOwnerFlatApplication,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      existingFeatureFlagsMap,
     });
 
     const flatDefaultViewToCreate = this.computeFlatViewToCreate({
@@ -454,7 +462,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           flatObjectMetadataToCreate.labelIdentifierFieldMetadataUniversalIdentifier,
         viewUniversalIdentifier:
           flatRecordPageFieldsViewToCreate.universalIdentifier,
-        excludeLabelIdentifier: true,
       });
 
       flatDefaultRecordPageLayoutsToCreate =
