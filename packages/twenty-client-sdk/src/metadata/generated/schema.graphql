@@ -47,6 +47,7 @@ type ApplicationRegistration {
   latestAvailableVersion: String
   isListed: Boolean!
   isFeatured: Boolean!
+  logoUrl: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -284,6 +285,7 @@ type ApplicationRegistrationSummary {
   id: UUID!
   latestAvailableVersion: String
   sourceType: ApplicationRegistrationSourceType!
+  logoUrl: String
 }
 
 type ApplicationVariable {

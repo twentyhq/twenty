@@ -43,6 +43,8 @@ export const SettingsApplicationDetails = () => {
 
   const applicationName = application?.name ?? t`Application details`;
   const applicationDescription = application?.description ?? undefined;
+  const applicationLogoUrl =
+    application?.applicationRegistration?.logoUrl ?? undefined;
 
   const settingsCustomTabFrontComponentId =
     application?.settingsCustomTabFrontComponentId;
@@ -96,6 +98,7 @@ export const SettingsApplicationDetails = () => {
         <SettingsApplicationDetailTitle
           displayName={applicationName}
           description={applicationDescription}
+          logoUrl={applicationLogoUrl}
         />
       }
       links={[

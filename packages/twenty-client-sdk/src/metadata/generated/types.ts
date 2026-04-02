@@ -212,6 +212,9 @@ export default {
             "isFeatured": [
                 6
             ],
+            "logoUrl": [
+                1
+            ],
             "createdAt": [
                 4
             ],
@@ -616,6 +619,9 @@ export default {
             ],
             "sourceType": [
                 8
+            ],
+            "logoUrl": [
+                1
             ],
             "__typename": [
                 1
