@@ -1,10 +1,13 @@
 import { defineApplication } from 'twenty-sdk';
-import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './src/roles/default-function.role';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './roles/default-function.role';
+
+export const APPLICATION_UNIVERSAL_IDENTIFIER =
+  '8b2df3cc-23ad-4e1b-87fd-f880d4cefd58';
 
 export default defineApplication({
-  universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
-  displayName: 'Rich App',
-  description: 'A simple rich app',
+  universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  displayName: 'Postcard App',
+  description: 'Send postcards easily with Twenty',
   icon: 'IconWorld',
   applicationVariables: {
     DEFAULT_RECIPIENT_NAME: {
