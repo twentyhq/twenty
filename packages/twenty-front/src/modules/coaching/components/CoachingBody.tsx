@@ -119,11 +119,11 @@ export const CoachingBody = ({
         <StyledMessageIcon>
           <IconAlertTriangle size={48} />
         </StyledMessageIcon>
-        <StyledMessageTitle>Customer object not found</StyledMessageTitle>
+        <StyledMessageTitle>Kundenobjekt nicht gefunden</StyledMessageTitle>
         <StyledMessageText>
-          The tobCustomer object has not been set up in this workspace. Please
-          contact your administrator to create the tobCustomer object and sync
-          customer data.
+          Das tobAppUser-Objekt wurde in diesem Workspace nicht eingerichtet.
+          Bitte kontaktieren Sie Ihren Administrator, um das Objekt zu erstellen
+          und die Kundendaten zu synchronisieren.
         </StyledMessageText>
       </StyledMessageContainer>
     );

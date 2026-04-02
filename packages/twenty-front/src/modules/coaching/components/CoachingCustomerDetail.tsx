@@ -214,7 +214,7 @@ const StyledPlaceholder = styled.div`
 
 const renderValue = (value: string | null | undefined) => {
   if (!value) {
-    return <StyledEmptyText>No value</StyledEmptyText>;
+    return <StyledEmptyText>Kein Wert</StyledEmptyText>;
   }
   return value;
 };
@@ -222,9 +222,9 @@ const renderValue = (value: string | null | undefined) => {
 const formatDate = (dateString: string | null | undefined) => {
   if (!dateString) return null;
   try {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
+    return new Date(dateString).toLocaleDateString('de-DE', {
       day: 'numeric',
+      month: 'short',
       year: 'numeric',
     });
   } catch {
@@ -243,11 +243,11 @@ export const CoachingCustomerDetail = ({
     useCoachingSubscriptions(customerEmail);
 
   if (loading) {
-    return <StyledLoadingContainer>Loading...</StyledLoadingContainer>;
+    return <StyledLoadingContainer>Wird geladen...</StyledLoadingContainer>;
   }
 
   if (!appUser) {
-    return <StyledLoadingContainer>User not found</StyledLoadingContainer>;
+    return <StyledLoadingContainer>Benutzer nicht gefunden</StyledLoadingContainer>;
   }
 
   return (
@@ -270,11 +270,11 @@ export const CoachingCustomerDetail = ({
           <StyledActionRow>
             <StyledActionButton>
               <IconLink size={16} />
-              Link user to existing customer
+              Benutzer mit bestehendem Kunden verknüpfen
             </StyledActionButton>
             <StyledActionButton>
               <IconPencil size={16} />
-              Change App Subscription&apos;s status
+              App-Abo-Status ändern
             </StyledActionButton>
           </StyledActionRow>
 
@@ -290,7 +290,7 @@ export const CoachingCustomerDetail = ({
           {/* App's Information */}
           <StyledSection>
             <StyledSectionHeader>
-              <StyledSectionTitle>App&apos;s Information</StyledSectionTitle>
+              <StyledSectionTitle>App-Informationen</StyledSectionTitle>
             </StyledSectionHeader>
             <StyledSectionBody>
               <StyledInfoCardGrid>
@@ -307,7 +307,7 @@ export const CoachingCustomerDetail = ({
                   </StyledInfoValue>
                 </StyledInfoCardCell>
                 <StyledInfoCardCell>
-                  <StyledInfoLabel>Registration Date</StyledInfoLabel>
+                  <StyledInfoLabel>Registrierungsdatum</StyledInfoLabel>
                   <StyledInfoValue>
                     {renderValue(
                       formatDate(appUser.registeredDate as string | null),
@@ -317,15 +317,15 @@ export const CoachingCustomerDetail = ({
               </StyledInfoCardGrid>
               <StyledInfoRow>
                 <StyledInfoCardCell>
-                  <StyledInfoLabel>Last Login Date</StyledInfoLabel>
+                  <StyledInfoLabel>Letzter Login</StyledInfoLabel>
                   <StyledInfoValue>
-                    <StyledEmptyText>No value</StyledEmptyText>
+                    <StyledEmptyText>Kein Wert</StyledEmptyText>
                   </StyledInfoValue>
                 </StyledInfoCardCell>
                 <StyledInfoCardCell>
-                  <StyledInfoLabel>Active Program Ids</StyledInfoLabel>
+                  <StyledInfoLabel>Aktive Programm-IDs</StyledInfoLabel>
                   <StyledInfoValue>
-                    <StyledEmptyText>No value</StyledEmptyText>
+                    <StyledEmptyText>Kein Wert</StyledEmptyText>
                   </StyledInfoValue>
                 </StyledInfoCardCell>
               </StyledInfoRow>
@@ -335,21 +335,21 @@ export const CoachingCustomerDetail = ({
           {/* Subscriptions */}
           <StyledSection>
             <StyledSectionHeader>
-              <StyledSectionTitle>Subscriptions</StyledSectionTitle>
-              <StyledSectionButton>Open Subscription</StyledSectionButton>
+              <StyledSectionTitle>Abonnements</StyledSectionTitle>
+              <StyledSectionButton>Abo öffnen</StyledSectionButton>
             </StyledSectionHeader>
             <StyledSectionBody>
               <StyledTable>
                 <thead>
                   <tr>
-                    <StyledTableHeader>Program</StyledTableHeader>
+                    <StyledTableHeader>Programm</StyledTableHeader>
                     <StyledTableHeader>
-                      Subscription App Status
+                      Abo-App-Status
                     </StyledTableHeader>
-                    <StyledTableHeader>Start Date</StyledTableHeader>
-                    <StyledTableHeader>End Date</StyledTableHeader>
+                    <StyledTableHeader>Startdatum</StyledTableHeader>
+                    <StyledTableHeader>Enddatum</StyledTableHeader>
                     <StyledTableHeader>
-                      Subscription Pause Days
+                      Pausetage
                     </StyledTableHeader>
                   </tr>
                 </thead>
@@ -357,14 +357,14 @@ export const CoachingCustomerDetail = ({
                   {subsLoading ? (
                     <tr>
                       <StyledTableCell colSpan={5}>
-                        Loading...
+                        Wird geladen...
                       </StyledTableCell>
                     </tr>
                   ) : subscriptions.length === 0 ? (
                     <tr>
                       <StyledTableCell colSpan={5}>
                         <StyledEmptyText>
-                          No subscriptions linked yet
+                          Keine Abos verknüpft
                         </StyledEmptyText>
                       </StyledTableCell>
                     </tr>
@@ -395,12 +395,12 @@ export const CoachingCustomerDetail = ({
           {/* Customer */}
           <StyledSection>
             <StyledSectionHeader>
-              <StyledSectionTitle>Customer</StyledSectionTitle>
+              <StyledSectionTitle>Kunde</StyledSectionTitle>
             </StyledSectionHeader>
             <StyledSectionBody>
               <StyledInfoCardGrid>
                 <StyledInfoCardCell>
-                  <StyledInfoLabel>Full Name</StyledInfoLabel>
+                  <StyledInfoLabel>Vollständiger Name</StyledInfoLabel>
                   <StyledInfoValue>
                     {renderValue(
                       (customer?.fullName as string | null) ??
@@ -409,7 +409,7 @@ export const CoachingCustomerDetail = ({
                   </StyledInfoValue>
                 </StyledInfoCardCell>
                 <StyledInfoCardCell>
-                  <StyledInfoLabel>Customer Email</StyledInfoLabel>
+                  <StyledInfoLabel>Kunden-E-Mail</StyledInfoLabel>
                   <StyledInfoValue>
                     {renderValue(
                       (customer?.email as string | null) ?? customerEmail,
@@ -417,7 +417,7 @@ export const CoachingCustomerDetail = ({
                   </StyledInfoValue>
                 </StyledInfoCardCell>
                 <StyledInfoCardCell>
-                  <StyledInfoLabel>Phone</StyledInfoLabel>
+                  <StyledInfoLabel>Telefon</StyledInfoLabel>
                   <StyledInfoValue>
                     {renderValue(customer?.phone as string | null)}
                   </StyledInfoValue>
@@ -429,10 +429,10 @@ export const CoachingCustomerDetail = ({
           {/* Discrepancies */}
           <StyledSection>
             <StyledSectionHeader>
-              <StyledSectionTitle>Discrepancies</StyledSectionTitle>
+              <StyledSectionTitle>Abweichungen</StyledSectionTitle>
             </StyledSectionHeader>
             <StyledSectionBody>
-              <StyledEmptyText>No discrepancies found</StyledEmptyText>
+              <StyledEmptyText>Keine Abweichungen gefunden</StyledEmptyText>
             </StyledSectionBody>
           </StyledSection>
         </StyledDetailContent>
@@ -444,7 +444,7 @@ export const CoachingCustomerDetail = ({
       ) : activeTab === 'Tickets' ? (
         <CoachingTicketsTab email={customerEmail} wpUserId={wpUserId} />
       ) : (
-        <StyledPlaceholder>{activeTab} — coming soon</StyledPlaceholder>
+        <StyledPlaceholder>{activeTab} — demnächst verfügbar</StyledPlaceholder>
       )
       )}
     </StyledDetailContainer>

@@ -25,7 +25,7 @@ export const CoachingEmptyDetail = () => {
       <StyledIcon>
         <IconUser size={48} />
       </StyledIcon>
-      <StyledText>Select a customer to view details</StyledText>
+      <StyledText>Kunden auswählen, um Details anzuzeigen</StyledText>
     </StyledContainer>
   );
 };

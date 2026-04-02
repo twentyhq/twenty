@@ -31,8 +31,9 @@ const StyledIconContainer = styled.div`
 
 const StyledOverviewContent = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledOverviewTitle = styled.span`
@@ -47,15 +48,56 @@ const StyledOverviewText = styled.span`
   line-height: 1.5;
 `;
 
+const StyledRecentSessions = styled.div`
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(1)};
+  margin-top: ${({ theme }) => theme.spacing(1)};
+  padding-top: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledSessionLabel = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+`;
+
+const StyledSessionItem = styled.div`
+  align-items: center;
+  color: ${({ theme }) => theme.font.color.secondary};
+  display: flex;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledSessionDate = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  min-width: 100px;
+`;
+
 const formatSinceDate = (dateString: string | null): string | null => {
   if (!dateString) return null;
   try {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString('de-DE', {
       month: 'short',
       year: 'numeric',
     });
   } catch {
     return null;
+  }
+};
+
+const formatSessionDate = (dateString: string | null): string => {
+  if (!dateString) return '';
+  try {
+    return new Date(dateString).toLocaleDateString('de-DE', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  } catch {
+    return String(dateString);
   }
 };
 
@@ -73,13 +115,11 @@ const analyzeSessionTypes = (sessions: ObjectRecord[]): string | null => {
 
   if (titleCounts.size === 0) return null;
 
-  // Find most attended session type
   const sorted = Array.from(titleCounts.entries()).sort(
     (a, b) => b[1] - a[1],
   );
   const topSession = sorted[0];
 
-  // Check recent sessions (last 30 days)
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -102,10 +142,10 @@ const analyzeSessionTypes = (sessions: ObjectRecord[]): string | null => {
 
   if (recentSorted.length > 0) {
     const recentTop = recentSorted[0];
-    return `Recently prioritized "${recentTop[0]}" (${recentTop[1]}x in last 30 days). Most attended overall: "${topSession[0]}" (${topSession[1]}x total)`;
+    return `Zuletzt bevorzugt: "${recentTop[0]}" (${recentTop[1]}x in den letzten 30 Tagen). Insgesamt am häufigsten: "${topSession[0]}" (${topSession[1]}x)`;
   }
 
-  return `Most attended session type: "${topSession[0]}" (${topSession[1]}x)`;
+  return `Am häufigsten besuchter Session-Typ: "${topSession[0]}" (${topSession[1]}x)`;
 };
 
 const buildSummary = (
@@ -118,7 +158,7 @@ const buildSummary = (
   ticketsLoading: boolean,
 ): string => {
   if (subsLoading || sessionsLoading || ticketsLoading) {
-    return 'Loading overview...';
+    return 'Übersicht wird geladen...';
   }
 
   const parts: string[] = [];
@@ -126,9 +166,9 @@ const buildSummary = (
   // Registration
   const since = formatSinceDate(registeredDate);
   if (since) {
-    parts.push(`Active customer since ${since}`);
+    parts.push(`Aktiver Kunde seit ${since}`);
   } else {
-    parts.push('Customer');
+    parts.push('Kunde');
   }
 
   // Subscriptions
@@ -144,27 +184,27 @@ const buildSummary = (
     const programText =
       programNames.length > 0 ? ` (${programNames.join(', ')})` : '';
     parts.push(
-      `${activeSubs.length} active subscription${activeSubs.length > 1 ? 's' : ''}${programText}`,
+      `${activeSubs.length} aktives Abo${activeSubs.length > 1 ? 's' : ''}${programText}`,
     );
   } else if (subscriptions.length > 0) {
     parts.push(
-      `${subscriptions.length} subscription${subscriptions.length > 1 ? 's' : ''} (none active)`,
+      `${subscriptions.length} Abo${subscriptions.length > 1 ? 's' : ''} (keines aktiv)`,
     );
   } else {
-    parts.push('No subscriptions');
+    parts.push('Keine Abos');
   }
 
   // Sessions + type analysis
   if (sessions.length > 0) {
     parts.push(
-      `${sessions.length} session${sessions.length > 1 ? 's' : ''} attended`,
+      `${sessions.length} Session${sessions.length > 1 ? 's' : ''} teilgenommen`,
     );
     const sessionInsight = analyzeSessionTypes(sessions);
     if (sessionInsight) {
       parts.push(sessionInsight);
     }
   } else {
-    parts.push('No sessions recorded');
+    parts.push('Keine Sessions erfasst');
   }
 
   // Tickets
@@ -175,10 +215,10 @@ const buildSummary = (
   );
   if (openTickets.length > 0) {
     parts.push(
-      `${openTickets.length} open ticket${openTickets.length > 1 ? 's' : ''}`,
+      `${openTickets.length} offene${openTickets.length > 1 ? '' : 's'} Ticket${openTickets.length > 1 ? 's' : ''}`,
     );
   } else {
-    parts.push('No open tickets');
+    parts.push('Keine offenen Tickets');
   }
 
   return parts.join('. ') + '.';
@@ -208,14 +248,32 @@ export const CoachingAiOverview = ({
     ticketsLoading,
   );
 
+  // Last 5 sessions (already sorted desc by date)
+  const recentFive = sessions.slice(0, 5);
+
   return (
     <StyledOverviewCard>
       <StyledIconContainer>
         <IconSparkles size={20} />
       </StyledIconContainer>
       <StyledOverviewContent>
-        <StyledOverviewTitle>Overview</StyledOverviewTitle>
+        <StyledOverviewTitle>Übersicht</StyledOverviewTitle>
         <StyledOverviewText>{summary}</StyledOverviewText>
+        {recentFive.length > 0 && (
+          <StyledRecentSessions>
+            <StyledSessionLabel>Letzte 5 Sessions:</StyledSessionLabel>
+            {recentFive.map((session) => (
+              <StyledSessionItem key={session.id}>
+                <StyledSessionDate>
+                  {formatSessionDate(
+                    session.sessionDatetime as string | null,
+                  )}
+                </StyledSessionDate>
+                {String(session.sessionTitle ?? '—')}
+              </StyledSessionItem>
+            ))}
+          </StyledRecentSessions>
+        )}
       </StyledOverviewContent>
     </StyledOverviewCard>
   );
