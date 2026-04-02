@@ -51,9 +51,7 @@ export const SettingsAgentResponseFormat = ({
 
     // TODO: Remove text response format support once prod migration upgrades legacy agents to JSON format.
     onResponseFormatChange(
-      newType === 'text'
-        ? { type: 'text' }
-        : { type: 'json', schema },
+      newType === 'text' ? { type: 'text' } : { type: 'json', schema },
     );
   };
 
