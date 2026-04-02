@@ -251,14 +251,19 @@ export const ApproveChangeRequestAction = () => {
                   source: 'CHANGE_REQUEST',
                 });
               } else {
-                // 4. EXTENSION: create new active period
+                // 4. EXTENSION: create new period (ACTIVE or EXTENSION_GRACE)
                 const extensionEndDate = new Date(
                   requestStartDate.getTime() + duration * MS_PER_DAY,
                 );
 
+                const extensionType =
+                  changeRequest.periodType === 'EXTENSION_GRACE'
+                    ? 'EXTENSION_GRACE'
+                    : 'ACTIVE';
+
                 const extensionPeriod = await createPeriod({
                   subscriptionId,
-                  periodType: 'ACTIVE',
+                  periodType: extensionType,
                   startDate: requestStartDate.toISOString(),
                   endDate: extensionEndDate.toISOString(),
                   source: 'CHANGE_REQUEST',
@@ -266,7 +271,7 @@ export const ApproveChangeRequestAction = () => {
                 });
                 allPeriods.push({
                   id: extensionPeriod.id as string,
-                  periodType: 'ACTIVE',
+                  periodType: extensionType,
                   startDate: requestStartDate.toISOString(),
                   endDate: extensionEndDate.toISOString(),
                   source: 'CHANGE_REQUEST',

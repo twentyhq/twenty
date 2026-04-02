@@ -115,7 +115,7 @@ export const ExtendSubscriptionFormModal = ({
 
       await createChangeRequest({
         subscriptionId: recordId,
-        periodType: 'ACTIVE',
+        periodType: 'EXTENSION_GRACE',
         startDate: baseDate.toISOString(),
         duration: durationDays,
         reason: reasonParts.join(' — '),
