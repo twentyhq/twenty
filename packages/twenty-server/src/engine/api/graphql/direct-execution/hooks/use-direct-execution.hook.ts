@@ -5,10 +5,8 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { isNull } from '@sniptt/guards';
 import { type DirectExecutionService } from 'src/engine/api/graphql/direct-execution/direct-execution.service';
-import { computeSkipWorkspaceSchemaCreation } from 'src/engine/api/graphql/direct-execution/utils/compute-skip-workspace-schema-creation.util';
+import { classifyTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/classify-top-level-fields.util';
 import { findOperationDefinition } from 'src/engine/api/graphql/direct-execution/utils/find-operation-definition.util';
-import { hasOnlyGeneratedWorkspaceResolvers } from 'src/engine/api/graphql/direct-execution/utils/has-only-generated-workspace-resolvers.util';
-import { isIntrospectionDocument } from 'src/engine/api/graphql/direct-execution/utils/is-introspection-document.util';
 import { isSubscriptionOperation } from 'src/engine/api/graphql/direct-execution/utils/is-subscription-operation.util';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 
@@ -38,15 +36,6 @@ export function useDirectExecution(
         return;
       }
 
-      const generatedWorkspaceResolverNames =
-        await config.directExecutionService.getGeneratedWorkspaceResolverNames(
-          req.workspace.id,
-        );
-
-      if (!generatedWorkspaceResolverNames) {
-        return;
-      }
-
       const queryString = req.body.query as string;
       const operationName = req.body.operationName as string | undefined;
 
@@ -64,42 +53,32 @@ export function useDirectExecution(
         return;
       }
 
-      if (isIntrospectionDocument(document, operationName)) {
-        const introspectionResult =
-          await config.directExecutionService.executeIntrospection(
-            req,
-            document,
-          );
+      const workspaceResolverNames =
+        await config.directExecutionService.getWorkspaceResolverNames(
+          req.workspace.id,
+        );
 
-        if (isNull(introspectionResult)) {
-          return;
-        }
-
-        return endResponse(Response.json(introspectionResult));
-      }
-
-      if (
-        computeSkipWorkspaceSchemaCreation(
-          queryString,
-          document,
-          operationName,
-          generatedWorkspaceResolverNames,
-        )
-      ) {
-        req.skipWorkspaceSchemaCreation = true;
-      }
-
-      if (
-        !hasOnlyGeneratedWorkspaceResolvers(
-          document,
-          operationName,
-          generatedWorkspaceResolverNames,
-        )
-      ) {
+      if (!workspaceResolverNames) {
         return;
       }
 
-      const result = await config.directExecutionService.execute(req, document);
+      const { hasIntrospectionFields, hasWorkspaceFields, hasCoreFields } =
+        classifyTopLevelFields(document, operationName, workspaceResolverNames);
+
+      if (!hasCoreFields) {
+        req.skipWorkspaceSchemaCreation = true;
+      }
+
+      if (hasCoreFields) {
+        return;
+      }
+
+      const result = await config.directExecutionService.execute(
+        req,
+        document,
+        hasIntrospectionFields,
+        hasWorkspaceFields,
+      );
 
       if (isNull(result)) {
         return;

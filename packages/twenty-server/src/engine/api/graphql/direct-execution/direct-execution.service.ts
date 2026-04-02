@@ -151,7 +151,7 @@ export class DirectExecutionService {
     ]);
   }
 
-  async getGeneratedWorkspaceResolverNames(
+  async getWorkspaceResolverNames(
     workspaceId: string,
   ): Promise<Set<string> | null> {
     const { graphQLResolverNameMap } =
@@ -163,6 +163,25 @@ export class DirectExecutionService {
   }
 
   async execute(
+    req: Request,
+    document: DocumentNode,
+    hasIntrospectionFields: boolean,
+    hasWorkspaceFields: boolean,
+  ): Promise<DirectExecutionResult | null> {
+    const [introspectionResult, workspaceResult] = await Promise.all([
+      hasIntrospectionFields
+        ? this.executeIntrospectionQuery(req, document)
+        : null,
+      hasWorkspaceFields ? this.executeWorkspaceQuery(req, document) : null,
+    ]);
+
+    return this.mergeDirectExecutionResults(
+      introspectionResult,
+      workspaceResult,
+    );
+  }
+
+  private async executeWorkspaceQuery(
     req: Request,
     document: DocumentNode,
   ): Promise<DirectExecutionResult | null> {
@@ -262,7 +281,7 @@ export class DirectExecutionService {
     }
   }
 
-  async executeIntrospection(
+  private async executeIntrospectionQuery(
     req: Request,
     document: DocumentNode,
   ): Promise<DirectExecutionResult | null> {
@@ -285,6 +304,7 @@ export class DirectExecutionService {
       const result = await execute({
         schema,
         document,
+        operationName: req.body?.operationName as string | undefined,
         variableValues: (req.body?.variables as Record<string, unknown>) ?? {},
       });
 
@@ -300,6 +320,28 @@ export class DirectExecutionService {
     } catch (error) {
       return { errors: [this.formatError(error, req)] };
     }
+  }
+
+  private mergeDirectExecutionResults(
+    introspectionResult: DirectExecutionResult | null,
+    workspaceResult: DirectExecutionResult | null,
+  ): DirectExecutionResult | null {
+    if (!introspectionResult && !workspaceResult) {
+      return null;
+    }
+
+    const errors = [
+      ...(introspectionResult?.errors ?? []),
+      ...(workspaceResult?.errors ?? []),
+    ];
+
+    return {
+      data: {
+        ...introspectionResult?.data,
+        ...workspaceResult?.data,
+      },
+      ...(errors.length > 0 ? { errors } : {}),
+    };
   }
 
   private async executeField({
