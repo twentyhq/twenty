@@ -43,7 +43,26 @@ const labelIdentifierFailingTestsUseCase: CreateOneObjectMetadataItemTestingCont
     },
   ];
 
-const allTestsUseCases = [...labelIdentifierFailingTestsUseCase];
+const imageIdentifierFailingTestsUseCase: CreateOneObjectMetadataItemTestingContext =
+  [
+    {
+      title: 'when imageIdentifier is not a uuid',
+      context: {
+        imageIdentifierFieldMetadataId: 'not-a-uuid',
+      },
+    },
+    {
+      title: 'when imageIdentifier is not a known field metadata id',
+      context: {
+        imageIdentifierFieldMetadataId: '42422020-f49c-4159-8751-76a24f47b360',
+      },
+    },
+  ];
+
+const allTestsUseCases = [
+  ...labelIdentifierFailingTestsUseCase,
+  ...imageIdentifierFailingTestsUseCase,
+];
 
 describe('Object metadata update should fail', () => {
   let objectMetadataId: string;
