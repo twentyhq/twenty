@@ -70,9 +70,7 @@ export const DestroyRecordsCommand = () => {
   const subtitle = isSingleRecord
     ? t`Are you sure you want to destroy this ${objectMetadataItem.labelSingular}? It cannot be recovered anymore.`
     : t`Are you sure you want to destroy these ${objectMetadataItem.labelPlural}? They won't be recoverable anymore.`;
-  const confirmButtonText = isSingleRecord
-    ? t`Permanently Destroy ${objectMetadataItem.labelSingular}`
-    : t`Destroy ${objectMetadataItem.labelPlural}`;
+  const confirmButtonText = `${t`Permanently Destroy`} ${objectLabel}`;
 
   return (
     <HeadlessConfirmationModalEngineCommandEffect
