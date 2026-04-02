@@ -1,4 +1,5 @@
 import { copyBaseApplicationProject } from '@/utils/app-template';
+import { downloadExample } from '@/utils/download-example';
 import { convertToLabel } from '@/utils/convert-to-label';
 import { install } from '@/utils/install';
 import { tryGitInit } from '@/utils/try-git-init';
@@ -16,16 +17,11 @@ import {
 } from 'twenty-sdk/cli';
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  type ExampleOptions,
-  type ScaffoldingMode,
-} from '@/types/scaffolding-options';
-
 const CURRENT_EXECUTION_DIRECTORY = process.env.INIT_CWD || process.cwd();
 
 type CreateAppOptions = {
   directory?: string;
-  mode?: ScaffoldingMode;
+  example?: string;
   name?: string;
   displayName?: string;
   description?: string;
@@ -38,23 +34,22 @@ export class CreateAppCommand {
       await this.getAppInfos(options);
 
     try {
-      const exampleOptions = this.resolveExampleOptions(
-        options.mode ?? 'minimal',
-      );
-
       await this.validateDirectory(appDirectory);
 
       this.logCreationInfo({ appDirectory, appName });
 
       await fs.ensureDir(appDirectory);
 
-      await copyBaseApplicationProject({
-        appName,
-        appDisplayName,
-        appDescription,
-        appDirectory,
-        exampleOptions,
-      });
+      if (options.example) {
+        await downloadExample(options.example, appDirectory);
+      } else {
+        await copyBaseApplicationProject({
+          appName,
+          appDisplayName,
+          appDescription,
+          appDirectory,
+        });
+      }
 
       await install(appDirectory);
 
@@ -150,34 +145,6 @@ export class CreateAppCommand {
       : path.join(CURRENT_EXECUTION_DIRECTORY, kebabCase(appName));
 
     return { appName, appDisplayName, appDirectory, appDescription };
-  }
-
-  private resolveExampleOptions(mode: ScaffoldingMode): ExampleOptions {
-    if (mode === 'minimal') {
-      return {
-        includeExampleObject: false,
-        includeExampleField: false,
-        includeExampleLogicFunction: false,
-        includeExampleFrontComponent: false,
-        includeExampleView: false,
-        includeExampleNavigationMenuItem: false,
-        includeExampleSkill: false,
-        includeExampleAgent: false,
-        includeExampleIntegrationTest: true,
-      };
-    }
-
-    return {
-      includeExampleObject: true,
-      includeExampleField: true,
-      includeExampleLogicFunction: true,
-      includeExampleFrontComponent: true,
-      includeExampleView: true,
-      includeExampleNavigationMenuItem: true,
-      includeExampleSkill: true,
-      includeExampleIntegrationTest: true,
-      includeExampleAgent: true,
-    };
   }
 
   private async validateDirectory(appDirectory: string): Promise<void> {
