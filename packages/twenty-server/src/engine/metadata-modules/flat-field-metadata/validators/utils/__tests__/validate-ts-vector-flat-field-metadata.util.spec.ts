@@ -29,9 +29,8 @@ const callValidator = (
     flatEntityToValidate,
   } as Parameters<typeof validateTsVectorFlatFieldMetadata>[0]);
 
-const stripUserFriendlyMessage = (
-  errors: FlatFieldMetadataValidationError[],
-) => errors.map(({ userFriendlyMessage: _, ...rest }) => rest);
+const stripUserFriendlyMessage = (errors: FlatFieldMetadataValidationError[]) =>
+  errors.map(({ userFriendlyMessage: _, ...rest }) => rest);
 
 describe('validateTsVectorFlatFieldMetadata', () => {
   it('should return no errors for a valid TS_VECTOR field', () => {

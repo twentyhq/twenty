@@ -159,6 +159,10 @@ describe('validateFlatObjectMetadataIdentifiers', () => {
     });
 
     expect(errors).toHaveLength(2);
-    expect(errors.every((e) => e.code === ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT)).toBe(true);
+    expect(
+      errors.every(
+        (e) => e.code === ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+      ),
+    ).toBe(true);
   });
 });
