@@ -2267,6 +2267,33 @@ type FieldConnection {
   edges: [FieldEdge!]!
 }
 
+type AuthToken {
+  token: String!
+  expiresAt: DateTime!
+}
+
+type ApplicationTokenPair {
+  applicationAccessToken: AuthToken!
+  applicationRefreshToken: AuthToken!
+}
+
+type FrontComponent {
+  id: UUID!
+  name: String!
+  description: String
+  sourceComponentPath: String!
+  builtComponentPath: String!
+  componentName: String!
+  builtComponentChecksum: String!
+  universalIdentifier: UUID
+  applicationId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  isHeadless: Boolean!
+  usesSdkClient: Boolean!
+  applicationTokenPair: ApplicationTokenPair
+}
+
 type LogicFunctionLogs {
   """Execution Logs"""
   logs: String!
@@ -2287,11 +2314,6 @@ type VerifyTwoFactorAuthenticationMethod {
 
 type AuthorizeApp {
   redirectUrl: String!
-}
-
-type AuthToken {
-  token: String!
-  expiresAt: DateTime!
 }
 
 type AuthTokenPair {
@@ -2400,11 +2422,6 @@ type DevelopmentApplication {
 type WorkspaceMigration {
   applicationUniversalIdentifier: String!
   actions: JSON!
-}
-
-type ApplicationTokenPair {
-  applicationAccessToken: AuthToken!
-  applicationRefreshToken: AuthToken!
 }
 
 type File {
@@ -2524,23 +2541,6 @@ type PostgresCredentials {
   user: String!
   password: String!
   workspaceId: UUID!
-}
-
-type FrontComponent {
-  id: UUID!
-  name: String!
-  description: String
-  sourceComponentPath: String!
-  builtComponentPath: String!
-  componentName: String!
-  builtComponentChecksum: String!
-  universalIdentifier: UUID
-  applicationId: UUID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  isHeadless: Boolean!
-  usesSdkClient: Boolean!
-  applicationTokenPair: ApplicationTokenPair
 }
 
 type CommandMenuItem {

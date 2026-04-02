@@ -63,8 +63,8 @@ export default {
         211,
         228,
         245,
-        281,
         282,
+        283,
         293,
         294,
         322,
@@ -4461,6 +4461,75 @@ export default {
                 1
             ]
         },
+        "AuthToken": {
+            "token": [
+                1
+            ],
+            "expiresAt": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "ApplicationTokenPair": {
+            "applicationAccessToken": [
+                247
+            ],
+            "applicationRefreshToken": [
+                247
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "FrontComponent": {
+            "id": [
+                3
+            ],
+            "name": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "sourceComponentPath": [
+                1
+            ],
+            "builtComponentPath": [
+                1
+            ],
+            "componentName": [
+                1
+            ],
+            "builtComponentChecksum": [
+                1
+            ],
+            "universalIdentifier": [
+                3
+            ],
+            "applicationId": [
+                3
+            ],
+            "createdAt": [
+                4
+            ],
+            "updatedAt": [
+                4
+            ],
+            "isHeadless": [
+                6
+            ],
+            "usesSdkClient": [
+                6
+            ],
+            "applicationTokenPair": [
+                248
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "LogicFunctionLogs": {
             "logs": [
                 1
@@ -4501,23 +4570,12 @@ export default {
                 1
             ]
         },
-        "AuthToken": {
-            "token": [
-                1
-            ],
-            "expiresAt": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
         "AuthTokenPair": {
             "accessOrWorkspaceAgnosticToken": [
-                252
+                247
             ],
             "refreshToken": [
-                252
+                247
             ],
             "__typename": [
                 1
@@ -4525,7 +4583,7 @@ export default {
         },
         "AvailableWorkspacesAndAccessTokens": {
             "tokens": [
-                253
+                255
             ],
             "availableWorkspaces": [
                 225
@@ -4577,10 +4635,10 @@ export default {
         },
         "SignUp": {
             "loginToken": [
-                252
+                247
             ],
             "workspace": [
-                258
+                260
             ],
             "__typename": [
                 1
@@ -4588,7 +4646,7 @@ export default {
         },
         "TransientToken": {
             "transientToken": [
-                252
+                247
             ],
             "__typename": [
                 1
@@ -4610,7 +4668,7 @@ export default {
         },
         "VerifyEmailAndGetLoginToken": {
             "loginToken": [
-                252
+                247
             ],
             "workspaceUrls": [
                 157
@@ -4629,7 +4687,7 @@ export default {
         },
         "AuthTokens": {
             "tokens": [
-                253
+                255
             ],
             "__typename": [
                 1
@@ -4637,7 +4695,7 @@ export default {
         },
         "LoginToken": {
             "loginToken": [
-                252
+                247
             ],
             "__typename": [
                 1
@@ -4667,10 +4725,10 @@ export default {
         },
         "Impersonate": {
             "loginToken": [
-                252
+                247
             ],
             "workspace": [
-                258
+                260
             ],
             "__typename": [
                 1
@@ -4692,7 +4750,7 @@ export default {
                 1
             ],
             "dailyUsage": [
-                269
+                271
             ],
             "__typename": [
                 1
@@ -4709,7 +4767,7 @@ export default {
                 180
             ],
             "timeSeries": [
-                269
+                271
             ],
             "periodStart": [
                 4
@@ -4718,7 +4776,7 @@ export default {
                 4
             ],
             "userDailyUsage": [
-                270
+                272
             ],
             "__typename": [
                 1
@@ -4741,17 +4799,6 @@ export default {
             ],
             "actions": [
                 15
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ApplicationTokenPair": {
-            "applicationAccessToken": [
-                252
-            ],
-            "applicationRefreshToken": [
-                252
             ],
             "__typename": [
                 1
@@ -4886,13 +4933,13 @@ export default {
                 1
             ],
             "driver": [
-                281
-            ],
-            "status": [
                 282
             ],
+            "status": [
+                283
+            ],
             "verificationRecords": [
-                279
+                280
             ],
             "verifiedAt": [
                 4
@@ -4939,7 +4986,7 @@ export default {
                 1
             ],
             "location": [
-                284
+                285
             ],
             "__typename": [
                 1
@@ -4967,13 +5014,13 @@ export default {
         },
         "ImapSmtpCaldavConnectionParameters": {
             "IMAP": [
-                286
+                287
             ],
             "SMTP": [
-                286
+                287
             ],
             "CALDAV": [
-                286
+                287
             ],
             "__typename": [
                 1
@@ -4993,7 +5040,7 @@ export default {
                 3
             ],
             "connectionParameters": [
-                287
+                288
             ],
             "__typename": [
                 1
@@ -5027,53 +5074,6 @@ export default {
                 1
             ]
         },
-        "FrontComponent": {
-            "id": [
-                3
-            ],
-            "name": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "sourceComponentPath": [
-                1
-            ],
-            "builtComponentPath": [
-                1
-            ],
-            "componentName": [
-                1
-            ],
-            "builtComponentChecksum": [
-                1
-            ],
-            "universalIdentifier": [
-                3
-            ],
-            "applicationId": [
-                3
-            ],
-            "createdAt": [
-                4
-            ],
-            "updatedAt": [
-                4
-            ],
-            "isHeadless": [
-                6
-            ],
-            "usesSdkClient": [
-                6
-            ],
-            "applicationTokenPair": [
-                274
-            ],
-            "__typename": [
-                1
-            ]
-        },
         "CommandMenuItem": {
             "id": [
                 3
@@ -5085,7 +5085,7 @@ export default {
                 3
             ],
             "frontComponent": [
-                291
+                249
             ],
             "engineComponentKey": [
                 293
@@ -6248,10 +6248,10 @@ export default {
                 }
             ],
             "frontComponents": [
-                291
+                249
             ],
             "frontComponent": [
-                291,
+                249,
                 {
                     "id": [
                         3,
@@ -6540,7 +6540,7 @@ export default {
                 }
             ],
             "checkUserExists": [
-                266,
+                268,
                 {
                     "email": [
                         1,
@@ -6552,7 +6552,7 @@ export default {
                 }
             ],
             "checkWorkspaceInviteHashIsValid": [
-                267,
+                269,
                 {
                     "inviteHash": [
                         1,
@@ -6570,7 +6570,7 @@ export default {
                 }
             ],
             "validatePasswordResetToken": [
-                261,
+                263,
                 {
                     "passwordResetToken": [
                         1,
@@ -6662,7 +6662,7 @@ export default {
                 221
             ],
             "getConnectedImapSmtpCaldavAccount": [
-                288,
+                289,
                 {
                     "id": [
                         3,
@@ -6671,7 +6671,7 @@ export default {
                 }
             ],
             "getAutoCompleteAddress": [
-                283,
+                284,
                 {
                     "address": [
                         1,
@@ -6690,7 +6690,7 @@ export default {
                 }
             ],
             "getAddressDetails": [
-                285,
+                286,
                 {
                     "placeId": [
                         1,
@@ -6793,7 +6793,7 @@ export default {
                 }
             ],
             "getUsageAnalytics": [
-                271,
+                273,
                 {
                     "input": [
                         362
@@ -6801,19 +6801,19 @@ export default {
                 }
             ],
             "getPostgresCredentials": [
-                290
+                291
             ],
             "findManyPublicDomains": [
-                278
+                279
             ],
             "getEmailingDomains": [
-                280
+                281
             ],
             "findManyMarketplaceApps": [
-                276
+                277
             ],
             "findMarketplaceAppDetail": [
-                277,
+                278,
                 {
                     "universalIdentifier": [
                         1,
@@ -7761,7 +7761,7 @@ export default {
                 }
             ],
             "createFrontComponent": [
-                291,
+                249,
                 {
                     "input": [
                         416,
@@ -7770,7 +7770,7 @@ export default {
                 }
             ],
             "updateFrontComponent": [
-                291,
+                249,
                 {
                     "input": [
                         417,
@@ -7779,7 +7779,7 @@ export default {
                 }
             ],
             "deleteFrontComponent": [
-                291,
+                249,
                 {
                     "id": [
                         3,
@@ -8258,7 +8258,7 @@ export default {
                 }
             ],
             "getAuthorizationUrlForSSO": [
-                256,
+                258,
                 {
                     "input": [
                         464,
@@ -8267,7 +8267,7 @@ export default {
                 }
             ],
             "getLoginTokenFromCredentials": [
-                265,
+                267,
                 {
                     "email": [
                         1,
@@ -8293,7 +8293,7 @@ export default {
                 }
             ],
             "signIn": [
-                254,
+                256,
                 {
                     "email": [
                         1,
@@ -8315,7 +8315,7 @@ export default {
                 }
             ],
             "verifyEmailAndGetLoginToken": [
-                262,
+                264,
                 {
                     "emailVerificationToken": [
                         1,
@@ -8335,7 +8335,7 @@ export default {
                 }
             ],
             "verifyEmailAndGetWorkspaceAgnosticToken": [
-                254,
+                256,
                 {
                     "emailVerificationToken": [
                         1,
@@ -8351,7 +8351,7 @@ export default {
                 }
             ],
             "getAuthTokensFromOTP": [
-                264,
+                266,
                 {
                     "otp": [
                         1,
@@ -8371,7 +8371,7 @@ export default {
                 }
             ],
             "signUp": [
-                254,
+                256,
                 {
                     "email": [
                         1,
@@ -8393,7 +8393,7 @@ export default {
                 }
             ],
             "signUpInWorkspace": [
-                259,
+                261,
                 {
                     "email": [
                         1,
@@ -8424,13 +8424,13 @@ export default {
                 }
             ],
             "signUpInNewWorkspace": [
-                259
+                261
             ],
             "generateTransientToken": [
-                260
+                262
             ],
             "getAuthTokensFromLoginToken": [
-                264,
+                266,
                 {
                     "loginToken": [
                         1,
@@ -8443,7 +8443,7 @@ export default {
                 }
             ],
             "authorizeApp": [
-                251,
+                254,
                 {
                     "clientId": [
                         1,
@@ -8465,7 +8465,7 @@ export default {
                 }
             ],
             "renewToken": [
-                264,
+                266,
                 {
                     "appToken": [
                         1,
@@ -8474,7 +8474,7 @@ export default {
                 }
             ],
             "generateApiKeyToken": [
-                263,
+                265,
                 {
                     "apiKeyId": [
                         3,
@@ -8487,7 +8487,7 @@ export default {
                 }
             ],
             "emailPasswordResetLink": [
-                255,
+                257,
                 {
                     "email": [
                         1,
@@ -8499,7 +8499,7 @@ export default {
                 }
             ],
             "updatePasswordViaResetToken": [
-                257,
+                259,
                 {
                     "passwordResetToken": [
                         1,
@@ -8600,7 +8600,7 @@ export default {
                 }
             ],
             "initiateOTPProvisioning": [
-                249,
+                252,
                 {
                     "loginToken": [
                         1,
@@ -8613,10 +8613,10 @@ export default {
                 }
             ],
             "initiateOTPProvisioningForAuthenticatedUser": [
-                249
+                252
             ],
             "deleteTwoFactorAuthenticationMethod": [
-                248,
+                251,
                 {
                     "twoFactorAuthenticationMethodId": [
                         3,
@@ -8625,7 +8625,7 @@ export default {
                 }
             ],
             "verifyTwoFactorAuthenticationMethodForAuthenticatedUser": [
-                250,
+                253,
                 {
                     "otp": [
                         1,
@@ -8731,7 +8731,7 @@ export default {
                 }
             ],
             "impersonate": [
-                268,
+                270,
                 {
                     "userId": [
                         3,
@@ -8753,7 +8753,7 @@ export default {
                 }
             ],
             "saveImapSmtpCaldavAccount": [
-                289,
+                290,
                 {
                     "accountOwnerId": [
                         3,
@@ -8956,13 +8956,13 @@ export default {
                 }
             ],
             "enablePostgresProxy": [
-                290
+                291
             ],
             "disablePostgresProxy": [
-                290
+                291
             ],
             "createPublicDomain": [
-                278,
+                279,
                 {
                     "domain": [
                         1,
@@ -8989,14 +8989,14 @@ export default {
                 }
             ],
             "createEmailingDomain": [
-                280,
+                281,
                 {
                     "domain": [
                         1,
                         "String!"
                     ],
                     "driver": [
-                        281,
+                        282,
                         "EmailingDomainDriver!"
                     ]
                 }
@@ -9011,7 +9011,7 @@ export default {
                 }
             ],
             "verifyEmailingDomain": [
-                280,
+                281,
                 {
                     "id": [
                         1,
@@ -9091,7 +9091,7 @@ export default {
                 }
             ],
             "createDevelopmentApplication": [
-                272,
+                274,
                 {
                     "universalIdentifier": [
                         1,
@@ -9104,7 +9104,7 @@ export default {
                 }
             ],
             "generateApplicationToken": [
-                274,
+                248,
                 {
                     "applicationId": [
                         3,
@@ -9113,7 +9113,7 @@ export default {
                 }
             ],
             "syncApplication": [
-                273,
+                275,
                 {
                     "manifest": [
                         15,
@@ -9122,7 +9122,7 @@ export default {
                 }
             ],
             "uploadApplicationFile": [
-                275,
+                276,
                 {
                     "file": [
                         370,
@@ -9156,7 +9156,7 @@ export default {
                 }
             ],
             "renewApplicationToken": [
-                274,
+                248,
                 {
                     "applicationRefreshToken": [
                         1,
@@ -11392,7 +11392,7 @@ export default {
                 }
             ],
             "logicFunctionLogs": [
-                247,
+                250,
                 {
                     "input": [
                         488,
