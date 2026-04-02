@@ -44,8 +44,8 @@ import {
   useMemo,
   useRef,
   useState,
-  type PointerEvent as ReactPointerEvent,
   type ReactNode,
+  type PointerEvent as ReactPointerEvent,
   type WheelEvent as ReactWheelEvent,
 } from 'react';
 import type {
@@ -62,7 +62,6 @@ import type {
   HeroVisualType,
 } from '../../types/HeroHomeData';
 import { Chip, ChipVariant } from './homeVisualChip';
-import { HomeVisualButton } from './homeVisualButton';
 import { VISUAL_TOKENS } from './homeVisualTokens';
 
 const APP_FONT = VISUAL_TOKENS.font.family;
@@ -83,7 +82,6 @@ const COLORS = {
   textSecondary: VISUAL_TOKENS.font.color.secondary,
   textTertiary: VISUAL_TOKENS.font.color.tertiary,
   textLight: VISUAL_TOKENS.font.color.light,
-  whiteOverlay: VISUAL_TOKENS.background.transparent.primary,
 };
 
 const SIDEBAR_TONES: Record<
@@ -102,10 +100,7 @@ const SIDEBAR_TONES: Record<
   red: { background: '#fee2e2', border: '#fecaca', color: '#b91c1c' },
 };
 
-const PERSON_TONES: Record<
-  string,
-  { background: string; color: string }
-> = {
+const PERSON_TONES: Record<string, { background: string; color: string }> = {
   amber: { background: '#f6e6d7', color: '#7a4f2a' },
   blue: { background: '#dbeafe', color: '#1d4ed8' },
   gray: { background: '#e5e7eb', color: '#4b5563' },
@@ -125,6 +120,7 @@ const StyledHomeVisual = styled.div`
   isolation: isolate;
   margin-top: ${theme.spacing(5)};
   position: relative;
+  text-align: left;
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
@@ -143,8 +139,7 @@ const ShellScene = styled.div`
 const Frame = styled.div`
   aspect-ratio: 1280 / 832;
   background-color: ${COLORS.background};
-  background-image:
-    radial-gradient(
+  background-image: radial-gradient(
       circle at top center,
       rgba(0, 0, 0, 0.035),
       rgba(0, 0, 0, 0) 55%
@@ -153,9 +148,7 @@ const Frame = styled.div`
   background-position:
     center top,
     center;
-  background-repeat:
-    no-repeat,
-    repeat;
+  background-repeat: no-repeat, repeat;
   border: 1px solid ${COLORS.border};
   border-radius: 8px;
   box-shadow: ${COLORS.shadow};
@@ -531,6 +524,30 @@ const DesktopOnlyNavbarAction = styled.div`
   }
 `;
 
+const NavbarDecorativeChip = styled.div`
+  align-items: center;
+  background: transparent;
+  border: 1px solid ${VISUAL_TOKENS.background.transparent.medium};
+  border-radius: ${VISUAL_TOKENS.border.radius.sm};
+  color: ${VISUAL_TOKENS.font.color.secondary};
+  display: inline-flex;
+  font-family: ${APP_FONT};
+  font-size: ${VISUAL_TOKENS.font.size.md};
+  font-weight: ${VISUAL_TOKENS.font.weight.medium};
+  gap: ${VISUAL_TOKENS.spacing[1]};
+  height: 24px;
+  padding: 0 ${VISUAL_TOKENS.spacing[2]};
+  white-space: nowrap;
+`;
+
+const NavbarDecorativeIconWrap = styled.span`
+  align-items: center;
+  color: currentColor;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: center;
+`;
+
 const IndexSurface = styled.div`
   background: ${COLORS.background};
   border-radius: 8px;
@@ -845,7 +862,9 @@ const HoverActions = styled.div<{ $visible: boolean }>`
   right: 4px;
   top: 4px;
   transform: translateX(${({ $visible }) => ($visible ? '0' : '4px')});
-  transition: opacity 0.14s ease, transform 0.14s ease;
+  transition:
+    opacity 0.14s ease,
+    transform 0.14s ease;
 `;
 
 const MiniAction = styled.div`
@@ -1024,17 +1043,9 @@ function ChevronDownMini({
   );
 }
 
-function SearchMini({
-  color = COLORS.textTertiary,
-  size = 16,
-}: MiniIconProps) {
+function SearchMini({ color = COLORS.textTertiary, size = 16 }: MiniIconProps) {
   return (
-    <IconSearch
-      aria-hidden
-      color={color}
-      size={size}
-      stroke={TABLER_STROKE}
-    />
+    <IconSearch aria-hidden color={color} size={size} stroke={TABLER_STROKE} />
   );
 }
 
@@ -1052,17 +1063,9 @@ function CollapseSidebarMini({
   );
 }
 
-function HomeMini({
-  color = COLORS.textSecondary,
-  size = 16,
-}: MiniIconProps) {
+function HomeMini({ color = COLORS.textSecondary, size = 16 }: MiniIconProps) {
   return (
-    <IconHome2
-      aria-hidden
-      color={color}
-      size={size}
-      stroke={TABLER_STROKE}
-    />
+    <IconHome2 aria-hidden color={color} size={size} stroke={TABLER_STROKE} />
   );
 }
 
@@ -1094,74 +1097,32 @@ function MessageCirclePlusMini({
   );
 }
 
-function LinkMini({
-  color = COLORS.textTertiary,
-  size = 16,
-}: MiniIconProps) {
+function LinkMini({ color = COLORS.textTertiary, size = 16 }: MiniIconProps) {
   return (
-    <IconLink
-      aria-hidden
-      color={color}
-      size={size}
-      stroke={TABLER_STROKE}
-    />
+    <IconLink aria-hidden color={color} size={size} stroke={TABLER_STROKE} />
   );
 }
 
-function ListMini({
-  color = COLORS.textSecondary,
-  size = 16,
-}: MiniIconProps) {
+function ListMini({ color = COLORS.textSecondary, size = 16 }: MiniIconProps) {
   return (
-    <IconList
-      aria-hidden
-      color={color}
-      size={size}
-      stroke={TABLER_STROKE}
-    />
+    <IconList aria-hidden color={color} size={size} stroke={TABLER_STROKE} />
   );
 }
 
-function PlusMini({
-  color = COLORS.textSecondary,
-  size = 14,
-}: MiniIconProps) {
+function PlusMini({ color = COLORS.textSecondary, size = 14 }: MiniIconProps) {
   return (
-    <IconPlus
-      aria-hidden
-      color={color}
-      size={size}
-      stroke={TABLER_STROKE}
-    />
+    <IconPlus aria-hidden color={color} size={size} stroke={TABLER_STROKE} />
   );
 }
 
-function CheckMini({
-  color = COLORS.text,
-  size = 12,
-}: MiniIconProps) {
+function CheckMini({ color = COLORS.text, size = 12 }: MiniIconProps) {
   return (
-    <IconCheck
-      aria-hidden
-      color={color}
-      size={size}
-      stroke={TABLER_STROKE}
-    />
+    <IconCheck aria-hidden color={color} size={size} stroke={TABLER_STROKE} />
   );
 }
 
-function CloseMini({
-  color = COLORS.text,
-  size = 12,
-}: MiniIconProps) {
-  return (
-    <IconX
-      aria-hidden
-      color={color}
-      size={size}
-      stroke={TABLER_STROKE}
-    />
-  );
+function CloseMini({ color = COLORS.text, size = 12 }: MiniIconProps) {
+  return <IconX aria-hidden color={color} size={size} stroke={TABLER_STROKE} />;
 }
 
 function PencilMini({
@@ -1169,26 +1130,13 @@ function PencilMini({
   size = 14,
 }: MiniIconProps) {
   return (
-    <IconPencil
-      aria-hidden
-      color={color}
-      size={size}
-      stroke={TABLER_STROKE}
-    />
+    <IconPencil aria-hidden color={color} size={size} stroke={TABLER_STROKE} />
   );
 }
 
-function CopyMini({
-  color = COLORS.textSecondary,
-  size = 14,
-}: MiniIconProps) {
+function CopyMini({ color = COLORS.textSecondary, size = 14 }: MiniIconProps) {
   return (
-    <IconCopy
-      aria-hidden
-      color={color}
-      size={size}
-      stroke={TABLER_STROKE}
-    />
+    <IconCopy aria-hidden color={color} size={size} stroke={TABLER_STROKE} />
   );
 }
 
@@ -1434,7 +1382,7 @@ function PersonTokenCell({
             {token.avatarUrl ? (
               <AvatarImage alt="" src={token.avatarUrl} />
             ) : (
-              token.shortLabel ?? getInitials(token.name)
+              (token.shortLabel ?? getInitials(token.name))
             )}
           </PersonAvatarCircle>
         }
@@ -1471,9 +1419,7 @@ function EntityCellComponent({
         <CellChip
           clickable={false}
           label={cell.name}
-          leftComponent={
-            <FaviconLogo domain={cell.domain} label={cell.name} />
-          }
+          leftComponent={<FaviconLogo domain={cell.domain} label={cell.name} />}
           variant={ChipVariant.Highlighted}
         />
         <HoverActions $visible={hovered}>
@@ -1505,8 +1451,7 @@ function RelationCellComponent({
     <div style={{ minWidth: 0, position: 'relative', width: '100%' }}>
       <MultiChipStack>
         {cell.items.map((item) => {
-          const tone =
-            PERSON_TONES[item.tone ?? 'gray'] ?? PERSON_TONES.gray;
+          const tone = PERSON_TONES[item.tone ?? 'gray'] ?? PERSON_TONES.gray;
 
           return (
             <CellChip
@@ -1599,9 +1544,8 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
   });
 
   const defaultActiveLabel =
-    visual.workspaceNav.find(
-      (entry) => !isFolder(entry) && entry.active,
-    )?.label ??
+    visual.workspaceNav.find((entry) => !isFolder(entry) && entry.active)
+      ?.label ??
     visual.workspaceNav[0]?.label ??
     '';
 
@@ -1632,24 +1576,17 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
   const totalTableWidth = visual.tableWidth ?? DEFAULT_TABLE_WIDTH;
   const actions = visual.actions ?? [];
 
-  const columnWidth = columns.reduce(
-    (sum, column) => sum + column.width,
-    0,
-  );
+  const columnWidth = columns.reduce((sum, column) => sum + column.width, 0);
   const fillerWidth = Math.max(totalTableWidth - columnWidth, 0);
 
-  const handleShellPointerMove = (
-    event: ReactPointerEvent<HTMLDivElement>,
-  ) => {
+  const handleShellPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.pointerType !== 'mouse' || dragging || !shellRef.current) {
       return;
     }
 
     const bounds = shellRef.current.getBoundingClientRect();
-    const horizontal =
-      ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
-    const vertical =
-      ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
+    const horizontal = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
+    const vertical = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
 
     setTilt({
       x: Number((-vertical * 2.2).toFixed(2)),
@@ -1661,9 +1598,7 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
     setTilt({ x: 0, y: 0 });
   };
 
-  const handlePointerDown = (
-    event: ReactPointerEvent<HTMLDivElement>,
-  ) => {
+  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (
       event.pointerType !== 'mouse' ||
       event.button !== 0 ||
@@ -1684,9 +1619,7 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
     event.preventDefault();
   };
 
-  const handlePointerMove = (
-    event: ReactPointerEvent<HTMLDivElement>,
-  ) => {
+  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (!dragRef.current.active || !viewportRef.current) {
       return;
     }
@@ -1702,13 +1635,8 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
     setDragging(false);
   };
 
-  const handlePointerUp = (
-    event: ReactPointerEvent<HTMLDivElement>,
-  ) => {
-    if (
-      !viewportRef.current ||
-      dragRef.current.pointerId !== event.pointerId
-    ) {
+  const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (!viewportRef.current || dragRef.current.pointerId !== event.pointerId) {
       return;
     }
 
@@ -1784,9 +1712,7 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
                       stroke={2}
                     />
                   </WorkspaceIcon>
-                  <WorkspaceLabel>
-                    {visual.workspace.name}
-                  </WorkspaceLabel>
+                  <WorkspaceLabel>{visual.workspace.name}</WorkspaceLabel>
                   <ChevronDownMini color={COLORS.textLight} size={12} />
                 </WorkspaceMenu>
                 <SidebarTopActions>
@@ -1849,19 +1775,28 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
                   </BreadcrumbTag>
                 </Breadcrumb>
 
-                <NavbarActions aria-hidden="true" inert>
+                <NavbarActions aria-hidden>
                   <DesktopOnlyNavbarAction>
-                    <HomeVisualButton
-                      Icon={IconPlus}
-                      title="New Record"
-                      aria-label="New record"
-                    />
+                    <NavbarDecorativeChip>
+                      <NavbarDecorativeIconWrap>
+                        <IconPlus
+                          aria-hidden
+                          size={VISUAL_TOKENS.icon.size.sm}
+                          stroke={VISUAL_TOKENS.icon.stroke.sm}
+                        />
+                      </NavbarDecorativeIconWrap>
+                      New Record
+                    </NavbarDecorativeChip>
                   </DesktopOnlyNavbarAction>
-                  <HomeVisualButton
-                    Icon={IconDotsVertical}
-                    hotkeys={['⌘K']}
-                    aria-label="Command menu"
-                  />
+                  <NavbarDecorativeChip>
+                    <NavbarDecorativeIconWrap>
+                      <IconDotsVertical
+                        aria-hidden
+                        size={VISUAL_TOKENS.icon.size.sm}
+                        stroke={VISUAL_TOKENS.icon.stroke.sm}
+                      />
+                    </NavbarDecorativeIconWrap>
+                  </NavbarDecorativeChip>
                 </NavbarActions>
               </NavbarBar>
 
@@ -1938,10 +1873,7 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
                         <EmptyFillCell $header $width={fillerWidth}>
                           {fillerWidth > 0 ? (
                             <HeaderFillContent>
-                              <PlusMini
-                                color={COLORS.textTertiary}
-                                size={16}
-                              />
+                              <PlusMini color={COLORS.textTertiary} size={16} />
                             </HeaderFillContent>
                           ) : null}
                         </EmptyFillCell>
