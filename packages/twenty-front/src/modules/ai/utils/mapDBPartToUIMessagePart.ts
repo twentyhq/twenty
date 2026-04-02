@@ -50,9 +50,13 @@ export const mapDBPartToUIMessagePart = (
         providerMetadata: part.providerMetadata ?? undefined,
       };
     case 'step-start':
+      return {
+        type: part.type,
+      };
     case 'data-compaction':
       return {
         type: part.type,
+        data: {},
       };
     case 'data-routing-status':
       return {

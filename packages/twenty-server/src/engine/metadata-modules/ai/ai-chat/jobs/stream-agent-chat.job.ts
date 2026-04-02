@@ -218,6 +218,7 @@ export class StreamAgentChatJob {
             writer.write({
               type: 'data-compaction' as const,
               id: `compaction-${data.threadId}`,
+              data: {},
             });
           };
 
