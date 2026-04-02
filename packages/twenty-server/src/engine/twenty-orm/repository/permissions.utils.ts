@@ -139,6 +139,19 @@ export const validateOperationIsPermittedOrThrow = ({
       });
       break;
     case 'insert':
+      if (!permissionsForEntity?.canUpdateObjectRecords) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+        );
+      }
+
+      validateReadFieldPermissionOrThrow({
+        restrictedFields: permissionsForEntity.restrictedFields,
+        selectedColumns,
+        columnNameToFieldMetadataIdMap,
+      });
+      break;
     case 'update':
       if (!permissionsForEntity?.canUpdateObjectRecords) {
         throw new PermissionsException(
