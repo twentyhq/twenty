@@ -9,6 +9,7 @@ import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
 
 describe('ClientConfigService', () => {
   let service: ClientConfigService;
@@ -37,6 +38,12 @@ describe('ClientConfigService', () => {
             getAdminFilteredModels: jest.fn().mockReturnValue([]),
             getRecommendedModelIds: jest.fn().mockReturnValue(new Set()),
             getModelConfig: jest.fn().mockReturnValue(undefined),
+          },
+        },
+        {
+          provide: MaintenanceModeService,
+          useValue: {
+            getMaintenanceMode: jest.fn().mockResolvedValue(null),
           },
         },
       ],
@@ -91,6 +98,8 @@ describe('ClientConfigService', () => {
             CALENDAR_BOOKING_PAGE_ID: 'team/twenty/talk-to-us',
             CLOUDFLARE_API_KEY: undefined,
             CLOUDFLARE_ZONE_ID: undefined,
+            ALLOW_REQUESTS_TO_TWENTY_ICONS: false,
+            CLICKHOUSE_URL: undefined,
           };
 
           return mockValues[key];
@@ -159,6 +168,7 @@ describe('ClientConfigService', () => {
         isGoogleCalendarEnabled: true,
         isConfigVariablesInDbEnabled: false,
         isImapSmtpCaldavEnabled: false,
+        allowRequestsToTwentyIcons: false,
         calendarBookingPageId: 'team/twenty/talk-to-us',
         isCloudflareIntegrationEnabled: false,
         isClickHouseConfigured: false,

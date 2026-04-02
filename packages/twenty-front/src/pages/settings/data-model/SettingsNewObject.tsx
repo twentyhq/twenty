@@ -9,12 +9,13 @@ import {
   type SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
+import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
@@ -26,6 +27,7 @@ export const SettingsNewObject = () => {
   const navigate = useNavigateSettings();
   const [isLoading, setIsLoading] = useState(false);
   const { createOneObjectMetadataItem } = useCreateOneObjectMetadataItem();
+  const isDDLLocked = useAtomStateValue(isDDLLockedState);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const formConfig = useForm<SettingsDataModelObjectAboutFormValues>({
@@ -49,7 +51,7 @@ export const SettingsNewObject = () => {
   const hasNameConflict = isDefined(conflictingObjectMetadataItem);
 
   const { isValid, isSubmitting } = formConfig.formState;
-  const canSave = isValid && !isSubmitting && !hasNameConflict;
+  const canSave = isValid && !isSubmitting && !hasNameConflict && !isDDLLocked;
 
   const handleSave = async (
     formValues: SettingsDataModelObjectAboutFormValues,

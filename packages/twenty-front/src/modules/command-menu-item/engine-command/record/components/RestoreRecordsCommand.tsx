@@ -9,19 +9,17 @@ import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-export const RestoreMultipleRecordsCommand = () => {
-  const { recordIndexId, objectMetadataItem, graphqlFilter } =
+export const RestoreRecordsCommand = () => {
+  const { recordIndexId, objectMetadataItem, selectedRecords, graphqlFilter } =
     useHeadlessCommandContextApi();
 
-  if (
-    !isDefined(recordIndexId) ||
-    !isDefined(objectMetadataItem) ||
-    !isDefined(graphqlFilter)
-  ) {
+  if (!isDefined(recordIndexId) || !isDefined(objectMetadataItem)) {
     throw new Error(
-      'Record index ID, object metadata item, and graphql filter are required to restore multiple records',
+      'Record index ID and object metadata are required to restore records',
     );
   }
+
+  const isSingleRecord = selectedRecords.length === 1;
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
   const { removeSelectedRecordsFromRecordBoard } =
@@ -31,12 +29,14 @@ export const RestoreMultipleRecordsCommand = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
+  const noMatchFilter: RecordGqlOperationFilter = { id: { in: [] } };
+
   const deletedAtFilter: RecordGqlOperationFilter = {
     deletedAt: { is: 'NOT_NULL' },
   };
 
-  const combinedFilter = {
-    ...graphqlFilter,
+  const combinedFilter: RecordGqlOperationFilter = {
+    ...(graphqlFilter ?? noMatchFilter),
     ...deletedAtFilter,
   };
 
@@ -49,6 +49,11 @@ export const RestoreMultipleRecordsCommand = () => {
 
   const handleExecute = async () => {
     removeSelectedRecordsFromRecordBoard();
+
+    if (!isDefined(graphqlFilter)) {
+      throw new Error('Cannot restore records without a valid filter');
+    }
+
     const recordsToRestore = await fetchAllRecordIds();
     const recordIdsToRestore = recordsToRestore.map((record) => record.id);
 
@@ -59,11 +64,20 @@ export const RestoreMultipleRecordsCommand = () => {
     });
   };
 
+  const objectLabel = isSingleRecord
+    ? objectMetadataItem.labelSingular
+    : objectMetadataItem.labelPlural;
+
+  const title = t`Restore ${objectLabel}`;
+  const subtitle = isSingleRecord
+    ? t`Are you sure you want to restore this ${objectMetadataItem.labelSingular}?`
+    : t`Are you sure you want to restore these ${objectMetadataItem.labelPlural}?`;
+
   return (
     <HeadlessConfirmationModalEngineCommandEffect
-      title={t`Restore Records`}
-      subtitle={t`Are you sure you want to restore these records?`}
-      confirmButtonText={t`Restore Records`}
+      title={title}
+      subtitle={subtitle}
+      confirmButtonText={title}
       confirmButtonAccent="default"
       execute={handleExecute}
     />

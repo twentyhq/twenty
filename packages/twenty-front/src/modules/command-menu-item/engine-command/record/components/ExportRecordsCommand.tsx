@@ -4,13 +4,14 @@ import { CommandComponentInstanceContext } from '@/command-menu-item/engine-comm
 import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useRecordIndexExportRecords } from '@/object-record/record-index/export/hooks/useRecordIndexExportRecords';
+import { useExportSingleRecord } from '@/object-record/record-show/hooks/useExportSingleRecord';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-const ExportMultipleRecordsCommandContent = ({
+const ExportIndexRecordsContent = ({
   objectMetadataItem,
   recordIndexId,
   setCommandMenuItemProgress,
@@ -42,8 +43,26 @@ const ExportMultipleRecordsCommandContent = ({
   return <HeadlessEngineCommandWrapperEffect execute={download} />;
 };
 
-export const ExportMultipleRecordsCommand = () => {
-  const { objectMetadataItem, recordIndexId } = useHeadlessCommandContextApi();
+const ExportShowRecordContent = ({
+  objectMetadataItem,
+  recordId,
+}: {
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  recordId: string;
+}) => {
+  const filename = `${objectMetadataItem.nameSingular}.csv`;
+  const { download } = useExportSingleRecord({
+    filename,
+    objectMetadataItem,
+    recordId,
+  });
+
+  return <HeadlessEngineCommandWrapperEffect execute={download} />;
+};
+
+export const ExportRecordsCommand = () => {
+  const { objectMetadataItem, recordIndexId, selectedRecords } =
+    useHeadlessCommandContextApi();
 
   const engineCommandId = useAvailableComponentInstanceIdOrThrow(
     CommandComponentInstanceContext,
@@ -54,9 +73,25 @@ export const ExportMultipleRecordsCommand = () => {
     engineCommandId,
   );
 
-  if (!isDefined(objectMetadataItem) || !isDefined(recordIndexId)) {
+  if (!isDefined(objectMetadataItem)) {
+    throw new Error('Object metadata item is required to export records');
+  }
+
+  const recordId = selectedRecords[0]?.id;
+  const isShowPageExport = !isDefined(recordIndexId) && isDefined(recordId);
+
+  if (isShowPageExport) {
+    return (
+      <ExportShowRecordContent
+        objectMetadataItem={objectMetadataItem}
+        recordId={recordId}
+      />
+    );
+  }
+
+  if (!isDefined(recordIndexId)) {
     throw new Error(
-      'Object metadata item and record index ID are required to export multiple records',
+      'Record index ID is required to export records from index page',
     );
   }
 
@@ -64,7 +99,7 @@ export const ExportMultipleRecordsCommand = () => {
     <ViewComponentInstanceContext.Provider
       value={{ instanceId: recordIndexId }}
     >
-      <ExportMultipleRecordsCommandContent
+      <ExportIndexRecordsContent
         objectMetadataItem={objectMetadataItem}
         recordIndexId={recordIndexId}
         setCommandMenuItemProgress={setCommandMenuItemProgress}
