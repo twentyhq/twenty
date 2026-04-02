@@ -36,7 +36,7 @@ const introspectSchema = async (url: string): Promise<string> => {
 };
 
 const main = async () => {
-  const serverUrl = process.env.TWENTY_API_URL ?? 'http://localhost:3002';
+  const serverUrl = process.env.TWENTY_API_URL ?? 'http://localhost:3000';
 
   const schema = await introspectSchema(`${serverUrl}/metadata`);
 
