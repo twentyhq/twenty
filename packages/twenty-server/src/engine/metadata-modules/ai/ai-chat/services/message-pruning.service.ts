@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type ModelMessage, pruneMessages } from 'ai';
 
-const COMPACTION_THRESHOLD_RATIO = 0.75;
+const COMPACTION_THRESHOLD_RATIO = 0.9;
 const TOOL_CALLS_PRESERVE_LAST_N_MESSAGES = 2;
 
 export type PruningResult = {
