@@ -114,6 +114,7 @@ export const generateCsv: GenerateExport = ({
   return json2csv(sanitizedRows, {
     keys,
     emptyFieldValue: '',
+    excelBOM: true,
     // Note: We handle CSV injection prevention manually with ZWJ approach above
     // This preserves original which the csvSecurity option does not do
   });
@@ -143,11 +144,9 @@ export const displayedExportProgress = (progress?: ExportProgress): string => {
   return t`Export (${exportedCount})`;
 };
 
-const UTF8_BOM = '\uFEFF';
-
 const downloader = (mimeType: string, generator: GenerateExport) => {
   return (filename: string, data: GenerateExportOptions) => {
-    const blob = new Blob([UTF8_BOM, generator(data)], { type: mimeType });
+    const blob = new Blob([generator(data)], { type: mimeType });
     saveAs(blob, filename);
   };
 };
