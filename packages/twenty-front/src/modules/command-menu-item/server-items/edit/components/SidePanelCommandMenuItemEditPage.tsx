@@ -249,7 +249,9 @@ export const SidePanelCommandMenuItemEditPage = () => {
   return (
     <StyledContainer data-click-outside-id={COMMAND_MENU_CLICK_OUTSIDE_ID}>
       <StyledViewbar>
-        <CommandMenuItemEditRecordSelectionDropdown isRecordPage={isRecordPage} />
+        <CommandMenuItemEditRecordSelectionDropdown
+          isRecordPage={isRecordPage}
+        />
       </StyledViewbar>
       <StyledContent>
         <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
