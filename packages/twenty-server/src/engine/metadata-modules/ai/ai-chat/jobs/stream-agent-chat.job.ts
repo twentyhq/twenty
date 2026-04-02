@@ -189,7 +189,6 @@ export class StreamAgentChatJob {
       };
       let lastStepConversationSize = 0;
       let totalCacheCreationTokens = 0;
-      let didCompact = false;
 
       // onFinish fires before the uiStream is fully drained. We use this
       // promise to coordinate: the IIFE waits for DB persist to complete
@@ -214,7 +213,6 @@ export class StreamAgentChatJob {
           };
 
           const onCompaction = () => {
-            didCompact = true;
             writer.write({
               type: 'data-compaction' as const,
               id: `compaction-${data.threadId}`,
@@ -270,21 +268,8 @@ export class StreamAgentChatJob {
               },
               onFinish: async ({ responseMessage }) => {
                 try {
-                  const messageToSave = didCompact
-                    ? {
-                        ...responseMessage,
-                        parts: [
-                          {
-                            type: 'data-compaction' as const,
-                            data: {},
-                          },
-                          ...responseMessage.parts,
-                        ],
-                      }
-                    : responseMessage;
-
                   await this.handleStreamFinish({
-                    responseMessage: messageToSave,
+                    responseMessage,
                     threadId: data.threadId,
                     streamUsage,
                     lastStepConversationSize,

@@ -62,8 +62,9 @@ export const mapUIMessagePartsToDBParts = (
             providerMetadata: part.providerMetadata ?? null,
           };
         case 'step-start':
-        case 'data-compaction':
           return basePart;
+        case 'data-compaction':
+          return null;
         case 'data-routing-status':
           return {
             ...basePart,

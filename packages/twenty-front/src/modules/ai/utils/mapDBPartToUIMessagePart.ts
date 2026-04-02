@@ -53,11 +53,6 @@ export const mapDBPartToUIMessagePart = (
       return {
         type: part.type,
       };
-    case 'data-compaction':
-      return {
-        type: part.type,
-        data: {},
-      };
     case 'data-routing-status':
       return {
         type: part.type,
