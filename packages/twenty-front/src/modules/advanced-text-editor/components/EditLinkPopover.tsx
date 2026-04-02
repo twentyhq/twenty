@@ -43,12 +43,7 @@ export const EditLinkPopover = ({
         return;
       }
 
-      editor
-        .chain()
-        .focus()
-        .extendMarkRange('link')
-        .setLink({ href })
-        .run();
+      editor.chain().focus().extendMarkRange('link').setLink({ href }).run();
     }
 
     toggleDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });

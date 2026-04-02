@@ -14,7 +14,7 @@ export const URLDisplay = ({ value }: URLDisplayProps) => {
     event.stopPropagation();
   };
 
-  const absoluteUrl = value ? getSafeUrl(value) ?? '' : '';
+  const absoluteUrl = value ? (getSafeUrl(value) ?? '') : '';
 
   const displayedValue = value ?? '';
 

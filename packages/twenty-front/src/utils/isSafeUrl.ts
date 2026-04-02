@@ -1,7 +1,7 @@
 const SAFE_URL_PROTOCOLS = ['http:', 'https:', 'mailto:', 'tel:'];
 
 export const isSafeUrl = (url: string): boolean => {
-  if (url.startsWith('/')) {
+  if (url.startsWith('/') && !url.startsWith('//')) {
     return true;
   }
 
