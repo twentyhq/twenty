@@ -51,6 +51,7 @@ import type {
   HeroCellEntity,
   HeroCellPerson,
   HeroCellRelation,
+  HeroCellText,
   HeroCellValue,
   HeroColumnDef,
   HeroRowDef,
@@ -90,16 +91,16 @@ const SIDEBAR_TONES: Record<
   string,
   { background: string; border: string; color: string }
 > = {
-  amber: { background: '#fff4d6', border: '#ffd49b', color: '#9a6700' },
-  blue: { background: '#d9e2fc', border: '#c6d4f9', color: '#3557c6' },
-  gray: { background: '#ebebeb', border: '#d6d6d6', color: '#666666' },
+  amber: { background: '#FEF2A4', border: '#FEF2A4', color: '#35290F' },
+  blue: { background: '#d9e2fc', border: '#c6d4f9', color: '#3A5CCC' },
+  gray: { background: '#ebebeb', border: '#d6d6d6', color: '#838383' },
   green: { background: '#ccebd7', border: '#bbe4c9', color: '#153226' },
-  orange: { background: '#ffdcc3', border: '#ffcca7', color: '#582d1d' },
+  orange: { background: '#ffdcc3', border: '#ffcca7', color: '#ED5F00' },
   pink: { background: '#ffe1e7', border: '#ffc8d6', color: '#a51853' },
   purple: { background: '#e0e7ff', border: '#c7d2fe', color: '#4f46e5' },
-  teal: { background: '#c7ebe5', border: '#b3e3dc', color: '#10302b' },
+  teal: { background: '#c7ebe5', border: '#afdfd7', color: '#0E9888' },
   violet: { background: '#ebe5ff', border: '#d8cbff', color: '#5b3fd1' },
-  red: { background: '#fee2e2', border: '#fecaca', color: '#b91c1c' },
+  red: { background: '#fdd8d8', border: '#f9c6c6', color: '#DC3D43' },
 };
 
 const PERSON_TONES: Record<string, { background: string; color: string }> = {
@@ -318,8 +319,9 @@ const NewChatLabel = styled.span`
 `;
 
 const SidebarScroll = styled.div`
-  display: grid;
-  gap: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   min-height: 0;
   overflow: hidden;
 `;
@@ -329,14 +331,15 @@ const SidebarSection = styled.div`
   gap: 2px;
 `;
 
-const SidebarSectionLabel = styled.span`
+const SidebarSectionLabel = styled.span<{ $workspace?: boolean }>`
   color: ${COLORS.textLight};
   display: none;
   font-family: ${APP_FONT};
   font-size: 11px;
   font-weight: 600;
   line-height: 1;
-  padding: 0 4px 4px;
+  padding: ${({ $workspace }) =>
+    $workspace ? '4px 4px 8px' : '0 4px 4px'};
 
   @media (min-width: ${theme.breakpoints.md}px) {
     display: block;
@@ -346,17 +349,57 @@ const SidebarSectionLabel = styled.span`
 const SidebarItemRow = styled.div<{
   $active?: boolean;
   $depth?: number;
+  $interactive?: boolean;
+  $withBranch?: boolean;
 }>`
   align-items: center;
   background: ${({ $active }) =>
-    $active ? 'rgba(0, 0, 0, 0.04)' : 'transparent'};
+    $active ? VISUAL_TOKENS.background.transparent.medium : 'transparent'};
   border-radius: 4px;
   display: grid;
-  gap: 8px;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0;
+  grid-template-columns: ${({ $withBranch }) =>
+    $withBranch ? '9px minmax(0, 1fr) auto' : 'minmax(0, 1fr) auto'};
   height: 28px;
-  padding: 0 2px 0 ${({ $depth = 0 }) => `${$depth === 0 ? 4 : 24}px`};
+  padding: 0 2px 0 ${({ $depth = 0 }) => `${$depth === 0 ? 4 : 11}px`};
   position: relative;
+  text-decoration: none;
+  transition: background-color 0.14s ease;
+
+  &:hover {
+    background: ${({ $active, $interactive }) =>
+      $active || $interactive
+        ? VISUAL_TOKENS.background.transparent.medium
+        : 'transparent'};
+  }
+`;
+
+const SidebarItemRowLink = styled.a<{
+  $active?: boolean;
+  $depth?: number;
+  $interactive?: boolean;
+  $withBranch?: boolean;
+}>`
+  align-items: center;
+  background: ${({ $active }) =>
+    $active ? VISUAL_TOKENS.background.transparent.medium : 'transparent'};
+  border-radius: 4px;
+  display: grid;
+  gap: 0;
+  grid-template-columns: ${({ $withBranch }) =>
+    $withBranch ? '9px minmax(0, 1fr) auto' : 'minmax(0, 1fr) auto'};
+  height: 28px;
+  padding: 0 2px 0 ${({ $depth = 0 }) => `${$depth === 0 ? 4 : 11}px`};
+  position: relative;
+  text-decoration: none;
+  transition: background-color 0.14s ease;
+
+  &:hover {
+    background: ${({ $active, $interactive }) =>
+      $active || $interactive
+        ? VISUAL_TOKENS.background.transparent.medium
+        : 'transparent'};
+  }
 `;
 
 const SidebarIconSurface = styled.div<{
@@ -384,8 +427,8 @@ const SidebarItemText = styled.div`
   min-width: 0;
 `;
 
-const SidebarItemLabel = styled.span`
-  color: ${COLORS.textSecondary};
+const SidebarItemLabel = styled.span<{ $active?: boolean }>`
+  color: ${({ $active }) => ($active ? COLORS.text : COLORS.textSecondary)};
   display: none;
   font-family: ${APP_FONT};
   font-size: 13px;
@@ -436,10 +479,41 @@ const SidebarChildStack = styled.div`
 const BranchLine = styled.div`
   background: ${COLORS.borderStrong};
   bottom: 14px;
-  left: 15px;
+  left: 11px;
   position: absolute;
   top: 0;
   width: 1px;
+`;
+
+const SidebarBranchCell = styled.div<{ $isLastChild?: boolean }>`
+  align-self: stretch;
+  position: relative;
+  width: 9px;
+
+  &::before {
+    background: ${COLORS.borderStrong};
+    content: '';
+    inset: 0 88.89% 0 0;
+    opacity: ${({ $isLastChild }) => ($isLastChild ? 0 : 1)};
+    position: absolute;
+  }
+
+  &::after {
+    border-bottom: 1px solid ${COLORS.borderStrong};
+    border-left: 1px solid ${COLORS.borderStrong};
+    border-radius: 0 0 0 4px;
+    content: '';
+    inset: 0 0 45.83% 0;
+    position: absolute;
+  }
+`;
+
+const SidebarRowMain = styled.div<{ $withBranch?: boolean }>`
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+  padding-left: ${({ $withBranch }) => ($withBranch ? '4px' : '0')};
 `;
 
 const SidebarAvatar = styled.div<{
@@ -1031,6 +1105,7 @@ const HEADER_ICON_MAP: Record<string, typeof IconBuildingSkyscraper> = {
 
 // -- Utility functions --
 
+const failedAvatarUrls = new Set<string>();
 const failedFaviconUrls = new Set<string>();
 
 function getInitials(value: string) {
@@ -1228,15 +1303,17 @@ function CopyMini({ color = COLORS.textSecondary, size = 14 }: MiniIconProps) {
 // -- Favicon logo component --
 
 function FaviconLogo({
+  src,
   domain,
   label,
   size = 14,
 }: {
+  src?: string;
   domain?: string;
   label?: string;
   size?: number;
 }) {
-  const faviconUrl = getLogoUrlFromDomainName(domain);
+  const faviconUrl = src ?? getLogoUrlFromDomainName(domain);
   const [localFailedUrl, setLocalFailedUrl] = useState<string | null>(null);
   const showFavicon =
     faviconUrl !== undefined &&
@@ -1284,6 +1361,31 @@ function FaviconLogo({
 
 // -- Sidebar icon rendering --
 
+function PersonAvatarContent({ token }: { token: HeroCellPerson }) {
+  const [localFailedUrl, setLocalFailedUrl] = useState<string | null>(null);
+  const showAvatar =
+    token.avatarUrl !== undefined &&
+    !failedAvatarUrls.has(token.avatarUrl) &&
+    localFailedUrl !== token.avatarUrl;
+
+  if (showAvatar) {
+    return (
+      <AvatarImage
+        alt=""
+        src={token.avatarUrl}
+        onError={() => {
+          if (token.avatarUrl) {
+            failedAvatarUrls.add(token.avatarUrl);
+            setLocalFailedUrl(token.avatarUrl);
+          }
+        }}
+      />
+    );
+  }
+
+  return token.shortLabel ?? getInitials(token.name);
+}
+
 function renderSidebarIcon(icon: HeroSidebarIcon): ReactNode {
   if (icon.kind === 'brand') {
     return (
@@ -1294,14 +1396,16 @@ function renderSidebarIcon(icon: HeroSidebarIcon): ReactNode {
       >
         <FaviconLogo
           domain={
-            icon.brand === 'claude'
+            icon.domain ??
+            (icon.brand === 'claude'
               ? 'claude.ai'
               : icon.brand === 'stripe'
                 ? 'stripe.com'
-                : undefined
+                : undefined)
           }
           label={icon.brand}
-          size={16}
+          size={icon.imageSrc ? 14 : 16}
+          src={icon.imageSrc}
         />
         {icon.overlay === 'link' ? (
           <div
@@ -1391,45 +1495,77 @@ function renderSidebarIcon(icon: HeroSidebarIcon): ReactNode {
 function SidebarItemComponent({
   depth = 0,
   interactive = true,
+  isLastChild = false,
   item,
   onSelect,
   selectedLabel,
 }: {
   depth?: number;
   interactive?: boolean;
+  isLastChild?: boolean;
   item: HeroSidebarItem;
   onSelect?: (label: string) => void;
   selectedLabel?: string;
 }) {
+  const showBranch = depth > 0;
+  const rowSelectable = interactive && item.href === undefined;
+  const rowInteractive = rowSelectable || item.href !== undefined;
   const rowActive =
-    interactive && selectedLabel !== undefined && item.label === selectedLabel;
+    rowSelectable && selectedLabel !== undefined && item.label === selectedLabel;
+  const childItems = item.children ?? [];
+  const rowContent = (
+    <>
+      {showBranch ? <SidebarBranchCell $isLastChild={isLastChild} /> : null}
+      <SidebarRowMain $withBranch={showBranch}>
+        {renderSidebarIcon(item.icon)}
+        <SidebarItemText>
+          <SidebarItemLabel $active={rowActive}>{item.label}</SidebarItemLabel>
+          {item.meta ? <SidebarItemMeta>· {item.meta}</SidebarItemMeta> : null}
+        </SidebarItemText>
+      </SidebarRowMain>
+      {item.showChevron || (item.children && item.children.length > 0) ? (
+        <SidebarChevron>
+          <ChevronDownMini color={COLORS.textTertiary} size={12} />
+        </SidebarChevron>
+      ) : null}
+    </>
+  );
 
   return (
     <>
-      <SidebarItemRow
-        $active={rowActive}
-        $depth={depth}
-        onClick={interactive ? () => onSelect?.(item.label) : undefined}
-        style={{ cursor: interactive ? 'pointer' : 'default' }}
-      >
-        {renderSidebarIcon(item.icon)}
-        <SidebarItemText>
-          <SidebarItemLabel>{item.label}</SidebarItemLabel>
-          {item.meta ? <SidebarItemMeta>· {item.meta}</SidebarItemMeta> : null}
-        </SidebarItemText>
-        {item.showChevron || (item.children && item.children.length > 0) ? (
-          <SidebarChevron>
-            <ChevronDownMini color={COLORS.textTertiary} size={12} />
-          </SidebarChevron>
-        ) : null}
-      </SidebarItemRow>
-      {item.children && item.children.length > 0 ? (
+      {item.href ? (
+        <SidebarItemRowLink
+          $active={rowActive}
+          $depth={depth}
+          $interactive={rowInteractive}
+          $withBranch={showBranch}
+          href={item.href}
+          rel="noreferrer"
+          style={{ cursor: rowInteractive ? 'pointer' : 'default' }}
+          target="_blank"
+        >
+          {rowContent}
+        </SidebarItemRowLink>
+      ) : (
+        <SidebarItemRow
+          $active={rowActive}
+          $depth={depth}
+          $interactive={rowInteractive}
+          $withBranch={showBranch}
+          onClick={rowSelectable ? () => onSelect?.(item.label) : undefined}
+          style={{ cursor: rowInteractive ? 'pointer' : 'default' }}
+        >
+          {rowContent}
+        </SidebarItemRow>
+      )}
+      {childItems.length > 0 ? (
         <SidebarChildStack>
           <BranchLine />
-          {item.children.map((child) => (
+          {childItems.map((child, index) => (
             <SidebarItemComponent
               key={child.id}
               depth={depth + 1}
+              isLastChild={index === childItems.length - 1}
               interactive={interactive}
               item={child}
               onSelect={onSelect}
@@ -1470,11 +1606,7 @@ function PersonTokenCell({
             $color={tone.color}
             $square={square}
           >
-            {token.avatarUrl ? (
-              <AvatarImage alt="" src={token.avatarUrl} />
-            ) : (
-              (token.shortLabel ?? getInitials(token.name))
-            )}
+            <PersonAvatarContent token={token} />
           </PersonAvatarCircle>
         }
       />
@@ -1567,6 +1699,35 @@ function RelationCellComponent({
   );
 }
 
+function TextCellComponent({
+  cell,
+  isFirstColumn,
+}: {
+  cell: HeroCellText;
+  isFirstColumn: boolean;
+}) {
+  if (!isFirstColumn || !cell.shortLabel) {
+    return <InlineText>{cell.value}</InlineText>;
+  }
+
+  const tone = PERSON_TONES[cell.tone ?? 'gray'] ?? PERSON_TONES.gray;
+
+  return (
+    <CellChip
+      clickable={false}
+      label={cell.value}
+      leftComponent={
+        <PersonAvatarCircle
+          $background={tone.background}
+          $color={tone.color}
+        >
+          {cell.shortLabel}
+        </PersonAvatarCircle>
+      }
+    />
+  );
+}
+
 function renderCellValue(
   cell: HeroCellValue,
   hovered: boolean,
@@ -1577,7 +1738,7 @@ function renderCellValue(
 
   switch (cell.type) {
     case 'text':
-      return <InlineText>{cell.value}</InlineText>;
+      return <TextCellComponent cell={cell} isFirstColumn={isFirstColumn} />;
     case 'number':
       return <RightAlignedText>{cell.value}</RightAlignedText>;
     case 'link':
@@ -1846,7 +2007,7 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
                   </SidebarSection>
                 ) : null}
                 <SidebarSection>
-                  <SidebarSectionLabel>Workspace</SidebarSectionLabel>
+                  <SidebarSectionLabel $workspace>Workspace</SidebarSectionLabel>
                   {visual.workspaceNav.map(renderSidebarEntry)}
                 </SidebarSection>
               </SidebarScroll>
