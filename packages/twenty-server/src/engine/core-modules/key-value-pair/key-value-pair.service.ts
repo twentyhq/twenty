@@ -82,42 +82,20 @@ export class KeyValuePairService<
       type,
     };
 
+    const conflictPaths: string[] = ['key'];
+    let indexPredicate: string | undefined;
+
     if (hasNullUserAndWorkspace) {
-      const existingKeyValuePair = await keyValuePairRepository.findOne({
-        where: {
-          userId: IsNull(),
-          workspaceId: IsNull(),
-          key,
-          type,
-        },
-      });
-
-      if (existingKeyValuePair) {
-        await keyValuePairRepository.update(existingKeyValuePair.id, {
-          value,
-        });
-
-        return;
-      }
-
-      await keyValuePairRepository.insert(upsertData);
-
-      return;
+      indexPredicate = '"userId" IS NULL AND "workspaceId" IS NULL';
+    } else if (normalizedUserId === null) {
+      conflictPaths.push('workspaceId');
+      indexPredicate = '"userId" IS NULL';
+    } else if (normalizedWorkspaceId === null) {
+      conflictPaths.push('userId');
+      indexPredicate = '"workspaceId" IS NULL';
+    } else {
+      conflictPaths.push('userId', 'workspaceId');
     }
-
-    const conflictPaths = Object.keys(upsertData).filter(
-      (conflictPath) =>
-        ['userId', 'workspaceId', 'key'].includes(conflictPath) &&
-        // @ts-expect-error legacy noImplicitAny
-        upsertData[conflictPath] !== undefined,
-    );
-
-    const indexPredicate =
-      normalizedUserId === null
-        ? '"userId" is NULL'
-        : normalizedWorkspaceId === null
-          ? '"workspaceId" is NULL'
-          : undefined;
 
     await keyValuePairRepository.upsert(upsertData, {
       conflictPaths,

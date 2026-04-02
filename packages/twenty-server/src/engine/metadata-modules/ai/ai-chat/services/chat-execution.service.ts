@@ -40,6 +40,7 @@ import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agen
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import {
   extractCodeInterpreterFiles,
@@ -51,12 +52,12 @@ import {
   AI_SDK_OPENAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
-import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import {
   AiModelRegistryService,
   type RegisteredAIModel,
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
+import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
 export type ChatExecutionOptions = {
@@ -65,8 +66,10 @@ export type ChatExecutionOptions = {
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
   browsingContext: BrowsingContextType | null;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
+  onCompaction?: () => void;
   modelId?: string;
   abortSignal?: AbortSignal;
+  conversationSizeTokens: number;
 };
 
 export type ChatExecutionResult = {
@@ -89,6 +92,7 @@ export class ChatExecutionService {
     private readonly systemPromptBuilder: SystemPromptBuilderService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly sdkProviderFactory: SdkProviderFactoryService,
+    private readonly messagePruningService: MessagePruningService,
   ) {}
 
   async streamChat({
@@ -97,8 +101,10 @@ export class ChatExecutionService {
     messages,
     browsingContext,
     onCodeExecutionUpdate,
+    onCompaction,
     modelId,
     abortSignal,
+    conversationSizeTokens,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
     const { actorContext, roleId, userId, userContext } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
@@ -232,7 +238,26 @@ export class ChatExecutionService {
             : undefined,
     };
 
-    const modelMessages = await convertToModelMessages(processedMessages);
+    const rawModelMessages = await convertToModelMessages(processedMessages);
+
+    const pruningResult =
+      this.messagePruningService.pruneIfOverContextWindowLimit(
+        rawModelMessages,
+        modelConfig.contextWindowTokens,
+        conversationSizeTokens,
+      );
+
+    if (pruningResult.isStillOverLimit) {
+      throw new Error(
+        'This conversation is too long for the model to process. Please start a new thread.',
+      );
+    }
+
+    if (pruningResult.wasPruned) {
+      onCompaction?.();
+    }
+
+    const modelMessages = pruningResult.messages;
 
     const billUsageFromSteps = (steps: StepResult<ToolSet>[]) => {
       const usage = steps.reduce<LanguageModelUsage>(

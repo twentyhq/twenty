@@ -22,7 +22,7 @@ import { DeleteRecordService } from 'src/engine/core-modules/record-crud/service
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { UpdateManyRecordsService } from 'src/engine/core-modules/record-crud/services/update-many-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
-import { type ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import { type ToolCategory } from 'twenty-shared/ai';
 import {
   type ToolDescriptor,
   type ToolIndexEntry,

@@ -82,26 +82,6 @@ exports[`Page layout widget restore via bulk update should succeed should handle
       "widgets": [
         {
           "configuration": {
-            "configurationType": "IFRAME",
-            "url": "https://updated.example.com",
-          },
-          "createdAt": Any<String>,
-          "deletedAt": null,
-          "gridPosition": {
-            "column": 0,
-            "columnSpan": 2,
-            "row": 0,
-            "rowSpan": 2,
-          },
-          "id": Any<String>,
-          "objectMetadataId": null,
-          "pageLayoutTabId": Any<String>,
-          "title": "Updated Widget Title",
-          "type": "IFRAME",
-          "updatedAt": Any<String>,
-        },
-        {
-          "configuration": {
             "aggregateFieldMetadataId": Any<String>,
             "aggregateOperation": "SUM",
             "configurationType": "AGGREGATE_CHART",
@@ -133,20 +113,20 @@ exports[`Page layout widget restore via bulk update should succeed should handle
         {
           "configuration": {
             "configurationType": "IFRAME",
-            "url": "https://new.example.com",
+            "url": "https://updated.example.com",
           },
           "createdAt": Any<String>,
           "deletedAt": null,
           "gridPosition": {
             "column": 0,
-            "columnSpan": 1,
-            "row": 2,
-            "rowSpan": 1,
+            "columnSpan": 2,
+            "row": 0,
+            "rowSpan": 2,
           },
           "id": Any<String>,
           "objectMetadataId": null,
           "pageLayoutTabId": Any<String>,
-          "title": "Brand New Widget",
+          "title": "Updated Widget Title",
           "type": "IFRAME",
           "updatedAt": Any<String>,
         },

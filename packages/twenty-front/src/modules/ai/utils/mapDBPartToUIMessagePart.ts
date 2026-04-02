@@ -51,7 +51,7 @@ export const mapDBPartToUIMessagePart = (
       };
     case 'step-start':
       return {
-        type: 'step-start',
+        type: part.type,
       };
     case 'data-routing-status':
       return {
