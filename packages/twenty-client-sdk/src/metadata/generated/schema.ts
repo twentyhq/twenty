@@ -6550,7 +6550,7 @@ export interface WorkspaceMigrationDeleteActionInput {type: WorkspaceMigrationAc
 export interface SubscriptionGenqlSelection{
     onEventSubscription?: (EventSubscriptionGenqlSelection & { __args: {eventStreamId: Scalars['String']} })
     logicFunctionLogs?: (LogicFunctionLogsGenqlSelection & { __args: {input: LogicFunctionLogsInput} })
-    onAgentChatEvent?: (AgentChatEventGenqlSelection & { __args: {threadId: Scalars['String']} })
+    onAgentChatEvent?: (AgentChatEventGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     __typename?: boolean | number
     __scalar?: boolean | number
 }

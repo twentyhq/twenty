@@ -4563,7 +4563,7 @@ enum FileFolder {
 type Subscription {
   onEventSubscription(eventStreamId: String!): EventSubscription
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
-  onAgentChatEvent(threadId: String!): AgentChatEvent!
+  onAgentChatEvent(threadId: UUID!): AgentChatEvent!
 }
 
 input LogicFunctionLogsInput {

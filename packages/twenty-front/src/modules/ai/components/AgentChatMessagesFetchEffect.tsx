@@ -1,16 +1,18 @@
 import { useCallback, useMemo } from 'react';
 import { useStore } from 'jotai';
+import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { AGENT_CHAT_UNKNOWN_THREAD_ID } from '@/ai/constants/AgentChatUnknownThreadId';
+import { agentChatFirstLiveSeqState } from '@/ai/states/agentChatFirstLiveSeqState';
+import { agentChatHandleEventCallbackState } from '@/ai/states/agentChatHandleEventCallbackState';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatFetchedMessagesComponentFamilyState } from '@/ai/states/agentChatFetchedMessagesComponentFamilyState';
 import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
 import { agentChatQueuedMessagesComponentFamilyState } from '@/ai/states/agentChatQueuedMessagesComponentFamilyState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
-import { agentChatCatchupChunksState } from '@/ai/states/agentChatCatchupChunksState';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import { useQueryWithCallbacks } from '@/apollo/hooks/useQueryWithCallbacks';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
@@ -70,11 +72,30 @@ export const AgentChatMessagesFetchEffect = () => {
 
       const catchup = data.chatStreamCatchupChunks;
 
-      if (isDefined(catchup) && catchup.chunks.length > 0) {
-        store.set(agentChatCatchupChunksState.atom, {
-          chunks: catchup.chunks as Record<string, unknown>[],
-          maxSeq: catchup.maxSeq,
-        });
+      if (!isDefined(catchup) || catchup.chunks.length === 0) {
+        return;
+      }
+
+      const handleEvent = store.get(agentChatHandleEventCallbackState.atom);
+
+      if (!isDefined(handleEvent)) {
+        return;
+      }
+
+      const firstLiveSeq = store.get(agentChatFirstLiveSeqState.atom);
+
+      for (let index = 0; index < catchup.chunks.length; index++) {
+        const chunkSeq = index + 1;
+
+        if (firstLiveSeq !== null && chunkSeq >= firstLiveSeq) {
+          break;
+        }
+
+        handleEvent({
+          type: 'stream-chunk',
+          chunk: catchup.chunks[index],
+          seq: chunkSeq,
+        } as AgentChatSubscriptionEvent);
       }
     },
     [setAgentChatFetchedMessages, setAgentChatQueuedMessages, store],

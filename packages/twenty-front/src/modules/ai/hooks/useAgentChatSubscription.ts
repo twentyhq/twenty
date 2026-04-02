@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { readUIMessageStream, type UIMessageChunk } from 'ai';
 import { print, type ExecutionResult } from 'graphql';
@@ -13,10 +13,13 @@ import { v4 } from 'uuid';
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { ON_AGENT_CHAT_EVENT } from '@/ai/graphql/subscriptions/OnAgentChatEvent';
-import { agentChatCatchupChunksState } from '@/ai/states/agentChatCatchupChunksState';
 import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
+import { agentChatFirstLiveSeqState } from '@/ai/states/agentChatFirstLiveSeqState';
+import { agentChatHandleEventCallbackState } from '@/ai/states/agentChatHandleEventCallbackState';
 import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
+import { agentChatStreamWriterState } from '@/ai/states/agentChatStreamWriterState';
+import { agentChatSubscriptionDisposeState } from '@/ai/states/agentChatSubscriptionDisposeState';
 import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
@@ -94,37 +97,23 @@ type AgentChatEventPayload = {
 export const useAgentChatSubscription = (threadId: string | null) => {
   const store = useStore();
   const sseClient = useAtomStateValue(sseClientState);
-  const agentChatCatchupChunks = useAtomStateValue(agentChatCatchupChunksState);
-  // These refs hold imperative handles (subscription dispose, stream writer)
-  // and a non-reactive flag mirroring the atom to avoid stale closures in
-  // the async stream loop — they are not used for rendering state.
-  // oxlint-disable-next-line twenty/no-state-useref
-  const disposeRef = useRef<(() => void) | null>(null);
-  // oxlint-disable-next-line twenty/no-state-useref
-  const writerRef = useRef<WritableStreamDefaultWriter<UIMessageChunk> | null>(
-    null,
-  );
-  // oxlint-disable-next-line twenty/no-state-useref
-  const isStreamingRef = useRef(false);
-  const handleEventRef =
-    // oxlint-disable-next-line twenty/no-state-useref
-    useRef<((event: AgentChatSubscriptionEvent) => void) | null>(null);
-  // Tracks the seq of the first chunk received via live SSE so we know
-  // which catchup chunks to replay and which to skip (already seen).
-  // oxlint-disable-next-line twenty/no-state-useref
-  const firstLiveSeqRef = useRef<number | null>(null);
 
   const cleanup = useCallback(() => {
-    if (writerRef.current) {
-      writerRef.current.close().catch(() => {});
-      writerRef.current = null;
+    const writer = store.get(agentChatStreamWriterState.atom);
+
+    if (isDefined(writer)) {
+      writer.close().catch(() => {});
+      store.set(agentChatStreamWriterState.atom, null);
     }
-    if (disposeRef.current) {
-      disposeRef.current();
-      disposeRef.current = null;
+
+    const dispose = store.get(agentChatSubscriptionDisposeState.atom);
+
+    if (isDefined(dispose)) {
+      dispose();
+      store.set(agentChatSubscriptionDisposeState.atom, null);
     }
-    if (isStreamingRef.current) {
-      isStreamingRef.current = false;
+
+    if (store.get(agentChatIsStreamingState.atom)) {
       store.set(agentChatIsStreamingState.atom, false);
     }
   }, [store]);
@@ -144,7 +133,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     let throttleTimer: ReturnType<typeof setTimeout> | null = null;
     let latestMessage: ExtendedUIMessage | null = null;
 
-    firstLiveSeqRef.current = null;
+    store.set(agentChatFirstLiveSeqState.atom, null);
 
     const flushToAtom = () => {
       const messageToFlush = latestMessage;
@@ -255,46 +244,51 @@ export const useAgentChatSubscription = (threadId: string | null) => {
       }
       flushToAtom();
 
-      isStreamingRef.current = false;
       store.set(agentChatIsStreamingState.atom, false);
     };
 
     const handleEvent = (event: AgentChatSubscriptionEvent) => {
       switch (event.type) {
         case 'stream-chunk': {
-          if (isDefined(event.seq) && firstLiveSeqRef.current === null) {
-            firstLiveSeqRef.current = event.seq;
+          if (
+            isDefined(event.seq) &&
+            store.get(agentChatFirstLiveSeqState.atom) === null
+          ) {
+            store.set(agentChatFirstLiveSeqState.atom, event.seq);
           }
 
-          if (!isStreamingRef.current) {
-            isStreamingRef.current = true;
+          if (!store.get(agentChatIsStreamingState.atom)) {
             store.set(agentChatIsStreamingState.atom, true);
 
             bridge = new TransformStream<UIMessageChunk>();
-            writerRef.current = bridge.writable.getWriter();
+            store.set(
+              agentChatStreamWriterState.atom,
+              bridge.writable.getWriter(),
+            );
 
             const adaptedReadable = bridge.readable.pipeThrough(
               createMidStreamAdapter(),
             );
 
             startReadLoop(adaptedReadable).catch(() => {
-              isStreamingRef.current = false;
               store.set(agentChatIsStreamingState.atom, false);
             });
           }
 
-          if (isDefined(writerRef.current)) {
-            writerRef.current
-              .write(event.chunk as UIMessageChunk)
-              .catch(() => {});
+          const writer = store.get(agentChatStreamWriterState.atom);
+
+          if (isDefined(writer)) {
+            writer.write(event.chunk as UIMessageChunk).catch(() => {});
           }
           break;
         }
 
         case 'message-persisted': {
-          if (isDefined(writerRef.current)) {
-            writerRef.current.close().catch(() => {});
-            writerRef.current = null;
+          const writer = store.get(agentChatStreamWriterState.atom);
+
+          if (isDefined(writer)) {
+            writer.close().catch(() => {});
+            store.set(agentChatStreamWriterState.atom, null);
           }
 
           dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
@@ -314,19 +308,20 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           streamError.code = event.code;
           store.set(agentChatErrorState.atom, streamError);
 
-          if (isDefined(writerRef.current)) {
-            writerRef.current.close().catch(() => {});
-            writerRef.current = null;
+          const writer = store.get(agentChatStreamWriterState.atom);
+
+          if (isDefined(writer)) {
+            writer.close().catch(() => {});
+            store.set(agentChatStreamWriterState.atom, null);
           }
 
-          isStreamingRef.current = false;
           store.set(agentChatIsStreamingState.atom, false);
           break;
         }
       }
     };
 
-    handleEventRef.current = handleEvent;
+    store.set(agentChatHandleEventCallbackState.atom, () => handleEvent);
 
     const dispose = sseClient.subscribe<AgentChatEventPayload>(
       {
@@ -350,47 +345,14 @@ export const useAgentChatSubscription = (threadId: string | null) => {
       },
     );
 
-    disposeRef.current = dispose;
+    store.set(agentChatSubscriptionDisposeState.atom, () => dispose);
 
     return () => {
-      handleEventRef.current = null;
+      store.set(agentChatHandleEventCallbackState.atom, null);
       if (isDefined(throttleTimer)) {
         clearTimeout(throttleTimer);
       }
       cleanup();
     };
   }, [threadId, sseClient, store, cleanup]);
-
-  // Replay accumulated stream chunks from Redis when the messages query
-  // includes catchup data (e.g. reconnecting to an active stream).
-  useEffect(() => {
-    if (
-      !isDefined(agentChatCatchupChunks) ||
-      agentChatCatchupChunks.chunks.length === 0
-    ) {
-      return;
-    }
-
-    if (!isDefined(handleEventRef.current)) {
-      return;
-    }
-
-    const firstLiveSeq = firstLiveSeqRef.current;
-
-    for (let index = 0; index < agentChatCatchupChunks.chunks.length; index++) {
-      const chunkSeq = index + 1;
-
-      if (firstLiveSeq !== null && chunkSeq >= firstLiveSeq) {
-        break;
-      }
-
-      handleEventRef.current({
-        type: 'stream-chunk',
-        chunk: agentChatCatchupChunks.chunks[index],
-        seq: chunkSeq,
-      });
-    }
-
-    store.set(agentChatCatchupChunksState.atom, null);
-  }, [agentChatCatchupChunks, store]);
 };

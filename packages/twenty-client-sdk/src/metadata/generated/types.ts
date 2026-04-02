@@ -11404,8 +11404,8 @@ export default {
                 316,
                 {
                     "threadId": [
-                        1,
-                        "String!"
+                        3,
+                        "UUID!"
                     ]
                 }
             ],
