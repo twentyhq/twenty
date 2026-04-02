@@ -172,7 +172,7 @@ If you have to create multiple things you *MUST* use the relevant create many to
 - Use *create_many_field_metadata* to create all non-relation fields at once (including new fields on standard objects)
 - Use *create_many_relation_fields* to create all relation fields between objects at once (do this AFTER creating the objects and non-relation fields)
 
-If you have to wait use the navigate tool.
+If you have to wait use the navigate_app tool.
 
 For the fields you will create, make sure to create a good variety of field types to showcase the different capabilities of the platform, for example:
 - Create SELECT and SELECT_MULTIPLE field types for building demo board index views and table with groups views
@@ -227,22 +227,22 @@ STEP 7: Rename and enrich the first N records of People, Companies, and Opportun
 
 STEP 7.5: Add view fields to the default views of standard objects to expose the new custom fields.
 For each of People, Companies, and Opportunities:
-- Navigate to the object's default view using the navigate tool
+- Navigate to the object's default view using the navigate_app tool
 - Wait 3 seconds
 - Use create_many_view_fields to add all the new custom fields to the default view so they are visible
   - Use decimal positions between 0 and 1 to insert them right after the label identifier field
-- Navigate to the object's default view again using the navigate tool so the user can see the enriched records
+- Navigate to the object's default view again using the navigate_app tool so the user can see the enriched records
 - Wait 3 seconds
 
 STEP 8: For each new custom object, repeat ALL of the following sub-steps before moving to the next object:
-- Navigate the object's default view using the navigate tool
+- Navigate the object's default view using the navigate_app tool
 - Wait 3 seconds, so the user has time to see the object default view
 - Create the view fields for the default view, use the create_many_view_fields tool, and make sure to include all created fields, including the relation fields, so that we have a complete view of the object with all its fields.
   BE CAREFUL to use a position that will put those view fields right after the first label identifier field
   which has a position of 0 and the next system created fields which begin at 1, *so use decimal positions between 0 and 1*
   *YOU MUST CREATE ALL VIEW FIELDS FOR ALL FIELDS, INCLUDING RELATION FIELDS, IN THIS STEP, DO NOT LEAVE ANY FIELD WITHOUT A VIEW FIELD, OTHERWISE IT WILL NOT BE VISIBLE IN THE DEFAULT VIEW AND THE USER WON'T KNOW IT EXISTS*
 
-- **MANDATORY**: Navigate to the object's default view again using the navigate tool — YOU MUST DO THIS BEFORE EACH OBJECT'S DATA SEEDING, every single time, without exception
+- **MANDATORY**: Navigate to the object's default view again using the navigate_app tool — YOU MUST DO THIS BEFORE EACH OBJECT'S DATA SEEDING, every single time, without exception
 - Wait 3 seconds
 - Seed relevant and realistic mock data for this object:
   - use the relevant tool to create many records for this object
@@ -251,7 +251,7 @@ STEP 8: For each new custom object, repeat ALL of the following sub-steps before
   - link records to existing People and Companies using the relation fields you created
   - use dates that are around TODAY so it's relevant for seeing past / future and present records
 
-- **MANDATORY**: Navigate to the object's default view again using the navigate tool so the user can see the populated data — DO NOT SKIP THIS, even if you already navigated earlier in this loop iteration
+- **MANDATORY**: Navigate to the object's default view again using the navigate_app tool so the user can see the populated data — DO NOT SKIP THIS, even if you already navigated earlier in this loop iteration
 - Wait 3 seconds so the user has time to see the seeded records
 
 - Then create 2 to 3 additional views for this object, one at a time. For each view, complete ALL of the following sub-steps before creating the next view:
@@ -266,7 +266,7 @@ STEP 8: For each new custom object, repeat ALL of the following sub-steps before
     - **KANBAN views**: Sort by a CURRENCY or NUMERIC field DESC (biggest value first) if one exists, or by createdAt DESC. Add a filter to exclude archived/cancelled records if such a SELECT option exists.
     - **CALENDAR views**: Sort by the date field ASC (earliest events first). Add a filter using IS_IN_FUTURE or IS_RELATIVE to show only upcoming records by default.
     - **TABLE with groups**: Sort by createdAt DESC (most recent first) and add a filter on a meaningful field (e.g. status IS_NOT "CANCELLED", or amount GREATER_THAN_OR_EQUAL to some threshold that keeps ~80% of the records visible).
-  - **MANDATORY**: Navigate to this view immediately using the navigate tool — YOU MUST DO THIS FOR EVERY SINGLE VIEW, right after its fields/filters/sorts are set up, without exception
+  - **MANDATORY**: Navigate to this view immediately using the navigate_app tool — YOU MUST DO THIS FOR EVERY SINGLE VIEW, right after its fields/filters/sorts are set up, without exception
   - Wait 3 seconds so the user can see the view and course-correct if needed
 
 Also create additional views for the standard objects (People, Companies, Opportunities) that showcase the new custom fields:
