@@ -4,6 +4,7 @@ import { useRelationField } from '@/object-record/record-field/ui/meta-types/hoo
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useAddNewRecordAndOpenSidePanel } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenSidePanel';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -20,6 +21,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { useContext } from 'react';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconForbid } from 'twenty-ui/display';
 
@@ -58,11 +60,34 @@ export const RelationManyToOneFieldInput = () => {
         const searchRecord = store.get(
           searchRecordStoreFamilyState.atomFamily(selectedMorphItem.recordId),
         );
+        const label = searchRecord?.label ?? '';
+
+        // Build the label field value matching the target object's label
+        // identifier type. FULL_NAME fields expect { firstName, lastName },
+        // not a plain string — otherwise the chip generator shows "-".
+        const labelField =
+          getLabelIdentifierFieldMetadataItem(relationObjectMetadataItem);
+        const fieldName = labelField?.name ?? 'name';
+
+        let labelValue: unknown;
+        if (labelField?.type === FieldMetadataType.FULL_NAME) {
+          const spaceIdx = label.indexOf(' ');
+          labelValue =
+            spaceIdx === -1
+              ? { firstName: label, lastName: '' }
+              : {
+                  firstName: label.slice(0, spaceIdx),
+                  lastName: label.slice(spaceIdx + 1),
+                };
+        } else {
+          labelValue = label;
+        }
+
         store.set(
           recordStoreFamilyState.atomFamily(selectedMorphItem.recordId),
           {
             id: selectedMorphItem.recordId,
-            name: searchRecord?.label ?? '',
+            [fieldName]: labelValue,
           } as unknown as ObjectRecord,
         );
       }

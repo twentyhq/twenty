@@ -89,6 +89,15 @@ export const useAddNewRecordAndOpenSidePanel = ({
               });
 
         seedValues[`${gqlField}Id`] = recordId;
+
+        // Also set the relation object so the display renders the chip
+        // (not just the FK). Read the source record from the store.
+        const sourceRecord = store.get(
+          recordStoreFamilyState.atomFamily(recordId),
+        );
+        if (isDefined(sourceRecord)) {
+          seedValues[gqlField] = sourceRecord;
+        }
       }
 
       // Seed draft in record store

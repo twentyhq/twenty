@@ -33,6 +33,7 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { buildMorphRelationUpdateInput } from '@/object-record/record-field/ui/meta-types/input/utils/buildMorphRelationUpdateInput';
@@ -212,9 +213,39 @@ export const usePersistField = ({
                 searchRecordStoreFamilyState.atomFamily(relationId),
               );
               if (isDefined(searchRecord)) {
+                // Look up the relation target object to build the label
+                // field correctly. FULL_NAME fields need { firstName, lastName },
+                // not a plain string.
+                const relationDef =
+                  fieldDefinition as FieldDefinition<FieldRelationMetadata>;
+                const targetObjMeta = objectMetadataItems.find(
+                  (o) =>
+                    o.nameSingular ===
+                    relationDef.metadata.relationObjectMetadataNameSingular,
+                );
+                const labelField = targetObjMeta
+                  ? getLabelIdentifierFieldMetadataItem(targetObjMeta)
+                  : undefined;
+                const labelFieldName = labelField?.name ?? 'name';
+                const label = searchRecord.label ?? '';
+
+                let labelValue: unknown;
+                if (labelField?.type === 'FULL_NAME') {
+                  const spaceIdx = label.indexOf(' ');
+                  labelValue =
+                    spaceIdx === -1
+                      ? { firstName: label, lastName: '' }
+                      : {
+                          firstName: label.slice(0, spaceIdx),
+                          lastName: label.slice(spaceIdx + 1),
+                        };
+                } else {
+                  labelValue = label;
+                }
+
                 fullRelatedRecord = {
                   id: relationId,
-                  name: searchRecord.label,
+                  [labelFieldName]: labelValue,
                 } as unknown as ObjectRecord;
               }
             }

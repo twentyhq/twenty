@@ -3852,6 +3852,7 @@ msgstr ""
 #. js-lingui-id: hYgDIe
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+#: src/modules/command-menu-item/components/RecordShowSidePanelCreateRecordButton.tsx
 msgid "Create"
 msgstr "Luo"
 
