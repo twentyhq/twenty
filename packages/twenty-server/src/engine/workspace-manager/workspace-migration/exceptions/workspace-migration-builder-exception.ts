@@ -6,15 +6,6 @@ export class WorkspaceMigrationBuilderException extends Error {
     message = 'Workspace migration builder failed',
   ) {
     super(message);
-    for (const failures of Object.values(
-      failedWorkspaceMigrationBuildResult.report,
-    )) {
-      for (const failure of failures) {
-        failure.errors = failure.errors.map(
-          (error) => JSON.stringify(error) as any,
-        );
-      }
-    }
     this.name = 'WorkspaceMigrationBuilderException';
   }
 }
