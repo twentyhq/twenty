@@ -7,8 +7,10 @@ import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/Field
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
+import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
@@ -90,9 +92,11 @@ export const SettingsObjectNewFieldConfigure = () => {
 
   if (!isDefined(activeObjectMetadataItem)) return null;
 
+  const isDDLLocked = useAtomStateValue(isDDLLockedState);
+
   const { isValid, isSubmitting } = formConfig.formState;
 
-  const canSave = isValid && !isSubmitting;
+  const canSave = isValid && !isSubmitting && !isDDLLocked;
 
   const handleSave = async (
     formValues: SettingsDataModelNewFieldFormValues,

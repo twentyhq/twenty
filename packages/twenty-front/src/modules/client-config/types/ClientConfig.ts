@@ -34,6 +34,7 @@ export type ClientConfig = {
   isEmailingDomainsEnabled: boolean;
   isCloudflareIntegrationEnabled: boolean;
   isClickHouseConfigured: boolean;
+  isWorkspaceSchemaDDLLocked: boolean;
   publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;
   signInPrefilled: boolean;

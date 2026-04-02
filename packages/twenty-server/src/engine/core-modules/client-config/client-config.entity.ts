@@ -312,6 +312,9 @@ export class ClientConfig {
   @Field(() => Boolean)
   isClickHouseConfigured: boolean;
 
+  @Field(() => Boolean)
+  isWorkspaceSchemaDDLLocked: boolean;
+
   @Field(() => ClientConfigMaintenanceMode, { nullable: true })
   maintenance?: ClientConfigMaintenanceMode;
 }

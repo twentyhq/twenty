@@ -12,6 +12,7 @@ import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConf
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { isCloudflareIntegrationEnabledState } from '@/client-config/states/isCloudflareIntegrationEnabledState';
+import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { maintenanceModeState } from '@/client-config/states/maintenanceModeState';
 import { isEmailingDomainsEnabledState } from '@/client-config/states/isEmailingDomainsEnabledState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
@@ -118,6 +119,8 @@ export const useClientConfig = (): UseClientConfigResult => {
     isClickHouseConfiguredState,
   );
 
+  const setIsDDLLocked = useSetAtomState(isDDLLockedState);
+
   const setMaintenanceMode = useSetAtomState(maintenanceModeState);
 
   const setAppVersion = useSetAtomState(appVersionState);
@@ -198,6 +201,7 @@ export const useClientConfig = (): UseClientConfigResult => {
         clientConfig?.isCloudflareIntegrationEnabled,
       );
       setIsClickHouseConfigured(clientConfig?.isClickHouseConfigured ?? false);
+      setIsDDLLocked(clientConfig?.isWorkspaceSchemaDDLLocked ?? false);
       setMaintenanceMode(clientConfig?.maintenance ?? null);
     } catch (err) {
       const error =
@@ -233,6 +237,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsEmailingDomainsEnabled,
     setIsClickHouseConfigured,
     setIsCloudflareIntegrationEnabled,
+    setIsDDLLocked,
     setLabPublicFeatureFlags,
     setMaintenanceMode,
     setIsMicrosoftCalendarEnabled,
