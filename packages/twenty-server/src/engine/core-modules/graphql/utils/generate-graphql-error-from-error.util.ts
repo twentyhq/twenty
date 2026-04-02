@@ -9,10 +9,7 @@ import {
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { convertExceptionToGraphQLError } from 'src/engine/utils/global-exception-handler.util';
 
-export const generateGraphQLErrorFromError = (
-  error: Error,
-  i18n: I18n,
-) => {
+export const generateGraphQLErrorFromError = (error: Error, i18n: I18n) => {
   const graphqlError =
     error instanceof HttpException
       ? convertExceptionToGraphQLError(error)

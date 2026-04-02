@@ -1771,6 +1771,7 @@ type ClientConfig {
   calendarBookingPageId: String
   isCloudflareIntegrationEnabled: Boolean!
   isClickHouseConfigured: Boolean!
+  isWorkspaceSchemaDDLLocked: Boolean!
   maintenance: ClientConfigMaintenanceMode
 }
 

@@ -1459,6 +1459,7 @@ export interface ClientConfig {
     calendarBookingPageId?: Scalars['String']
     isCloudflareIntegrationEnabled: Scalars['Boolean']
     isClickHouseConfigured: Scalars['Boolean']
+    isWorkspaceSchemaDDLLocked: Scalars['Boolean']
     maintenance?: ClientConfigMaintenanceMode
     __typename: 'ClientConfig'
 }
@@ -4562,6 +4563,7 @@ export interface ClientConfigGenqlSelection{
     calendarBookingPageId?: boolean | number
     isCloudflareIntegrationEnabled?: boolean | number
     isClickHouseConfigured?: boolean | number
+    isWorkspaceSchemaDDLLocked?: boolean | number
     maintenance?: ClientConfigMaintenanceModeGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number

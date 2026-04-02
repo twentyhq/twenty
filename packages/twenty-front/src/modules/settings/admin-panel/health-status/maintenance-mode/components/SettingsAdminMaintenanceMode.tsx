@@ -17,6 +17,7 @@ import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsO
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { InputHint } from '@/ui/input/components/InputHint';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -32,12 +33,10 @@ const StyledStatusRow = styled.div`
 `;
 
 export const SettingsAdminMaintenanceMode = () => {
-  const adminPanelMaintenanceMode = useAtomStateValue(
-    adminPanelMaintenanceModeState,
-  );
-  const setAdminPanelMaintenanceMode = useSetAtomState(
-    adminPanelMaintenanceModeState,
-  );
+  const [adminPanelMaintenanceMode, setAdminPanelMaintenanceMode] =
+    useAtomState(adminPanelMaintenanceModeState);
+
+  const maintenanceMode = useAtomStateValue(maintenanceModeState);
   const setMaintenanceMode = useSetAtomState(maintenanceModeState);
 
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -57,11 +56,23 @@ export const SettingsAdminMaintenanceMode = () => {
       ? new Date(adminPanelMaintenanceMode.endAt)
       : undefined;
 
-  const isScheduled = isDefined(startDate) && isDefined(endDate);
+  const hasValidDateRange =
+    isDefined(startDate) &&
+    isDefined(endDate) &&
+    endDate.getTime() > startDate.getTime();
+
+  const isScheduled =
+    isDefined(maintenanceMode) &&
+    isNonEmptyString(maintenanceMode.startAt) &&
+    isNonEmptyString(maintenanceMode.endAt);
 
   const saveToBackend = useCallback(
     async (startAt: string, endAt: string, link?: string) => {
       if (!isNonEmptyString(startAt) || !isNonEmptyString(endAt)) {
+        return;
+      }
+
+      if (new Date(endAt).getTime() <= new Date(startAt).getTime()) {
         return;
       }
 
@@ -151,8 +162,12 @@ export const SettingsAdminMaintenanceMode = () => {
     );
   }, [adminPanelMaintenanceMode, saveToBackend]);
 
-  const formattedStartDate = isScheduled
-    ? startDate.toLocaleDateString(undefined, {
+  const scheduledStartDate = isScheduled
+    ? new Date(maintenanceMode.startAt)
+    : undefined;
+
+  const formattedStartDate = isDefined(scheduledStartDate)
+    ? scheduledStartDate.toLocaleDateString(undefined, {
         month: '2-digit',
         day: '2-digit',
         year: 'numeric',
@@ -185,11 +200,18 @@ export const SettingsAdminMaintenanceMode = () => {
                 value={startDate}
                 onChange={handleDateChange('startAt')}
               />
-              <SettingsDatePickerInput
-                label={t`End date`}
-                value={endDate}
-                onChange={handleDateChange('endAt')}
-              />
+              <div>
+                <SettingsDatePickerInput
+                  label={t`End date`}
+                  value={endDate}
+                  onChange={handleDateChange('endAt')}
+                />
+                {isDefined(startDate) &&
+                  isDefined(endDate) &&
+                  !hasValidDateRange && (
+                    <InputHint>{t`End date must be after start date.`}</InputHint>
+                  )}
+              </div>
               <div>
                 <TextInput
                   label={t`Link`}

@@ -162,7 +162,7 @@ export const SettingsDatePickerInput = ({
                 instanceId={`settings-date-picker-${label}`}
                 date={zonedDateTime}
                 onChange={handleDateTimeSelect}
-                onClose={handleDateTimeSelect}
+                onClose={handleClose}
                 onClear={handleClear}
                 clearable
               />
