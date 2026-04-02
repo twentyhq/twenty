@@ -37,18 +37,13 @@ export class LocalDriver implements LogicFunctionDriver {
     this.sdkClientArchiveService = options.sdkClientArchiveService;
   }
 
-  private getDepsNodeModulesPath(flatApplication: FlatApplication): string {
+  private getDepsLayerPath(flatApplication: FlatApplication): string {
     const checksum = flatApplication.yarnLockChecksum ?? 'default';
 
-    return join(
-      LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER,
-      'deps',
-      checksum,
-      'node_modules',
-    );
+    return join(LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER, 'deps', checksum);
   }
 
-  private getSdkNodeModulesPath({
+  private getSdkLayerPath({
     workspaceId,
     applicationUniversalIdentifier,
   }: {
@@ -59,7 +54,6 @@ export class LocalDriver implements LogicFunctionDriver {
       LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER,
       'sdk',
       `${workspaceId}-${applicationUniversalIdentifier}`,
-      'node_modules',
     );
   }
 
@@ -70,16 +64,20 @@ export class LocalDriver implements LogicFunctionDriver {
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }): Promise<void> {
-    const depsNodeModulesPath = this.getDepsNodeModulesPath(flatApplication);
-    const depsLayerPath = dirname(depsNodeModulesPath);
+    const depsLayerPath = this.getDepsLayerPath(flatApplication);
+    const depsNodeModulesPath = join(depsLayerPath, 'node_modules');
 
-    try {
-      await fs.access(depsNodeModulesPath);
+    const nodeModulesExist = await fs
+      .access(depsNodeModulesPath)
+      .then(() => true)
+      .catch(() => false);
 
+    if (nodeModulesExist) {
       return;
-    } catch {
-      await fs.rm(depsLayerPath, { recursive: true, force: true });
     }
+
+    // Wipe any partial leftovers from a previously failed build
+    await fs.rm(depsLayerPath, { recursive: true, force: true });
 
     await this.logicFunctionResourceService.copyDependenciesInMemory({
       applicationUniversalIdentifier,
@@ -96,11 +94,11 @@ export class LocalDriver implements LogicFunctionDriver {
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }): Promise<void> {
-    const sdkNodeModulesPath = this.getSdkNodeModulesPath({
+    const sdkLayerPath = this.getSdkLayerPath({
       workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
     });
-    const sdkLayerPath = dirname(sdkNodeModulesPath);
+    const sdkNodeModulesPath = join(sdkLayerPath, 'node_modules');
 
     const layerExists = await fs
       .access(sdkLayerPath)
@@ -194,11 +192,17 @@ export class LocalDriver implements LogicFunctionDriver {
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }): Promise<void> {
-    const depsNodeModules = this.getDepsNodeModulesPath(flatApplication);
-    const sdkNodeModules = this.getSdkNodeModulesPath({
-      workspaceId: flatApplication.workspaceId,
-      applicationUniversalIdentifier,
-    });
+    const depsNodeModules = join(
+      this.getDepsLayerPath(flatApplication),
+      'node_modules',
+    );
+    const sdkNodeModules = join(
+      this.getSdkLayerPath({
+        workspaceId: flatApplication.workspaceId,
+        applicationUniversalIdentifier,
+      }),
+      'node_modules',
+    );
     const execNodeModules = join(sourceTemporaryDir, 'node_modules');
 
     await fs.mkdir(execNodeModules, { recursive: true });
