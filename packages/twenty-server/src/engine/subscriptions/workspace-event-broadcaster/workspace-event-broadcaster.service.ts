@@ -49,7 +49,7 @@ export class WorkspaceEventBroadcaster {
         recordId: event.recordId,
         properties: event.properties,
         updatedCollectionHash,
-      })) as unknown as EventStreamPayload['metadataEvents'],
+      })),
     };
 
     for (const [streamChannelId, streamData] of streamsData) {
