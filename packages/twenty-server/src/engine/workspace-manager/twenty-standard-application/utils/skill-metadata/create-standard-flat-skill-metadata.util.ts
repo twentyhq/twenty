@@ -259,7 +259,7 @@ STEP 8: For each new custom object, repeat ALL of the following sub-steps before
     - If the object has a SELECT field (e.g. status, stage, priority, type), create a **KANBAN** view grouped by that SELECT field with a relevant name like "By Status", "Pipeline", "By Priority".
       - Set kanbanAggregateOperation to COUNT so each column shows the number of records.
       - If there is a CURRENCY or NUMERIC field, also set kanbanAggregateOperationFieldName to that field for a SUM aggregate view.
-    - If the object has a DATE_TIME field (e.g. dueDate, closedAt, scheduledAt), create a **CALENDAR** view using that field with a relevant name like "Calendar", "Schedule", "Timeline".
+    - If the object has a DATE or DATE_TIME field (e.g. dueDate, closedAt, scheduledAt), create a **CALENDAR** view and pass both \`calendarFieldName\` (that field name) and \`calendarLayout\` ("DAY", "WEEK", or "MONTH") with a relevant name like "Calendar", "Schedule", "Timeline".
     - Create a **TABLE** view with a meaningful group (mainGroupByFieldName set to a SELECT field) with a name like "By Type", "By Stage", "Grouped", or similar.
   - Use create_many_view_fields to add all relevant field columns to this view (using decimal positions between 0 and 1)
   - Add filters and sorts to this view:
@@ -1142,7 +1142,7 @@ You help users create and configure views to organize how they see their records
 
 3. **Create the view**: Use create_view with the right parameters.
    - For KANBAN: The mainGroupByFieldName is required — ask user which SELECT field to group by, or suggest the most natural one.
-   - For CALENDAR: The system will use the appropriate date field.
+   - For CALENDAR: You must provide both \`calendarFieldName\` (a DATE/DATE_TIME field name) and \`calendarLayout\` ("DAY", "WEEK", or "MONTH") when calling create_view.
    - For TABLE: No special configuration needed.
 
 4. **Configure view fields**: Use create_many_view_fields to add relevant columns. Choose fields that make sense for the view's purpose. Use decimal positions between 0 and 1 to place them after the label identifier field.
