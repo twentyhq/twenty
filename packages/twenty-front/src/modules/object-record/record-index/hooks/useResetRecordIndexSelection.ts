@@ -27,12 +27,14 @@ export const useResetRecordIndexSelection = (
 
   const objectNamePlural = objectMetadataItem?.namePlural;
 
-  const recordIndexId = isDefined(objectNamePlural)
+  const hasValidContext = isDefined(objectNamePlural);
+
+  const recordIndexId = hasValidContext
     ? getRecordIndexIdFromObjectNamePluralAndViewId(
         objectNamePlural,
         contextStoreCurrentViewId ?? '',
       )
-    : undefined;
+    : '';
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
 
@@ -40,6 +42,10 @@ export const useResetRecordIndexSelection = (
     useResetRecordBoardSelection(recordIndexId);
 
   const resetRecordIndexSelection = () => {
+    if (!hasValidContext) {
+      return;
+    }
+
     switch (contextStoreCurrentViewType) {
       case ContextStoreViewType.Table:
         resetTableRowSelection();
