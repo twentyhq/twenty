@@ -723,19 +723,6 @@
         "supportsReasoning": true
       },
       {
-        "name": "claude-3-7-sonnet-latest",
-        "label": "Claude Sonnet 3.7 (latest)",
-        "modelFamily": "CLAUDE",
-        "inputCostPerMillionTokens": 3,
-        "outputCostPerMillionTokens": 15,
-        "cachedInputCostPerMillionTokens": 0.3,
-        "cacheCreationCostPerMillionTokens": 3.75,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 64000,
-        "modalities": ["image", "pdf"],
-        "supportsReasoning": true
-      },
-      {
         "name": "claude-haiku-4-5",
         "label": "Claude Haiku 4.5 (latest)",
         "modelFamily": "CLAUDE",

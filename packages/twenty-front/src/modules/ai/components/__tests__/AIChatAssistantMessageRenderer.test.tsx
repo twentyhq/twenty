@@ -109,7 +109,7 @@ describe('AIChatAssistantMessageRenderer', () => {
     );
   });
 
-  it('should keep code interpreter rendering path unchanged and out of thinking grouping', () => {
+  it('should show data-code-execution during streaming and hide the tool part to avoid duplicates', () => {
     const messageParts = [
       {
         type: 'tool-code_interpreter',
@@ -135,10 +135,64 @@ describe('AIChatAssistantMessageRenderer', () => {
     renderAssistantRenderer(messageParts);
 
     expect(screen.queryByTestId('thinking-steps-display')).toBeNull();
+    expect(screen.queryByTestId('tool-step-renderer')).toBeNull();
+    expect(screen.getByTestId('code-execution-display')).toBeInTheDocument();
+  });
+
+  it('should render tool-execute_tool wrapping code_interpreter via ToolStepRenderer after refetch', () => {
+    const messageParts = [
+      {
+        type: 'tool-execute_tool',
+        toolCallId: 'tool-exec-1',
+        input: {
+          toolName: 'code_interpreter',
+          arguments: { code: 'print(42)' },
+        },
+        output: {
+          result: { stdout: '42', stderr: '', exitCode: 0, files: [] },
+        },
+        state: 'output-available',
+      },
+    ] as ExtendedUIMessagePart[];
+
+    renderAssistantRenderer(messageParts);
+
+    expect(screen.queryByTestId('thinking-steps-display')).toBeNull();
     expect(screen.getByTestId('tool-step-renderer')).toHaveTextContent(
-      'tool-code_interpreter',
+      'tool-execute_tool',
     );
-    expect(screen.queryByTestId('code-execution-display')).toBeNull();
+  });
+
+  it('should hide execute_tool wrapping code_interpreter when data-code-execution parts exist', () => {
+    const messageParts = [
+      {
+        type: 'tool-execute_tool',
+        toolCallId: 'tool-exec-1',
+        input: {
+          toolName: 'code_interpreter',
+          arguments: { code: 'print(42)' },
+        },
+        output: null,
+        state: 'call',
+      },
+      {
+        type: 'data-code-execution',
+        data: {
+          executionId: 'exec-2',
+          state: 'running',
+          code: 'print(42)',
+          language: 'python',
+          stdout: '42',
+          stderr: '',
+          files: [],
+        },
+      },
+    ] as ExtendedUIMessagePart[];
+
+    renderAssistantRenderer(messageParts);
+
+    expect(screen.queryByTestId('tool-step-renderer')).toBeNull();
+    expect(screen.getByTestId('code-execution-display')).toBeInTheDocument();
   });
 
   it('should render non-thinking parts directly when there are no thinking steps', () => {

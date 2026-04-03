@@ -32,7 +32,7 @@ export const InformationBannerLegacyEnterpriseKey = () => {
   return (
     <InformationBanner
       componentInstanceId={COMPONENT_INSTANCE_ID}
-      variant="default"
+      variant="secondary"
       message={t`Your enterprise key format is deprecated. Please activate a new key to keep enterprise features.`}
       buttonTitle={t`Activate`}
       buttonIcon={IconKey}

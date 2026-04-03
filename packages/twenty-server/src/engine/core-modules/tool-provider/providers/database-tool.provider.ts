@@ -21,7 +21,7 @@ import { generateUpdateRecordInputSchema } from 'src/engine/core-modules/record-
 import { DeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/delete-tool.zod-schema';
 import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
-import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import { ToolCategory } from 'twenty-shared/ai';
 import {
   type ToolDescriptor,
   type ToolIndexEntry,
@@ -122,6 +122,7 @@ export class DatabaseToolProvider implements ToolProvider {
             operation: 'find',
           },
           objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
           operation: 'find',
         });
 
@@ -138,6 +139,7 @@ export class DatabaseToolProvider implements ToolProvider {
             operation: 'find_one',
           },
           objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
           operation: 'find_one',
         });
       }
@@ -158,6 +160,7 @@ export class DatabaseToolProvider implements ToolProvider {
             operation: 'create',
           },
           objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
           operation: 'create',
         });
 
@@ -179,6 +182,7 @@ export class DatabaseToolProvider implements ToolProvider {
             operation: 'create_many',
           },
           objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
           operation: 'create_many',
         });
 
@@ -197,6 +201,7 @@ export class DatabaseToolProvider implements ToolProvider {
             operation: 'update',
           },
           objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
           operation: 'update',
         });
 
@@ -218,6 +223,7 @@ export class DatabaseToolProvider implements ToolProvider {
             operation: 'update_many',
           },
           objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
           operation: 'update_many',
         });
       }
@@ -236,6 +242,7 @@ export class DatabaseToolProvider implements ToolProvider {
             operation: 'delete',
           },
           objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
           operation: 'delete',
         });
       }

@@ -73,7 +73,7 @@ export class CheckServerOrchestratorStep {
         this.state.applyStepEvents([
           {
             message:
-              'Authentication failed. Run `yarn twenty remote add` to authenticate.',
+              'Authentication failed. Run `yarn twenty remote add --local` to authenticate.',
             status: 'error',
           },
         ]);

@@ -28,6 +28,13 @@ jest.mock('@/auth/services/AuthService', () => {
   };
 });
 
+jest.mock('@/apollo/utils/getTokenPair', () => ({
+  getTokenPair: jest.fn().mockReturnValue({
+    accessOrWorkspaceAgnosticToken: { token: 'testAccessToken', expiresAt: '' },
+    refreshToken: { token: 'testRefreshToken', expiresAt: '' },
+  }),
+}));
+
 const mockOnError = jest.fn();
 const mockOnNetworkError = jest.fn();
 const mockOnPayloadTooLarge = jest.fn();

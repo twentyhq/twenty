@@ -20,11 +20,13 @@ export const isContainerRunning = (): boolean => {
 export const getContainerPort = (): number => {
   try {
     const result = execSync(
-      `docker inspect -f '{{(index (index .NetworkSettings.Ports "3000/tcp") 0).HostPort}}' ${CONTAINER_NAME}`,
+      `docker inspect -f '{{range .Config.Env}}{{println .}}{{end}}' ${CONTAINER_NAME}`,
       { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] },
-    ).trim();
+    );
 
-    return parseInt(result, 10) || DEFAULT_PORT;
+    const match = result.match(/^NODE_PORT=(\d+)$/m);
+
+    return match ? parseInt(match[1], 10) : DEFAULT_PORT;
   } catch {
     return DEFAULT_PORT;
   }

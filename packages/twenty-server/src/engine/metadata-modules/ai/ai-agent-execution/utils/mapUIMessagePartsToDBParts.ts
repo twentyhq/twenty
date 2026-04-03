@@ -63,6 +63,8 @@ export const mapUIMessagePartsToDBParts = (
           };
         case 'step-start':
           return basePart;
+        case 'data-compaction':
+          return null;
         case 'data-routing-status':
           return {
             ...basePart,

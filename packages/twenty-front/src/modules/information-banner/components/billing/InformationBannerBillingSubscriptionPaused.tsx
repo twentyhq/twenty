@@ -35,7 +35,8 @@ export const InformationBannerBillingSubscriptionPaused = () => {
   return (
     <InformationBanner
       componentInstanceId="information-banner-billing-subscription-paused"
-      variant="danger"
+      color="danger"
+      variant="secondary"
       message={
         hasPermissionToUpdateBillingDetails
           ? t`Trial expired. Please update your billing details.`

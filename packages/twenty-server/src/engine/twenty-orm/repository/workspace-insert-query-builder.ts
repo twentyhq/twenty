@@ -241,7 +241,9 @@ export class WorkspaceInsertQueryBuilder<
         result.identifiers.map((identifier) => identifier.id),
       );
 
-      const afterResult = await eventSelectQueryBuilder.getMany();
+      const afterResult = await eventSelectQueryBuilder.getMany({
+        noFormatting: true,
+      });
 
       const formattedResultForEvent = formatResult<T[]>(
         afterResult,
