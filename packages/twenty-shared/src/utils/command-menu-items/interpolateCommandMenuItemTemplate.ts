@@ -50,7 +50,7 @@ const resolveTemplateExpression = ({
     : stringValue;
 };
 
-export const interpolateCommandMenuItemLabel = ({
+export const interpolateCommandMenuItemTemplate = ({
   label,
   context,
 }: {
