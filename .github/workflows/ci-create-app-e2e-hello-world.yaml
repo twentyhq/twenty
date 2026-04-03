@@ -1,11 +1,13 @@
 name: CI Hello world App E2E
 
 on:
-  push:
-    branches:
-      - main
-
-  pull_request:
+  # Temporarily disabled — will be re-enabled when example apps are published.
+  # push:
+  #   branches:
+  #     - main
+  #
+  # pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
