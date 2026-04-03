@@ -326,7 +326,7 @@ ${hasWebSearch ? '3' : '2'}. **Other tools**: First call \`${LEARN_TOOLS_TOOL_NA
       case ToolCategory.METADATA:
         return 'Metadata Tools (schema management)';
       case ToolCategory.VIEW:
-        return 'View Tools (query views)';
+        return 'View Tools (manage views, filters, and sorts)';
       case ToolCategory.DASHBOARD:
         return 'Dashboard Tools (create/manage dashboards)';
       case ToolCategory.LOGIC_FUNCTION:

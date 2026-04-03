@@ -5,7 +5,6 @@ import { styled } from '@linaria/react';
 import {
   IconBook,
   IconBox,
-  IconBrandApple,
   IconBrandLinkedin,
   IconBuildingFactory2,
   IconBuildingSkyscraper,
@@ -52,6 +51,7 @@ import type {
   HeroCellEntity,
   HeroCellPerson,
   HeroCellRelation,
+  HeroCellText,
   HeroCellValue,
   HeroColumnDef,
   HeroRowDef,
@@ -66,6 +66,9 @@ import { VISUAL_TOKENS } from './homeVisualTokens';
 
 const APP_FONT = VISUAL_TOKENS.font.family;
 const DEFAULT_TABLE_WIDTH = 1700;
+const APPLE_WORKSPACE_LOGO_SRC = '/images/home/hero/apple-rainbow-logo.svg';
+const TABLE_CELL_HORIZONTAL_PADDING = 8;
+const HOVER_ACTION_EDGE_INSET = 4;
 
 const COLORS = {
   accent: VISUAL_TOKENS.accent.accent9,
@@ -88,16 +91,16 @@ const SIDEBAR_TONES: Record<
   string,
   { background: string; border: string; color: string }
 > = {
-  amber: { background: '#fff4d6', border: '#ffd49b', color: '#9a6700' },
-  blue: { background: '#d9e2fc', border: '#c6d4f9', color: '#3557c6' },
-  gray: { background: '#ebebeb', border: '#d6d6d6', color: '#666666' },
+  amber: { background: '#FEF2A4', border: '#FEF2A4', color: '#35290F' },
+  blue: { background: '#d9e2fc', border: '#c6d4f9', color: '#3A5CCC' },
+  gray: { background: '#ebebeb', border: '#d6d6d6', color: '#838383' },
   green: { background: '#ccebd7', border: '#bbe4c9', color: '#153226' },
-  orange: { background: '#ffdcc3', border: '#ffcca7', color: '#582d1d' },
+  orange: { background: '#ffdcc3', border: '#ffcca7', color: '#ED5F00' },
   pink: { background: '#ffe1e7', border: '#ffc8d6', color: '#a51853' },
   purple: { background: '#e0e7ff', border: '#c7d2fe', color: '#4f46e5' },
-  teal: { background: '#c7ebe5', border: '#b3e3dc', color: '#10302b' },
+  teal: { background: '#c7ebe5', border: '#afdfd7', color: '#0E9888' },
   violet: { background: '#ebe5ff', border: '#d8cbff', color: '#5b3fd1' },
-  red: { background: '#fee2e2', border: '#fecaca', color: '#b91c1c' },
+  red: { background: '#fdd8d8', border: '#f9c6c6', color: '#DC3D43' },
 };
 
 const PERSON_TONES: Record<string, { background: string; color: string }> = {
@@ -113,6 +116,10 @@ const PERSON_TONES: Record<string, { background: string; color: string }> = {
 
 const TABLER_STROKE = 1.6;
 const NAVIGATION_TABLER_STROKE = 2;
+const ROW_HOVER_ACTION_DISABLED_COLUMNS = new Set([
+  'createdBy',
+  'accountOwner',
+]);
 
 // -- Styled Components --
 
@@ -139,16 +146,7 @@ const ShellScene = styled.div`
 const Frame = styled.div`
   aspect-ratio: 1280 / 832;
   background-color: ${COLORS.background};
-  background-image: radial-gradient(
-      circle at top center,
-      rgba(0, 0, 0, 0.035),
-      rgba(0, 0, 0, 0) 55%
-    ),
-    ${VISUAL_TOKENS.background.noisy};
-  background-position:
-    center top,
-    center;
-  background-repeat: no-repeat, repeat;
+  background-image: ${VISUAL_TOKENS.background.noisy};
   border: 1px solid ${COLORS.border};
   border-radius: 8px;
   box-shadow: ${COLORS.shadow};
@@ -157,24 +155,27 @@ const Frame = styled.div`
 `;
 
 const AppLayout = styled.div`
-  display: grid;
-  grid-template-columns: 72px minmax(0, 1fr);
+  display: flex;
   height: 100%;
+  min-height: 0;
   position: relative;
   z-index: 1;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    grid-template-columns: 220px minmax(0, 1fr);
-  }
 `;
 
 const SidebarPanel = styled.aside`
   background: transparent;
-  border-right: 1px solid rgba(0, 0, 0, 0.04);
   display: grid;
+  flex: 0 0 72px;
   gap: 12px;
   grid-template-rows: auto auto minmax(0, 1fr);
+  min-height: 0;
   padding: 12px 8px;
+  width: 72px;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    flex-basis: 220px;
+    width: 220px;
+  }
 `;
 
 const SidebarTopBar = styled.div`
@@ -196,16 +197,17 @@ const WorkspaceMenu = styled.div`
 
 const WorkspaceIcon = styled.div`
   align-items: center;
-  background: #111111;
-  border-radius: 2px;
-  color: #ffffff;
   display: flex;
-  font-family: ${APP_FONT};
-  font-size: 11px;
-  font-weight: ${theme.font.weight.medium};
+  flex: 0 0 auto;
   height: 16px;
   justify-content: center;
-  width: 16px;
+  width: 14px;
+`;
+
+const WorkspaceIconImage = styled.img`
+  display: block;
+  height: 100%;
+  width: 100%;
 `;
 
 const WorkspaceLabel = styled.span`
@@ -246,10 +248,17 @@ const SidebarControls = styled.div`
   display: grid;
   gap: 8px;
   grid-template-columns: auto 1fr;
+  min-width: 0;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+  }
 `;
 
 const SegmentedRail = styled.div`
-  background: rgba(252, 252, 252, 0.8);
+  background: #fcfcfccc;
   border: 1px solid ${COLORS.border};
   border-radius: 40px;
   display: grid;
@@ -261,12 +270,17 @@ const SegmentedRail = styled.div`
 const Segment = styled.div<{ $selected?: boolean }>`
   align-items: center;
   background: ${({ $selected }) =>
-    $selected ? 'rgba(0, 0, 0, 0.04)' : 'transparent'};
+    $selected ? '#0000000a' : 'transparent'};
   border-radius: 16px;
   display: flex;
   height: 22px;
   justify-content: center;
   width: 22px;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    padding: 0 8px;
+    width: 32px;
+  }
 `;
 
 const NewChat = styled.div`
@@ -305,8 +319,9 @@ const NewChatLabel = styled.span`
 `;
 
 const SidebarScroll = styled.div`
-  display: grid;
-  gap: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   min-height: 0;
   overflow: hidden;
 `;
@@ -316,14 +331,15 @@ const SidebarSection = styled.div`
   gap: 2px;
 `;
 
-const SidebarSectionLabel = styled.span`
+const SidebarSectionLabel = styled.span<{ $workspace?: boolean }>`
   color: ${COLORS.textLight};
   display: none;
   font-family: ${APP_FONT};
   font-size: 11px;
   font-weight: 600;
   line-height: 1;
-  padding: 0 4px 4px;
+  padding: ${({ $workspace }) =>
+    $workspace ? '4px 4px 8px' : '0 4px 4px'};
 
   @media (min-width: ${theme.breakpoints.md}px) {
     display: block;
@@ -333,17 +349,57 @@ const SidebarSectionLabel = styled.span`
 const SidebarItemRow = styled.div<{
   $active?: boolean;
   $depth?: number;
+  $interactive?: boolean;
+  $withBranch?: boolean;
 }>`
   align-items: center;
   background: ${({ $active }) =>
-    $active ? 'rgba(0, 0, 0, 0.04)' : 'transparent'};
+    $active ? VISUAL_TOKENS.background.transparent.medium : 'transparent'};
   border-radius: 4px;
   display: grid;
-  gap: 8px;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0;
+  grid-template-columns: ${({ $withBranch }) =>
+    $withBranch ? '9px minmax(0, 1fr) auto' : 'minmax(0, 1fr) auto'};
   height: 28px;
-  padding: 0 2px 0 ${({ $depth = 0 }) => `${$depth === 0 ? 4 : 24}px`};
+  padding: 0 2px 0 ${({ $depth = 0 }) => `${$depth === 0 ? 4 : 11}px`};
   position: relative;
+  text-decoration: none;
+  transition: background-color 0.14s ease;
+
+  &:hover {
+    background: ${({ $active, $interactive }) =>
+      $active || $interactive
+        ? VISUAL_TOKENS.background.transparent.medium
+        : 'transparent'};
+  }
+`;
+
+const SidebarItemRowLink = styled.a<{
+  $active?: boolean;
+  $depth?: number;
+  $interactive?: boolean;
+  $withBranch?: boolean;
+}>`
+  align-items: center;
+  background: ${({ $active }) =>
+    $active ? VISUAL_TOKENS.background.transparent.medium : 'transparent'};
+  border-radius: 4px;
+  display: grid;
+  gap: 0;
+  grid-template-columns: ${({ $withBranch }) =>
+    $withBranch ? '9px minmax(0, 1fr) auto' : 'minmax(0, 1fr) auto'};
+  height: 28px;
+  padding: 0 2px 0 ${({ $depth = 0 }) => `${$depth === 0 ? 4 : 11}px`};
+  position: relative;
+  text-decoration: none;
+  transition: background-color 0.14s ease;
+
+  &:hover {
+    background: ${({ $active, $interactive }) =>
+      $active || $interactive
+        ? VISUAL_TOKENS.background.transparent.medium
+        : 'transparent'};
+  }
 `;
 
 const SidebarIconSurface = styled.div<{
@@ -371,8 +427,8 @@ const SidebarItemText = styled.div`
   min-width: 0;
 `;
 
-const SidebarItemLabel = styled.span`
-  color: ${COLORS.textSecondary};
+const SidebarItemLabel = styled.span<{ $active?: boolean }>`
+  color: ${({ $active }) => ($active ? COLORS.text : COLORS.textSecondary)};
   display: none;
   font-family: ${APP_FONT};
   font-size: 13px;
@@ -423,10 +479,41 @@ const SidebarChildStack = styled.div`
 const BranchLine = styled.div`
   background: ${COLORS.borderStrong};
   bottom: 14px;
-  left: 15px;
+  left: 11px;
   position: absolute;
   top: 0;
   width: 1px;
+`;
+
+const SidebarBranchCell = styled.div<{ $isLastChild?: boolean }>`
+  align-self: stretch;
+  position: relative;
+  width: 9px;
+
+  &::before {
+    background: ${COLORS.borderStrong};
+    content: '';
+    inset: 0 88.89% 0 0;
+    opacity: ${({ $isLastChild }) => ($isLastChild ? 0 : 1)};
+    position: absolute;
+  }
+
+  &::after {
+    border-bottom: 1px solid ${COLORS.borderStrong};
+    border-left: 1px solid ${COLORS.borderStrong};
+    border-radius: 0 0 0 4px;
+    content: '';
+    inset: 0 0 45.83% 0;
+    position: absolute;
+  }
+`;
+
+const SidebarRowMain = styled.div<{ $withBranch?: boolean }>`
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+  padding-left: ${({ $withBranch }) => ($withBranch ? '4px' : '0')};
 `;
 
 const SidebarAvatar = styled.div<{
@@ -450,9 +537,11 @@ const SidebarAvatar = styled.div<{
 `;
 
 const RightPane = styled.div`
-  display: grid;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
   gap: 12px;
-  grid-template-rows: 32px minmax(0, 1fr);
+  min-height: 0;
   min-width: 0;
   padding: 12px 8px 12px 0;
 
@@ -465,6 +554,8 @@ const NavbarBar = styled.div`
   align-items: center;
   background: transparent;
   display: flex;
+  flex: 0 0 32px;
+  height: 32px;
   justify-content: space-between;
   min-width: 0;
 `;
@@ -524,12 +615,13 @@ const DesktopOnlyNavbarAction = styled.div`
   }
 `;
 
-const NavbarDecorativeChip = styled.div`
+const NAVBAR_ACTION_BORDER = 'rgba(0, 0, 0, 0.08)';
+
+const NavbarActionButton = styled.div`
   align-items: center;
   background: transparent;
-  border: 1px solid ${VISUAL_TOKENS.background.transparent.medium};
+  border: 1px solid ${NAVBAR_ACTION_BORDER};
   border-radius: ${VISUAL_TOKENS.border.radius.sm};
-  color: ${VISUAL_TOKENS.font.color.secondary};
   display: inline-flex;
   font-family: ${APP_FONT};
   font-size: ${VISUAL_TOKENS.font.size.md};
@@ -540,19 +632,38 @@ const NavbarDecorativeChip = styled.div`
   white-space: nowrap;
 `;
 
-const NavbarDecorativeIconWrap = styled.span`
+const NavbarActionIconWrap = styled.span<{ $color?: string }>`
   align-items: center;
-  color: currentColor;
+  color: ${({ $color }) => $color ?? VISUAL_TOKENS.font.color.secondary};
   display: flex;
   flex: 0 0 auto;
   justify-content: center;
 `;
 
+const NavbarActionLabel = styled.span<{ $color?: string }>`
+  color: ${({ $color }) => $color ?? VISUAL_TOKENS.font.color.secondary};
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: 1.4;
+  white-space: nowrap;
+`;
+
+const NavbarActionSeparator = styled.div`
+  background: ${VISUAL_TOKENS.background.transparent.medium};
+  border-radius: 56px;
+  height: 100%;
+  width: 1px;
+`;
+
 const IndexSurface = styled.div`
   background: ${COLORS.background};
+  border: 1px solid ${COLORS.border};
   border-radius: 8px;
-  display: grid;
-  grid-template-rows: 40px minmax(0, 1fr);
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
   min-width: 0;
   overflow: hidden;
 `;
@@ -563,15 +674,19 @@ const ViewbarBar = styled.div`
   border-bottom: 1px solid ${COLORS.borderLight};
   display: flex;
   justify-content: space-between;
+  min-width: 0;
   padding: 8px 8px 8px 12px;
+  width: 100%;
 `;
 
 const ViewSwitcher = styled.div`
   align-items: center;
   display: flex;
+  flex: 1 1 auto;
   gap: 4px;
   height: 24px;
   min-width: 0;
+  overflow: hidden;
   padding: 0 4px;
 `;
 
@@ -603,7 +718,11 @@ const TinyDot = styled.div`
 const ViewActions = styled.div`
   align-items: center;
   display: flex;
+  flex: 0 0 auto;
   gap: 2px;
+  margin-left: auto;
+  position: relative;
+  z-index: 1;
 `;
 
 const ViewAction = styled.span`
@@ -622,7 +741,11 @@ const ViewAction = styled.span`
 
 const TableShell = styled.div`
   display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
   min-height: 0;
+  overflow: hidden;
+  width: 100%;
 `;
 
 const GripRail = styled.div`
@@ -640,11 +763,14 @@ const GripCell = styled.div`
 
 const TableViewport = styled.div<{ $dragging: boolean }>`
   cursor: ${({ $dragging }) => ($dragging ? 'grabbing' : 'grab')};
+  flex: 1 1 auto;
   min-height: 0;
+  min-width: 0;
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-x: contain;
   scrollbar-width: none;
+  width: 100%;
 
   &::-webkit-scrollbar {
     display: none;
@@ -652,6 +778,10 @@ const TableViewport = styled.div<{ $dragging: boolean }>`
 `;
 
 const TableCanvas = styled.div<{ $width: number }>`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100%;
   min-width: ${({ $width }) => `${$width}px`};
   width: ${({ $width }) => `${$width}px`};
 `;
@@ -693,7 +823,7 @@ const TableCell = styled.div<{
     $align === 'right' ? 'flex-end' : 'flex-start'};
   left: ${({ $sticky }) => ($sticky ? '0' : 'auto')};
   min-width: ${({ $width }) => `${$width}px`};
-  padding: 0 8px;
+  padding: 0 ${TABLE_CELL_HORIZONTAL_PADDING}px;
   position: ${({ $sticky }) => ($sticky ? 'sticky' : 'relative')};
   z-index: ${({ $header, $sticky }) => {
     if ($sticky && $header) {
@@ -778,6 +908,16 @@ const EntityCellLayout = styled.div`
   align-items: center;
   display: flex;
   gap: 4px;
+  height: 100%;
+  min-width: 0;
+  position: relative;
+  width: 100%;
+`;
+
+const CellHoverAnchor = styled.div`
+  align-items: center;
+  display: flex;
+  height: 100%;
   min-width: 0;
   position: relative;
   width: 100%;
@@ -826,7 +966,7 @@ const PersonAvatarCircle = styled.div<{
   display: flex;
   flex: 0 0 auto;
   font-family: ${APP_FONT};
-  font-size: 9px;
+  font-size: 10px;
   font-weight: ${theme.font.weight.medium};
   height: 14px;
   justify-content: center;
@@ -847,24 +987,29 @@ const BooleanRow = styled.div`
   gap: 4px;
 `;
 
-const HoverActions = styled.div<{ $visible: boolean }>`
+const HoverActions = styled.div<{ $rightInset?: number; $visible: boolean }>`
   align-items: center;
-  background: ${COLORS.backgroundSecondary};
-  border: 1px solid ${COLORS.border};
+  background: ${VISUAL_TOKENS.background.transparent.primary};
+  border: 1px solid ${VISUAL_TOKENS.background.transparent.light};
   border-radius: 4px;
+  bottom: 4px;
+  box-sizing: border-box;
   box-shadow: ${VISUAL_TOKENS.boxShadow.light};
   display: flex;
-  gap: 2px;
+  gap: 0;
+  justify-content: center;
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
-  padding: 2px;
+  padding: 0 4px;
   pointer-events: none;
   position: absolute;
-  right: 4px;
+  right: ${({ $rightInset = HOVER_ACTION_EDGE_INSET - TABLE_CELL_HORIZONTAL_PADDING }) =>
+    `${$rightInset}px`};
   top: 4px;
   transform: translateX(${({ $visible }) => ($visible ? '0' : '4px')});
   transition:
     opacity 0.14s ease,
     transform 0.14s ease;
+  width: 24px;
 `;
 
 const MiniAction = styled.div`
@@ -872,9 +1017,9 @@ const MiniAction = styled.div`
   border-radius: 2px;
   color: ${COLORS.textSecondary};
   display: flex;
-  height: 20px;
+  height: 16px;
   justify-content: center;
-  width: 20px;
+  width: 16px;
 `;
 
 const FooterFirstContent = styled.div`
@@ -960,6 +1105,7 @@ const HEADER_ICON_MAP: Record<string, typeof IconBuildingSkyscraper> = {
 
 // -- Utility functions --
 
+const failedAvatarUrls = new Set<string>();
 const failedFaviconUrls = new Set<string>();
 
 function getInitials(value: string) {
@@ -1157,15 +1303,17 @@ function CopyMini({ color = COLORS.textSecondary, size = 14 }: MiniIconProps) {
 // -- Favicon logo component --
 
 function FaviconLogo({
+  src,
   domain,
   label,
   size = 14,
 }: {
+  src?: string;
   domain?: string;
   label?: string;
   size?: number;
 }) {
-  const faviconUrl = getLogoUrlFromDomainName(domain);
+  const faviconUrl = src ?? getLogoUrlFromDomainName(domain);
   const [localFailedUrl, setLocalFailedUrl] = useState<string | null>(null);
   const showFavicon =
     faviconUrl !== undefined &&
@@ -1213,6 +1361,31 @@ function FaviconLogo({
 
 // -- Sidebar icon rendering --
 
+function PersonAvatarContent({ token }: { token: HeroCellPerson }) {
+  const [localFailedUrl, setLocalFailedUrl] = useState<string | null>(null);
+  const showAvatar =
+    token.avatarUrl !== undefined &&
+    !failedAvatarUrls.has(token.avatarUrl) &&
+    localFailedUrl !== token.avatarUrl;
+
+  if (showAvatar) {
+    return (
+      <AvatarImage
+        alt=""
+        src={token.avatarUrl}
+        onError={() => {
+          if (token.avatarUrl) {
+            failedAvatarUrls.add(token.avatarUrl);
+            setLocalFailedUrl(token.avatarUrl);
+          }
+        }}
+      />
+    );
+  }
+
+  return token.shortLabel ?? getInitials(token.name);
+}
+
 function renderSidebarIcon(icon: HeroSidebarIcon): ReactNode {
   if (icon.kind === 'brand') {
     return (
@@ -1223,14 +1396,16 @@ function renderSidebarIcon(icon: HeroSidebarIcon): ReactNode {
       >
         <FaviconLogo
           domain={
-            icon.brand === 'claude'
+            icon.domain ??
+            (icon.brand === 'claude'
               ? 'claude.ai'
               : icon.brand === 'stripe'
                 ? 'stripe.com'
-                : undefined
+                : undefined)
           }
           label={icon.brand}
-          size={16}
+          size={icon.imageSrc ? 14 : 16}
+          src={icon.imageSrc}
         />
         {icon.overlay === 'link' ? (
           <div
@@ -1320,45 +1495,77 @@ function renderSidebarIcon(icon: HeroSidebarIcon): ReactNode {
 function SidebarItemComponent({
   depth = 0,
   interactive = true,
+  isLastChild = false,
   item,
   onSelect,
   selectedLabel,
 }: {
   depth?: number;
   interactive?: boolean;
+  isLastChild?: boolean;
   item: HeroSidebarItem;
   onSelect?: (label: string) => void;
   selectedLabel?: string;
 }) {
+  const showBranch = depth > 0;
+  const rowSelectable = interactive && item.href === undefined;
+  const rowInteractive = rowSelectable || item.href !== undefined;
   const rowActive =
-    interactive && selectedLabel !== undefined && item.label === selectedLabel;
+    rowSelectable && selectedLabel !== undefined && item.label === selectedLabel;
+  const childItems = item.children ?? [];
+  const rowContent = (
+    <>
+      {showBranch ? <SidebarBranchCell $isLastChild={isLastChild} /> : null}
+      <SidebarRowMain $withBranch={showBranch}>
+        {renderSidebarIcon(item.icon)}
+        <SidebarItemText>
+          <SidebarItemLabel $active={rowActive}>{item.label}</SidebarItemLabel>
+          {item.meta ? <SidebarItemMeta>· {item.meta}</SidebarItemMeta> : null}
+        </SidebarItemText>
+      </SidebarRowMain>
+      {item.showChevron || (item.children && item.children.length > 0) ? (
+        <SidebarChevron>
+          <ChevronDownMini color={COLORS.textTertiary} size={12} />
+        </SidebarChevron>
+      ) : null}
+    </>
+  );
 
   return (
     <>
-      <SidebarItemRow
-        $active={rowActive}
-        $depth={depth}
-        onClick={interactive ? () => onSelect?.(item.label) : undefined}
-        style={{ cursor: interactive ? 'pointer' : 'default' }}
-      >
-        {renderSidebarIcon(item.icon)}
-        <SidebarItemText>
-          <SidebarItemLabel>{item.label}</SidebarItemLabel>
-          {item.meta ? <SidebarItemMeta>· {item.meta}</SidebarItemMeta> : null}
-        </SidebarItemText>
-        {item.showChevron || (item.children && item.children.length > 0) ? (
-          <SidebarChevron>
-            <ChevronDownMini color={COLORS.textTertiary} size={12} />
-          </SidebarChevron>
-        ) : null}
-      </SidebarItemRow>
-      {item.children && item.children.length > 0 ? (
+      {item.href ? (
+        <SidebarItemRowLink
+          $active={rowActive}
+          $depth={depth}
+          $interactive={rowInteractive}
+          $withBranch={showBranch}
+          href={item.href}
+          rel="noreferrer"
+          style={{ cursor: rowInteractive ? 'pointer' : 'default' }}
+          target="_blank"
+        >
+          {rowContent}
+        </SidebarItemRowLink>
+      ) : (
+        <SidebarItemRow
+          $active={rowActive}
+          $depth={depth}
+          $interactive={rowInteractive}
+          $withBranch={showBranch}
+          onClick={rowSelectable ? () => onSelect?.(item.label) : undefined}
+          style={{ cursor: rowInteractive ? 'pointer' : 'default' }}
+        >
+          {rowContent}
+        </SidebarItemRow>
+      )}
+      {childItems.length > 0 ? (
         <SidebarChildStack>
           <BranchLine />
-          {item.children.map((child) => (
+          {childItems.map((child, index) => (
             <SidebarItemComponent
               key={child.id}
               depth={depth + 1}
+              isLastChild={index === childItems.length - 1}
               interactive={interactive}
               item={child}
               onSelect={onSelect}
@@ -1389,7 +1596,7 @@ function PersonTokenCell({
     token.kind === 'workflow';
 
   return (
-    <div style={{ minWidth: 0, position: 'relative', width: '100%' }}>
+    <CellHoverAnchor>
       <CellChip
         clickable={false}
         label={token.name}
@@ -1399,11 +1606,7 @@ function PersonTokenCell({
             $color={tone.color}
             $square={square}
           >
-            {token.avatarUrl ? (
-              <AvatarImage alt="" src={token.avatarUrl} />
-            ) : (
-              (token.shortLabel ?? getInitials(token.name))
-            )}
+            <PersonAvatarContent token={token} />
           </PersonAvatarCircle>
         }
       />
@@ -1413,11 +1616,8 @@ function PersonTokenCell({
             <CopyMini />
           </MiniAction>
         ) : null}
-        <MiniAction aria-hidden="true">
-          <PencilMini />
-        </MiniAction>
       </HoverActions>
-    </div>
+    </CellHoverAnchor>
   );
 }
 
@@ -1468,7 +1668,7 @@ function RelationCellComponent({
   hovered: boolean;
 }) {
   return (
-    <div style={{ minWidth: 0, position: 'relative', width: '100%' }}>
+    <CellHoverAnchor>
       <MultiChipStack>
         {cell.items.map((item) => {
           const tone = PERSON_TONES[item.tone ?? 'gray'] ?? PERSON_TONES.gray;
@@ -1494,11 +1694,37 @@ function RelationCellComponent({
         <MiniAction aria-hidden="true">
           <CopyMini />
         </MiniAction>
-        <MiniAction aria-hidden="true">
-          <PencilMini />
-        </MiniAction>
       </HoverActions>
-    </div>
+    </CellHoverAnchor>
+  );
+}
+
+function TextCellComponent({
+  cell,
+  isFirstColumn,
+}: {
+  cell: HeroCellText;
+  isFirstColumn: boolean;
+}) {
+  if (!isFirstColumn || !cell.shortLabel) {
+    return <InlineText>{cell.value}</InlineText>;
+  }
+
+  const tone = PERSON_TONES[cell.tone ?? 'gray'] ?? PERSON_TONES.gray;
+
+  return (
+    <CellChip
+      clickable={false}
+      label={cell.value}
+      leftComponent={
+        <PersonAvatarCircle
+          $background={tone.background}
+          $color={tone.color}
+        >
+          {cell.shortLabel}
+        </PersonAvatarCircle>
+      }
+    />
   );
 }
 
@@ -1506,10 +1732,13 @@ function renderCellValue(
   cell: HeroCellValue,
   hovered: boolean,
   isFirstColumn: boolean,
+  columnId: string,
 ): ReactNode {
+  const showHoverAction = !ROW_HOVER_ACTION_DISABLED_COLUMNS.has(columnId);
+
   switch (cell.type) {
     case 'text':
-      return <InlineText>{cell.value}</InlineText>;
+      return <TextCellComponent cell={cell} isFirstColumn={isFirstColumn} />;
     case 'number':
       return <RightAlignedText>{cell.value}</RightAlignedText>;
     case 'link':
@@ -1520,11 +1749,6 @@ function renderCellValue(
             label={cell.value}
             variant={ChipVariant.Static}
           />
-          <HoverActions $visible={hovered}>
-            <MiniAction aria-hidden="true">
-              <PencilMini />
-            </MiniAction>
-          </HoverActions>
         </div>
       );
     case 'boolean':
@@ -1537,17 +1761,24 @@ function renderCellValue(
     case 'tag':
       return <TagChip>{cell.value}</TagChip>;
     case 'person':
-      return <PersonTokenCell hovered={hovered} token={cell} />;
+      return (
+        <PersonTokenCell hovered={hovered && showHoverAction} token={cell} />
+      );
     case 'entity':
       return (
         <EntityCellComponent
           cell={cell}
-          hovered={hovered}
+          hovered={hovered && showHoverAction}
           isFirstColumn={isFirstColumn}
         />
       );
     case 'relation':
-      return <RelationCellComponent cell={cell} hovered={hovered} />;
+      return (
+        <RelationCellComponent
+          cell={cell}
+          hovered={hovered && showHoverAction}
+        />
+      );
   }
 }
 
@@ -1728,11 +1959,10 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
               <SidebarTopBar>
                 <WorkspaceMenu>
                   <WorkspaceIcon>
-                    <IconBrandApple
-                      aria-hidden
-                      color="#ffffff"
-                      size={11}
-                      stroke={2}
+                    <WorkspaceIconImage
+                      alt=""
+                      aria-hidden="true"
+                      src={APPLE_WORKSPACE_LOGO_SRC}
                     />
                   </WorkspaceIcon>
                   <WorkspaceLabel>{visual.workspace.name}</WorkspaceLabel>
@@ -1777,7 +2007,7 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
                   </SidebarSection>
                 ) : null}
                 <SidebarSection>
-                  <SidebarSectionLabel>Workspace</SidebarSectionLabel>
+                  <SidebarSectionLabel $workspace>Workspace</SidebarSectionLabel>
                   {visual.workspaceNav.map(renderSidebarEntry)}
                 </SidebarSection>
               </SidebarScroll>
@@ -1800,26 +2030,30 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
 
                 <NavbarActions aria-hidden>
                   <DesktopOnlyNavbarAction>
-                    <NavbarDecorativeChip>
-                      <NavbarDecorativeIconWrap>
+                    <NavbarActionButton>
+                      <NavbarActionIconWrap>
                         <IconPlus
                           aria-hidden
                           size={VISUAL_TOKENS.icon.size.sm}
                           stroke={VISUAL_TOKENS.icon.stroke.sm}
                         />
-                      </NavbarDecorativeIconWrap>
-                      New Record
-                    </NavbarDecorativeChip>
+                      </NavbarActionIconWrap>
+                      <NavbarActionLabel>New Record</NavbarActionLabel>
+                    </NavbarActionButton>
                   </DesktopOnlyNavbarAction>
-                  <NavbarDecorativeChip>
-                    <NavbarDecorativeIconWrap>
+                  <NavbarActionButton>
+                    <NavbarActionIconWrap>
                       <IconDotsVertical
                         aria-hidden
                         size={VISUAL_TOKENS.icon.size.sm}
                         stroke={VISUAL_TOKENS.icon.stroke.sm}
                       />
-                    </NavbarDecorativeIconWrap>
-                  </NavbarDecorativeChip>
+                    </NavbarActionIconWrap>
+                    <NavbarActionSeparator />
+                    <NavbarActionLabel $color={VISUAL_TOKENS.font.color.light}>
+                      ⌘K
+                    </NavbarActionLabel>
+                  </NavbarActionButton>
                 </NavbarActions>
               </NavbarBar>
 
@@ -1930,6 +2164,7 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
                                         cell,
                                         hovered,
                                         !!column.isFirstColumn,
+                                        column.id,
                                       )
                                     : null}
                                 </TableCell>

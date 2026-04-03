@@ -3109,6 +3109,8 @@ type Query {
   getView(id: String!): View
   getViewSorts(viewId: String): [ViewSort!]!
   getViewSort(id: String!): ViewSort
+  getViewFields(viewId: String!): [ViewField!]!
+  getViewField(id: String!): ViewField
   getViewFieldGroups(viewId: String!): [ViewFieldGroup!]!
   getViewFieldGroup(id: String!): ViewFieldGroup
   apiKeys: [ApiKey!]!
@@ -3147,8 +3149,6 @@ type Query {
     """Specify to filter the records returned."""
     filter: ObjectFilter! = {}
   ): ObjectConnection!
-  getViewFields(viewId: String!): [ViewField!]!
-  getViewField(id: String!): ViewField
   index(
     """The id of the record to find."""
     id: UUID!
@@ -3401,6 +3401,11 @@ type Mutation {
   updateViewSort(input: UpdateViewSortInput!): ViewSort!
   deleteViewSort(input: DeleteViewSortInput!): Boolean!
   destroyViewSort(input: DestroyViewSortInput!): Boolean!
+  updateViewField(input: UpdateViewFieldInput!): ViewField!
+  createViewField(input: CreateViewFieldInput!): ViewField!
+  createManyViewFields(inputs: [CreateViewFieldInput!]!): [ViewField!]!
+  deleteViewField(input: DeleteViewFieldInput!): ViewField!
+  destroyViewField(input: DestroyViewFieldInput!): ViewField!
   updateViewFieldGroup(input: UpdateViewFieldGroupInput!): ViewFieldGroup!
   createViewFieldGroup(input: CreateViewFieldGroupInput!): ViewFieldGroup!
   createManyViewFieldGroups(inputs: [CreateViewFieldGroupInput!]!): [ViewFieldGroup!]!
@@ -3454,11 +3459,6 @@ type Mutation {
   createOneObject(input: CreateOneObjectInput!): Object!
   deleteOneObject(input: DeleteOneObjectInput!): Object!
   updateOneObject(input: UpdateOneObjectInput!): Object!
-  updateViewField(input: UpdateViewFieldInput!): ViewField!
-  createViewField(input: CreateViewFieldInput!): ViewField!
-  createManyViewFields(inputs: [CreateViewFieldInput!]!): [ViewField!]!
-  deleteViewField(input: DeleteViewFieldInput!): ViewField!
-  destroyViewField(input: DestroyViewFieldInput!): ViewField!
   createOneAgent(input: CreateAgentInput!): Agent!
   updateOneAgent(input: UpdateAgentInput!): Agent!
   deleteOneAgent(input: AgentIdInput!): Agent!
@@ -3749,6 +3749,43 @@ input DeleteViewSortInput {
 
 input DestroyViewSortInput {
   """The id of the view sort to destroy."""
+  id: UUID!
+}
+
+input UpdateViewFieldInput {
+  """The id of the view field to update"""
+  id: UUID!
+
+  """The view field to update"""
+  update: UpdateViewFieldInputUpdates!
+}
+
+input UpdateViewFieldInputUpdates {
+  isVisible: Boolean
+  size: Float
+  position: Float
+  aggregateOperation: AggregateOperations
+  viewFieldGroupId: UUID
+}
+
+input CreateViewFieldInput {
+  id: UUID
+  fieldMetadataId: UUID!
+  viewId: UUID!
+  isVisible: Boolean = true
+  size: Float = 0
+  position: Float = 0
+  aggregateOperation: AggregateOperations
+  viewFieldGroupId: UUID
+}
+
+input DeleteViewFieldInput {
+  """The id of the view field to delete."""
+  id: UUID!
+}
+
+input DestroyViewFieldInput {
+  """The id of the view field to destroy."""
   id: UUID!
 }
 
@@ -4080,43 +4117,6 @@ input UpdateObjectPayload {
   imageIdentifierFieldMetadataId: UUID
   isLabelSyncedWithName: Boolean
   isSearchable: Boolean
-}
-
-input UpdateViewFieldInput {
-  """The id of the view field to update"""
-  id: UUID!
-
-  """The view field to update"""
-  update: UpdateViewFieldInputUpdates!
-}
-
-input UpdateViewFieldInputUpdates {
-  isVisible: Boolean
-  size: Float
-  position: Float
-  aggregateOperation: AggregateOperations
-  viewFieldGroupId: UUID
-}
-
-input CreateViewFieldInput {
-  id: UUID
-  fieldMetadataId: UUID!
-  viewId: UUID!
-  isVisible: Boolean = true
-  size: Float = 0
-  position: Float = 0
-  aggregateOperation: AggregateOperations
-  viewFieldGroupId: UUID
-}
-
-input DeleteViewFieldInput {
-  """The id of the view field to delete."""
-  id: UUID!
-}
-
-input DestroyViewFieldInput {
-  """The id of the view field to destroy."""
-  id: UUID!
 }
 
 input CreateAgentInput {
