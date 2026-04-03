@@ -42,8 +42,8 @@ export const FOOTER_DATA: FooterDataType = {
       ctas: [],
       links: [
         { label: 'Cookie Policy', href: '#', external: false },
-        { label: 'Privacy Policy', href: '#', external: false },
-        { label: 'Terms and Conditions', href: '#', external: false },
+        { label: 'Privacy Policy', href: '/privacy-policy', external: false },
+        { label: 'Terms and Conditions', href: '/terms', external: false },
       ],
     },
     {
