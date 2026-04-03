@@ -29,6 +29,7 @@ import { type WorkflowVersionStatusUpdate } from 'src/modules/workflow/workflow-
 import { AutomatedTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.workspace-service';
 import { type DatabaseEventTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
+import { type CachedCronTrigger } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/types/cached-cron-trigger.type';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
@@ -502,9 +503,17 @@ export class WorkflowTriggerWorkspaceService {
           entityManager: transactionContext?.entityManager,
         });
 
-        await this.cacheStorageService.del(
-          WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-        );
+        const cachedTrigger: CachedCronTrigger = {
+          workspaceId,
+          workflowId: workflowVersion.workflowId,
+          pattern,
+        };
+
+        await this.cacheStorageService.hashSetIfExists({
+          key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
+          field: workflowVersion.workflowId,
+          value: JSON.stringify(cachedTrigger),
+        });
 
         return;
       }
@@ -524,11 +533,23 @@ export class WorkflowTriggerWorkspaceService {
 
     switch (workflowVersion.trigger.type) {
       case WorkflowTriggerType.DATABASE_EVENT:
+        await this.automatedTriggerWorkspaceService.deleteAutomatedTrigger({
+          workflowId: workflowVersion.workflowId,
+          workspaceId,
+          entityManager: transactionContext?.entityManager,
+        });
+
+        return;
       case WorkflowTriggerType.CRON:
         await this.automatedTriggerWorkspaceService.deleteAutomatedTrigger({
           workflowId: workflowVersion.workflowId,
           workspaceId,
           entityManager: transactionContext?.entityManager,
+        });
+
+        await this.cacheStorageService.hashDeleteIfExists({
+          key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
+          field: workflowVersion.workflowId,
         });
 
         return;

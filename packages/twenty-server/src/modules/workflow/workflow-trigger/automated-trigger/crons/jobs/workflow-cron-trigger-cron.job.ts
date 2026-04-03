@@ -18,10 +18,10 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
-import { WORKFLOW_CRON_TRIGGER_BATCH_SIZE } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-batch-size.constant';
+import { type CronTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
 import { WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-ttl.constant';
-import { type CronTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
+import { type CachedCronTrigger } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/types/cached-cron-trigger.type';
 import {
   WorkflowTriggerJob,
   type WorkflowTriggerJobData,
@@ -56,26 +56,57 @@ export class WorkflowCronTriggerCronJob {
 
     const now = new Date();
 
-    const cachedWorkspaceIds = await this.cacheStorageService.setMembers(
+    const cachedValues = await this.cacheStorageService.hashGetValues(
       WORKFLOW_CRON_TRIGGER_CACHE_KEY,
     );
 
-    if (cachedWorkspaceIds.length > 0) {
-      this.logger.log(
-        `Cache hit: ${cachedWorkspaceIds.length} workspaces with cron triggers`,
-      );
+    if (cachedValues.length > 0) {
+      this.logger.log(`Cache hit: ${cachedValues.length} cached cron triggers`);
 
-      await this.processWorkspacesBatched(cachedWorkspaceIds, now);
+      await this.getAndRunTriggersFromCache(cachedValues, now);
     } else {
       this.logger.log('Cache miss: performing full scan of all workspaces');
 
-      await this.fullScanAndRebuildCache(now);
+      await this.getAndRunTriggersFromDatabase(now);
     }
 
     this.logger.log('WorkflowCronTriggerCronJob completed');
   }
 
-  private async fullScanAndRebuildCache(now: Date) {
+  private async getAndRunTriggersFromCache(cachedValues: string[], now: Date) {
+    for (const serialized of cachedValues) {
+      try {
+        const trigger = JSON.parse(serialized) as CachedCronTrigger;
+
+        if (!isDefined(trigger.pattern)) {
+          continue;
+        }
+
+        if (!shouldRunNow(trigger.pattern, now)) {
+          continue;
+        }
+
+        this.logger.log(
+          `Enqueuing WorkflowTriggerJob for workflow ${trigger.workflowId} in workspace ${trigger.workspaceId}`,
+        );
+
+        await this.messageQueueService.add<WorkflowTriggerJobData>(
+          WorkflowTriggerJob.name,
+          {
+            workspaceId: trigger.workspaceId,
+            workflowId: trigger.workflowId,
+            payload: {},
+          },
+          { retryLimit: 3 },
+        );
+      } catch (error) {
+        this.logger.error(`Error processing cached trigger: ${error}`);
+        this.exceptionHandlerService.captureExceptions([error]);
+      }
+    }
+  }
+
+  private async getAndRunTriggersFromDatabase(now: Date) {
     const activeWorkspaces = await this.workspaceRepository.find({
       where: {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
@@ -85,88 +116,54 @@ export class WorkflowCronTriggerCronJob {
 
     this.logger.log(`Found ${activeWorkspaces.length} active workspaces`);
 
-    const workspaceIdsWithCronTriggers: string[] = [];
-    const allWorkspaceIds = activeWorkspaces.map(
-      (workspace) => workspace.id,
-    );
+    let triggerCount = 0;
 
-    for (
-      let i = 0;
-      i < allWorkspaceIds.length;
-      i += WORKFLOW_CRON_TRIGGER_BATCH_SIZE
-    ) {
-      const batch = allWorkspaceIds.slice(
-        i,
-        i + WORKFLOW_CRON_TRIGGER_BATCH_SIZE,
+    for (const workspace of activeWorkspaces) {
+      const triggersToCache = await this.getAndRunWorkspaceTriggersFromDatabase(
+        workspace.id,
+        now,
       );
 
-      const batchResults = await Promise.all(
-        batch.map((workspaceId) =>
-          this.processWorkspace(workspaceId, now),
-        ),
-      );
-
-      for (const [index, hasCronTriggers] of batchResults.entries()) {
-        if (hasCronTriggers) {
-          workspaceIdsWithCronTriggers.push(batch[index]);
-        }
+      for (const trigger of triggersToCache) {
+        await this.cacheStorageService.hashSet({
+          key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
+          field: trigger.workflowId,
+          value: JSON.stringify(trigger),
+        });
+        triggerCount++;
       }
     }
 
-    if (workspaceIdsWithCronTriggers.length > 0) {
-      await this.cacheStorageService.setAdd(
+    if (triggerCount > 0) {
+      await this.cacheStorageService.expire(
         WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-        workspaceIdsWithCronTriggers,
         WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS,
       );
     }
 
-    this.logger.log(
-      `Cache rebuilt with ${workspaceIdsWithCronTriggers.length} workspaces`,
-    );
+    this.logger.log(`Cache rebuilt with ${triggerCount} cron triggers`);
   }
 
-  private async processWorkspacesBatched(
-    workspaceIds: string[],
-    now: Date,
-  ) {
-    for (
-      let i = 0;
-      i < workspaceIds.length;
-      i += WORKFLOW_CRON_TRIGGER_BATCH_SIZE
-    ) {
-      const batch = workspaceIds.slice(
-        i,
-        i + WORKFLOW_CRON_TRIGGER_BATCH_SIZE,
-      );
-
-      await Promise.all(
-        batch.map((workspaceId) =>
-          this.processWorkspace(workspaceId, now),
-        ),
-      );
-    }
-  }
-
-  private async processWorkspace(
+  private async getAndRunWorkspaceTriggersFromDatabase(
     workspaceId: string,
     now: Date,
-  ): Promise<boolean> {
+  ): Promise<CachedCronTrigger[]> {
     try {
       const schemaName = getWorkspaceSchemaName(workspaceId);
 
-      const workflowAutomatedCronTriggers =
-        await this.coreDataSource.query(
-          `SELECT * FROM ${schemaName}."workflowAutomatedTrigger" WHERE type = '${AutomatedTriggerType.CRON}'`,
-        );
+      const workflowAutomatedCronTriggers = await this.coreDataSource.query(
+        `SELECT * FROM ${schemaName}."workflowAutomatedTrigger" WHERE type = '${AutomatedTriggerType.CRON}'`,
+      );
 
       if (workflowAutomatedCronTriggers.length === 0) {
-        return false;
+        return [];
       }
 
       this.logger.log(
         `Workspace ${workspaceId}: found ${workflowAutomatedCronTriggers.length} cron triggers`,
       );
+
+      const triggersToCache: CachedCronTrigger[] = [];
 
       for (const trigger of workflowAutomatedCronTriggers) {
         const settings = trigger.settings as CronTriggerSettings;
@@ -178,35 +175,39 @@ export class WorkflowCronTriggerCronJob {
           continue;
         }
 
-        if (!shouldRunNow(settings.pattern, now)) {
-          continue;
+        const cachedTrigger: CachedCronTrigger = {
+          workspaceId,
+          workflowId: trigger.workflowId,
+          pattern: settings.pattern,
+        };
+
+        triggersToCache.push(cachedTrigger);
+
+        if (shouldRunNow(settings.pattern, now)) {
+          this.logger.log(
+            `Trigger ${trigger.id}: enqueuing WorkflowTriggerJob for workflow ${trigger.workflowId}`,
+          );
+
+          await this.messageQueueService.add<WorkflowTriggerJobData>(
+            WorkflowTriggerJob.name,
+            {
+              workspaceId,
+              workflowId: trigger.workflowId,
+              payload: {},
+            },
+            { retryLimit: 3 },
+          );
         }
-
-        this.logger.log(
-          `Trigger ${trigger.id}: enqueuing WorkflowTriggerJob for workflow ${trigger.workflowId}`,
-        );
-
-        await this.messageQueueService.add<WorkflowTriggerJobData>(
-          WorkflowTriggerJob.name,
-          {
-            workspaceId,
-            workflowId: trigger.workflowId,
-            payload: {},
-          },
-          { retryLimit: 3 },
-        );
       }
 
-      return true;
+      return triggersToCache;
     } catch (error) {
-      this.logger.error(
-        `Error processing workspace ${workspaceId}: ${error}`,
-      );
+      this.logger.error(`Error processing workspace ${workspaceId}: ${error}`);
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: workspaceId },
       });
 
-      return false;
+      return [];
     }
   }
 }

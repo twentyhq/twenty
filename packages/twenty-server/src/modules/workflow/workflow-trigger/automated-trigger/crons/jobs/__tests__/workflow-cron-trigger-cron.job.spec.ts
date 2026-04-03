@@ -30,8 +30,9 @@ const mockExceptionHandlerService = {
 };
 
 const mockCacheStorageService = {
-  setMembers: jest.fn(),
-  setAdd: jest.fn(),
+  hashGetValues: jest.fn(),
+  hashSet: jest.fn(),
+  expire: jest.fn(),
 };
 
 describe('WorkflowCronTriggerCronJob', () => {
@@ -76,30 +77,31 @@ describe('WorkflowCronTriggerCronJob', () => {
   });
 
   describe('handle - cache hit', () => {
-    it('should query only cached workspaces when cache exists', async () => {
-      mockCacheStorageService.setMembers.mockResolvedValue([
-        WORKSPACE_1,
-        WORKSPACE_2,
+    it('should process cached triggers without querying the database', async () => {
+      mockCacheStorageService.hashGetValues.mockResolvedValue([
+        JSON.stringify({
+          workspaceId: WORKSPACE_1,
+          workflowId: 'workflow-1',
+          pattern: '* * * * *',
+        }),
       ]);
-      mockCoreDataSource.query.mockResolvedValue([]);
 
       await job.handle();
 
-      expect(mockCacheStorageService.setMembers).toHaveBeenCalledWith(
+      expect(mockCacheStorageService.hashGetValues).toHaveBeenCalledWith(
         WORKFLOW_CRON_TRIGGER_CACHE_KEY,
       );
       expect(mockWorkspaceRepository.find).not.toHaveBeenCalled();
-      expect(mockCoreDataSource.query).toHaveBeenCalledTimes(2);
+      expect(mockCoreDataSource.query).not.toHaveBeenCalled();
     });
 
     it('should enqueue jobs for matching cron triggers', async () => {
-      mockCacheStorageService.setMembers.mockResolvedValue([WORKSPACE_1]);
-      mockCoreDataSource.query.mockResolvedValue([
-        {
-          id: 'trigger-1',
+      mockCacheStorageService.hashGetValues.mockResolvedValue([
+        JSON.stringify({
+          workspaceId: WORKSPACE_1,
           workflowId: 'workflow-1',
-          settings: { pattern: '* * * * *' },
-        },
+          pattern: '* * * * *',
+        }),
       ]);
 
       await job.handle();
@@ -116,13 +118,12 @@ describe('WorkflowCronTriggerCronJob', () => {
     });
 
     it('should not enqueue jobs when cron pattern does not match', async () => {
-      mockCacheStorageService.setMembers.mockResolvedValue([WORKSPACE_1]);
-      mockCoreDataSource.query.mockResolvedValue([
-        {
-          id: 'trigger-1',
+      mockCacheStorageService.hashGetValues.mockResolvedValue([
+        JSON.stringify({
+          workspaceId: WORKSPACE_1,
           workflowId: 'workflow-1',
-          settings: { pattern: '0 0 1 1 *' },
-        },
+          pattern: '0 0 1 1 *',
+        }),
       ]);
 
       await job.handle();
@@ -131,13 +132,11 @@ describe('WorkflowCronTriggerCronJob', () => {
     });
 
     it('should skip triggers with undefined pattern', async () => {
-      mockCacheStorageService.setMembers.mockResolvedValue([WORKSPACE_1]);
-      mockCoreDataSource.query.mockResolvedValue([
-        {
-          id: 'trigger-1',
+      mockCacheStorageService.hashGetValues.mockResolvedValue([
+        JSON.stringify({
+          workspaceId: WORKSPACE_1,
           workflowId: 'workflow-1',
-          settings: {},
-        },
+        }),
       ]);
 
       await job.handle();
@@ -146,18 +145,23 @@ describe('WorkflowCronTriggerCronJob', () => {
     });
 
     it('should not rebuild cache on cache hit', async () => {
-      mockCacheStorageService.setMembers.mockResolvedValue([WORKSPACE_1]);
-      mockCoreDataSource.query.mockResolvedValue([]);
+      mockCacheStorageService.hashGetValues.mockResolvedValue([
+        JSON.stringify({
+          workspaceId: WORKSPACE_1,
+          workflowId: 'workflow-1',
+          pattern: '* * * * *',
+        }),
+      ]);
 
       await job.handle();
 
-      expect(mockCacheStorageService.setAdd).not.toHaveBeenCalled();
+      expect(mockCacheStorageService.hashSet).not.toHaveBeenCalled();
     });
   });
 
   describe('handle - cache miss', () => {
     it('should perform full scan when cache is empty', async () => {
-      mockCacheStorageService.setMembers.mockResolvedValue([]);
+      mockCacheStorageService.hashGetValues.mockResolvedValue([]);
       mockWorkspaceRepository.find.mockResolvedValue([
         { id: WORKSPACE_1 },
         { id: WORKSPACE_2 },
@@ -171,8 +175,8 @@ describe('WorkflowCronTriggerCronJob', () => {
       expect(mockCoreDataSource.query).toHaveBeenCalledTimes(3);
     });
 
-    it('should rebuild cache with workspaces that have cron triggers', async () => {
-      mockCacheStorageService.setMembers.mockResolvedValue([]);
+    it('should write each trigger to cache immediately and set TTL', async () => {
+      mockCacheStorageService.hashGetValues.mockResolvedValue([]);
       mockWorkspaceRepository.find.mockResolvedValue([
         { id: WORKSPACE_1 },
         { id: WORKSPACE_2 },
@@ -198,31 +202,75 @@ describe('WorkflowCronTriggerCronJob', () => {
 
       await job.handle();
 
-      expect(mockCacheStorageService.setAdd).toHaveBeenCalledWith(
+      expect(mockCacheStorageService.hashSet).toHaveBeenCalledTimes(2);
+      expect(mockCacheStorageService.hashSet).toHaveBeenCalledWith({
+        key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
+        field: 'workflow-1',
+        value: JSON.stringify({
+          workspaceId: WORKSPACE_1,
+          workflowId: 'workflow-1',
+          pattern: '* * * * *',
+        }),
+      });
+      expect(mockCacheStorageService.hashSet).toHaveBeenCalledWith({
+        key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
+        field: 'workflow-2',
+        value: JSON.stringify({
+          workspaceId: WORKSPACE_3,
+          workflowId: 'workflow-2',
+          pattern: '* * * * *',
+        }),
+      });
+      expect(mockCacheStorageService.expire).toHaveBeenCalledWith(
         WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-        [WORKSPACE_1, WORKSPACE_3],
         WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS,
       );
     });
 
-    it('should not call setAdd when no workspaces have cron triggers', async () => {
-      mockCacheStorageService.setMembers.mockResolvedValue([]);
-      mockWorkspaceRepository.find.mockResolvedValue([
-        { id: WORKSPACE_1 },
-      ]);
+    it('should not write to cache when no workspaces have cron triggers', async () => {
+      mockCacheStorageService.hashGetValues.mockResolvedValue([]);
+      mockWorkspaceRepository.find.mockResolvedValue([{ id: WORKSPACE_1 }]);
       mockCoreDataSource.query.mockResolvedValue([]);
 
       await job.handle();
 
-      expect(mockCacheStorageService.setAdd).not.toHaveBeenCalled();
+      expect(mockCacheStorageService.hashSet).not.toHaveBeenCalled();
+      expect(mockCacheStorageService.expire).not.toHaveBeenCalled();
     });
   });
 
   describe('error handling', () => {
-    it('should catch errors per workspace and continue processing others', async () => {
-      mockCacheStorageService.setMembers.mockResolvedValue([
-        WORKSPACE_1,
-        WORKSPACE_2,
+    it('should catch errors for cached triggers and continue processing', async () => {
+      mockCacheStorageService.hashGetValues.mockResolvedValue([
+        'invalid-json',
+        JSON.stringify({
+          workspaceId: WORKSPACE_2,
+          workflowId: 'workflow-1',
+          pattern: '* * * * *',
+        }),
+      ]);
+
+      await job.handle();
+
+      expect(
+        mockExceptionHandlerService.captureExceptions,
+      ).toHaveBeenCalledWith([expect.any(Error)]);
+      expect(mockMessageQueueService.add).toHaveBeenCalledWith(
+        WorkflowTriggerJob.name,
+        {
+          workspaceId: WORKSPACE_2,
+          workflowId: 'workflow-1',
+          payload: {},
+        },
+        { retryLimit: 3 },
+      );
+    });
+
+    it('should catch errors per workspace during full scan and continue', async () => {
+      mockCacheStorageService.hashGetValues.mockResolvedValue([]);
+      mockWorkspaceRepository.find.mockResolvedValue([
+        { id: WORKSPACE_1 },
+        { id: WORKSPACE_2 },
       ]);
       mockCoreDataSource.query
         .mockRejectedValueOnce(new Error('Schema not found'))
@@ -236,10 +284,11 @@ describe('WorkflowCronTriggerCronJob', () => {
 
       await job.handle();
 
-      expect(mockExceptionHandlerService.captureExceptions).toHaveBeenCalledWith(
-        [expect.any(Error)],
-        { workspace: { id: WORKSPACE_1 } },
-      );
+      expect(
+        mockExceptionHandlerService.captureExceptions,
+      ).toHaveBeenCalledWith([expect.any(Error)], {
+        workspace: { id: WORKSPACE_1 },
+      });
       expect(mockMessageQueueService.add).toHaveBeenCalledWith(
         WorkflowTriggerJob.name,
         {
