@@ -49,8 +49,8 @@ export const fieldMetadataConfigByFieldName: Record<
       { value: 'OPTION_2' },
     ] as FieldMetadataDefaultOption[],
   },
-  manyToOneRelationFieldId: {
-    name: 'manyToOneRelationFieldId',
+  manyToOneRelationField: {
+    name: 'manyToOneRelationField',
     type: FieldMetadataType.RELATION,
     isNullable: true,
     settings: {
@@ -58,8 +58,8 @@ export const fieldMetadataConfigByFieldName: Record<
       joinColumnName: 'manyToOneRelationFieldId',
     },
   },
-  manyToOneRelationFieldIdId: {
-    name: 'manyToOneRelationFieldId',
+  manyToOneRelationFieldId: {
+    name: 'manyToOneRelationField',
     type: FieldMetadataType.RELATION,
     isNullable: true,
     settings: {

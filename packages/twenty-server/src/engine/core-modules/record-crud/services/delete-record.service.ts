@@ -54,7 +54,7 @@ export class DeleteRecordService {
       }
 
       if (soft) {
-        const deletedRecord = await this.commonDeleteOneRunner.execute(
+        const { results: deletedRecord } = await this.commonDeleteOneRunner.execute(
           {
             id: objectRecordId,
             selectedFields,
@@ -70,7 +70,7 @@ export class DeleteRecordService {
           result: deletedRecord,
         };
       } else {
-        const destroyedRecord = await this.commonDestroyOneRunner.execute(
+        const { results: destroyedRecord } = await this.commonDestroyOneRunner.execute(
           {
             id: objectRecordId,
             selectedFields,

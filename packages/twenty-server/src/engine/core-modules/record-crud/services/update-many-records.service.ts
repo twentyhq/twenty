@@ -50,7 +50,7 @@ export class UpdateManyRecordsService {
 
       const cleanedData = removeUndefinedFromRecord(data);
 
-      const updatedRecords = await this.commonUpdateManyRunner.execute(
+      const { results: updatedRecords } = await this.commonUpdateManyRunner.execute(
         { filter, data: cleanedData, selectedFields },
         queryRunnerContext,
       );

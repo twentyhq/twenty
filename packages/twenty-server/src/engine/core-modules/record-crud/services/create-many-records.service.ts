@@ -59,7 +59,7 @@ export class CreateManyRecordsService {
         createdBy: actorMetadata,
       }));
 
-      const createdRecords = await this.commonCreateManyRunner.execute(
+      const { results: createdRecords } = await this.commonCreateManyRunner.execute(
         {
           data: cleanedRecords,
           selectedFields,

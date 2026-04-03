@@ -203,12 +203,15 @@ export class DirectExecutionService {
       const variables = req.body.variables ?? {};
       const data: Record<string, unknown> = {};
 
-      const { graphQLResolverNameMap, flatObjectMetadataMaps, flatFieldMetadataMaps } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'graphQLResolverNameMap',
-          'flatObjectMetadataMaps',
-          'flatFieldMetadataMaps',
-        ]);
+      const {
+        graphQLResolverNameMap,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'graphQLResolverNameMap',
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+      ]);
 
       const { idByNameSingular: objectIdByNameSingular } =
         buildObjectIdByNameMaps(flatObjectMetadataMaps);
