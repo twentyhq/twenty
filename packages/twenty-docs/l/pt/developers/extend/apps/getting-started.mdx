@@ -19,9 +19,9 @@ Antes de começar, verifique se o seguinte está instalado na sua máquina:
 * **Yarn 4** — Vem com o Node.js via Corepack. Ative-o executando `corepack enable`
 * **Docker** — [Baixe aqui](https://www.docker.com/products/docker-desktop/). Necessário para executar uma instância local do Twenty. Não é necessário se você já tiver um servidor Twenty em execução.
 
-## Create your first app
+## Crie seu primeiro aplicativo
 
-### Scaffold your app
+### Gere o scaffold do seu aplicativo
 
 Abra um terminal e execute:
 
@@ -33,7 +33,7 @@ Será solicitado que você informe um nome e uma descrição para o seu aplicati
 
 Isso cria uma nova pasta chamada `my-twenty-app` com tudo de que você precisa.
 
-### Set up a local Twenty instance
+### Configure uma instância local do Twenty
 
 O gerador de scaffold perguntará:
 
@@ -46,7 +46,7 @@ O gerador de scaffold perguntará:
   <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Deve iniciar instância local?" />
 </div>
 
-### Sign in to your workspace
+### Faça login no seu espaço de trabalho
 
 Em seguida, uma janela do navegador será aberta com a página de login do Twenty. Faça login com a conta de demonstração pré-configurada:
 
@@ -57,7 +57,7 @@ Em seguida, uma janela do navegador será aberta com a página de login do Twent
   <img src="/images/docs/developers/extends/apps/login.png" alt="Tela de login do Twenty" />
 </div>
 
-### Authorize the app
+### Autorize o aplicativo
 
 Após fazer login, você verá uma tela de autorização. Isso permite que seu aplicativo interaja com seu espaço de trabalho.
 
@@ -73,7 +73,7 @@ Depois de autorizado, seu terminal confirmará que tudo está configurado.
   <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="Scaffold do aplicativo criado com sucesso" />
 </div>
 
-### Start developing
+### Comece a desenvolver
 
 Entre na nova pasta do seu aplicativo e inicie o servidor de desenvolvimento:
 
@@ -98,7 +98,7 @@ O modo de desenvolvimento só está disponível em instâncias do Twenty em modo
   <img src="/images/docs/developers/extends/apps/dev.jpg" alt="Saída do terminal no modo de desenvolvimento" />
 </div>
 
-### See your app in Twenty
+### Veja seu aplicativo no Twenty
 
 Abra [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer) no seu navegador. Navegue até **Settings > Apps** e selecione a aba **Developer**. Você deverá ver seu aplicativo listado em **Your Apps**:
 
@@ -130,24 +130,24 @@ Tudo pronto! Edite qualquer arquivo em `src/` e as alterações serão detectada
 
 ## O que você pode criar
 
-Apps are composed of **entities** — each defined as a TypeScript file with a single `export default`:
+Os aplicativos são compostos por **entidades** — cada uma definida como um arquivo TypeScript com um único `export default`:
 
-| Entity                       | What it does                                                                                  |
-| ---------------------------- | --------------------------------------------------------------------------------------------- |
-| **Objects & Fields**         | Define custom data models (like Post Card, Invoice) with typed fields                         |
-| **Funções lógicas**          | Server-side TypeScript functions triggered by HTTP routes, cron schedules, or database events |
-| **Componentes de front-end** | React components that render inside Twenty's UI (side panel, widgets, command menu)           |
-| **Skills & Agents**          | AI capabilities — reusable instructions and autonomous assistants                             |
-| **Views & Navigation**       | Pre-configured list views and sidebar menu items for your objects                             |
-| **Layouts de página**        | Custom record detail pages with tabs and widgets                                              |
+| Entidade                     | O que faz                                                                                                          |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Objetos e campos**         | Defina modelos de dados personalizados (como cartão postal, fatura) com campos tipados                             |
+| **Funções lógicas**          | Funções TypeScript do lado do servidor acionadas por rotas HTTP, agendamentos do cron ou eventos de banco de dados |
+| **Componentes de front-end** | Componentes React que são renderizados na UI do Twenty (painel lateral, widgets, menu de comandos)                 |
+| **Habilidades e agentes**    | Recursos de IA — instruções reutilizáveis e assistentes autônomos                                                  |
+| **Exibições e navegação**    | Exibições de lista pré-configuradas e itens de menu da barra lateral para seus objetos                             |
+| **Layouts de página**        | Páginas de detalhes de registros personalizadas com abas e widgets                                                 |
 
-Head over to [Building Apps](/l/pt/developers/extend/apps/building) for a detailed guide on each entity type.
+Acesse [Criando aplicativos](/l/pt/developers/extend/apps/building) para um guia detalhado sobre cada tipo de entidade.
 
 ---
 
 ## Estrutura do projeto
 
-The scaffolder generates the following file structure:
+A ferramenta de scaffolding gera a seguinte estrutura de arquivos:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -176,15 +176,15 @@ my-twenty-app/
       └── app-install.integration-test.ts     # Integration test
 ```
 
-### Starting from an example
+### Começando a partir de um exemplo
 
-To start from a more complete example with custom objects, fields, logic functions, front components, and more, use the `--example` flag:
+Para começar a partir de um exemplo mais completo com objetos, campos, funções de lógica, componentes de front-end e mais, use a opção `--example`:
 
 ```bash filename="Terminal"
 npx create-twenty-app@latest my-twenty-app --example postcard
 ```
 
-Examples are sourced from the [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples) directory on GitHub. You can also scaffold individual entities into an existing project with `yarn twenty add` (see [Building Apps](/l/pt/developers/extend/apps/building#scaffolding-entities-with-yarn-twenty-add)).
+Os exemplos são obtidos do diretório [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples) no GitHub. Você também pode criar o scaffolding de entidades individuais em um projeto existente com `yarn twenty add` (veja [Criando aplicativos](/l/pt/developers/extend/apps/building#scaffolding-entities-with-yarn-twenty-add)).
 
 ### Arquivos principais
 
@@ -192,14 +192,14 @@ Examples are sourced from the [twenty-apps/examples](https://github.com/twentyhq
 | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `package.json`                           | Declara o nome, a versão e as dependências do seu aplicativo. Inclui um script `twenty` para que você possa executar `yarn twenty help` e ver todos os comandos. |
 | `src/application-config.ts`              | **Obrigatório.** O principal arquivo de configuração do seu aplicativo.                                                                                          |
-| `src/default-role.ts`                    | Default role that controls what your logic functions can access.                                                                                                 |
-| `src/constants/universal-identifiers.ts` | Auto-generated UUIDs and app metadata (display name, description).                                                                                               |
+| `src/default-role.ts`                    | Papel padrão que controla o que suas funções de lógica podem acessar.                                                                                            |
+| `src/constants/universal-identifiers.ts` | UUIDs gerados automaticamente e metadados do aplicativo (nome de exibição, descrição).                                                                           |
 | `src/__tests__/`                         | Testes de integração (configuração + teste de exemplo).                                                                                                          |
 | `public/`                                | Recursos estáticos (imagens, fontes) servidos com seu aplicativo.                                                                                                |
 
-## Local development server
+## Servidor de desenvolvimento local
 
-The scaffolder already started a local Twenty server for you. To manage it later, use `yarn twenty server`:
+A ferramenta de scaffolding já iniciou um servidor local do Twenty para você. Para gerenciá-lo depois, use `yarn twenty server`:
 
 | Comando                                | Descrição                                              |
 | -------------------------------------- | ------------------------------------------------------ |
@@ -211,7 +211,7 @@ The scaffolder already started a local Twenty server for you. To manage it later
 | `yarn twenty server logs --lines 100`  | Mostra as últimas 100 linhas de log                    |
 | `yarn twenty server reset`             | Exclui todos os dados e inicia do zero                 |
 
-Data is persisted across restarts in two Docker volumes (`twenty-app-dev-data` for PostgreSQL, `twenty-app-dev-storage` for files). Use `reset` to wipe everything and start fresh.
+Os dados são persistidos entre reinicializações em dois volumes do Docker (`twenty-app-dev-data` para PostgreSQL, `twenty-app-dev-storage` para arquivos). Use `reset` para apagar tudo e começar do zero.
 
 <Note>
   O servidor requer que o **Docker** esteja em execução. Se você vir um erro "Docker not running", certifique-se de que o Docker Desktop (ou o daemon do Docker) esteja iniciado.

@@ -19,9 +19,9 @@ description: Создайте своё первое приложение Twenty 
 * **Yarn 4** — Поставляется вместе с Node.js через Corepack. Включите его, выполнив `corepack enable`
 * **Docker** — [Скачать здесь](https://www.docker.com/products/docker-desktop/). Требуется для запуска локального экземпляра Twenty. Не требуется, если у вас уже запущен сервер Twenty.
 
-## Create your first app
+## Создайте своё первое приложение
 
-### Scaffold your app
+### Сгенерируйте каркас приложения
 
 Откройте терминал и выполните:
 
@@ -33,7 +33,7 @@ npx create-twenty-app@latest my-twenty-app
 
 Будет создана новая папка `my-twenty-app` со всем необходимым.
 
-### Set up a local Twenty instance
+### Настройте локальный экземпляр Twenty
 
 Скэффолдер спросит:
 
@@ -46,7 +46,7 @@ npx create-twenty-app@latest my-twenty-app
   <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Запустить локальный экземпляр?" />
 </div>
 
-### Sign in to your workspace
+### Войдите в своё рабочее пространство
 
 Затем откроется окно браузера со страницей входа в Twenty. Войдите, используя предварительно созданную демонстрационную учётную запись:
 
@@ -57,7 +57,7 @@ npx create-twenty-app@latest my-twenty-app
   <img src="/images/docs/developers/extends/apps/login.png" alt="Экран входа в Twenty" />
 </div>
 
-### Authorize the app
+### Авторизуйте приложение
 
 После входа вы увидите экран авторизации. Это позволит вашему приложению взаимодействовать с вашим рабочим пространством.
 
@@ -73,7 +73,7 @@ npx create-twenty-app@latest my-twenty-app
   <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="Каркас приложения успешно создан" />
 </div>
 
-### Start developing
+### Начните разработку
 
 Перейдите в папку вашего нового приложения и запустите сервер разработки:
 
@@ -98,7 +98,7 @@ yarn twenty dev --verbose
   <img src="/images/docs/developers/extends/apps/dev.jpg" alt="Вывод терминала в режиме разработки" />
 </div>
 
-### See your app in Twenty
+### Посмотрите своё приложение в Twenty
 
 Откройте [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer) в браузере. Перейдите в **Settings > Apps** и выберите вкладку **Developer**. Вы должны увидеть своё приложение в разделе **Your Apps**:
 
@@ -130,24 +130,24 @@ yarn twenty dev --verbose
 
 ## Что вы можете создать
 
-Apps are composed of **entities** — each defined as a TypeScript file with a single `export default`:
+Приложения состоят из **сущностей** — каждая определена как файл TypeScript с одним `export default`:
 
-| Entity                  | What it does                                                                                  |
-| ----------------------- | --------------------------------------------------------------------------------------------- |
-| **Objects & Fields**    | Define custom data models (like Post Card, Invoice) with typed fields                         |
-| **Логические функции**  | Server-side TypeScript functions triggered by HTTP routes, cron schedules, or database events |
-| **Фронтенд-компоненты** | React components that render inside Twenty's UI (side panel, widgets, command menu)           |
-| **Skills & Agents**     | AI capabilities — reusable instructions and autonomous assistants                             |
-| **Views & Navigation**  | Pre-configured list views and sidebar menu items for your objects                             |
-| **Макеты страниц**      | Custom record detail pages with tabs and widgets                                              |
+| Сущность                      | Что делает                                                                                                |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------- |
+| **Объекты и поля**            | Определяйте пользовательские модели данных (например, Post Card, Invoice) с типизированными полями        |
+| **Логические функции**        | Серверные функции на TypeScript, запускаемые HTTP-маршрутами, расписаниями cron или событиями базы данных |
+| **Фронтенд-компоненты**       | React-компоненты, которые отображаются внутри интерфейса Twenty (боковая панель, виджеты, командное меню) |
+| **Навыки и агенты**           | Возможности ИИ — многократно используемые инструкции и автономные помощники                               |
+| **Представления и навигация** | Предварительно настроенные представления списков и элементы бокового меню для ваших объектов              |
+| **Макеты страниц**            | Пользовательские страницы сведений о записи с вкладками и виджетами                                       |
 
-Head over to [Building Apps](/l/ru/developers/extend/apps/building) for a detailed guide on each entity type.
+Перейдите к разделу [Создание приложений](/l/ru/developers/extend/apps/building), чтобы получить подробное руководство по каждому типу сущности.
 
 ---
 
 ## Структура проекта
 
-The scaffolder generates the following file structure:
+Инструмент генерации каркаса создаёт следующую структуру файлов:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -176,15 +176,15 @@ my-twenty-app/
       └── app-install.integration-test.ts     # Integration test
 ```
 
-### Starting from an example
+### Начните с примера
 
-To start from a more complete example with custom objects, fields, logic functions, front components, and more, use the `--example` flag:
+Чтобы начать с более полного примера с пользовательскими объектами, полями, логическими функциями, фронтенд-компонентами и многим другим, используйте флаг `--example`:
 
 ```bash filename="Terminal"
 npx create-twenty-app@latest my-twenty-app --example postcard
 ```
 
-Examples are sourced from the [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples) directory on GitHub. You can also scaffold individual entities into an existing project with `yarn twenty add` (see [Building Apps](/l/ru/developers/extend/apps/building#scaffolding-entities-with-yarn-twenty-add)).
+Примеры берутся из каталога [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples) на GitHub. Вы также можете сгенерировать каркас отдельных сущностей в существующем проекте с помощью `yarn twenty add` (см. [Создание приложений](/l/ru/developers/extend/apps/building#scaffolding-entities-with-yarn-twenty-add)).
 
 ### Ключевые файлы
 
@@ -192,14 +192,14 @@ Examples are sourced from the [twenty-apps/examples](https://github.com/twentyhq
 | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `package.json`                           | Содержит имя, версию и зависимости вашего приложения. Содержит скрипт `twenty`, чтобы вы могли выполнить `yarn twenty help` и увидеть все команды. |
 | `src/application-config.ts`              | **Обязательно.** Основной файл конфигурации для вашего приложения.                                                                                 |
-| `src/default-role.ts`                    | Default role that controls what your logic functions can access.                                                                                   |
-| `src/constants/universal-identifiers.ts` | Auto-generated UUIDs and app metadata (display name, description).                                                                                 |
+| `src/default-role.ts`                    | Роль по умолчанию, которая контролирует, к чему имеют доступ ваши логические функции.                                                              |
+| `src/constants/universal-identifiers.ts` | Автоматически генерируемые UUID и метаданные приложения (отображаемое имя, описание).                                                              |
 | `src/__tests__/`                         | Интеграционные тесты (настройка + пример теста).                                                                                                   |
 | `public/`                                | Статические ресурсы (изображения, шрифты), обслуживаемые вместе с вашим приложением.                                                               |
 
-## Local development server
+## Локальный сервер разработки
 
-The scaffolder already started a local Twenty server for you. To manage it later, use `yarn twenty server`:
+Генератор каркаса уже запустил для вас локальный сервер Twenty. Чтобы управлять им позже, используйте `yarn twenty server`:
 
 | Команда                                | Описание                                                       |
 | -------------------------------------- | -------------------------------------------------------------- |
@@ -211,7 +211,7 @@ The scaffolder already started a local Twenty server for you. To manage it later
 | `yarn twenty server logs --lines 100`  | Показать последние 100 строк журнала                           |
 | `yarn twenty server reset`             | Удалить все данные и начать с чистого листа                    |
 
-Data is persisted across restarts in two Docker volumes (`twenty-app-dev-data` for PostgreSQL, `twenty-app-dev-storage` for files). Use `reset` to wipe everything and start fresh.
+Данные сохраняются между перезапусками в двух томах Docker (`twenty-app-dev-data` для PostgreSQL, `twenty-app-dev-storage` для файлов). Используйте `reset`, чтобы стереть всё и начать заново.
 
 <Note>
   Для работы сервера необходимо, чтобы **Docker** был запущен. Если вы видите ошибку "Docker not running", убедитесь, что запущен Docker Desktop (или демон Docker).
