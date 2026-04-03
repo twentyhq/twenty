@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { v4 } from 'uuid';
-import { EntityManager } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import {
   CalendarChannelSyncStage,
@@ -17,7 +18,6 @@ export type CreateCalendarChannelInput = {
   connectedAccountId: string;
   handle: string;
   calendarVisibility?: CalendarChannelVisibility;
-  manager: EntityManager;
   skipMessageChannelConfiguration?: boolean;
 };
 
@@ -25,6 +25,8 @@ export type CreateCalendarChannelInput = {
 export class CreateCalendarChannelService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    @InjectRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
   ) {}
 
   async createCalendarChannel(
@@ -35,7 +37,6 @@ export class CreateCalendarChannelService {
       connectedAccountId,
       handle,
       calendarVisibility,
-      manager,
       skipMessageChannelConfiguration,
     } = input;
 
@@ -45,7 +46,7 @@ export class CreateCalendarChannelService {
       async () => {
         const newCalendarChannelId = v4();
 
-        await manager.getRepository(CalendarChannelEntity).save({
+        await this.calendarChannelRepository.save({
           id: newCalendarChannelId,
           connectedAccountId,
           handle,

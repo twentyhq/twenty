@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { EntityManager } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import {
   MessageChannelPendingGroupEmailsAction,
@@ -21,7 +22,6 @@ export type CreateMessageChannelInput = {
   connectedAccountId: string;
   handle: string;
   messageVisibility?: MessageChannelVisibility;
-  manager: EntityManager;
   skipMessageChannelConfiguration?: boolean;
 };
 
@@ -29,6 +29,8 @@ export type CreateMessageChannelInput = {
 export class CreateMessageChannelService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly syncMessageFoldersService: SyncMessageFoldersService,
   ) {}
 
@@ -40,7 +42,6 @@ export class CreateMessageChannelService {
       connectedAccountId,
       handle,
       messageVisibility,
-      manager,
       skipMessageChannelConfiguration,
     } = input;
 
@@ -50,9 +51,7 @@ export class CreateMessageChannelService {
       async () => {
         const newMessageChannelId = v4();
 
-        const repo = manager.getRepository(MessageChannelEntity);
-
-        await repo.save({
+        await this.messageChannelRepository.save({
           id: newMessageChannelId,
           connectedAccountId,
           type: MessageChannelType.EMAIL,
@@ -69,7 +68,7 @@ export class CreateMessageChannelService {
           workspaceId,
         });
 
-        const createdMessageChannel = await repo.findOne({
+        const createdMessageChannel = await this.messageChannelRepository.findOne({
           where: { id: newMessageChannelId, workspaceId },
           relations: ['connectedAccount', 'messageFolders'],
         });

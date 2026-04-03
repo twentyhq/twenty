@@ -179,7 +179,6 @@ export class GoogleAPIsService {
             refreshToken: input.refreshToken,
             accountOwnerId: workspaceMemberId,
             scopes,
-            manager: transactionManager,
           });
 
           if (existingAccountId) {
@@ -190,7 +189,6 @@ export class GoogleAPIsService {
                 accessToken: input.accessToken,
                 refreshToken: input.refreshToken,
                 scopes,
-                manager: transactionManager,
               },
             );
 
@@ -219,7 +217,6 @@ export class GoogleAPIsService {
               connectedAccountId: newOrExistingConnectedAccountId,
               handle,
               messageVisibility,
-              manager: transactionManager,
               skipMessageChannelConfiguration,
             });
           }
@@ -242,7 +239,6 @@ export class GoogleAPIsService {
               connectedAccountId: newOrExistingConnectedAccountId,
               handle,
               calendarVisibility,
-              manager: transactionManager,
               skipMessageChannelConfiguration,
             });
           }

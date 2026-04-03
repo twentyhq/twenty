@@ -135,7 +135,6 @@ export class MicrosoftAPIsService {
             refreshToken: input.refreshToken,
             accountOwnerId: workspaceMemberId,
             scopes,
-            manager: transactionManager,
           });
 
           if (existingAccountId) {
@@ -146,7 +145,6 @@ export class MicrosoftAPIsService {
                 accessToken: input.accessToken,
                 refreshToken: input.refreshToken,
                 scopes,
-                manager: transactionManager,
               },
             );
 
@@ -186,7 +184,6 @@ export class MicrosoftAPIsService {
               connectedAccountId: newOrExistingConnectedAccountId,
               handle,
               messageVisibility,
-              manager: transactionManager,
               skipMessageChannelConfiguration,
             });
           }
@@ -210,7 +207,6 @@ export class MicrosoftAPIsService {
               connectedAccountId: newOrExistingConnectedAccountId,
               handle,
               calendarVisibility,
-              manager: transactionManager,
               skipMessageChannelConfiguration,
             });
           }

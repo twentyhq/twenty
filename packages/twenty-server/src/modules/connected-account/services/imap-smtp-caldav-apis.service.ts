@@ -154,7 +154,6 @@ export class ImapSmtpCalDavAPIService {
                 workspaceId,
                 connectedAccountId: newOrExistingAccountId,
                 handle,
-                manager,
               });
             }
 
@@ -163,7 +162,6 @@ export class ImapSmtpCalDavAPIService {
                 workspaceId,
                 connectedAccountId: newOrExistingAccountId,
                 handle,
-                manager,
               });
             }
           },
