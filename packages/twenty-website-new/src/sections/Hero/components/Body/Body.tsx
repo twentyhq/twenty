@@ -53,6 +53,10 @@ const BodyContainer = styled.div`
     &[data-page=${Pages.ReleaseNotes}] {
       max-width: 591px;
     }
+
+    &[data-page=${Pages.OssFriends}] {
+      max-width: 591px;
+    }
   }
 `;
 

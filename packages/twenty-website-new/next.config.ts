@@ -8,6 +8,11 @@ const nextConfig: LinariaConfig = {
         pathname: '/**',
         protocol: 'https',
       },
+      {
+        hostname: 'twenty-icons.com',
+        pathname: '/**',
+        protocol: 'https',
+      },
     ],
   },
   reactCompiler: true,
