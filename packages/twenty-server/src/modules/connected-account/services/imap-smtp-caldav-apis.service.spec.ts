@@ -10,7 +10,6 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 
@@ -176,9 +175,9 @@ describe('ImapSmtpCalDavAPIService', () => {
       const existingAccount = {
         id: 'existing-account-id',
         handle: 'test@example.com',
-        accountOwnerId: 'workspace-member-id',
+        userWorkspaceId: 'user-workspace-id',
         provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-      } as ConnectedAccountWorkspaceEntity;
+      } as ConnectedAccountEntity;
 
       const existingMessageChannel = {
         id: 'existing-message-channel-id',
@@ -391,9 +390,9 @@ describe('ImapSmtpCalDavAPIService', () => {
       const existingAccount = {
         id: 'existing-account-id',
         handle: 'test@example.com',
-        accountOwnerId: 'workspace-member-id',
+        userWorkspaceId: 'user-workspace-id',
         provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-      } as ConnectedAccountWorkspaceEntity;
+      } as ConnectedAccountEntity;
 
       mockConnectedAccountRepository.findOne.mockResolvedValueOnce(
         existingAccount,

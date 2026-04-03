@@ -14,7 +14,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
   CreateCompanyAndContactJob,
   type CreateCompanyAndContactJobData,
@@ -46,7 +46,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
   async saveMessagesAndEnqueueContactCreation(
     messagesToSave: MessageWithParticipants[],
     messageChannel: MessageChannelEntity,
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: ConnectedAccountEntity,
     workspaceId: string,
   ) {
     const handleAliases = connectedAccount.handleAliases || [];

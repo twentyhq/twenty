@@ -1,5 +1,5 @@
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { CalendarFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service';
 
 const mockCalendarChannelSyncStatusService = {
@@ -51,7 +51,7 @@ const baseConnectedAccount = {
   refreshToken: 'refresh-token',
   accessToken: 'access-token',
   handle: 'test@example.com',
-} as unknown as ConnectedAccountWorkspaceEntity;
+} as unknown as ConnectedAccountEntity;
 
 const createCalendarChannel = (
   syncCursor: string | null,

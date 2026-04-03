@@ -9,7 +9,6 @@ import { GoogleEmailAliasManagerService } from 'src/modules/connected-account/em
 import { microsoftGraphMeResponseWithProxyAddresses } from 'src/modules/connected-account/email-alias-manager/drivers/microsoft/mocks/microsoft-api-examples';
 import { MicrosoftEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/microsoft/services/microsoft-email-alias-manager.service';
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 import { EmailAliasManagerService } from './email-alias-manager.service';
 
@@ -74,7 +73,7 @@ describe('Email Alias Manager Service', () => {
 
   describe('Refresh handle aliases for Microsoft', () => {
     it('Should refresh Microsoft handle aliases successfully', async () => {
-      const mockConnectedAccount: Partial<ConnectedAccountWorkspaceEntity> = {
+      const mockConnectedAccount: Partial<ConnectedAccountEntity> = {
         id: 'test-id',
         provider: ConnectedAccountProvider.MICROSOFT,
         refreshToken: 'test-refresh-token',
@@ -88,7 +87,7 @@ describe('Email Alias Manager Service', () => {
       jest.spyOn(microsoftEmailAliasManagerService, 'getHandleAliases');
 
       await emailAliasManagerService.refreshHandleAliases(
-        mockConnectedAccount as ConnectedAccountWorkspaceEntity,
+        mockConnectedAccount as ConnectedAccountEntity,
         'test-workspace-id',
       );
 

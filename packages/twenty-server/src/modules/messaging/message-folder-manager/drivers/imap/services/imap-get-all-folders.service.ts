@@ -9,7 +9,7 @@ import {
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { shouldCreateFolderByDefault } from 'src/modules/messaging/message-folder-manager/utils/should-create-folder-by-default.util';
 import { shouldSyncFolderByDefault } from 'src/modules/messaging/message-folder-manager/utils/should-sync-folder-by-default.util';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
@@ -27,7 +27,7 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
 
   public async getAllMessageFolders(
     connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
+      ConnectedAccountEntity,
       'id' | 'provider' | 'connectionParameters' | 'handle'
     >,
     messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,

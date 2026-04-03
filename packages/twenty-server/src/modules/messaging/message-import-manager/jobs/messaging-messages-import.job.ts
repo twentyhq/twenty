@@ -14,7 +14,6 @@ import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/se
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 const toIsoStringOrNull = (
   value: string | Date | null | undefined,
@@ -105,7 +104,7 @@ export class MessagingMessagesImportJob {
 
       await this.messagingMessagesImportService.processMessageBatchImport(
         messageChannel,
-        messageChannel.connectedAccount as unknown as ConnectedAccountWorkspaceEntity,
+        messageChannel.connectedAccount,
         workspaceId,
       );
     }, authContext);

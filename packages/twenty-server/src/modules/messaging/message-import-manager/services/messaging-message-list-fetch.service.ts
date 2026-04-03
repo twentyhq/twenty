@@ -9,6 +9,7 @@ import { In, MoreThanOrEqual, Repository } from 'typeorm';
 import {
   MessageChannelPendingGroupEmailsAction,
   MessageChannelSyncStage,
+  MessageFolderPendingSyncAction,
 } from 'twenty-shared/types';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -17,10 +18,6 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
-import {
-  MessageFolderPendingSyncAction,
-  type MessageFolderWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
@@ -34,7 +31,6 @@ import { MessagingMessagesImportService } from 'src/modules/messaging/message-im
 import { MessagingProcessFolderActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
 
@@ -87,13 +83,13 @@ export class MessagingMessageListFetchService {
 
         const freshMessageChannel =
           pendingGroupEmailActionsProcessed || pendingFolderActionsProcessed
-            ? ((await this.messageChannelRepository.findOne({
+            ? await this.messageChannelRepository.findOne({
                 where: {
                   id: messageChannel.id,
                   workspaceId,
                 },
                 relations: { connectedAccount: true, messageFolders: true },
-              })) as unknown as MessageChannelEntity | null)
+              })
             : messageChannel;
 
         if (!isDefined(freshMessageChannel)) {
@@ -107,8 +103,7 @@ export class MessagingMessageListFetchService {
         const { accessToken, refreshToken } =
           await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
             {
-              connectedAccount:
-                freshMessageChannel.connectedAccount as unknown as ConnectedAccountWorkspaceEntity,
+              connectedAccount: freshMessageChannel.connectedAccount,
               workspaceId,
               messageChannelId: freshMessageChannel.id,
             },
@@ -289,7 +284,7 @@ export class MessagingMessageListFetchService {
             ...messageChannelWithFreshTokens,
             syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
           },
-          messageChannelWithFreshTokens.connectedAccount as unknown as ConnectedAccountWorkspaceEntity,
+          messageChannelWithFreshTokens.connectedAccount,
           workspaceId,
         );
       } catch (error) {
@@ -349,7 +344,7 @@ export class MessagingMessageListFetchService {
 
     await this.messagingProcessFolderActionsService.processFolderActions(
       messageChannel,
-      foldersWithPendingActions as unknown as MessageFolderWorkspaceEntity[],
+      foldersWithPendingActions,
       workspaceId,
     );
 

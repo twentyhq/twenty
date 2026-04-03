@@ -8,10 +8,7 @@ import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-c
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import {
-  MessageFolderPendingSyncAction,
-  MessageFolderWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
 import { MessagingDeleteFolderMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-folder-messages.service';
 
 @Injectable()
@@ -29,7 +26,7 @@ export class MessagingProcessFolderActionsService {
 
   async processFolderActions(
     messageChannel: MessageChannelEntity,
-    messageFolders: MessageFolderWorkspaceEntity[],
+    messageFolders: MessageFolderEntity[],
     workspaceId: string,
   ): Promise<void> {
     const foldersWithPendingActions = messageFolders.filter(

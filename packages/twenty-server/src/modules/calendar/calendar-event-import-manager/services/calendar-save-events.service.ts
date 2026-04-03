@@ -11,7 +11,7 @@ import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-e
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 type FetchedCalendarEventWithDBEvent = {
   fetchedCalendarEvent: FetchedCalendarEvent;
@@ -29,7 +29,7 @@ export class CalendarSaveEventsService {
   public async saveCalendarEventsAndEnqueueContactCreationJob(
     fetchedCalendarEvents: FetchedCalendarEvent[],
     calendarChannel: CalendarChannelEntity,
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: ConnectedAccountEntity,
     workspaceId: string,
   ): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);

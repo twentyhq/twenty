@@ -15,7 +15,7 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { type FetchedCalendarEventParticipant } from 'src/modules/calendar/common/types/fetched-calendar-event';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
   CreateCompanyAndContactJob,
   type CreateCompanyAndContactJobData,
@@ -53,7 +53,7 @@ export class CalendarEventParticipantService {
     participantsToUpdate: FetchedCalendarEventParticipantWithCalendarEventId[];
     transactionManager?: WorkspaceEntityManager;
     calendarChannel: CalendarChannelEntity;
-    connectedAccount: ConnectedAccountWorkspaceEntity;
+    connectedAccount: ConnectedAccountEntity;
     workspaceId: string;
   }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);

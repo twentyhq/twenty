@@ -4,7 +4,7 @@ import { type ImapFlow } from 'imapflow';
 import { Address, type Email as ParsedMail } from 'postal-mime';
 import { MessageParticipantRole } from 'twenty-shared/types';
 
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapMessageParserService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-parser.service';
@@ -17,7 +17,7 @@ import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message
 import { sanitizeString } from 'src/modules/messaging/message-import-manager/utils/sanitize-string.util';
 
 type ConnectedAccount = Pick<
-  ConnectedAccountWorkspaceEntity,
+  ConnectedAccountEntity,
   'id' | 'provider' | 'handle' | 'handleAliases' | 'connectionParameters'
 >;
 
@@ -163,7 +163,7 @@ export class ImapGetMessagesService {
     folderPath: string,
     folderExternalId: string,
     connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
+      ConnectedAccountEntity,
       'handle' | 'handleAliases'
     >,
   ): MessageWithParticipants {

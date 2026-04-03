@@ -11,7 +11,6 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 
@@ -79,7 +78,7 @@ export class CalendarEventsImportJob {
 
       await this.calendarEventsImportService.processCalendarEventsImport(
         calendarChannel as unknown as CalendarChannelEntity,
-        calendarChannel.connectedAccount as unknown as ConnectedAccountWorkspaceEntity,
+        calendarChannel.connectedAccount,
         workspaceId,
       );
     }, authContext);

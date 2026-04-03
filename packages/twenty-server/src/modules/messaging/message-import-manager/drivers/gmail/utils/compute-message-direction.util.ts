@@ -1,10 +1,10 @@
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 
 export const computeMessageDirection = (
   fromHandle: string,
   connectedAccount: Pick<
-    ConnectedAccountWorkspaceEntity,
+    ConnectedAccountEntity,
     'handle' | 'handleAliases'
   >,
 ): MessageDirection =>

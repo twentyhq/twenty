@@ -9,7 +9,7 @@ import {
 
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { shouldCreateFolderByDefault } from 'src/modules/messaging/message-folder-manager/utils/should-create-folder-by-default.util';
 import { shouldSyncFolderByDefault } from 'src/modules/messaging/message-folder-manager/utils/should-sync-folder-by-default.util';
 import { MicrosoftMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-message-list-fetch-error-handler.service';
@@ -37,7 +37,7 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
 
   async getAllMessageFolders(
     connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
+      ConnectedAccountEntity,
       'accessToken' | 'refreshToken' | 'id' | 'handle' | 'provider'
     >,
     messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,

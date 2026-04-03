@@ -7,6 +7,7 @@ import {
   MessageChannelType,
   MessageChannelVisibility,
   MessageFolderImportPolicy,
+  MessageFolderPendingSyncAction,
 } from 'twenty-shared/types';
 import { In } from 'typeorm';
 
@@ -14,17 +15,13 @@ import { type DiscoveredMessageFolder } from 'src/modules/messaging/message-fold
 
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import {
-  MessageFolderPendingSyncAction,
-  type MessageFolderWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { GmailGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/gmail/services/gmail-get-all-folders.service';
 import { ImapGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/imap/services/imap-get-all-folders.service';
 import { MicrosoftGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/microsoft/services/microsoft-get-all-folders.service';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
 
 type SyncedMessageFolder = Pick<
-  MessageFolderWorkspaceEntity,
+  MessageFolderEntity,
   | 'id'
   | 'name'
   | 'isSynced'
@@ -120,7 +117,7 @@ describe('SyncMessageFoldersService', () => {
   };
 
   let createdFolderRecords: Array<
-    Partial<MessageFolderWorkspaceEntity> & {
+    Partial<MessageFolderEntity> & {
       id: string;
       externalId: string;
     }

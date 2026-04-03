@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type MessageOutboundDriver } from 'src/modules/messaging/message-outbound-manager/interfaces/message-outbound-driver.interface';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { mimeEncode } from 'src/modules/messaging/message-import-manager/utils/mime-encode.util';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
 import { toMailComposerOptions } from 'src/modules/messaging/message-outbound-manager/utils/to-mail-composer-options.util';
@@ -20,7 +20,7 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
 
   async sendMessage(
     sendMessageInput: SendMessageInput,
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: ConnectedAccountEntity,
   ): Promise<void> {
     const { gmailClient, encodedMessage } = await this.composeGmailMessage(
       connectedAccount,
@@ -37,7 +37,7 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
 
   async createDraft(
     sendMessageInput: SendMessageInput,
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: ConnectedAccountEntity,
   ): Promise<void> {
     const { gmailClient, encodedMessage } = await this.composeGmailMessage(
       connectedAccount,
@@ -55,7 +55,7 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
   }
 
   private async composeGmailMessage(
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: ConnectedAccountEntity,
     sendMessageInput: SendMessageInput,
   ): Promise<{
     gmailClient: gmail_v1.Gmail;

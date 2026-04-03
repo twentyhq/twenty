@@ -79,8 +79,7 @@ export class CreateMessageChannelService {
         }
 
         await this.syncMessageFoldersService.syncMessageFolders({
-          messageChannel:
-            createdMessageChannel as unknown as MessageChannelEntity,
+          messageChannel: createdMessageChannel,
           workspaceId,
         });
 

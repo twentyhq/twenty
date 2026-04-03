@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import {
+  ConnectedAccountProvider,
+  MessageFolderPendingSyncAction,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
@@ -14,8 +17,7 @@ import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-c
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageFolderPendingSyncAction } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GmailGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/gmail/services/gmail-get-all-folders.service';
 import { ImapGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/imap/services/imap-get-all-folders.service';
 import { MicrosoftGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/microsoft/services/microsoft-get-all-folders.service';
@@ -44,7 +46,7 @@ export class SyncMessageFoldersService {
       'id' | 'messageFolderImportPolicy'
     > & {
       connectedAccount: Pick<
-        ConnectedAccountWorkspaceEntity,
+        ConnectedAccountEntity,
         | 'provider'
         | 'accessToken'
         | 'refreshToken'
@@ -74,7 +76,7 @@ export class SyncMessageFoldersService {
 
   async discoverAllFolders(
     connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
+      ConnectedAccountEntity,
       | 'accessToken'
       | 'refreshToken'
       | 'id'

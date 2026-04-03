@@ -11,7 +11,6 @@ import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 import { ConnectedAccountRefreshTokensService } from './connected-account-refresh-tokens.service';
 
@@ -89,7 +88,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         accessToken: mockAccessToken,
         refreshToken: mockRefreshToken,
         lastCredentialsRefreshedAt: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
-      } as ConnectedAccountWorkspaceEntity;
+      } as ConnectedAccountEntity;
 
       const result = await service.refreshAndSaveTokens(
         connectedAccount,
@@ -113,7 +112,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         accessToken: mockAccessToken,
         refreshToken: mockRefreshToken,
         lastCredentialsRefreshedAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-      } as ConnectedAccountWorkspaceEntity;
+      } as ConnectedAccountEntity;
 
       const newTokens = {
         accessToken: mockNewAccessToken,
@@ -149,7 +148,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         accessToken: mockAccessToken,
         refreshToken: mockRefreshToken,
         lastCredentialsRefreshedAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-      } as ConnectedAccountWorkspaceEntity;
+      } as ConnectedAccountEntity;
 
       const newTokens = {
         accessToken: mockNewAccessToken,
@@ -185,7 +184,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         accessToken: mockAccessToken,
         refreshToken: mockRefreshToken,
         lastCredentialsRefreshedAt: null,
-      } as ConnectedAccountWorkspaceEntity;
+      } as ConnectedAccountEntity;
 
       const newTokens = {
         accessToken: mockNewAccessToken,
@@ -221,7 +220,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         accessToken: mockAccessToken,
         refreshToken: null,
         lastCredentialsRefreshedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
-      } as unknown as ConnectedAccountWorkspaceEntity;
+      } as unknown as ConnectedAccountEntity;
 
       await expect(
         service.refreshAndSaveTokens(connectedAccount, mockWorkspaceId),
@@ -240,7 +239,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         accessToken: mockAccessToken,
         refreshToken: mockRefreshToken,
         lastCredentialsRefreshedAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-      } as ConnectedAccountWorkspaceEntity;
+      } as ConnectedAccountEntity;
 
       const invalidGrantError = new ConnectedAccountRefreshAccessTokenException(
         'Microsoft OAuth error: invalid_grant - Token has been revoked',
@@ -268,7 +267,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         accessToken: mockAccessToken,
         refreshToken: mockRefreshToken,
         lastCredentialsRefreshedAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-      } as ConnectedAccountWorkspaceEntity;
+      } as ConnectedAccountEntity;
 
       const networkError = new ConnectedAccountRefreshAccessTokenException(
         'Google refresh token network error: ECONNRESET - Network error',
@@ -293,7 +292,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         id: mockConnectedAccountId,
         provider: ConnectedAccountProvider.MICROSOFT,
         lastCredentialsRefreshedAt: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
-      } as ConnectedAccountWorkspaceEntity;
+      } as ConnectedAccountEntity;
 
       const result = await service.isAccessTokenStillValid(connectedAccount);
 
@@ -305,7 +304,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         id: mockConnectedAccountId,
         provider: ConnectedAccountProvider.GOOGLE,
         lastCredentialsRefreshedAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-      } as ConnectedAccountWorkspaceEntity;
+      } as ConnectedAccountEntity;
 
       const result = await service.isAccessTokenStillValid(connectedAccount);
 
@@ -317,7 +316,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         id: mockConnectedAccountId,
         provider: ConnectedAccountProvider.MICROSOFT,
         lastCredentialsRefreshedAt: null,
-      } as ConnectedAccountWorkspaceEntity;
+      } as ConnectedAccountEntity;
 
       const result = await service.isAccessTokenStillValid(connectedAccount);
 
@@ -329,7 +328,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         id: mockConnectedAccountId,
         provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
         lastCredentialsRefreshedAt: null,
-      } as ConnectedAccountWorkspaceEntity;
+      } as ConnectedAccountEntity;
 
       const result = await service.isAccessTokenStillValid(connectedAccount);
 
@@ -341,7 +340,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         id: mockConnectedAccountId,
         provider: ConnectedAccountProvider.OIDC,
         lastCredentialsRefreshedAt: null,
-      } as ConnectedAccountWorkspaceEntity;
+      } as ConnectedAccountEntity;
 
       const result = await service.isAccessTokenStillValid(connectedAccount);
 
@@ -353,7 +352,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         id: mockConnectedAccountId,
         provider: ConnectedAccountProvider.SAML,
         lastCredentialsRefreshedAt: null,
-      } as ConnectedAccountWorkspaceEntity;
+      } as ConnectedAccountEntity;
 
       const result = await service.isAccessTokenStillValid(connectedAccount);
 
@@ -369,7 +368,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         accessToken: mockAccessToken,
         refreshToken: mockRefreshToken,
         lastCredentialsRefreshedAt: null,
-      } as unknown as ConnectedAccountWorkspaceEntity;
+      } as unknown as ConnectedAccountEntity;
 
       const result = await service.refreshAndSaveTokens(
         connectedAccount,
@@ -396,7 +395,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         accessToken: mockAccessToken,
         refreshToken: mockRefreshToken,
         lastCredentialsRefreshedAt: null,
-      } as unknown as ConnectedAccountWorkspaceEntity;
+      } as unknown as ConnectedAccountEntity;
 
       const result = await service.refreshAndSaveTokens(
         connectedAccount,

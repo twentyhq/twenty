@@ -24,7 +24,6 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 
 jest.mock('uuid', () => ({
@@ -207,9 +206,9 @@ describe('MicrosoftAPIsService', () => {
       const existingConnectedAccount = {
         id: 'existing-account-id',
         handle: 'test@example.com',
-        accountOwnerId: 'workspace-member-id',
+        userWorkspaceId: 'user-workspace-id',
         provider: ConnectedAccountProvider.MICROSOFT,
-      } as ConnectedAccountWorkspaceEntity;
+      } as ConnectedAccountEntity;
 
       mockConnectedAccountRepository.findOne.mockResolvedValue(
         existingConnectedAccount,

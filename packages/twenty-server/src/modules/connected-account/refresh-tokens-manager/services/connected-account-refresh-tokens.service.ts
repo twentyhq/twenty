@@ -14,7 +14,6 @@ import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 export type ConnectedAccountTokens = {
   accessToken: string;
@@ -38,7 +37,7 @@ export class ConnectedAccountRefreshTokensService {
   ) {}
 
   async refreshAndSaveTokens(
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: ConnectedAccountEntity,
     workspaceId: string,
   ): Promise<ConnectedAccountTokens> {
     const { refreshToken, accessToken } = connectedAccount;
@@ -96,7 +95,7 @@ export class ConnectedAccountRefreshTokensService {
   }
 
   async isAccessTokenStillValid(
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: ConnectedAccountEntity,
   ): Promise<boolean> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
@@ -128,7 +127,7 @@ export class ConnectedAccountRefreshTokensService {
   }
 
   async refreshTokens(
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: ConnectedAccountEntity,
     refreshToken: string,
     workspaceId: string,
   ): Promise<ConnectedAccountTokens> {

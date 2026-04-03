@@ -25,7 +25,6 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { parseEmailBody } from 'src/utils/parse-email-body';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 @Injectable()
@@ -273,7 +272,7 @@ export class EmailComposerService {
     }
 
     const connectedAccountAsWorkspaceEntity =
-      connectedAccount as unknown as ConnectedAccountWorkspaceEntity;
+      connectedAccount as unknown as ConnectedAccountEntity;
 
     const { accessToken, refreshToken } =
       await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
@@ -288,7 +287,7 @@ export class EmailComposerService {
       ...connectedAccountAsWorkspaceEntity,
       accessToken,
       refreshToken,
-    } as ConnectedAccountWorkspaceEntity;
+    } as ConnectedAccountEntity;
 
     const attachments = await this.getAttachments(files || [], workspaceId);
 

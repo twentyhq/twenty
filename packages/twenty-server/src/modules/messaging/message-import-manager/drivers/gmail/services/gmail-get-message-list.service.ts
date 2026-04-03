@@ -6,8 +6,8 @@ import { google } from 'googleapis';
 import { MessageFolderImportPolicy } from 'twenty-shared/types';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
@@ -30,11 +30,11 @@ export class GmailGetMessageListService {
 
   private async getMessageListWithoutCursor(
     connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
+      ConnectedAccountEntity,
       'provider' | 'accessToken' | 'refreshToken' | 'id' | 'handle'
     >,
     messageFolders: Pick<
-      MessageFolderWorkspaceEntity,
+      MessageFolderEntity,
       'name' | 'externalId' | 'isSynced' | 'parentFolderId'
     >[],
     messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,

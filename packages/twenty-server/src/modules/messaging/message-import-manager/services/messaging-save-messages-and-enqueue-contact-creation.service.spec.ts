@@ -13,7 +13,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { CreateCompanyAndContactJob } from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { MessagingMessageFolderAssociationService } from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-association.service';
@@ -32,11 +32,11 @@ describe('MessagingSaveMessagesAndEnqueueContactCreationService', () => {
 
   const workspaceId = 'workspace-id';
 
-  const mockConnectedAccount: ConnectedAccountWorkspaceEntity = {
+  const mockConnectedAccount: ConnectedAccountEntity = {
     id: 'connected-account-id',
     handle: 'test@example.com',
     handleAliases: ['alias1@example.com', 'alias2@example.com'],
-  } as ConnectedAccountWorkspaceEntity;
+  } as ConnectedAccountEntity;
 
   const mockMessageChannel: MessageChannelEntity = {
     id: 'message-channel-id',

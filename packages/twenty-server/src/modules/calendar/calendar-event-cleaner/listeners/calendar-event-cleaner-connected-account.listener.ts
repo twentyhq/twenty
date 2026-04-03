@@ -10,7 +10,7 @@ import {
   DeleteConnectedAccountAssociatedCalendarDataJob,
   type DeleteConnectedAccountAssociatedCalendarDataJobData,
 } from 'src/modules/calendar/calendar-event-cleaner/jobs/delete-connected-account-associated-calendar-data.job';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
@@ -24,7 +24,7 @@ export class CalendarEventCleanerConnectedAccountListener {
   @OnDatabaseBatchEvent('connectedAccount', DatabaseEventAction.DESTROYED)
   async handleDestroyedEvent(
     payload: WorkspaceEventBatch<
-      ObjectRecordDeleteEvent<ConnectedAccountWorkspaceEntity>
+      ObjectRecordDeleteEvent<ConnectedAccountEntity>
     >,
   ) {
     await Promise.all(

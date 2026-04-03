@@ -4,14 +4,14 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import {
   ConnectedAccountProvider,
   MessageFolderImportPolicy,
+  MessageFolderPendingSyncAction,
 } from 'twenty-shared/types';
 
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageFolderPendingSyncAction } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { microsoftGraphWithMessagesDeltaLink } from 'src/modules/messaging/message-import-manager/drivers/microsoft/mocks/microsoft-api-examples';
 import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/folders';
@@ -24,7 +24,7 @@ const accessToken = 'replace-with-your-access-token';
 const refreshToken = 'replace-with-your-refresh-token';
 const syncCursor = `replace-with-your-sync-cursor`;
 const mockConnectedAccount: Pick<
-  ConnectedAccountWorkspaceEntity,
+  ConnectedAccountEntity,
   | 'provider'
   | 'accessToken'
   | 'refreshToken'

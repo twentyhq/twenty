@@ -9,7 +9,7 @@ import { type MessageOutboundDriver } from 'src/modules/messaging/message-outbou
 
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapFindDraftsFolderService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-drafts-folder.service';
 import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
@@ -30,7 +30,7 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
 
   async sendMessage(
     sendMessageInput: SendMessageInput,
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: ConnectedAccountEntity,
   ): Promise<void> {
     const { handle, connectionParameters } = connectedAccount;
 
@@ -84,7 +84,7 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
 
   async createDraft(
     sendMessageInput: SendMessageInput,
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: ConnectedAccountEntity,
   ): Promise<void> {
     const { handle, connectionParameters } = connectedAccount;
 

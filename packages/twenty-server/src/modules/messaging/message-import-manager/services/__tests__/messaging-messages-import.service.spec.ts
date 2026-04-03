@@ -13,7 +13,7 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
@@ -25,6 +25,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
 describe('MessagingMessagesImportService', () => {
   let service: MessagingMessagesImportService;
@@ -44,7 +45,7 @@ describe('MessagingMessagesImportService', () => {
     | 'messageFolders'
     | 'messageFolderImportPolicy'
   >;
-  let mockConnectedAccount: ConnectedAccountWorkspaceEntity;
+  let mockConnectedAccount: ConnectedAccountEntity;
   let providersBase: Provider[];
 
   beforeEach(async () => {
@@ -54,9 +55,9 @@ describe('MessagingMessagesImportService', () => {
       handle: 'test@gmail.com',
       refreshToken: 'refresh-token',
       accessToken: 'old-access-token',
-      accountOwnerId: 'account-owner-id',
+      userWorkspaceId: 'user-workspace-id',
       handleAliases: ['alias1@gmail.com', 'alias2@gmail.com'],
-    } as ConnectedAccountWorkspaceEntity;
+    } as ConnectedAccountEntity;
 
     mockMessageChannel = {
       id: 'message-channel-id',
@@ -125,6 +126,10 @@ describe('MessagingMessagesImportService', () => {
         useValue: {
           getRepository: jest.fn().mockResolvedValue({
             update: jest.fn().mockResolvedValue(undefined),
+            findOne: jest.fn().mockResolvedValue({
+              id: 'workspace-member-id',
+              userId: 'user-id',
+            }),
           }),
           executeInWorkspaceContext: jest
             .fn()
@@ -171,6 +176,12 @@ describe('MessagingMessagesImportService', () => {
       {
         provide: MessagingAccountAuthenticationService,
         useClass: MessagingAccountAuthenticationService,
+      },
+      {
+        provide: getRepositoryToken(UserWorkspaceEntity),
+        useValue: {
+          findOne: jest.fn().mockResolvedValue({ userId: 'user-id' }),
+        },
       },
     ];
     const module: TestingModule = await Test.createTestingModule({

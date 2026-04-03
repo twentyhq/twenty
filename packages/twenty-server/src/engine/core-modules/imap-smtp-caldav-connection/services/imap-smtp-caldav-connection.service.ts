@@ -16,7 +16,6 @@ import {
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CalDAVClient } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/caldav.client';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
 export class ImapSmtpCaldavService {
@@ -188,7 +187,7 @@ export class ImapSmtpCaldavService {
   async getImapSmtpCaldav(
     workspaceId: string,
     connectionId: string,
-  ): Promise<ConnectedAccountWorkspaceEntity | null> {
+  ): Promise<ConnectedAccountEntity | null> {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
@@ -201,7 +200,7 @@ export class ImapSmtpCaldavService {
           },
         });
 
-        return connectedAccount as ConnectedAccountWorkspaceEntity | null;
+        return connectedAccount as ConnectedAccountEntity | null;
       },
       authContext,
     );

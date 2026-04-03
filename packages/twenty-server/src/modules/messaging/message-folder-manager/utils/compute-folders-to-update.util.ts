@@ -6,7 +6,7 @@ import {
   type MessageFolder,
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
-import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 
 export const computeFoldersToUpdate = ({
   discoveredFolders,
@@ -16,15 +16,12 @@ export const computeFoldersToUpdate = ({
   discoveredFolders: DiscoveredMessageFolder[];
   existingFolders: MessageFolder[];
   externalIdToUuidMap: Map<string, string>;
-}): Map<string, Partial<MessageFolderWorkspaceEntity>> => {
+}): Map<string, Partial<MessageFolderEntity>> => {
   const existingFoldersByExternalId = new Map(
     existingFolders.map((folder) => [folder.externalId, folder]),
   );
 
-  const foldersToUpdate = new Map<
-    string,
-    Partial<MessageFolderWorkspaceEntity>
-  >();
+  const foldersToUpdate = new Map<string, Partial<MessageFolderEntity>>();
 
   for (const discoveredFolder of discoveredFolders) {
     const existingFolder = existingFoldersByExternalId.get(
