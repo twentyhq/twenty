@@ -1,4 +1,5 @@
 import { type FieldAddressValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+
 import { joinAddressFieldValues } from '~/utils/joinAddressFieldValues';
 
 describe('joinAddressFieldValues', () => {
@@ -19,7 +20,7 @@ describe('joinAddressFieldValues', () => {
       'addressCity',
       'addressState',
     ]);
-    expect(result).toBe('123 Main St,New York,NY');
+    expect(result).toBe('123 Main St, New York, NY');
   });
 
   it('should filter out null and empty string values', () => {
@@ -42,7 +43,7 @@ describe('joinAddressFieldValues', () => {
       'addressPostcode',
       'addressCountry',
     ]);
-    expect(result).toBe('456 Oak Ave,CA,90210');
+    expect(result).toBe('456 Oak Ave, CA, 90210');
   });
 
   it('should handle empty subFields array', () => {
@@ -64,7 +65,7 @@ describe('joinAddressFieldValues', () => {
       'addressPostcode',
       'addressCountry',
     ]);
-    expect(result).toBe('123 Main St,Apt 4B,New York,NY,10001,United States');
+    expect(result).toBe('123 Main St, Apt 4B, New York, NY, 10001, United States');
   });
 
   it('should handle address with empty and null values', () => {
@@ -110,6 +111,6 @@ describe('joinAddressFieldValues', () => {
       'addressState',
       'addressPostcode',
     ]);
-    expect(result).toBe('123 Main St,New York,10001');
+    expect(result).toBe('123 Main St, New York, 10001');
   });
 });
