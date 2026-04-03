@@ -4,7 +4,7 @@ import chalk from 'chalk';
 import { CommandRunner, Option } from 'nest-commander';
 import { SemVer } from 'semver';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { MigrationInterface, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import {
@@ -45,6 +45,7 @@ type VersionContext = {
   fromWorkspaceVersion: SemVer;
   currentAppVersion: SemVer;
   currentVersionMajorMinor: UpgradeCommandVersion;
+  instanceCommands: MigrationInterface[];
   workspaceCommands: VersionCommands;
 };
 
@@ -145,6 +146,18 @@ export abstract class UpgradeCommandRunner extends CommandRunner {
     try {
       const versionContext = this.resolveVersionContext();
 
+      this.logger.log(
+        chalk.blue(
+          [
+            'Initialized upgrade context with:',
+            `- currentVersion (migrating to): ${versionContext.currentAppVersion}`,
+            `- fromWorkspaceVersion: ${versionContext.fromWorkspaceVersion}`,
+            `- ${versionContext.instanceCommands.length} instance commands (from registry)`,
+            `- ${versionContext.workspaceCommands.length} workspace commands`,
+          ].join('\n   '),
+        ),
+      );
+
       const hasWorkspaces =
         await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
 
@@ -173,12 +186,7 @@ Please roll back to that version and run the upgrade command again.`,
         );
       }
 
-      const instanceCommands =
-        this.versionedMigrationRegistryService.getInstanceCommandsForVersion(
-          versionContext.currentVersionMajorMinor,
-        );
-
-      for (const instanceCommand of instanceCommands) {
+      for (const instanceCommand of versionContext.instanceCommands) {
         const migrationName = instanceCommand.constructor.name;
         const result =
           await this.coreMigrationRunnerService.runSingleMigration(
@@ -247,23 +255,12 @@ Please roll back to that version and run the upgrade command again.`,
         currentVersionMajorMinor,
       );
 
-    this.logger.log(
-      chalk.blue(
-        [
-          'Initialized upgrade context with:',
-          `- currentVersion (migrating to): ${currentAppVersion}`,
-          `- fromWorkspaceVersion: ${fromWorkspaceVersion}`,
-          `- ${instanceCommands.length} instance commands (from registry)`,
-          `- ${workspaceCommands.length} workspace commands`,
-        ].join('\n   '),
-      ),
-    );
-
     return {
       fromWorkspaceVersion,
       currentAppVersion,
       currentVersionMajorMinor,
       workspaceCommands,
+      instanceCommands,
     };
   }
 
