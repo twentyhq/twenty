@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -20,6 +21,10 @@ export const getMatchingRecordId = (
 ): string | undefined => {
   const matchingRecordIds = conflictingFields.reduce<string[]>((acc, field) => {
     const requestFieldValue = getValueFromPath(record, field.fullPath);
+
+    if (!isDefined(requestFieldValue)) {
+      return acc;
+    }
 
     const matchingRecord = existingRecords.find((existingRecord) => {
       const existingFieldValue = getValueFromPath(
