@@ -97,11 +97,7 @@ export const SettingsApplications = () => {
       ]}
     >
       <SettingsPageContainer>
-        <TabList
-          tabs={tabs}
-          componentInstanceId={APPLICATIONS_TAB_LIST_ID}
-          behaveAsLinks={false}
-        />
+        <TabList tabs={tabs} componentInstanceId={APPLICATIONS_TAB_LIST_ID} />
         {renderActiveTabContent()}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
