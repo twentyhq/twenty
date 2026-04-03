@@ -81,7 +81,7 @@ import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
 export default defineApplication({
-  universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',
   icon: 'IconWorld',
@@ -716,6 +716,13 @@ yarn twenty exec --postInstall
 
 Фронтенд-компоненты — это компоненты React, которые отображаются непосредственно внутри интерфейса Twenty. Они выполняются в изолированном Web Worker с использованием Remote DOM — ваш код изолирован (sandboxed), но рендерится нативно на странице, а не в iframe.
 
+#### Где можно использовать фронт-компоненты
+
+Фронт-компоненты могут отображаться в двух местах внутри Twenty:
+
+* **Боковая панель** — фронт-компоненты с интерфейсом открываются в правой боковой панели. Это поведение по умолчанию, когда фронт-компонент запускается из меню команд.
+* **Виджеты (дашборды и страницы записей)** — фронт-компоненты можно встраивать как виджеты в макеты страниц. При настройке дашборда или макета страницы записи пользователи могут добавить виджет фронт-компонента.
+
 #### Простой пример
 
 Самый быстрый способ увидеть фронтенд-компонент в действии — зарегистрировать его как **команду**. Добавление поля `command` с `isPinned: true` делает его кнопкой быстрого действия в правом верхнем углу страницы — макет страницы не требуется:
@@ -773,9 +780,13 @@ export default defineFrontComponent({
 
 Помимо команд, вы можете встроить фронт-компонент непосредственно на страницу записи, добавив его как виджет в **макет страницы**. См. раздел [definePageLayout](#definepagelayout) для подробностей.
 
-#### Headless-компоненты (`isHeadless: true`)
+#### Headless и non-headless
 
-Headless-компоненты не отображают видимый UI, но при этом выполняют логику React. Это полезно для **компонентов-эффектов** — компонентов, которые выполняют побочные эффекты при монтировании, например синхронизацию данных, запуск таймера, прослушивание событий или показ уведомления.
+Фронт-компоненты поддерживают два режима отображения, управляемых опцией `isHeadless`:
+
+**Non-headless (по умолчанию)** — компонент отображает видимый интерфейс. При запуске из меню команд он открывается в боковой панели. Это поведение по умолчанию, когда `isHeadless` имеет значение `false` или опущен.
+
+**Headless (`isHeadless: true`)** — компонент монтируется невидимо в фоновом режиме. Он не открывает боковую панель. Компоненты headless предназначены для действий, которые выполняют логику и затем размонтируются — например, запуск асинхронной задачи, переход на страницу или показ модального окна подтверждения. Они естественно сочетаются с компонентами SDK Command, описанными ниже.
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent, useRecordId, enqueueSnackbar } from 'twenty-sdk';
@@ -801,6 +812,89 @@ export default defineFrontComponent({
 ```
 
 Поскольку компонент возвращает `null`, Twenty пропускает рендеринг контейнера для него — в макете не появляется пустое место. Компонент по-прежнему имеет доступ ко всем хукам и API взаимодействия с хостом.
+
+#### Компоненты SDK Command
+
+Пакет `twenty-sdk` предоставляет четыре вспомогательных компонента Command, предназначенных для headless фронт-компонентов. Каждый компонент выполняет действие при монтировании, обрабатывает ошибки, показывая уведомление snackbar, и автоматически размонтирует фронт-компонент по завершении.
+
+Импортируйте их из `twenty-sdk/command`:
+
+* **`Command`** — запускает асинхронный колбэк через проп `execute`.
+* **`CommandLink`** — переходит по пути внутри приложения. Пропы: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — открывает модальное окно подтверждения. Если пользователь подтвердит, выполняет колбэк `execute`. Пропы: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — открывает конкретную страницу боковой панели. Пропы: `page`, `pageTitle`, `pageIcon`.
+
+Полный пример headless фронт-компонента, использующего `Command` для запуска действия из меню команд:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+    label: 'Run my action',
+    icon: 'IconPlayerPlay',
+  },
+});
+```
+
+А также пример с использованием `CommandModal` для запроса подтверждения перед выполнением:
+
+```tsx src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+    label: 'Delete draft',
+    icon: 'IconTrash',
+  },
+});
+```
 
 #### Доступ к контексту времени выполнения
 
@@ -857,6 +951,50 @@ export default defineFrontComponent({
 | `enqueueSnackbar(params)`                       | Показать всплывающее уведомление |
 | `unmountFrontComponent()`                       | Размонтировать компонент         |
 | `updateProgress(progress)`                      | Обновить индикатор прогресса     |
+
+Пример, который использует API хоста для показа snackbar и закрытия боковой панели после завершения действия:
+
+```tsx src/front-components/archive-record.tsx
+import { defineFrontComponent, useRecordId } from 'twenty-sdk';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
 
 #### Параметры команды
 
@@ -1712,3 +1850,86 @@ yarn twenty uninstall
 # Skip the confirmation prompt
 yarn twenty uninstall --yes
 ```
+
+## Управление удалёнными серверами
+
+**Remote** — это сервер Twenty, к которому подключается ваше приложение. Во время настройки скэффолдер автоматически создаст его для вас. Вы можете в любой момент добавлять новые удалённые серверы или переключаться между ними.
+
+```bash filename="Terminal"
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote add
+
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote add --local
+
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+
+# List all configured remotes
+yarn twenty remote list
+
+# Switch the active remote
+yarn twenty remote switch <name>
+```
+
+Ваши учётные данные хранятся в `~/.twenty/config.json`.
+
+## CI с GitHub Actions
+
+Скэффолдер генерирует готовый к использованию workflow GitHub Actions в `.github/workflows/ci.yml`. Он автоматически запускает ваши интеграционные тесты при каждом пуше в `main` и в pull request'ах.
+
+Рабочий процесс:
+
+1. Извлекает ваш код
+2. Поднимает временный сервер Twenty с помощью экшена `twentyhq/twenty/.github/actions/spawn-twenty-docker-image`
+3. Устанавливает зависимости с помощью `yarn install --immutable`
+4. Запускает `yarn test` с `TWENTY_API_URL` и `TWENTY_API_KEY`, переданными из выходных данных экшена
+
+```yaml .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+
+env:
+  TWENTY_VERSION: latest
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Spawn Twenty instance
+        id: twenty
+        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
+        with:
+          twenty-version: ${{ env.TWENTY_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run integration tests
+        run: yarn test
+        env:
+          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
+          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
+```
+
+Вам не нужно настраивать секреты — экшен `spawn-twenty-docker-image` запускает эфемерный сервер Twenty прямо в раннере и выводит данные для подключения. Секрет `GITHUB_TOKEN` предоставляется GitHub автоматически.
+
+Чтобы закрепить конкретную версию Twenty вместо `latest`, измените переменную окружения `TWENTY_VERSION` в начале workflow.
