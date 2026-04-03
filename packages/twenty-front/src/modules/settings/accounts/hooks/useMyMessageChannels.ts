@@ -63,7 +63,7 @@ export const useMyMessageChannels = () => {
             throttleFailureCount: 0,
             connectedAccountId: channel.connectedAccountId,
             __typename: 'MessageChannel',
-          }),
+          } as MessageChannel),
       );
   }, [metadataData]);
 
