@@ -29,8 +29,10 @@ export const LinkBubbleMenu = ({ editor }: LinkBubbleMenuProps) => {
     {
       Icon: IconExternalLink,
       onClick: () => {
-        if (getSafeUrl(state.linkHref)) {
-          window.open(state.linkHref, '_blank', 'noopener,noreferrer');
+        const safeHref = getSafeUrl(state.linkHref);
+
+        if (safeHref) {
+          window.open(safeHref, '_blank', 'noopener,noreferrer');
         }
       },
     },

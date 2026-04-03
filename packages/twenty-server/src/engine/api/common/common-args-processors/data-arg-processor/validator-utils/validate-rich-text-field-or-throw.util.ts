@@ -10,11 +10,36 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
-const DANGEROUS_URL_IN_JSON_PATTERN =
-  /"(?:url|href)"\s*:\s*"\\?\s*(?:javascript|vbscript)\s*:/i;
+const SAFE_URL_PROTOCOLS = ['http:', 'https:', 'mailto:', 'tel:'];
+
+const isSafeUrl = (url: string): boolean => {
+  if (url.startsWith('/') && !url.startsWith('//')) {
+    return true;
+  }
+
+  try {
+    const parsed = new URL(url);
+
+    return SAFE_URL_PROTOCOLS.includes(parsed.protocol);
+  } catch {
+    return false;
+  }
+};
+
+const URL_VALUE_PATTERN = /"(?:url|href)"\s*:\s*"([^"]*)"/gi;
 
 const hasDangerousUrl = (json: string): boolean => {
-  return DANGEROUS_URL_IN_JSON_PATTERN.test(json);
+  let match;
+
+  while ((match = URL_VALUE_PATTERN.exec(json)) !== null) {
+    const url = match[1].trim();
+
+    if (url.length > 0 && !isSafeUrl(url)) {
+      return true;
+    }
+  }
+
+  return false;
 };
 
 const validateBlocknoteFieldOrThrow = (

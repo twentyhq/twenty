@@ -87,14 +87,18 @@ export const FileBlock = createReactBlockSpec(
           handleUploadAttachment?.(e.target.files[0]);
       };
 
-      if (isNonEmptyString(block.props.url) && getSafeUrl(block.props.url)) {
+      const safeUrl = isNonEmptyString(block.props.url)
+        ? getSafeUrl(block.props.url)
+        : undefined;
+
+      if (safeUrl) {
         return (
           <StyledFileLine>
             <FileIcon
               fileCategory={block.props.fileCategory as AttachmentFileCategory}
             />
             <StyledLink
-              href={block.props.url}
+              href={safeUrl}
               target="_blank"
               rel="noopener noreferrer"
             >

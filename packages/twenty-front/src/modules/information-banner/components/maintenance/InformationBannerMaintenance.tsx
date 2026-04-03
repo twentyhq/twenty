@@ -51,10 +51,9 @@ export const InformationBannerMaintenance = () => {
 
   const message = t`Scheduled maintenance: ${startFormatted} — ${endFormatted}`;
   const rawMaintenanceLink = maintenanceMode.link?.trim();
-  const maintenanceLink =
-    isNonEmptyString(rawMaintenanceLink) && getSafeUrl(rawMaintenanceLink)
-      ? rawMaintenanceLink
-      : undefined;
+  const maintenanceLink = isNonEmptyString(rawMaintenanceLink)
+    ? getSafeUrl(rawMaintenanceLink)
+    : undefined;
 
   return (
     <InformationBanner
