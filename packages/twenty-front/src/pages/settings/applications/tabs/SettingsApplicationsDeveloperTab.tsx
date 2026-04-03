@@ -41,6 +41,8 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useMarketplaceApps } from '~/modules/marketplace/hooks/useMarketplaceApps';
 
 const StyledButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
   margin: ${themeCssVariables.spacing[2]} 0;
 `;
 
