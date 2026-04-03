@@ -3,7 +3,7 @@ import * as path from 'path';
 
 import { Logger } from '@nestjs/common';
 
-import { Command, CommandRunner } from 'nest-commander';
+import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { CoreMigrationGeneratorService } from 'src/database/commands/core-migration/services/core-migration-generator.service';
 import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
@@ -12,6 +12,10 @@ const MIGRATIONS_DIR = path.resolve(
   process.cwd(),
   'src/database/typeorm/core/migrations/common',
 );
+
+type GenerateVersionedMigrationCommandOptions = {
+  name: string;
+};
 
 @Command({
   name: 'generate:versioned-migration',
@@ -27,8 +31,20 @@ export class GenerateVersionedMigrationCommand extends CommandRunner {
     super();
   }
 
-  async run(passedParams: string[]): Promise<void> {
-    const migrationName = passedParams[0] ?? 'auto-generated';
+  @Option({
+    flags: '-n, --name <name>',
+    description: 'Migration name (kebab-case)',
+    defaultValue: 'auto-generated',
+  })
+  parseName(value: string): string {
+    return value;
+  }
+
+  async run(
+    _passedParams: string[],
+    options: GenerateVersionedMigrationCommandOptions,
+  ): Promise<void> {
+    const migrationName = options.name;
 
     const version = UPGRADE_COMMAND_SUPPORTED_VERSIONS.slice(-1)[0];
 
