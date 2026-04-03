@@ -38,7 +38,7 @@ export class CreateOneResolverFactory
       });
 
       try {
-        const record = await this.commonCreateOneQueryRunnerService.execute(
+        const { results: record } = await this.commonCreateOneQueryRunnerService.execute(
           { ...args, selectedFields },
           resolverContext,
         );

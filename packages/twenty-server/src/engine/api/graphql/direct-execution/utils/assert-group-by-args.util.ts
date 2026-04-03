@@ -72,7 +72,8 @@ export function assertGroupByArgs(
     'orderBy' in args &&
     isDefined(args.orderBy) &&
     !isEmptyObject(args.orderBy) &&
-    !isArray(args.orderBy)
+    !isArray(args.orderBy) &&
+    !isObject(args.orderBy)
   ) {
     throw new GraphqlDirectExecutionException(
       'Invalid argument: "orderBy" must be an array',
@@ -85,7 +86,8 @@ export function assertGroupByArgs(
     'orderByForRecords' in args &&
     isDefined(args.orderByForRecords) &&
     !isEmptyObject(args.orderByForRecords) &&
-    !isArray(args.orderByForRecords)
+    !isArray(args.orderByForRecords) &&
+    !isObject(args.orderByForRecords)
   ) {
     throw new GraphqlDirectExecutionException(
       'Invalid argument: "orderByForRecords" must be an array',

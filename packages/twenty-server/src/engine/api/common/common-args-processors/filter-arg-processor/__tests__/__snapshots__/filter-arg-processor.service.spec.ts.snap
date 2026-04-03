@@ -134,11 +134,11 @@ exports[`FilterArgProcessorService failing filter inputs validation RAW_JSON sho
 
 exports[`FilterArgProcessorService failing filter inputs validation RAW_JSON should throw for invalid filter #2: {"rawJsonField":{}} 1`] = `"Filter for field "rawJsonField" must have exactly one operator"`;
 
-exports[`FilterArgProcessorService failing filter inputs validation RELATION should throw for invalid filter #1: {"manyToOneRelationFieldId":{"eq":"invalid-uuid"}} 1`] = `"Invalid UUID value 'invalid-uuid' for field "manyToOneRelationFieldId""`;
+exports[`FilterArgProcessorService failing filter inputs validation RELATION should throw for invalid filter #1: {"manyToOneRelationFieldId":{"eq":"invalid-uuid"}} 1`] = `"Cannot filter by relation field "manyToOneRelationFieldId": use "manyToOneRelationFieldIdId" instead"`;
 
-exports[`FilterArgProcessorService failing filter inputs validation RELATION should throw for invalid filter #2: {"manyToOneRelationFieldId":{"invalidOperator":"test"}} 1`] = `"Operator "invalidOperator" is not valid for field "manyToOneRelationFieldId" of type RELATION - Allowed operators: eq, neq, gt, gte, lt, lte, in, is"`;
+exports[`FilterArgProcessorService failing filter inputs validation RELATION should throw for invalid filter #2: {"manyToOneRelationFieldId":{"invalidOperator":"test"}} 1`] = `"Cannot filter by relation field "manyToOneRelationFieldId": use "manyToOneRelationFieldIdId" instead"`;
 
-exports[`FilterArgProcessorService failing filter inputs validation RELATION should throw for invalid filter #3: {"manyToOneRelationFieldId":{}} 1`] = `"Filter for field "manyToOneRelationFieldId" must have exactly one operator"`;
+exports[`FilterArgProcessorService failing filter inputs validation RELATION should throw for invalid filter #3: {"manyToOneRelationFieldId":{}} 1`] = `"Cannot filter by relation field "manyToOneRelationFieldId": use "manyToOneRelationFieldIdId" instead"`;
 
 exports[`FilterArgProcessorService failing filter inputs validation RICH_TEXT should throw for invalid filter #1: {"richTextField":{"invalidOperator":"test"}} 1`] = `"Sub field "invalidOperator" not found for composite type: RICH_TEXT"`;
 

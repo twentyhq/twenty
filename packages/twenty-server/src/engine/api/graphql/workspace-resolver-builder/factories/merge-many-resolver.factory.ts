@@ -38,7 +38,7 @@ export class MergeManyResolverFactory
       });
 
       try {
-        const record = await this.commonMergeManyQueryRunnerService.execute(
+        const { results: record } = await this.commonMergeManyQueryRunnerService.execute(
           { ...args, selectedFields },
           resolverContext,
         );

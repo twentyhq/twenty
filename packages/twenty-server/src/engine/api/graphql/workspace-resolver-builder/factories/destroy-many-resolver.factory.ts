@@ -39,7 +39,7 @@ export class DestroyManyResolverFactory
       });
 
       try {
-        const records = await this.commonDestroyManyQueryRunnerService.execute(
+        const { results: records } = await this.commonDestroyManyQueryRunnerService.execute(
           { ...args, selectedFields },
           resolverContext,
         );

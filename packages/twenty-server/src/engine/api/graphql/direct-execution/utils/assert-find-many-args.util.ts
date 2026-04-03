@@ -70,7 +70,8 @@ export function assertFindManyArgs(
     'orderBy' in args &&
     isDefined(args.orderBy) &&
     !isEmptyObject(args.orderBy) &&
-    !isArray(args.orderBy)
+    !isArray(args.orderBy) &&
+    !isObject(args.orderBy)
   ) {
     throw new GraphqlDirectExecutionException(
       'Invalid argument: "orderBy" must be an array',

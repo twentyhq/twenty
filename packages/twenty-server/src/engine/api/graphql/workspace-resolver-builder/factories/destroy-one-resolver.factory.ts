@@ -38,7 +38,7 @@ export class DestroyOneResolverFactory
       });
 
       try {
-        const record = await this.commonDestroyOneQueryRunnerService.execute(
+        const { results: record } = await this.commonDestroyOneQueryRunnerService.execute(
           { ...args, selectedFields },
           resolverContext,
         );

@@ -38,7 +38,7 @@ export class DeleteOneResolverFactory
       });
 
       try {
-        const record = await this.commonDeleteOneQueryRunnerService.execute(
+        const { results: record } = await this.commonDeleteOneQueryRunnerService.execute(
           { ...args, selectedFields },
           resolverContext,
         );

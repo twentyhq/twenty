@@ -136,12 +136,12 @@ export const successfulFilterInputsByFieldMetadataType: {
     { filter: { rawJsonField: { like: '%test%' } } },
   ],
   [FieldMetadataType.RELATION]: [
-    { filter: { manyToOneRelationFieldId: { eq: TEST_UUID } } },
-    { filter: { manyToOneRelationFieldId: { neq: TEST_UUID } } },
-    { filter: { manyToOneRelationFieldId: { in: [TEST_UUID] } } },
-    { filter: { manyToOneRelationFieldId: { is: 'NULL' } } },
-    { filter: { manyToOneRelationFieldId: { is: 'NOT_NULL' } } },
-    { filter: { manyToOneRelationFieldId: { eq: null } } },
+    { filter: { manyToOneRelationFieldIdId: { eq: TEST_UUID } } },
+    { filter: { manyToOneRelationFieldIdId: { neq: TEST_UUID } } },
+    { filter: { manyToOneRelationFieldIdId: { in: [TEST_UUID] } } },
+    { filter: { manyToOneRelationFieldIdId: { is: 'NULL' } } },
+    { filter: { manyToOneRelationFieldIdId: { is: 'NOT_NULL' } } },
+    { filter: { manyToOneRelationFieldIdId: { eq: null } } },
   ],
   [FieldMetadataType.MORPH_RELATION]: [
     {

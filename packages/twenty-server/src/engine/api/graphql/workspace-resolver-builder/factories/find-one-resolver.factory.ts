@@ -38,7 +38,7 @@ export class FindOneResolverFactory
           workspaceSchemaBuilderContext: internalContext,
         });
 
-        const record = await this.commonFindOneQueryRunnerService.execute(
+        const { results: record } = await this.commonFindOneQueryRunnerService.execute(
           { ...args, selectedFields },
           resolverContext,
         );

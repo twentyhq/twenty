@@ -38,7 +38,7 @@ export class RestoreOneResolverFactory
       });
 
       try {
-        const record = await this.commonRestoreOneQueryRunnerService.execute(
+        const { results: record } = await this.commonRestoreOneQueryRunnerService.execute(
           { ...args, selectedFields },
           resolverContext,
         );

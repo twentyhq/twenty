@@ -58,6 +58,15 @@ export const fieldMetadataConfigByFieldName: Record<
       joinColumnName: 'manyToOneRelationFieldId',
     },
   },
+  manyToOneRelationFieldIdId: {
+    name: 'manyToOneRelationFieldId',
+    type: FieldMetadataType.RELATION,
+    isNullable: true,
+    settings: {
+      relationType: RelationType.MANY_TO_ONE,
+      joinColumnName: 'manyToOneRelationFieldId',
+    },
+  },
   rawJsonField: {
     name: 'rawJsonField',
     type: FieldMetadataType.RAW_JSON,

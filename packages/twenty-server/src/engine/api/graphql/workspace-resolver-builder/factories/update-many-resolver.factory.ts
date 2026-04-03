@@ -39,7 +39,7 @@ export class UpdateManyResolverFactory
       });
 
       try {
-        const records = await this.commonUpdateManyQueryRunnerService.execute(
+        const { results: records } = await this.commonUpdateManyQueryRunnerService.execute(
           { ...args, selectedFields },
           resolverContext,
         );
