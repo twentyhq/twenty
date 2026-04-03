@@ -68,10 +68,11 @@ export class CreateMessageChannelService {
           workspaceId,
         });
 
-        const createdMessageChannel = await this.messageChannelRepository.findOne({
-          where: { id: newMessageChannelId, workspaceId },
-          relations: ['connectedAccount', 'messageFolders'],
-        });
+        const createdMessageChannel =
+          await this.messageChannelRepository.findOne({
+            where: { id: newMessageChannelId, workspaceId },
+            relations: ['connectedAccount', 'messageFolders'],
+          });
 
         if (!isDefined(createdMessageChannel)) {
           throw new Error('Message channel not found');

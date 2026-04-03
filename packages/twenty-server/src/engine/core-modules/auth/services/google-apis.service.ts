@@ -47,6 +47,7 @@ import {
   MessagingMessageListFetchJob,
   type MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class GoogleAPIsService {
@@ -144,7 +145,7 @@ export class GoogleAPIsService {
           where: { userId, workspaceId },
         });
 
-        if (!userWorkspace) {
+        if (!isDefined(userWorkspace)) {
           throw new AuthException(
             `User workspace not found for user ${userId} in workspace ${workspaceId}`,
             AuthExceptionCode.INVALID_INPUT,
