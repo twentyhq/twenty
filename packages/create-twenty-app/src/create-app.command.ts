@@ -108,13 +108,14 @@ export class CreateAppCommand {
     const hasName = isDefined(options.name) || isDefined(directory);
     const hasDisplayName = isDefined(options.displayName);
     const hasDescription = isDefined(options.description);
+    const hasExample = isDefined(options.example);
 
     const { name, displayName, description } = await inquirer.prompt([
       {
         type: 'input',
         name: 'name',
         message: 'Application name:',
-        when: () => !hasName,
+        when: () => !hasName && !hasExample,
         default: 'my-twenty-app',
         validate: (input) => {
           if (input.length === 0) return 'Application name is required';
@@ -125,7 +126,7 @@ export class CreateAppCommand {
         type: 'input',
         name: 'displayName',
         message: 'Application display name:',
-        when: () => !hasDisplayName,
+        when: () => !hasDisplayName && !hasExample,
         default: (answers: { name?: string }) => {
           return convertToLabel(
             answers?.name ?? options.name ?? directory ?? '',
@@ -136,7 +137,7 @@ export class CreateAppCommand {
         type: 'input',
         name: 'description',
         message: 'Application description (optional):',
-        when: () => !hasDescription,
+        when: () => !hasDescription && !hasExample,
         default: '',
       },
     ]);
@@ -145,6 +146,7 @@ export class CreateAppCommand {
       options.name ??
       name ??
       directory ??
+      options.example ??
       'my-twenty-app'
     ).trim();
 

@@ -10,59 +10,12 @@ const TWENTY_DEFAULT_REF = 'main';
 const TWENTY_EXAMPLES_PATH = 'packages/twenty-apps/examples';
 const TWENTY_EXAMPLES_URL = `https://github.com/${TWENTY_REPO_OWNER}/${TWENTY_REPO_NAME}/tree/${TWENTY_DEFAULT_REF}/${TWENTY_EXAMPLES_PATH}`;
 
-type ResolvedGitHubSource = {
-  owner: string;
-  repo: string;
-  ref: string;
-  path: string;
-};
-
-export const isUrl = (source: string): boolean => {
-  return source.startsWith('https://') || source.startsWith('http://');
-};
-
-export const parseGitHubUrl = (url: string): ResolvedGitHubSource => {
-  const match = url.match(
-    /^https?:\/\/github\.com\/([^/]+)\/([^/]+?)(?:\/tree\/([^/]+)(?:\/(.+))?)?(?:\.git)?$/,
-  );
-
-  if (!match) {
-    throw new Error(
-      `Invalid GitHub URL: "${url}". Expected format: https://github.com/owner/repo[/tree/ref[/path]]`,
-    );
-  }
-
-  const [, owner, repo, ref, path] = match;
-
-  return {
-    owner,
-    repo,
-    ref: ref ?? TWENTY_DEFAULT_REF,
-    path: path ?? '',
-  };
-};
-
-const resolveSource = (source: string): ResolvedGitHubSource => {
-  if (isUrl(source)) {
-    return parseGitHubUrl(source);
-  }
-
-  return {
-    owner: TWENTY_REPO_OWNER,
-    repo: TWENTY_REPO_NAME,
-    ref: TWENTY_DEFAULT_REF,
-    path: `${TWENTY_EXAMPLES_PATH}/${source}`,
-  };
-};
-
 // Uses the GitHub Contents API to list directories — fast and doesn't download the repo
 const fetchGitHubDirectoryContents = async (
-  owner: string,
-  repo: string,
   path: string,
   ref: string,
 ): Promise<{ name: string; type: string }[] | null> => {
-  const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${ref}`;
+  const apiUrl = `https://api.github.com/repos/${TWENTY_REPO_OWNER}/${TWENTY_REPO_NAME}/contents/${path}?ref=${ref}`;
 
   const response = await fetch(apiUrl, {
     headers: { Accept: 'application/vnd.github.v3+json' },
@@ -81,16 +34,10 @@ const fetchGitHubDirectoryContents = async (
   return data as { name: string; type: string }[];
 };
 
-const listAvailableExamples = async (
-  owner: string,
-  repo: string,
-  ref: string,
-): Promise<string[]> => {
+const listAvailableExamples = async (): Promise<string[]> => {
   const contents = await fetchGitHubDirectoryContents(
-    owner,
-    repo,
     TWENTY_EXAMPLES_PATH,
-    ref,
+    TWENTY_DEFAULT_REF,
   );
 
   if (!contents) {
@@ -103,47 +50,41 @@ const listAvailableExamples = async (
 };
 
 const validateExampleExists = async (
-  source: ResolvedGitHubSource,
-  originalSource: string,
+  exampleName: string,
 ): Promise<void> => {
-  const { owner, repo, ref, path } = source;
+  const examplePath = `${TWENTY_EXAMPLES_PATH}/${exampleName}`;
 
-  const contents = await fetchGitHubDirectoryContents(owner, repo, path, ref);
+  const contents = await fetchGitHubDirectoryContents(
+    examplePath,
+    TWENTY_DEFAULT_REF,
+  );
 
   if (contents !== null) {
     return;
   }
 
-  if (!isUrl(originalSource)) {
-    const availableExamples = await listAvailableExamples(owner, repo, ref);
-
-    throw new Error(
-      `Example "${originalSource}" not found.\n\n` +
-        (availableExamples.length > 0
-          ? `Available examples:\n${availableExamples.map((name) => `  - ${name}`).join('\n')}\n\n`
-          : '') +
-        `Browse all examples: ${TWENTY_EXAMPLES_URL}`,
-    );
-  }
+  const availableExamples = await listAvailableExamples();
 
   throw new Error(
-    `Example not found: "${path}" does not exist in ${owner}/${repo} (ref: ${ref})`,
+    `Example "${exampleName}" not found.\n\n` +
+      (availableExamples.length > 0
+        ? `Available examples:\n${availableExamples.map((name) => `  - ${name}`).join('\n')}\n\n`
+        : '') +
+      `Browse all examples: ${TWENTY_EXAMPLES_URL}`,
   );
 };
 
 export const downloadExample = async (
-  source: string,
+  exampleName: string,
   targetDirectory: string,
 ): Promise<void> => {
-  const resolved = resolveSource(source);
+  const examplePath = `${TWENTY_EXAMPLES_PATH}/${exampleName}`;
 
-  const { owner, repo, ref, path } = resolved;
+  await validateExampleExists(exampleName);
 
-  await validateExampleExists(resolved, source);
+  console.log(chalk.gray(`Example '${examplePath}' validated successfully.`));
 
-  console.log(chalk.gray(`Example '${path}' validated successfully.`));
-
-  const tarballUrl = `https://codeload.github.com/${owner}/${repo}/tar.gz/${ref}`;
+  const tarballUrl = `https://codeload.github.com/${TWENTY_REPO_OWNER}/${TWENTY_REPO_NAME}/tar.gz/${TWENTY_DEFAULT_REF}`;
 
   const tempDir = join(
     tmpdir(),
@@ -160,7 +101,7 @@ export const downloadExample = async (
     if (!response.ok) {
       if (response.status === 404) {
         throw new Error(
-          `Could not find repository: ${owner}/${repo} (ref: ${ref})`,
+          `Could not find repository: ${TWENTY_REPO_OWNER}/${TWENTY_REPO_NAME} (ref: ${TWENTY_DEFAULT_REF})`,
         );
       }
       throw new Error(
@@ -196,12 +137,12 @@ export const downloadExample = async (
       throw new Error('Failed to extract archive: no directory found');
     }
 
-    const sourcePath = path
-      ? join(tempDir, extractedDir, path)
-      : join(tempDir, extractedDir);
+    const sourcePath = join(tempDir, extractedDir, examplePath);
 
     if (!(await fs.pathExists(sourcePath))) {
-      throw new Error(`Example directory not found in archive: "${path}"`);
+      throw new Error(
+        `Example directory not found in archive: "${examplePath}"`,
+      );
     }
 
     await fs.copy(sourcePath, targetDirectory);

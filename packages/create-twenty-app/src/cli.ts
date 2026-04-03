@@ -13,8 +13,8 @@ const program = new Command(packageJson.name)
   )
   .argument('[directory]')
   .option(
-    '--example <name-or-url>',
-    'Initialize from an example (name or GitHub URL)',
+    '--example <name>',
+    'Initialize from an example',
   )
   .option('-n, --name <name>', 'Application name (skips prompt)')
   .option(

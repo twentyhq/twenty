@@ -1,4 +1,4 @@
-name: CI Create App E2E
+name: CI Hello world App E2E
 
 on:
   push:
@@ -29,7 +29,7 @@ jobs:
         !packages/twenty-client-sdk/package.json
         !packages/twenty-shared/package.json
         !packages/twenty-server/package.json
-  create-app-e2e:
+  create-app-e2e-hello-world:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
@@ -107,7 +107,7 @@ jobs:
           create-twenty-app --version
           mkdir -p /tmp/e2e-test-workspace
           cd /tmp/e2e-test-workspace
-          create-twenty-app test-app --example https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world --display-name "Test App" --description "E2E test app" --skip-local-instance
+          create-twenty-app test-app --example hello-world --display-name "Test hello-world app" --description "E2E test hello-world app" --skip-local-instance
 
       - name: Install scaffolded app dependencies
         run: |
@@ -115,6 +115,8 @@ jobs:
           echo 'npmRegistryServer: "http://localhost:4873"' >> .yarnrc.yml
           echo 'unsafeHttpWhitelist: ["localhost"]' >> .yarnrc.yml
           YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install --no-immutable
+          echo "--- Installing last SDK versions ---"
+          YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn add twenty-sdk twenty-client-sdk
 
       - name: Verify installed app versions
         run: |
@@ -191,11 +193,11 @@ jobs:
           cd /tmp/e2e-test-workspace/test-app
           yarn test
 
-  ci-create-app-e2e-status-check:
+  ci-create-app-e2e-hello-world-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    needs: [changed-files-check, create-app-e2e]
+    needs: [changed-files-check, create-app-e2e-hello-world]
     steps:
       - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure')

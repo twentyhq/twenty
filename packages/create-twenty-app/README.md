@@ -32,7 +32,7 @@ The scaffolder will:
 
 | Flag                           | Description                                     |
 | ------------------------------ | ----------------------------------------------- |
-| `--example <name-or-url>`      | Initialize from an example (name or GitHub URL) |
+| `--example <name>`             | Initialize from an example                      |
 | `--name <name>`                | Set the app name (skips the prompt)             |
 | `--display-name <displayName>` | Set the display name (skips the prompt)         |
 | `--description <description>`  | Set the description (skips the prompt)          |
@@ -44,7 +44,7 @@ By default (no flags), a minimal app is generated with core files and an integra
 npx create-twenty-app@latest my-twenty-app --example hello-world
 ```
 
-Examples are sourced from [twentyhq/twenty/packages/twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples). You can also pass any GitHub URL as the example value.
+Examples are sourced from [twentyhq/twenty/packages/twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples).
 
 ## Documentation
 

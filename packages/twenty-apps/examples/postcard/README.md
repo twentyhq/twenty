@@ -31,7 +31,7 @@ yarn twenty dev
 Or use it as a template via create-twenty-app:
 
 ```bash
-npx create-twenty-app@latest my-app --example postcard-app
+npx create-twenty-app@latest my-app --example postcard
 ```
 
 ## Learn more
