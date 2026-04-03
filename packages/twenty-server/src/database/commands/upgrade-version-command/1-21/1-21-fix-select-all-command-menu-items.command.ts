@@ -1,0 +1,144 @@
+import { Command } from 'nest-commander';
+import { isDefined } from 'twenty-shared/utils';
+
+import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+
+const UNIVERSAL_IDENTIFIERS_TO_FIX = new Set([
+  'd5a55d57-ed1d-4791-89b8-53b7e121d69d', // deleteRecords
+  '2d733846-8cc5-4314-ab79-916ae0801baa', // restoreRecords
+  '0ea2ebc4-02ca-4d15-b424-5352b9e487df', // destroyRecords
+]);
+
+@Command({
+  name: 'upgrade:1-21:fix-select-all-command-menu-items',
+  description:
+    'Fix delete/restore/destroy command menu items to work in select-all (exclusion) mode',
+})
+export class FixSelectAllCommandMenuItemsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+  constructor(
+    protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly applicationService: ApplicationService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+  ) {
+    super(workspaceIteratorService);
+  }
+
+  override async runOnWorkspace({
+    workspaceId,
+    options,
+  }: RunOnWorkspaceArgs): Promise<void> {
+    const isDryRun = options.dryRun ?? false;
+
+    this.logger.log(
+      `${isDryRun ? '[DRY RUN] ' : ''}Starting select-all expression fix for workspace ${workspaceId}`,
+    );
+
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const { flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatCommandMenuItemMaps',
+      ]);
+
+    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
+      computeTwentyStandardApplicationAllFlatEntityMaps({
+        shouldIncludeRecordPageLayouts: true,
+        now: new Date().toISOString(),
+        workspaceId,
+        twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      });
+
+    const itemsToUpdate = Object.values(
+      standardAllFlatEntityMaps.flatCommandMenuItemMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter((standardItem) =>
+        UNIVERSAL_IDENTIFIERS_TO_FIX.has(standardItem.universalIdentifier),
+      )
+      .filter((standardItem) => {
+        const existingItem =
+          existingFlatCommandMenuItemMaps.byUniversalIdentifier[
+            standardItem.universalIdentifier
+          ];
+
+        return (
+          isDefined(existingItem) &&
+          existingItem.conditionalAvailabilityExpression !==
+            standardItem.conditionalAvailabilityExpression
+        );
+      })
+      .map((standardItem) => {
+        const existingItem =
+          existingFlatCommandMenuItemMaps.byUniversalIdentifier[
+            standardItem.universalIdentifier
+          ]!;
+
+        return {
+          ...existingItem,
+          conditionalAvailabilityExpression:
+            standardItem.conditionalAvailabilityExpression,
+          updatedAt: new Date().toISOString(),
+        };
+      });
+
+    if (itemsToUpdate.length === 0) {
+      this.logger.log(
+        `Select-all command menu item expressions already up to date for workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
+    this.logger.log(
+      `Found ${itemsToUpdate.length} command menu item(s) to update for workspace ${workspaceId}`,
+    );
+
+    if (isDryRun) {
+      this.logger.log(
+        `[DRY RUN] Would update ${itemsToUpdate.length} command menu item expression(s) for workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            commandMenuItem: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: itemsToUpdate,
+            },
+          },
+          workspaceId,
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
+        },
+      );
+
+    if (validateAndBuildResult.status === 'fail') {
+      this.logger.error(
+        `Failed to fix select-all expressions:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
+      );
+
+      throw new Error(
+        `Failed to fix select-all command menu item expressions for workspace ${workspaceId}`,
+      );
+    }
+
+    this.logger.log(
+      `Successfully updated ${itemsToUpdate.length} command menu item expression(s) for workspace ${workspaceId}`,
+    );
+  }
+}
