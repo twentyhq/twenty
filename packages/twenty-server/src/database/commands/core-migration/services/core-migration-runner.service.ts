@@ -11,7 +11,7 @@ export type RunSingleMigrationError =
 
 export type RunSingleMigrationResult =
   | { status: 'success' }
-  | { error: RunSingleMigrationError; status: 'fail' };
+  | { code: RunSingleMigrationError; error?: unknown; status: 'fail' };
 
 @Injectable()
 export class CoreMigrationRunnerService {
@@ -71,20 +71,20 @@ export class CoreMigrationRunnerService {
 
         if (!registeredMigration) {
           return {
-            error: 'migration-not-registered',
+            code: 'migration-not-registered',
             status: 'fail',
           };
         }
 
         return {
-          error: 'already-executed',
+            code: 'already-executed',
           status: 'fail',
         };
       }
 
       if (!pendingMigration.instance) {
         return {
-          error: 'migration-instance-not-defined',
+            code: 'migration-instance-not-defined',
           status: 'fail',
         };
       }
@@ -122,7 +122,8 @@ export class CoreMigrationRunnerService {
       this.logger.error('Error running database migration:', error);
 
       return {
-        error: 'migration-execution-failed',
+        code: 'migration-execution-failed',
+        error,
         status: 'fail',
       };
     } finally {

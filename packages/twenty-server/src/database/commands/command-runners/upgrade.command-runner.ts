@@ -194,7 +194,7 @@ Please roll back to that version and run the upgrade command again.`,
           );
 
         if (result.status === 'fail') {
-          if (result.error === 'already-executed') {
+          if (result.code === 'already-executed') {
             this.logger.warn(
               `Core migration ${migrationName} already executed, skipping`,
             );
@@ -203,10 +203,20 @@ Please roll back to that version and run the upgrade command again.`,
           }
 
           this.logger.error(
-            `Core migration ${migrationName} failed with error: ${result.error}`,
+            `Core migration ${migrationName} failed with code: ${result.code}`,
           );
 
-          return;
+          if (isDefined(result.error)) {
+            this.logger.error(
+              result.error instanceof Error
+                ? (result.error.stack ?? result.error.message)
+                : String(result.error),
+            );
+          }
+
+          throw new Error(
+            `Core migration ${migrationName} failed: ${result.code}`,
+          );
         }
 
         this.logger.log(
