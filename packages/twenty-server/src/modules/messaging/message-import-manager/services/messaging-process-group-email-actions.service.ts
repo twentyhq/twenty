@@ -65,10 +65,16 @@ export class MessagingProcessGroupEmailActionsService {
         async () => {
           switch (pendingGroupEmailsAction) {
             case MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_DELETION:
-              await this.handleGroupEmailsDeletion(workspaceId, messageChannel.id);
+              await this.handleGroupEmailsDeletion(
+                workspaceId,
+                messageChannel.id,
+              );
               break;
             case MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_IMPORT:
-              await this.handleGroupEmailsImport(workspaceId, messageChannel.id);
+              await this.handleGroupEmailsImport(
+                workspaceId,
+                messageChannel.id,
+              );
               break;
           }
         },
@@ -77,7 +83,9 @@ export class MessagingProcessGroupEmailActionsService {
 
       await this.messageChannelRepository.update(
         { id: messageChannel.id, workspaceId },
-        { pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE },
+        {
+          pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
+        },
       );
 
       this.logger.debug(
@@ -119,10 +127,7 @@ export class MessagingProcessGroupEmailActionsService {
     );
   }
 
-  private async resetCursors(
-    workspaceId: string,
-    messageChannelId: string,
-  ) {
+  private async resetCursors(workspaceId: string, messageChannelId: string) {
     await this.messageChannelRepository.update(
       { id: messageChannelId, workspaceId },
       { syncCursor: '' },
