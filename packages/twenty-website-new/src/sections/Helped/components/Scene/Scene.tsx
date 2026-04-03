@@ -39,6 +39,16 @@ const HeadlineBlock = styled.div`
   text-align: center;
   width: 100%;
   z-index: 1;
+
+  span {
+    transition: opacity 0.4s ease;
+  }
+
+  h1:has(span:hover) span:not(:hover),
+  h2:has(span:hover) span:not(:hover),
+  h3:has(span:hover) span:not(:hover) {
+    opacity: 0.2;
+  }
 `;
 
 const CardsLayer = styled.div`

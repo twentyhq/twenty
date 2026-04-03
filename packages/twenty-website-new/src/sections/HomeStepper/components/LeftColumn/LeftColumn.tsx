@@ -38,6 +38,16 @@ const StepBlock = styled.div`
   row-gap: ${theme.spacing(4)};
   transition: opacity 0.4s ease;
 
+  span {
+    transition: opacity 0.4s ease;
+  }
+
+  h1:has(span:hover) span:not(:hover),
+  h2:has(span:hover) span:not(:hover),
+  h3:has(span:hover) span:not(:hover) {
+    opacity: 0.2;
+  }
+
   @media (min-width: ${theme.breakpoints.md}px) {
     min-height: 100vh;
     row-gap: ${theme.spacing(6)};

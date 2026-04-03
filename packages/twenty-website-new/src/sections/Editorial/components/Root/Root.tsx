@@ -14,6 +14,23 @@ const Inner = styled.div`
   flex-direction: column;
   gap: ${theme.spacing(10)};
   width: 100%;
+
+  /* Smooth transition for the children elements */
+  & > * {
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* When hovering over any direct child, aggressively shrink and dim the other */
+  &:has(> div:hover) > div:not(:hover) {
+    opacity: 0.1;
+    transform: scale(0.95) translateY(12px);
+  }
+
+  /* Expand the hovered element */
+  &:has(> div:hover) > div:hover {
+    transform: scale(1.02);
+    z-index: 2;
+  }
 `;
 
 const StyledContainer = styled(Container)`
