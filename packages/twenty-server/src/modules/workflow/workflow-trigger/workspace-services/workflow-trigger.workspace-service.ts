@@ -547,7 +547,7 @@ export class WorkflowTriggerWorkspaceService {
           entityManager: transactionContext?.entityManager,
         });
 
-        await this.cacheStorageService.hashDeleteIfExists({
+        await this.cacheStorageService.hashDelete({
           key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
           field: workflowVersion.workflowId,
         });

@@ -342,7 +342,7 @@ end`;
     }) as Promise<number>;
   }
 
-  async hashDeleteIfExists({
+  async hashDelete({
     key,
     field,
   }: {
@@ -350,22 +350,12 @@ end`;
     field: string;
   }): Promise<number> {
     if (!this.isRedisCache()) {
-      throw new Error('hashDeleteIfExists is only supported with Redis cache');
+      throw new Error('hashDelete is only supported with Redis cache');
     }
 
     const redisClient = (this.cache as RedisCache).store.client;
 
-    const script = `
-if redis.call('EXISTS', KEYS[1]) == 1 then
-  return redis.call('HDEL', KEYS[1], ARGV[1])
-else
-  return 0
-end`;
-
-    return redisClient.eval(script, {
-      keys: [this.getKey(key)],
-      arguments: [field],
-    }) as Promise<number>;
+    return redisClient.hDel(this.getKey(key), field);
   }
 
   async expire(key: string, ttlMs: Milliseconds): Promise<boolean> {
