@@ -6,13 +6,14 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const UNIVERSAL_IDENTIFIERS_TO_FIX = new Set([
-  'd5a55d57-ed1d-4791-89b8-53b7e121d69d', // deleteRecords
-  '2d733846-8cc5-4314-ab79-916ae0801baa', // restoreRecords
-  '0ea2ebc4-02ca-4d15-b424-5352b9e487df', // destroyRecords
+const UNIVERSAL_IDENTIFIERS_TO_FIX = new Set<string>([
+  STANDARD_COMMAND_MENU_ITEMS.deleteRecords.universalIdentifier,
+  STANDARD_COMMAND_MENU_ITEMS.restoreRecords.universalIdentifier,
+  STANDARD_COMMAND_MENU_ITEMS.destroyRecords.universalIdentifier,
 ]);
 
 @Command({
