@@ -8,7 +8,7 @@ const PEOPLE_AVATAR_URLS = {
   jeffWilliams:
     'https://twentyhq.github.io/placeholder-images/people/image-22.png',
   katherineAdams:
-    'https://twentyhq.github.io/placeholder-images/people/image-07.png',
+    '/images/home/hero/avatars/katherine-adams.jpg',
   philSchiller:
     'https://twentyhq.github.io/placeholder-images/people/image-14.png',
   timCook:
@@ -28,66 +28,6 @@ export const HERO_DATA: HeroHomeDataType = {
     workspace: { icon: 'apple', name: 'Apple' },
     tableWidth: 1700,
     actions: ['Filter', 'Sort', 'Options'],
-    favoritesNav: [
-      {
-        id: 'fav-to-follow',
-        label: 'To Follow',
-        icon: { kind: 'tabler', name: 'folder', tone: 'orange' },
-        showChevron: true,
-        children: [
-          {
-            id: 'fav-stripe',
-            label: 'Stripe',
-            meta: 'Company',
-            icon: { kind: 'brand', brand: 'stripe' },
-          },
-          {
-            id: 'fav-airbnb',
-            label: 'Airbnb',
-            meta: 'Company',
-            icon: { kind: 'brand', brand: 'airbnb' },
-          },
-          {
-            id: 'fav-brian-chesky',
-            label: 'Brian Chesky',
-            meta: 'Person',
-            icon: {
-              kind: 'avatar',
-              label: 'B',
-              tone: 'violet',
-              shape: 'circle',
-            },
-          },
-        ],
-      },
-      {
-        id: 'fav-all-companies',
-        label: 'All Companies',
-        icon: { kind: 'tabler', name: 'buildingSkyscraper', tone: 'blue' },
-      },
-      {
-        id: 'fav-send-nda',
-        label: 'Send NDA to Qonto - T...',
-        icon: { kind: 'avatar', label: 'L', tone: 'teal', shape: 'circle' },
-      },
-      {
-        id: 'fav-page-layout',
-        label: 'Page Layout',
-        icon: { kind: 'brand', brand: 'page-layout' },
-      },
-      {
-        id: 'fav-figma',
-        label: 'Figma',
-        meta: 'Company',
-        icon: { kind: 'brand', brand: 'figma' },
-      },
-      {
-        id: 'fav-ben-chestnut',
-        label: 'Ben Chestnut',
-        meta: 'Person',
-        icon: { kind: 'brand', brand: 'ben-chestnut' },
-      },
-    ],
     workspaceNav: [
       {
         id: 'companies',
@@ -369,7 +309,7 @@ export const HERO_DATA: HeroHomeDataType = {
       {
         id: 'people',
         label: 'People',
-        icon: { kind: 'tabler', name: 'user', tone: 'purple' },
+        icon: { kind: 'tabler', name: 'user', tone: 'blue' },
         viewLabel: 'All People',
         viewCount: 5,
         columns: [
@@ -414,7 +354,7 @@ export const HERO_DATA: HeroHomeDataType = {
       {
         id: 'opportunities',
         label: 'Opportunities',
-        icon: { kind: 'tabler', name: 'targetArrow', tone: 'pink' },
+        icon: { kind: 'tabler', name: 'targetArrow', tone: 'red' },
         viewLabel: 'All Opportunities',
         viewCount: 3,
         columns: [
@@ -429,7 +369,12 @@ export const HERO_DATA: HeroHomeDataType = {
           {
             id: 'enterprise-rollout',
             cells: {
-              name: { type: 'text', value: 'Enterprise rollout' },
+              name: {
+                type: 'text',
+                value: 'Enterprise rollout',
+                shortLabel: 'E',
+                tone: 'pink',
+              },
               company: { type: 'entity', name: 'Slack', domain: 'slack.com' },
               amount: { type: 'number', value: '$2,300,000' },
               stage: { type: 'tag', value: 'Negotiation' },
@@ -440,7 +385,12 @@ export const HERO_DATA: HeroHomeDataType = {
           {
             id: 'workspace-upgrade',
             cells: {
-              name: { type: 'text', value: 'Workspace upgrade' },
+              name: {
+                type: 'text',
+                value: 'Workspace upgrade',
+                shortLabel: 'W',
+                tone: 'pink',
+              },
               company: { type: 'entity', name: 'Notion', domain: 'notion.com' },
               amount: { type: 'number', value: '$750,000' },
               stage: { type: 'tag', value: 'Qualified' },
@@ -467,7 +417,12 @@ export const HERO_DATA: HeroHomeDataType = {
           {
             id: 'send-nda',
             cells: {
-              title: { type: 'text', value: 'Send NDA' },
+              title: {
+                type: 'text',
+                value: 'Send NDA',
+                shortLabel: 'S',
+                tone: 'teal',
+              },
               assignee: { type: 'person', name: 'Tim Cook', tone: 'teal', kind: 'person', avatarUrl: PEOPLE_AVATAR_URLS.timCook },
               dueDate: { type: 'text', value: 'Oct 25, 2023' },
               relatedTo: { type: 'entity', name: 'Anthropic', domain: 'anthropic.com' },
@@ -477,7 +432,12 @@ export const HERO_DATA: HeroHomeDataType = {
           {
             id: 'review-proposal',
             cells: {
-              title: { type: 'text', value: 'Review proposal' },
+              title: {
+                type: 'text',
+                value: 'Review proposal',
+                shortLabel: 'R',
+                tone: 'teal',
+              },
               assignee: { type: 'person', name: 'Eddy Cue', tone: 'gray', kind: 'person', avatarUrl: PEOPLE_AVATAR_URLS.eddyCue },
               dueDate: { type: 'text', value: 'Oct 28, 2023' },
               relatedTo: { type: 'entity', name: 'Slack', domain: 'slack.com' },
@@ -489,7 +449,7 @@ export const HERO_DATA: HeroHomeDataType = {
       {
         id: 'notes',
         label: 'Notes',
-        icon: { kind: 'tabler', name: 'notes', tone: 'green' },
+        icon: { kind: 'tabler', name: 'notes', tone: 'teal' },
         viewLabel: 'All Notes',
         viewCount: 2,
         columns: [
@@ -502,7 +462,12 @@ export const HERO_DATA: HeroHomeDataType = {
           {
             id: 'discovery-call',
             cells: {
-              title: { type: 'text', value: 'Discovery call notes' },
+              title: {
+                type: 'text',
+                value: 'Discovery call notes',
+                shortLabel: 'D',
+                tone: 'green',
+              },
               createdBy: { type: 'person', name: 'Phil Schiller', tone: 'amber', kind: 'person', avatarUrl: PEOPLE_AVATAR_URLS.philSchiller },
               relatedTo: { type: 'entity', name: 'Notion', domain: 'notion.com' },
               added: { type: 'text', value: 'Sep 2, 2023' },
@@ -511,7 +476,12 @@ export const HERO_DATA: HeroHomeDataType = {
           {
             id: 'design-system-meeting',
             cells: {
-              title: { type: 'text', value: 'Design system meeting' },
+              title: {
+                type: 'text',
+                value: 'Design system meeting',
+                shortLabel: 'D',
+                tone: 'green',
+              },
               createdBy: { type: 'person', name: 'Tim Cook', tone: 'teal', kind: 'person', avatarUrl: PEOPLE_AVATAR_URLS.timCook },
               relatedTo: { type: 'entity', name: 'Figma', domain: 'figma.com' },
               added: { type: 'text', value: 'Oct 18, 2023' },
@@ -522,7 +492,7 @@ export const HERO_DATA: HeroHomeDataType = {
       {
         id: 'sales-dashboard',
         label: 'Sales Dashboard',
-        icon: { kind: 'avatar', label: '$', tone: 'amber', shape: 'circle' },
+        icon: { kind: 'avatar', label: 'S', tone: 'amber', shape: 'circle' },
         meta: 'Dashboard',
         viewLabel: 'Sales Dashboard',
         viewCount: 0,
@@ -550,7 +520,12 @@ export const HERO_DATA: HeroHomeDataType = {
               {
                 id: 'new-lead',
                 cells: {
-                  name: { type: 'text', value: 'New Lead Assignment' },
+                  name: {
+                    type: 'text',
+                    value: 'New Lead Assignment',
+                    shortLabel: 'N',
+                    tone: 'amber',
+                  },
                   status: { type: 'tag', value: 'Active' },
                   lastRun: { type: 'text', value: 'Oct 24, 2023 10:00 am' },
                 },
@@ -558,7 +533,12 @@ export const HERO_DATA: HeroHomeDataType = {
               {
                 id: 'nurture',
                 cells: {
-                  name: { type: 'text', value: 'Nurture Sequence' },
+                  name: {
+                    type: 'text',
+                    value: 'Nurture Sequence',
+                    shortLabel: 'N',
+                    tone: 'amber',
+                  },
                   status: { type: 'tag', value: 'Inactive' },
                   lastRun: { type: 'text', value: 'Oct 20, 2023 3:15 pm' },
                 },
@@ -582,7 +562,12 @@ export const HERO_DATA: HeroHomeDataType = {
               {
                 id: 'run-12345',
                 cells: {
-                  runId: { type: 'text', value: 'run_12345' },
+                  runId: {
+                    type: 'text',
+                    value: 'run_12345',
+                    shortLabel: 'R',
+                    tone: 'amber',
+                  },
                   workflow: { type: 'text', value: 'New Lead Assignment' },
                   status: { type: 'tag', value: 'Success' },
                   startedAt: { type: 'text', value: 'Oct 24, 2023 10:00 am' },
@@ -592,7 +577,12 @@ export const HERO_DATA: HeroHomeDataType = {
               {
                 id: 'run-12346',
                 cells: {
-                  runId: { type: 'text', value: 'run_12346' },
+                  runId: {
+                    type: 'text',
+                    value: 'run_12346',
+                    shortLabel: 'R',
+                    tone: 'amber',
+                  },
                   workflow: { type: 'text', value: 'Nurture Sequence' },
                   status: { type: 'tag', value: 'Failed' },
                   startedAt: { type: 'text', value: 'Oct 20, 2023 3:15 pm' },
@@ -617,7 +607,12 @@ export const HERO_DATA: HeroHomeDataType = {
               {
                 id: 'v2-lead',
                 cells: {
-                  version: { type: 'text', value: 'v2' },
+                  version: {
+                    type: 'text',
+                    value: 'v2',
+                    shortLabel: 'V',
+                    tone: 'amber',
+                  },
                   workflow: { type: 'text', value: 'New Lead Assignment' },
                   publishedAt: { type: 'text', value: 'Oct 15, 2023 9:00 am' },
                   publishedBy: { type: 'person', name: 'Ivan Zhao', shortLabel: 'I', tone: 'gray', kind: 'person', avatarUrl: 'https://twentyhq.github.io/placeholder-images/people/image-09.png' },
@@ -626,7 +621,12 @@ export const HERO_DATA: HeroHomeDataType = {
               {
                 id: 'v1-lead',
                 cells: {
-                  version: { type: 'text', value: 'v1' },
+                  version: {
+                    type: 'text',
+                    value: 'v1',
+                    shortLabel: 'V',
+                    tone: 'amber',
+                  },
                   workflow: { type: 'text', value: 'New Lead Assignment' },
                   publishedAt: { type: 'text', value: 'Sep 10, 2023 1:00 pm' },
                   publishedBy: { type: 'person', name: 'Ivan Zhao', shortLabel: 'I', tone: 'gray', kind: 'person', avatarUrl: 'https://twentyhq.github.io/placeholder-images/people/image-09.png' },
@@ -637,15 +637,15 @@ export const HERO_DATA: HeroHomeDataType = {
         ],
       },
       {
-        id: 'claude',
-        label: 'Claude',
-        icon: { kind: 'brand', brand: 'claude', overlay: 'link' },
-      },
-      {
-        id: 'workspace-stripe',
-        label: 'Stripe',
-        icon: { kind: 'brand', brand: 'stripe' },
-        showChevron: true,
+        id: 'book-demo',
+        label: 'Book a demo',
+        href: 'https://cal.com/forms/f7841033-0a20-4958-8c92-4e34ec128a81',
+        icon: {
+          kind: 'brand',
+          brand: 'twenty',
+          imageSrc: '/images/home/hero/twenty-demo-logo.png',
+          overlay: 'link',
+        },
       },
     ],
   },
