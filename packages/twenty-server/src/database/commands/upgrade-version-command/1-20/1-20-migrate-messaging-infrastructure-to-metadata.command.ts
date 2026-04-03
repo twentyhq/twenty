@@ -187,9 +187,7 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends ActiveOrSus
         });
 
       if (coreConnectedAccounts.length > 0) {
-        await this.connectedAccountRepository.save(
-          coreConnectedAccounts
-        );
+        await this.connectedAccountRepository.save(coreConnectedAccounts);
         this.logger.log(
           `Migrated ${coreConnectedAccounts.length} connected accounts for workspace ${workspaceId}`,
         );

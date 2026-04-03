@@ -190,10 +190,7 @@ export class SyncMessageFoldersService {
           folderIdsToDelete,
         });
 
-        return [
-          ...updatedExistingFolders,
-          ...createdFolders,
-        ];
+        return [...updatedExistingFolders, ...createdFolders];
       },
       authContext,
     );

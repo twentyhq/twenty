@@ -23,9 +23,7 @@ export class MessagingMessageCleanerMessageChannelListener {
 
   @OnDatabaseBatchEvent('messageChannel', DatabaseEventAction.DESTROYED)
   async handleDestroyedEvent(
-    payload: WorkspaceEventBatch<
-      ObjectRecordDeleteEvent<MessageChannelEntity>
-    >,
+    payload: WorkspaceEventBatch<ObjectRecordDeleteEvent<MessageChannelEntity>>,
   ) {
     await Promise.all(
       payload.events.map((eventPayload) =>

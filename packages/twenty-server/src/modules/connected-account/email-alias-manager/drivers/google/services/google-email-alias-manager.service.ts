@@ -13,9 +13,7 @@ export class GoogleEmailAliasManagerService {
     private readonly gmailEmailAliasErrorHandlerService: GmailEmailAliasErrorHandlerService,
   ) {}
 
-  public async getHandleAliases(
-    connectedAccount: ConnectedAccountEntity,
-  ) {
+  public async getHandleAliases(connectedAccount: ConnectedAccountEntity) {
     const oAuth2Client =
       await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
         connectedAccount,

@@ -11,10 +11,7 @@ import { sanitizeString } from 'src/modules/messaging/message-import-manager/uti
 
 export const parseAndFormatGmailMessage = (
   message: gmailV1.Schema$Message,
-  connectedAccount: Pick<
-    ConnectedAccountEntity,
-    'handle' | 'handleAliases'
-  >,
+  connectedAccount: Pick<ConnectedAccountEntity, 'handle' | 'handleAliases'>,
 ): MessageWithParticipants | null => {
   const {
     id,

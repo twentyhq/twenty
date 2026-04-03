@@ -271,8 +271,7 @@ export class EmailComposerService {
       );
     }
 
-    const connectedAccountAsWorkspaceEntity =
-      connectedAccount;
+    const connectedAccountAsWorkspaceEntity = connectedAccount;
 
     const { accessToken, refreshToken } =
       await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(

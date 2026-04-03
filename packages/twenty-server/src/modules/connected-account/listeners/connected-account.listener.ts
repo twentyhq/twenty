@@ -33,8 +33,7 @@ export class ConnectedAccountListener {
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       for (const eventPayload of payload.events) {
-        const userWorkspaceId =
-          eventPayload.properties.before.userWorkspaceId;
+        const userWorkspaceId = eventPayload.properties.before.userWorkspaceId;
 
         const userWorkspace = await this.userWorkspaceRepository.findOne({
           where: { id: userWorkspaceId },

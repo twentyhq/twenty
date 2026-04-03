@@ -162,10 +162,7 @@ export class ImapGetMessagesService {
     uid: number,
     folderPath: string,
     folderExternalId: string,
-    connectedAccount: Pick<
-      ConnectedAccountEntity,
-      'handle' | 'handleAliases'
-    >,
+    connectedAccount: Pick<ConnectedAccountEntity, 'handle' | 'handleAliases'>,
   ): MessageWithParticipants {
     const fromAddresses = this.extractAddresses(parsed.from);
     const senderAddress = fromAddresses[0]?.address ?? '';

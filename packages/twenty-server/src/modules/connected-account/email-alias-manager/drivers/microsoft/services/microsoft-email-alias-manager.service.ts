@@ -11,9 +11,7 @@ export class MicrosoftEmailAliasManagerService {
     private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
   ) {}
 
-  public async getHandleAliases(
-    connectedAccount: ConnectedAccountEntity,
-  ) {
+  public async getHandleAliases(connectedAccount: ConnectedAccountEntity) {
     const microsoftClient =
       await this.oAuth2ClientManagerService.getMicrosoftOAuth2Client(
         connectedAccount,
