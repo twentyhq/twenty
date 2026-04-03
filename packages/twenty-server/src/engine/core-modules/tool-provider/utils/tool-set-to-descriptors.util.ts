@@ -2,10 +2,8 @@ import { type ToolSet } from 'ai';
 import { z } from 'zod';
 
 import { type ToolCategory } from 'twenty-shared/ai';
-import {
-  type ToolDescriptor,
-  type ToolIndexEntry,
-} from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 
 export type ToolSetToDescriptorsOptions = {
   includeSchemas?: boolean;
