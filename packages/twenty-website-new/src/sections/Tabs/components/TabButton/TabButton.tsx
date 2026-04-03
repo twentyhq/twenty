@@ -32,12 +32,7 @@ const StyledButton = styled.button`
     background-color 0.2s ease,
     background-image 0.2s ease,
     border-color 0.2s ease,
-    color 0.2s ease,
-    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-
-  &:hover {
-    transform: translateX(8px);
-  }
+    color 0.2s ease;
 
   &[data-active='true'] {
     background-color: ${theme.colors.primary.background[100]};
@@ -69,12 +64,6 @@ const TabIconBox = styled.span`
   overflow: hidden;
   place-items: center;
   width: ${theme.spacing(6)};
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-radius 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-
-  ${StyledButton}:hover & {
-    transform: rotate(15deg) scale(1.2);
-    border-radius: 50%;
-  }
 
   & svg {
     display: block;
