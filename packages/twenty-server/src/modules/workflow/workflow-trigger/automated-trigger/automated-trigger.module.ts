@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
@@ -12,6 +13,7 @@ import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workf
 @Module({
   imports: [
     TypeOrmModule.forFeature([WorkspaceEntity]),
+    CacheStorageModule,
     WorkflowCommonModule,
     WorkspaceDataSourceModule,
   ],

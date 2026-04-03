@@ -1,5 +1,4 @@
 import { AnimatedIconCrossfade } from 'twenty-ui/utilities';
-import { commandMenuItemEditSelectionModeState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditSelectionModeState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -7,14 +6,12 @@ import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedSta
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { useStore } from 'jotai';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconPencil, IconX } from 'twenty-ui/display';
 import { AnimatedButton } from 'twenty-ui/input';
 
 export const CommandMenuItemEditButton = () => {
   const { t } = useLingui();
-  const store = useStore();
   const { navigateSidePanel } = useNavigateSidePanel();
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -37,8 +34,6 @@ export const CommandMenuItemEditButton = () => {
 
       return;
     }
-
-    store.set(commandMenuItemEditSelectionModeState.atom, 'selection');
 
     navigateSidePanel({
       page: SidePanelPages.CommandMenuEdit,

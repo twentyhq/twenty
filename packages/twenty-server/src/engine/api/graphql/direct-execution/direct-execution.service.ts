@@ -203,73 +203,72 @@ export class DirectExecutionService {
       const variables = req.body.variables ?? {};
       const data: Record<string, unknown> = {};
 
-      const { graphQLResolverNameMap } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'graphQLResolverNameMap',
-        ]);
-
       const {
+        graphQLResolverNameMap,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        objectIdByNameSingular,
-      } = await this.loadWorkspaceMetadata(workspaceId);
+      } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'graphQLResolverNameMap',
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+      ]);
 
-      const results = await Promise.allSettled(
+      const { idByNameSingular: objectIdByNameSingular } =
+        buildObjectIdByNameMaps(flatObjectMetadataMaps);
+
+      const errors: GraphQLFormattedError[] = [];
+
+      await Promise.all(
         topLevelFields.map(async (field) => {
           const entry = graphQLResolverNameMap[field.name.value];
           const responseKey = field.alias?.value ?? field.name.value;
 
-          const args = extractArgumentsFromAst(field.arguments, variables);
+          try {
+            const args = extractArgumentsFromAst(field.arguments, variables);
 
-          const graphqlPartialResolveInfo = graphQLBuildPartialResolveInfo(
-            field,
-            fragmentMap,
-          );
-
-          const workspaceSchemaBuilderContext =
-            buildWorkspaceSchemaBuilderContext(
-              entry,
-              flatObjectMetadataMaps,
-              flatFieldMetadataMaps,
-              objectIdByNameSingular,
+            const graphqlPartialResolveInfo = graphQLBuildPartialResolveInfo(
+              field,
+              fragmentMap,
             );
 
-          const result = (await this.executeField({
-            entry,
-            args,
-            graphqlPartialResolveInfo,
-            workspaceSchemaBuilderContext,
-          })) as ResolverOutput;
+            const workspaceSchemaBuilderContext =
+              buildWorkspaceSchemaBuilderContext(
+                entry,
+                flatObjectMetadataMaps,
+                flatFieldMetadataMaps,
+                objectIdByNameSingular,
+              );
 
-          const formattedResult = graphQLFormatResultFromSelectedFields(
-            result,
-            graphqlFields(
-              graphqlPartialResolveInfo as GraphQLResolveInfo,
-              {},
-              { excludedFields: [] },
-            ),
-            workspaceSchemaBuilderContext.flatObjectMetadata.nameSingular,
-            {
-              flatObjectMetadataMaps,
-              flatFieldMetadataMaps,
-              objectIdByNameSingular,
-              method: entry.method,
-            },
-          );
+            const result = (await this.executeField({
+              entry,
+              args,
+              graphqlPartialResolveInfo,
+              workspaceSchemaBuilderContext,
+            })) as ResolverOutput;
 
-          return { responseKey, result: formattedResult };
+            const formattedResult = graphQLFormatResultFromSelectedFields(
+              result,
+              graphqlFields(
+                graphqlPartialResolveInfo as GraphQLResolveInfo,
+                {},
+                { excludedFields: [] },
+              ),
+              workspaceSchemaBuilderContext.flatObjectMetadata.nameSingular,
+              {
+                flatObjectMetadataMaps,
+                flatFieldMetadataMaps,
+                objectIdByNameSingular,
+                method: entry.method,
+              },
+            );
+
+            data[responseKey] = formattedResult;
+          } catch (error) {
+            data[responseKey] = null;
+            errors.push(this.formatError(error, req));
+          }
         }),
       );
-
-      const errors: GraphQLFormattedError[] = [];
-
-      for (const settled of results) {
-        if (settled.status === 'fulfilled') {
-          data[settled.value.responseKey] = settled.value.result;
-        } else {
-          errors.push(this.formatError(settled.reason, req));
-        }
-      }
 
       if (errors.length > 0) {
         return { data, errors };
@@ -439,25 +438,5 @@ export class DirectExecutionService {
 
       seen.add(name);
     }
-  }
-
-  private async loadWorkspaceMetadata(workspaceId: string) {
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
-      await this.workspaceFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
-        },
-      );
-
-    const { idByNameSingular } = buildObjectIdByNameMaps(
-      flatObjectMetadataMaps,
-    );
-
-    return {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      objectIdByNameSingular: idByNameSingular,
-    };
   }
 }

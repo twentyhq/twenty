@@ -286,6 +286,78 @@ export class CacheStorageService {
     return newValue;
   }
 
+  async hashGetValues(key: string): Promise<string[]> {
+    if (!this.isRedisCache()) {
+      throw new Error('hashGetValues is only supported with Redis cache');
+    }
+
+    const redisClient = (this.cache as RedisCache).store.client;
+
+    return redisClient.hVals(this.getKey(key));
+  }
+
+  async hashSet({
+    key,
+    field,
+    value,
+  }: {
+    key: string;
+    field: string;
+    value: string;
+  }): Promise<number> {
+    if (!this.isRedisCache()) {
+      throw new Error('hashSet is only supported with Redis cache');
+    }
+
+    const redisClient = (this.cache as RedisCache).store.client;
+
+    return redisClient.hSet(this.getKey(key), field, value);
+  }
+
+  async hashSetIfExists({
+    key,
+    field,
+    value,
+  }: {
+    key: string;
+    field: string;
+    value: string;
+  }): Promise<number> {
+    if (!this.isRedisCache()) {
+      throw new Error('hashSetIfExists is only supported with Redis cache');
+    }
+
+    const redisClient = (this.cache as RedisCache).store.client;
+
+    const script = `
+if redis.call('EXISTS', KEYS[1]) == 1 then
+  return redis.call('HSET', KEYS[1], ARGV[1], ARGV[2])
+else
+  return 0
+end`;
+
+    return redisClient.eval(script, {
+      keys: [this.getKey(key)],
+      arguments: [field, value],
+    }) as Promise<number>;
+  }
+
+  async hashDelete({
+    key,
+    field,
+  }: {
+    key: string;
+    field: string;
+  }): Promise<number> {
+    if (!this.isRedisCache()) {
+      throw new Error('hashDelete is only supported with Redis cache');
+    }
+
+    const redisClient = (this.cache as RedisCache).store.client;
+
+    return redisClient.hDel(this.getKey(key), field);
+  }
+
   async expire(key: string, ttlMs: Milliseconds): Promise<boolean> {
     if (this.isRedisCache()) {
       return (this.cache as RedisCache).store.client.expire(

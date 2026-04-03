@@ -39,10 +39,11 @@ export class DestroyManyResolverFactory
       });
 
       try {
-        const records = await this.commonDestroyManyQueryRunnerService.execute(
-          { ...args, selectedFields },
-          resolverContext,
-        );
+        const { results: records } =
+          await this.commonDestroyManyQueryRunnerService.execute(
+            { ...args, selectedFields },
+            resolverContext,
+          );
 
         const typeORMObjectRecordsParser =
           new ObjectRecordsToGraphqlConnectionHelper(

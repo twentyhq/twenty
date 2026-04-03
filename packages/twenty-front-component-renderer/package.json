@@ -1,6 +1,5 @@
 {
   "name": "twenty-front-component-renderer",
-  "version": "0.8.0-canary.5",
   "private": true,
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",

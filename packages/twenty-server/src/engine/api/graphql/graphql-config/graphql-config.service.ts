@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ContextIdFactory, ModuleRef } from '@nestjs/core';
 import { type GqlOptionsFactory } from '@nestjs/graphql';
 
@@ -31,6 +31,7 @@ import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hook
 import { useValidateGraphqlQueryComplexity } from 'src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
@@ -46,6 +47,8 @@ export interface GraphQLContext extends YogaDriverServerContext<'express'> {
 export class GraphQLConfigService
   implements GqlOptionsFactory<YogaDriverConfig<'express'>>
 {
+  private readonly logger = new Logger(GraphQLConfigService.name);
+
   constructor(
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -101,6 +104,10 @@ export class GraphQLConfigService
           if (!isDefined(workspace) || skipWorkspaceSchemaCreation) {
             return new GraphQLSchema({});
           }
+
+          this.logger.log(
+            `Creating schema for workspace ${workspace.id} for request ${context?.req?.body?.operationName}`,
+          );
 
           return await this.createSchema(context, workspace, application?.id);
         } catch (error) {
@@ -187,6 +194,11 @@ export class GraphQLConfigService
         strict: false,
       },
     );
+
+    await this.metricsService.incrementCounter({
+      key: MetricsKeys.GraphqlSchemaBuild,
+      shouldStoreInCache: false,
+    });
 
     return await workspaceFactory.createGraphQLSchema(workspace, applicationId);
   }

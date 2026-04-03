@@ -61,13 +61,14 @@ export class CreateRecordService {
       const cleanedRecord = removeUndefinedFromRecord(objectRecord);
       const dataWithActor = { ...cleanedRecord, createdBy: actorMetadata };
 
-      const createdRecord = await this.commonCreateOneRunner.execute(
-        {
-          data: dataWithActor,
-          selectedFields,
-        },
-        queryRunnerContext,
-      );
+      const { results: createdRecord } =
+        await this.commonCreateOneRunner.execute(
+          {
+            data: dataWithActor,
+            selectedFields,
+          },
+          queryRunnerContext,
+        );
 
       this.logger.log(`Record created successfully in ${objectName}`);
 
