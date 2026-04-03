@@ -41,6 +41,7 @@ const SendPostCardsEffect = () => {
 
         if (idsToSend.length === 0) {
           await updateProgress(1);
+          await unmountFrontComponent();
           return;
         }
 
@@ -73,6 +74,7 @@ const SendPostCardsEffect = () => {
           error instanceof Error ? error.message : 'Failed to send postcards';
 
         await enqueueSnackbar({ message, variant: 'error' });
+        await unmountFrontComponent();
       }
     };
 

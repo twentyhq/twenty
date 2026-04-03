@@ -24,6 +24,7 @@ const GeneratePostCardEffect = () => {
         message: 'No record selected',
         variant: 'error',
       });
+      unmountFrontComponent();
       return;
     }
 
@@ -68,7 +69,7 @@ const GeneratePostCardEffect = () => {
         const data = (await response.json()) as { text?: string };
         const generatedContent = data.text ?? '';
 
-        updateProgress(0.7);
+        await updateProgress(0.7);
 
         await client.mutation({
           updatePostCard: {
@@ -80,7 +81,7 @@ const GeneratePostCardEffect = () => {
           },
         });
 
-        updateProgress(1);
+        await updateProgress(1);
 
         await enqueueSnackbar({
           message: 'Post card content generated!',
@@ -96,6 +97,7 @@ const GeneratePostCardEffect = () => {
               : 'Failed to generate content',
           variant: 'error',
         });
+        await unmountFrontComponent();
       }
     };
 

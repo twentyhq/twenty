@@ -203,6 +203,9 @@ export class CreateAppCommand {
         process.exit(1);
       }
 
+      // Clean up any partial files from the failed download
+      await fs.emptyDir(appDirectory);
+
       return false;
     }
   }
