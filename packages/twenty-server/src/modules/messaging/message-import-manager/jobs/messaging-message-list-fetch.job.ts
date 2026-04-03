@@ -112,7 +112,7 @@ export class MessagingMessageListFetchJob {
         });
 
         await this.messagingMessageListFetchService.processMessageListFetch(
-          messageChannel as unknown as MessageChannelEntity,
+          messageChannel,
           workspaceId,
         );
 
@@ -126,7 +126,7 @@ export class MessagingMessageListFetchJob {
         await this.messageImportErrorHandlerService.handleDriverException(
           error,
           MessageImportSyncStep.MESSAGE_LIST_FETCH,
-          messageChannel as unknown as MessageChannelEntity,
+          messageChannel,
           workspaceId,
         );
       }

@@ -272,7 +272,7 @@ export class EmailComposerService {
     }
 
     const connectedAccountAsWorkspaceEntity =
-      connectedAccount as unknown as ConnectedAccountEntity;
+      connectedAccount;
 
     const { accessToken, refreshToken } =
       await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
@@ -287,7 +287,7 @@ export class EmailComposerService {
       ...connectedAccountAsWorkspaceEntity,
       accessToken,
       refreshToken,
-    } as ConnectedAccountEntity;
+    };
 
     const attachments = await this.getAttachments(files || [], workspaceId);
 

@@ -200,7 +200,7 @@ export class ImapSmtpCaldavService {
           },
         });
 
-        return connectedAccount as ConnectedAccountEntity | null;
+        return connectedAccount;
       },
       authContext,
     );

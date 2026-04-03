@@ -67,7 +67,7 @@ export class CreateMessageChannelService {
             : MessageChannelSyncStage.PENDING_CONFIGURATION,
           pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
           workspaceId,
-        } as MessageChannelEntity);
+        });
 
         const createdMessageChannel = await repo.findOne({
           where: { id: newMessageChannelId, workspaceId },

@@ -96,7 +96,7 @@ export const SettingsAccountsConfiguration = () => {
     return (
       <>
         <SettingsAccountsConfigurationSelectedMessageChannelEffect
-          messageChannel={messageChannel as unknown as MessageChannel}
+          messageChannel={messageChannel}
         />
         <SettingsAccountsConfigurationStepEmail
           messageChannel={messageChannel}

@@ -165,7 +165,7 @@ export class SyncMessageFoldersService {
             await this.messageFolderRepository.save({
               ...folderToCreate,
               workspaceId,
-            } as unknown as MessageFolderEntity);
+            });
           }
         }
 
@@ -192,7 +192,7 @@ export class SyncMessageFoldersService {
 
         return [
           ...updatedExistingFolders,
-          ...(createdFolders as MessageFolder[]),
+          ...createdFolders,
         ];
       },
       authContext,

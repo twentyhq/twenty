@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { Repository } from 'typeorm';
 
+import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
 import { type EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
@@ -81,13 +82,23 @@ export class ImapSmtpCalDavAPIService {
           where: { id: workspaceMemberId },
         });
 
-        const userWorkspaceId = member
-          ? ((
-              await this.userWorkspaceRepository.findOne({
-                where: { userId: member.userId, workspaceId },
-              })
-            )?.id ?? null)
-          : null;
+        if (!member) {
+          throw new NotFoundError(
+            `Workspace member with id ${workspaceMemberId} not found`,
+          );
+        }
+
+        const userWorkspace = await this.userWorkspaceRepository.findOne({
+          where: { userId: member.userId, workspaceId },
+        });
+
+        if (!userWorkspace) {
+          throw new NotFoundError(
+            `UserWorkspace not found for userId ${member.userId} in workspace ${workspaceId}`,
+          );
+        }
+
+        const userWorkspaceId = userWorkspace.id;
 
         const existingAccount = connectedAccountId
           ? await this.connectedAccountRepository.findOne({
@@ -96,8 +107,7 @@ export class ImapSmtpCalDavAPIService {
           : await this.connectedAccountRepository.findOne({
               where: {
                 handle,
-                userWorkspaceId:
-                  userWorkspaceId ?? '00000000-0000-0000-0000-000000000000',
+                userWorkspaceId,
                 workspaceId,
               },
             });
@@ -137,7 +147,7 @@ export class ImapSmtpCalDavAPIService {
               connectionParameters: input.connectionParameters,
               userWorkspaceId,
               workspaceId,
-            } as ConnectedAccountEntity);
+            });
 
             if (shouldCreateMessageChannel) {
               await this.createMessageChannelService.createMessageChannel({
