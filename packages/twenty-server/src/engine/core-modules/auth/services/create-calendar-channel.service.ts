@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { v4 } from 'uuid';
-import { Repository } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 import {
   CalendarChannelSyncStage,
@@ -10,7 +9,6 @@ import {
   CalendarChannelVisibility,
 } from 'twenty-shared/types';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
@@ -19,7 +17,7 @@ export type CreateCalendarChannelInput = {
   connectedAccountId: string;
   handle: string;
   calendarVisibility?: CalendarChannelVisibility;
-  manager: WorkspaceEntityManager;
+  manager: EntityManager;
   skipMessageChannelConfiguration?: boolean;
 };
 
@@ -27,8 +25,6 @@ export type CreateCalendarChannelInput = {
 export class CreateCalendarChannelService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
   ) {}
 
   async createCalendarChannel(
@@ -39,6 +35,7 @@ export class CreateCalendarChannelService {
       connectedAccountId,
       handle,
       calendarVisibility,
+      manager,
       skipMessageChannelConfiguration,
     } = input;
 
@@ -48,7 +45,7 @@ export class CreateCalendarChannelService {
       async () => {
         const newCalendarChannelId = v4();
 
-        await this.calendarChannelRepository.save({
+        await manager.getRepository(CalendarChannelEntity).save({
           id: newCalendarChannelId,
           connectedAccountId,
           handle,

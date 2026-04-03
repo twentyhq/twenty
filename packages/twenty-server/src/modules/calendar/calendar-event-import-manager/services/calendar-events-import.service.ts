@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Any } from 'typeorm';
+import { Any, Repository } from 'typeorm';
 
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -30,6 +32,7 @@ import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class CalendarEventsImportService {
@@ -45,6 +48,8 @@ export class CalendarEventsImportService {
     private readonly calendarEventImportErrorHandlerService: CalendarEventImportErrorHandlerService,
     private readonly microsoftCalendarImportEventService: MicrosoftCalendarImportEventsService,
     private readonly emailAliasManagerService: EmailAliasManagerService,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
   public async processCalendarEventsImport(
@@ -101,10 +106,31 @@ export class CalendarEventsImportService {
           );
         }
 
-        const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(
-          connectedAccount.accountOwnerId,
-          workspaceId,
-        );
+        const userWorkspace = await this.userWorkspaceRepository.findOne({
+          where: {
+            id: (connectedAccount as unknown as { userWorkspaceId: string })
+              .userWorkspaceId,
+          },
+        });
+
+        const workspaceMemberRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            workspaceId,
+            'workspaceMember',
+          );
+
+        const workspaceMember = userWorkspace
+          ? await workspaceMemberRepository.findOne({
+              where: { userId: userWorkspace.userId },
+            })
+          : null;
+
+        const blocklist = workspaceMember
+          ? await this.blocklistRepository.getByWorkspaceMemberId(
+              workspaceMember.id,
+              workspaceId,
+            )
+          : [];
 
         const refreshedHandleAliases =
           await this.emailAliasManagerService.refreshHandleAliases(

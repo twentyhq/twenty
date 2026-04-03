@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type ObjectRecordCreateEvent } from 'twenty-shared/database-events';
 import { MessageParticipantRole } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { And, Any, ILike, In, IsNull, Not, Or, Repository } from 'typeorm';
+import { And, Any, ILike, In, Not, Or, Repository } from 'typeorm';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';

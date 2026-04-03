@@ -8,6 +8,7 @@ import { MessageChannelSyncStage } from 'twenty-shared/types';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -15,6 +16,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageImportDriverException,
@@ -51,6 +53,8 @@ export class MessagingMessagesImportService {
     private readonly messagingGetMessagesService: MessagingGetMessagesService,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
     private readonly messagingAccountAuthenticationService: MessagingAccountAuthenticationService,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
   async processMessageBatchImport(
@@ -148,10 +152,34 @@ export class MessagingMessagesImportService {
             .filter(isDefined);
         }
 
-        const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(
-          connectedAccountWithFreshTokens.accountOwnerId,
-          workspaceId,
-        );
+        const userWorkspace = await this.userWorkspaceRepository.findOne({
+          where: {
+            id: (
+              connectedAccountWithFreshTokens as unknown as {
+                userWorkspaceId: string;
+              }
+            ).userWorkspaceId,
+          },
+        });
+
+        const workspaceMemberRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            workspaceId,
+            'workspaceMember',
+          );
+
+        const workspaceMember = userWorkspace
+          ? await workspaceMemberRepository.findOne({
+              where: { userId: userWorkspace.userId },
+            })
+          : null;
+
+        const blocklist = workspaceMember
+          ? await this.blocklistRepository.getByWorkspaceMemberId(
+              workspaceMember.id,
+              workspaceId,
+            )
+          : [];
 
         if (!isDefined(messageChannel.handle)) {
           throw new MessageImportDriverException(

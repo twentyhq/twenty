@@ -53,10 +53,6 @@ import {
   MESSAGE_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-data-seeds.constant';
 import {
-  MESSAGE_FOLDER_DATA_SEED_COLUMNS,
-  MESSAGE_FOLDER_DATA_SEEDS,
-} from 'src/engine/workspace-manager/dev-seeder/data/constants/message-folder-data-seeds.constant';
-import {
   getMessageParticipantDataSeeds,
   MESSAGE_PARTICIPANT_DATA_SEED_COLUMNS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-participant-data-seeds.constant';

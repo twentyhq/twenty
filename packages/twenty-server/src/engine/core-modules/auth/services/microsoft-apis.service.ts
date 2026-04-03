@@ -11,6 +11,10 @@ import {
 import { v4 } from 'uuid';
 import { Repository } from 'typeorm';
 
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
@@ -97,7 +101,14 @@ export class MicrosoftAPIsService {
           where: { userId, workspaceId },
         });
 
-        const userWorkspaceId = userWorkspace?.id;
+        if (!userWorkspace) {
+          throw new AuthException(
+            `User workspace not found for user ${userId} in workspace ${workspaceId}`,
+            AuthExceptionCode.INVALID_INPUT,
+          );
+        }
+
+        const userWorkspaceId = userWorkspace.id;
 
         const connectedAccount = await this.connectedAccountRepository.findOne({
           where: {

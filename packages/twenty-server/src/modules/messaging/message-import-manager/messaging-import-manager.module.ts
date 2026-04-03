@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -68,6 +69,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
       ObjectMetadataEntity,
       MessageChannelEntity,
       MessageFolderEntity,
+      UserWorkspaceEntity,
     ]),
     EmailAliasManagerModule,
     FeatureFlagModule,

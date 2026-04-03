@@ -2,11 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ConnectedAccountProvider } from 'twenty-shared/types';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -20,15 +19,13 @@ export type CreateConnectedAccountInput = {
   refreshToken: string;
   accountOwnerId: string;
   scopes: string[];
-  manager: WorkspaceEntityManager;
+  manager: EntityManager;
 };
 
 @Injectable()
 export class CreateConnectedAccountService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    @InjectRepository(ConnectedAccountEntity)
-    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
@@ -45,6 +42,7 @@ export class CreateConnectedAccountService {
       refreshToken,
       accountOwnerId,
       scopes,
+      manager,
     } = input;
 
     const authContext = buildSystemAuthContext(workspaceId);
@@ -60,15 +58,25 @@ export class CreateConnectedAccountService {
         where: { id: accountOwnerId },
       });
 
-      const userWorkspaceId = member
-        ? ((
-            await this.userWorkspaceRepository.findOne({
-              where: { userId: member.userId, workspaceId },
-            })
-          )?.id ?? null)
-        : null;
+      if (!member) {
+        throw new Error(
+          `Workspace member not found for accountOwnerId ${accountOwnerId}`,
+        );
+      }
 
-      await this.connectedAccountRepository.save({
+      const userWorkspace = await this.userWorkspaceRepository.findOne({
+        where: { userId: member.userId, workspaceId },
+      });
+
+      if (!userWorkspace) {
+        throw new Error(
+          `User workspace not found for user ${member.userId} in workspace ${workspaceId}`,
+        );
+      }
+
+      const userWorkspaceId = userWorkspace.id;
+
+      await manager.getRepository(ConnectedAccountEntity).save({
         id: connectedAccountId,
         handle,
         provider,

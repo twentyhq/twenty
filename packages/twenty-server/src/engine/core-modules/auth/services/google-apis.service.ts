@@ -140,11 +140,18 @@ export class GoogleAPIsService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const userWorkspaceId = (
-          await this.userWorkspaceRepository.findOne({
-            where: { userId, workspaceId },
-          })
-        )?.id;
+        const userWorkspace = await this.userWorkspaceRepository.findOne({
+          where: { userId, workspaceId },
+        });
+
+        if (!userWorkspace) {
+          throw new AuthException(
+            `User workspace not found for user ${userId} in workspace ${workspaceId}`,
+            AuthExceptionCode.INVALID_INPUT,
+          );
+        }
+
+        const userWorkspaceId = userWorkspace.id;
 
         const connectedAccount = await this.connectedAccountRepository.findOne({
           where: {

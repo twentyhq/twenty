@@ -49,13 +49,15 @@ describe('TimelineCalendarEventService', () => {
     };
 
     const mockGlobalWorkspaceOrmManager = {
-      getRepository: jest.fn().mockImplementation((_workspaceId, entityName) => {
-        if (entityName === 'connectedAccount') {
-          return Promise.resolve(mockConnectedAccountRepository);
-        }
+      getRepository: jest
+        .fn()
+        .mockImplementation((_workspaceId, entityName) => {
+          if (entityName === 'connectedAccount') {
+            return Promise.resolve(mockConnectedAccountRepository);
+          }
 
-        return Promise.resolve(mockCalendarEventRepository);
-      }),
+          return Promise.resolve(mockCalendarEventRepository);
+        }),
       executeInWorkspaceContext: jest
         .fn()
         .mockImplementation((fn: () => any, _authContext?: any) => fn()),
