@@ -1,3 +1,9 @@
+import { useCallback, useEffect } from 'react';
+
+import { isNonEmptyArray } from '@sniptt/guards';
+import { createClient } from 'graphql-sse';
+import { useStore } from 'jotai';
+
 import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { useHandleSseClientConnectionRetry } from '@/sse-db-event/hooks/useHandleSseClientConnectionRetry';
@@ -5,12 +11,10 @@ import { activeQueryListenersState } from '@/sse-db-event/states/activeQueryList
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isNonEmptyArray } from '@sniptt/guards';
-import { createClient } from 'graphql-sse';
-import { useCallback, useEffect } from 'react';
+
 import { isDefined } from 'twenty-shared/utils';
+
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { useStore } from 'jotai';
 
 export const SSEClientEffect = () => {
   const store = useStore();
@@ -45,6 +49,17 @@ export const SSEClientEffect = () => {
         },
         on: {
           connected: handleSSEClientConnected,
+          error: (error: unknown) => {
+            if (
+              Array.isArray(error) &&
+              isDefined(error[0]) &&
+              typeof error[0] === 'object' &&
+              'extensions' in error[0] &&
+              (error[0].extensions as any)?.code === 'UNAUTHENTICATED'
+            ) {
+              return;
+            }
+          },
         },
         retryAttempts: Infinity,
         retry: (retryCount: number) =>

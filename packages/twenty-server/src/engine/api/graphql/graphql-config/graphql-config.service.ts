@@ -4,41 +4,32 @@ import { type GqlOptionsFactory } from '@nestjs/graphql';
 
 import {
   type YogaDriverConfig,
-  type YogaDriverServerContext,
-} from '@graphql-yoga/nestjs';
-import * as Sentry from '@sentry/node';
-import { GraphQLError, GraphQLSchema } from 'graphql';
-import GraphQLJSON from 'graphql-type-json';
+} from '@nestjs/yoga';
+
+import { GraphQLSchema } from 'graphql';
 import {
   type GraphQLSchemaWithContext,
   type YogaInitialContext,
 } from 'graphql-yoga';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
-import { isDefined } from 'twenty-shared/utils';
-
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { DirectExecutionService } from 'src/engine/api/graphql/direct-execution/direct-execution.service';
 import { useDirectExecution } from 'src/engine/api/graphql/direct-execution/hooks/use-direct-execution.hook';
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
-import { type FlatAuthContextUser } from 'src/engine/core-modules/auth/types/flat-auth-context-user.type';
-import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
+import { WorkspaceAuthContextUser } from 'src/engine/core-modules/auth/types/workspace-auth-context-user.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { useSentryTracing } from 'src/engine/core-modules/exception-handler/hooks/use-sentry-tracing';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers } from 'src/engine/core-modules/graphql/hooks/use-disable-introspection-and-suggestions-for-unauthenticated-users.hook';
-import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
-import { useValidateGraphqlQueryComplexity } from 'src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { handleExceptionAndConvertToGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-api-exception-handler.util';
+import { AuthenticationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
-import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
-import { handleExceptionAndConvertToGraphQLError } from 'src/engine/utils/global-exception-handler.util';
-import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
+import { FeatureFlagService } from 'src/engine/metadata-modules/feature-flag/services/feature-flag.service';
 
-export interface GraphQLContext extends YogaDriverServerContext<'express'> {
-  user?: FlatAuthContextUser;
+import { isDefined } from 'twenty-shared/utils';
+
+export interface MetadataInitialContext extends YogaInitialContext {
+  user?: WorkspaceAuthContextUser;
   workspace?: FlatWorkspace;
 }
 
@@ -48,11 +39,9 @@ export class GraphQLConfigService
 {
   constructor(
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly twentyConfigService: TwentyConfigService,
+    private readonly workspaceService: WorkspaceService,
     private readonly moduleRef: ModuleRef,
-    private readonly metricsService: MetricsService,
-    private readonly dataloaderService: DataloaderService,
-    private readonly i18nService: I18nService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly directExecutionService: DirectExecutionService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
@@ -60,126 +49,73 @@ export class GraphQLConfigService
   createGqlOptions(): YogaDriverConfig {
     const isDebugMode =
       this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT;
-    const plugins = [
-      useDirectExecution({
-        directExecutionService: this.directExecutionService,
-        featureFlagService: this.featureFlagService,
-      }),
-      useGraphQLErrorHandlerHook({
-        metricsService: this.metricsService,
-        exceptionHandlerService: this.exceptionHandlerService,
-        i18nService: this.i18nService,
-        twentyConfigService: this.twentyConfigService,
-      }),
-      useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers(
-        this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.PRODUCTION,
-      ),
-      useValidateGraphqlQueryComplexity({
-        maximumAllowedFields:
-          this.twentyConfigService.get('GRAPHQL_MAX_FIELDS'),
-        maximumAllowedRootResolvers: this.twentyConfigService.get(
-          'GRAPHQL_MAX_ROOT_RESOLVERS',
-        ),
-        checkDuplicateRootResolvers: true,
-      }),
-    ];
 
-    if (Sentry.isInitialized()) {
-      plugins.push(useSentryTracing());
-    }
-
-    const config: YogaDriverConfig = {
-      autoSchemaFile: true,
-      include: [CoreEngineModule],
-      resolverSchemaScope: 'core',
-      buildSchemaOptions: {},
-      conditionalSchema: async (context) => {
-        const { workspace, user, application, skipWorkspaceSchemaCreation } =
-          context.req;
-
+    const conditionalSchema: GraphQLSchemaWithContext<MetadataInitialContext> = {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      __isTypeOf: (obj: any) => obj instanceof GraphQLSchema,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      async __resolveType(context: MetadataInitialContext) {
         try {
-          if (!isDefined(workspace) || skipWorkspaceSchemaCreation) {
-            return new GraphQLSchema({});
+          const workspace = context.workspace;
+          const applicationId = context.user?.applicationId;
+
+          if (!isDefined(workspace)) {
+            throw new AuthenticationError('Unauthenticated');
           }
 
-          return await this.createSchema(context, workspace, application?.id);
+          return await this.createSchema(workspace, applicationId);
         } catch (error) {
           if (error instanceof UnauthorizedException) {
-            throw new GraphQLError('Unauthenticated', {
-              extensions: {
-                code: 'UNAUTHENTICATED',
-              },
-            });
+            throw new AuthenticationError('Unauthenticated');
           }
 
           if (error instanceof JsonWebTokenError) {
             //mockedUserJWT
-            throw new GraphQLError('Unauthenticated', {
-              extensions: {
-                code: 'UNAUTHENTICATED',
-              },
-            });
+            throw new AuthenticationError('Unauthenticated');
           }
 
           if (error instanceof TokenExpiredError) {
-            throw new GraphQLError('Unauthenticated', {
-              extensions: {
-                code: 'UNAUTHENTICATED',
-              },
-            });
+            throw new AuthenticationError('Unauthenticated');
           }
 
           throw handleExceptionAndConvertToGraphQLError(
             error,
             this.exceptionHandlerService,
-            isDefined(user)
-              ? {
-                  id: user.id,
-                  email: user.email,
-                  firstName: user.firstName,
-                  lastName: user.lastName,
-                }
-              : undefined,
-            isDefined(workspace)
-              ? {
-                  id: workspace.id,
-                  displayName: workspace.displayName,
-                  activationStatus: workspace.activationStatus,
-                }
-              : undefined,
           );
         }
       },
-      resolvers: { JSON: GraphQLJSON },
-      plugins: plugins,
-      context: () => ({
-        loaders: this.dataloaderService.createLoaders(),
-      }),
+    } as any;
+
+    return {
+      driver: 'express',
+      autoSchemaFile: true,
+      path: '/metadata',
+      schema: conditionalSchema as any,
+      logging: isDebugMode,
+      debug: isDebugMode,
+      maskedErrors: isDebugMode
+        ? false
+        : {
+            handleParseErrors: true,
+            handleValidationErrors: true,
+          },
+      plugins: [
+        useDirectExecution({
+          directExecutionService: this.directExecutionService,
+          twentyConfigService: this.twentyConfigService,
+        }),
+      ],
     };
-
-    if (isDebugMode) {
-      config.renderGraphiQL = () => {
-        return renderApolloPlayground();
-      };
-    }
-
-    return config;
   }
 
-  async createSchema(
-    context: YogaDriverServerContext<'express'> & YogaInitialContext,
+  private async createSchema(
     workspace: FlatWorkspace,
     applicationId?: string,
-  ): Promise<GraphQLSchemaWithContext<YogaDriverServerContext<'express'>>> {
-    // Create a new contextId for each request
+  ): Promise<GraphQLSchema> {
     const contextId = ContextIdFactory.create();
 
-    if (this.moduleRef.registerRequestByContextId) {
-      // Register the request in the contextId
-      this.moduleRef.registerRequestByContextId(context.req, contextId);
-    }
+    this.moduleRef.registerRequestByContextId({ workspace }, contextId);
 
-    // Resolve the WorkspaceSchemaFactory for the contextId
     const workspaceFactory = await this.moduleRef.resolve(
       WorkspaceSchemaFactory,
       contextId,
