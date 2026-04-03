@@ -3368,6 +3368,11 @@ msgstr "Invalid filter parameter."
 msgid "Invalid filter value: \"{value}\""
 msgstr "Invalid filter value: \"{value}\""
 
+#. js-lingui-id: NOU3zh
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-string-operator-value-or-throw.util.ts
+msgid "Invalid filter: \"{operator}\" operator requires a String"
+msgstr "Invalid filter: \"{operator}\" operator requires a String"
+
 #. js-lingui-id: +GVjEm
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-array-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"{operator}\" operator requires an array"
@@ -3387,6 +3392,16 @@ msgstr "Invalid filter: exactly one operator per field is required"
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
 msgid "Invalid filter: filter value must be an object"
 msgstr "Invalid filter: filter value must be an object"
+
+#. js-lingui-id: rpkTUe
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Invalid filter: filtering by relation field \"{key}\" is not supported"
+msgstr "Invalid filter: filtering by relation field \"{key}\" is not supported"
+
+#. js-lingui-id: bNNDED
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Invalid filter: use \"{joinColumnName}\" to filter by this relation field"
+msgstr "Invalid filter: use \"{joinColumnName}\" to filter by this relation field"
 
 #. js-lingui-id: rFH0az
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
