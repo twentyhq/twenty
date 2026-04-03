@@ -76,7 +76,11 @@ export const downloadExample = async (
   exampleName: string,
   targetDirectory: string,
 ): Promise<void> => {
-  if (exampleName.includes('/') || exampleName.includes('\\') || exampleName.includes('..')) {
+  if (
+    exampleName.includes('/') ||
+    exampleName.includes('\\') ||
+    exampleName.includes('..')
+  ) {
     throw new Error(
       `Invalid example name: "${exampleName}". Example names must be simple directory names (e.g., "hello-world").`,
     );
