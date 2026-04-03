@@ -218,16 +218,6 @@
         "command": "node dist/command/command.js generate:versioned-migration {args.migrationName}"
       }
     },
-    "database:migrate:revert": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["^build"],
-      "options": {
-        "cwd": "packages/twenty-server",
-        "commands": [
-          "nx typeorm -- migration:revert -d src/database/typeorm/core/core.datasource"
-        ]
-      }
-    },
     "generate:integration-test": {
       "executor": "nx:run-commands",
       "options": {
