@@ -85,7 +85,9 @@ describe('interpolateCommandMenuItemTemplate', () => {
     it('should return an empty string for an empty label', () => {
       const context = buildContext();
 
-      expect(interpolateCommandMenuItemTemplate({ label: '', context })).toBe('');
+      expect(interpolateCommandMenuItemTemplate({ label: '', context })).toBe(
+        '',
+      );
     });
   });
 
