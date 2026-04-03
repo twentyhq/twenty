@@ -8,9 +8,8 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Editor } from '@tiptap/core';
 import { useId, useState, type FocusEvent, type FormEvent } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { getSafeUrl, isDefined } from 'twenty-shared/utils';
 import { IconLink, IconPencil } from 'twenty-ui/display';
-import { getSafeUrl } from '~/utils/getSafeUrl';
 
 type EditLinkPopoverProps = {
   defaultValue: string | undefined;

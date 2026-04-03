@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { LinkType, RoundedLink, SocialLink } from 'twenty-ui/navigation';
 import { checkUrlType } from '~/utils/checkUrlType';
-import { getSafeUrl } from '~/utils/getSafeUrl';
+import { getSafeUrl } from 'twenty-shared/utils';
 
 type LinkDisplayProps = {
   value: { url: string; label?: string | null };

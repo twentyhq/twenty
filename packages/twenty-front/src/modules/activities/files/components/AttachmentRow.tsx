@@ -11,11 +11,10 @@ import { getFileCategoryFromExtension } from '@/object-record/record-field/ui/ut
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { useState, useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { getSafeUrl, isDefined } from 'twenty-shared/utils';
 
 import { type AttachmentWithFile } from '@/activities/files/utils/filterAttachmentsWithFile';
 import { FileIcon } from '@/file/components/FileIcon';
-import { getSafeUrl } from '~/utils/getSafeUrl';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';

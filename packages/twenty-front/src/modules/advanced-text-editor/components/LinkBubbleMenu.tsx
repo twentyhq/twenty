@@ -5,7 +5,7 @@ import { type Editor } from '@tiptap/core';
 import { useEditorState } from '@tiptap/react';
 import { BubbleMenu } from '@tiptap/react/menus';
 import { IconExternalLink, IconLinkOff } from 'twenty-ui/display';
-import { getSafeUrl } from '~/utils/getSafeUrl';
+import { getSafeUrl } from 'twenty-shared/utils';
 
 type LinkBubbleMenuProps = {
   editor: Editor;

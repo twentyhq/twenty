@@ -2,6 +2,7 @@ import { inspect } from 'util';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString, isNull } from '@sniptt/guards';
+import { isSafeUrl } from 'twenty-shared/utils';
 
 import { validateRawJsonFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util';
 import { validateTextFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util';
@@ -10,25 +11,11 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
-const SAFE_URL_PROTOCOLS = ['http:', 'https:', 'mailto:', 'tel:'];
-
-const isSafeUrl = (url: string): boolean => {
-  if (url.startsWith('/') && !url.startsWith('//')) {
-    return true;
-  }
-
-  try {
-    const parsed = new URL(url);
-
-    return SAFE_URL_PROTOCOLS.includes(parsed.protocol);
-  } catch {
-    return false;
-  }
-};
-
 const URL_VALUE_PATTERN = /"(?:url|href)"\s*:\s*"([^"]*)"/gi;
 
 const hasDangerousUrl = (json: string): boolean => {
+  URL_VALUE_PATTERN.lastIndex = 0;
+
   let match;
 
   while ((match = URL_VALUE_PATTERN.exec(json)) !== null) {

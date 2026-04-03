@@ -8,9 +8,8 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { FileIcon } from '@/file/components/FileIcon';
-import { getSafeUrl } from '~/utils/getSafeUrl';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { getSafeUrl, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 
 const StyledFileInput = styled.input`
@@ -87,9 +86,7 @@ export const FileBlock = createReactBlockSpec(
           handleUploadAttachment?.(e.target.files[0]);
       };
 
-      const safeUrl = isNonEmptyString(block.props.url)
-        ? getSafeUrl(block.props.url)
-        : undefined;
+      const safeUrl = getSafeUrl(block.props.url);
 
       if (safeUrl) {
         return (
