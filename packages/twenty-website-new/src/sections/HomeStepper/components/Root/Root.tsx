@@ -8,10 +8,6 @@ import type { ReactNode, RefObject } from 'react';
 const StyledSection = styled.section`
   background-color: ${theme.colors.primary.text[5]};
   width: 100%;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    height: 300vh;
-  }
 `;
 
 const StyledContainer = styled(Container)`

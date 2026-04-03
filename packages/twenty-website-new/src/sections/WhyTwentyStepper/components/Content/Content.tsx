@@ -1,6 +1,6 @@
 'use client';
 
-import { Body, Heading } from '@/design-system/components';
+import { Body, Heading, StepperProgressRail } from '@/design-system/components';
 import type { BodyType } from '@/design-system/components/Body/types/Body';
 import type { HeadingType } from '@/design-system/components/Heading/types/Heading';
 import { theme } from '@/theme';
@@ -21,65 +21,6 @@ const ContentRoot = styled.div`
   }
 `;
 
-const ProgressRail = styled.div`
-  display: none;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    gap: ${theme.spacing(2)};
-    height: max-content;
-    position: sticky;
-    top: calc(50vh - ${theme.spacing(10)});
-  }
-`;
-
-const StepIndicatorRow = styled.div`
-  align-items: flex-start;
-  display: flex;
-  gap: ${theme.spacing(4)};
-`;
-
-const PillBackground = styled.div`
-  background-color: ${theme.colors.primary.text[20]};
-  border-radius: ${theme.radius(8)};
-  display: flex;
-  height: ${theme.spacing(20)};
-  overflow: hidden;
-  width: ${theme.spacing(1)};
-`;
-
-const PillFill = styled.div`
-  background-color: ${theme.colors.highlight[100]};
-  border-radius: ${theme.radius(10)};
-  transition: height 0.1s linear;
-  width: 100%;
-`;
-
-const ActiveLabel = styled.p`
-  color: ${theme.colors.highlight[100]};
-  font-family: ${theme.font.family.mono};
-  font-size: ${theme.font.size(3)};
-  font-weight: ${theme.font.weight.medium};
-  line-height: ${theme.spacing(4)};
-  margin: 0;
-  text-transform: uppercase;
-`;
-
-const InactiveDotWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${theme.spacing(4)};
-`;
-
-const InactiveDot = styled.div`
-  background-color: ${theme.colors.primary.text[20]};
-  border-radius: 50%;
-  height: ${theme.spacing(1)};
-  width: ${theme.spacing(1)};
-`;
-
 const StepsColumn = styled.div`
   display: grid;
   gap: ${theme.spacing(8)};
@@ -95,7 +36,6 @@ const HeadingBlock = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   row-gap: ${theme.spacing(4)};
-  margin-bottom: ${theme.spacing(8)};
 `;
 
 const StepBlock = styled.div`
@@ -103,56 +43,17 @@ const StepBlock = styled.div`
   grid-template-columns: 1fr;
   opacity: 1;
   row-gap: ${theme.spacing(4)};
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     opacity: var(--step-opacity, 1);
     pointer-events: var(--step-pointer-events, auto);
     row-gap: ${theme.spacing(6)};
     transform: var(--step-translate-y, translateY(0));
-    margin-bottom: ${theme.spacing(20)};
   }
 `;
-
-type ProgressRailProps = {
-  activeStepIndex: number;
-  scrollProgress: number;
-  stepCount: number;
-};
-
-function WhyTwentyProgressRail({
-  activeStepIndex,
-  scrollProgress,
-  stepCount,
-}: ProgressRailProps) {
-  const globalProgress = scrollProgress * (stepCount - 1);
-
-  const nodes = [];
-
-  for (let index = 0; index < stepCount; index += 1) {
-    if (index === activeStepIndex) {
-      const localProgress = globalProgress - index;
-      const fillPercentage = Math.min(100, Math.max(0, localProgress * 100 * 1.5));
-      
-      nodes.push(
-        <StepIndicatorRow key={`step-${index}`}>
-          <PillBackground>
-            <PillFill style={{ height: `${fillPercentage}%` }} />
-          </PillBackground>
-          <ActiveLabel>{String(index + 1).padStart(2, '0')}</ActiveLabel>
-        </StepIndicatorRow>,
-      );
-    } else {
-      nodes.push(
-        <InactiveDotWrapper key={`step-${index}`}>
-          <InactiveDot />
-        </InactiveDotWrapper>,
-      );
-    }
-  }
-
-  return <ProgressRail>{nodes}</ProgressRail>;
-}
 
 export type WhyTwentyStepperContentProps = {
   activeStepIndex: number;
@@ -171,8 +72,9 @@ export function Content({
 
   return (
     <ContentRoot>
-      <WhyTwentyProgressRail
+      <StepperProgressRail
         activeStepIndex={activeStepIndex}
+        inactiveColor={theme.colors.primary.text[20]}
         scrollProgress={scrollProgress}
         stepCount={stepCount}
       />

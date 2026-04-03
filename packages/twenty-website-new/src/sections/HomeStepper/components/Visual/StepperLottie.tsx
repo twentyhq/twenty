@@ -11,6 +11,7 @@ const LottieSlot = styled.div`
   box-sizing: border-box;
   height: 100%;
   padding: ${theme.spacing(4)};
+  padding-left: ${theme.spacing(8)};
   pointer-events: none;
   width: 100%;
 `;

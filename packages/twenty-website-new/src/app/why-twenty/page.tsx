@@ -12,6 +12,7 @@ import { STATEMENT_TWO } from '@/app/why-twenty/constants/statement-two';
 import { STEPPER_DATA } from '@/app/why-twenty/constants/stepper';
 import { LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
+import { ScrollReveal } from '@/motion/ScrollReveal';
 import { Editorial } from '@/sections/Editorial/components';
 import { Hero } from '@/sections/Hero/components';
 import { Marquee } from '@/sections/Marquee/components';
@@ -21,7 +22,6 @@ import { Signoff } from '@/sections/Signoff/components';
 import { Statement } from '@/sections/Statement/components';
 import { WhyTwentyStepper } from '@/sections/WhyTwentyStepper/components';
 import { theme } from '@/theme';
-import { ScrollReveal } from '@/motion/ScrollReveal';
 
 export default function WhyTwentyPage() {
   return (
@@ -155,7 +155,7 @@ export default function WhyTwentyPage() {
 
       <ScrollReveal>
         <Signoff.Root
-          backgroundColor={theme.colors.primary.background[100]}
+          backgroundColor={theme.colors.secondary.background[5]}
           color={theme.colors.secondary.text[100]}
           variant="shaped"
           shapeFillColor={theme.colors.secondary.background[100]}
