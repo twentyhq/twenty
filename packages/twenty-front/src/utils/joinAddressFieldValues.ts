@@ -1,8 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { type FieldAddressValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import type { FieldAddressValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
-import { type AllowedAddressSubField } from 'twenty-shared/types';
+import type { AllowedAddressSubField } from 'twenty-shared/types';
 
 export const joinAddressFieldValues = (
   fieldValue: FieldAddressValue,
