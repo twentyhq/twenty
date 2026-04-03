@@ -45,6 +45,10 @@ const BodyContainer = styled.div`
     &[data-page=${Pages.WhyTwenty}] {
       max-width: 443px;
     }
+
+    &[data-page=${Pages.Contributors}] {
+      max-width: 591px;
+    }
   }
 `;
 

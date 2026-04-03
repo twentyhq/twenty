@@ -1,5 +1,16 @@
 import withLinaria, { type LinariaConfig } from 'next-with-linaria';
 
-const nextConfig: LinariaConfig = { reactCompiler: true };
+const nextConfig: LinariaConfig = {
+  images: {
+    remotePatterns: [
+      {
+        hostname: 'avatars.githubusercontent.com',
+        pathname: '/**',
+        protocol: 'https',
+      },
+    ],
+  },
+  reactCompiler: true,
+};
 
 module.exports = withLinaria(nextConfig);
