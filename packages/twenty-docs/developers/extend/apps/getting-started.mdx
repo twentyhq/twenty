@@ -33,13 +33,6 @@ You will be prompted to enter a name and a description for your app. Press **Ent
 
 This creates a new folder called `my-twenty-app` with everything you need.
 
-<Note>
-The scaffolder supports these flags:
-
-- `--example <name>` — (optional) initialize from an example
-
-</Note>
-
 ### Set up a local Twenty instance
 
 The scaffolder will ask:
@@ -133,7 +126,22 @@ Switch to the **Content** tab to see everything your app provides — objects, f
 
 You are all set! Edit any file in `src/` and the changes will be picked up automatically.
 
-Head over to [Building Apps](/developers/extend/apps/building) for a detailed guide on creating objects, logic functions, front components, skills, and more.
+---
+
+## What you can build
+
+Apps are composed of **entities** — each defined as a TypeScript file with a single `export default`:
+
+| Entity | What it does |
+|--------|-------------|
+| **Objects & Fields** | Define custom data models (like Post Card, Invoice) with typed fields |
+| **Logic functions** | Server-side TypeScript functions triggered by HTTP routes, cron schedules, or database events |
+| **Front components** | React components that render inside Twenty's UI (side panel, widgets, command menu) |
+| **Skills & Agents** | AI capabilities — reusable instructions and autonomous assistants |
+| **Views & Navigation** | Pre-configured list views and sidebar menu items for your objects |
+| **Page layouts** | Custom record detail pages with tabs and widgets |
+
+Head over to [Building Apps](/developers/extend/apps/building) for a detailed guide on each entity type.
 
 ---
 
@@ -168,13 +176,15 @@ my-twenty-app/
       └── app-install.integration-test.ts     # Integration test
 ```
 
+### Starting from an example
+
 To start from a more complete example with custom objects, fields, logic functions, front components, and more, use the `--example` flag:
 
 ```bash filename="Terminal"
-npx create-twenty-app@latest my-twenty-app --example <name>
+npx create-twenty-app@latest my-twenty-app --example postcard
 ```
 
-Examples are sourced from the [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples) directory on GitHub.
+Examples are sourced from the [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples) directory on GitHub. You can also scaffold individual entities into an existing project with `yarn twenty add` (see [Building Apps](/developers/extend/apps/building#scaffolding-entities-with-yarn-twenty-add)).
 
 ### Key files
 
@@ -187,73 +197,9 @@ Examples are sourced from the [twenty-apps/examples](https://github.com/twentyhq
 | `src/__tests__/` | Integration tests (setup + example test). |
 | `public/` | Static assets (images, fonts) served with your app. |
 
-## Local development server (`yarn twenty server`)
+## Local development server
 
-The CLI can manage a local Twenty server running in Docker. This is the same server started automatically when you scaffold an app with `create-twenty-app`, but you can also manage it manually.
-
-### Starting the server
-
-```bash filename="Terminal"
-yarn twenty server start
-```
-
-This pulls the `twentycrm/twenty-app-dev:latest` Docker image (if not already present), creates a container named `twenty-app-dev`, and starts it on port **2020**. The CLI waits until the server passes its health check before returning.
-
-Two Docker volumes are created to persist data between restarts:
-- `twenty-app-dev-data` — PostgreSQL database
-- `twenty-app-dev-storage` — file storage
-
-If port 2020 is already in use, you can start on a different port:
-
-```bash filename="Terminal"
-yarn twenty server start --port 3030
-```
-
-The CLI automatically configures the container's internal `NODE_PORT` and `SERVER_URL` to match the chosen port, so logic functions, OAuth, and all other internal networking work correctly.
-
-Once started, the server is automatically registered as the `local` remote in your CLI config.
-
-### Checking server status
-
-```bash filename="Terminal"
-yarn twenty server status
-```
-
-Displays whether the server is running, its URL, and the default login credentials (`tim@apple.dev` / `tim@apple.dev`).
-
-### Viewing server logs
-
-```bash filename="Terminal"
-yarn twenty server logs
-```
-
-Streams the container logs. Use `--lines` to control how many recent lines to show:
-
-```bash filename="Terminal"
-yarn twenty server logs --lines 100
-```
-
-### Stopping the server
-
-```bash filename="Terminal"
-yarn twenty server stop
-```
-
-Stops the container. Your data is preserved in the Docker volumes — the next `start` picks up where you left off.
-
-### Resetting the server
-
-```bash filename="Terminal"
-yarn twenty server reset
-```
-
-Removes the container **and** deletes both Docker volumes, wiping all data. The next `start` creates a fresh instance.
-
-<Note>
-  The server requires **Docker** to be running. If you see a "Docker not running" error, make sure Docker Desktop (or the Docker daemon) is started.
-</Note>
-
-### Command reference
+The scaffolder already started a local Twenty server for you. To manage it later, use `yarn twenty server`:
 
 | Command | Description |
 |---------|-------------|
@@ -264,6 +210,12 @@ Removes the container **and** deletes both Docker volumes, wiping all data. The 
 | `yarn twenty server logs` | Stream server logs |
 | `yarn twenty server logs --lines 100` | Show the last 100 log lines |
 | `yarn twenty server reset` | Delete all data and start fresh |
+
+Data is persisted across restarts in two Docker volumes (`twenty-app-dev-data` for PostgreSQL, `twenty-app-dev-storage` for files). Use `reset` to wipe everything and start fresh.
+
+<Note>
+  The server requires **Docker** to be running. If you see a "Docker not running" error, make sure Docker Desktop (or the Docker daemon) is started.
+</Note>
 
 ## Manual setup (without the scaffolder)
 
