@@ -6,7 +6,7 @@ import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-wo
 import { GenerateVersionedMigrationCommand } from 'src/database/commands/generate-versioned-migration.command';
 import { ListOrphanedWorkspaceEntitiesCommand } from 'src/database/commands/list-and-delete-orphaned-workspace-entities.command';
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
-import { RunTypeormMigrationCommand } from 'src/database/commands/run-typeorm-migration.command';
+import { RunCoreMigrationCommand } from 'src/database/commands/run-core-migration.command';
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
 import { WorkspaceExportModule } from 'src/database/commands/workspace-export/workspace-export.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
@@ -85,7 +85,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     ListOrphanedWorkspaceEntitiesCommand,
     EnterpriseKeyValidationCronCommand,
     GenerateApiKeyCommand,
-    RunTypeormMigrationCommand,
+    RunCoreMigrationCommand,
   ],
 })
 export class DatabaseCommandModule {}

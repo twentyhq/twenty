@@ -7,17 +7,17 @@ import { CoreMigrationRunnerService } from 'src/database/commands/core-migration
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
-type RunTypeormMigrationCommandOptions = {
+type RunCoreMigrationCommandOptions = {
   force?: boolean;
 };
 
 @Command({
-  name: 'run-typeorm-migration',
+  name: 'run-core-migration',
   description:
     'Run TypeORM core migrations with workspace version safety check',
 })
-export class RunTypeormMigrationCommand extends CommandRunner {
-  private readonly logger = new Logger(RunTypeormMigrationCommand.name);
+export class RunCoreMigrationCommand extends CommandRunner {
+  private readonly logger = new Logger(RunCoreMigrationCommand.name);
 
   constructor(
     private readonly coreEngineVersionService: CoreEngineVersionService,
@@ -38,7 +38,7 @@ export class RunTypeormMigrationCommand extends CommandRunner {
 
   async run(
     _passedParams: string[],
-    options: RunTypeormMigrationCommandOptions,
+    options: RunCoreMigrationCommandOptions,
   ): Promise<void> {
     if (options.force) {
       this.logger.warn(
