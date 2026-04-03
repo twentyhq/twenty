@@ -1,7 +1,7 @@
 import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { type MigrationInterface, DataSource } from 'typeorm';
+import { DataSource, type MigrationInterface } from 'typeorm';
 
 import { getVersionedMigrationVersion } from 'src/database/typeorm/core/decorators/versioned-migration.decorator';
 import {
