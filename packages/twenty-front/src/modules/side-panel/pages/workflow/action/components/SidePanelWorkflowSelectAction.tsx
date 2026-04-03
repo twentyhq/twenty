@@ -1,5 +1,6 @@
 import { WorkflowActionMenuItems } from '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems';
-import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
+import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { SidePanelStepListContainer } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepContainer';
 import { SidePanelWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepTitle';
@@ -10,7 +11,6 @@ import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { IconFunction } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -33,7 +33,7 @@ export const SidePanelWorkflowSelectAction = ({
 
   const { t } = useLingui();
 
-  const logicFunctions = useAtomStateValue(logicFunctionsState);
+  const logicFunctions = useAtomStateValue(logicFunctionsSelector);
 
   const toolFunctions = logicFunctions.filter((fn) => fn.isTool === true);
 

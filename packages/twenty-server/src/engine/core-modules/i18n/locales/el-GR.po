@@ -2463,10 +2463,15 @@ msgstr "Το πεδίο ήδη υπάρχει"
 msgid "Field cannot be indexed as it belongs to a different object"
 msgstr "Το πεδίο δεν μπορεί να ευρετηριαστεί καθώς ανήκει σε διαφορετικό αντικείμενο"
 
-#. js-lingui-id: Hg95ys
+#. js-lingui-id: e2V+x1
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
-msgid "Field cannot be used as label identifier"
-msgstr "Το πεδίο δεν μπορεί να χρησιμοποιηθεί ως αναγνωριστικό ετικέτας"
+msgid "Field cannot be used as label identifier due to its type"
+msgstr ""
+
+#. js-lingui-id: QMSXe6
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
+msgid "Field cannot be used as label identifier due to its type: should be of type UUID, text or full name"
+msgstr ""
 
 #. js-lingui-id: F6OLoA
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
@@ -2634,6 +2639,11 @@ msgstr "Ο τύπος πεδίου TS_VECTOR πρέπει να είναι πεδ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must be named \"searchVector\""
 msgstr "Ο τύπος πεδίου TS_VECTOR πρέπει να ονομάζεται \"searchVector\""
+
+#. js-lingui-id: NuL8km
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
+msgid "Field type TS_VECTOR must have an expression. This may have failed to be built because record identifier field does not exist or is not of a searchable type."
+msgstr ""
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -5593,6 +5603,11 @@ msgstr ""
 msgid "Please check your connection settings. Make sure the server host, port, and password are correct."
 msgstr "Παρακαλώ ελέγξτε τις ρυθμίσεις της σύνδεσής σας. Βεβαιωθείτε ότι ο διακομιστής, η θύρα και ο κωδικός πρόσβασης είναι σωστά."
 
+#. js-lingui-id: PdKZim
+#: src/engine/core-modules/admin-panel/admin-panel.exception.ts
+msgid "Please choose an end date and time after the start date and time."
+msgstr ""
+
 #. js-lingui-id: mqzu5F
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
 msgid "Please confirm your updated email"
@@ -6267,6 +6282,11 @@ msgstr "Μερικές από τις άδειες που επιλέξατε δε
 #: src/engine/metadata-modules/user-role/user-role.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Δεν ήταν δυνατή η εύρεση ορισμένων συμμετοχών στον χώρο εργασίας. Ίσως να μην έχουν πλέον πρόσβαση σε αυτόν τον χώρο εργασίας."
+
+#. js-lingui-id: fWsBTs
+#: src/engine/core-modules/admin-panel/admin-panel.exception.ts
+msgid "Something went wrong. Please try again."
+msgstr ""
 
 #. js-lingui-id: Oa7nLQ
 #: src/engine/core-modules/application/application.exception.ts
@@ -8417,6 +8437,12 @@ msgstr "Δεν βρέθηκε χώρος εργασίας για συμβάν σ
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Workspace not found."
 msgstr "Ο χώρος εργασίας δεν βρέθηκε."
+
+#. js-lingui-id: osscRx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/workspace-datasource/exceptions/workspace-datasource.exception.ts
+msgid "Workspace schema changes are temporarily locked."
+msgstr ""
 
 #. js-lingui-id: 7wxAZI
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts

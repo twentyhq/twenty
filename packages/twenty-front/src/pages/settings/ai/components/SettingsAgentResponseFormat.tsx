@@ -1,15 +1,12 @@
-import { isDefined } from 'twenty-shared/utils';
 import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
+import { fieldsToSchema } from '@/ai/utils/fieldsToSchema';
+import { schemaToFields } from '@/ai/utils/schemaToFields';
 import { Select } from '@/ui/input/components/Select';
 import { WorkflowOutputSchemaBuilder } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import {
-  type AgentResponseFieldType,
-  type AgentResponseSchema,
-} from 'twenty-shared/ai';
-import { v4 } from 'uuid';
+import { type AgentResponseSchema } from 'twenty-shared/ai';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -28,42 +25,6 @@ type SettingsAgentResponseFormatProps = {
     schema?: AgentResponseSchema;
   }) => void;
   disabled?: boolean;
-};
-
-const schemaToFields = (schema: AgentResponseSchema): OutputSchemaField[] => {
-  if (!isDefined(schema.properties)) return [];
-
-  return Object.entries(schema.properties).map(([key, field]) => ({
-    id: v4(),
-    name: key,
-    description: field.description || '',
-    type: field.type,
-  }));
-};
-
-const fieldsToSchema = (fields: OutputSchemaField[]): AgentResponseSchema => {
-  const properties: Record<
-    string,
-    { type: AgentResponseFieldType; description?: string }
-  > = {};
-  const required: string[] = [];
-
-  fields
-    .filter((field) => field.name.trim() && field.type)
-    .forEach((field) => {
-      properties[field.name] = {
-        type: field.type!,
-        description: field.description || field.name,
-      };
-      required.push(field.name);
-    });
-
-  return {
-    type: 'object' as const,
-    properties,
-    required,
-    additionalProperties: false as const,
-  };
 };
 
 export const SettingsAgentResponseFormat = ({
@@ -87,16 +48,11 @@ export const SettingsAgentResponseFormat = ({
     if (newType === 'json') {
       setVisualBuilderFields(schemaToFields(schema));
     }
-    const emptySchema: AgentResponseSchema = {
-      type: 'object' as const,
-      properties: {},
-      required: [],
-      additionalProperties: false as const,
-    };
-    onResponseFormatChange({
-      type: newType,
-      schema: newType === 'text' ? emptySchema : schema,
-    });
+
+    // TODO: Remove text response format support once prod migration upgrades legacy agents to JSON format.
+    onResponseFormatChange(
+      newType === 'text' ? { type: 'text' } : { type: 'json', schema },
+    );
   };
 
   const handleVisualBuilderChange = (updatedFields: OutputSchemaField[]) => {
@@ -115,6 +71,7 @@ export const SettingsAgentResponseFormat = ({
         value={formatType}
         onChange={handleFormatTypeChange}
         options={[
+          // TODO: Remove string option once text response format support is fully dropped.
           { label: t`String`, value: 'text' as const },
           { label: t`JSON`, value: 'json' as const },
         ]}

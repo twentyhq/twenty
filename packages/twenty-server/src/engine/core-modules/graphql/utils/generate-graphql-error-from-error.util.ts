@@ -1,6 +1,6 @@
 import { HttpException } from '@nestjs/common';
 
-import { type I18n } from '@lingui/core';
+import { type I18n, type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
 import {
@@ -8,12 +8,8 @@ import {
   ErrorCode,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { convertExceptionToGraphQLError } from 'src/engine/utils/global-exception-handler.util';
-import { CustomException } from 'src/utils/custom-exception';
 
-export const generateGraphQLErrorFromError = (
-  error: Error | CustomException,
-  i18n: I18n,
-) => {
+export const generateGraphQLErrorFromError = (error: Error, i18n: I18n) => {
   const graphqlError =
     error instanceof HttpException
       ? convertExceptionToGraphQLError(error)
@@ -21,13 +17,14 @@ export const generateGraphQLErrorFromError = (
 
   const defaultErrorMessage = msg`An error occurred.`;
 
-  if (error instanceof CustomException) {
-    graphqlError.extensions.userFriendlyMessage = i18n._(
-      error.userFriendlyMessage ?? defaultErrorMessage,
-    );
-  } else {
-    graphqlError.extensions.userFriendlyMessage = i18n._(defaultErrorMessage);
-  }
+  const userFriendlyMessage =
+    'userFriendlyMessage' in error
+      ? (error.userFriendlyMessage as MessageDescriptor)
+      : undefined;
+
+  graphqlError.extensions.userFriendlyMessage = i18n._(
+    userFriendlyMessage ?? defaultErrorMessage,
+  );
 
   return graphqlError;
 };

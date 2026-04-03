@@ -1,4 +1,4 @@
-import { Body, Heading, IconButton } from '@/design-system/components';
+import { Body, Heading, IconButton, LazyEmbed } from '@/design-system/components';
 import { ArrowRightIcon } from '@/icons';
 import { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
 import { theme } from '@/theme';
@@ -26,7 +26,7 @@ const CardRule = styled.div`
   width: 100%;
 `;
 
-const CardEmbed = styled.iframe`
+const CardEmbed = styled(LazyEmbed)`
   width: 100%;
   height: 240px;
   border: none;

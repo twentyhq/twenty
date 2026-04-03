@@ -4,73 +4,142 @@ description: 几分钟内创建你的第一个 Twenty 应用。
 ---
 
 <Warning>
-应用目前处于 Alpha 测试阶段。 该功能可用，但仍在演进中。
+应用目前处于 Alpha 阶段。 该功能可用，但仍在演进中。
 </Warning>
 
 应用可通过自定义对象、字段、逻辑函数、AI 技能和 UI 组件来扩展 Twenty——全部以代码进行管理。
 
-**你可以构建的内容:**
-
-* 自定义对象、字段、视图和导航项，以塑造你的数据模型
-* 由 HTTP 路由、cron 调度或数据库事件触发的逻辑函数
-* 在 Twenty 的 UI 中直接渲染的前端组件
-* 用于扩展 Twenty 的 AI 代理的技能
-* 将同一个应用部署到多个工作空间
-
 ## 先决条件
 
-* Node.js 24+
-* Yarn 4
-* Docker (或正在运行的本地 Twenty 实例)
+在开始之前，请确保你的机器已安装以下内容：
 
-## 开始使用
+* **Node.js 24+** — [在此下载](https://nodejs.org/)
+* **Yarn 4** — 通过 Corepack 随 Node.js 提供。 通过运行 `corepack enable` 启用它
+* **Docker** — [在此下载](https://www.docker.com/products/docker-desktop/)。 运行本地 Twenty 实例所必需。 如果你已经有一个正在运行的 Twenty 服务器，则不需要。
 
-使用官方脚手架创建一个新应用，然后进行身份验证并开始开发：
+## 步骤 1：为你的应用创建脚手架
+
+打开终端并运行：
 
 ```bash filename="Terminal"
-# Scaffold a new app (includes all examples by default)
 npx create-twenty-app@latest my-twenty-app
 ```
 
-> 使用 `--minimal` 选项生成最简安装脚手架
+系统会提示你为应用输入名称和描述。 按下 **Enter** 接受默认值。
 
-从这里您可以：
+这会创建一个名为 `my-twenty-app` 的新文件夹，其中包含你所需的一切。
+
+<Note>
+脚手架工具支持以下标志：
+
+* `--minimal` — 仅创建必要文件，不包含示例（默认）
+* `--exhaustive` — 创建所有示例实体
+* `--name <name>` — 设置应用名称（跳过提示）
+* `--display-name <displayName>` — 设置显示名称（跳过提示）
+* `--description <description>` — 设置描述（跳过提示）
+* `--skip-local-instance` — 跳过本地服务器设置提示
+</Note>
+
+## 步骤 2：设置本地 Twenty 实例
+
+脚手架工具会询问：
+
+> **是否要设置本地 Twenty 实例？**
+
+* **输入 `yes`**（推荐）— 这将拉取 `twenty-app-dev` Docker 镜像，并在端口 `2020` 上启动本地 Twenty 服务器。 继续之前，请确保 Docker 正在运行。
+* **输入 `no`** — 如果你已经有一个在本地运行的 Twenty 服务器，请选择此项。
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="是否启动本地实例？" />
+</div>
+
+## 步骤 3：登录你的工作区
+
+接下来，将打开一个浏览器窗口，显示 Twenty 登录页面。 使用预置的演示账户登录：
+
+* **邮箱：** `tim@apple.dev`
+* **密码：** `tim@apple.dev`
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/login.png" alt="Twenty 登录界面" />
+</div>
+
+## 步骤 4：授权该应用
+
+登录后，你会看到一个授权界面。 这使你的应用可以与工作区交互。
+
+点击 **授权** 继续。
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/authorize.png" alt="Twenty CLI 授权界面" />
+</div>
+
+授权后，你的终端会确认一切已就绪。
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="应用脚手架创建成功" />
+</div>
+
+## 步骤 5：开始开发
+
+进入你的新应用文件夹并启动开发服务器：
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
-yarn twenty add
-
-# Watch your application's function logs
-yarn twenty function:logs
-
-# Execute a function by name
-yarn twenty function:execute -n my-function -p '{"name": "test"}'
-
-# Execute the pre-install function
-yarn twenty function:execute --preInstall
-
-# Execute the post-install function
-yarn twenty function:execute --postInstall
-
-# Uninstall the application from the current workspace
-yarn twenty uninstall
-
-# Display commands' help
-yarn twenty help
+cd my-twenty-app
+yarn twenty dev
 ```
 
-另请参阅：[create-twenty-app](https://www.npmjs.com/package/create-twenty-app) 和 [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk) 的 CLI 参考页面。
+它会监听你的源文件，每次更改都会重建，并自动将你的应用同步到本地 Twenty 服务器。 你应当在终端中看到一个实时状态面板。
 
-## 项目结构（脚手架生成）
+如需更详细的输出（构建日志、同步请求、错误跟踪），请使用 `--verbose` 标志：
 
-当你运行 `npx create-twenty-app@latest my-twenty-app` 时，脚手架将：
+```bash filename="Terminal"
+yarn twenty dev --verbose
+```
 
-* 将一个最小的基础应用复制到 `my-twenty-app/` 中
-* 添加本地 `twenty-sdk` 依赖和 Yarn 4 配置
-* 创建与 `twenty` CLI 关联的配置文件和脚本
-* 生成核心文件（应用配置、默认函数角色、安装前/安装后函数），并基于脚手架模式生成示例文件
+<Warning>
+开发模式仅适用于以开发模式运行的 Twenty 实例（`NODE_ENV=development`）。 生产实例会拒绝开发同步请求。 使用 `yarn twenty deploy` 部署到生产服务器——详见[发布应用](/l/zh/developers/extend/apps/publishing)。
+</Warning>
 
-使用默认 `--exhaustive` 模式新搭建的应用如下所示：
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/dev.jpg" alt="开发模式终端输出" />
+</div>
+
+## 步骤 6：在 Twenty 中查看你的应用
+
+在浏览器中打开 [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer)。 前往 **设置 > 应用**，并选择 **开发者** 选项卡。 你应当在 **你的应用** 下看到你的应用：
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="“你的应用”列表显示 My twenty app" />
+</div>
+
+点击 **My twenty app** 打开其 **应用注册**。 注册项是一个服务器级记录，用于描述你的应用——其名称、唯一标识符、OAuth 凭据以及来源（本地、npm 或 tarball）。 它位于服务器上，而不在任何特定工作区内。 当你将应用安装到工作区时，Twenty 会创建一个工作区范围的 **应用**，指向该注册项。 同一服务器上的多个工作区可以安装同一个注册项。
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="应用注册详情" />
+</div>
+
+点击 **查看已安装的应用** 以查看已安装的应用。 **关于** 选项卡显示当前版本和管理选项：
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="已安装的应用 — “关于”选项卡" />
+</div>
+
+切换到 **内容** 选项卡，以查看你的应用提供的全部内容——对象、字段、逻辑函数和智能体：
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-4.png" alt="已安装的应用 — “内容”选项卡" />
+</div>
+
+一切就绪！ 编辑 `src/` 中的任意文件，更改会被自动检测到。
+
+前往[构建应用](/l/zh/developers/extend/apps/building)，查看关于创建对象、逻辑函数、前端组件、技能等的详细指南。
+
+---
+
+## 项目结构
+
+脚手架工具会生成以下文件结构（以 `--exhaustive` 模式展示，其中包含每种实体类型的示例）：
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -83,124 +152,238 @@ my-twenty-app/
     install-state.gz
   .oxlintrc.json
   tsconfig.json
+  tsconfig.spec.json                  # TypeScript config for tests
+  vitest.config.ts                    # Vitest test runner configuration
+  LLMS.md
   README.md
-  public/                           # Public assets folder (images, fonts, etc.)
+  .github/
+    └── workflows/
+        └── ci.yml                      # GitHub Actions CI workflow
+  public/                             # Public assets (images, fonts, etc.)
   src/
-  ├── application-config.ts           # Required - main application configuration
+  ├── application-config.ts             # Required — main application configuration
+  ├── __tests__/
+  │   ├── setup-test.ts                   # Test setup (server health check, config)
+  │   └── app-install.integration-test.ts # Example integration test
   ├── roles/
-  │   └── default-role.ts               # Default role for logic functions
+  │   └── default-role.ts                 # Default role for logic functions
   ├── objects/
-  │   └── example-object.ts             # Example custom object definition
+  │   └── example-object.ts               # Example custom object definition
   ├── fields/
-  │   └── example-field.ts              # Example standalone field definition
+  │   └── example-field.ts                # Example standalone field definition
   ├── logic-functions/
-  │   ├── hello-world.ts                # Example logic function
-  │   ├── pre-install.ts                # Pre-install logic function
-  │   └── post-install.ts               # Post-install logic function
+  │   ├── hello-world.ts                  # Example logic function
+  │   ├── create-hello-world-company.ts   # Example logic function using CoreApiClient
+  │   ├── pre-install.ts                  # Runs before installation
+  │   └── post-install.ts                 # Runs after installation
   ├── front-components/
-  │   └── hello-world.tsx               # Example front component
+  │   └── hello-world.tsx                 # Example front component
+  ├── page-layouts/
+  │   └── example-record-page-layout.ts   # Example page layout with front component
   ├── views/
-  │   └── example-view.ts                # Example saved view definition
+  │   └── example-view.ts                 # Example saved view definition
   ├── navigation-menu-items/
   │   └── example-navigation-menu-item.ts # Example sidebar navigation link
-  └── skills/
-      └── example-skill.ts                # Example AI agent skill definition
+  ├── skills/
+  │   └── example-skill.ts                # Example AI agent skill definition
+  └── agents/
+      └── example-agent.ts                # Example AI agent definition
 ```
 
-使用 `--minimal` 时，只会创建核心文件（`application-config.ts`、`roles/default-role.ts`、`logic-functions/pre-install.ts` 和 `logic-functions/post-install.ts`）。
+默认情况下（`--minimal`），仅创建核心文件：`application-config.ts`、`roles/default-role.ts`、`logic-functions/pre-install.ts` 和 `logic-functions/post-install.ts`。 使用 `--exhaustive` 可包含上面展示的所有示例文件。
 
-总体来说：
+### 关键文件
 
-* **package.json**：声明应用名称、版本、引擎（Node 24+、Yarn 4），并添加 `twenty-sdk` 以及一个 `twenty` 脚本，该脚本会委托给本地的 `twenty` CLI。 运行 `yarn twenty help` 以列出所有可用命令。
-* **.gitignore**：忽略常见产物，如 `node_modules`、`.yarn`、`.twenty/`、`dist/`、`build/`、覆盖率文件夹、日志文件以及 `.env*` 文件。
-* **yarn.lock**、**.yarnrc.yml**、**.yarn/**：锁定并配置项目使用的 Yarn 4 工具链。
-* **.nvmrc**：固定项目期望的 Node.js 版本。
-* **.oxlintrc.json** 和 **tsconfig.json**：为应用的 TypeScript 源码提供 Lint 与 TypeScript 配置。
-* **README.md**：应用根目录中的简短 README，包含基本说明。
-* **public/**: 一个用于存储公共资源（图像、字体、静态文件）的文件夹，这些资源将随你的应用程序一起提供。 放置在此处的文件会在同步期间上传，并可在运行时访问。
-* **src/**：你以代码形式定义应用的主要位置
+| 文件 / 文件夹                     | 目的                                                                 |
+| ---------------------------- | ------------------------------------------------------------------ |
+| `package.json`               | 声明应用的名称、版本和依赖。 包含一个 `twenty` 脚本，因此你可以运行 `yarn twenty help` 查看所有命令。 |
+| `src/application-config.ts`  | **必需。** 应用的主配置文件。                                                  |
+| `src/roles/`                 | 定义角色，用于控制逻辑函数的访问权限。                                                |
+| `src/logic-functions/`       | 由路由、cron 调度或数据库事件触发的服务端函数。                                         |
+| `src/front-components/`      | 在 Twenty 的 UI 中渲染的 React 组件。                                       |
+| `src/objects/`               | 用于扩展数据模型的自定义对象定义。                                                  |
+| `src/fields/`                | 添加到现有对象的自定义字段。                                                     |
+| `src/views/`                 | 已保存的视图配置。                                                          |
+| `src/navigation-menu-items/` | 侧边栏导航中的自定义链接。                                                      |
+| `src/skills/`                | 用于扩展 Twenty 的 AI 代理的技能.                                            |
+| `src/agents/`                | 具有自定义提示词的 AI 智能体。                                                  |
+| `src/page-layouts/`          | 记录视图的自定义页面布局。                                                      |
+| `src/__tests__/`             | 集成测试（设置 + 示例测试）。                                                   |
+| `public/`                    | 随应用一起提供的静态资源（图像、字体）。                                               |
 
-### 实体检测
+## 管理远程
 
-该 SDK 通过在你的 TypeScript 文件中解析 **`export default define<Entity>({...})`** 调用来检测实体。 每种实体类型都有一个从 `twenty-sdk` 导出的对应辅助函数：
-
-| 辅助函数                             | 实体类型             |
-| -------------------------------- | ---------------- |
-| `defineObject`                   | 自定义对象定义          |
-| `defineLogicFunction`            | 逻辑函数定义           |
-| `definePreInstallLogicFunction`  | 安装前逻辑函数（在安装之前运行） |
-| `definePostInstallLogicFunction` | 安装后逻辑函数（在安装之后运行） |
-| `defineFrontComponent`           | 前端组件定义           |
-| `defineRole`                     | 角色定义             |
-| `defineField`                    | 现有对象的字段扩展        |
-| `defineView`                     | 已保存的视图定义         |
-| `defineNavigationMenuItem`       | 导航菜单项定义          |
-| `defineSkill`                    | AI 代理技能定义        |
-
-<Note>
-**文件命名是灵活的。** 实体检测基于 AST — SDK 会扫描你的源文件以查找 `export default define<Entity>({...})` 模式。 你可以按照自己的喜好组织文件和文件夹。 按实体类型分组（例如 `logic-functions/`、`roles/`）只是代码组织的一种约定，并非必需。
-</Note>
-
-已检测实体的示例：
-
-```typescript
-// This file can be named anything and placed anywhere in src/
-import { defineObject, FieldType } from 'twenty-sdk';
-
-export default defineObject({
-  universalIdentifier: '...',
-  nameSingular: 'postCard',
-  // ... rest of config
-});
-```
-
-后续命令将添加更多文件和文件夹：
-
-* `yarn twenty dev` 会自动生成类型化的 `CoreApiClient`（通过 `/graphql` 获取工作区数据），并写入 `node_modules/twenty-client-sdk/`。 `MetadataApiClient`（通过 `/metadata` 处理工作区配置和文件上传）为预构建版本，可立即使用。 分别从 `twenty-client-sdk/core` 和 `twenty-client-sdk/metadata` 导入它们。
-* `yarn twenty add` 会在 `src/` 下为你的自定义对象、函数、前端组件、角色、技能等添加实体定义文件。
-
-## 身份验证
-
-首次运行 `yarn twenty auth:login` 时，你将被提示输入：
-
-* API URL（默认为 http://localhost:3000 或你当前的工作空间配置）
-* API 密钥
-
-你的凭据按用户存储在 `~/.twenty/config.json` 中。 你可以维护多个配置文件并在它们之间切换。
-
-### 管理工作空间
+“远程”是指你的应用连接到的 Twenty 服务器。 在设置期间，脚手架工具会为你自动创建一个。 你可以随时添加更多远程或在它们之间切换。
 
 ```bash filename="Terminal"
-# Login interactively (recommended)
-yarn twenty auth:login
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote add
 
-# Login to a specific workspace profile
-yarn twenty auth:login --workspace my-custom-workspace
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote add --local
 
-# List all configured workspaces
-yarn twenty auth:list
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
 
-# Switch the default workspace (interactive)
-yarn twenty auth:switch
+# List all configured remotes
+yarn twenty remote list
 
-# Switch to a specific workspace
-yarn twenty auth:switch production
-
-# Check current authentication status
-yarn twenty auth:status
+# Switch the active remote
+yarn twenty remote switch <name>
 ```
 
-使用 `yarn twenty auth:switch` 切换工作空间后，后续所有命令将默认使用该工作空间。 你仍可通过 `--workspace <name>` 临时覆盖。
+你的凭据存储在 `~/.twenty/config.json` 中。
+
+## 本地开发服务器（`yarn twenty server`）
+
+CLI 可以管理在 Docker 中运行的本地 Twenty 服务器。 这与使用 `create-twenty-app` 搭建应用时自动启动的服务器相同，但你也可以手动管理它。
+
+### 启动服务器
+
+```bash filename="Terminal"
+yarn twenty server start
+```
+
+这将拉取 `twentycrm/twenty-app-dev:latest` Docker 镜像（如果尚未存在），创建名为 `twenty-app-dev` 的容器，并在端口 **2020** 上启动它。 CLI 会等待服务器通过健康检查后再返回。
+
+会创建两个 Docker 卷，以在重启之间持久化数据：
+
+* `twenty-app-dev-data` — PostgreSQL 数据库
+* `twenty-app-dev-storage` — 文件存储
+
+如果端口 2020 已被占用，你可以在其他端口上启动：
+
+```bash filename="Terminal"
+yarn twenty server start --port 3030
+```
+
+CLI 会自动配置容器内部的 `NODE_PORT` 和 `SERVER_URL` 以匹配所选端口，从而使逻辑函数、OAuth 以及所有其他内部网络正常工作。
+
+启动后，该服务器会在你的 CLI 配置中自动注册为 `local` 远程。
+
+### 检查服务器状态
+
+```bash filename="Terminal"
+yarn twenty server status
+```
+
+显示服务器是否在运行、其 URL，以及默认登录凭据（`tim@apple.dev` / `tim@apple.dev`）。
+
+### 查看服务器日志
+
+```bash filename="Terminal"
+yarn twenty server logs
+```
+
+持续输出容器日志。 使用 `--lines` 控制显示的最近日志行数：
+
+```bash filename="Terminal"
+yarn twenty server logs --lines 100
+```
+
+### 停止服务器
+
+```bash filename="Terminal"
+yarn twenty server stop
+```
+
+停止容器。 你的数据会保存在 Docker 卷中——下次 `start` 会从上次中断处继续。
+
+### 重置服务器
+
+```bash filename="Terminal"
+yarn twenty server reset
+```
+
+移除容器并删除这两个 Docker 卷，清除所有数据。 下一次 `start` 会创建一个全新实例。
+
+<Note>
+  服务器需要 Docker 处于运行状态。 如果看到 "Docker not running" 错误，请确保 Docker Desktop（或 Docker 守护进程）已启动。
+</Note>
+
+### 命令参考
+
+| 命令                                     | 描述              |
+| -------------------------------------- | --------------- |
+| `yarn twenty server start`             | 启动本地服务器（按需拉取镜像） |
+| `yarn twenty server start --port 3030` | 在自定义端口启动        |
+| `yarn twenty server stop`              | 停止服务器（保留数据）     |
+| `yarn twenty server status`            | 显示服务器状态、URL 和凭据 |
+| `yarn twenty server logs`              | 流式输出服务器日志       |
+| `yarn twenty server logs --lines 100`  | 显示最近 100 行日志    |
+| `yarn twenty server reset`             | 删除所有数据并全新开始     |
+
+## 使用 GitHub Actions 进行 CI
+
+脚手架工具会在 `.github/workflows/ci.yml` 生成一个开箱即用的 GitHub Actions 工作流。 它会在每次向 `main` 推送以及拉取请求上自动运行你的集成测试。
+
+工作流：
+
+1. 检出你的代码
+2. 使用 `twentyhq/twenty/.github/actions/spawn-twenty-docker-image` 动作启动一个临时的 Twenty 服务器
+3. 使用 `yarn install --immutable` 安装依赖
+4. 运行 `yarn test`，并从该动作的输出中注入 `TWENTY_API_URL` 和 `TWENTY_API_KEY`
+
+```yaml .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+
+env:
+  TWENTY_VERSION: latest
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Spawn Twenty instance
+        id: twenty
+        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
+        with:
+          twenty-version: ${{ env.TWENTY_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run integration tests
+        run: yarn test
+        env:
+          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
+          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
+```
+
+你无需配置任何机密——`spawn-twenty-docker-image` 动作会在运行器中直接启动一个临时的 Twenty 服务器，并输出连接详情。 GitHub 会自动提供 `GITHUB_TOKEN` 机密。
+
+若要固定为特定的 Twenty 版本而不是 `latest`，请在工作流顶部修改 `TWENTY_VERSION` 环境变量。
 
 ## 手动设置（不使用脚手架）
 
-虽然我们建议使用 `create-twenty-app` 以获得最佳的上手体验，但你也可以手动设置项目。 不要全局安装 CLI。 相反，请将 `twenty-sdk` 添加为本地依赖，并在你的 package.json 中配置一个脚本：
+如果你不想使用 `create-twenty-app`，而是自行完成设置，可以分两步进行。
+
+\*\*1. 将 `twenty-sdk` 和 `twenty-client-sdk` 添加为依赖项：
 
 ```bash filename="Terminal"
-yarn add -D twenty-sdk
+yarn add twenty-sdk twenty-client-sdk
 ```
 
-然后添加一个 `twenty` 脚本：
+\*\*2. 在你的 `package.json` 中添加一个 `twenty` 脚本：
 
 ```json filename="package.json"
 {
@@ -210,25 +393,19 @@ yarn add -D twenty-sdk
 }
 ```
 
-现在你可以通过 `yarn twenty <command>` 运行所有命令，例如 `yarn twenty dev`、`yarn twenty help` 等。
+现在你可以运行 `yarn twenty dev`、`yarn twenty help` 以及所有其他命令。
 
-## 如何使用本地 Twenty 实例
-
-如果你已经在本地运行一个 Twenty 实例（例如通过 `npx nx start twenty-server`），你可以连接到它，而不是使用 Docker:
-
-```bash filename="Terminal"
-# During scaffolding — skip Docker, connect to your running instance
-npx create-twenty-app@latest my-app --port 3000
-
-# Or after scaffolding — add a remote pointing to your instance
-yarn twenty remote add --local --port 3000
-```
+<Note>
+不要全局安装 `twenty-sdk`。 始终将其作为本地项目依赖使用，以便每个项目都能固定其自己的版本。
+</Note>
 
 ## 故障排除
 
-* 身份验证错误：运行 `yarn twenty auth:login`，并确保你的 API 密钥具有所需权限。
-* 无法连接到服务器：请验证 API URL，并确保 Twenty 服务器可达。
-* 类型或客户端缺失/过期：重启 `yarn twenty dev` — 它会自动生成类型化客户端。
-* 开发模式未同步：确保 `yarn twenty dev` 正在运行，并且你的环境不会忽略变更。
+如果遇到问题：
 
-Discord 帮助频道：https://discord.com/channels/1130383047699738754/1130386664812982322
+* 在使用本地实例启动脚手架工具之前，请确保**Docker 已在运行**。
+* 请确保使用 **Node.js 24+**（运行 `node -v` 进行检查）。
+* 请确保**已启用 Corepack**（`corepack enable`），以便可使用 Yarn 4。
+* 如果依赖似乎有问题，尝试删除 `node_modules` 并重新运行 `yarn install`。
+
+仍然遇到问题？ 在 [Twenty 的 Discord](https://discord.com/channels/1130383047699738754/1130386664812982322) 上寻求帮助。

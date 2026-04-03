@@ -1,3 +1,4 @@
+import { FOOTER_DATA } from '@/app/(home)/constants/footer';
 import { Footer } from '@/sections/Footer/components';
 import { theme } from '@/theme';
 import { cssVariables } from '@/theme/css-variables';
@@ -5,6 +6,7 @@ import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import type { Metadata } from 'next';
 import { Aleo, Azeret_Mono, Host_Grotesk } from 'next/font/google';
+import '../../../twenty-ui/dist/theme-light.css';
 
 const hostGrotesk = Host_Grotesk({
   subsets: ['latin'],
@@ -64,16 +66,19 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="light">
       <body
         className={`${cssVariables} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable}`}
       >
         <StyledMain>{children}</StyledMain>
-        <Footer.Root>
+        <Footer.Root illustration={FOOTER_DATA.illustration}>
           <Footer.Logo />
-          <Footer.Nav />
-          <Footer.Bottom>
-            <Footer.Social />
+          <Footer.Nav groups={FOOTER_DATA.navGroups} />
+          <Footer.Bottom
+            copyright={FOOTER_DATA.bottom.copyright}
+            credit={FOOTER_DATA.bottom.credit}
+          >
+            <Footer.Social links={FOOTER_DATA.socialLinks} />
           </Footer.Bottom>
         </Footer.Root>
       </body>
