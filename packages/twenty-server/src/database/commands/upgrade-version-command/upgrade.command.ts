@@ -29,7 +29,7 @@ import { AddGlobalKeyValuePairUniqueIndexCommand } from 'src/database/commands/u
 import { BackfillDatasourceToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-backfill-datasource-to-workspace.command';
 import { BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-backfill-page-layouts-and-fields-widget-view-fields.command';
 import { DeduplicateEngineCommandsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-deduplicate-engine-commands.command';
-import { DropWorkspaceMessagingFksCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-drop-workspace-messaging-fks.command';
+import { FixSelectAllCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-fix-select-all-command-menu-items.command';
 import { MigrateAiAgentTextToJsonResponseFormatCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-migrate-ai-agent-text-to-json-response-format.command';
 import { UpdateEditLayoutCommandMenuItemLabelCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-update-edit-layout-command-menu-item-label.command';
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
@@ -73,7 +73,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     private readonly backfillDatasourceToWorkspaceCommand: BackfillDatasourceToWorkspaceCommand,
     private readonly backfillPageLayoutsAndFieldsWidgetViewFieldsCommand: BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
     private readonly deduplicateEngineCommandsCommand: DeduplicateEngineCommandsCommand,
-    private readonly dropWorkspaceMessagingFksCommand: DropWorkspaceMessagingFksCommand,
+    private readonly fixSelectAllCommandMenuItemsCommand: FixSelectAllCommandMenuItemsCommand,
     private readonly migrateAiAgentTextToJsonResponseFormatCommand: MigrateAiAgentTextToJsonResponseFormatCommand,
     private readonly updateEditLayoutCommandMenuItemLabelCommand: UpdateEditLayoutCommandMenuItemLabelCommand,
   ) {
@@ -111,7 +111,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.backfillDatasourceToWorkspaceCommand,
       this.backfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
       this.deduplicateEngineCommandsCommand,
-      this.dropWorkspaceMessagingFksCommand,
+      this.fixSelectAllCommandMenuItemsCommand,
       this.migrateAiAgentTextToJsonResponseFormatCommand,
       this.updateEditLayoutCommandMenuItemLabelCommand,
     ];

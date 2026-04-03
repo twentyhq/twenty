@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Filter args validation - ARRAY Gql filter input - failure ARRAY field type - should fail with filter : {"arrayField":{"containsIlike":[]}} 1`] = `"String cannot represent a non string value: []"`;
+exports[`Filter args validation - ARRAY Gql filter input - failure ARRAY field type - should fail with filter : {"arrayField":{"containsIlike":[]}} 1`] = `"Filter operator "containsIlike" requires a string value for field "arrayField", got object"`;
 
-exports[`Filter args validation - ARRAY Gql filter input - failure ARRAY field type - should fail with filter : {"arrayField":{"containsIlike":{}}} 1`] = `"String cannot represent a non string value: {}"`;
+exports[`Filter args validation - ARRAY Gql filter input - failure ARRAY field type - should fail with filter : {"arrayField":{"containsIlike":{}}} 1`] = `"Filter operator "containsIlike" requires a string value for field "arrayField", got object"`;
 
-exports[`Filter args validation - ARRAY Gql filter input - failure ARRAY field type - should fail with filter : {"arrayField":{"containsIlike":2}} 1`] = `"String cannot represent a non string value: 2"`;
+exports[`Filter args validation - ARRAY Gql filter input - failure ARRAY field type - should fail with filter : {"arrayField":{"containsIlike":2}} 1`] = `"Filter operator "containsIlike" requires a string value for field "arrayField", got number"`;
 
-exports[`Filter args validation - ARRAY Gql filter input - failure ARRAY field type - should fail with filter : {"arrayField":{"containsIlike":true}} 1`] = `"String cannot represent a non string value: true"`;
+exports[`Filter args validation - ARRAY Gql filter input - failure ARRAY field type - should fail with filter : {"arrayField":{"containsIlike":true}} 1`] = `"Filter operator "containsIlike" requires a string value for field "arrayField", got boolean"`;
 
 exports[`Filter args validation - ARRAY Rest filter input - failure ARRAY field type - should fail with filter : "arrayField[containsAny]:\\"[]\\"" 1`] = `
 [
