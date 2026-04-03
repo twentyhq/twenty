@@ -135,7 +135,7 @@ export const SettingsApplicationsDeveloperTab = () => {
               window.open(
                 getDocumentationUrl({
                   locale: currentWorkspaceMember?.locale,
-                  path: '/developers/extend/capabilities/apps',
+                  path: '/developers/extend/apps/getting-started',
                 }),
                 '_blank',
               )

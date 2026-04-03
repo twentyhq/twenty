@@ -51,6 +51,7 @@ export interface ApplicationRegistration {
     latestAvailableVersion?: Scalars['String']
     isListed: Scalars['Boolean']
     isFeatured: Scalars['Boolean']
+    logoUrl?: Scalars['String']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     __typename: 'ApplicationRegistration'
@@ -233,6 +234,7 @@ export interface ApplicationRegistrationSummary {
     id: Scalars['UUID']
     latestAvailableVersion?: Scalars['String']
     sourceType: ApplicationRegistrationSourceType
+    logoUrl?: Scalars['String']
     __typename: 'ApplicationRegistrationSummary'
 }
 
@@ -3099,6 +3101,7 @@ export interface ApplicationRegistrationGenqlSelection{
     latestAvailableVersion?: boolean | number
     isListed?: boolean | number
     isFeatured?: boolean | number
+    logoUrl?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     __typename?: boolean | number
@@ -3274,6 +3277,7 @@ export interface ApplicationRegistrationSummaryGenqlSelection{
     id?: boolean | number
     latestAvailableVersion?: boolean | number
     sourceType?: boolean | number
+    logoUrl?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

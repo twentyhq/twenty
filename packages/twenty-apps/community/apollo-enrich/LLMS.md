@@ -1,7 +1,7 @@
 ## Base documentation
 
 - Documentation: https://docs.twenty.com/developers/extend/capabilities/apps
-- Rich app example: https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/fixtures/postcard-app
+- Rich app example: https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/fixtures/rich-app
 
 ## UUID requirement
 - All generated UUIDs must be valid UUID v4.
