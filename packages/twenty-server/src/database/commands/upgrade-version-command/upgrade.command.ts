@@ -77,7 +77,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     private readonly fixSelectAllCommandMenuItemsCommand: FixSelectAllCommandMenuItemsCommand,
     private readonly migrateAiAgentTextToJsonResponseFormatCommand: MigrateAiAgentTextToJsonResponseFormatCommand,
     private readonly updateEditLayoutCommandMenuItemLabelCommand: UpdateEditLayoutCommandMenuItemLabelCommand,
-    private readonly dropWorkspaceMessagingFksCommand: DropWorkspaceMessagingFksCommand,
   ) {
     super(
       workspaceRepository,
@@ -116,7 +115,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.fixSelectAllCommandMenuItemsCommand,
       this.migrateAiAgentTextToJsonResponseFormatCommand,
       this.updateEditLayoutCommandMenuItemLabelCommand,
-      this.dropWorkspaceMessagingFksCommand,
     ];
 
     this.allCommands = {
