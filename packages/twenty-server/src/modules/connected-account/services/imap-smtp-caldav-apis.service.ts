@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
@@ -14,10 +14,10 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
 
 @Injectable()
 export class ImapSmtpCalDavAPIService {
@@ -33,6 +33,7 @@ export class ImapSmtpCalDavAPIService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly createMessageChannelService: CreateMessageChannelService,
     private readonly createCalendarChannelService: CreateCalendarChannelService,
+    private readonly syncMessageFoldersService: SyncMessageFoldersService,
   ) {}
 
   async getImapSmtpCaldavConnectedAccount(
@@ -115,9 +116,6 @@ export class ImapSmtpCalDavAPIService {
         const newOrExistingAccountId =
           existingAccount?.id ?? connectedAccountId ?? v4();
 
-        const workspaceDataSource =
-          await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
-
         const existingMessageChannel = existingAccount
           ? await this.messageChannelRepository.findOne({
               where: { connectedAccountId: existingAccount.id, workspaceId },
@@ -138,22 +136,25 @@ export class ImapSmtpCalDavAPIService {
           !isDefined(existingCalendarChannel) &&
           Boolean(input.connectionParameters.CALDAV);
 
-        await workspaceDataSource.transaction(
-          async (manager: WorkspaceEntityManager) => {
-            await this.connectedAccountRepository.save({
-              id: newOrExistingAccountId,
-              handle,
-              provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-              connectionParameters: input.connectionParameters,
-              userWorkspaceId,
-              workspaceId,
-            });
+        await this.connectedAccountRepository.manager.transaction(
+          async (transactionManager: EntityManager) => {
+            await transactionManager
+              .getRepository(ConnectedAccountEntity)
+              .save({
+                id: newOrExistingAccountId,
+                handle,
+                provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+                connectionParameters: input.connectionParameters,
+                userWorkspaceId,
+                workspaceId,
+              });
 
             if (shouldCreateMessageChannel) {
               await this.createMessageChannelService.createMessageChannel({
                 workspaceId,
                 connectedAccountId: newOrExistingAccountId,
                 handle,
+                transactionManager,
               });
             }
 
@@ -162,10 +163,30 @@ export class ImapSmtpCalDavAPIService {
                 workspaceId,
                 connectedAccountId: newOrExistingAccountId,
                 handle,
+                transactionManager,
               });
             }
           },
         );
+
+        if (shouldCreateMessageChannel) {
+          const newMessageChannel = await this.messageChannelRepository.findOne(
+            {
+              where: {
+                connectedAccountId: newOrExistingAccountId,
+                workspaceId,
+              },
+              relations: ['connectedAccount', 'messageFolders'],
+            },
+          );
+
+          if (isDefined(newMessageChannel)) {
+            await this.syncMessageFoldersService.syncMessageFolders({
+              messageChannel: newMessageChannel,
+              workspaceId,
+            });
+          }
+        }
 
         return newOrExistingAccountId;
       },

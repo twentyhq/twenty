@@ -28,6 +28,7 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
+import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
 
 jest.mock('uuid', () => ({
   v4: jest.fn(() => 'mocked-uuid'),
@@ -43,8 +44,16 @@ describe('GoogleAPIsService', () => {
     findOne: jest.fn(),
   };
 
+  const mockTransactionManager = {
+    getRepository: jest.fn().mockReturnValue({ save: jest.fn() }),
+  };
+
   const mockMessageChannelRepository = {
     find: jest.fn(),
+    findOne: jest.fn().mockResolvedValue(null),
+    manager: {
+      transaction: jest.fn((callback) => callback(mockTransactionManager)),
+    },
   };
 
   const mockCalendarChannelRepository = {
@@ -61,10 +70,6 @@ describe('GoogleAPIsService', () => {
       id: 'workspace-member-id',
       userId: 'user-id',
     }),
-  };
-
-  const mockWorkspaceDataSource = {
-    transaction: jest.fn((callback) => callback({})),
   };
 
   const mockTwentyConfigService = {
@@ -94,9 +99,6 @@ describe('GoogleAPIsService', () => {
 
                 return {};
               }),
-            getGlobalWorkspaceDataSource: jest
-              .fn()
-              .mockResolvedValue(mockWorkspaceDataSource),
             executeInWorkspaceContext: jest
               .fn()
               .mockImplementation((fn: () => any, _authContext?: any) => fn()),
@@ -185,6 +187,12 @@ describe('GoogleAPIsService', () => {
           provide: FeatureFlagService,
           useValue: {
             isFeatureEnabled: jest.fn().mockResolvedValue(false),
+          },
+        },
+        {
+          provide: SyncMessageFoldersService,
+          useValue: {
+            syncMessageFolders: jest.fn().mockResolvedValue([]),
           },
         },
         {

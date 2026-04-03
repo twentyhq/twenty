@@ -11,7 +11,7 @@ import {
   type MessageChannelVisibility,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import {
   AuthException,
@@ -24,6 +24,7 @@ import { GoogleAPIScopesService } from 'src/engine/core-modules/auth/services/go
 import { GoogleApisServiceAvailabilityService } from 'src/engine/core-modules/auth/services/google-apis-service-availability.service';
 import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -32,7 +33,6 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -68,6 +68,7 @@ export class GoogleAPIsService {
     private readonly googleAPIScopesService: GoogleAPIScopesService,
     private readonly googleApisServiceAvailabilityService: GoogleApisServiceAvailabilityService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly syncMessageFoldersService: SyncMessageFoldersService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -165,85 +166,109 @@ export class GoogleAPIsService {
         const existingAccountId = connectedAccount?.id;
         const newOrExistingConnectedAccountId = existingAccountId ?? v4();
 
-        const workspaceDataSource =
-          await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
-
-        await workspaceDataSource.transaction(async (manager) => {
-          const transactionManager = manager as WorkspaceEntityManager;
-
-          await this.createConnectedAccountService.createConnectedAccount({
-            workspaceId,
-            connectedAccountId: newOrExistingConnectedAccountId,
-            handle,
-            provider: ConnectedAccountProvider.GOOGLE,
-            accessToken: input.accessToken,
-            refreshToken: input.refreshToken,
-            accountOwnerId: workspaceMemberId,
-            scopes,
+        const existingMessageChannels =
+          await this.messageChannelRepository.find({
+            where: {
+              connectedAccountId: newOrExistingConnectedAccountId,
+              workspaceId,
+            },
           });
 
-          if (existingAccountId) {
-            await this.updateConnectedAccountOnReconnectService.updateConnectedAccountOnReconnect(
-              {
+        const existingCalendarChannels =
+          await this.calendarChannelRepository.find({
+            where: {
+              connectedAccountId: newOrExistingConnectedAccountId,
+              workspaceId,
+            },
+          });
+
+        await this.messageChannelRepository.manager.transaction(
+          async (transactionManager: EntityManager) => {
+            await this.createConnectedAccountService.createConnectedAccount({
+              workspaceId,
+              connectedAccountId: newOrExistingConnectedAccountId,
+              handle,
+              provider: ConnectedAccountProvider.GOOGLE,
+              accessToken: input.accessToken,
+              refreshToken: input.refreshToken,
+              accountOwnerId: workspaceMemberId,
+              scopes,
+              transactionManager,
+            });
+
+            if (existingAccountId) {
+              await this.updateConnectedAccountOnReconnectService.updateConnectedAccountOnReconnect(
+                {
+                  workspaceId,
+                  connectedAccountId: newOrExistingConnectedAccountId,
+                  accessToken: input.accessToken,
+                  refreshToken: input.refreshToken,
+                  scopes,
+                  transactionManager,
+                },
+              );
+
+              await this.accountsToReconnectService.removeAccountToReconnect(
+                userId,
+                workspaceId,
+                newOrExistingConnectedAccountId,
+              );
+            }
+
+            if (
+              isMessagingEnabled &&
+              isMessagingAvailable &&
+              existingMessageChannels.length === 0
+            ) {
+              await this.createMessageChannelService.createMessageChannel({
                 workspaceId,
                 connectedAccountId: newOrExistingConnectedAccountId,
-                accessToken: input.accessToken,
-                refreshToken: input.refreshToken,
-                scopes,
-              },
-            );
+                handle,
+                messageVisibility,
+                skipMessageChannelConfiguration,
+                transactionManager,
+              });
+            }
 
-            await this.accountsToReconnectService.removeAccountToReconnect(
-              userId,
-              workspaceId,
-              newOrExistingConnectedAccountId,
-            );
-          }
+            if (
+              isCalendarEnabled &&
+              isCalendarAvailable &&
+              existingCalendarChannels.length === 0
+            ) {
+              await this.createCalendarChannelService.createCalendarChannel({
+                workspaceId,
+                connectedAccountId: newOrExistingConnectedAccountId,
+                handle,
+                calendarVisibility,
+                skipMessageChannelConfiguration,
+                transactionManager,
+              });
+            }
+          },
+        );
 
-          const existingMessageChannels =
-            await this.messageChannelRepository.find({
+        if (
+          isMessagingEnabled &&
+          isMessagingAvailable &&
+          existingMessageChannels.length === 0
+        ) {
+          const newMessageChannel = await this.messageChannelRepository.findOne(
+            {
               where: {
                 connectedAccountId: newOrExistingConnectedAccountId,
                 workspaceId,
               },
-            });
+              relations: ['connectedAccount', 'messageFolders'],
+            },
+          );
 
-          if (
-            isMessagingEnabled &&
-            isMessagingAvailable &&
-            existingMessageChannels.length === 0
-          ) {
-            await this.createMessageChannelService.createMessageChannel({
+          if (isDefined(newMessageChannel)) {
+            await this.syncMessageFoldersService.syncMessageFolders({
+              messageChannel: newMessageChannel,
               workspaceId,
-              connectedAccountId: newOrExistingConnectedAccountId,
-              handle,
-              messageVisibility,
-              skipMessageChannelConfiguration,
             });
           }
-
-          const existingCalendarChannels =
-            await this.calendarChannelRepository.find({
-              where: {
-                connectedAccountId: newOrExistingConnectedAccountId,
-                workspaceId,
-              },
-            });
-
-          if (
-            isCalendarEnabled &&
-            isCalendarAvailable &&
-            existingCalendarChannels.length === 0
-          ) {
-            await this.createCalendarChannelService.createCalendarChannel({
-              workspaceId,
-              connectedAccountId: newOrExistingConnectedAccountId,
-              handle,
-              calendarVisibility,
-              skipMessageChannelConfiguration,
-            });
-          }
-        });
+        }
 
         if (isMessagingEnabled) {
           const messageChannels = await this.messageChannelRepository.find({

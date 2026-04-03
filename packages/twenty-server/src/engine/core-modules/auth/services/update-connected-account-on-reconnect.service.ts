@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -13,14 +12,13 @@ export type UpdateConnectedAccountOnReconnectInput = {
   accessToken: string;
   refreshToken: string;
   scopes: string[];
+  transactionManager: EntityManager;
 };
 
 @Injectable()
 export class UpdateConnectedAccountOnReconnectService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    @InjectRepository(ConnectedAccountEntity)
-    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
   ) {}
 
   async updateConnectedAccountOnReconnect(
@@ -37,18 +35,20 @@ export class UpdateConnectedAccountOnReconnectService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      await this.connectedAccountRepository.update(
-        {
-          id: connectedAccountId,
-          workspaceId,
-        },
-        {
-          accessToken,
-          refreshToken,
-          scopes,
-          authFailedAt: null,
-        },
-      );
+      await input.transactionManager
+        .getRepository(ConnectedAccountEntity)
+        .update(
+          {
+            id: connectedAccountId,
+            workspaceId,
+          },
+          {
+            accessToken,
+            refreshToken,
+            scopes,
+            authFailedAt: null,
+          },
+        );
     }, authContext);
   }
 }

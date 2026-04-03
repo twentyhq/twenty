@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ConnectedAccountProvider } from 'twenty-shared/types';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -19,14 +19,13 @@ export type CreateConnectedAccountInput = {
   refreshToken: string;
   accountOwnerId: string;
   scopes: string[];
+  transactionManager: EntityManager;
 };
 
 @Injectable()
 export class CreateConnectedAccountService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    @InjectRepository(ConnectedAccountEntity)
-    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
@@ -76,16 +75,18 @@ export class CreateConnectedAccountService {
 
       const userWorkspaceId = userWorkspace.id;
 
-      await this.connectedAccountRepository.save({
-        id: connectedAccountId,
-        handle,
-        provider,
-        accessToken,
-        refreshToken,
-        userWorkspaceId,
-        scopes,
-        workspaceId,
-      } as ConnectedAccountEntity);
+      await input.transactionManager
+        .getRepository(ConnectedAccountEntity)
+        .save({
+          id: connectedAccountId,
+          handle,
+          provider,
+          accessToken,
+          refreshToken,
+          userWorkspaceId,
+          scopes,
+          workspaceId,
+        } as ConnectedAccountEntity);
     }, authContext);
   }
 }

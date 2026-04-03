@@ -13,6 +13,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
+import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services
     TwentyORMModule,
     FeatureFlagModule,
     AuthModule,
+    MessagingFolderSyncManagerModule,
   ],
   providers: [ImapSmtpCalDavAPIService],
   exports: [ImapSmtpCalDavAPIService],

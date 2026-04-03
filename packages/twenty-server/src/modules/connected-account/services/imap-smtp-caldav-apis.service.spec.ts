@@ -12,6 +12,7 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
 
 jest.mock('uuid', () => ({
   v4: jest.fn(() => 'mocked-uuid'),
@@ -20,9 +21,19 @@ jest.mock('uuid', () => ({
 describe('ImapSmtpCalDavAPIService', () => {
   let service: ImapSmtpCalDavAPIService;
 
+  const mockTransactionManagerSave = jest.fn();
+  const mockTransactionManager = {
+    getRepository: jest
+      .fn()
+      .mockReturnValue({ save: mockTransactionManagerSave }),
+  };
+
   const mockConnectedAccountRepository = {
     findOne: jest.fn(),
     save: jest.fn(),
+    manager: {
+      transaction: jest.fn((callback) => callback(mockTransactionManager)),
+    },
   };
 
   const mockMessageChannelRepository = {
@@ -42,10 +53,6 @@ describe('ImapSmtpCalDavAPIService', () => {
       id: 'workspace-member-id',
       userId: 'user-id',
     }),
-  };
-
-  const mockWorkspaceDataSource = {
-    transaction: jest.fn((callback) => callback({})),
   };
 
   const mockCreateMessageChannelService = {
@@ -71,9 +78,6 @@ describe('ImapSmtpCalDavAPIService', () => {
 
                 return {};
               }),
-            getGlobalWorkspaceDataSource: jest
-              .fn()
-              .mockResolvedValue(mockWorkspaceDataSource),
             executeInWorkspaceContext: jest
               .fn()
 
@@ -103,6 +107,12 @@ describe('ImapSmtpCalDavAPIService', () => {
         {
           provide: getRepositoryToken(UserWorkspaceEntity),
           useValue: mockUserWorkspaceRepository,
+        },
+        {
+          provide: SyncMessageFoldersService,
+          useValue: {
+            syncMessageFolders: jest.fn().mockResolvedValue([]),
+          },
         },
       ],
     }).compile();
@@ -148,7 +158,7 @@ describe('ImapSmtpCalDavAPIService', () => {
 
       await service.processAccount(baseInput);
 
-      expect(mockConnectedAccountRepository.save).toHaveBeenCalledWith({
+      expect(mockTransactionManagerSave).toHaveBeenCalledWith({
         id: 'mocked-uuid',
         handle: 'test@example.com',
         provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
@@ -163,7 +173,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         workspaceId: 'workspace-id',
         connectedAccountId: 'mocked-uuid',
         handle: 'test@example.com',
-        manager: {},
+        transactionManager: mockTransactionManager,
       });
 
       expect(
@@ -211,7 +221,7 @@ describe('ImapSmtpCalDavAPIService', () => {
 
       await service.processAccount(inputWithConnectedAccountId);
 
-      expect(mockConnectedAccountRepository.save).toHaveBeenCalledWith({
+      expect(mockTransactionManagerSave).toHaveBeenCalledWith({
         id: 'existing-account-id',
         handle: 'test@example.com',
         provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
@@ -418,7 +428,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         },
       });
 
-      expect(mockConnectedAccountRepository.save).toHaveBeenCalledWith({
+      expect(mockTransactionManagerSave).toHaveBeenCalledWith({
         id: 'existing-account-id',
         handle: 'test@example.com',
         provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
@@ -477,9 +487,9 @@ describe('ImapSmtpCalDavAPIService', () => {
 
       await service.processAccount(baseInput);
 
-      expect(mockWorkspaceDataSource.transaction).toHaveBeenCalledWith(
-        expect.any(Function),
-      );
+      expect(
+        mockConnectedAccountRepository.manager.transaction,
+      ).toHaveBeenCalledWith(expect.any(Function));
     });
   });
 });
