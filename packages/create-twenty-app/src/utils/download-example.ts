@@ -49,9 +49,7 @@ const listAvailableExamples = async (): Promise<string[]> => {
     .map((entry) => entry.name);
 };
 
-const validateExampleExists = async (
-  exampleName: string,
-): Promise<void> => {
+const validateExampleExists = async (exampleName: string): Promise<void> => {
   const examplePath = `${TWENTY_EXAMPLES_PATH}/${exampleName}`;
 
   const contents = await fetchGitHubDirectoryContents(

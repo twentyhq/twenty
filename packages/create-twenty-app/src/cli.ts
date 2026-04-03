@@ -12,10 +12,7 @@ const program = new Command(packageJson.name)
     'Output the current version of create-twenty-app.',
   )
   .argument('[directory]')
-  .option(
-    '--example <name>',
-    'Initialize from an example',
-  )
+  .option('--example <name>', 'Initialize from an example')
   .option('-n, --name <name>', 'Application name (skips prompt)')
   .option(
     '-d, --display-name <displayName>',
