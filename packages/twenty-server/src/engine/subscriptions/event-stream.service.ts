@@ -37,6 +37,7 @@ export class EventStreamService implements OnModuleInit {
       callback: async () => {
         return this.getTotalActiveStreamCount();
       },
+      cacheValue: true,
     });
   }
 
