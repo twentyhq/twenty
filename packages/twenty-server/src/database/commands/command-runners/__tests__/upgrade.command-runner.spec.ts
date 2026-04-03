@@ -251,7 +251,7 @@ describe('UpgradeCommandRunner', () => {
     return module;
   };
 
-  it('should ignore and list as succesfull upgrade on workspace with higher version', async () => {
+  it('should ignore and list as successful upgrade on workspace with higher version', async () => {
     const higherVersionWorkspace = generateMockWorkspace({
       id: 'higher_version_workspace',
       version: '42.42.42',
@@ -261,11 +261,9 @@ describe('UpgradeCommandRunner', () => {
       numberOfWorkspace: 0,
       workspaces: [higherVersionWorkspace],
     });
-    // @ts-expect-error legacy noImplicitAny
-    const passedParams = [];
-    const options = {};
+    const passedParams: string[] = [];
+    const options: UpgradeCommandOptions = {};
 
-    // @ts-expect-error legacy noImplicitAny
     await upgradeCommandRunner.run(passedParams, options);
 
     [workspaceRepository.update].forEach((fn) =>
@@ -279,11 +277,9 @@ describe('UpgradeCommandRunner', () => {
     await buildModuleAndSetupSpies({
       numberOfWorkspace,
     });
-    // @ts-expect-error legacy noImplicitAny
-    const passedParams = [];
-    const options = {};
+    const passedParams: string[] = [];
+    const options: UpgradeCommandOptions = {};
 
-    // @ts-expect-error legacy noImplicitAny
     await upgradeCommandRunner.run(passedParams, options);
 
     expect(workspaceRepository.update).toHaveBeenNthCalledWith(
