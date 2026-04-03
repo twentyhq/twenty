@@ -1,5 +1,6 @@
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
@@ -17,13 +18,17 @@ import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibl
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
+import { useMemo } from 'react';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
+
 const StyledContainer = styled.div<{ hasPinnedTab: boolean }>`
   display: grid;
   grid-template-columns: ${({ hasPinnedTab }) =>
@@ -68,6 +73,24 @@ export const PageLayoutTabsRenderer = () => {
   const { reorderRecordPageTabs } = useReorderRecordPageLayoutTabs(
     currentPageLayout.id,
   );
+
+  const targetRecord = useTargetRecord();
+
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: targetRecord.targetObjectNameSingular,
+  });
+
+  const inactiveRelationTabs = useMemo(() => {
+    if (!isDefined(objectMetadataItem)) {
+      return [];
+    }
+    return objectMetadataItem.fields.filter(
+      (field) =>
+        !field.isActive &&
+        (field.type === FieldMetadataType.RELATION ||
+          field.type === FieldMetadataType.MORPH_RELATION),
+    );
+  }, [objectMetadataItem]);
 
   const isMobile = useIsMobile();
 
@@ -114,6 +137,16 @@ export const PageLayoutTabsRenderer = () => {
 
   const sortedTabs = sortTabsByPosition(tabsToRenderInTabList);
 
+  const sortedActiveTabs = useMemo(
+    () =>
+      sortedTabs.filter((tab) =>
+        inactiveRelationTabs.every(
+          (inactiveField) => inactiveField.label !== tab.title,
+        ),
+      ),
+    [sortedTabs, inactiveRelationTabs],
+  );
+
   const activeTabExistsInCurrentPageLayout = currentPageLayout.tabs.some(
     (tab) => tab.id === activeTabId,
   );
@@ -126,7 +159,7 @@ export const PageLayoutTabsRenderer = () => {
 
       <StyledTabsAndDashboardContainer>
         <PageLayoutTabListEffect
-          tabs={sortedTabs}
+          tabs={sortedActiveTabs}
           componentInstanceId={tabListInstanceId}
           defaultTabToFocusOnMobileAndSidePanelId={
             currentPageLayout.defaultTabToFocusOnMobileAndSidePanelId ??
