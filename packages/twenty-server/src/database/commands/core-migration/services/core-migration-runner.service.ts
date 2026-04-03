@@ -76,8 +76,6 @@ export class CoreMigrationRunnerService {
           };
         }
 
-        this.logger.log(`Migration ${migrationName} has already been executed`);
-
         return {
           error: 'already-executed',
           status: 'fail',
@@ -118,8 +116,6 @@ export class CoreMigrationRunnerService {
       } finally {
         await queryRunner.afterMigration();
       }
-
-      this.logger.log(`Executed migration successfully: ${migrationName}`);
 
       return { status: 'success' };
     } catch (error) {

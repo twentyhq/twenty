@@ -193,13 +193,25 @@ Please roll back to that version and run the upgrade command again.`,
             migrationName,
           );
 
-        if (result.status === 'fail' && result.error !== 'already-executed') {
+        if (result.status === 'fail') {
+          if (result.error === 'already-executed') {
+            this.logger.warn(
+              `Core migration ${migrationName} already executed, skipping`,
+            );
+
+            continue;
+          }
+
           this.logger.error(
             `Core migration ${migrationName} failed with error: ${result.error}`,
           );
 
           return;
         }
+
+        this.logger.log(
+          `Core migration ${migrationName} executed successfully`,
+        );
       }
 
       const iteratorReport = await this.workspaceIteratorService.iterate({
