@@ -52,9 +52,7 @@ export class GenerateVersionedMigrationCommand extends CommandRunner {
       throw new Error('No supported versions found');
     }
 
-    this.logger.log(
-      `Generating versioned migration for version ${version}...`,
-    );
+    this.logger.log(`Generating versioned migration for version ${version}...`);
 
     const timestamp = Date.now();
 

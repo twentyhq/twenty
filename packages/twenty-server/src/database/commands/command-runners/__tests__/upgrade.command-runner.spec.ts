@@ -5,7 +5,11 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
-import { type MigrationInterface, type QueryRunner, type Repository } from 'typeorm';
+import {
+  type MigrationInterface,
+  type QueryRunner,
+  type Repository,
+} from 'typeorm';
 
 import {
   UpgradeCommandOptions,

@@ -92,7 +92,8 @@ describe('CoreMigrationGeneratorService', () => {
     const service = await buildService(
       [
         {
-          query: 'INSERT INTO "core"."setting" ("key", "value") VALUES ($1, $2)',
+          query:
+            'INSERT INTO "core"."setting" ("key", "value") VALUES ($1, $2)',
           parameters: ['theme', 'dark'],
         },
       ],
@@ -115,8 +116,8 @@ describe('CoreMigrationGeneratorService', () => {
 
   it('should escape single quotes in SQL queries', async () => {
     const service = await buildService(
-      [{ query: "UPDATE \"core\".\"config\" SET \"value\" = 'it''s done'" }],
-      [{ query: "UPDATE \"core\".\"config\" SET \"value\" = 'original'" }],
+      [{ query: 'UPDATE "core"."config" SET "value" = \'it\'\'s done\'' }],
+      [{ query: 'UPDATE "core"."config" SET "value" = \'original\'' }],
     );
 
     const result = await service.generate({
@@ -132,8 +133,7 @@ describe('CoreMigrationGeneratorService', () => {
     const service = await buildService(
       [
         {
-          query:
-            'UPDATE "core"."config" SET "value" = E\'path\\\\to\\\\file\'',
+          query: 'UPDATE "core"."config" SET "value" = E\'path\\\\to\\\\file\'',
         },
       ],
       [{ query: 'UPDATE "core"."config" SET "value" = NULL' }],

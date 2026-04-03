@@ -132,9 +132,7 @@ describe('VersionedMigrationRegistryService', () => {
     const service = await buildRegistryService([]);
 
     expect(
-      service.getInstanceCommandsForVersion(
-        '99.0.0' as unknown as '1.21.0',
-      ),
+      service.getInstanceCommandsForVersion('99.0.0' as unknown as '1.21.0'),
     ).toStrictEqual([]);
   });
 });
