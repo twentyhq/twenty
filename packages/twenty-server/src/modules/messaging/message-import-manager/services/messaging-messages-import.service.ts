@@ -15,7 +15,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
-import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
@@ -59,7 +59,7 @@ export class MessagingMessagesImportService {
 
   async processMessageBatchImport(
     messageChannel: MessageChannelEntity,
-    connectedAccount: ConnectedAccountEntity,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ) {
     let messageIdsToFetch: string[] = [];
@@ -154,7 +154,11 @@ export class MessagingMessagesImportService {
 
         const userWorkspace = await this.userWorkspaceRepository.findOne({
           where: {
-            id: connectedAccountWithFreshTokens.userWorkspaceId,
+            id: (
+              connectedAccountWithFreshTokens as unknown as {
+                userWorkspaceId: string;
+              }
+            ).userWorkspaceId,
           },
         });
 
