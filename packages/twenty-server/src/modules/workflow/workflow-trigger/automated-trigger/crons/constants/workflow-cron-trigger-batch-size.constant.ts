@@ -1,0 +1,1 @@
+export const WORKFLOW_CRON_TRIGGER_BATCH_SIZE = 10;
