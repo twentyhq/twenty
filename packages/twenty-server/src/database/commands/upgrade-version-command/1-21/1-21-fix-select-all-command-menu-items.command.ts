@@ -59,30 +59,24 @@ export class FixSelectAllCommandMenuItemsCommand extends ActiveOrSuspendedWorksp
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
 
-    const itemsToUpdate = Object.values(
-      standardAllFlatEntityMaps.flatCommandMenuItemMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter((standardItem) =>
-        UNIVERSAL_IDENTIFIERS_TO_FIX.has(standardItem.universalIdentifier),
-      )
-      .filter((standardItem) => {
+    const itemsToUpdate = [...UNIVERSAL_IDENTIFIERS_TO_FIX]
+      .map((universalIdentifier) => {
+        const standardItem =
+          standardAllFlatEntityMaps.flatCommandMenuItemMaps
+            .byUniversalIdentifier[universalIdentifier];
         const existingItem =
           existingFlatCommandMenuItemMaps.byUniversalIdentifier[
-            standardItem.universalIdentifier
+            universalIdentifier
           ];
 
-        return (
-          isDefined(existingItem) &&
-          existingItem.conditionalAvailabilityExpression !==
+        if (
+          !isDefined(standardItem) ||
+          !isDefined(existingItem) ||
+          existingItem.conditionalAvailabilityExpression ===
             standardItem.conditionalAvailabilityExpression
-        );
-      })
-      .map((standardItem) => {
-        const existingItem =
-          existingFlatCommandMenuItemMaps.byUniversalIdentifier[
-            standardItem.universalIdentifier
-          ]!;
+        ) {
+          return undefined;
+        }
 
         return {
           ...existingItem,
@@ -90,7 +84,8 @@ export class FixSelectAllCommandMenuItemsCommand extends ActiveOrSuspendedWorksp
             standardItem.conditionalAvailabilityExpression,
           updatedAt: new Date().toISOString(),
         };
-      });
+      })
+      .filter(isDefined);
 
     if (itemsToUpdate.length === 0) {
       this.logger.log(
