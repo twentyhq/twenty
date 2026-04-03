@@ -6525,6 +6525,11 @@ msgstr "Falha ao carregar a imagem"
 msgid "Failure Rate"
 msgstr "Taxa de falhas"
 
+#. js-lingui-id: 8wngZM
+#: src/modules/command-menu-item/server-items/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+msgid "Fallback"
+msgstr ""
+
 #. js-lingui-id: ocUvR+
 #: src/modules/ui/field/display/components/BooleanDisplay.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
