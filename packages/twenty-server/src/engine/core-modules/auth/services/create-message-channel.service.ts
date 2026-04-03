@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { Repository } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 import {
   MessageChannelPendingGroupEmailsAction,
@@ -14,7 +12,6 @@ import {
 } from 'twenty-shared/types';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
 export type CreateMessageChannelInput = {
@@ -23,15 +20,13 @@ export type CreateMessageChannelInput = {
   handle: string;
   messageVisibility?: MessageChannelVisibility;
   skipMessageChannelConfiguration?: boolean;
+  transactionManager: EntityManager;
 };
 
 @Injectable()
 export class CreateMessageChannelService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    @InjectRepository(MessageChannelEntity)
-    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    private readonly syncMessageFoldersService: SyncMessageFoldersService,
   ) {}
 
   async createMessageChannel(
@@ -43,15 +38,18 @@ export class CreateMessageChannelService {
       handle,
       messageVisibility,
       skipMessageChannelConfiguration,
+      transactionManager,
     } = input;
 
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
+        const messageChannelRepo =
+          transactionManager.getRepository(MessageChannelEntity);
         const newMessageChannelId = v4();
 
-        await this.messageChannelRepository.save({
+        await messageChannelRepo.save({
           id: newMessageChannelId,
           connectedAccountId,
           type: MessageChannelType.EMAIL,
@@ -65,21 +63,6 @@ export class CreateMessageChannelService {
             ? MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING
             : MessageChannelSyncStage.PENDING_CONFIGURATION,
           pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
-          workspaceId,
-        });
-
-        const createdMessageChannel =
-          await this.messageChannelRepository.findOne({
-            where: { id: newMessageChannelId, workspaceId },
-            relations: ['connectedAccount', 'messageFolders'],
-          });
-
-        if (!isDefined(createdMessageChannel)) {
-          throw new Error('Message channel not found');
-        }
-
-        await this.syncMessageFoldersService.syncMessageFolders({
-          messageChannel: createdMessageChannel,
           workspaceId,
         });
 
