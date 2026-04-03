@@ -65,7 +65,9 @@ describe('joinAddressFieldValues', () => {
       'addressPostcode',
       'addressCountry',
     ]);
-    expect(result).toBe('123 Main St, Apt 4B, New York, NY, 10001, United States');
+    expect(result).toBe(
+      '123 Main St, Apt 4B, New York, NY, 10001, United States',
+    );
   });
 
   it('should handle address with empty and null values', () => {
