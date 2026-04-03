@@ -187,8 +187,7 @@ const backfillNullValuesAndComputeTypeNameForObjectRecord = (
 
     if (
       isDefined(fieldMetadata) &&
-      (fieldMetadata.type === FieldMetadataType.NUMBER ||
-        fieldMetadata.type === FieldMetadataType.NUMERIC) &&
+      fieldMetadata.type === FieldMetadataType.NUMBER &&
       isNonEmptyString(value) &&
       isFinite(Number(value))
     ) {
