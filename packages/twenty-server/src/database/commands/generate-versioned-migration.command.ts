@@ -19,8 +19,18 @@ const toPascalCase = (str: string): string =>
     p2 ? p2.toUpperCase() : p1.toLowerCase(),
   );
 
-const buildClassName = (name: string, timestamp: number): string =>
-  `${toPascalCase(` ${name}`).trim()}${timestamp}`;
+const versionToFileTag = (version: string): string =>
+  version.replace(/\./g, '-');
+
+const versionToClassTag = (version: string): string =>
+  version.replace(/\./g, '');
+
+const buildClassName = (
+  name: string,
+  version: string,
+  timestamp: number,
+): string =>
+  `${toPascalCase(` ${name}`).trim()}V${versionToClassTag(version)}${timestamp}`;
 
 const formatQueryParams = (parameters: unknown[] | undefined): string => {
   if (!parameters || !parameters.length) {
@@ -96,7 +106,7 @@ export class GenerateVersionedMigrationCommand extends CommandRunner {
     }
 
     const timestamp = Date.now();
-    const className = buildClassName(migrationName, timestamp);
+    const className = buildClassName(migrationName, version, timestamp);
 
     const upStatements = sqlInMemory.upQueries.map(
       (query) =>
@@ -117,7 +127,7 @@ export class GenerateVersionedMigrationCommand extends CommandRunner {
       downStatements,
     );
 
-    const fileName = `${timestamp}-${migrationName}.ts`;
+    const fileName = `${timestamp}-${versionToFileTag(version)}-${migrationName}.ts`;
     const filePath = path.join(MIGRATIONS_DIR, fileName);
 
     fs.writeFileSync(filePath, fileContent);

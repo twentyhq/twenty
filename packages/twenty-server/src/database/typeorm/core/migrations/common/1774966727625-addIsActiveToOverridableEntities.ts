@@ -1,5 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
+import { VersionedMigration } from 'src/database/typeorm/core/decorators/versioned-migration.decorator';
+
+@VersionedMigration('1.21.0')
 export class AddIsActiveToOverridableEntities1774966727625
   implements MigrationInterface
 {

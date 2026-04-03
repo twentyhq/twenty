@@ -1,5 +1,8 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
+import { VersionedMigration } from 'src/database/typeorm/core/decorators/versioned-migration.decorator';
+
+@VersionedMigration('1.21.0')
 export class AddViewFieldGroupIdIndexOnViewField1775129420309
   implements MigrationInterface
 {
