@@ -187,29 +187,6 @@ Examples are sourced from the [twenty-apps/examples](https://github.com/twentyhq
 | `src/__tests__/` | Integration tests (setup + example test). |
 | `public/` | Static assets (images, fonts) served with your app. |
 
-## Managing remotes
-
-A **remote** is a Twenty server that your app connects to. During setup, the scaffolder creates one for you automatically. You can add more remotes or switch between them at any time.
-
-```bash filename="Terminal"
-# Add a new remote (opens a browser for OAuth login)
-yarn twenty remote add
-
-# Connect to a local Twenty server (auto-detects port 2020 or 3000)
-yarn twenty remote add --local
-
-# Add a remote non-interactively (useful for CI)
-yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
-
-# List all configured remotes
-yarn twenty remote list
-
-# Switch the active remote
-yarn twenty remote switch <name>
-```
-
-Your credentials are stored in `~/.twenty/config.json`.
-
 ## Local development server (`yarn twenty server`)
 
 The CLI can manage a local Twenty server running in Docker. This is the same server started automatically when you scaffold an app with `create-twenty-app`, but you can also manage it manually.
@@ -287,67 +264,6 @@ Removes the container **and** deletes both Docker volumes, wiping all data. The 
 | `yarn twenty server logs` | Stream server logs |
 | `yarn twenty server logs --lines 100` | Show the last 100 log lines |
 | `yarn twenty server reset` | Delete all data and start fresh |
-
-
-## CI with GitHub Actions
-
-The scaffolder generates a ready-to-use GitHub Actions workflow at `.github/workflows/ci.yml`. It runs your integration tests automatically on every push to `main` and on pull requests.
-
-The workflow:
-
-1. Checks out your code
-2. Spins up a temporary Twenty server using the `twentyhq/twenty/.github/actions/spawn-twenty-docker-image` action
-3. Installs dependencies with `yarn install --immutable`
-4. Runs `yarn test` with `TWENTY_API_URL` and `TWENTY_API_KEY` injected from the action outputs
-
-```yaml .github/workflows/ci.yml
-name: CI
-
-on:
-  push:
-    branches:
-      - main
-  pull_request: {}
-
-env:
-  TWENTY_VERSION: latest
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Spawn Twenty instance
-        id: twenty
-        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
-        with:
-          twenty-version: ${{ env.TWENTY_VERSION }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: Run integration tests
-        run: yarn test
-        env:
-          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
-          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
-```
-
-You don't need to configure any secrets — the `spawn-twenty-docker-image` action starts an ephemeral Twenty server directly in the runner and outputs the connection details. The `GITHUB_TOKEN` secret is provided automatically by GitHub.
-
-To pin a specific Twenty version instead of `latest`, change the `TWENTY_VERSION` environment variable at the top of the workflow.
 
 ## Manual setup (without the scaffolder)
 
