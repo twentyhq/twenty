@@ -10,8 +10,8 @@ import { DataSource } from 'typeorm';
 import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 
 const MIGRATIONS_DIR = path.resolve(
-  __dirname,
-  '../typeorm/core/migrations/common',
+  process.cwd(),
+  'src/database/typeorm/core/migrations/common',
 );
 
 const toPascalCase = (str: string): string =>
