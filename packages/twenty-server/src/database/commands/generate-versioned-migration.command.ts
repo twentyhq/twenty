@@ -5,7 +5,7 @@ import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner } from 'nest-commander';
 
-import { CoreMigrationGeneratorService } from 'src/database/commands/core-migration-runner/services/core-migration-generator.service';
+import { CoreMigrationGeneratorService } from 'src/database/commands/core-migration/services/core-migration-generator.service';
 import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 
 const MIGRATIONS_DIR = path.resolve(

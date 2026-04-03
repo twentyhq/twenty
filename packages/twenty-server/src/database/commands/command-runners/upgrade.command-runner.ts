@@ -15,8 +15,8 @@ import {
   type RunOnWorkspaceArgs,
   WorkspaceCommandRunner,
 } from 'src/database/commands/command-runners/workspace.command-runner';
-import { CoreMigrationRunnerService } from 'src/database/commands/core-migration-runner/services/core-migration-runner.service';
-import { VersionedMigrationRegistryService } from 'src/database/commands/core-migration-runner/services/versioned-migration-registry.service';
+import { CoreMigrationRunnerService } from 'src/database/commands/core-migration/services/core-migration-runner.service';
+import { VersionedMigrationRegistryService } from 'src/database/commands/core-migration/services/versioned-migration-registry.service';
 import { CommandLogger } from 'src/database/commands/logger';
 import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
