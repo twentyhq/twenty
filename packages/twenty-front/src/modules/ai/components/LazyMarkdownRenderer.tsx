@@ -10,7 +10,13 @@ import {
   StyledSkeletonContainer,
   StyledTableScrollContainer,
 } from '@/ai/components/LazyMarkdownRendererStyledComponents';
-import { lazy, Suspense, useContext } from 'react';
+import {
+  cloneElement,
+  isValidElement,
+  lazy,
+  Suspense,
+  useContext,
+} from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
@@ -64,6 +70,16 @@ const processChildrenForRecordLinks = (
     ));
   }
 
+  if (isValidElement<{ children?: React.ReactNode }>(children)) {
+    const childProps = children.props;
+
+    if (isDefined(childProps.children)) {
+      return cloneElement(children, {
+        children: processChildrenForRecordLinks(childProps.children),
+      });
+    }
+  }
+
   return children;
 };
 
@@ -95,6 +111,12 @@ const MarkdownRenderer = lazy(async () => {
             <ParagraphComponent>
               {processChildrenForRecordLinks(children)}
             </ParagraphComponent>
+          ),
+          td: ({ children }) => (
+            <td>{processChildrenForRecordLinks(children)}</td>
+          ),
+          th: ({ children }) => (
+            <th>{processChildrenForRecordLinks(children)}</th>
           ),
           li: ({ children }) => (
             <li>{processChildrenForRecordLinks(children)}</li>

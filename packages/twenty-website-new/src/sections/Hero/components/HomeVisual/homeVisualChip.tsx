@@ -25,7 +25,7 @@ const StyledContainer = styled.div<
   Pick<ChipProps, 'clickable' | 'isBold' | 'maxWidth' | 'variant'>
 >`
   --chip-horizontal-padding: ${VISUAL_TOKENS.spacing[1]};
-  --chip-vertical-padding: ${VISUAL_TOKENS.spacing[1]};
+  --chip-vertical-padding: 3px;
 
   align-items: center;
   background-color: ${({ variant }) =>
@@ -70,6 +70,9 @@ const StyledContainer = styled.div<
       ? VISUAL_TOKENS.spacing[2]
       : 'var(--chip-horizontal-padding)'};
   user-select: none;
+  font-family: ${VISUAL_TOKENS.font.family};
+  font-size: ${VISUAL_TOKENS.font.size.md};
+  line-height: 1.4;
 
   font-weight: ${({ isBold }) =>
     isBold
@@ -83,7 +86,7 @@ const StyledContainer = styled.div<
         : variant === ChipVariant.Highlighted
           ? VISUAL_TOKENS.background.transparent.medium
           : variant === ChipVariant.Static
-            ? VISUAL_TOKENS.background.transparent.light
+            ? VISUAL_TOKENS.background.transparent.lighter
             : 'inherit'};
   }
 
@@ -94,7 +97,7 @@ const StyledContainer = styled.div<
         : variant === ChipVariant.Highlighted
           ? VISUAL_TOKENS.background.transparent.strong
           : variant === ChipVariant.Static
-            ? VISUAL_TOKENS.background.transparent.light
+            ? VISUAL_TOKENS.background.transparent.lighter
             : 'inherit'};
   }
 
@@ -105,8 +108,10 @@ const StyledContainer = styled.div<
 
 const StyledLabel = styled.span`
   color: inherit;
+  font-family: inherit;
   font-size: inherit;
   font-weight: inherit;
+  line-height: inherit;
   max-width: 100%;
   min-width: 0;
   overflow: hidden;
