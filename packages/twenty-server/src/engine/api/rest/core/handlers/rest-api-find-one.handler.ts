@@ -36,7 +36,7 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
         authContext,
       });
 
-      const record = await this.commonFindOneQueryRunnerService.execute(
+      const { results: record } = await this.commonFindOneQueryRunnerService.execute(
         { filter, selectedFields },
         {
           authContext,

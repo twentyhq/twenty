@@ -38,7 +38,7 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
         authContext,
       });
 
-      const record = await this.commonUpdateOneQueryRunnerService.execute(
+      const { results: record } = await this.commonUpdateOneQueryRunnerService.execute(
         { id, data, selectedFields },
         {
           authContext,

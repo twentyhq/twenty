@@ -37,7 +37,7 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
         authContext,
       });
 
-      const records = await this.commonCreateManyQueryRunnerService.execute(
+      const { results: records } = await this.commonCreateManyQueryRunnerService.execute(
         { data, selectedFields, upsert },
         {
           authContext,

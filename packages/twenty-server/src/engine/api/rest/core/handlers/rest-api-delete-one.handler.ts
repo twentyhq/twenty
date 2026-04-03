@@ -29,7 +29,7 @@ export class RestApiDeleteOneHandler extends RestApiBaseHandler {
         objectIdByNameSingular,
       } = await this.buildCommonOptions(request);
 
-      const record = await this.commonDeleteOneQueryRunnerService.execute(
+      const { results: record } = await this.commonDeleteOneQueryRunnerService.execute(
         { id, selectedFields: { id: true } },
         {
           authContext,

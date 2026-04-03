@@ -38,7 +38,7 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
         authContext,
       });
 
-      const record = await this.commonCreateOneQueryRunnerService.execute(
+      const { results: record } = await this.commonCreateOneQueryRunnerService.execute(
         { data, selectedFields, upsert },
         {
           authContext,

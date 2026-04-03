@@ -42,7 +42,7 @@ export class RestApiRestoreManyHandler extends RestApiBaseHandler {
         authContext,
       });
 
-      const records = await this.commonRestoreManyQueryRunnerService.execute(
+      const { results: records } = await this.commonRestoreManyQueryRunnerService.execute(
         { filter, selectedFields },
         {
           authContext,

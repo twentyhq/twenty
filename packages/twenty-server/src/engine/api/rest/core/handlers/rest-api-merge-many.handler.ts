@@ -36,7 +36,7 @@ export class RestApiMergeManyHandler extends RestApiBaseHandler {
         authContext,
       });
 
-      const record = await this.commonMergeManyQueryRunnerService.execute(
+      const { results: record } = await this.commonMergeManyQueryRunnerService.execute(
         { ...restArgs, selectedFields },
         {
           authContext,

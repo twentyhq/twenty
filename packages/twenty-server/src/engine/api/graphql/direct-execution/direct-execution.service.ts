@@ -203,16 +203,15 @@ export class DirectExecutionService {
       const variables = req.body.variables ?? {};
       const data: Record<string, unknown> = {};
 
-      const { graphQLResolverNameMap } =
+      const { graphQLResolverNameMap, flatObjectMetadataMaps, flatFieldMetadataMaps } =
         await this.workspaceCacheService.getOrRecompute(workspaceId, [
           'graphQLResolverNameMap',
+          'flatObjectMetadataMaps',
+          'flatFieldMetadataMaps',
         ]);
 
-      const {
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        objectIdByNameSingular,
-      } = await this.loadWorkspaceMetadata(workspaceId);
+      const { idByNameSingular: objectIdByNameSingular } =
+        buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
       const errors: GraphQLFormattedError[] = [];
 
@@ -436,25 +435,5 @@ export class DirectExecutionService {
 
       seen.add(name);
     }
-  }
-
-  private async loadWorkspaceMetadata(workspaceId: string) {
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
-      await this.workspaceFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
-        },
-      );
-
-    const { idByNameSingular } = buildObjectIdByNameMaps(
-      flatObjectMetadataMaps,
-    );
-
-    return {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      objectIdByNameSingular: idByNameSingular,
-    };
   }
 }

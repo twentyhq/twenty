@@ -40,7 +40,7 @@ export class RestApiDestroyManyHandler extends RestApiBaseHandler {
     } = await this.buildCommonOptions(request);
 
     try {
-      const records = await this.commonDestroyManyQueryRunnerService.execute(
+      const { results: records } = await this.commonDestroyManyQueryRunnerService.execute(
         { filter, selectedFields: { id: true } },
         {
           authContext,

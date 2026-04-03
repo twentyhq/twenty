@@ -38,7 +38,7 @@ export class RestApiUpdateManyHandler extends RestApiBaseHandler {
         authContext,
       });
 
-      const records = await this.commonUpdateManyQueryRunnerService.execute(
+      const { results: records } = await this.commonUpdateManyQueryRunnerService.execute(
         { data, filter, selectedFields },
         {
           authContext,

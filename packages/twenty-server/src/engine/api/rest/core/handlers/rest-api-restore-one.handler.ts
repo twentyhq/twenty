@@ -38,7 +38,7 @@ export class RestApiRestoreOneHandler extends RestApiBaseHandler {
         authContext,
       });
 
-      const record = await this.commonRestoreOneQueryRunnerService.execute(
+      const { results: record } = await this.commonRestoreOneQueryRunnerService.execute(
         { id, selectedFields },
         {
           authContext,
