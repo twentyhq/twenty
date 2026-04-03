@@ -10,7 +10,7 @@ import {
 } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { CoreMigrationRunnerService } from 'src/database/commands/core-migration/services/core-migration-runner.service';
-import { VersionedMigrationRegistryService } from 'src/database/commands/core-migration/services/versioned-migration-registry.service';
+import { RegisteredCoreMigrationService } from 'src/database/commands/core-migration/services/registered-core-migration-registry.service';
 import { BackfillCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-command-menu-items.command';
 import { BackfillNavigationMenuItemTypeCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-navigation-menu-item-type.command';
 import { BackfillSelectFieldOptionIdsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-select-field-option-ids.command';
@@ -49,7 +49,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly coreEngineVersionService: CoreEngineVersionService,
     protected readonly workspaceVersionService: WorkspaceVersionService,
     protected readonly coreMigrationRunnerService: CoreMigrationRunnerService,
-    protected readonly versionedMigrationRegistryService: VersionedMigrationRegistryService,
+    protected readonly versionedMigrationRegistryService: RegisteredCoreMigrationService,
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
 
     // 1.20 Commands

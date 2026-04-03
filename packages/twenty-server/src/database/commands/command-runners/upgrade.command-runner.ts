@@ -16,7 +16,7 @@ import {
   WorkspaceCommandRunner,
 } from 'src/database/commands/command-runners/workspace.command-runner';
 import { CoreMigrationRunnerService } from 'src/database/commands/core-migration/services/core-migration-runner.service';
-import { VersionedMigrationRegistryService } from 'src/database/commands/core-migration/services/versioned-migration-registry.service';
+import { RegisteredCoreMigrationService } from 'src/database/commands/core-migration/services/registered-core-migration-registry.service';
 import { CommandLogger } from 'src/database/commands/logger';
 import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
@@ -60,7 +60,7 @@ export abstract class UpgradeCommandRunner extends CommandRunner {
     protected readonly coreEngineVersionService: CoreEngineVersionService,
     protected readonly workspaceVersionService: WorkspaceVersionService,
     protected readonly coreMigrationRunnerService: CoreMigrationRunnerService,
-    protected readonly versionedMigrationRegistryService: VersionedMigrationRegistryService,
+    protected readonly versionedMigrationRegistryService: RegisteredCoreMigrationService,
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
   ) {
     super();

@@ -10,8 +10,8 @@ import {
 } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 
 @Injectable()
-export class VersionedMigrationRegistryService implements OnModuleInit {
-  private readonly logger = new Logger(VersionedMigrationRegistryService.name);
+export class RegisteredCoreMigrationService implements OnModuleInit {
+  private readonly logger = new Logger(RegisteredCoreMigrationService.name);
 
   private readonly migrationsByVersion = new Map<
     UpgradeCommandVersion,

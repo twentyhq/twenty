@@ -5,7 +5,7 @@ import { getDataSourceToken } from '@nestjs/typeorm';
 
 import { type MigrationInterface } from 'typeorm';
 
-import { VersionedMigrationRegistryService } from 'src/database/commands/core-migration/services/versioned-migration-registry.service';
+import { RegisteredCoreMigrationService } from 'src/database/commands/core-migration/services/registered-core-migration-registry.service';
 import { RegisteredCoreMigration } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
 
 @RegisteredCoreMigration('1.21.0')
@@ -49,10 +49,10 @@ class UndecoratedMigration1768000000000 implements MigrationInterface {
 
 const buildRegistryService = async (
   migrations: MigrationInterface[],
-): Promise<VersionedMigrationRegistryService> => {
+): Promise<RegisteredCoreMigrationService> => {
   const module = await Test.createTestingModule({
     providers: [
-      VersionedMigrationRegistryService,
+      RegisteredCoreMigrationService,
       {
         provide: getDataSourceToken(),
         useValue: { migrations },
@@ -60,7 +60,7 @@ const buildRegistryService = async (
     ],
   }).compile();
 
-  const service = module.get(VersionedMigrationRegistryService);
+  const service = module.get(RegisteredCoreMigrationService);
 
   service.onModuleInit();
 

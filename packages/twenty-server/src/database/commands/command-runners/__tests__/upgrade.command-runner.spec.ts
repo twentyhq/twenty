@@ -18,7 +18,7 @@ import {
 } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { CoreMigrationRunnerService } from 'src/database/commands/core-migration/services/core-migration-runner.service';
-import { VersionedMigrationRegistryService } from 'src/database/commands/core-migration/services/versioned-migration-registry.service';
+import { RegisteredCoreMigrationService } from 'src/database/commands/core-migration/services/registered-core-migration-registry.service';
 import { RegisteredCoreMigration } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
 import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
@@ -76,14 +76,12 @@ const buildUpgradeCommandModule = async ({
 }: BuildUpgradeCommandModuleArgs) => {
   const registryProvider = migrations
     ? {
-        provide: VersionedMigrationRegistryService,
+        provide: RegisteredCoreMigrationService,
         useFactory: () => {
           const fakeDataSource = {
             migrations,
           } as unknown as import('typeorm').DataSource;
-          const registry = new VersionedMigrationRegistryService(
-            fakeDataSource,
-          );
+          const registry = new RegisteredCoreMigrationService(fakeDataSource);
 
           registry.onModuleInit();
 
@@ -91,7 +89,7 @@ const buildUpgradeCommandModule = async ({
         },
       }
     : {
-        provide: VersionedMigrationRegistryService,
+        provide: RegisteredCoreMigrationService,
         useValue: {
           getInstanceCommandsForVersion: jest.fn().mockReturnValue([]),
         },
@@ -106,7 +104,7 @@ const buildUpgradeCommandModule = async ({
           coreEngineVersionService: CoreEngineVersionService,
           workspaceVersionService: WorkspaceVersionService,
           coreMigrationRunnerService: CoreMigrationRunnerService,
-          versionedMigrationRegistryService: VersionedMigrationRegistryService,
+          versionedMigrationRegistryService: RegisteredCoreMigrationService,
           workspaceIteratorService: WorkspaceIteratorService,
         ) => {
           return new commandRunner(
@@ -123,7 +121,7 @@ const buildUpgradeCommandModule = async ({
           CoreEngineVersionService,
           WorkspaceVersionService,
           CoreMigrationRunnerService,
-          VersionedMigrationRegistryService,
+          RegisteredCoreMigrationService,
           WorkspaceIteratorService,
         ],
       },
