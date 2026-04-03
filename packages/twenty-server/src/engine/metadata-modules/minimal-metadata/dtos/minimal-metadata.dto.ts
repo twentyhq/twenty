@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CollectionHashDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/collection-hash.dto';
 import { MinimalObjectMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-object-metadata.dto';
 import { MinimalViewDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-view.dto';
@@ -14,4 +15,7 @@ export class MinimalMetadataDTO {
 
   @Field(() => [CollectionHashDTO])
   collectionHashes: CollectionHashDTO[];
+
+  @Field(() => WorkspaceEntity)
+  currentWorkspace: WorkspaceEntity;
 }
