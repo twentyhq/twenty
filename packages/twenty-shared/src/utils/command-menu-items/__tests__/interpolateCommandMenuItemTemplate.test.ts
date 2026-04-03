@@ -2,7 +2,7 @@ import {
   CommandMenuContextApiPageType,
   type CommandMenuContextApi,
 } from '@/types';
-import { interpolateCommandMenuItemLabel } from '../interpolateCommandMenuItemLabel';
+import { interpolateCommandMenuItemTemplate } from '../interpolateCommandMenuItemTemplate';
 
 const buildContext = (
   overrides: Partial<CommandMenuContextApi> = {},
@@ -33,7 +33,7 @@ const buildContext = (
   ...overrides,
 });
 
-describe('interpolateCommandMenuItemLabel', () => {
+describe('interpolateCommandMenuItemTemplate', () => {
   describe('sequential invocations (global regex lastIndex)', () => {
     it('should interpolate correctly when called multiple times in sequence', () => {
       const context = buildContext({
@@ -42,14 +42,14 @@ describe('interpolateCommandMenuItemLabel', () => {
       });
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: 'First: ${numberOfSelectedRecords}',
           context,
         }),
       ).toBe('First: 2');
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: 'Second: ${objectMetadataItem.labelPlural}',
           context,
         }),
@@ -62,7 +62,7 @@ describe('interpolateCommandMenuItemLabel', () => {
       const context = buildContext();
 
       expect(
-        interpolateCommandMenuItemLabel({ label: 'Delete', context }),
+        interpolateCommandMenuItemTemplate({ label: 'Delete', context }),
       ).toBe('Delete');
     });
 
@@ -70,7 +70,7 @@ describe('interpolateCommandMenuItemLabel', () => {
       const context = buildContext();
 
       expect(
-        interpolateCommandMenuItemLabel({ label: null, context }),
+        interpolateCommandMenuItemTemplate({ label: null, context }),
       ).toBeNull();
     });
 
@@ -78,14 +78,14 @@ describe('interpolateCommandMenuItemLabel', () => {
       const context = buildContext();
 
       expect(
-        interpolateCommandMenuItemLabel({ label: undefined, context }),
+        interpolateCommandMenuItemTemplate({ label: undefined, context }),
       ).toBeNull();
     });
 
     it('should return an empty string for an empty label', () => {
       const context = buildContext();
 
-      expect(interpolateCommandMenuItemLabel({ label: '', context })).toBe('');
+      expect(interpolateCommandMenuItemTemplate({ label: '', context })).toBe('');
     });
   });
 
@@ -94,7 +94,7 @@ describe('interpolateCommandMenuItemLabel', () => {
       const context = buildContext({ numberOfSelectedRecords: 5 });
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: 'Selected: ${numberOfSelectedRecords}',
           context,
         }),
@@ -107,7 +107,7 @@ describe('interpolateCommandMenuItemLabel', () => {
       });
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: 'Create new ${objectMetadataItem.labelSingular}',
           context,
         }),
@@ -120,7 +120,7 @@ describe('interpolateCommandMenuItemLabel', () => {
       });
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: 'Delete ${objectMetadataItem.labelPlural}',
           context,
         }),
@@ -136,7 +136,7 @@ describe('interpolateCommandMenuItemLabel', () => {
       });
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label:
             '${numberOfSelectedRecords} ${objectMetadataItem.labelPlural} selected',
           context,
@@ -155,7 +155,7 @@ describe('interpolateCommandMenuItemLabel', () => {
       });
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: 'New ${objectMetadataItem.nameSingular}',
           context,
         }),
@@ -170,7 +170,7 @@ describe('interpolateCommandMenuItemLabel', () => {
       });
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: 'New ${objectMetadataItem.labelSingular}',
           context,
         }),
@@ -181,7 +181,7 @@ describe('interpolateCommandMenuItemLabel', () => {
       const context = buildContext();
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: 'Create new ${objectMetadataItem.labelSingular}',
           context,
         }),
@@ -194,7 +194,7 @@ describe('interpolateCommandMenuItemLabel', () => {
       const context = buildContext();
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: 'Label ${nonExistent.deep.path}',
           context,
         }),
@@ -205,14 +205,14 @@ describe('interpolateCommandMenuItemLabel', () => {
       const context = buildContext();
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: 'Val: ${toString}',
           context,
         }),
       ).toBe('Val: ');
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: 'Val: ${objectMetadataItem.hasOwnProperty}',
           context,
         }),
@@ -225,7 +225,7 @@ describe('interpolateCommandMenuItemLabel', () => {
       const context = buildContext({ isInSidePanel: true });
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: 'Side panel: ${isInSidePanel}',
           context,
         }),
@@ -238,7 +238,7 @@ describe('interpolateCommandMenuItemLabel', () => {
       });
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: 'Create new ${objectMetadataItem.labelSingular}',
           context,
         }),
@@ -253,7 +253,7 @@ describe('interpolateCommandMenuItemLabel', () => {
       });
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: '${capitalize(objectMetadataItem.labelSingular)} details',
           context,
         }),
@@ -266,7 +266,7 @@ describe('interpolateCommandMenuItemLabel', () => {
       });
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: '${capitalize(objectMetadataItem.labelPlural)} selected',
           context,
         }),
@@ -279,7 +279,7 @@ describe('interpolateCommandMenuItemLabel', () => {
       });
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: '${capitalize(objectMetadataItem.labelSingular)} details',
           context,
         }),
@@ -294,7 +294,7 @@ describe('interpolateCommandMenuItemLabel', () => {
       });
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: 'Create ${lowercase(objectMetadataItem.labelSingular)}',
           context,
         }),
@@ -307,11 +307,37 @@ describe('interpolateCommandMenuItemLabel', () => {
       });
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: 'Delete ${lowercase(objectMetadataItem.labelPlural)}',
           context,
         }),
       ).toBe('Delete people');
+    });
+  });
+
+  describe('icon interpolation', () => {
+    it('should interpolate objectMetadataItem.icon', () => {
+      const context = buildContext({
+        objectMetadataItem: { icon: 'IconBuilding' },
+      });
+
+      expect(
+        interpolateCommandMenuItemTemplate({
+          label: '${objectMetadataItem.icon}',
+          context,
+        }),
+      ).toBe('IconBuilding');
+    });
+
+    it('should return static icon unchanged when no template variable present', () => {
+      const context = buildContext();
+
+      expect(
+        interpolateCommandMenuItemTemplate({
+          label: 'IconTrash',
+          context,
+        }),
+      ).toBe('IconTrash');
     });
   });
 
@@ -322,7 +348,7 @@ describe('interpolateCommandMenuItemLabel', () => {
       });
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: 'Delete ${capitalize(objectMetadataLabel)}',
           context,
         }),
@@ -335,7 +361,7 @@ describe('interpolateCommandMenuItemLabel', () => {
       });
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: 'Export ${capitalize(objectMetadataLabel)}',
           context,
         }),
@@ -348,7 +374,7 @@ describe('interpolateCommandMenuItemLabel', () => {
       });
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: '${objectMetadataLabel} selected',
           context,
         }),
@@ -361,7 +387,7 @@ describe('interpolateCommandMenuItemLabel', () => {
       });
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: 'Create ${lowercase(objectMetadataLabel)}',
           context,
         }),
@@ -374,7 +400,7 @@ describe('interpolateCommandMenuItemLabel', () => {
       });
 
       expect(
-        interpolateCommandMenuItemLabel({
+        interpolateCommandMenuItemTemplate({
           label: 'Delete ${capitalize(objectMetadataLabel)}',
           context,
         }),

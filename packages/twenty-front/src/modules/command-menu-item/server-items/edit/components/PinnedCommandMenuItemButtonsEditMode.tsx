@@ -15,7 +15,7 @@ import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useContext, useMemo } from 'react';
-import { interpolateCommandMenuItemLabel } from 'twenty-shared/utils';
+import { interpolateCommandMenuItemTemplate } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
@@ -73,7 +73,7 @@ export const PinnedCommandMenuItemButtonsEditMode = () => {
   );
 
   const interpolateLabel = (rawLabel: string | null | undefined) =>
-    interpolateCommandMenuItemLabel({
+    interpolateCommandMenuItemTemplate({
       label: rawLabel,
       context: commandMenuContextApi,
     });
