@@ -15,6 +15,13 @@ import { PlanTable } from '@/sections/PlanTable/components';
 import { Salesforce } from '@/sections/Salesforce/components';
 import { theme } from '@/theme';
 import { ScrollReveal } from '@/motion/ScrollReveal';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Pricing — Twenty',
+  description:
+    'Plans that scale with your team. Compare tiers and see how Twenty stacks up for your open source CRM.',
+};
 
 export default function PricingPage() {
   return (
@@ -70,7 +77,9 @@ export default function PricingPage() {
       </ScrollReveal>
 
       <ScrollReveal>
-        <PlanTable.Root backgroundColor={theme.colors.secondary.background[100]}>
+        <PlanTable.Root
+          backgroundColor={theme.colors.secondary.background[100]}
+        >
           <PlanTable.Content data={PLAN_TABLE_DATA} />
         </PlanTable.Root>
       </ScrollReveal>
@@ -85,7 +94,10 @@ export default function PricingPage() {
       <ScrollReveal>
         <Faq.Root illustration={FAQ_DATA.illustration}>
           <Faq.Intro>
-            <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
+            <Eyebrow
+              colorScheme="secondary"
+              heading={FAQ_DATA.eyebrow.heading}
+            />
             <Faq.Heading segments={FAQ_DATA.heading} />
             <Faq.Cta>
               <LinkButton

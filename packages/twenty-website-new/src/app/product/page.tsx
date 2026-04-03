@@ -20,6 +20,13 @@ import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
 import { ScrollReveal } from '@/motion/ScrollReveal';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Product — Twenty',
+  description:
+    'Modern interface. AI assistance. All the features you need, ready from day one.',
+};
 
 export default function ProductPage() {
   return (
@@ -68,7 +75,10 @@ export default function ProductPage() {
 
       <ScrollReveal>
         <Tabs.Root>
-          <Eyebrow colorScheme="secondary" heading={TABS_DATA.eyebrow.heading} />
+          <Eyebrow
+            colorScheme="secondary"
+            heading={TABS_DATA.eyebrow.heading}
+          />
           <Tabs.Heading segments={TABS_DATA.heading} />
           <Tabs.Body body={TABS_DATA.body} />
           <Tabs.TabGroup tabs={TABS_DATA.tabs} />
@@ -135,7 +145,10 @@ export default function ProductPage() {
       <ScrollReveal>
         <Faq.Root illustration={FAQ_DATA.illustration}>
           <Faq.Intro>
-            <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
+            <Eyebrow
+              colorScheme="secondary"
+              heading={FAQ_DATA.eyebrow.heading}
+            />
             <Faq.Heading segments={FAQ_DATA.heading} />
             <Faq.Cta>
               <LinkButton

@@ -22,6 +22,13 @@ import { Signoff } from '@/sections/Signoff/components';
 import { Statement } from '@/sections/Statement/components';
 import { WhyTwentyStepper } from '@/sections/WhyTwentyStepper/components';
 import { theme } from '@/theme';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Why Twenty — Twenty',
+  description:
+    'Most packaged software makes companies more similar. Learn why the future of CRM is built, not bought.',
+};
 
 export default function WhyTwentyPage() {
   return (

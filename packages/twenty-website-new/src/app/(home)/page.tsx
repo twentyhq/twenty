@@ -21,6 +21,12 @@ import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
 import { ScrollReveal } from '@/motion/ScrollReveal';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Twenty — Open Source CRM',
+  description: 'Modular, scalable open source CRM for modern teams.',
+};
 
 export default function HomePage() {
   return (
@@ -142,7 +148,10 @@ export default function HomePage() {
       <ScrollReveal>
         <Faq.Root illustration={FAQ_DATA.illustration}>
           <Faq.Intro>
-            <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
+            <Eyebrow
+              colorScheme="secondary"
+              heading={FAQ_DATA.eyebrow.heading}
+            />
             <Faq.Heading segments={FAQ_DATA.heading} />
             <Faq.Cta>
               <LinkButton

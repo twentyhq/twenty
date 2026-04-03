@@ -18,6 +18,13 @@ import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
 import { ScrollReveal } from '@/motion/ScrollReveal';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Partners — Twenty',
+  description:
+    'Join our partner ecosystem and grow with us as we build the #1 open-source CRM.',
+};
 
 export default function PartnerPage() {
   return (
@@ -159,7 +166,10 @@ export default function PartnerPage() {
       <ScrollReveal>
         <Faq.Root illustration={FAQ_DATA.illustration}>
           <Faq.Intro>
-            <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
+            <Eyebrow
+              colorScheme="secondary"
+              heading={FAQ_DATA.eyebrow.heading}
+            />
             <Faq.Heading segments={FAQ_DATA.heading} />
             <Faq.Cta>
               <LinkButton
