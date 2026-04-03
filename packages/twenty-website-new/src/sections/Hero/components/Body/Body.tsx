@@ -46,10 +46,6 @@ const BodyContainer = styled.div`
       max-width: 443px;
     }
 
-    &[data-page=${Pages.Contributors}] {
-      max-width: 591px;
-    }
-
     &[data-page=${Pages.ReleaseNotes}] {
       max-width: 591px;
     }
