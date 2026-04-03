@@ -53,7 +53,12 @@ export const SettingsApplicationDetails = () => {
     { id: 'about', title: t`About`, Icon: IconInfoCircle },
     { id: 'content', title: t`Content`, Icon: IconBox },
     { id: 'permissions', title: t`Permissions`, Icon: IconLock },
-    { id: 'settings', title: t`Settings`, Icon: IconSettings },
+    {
+      id: 'settings',
+      title: t`Settings`,
+      Icon: IconSettings,
+      disabled: (application?.applicationVariables ?? []).length === 0,
+    },
     ...(isDefined(settingsCustomTabFrontComponentId)
       ? [{ id: 'custom', title: t`Custom`, Icon: IconApps }]
       : []),
