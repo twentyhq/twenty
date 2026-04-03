@@ -24,18 +24,20 @@ const IllustrationLayer = styled.div`
 
 const FaqIllustrationEmbed = styled(LazyEmbed)`
   border: none;
-  bottom: -10%;
+  top: -15%;
+  right: -5%;
+  left: auto;
+  transform: none;
   display: block;
-  height: min(52vh, 520px);
-  left: 50%;
+  height: min(60vh, 550px);
   position: absolute;
-  transform: translateX(-50%);
-  width: min(118%, 920px);
+  width: min(70vw, 750px);
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    bottom: -14%;
-    height: min(58vh, 600px);
-    width: min(105%, 1080px);
+    top: -20%;
+    right: -10%;
+    height: min(70vh, 700px);
+    width: min(60vw, 900px);
   }
 `;
 

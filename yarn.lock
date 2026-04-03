@@ -7856,6 +7856,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@gsap/react@npm:2.1.2":
+  version: 2.1.2
+  resolution: "@gsap/react@npm:2.1.2"
+  peerDependencies:
+    gsap: ^3.12.5
+    react: ">=17"
+  checksum: 10c0/d0285391cfd7cef8125e6ddf81a063121bdb92ddf633d76c6144d8b93e3b7f7d837ec75f1fda8fd33d7efac0ad4c1aad89647e81446e9363012ada7db9f67daf
+  languageName: node
+  linkType: hard
+
 "@handlewithcare/prosemirror-inputrules@npm:^0.1.4":
   version: 0.1.4
   resolution: "@handlewithcare/prosemirror-inputrules@npm:0.1.4"
@@ -40542,6 +40552,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"gsap@npm:^3.14.2":
+  version: 3.14.2
+  resolution: "gsap@npm:3.14.2"
+  checksum: 10c0/8f7d93d58d43c23a8de22630539364fac270e0d1dd8b8747064275dcc177e9c3c944a2eb54a10684e2902011dad0ba9ca3eb5c2a0a3bdb815d4f5401f14519e6
+  languageName: node
+  linkType: hard
+
 "gtoken@npm:^6.1.0":
   version: 6.1.2
   resolution: "gtoken@npm:6.1.2"
@@ -60714,6 +60731,7 @@ __metadata:
   dependencies:
     "@base-ui/react": "npm:^1.3.0"
     "@base-ui/utils": "npm:^0.2.6"
+    "@gsap/react": "npm:2.1.2"
     "@linaria/core": "npm:^7.0.0"
     "@linaria/react": "npm:^7.0.1"
     "@react-three/drei": "npm:^10.7.7"
@@ -60725,6 +60743,7 @@ __metadata:
     "@types/three": "npm:^0.183.1"
     "@wyw-in-js/babel-preset": "npm:^0.8.1"
     babel-plugin-react-compiler: "npm:1.0.0"
+    gsap: "npm:^3.14.2"
     lottie-react: "npm:^2.4.1"
     next: "npm:16.1.7"
     next-with-linaria: "npm:^1.3.0"

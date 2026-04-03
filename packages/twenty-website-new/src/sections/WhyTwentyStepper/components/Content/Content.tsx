@@ -53,7 +53,7 @@ const PillBackground = styled.div`
 const PillFill = styled.div`
   background-color: ${theme.colors.highlight[100]};
   border-radius: ${theme.radius(10)};
-  transition: height 0.4s ease;
+  transition: height 0.1s linear;
   width: 100%;
 `;
 
@@ -95,6 +95,7 @@ const HeadingBlock = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   row-gap: ${theme.spacing(4)};
+  margin-bottom: ${theme.spacing(8)};
 `;
 
 const StepBlock = styled.div`
@@ -109,6 +110,7 @@ const StepBlock = styled.div`
     pointer-events: var(--step-pointer-events, auto);
     row-gap: ${theme.spacing(6)};
     transform: var(--step-translate-y, translateY(0));
+    margin-bottom: ${theme.spacing(20)};
   }
 `;
 
@@ -125,15 +127,13 @@ function WhyTwentyProgressRail({
 }: ProgressRailProps) {
   const globalProgress = scrollProgress * (stepCount - 1);
 
-  const fillPercentage =
-    globalProgress >= stepCount - 1
-      ? 100
-      : (globalProgress - activeStepIndex) * 100;
-
   const nodes = [];
 
   for (let index = 0; index < stepCount; index += 1) {
     if (index === activeStepIndex) {
+      const localProgress = globalProgress - index;
+      const fillPercentage = Math.min(100, Math.max(0, localProgress * 100 * 1.5));
+      
       nodes.push(
         <StepIndicatorRow key={`step-${index}`}>
           <PillBackground>

@@ -28,7 +28,7 @@ export const FAQ_DATA: FaqDataType = {
         fontFamily: 'sans',
       },
       answer: {
-        text: "Toute personne souhaitant investir dans l'immobilier de luxe, qu'elle soit expérimentée ou novice, peut soumettre une candidature pour rejoindre le Kretz Club.",
+        text: "You can seamlessly deploy Twenty CRM to your production within hours. For highly bespoke on-premise implementations and massive scale data structures, our guided integration typically takes less than two weeks.",
       },
     },
     {
