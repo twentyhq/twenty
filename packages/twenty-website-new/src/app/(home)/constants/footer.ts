@@ -11,7 +11,6 @@ export const FOOTER_DATA: FooterDataType = {
   },
   bottom: {
     copyright: '© 2026 – Twenty',
-    credit: 'Design by Ardent.',
   },
   navGroups: [
     {

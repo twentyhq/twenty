@@ -76,10 +76,7 @@ export default function RootLayout({
         <Footer.Root illustration={FOOTER_DATA.illustration}>
           <Footer.Logo />
           <Footer.Nav groups={FOOTER_DATA.navGroups} />
-          <Footer.Bottom
-            copyright={FOOTER_DATA.bottom.copyright}
-            credit={FOOTER_DATA.bottom.credit}
-          >
+          <Footer.Bottom copyright={FOOTER_DATA.bottom.copyright}>
             <Footer.Social links={FOOTER_DATA.socialLinks} />
           </Footer.Bottom>
         </Footer.Root>

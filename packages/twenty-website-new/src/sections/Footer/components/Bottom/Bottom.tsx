@@ -15,41 +15,27 @@ const BottomGrid = styled.div`
 const Copyright = styled.div`
   color: ${theme.colors.primary.text[100]};
   font-family: ${theme.font.family.mono};
-  grid-column: 1;
+  grid-column: 1 / -1;
   grid-row: 2;
   justify-self: start;
   text-transform: uppercase;
 
   @media (min-width: ${theme.breakpoints.md}px) {
+    grid-column: 1;
     grid-row: 1;
-  }
-`;
-
-const Credit = styled.div`
-  color: ${theme.colors.primary.text[100]};
-  font-family: ${theme.font.family.mono};
-  grid-column: 2;
-  grid-row: 2;
-  justify-self: end;
-  text-transform: uppercase;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    grid-column: 1 / -1;
   }
 `;
 
 type BottomProps = {
   children?: ReactNode;
   copyright: string;
-  credit: string;
 };
 
-export function Bottom({ children, copyright, credit }: BottomProps) {
+export function Bottom({ children, copyright }: BottomProps) {
   return (
     <BottomGrid>
       <Copyright>{copyright}</Copyright>
       {children}
-      <Credit>{credit}</Credit>
     </BottomGrid>
   );
 }
