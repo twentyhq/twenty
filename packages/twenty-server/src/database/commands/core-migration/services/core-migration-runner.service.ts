@@ -77,14 +77,14 @@ export class CoreMigrationRunnerService {
         }
 
         return {
-            code: 'already-executed',
+          code: 'already-executed',
           status: 'fail',
         };
       }
 
       if (!pendingMigration.instance) {
         return {
-            code: 'migration-instance-not-defined',
+          code: 'migration-instance-not-defined',
           status: 'fail',
         };
       }
