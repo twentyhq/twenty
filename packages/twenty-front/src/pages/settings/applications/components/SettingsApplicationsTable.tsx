@@ -23,8 +23,8 @@ const StyledTableContainer = styled.div`
 `;
 
 const StyledTableRowsContainer = styled.div`
-  padding: ${themeCssVariables.spacing[2]} 0;
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  padding: ${themeCssVariables.spacing[2]} 0;
 `;
 
 const StyledSearchInputContainer = styled.div`

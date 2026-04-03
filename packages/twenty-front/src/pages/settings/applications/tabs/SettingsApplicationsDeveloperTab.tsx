@@ -30,9 +30,11 @@ import {
 import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   type ApplicationRegistrationFragmentFragment,
   ApplicationRegistrationSourceType,
+  FeatureFlagKey,
   FindManyApplicationRegistrationsDocument,
 } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -53,8 +55,8 @@ const StyledEmptyState = styled.div`
 `;
 
 const StyledTableRowsContainer = styled.div`
-  padding: ${themeCssVariables.spacing[2]} 0;
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  padding: ${themeCssVariables.spacing[2]} 0;
 `;
 
 const NPM_PACKAGES_GRID_COLUMNS = '200px 1fr 36px';
@@ -89,6 +91,10 @@ export const SettingsApplicationsDeveloperTab = () => {
   const { copyToClipboard } = useCopyToClipboard();
 
   const { data, loading } = useQuery(FindManyApplicationRegistrationsDocument);
+
+  const isMarketplaceSettingTabVisible = useIsFeatureEnabled(
+    FeatureFlagKey.IS_MARKETPLACE_SETTING_TAB_VISIBLE,
+  );
 
   const [npmSearchTerm, setNpmSearchTerm] = useState('');
   const { data: marketplaceApps } = useMarketplaceApps();
@@ -213,68 +219,73 @@ export const SettingsApplicationsDeveloperTab = () => {
         )}
       </Section>
 
-      <Section>
-        <H2Title
-          title={t`NPM packages`}
-          description={t`Apps made by other developers published on npm`}
-        />
-        <StyledSearchInputContainer>
-          <SearchInput
-            placeholder={t`Search an application`}
-            value={npmSearchTerm}
-            onChange={setNpmSearchTerm}
+      {!isMarketplaceSettingTabVisible && (
+        <Section>
+          <H2Title
+            title={t`NPM packages`}
+            description={t`Apps made by other developers published on npm`}
           />
-        </StyledSearchInputContainer>
-        {filteredMarketplaceApps.length === 0 ? (
-          <StyledEmptyState>{t`No application found`}</StyledEmptyState>
-        ) : (
-          <Table>
-            <TableRow gridAutoColumns={NPM_PACKAGES_GRID_COLUMNS}>
-              <TableHeader>{t`Name`}</TableHeader>
-              <TableHeader>{t`Description`}</TableHeader>
-              <TableHeader />
-            </TableRow>
-            <StyledTableRowsContainer>
-              {filteredMarketplaceApps.map((application) => (
-                <TableRow
-                  key={application.id}
-                  gridAutoColumns={NPM_PACKAGES_GRID_COLUMNS}
-                  to={getSettingsPath(SettingsPath.AvailableApplicationDetail, {
-                    availableApplicationId: application.id,
-                  })}
-                >
-                  <StyledNameTableCell>
-                    <Avatar
-                      avatarUrl={application.logo || null}
-                      placeholder={application.name}
-                      placeholderColorSeed={application.name}
-                      size="md"
-                      type="squared"
-                    />
-                    <OverflowingTextWithTooltip text={application.name} />
-                  </StyledNameTableCell>
-                  <TableCell
-                    overflow="hidden"
-                    textOverflow="ellipsis"
-                    whiteSpace="nowrap"
+          <StyledSearchInputContainer>
+            <SearchInput
+              placeholder={t`Search an application`}
+              value={npmSearchTerm}
+              onChange={setNpmSearchTerm}
+            />
+          </StyledSearchInputContainer>
+          {filteredMarketplaceApps.length === 0 ? (
+            <StyledEmptyState>{t`No application found`}</StyledEmptyState>
+          ) : (
+            <Table>
+              <TableRow gridAutoColumns={NPM_PACKAGES_GRID_COLUMNS}>
+                <TableHeader>{t`Name`}</TableHeader>
+                <TableHeader>{t`Description`}</TableHeader>
+                <TableHeader />
+              </TableRow>
+              <StyledTableRowsContainer>
+                {filteredMarketplaceApps.map((application) => (
+                  <TableRow
+                    key={application.id}
+                    gridAutoColumns={NPM_PACKAGES_GRID_COLUMNS}
+                    to={getSettingsPath(
+                      SettingsPath.AvailableApplicationDetail,
+                      {
+                        availableApplicationId: application.id,
+                      },
+                    )}
                   >
-                    <OverflowingTextWithTooltip
-                      text={application.description}
-                    />
-                  </TableCell>
-                  <StyledActionTableCell>
-                    <IconChevronRight
-                      size={theme.icon.size.md}
-                      stroke={theme.icon.stroke.sm}
-                      color={theme.font.color.tertiary}
-                    />
-                  </StyledActionTableCell>
-                </TableRow>
-              ))}
-            </StyledTableRowsContainer>
-          </Table>
-        )}
-      </Section>
+                    <StyledNameTableCell>
+                      <Avatar
+                        avatarUrl={application.logo || null}
+                        placeholder={application.name}
+                        placeholderColorSeed={application.name}
+                        size="md"
+                        type="squared"
+                      />
+                      <OverflowingTextWithTooltip text={application.name} />
+                    </StyledNameTableCell>
+                    <TableCell
+                      overflow="hidden"
+                      textOverflow="ellipsis"
+                      whiteSpace="nowrap"
+                    >
+                      <OverflowingTextWithTooltip
+                        text={application.description}
+                      />
+                    </TableCell>
+                    <StyledActionTableCell>
+                      <IconChevronRight
+                        size={theme.icon.size.md}
+                        stroke={theme.icon.stroke.sm}
+                        color={theme.font.color.tertiary}
+                      />
+                    </StyledActionTableCell>
+                  </TableRow>
+                ))}
+              </StyledTableRowsContainer>
+            </Table>
+          )}
+        </Section>
+      )}
     </>
   );
 };
