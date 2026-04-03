@@ -92,9 +92,9 @@ export class CoreMigrationGeneratorService {
   ): string {
     return `import { MigrationInterface, QueryRunner } from 'typeorm';
 
-import { VersionedMigration } from 'src/database/typeorm/core/decorators/versioned-migration.decorator';
+import { RegisteredCoreMigration } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
 
-@VersionedMigration('${version}')
+@RegisteredCoreMigration('${version}')
 export class ${className} implements MigrationInterface {
   name = '${className}';
 

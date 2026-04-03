@@ -3,7 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource, type MigrationInterface } from 'typeorm';
 
-import { getVersionedMigrationVersion } from 'src/database/typeorm/core/decorators/versioned-migration.decorator';
+import { getRegisteredCoreMigrationVersion } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
 import {
   UPGRADE_COMMAND_SUPPORTED_VERSIONS,
   type UpgradeCommandVersion,
@@ -32,7 +32,7 @@ export class VersionedMigrationRegistryService implements OnModuleInit {
     // ascending by the 13-digit suffix of the class name)
     for (const migration of this.dataSource.migrations) {
       const constructor = migration.constructor;
-      const version = getVersionedMigrationVersion(constructor);
+      const version = getRegisteredCoreMigrationVersion(constructor);
 
       if (version === undefined) {
         continue;

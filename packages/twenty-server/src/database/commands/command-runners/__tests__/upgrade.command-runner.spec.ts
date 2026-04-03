@@ -19,11 +19,8 @@ import {
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { CoreMigrationRunnerService } from 'src/database/commands/core-migration/services/core-migration-runner.service';
 import { VersionedMigrationRegistryService } from 'src/database/commands/core-migration/services/versioned-migration-registry.service';
-import { VersionedMigration } from 'src/database/typeorm/core/decorators/versioned-migration.decorator';
-import {
-  UPGRADE_COMMAND_SUPPORTED_VERSIONS,
-  type UpgradeCommandVersion,
-} from 'src/engine/constants/upgrade-command-supported-versions.constant';
+import { RegisteredCoreMigration } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
+import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -356,19 +353,19 @@ describe('UpgradeCommandRunner', () => {
   });
 
   it('should only run instance commands for the current version', async () => {
-    @VersionedMigration(CURRENT_VERSION)
+    @RegisteredCoreMigration(CURRENT_VERSION)
     class AddIndexToUsers1770000000000 implements MigrationInterface {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
     }
 
-    @VersionedMigration(CURRENT_VERSION)
+    @RegisteredCoreMigration(CURRENT_VERSION)
     class AddColumnToAccounts1771000000000 implements MigrationInterface {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
     }
 
-    @VersionedMigration(PREVIOUS_VERSION)
+    @RegisteredCoreMigration(PREVIOUS_VERSION)
     class DropLegacyTable1769000000000 implements MigrationInterface {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}

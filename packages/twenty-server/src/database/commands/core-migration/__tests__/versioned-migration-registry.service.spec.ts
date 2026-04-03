@@ -6,9 +6,9 @@ import { getDataSourceToken } from '@nestjs/typeorm';
 import { type MigrationInterface } from 'typeorm';
 
 import { VersionedMigrationRegistryService } from 'src/database/commands/core-migration/services/versioned-migration-registry.service';
-import { VersionedMigration } from 'src/database/typeorm/core/decorators/versioned-migration.decorator';
+import { RegisteredCoreMigration } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
 
-@VersionedMigration('1.21.0')
+@RegisteredCoreMigration('1.21.0')
 class MigrationA1770000000000 implements MigrationInterface {
   name = 'MigrationA1770000000000';
 
@@ -16,7 +16,7 @@ class MigrationA1770000000000 implements MigrationInterface {
   async down(): Promise<void> {}
 }
 
-@VersionedMigration('1.21.0')
+@RegisteredCoreMigration('1.21.0')
 class MigrationB1771000000000 implements MigrationInterface {
   name = 'MigrationB1771000000000';
 
@@ -24,7 +24,7 @@ class MigrationB1771000000000 implements MigrationInterface {
   async down(): Promise<void> {}
 }
 
-@VersionedMigration('1.21.0')
+@RegisteredCoreMigration('1.21.0')
 class MigrationC1772000000000 implements MigrationInterface {
   name = 'MigrationC1772000000000';
 
@@ -32,7 +32,7 @@ class MigrationC1772000000000 implements MigrationInterface {
   async down(): Promise<void> {}
 }
 
-@VersionedMigration('1.20.0')
+@RegisteredCoreMigration('1.20.0')
 class MigrationD1769000000000 implements MigrationInterface {
   name = 'MigrationD1769000000000';
 

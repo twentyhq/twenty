@@ -1,9 +1,9 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-import { VersionedMigration } from 'src/database/typeorm/core/decorators/versioned-migration.decorator';
+import { RegisteredCoreMigration } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
 import { addGlobalKeyValuePairUniqueIndexQueries } from 'src/database/typeorm/core/migrations/utils/1774700000000-add-global-key-value-pair-unique-index.util';
 
-@VersionedMigration('1.21.0')
+@RegisteredCoreMigration('1.21.0')
 export class AddGlobalKeyValuePairUniqueIndex1774700000000
   implements MigrationInterface
 {

@@ -20,7 +20,7 @@ type GenerateVersionedMigrationCommandOptions = {
 @Command({
   name: 'generate:versioned-migration',
   description:
-    'Generate a TypeORM migration with @VersionedMigration decorator for the latest supported version',
+    'Generate a TypeORM migration with @RegisteredCoreMigration decorator for the latest supported version',
 })
 export class GenerateVersionedMigrationCommand extends CommandRunner {
   private readonly logger = new Logger(GenerateVersionedMigrationCommand.name);
