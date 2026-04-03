@@ -1,8 +1,10 @@
 import { Test, type TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 
 import { CalendarChannelVisibility } from 'twenty-shared/types';
+import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
@@ -19,6 +21,8 @@ type MockWorkspaceRepository = Partial<
 describe('TimelineCalendarEventService', () => {
   let service: TimelineCalendarEventService;
   let mockCalendarEventRepository: MockWorkspaceRepository;
+  let mockCalendarChannelCoreRepository: { find: jest.Mock };
+  let mockConnectedAccountRepository: { find: jest.Mock };
 
   const mockCalendarEvent: Partial<CalendarEventWorkspaceEntity> = {
     id: '1',
@@ -36,8 +40,22 @@ describe('TimelineCalendarEventService', () => {
       findAndCount: jest.fn(),
     };
 
+    mockConnectedAccountRepository = {
+      find: jest.fn().mockResolvedValue([]),
+    };
+
+    mockCalendarChannelCoreRepository = {
+      find: jest.fn().mockResolvedValue([]),
+    };
+
     const mockGlobalWorkspaceOrmManager = {
-      getRepository: jest.fn().mockResolvedValue(mockCalendarEventRepository),
+      getRepository: jest.fn().mockImplementation((_workspaceId, entityName) => {
+        if (entityName === 'connectedAccount') {
+          return Promise.resolve(mockConnectedAccountRepository);
+        }
+
+        return Promise.resolve(mockCalendarEventRepository);
+      }),
       executeInWorkspaceContext: jest
         .fn()
         .mockImplementation((fn: () => any, _authContext?: any) => fn()),
@@ -49,6 +67,10 @@ describe('TimelineCalendarEventService', () => {
         {
           provide: GlobalWorkspaceOrmManager,
           useValue: mockGlobalWorkspaceOrmManager,
+        },
+        {
+          provide: getRepositoryToken(CalendarChannelEntity),
+          useValue: mockCalendarChannelCoreRepository,
         },
       ],
     }).compile();
@@ -70,18 +92,24 @@ describe('TimelineCalendarEventService', () => {
         {
           ...mockCalendarEvent,
           calendarChannelEventAssociations: [
-            {
-              calendarChannel: {
-                visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
-                connectedAccount: {
-                  accountOwnerId: 'other-workspace-member-id',
-                },
-              },
-            },
+            { calendarChannelId: 'channel-1' },
           ],
         },
       ],
       1,
+    ]);
+    mockCalendarChannelCoreRepository.find.mockResolvedValue([
+      {
+        id: 'channel-1',
+        visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
+        connectedAccountId: 'connected-account-1',
+      },
+    ]);
+    mockConnectedAccountRepository.find.mockResolvedValue([
+      {
+        id: 'connected-account-1',
+        accountOwnerId: 'other-workspace-member-id',
+      },
     ]);
 
     const result = await service.getCalendarEventsFromPersonIds({
@@ -110,18 +138,24 @@ describe('TimelineCalendarEventService', () => {
         {
           ...mockCalendarEvent,
           calendarChannelEventAssociations: [
-            {
-              calendarChannel: {
-                visibility: CalendarChannelVisibility.METADATA,
-                connectedAccount: {
-                  accountOwnerId: 'other-workspace-member-id',
-                },
-              },
-            },
+            { calendarChannelId: 'channel-1' },
           ],
         },
       ],
       1,
+    ]);
+    mockCalendarChannelCoreRepository.find.mockResolvedValue([
+      {
+        id: 'channel-1',
+        visibility: CalendarChannelVisibility.METADATA,
+        connectedAccountId: 'connected-account-1',
+      },
+    ]);
+    mockConnectedAccountRepository.find.mockResolvedValue([
+      {
+        id: 'connected-account-1',
+        accountOwnerId: 'other-workspace-member-id',
+      },
     ]);
 
     const result = await service.getCalendarEventsFromPersonIds({
@@ -152,18 +186,24 @@ describe('TimelineCalendarEventService', () => {
         {
           ...mockCalendarEvent,
           calendarChannelEventAssociations: [
-            {
-              calendarChannel: {
-                visibility: CalendarChannelVisibility.METADATA,
-                connectedAccount: {
-                  accountOwnerId: 'current-workspace-member-id',
-                },
-              },
-            },
+            { calendarChannelId: 'channel-1' },
           ],
         },
       ],
       1,
+    ]);
+    mockCalendarChannelCoreRepository.find.mockResolvedValue([
+      {
+        id: 'channel-1',
+        visibility: CalendarChannelVisibility.METADATA,
+        connectedAccountId: 'connected-account-1',
+      },
+    ]);
+    mockConnectedAccountRepository.find.mockResolvedValue([
+      {
+        id: 'connected-account-1',
+        accountOwnerId: 'current-workspace-member-id',
+      },
     ]);
 
     const result = await service.getCalendarEventsFromPersonIds({
