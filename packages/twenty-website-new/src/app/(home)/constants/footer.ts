@@ -34,7 +34,7 @@ export const FOOTER_DATA: FooterDataType = {
         { label: 'Developers', href: '#', external: false },
         { label: 'FAQ', href: '#', external: false },
         { label: 'Support', href: '#', external: false },
-        { label: 'Release Notes', href: '#', external: false },
+        { label: 'Release Notes', href: '/release-notes', external: false },
       ],
     },
     {

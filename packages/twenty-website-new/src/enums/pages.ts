@@ -1,4 +1,5 @@
 export enum Pages {
+    ReleaseNotes = 'releaseNotes',
     Contributors = 'contributors',
     Home = 'home',
     Partner = 'partner',
