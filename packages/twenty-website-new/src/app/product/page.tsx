@@ -1,5 +1,4 @@
 import { FAQ_DATA } from '@/app/(home)/constants/faq';
-import { MENU_DATA } from '@/app/(home)/constants/menu';
 import { TRUSTED_BY_DATA } from '@/app/(home)/constants/trusted-by';
 import { DEMO_DATA } from '@/app/product/constants/demo';
 import { FEATURE_DATA } from '@/app/product/constants/feature';
@@ -9,6 +8,7 @@ import { TABS_DATA } from '@/app/product/constants/tabs';
 import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/product/constants/three-cards';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
+import { getMenuData } from '@/lib/community/get-menu-data';
 import { Demo } from '@/sections/Demo/components';
 import { Feature } from '@/sections/Feature/components';
 import { Faq } from '@/sections/Faq/components';
@@ -28,18 +28,20 @@ export const metadata: Metadata = {
     'Modern interface. AI assistance. All the features you need, ready from day one.',
 };
 
-export default function ProductPage() {
+export default async function ProductPage() {
+  const menuData = await getMenuData();
+
   return (
     <>
       <Menu.Root
         backgroundColor={theme.colors.primary.background[100]}
         scheme="primary"
-        navItems={MENU_DATA.navItems}
-        socialLinks={MENU_DATA.socialLinks}
+        navItems={menuData.navItems}
+        socialLinks={menuData.socialLinks}
       >
         <Menu.Logo scheme="primary" />
-        <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="primary" socialLinks={MENU_DATA.socialLinks} />
+        <Menu.Nav scheme="primary" navItems={menuData.navItems} />
+        <Menu.Social scheme="primary" socialLinks={menuData.socialLinks} />
         <Menu.Cta scheme="primary" />
       </Menu.Root>
 

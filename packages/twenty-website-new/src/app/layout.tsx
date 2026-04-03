@@ -1,5 +1,10 @@
 import { FOOTER_DATA } from '@/app/(home)/constants/footer';
 import { GlbWarmCache } from '@/constants/glb-warm-cache.component';
+import {
+  getCommunityStats,
+  labelsFromCommunityStats,
+} from '@/lib/community/fetch-community-stats';
+import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Footer } from '@/sections/Footer/components';
 import { theme } from '@/theme';
 import { cssVariables } from '@/theme/css-variables';
@@ -63,9 +68,16 @@ export const metadata: Metadata = {
   description: 'Modular, scalable open source CRM for modern teams.',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const communityStats = await getCommunityStats();
+  const communityLabels = labelsFromCommunityStats(communityStats);
+  const footerSocialLinks = mergeSocialLinkLabels(
+    FOOTER_DATA.socialLinks,
+    communityLabels,
+  );
+
   return (
     <html lang="en" className="light">
       <body
@@ -77,7 +89,7 @@ export default function RootLayout({
           <Footer.Logo />
           <Footer.Nav groups={FOOTER_DATA.navGroups} />
           <Footer.Bottom copyright={FOOTER_DATA.bottom.copyright}>
-            <Footer.Social links={FOOTER_DATA.socialLinks} />
+            <Footer.Social links={footerSocialLinks} />
           </Footer.Bottom>
         </Footer.Root>
       </body>

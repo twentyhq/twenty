@@ -1,10 +1,10 @@
-import { MENU_DATA } from '@/app/(home)/constants/menu';
 import {
   CONTRIBUTORS_HERO_BODY,
   CONTRIBUTORS_HERO_HEADING,
 } from '@/app/contributors/constants/hero';
 import { LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
+import { getMenuData } from '@/lib/community/get-menu-data';
 import { fetchPublicRepoContributors } from '@/lib/github/fetch-public-repo-contributors';
 import { Contributors } from '@/sections/Contributors/components';
 import { Hero } from '@/sections/Hero/components';
@@ -20,19 +20,22 @@ export const metadata: Metadata = {
 };
 
 export default async function ContributorsPage() {
-  const { contributors, loadFailed } = await fetchPublicRepoContributors();
+  const [{ contributors, loadFailed }, menuData] = await Promise.all([
+    fetchPublicRepoContributors(),
+    getMenuData(),
+  ]);
 
   return (
     <>
       <Menu.Root
         backgroundColor={theme.colors.primary.background[100]}
         scheme="primary"
-        navItems={MENU_DATA.navItems}
-        socialLinks={MENU_DATA.socialLinks}
+        navItems={menuData.navItems}
+        socialLinks={menuData.socialLinks}
       >
         <Menu.Logo scheme="primary" />
-        <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="primary" socialLinks={MENU_DATA.socialLinks} />
+        <Menu.Nav scheme="primary" navItems={menuData.navItems} />
+        <Menu.Social scheme="primary" socialLinks={menuData.socialLinks} />
         <Menu.Cta scheme="primary" />
       </Menu.Root>
 

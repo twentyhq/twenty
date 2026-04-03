@@ -2,7 +2,6 @@ import { FAQ_DATA } from '@/app/(home)/constants/faq';
 import { HELPED_DATA } from '@/app/(home)/constants/helped';
 import { HERO_DATA } from '@/app/(home)/constants/hero';
 import { HOME_STEPPER_DATA } from '@/app/(home)/constants/home-stepper';
-import { MENU_DATA } from '@/app/(home)/constants/menu';
 import { PROBLEM_DATA } from '@/app/(home)/constants/problem';
 import { TESTIMONIALS_DATA } from '@/app/(home)/constants/testimonials';
 import { THREE_CARDS_FEATURE_DATA } from '@/app/(home)/constants/three-cards-feature';
@@ -10,6 +9,7 @@ import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/(home)/constants/three-card
 import { TRUSTED_BY_DATA } from '@/app/(home)/constants/trusted-by';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
+import { getMenuData } from '@/lib/community/get-menu-data';
 import { Faq } from '@/sections/Faq/components';
 import { Helped } from '@/sections/Helped/components';
 import { Hero } from '@/sections/Hero/components';
@@ -28,18 +28,20 @@ export const metadata: Metadata = {
   description: 'Modular, scalable open source CRM for modern teams.',
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const menuData = await getMenuData();
+
   return (
     <>
       <Menu.Root
         backgroundColor={theme.colors.primary.background[100]}
         scheme="primary"
-        navItems={MENU_DATA.navItems}
-        socialLinks={MENU_DATA.socialLinks}
+        navItems={menuData.navItems}
+        socialLinks={menuData.socialLinks}
       >
         <Menu.Logo scheme="primary" />
-        <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="primary" socialLinks={MENU_DATA.socialLinks} />
+        <Menu.Nav scheme="primary" navItems={menuData.navItems} />
+        <Menu.Social scheme="primary" socialLinks={menuData.socialLinks} />
         <Menu.Cta scheme="primary" />
       </Menu.Root>
 

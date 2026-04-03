@@ -1,3 +1,4 @@
+import { getMenuData } from '@/lib/community/get-menu-data';
 import { LegalDocumentPage } from '@/sections/LegalDocument/legal-document-page';
 import type { Metadata } from 'next';
 
@@ -6,9 +7,11 @@ export const metadata: Metadata = {
   description: 'How Twenty collects, uses, and protects your information.',
 };
 
-export default function PrivacyPolicyPage() {
+export default async function PrivacyPolicyPage() {
+  const menuData = await getMenuData();
+
   return (
-    <LegalDocumentPage title="Privacy Policy">
+    <LegalDocumentPage menuData={menuData} title="Privacy Policy">
       <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
         tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim

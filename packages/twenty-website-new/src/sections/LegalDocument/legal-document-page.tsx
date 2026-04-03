@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
-import { MENU_DATA } from '@/app/(home)/constants/menu';
 import { Container } from '@/design-system/components';
 import { Menu } from '@/sections/Menu/components';
+import type { MenuDataType } from '@/sections/Menu/types';
 import { theme } from '@/theme';
 
 const PageSection = styled.section`
@@ -66,21 +66,26 @@ const Article = styled.article`
 
 type LegalDocumentPageProps = {
   children: ReactNode;
+  menuData: MenuDataType;
   title: string;
 };
 
-export function LegalDocumentPage({ children, title }: LegalDocumentPageProps) {
+export function LegalDocumentPage({
+  children,
+  menuData,
+  title,
+}: LegalDocumentPageProps) {
   return (
     <>
       <Menu.Root
         backgroundColor={theme.colors.primary.background[100]}
         scheme="primary"
-        navItems={MENU_DATA.navItems}
-        socialLinks={MENU_DATA.socialLinks}
+        navItems={menuData.navItems}
+        socialLinks={menuData.socialLinks}
       >
         <Menu.Logo scheme="primary" />
-        <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="primary" socialLinks={MENU_DATA.socialLinks} />
+        <Menu.Nav scheme="primary" navItems={menuData.navItems} />
+        <Menu.Social scheme="primary" socialLinks={menuData.socialLinks} />
         <Menu.Cta scheme="primary" />
       </Menu.Root>
 

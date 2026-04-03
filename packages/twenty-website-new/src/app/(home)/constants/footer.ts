@@ -1,3 +1,4 @@
+import { COMMUNITY } from '@/constants/community';
 import type { FooterDataType } from '@/sections/Footer/types';
 
 const FOOTER_ILLUSTRATION_SRC =
@@ -78,17 +79,17 @@ export const FOOTER_DATA: FooterDataType = {
   ],
   socialLinks: [
     {
-      href: 'https://github.com/twentyhq/twenty',
+      href: COMMUNITY.GITHUB_REPO_URL,
       icon: 'github',
-      label: '39.8K',
+      label: COMMUNITY.FALLBACK_GITHUB_LABEL,
       ariaLabel: 'GitHub (opens in new tab)',
       showInDesktop: true,
       showInDrawer: true,
     },
     {
-      href: 'https://discord.gg/cx5n4Jzs57',
+      href: COMMUNITY.DISCORD_INVITE_URL,
       icon: 'discord',
-      label: '5.6K',
+      label: COMMUNITY.FALLBACK_DISCORD_LABEL,
       ariaLabel: 'Discord (opens in new tab)',
       className: 'discord-link',
       showInDesktop: true,

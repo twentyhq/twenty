@@ -1,5 +1,4 @@
 import { FAQ_DATA } from '@/app/(home)/constants/faq';
-import { MENU_DATA } from '@/app/(home)/constants/menu';
 import { TRUSTED_BY_DATA } from '@/app/(home)/constants/trusted-by';
 import { ENGAGEMENT_BAND_DATA } from '@/app/partner/constants/engagement-band';
 import { HERO_DATA } from '@/app/partner/constants/hero';
@@ -8,6 +7,7 @@ import { SIGNOFF_DATA } from '@/app/partner/constants/signoff';
 import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/partner/constants/three-cards-illustration';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
+import { getMenuData } from '@/lib/community/get-menu-data';
 import { EngagementBand } from '@/sections/EngagementBand/components';
 import { Faq } from '@/sections/Faq/components';
 import { Hero } from '@/sections/Hero/components';
@@ -26,18 +26,20 @@ export const metadata: Metadata = {
     'Join our partner ecosystem and grow with us as we build the #1 open-source CRM.',
 };
 
-export default function PartnerPage() {
+export default async function PartnerPage() {
+  const menuData = await getMenuData();
+
   return (
     <>
       <Menu.Root
         backgroundColor={theme.colors.primary.background[100]}
         scheme="primary"
-        navItems={MENU_DATA.navItems}
-        socialLinks={MENU_DATA.socialLinks}
+        navItems={menuData.navItems}
+        socialLinks={menuData.socialLinks}
       >
         <Menu.Logo scheme="primary" />
-        <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="primary" socialLinks={MENU_DATA.socialLinks} />
+        <Menu.Nav scheme="primary" navItems={menuData.navItems} />
+        <Menu.Social scheme="primary" socialLinks={menuData.socialLinks} />
         <Menu.Cta scheme="primary" />
       </Menu.Root>
 

@@ -1,9 +1,9 @@
-import { MENU_DATA } from '@/app/(home)/constants/menu';
 import {
   OSS_FRIENDS_HERO_BODY,
   OSS_FRIENDS_HERO_HEADING,
 } from '@/app/oss-friends/constants/hero';
 import { Pages } from '@/enums/pages';
+import { getMenuData } from '@/lib/community/get-menu-data';
 import { fetchOssFriends } from '@/lib/oss-friends/fetch-oss-friends';
 import { ScrollReveal } from '@/motion/ScrollReveal';
 import { Hero } from '@/sections/Hero/components';
@@ -19,19 +19,22 @@ export const metadata: Metadata = {
 };
 
 export default async function OssFriendsPage() {
-  const { friends, loadFailed } = await fetchOssFriends();
+  const [{ friends, loadFailed }, menuData] = await Promise.all([
+    fetchOssFriends(),
+    getMenuData(),
+  ]);
 
   return (
     <>
       <Menu.Root
         backgroundColor={theme.colors.primary.background[100]}
         scheme="primary"
-        navItems={MENU_DATA.navItems}
-        socialLinks={MENU_DATA.socialLinks}
+        navItems={menuData.navItems}
+        socialLinks={menuData.socialLinks}
       >
         <Menu.Logo scheme="primary" />
-        <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="primary" socialLinks={MENU_DATA.socialLinks} />
+        <Menu.Nav scheme="primary" navItems={menuData.navItems} />
+        <Menu.Social scheme="primary" socialLinks={menuData.socialLinks} />
         <Menu.Cta scheme="primary" />
       </Menu.Root>
 

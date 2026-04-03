@@ -1,11 +1,11 @@
 import { FAQ_DATA } from '@/app/(home)/constants/faq';
-import { MENU_DATA } from '@/app/(home)/constants/menu';
 import { ENGAGEMENT_BAND_DATA } from '@/app/partner/constants/engagement-band';
 import { HERO_DATA } from '@/app/pricing/constants/hero';
 import { PLAN_TABLE_DATA } from '@/app/pricing/constants/plan-table';
 import { SALESFORCE_DATA } from '@/app/pricing/constants/salesforce';
 import { Eyebrow, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
+import { getMenuData } from '@/lib/community/get-menu-data';
 import { EngagementBand } from '@/sections/EngagementBand/components';
 import { Faq } from '@/sections/Faq/components';
 import { Hero } from '@/sections/Hero/components';
@@ -23,18 +23,20 @@ export const metadata: Metadata = {
     'Plans that scale with your team. Compare tiers and see how Twenty stacks up for your open source CRM.',
 };
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  const menuData = await getMenuData();
+
   return (
     <>
       <Menu.Root
         backgroundColor={theme.colors.secondary.background[5]}
         scheme="primary"
-        navItems={MENU_DATA.navItems}
-        socialLinks={MENU_DATA.socialLinks}
+        navItems={menuData.navItems}
+        socialLinks={menuData.socialLinks}
       >
         <Menu.Logo scheme="primary" />
-        <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="primary" socialLinks={MENU_DATA.socialLinks} />
+        <Menu.Nav scheme="primary" navItems={menuData.navItems} />
+        <Menu.Social scheme="primary" socialLinks={menuData.socialLinks} />
         <Menu.Cta scheme="primary" />
       </Menu.Root>
 

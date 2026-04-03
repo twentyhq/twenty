@@ -1,4 +1,3 @@
-import { MENU_DATA } from '@/app/(home)/constants/menu';
 import { EDITORIAL_FOUR } from '@/app/why-twenty/constants/editorial-four';
 import { EDITORIAL_ONE } from '@/app/why-twenty/constants/editorial-one';
 import { EDITORIAL_THREE } from '@/app/why-twenty/constants/editorial-three';
@@ -12,6 +11,7 @@ import { STATEMENT_TWO } from '@/app/why-twenty/constants/statement-two';
 import { STEPPER_DATA } from '@/app/why-twenty/constants/stepper';
 import { LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
+import { getMenuData } from '@/lib/community/get-menu-data';
 import { ScrollReveal } from '@/motion/ScrollReveal';
 import { Editorial } from '@/sections/Editorial/components';
 import { Hero } from '@/sections/Hero/components';
@@ -30,18 +30,20 @@ export const metadata: Metadata = {
     'Most packaged software makes companies more similar. Learn why the future of CRM is built, not bought.',
 };
 
-export default function WhyTwentyPage() {
+export default async function WhyTwentyPage() {
+  const menuData = await getMenuData();
+
   return (
     <>
       <Menu.Root
         backgroundColor={theme.colors.secondary.background[100]}
         scheme="secondary"
-        navItems={MENU_DATA.navItems}
-        socialLinks={MENU_DATA.socialLinks}
+        navItems={menuData.navItems}
+        socialLinks={menuData.socialLinks}
       >
         <Menu.Logo scheme="secondary" />
-        <Menu.Nav scheme="secondary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="secondary" socialLinks={MENU_DATA.socialLinks} />
+        <Menu.Nav scheme="secondary" navItems={menuData.navItems} />
+        <Menu.Social scheme="secondary" socialLinks={menuData.socialLinks} />
         <Menu.Cta scheme="secondary" />
       </Menu.Root>
 
