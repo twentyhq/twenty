@@ -76,24 +76,31 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
       const sentMailbox = mailboxList.find((m) => m.path === sentFolder.path);
       // \Noselect folders cannot be queried with STATUS — skip getUidValidity
       const isNoselect = sentMailbox?.flags?.has('\\Noselect') ?? false;
-      const uidValidity =
-        !isNoselect && sentMailbox
+
+      // \Noselect folders cannot hold messages — skip APPEND entirely by not including them
+      if (isNoselect) {
+        this.logger.warn(
+          `Sent folder "${sentFolder.path}" is \\Noselect — skipping to prevent APPEND failure.`,
+        );
+      } else {
+        const uidValidity = sentMailbox
           ? await this.getUidValidity(client, sentMailbox)
           : null;
 
-      const externalId = uidValidity
-        ? `${sentFolder.path}:${uidValidity.toString()}`
-        : sentFolder.path;
+        const externalId = uidValidity
+          ? `${sentFolder.path}:${uidValidity.toString()}`
+          : sentFolder.path;
 
-      pathToExternalIdMap.set(sentFolder.path, externalId);
+        pathToExternalIdMap.set(sentFolder.path, externalId);
 
-      folders.push({
-        externalId,
-        name: sentFolder.name,
-        isSynced: true,
-        isSentFolder: true,
-        parentFolderId: sentMailbox?.parentPath || null,
-      });
+        folders.push({
+          externalId,
+          name: sentFolder.name,
+          isSynced: true,
+          isSentFolder: true,
+          parentFolderId: sentMailbox?.parentPath || null,
+        });
+      }
     }
 
     for (const mailbox of mailboxList) {

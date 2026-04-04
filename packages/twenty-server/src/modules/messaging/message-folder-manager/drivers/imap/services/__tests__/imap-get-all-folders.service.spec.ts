@@ -137,5 +137,92 @@ describe('ImapGetAllFoldersService', () => {
     const childFolder = folders.find((f: MessageFolder) => f.name === 'Child');
     // Child's parentFolderId should be the path-based externalId of the \Noselect parent
     expect(childFolder?.parentFolderId).toBe('INBOX.Parents');
+
+  it('excludes sent folder from results when it has \\Noselect flag to prevent APPEND failure', async () => {
+    const mockClient = {
+      list: jest.fn().mockResolvedValue([
+        {
+          path: 'INBOX',
+          name: 'INBOX',
+          flags: new Set<string>(['\\HasNoChildren']),
+          parentPath: '',
+        },
+        {
+          path: '[Gmail]',
+          name: '[Gmail]',
+          flags: new Set<string>(['\\Noselect', '\\All']),
+          parentPath: '',
+        },
+        {
+          path: '[Gmail]/Sent Mail',
+          name: 'Sent Mail',
+          flags: new Set<string>(['\\HasNoChildren']),
+          parentPath: '[Gmail]',
+        },
+      ]),
+      status: jest.fn().mockRejectedValue(new Error('Mailbox does not exist')),
+      logout: jest.fn(),
+    };
+
+    (imapClientProvider.getClient as jest.Mock).mockResolvedValue(mockClient);
+    (imapClientProvider.closeClient as jest.Mock).mockResolvedValue(undefined);
+    (imapFindSentFolderService.findSentFolder as jest.Mock).mockResolvedValue({
+      path: '[Gmail]/Sent Mail',
+      name: 'Sent Mail',
+    });
+
+    const folders = await service.getAllMessageFolders(
+      mockConnectedAccount,
+      mockMessageChannel as any,
+    );
+
+    // [Gmail] is \Noselect — it should NOT be in the results
+    expect(folders.some((f) => f.name === '[Gmail]')).toBe(false);
+    // INBOX should still be included
+    expect(folders.some((f) => f.name === 'INBOX')).toBe(true);
+    // Sent Mail should be included (selectable, identified as sent folder)
+    expect(folders.some((f) => f.name === 'Sent Mail')).toBe(true);
+  });
+
+  // TEST: when sent folder itself has \Noselect flag, it should be excluded
+  it('skips APPEND by not including a \\Noselect sent folder from results', async () => {
+    const mockClient = {
+      list: jest.fn().mockResolvedValue([
+        {
+          path: 'INBOX',
+          name: 'INBOX',
+          flags: new Set<string>(['\\HasNoChildren']),
+          parentPath: '',
+        },
+        {
+          path: 'Sent',
+          name: 'Sent',
+          flags: new Set<string>(['\\Noselect', '\\HasChildren']),
+          parentPath: '',
+        },
+      ]),
+      status: jest.fn().mockRejectedValue(new Error('Mailbox does not exist')),
+      logout: jest.fn(),
+    };
+
+    (imapClientProvider.getClient as jest.Mock).mockResolvedValue(mockClient);
+    (imapClientProvider.closeClient as jest.Mock).mockResolvedValue(undefined);
+    // imapFindSentFolderService returns a folder that has \Noselect flag
+    (imapFindSentFolderService.findSentFolder as jest.Mock).mockResolvedValue({
+      path: 'Sent',
+      name: 'Sent',
+    });
+
+    const folders = await service.getAllMessageFolders(
+      mockConnectedAccount,
+      mockMessageChannel as any,
+    );
+
+    // Sent folder has \Noselect — it must NOT be included to prevent APPEND failure
+    expect(folders.some((f) => f.name === 'Sent' && f.isSentFolder)).toBe(false);
+    // INBOX should still be present
+    expect(folders.some((f) => f.name === 'INBOX')).toBe(true);
+  });
+
   });
 });
