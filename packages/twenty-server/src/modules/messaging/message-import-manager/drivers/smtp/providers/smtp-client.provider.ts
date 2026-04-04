@@ -7,12 +7,14 @@ import { isDefined } from 'twenty-shared/utils';
 import type SMTPConnection from 'nodemailer/lib/smtp-connection';
 
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
 export class SmtpClientProvider {
   constructor(
     private readonly secureHttpClientService: SecureHttpClientService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   public async getSmtpClient(
@@ -36,17 +38,40 @@ export class SmtpClientProvider {
     const validatedSmtpHost =
       await this.secureHttpClientService.getValidatedHost(host);
 
-    const auth: { user: string; pass?: string; accessToken?: string; type?: string } = {
+    const auth: { 
+      user: string; 
+      pass?: string; 
+      accessToken?: string; 
+      type?: string;
+      clientId?: string;
+      clientSecret?: string;
+      refreshToken?: string;
+    } = {
       user: username ?? connectedAccount.handle ?? '',
     };
 
     if (
-      (connectedAccount.provider === ConnectedAccountProvider.GOOGLE ||
-        connectedAccount.provider === ConnectedAccountProvider.MICROSOFT) &&
+      connectedAccount.provider === ConnectedAccountProvider.GOOGLE &&
       isDefined(connectedAccount.accessToken)
     ) {
       auth.type = 'OAuth2';
       auth.accessToken = connectedAccount.accessToken as string;
+      if (isDefined(connectedAccount.refreshToken)) {
+        auth.refreshToken = connectedAccount.refreshToken as string;
+        auth.clientId = this.twentyConfigService.get('AUTH_GOOGLE_CLIENT_ID') as string;
+        auth.clientSecret = this.twentyConfigService.get('AUTH_GOOGLE_CLIENT_SECRET') as string;
+      }
+    } else if (
+      connectedAccount.provider === ConnectedAccountProvider.MICROSOFT &&
+      isDefined(connectedAccount.accessToken)
+    ) {
+      auth.type = 'OAuth2';
+      auth.accessToken = connectedAccount.accessToken as string;
+      if (isDefined(connectedAccount.refreshToken)) {
+        auth.refreshToken = connectedAccount.refreshToken as string;
+        auth.clientId = this.twentyConfigService.get('AUTH_MICROSOFT_CLIENT_ID') as string;
+        auth.clientSecret = this.twentyConfigService.get('AUTH_MICROSOFT_CLIENT_SECRET') as string;
+      }
     } else {
       auth.pass = password;
     }
