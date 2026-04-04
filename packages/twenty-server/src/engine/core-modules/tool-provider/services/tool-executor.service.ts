@@ -246,7 +246,7 @@ export class ToolExecutorService {
     return {
       success: true,
       message: 'Logic function executed successfully',
-      result: result.data,
+      result: result.data ?? undefined,
     };
   }
 

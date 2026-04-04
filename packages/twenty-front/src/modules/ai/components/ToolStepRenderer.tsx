@@ -221,7 +221,7 @@ export const ToolStepRenderer = ({
         rawToolName === 'execute_tool' ||
         rawToolName === 'load_skills'
       ? getToolDisplayMessage(input, rawToolName, true)
-      : toolMessage ?? getToolDisplayMessage(input, rawToolName, true);
+      : (toolMessage ?? getToolDisplayMessage(input, rawToolName, true));
 
   const result = toolError ? { error: toolError } : outputObj;
 
