@@ -13,6 +13,7 @@ import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-co
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapFindDraftsFolderService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-drafts-folder.service';
 import { ImapFindSentFolderService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-sent-folder.service';
+import { ImapIdleService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-idle.service';
 import { ImapGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-message-list.service';
 import { ImapGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-messages.service';
 import { ImapMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-list-fetch-error-handler.service';
@@ -20,14 +21,17 @@ import { ImapMessageParserService } from 'src/modules/messaging/message-import-m
 import { ImapMessageTextExtractorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-text-extractor.service';
 import { ImapMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-messages-import-error-handler.service';
 import { ImapSyncService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-sync.service';
+import { MessagingImapIdleCronJob } from 'src/modules/messaging/message-import-manager/drivers/imap/crons/jobs/messaging-imap-idle.cron.job';
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Module({
   imports: [
     HttpModule,
     ObjectMetadataRepositoryModule.forFeature([BlocklistWorkspaceEntity]),
     MessagingCommonModule,
-    TypeOrmModule.forFeature([FeatureFlagEntity]),
+    TypeOrmModule.forFeature([FeatureFlagEntity, WorkspaceEntity, ConnectedAccountWorkspaceEntity]),
     EmailAliasManagerModule,
     FeatureFlagModule,
     SecureHttpClientModule,
@@ -45,6 +49,8 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
     ImapFindDraftsFolderService,
     ImapFindSentFolderService,
     ImapMessageTextExtractorService,
+    ImapIdleService,
+    MessagingImapIdleCronJob,
   ],
   exports: [
     ImapGetMessagesService,
@@ -52,6 +58,8 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
     ImapClientProvider,
     ImapFindDraftsFolderService,
     ImapFindSentFolderService,
+    ImapIdleService,
+    MessagingImapIdleCronJob,
   ],
 })
 export class MessagingIMAPDriverModule {}

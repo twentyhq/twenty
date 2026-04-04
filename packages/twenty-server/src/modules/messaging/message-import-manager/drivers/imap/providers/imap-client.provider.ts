@@ -12,7 +12,7 @@ import { parseImapAuthenticationError } from 'src/modules/messaging/message-impo
 
 type ConnectedAccountIdentifier = Pick<
   ConnectedAccountWorkspaceEntity,
-  'id' | 'provider' | 'connectionParameters' | 'handle'
+  'id' | 'provider' | 'connectionParameters' | 'handle' | 'accessToken'
 >;
 
 @Injectable()
@@ -76,16 +76,27 @@ export class ImapClientProvider {
         connectionParameters.IMAP?.host || '',
       );
 
+    const auth: { user: string; pass?: string; accessToken?: string } = {
+      user: isDefined(connectionParameters.IMAP?.username)
+        ? (connectionParameters.IMAP?.username as string)
+        : (connectedAccount.handle as string),
+    };
+
+    if (
+      (connectedAccount.provider === ConnectedAccountProvider.GOOGLE ||
+        connectedAccount.provider === ConnectedAccountProvider.MICROSOFT) &&
+      isDefined(connectedAccount.accessToken)
+    ) {
+      auth.accessToken = connectedAccount.accessToken as string;
+    } else {
+      auth.pass = connectionParameters.IMAP?.password || '';
+    }
+
     const client = new ImapFlow({
       host: validatedImapHost,
       port: connectionParameters.IMAP?.port || 993,
       secure: connectionParameters.IMAP?.secure,
-      auth: {
-        user: isDefined(connectionParameters.IMAP?.username)
-          ? connectionParameters.IMAP?.username
-          : connectedAccount.handle,
-        pass: connectionParameters.IMAP?.password || '',
-      },
+      auth,
       logger: false,
       tls: {
         rejectUnauthorized: false,

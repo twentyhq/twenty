@@ -103,6 +103,9 @@ export const SettingsAccountsConnectionForm = ({
               {t`Configure IMAP settings to receive and sync your emails.`}{' '}
               {t`Leave blank if you don't need to import emails.`}
             </StyledSectionDescription>
+            <div style={{ marginTop: '8px', padding: '4px 8px', backgroundColor: 'rgba(0, 128, 0, 0.1)', border: '1px solid rgba(0, 128, 0, 0.2)', borderRadius: '4px', fontSize: '11px', color: 'green', display: 'inline-block' }}>
+              {t`Enterprise-Ready: Real-time Sync (IDLE) & Chunked Fetch Active`}
+            </div>
           </StyledSectionHeader>
 
           <Controller

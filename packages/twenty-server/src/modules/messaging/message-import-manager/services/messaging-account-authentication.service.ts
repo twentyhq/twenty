@@ -35,7 +35,8 @@ export class MessagingAccountAuthenticationService {
   }: ValidateAndRefreshConnectedAccountAuthenticationParams): Promise<ConnectedAccountTokens> {
     if (
       connectedAccount.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
-      isDefined(connectedAccount.connectionParameters?.IMAP)
+      isDefined(connectedAccount.connectionParameters?.IMAP) &&
+      !isDefined(connectedAccount.accessToken)
     ) {
       await this.validateImapCredentialsForConnectedAccount({
         connectedAccount,

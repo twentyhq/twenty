@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type FetchMessageObject, type ImapFlow } from 'imapflow';
+import chunk from 'lodash.chunk';
 import PostalMime, { type Email as ParsedEmail } from 'postal-mime';
 
 export type MessageParseResult = {
@@ -17,6 +18,8 @@ export type FolderParseResult = {
 @Injectable()
 export class ImapMessageParserService {
   private readonly logger = new Logger(ImapMessageParserService.name);
+
+  private static readonly FETCH_CHUNK_SIZE = 25;
 
   async parseMessagesFromFolder(
     messageUids: number[],
@@ -35,21 +38,25 @@ export class ImapMessageParserService {
           ? client.mailbox.uidValidity
           : null;
 
-      const uidSet = messageUids.join(',');
       const startTime = Date.now();
-
-      const messages = await client.fetchAll(
-        uidSet,
-        { uid: true, source: true },
-        { uid: true },
-      );
-
-      const fetchedUids = new Set<number>();
       const results: MessageParseResult[] = [];
+      const fetchedUids = new Set<number>();
 
-      for (const message of messages) {
-        fetchedUids.add(message.uid);
-        results.push(await this.parseMessage(message));
+      const uidChunks = chunk(messageUids, ImapMessageParserService.FETCH_CHUNK_SIZE);
+
+      for (const uidChunk of uidChunks) {
+        const uidSet = uidChunk.join(',');
+        
+        const messages = await client.fetchAll(
+          uidSet,
+          { uid: true, source: true },
+          { uid: true },
+        );
+
+        for (const message of messages) {
+          fetchedUids.add(message.uid);
+          results.push(await this.parseMessage(message));
+        }
       }
 
       for (const uid of messageUids) {
@@ -59,7 +66,7 @@ export class ImapMessageParserService {
       }
 
       this.logger.log(
-        `Fetched and parsed ${results.length} messages from ${folderPath} in ${Date.now() - startTime}ms`,
+        `Fetched and parsed ${results.length} messages from ${folderPath} in ${Date.now() - startTime}ms using ${uidChunks.length} chunks`,
       );
 
       return { messages: results, uidValidity };

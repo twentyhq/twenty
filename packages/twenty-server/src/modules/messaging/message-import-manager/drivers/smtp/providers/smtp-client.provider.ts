@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { createTransport, type Transporter } from 'nodemailer';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import type SMTPConnection from 'nodemailer/lib/smtp-connection';
@@ -17,7 +18,11 @@ export class SmtpClientProvider {
   public async getSmtpClient(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'connectionParameters' | 'handle'
+      | 'connectionParameters'
+      | 'handle'
+      | 'provider'
+      | 'accessToken'
+      | 'refreshToken'
     >,
   ): Promise<Transporter> {
     const smtpParams = connectedAccount.connectionParameters?.SMTP;
@@ -26,16 +31,29 @@ export class SmtpClientProvider {
       throw new Error('SMTP settings not configured for this account');
     }
 
+    const { host, port, username, password } = smtpParams;
+
     const validatedSmtpHost =
-      await this.secureHttpClientService.getValidatedHost(smtpParams.host);
+      await this.secureHttpClientService.getValidatedHost(host);
+
+    const auth: { user: string; pass?: string; accessToken?: string } = {
+      user: username ?? connectedAccount.handle ?? '',
+    };
+
+    if (
+      (connectedAccount.provider === ConnectedAccountProvider.GOOGLE ||
+        connectedAccount.provider === ConnectedAccountProvider.MICROSOFT) &&
+      isDefined(connectedAccount.accessToken)
+    ) {
+      auth.accessToken = connectedAccount.accessToken as string;
+    } else {
+      auth.pass = password;
+    }
 
     const options: SMTPConnection.Options = {
       host: validatedSmtpHost,
-      port: smtpParams.port,
-      auth: {
-        user: smtpParams.username ?? connectedAccount.handle ?? '',
-        pass: smtpParams.password,
-      },
+      port,
+      auth,
       tls: {
         rejectUnauthorized: false,
       },
