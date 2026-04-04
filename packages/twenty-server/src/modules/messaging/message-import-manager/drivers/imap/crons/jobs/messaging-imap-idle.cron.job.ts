@@ -70,12 +70,12 @@ export class MessagingImapIdleCronJob {
            // For now, we manually construct a partial that matches the requirements
            // or we load it properly.
            const connectedAccount = isMigrated
-             ? await this.coreDataSource.getRepository('connectedAccount').findOne({
-                 where: { id: messageChannel.connectedAccountId }
-               }) as any
+             ? await this.coreDataSource.query(
+                 `SELECT * FROM core."connectedAccount" WHERE id = '${messageChannel.connectedAccountId}'`
+               ).then((res: any[]) => res[0]) as any
              : await this.coreDataSource.query(
                  `SELECT * FROM ${workspaceSchema}."connectedAccount" WHERE id = '${messageChannel.connectedAccountId}'`
-               ).then(res => res[0]) as any;
+               ).then((res: any[]) => res[0]) as any;
 
            if (connectedAccount) {
              await this.imapIdleService.startIdle(connectedAccount, activeWorkspace.id);
