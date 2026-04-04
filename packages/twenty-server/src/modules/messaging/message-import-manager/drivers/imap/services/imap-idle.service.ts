@@ -54,6 +54,7 @@ export class ImapIdleService implements OnModuleDestroy {
       // Handle IDLE in background
       client.idle().then(() => {
         this.logger.debug(`IDLE stopped for ${connectedAccount.handle}`);
+        this.stopIdle(accountId);
       }).catch((error) => {
         this.logger.error(`IDLE error for ${connectedAccount.handle}: ${error.message}`);
         this.stopIdle(accountId);
