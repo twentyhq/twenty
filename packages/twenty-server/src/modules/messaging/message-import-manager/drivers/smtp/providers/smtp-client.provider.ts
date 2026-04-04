@@ -27,13 +27,34 @@ export class SmtpClientProvider {
       | 'refreshToken'
     >,
   ): Promise<Transporter> {
-    const smtpParams = connectedAccount.connectionParameters?.SMTP;
+    const isGoogle = connectedAccount.provider === ConnectedAccountProvider.GOOGLE;
+    const isMicrosoft = connectedAccount.provider === ConnectedAccountProvider.MICROSOFT;
 
-    if (!isDefined(smtpParams)) {
-      throw new Error('SMTP settings not configured for this account');
+    let host = '';
+    let port = 0;
+    let username = '';
+    let password = '';
+
+    if (isGoogle) {
+      host = 'smtp.gmail.com';
+      port = 465;
+    } else if (isMicrosoft) {
+      host = 'smtp.office365.com';
+      port = 587;
+    } else {
+      const smtpParams = connectedAccount.connectionParameters?.SMTP;
+
+      if (!isDefined(smtpParams)) {
+        throw new Error('SMTP settings not configured for this account');
+      }
+
+      const { host: smtpHost, port: smtpPort, username: smtpUsername, password: smtpPassword } = smtpParams as any;
+
+      host = smtpHost;
+      port = smtpPort;
+      username = smtpUsername;
+      password = smtpPassword;
     }
-
-    const { host, port, username, password } = smtpParams;
 
     const validatedSmtpHost =
       await this.secureHttpClientService.getValidatedHost(host);
@@ -47,13 +68,10 @@ export class SmtpClientProvider {
       clientSecret?: string;
       refreshToken?: string;
     } = {
-      user: username ?? connectedAccount.handle ?? '',
+      user: isGoogle || isMicrosoft ? connectedAccount.handle ?? '' : username,
     };
 
-    if (
-      connectedAccount.provider === ConnectedAccountProvider.GOOGLE &&
-      isDefined(connectedAccount.accessToken)
-    ) {
+    if (isGoogle && isDefined(connectedAccount.accessToken)) {
       auth.type = 'OAuth2';
       auth.accessToken = connectedAccount.accessToken as string;
       if (isDefined(connectedAccount.refreshToken)) {
@@ -61,10 +79,7 @@ export class SmtpClientProvider {
         auth.clientId = this.twentyConfigService.get('AUTH_GOOGLE_CLIENT_ID') as string;
         auth.clientSecret = this.twentyConfigService.get('AUTH_GOOGLE_CLIENT_SECRET') as string;
       }
-    } else if (
-      connectedAccount.provider === ConnectedAccountProvider.MICROSOFT &&
-      isDefined(connectedAccount.accessToken)
-    ) {
+    } else if (isMicrosoft && isDefined(connectedAccount.accessToken)) {
       auth.type = 'OAuth2';
       auth.accessToken = connectedAccount.accessToken as string;
       if (isDefined(connectedAccount.refreshToken)) {
