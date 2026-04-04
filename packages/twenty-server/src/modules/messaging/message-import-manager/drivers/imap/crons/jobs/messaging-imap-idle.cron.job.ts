@@ -55,14 +55,14 @@ export class MessagingImapIdleCronJob {
                JOIN core."connectedAccount" ca ON mc."connectedAccountId" = ca.id
                WHERE mc."workspaceId" = '${activeWorkspace.id}' 
                AND mc."isSyncEnabled" = true 
-               AND ca.provider = '${ConnectedAccountProvider.IMAP_SMTP_CALDAV}'`
+               AND ca.provider IN ('${ConnectedAccountProvider.IMAP_SMTP_CALDAV}', '${ConnectedAccountProvider.GOOGLE}', '${ConnectedAccountProvider.MICROSOFT}')`
             )
           : await this.coreDataSource.query(
               `SELECT mc.*, ca.provider, ca.id as "connectedAccountId" 
                FROM ${workspaceSchema}."messageChannel" mc
                JOIN ${workspaceSchema}."connectedAccount" ca ON mc."connectedAccountId" = ca.id
                WHERE mc."isSyncEnabled" = true 
-               AND ca.provider = '${ConnectedAccountProvider.IMAP_SMTP_CALDAV}'`
+               AND ca.provider IN ('${ConnectedAccountProvider.IMAP_SMTP_CALDAV}', '${ConnectedAccountProvider.GOOGLE}', '${ConnectedAccountProvider.MICROSOFT}')`
             );
 
         for (const messageChannel of messageChannels) {
