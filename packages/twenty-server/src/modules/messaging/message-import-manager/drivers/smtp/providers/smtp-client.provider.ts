@@ -36,7 +36,7 @@ export class SmtpClientProvider {
     const validatedSmtpHost =
       await this.secureHttpClientService.getValidatedHost(host);
 
-    const auth: { user: string; pass?: string; accessToken?: string } = {
+    const auth: { user: string; pass?: string; accessToken?: string; type?: string } = {
       user: username ?? connectedAccount.handle ?? '',
     };
 
@@ -45,6 +45,7 @@ export class SmtpClientProvider {
         connectedAccount.provider === ConnectedAccountProvider.MICROSOFT) &&
       isDefined(connectedAccount.accessToken)
     ) {
+      auth.type = 'OAuth2';
       auth.accessToken = connectedAccount.accessToken as string;
     } else {
       auth.pass = password;

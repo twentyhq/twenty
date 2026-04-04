@@ -54,7 +54,11 @@ export class ImapClientProvider {
     connectedAccount: ConnectedAccountIdentifier,
   ): Promise<ImapFlow> {
     if (
-      connectedAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV ||
+      ![
+        ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+        ConnectedAccountProvider.GOOGLE,
+        ConnectedAccountProvider.MICROSOFT,
+      ].includes(connectedAccount.provider as ConnectedAccountProvider) ||
       !isDefined(connectedAccount.connectionParameters?.IMAP)
     ) {
       throw new Error('Connected account is not an IMAP provider');
