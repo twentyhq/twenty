@@ -1498,6 +1498,11 @@ msgstr "Contact auto creation policy"
 msgid "Content cannot be empty"
 msgstr "Content cannot be empty"
 
+#. js-lingui-id: 869Uds
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
+msgid "Content contains a URL with a dangerous protocol."
+msgstr "Content contains a URL with a dangerous protocol."
+
 #. js-lingui-id: cmBz2p
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "Contradicting field permissions have been detected on a relation field."
