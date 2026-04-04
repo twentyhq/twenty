@@ -137,6 +137,7 @@ describe('ImapGetAllFoldersService', () => {
     const childFolder = folders.find((f: MessageFolder) => f.name === 'Child');
     // Child's parentFolderId should be the path-based externalId of the \Noselect parent
     expect(childFolder?.parentFolderId).toBe('INBOX.Parents');
+  });
 
   it('excludes sent folder from results when it has \\Noselect flag to prevent APPEND failure', async () => {
     const mockClient = {
