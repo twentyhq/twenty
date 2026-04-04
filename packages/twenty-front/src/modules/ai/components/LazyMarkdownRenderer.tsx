@@ -18,7 +18,7 @@ import {
   useContext,
 } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { isDefined } from 'twenty-shared/utils';
+import { getSafeUrl, isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const TextWithRecordLinks = ({ text }: { text: string }) => {
@@ -121,13 +121,13 @@ const MarkdownRenderer = lazy(async () => {
           li: ({ children }) => (
             <li>{processChildrenForRecordLinks(children)}</li>
           ),
-          a: ({ children, href, title, target, rel, node: _node }) => (
+          a: ({ children, href, title, node: _node }) => (
             <a
               className="markdown-link"
-              href={href}
+              href={getSafeUrl(href)}
               title={title}
-              target={target}
-              rel={rel}
+              target="_blank"
+              rel="noopener noreferrer"
             >
               {processChildrenForRecordLinks(children)}
             </a>
