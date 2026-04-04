@@ -6,14 +6,23 @@ const fetchAllPeople = async () => {
   const client = new CoreApiClient();
   const result = await client.query({
     people: {
+      __args: {
+        filter: {
+          /*
+          lastInteraction: {
+            is: 'NOT_NULL',
+          },
+          */
+        },
+      },
       edges: {
         node: {
           id: true,
           lastInteraction: true,
           interactionStatus: true,
-        }
-      }
-    }
+        },
+      },
+    },
   });
   if (!result.people) {
     throw new Error('Could not find any people');
@@ -25,14 +34,23 @@ const fetchAllCompanies = async () => {
   const client = new CoreApiClient();
   const result = await client.query({
     companies: {
+      __args: {
+        filter: {
+          /* how to fetch fields added in fields folder?
+          lastInteraction: {
+            is: 'NOT_NULL',
+          },
+          */
+        },
+      },
       edges: {
         node: {
           id: true,
           lastInteraction: true,
           interactionStatus: true,
-        }
-      }
-    }
+        },
+      },
+    },
   });
   if (!result.companies) {
     throw new Error('Could not find any companies');
