@@ -2407,7 +2407,7 @@ export type MessageFolder = {
   isSynced: Scalars['Boolean'];
   messageChannelId: Scalars['UUID'];
   name?: Maybe<Scalars['String']>;
-  parentFolderId?: Maybe<Scalars['UUID']>;
+  parentFolderId?: Maybe<Scalars['String']>;
   pendingSyncAction: MessageFolderPendingSyncAction;
   updatedAt: Scalars['DateTime'];
 };

@@ -36,6 +36,7 @@ import { CoreEngineVersionService } from 'src/engine/core-engine-version/service
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 import { DropWorkspaceMessagingFksCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-drop-workspace-messaging-fks.command';
+import { MigrateMessageFolderParentIdToExternalIdCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-migrate-message-folder-parent-id-to-external-id.command';
 
 @Command({
   name: 'upgrade',
@@ -78,6 +79,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     private readonly migrateAiAgentTextToJsonResponseFormatCommand: MigrateAiAgentTextToJsonResponseFormatCommand,
     private readonly updateEditLayoutCommandMenuItemLabelCommand: UpdateEditLayoutCommandMenuItemLabelCommand,
     private readonly dropWorkspaceMessagingFksCommand: DropWorkspaceMessagingFksCommand,
+    private readonly migrateMessageFolderParentIdToExternalIdCommand: MigrateMessageFolderParentIdToExternalIdCommand,
   ) {
     super(
       workspaceRepository,
@@ -117,6 +119,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.migrateAiAgentTextToJsonResponseFormatCommand,
       this.updateEditLayoutCommandMenuItemLabelCommand,
       this.dropWorkspaceMessagingFksCommand,
+      this.migrateMessageFolderParentIdToExternalIdCommand,
     ];
 
     this.allCommands = {

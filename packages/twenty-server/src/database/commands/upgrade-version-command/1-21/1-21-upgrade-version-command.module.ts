@@ -8,6 +8,7 @@ import { BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand } from 'src/databas
 import { DeduplicateEngineCommandsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-deduplicate-engine-commands.command';
 import { DropWorkspaceMessagingFksCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-drop-workspace-messaging-fks.command';
 import { FixSelectAllCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-fix-select-all-command-menu-items.command';
+import { MigrateMessageFolderParentIdToExternalIdCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-migrate-message-folder-parent-id-to-external-id.command';
 import { MigrateAiAgentTextToJsonResponseFormatCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-migrate-ai-agent-text-to-json-response-format.command';
 import { UpdateEditLayoutCommandMenuItemLabelCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-update-edit-layout-command-menu-item-label.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -15,13 +16,14 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([WorkspaceEntity, DataSourceEntity]),
+    TypeOrmModule.forFeature([WorkspaceEntity, DataSourceEntity, MessageFolderEntity]),
     DataSourceModule,
     WorkspaceCacheModule,
     ApplicationModule,
@@ -39,6 +41,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     MigrateAiAgentTextToJsonResponseFormatCommand,
     UpdateEditLayoutCommandMenuItemLabelCommand,
     DropWorkspaceMessagingFksCommand,
+    MigrateMessageFolderParentIdToExternalIdCommand,
   ],
   exports: [
     AddGlobalKeyValuePairUniqueIndexCommand,
@@ -49,6 +52,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     MigrateAiAgentTextToJsonResponseFormatCommand,
     UpdateEditLayoutCommandMenuItemLabelCommand,
     DropWorkspaceMessagingFksCommand,
+    MigrateMessageFolderParentIdToExternalIdCommand,
   ],
 })
 export class V1_21_UpgradeVersionCommandModule {}

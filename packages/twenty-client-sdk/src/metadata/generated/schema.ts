@@ -2628,7 +2628,7 @@ export interface MessageFolder {
     name?: Scalars['String']
     isSentFolder: Scalars['Boolean']
     isSynced: Scalars['Boolean']
-    parentFolderId?: Scalars['UUID']
+    parentFolderId?: Scalars['String']
     externalId?: Scalars['String']
     pendingSyncAction: MessageFolderPendingSyncAction
     messageChannelId: Scalars['UUID']
