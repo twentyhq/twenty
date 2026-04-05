@@ -59,7 +59,6 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WebSearchService } from 'src/engine/core-modules/web-search/web-search.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
@@ -96,7 +95,6 @@ export class ChatExecutionService {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly sdkProviderFactory: SdkProviderFactoryService,
     private readonly messagePruningService: MessagePruningService,
-    private readonly twentyConfigService: TwentyConfigService,
     private readonly webSearchService: WebSearchService,
   ) {}
 
@@ -165,12 +163,10 @@ export class ChatExecutionService {
       registeredModel.modelId,
     );
 
-    const shouldUseNativeSearch =
-      this.twentyConfigService.get('WEB_SEARCH_PREFER_NATIVE') ||
-      !this.webSearchService.isEnabled();
+    const useNativeSearch = this.webSearchService.shouldUseNativeSearch();
 
     const { tools: nativeSearchTools, callableToolNames: searchToolNames } =
-      shouldUseNativeSearch
+      useNativeSearch
         ? this.getNativeWebSearchTools(registeredModel)
         : { tools: {}, callableToolNames: [] };
 
@@ -321,14 +317,16 @@ export class ChatExecutionService {
         userWorkspaceId,
       );
 
-      const nativeWebSearchCallCount =
-        countNativeWebSearchCallsFromSteps(steps);
+      if (useNativeSearch) {
+        const nativeWebSearchCallCount =
+          countNativeWebSearchCallsFromSteps(steps);
 
-      this.aiBillingService.billNativeWebSearchUsage(
-        nativeWebSearchCallCount,
-        workspace.id,
-        userWorkspaceId,
-      );
+        this.aiBillingService.billNativeWebSearchUsage(
+          nativeWebSearchCallCount,
+          workspace.id,
+          userWorkspaceId,
+        );
+      }
     };
 
     const stream = streamText({

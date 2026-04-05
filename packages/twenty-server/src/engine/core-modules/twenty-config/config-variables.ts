@@ -663,7 +663,7 @@ export class ConfigVariables {
   CODE_INTERPRETER_TIMEOUT_MS = 300_000;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.WEB_SEARCH_CONFIG,
+    group: ConfigVariablesGroup.LLM,
     description:
       'Web search driver type - EXA for Exa search, DISABLED to turn off',
     type: ConfigVariableType.STRING,
@@ -674,7 +674,7 @@ export class ConfigVariables {
   WEB_SEARCH_DRIVER: WebSearchDriverType = WebSearchDriverType.DISABLED;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.WEB_SEARCH_CONFIG,
+    group: ConfigVariablesGroup.LLM,
     description: 'Exa API key for web search',
     type: ConfigVariableType.STRING,
     isSensitive: true,
@@ -683,7 +683,7 @@ export class ConfigVariables {
   EXA_API_KEY?: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.WEB_SEARCH_CONFIG,
+    group: ConfigVariablesGroup.LLM,
     description:
       'When true, use native provider search (Anthropic/OpenAI) when available. When false, always prefer the configured driver (e.g. Exa).',
     type: ConfigVariableType.BOOLEAN,

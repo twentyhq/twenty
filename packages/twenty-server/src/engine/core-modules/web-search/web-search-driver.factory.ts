@@ -19,7 +19,7 @@ export class WebSearchDriverFactory extends DriverFactoryBase<WebSearchDriver> {
     const driverType = this.twentyConfigService.get('WEB_SEARCH_DRIVER');
 
     if (driverType !== WebSearchDriverType.DISABLED) {
-      return `${driverType}|${this.getConfigGroupHash(ConfigVariablesGroup.WEB_SEARCH_CONFIG)}`;
+      return `${driverType}|${this.getConfigGroupHash(ConfigVariablesGroup.LLM)}`;
     }
 
     return driverType;
