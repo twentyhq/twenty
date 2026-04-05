@@ -23,7 +23,11 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([WorkspaceEntity, DataSourceEntity, MessageFolderEntity]),
+    TypeOrmModule.forFeature([
+      WorkspaceEntity,
+      DataSourceEntity,
+      MessageFolderEntity,
+    ]),
     DataSourceModule,
     WorkspaceCacheModule,
     ApplicationModule,
