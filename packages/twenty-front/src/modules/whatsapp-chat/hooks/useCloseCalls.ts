@@ -10,6 +10,7 @@ export interface CloseCall {
   status: string | null;
   disposition: string | null;
   note: string | null;
+  summary: string | null;
   userName: string | null;
   dateCreated: string | null;
   leadId: string | null;
