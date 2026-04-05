@@ -688,7 +688,12 @@ const StyledCallNote = styled.div`
   max-height: 200px;
   overflow-y: auto;
   padding: 8px 10px;
-  white-space: pre-wrap;
+
+  p { margin: 4px 0; }
+  ul, ol { margin: 4px 0; padding-left: 18px; }
+  li { margin: 2px 0; }
+  strong { font-weight: 600; }
+  h1, h2, h3, h4 { font-size: 12px; font-weight: 600; margin: 6px 0 2px; }
 `;
 
 const StyledCallCopyButton = styled.button`
@@ -2510,7 +2515,9 @@ export const ConversationDetails = ({
 
                         {(call.summary || call.note) && (
                           <>
-                            <StyledCallNote>{call.summary || call.note}</StyledCallNote>
+                            <StyledCallNote>
+                              <ReactMarkdown>{call.summary || call.note || ''}</ReactMarkdown>
+                            </StyledCallNote>
                             <StyledCallCopyButton
                               onClick={(e) => {
                                 e.stopPropagation();
