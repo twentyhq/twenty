@@ -12,13 +12,12 @@ import {
 } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool.schema';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import {
-  type Tool,
-  type ToolExecutionContext,
-} from 'src/engine/core-modules/tool/types/tool.type';
+import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
+import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -182,66 +181,80 @@ export class NavigateAppTool implements Tool {
         },
       );
 
-    const availableObjectNames = navigationMenuItems
-      .map((navigationMenuItem) => {
-        if (isDefined(navigationMenuItem.viewId)) {
-          const correspondingViewUniversalIdentifier =
-            flatViewMaps.universalIdentifierById[navigationMenuItem.viewId];
+    type NavigatableObject = {
+      nameSingular: string;
+      labelSingular: string;
+      labelPlural: string;
+    };
 
-          if (isDefined(correspondingViewUniversalIdentifier)) {
-            const correspondingView =
-              flatViewMaps.byUniversalIdentifier[
-                correspondingViewUniversalIdentifier
-              ];
+    const navigatableObjects = navigationMenuItems
+      .map<NavigatableObject | null>((navigationMenuItem) => {
+        const objectMetadataId =
+          navigationMenuItem.type === NavigationMenuItemType.OBJECT
+            ? navigationMenuItem.targetObjectMetadataId
+            : navigationMenuItem.type === NavigationMenuItemType.VIEW &&
+                isDefined(navigationMenuItem.viewId)
+              ? flatViewMaps.byUniversalIdentifier[
+                  flatViewMaps.universalIdentifierById[
+                    navigationMenuItem.viewId
+                  ] ?? ''
+                ]?.objectMetadataId
+              : undefined;
 
-            if (isDefined(correspondingView)) {
-              const correspondingObjectMetadataUniversalIdentifier =
-                flatObjectMetadataMaps.universalIdentifierById[
-                  correspondingView.objectMetadataId
-                ];
-
-              if (isDefined(correspondingObjectMetadataUniversalIdentifier)) {
-                const correspondingObjectMetadata =
-                  flatObjectMetadataMaps.byUniversalIdentifier[
-                    correspondingObjectMetadataUniversalIdentifier
-                  ];
-
-                if (isDefined(correspondingObjectMetadata)) {
-                  const correspondingObjectNameSingular =
-                    correspondingObjectMetadata.nameSingular;
-
-                  return correspondingObjectNameSingular;
-                }
-              }
-            }
-          }
+        if (!isDefined(objectMetadataId)) {
+          return null;
         }
 
-        return null;
+        const objectMetadataUniversalIdentifier =
+          flatObjectMetadataMaps.universalIdentifierById[objectMetadataId];
+
+        if (!isDefined(objectMetadataUniversalIdentifier)) {
+          return null;
+        }
+
+        const objectMetadata =
+          flatObjectMetadataMaps.byUniversalIdentifier[
+            objectMetadataUniversalIdentifier
+          ];
+
+        if (!isDefined(objectMetadata)) {
+          return null;
+        }
+
+        return {
+          nameSingular: objectMetadata.nameSingular,
+          labelSingular: objectMetadata.labelSingular,
+          labelPlural: objectMetadata.labelPlural,
+        };
       })
       .filter(isDefined);
 
-    const fuse = new Fuse(availableObjectNames, {
-      threshold: 0.6,
+    const fuse = new Fuse(navigatableObjects, {
+      keys: ['nameSingular', 'labelSingular', 'labelPlural'],
+      threshold: 0.4,
     });
 
-    const results = fuse.search(objectNameSingular.replace(/\s/g, ''));
-    const firstMatchingNavigationItemLabel = results[0]?.item;
+    const results = fuse.search(objectNameSingular);
+    const matchingObject = results[0]?.item;
 
-    if (!isDefined(firstMatchingNavigationItemLabel)) {
+    if (!isDefined(matchingObject)) {
+      const availableLabels = navigatableObjects
+        .map((object) => object.labelPlural)
+        .join(', ');
+
       return {
         success: false,
         message: `Object "${objectNameSingular}" not found`,
-        error: `No object with singular name "${objectNameSingular}" was found in this workspace. Available objects: ${availableObjectNames}`,
+        error: `No object matching "${objectNameSingular}" was found in this workspace. Available objects: ${availableLabels}`,
       };
     }
 
     return {
       success: true,
-      message: `Navigating to ${firstMatchingNavigationItemLabel} default view`,
+      message: `Navigating to ${matchingObject.labelPlural} default view`,
       result: {
         action: 'navigateToObject',
-        objectNameSingular: firstMatchingNavigationItemLabel,
+        objectNameSingular: matchingObject.nameSingular,
       },
     };
   }

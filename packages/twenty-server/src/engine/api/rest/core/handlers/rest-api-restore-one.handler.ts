@@ -38,16 +38,17 @@ export class RestApiRestoreOneHandler extends RestApiBaseHandler {
         authContext,
       });
 
-      const record = await this.commonRestoreOneQueryRunnerService.execute(
-        { id, selectedFields },
-        {
-          authContext,
-          flatObjectMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          objectIdByNameSingular,
-        },
-      );
+      const { results: record } =
+        await this.commonRestoreOneQueryRunnerService.execute(
+          { id, selectedFields },
+          {
+            authContext,
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            objectIdByNameSingular,
+          },
+        );
 
       return this.formatRestResponse(record, flatObjectMetadata.nameSingular);
     } catch (error) {

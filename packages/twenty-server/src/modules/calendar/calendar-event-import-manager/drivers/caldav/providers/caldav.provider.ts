@@ -26,9 +26,10 @@ export class CalDavClientProvider {
       throw new Error('Missing required CalDAV connection parameters');
     }
 
-    const serverUrl = await this.secureHttpClientService.getValidatedUrl(
+    await this.secureHttpClientService.getValidatedHost(
       connectedAccount.connectionParameters.CALDAV.host,
     );
+    const serverUrl = connectedAccount.connectionParameters.CALDAV.host;
 
     return new CalDAVClient({
       username:

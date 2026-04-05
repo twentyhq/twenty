@@ -1,4 +1,4 @@
-import { Image } from '@/design-system/components';
+import { Image, LazyEmbed } from '@/design-system/components';
 import { IllustrationType } from '@/design-system/components/Illustration/types/Illustration';
 import { ImageType } from '@/design-system/components/Image/types/Image';
 import { theme } from '@/theme';
@@ -17,7 +17,7 @@ const StyledBackground = styled(Image)`
   height: 100%;
 `;
 
-const StyledIframe = styled.iframe`
+const StyledIframe = styled(LazyEmbed)`
   border: none;
   height: 200%;
   mix-blend-mode: lighten;
@@ -38,8 +38,10 @@ export function WhyTwentyVisual({ image, illustration }: WhyTwentyVisualProps) {
     <VisualContainer>
       <StyledBackground src={image.src} alt={image.alt} />
       <StyledIframe
+        eager
         src={illustration.src}
         title={illustration.title}
+        unloadWhenHidden={false}
         allow="clipboard-write; encrypted-media; gyroscope; web-share"
         referrerPolicy="strict-origin-when-cross-origin"
         allowFullScreen

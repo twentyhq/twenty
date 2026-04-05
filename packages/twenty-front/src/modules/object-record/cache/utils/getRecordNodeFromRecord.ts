@@ -4,13 +4,12 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { computePossibleMorphGqlFieldForFieldName } from '@/object-record/cache/utils/computePossibleMorphGqlFieldForFieldName';
 import { getFieldMetadataFromGqlField } from '@/object-record/cache/utils/getFieldMetadataFromGqlField';
 import { getMorphRelationFromFieldMetadataAndGqlField } from '@/object-record/cache/utils/getMorphRelationFromFieldMetadataAndGqlField';
-import { getNodeTypename } from '@/object-record/cache/utils/getNodeTypename';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
 import { getRefName } from '@/object-record/cache/utils/getRefName';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined, pascalCase } from 'twenty-shared/utils';
+import { getNodeTypename, isDefined, pascalCase } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 export const getRecordNodeFromRecord = <T extends ObjectRecord>({
@@ -206,7 +205,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
               return undefined;
             }
 
-            const typeName = getObjectTypename(
+            const typeName = getNodeTypename(
               morphRelation?.targetObjectMetadata?.nameSingular,
             );
 

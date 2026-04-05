@@ -349,6 +349,7 @@ export class ViewFieldService {
     return this.viewFieldRepository.find({
       where: {
         workspaceId,
+        isActive: true,
         deletedAt: IsNull(),
       },
       order: { position: 'ASC' },
@@ -364,6 +365,7 @@ export class ViewFieldService {
       where: {
         workspaceId,
         viewId,
+        isActive: true,
         deletedAt: IsNull(),
       },
       order: { position: 'ASC' },

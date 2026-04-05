@@ -7,10 +7,6 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { CoreEntityCacheProvider } from 'src/engine/core-entity-cache/interfaces/core-entity-cache-provider.service';
 
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
 import { CORE_ENTITY_CACHE_KEY } from 'src/engine/core-entity-cache/decorators/core-entity-cache.decorator';
 import {
   CORE_ENTITY_CACHE_KEYS,
@@ -18,6 +14,10 @@ import {
   type CoreEntityCacheDataMap,
 } from 'src/engine/core-entity-cache/types/core-entity-cache-key.type';
 import { type CoreEntityLocalCacheEntry } from 'src/engine/core-entity-cache/types/core-entity-local-cache-entry.type';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
 
 const LOCAL_TTL_MS = 100; // 100ms
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes
@@ -76,6 +76,36 @@ export class CoreEntityCacheService implements OnModuleInit {
         this.coreEntityCacheProviders.set(coreEntityCacheKeyName, instance);
       }
     }
+
+    setInterval(() => {
+      const stats = this.getStats();
+
+      this.logger.log(
+        `Cache stats: localCacheSize=${stats.localCacheSize} memoizerCacheSize=${stats.memoizerCacheSize} memoizerPendingSize=${stats.memoizerPendingSize} entriesByKey=${JSON.stringify(stats.entriesByKey)} versionsByKey=${JSON.stringify(stats.versionsByKey)}`,
+      );
+    }, 60_000).unref();
+  }
+
+  public getStats() {
+    const memoizerSize = this.memoizer.getSize();
+    const entriesByKey: Record<string, number> = {};
+    const versionsByKey: Record<string, number> = {};
+
+    for (const [key, entry] of this.localCache.entries()) {
+      const prefix = key.substring(0, key.lastIndexOf(':'));
+
+      entriesByKey[prefix] = (entriesByKey[prefix] ?? 0) + 1;
+      versionsByKey[prefix] =
+        (versionsByKey[prefix] ?? 0) + entry.versions.size;
+    }
+
+    return {
+      localCacheSize: this.localCache.size,
+      memoizerCacheSize: memoizerSize.cache,
+      memoizerPendingSize: memoizerSize.pending,
+      entriesByKey,
+      versionsByKey,
+    };
   }
 
   public async get<K extends CoreEntityCacheKeyName>(

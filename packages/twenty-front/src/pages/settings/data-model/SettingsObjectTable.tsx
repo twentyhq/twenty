@@ -1,4 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -71,6 +72,7 @@ export const SettingsObjectTable = ({
   const { t } = useLingui();
 
   const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
+  const isDDLLocked = useAtomStateValue(isDDLLockedState);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeactivated, setShowDeactivated] = useState(true);
@@ -246,7 +248,7 @@ export const SettingsObjectTable = ({
                           stroke={theme.icon.stroke.sm}
                         />
                       </StyledIconChevronRightContainer>
-                    ) : (
+                    ) : isDDLLocked ? null : (
                       <SettingsObjectInactiveMenuDropDown
                         isCustomObject={
                           objectSettingsItem.objectMetadataItem.isCustom
