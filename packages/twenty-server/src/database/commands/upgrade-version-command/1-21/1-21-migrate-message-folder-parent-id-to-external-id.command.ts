@@ -36,10 +36,12 @@ export class MigrateMessageFolderParentIdToExternalIdCommand extends ActiveOrSus
     });
 
     const idToExternalIdMap = new Map<string, string>();
+    const existingExternalIds = new Set<string>();
 
     for (const folder of folders) {
       if (folder.externalId) {
         idToExternalIdMap.set(folder.id, folder.externalId);
+        existingExternalIds.add(folder.externalId);
       }
     }
 
@@ -51,6 +53,11 @@ export class MigrateMessageFolderParentIdToExternalIdCommand extends ActiveOrSus
       }
 
       if (!UUID_REGEX.test(folder.parentFolderId)) {
+        continue;
+      }
+
+      // Already points to a valid externalId — skip even if it looks like a UUID
+      if (existingExternalIds.has(folder.parentFolderId)) {
         continue;
       }
 
