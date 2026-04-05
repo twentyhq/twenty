@@ -85,15 +85,20 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
         ? `${sentFolder.path}:${uidValidity.toString()}`
         : sentFolder.path;
 
-      pathToExternalIdMap.set(sentFolder.path, externalId);
+      if (isNoselect) {
+        // \Noselect folders cannot be selected as mailboxes — skip entirely to prevent
+        // APPEND failures in ImapSmtpMessageOutboundService.
+      } else {
+        pathToExternalIdMap.set(sentFolder.path, externalId);
 
-      folders.push({
-        externalId,
-        name: sentFolder.name,
-        isSynced: true,
-        isSentFolder: true,
-        parentFolderId: sentMailbox?.parentPath || null,
-      });
+        folders.push({
+          externalId,
+          name: sentFolder.name,
+          isSynced: true,
+          isSentFolder: true,
+          parentFolderId: sentMailbox?.parentPath || null,
+        });
+      }
     }
 
     for (const mailbox of mailboxList) {
