@@ -18,8 +18,7 @@ export const computeFolderIdsForSyncToggle = ({
     const folder = folderById.get(id);
     const children = folder
       ? allFolders.filter(
-          (childFolder) =>
-            childFolder.parentFolderId === folder.externalId,
+          (childFolder) => childFolder.parentFolderId === folder.externalId,
         )
       : [];
 
