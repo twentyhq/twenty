@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { AppRouterProviders } from '@/app/components/AppRouterProviders';
 import { SettingsRoutes } from '@/app/components/SettingsRoutes';
 import { VerifyLoginTokenEffect } from '@/auth/components/VerifyLoginTokenEffect';
@@ -85,23 +85,23 @@ export const useCreateAppRouter = (
           />
           <Route
             path={AppPath.CoatApproval}
-            element={<CoatApprovalPage />}
+            element={<Suspense fallback={<></>}><CoatApprovalPage /></Suspense>}
           />
           <Route
             path={AppPath.WhatsAppChat}
-            element={<WhatsAppChatPage />}
+            element={<Suspense fallback={<></>}><WhatsAppChatPage /></Suspense>}
           />
           <Route
             path={AppPath.Coaching}
-            element={<CoachingPage />}
+            element={<Suspense fallback={<></>}><CoachingPage /></Suspense>}
           />
           <Route
             path={AppPath.DataValidatorJustusTruths}
-            element={<JustusTruthsValidatorPage />}
+            element={<Suspense fallback={<></>}><JustusTruthsValidatorPage /></Suspense>}
           />
           <Route
             path={AppPath.DataValidator}
-            element={<DataValidatorPage />}
+            element={<Suspense fallback={<></>}><DataValidatorPage /></Suspense>}
           />
           <Route path={AppPath.RecordIndexPage} element={<RecordIndexPage />} />
           <Route path={AppPath.RecordShowPage} element={<RecordShowPage />} />
