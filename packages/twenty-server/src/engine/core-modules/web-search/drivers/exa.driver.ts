@@ -1,17 +1,26 @@
 import Exa from 'exa-js';
 
-import { type WebSearchDriver } from 'src/engine/core-modules/web-search/drivers/interfaces/web-search-driver.interface';
+import {
+  type WebSearchCostModel,
+  type WebSearchDriver,
+} from 'src/engine/core-modules/web-search/drivers/interfaces/web-search-driver.interface';
 import { type WebSearchOptions } from 'src/engine/core-modules/web-search/types/web-search-options.type';
 import { type WebSearchResult } from 'src/engine/core-modules/web-search/types/web-search-result.type';
 
-const MAX_RESULTS = 10;
+const DEFAULT_NUM_RESULTS = 10;
 const MAX_HIGHLIGHT_CHARACTERS = 4000;
 
-// Exa charges $7/1k requests for auto search type
-const EXA_COST_PER_QUERY_DOLLARS = 0.007;
+// Exa charges $7/1k requests for auto search type (up to 10 results)
+// Additional results above 10 cost $1/1k = $0.001 each
+const EXA_BASE_COST_DOLLARS = 0.007;
+const EXA_COST_PER_ADDITIONAL_RESULT_DOLLARS = 0.001;
 
 export class ExaDriver implements WebSearchDriver {
-  readonly costPerQueryDollars = EXA_COST_PER_QUERY_DOLLARS;
+  readonly costModel: WebSearchCostModel = {
+    baseResultCount: DEFAULT_NUM_RESULTS,
+    baseCostDollars: EXA_BASE_COST_DOLLARS,
+    costPerAdditionalResultDollars: EXA_COST_PER_ADDITIONAL_RESULT_DOLLARS,
+  };
 
   private readonly client: Exa;
 
@@ -23,9 +32,11 @@ export class ExaDriver implements WebSearchDriver {
     query: string,
     options?: WebSearchOptions,
   ): Promise<WebSearchResult[]> {
+    const numResults = options?.numResults ?? DEFAULT_NUM_RESULTS;
+
     const response = await this.client.search(query, {
       type: 'auto',
-      numResults: MAX_RESULTS,
+      numResults,
       category: options?.category,
       contents: {
         highlights: { maxCharacters: MAX_HIGHLIGHT_CHARACTERS },
@@ -35,8 +46,7 @@ export class ExaDriver implements WebSearchDriver {
     return response.results.map((result) => ({
       title: result.title ?? '',
       url: result.url,
-      snippet:
-        result.highlights?.join('\n') ?? result.text?.slice(0, 500) ?? '',
+      snippet: result.highlights?.join('\n') ?? '',
     }));
   }
 }

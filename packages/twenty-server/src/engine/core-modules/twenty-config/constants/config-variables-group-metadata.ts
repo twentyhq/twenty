@@ -140,4 +140,11 @@ export const CONFIG_VARIABLES_GROUP_METADATA: Record<
     isHiddenOnLoad: true,
     isHiddenInAdminPanel: true,
   },
+  [ConfigVariablesGroup.WEB_SEARCH_CONFIG]: {
+    position: 1560,
+    description:
+      'Configure the web search provider for AI agents. Use EXA for Exa-powered search or DISABLED to turn off.',
+    isHiddenOnLoad: true,
+    isHiddenInAdminPanel: false,
+  },
 };

@@ -148,11 +148,7 @@ export class ActionToolProvider implements ToolProvider {
 
     if (this.webSearchService.isEnabled()) {
       descriptors.push(
-        this.buildDescriptor(
-          'web_search',
-          this.webSearchTool,
-          includeSchemas,
-        ),
+        this.buildDescriptor('web_search', this.webSearchTool, includeSchemas),
       );
     }
 

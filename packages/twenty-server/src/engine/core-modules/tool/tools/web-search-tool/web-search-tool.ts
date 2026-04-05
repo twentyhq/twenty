@@ -20,12 +20,12 @@ export class WebSearchTool implements Tool {
     parameters: ToolInput,
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
-    const { query, category } = parameters as WebSearchInput;
+    const { query, category, numResults } = parameters as WebSearchInput;
 
     try {
       const results = await this.webSearchService.search(
         query,
-        { category },
+        { category, numResults },
         {
           workspaceId: context.workspaceId,
           userWorkspaceId: context.userWorkspaceId,

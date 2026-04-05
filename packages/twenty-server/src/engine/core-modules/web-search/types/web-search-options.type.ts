@@ -2,4 +2,5 @@ import { type WebSearchCategory } from 'src/engine/core-modules/web-search/types
 
 export type WebSearchOptions = {
   category?: WebSearchCategory;
+  numResults?: number;
 };

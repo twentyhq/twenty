@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { type WebSearchDriver } from 'src/engine/core-modules/web-search/drivers/interfaces/web-search-driver.interface';
+import {
+  type WebSearchCostModel,
+  type WebSearchDriver,
+} from 'src/engine/core-modules/web-search/drivers/interfaces/web-search-driver.interface';
 import { type WebSearchBillingContext } from 'src/engine/core-modules/web-search/types/web-search-billing-context.type';
 import { type WebSearchOptions } from 'src/engine/core-modules/web-search/types/web-search-options.type';
 import { type WebSearchResult } from 'src/engine/core-modules/web-search/types/web-search-result.type';
@@ -39,18 +42,38 @@ export class WebSearchService {
     const results = await driver.search(query, options);
 
     if (billingContext) {
-      this.emitUsageEvent(driver, billingContext);
+      this.emitUsageEvent(driver, results.length, billingContext);
     }
 
     return results;
   }
 
+  static computeQueryCostDollars(
+    costModel: WebSearchCostModel,
+    numResults: number,
+  ): number {
+    const additionalResults = Math.max(
+      0,
+      numResults - costModel.baseResultCount,
+    );
+
+    return (
+      costModel.baseCostDollars +
+      additionalResults * costModel.costPerAdditionalResultDollars
+    );
+  }
+
   private emitUsageEvent(
     driver: WebSearchDriver,
+    numResults: number,
     billingContext: WebSearchBillingContext,
   ): void {
+    const costDollars = WebSearchService.computeQueryCostDollars(
+      driver.costModel,
+      numResults,
+    );
     const creditsUsedMicro = Math.round(
-      driver.costPerQueryDollars * DOLLAR_TO_CREDIT_MULTIPLIER,
+      costDollars * DOLLAR_TO_CREDIT_MULTIPLIER,
     );
 
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
