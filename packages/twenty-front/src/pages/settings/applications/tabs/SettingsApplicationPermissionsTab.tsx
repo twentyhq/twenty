@@ -6,8 +6,10 @@ import { SettingsRolePermissions } from '@/settings/roles/role-permissions/compo
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   type ObjectFieldManifest,
@@ -370,6 +372,10 @@ const MarketplaceAppPermissions = ({
   );
 };
 
+const StyledEmptyState = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+`;
+
 export const SettingsApplicationPermissionsTab = ({
   defaultRoleId,
   marketplaceAppDefaultRole,
@@ -393,5 +399,9 @@ export const SettingsApplicationPermissionsTab = ({
     );
   }
 
-  return <div>{t`No permissions configured for this application.`}</div>;
+  return (
+    <StyledEmptyState>
+      {t`No permissions configured for this application.`}
+    </StyledEmptyState>
+  );
 };
