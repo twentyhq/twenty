@@ -16,6 +16,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import {
   IconBrandWhatsapp,
   IconFileCheck,
+  IconListCheck,
   IconSearch,
   IconSettings,
   IconSparkles,
@@ -90,6 +91,12 @@ export const MainNavigationDrawerFixedItems = () => {
           Icon={IconBrandWhatsapp}
           to="/chat"
           active={location.pathname.startsWith('/chat')}
+        />
+        <NavigationDrawerItem
+          label="Data Validator"
+          Icon={IconListCheck}
+          to="/data-validator"
+          active={location.pathname.startsWith('/data-validator')}
         />
         <NavigationDrawerItem
           label="Transcripts"
