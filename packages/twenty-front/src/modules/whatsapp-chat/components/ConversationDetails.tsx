@@ -2508,13 +2508,13 @@ export const ConversationDetails = ({
                           )}
                         </div>
 
-                        {call.note && (
+                        {(call.summary || call.note) && (
                           <>
-                            <StyledCallNote>{call.note}</StyledCallNote>
+                            <StyledCallNote>{call.summary || call.note}</StyledCallNote>
                             <StyledCallCopyButton
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleCallCopyNote(call.note!, call.id);
+                                handleCallCopyNote((call.summary || call.note)!, call.id);
                               }}
                             >
                               {callCopiedId === call.id ? (
@@ -2525,16 +2525,16 @@ export const ConversationDetails = ({
                               ) : (
                                 <>
                                   <IconCopy size={12} />
-                                  Copy note
+                                  Copy {call.summary ? 'summary' : 'note'}
                                 </>
                               )}
                             </StyledCallCopyButton>
                           </>
                         )}
 
-                        {!call.note && (
+                        {!call.summary && !call.note && (
                           <StyledCardMeta style={{ fontStyle: 'italic' }}>
-                            No note recorded
+                            No summary recorded
                           </StyledCardMeta>
                         )}
                       </StyledCallCardBody>
