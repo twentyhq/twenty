@@ -19,8 +19,10 @@ import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/sen
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool';
 import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
+import { WebSearchTool } from 'src/engine/core-modules/tool/tools/web-search-tool/web-search-tool';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
+import { WebSearchService } from 'src/engine/core-modules/web-search/web-search.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 @Injectable()
@@ -36,7 +38,9 @@ export class ActionToolProvider implements ToolProvider {
     private readonly searchHelpCenterTool: SearchHelpCenterTool,
     private readonly codeInterpreterTool: CodeInterpreterTool,
     private readonly navigateAppTool: NavigateAppTool,
+    private readonly webSearchTool: WebSearchTool,
     private readonly codeInterpreterService: CodeInterpreterService,
+    private readonly webSearchService: WebSearchService,
     private readonly permissionsService: PermissionsService,
     private readonly toolExecutorService: ToolExecutorService,
   ) {
@@ -47,6 +51,7 @@ export class ActionToolProvider implements ToolProvider {
       ['search_help_center', this.searchHelpCenterTool],
       ['code_interpreter', this.codeInterpreterTool],
       ['navigate_app', this.navigateAppTool],
+      ['web_search', this.webSearchTool],
     ]);
 
     // Register each action tool as a static handler in the executor
@@ -136,6 +141,16 @@ export class ActionToolProvider implements ToolProvider {
         this.buildDescriptor(
           'code_interpreter',
           this.codeInterpreterTool,
+          includeSchemas,
+        ),
+      );
+    }
+
+    if (this.webSearchService.isEnabled()) {
+      descriptors.push(
+        this.buildDescriptor(
+          'web_search',
+          this.webSearchTool,
           includeSchemas,
         ),
       );

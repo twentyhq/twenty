@@ -34100,7 +34100,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-fetch@npm:4.1.0":
+"cross-fetch@npm:4.1.0, cross-fetch@npm:~4.1.0":
   version: 4.1.0
   resolution: "cross-fetch@npm:4.1.0"
   dependencies:
@@ -35837,7 +35837,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:~16.4.5":
+"dotenv@npm:~16.4.5, dotenv@npm:~16.4.7":
   version: 16.4.7
   resolution: "dotenv@npm:16.4.7"
   checksum: 10c0/be9f597e36a8daf834452daa1f4cc30e5375a5968f98f46d89b16b983c567398a330580c88395069a77473943c06b877d1ca25b4afafcdd6d4adb549e8293462
@@ -37694,6 +37694,19 @@ __metadata:
     node-gyp: "npm:latest"
     safe-buffer: "npm:^5.1.1"
   checksum: 10c0/77fbe2d94a902a80e9b8f5a73dcd695d9c14899c5e82967a61b1fc6cbbb28c46552d9b127cff47c45fcf684748bdbcfa0a50410349109de87ceb4b199ef6ee99
+  languageName: node
+  linkType: hard
+
+"exa-js@npm:^2.11.0":
+  version: 2.11.0
+  resolution: "exa-js@npm:2.11.0"
+  dependencies:
+    cross-fetch: "npm:~4.1.0"
+    dotenv: "npm:~16.4.7"
+    openai: "npm:^5.0.1"
+    zod: "npm:^3.22.0"
+    zod-to-json-schema: "npm:^3.20.0"
+  checksum: 10c0/3545b98e55f8196c8c2c415684803a3bda0977abdb0950142898ce680eabcd3a855f5d0e4d30ca0cd19ddf41e5e81d4db5992ea35e5b38129ce1f41be94d324c
   languageName: node
   linkType: hard
 
@@ -50235,6 +50248,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"openai@npm:^5.0.1":
+  version: 5.23.2
+  resolution: "openai@npm:5.23.2"
+  peerDependencies:
+    ws: ^8.18.0
+    zod: ^3.23.8
+  peerDependenciesMeta:
+    ws:
+      optional: true
+    zod:
+      optional: true
+  bin:
+    openai: bin/cli
+  checksum: 10c0/8ee37f37c64fd04a61622c4782d231e8f0245e2d85956d833e43d30946edbf07d5276cd74e09aa5d23006de8da43dad312246a9dd7ca6ca6d65d983fc976ffa6
+  languageName: node
+  linkType: hard
+
 "openapi-fetch@npm:^0.9.7":
   version: 0.9.8
   resolution: "openapi-fetch@npm:0.9.8"
@@ -60103,6 +60133,7 @@ __metadata:
     deep-equal: "npm:2.2.3"
     dompurify: "npm:3.3.3"
     dotenv: "npm:16.4.5"
+    exa-js: "npm:^2.11.0"
     express: "npm:4.22.1"
     express-session: "npm:^1.18.2"
     file-type: "npm:^21.3.1"
@@ -64128,6 +64159,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"zod-to-json-schema@npm:^3.20.0":
+  version: 3.25.2
+  resolution: "zod-to-json-schema@npm:3.25.2"
+  peerDependencies:
+    zod: ^3.25.28 || ^4
+  checksum: 10c0/dd300554393903022487688af14fbda5c719ba8179702bb55b3aa86318830467f0f7beb7d654036975ac963dc4843b72e59636448bfff9a0608f277bb6a14939
+  languageName: node
+  linkType: hard
+
 "zod-to-json-schema@npm:^3.20.3":
   version: 3.24.6
   resolution: "zod-to-json-schema@npm:3.24.6"
@@ -64144,7 +64184,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.20.6, zod@npm:^3.23.8, zod@npm:^3.25.76":
+"zod@npm:^3.20.6, zod@npm:^3.22.0, zod@npm:^3.23.8, zod@npm:^3.25.76":
   version: 3.25.76
   resolution: "zod@npm:3.25.76"
   checksum: 10c0/5718ec35e3c40b600316c5b4c5e4976f7fee68151bc8f8d90ec18a469be9571f072e1bbaace10f1e85cf8892ea12d90821b200e980ab46916a6166a4260a983c

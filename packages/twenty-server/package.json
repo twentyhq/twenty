@@ -104,6 +104,7 @@
     "deep-equal": "2.2.3",
     "dompurify": "3.3.3",
     "dotenv": "16.4.5",
+    "exa-js": "^2.11.0",
     "express": "4.22.1",
     "express-session": "^1.18.2",
     "file-type": "^21.3.1",

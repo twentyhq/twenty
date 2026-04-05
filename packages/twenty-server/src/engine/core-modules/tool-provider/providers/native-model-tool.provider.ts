@@ -7,6 +7,8 @@ import { type NativeToolProvider } from 'src/engine/core-modules/tool-provider/i
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 
 import { ToolCategory } from 'twenty-shared/ai';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WebSearchService } from 'src/engine/core-modules/web-search/web-search.service';
 import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
@@ -19,6 +21,8 @@ export class NativeModelToolProvider implements NativeToolProvider {
   constructor(
     private readonly agentModelConfigService: AgentModelConfigService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly twentyConfigService: TwentyConfigService,
+    private readonly webSearchService: WebSearchService,
   ) {}
 
   async isAvailable(context: ToolProviderContext): Promise<boolean> {
@@ -27,6 +31,14 @@ export class NativeModelToolProvider implements NativeToolProvider {
 
   async generateTools(context: ToolProviderContext): Promise<ToolSet> {
     if (!context.agent) {
+      return {};
+    }
+
+    const shouldUseNativeSearch =
+      this.twentyConfigService.get('WEB_SEARCH_PREFER_NATIVE') ||
+      !this.webSearchService.isEnabled();
+
+    if (!shouldUseNativeSearch) {
       return {};
     }
 

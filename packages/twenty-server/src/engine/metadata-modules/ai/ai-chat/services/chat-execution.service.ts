@@ -39,6 +39,7 @@ import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
@@ -58,6 +59,8 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WebSearchService } from 'src/engine/core-modules/web-search/web-search.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
 export type ChatExecutionOptions = {
@@ -93,6 +96,8 @@ export class ChatExecutionService {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly sdkProviderFactory: SdkProviderFactoryService,
     private readonly messagePruningService: MessagePruningService,
+    private readonly twentyConfigService: TwentyConfigService,
+    private readonly webSearchService: WebSearchService,
   ) {}
 
   async streamChat({
@@ -160,8 +165,14 @@ export class ChatExecutionService {
       registeredModel.modelId,
     );
 
+    const shouldUseNativeSearch =
+      this.twentyConfigService.get('WEB_SEARCH_PREFER_NATIVE') ||
+      !this.webSearchService.isEnabled();
+
     const { tools: nativeSearchTools, callableToolNames: searchToolNames } =
-      this.getNativeWebSearchTools(registeredModel);
+      shouldUseNativeSearch
+        ? this.getNativeWebSearchTools(registeredModel)
+        : { tools: {}, callableToolNames: [] };
 
     // Direct tools: native provider tools + preloaded tools.
     // These are callable directly AND as fallback through execute_tool.
@@ -309,6 +320,15 @@ export class ChatExecutionService {
         null,
         userWorkspaceId,
       );
+
+      const nativeWebSearchCallCount =
+        countNativeWebSearchCallsFromSteps(steps);
+
+      this.aiBillingService.billNativeWebSearchUsage(
+        nativeWebSearchCallCount,
+        workspace.id,
+        userWorkspaceId,
+      );
     };
 
     const stream = streamText({
@@ -449,21 +469,8 @@ export class ChatExecutionService {
           callableToolNames: ['web_search'],
         };
       }
-      case AI_SDK_BEDROCK: {
-        const provider =
-          this.sdkProviderFactory.getRawBedrockProvider(providerName);
-
-        if (!provider) {
-          return empty;
-        }
-
-        return {
-          tools: {
-            web_search: provider.tools.webSearch_20250305() as ToolSet[string],
-          },
-          callableToolNames: ['web_search'],
-        };
-      }
+      case AI_SDK_BEDROCK:
+        return empty;
       case AI_SDK_OPENAI: {
         const provider =
           this.sdkProviderFactory.getRawOpenAIProvider(providerName);
