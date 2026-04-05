@@ -1,4 +1,5 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import {
   StyledActionTableCell,
@@ -48,12 +49,6 @@ const StyledButtonContainer = styled.div`
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledEmptyState = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  padding: ${themeCssVariables.spacing[8]};
-  text-align: center;
 `;
 
 const StyledTableRowsContainer = styled.div`
@@ -235,7 +230,7 @@ export const SettingsApplicationsDeveloperTab = () => {
             />
           </StyledSearchInputContainer>
           {filteredMarketplaceApps.length === 0 ? (
-            <StyledEmptyState>{t`No application found`}</StyledEmptyState>
+            <SettingsEmptyPlaceholder>{t`No application found`}</SettingsEmptyPlaceholder>
           ) : (
             <Table>
               <TableRow gridAutoColumns={NPM_PACKAGES_GRID_COLUMNS}>
