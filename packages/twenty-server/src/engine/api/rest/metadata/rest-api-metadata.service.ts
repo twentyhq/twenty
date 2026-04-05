@@ -10,6 +10,7 @@ import {
 import { type RequestContext } from 'src/engine/api/rest/types/RequestContext';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getServerUrl } from 'src/utils/get-server-url';
 
 @Injectable()
@@ -19,6 +20,7 @@ export class RestApiMetadataService {
     private readonly metadataQueryBuilderFactory: MetadataQueryBuilderFactory,
     private readonly restApiService: RestApiService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
   async get(request: Request) {
@@ -42,11 +44,16 @@ export class RestApiMetadataService {
       fields: ['*'],
     });
 
-    return await this.restApiService.call(
+    const result = await this.restApiService.call(
       GraphqlApiType.METADATA,
       requestContext,
       data,
     );
+
+    // Invalidate GraphQL schema cache after metadata changes
+    await this.invalidateGraphQLSchemaCache(requestContext);
+
+    return result;
   }
 
   async update(request: Request) {
@@ -56,11 +63,16 @@ export class RestApiMetadataService {
       fields: ['*'],
     });
 
-    return await this.restApiService.call(
+    const result = await this.restApiService.call(
       GraphqlApiType.METADATA,
       requestContext,
       data,
     );
+
+    // Invalidate GraphQL schema cache after metadata changes
+    await this.invalidateGraphQLSchemaCache(requestContext);
+
+    return result;
   }
 
   async delete(request: Request) {
@@ -68,11 +80,16 @@ export class RestApiMetadataService {
     const requestContext = this.getRequestContext(request);
     const data = await this.metadataQueryBuilderFactory.delete(requestContext);
 
-    return await this.restApiService.call(
+    const result = await this.restApiService.call(
       GraphqlApiType.METADATA,
       requestContext,
       data,
     );
+
+    // Invalidate GraphQL schema cache after metadata changes
+    await this.invalidateGraphQLSchemaCache(requestContext);
+
+    return result;
   }
 
   private getRequestContext(request: Request): RequestContext {
@@ -87,5 +104,16 @@ export class RestApiMetadataService {
       path: request.url,
       headers: request.headers,
     };
+  }
+
+  private async invalidateGraphQLSchemaCache(requestContext: RequestContext): Promise<void> {
+    // Extract workspace ID from the authenticated request context
+    // The request should have workspace information from the guards
+    const authenticatedRequest = requestContext as any;
+    
+    if (authenticatedRequest.workspace?.id) {
+      // Invalidate GraphQL schema cache for the workspace
+      await this.workspaceCacheStorageService.flushVersionedMetadata(authenticatedRequest.workspace.id);
+    }
   }
 }
