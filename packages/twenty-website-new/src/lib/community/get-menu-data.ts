@@ -1,4 +1,4 @@
-import { MENU_DATA } from '@/app/(home)/constants/menu';
+import { MENU_DATA } from '@/app/_constants/menu';
 import {
   getCommunityStats,
   labelsFromCommunityStats,

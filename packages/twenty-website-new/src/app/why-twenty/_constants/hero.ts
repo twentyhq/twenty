@@ -1,4 +1,4 @@
-import { HeroWhyTwentyDataType } from '@/sections/Hero/types';
+import type { HeroWhyTwentyDataType } from '@/sections/Hero/types';
 
 export const HERO_DATA: HeroWhyTwentyDataType = {
   heading: [

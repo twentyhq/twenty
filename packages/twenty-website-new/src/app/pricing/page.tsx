@@ -1,11 +1,14 @@
-import { FAQ_DATA } from '@/app/(home)/constants/faq';
-import { ENGAGEMENT_BAND_DATA } from '@/app/partner/constants/engagement-band';
-import { HERO_DATA } from '@/app/pricing/constants/hero';
-import { PLAN_TABLE_DATA } from '@/app/pricing/constants/plan-table';
-import { SALESFORCE_DATA } from '@/app/pricing/constants/salesforce';
+import { FAQ_DATA } from '@/app/_constants';
+import {
+  ENGAGEMENT_BAND_DATA,
+  HERO_DATA,
+  PLAN_TABLE_DATA,
+  SALESFORCE_DATA,
+} from '@/app/pricing/_constants';
 import { Eyebrow, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { getMenuData } from '@/lib/community/get-menu-data';
+import { ScrollReveal } from '@/motion/ScrollReveal';
 import { EngagementBand } from '@/sections/EngagementBand/components';
 import { Faq } from '@/sections/Faq/components';
 import { Hero } from '@/sections/Hero/components';
@@ -14,7 +17,6 @@ import { Plans } from '@/sections/Plans/components';
 import { PlanTable } from '@/sections/PlanTable/components';
 import { Salesforce } from '@/sections/Salesforce/components';
 import { theme } from '@/theme';
-import { ScrollReveal } from '@/motion/ScrollReveal';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {

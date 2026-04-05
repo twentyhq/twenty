@@ -1,4 +1,4 @@
-import { ProblemDataType } from '@/sections/Problem/types';
+import type { ProblemDataType } from '@/sections/Problem/types';
 
 export const PROBLEM_DATA: ProblemDataType = {
   eyebrow: { heading: { text: 'The Problem:', fontFamily: 'sans' } },

@@ -1,15 +1,17 @@
-import { FAQ_DATA } from '@/app/(home)/constants/faq';
-import { HELPED_DATA } from '@/app/(home)/constants/helped';
-import { HERO_DATA } from '@/app/(home)/constants/hero';
-import { HOME_STEPPER_DATA } from '@/app/(home)/constants/home-stepper';
-import { PROBLEM_DATA } from '@/app/(home)/constants/problem';
-import { TESTIMONIALS_DATA } from '@/app/(home)/constants/testimonials';
-import { THREE_CARDS_FEATURE_DATA } from '@/app/(home)/constants/three-cards-feature';
-import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/(home)/constants/three-cards-illustration';
-import { TRUSTED_BY_DATA } from '@/app/(home)/constants/trusted-by';
+import {
+  HELPED_DATA,
+  HERO_DATA,
+  HOME_STEPPER_DATA,
+  PROBLEM_DATA,
+  TESTIMONIALS_DATA,
+  THREE_CARDS_FEATURE_DATA,
+  THREE_CARDS_ILLUSTRATION_DATA,
+} from '@/app/(home)/_constants';
+import { FAQ_DATA, TRUSTED_BY_DATA } from '@/app/_constants';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { getMenuData } from '@/lib/community/get-menu-data';
+import { ScrollReveal } from '@/motion/ScrollReveal';
 import { Faq } from '@/sections/Faq/components';
 import { Helped } from '@/sections/Helped/components';
 import { Hero } from '@/sections/Hero/components';
@@ -20,7 +22,6 @@ import { Testimonials } from '@/sections/Testimonials/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
-import { ScrollReveal } from '@/motion/ScrollReveal';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {

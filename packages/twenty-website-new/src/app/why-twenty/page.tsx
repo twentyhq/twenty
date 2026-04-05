@@ -1,14 +1,16 @@
-import { EDITORIAL_FOUR } from '@/app/why-twenty/constants/editorial-four';
-import { EDITORIAL_ONE } from '@/app/why-twenty/constants/editorial-one';
-import { EDITORIAL_THREE } from '@/app/why-twenty/constants/editorial-three';
-import { EDITORIAL_TWO } from '@/app/why-twenty/constants/editorial-two';
-import { HERO_DATA } from '@/app/why-twenty/constants/hero';
-import { MARQUEE_DATA } from '@/app/why-twenty/constants/marquee';
-import { QUOTE_DATA } from '@/app/why-twenty/constants/quote';
-import { SIGNOFF_DATA } from '@/app/why-twenty/constants/signoff';
-import { STATEMENT_ONE } from '@/app/why-twenty/constants/statement-one';
-import { STATEMENT_TWO } from '@/app/why-twenty/constants/statement-two';
-import { STEPPER_DATA } from '@/app/why-twenty/constants/stepper';
+import {
+  EDITORIAL_FOUR,
+  EDITORIAL_ONE,
+  EDITORIAL_THREE,
+  EDITORIAL_TWO,
+  HERO_DATA,
+  MARQUEE_DATA,
+  QUOTE_DATA,
+  SIGNOFF_DATA,
+  STATEMENT_ONE,
+  STATEMENT_TWO,
+  STEPPER_DATA,
+} from '@/app/why-twenty/_constants';
 import { LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { getMenuData } from '@/lib/community/get-menu-data';

@@ -1,13 +1,15 @@
-import { FAQ_DATA } from '@/app/(home)/constants/faq';
-import { TRUSTED_BY_DATA } from '@/app/(home)/constants/trusted-by';
-import { ENGAGEMENT_BAND_DATA } from '@/app/partner/constants/engagement-band';
-import { HERO_DATA } from '@/app/partner/constants/hero';
-import { TESTIMONIALS_DATA } from '@/app/partner/constants/testimonials';
-import { SIGNOFF_DATA } from '@/app/partner/constants/signoff';
-import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/partner/constants/three-cards-illustration';
+import { FAQ_DATA, TRUSTED_BY_DATA } from '@/app/_constants';
+import {
+  ENGAGEMENT_BAND_DATA,
+  HERO_DATA,
+  SIGNOFF_DATA,
+  TESTIMONIALS_DATA,
+  THREE_CARDS_ILLUSTRATION_DATA,
+} from '@/app/partner/_constants';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { getMenuData } from '@/lib/community/get-menu-data';
+import { ScrollReveal } from '@/motion/ScrollReveal';
 import { EngagementBand } from '@/sections/EngagementBand/components';
 import { Faq } from '@/sections/Faq/components';
 import { Hero } from '@/sections/Hero/components';
@@ -17,7 +19,6 @@ import { Testimonials } from '@/sections/Testimonials/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
-import { ScrollReveal } from '@/motion/ScrollReveal';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {

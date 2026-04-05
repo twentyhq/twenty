@@ -1,4 +1,4 @@
-import { HeroIllustrationDataType } from '@/sections/Hero/types';
+import type { HeroIllustrationDataType } from '@/sections/Hero/types';
 
 export const HERO_DATA: HeroIllustrationDataType = {
   heading: [

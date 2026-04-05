@@ -1,4 +1,4 @@
-import { FOOTER_DATA } from '@/app/(home)/constants/footer';
+import { FOOTER_DATA } from '@/app/_constants/footer';
 import { GlbWarmCache } from '@/constants/glb-warm-cache.component';
 import {
   getCommunityStats,

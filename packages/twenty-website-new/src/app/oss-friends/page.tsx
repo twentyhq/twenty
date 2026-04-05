@@ -1,7 +1,7 @@
 import {
   OSS_FRIENDS_HERO_BODY,
   OSS_FRIENDS_HERO_HEADING,
-} from '@/app/oss-friends/constants/hero';
+} from '@/app/oss-friends/_constants/hero';
 import { Pages } from '@/enums/pages';
 import { getMenuData } from '@/lib/community/get-menu-data';
 import { fetchOssFriends } from '@/lib/oss-friends/fetch-oss-friends';

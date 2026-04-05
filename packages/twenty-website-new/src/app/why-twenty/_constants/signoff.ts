@@ -1,4 +1,4 @@
-import { SignoffDataType } from '@/sections/Signoff/types';
+import type { SignoffDataType } from '@/sections/Signoff/types';
 
 export const SIGNOFF_DATA: SignoffDataType = {
   heading: [

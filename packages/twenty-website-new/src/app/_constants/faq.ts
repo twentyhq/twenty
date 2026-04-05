@@ -1,4 +1,4 @@
-import { FaqDataType } from '@/sections/Faq/types';
+import type { FaqDataType } from '@/sections/Faq/types';
 
 export const FAQ_DATA: FaqDataType = {
   illustration: {
@@ -28,7 +28,7 @@ export const FAQ_DATA: FaqDataType = {
         fontFamily: 'sans',
       },
       answer: {
-        text: "You can seamlessly deploy Twenty CRM to your production within hours. For highly bespoke on-premise implementations and massive scale data structures, our guided integration typically takes less than two weeks.",
+        text: 'You can seamlessly deploy Twenty CRM to your production within hours. For highly bespoke on-premise implementations and massive scale data structures, our guided integration typically takes less than two weeks.',
       },
     },
     {

@@ -1,7 +1,7 @@
 import {
   RELEASE_NOTES_HERO_BODY,
   RELEASE_NOTES_HERO_HEADING,
-} from '@/app/release-notes/constants/hero';
+} from '@/app/release-notes/_constants/hero';
 import { LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { getMenuData } from '@/lib/community/get-menu-data';

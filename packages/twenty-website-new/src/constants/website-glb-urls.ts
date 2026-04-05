@@ -1,16 +1,16 @@
-import { FAQ_DATA } from '@/app/(home)/constants/faq';
-import { FOOTER_DATA } from '@/app/(home)/constants/footer';
-import { HELPED_DATA } from '@/app/(home)/constants/helped';
-import { TESTIMONIALS_DATA as HOME_TESTIMONIALS_DATA } from '@/app/(home)/constants/testimonials';
-import { THREE_CARDS_ILLUSTRATION_DATA as HOME_THREE_CARDS_DATA } from '@/app/(home)/constants/three-cards-illustration';
-import { TESTIMONIALS_DATA as PARTNER_TESTIMONIALS_DATA } from '@/app/partner/constants/testimonials';
-import { THREE_CARDS_ILLUSTRATION_DATA as PARTNER_THREE_CARDS_DATA } from '@/app/partner/constants/three-cards-illustration';
-import { HERO_DATA as PRODUCT_HERO_DATA } from '@/app/product/constants/hero';
-import { THREE_CARDS_ILLUSTRATION_DATA as PRODUCT_THREE_CARDS_DATA } from '@/app/product/constants/three-cards';
-import { PLANS_DATA } from '@/app/pricing/constants/plans';
-import { HERO_DATA as WHY_TWENTY_HERO_DATA } from '@/app/why-twenty/constants/hero';
-import { QUOTE_DATA } from '@/app/why-twenty/constants/quote';
-import { STEPPER_DATA } from '@/app/why-twenty/constants/stepper';
+import { HELPED_DATA } from '@/app/(home)/_constants/helped';
+import { TESTIMONIALS_DATA as HOME_TESTIMONIALS_DATA } from '@/app/(home)/_constants/testimonials';
+import { THREE_CARDS_ILLUSTRATION_DATA as HOME_THREE_CARDS_DATA } from '@/app/(home)/_constants/three-cards-illustration';
+import { FAQ_DATA } from '@/app/_constants/faq';
+import { FOOTER_DATA } from '@/app/_constants/footer';
+import { TESTIMONIALS_DATA as PARTNER_TESTIMONIALS_DATA } from '@/app/partner/_constants/testimonials';
+import { THREE_CARDS_ILLUSTRATION_DATA as PARTNER_THREE_CARDS_DATA } from '@/app/partner/_constants/three-cards-illustration';
+import { PLANS_DATA } from '@/app/pricing/_constants/plans';
+import { HERO_DATA as PRODUCT_HERO_DATA } from '@/app/product/_constants/hero';
+import { THREE_CARDS_ILLUSTRATION_DATA as PRODUCT_THREE_CARDS_DATA } from '@/app/product/_constants/three-cards';
+import { HERO_DATA as WHY_TWENTY_HERO_DATA } from '@/app/why-twenty/_constants/hero';
+import { QUOTE_DATA } from '@/app/why-twenty/_constants/quote';
+import { STEPPER_DATA } from '@/app/why-twenty/_constants/stepper';
 
 const addIfGlb = (urls: Set<string>, src: string) => {
   if (src.toLowerCase().endsWith('.glb')) {

@@ -1,4 +1,4 @@
-import { ThreeCardsIllustrationDataType } from '@/sections/ThreeCards/types';
+import type { ThreeCardsIllustrationDataType } from '@/sections/ThreeCards/types';
 
 export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
   eyebrow: {
