@@ -45,7 +45,11 @@ type DatePickerInputProps = {
   readonly?: boolean;
 };
 
-export const DatePickerInput = ({ date, onChange, readonly = false }: DatePickerInputProps) => {
+export const DatePickerInput = ({
+  date,
+  onChange,
+  readonly = false,
+}: DatePickerInputProps) => {
   const { dateFormat } = useDateTimeFormat();
 
   const [internalDate, setInternalDate] = useState(date);

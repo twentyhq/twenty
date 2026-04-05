@@ -104,8 +104,6 @@ export const WithVariable: Story = {
     const variable = await canvas.findByText('Name');
     expect(variable).toBeVisible();
 
-    expect(args.onChange).toHaveBeenCalledWith(
-      `{{${MOCKED_STEP_ID}.name}}`,
-    );
+    expect(args.onChange).toHaveBeenCalledWith(`{{${MOCKED_STEP_ID}.name}}`);
   },
 };
