@@ -43,6 +43,7 @@ export {
   IconBrain,
   IconBrandDaysCounter,
   IconBrandGithub,
+  IconBrandWhatsapp,
   IconBrandGoogle,
   IconBrandGraphql,
   IconBrandLinkedin,
