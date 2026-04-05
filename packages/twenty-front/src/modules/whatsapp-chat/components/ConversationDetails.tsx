@@ -2516,7 +2516,9 @@ export const ConversationDetails = ({
                         {(call.summary || call.note) && (
                           <>
                             <StyledCallNote>
-                              <ReactMarkdown>{call.summary || call.note || ''}</ReactMarkdown>
+                              <Suspense fallback={<span>{call.summary || call.note}</span>}>
+                                <ReactMarkdown>{call.summary || call.note || ''}</ReactMarkdown>
+                              </Suspense>
                             </StyledCallNote>
                             <StyledCallCopyButton
                               onClick={(e) => {
