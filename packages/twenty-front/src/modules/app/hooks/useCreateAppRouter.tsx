@@ -29,6 +29,12 @@ const WhatsAppChatPage = React.lazy(
 const CoachingPage = React.lazy(
   () => import('~/pages/coaching/CoachingPage').then(m => ({ default: m.CoachingPage })),
 );
+const DataValidatorPage = React.lazy(
+  () => import('~/pages/data-validator/DataValidatorPage').then(m => ({ default: m.DataValidatorPage })),
+);
+const JustusTruthsValidatorPage = React.lazy(
+  () => import('~/pages/data-validator/JustusTruthsValidatorPage').then(m => ({ default: m.JustusTruthsValidatorPage })),
+);
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
 import { BookCall } from '~/pages/onboarding/BookCall';
@@ -88,6 +94,14 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.Coaching}
             element={<CoachingPage />}
+          />
+          <Route
+            path={AppPath.DataValidatorJustusTruths}
+            element={<JustusTruthsValidatorPage />}
+          />
+          <Route
+            path={AppPath.DataValidator}
+            element={<DataValidatorPage />}
           />
           <Route path={AppPath.RecordIndexPage} element={<RecordIndexPage />} />
           <Route path={AppPath.RecordShowPage} element={<RecordShowPage />} />

@@ -42,6 +42,10 @@ export enum AppPath {
   // Coaching Dashboard
   Coaching = '/coaching',
 
+  // Data Validator
+  DataValidator = '/data-validator',
+  DataValidatorJustusTruths = '/data-validator/justus-truths',
+
   // 404 page not found
   NotFoundWildcard = '*',
   NotFound = '/not-found',
