@@ -1984,6 +1984,11 @@ msgstr "Dominis Aprovats"
 msgid "Apps"
 msgstr "Aplicacions"
 
+#. js-lingui-id: dEnE1D
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Apps made by other developers published on npm"
+msgstr ""
+
 #. js-lingui-id: 8HV3WN
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -3776,11 +3781,6 @@ msgstr "crea"
 msgid "Create"
 msgstr "Crea"
 
-#. js-lingui-id: 5XhrY3
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "Create & Develop"
-msgstr "Crea i desenvolupa"
-
 #. js-lingui-id: 8aATyU
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a dashboard"
@@ -3820,6 +3820,11 @@ msgstr "Crea un flux de treball i torna aquí per veure les seves versions"
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Create a workspace"
 msgstr "Crear un espai de treball"
+
+#. js-lingui-id: /WlFSf
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Create an application"
+msgstr ""
 
 #. js-lingui-id: 8ZjIgO
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -4794,6 +4799,7 @@ msgstr "Descriviu què voleu que faci la IA..."
 
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
@@ -9223,6 +9229,7 @@ msgstr "mySkill"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
@@ -9588,6 +9595,11 @@ msgstr "No hi ha claus d'API disponibles"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "No API keys match your search"
 msgstr "Cap clau d'API concorda amb la teva cerca"
+
+#. js-lingui-id: /VRg8Z
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "No application found"
+msgstr ""
 
 #. js-lingui-id: rxBnh8
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
@@ -10131,6 +10143,11 @@ msgstr "ara"
 #. js-lingui-id: OduKuG
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Npm package"
+msgstr ""
+
+#. js-lingui-id: p7abaY
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "NPM packages"
 msgstr ""
 
 #. js-lingui-id: VVexZo
@@ -12086,11 +12103,6 @@ msgstr "Desa"
 msgid "Save as new view"
 msgstr "Desa com a nova vista"
 
-#. js-lingui-id: veLq3R
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "Scaffold a new app, then use the CLI to develop, publish, and distribute"
-msgstr "Genera l'esquelet d'una aplicació nova, després utilitza la CLI per desenvolupar, publicar i distribuir"
-
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Schedule"
@@ -12232,6 +12244,7 @@ msgid "Search an agent..."
 msgstr "Cerca un agent..."
 
 #. js-lingui-id: fGTI3o
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "Search an application"
@@ -15941,6 +15954,11 @@ msgstr "Ja formes part d'aquest espai de treball"
 msgid "You are not allowed to create records for this object"
 msgstr "No tens permís per crear registres en aquest objecte"
 
+#. js-lingui-id: iibZbD
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "You can either create a private app or share it to others"
+msgstr ""
+
 #. js-lingui-id: CNAoaw
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "You can see the function logic in your application settings."
@@ -16016,10 +16034,10 @@ msgstr "El teu compte s'ha activat."
 msgid "Your app version is out of date. Please refresh the page."
 msgstr "La teva versió de l'aplicació està desactualitzada. Si us plau, actualitza la pàgina."
 
-#. js-lingui-id: oNUh7z
+#. js-lingui-id: 9pWhO+
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "Your Apps"
-msgstr "Les teves aplicacions"
+msgid "Your apps"
+msgstr ""
 
 #. js-lingui-id: +5YqGH
 #: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts

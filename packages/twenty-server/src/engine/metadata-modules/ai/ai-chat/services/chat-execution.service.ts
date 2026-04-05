@@ -17,7 +17,7 @@ import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
-import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/code-execution-stream-emitter.type';
 
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';

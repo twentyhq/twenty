@@ -3,17 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { DEFAULT_TOOL_INPUT_SCHEMA } from 'twenty-shared/logic-function';
 
-import {
-  type GenerateDescriptorOptions,
-  type ToolProvider,
-  type ToolProviderContext,
-} from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
+import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 
 import { ToolCategory } from 'twenty-shared/ai';
-import {
-  type ToolDescriptor,
-  type ToolIndexEntry,
-} from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
