@@ -14,6 +14,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
+  IconBrandWhatsapp,
   IconFileCheck,
   IconSearch,
   IconSettings,
@@ -83,6 +84,12 @@ export const MainNavigationDrawerFixedItems = () => {
           Icon={IconFileCheck}
           to="/coat-approval"
           active={location.pathname.startsWith('/coat-approval')}
+        />
+        <NavigationDrawerItem
+          label="WhatsApp"
+          Icon={IconBrandWhatsapp}
+          to="/chat"
+          active={location.pathname.startsWith('/chat')}
         />
         <NavigationDrawerItem
           label="Transcripts"

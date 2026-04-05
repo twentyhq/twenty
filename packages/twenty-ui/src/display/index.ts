@@ -121,6 +121,7 @@ export {
   IconBrandGoogle,
   IconBrandGraphql,
   IconBrandLinkedin,
+  IconBrandWhatsapp,
   IconBrandOpenai,
   IconBrandX,
   IconBriefcase,
