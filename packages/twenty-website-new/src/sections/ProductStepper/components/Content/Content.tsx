@@ -18,11 +18,9 @@ const ContentRoot = styled.div`
   min-width: 0;
 
   @media (min-width: ${theme.breakpoints.md}px) {
+    align-self: stretch;
     gap: ${theme.spacing(20)};
-    height: max-content;
     margin-left: calc(-1 * ${theme.spacing(4)});
-    position: sticky;
-    top: calc(50vh - 150px);
   }
 `;
 
@@ -33,7 +31,10 @@ const StepsColumn = styled.div`
   gap: ${theme.spacing(8)};
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    max-width: 520px;
+    height: max-content;
+    max-width: 556px;
+    position: sticky;
+    top: ${theme.spacing(20)};
   }
 `;
 
@@ -41,19 +42,21 @@ const StepBlock = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   opacity: 1;
-  row-gap: ${theme.spacing(4)};
-  transition: opacity 0.4s ease;
+  row-gap: ${theme.spacing(2)};
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    row-gap: ${theme.spacing(6)};
     opacity: var(--step-opacity, 1);
+    transform: translateY(var(--step-translate-y, 0px));
   }
 `;
 
 const IntroBlock = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  row-gap: ${theme.spacing(4)};
+  row-gap: ${theme.spacing(2)};
 `;
 
 const StepRowHeader = styled.div`
@@ -109,18 +112,26 @@ export function Content({
             : theme.colors.secondary.text[100];
 
           let opacity = 1;
+          let translateY = 0;
 
           if (index > activeStepIndex + 1) {
             opacity = 0;
+            translateY = 300;
           } else if (index === activeStepIndex + 1) {
             opacity = 0.4;
+            translateY = 300 * (1 - localProgress);
           }
 
           return (
             <StepBlock
               data-active={String(isActive)}
               key={index}
-              style={{ '--step-opacity': opacity } as React.CSSProperties}
+              style={
+                {
+                  '--step-opacity': opacity,
+                  '--step-translate-y': `${translateY}px`,
+                } as React.CSSProperties
+              }
             >
               <StepRowHeader>
                 <StepIconBox data-active={String(isActive)}>
