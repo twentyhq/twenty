@@ -19,7 +19,7 @@ export type GeneratedMigrationResult = {
 };
 
 @Injectable()
-export class InstanceMigrationGenerationService {
+export class InstanceCommandGenerationService {
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
@@ -59,7 +59,8 @@ export class InstanceMigrationGenerationService {
       downStatements,
     );
 
-    const fileName = `${timestamp}-${version.replace(/\./g, '-')}-${migrationName}.ts`;
+    const versionSlug = version.replace(/\./g, '-');
+    const fileName = `${versionSlug}-instance-command-fast-${timestamp}-${migrationName}.ts`;
 
     return { fileName, fileTemplate, className };
   }

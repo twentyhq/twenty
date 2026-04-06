@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { getDataSourceToken } from '@nestjs/typeorm';
 
-import { InstanceMigrationGenerationService } from 'src/engine/core-modules/upgrade/services/instance-migration-generation.service';
+import { InstanceCommandGenerationService } from 'src/engine/core-modules/upgrade/services/instance-command-generation.service';
 
 const FIXED_TIMESTAMP = 1775000000000;
 
@@ -23,7 +23,7 @@ describe('InstanceMigrationService', () => {
   ) => {
     const module = await Test.createTestingModule({
       providers: [
-        InstanceMigrationGenerationService,
+        InstanceCommandGenerationService,
         {
           provide: getDataSourceToken(),
           useValue: buildMockDataSource(upQueries, downQueries),
@@ -31,7 +31,7 @@ describe('InstanceMigrationService', () => {
       ],
     }).compile();
 
-    return module.get(InstanceMigrationGenerationService);
+    return module.get(InstanceCommandGenerationService);
   };
 
   it('should return null when no schema changes are detected', async () => {

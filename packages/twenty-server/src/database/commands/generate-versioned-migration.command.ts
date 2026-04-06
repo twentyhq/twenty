@@ -6,11 +6,11 @@ import { Logger } from '@nestjs/common';
 import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
-import { InstanceMigrationGenerationService } from 'src/engine/core-modules/upgrade/services/instance-migration-generation.service';
+import { InstanceCommandGenerationService } from 'src/engine/core-modules/upgrade/services/instance-command-generation.service';
 
-const MIGRATIONS_DIR = path.resolve(
+const UPGRADE_VERSION_COMMAND_DIR = path.resolve(
   process.cwd(),
-  'src/database/typeorm/core/migrations/common',
+  'src/database/commands/upgrade-version-command',
 );
 
 type GenerateVersionedMigrationCommandOptions = {
@@ -26,7 +26,7 @@ export class GenerateVersionedMigrationCommand extends CommandRunner {
   private readonly logger = new Logger(GenerateVersionedMigrationCommand.name);
 
   constructor(
-    private readonly coreMigrationGeneratorService: InstanceMigrationGenerationService,
+    private readonly instanceMigrationGenerationService: InstanceCommandGenerationService,
   ) {
     super();
   }
@@ -54,9 +54,10 @@ export class GenerateVersionedMigrationCommand extends CommandRunner {
 
     this.logger.log(`Generating versioned migration for version ${version}...`);
 
+    const versionDir = this.getVersionDir(version);
     const timestamp = Date.now();
 
-    const result = await this.coreMigrationGeneratorService.generate({
+    const result = await this.instanceMigrationGenerationService.generate({
       migrationName,
       version,
       timestamp,
@@ -70,12 +71,18 @@ export class GenerateVersionedMigrationCommand extends CommandRunner {
       return;
     }
 
-    const filePath = path.join(MIGRATIONS_DIR, result.fileName);
+    const migrationFilePath = path.join(versionDir, result.fileName);
 
-    fs.writeFileSync(filePath, result.fileTemplate);
+    fs.writeFileSync(migrationFilePath, result.fileTemplate);
 
-    this.logger.log(`Migration generated successfully: ${filePath}`);
+    this.logger.log(`Migration generated successfully: ${migrationFilePath}`);
     this.logger.log(`  Class: ${result.className}`);
     this.logger.log(`  Version: ${version}`);
+  }
+
+  private getVersionDir(version: string): string {
+    const versionSlug = version.split('.').slice(0, 2).join('-');
+
+    return path.join(UPGRADE_VERSION_COMMAND_DIR, versionSlug);
   }
 }
