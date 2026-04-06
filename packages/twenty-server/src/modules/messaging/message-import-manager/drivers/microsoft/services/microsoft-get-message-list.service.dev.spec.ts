@@ -1,20 +1,18 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import {
+  ConnectedAccountProvider,
+  MessageFolderImportPolicy,
+  MessageFolderPendingSyncAction,
+} from 'twenty-shared/types';
 
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import {
-  MessageChannelWorkspaceEntity,
-  MessageFolderImportPolicy,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import {
-  MessageFolderPendingSyncAction,
-  MessageFolderWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { microsoftGraphWithMessagesDeltaLink } from 'src/modules/messaging/message-import-manager/drivers/microsoft/mocks/microsoft-api-examples';
 import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/folders';
 
@@ -26,7 +24,7 @@ const accessToken = 'replace-with-your-access-token';
 const refreshToken = 'replace-with-your-refresh-token';
 const syncCursor = `replace-with-your-sync-cursor`;
 const mockConnectedAccount: Pick<
-  ConnectedAccountWorkspaceEntity,
+  ConnectedAccountEntity,
   | 'provider'
   | 'accessToken'
   | 'refreshToken'
@@ -43,7 +41,7 @@ const mockConnectedAccount: Pick<
 };
 
 const mockMessageChannel: Pick<
-  MessageChannelWorkspaceEntity,
+  MessageChannelEntity,
   'id' | 'syncCursor' | 'messageFolderImportPolicy'
 > = {
   id: 'message-channel-id',
@@ -178,7 +176,7 @@ xdescribe('Microsoft dev tests : get message list service', () => {
 xdescribe('Microsoft dev tests : get message list service for folders', () => {
   let service: MicrosoftGetMessageListService;
 
-  const inboxFolder = new MessageFolderWorkspaceEntity();
+  const inboxFolder = new MessageFolderEntity();
 
   inboxFolder.id = 'inbox-folder-id';
   inboxFolder.name = MessageFolderName.INBOX;
@@ -186,7 +184,7 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
   inboxFolder.messageChannelId = 'message-channel-1';
   inboxFolder.parentFolderId = null;
 
-  const sentFolder = new MessageFolderWorkspaceEntity();
+  const sentFolder = new MessageFolderEntity();
 
   sentFolder.id = 'sent-folder-id';
   sentFolder.name = MessageFolderName.SENT_ITEMS;
@@ -194,7 +192,7 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
   sentFolder.messageChannelId = 'message-channel-1';
   sentFolder.parentFolderId = null;
 
-  const otherFolder = new MessageFolderWorkspaceEntity();
+  const otherFolder = new MessageFolderEntity();
 
   otherFolder.id = 'other-folder-id';
   otherFolder.name = 'other';
@@ -202,7 +200,7 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
   otherFolder.messageChannelId = 'message-channel-2';
   otherFolder.parentFolderId = null;
 
-  const messageChannelNoFolders = new MessageChannelWorkspaceEntity();
+  const messageChannelNoFolders = new MessageChannelEntity();
 
   messageChannelNoFolders.id = 'message-channel-0';
   messageChannelNoFolders.messageFolders = [];
@@ -210,7 +208,7 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
   messageChannelNoFolders.messageFolderImportPolicy =
     MessageFolderImportPolicy.SELECTED_FOLDERS;
 
-  const messageChannelMicrosoftOneFolder = new MessageChannelWorkspaceEntity();
+  const messageChannelMicrosoftOneFolder = new MessageChannelEntity();
 
   messageChannelMicrosoftOneFolder.id = 'message-channel-1';
   messageChannelMicrosoftOneFolder.messageFolders = [inboxFolder];
@@ -218,7 +216,7 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
   messageChannelMicrosoftOneFolder.messageFolderImportPolicy =
     MessageFolderImportPolicy.SELECTED_FOLDERS;
 
-  const messageChannelMicrosoft = new MessageChannelWorkspaceEntity();
+  const messageChannelMicrosoft = new MessageChannelEntity();
 
   messageChannelMicrosoft.id = 'message-channel-2';
   messageChannelMicrosoft.messageFolders = [inboxFolder, sentFolder];

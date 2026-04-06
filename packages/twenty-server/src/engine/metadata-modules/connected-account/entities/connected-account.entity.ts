@@ -8,6 +8,9 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { type ConnectedAccountProvider } from 'twenty-shared/types';
+
+import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
@@ -21,7 +24,7 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   handle: string;
 
   @Column({ type: 'varchar', nullable: false })
-  provider: string;
+  provider: ConnectedAccountProvider;
 
   @Column({ type: 'varchar', nullable: true })
   accessToken: string | null;
@@ -42,7 +45,7 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   scopes: string[] | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  connectionParameters: Record<string, unknown> | null;
+  connectionParameters: ImapSmtpCaldavParams | null;
 
   @Column({ type: 'timestamptz', nullable: true })
   lastSignedInAt: Date | null;

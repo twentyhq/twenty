@@ -3,6 +3,10 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { DataSource, Repository } from 'typeorm';
 
+import {
+  CalendarChannelSyncStage,
+  CalendarChannelSyncStatus,
+} from 'twenty-shared/types';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -16,10 +20,6 @@ import {
   CalendarRelaunchFailedCalendarChannelJob,
   type CalendarRelaunchFailedCalendarChannelJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-relaunch-failed-calendar-channel.job';
-import {
-  CalendarChannelSyncStage,
-  CalendarChannelSyncStatus,
-} from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
 export const CALENDAR_RELAUNCH_FAILED_CALENDAR_CHANNELS_CRON_PATTERN =
   '*/30 * * * *';

@@ -101,8 +101,9 @@ export class GoogleAPIsAuthController {
       const connectedAccountId =
         await this.googleAPIsService.refreshGoogleRefreshToken({
           handle,
-          workspaceMemberId: workspaceMemberId,
-          workspaceId: workspaceId,
+          userId,
+          workspaceMemberId,
+          workspaceId,
           accessToken,
           refreshToken,
           calendarVisibility,

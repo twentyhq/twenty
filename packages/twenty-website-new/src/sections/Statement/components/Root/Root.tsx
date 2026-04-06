@@ -22,6 +22,17 @@ const StyledContainer = styled(Container)`
   padding-top: ${theme.spacing(28)};
   position: relative;
 
+  /* Smooth transition for the children elements */
+  & > * {
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* When hovering over the heading, massively spin the decoration and push it up */
+  &:has(div:hover) > div:not(:hover) {
+    opacity: 0.1;
+    transform: scale(1.5) rotate(90deg) translateY(-20px);
+  }
+
   @media (min-width: ${theme.breakpoints.md}px) {
     padding-left: ${theme.spacing(10)};
     padding-right: ${theme.spacing(10)};

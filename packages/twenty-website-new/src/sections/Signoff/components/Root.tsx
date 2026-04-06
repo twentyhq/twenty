@@ -25,6 +25,37 @@ const StyledContainer = styled(Container)`
   padding-right: ${theme.spacing(4)};
   padding-top: ${theme.spacing(20)};
   text-align: center;
+  position: relative;
+  z-index: 10;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Whole container pushes forward on hover */
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  /* Smooth transition for the children elements */
+  & > * {
+    transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* When hovering over the heading, push it up and dim the rest */
+  &:has(h2:hover) > div:not(:first-child) {
+    opacity: 0.2;
+    transform: translateY(16px);
+  }
+
+  /* When hovering over the body text, push it left/right and dim the rest */
+  &:has(div > p:hover) > div:not(:nth-child(2)) {
+    opacity: 0.2;
+    transform: scale(0.95);
+  }
+
+  /* When hovering over CTA, push it up hugely and dim text */
+  &:has(a:hover) > div:not(:last-child) {
+    opacity: 0.1;
+    transform: translateY(-24px) scale(0.9);
+  }
 
   @media (min-width: ${theme.breakpoints.md}px) {
     padding-bottom: ${theme.spacing(28)};

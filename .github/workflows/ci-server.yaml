@@ -144,15 +144,15 @@ jobs:
           exit 1
       - name: Server / Check for Pending Migrations
         run: |
-          CORE_MIGRATION_OUTPUT=$(npx nx run twenty-server:typeorm migration:generate core-migration-check -d src/database/typeorm/core/core.datasource.ts || true)
+          CORE_MIGRATION_OUTPUT=$(npx nx database:migrate:generate twenty-server -- --name core-migration-check || true)
 
-          CORE_MIGRATION_FILE=$(ls packages/twenty-server/*core-migration-check.ts 2>/dev/null || echo "")
+          CORE_MIGRATION_FILE=$(ls packages/twenty-server/src/database/typeorm/core/migrations/common/*core-migration-check.ts 2>/dev/null || echo "")
 
           if [ -n "$CORE_MIGRATION_FILE" ]; then
-            echo "::error::Unexpected migration files were generated. Please create a proper migration manually."
+            echo "::error::Unexpected migration files were generated. Please run 'npx nx database:migrate:generate twenty-server -- --name <migration-name>' and commit the result."
             echo "$CORE_MIGRATION_OUTPUT"
 
-            rm -f packages/twenty-server/*core-migration-check.ts
+            rm -f packages/twenty-server/src/database/typeorm/core/migrations/common/*core-migration-check.ts
 
             exit 1
           fi

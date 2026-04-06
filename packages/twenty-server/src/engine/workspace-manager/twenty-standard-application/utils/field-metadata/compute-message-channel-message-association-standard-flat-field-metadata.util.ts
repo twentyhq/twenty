@@ -273,25 +273,17 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
       twentyStandardApplicationId,
       now,
     }),
-    messageChannel: createStandardRelationFieldFlatMetadata({
+    messageChannelId: createStandardFieldFlatMetadata({
       objectName,
       workspaceId,
       context: {
-        type: FieldMetadataType.RELATION,
-        morphId: null,
-        fieldName: 'messageChannel',
+        fieldName: 'messageChannelId',
+        type: FieldMetadataType.UUID,
         label: i18nLabel(msg`Message Channel Id`),
         description: i18nLabel(msg`Message Channel Id`),
         icon: 'IconHash',
         isNullable: true,
         isUIReadOnly: true,
-        targetObjectName: 'messageChannel',
-        targetFieldName: 'messageChannelMessageAssociations',
-        settings: {
-          relationType: RelationType.MANY_TO_ONE,
-          onDelete: RelationOnDeleteAction.CASCADE,
-          joinColumnName: 'messageChannelId',
-        },
       },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,

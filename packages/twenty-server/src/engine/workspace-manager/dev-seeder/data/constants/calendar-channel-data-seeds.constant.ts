@@ -1,5 +1,5 @@
+import { CalendarChannelVisibility } from 'twenty-shared/types';
 import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
-import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
 type CalendarChannelDataSeed = {
   id: string;

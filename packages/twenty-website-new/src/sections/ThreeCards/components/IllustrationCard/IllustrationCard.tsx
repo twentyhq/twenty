@@ -1,9 +1,10 @@
 import { Body, Heading, IconButton, LazyEmbed } from '@/design-system/components';
 import { ArrowRightIcon } from '@/icons';
-import { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
+import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { ThreeCardsCardShape } from './CardShape';
+import { GlbViewer } from './GlbViewer';
 
 const IllustrationCardContainer = styled.div`
   position: relative;
@@ -18,6 +19,22 @@ const IllustrationCardContainer = styled.div`
   min-width: 0;
   min-height: 0;
   height: 100%;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+  span {
+    transition: opacity 0.4s ease;
+  }
+
+  h1:has(span:hover) span:not(:hover),
+  h2:has(span:hover) span:not(:hover),
+  h3:has(span:hover) span:not(:hover) {
+    opacity: 0.2;
+  }
+
+  &:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  }
 `;
 
 const CardRule = styled.div`
@@ -26,7 +43,7 @@ const CardRule = styled.div`
   width: 100%;
 `;
 
-const CardEmbed = styled(LazyEmbed)`
+const CardEmbed = styled.div`
   width: 100%;
   height: 240px;
   border: none;
@@ -84,13 +101,19 @@ export function IllustrationCard({
         weight="medium"
       />
       <CardRule />
-      <CardEmbed
-        src={illustrationCard.illustration.src}
-        title={illustrationCard.illustration.title}
-        allow="clipboard-write; encrypted-media; gyroscope; web-share"
-        referrerPolicy="strict-origin-when-cross-origin"
-        allowFullScreen
-      />
+      <CardEmbed>
+        {illustrationCard.illustration.src.endsWith('.glb') ? (
+          <GlbViewer src={illustrationCard.illustration.src} />
+        ) : (
+          <LazyEmbed
+            src={illustrationCard.illustration.src}
+            title={illustrationCard.illustration.title}
+            allow="clipboard-write; encrypted-media; gyroscope; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+          />
+        )}
+      </CardEmbed>
       <CardRule />
       <CardBodyCell>
         <Body body={illustrationCard.body} size="sm" weight="regular" />

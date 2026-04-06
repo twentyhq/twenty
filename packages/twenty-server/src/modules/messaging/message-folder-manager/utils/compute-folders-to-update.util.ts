@@ -6,23 +6,22 @@ import {
   type MessageFolder,
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
-import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 
 export const computeFoldersToUpdate = ({
   discoveredFolders,
   existingFolders,
+  externalIdToUuidMap,
 }: {
   discoveredFolders: DiscoveredMessageFolder[];
   existingFolders: MessageFolder[];
-}): Map<string, Partial<MessageFolderWorkspaceEntity>> => {
+  externalIdToUuidMap: Map<string, string>;
+}): Map<string, Partial<MessageFolderEntity>> => {
   const existingFoldersByExternalId = new Map(
     existingFolders.map((folder) => [folder.externalId, folder]),
   );
 
-  const foldersToUpdate = new Map<
-    string,
-    Partial<MessageFolderWorkspaceEntity>
-  >();
+  const foldersToUpdate = new Map<string, Partial<MessageFolderEntity>>();
 
   for (const discoveredFolder of discoveredFolders) {
     const existingFolder = existingFoldersByExternalId.get(
@@ -33,12 +32,16 @@ export const computeFoldersToUpdate = ({
       continue;
     }
 
+    const resolvedParentFolderId = isNonEmptyString(
+      discoveredFolder.parentFolderId,
+    )
+      ? (externalIdToUuidMap.get(discoveredFolder.parentFolderId) ?? null)
+      : null;
+
     const discoveredFolderData = {
       name: discoveredFolder.name,
       isSentFolder: discoveredFolder.isSentFolder,
-      parentFolderId: isNonEmptyString(discoveredFolder.parentFolderId)
-        ? discoveredFolder.parentFolderId
-        : null,
+      parentFolderId: resolvedParentFolderId,
     };
 
     const existingFolderData = {

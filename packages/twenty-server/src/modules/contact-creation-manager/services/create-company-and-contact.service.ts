@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString, isNull } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
@@ -8,13 +9,14 @@ import {
   type FieldActorSource,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type DeepPartial } from 'typeorm';
+import { type DeepPartial, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { CONTACTS_CREATION_BATCH_SIZE } from 'src/modules/contact-creation-manager/constants/contacts-creation-batch-size.constant';
 import { CreateCompanyService } from 'src/modules/contact-creation-manager/services/create-company.service';
 import { CreatePersonService } from 'src/modules/contact-creation-manager/services/create-person.service';
@@ -36,13 +38,16 @@ export class CreateCompanyAndPersonService {
     private readonly createCompaniesService: CreateCompanyService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
   async createCompaniesAndPeople(
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: ConnectedAccountEntity,
     contactsToCreate: Contact[],
     workspaceId: string,
     source: FieldActorSource,
+    accountOwner: WorkspaceMemberWorkspaceEntity | null,
   ): Promise<DeepPartial<PersonWorkspaceEntity>[]> {
     if (!contactsToCreate || contactsToCreate.length === 0) {
       return [];
@@ -105,6 +110,7 @@ export class CreateCompanyAndPersonService {
             alreadyCreatedPeople,
             source,
             connectedAccount,
+            accountOwner,
           );
 
         const companiesMap =
@@ -117,7 +123,7 @@ export class CreateCompanyAndPersonService {
           contactsToCreate: contactsThatNeedPersonCreate,
           createdBy: {
             source: source,
-            workspaceMember: connectedAccount.accountOwner,
+            workspaceMember: accountOwner,
             context: {
               provider: connectedAccount.provider,
             },
@@ -148,7 +154,7 @@ export class CreateCompanyAndPersonService {
   }
 
   async createCompaniesAndPeopleAndUpdateParticipants(
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: ConnectedAccountEntity,
     contactsToCreate: Contact[],
     workspaceId: string,
     source: FieldActorSource,
@@ -160,29 +166,31 @@ export class CreateCompanyAndPersonService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      if (!connectedAccount.accountOwner) {
-        const workspaceMemberRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            WorkspaceMemberWorkspaceEntity,
-          );
+    const accountOwner =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          const userWorkspace = await this.userWorkspaceRepository.findOne({
+            where: { id: connectedAccount.userWorkspaceId },
+          });
 
-        const workspaceMember = await workspaceMemberRepository.findOne({
-          where: {
-            id: connectedAccount.accountOwnerId,
-          },
-        });
+          if (!userWorkspace) {
+            throw new Error(
+              `UserWorkspace with id ${connectedAccount.userWorkspaceId} not found`,
+            );
+          }
 
-        if (!workspaceMember) {
-          throw new Error(
-            `Workspace member with id ${connectedAccount.accountOwnerId} not found in workspace ${workspaceId}`,
-          );
-        }
+          const workspaceMemberRepository =
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              WorkspaceMemberWorkspaceEntity,
+            );
 
-        connectedAccount.accountOwner = workspaceMember;
-      }
-    }, authContext);
+          return workspaceMemberRepository.findOne({
+            where: { userId: userWorkspace.userId },
+          });
+        },
+        authContext,
+      );
 
     for (const contactsBatch of contactsBatches) {
       try {
@@ -191,6 +199,7 @@ export class CreateCompanyAndPersonService {
           contactsBatch,
           workspaceId,
           source,
+          accountOwner,
         );
       } catch (error) {
         this.exceptionHandlerService.captureExceptions([error], {
@@ -206,7 +215,8 @@ export class CreateCompanyAndPersonService {
     uniqueContacts: Contact[],
     alreadyCreatedPeople: PersonWorkspaceEntity[],
     source: FieldActorSource,
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: ConnectedAccountEntity,
+    accountOwner: WorkspaceMemberWorkspaceEntity | null,
   ) {
     const shouldCreateOrRestorePeopleByHandleMap = new Map<
       string,
@@ -288,7 +298,7 @@ export class CreateCompanyAndPersonService {
           return {
             domainName: companyDomainName,
             createdBySource: source,
-            createdByWorkspaceMember: connectedAccount.accountOwner,
+            createdByWorkspaceMember: accountOwner,
             createdByContext: {
               provider: connectedAccount.provider,
             },

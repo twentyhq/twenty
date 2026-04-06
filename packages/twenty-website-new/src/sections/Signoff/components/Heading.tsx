@@ -11,6 +11,11 @@ const HeadingWrap = styled.div`
   max-width: 921px;
   min-width: 0;
   width: 100%;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    transform: translateY(-8px) scale(1.02);
+  }
 `;
 
 type HeadingProps = {

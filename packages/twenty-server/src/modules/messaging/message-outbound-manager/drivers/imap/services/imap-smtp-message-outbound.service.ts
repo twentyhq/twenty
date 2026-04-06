@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import MailComposer from 'nodemailer/lib/mail-composer';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { type MessageOutboundDriver } from 'src/modules/messaging/message-outbound-manager/interfaces/message-outbound-driver.interface';
 
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapFindDraftsFolderService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-drafts-folder.service';
 import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
@@ -18,13 +22,17 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
     private readonly smtpClientProvider: SmtpClientProvider,
     private readonly imapClientProvider: ImapClientProvider,
     private readonly imapFindDraftsFolderService: ImapFindDraftsFolderService,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
+    @InjectRepository(MessageFolderEntity)
+    private readonly messageFolderRepository: Repository<MessageFolderEntity>,
   ) {}
 
   async sendMessage(
     sendMessageInput: SendMessageInput,
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: ConnectedAccountEntity,
   ): Promise<void> {
-    const { handle, connectionParameters, messageChannels } = connectedAccount;
+    const { handle, connectionParameters } = connectedAccount;
 
     const smtpClient =
       await this.smtpClientProvider.getSmtpClient(connectedAccount);
@@ -48,13 +56,23 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
       const imapClient =
         await this.imapClientProvider.getClient(connectedAccount);
 
-      const messageChannel = messageChannels.find(
-        (channel) => channel.handle === handle,
-      );
+      const messageChannel = await this.messageChannelRepository.findOne({
+        where: {
+          connectedAccountId: connectedAccount.id,
+          handle: handle,
+        },
+      });
 
-      const sentFolder = messageChannel?.messageFolders.find(
-        (messageFolder) => messageFolder.isSentFolder,
-      );
+      let sentFolder: MessageFolderEntity | null = null;
+
+      if (isDefined(messageChannel)) {
+        sentFolder = await this.messageFolderRepository.findOne({
+          where: {
+            messageChannelId: messageChannel.id,
+            isSentFolder: true,
+          },
+        });
+      }
 
       if (isDefined(sentFolder) && isDefined(sentFolder.name)) {
         await imapClient.append(sentFolder.name, messageBuffer);
@@ -66,7 +84,7 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
 
   async createDraft(
     sendMessageInput: SendMessageInput,
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: ConnectedAccountEntity,
   ): Promise<void> {
     const { handle, connectionParameters } = connectedAccount;
 

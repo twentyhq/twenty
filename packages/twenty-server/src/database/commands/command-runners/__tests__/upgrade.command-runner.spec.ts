@@ -5,14 +5,21 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
-import { type Repository } from 'typeorm';
+import {
+  type MigrationInterface,
+  type QueryRunner,
+  type Repository,
+} from 'typeorm';
 
 import {
+  UpgradeCommandOptions,
   UpgradeCommandRunner,
   type AllCommands,
 } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { CoreMigrationRunnerService } from 'src/database/commands/core-migration-runner/services/core-migration-runner.service';
+import { CoreMigrationRunnerService } from 'src/database/commands/core-migration/services/core-migration-runner.service';
+import { RegisteredCoreMigrationService } from 'src/database/commands/core-migration/services/registered-core-migration-registry.service';
+import { RegisteredCoreMigration } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
 import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
@@ -59,12 +66,35 @@ type BuildUpgradeCommandModuleArgs = {
   workspaces: WorkspaceEntity[];
   appVersion: string | null;
   commandRunner: CommandRunnerValues;
+  migrations?: MigrationInterface[];
 };
 const buildUpgradeCommandModule = async ({
   workspaces,
   appVersion,
   commandRunner,
+  migrations,
 }: BuildUpgradeCommandModuleArgs) => {
+  const registryProvider = migrations
+    ? {
+        provide: RegisteredCoreMigrationService,
+        useFactory: () => {
+          const fakeDataSource = {
+            migrations,
+          } as unknown as import('typeorm').DataSource;
+          const registry = new RegisteredCoreMigrationService(fakeDataSource);
+
+          registry.onModuleInit();
+
+          return registry;
+        },
+      }
+    : {
+        provide: RegisteredCoreMigrationService,
+        useValue: {
+          getInstanceCommandsForVersion: jest.fn().mockReturnValue([]),
+        },
+      };
+
   const module: TestingModule = await Test.createTestingModule({
     providers: [
       {
@@ -74,6 +104,7 @@ const buildUpgradeCommandModule = async ({
           coreEngineVersionService: CoreEngineVersionService,
           workspaceVersionService: WorkspaceVersionService,
           coreMigrationRunnerService: CoreMigrationRunnerService,
+          versionedMigrationRegistryService: RegisteredCoreMigrationService,
           workspaceIteratorService: WorkspaceIteratorService,
         ) => {
           return new commandRunner(
@@ -81,6 +112,7 @@ const buildUpgradeCommandModule = async ({
             coreEngineVersionService,
             workspaceVersionService,
             coreMigrationRunnerService,
+            versionedMigrationRegistryService,
             workspaceIteratorService,
           );
         },
@@ -89,6 +121,7 @@ const buildUpgradeCommandModule = async ({
           CoreEngineVersionService,
           WorkspaceVersionService,
           CoreMigrationRunnerService,
+          RegisteredCoreMigrationService,
           WorkspaceIteratorService,
         ],
       },
@@ -124,8 +157,13 @@ const buildUpgradeCommandModule = async ({
       WorkspaceVersionService,
       {
         provide: CoreMigrationRunnerService,
-        useValue: { run: jest.fn().mockResolvedValue(undefined) },
+        useValue: {
+          runSingleMigration: jest
+            .fn()
+            .mockResolvedValue({ status: 'success' }),
+        },
       },
+      registryProvider,
       {
         provide: WorkspaceIteratorService,
         useValue: {
@@ -173,6 +211,7 @@ describe('UpgradeCommandRunner', () => {
     workspaces?: WorkspaceEntity[];
     appVersion?: string | null;
     commandRunner?: CommandRunnerValues;
+    migrations?: MigrationInterface[];
   };
   const buildModuleAndSetupSpies = async ({
     numberOfWorkspace = 1,
@@ -180,6 +219,7 @@ describe('UpgradeCommandRunner', () => {
     workspaces,
     commandRunner = BasicUpgradeCommandRunner,
     appVersion = CURRENT_VERSION,
+    migrations,
   }: BuildModuleAndSetupSpiesArgs) => {
     const generatedWorkspaces = Array.from(
       { length: numberOfWorkspace },
@@ -193,6 +233,7 @@ describe('UpgradeCommandRunner', () => {
       commandRunner,
       appVersion,
       workspaces: [...generatedWorkspaces, ...(workspaces ?? [])],
+      migrations,
     });
 
     upgradeCommandRunner = module.get(commandRunner);
@@ -204,9 +245,11 @@ describe('UpgradeCommandRunner', () => {
     workspaceRepository = module.get<Repository<WorkspaceEntity>>(
       getRepositoryToken(WorkspaceEntity),
     );
+
+    return module;
   };
 
-  it('should ignore and list as succesfull upgrade on workspace with higher version', async () => {
+  it('should ignore and list as successful upgrade on workspace with higher version', async () => {
     const higherVersionWorkspace = generateMockWorkspace({
       id: 'higher_version_workspace',
       version: '42.42.42',
@@ -216,11 +259,9 @@ describe('UpgradeCommandRunner', () => {
       numberOfWorkspace: 0,
       workspaces: [higherVersionWorkspace],
     });
-    // @ts-expect-error legacy noImplicitAny
-    const passedParams = [];
-    const options = {};
+    const passedParams: string[] = [];
+    const options: UpgradeCommandOptions = {};
 
-    // @ts-expect-error legacy noImplicitAny
     await upgradeCommandRunner.run(passedParams, options);
 
     [workspaceRepository.update].forEach((fn) =>
@@ -234,11 +275,9 @@ describe('UpgradeCommandRunner', () => {
     await buildModuleAndSetupSpies({
       numberOfWorkspace,
     });
-    // @ts-expect-error legacy noImplicitAny
-    const passedParams = [];
-    const options = {};
+    const passedParams: string[] = [];
+    const options: UpgradeCommandOptions = {};
 
-    // @ts-expect-error legacy noImplicitAny
     await upgradeCommandRunner.run(passedParams, options);
 
     expect(workspaceRepository.update).toHaveBeenNthCalledWith(
@@ -294,11 +333,9 @@ describe('UpgradeCommandRunner', () => {
       async ({ context: { input } }) => {
         await buildModuleAndSetupSpies(input);
 
-        // @ts-expect-error legacy noImplicitAny
-        const passedParams = [];
-        const options = {};
+        const passedParams: string[] = [];
+        const options: UpgradeCommandOptions = {};
 
-        // @ts-expect-error legacy noImplicitAny
         await upgradeCommandRunner.run(passedParams, options);
 
         expect(workspaceRepository.update).toHaveBeenCalledWith(
@@ -306,6 +343,57 @@ describe('UpgradeCommandRunner', () => {
           { version: expect.any(String) },
         );
       },
+    );
+  });
+
+  it('should only run instance commands for the current version', async () => {
+    @RegisteredCoreMigration(CURRENT_VERSION)
+    class AddIndexToUsers1770000000000 implements MigrationInterface {
+      async up(_queryRunner: QueryRunner) {}
+      async down(_queryRunner: QueryRunner) {}
+    }
+
+    @RegisteredCoreMigration(CURRENT_VERSION)
+    class AddColumnToAccounts1771000000000 implements MigrationInterface {
+      async up(_queryRunner: QueryRunner) {}
+      async down(_queryRunner: QueryRunner) {}
+    }
+
+    @RegisteredCoreMigration(PREVIOUS_VERSION)
+    class DropLegacyTable1769000000000 implements MigrationInterface {
+      async up(_queryRunner: QueryRunner) {}
+      async down(_queryRunner: QueryRunner) {}
+    }
+
+    class UndecoratedMigration1768000000000 implements MigrationInterface {
+      async up(_queryRunner: QueryRunner) {}
+      async down(_queryRunner: QueryRunner) {}
+    }
+
+    const module = await buildModuleAndSetupSpies({
+      migrations: [
+        new UndecoratedMigration1768000000000(),
+        new DropLegacyTable1769000000000(),
+        new AddIndexToUsers1770000000000(),
+        new AddColumnToAccounts1771000000000(),
+      ],
+    });
+
+    const migrationRunnerService = module.get(CoreMigrationRunnerService);
+
+    const passedParams: string[] = [];
+    const options: UpgradeCommandOptions = {};
+
+    await upgradeCommandRunner.run(passedParams, options);
+
+    expect(migrationRunnerService.runSingleMigration).toHaveBeenCalledTimes(2);
+    expect(migrationRunnerService.runSingleMigration).toHaveBeenNthCalledWith(
+      1,
+      'AddIndexToUsers1770000000000',
+    );
+    expect(migrationRunnerService.runSingleMigration).toHaveBeenNthCalledWith(
+      2,
+      'AddColumnToAccounts1771000000000',
     );
   });
 

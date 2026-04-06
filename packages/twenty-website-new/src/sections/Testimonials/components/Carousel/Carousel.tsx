@@ -100,11 +100,14 @@ const HeadingWrapper = styled.div`
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 
   &[data-active='true'] {
     opacity: 1;
     pointer-events: auto;
     visibility: visible;
+    transform: translateY(0);
   }
 `;
 

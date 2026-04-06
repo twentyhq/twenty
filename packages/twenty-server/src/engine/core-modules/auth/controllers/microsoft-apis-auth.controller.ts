@@ -108,7 +108,8 @@ export class MicrosoftAPIsAuthController {
       const connectedAccountId =
         await this.microsoftAPIsService.refreshMicrosoftRefreshToken({
           handle,
-          workspaceMemberId: workspaceMemberId,
+          userId,
+          workspaceMemberId,
           workspaceId: workspaceId,
           accessToken,
           refreshToken,
