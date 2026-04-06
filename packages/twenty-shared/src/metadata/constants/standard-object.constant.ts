@@ -1850,14 +1850,23 @@ export const STANDARD_OBJECTS = {
       searchVector: {
         universalIdentifier: 'c63e091f-6528-4657-ad2a-b0a158f9e483',
       },
+      subject: {
+        universalIdentifier: 'a8ddbf8c-1137-45d1-b89e-5ffbd83f67c8',
+      },
     },
     indexes: {},
     views: {
       allMessageThreads: {
         universalIdentifier: '20202020-d002-4d02-8d02-ae55a9ba2002',
         viewFields: {
+          subject: {
+            universalIdentifier: 'e5f0d32b-2b6a-47bc-b3bd-f32c96594ec1',
+          },
           messages: {
             universalIdentifier: '20202020-df02-4d02-8d02-ae55a9ba2f01',
+          },
+          updatedAt: {
+            universalIdentifier: 'af2c6ac9-7083-4609-8172-d518441f5e9e',
           },
           createdAt: {
             universalIdentifier: '20202020-df02-4d02-8d02-ae55a9ba2f02',

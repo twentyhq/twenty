@@ -40,6 +40,7 @@ import { TestWorkflowSingleRecordCommand } from '@/command-menu-item/engine-comm
 import { TidyUpWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/TidyUpWorkflowSingleRecordCommand';
 import { HeadlessFrontComponentRendererEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessFrontComponentRendererEngineCommand';
 import { TriggerWorkflowVersionEngineCommand } from '@/command-menu-item/engine-command/record/components/TriggerWorkflowVersionEngineCommand';
+import { ReplyToEmailThreadCommand } from '@/command-menu-item/engine-command/record/single-record/message-thread/components/ReplyToEmailThreadCommand';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { msg } from '@lingui/core/macro';
 import { AppPath, SettingsPath, SidePanelPages } from 'twenty-shared/types';
@@ -239,6 +240,9 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   ),
   [EngineComponentKey.FRONT_COMPONENT_RENDERER]: (
     <HeadlessFrontComponentRendererEngineCommand />
+  ),
+  [EngineComponentKey.REPLY_TO_EMAIL_THREAD]: (
+    <ReplyToEmailThreadCommand />
   ),
 
   // Deprecated keys kept for backward compatibility until migration runs

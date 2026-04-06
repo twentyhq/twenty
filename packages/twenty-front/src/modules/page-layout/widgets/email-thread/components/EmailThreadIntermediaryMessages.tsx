@@ -3,23 +3,25 @@ import { useState } from 'react';
 
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
-import { Button } from 'twenty-ui/input';
+import { t } from '@lingui/core/macro';
 import { IconArrowsVertical } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledButtonContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  padding: 16px 24px;
+  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[6]};
 `;
 
-export const SidePanelMessageThreadIntermediaryMessages = ({
+export const EmailThreadIntermediaryMessages = ({
   messages,
 }: {
   messages: EmailThreadMessageWithSender[];
 }) => {
   const [areMessagesOpen, setAreMessagesOpen] = useState(false);
+  const messagesLength = messages.length;
 
-  if (messages.length === 0) {
+  if (messagesLength === 0) {
     return null;
   }
 
@@ -37,7 +39,7 @@ export const SidePanelMessageThreadIntermediaryMessages = ({
     <StyledButtonContainer>
       <Button
         Icon={IconArrowsVertical}
-        title={`${messages.length} email${messages.length > 1 ? 's' : ''}`}
+        title={t`${messagesLength} emails`}
         size="small"
         onClick={() => setAreMessagesOpen(true)}
       />

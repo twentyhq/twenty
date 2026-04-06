@@ -1,29 +1,22 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { fetchAllThreadMessagesOperationSignatureFactory } from '@/activities/emails/graphql/operation-signatures/factories/fetchAllThreadMessagesOperationSignatureFactory';
 import { type EmailThread } from '@/activities/emails/types/EmailThread';
 import { type EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
-
-import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
 import { type MessageChannelMessageAssociation } from '@/activities/emails/types/MessageChannelMessageAssociation';
-import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/states/viewableRecordIdComponentState';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import {
   CoreObjectNameSingular,
   MessageParticipantRole,
 } from 'twenty-shared/types';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
-// to improve - https://github.com/twentyhq/twenty/issues/12190
-export const useEmailThreadInSidePanel = () => {
-  const viewableRecordId = useAtomComponentStateValue(
-    viewableRecordIdComponentState,
-  );
+export const useEmailThread = (threadId: string | null) => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const [lastMessageId, setLastMessageId] = useState<string | null>(null);
   const [lastMessageChannelId, setLastMessageChannelId] = useState<
@@ -33,7 +26,7 @@ export const useEmailThreadInSidePanel = () => {
 
   const { record: thread } = useFindOneRecord<EmailThread>({
     objectNameSingular: CoreObjectNameSingular.MessageThread,
-    objectRecordId: viewableRecordId ?? '',
+    objectRecordId: threadId ?? '',
     recordGqlFields: {
       id: true,
     },
@@ -47,7 +40,7 @@ export const useEmailThreadInSidePanel = () => {
 
   const FETCH_ALL_MESSAGES_OPERATION_SIGNATURE =
     fetchAllThreadMessagesOperationSignatureFactory({
-      messageThreadId: viewableRecordId,
+      messageThreadId: threadId,
     });
 
   const {
@@ -62,7 +55,7 @@ export const useEmailThreadInSidePanel = () => {
       FETCH_ALL_MESSAGES_OPERATION_SIGNATURE.objectNameSingular,
     orderBy: FETCH_ALL_MESSAGES_OPERATION_SIGNATURE.variables.orderBy,
     recordGqlFields: FETCH_ALL_MESSAGES_OPERATION_SIGNATURE.fields,
-    skip: !viewableRecordId,
+    skip: !threadId,
   });
 
   const fetchMoreMessages = useCallback(() => {
@@ -76,11 +69,11 @@ export const useEmailThreadInSidePanel = () => {
   useEffect(() => {
     if (messages.length > 0 && isMessagesFetchComplete) {
       const lastMessage = messages[messages.length - 1];
+
       setLastMessageId(lastMessage.id);
     }
   }, [messages, isMessagesFetchComplete]);
 
-  // TODO: introduce nested filters so we can retrieve the message sender directly from the message query
   const { records: messageSenders } =
     useFindManyRecords<EmailThreadMessageParticipant>({
       filter: {
@@ -167,9 +160,11 @@ export const useEmailThreadInSidePanel = () => {
       const sender = messageSenders.find(
         (messageSender) => messageSender.messageId === message.id,
       );
+
       if (!sender) {
         return null;
       }
+
       return {
         ...message,
         sender,

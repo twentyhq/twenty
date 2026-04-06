@@ -27,6 +27,7 @@ import { SeedCliApplicationRegistrationCommand } from 'src/database/commands/upg
 import { UpdateStandardIndexViewNamesCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-update-standard-index-view-names.command';
 import { AddGlobalKeyValuePairUniqueIndexCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-add-global-key-value-pair-unique-index.command';
 import { BackfillDatasourceToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-backfill-datasource-to-workspace.command';
+import { BackfillMessageThreadSubjectCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-backfill-message-thread-subject.command';
 import { BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-backfill-page-layouts-and-fields-widget-view-fields.command';
 import { DeduplicateEngineCommandsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-deduplicate-engine-commands.command';
 import { FixSelectAllCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-fix-select-all-command-menu-items.command';
@@ -72,6 +73,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     // 1.21 Commands
     private readonly addGlobalKeyValuePairUniqueIndexCommand: AddGlobalKeyValuePairUniqueIndexCommand,
     private readonly backfillDatasourceToWorkspaceCommand: BackfillDatasourceToWorkspaceCommand,
+    private readonly backfillMessageThreadSubjectCommand: BackfillMessageThreadSubjectCommand,
     private readonly backfillPageLayoutsAndFieldsWidgetViewFieldsCommand: BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
     private readonly deduplicateEngineCommandsCommand: DeduplicateEngineCommandsCommand,
     private readonly fixSelectAllCommandMenuItemsCommand: FixSelectAllCommandMenuItemsCommand,
@@ -111,6 +113,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     const commands_1210: VersionCommands = [
       this.addGlobalKeyValuePairUniqueIndexCommand,
       this.backfillDatasourceToWorkspaceCommand,
+      this.backfillMessageThreadSubjectCommand,
       this.backfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
       this.deduplicateEngineCommandsCommand,
       this.fixSelectAllCommandMenuItemsCommand,

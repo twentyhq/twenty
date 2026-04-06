@@ -787,4 +787,19 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.VIEW_PREVIOUS_AI_CHATS,
     hotKeys: null,
   },
+  replyToEmailThread: {
+    universalIdentifier: '8f015cbd-c764-434e-a6c6-bb7581b4be44',
+    label: 'Reply',
+    icon: 'IconArrowBackUp',
+    isPinned: true,
+    position: 70,
+    shortLabel: 'Reply',
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression: 'numberOfSelectedRecords == 1',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.messageThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.REPLY_TO_EMAIL_THREAD,
+    hotKeys: null,
+  },
 } as const;
