@@ -1,12 +1,12 @@
 import { MENU_DATA } from '@/app/_constants';
-import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
-import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import {
   RELEASE_NOTES_HERO_BODY,
   RELEASE_NOTES_HERO_HEADING,
 } from '@/app/release-notes/_constants/hero';
 import { LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
+import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { fetchLatestGithubReleaseTag } from '@/lib/github/fetch-latest-release-tag';
 import { getVisibleReleaseNotes } from '@/lib/releases/get-visible-releases';
 import { loadLocalReleaseNotes } from '@/lib/releases/load-local-release-notes';
@@ -30,10 +30,7 @@ export default async function ReleaseNotesPage() {
     fetchLatestGithubReleaseTag(),
     fetchCommunityStats(),
   ]);
-  const menuSocialLinks = mergeSocialLinkLabels(
-    MENU_DATA.socialLinks,
-    stats,
-  );
+  const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
   const visibleNotes =
     process.env.NODE_ENV === 'development'
       ? allNotes
@@ -78,35 +75,33 @@ export default async function ReleaseNotesPage() {
         </Hero.Root>
       </ScrollReveal>
 
-      <ScrollReveal>
-        <ReleaseNotes.Root>
-          {allNotes.length === 0 ? (
-            <ReleaseNotes.EmptyMessage>
-              Release notes were not found. This app reads release MDX from{' '}
-              <strong>packages/twenty-website/src/content/releases</strong> in
-              the monorepo. Ensure that folder is present when building or
-              running locally.
-            </ReleaseNotes.EmptyMessage>
-          ) : visibleNotes.length === 0 ? (
-            <ReleaseNotes.EmptyMessage>
-              No releases are visible yet for the current published version.
-            </ReleaseNotes.EmptyMessage>
-          ) : (
-            visibleNotes.map((note, index) => (
-              <Fragment key={note.slug}>
-                <ReleaseNotes.ReleaseEntry
-                  content={note.content}
-                  date={note.date}
-                  release={note.release}
-                />
-                {index < visibleNotes.length - 1 ? (
-                  <ReleaseNotes.Divider />
-                ) : null}
-              </Fragment>
-            ))
-          )}
-        </ReleaseNotes.Root>
-      </ScrollReveal>
+      <ReleaseNotes.Root>
+        {allNotes.length === 0 ? (
+          <ReleaseNotes.EmptyMessage>
+            Release notes were not found. This app reads release MDX from{' '}
+            <strong>packages/twenty-website/src/content/releases</strong> in the
+            monorepo. Ensure that folder is present when building or running
+            locally.
+          </ReleaseNotes.EmptyMessage>
+        ) : visibleNotes.length === 0 ? (
+          <ReleaseNotes.EmptyMessage>
+            No releases are visible yet for the current published version.
+          </ReleaseNotes.EmptyMessage>
+        ) : (
+          visibleNotes.map((note, index) => (
+            <Fragment key={note.slug}>
+              <ReleaseNotes.ReleaseEntry
+                content={note.content}
+                date={note.date}
+                release={note.release}
+              />
+              {index < visibleNotes.length - 1 ? (
+                <ReleaseNotes.Divider />
+              ) : null}
+            </Fragment>
+          ))
+        )}
+      </ReleaseNotes.Root>
     </>
   );
 }
