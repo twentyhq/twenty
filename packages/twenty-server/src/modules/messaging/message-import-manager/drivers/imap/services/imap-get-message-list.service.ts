@@ -3,9 +3,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { type ImapFlow } from 'imapflow';
 import { isDefined } from 'twenty-shared/utils';
 
+import { MessageFolderImportPolicy } from 'twenty-shared/types';
 import { MessageFolder } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
-import { MessageFolderImportPolicy } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,

@@ -58,10 +58,9 @@ import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
-import { CalendarChannelDataAccessModule } from 'src/engine/metadata-modules/calendar-channel/data-access/calendar-channel-data-access.module';
+import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { ConnectedAccountDataAccessModule } from 'src/engine/metadata-modules/connected-account/data-access/connected-account-data-access.module';
-import { MessageChannelDataAccessModule } from 'src/engine/metadata-modules/message-channel/data-access/message-channel-data-access.module';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -94,15 +93,14 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
       TwoFactorAuthenticationMethodEntity,
       ObjectMetadataEntity,
       ConnectedAccountEntity,
+      MessageChannelEntity,
+      CalendarChannelEntity,
     ]),
     UserWorkspaceModule,
     OnboardingModule,
     ConnectedAccountModule,
     MessagingCommonModule,
     MessagingFolderSyncManagerModule,
-    CalendarChannelDataAccessModule,
-    ConnectedAccountDataAccessModule,
-    MessageChannelDataAccessModule,
     WorkspaceSSOModule,
     FeatureFlagModule,
     WorkspaceInvitationModule,

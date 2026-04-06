@@ -8,10 +8,10 @@ import {
 import { isNonEmptyString } from '@sniptt/guards';
 import pLimit from 'p-limit';
 
+import { MessageFolderImportPolicy } from 'twenty-shared/types';
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageFolderImportPolicy } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { MicrosoftMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-message-list-fetch-error-handler.service';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import {
@@ -72,11 +72,11 @@ export class MicrosoftGetMessageListService {
 
   public async getMessageList(
     connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
+      ConnectedAccountEntity,
       'provider' | 'accessToken' | 'id'
     >,
     messageFolder: Pick<
-      MessageFolderWorkspaceEntity,
+      MessageFolderEntity,
       'name' | 'syncCursor' | 'externalId'
     >,
   ): Promise<GetOneMessageListResponse> {
