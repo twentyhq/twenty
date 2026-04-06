@@ -14,22 +14,23 @@ const ContentRoot = styled.div`
   min-width: 0;
 
   @media (min-width: ${theme.breakpoints.md}px) {
+    align-self: stretch;
     gap: ${theme.spacing(20)};
-    height: max-content;
     margin-left: calc(-1 * ${theme.spacing(4)});
-    position: sticky;
-    top: calc(50vh - 150px);
   }
 `;
 
 const StepsColumn = styled.div`
   display: grid;
-  gap: ${theme.spacing(8)};
+  gap: ${theme.spacing(6)};
   grid-template-columns: 1fr;
   min-width: 0;
 
   @media (min-width: ${theme.breakpoints.md}px) {
+    height: max-content;
     max-width: 556px;
+    position: sticky;
+    top: calc(50vh - 150px);
   }
 `;
 
@@ -44,11 +45,14 @@ const StepBlock = styled.div`
   grid-template-columns: 1fr;
   opacity: 1;
   row-gap: ${theme.spacing(4)};
-  transition: opacity 0.4s ease;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     opacity: var(--step-opacity, 1);
     row-gap: ${theme.spacing(6)};
+    transform: translateY(var(--step-translate-y, 0px));
   }
 `;
 
@@ -81,18 +85,26 @@ export function Content({
         </HeadingBlock>
         {body.map((bodyItem, index) => {
           let opacity = 1;
+          let translateY = 0;
 
           if (index > activeStepIndex + 1) {
             opacity = 0;
+            translateY = 300;
           } else if (index === activeStepIndex + 1) {
             opacity = 0.4;
+            translateY = 300 * (1 - localProgress);
           }
 
           return (
             <StepBlock
               data-active={String(index <= activeStepIndex)}
               key={index}
-              style={{ '--step-opacity': opacity } as CSSProperties}
+              style={
+                {
+                  '--step-opacity': opacity,
+                  '--step-translate-y': `${translateY}px`,
+                } as CSSProperties
+              }
             >
               <Body body={bodyItem} family="sans" size="md" weight="regular" />
             </StepBlock>
