@@ -19,7 +19,6 @@ export const FOOTER_DATA: FooterDataType = {
         { label: 'Pricing', href: '/pricing', external: false },
         { label: 'Partners', href: '/partner', external: false },
         { label: 'Why Twenty', href: '/why-twenty', external: false },
-        { label: 'OSS Friends', href: '/oss-friends', external: false },
       ],
     },
     {

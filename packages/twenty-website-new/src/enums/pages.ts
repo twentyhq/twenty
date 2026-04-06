@@ -1,5 +1,4 @@
 export enum Pages {
-    OssFriends = 'ossFriends',
     ReleaseNotes = 'releaseNotes',
     Home = 'home',
     Partner = 'partner',
