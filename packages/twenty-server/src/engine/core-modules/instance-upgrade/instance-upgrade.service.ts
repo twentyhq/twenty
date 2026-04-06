@@ -3,7 +3,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { DataSource, MigrationInterface, Repository } from 'typeorm';
 
-import { InstanceMigrationEntity } from 'src/engine/core-modules/instance-migration/instance-migration.entity';
+import { InstanceUpgradeEntity } from 'src/engine/core-modules/instance-upgrade/instance-upgrade.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type RunSingleMigrationResult =
@@ -12,10 +12,10 @@ export type RunSingleMigrationResult =
   | { status: 'failed'; error: unknown };
 
 @Injectable()
-export class InstanceMigrationService {
+export class InstanceUpgradeService {
   constructor(
-    @InjectRepository(InstanceMigrationEntity)
-    private readonly instanceMigrationRepository: Repository<InstanceMigrationEntity>,
+    @InjectRepository(InstanceUpgradeEntity)
+    private readonly instanceUpgradeRepository: Repository<InstanceUpgradeEntity>,
     @InjectDataSource()
     private readonly dataSource: DataSource,
     private readonly twentyConfigService: TwentyConfigService,
@@ -56,7 +56,7 @@ export class InstanceMigrationService {
   }
 
   private async isExecuted(name: string): Promise<boolean> {
-    return this.instanceMigrationRepository.exists({
+    return this.instanceUpgradeRepository.exists({
       where: { name, status: 'completed' },
     });
   }
@@ -65,12 +65,12 @@ export class InstanceMigrationService {
     const runByVersion =
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
-    const existing = await this.instanceMigrationRepository.findOne({
+    const existing = await this.instanceUpgradeRepository.findOne({
       where: { name },
     });
 
     if (existing) {
-      await this.instanceMigrationRepository.update(existing.id, {
+      await this.instanceUpgradeRepository.update(existing.id, {
         status: 'completed',
         retry: existing.retry + 1,
         runByVersion,
@@ -79,7 +79,7 @@ export class InstanceMigrationService {
       return;
     }
 
-    await this.instanceMigrationRepository.save({
+    await this.instanceUpgradeRepository.save({
       name,
       version,
       status: 'completed',
@@ -92,12 +92,12 @@ export class InstanceMigrationService {
     const runByVersion =
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
-    const existing = await this.instanceMigrationRepository.findOne({
+    const existing = await this.instanceUpgradeRepository.findOne({
       where: { name },
     });
 
     if (existing) {
-      await this.instanceMigrationRepository.update(existing.id, {
+      await this.instanceUpgradeRepository.update(existing.id, {
         status: 'failed',
         retry: existing.retry + 1,
         runByVersion,
@@ -106,7 +106,7 @@ export class InstanceMigrationService {
       return;
     }
 
-    await this.instanceMigrationRepository.save({
+    await this.instanceUpgradeRepository.save({
       name,
       version,
       status: 'failed',

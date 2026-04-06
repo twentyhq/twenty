@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { WorkspaceUpgradeService } from 'src/database/commands/command-runners/workspace-upgrade.service';
 import { CoreMigrationModule } from 'src/database/commands/core-migration/core-migration.module';
 import { V1_20_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-20/1-20-upgrade-version-command.module';
 import { V1_21_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/1-21/1-21-upgrade-version-command.module';
@@ -22,6 +23,6 @@ import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-v
     WorkspaceVersionModule,
     WorkspaceIteratorModule,
   ],
-  providers: [UpgradeCommand],
+  providers: [UpgradeCommand, WorkspaceUpgradeService],
 })
 export class UpgradeVersionCommandModule {}

@@ -6,7 +6,7 @@ import {
 } from 'typeorm';
 
 @Entity({ name: 'instanceMigration', schema: 'core' })
-export class InstanceMigrationEntity {
+export class InstanceUpgradeEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

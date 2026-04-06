@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 
 import { CoreMigrationGeneratorService } from 'src/database/commands/core-migration/services/core-migration-generator.service';
 import { RegisteredCoreMigrationService } from 'src/database/commands/core-migration/services/registered-core-migration-registry.service';
-import { InstanceMigrationModule } from 'src/engine/core-modules/instance-migration/instance-migration.module';
+import { InstanceUpgradeModule } from 'src/engine/core-modules/instance-upgrade/instance-upgrade.module';
 
 @Module({
-  imports: [InstanceMigrationModule],
+  imports: [InstanceUpgradeModule],
   providers: [
     CoreMigrationGeneratorService,
     RegisteredCoreMigrationService,
@@ -13,7 +13,7 @@ import { InstanceMigrationModule } from 'src/engine/core-modules/instance-migrat
   exports: [
     CoreMigrationGeneratorService,
     RegisteredCoreMigrationService,
-    InstanceMigrationModule,
+    InstanceUpgradeModule,
   ],
 })
 export class CoreMigrationModule {}
