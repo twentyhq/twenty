@@ -15,11 +15,11 @@ import {
   type RunOnWorkspaceArgs,
   WorkspaceCommandRunner,
 } from 'src/database/commands/command-runners/workspace.command-runner';
-import { CoreMigrationRunnerService } from 'src/database/commands/core-migration/services/core-migration-runner.service';
 import { RegisteredCoreMigrationService } from 'src/database/commands/core-migration/services/registered-core-migration-registry.service';
 import { CommandLogger } from 'src/database/commands/logger';
 import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
+import { InstanceMigrationService } from 'src/engine/core-modules/instance-migration/instance-migration.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 import {
@@ -59,8 +59,8 @@ export abstract class UpgradeCommandRunner extends CommandRunner {
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly coreEngineVersionService: CoreEngineVersionService,
     protected readonly workspaceVersionService: WorkspaceVersionService,
-    protected readonly coreMigrationRunnerService: CoreMigrationRunnerService,
     protected readonly versionedMigrationRegistryService: RegisteredCoreMigrationService,
+    protected readonly instanceMigrationService: InstanceMigrationService,
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
   ) {
     super();
@@ -189,39 +189,47 @@ Please roll back to that version and run the upgrade command again.`,
       for (const instanceCommand of versionContext.instanceCommands) {
         const migrationName = instanceCommand.constructor.name;
         const result =
-          await this.coreMigrationRunnerService.runSingleMigration(
-            migrationName,
+          await this.instanceMigrationService.runSingleMigration(
+            instanceCommand,
+            versionContext.currentVersionMajorMinor,
           );
 
-        if (result.status === 'fail') {
-          if (result.code === 'already-executed') {
+        switch (result.status) {
+          case 'already-executed': {
             this.logger.warn(
               `Core migration ${migrationName} already executed, skipping`,
             );
 
-            continue;
+            break;
           }
-
-          this.logger.error(
-            `Core migration ${migrationName} failed with code: ${result.code}`,
-          );
-
-          if (isDefined(result.error)) {
+          case 'failed': {
             this.logger.error(
-              result.error instanceof Error
-                ? (result.error.stack ?? result.error.message)
-                : String(result.error),
+              `Core migration ${migrationName} failed`,
+            );
+
+            if (isDefined(result.error)) {
+              this.logger.error(
+                result.error instanceof Error
+                  ? (result.error.stack ?? result.error.message)
+                  : String(result.error),
+              );
+            }
+
+            throw new Error(
+              `Core migration ${migrationName} failed`,
             );
           }
+          case 'success': {
+            this.logger.log(
+              `Core migration ${migrationName} executed successfully`,
+            );
 
-          throw new Error(
-            `Core migration ${migrationName} failed: ${result.code}`,
-          );
+            break;
+          }
+          default: {
+            assertUnreachable(result);
+          }
         }
-
-        this.logger.log(
-          `Core migration ${migrationName} executed successfully`,
-        );
       }
 
       const iteratorReport = await this.workspaceIteratorService.iterate({

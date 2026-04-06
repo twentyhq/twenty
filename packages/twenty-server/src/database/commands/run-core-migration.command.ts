@@ -1,9 +1,10 @@
 import { Logger } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
+import { DataSource } from 'typeorm';
 
-import { CoreMigrationRunnerService } from 'src/database/commands/core-migration/services/core-migration-runner.service';
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
@@ -22,7 +23,8 @@ export class RunCoreMigrationCommand extends CommandRunner {
   constructor(
     private readonly coreEngineVersionService: CoreEngineVersionService,
     private readonly workspaceVersionService: WorkspaceVersionService,
-    private readonly coreMigrationRunnerService: CoreMigrationRunnerService,
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
   ) {
     super();
   }
@@ -70,6 +72,25 @@ export class RunCoreMigrationCommand extends CommandRunner {
       }
     }
 
-    await this.coreMigrationRunnerService.runAllPendingMigrations();
+    this.logger.log('Running core datasource migrations...');
+
+    try {
+      const migrations = await this.dataSource.runMigrations({
+        transaction: 'each',
+      });
+
+      if (migrations.length === 0) {
+        this.logger.log('No pending migrations');
+      } else {
+        this.logger.log(
+          `Executed ${migrations.length} migration(s): ${migrations.map((migration) => migration.name).join(', ')}`,
+        );
+      }
+
+      this.logger.log('Database migrations completed successfully');
+    } catch (error) {
+      this.logger.error('Error running database migrations:', error);
+      throw error;
+    }
   }
 }

@@ -9,7 +9,6 @@ import {
   type VersionCommands,
 } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { CoreMigrationRunnerService } from 'src/database/commands/core-migration/services/core-migration-runner.service';
 import { RegisteredCoreMigrationService } from 'src/database/commands/core-migration/services/registered-core-migration-registry.service';
 import { BackfillCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-command-menu-items.command';
 import { BackfillNavigationMenuItemTypeCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-navigation-menu-item-type.command';
@@ -36,6 +35,7 @@ import { FixSelectAllCommandMenuItemsCommand } from 'src/database/commands/upgra
 import { MigrateAiAgentTextToJsonResponseFormatCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-migrate-ai-agent-text-to-json-response-format.command';
 import { UpdateEditLayoutCommandMenuItemLabelCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-update-edit-layout-command-menu-item-label.command';
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
+import { InstanceMigrationService } from 'src/engine/core-modules/instance-migration/instance-migration.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 import { DropWorkspaceMessagingFksCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-drop-workspace-messaging-fks.command';
@@ -53,8 +53,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly coreEngineVersionService: CoreEngineVersionService,
     protected readonly workspaceVersionService: WorkspaceVersionService,
-    protected readonly coreMigrationRunnerService: CoreMigrationRunnerService,
     protected readonly versionedMigrationRegistryService: RegisteredCoreMigrationService,
+    protected readonly instanceMigrationService: InstanceMigrationService,
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
 
     // 1.20 Commands
@@ -91,8 +91,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       workspaceRepository,
       coreEngineVersionService,
       workspaceVersionService,
-      coreMigrationRunnerService,
       versionedMigrationRegistryService,
+      instanceMigrationService,
       workspaceIteratorService,
     );
 
