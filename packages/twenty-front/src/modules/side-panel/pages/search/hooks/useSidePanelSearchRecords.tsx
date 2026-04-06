@@ -5,6 +5,7 @@ import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemTy
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { sidePanelSearchContextObjectNameSingularState } from '@/side-panel/states/sidePanelSearchContextObjectNameSingularState';
 import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
@@ -27,6 +28,9 @@ export const useSidePanelSearchRecords = () => {
   );
   const sidePanelShowHiddenObjects = useAtomStateValue(
     sidePanelShowHiddenObjectsState,
+  );
+  const contextObjectNameSingular = useAtomStateValue(
+    sidePanelSearchContextObjectNameSingularState,
   );
   const coreClient = useApolloCoreClient();
 
@@ -58,12 +62,26 @@ export const useSidePanelSearchRecords = () => {
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
+  const sortedEdges = useMemo(() => {
+    const edges = searchData?.search.edges ?? [];
+    if (!contextObjectNameSingular) return edges;
+    return [
+      ...edges.filter(
+        (e) => e.node.objectNameSingular === contextObjectNameSingular,
+      ),
+      ...edges.filter(
+        (e) => e.node.objectNameSingular !== contextObjectNameSingular,
+      ),
+    ];
+  }, [searchData, contextObjectNameSingular]);
+
   const personRecordIds = useMemo(
     () =>
-      (searchData?.search.edges.map((e) => e.node) ?? [])
+      sortedEdges
+        .map((e) => e.node)
         .filter((r) => r.objectNameSingular === 'person')
         .map((r) => r.recordId),
-    [searchData],
+    [sortedEdges],
   );
 
   const { records: personRecordsWithCompany } = useFindManyRecords({
@@ -82,7 +100,7 @@ export const useSidePanelSearchRecords = () => {
   }, [personRecordsWithCompany]);
 
   const actionItems = useMemo(() => {
-    return (searchData?.search.edges.map((edge) => edge.node) ?? []).map(
+    return sortedEdges.map((edge) => edge.node).map(
       (searchRecord, index) => {
         const baseAction = {
           type: CommandMenuItemType.Navigation,
@@ -155,7 +173,7 @@ export const useSidePanelSearchRecords = () => {
         };
       },
     );
-  }, [searchData, openRecordInSidePanel, readableObjectMetadataItems, companyNameByPersonId]);
+  }, [sortedEdges, openRecordInSidePanel, readableObjectMetadataItems, companyNameByPersonId]);
 
   return {
     loading,
