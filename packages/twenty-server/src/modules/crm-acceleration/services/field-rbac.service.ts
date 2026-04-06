@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-interface FieldPermissionInput {
+export interface FieldPermissionInput {
   roleId: string;
   objectName: string;
   fieldName: string;

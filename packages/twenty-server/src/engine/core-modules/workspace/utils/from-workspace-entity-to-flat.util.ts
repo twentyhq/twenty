@@ -36,6 +36,7 @@ export const fromWorkspaceEntityToFlat = (
   useRecommendedModels: entity.useRecommendedModels,
   workspaceCustomApplicationId: entity.workspaceCustomApplicationId,
   routerModel: entity.routerModel,
+  plan: entity.plan,
   createdAt: entity.createdAt.toISOString(),
   updatedAt: entity.updatedAt.toISOString(),
   deletedAt: entity.deletedAt?.toISOString(),

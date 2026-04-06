@@ -10,7 +10,6 @@ import {
   PeriodicExportingMetricReader,
 } from '@opentelemetry/sdk-metrics';
 import * as Sentry from '@sentry/node';
-import { nodeProfilingIntegration } from '@sentry/profiling-node';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
@@ -25,6 +24,21 @@ const meterDrivers = parseArrayEnvVar(
 );
 
 if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let profilingIntegration: any | null = null;
+
+  try {
+    const { nodeProfilingIntegration } = require(
+      '@sentry/profiling-node',
+    ) as typeof import('@sentry/profiling-node');
+
+    profilingIntegration = nodeProfilingIntegration();
+  } catch {
+    // Optional native profiler can fail to load on unsupported Node runtimes.
+    // We keep Sentry enabled and continue without CPU profiling.
+    profilingIntegration = null;
+  }
+
   Sentry.init({
     environment: process.env.SENTRY_ENVIRONMENT,
     release: process.env.APP_VERSION,
@@ -39,7 +53,7 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
         recordInputs: true,
         recordOutputs: true,
       }),
-      nodeProfilingIntegration(),
+      ...(profilingIntegration ? [profilingIntegration] : []),
     ],
     tracesSampleRate: 0.1,
     profilesSampleRate: 0.3,

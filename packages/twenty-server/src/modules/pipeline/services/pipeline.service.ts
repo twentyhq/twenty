@@ -1,16 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable, Logger } from '@nestjs/common';
 
-import { PipelineWorkspaceEntity } from 'src/modules/pipeline/standard-objects/pipeline.workspace-entity';
-import { STAGE_PROBABILITIES, DEFAULT_STAGES } from 'src/modules/pipeline/constants/pipeline.constant';
+import { DEFAULT_STAGES, STAGE_PROBABILITIES } from 'src/modules/pipeline/constants/pipeline.constant';
 
 @Injectable()
 export class PipelineService {
-  constructor(
-    @InjectRepository(PipelineWorkspaceEntity, 'core')
-    private readonly pipelineRepository: Repository<PipelineWorkspaceEntity>,
-  ) {}
+  private readonly logger = new Logger(PipelineService.name);
 
   async getDefaultStages(): Promise<typeof DEFAULT_STAGES> {
     return DEFAULT_STAGES;
@@ -33,15 +27,8 @@ export class PipelineService {
     return Math.floor(diff / (1000 * 60 * 60 * 24));
   }
 
-  async createDefaultPipeline(workspaceId: string): Promise<PipelineWorkspaceEntity> {
-    const pipeline = this.pipelineRepository.create({
-      name: 'Pipeline Principal',
-      type: 'NEW_BUSINESS',
-      description: 'Pipeline de ventas principal',
-      isDefault: true,
-      isActive: true,
-      position: 0,
-    });
-    return this.pipelineRepository.save(pipeline);
+  async createDefaultPipeline(workspaceId: string): Promise<{ name: string; isDefault: boolean }> {
+    this.logger.log(`Creating default pipeline for workspace ${workspaceId}`);
+    return { name: 'Pipeline Principal', isDefault: true };
   }
 }

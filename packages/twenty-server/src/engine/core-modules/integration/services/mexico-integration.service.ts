@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { IntegrationService, IntegrationConfig } from './services/integration.service';
-import { IntegrationProvider } from './enums/integration-provider.enum';
+import { IntegrationProvider } from '../enums/integration-provider.enum';
+import { IntegrationService, IntegrationConfig } from './integration.service';
 
 export interface WhatsAppMessage {
   to: string;

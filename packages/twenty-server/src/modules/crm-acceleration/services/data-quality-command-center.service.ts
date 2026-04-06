@@ -15,7 +15,7 @@ interface DataQualityRequest {
   staleAfterDays?: number;
 }
 
-interface DuplicateGroup {
+export interface DuplicateGroup {
   key: string;
   recordIds: string[];
 }

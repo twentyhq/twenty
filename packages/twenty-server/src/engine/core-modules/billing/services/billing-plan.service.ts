@@ -19,9 +19,8 @@ import { type BillingGetPlanResult } from 'src/engine/core-modules/billing/types
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 import {
   BILLING_PLAN_FEATURES,
-  BILLING_PRICES_DISPLAY_MXN,
-  getFormattedPrice,
-} from 'src/engine/core-modules/billing/constants/billing-prices-mxn.constant';
+  BILLING_PRICES_DISPLAY_COP,
+} from 'src/engine/core-modules/billing/constants/billing-prices-cop.constant';
 
 export interface PlanDetails {
   planKey: BillingPlanKey;
@@ -181,7 +180,7 @@ export class BillingPlanService {
 
   async getPlanDetails(planKey: BillingPlanKey): Promise<PlanDetails> {
     const features = BILLING_PLAN_FEATURES[planKey];
-    const prices = BILLING_PRICES_DISPLAY_MXN[planKey];
+    const prices = BILLING_PRICES_DISPLAY_COP[planKey];
 
     if (!features || !prices) {
       throw new BillingException(
@@ -201,13 +200,13 @@ export class BillingPlanService {
           amount: prices.monthly.amount,
           currency: prices.monthly.currency,
           formatted: prices.monthly.formatted,
-          savings: prices.monthly.savings,
+          savings: 'savings' in prices.monthly ? (prices.monthly as { savings: string }).savings : undefined,
         },
         yearly: {
           amount: prices.yearly.amount,
           currency: prices.yearly.currency,
           formatted: prices.yearly.formatted,
-          savings: prices.yearly.savings,
+          savings: 'savings' in prices.yearly ? (prices.yearly as { savings: string }).savings : undefined,
         },
       },
     };

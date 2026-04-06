@@ -1,8 +1,8 @@
 import { Controller, Post, Body, Get, Param, Delete, Headers, Req } from '@nestjs/common';
 import { Request } from 'express';
 
-import { IntegrationProvider } from '../enums/integration-provider.enum';
-import { IntegrationService } from '../services/integration.service';
+import { IntegrationProvider } from './enums/integration-provider.enum';
+import { IntegrationService } from './services/integration.service';
 
 class ConnectIntegrationDto {
   provider: IntegrationProvider;

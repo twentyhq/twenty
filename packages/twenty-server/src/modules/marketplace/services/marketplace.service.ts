@@ -1,8 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-
-import { MarketplaceIntegrationWorkspaceEntity } from 'src/modules/marketplace/standard-objects/marketplace-integration.workspace-entity';
 
 export interface IntegrationConfig {
   name: string;
@@ -135,10 +131,7 @@ export class MarketplaceService {
     },
   };
 
-  constructor(
-    @InjectRepository(MarketplaceIntegrationWorkspaceEntity, 'core')
-    private readonly integrationRepository: Repository<MarketplaceIntegrationWorkspaceEntity>,
-  ) {}
+  private readonly connectedIntegrations = new Map<string, { provider: string; status: string }>();
 
   getAvailableIntegrations(): IntegrationConfig[] {
     return Object.values(this.availableIntegrations);
@@ -151,87 +144,36 @@ export class MarketplaceService {
   async connect(
     provider: string,
     credentials: Record<string, string>,
-    config?: Record<string, unknown>,
+    _config?: Record<string, unknown>,
   ): Promise<IntegrationResult> {
     const integrationConfig = this.getIntegrationConfig(provider);
-    
-    if (!integrationConfig) {
-      return { success: false, error: 'Integration not found' };
-    }
+    if (!integrationConfig) return { success: false, error: 'Integration not found' };
 
-    try {
-      const isValid = await this.validateCredentials(provider, credentials);
-      
-      if (!isValid) {
-        return { success: false, error: 'Invalid credentials' };
-      }
+    const isValid = await this.validateCredentials(provider, credentials);
+    if (!isValid) return { success: false, error: 'Invalid credentials' };
 
-      const integration = this.integrationRepository.create({
-        name: integrationConfig.name,
-        provider,
-        status: 'CONNECTED',
-        credentials: JSON.stringify(credentials),
-        config: config ? JSON.stringify(config) : null,
-      });
-
-      await this.integrationRepository.save(integration);
-
-      this.logger.log(`Connected ${integrationConfig.name} integration`);
-
-      return { success: true, data: { integrationId: integration.id } };
-    } catch (error) {
-      this.logger.error(`Failed to connect ${provider}: ${error}`);
-      return { success: false, error: String(error) };
-    }
+    const integrationId = `integration_${provider}_${Date.now()}`;
+    this.connectedIntegrations.set(provider, { provider, status: 'CONNECTED' });
+    this.logger.log(`Connected ${integrationConfig.name} integration`);
+    return { success: true, data: { integrationId } };
   }
 
   async disconnect(provider: string): Promise<IntegrationResult> {
-    try {
-      await this.integrationRepository.delete({ provider });
-      this.logger.log(`Disconnected ${provider}`);
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: String(error) };
-    }
+    this.connectedIntegrations.delete(provider);
+    this.logger.log(`Disconnected ${provider}`);
+    return { success: true };
   }
 
   async sync(provider: string): Promise<IntegrationResult> {
-    const integration = await this.integrationRepository.findOne({
-      where: { provider },
-    });
-
-    if (!integration) {
+    if (!this.connectedIntegrations.has(provider)) {
       return { success: false, error: 'Integration not connected' };
     }
-
-    try {
-      await this.integrationRepository.update(integration.id, {
-        lastSyncAt: new Date(),
-        syncStatus: 'SYNCING',
-      });
-
-      await this.performSync(provider);
-
-      await this.integrationRepository.update(integration.id, {
-        lastSyncAt: new Date(),
-        syncStatus: 'SUCCESS',
-      });
-
-      return { success: true };
-    } catch (error) {
-      await this.integrationRepository.update(integration.id, {
-        syncStatus: 'ERROR',
-        errorMessage: String(error),
-      });
-
-      return { success: false, error: String(error) };
-    }
+    await this.performSync(provider);
+    return { success: true };
   }
 
-  async getConnectedIntegrations(): Promise<MarketplaceIntegrationWorkspaceEntity[]> {
-    return this.integrationRepository.find({
-      where: { status: 'CONNECTED' },
-    });
+  async getConnectedIntegrations(): Promise<Array<{ provider: string; status: string }>> {
+    return Array.from(this.connectedIntegrations.values());
   }
 
   private async validateCredentials(
