@@ -199,17 +199,6 @@ export class MessagingMessageService {
           .map((accumulator) => accumulator.threadToCreate)
           .filter(isDefined);
 
-        await messageThreadRepository.insert(
-          messageThreadsToCreate,
-          transactionManager,
-        );
-
-        const messagesToCreate = Array.from(messageAccumulatorMap.values())
-          .map((accumulator) => accumulator.messageToCreate)
-          .filter(isDefined);
-
-        await messageRepository.insert(messagesToCreate, transactionManager);
-
         const threadSubjectUpdates = new Map<string, string>();
 
         for (const message of messages) {
@@ -233,13 +222,26 @@ export class MessagingMessageService {
           }
         }
 
-        for (const [threadId, subject] of threadSubjectUpdates) {
-          await messageThreadRepository.update(
-            threadId,
-            { subject },
+        const threadsToUpsert = [
+          ...messageThreadsToCreate,
+          ...Array.from(threadSubjectUpdates.entries()).map(
+            ([id, subject]) => ({ id, subject }),
+          ),
+        ];
+
+        if (threadsToUpsert.length > 0) {
+          await messageThreadRepository.upsert(
+            threadsToUpsert,
+            ['id'],
             transactionManager,
           );
         }
+
+        const messagesToCreate = Array.from(messageAccumulatorMap.values())
+          .map((accumulator) => accumulator.messageToCreate)
+          .filter(isDefined);
+
+        await messageRepository.insert(messagesToCreate, transactionManager);
 
         const messageChannelMessageAssociationsToCreate = Array.from(
           messageAccumulatorMap.values(),
