@@ -1,25 +1,22 @@
+import axios from 'axios';
+
 export async function fetchLatestGithubReleaseTag(): Promise<string | null> {
   try {
-    const response = await fetch(
-      'https://api.github.com/repos/twentyhq/twenty/releases/latest',
-      {
-        headers: {
-          Accept: 'application/vnd.github+json',
-          'X-GitHub-Api-Version': '2022-11-28',
-          ...(process.env.GITHUB_TOKEN && {
-            Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-          }),
-        },
-        next: { revalidate: 3600 },
-      },
-    );
+    const headers: Record<string, string> = {
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+    };
 
-    if (!response.ok) {
-      return null;
+    if (process.env.GITHUB_TOKEN) {
+      headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
     }
 
-    const data = (await response.json()) as { tag_name?: unknown };
-    return typeof data.tag_name === 'string' ? data.tag_name : null;
+    const response = await axios.get(
+      'https://api.github.com/repos/twentyhq/twenty/releases/latest',
+      { headers },
+    );
+
+    return response.data.tag_name;
   } catch {
     return null;
   }

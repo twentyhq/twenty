@@ -1,9 +1,6 @@
 import { FOOTER_DATA } from '@/app/_constants/footer';
 import { GlbWarmCache } from '@/constants/glb-warm-cache.component';
-import {
-  getCommunityStats,
-  labelsFromCommunityStats,
-} from '@/lib/community/fetch-community-stats';
+import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Footer } from '@/sections/Footer/components';
 import { theme } from '@/theme';
@@ -71,15 +68,14 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const communityStats = await getCommunityStats();
-  const communityLabels = labelsFromCommunityStats(communityStats);
+  const stats = await fetchCommunityStats();
   const footerSocialLinks = mergeSocialLinkLabels(
     FOOTER_DATA.socialLinks,
-    communityLabels,
+    stats,
   );
 
   return (
-    <html lang="en" className="light">
+    <html lang="en">
       <body
         className={`${cssVariables} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable}`}
       >
@@ -88,9 +84,10 @@ export default async function RootLayout({
         <Footer.Root illustration={FOOTER_DATA.illustration}>
           <Footer.Logo />
           <Footer.Nav groups={FOOTER_DATA.navGroups} />
-          <Footer.Bottom copyright={FOOTER_DATA.bottom.copyright}>
-            <Footer.Social links={footerSocialLinks} />
-          </Footer.Bottom>
+          <Footer.Bottom
+            copyright={FOOTER_DATA.bottom.copyright}
+            links={footerSocialLinks}
+          />
         </Footer.Root>
       </body>
     </html>

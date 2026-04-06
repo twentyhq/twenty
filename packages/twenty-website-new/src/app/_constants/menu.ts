@@ -1,4 +1,3 @@
-import { COMMUNITY } from '@/constants/community';
 import type { MenuDataType } from '@/sections/Menu/types';
 
 export const MENU_DATA: MenuDataType = {
@@ -11,18 +10,16 @@ export const MENU_DATA: MenuDataType = {
   socialLinks: [
     {
       ariaLabel: 'GitHub (opens in new tab)',
-      href: COMMUNITY.GITHUB_REPO_URL,
+      href: 'https://github.com/twentyhq/twenty',
       icon: 'github',
-      label: COMMUNITY.FALLBACK_GITHUB_LABEL,
       showInDesktop: true,
       showInDrawer: true,
     },
     {
       ariaLabel: 'Discord (opens in new tab)',
       className: 'discord-link',
-      href: COMMUNITY.DISCORD_INVITE_URL,
+      href: 'https://discord.gg/cx5n4Jzs57',
       icon: 'discord',
-      label: COMMUNITY.FALLBACK_DISCORD_LABEL,
       showInDesktop: true,
       showInDrawer: true,
     },

@@ -17,6 +17,7 @@
     "@react-three/fiber": "^9.5.0",
     "@tabler/icons-react": "^3.41.1",
     "@wyw-in-js/babel-preset": "^0.8.1",
+    "axios": "^1.14.0",
     "gray-matter": "^4.0.3",
     "gsap": "^3.14.2",
     "lottie-react": "^2.4.1",

@@ -1,10 +1,12 @@
+import { MENU_DATA } from '@/app/_constants';
+import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import {
   RELEASE_NOTES_HERO_BODY,
   RELEASE_NOTES_HERO_HEADING,
 } from '@/app/release-notes/_constants/hero';
 import { LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
-import { getMenuData } from '@/lib/community/get-menu-data';
 import { fetchLatestGithubReleaseTag } from '@/lib/github/fetch-latest-release-tag';
 import { getVisibleReleaseNotes } from '@/lib/releases/get-visible-releases';
 import { loadLocalReleaseNotes } from '@/lib/releases/load-local-release-notes';
@@ -24,10 +26,14 @@ export const metadata: Metadata = {
 
 export default async function ReleaseNotesPage() {
   const allNotes = loadLocalReleaseNotes();
-  const [latestTag, menuData] = await Promise.all([
+  const [latestTag, stats] = await Promise.all([
     fetchLatestGithubReleaseTag(),
-    getMenuData(),
+    fetchCommunityStats(),
   ]);
+  const menuSocialLinks = mergeSocialLinkLabels(
+    MENU_DATA.socialLinks,
+    stats,
+  );
   const visibleNotes =
     process.env.NODE_ENV === 'development'
       ? allNotes
@@ -38,12 +44,12 @@ export default async function ReleaseNotesPage() {
       <Menu.Root
         backgroundColor={theme.colors.primary.background[100]}
         scheme="primary"
-        navItems={menuData.navItems}
-        socialLinks={menuData.socialLinks}
+        navItems={MENU_DATA.navItems}
+        socialLinks={menuSocialLinks}
       >
         <Menu.Logo scheme="primary" />
-        <Menu.Nav scheme="primary" navItems={menuData.navItems} />
-        <Menu.Social scheme="primary" socialLinks={menuData.socialLinks} />
+        <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
+        <Menu.Social scheme="primary" socialLinks={menuSocialLinks} />
         <Menu.Cta scheme="primary" />
       </Menu.Root>
 

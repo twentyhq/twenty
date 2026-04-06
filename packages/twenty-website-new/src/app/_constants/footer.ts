@@ -1,13 +1,8 @@
-import { COMMUNITY } from '@/constants/community';
 import type { FooterDataType } from '@/sections/Footer/types';
-
-const FOOTER_ILLUSTRATION_SRC =
-  process.env.NEXT_PUBLIC_FOOTER_BACKGROUND_EMBED_SRC ??
-  '/illustrations/home/footer/footer.glb';
 
 export const FOOTER_DATA: FooterDataType = {
   illustration: {
-    src: FOOTER_ILLUSTRATION_SRC,
+    src: '/illustrations/common/footer/footer.glb',
     title: 'Footer background',
   },
   bottom: {
@@ -78,35 +73,24 @@ export const FOOTER_DATA: FooterDataType = {
   ],
   socialLinks: [
     {
-      href: COMMUNITY.GITHUB_REPO_URL,
+      href: 'https://github.com/twentyhq/twenty',
       icon: 'github',
-      label: COMMUNITY.FALLBACK_GITHUB_LABEL,
       ariaLabel: 'GitHub (opens in new tab)',
-      showInDesktop: true,
-      showInDrawer: true,
     },
     {
-      href: COMMUNITY.DISCORD_INVITE_URL,
+      href: 'https://discord.gg/cx5n4Jzs57',
       icon: 'discord',
-      label: COMMUNITY.FALLBACK_DISCORD_LABEL,
       ariaLabel: 'Discord (opens in new tab)',
-      className: 'discord-link',
-      showInDesktop: true,
-      showInDrawer: true,
     },
     {
       href: 'https://www.linkedin.com/company/twenty',
       icon: 'linkedin',
       ariaLabel: 'LinkedIn (opens in new tab)',
-      showInDesktop: false,
-      showInDrawer: true,
     },
     {
       href: 'https://x.com/twentycrm',
       icon: 'x',
       ariaLabel: 'X (opens in new tab)',
-      showInDesktop: false,
-      showInDrawer: true,
     },
   ],
 };

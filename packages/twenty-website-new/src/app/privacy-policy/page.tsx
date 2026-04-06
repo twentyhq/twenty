@@ -1,4 +1,6 @@
-import { getMenuData } from '@/lib/community/get-menu-data';
+import { MENU_DATA } from '@/app/_constants';
+import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { LegalDocumentPage } from '@/sections/LegalDocument/legal-document-page';
 import type { Metadata } from 'next';
 
@@ -8,10 +10,17 @@ export const metadata: Metadata = {
 };
 
 export default async function PrivacyPolicyPage() {
-  const menuData = await getMenuData();
+  const stats = await fetchCommunityStats();
+  const menuSocialLinks = mergeSocialLinkLabels(
+    MENU_DATA.socialLinks,
+    stats,
+  );
 
   return (
-    <LegalDocumentPage menuData={menuData} title="Privacy Policy">
+    <LegalDocumentPage
+      menuData={{ navItems: MENU_DATA.navItems, socialLinks: menuSocialLinks }}
+      title="Privacy Policy"
+    >
       <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
         tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
