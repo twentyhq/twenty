@@ -3,7 +3,11 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
-import { type DataSource, type MigrationInterface, type QueryRunner } from 'typeorm';
+import {
+  type DataSource,
+  type MigrationInterface,
+  type QueryRunner,
+} from 'typeorm';
 
 import { getDataSourceToken } from '@nestjs/typeorm';
 
