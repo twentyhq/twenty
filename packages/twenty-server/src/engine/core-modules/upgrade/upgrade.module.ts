@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { InstanceUpgradeEntity } from 'src/engine/core-modules/upgrade/instance-upgrade.entity';
@@ -9,16 +10,21 @@ import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/service
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([InstanceUpgradeEntity, WorkspaceEntity])],
+  imports: [
+    DiscoveryModule,
+    TypeOrmModule.forFeature([InstanceUpgradeEntity, WorkspaceEntity]),
+  ],
   providers: [
     InstanceUpgradeService,
     WorkspaceUpgradeService,
+    // TODO prastoin does not make really sense to be exported here
     InstanceMigrationGenerationService,
     RegisteredInstanceMigrationService,
   ],
   exports: [
     InstanceUpgradeService,
     WorkspaceUpgradeService,
+    // TODO prastoin does not make really sense to be exported here
     InstanceMigrationGenerationService,
     RegisteredInstanceMigrationService,
   ],

@@ -74,10 +74,16 @@ const buildUpgradeCommandModule = async ({
     ? {
         provide: RegisteredInstanceMigrationService,
         useFactory: () => {
-          const fakeDataSource = {
-            migrations,
-          } as unknown as import('typeorm').DataSource;
-          const registry = new RegisteredInstanceMigrationService(fakeDataSource);
+          const fakeDiscoveryService = {
+            getProviders: () =>
+              migrations.map((migration) => ({
+                instance: migration,
+                metatype: migration.constructor,
+              })),
+          } as unknown as import('@nestjs/core').DiscoveryService;
+          const registry = new RegisteredInstanceMigrationService(
+            fakeDiscoveryService,
+          );
 
           registry.onModuleInit();
 

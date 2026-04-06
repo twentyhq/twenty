@@ -1,9 +1,9 @@
 import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
+import { DiscoveryService } from '@nestjs/core';
 
-import { DataSource, type MigrationInterface } from 'typeorm';
+import { type MigrationInterface } from 'typeorm';
 
-import { getRegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
+import { getRegisteredInstanceMigrationVersion } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
 import {
   UPGRADE_COMMAND_SUPPORTED_VERSIONS,
   type UpgradeCommandVersion,
@@ -18,19 +18,23 @@ export class RegisteredInstanceMigrationService implements OnModuleInit {
     MigrationInterface[]
   >();
 
-  constructor(
-    @InjectDataSource()
-    private readonly dataSource: DataSource,
-  ) {}
+  constructor(private readonly discoveryService: DiscoveryService) {}
 
   onModuleInit(): void {
     for (const version of UPGRADE_COMMAND_SUPPORTED_VERSIONS) {
       this.migrationsByVersion.set(version, []);
     }
 
-    for (const migration of this.dataSource.migrations) {
-      const constructor = migration.constructor;
-      const version = getRegisteredInstanceMigration(constructor);
+    const providers = this.discoveryService.getProviders();
+
+    for (const wrapper of providers) {
+      const { instance, metatype } = wrapper;
+
+      if (!instance || !metatype) {
+        continue;
+      }
+
+      const version = getRegisteredInstanceMigrationVersion(metatype);
 
       if (version === undefined) {
         continue;
@@ -42,7 +46,7 @@ export class RegisteredInstanceMigrationService implements OnModuleInit {
         continue;
       }
 
-      bucket.push(migration);
+      bucket.push(instance as MigrationInterface);
     }
 
     for (const [version, migrations] of this.migrationsByVersion) {

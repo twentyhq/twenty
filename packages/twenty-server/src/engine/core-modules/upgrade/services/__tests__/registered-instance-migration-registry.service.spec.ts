@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 
 import { Test } from '@nestjs/testing';
-import { getDataSourceToken } from '@nestjs/typeorm';
+import { DiscoveryService } from '@nestjs/core';
 
 import { type MigrationInterface } from 'typeorm';
 
@@ -47,6 +47,11 @@ class UndecoratedMigration1768000000000 implements MigrationInterface {
   async down(): Promise<void> {}
 }
 
+const buildProviderWrapper = (migration: MigrationInterface) => ({
+  instance: migration,
+  metatype: migration.constructor,
+});
+
 const buildRegistryService = async (
   migrations: MigrationInterface[],
 ): Promise<RegisteredInstanceMigrationService> => {
@@ -54,8 +59,10 @@ const buildRegistryService = async (
     providers: [
       RegisteredInstanceMigrationService,
       {
-        provide: getDataSourceToken(),
-        useValue: { migrations },
+        provide: DiscoveryService,
+        useValue: {
+          getProviders: () => migrations.map(buildProviderWrapper),
+        },
       },
     ],
   }).compile();
@@ -67,7 +74,7 @@ const buildRegistryService = async (
   return service;
 };
 
-describe('VersionedMigrationRegistryService', () => {
+describe('RegisteredInstanceMigrationService', () => {
   it('should group migrations by version', async () => {
     const service = await buildRegistryService([
       new MigrationD1769000000000(),
