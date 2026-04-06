@@ -138,40 +138,13 @@ export const validateWidgetConfigurationInput = ({
         PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
       );
     case WidgetConfigurationType.FIELDS:
-      throw new PageLayoutWidgetException(
-        'Fields configuration is not supported yet',
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
     case WidgetConfigurationType.TIMELINE:
-      throw new PageLayoutWidgetException(
-        'Timeline configuration is not supported yet',
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
     case WidgetConfigurationType.TASKS:
-      throw new PageLayoutWidgetException(
-        'Tasks configuration is not supported yet',
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
     case WidgetConfigurationType.NOTES:
-      throw new PageLayoutWidgetException(
-        'Notes configuration is not supported yet',
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
     case WidgetConfigurationType.FILES:
-      throw new PageLayoutWidgetException(
-        'Files configuration is not supported yet',
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
     case WidgetConfigurationType.EMAILS:
-      throw new PageLayoutWidgetException(
-        'Emails configuration is not supported yet',
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
     case WidgetConfigurationType.CALENDAR:
-      throw new PageLayoutWidgetException(
-        'Calendar configuration is not supported yet',
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
+      break;
     case WidgetConfigurationType.FIELD_RICH_TEXT:
       throw new PageLayoutWidgetException(
         'Field rich text configuration is not supported yet',
