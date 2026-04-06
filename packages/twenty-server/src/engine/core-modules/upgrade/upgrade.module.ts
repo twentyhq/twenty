@@ -9,9 +9,7 @@ import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/service
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([InstanceUpgradeEntity, WorkspaceEntity]),
-  ],
+  imports: [TypeOrmModule.forFeature([InstanceUpgradeEntity, WorkspaceEntity])],
   providers: [
     InstanceUpgradeService,
     WorkspaceUpgradeService,

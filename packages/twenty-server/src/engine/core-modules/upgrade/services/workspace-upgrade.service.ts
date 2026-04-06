@@ -77,9 +77,7 @@ export class WorkspaceUpgradeService {
           );
         }
 
-        this.logger.log(
-          `Upgrade for workspace ${workspaceId} completed.`,
-        );
+        this.logger.log(`Upgrade for workspace ${workspaceId} completed.`);
 
         return;
       }

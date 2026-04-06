@@ -3,10 +3,7 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
-import {
-  type MigrationInterface,
-  type QueryRunner,
-} from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 import {
   UpgradeCommandOptions,
@@ -159,10 +156,8 @@ const buildUpgradeCommandModule = async ({
 
                 try {
                   return (
-                    compareVersionMajorAndMinor(
-                      workspace.version,
-                      version,
-                    ) === 'lower'
+                    compareVersionMajorAndMinor(workspace.version, version) ===
+                    'lower'
                   );
                 } catch {
                   return true;
@@ -293,9 +288,9 @@ describe('UpgradeCommandRunner', () => {
 
     await upgradeCommandRunner.run(passedParams, options);
 
-    expect(
-      workspaceUpgradeService.upgradeWorkspace,
-    ).toHaveBeenCalledTimes(numberOfWorkspace);
+    expect(workspaceUpgradeService.upgradeWorkspace).toHaveBeenCalledTimes(
+      numberOfWorkspace,
+    );
   });
 
   describe('Workspace upgrade should succeed ', () => {
@@ -350,9 +345,7 @@ describe('UpgradeCommandRunner', () => {
 
         await upgradeCommandRunner.run(passedParams, options);
 
-        expect(
-          workspaceUpgradeService.upgradeWorkspace,
-        ).toHaveBeenCalled();
+        expect(workspaceUpgradeService.upgradeWorkspace).toHaveBeenCalled();
       },
     );
   });
@@ -397,15 +390,17 @@ describe('UpgradeCommandRunner', () => {
 
     await upgradeCommandRunner.run(passedParams, options);
 
-    expect(
-      instanceUpgradeService.runSingleMigration,
-    ).toHaveBeenCalledTimes(2);
-    expect(
-      instanceUpgradeService.runSingleMigration,
-    ).toHaveBeenNthCalledWith(1, addIndex, CURRENT_VERSION);
-    expect(
-      instanceUpgradeService.runSingleMigration,
-    ).toHaveBeenNthCalledWith(2, addColumn, CURRENT_VERSION);
+    expect(instanceUpgradeService.runSingleMigration).toHaveBeenCalledTimes(2);
+    expect(instanceUpgradeService.runSingleMigration).toHaveBeenNthCalledWith(
+      1,
+      addIndex,
+      CURRENT_VERSION,
+    );
+    expect(instanceUpgradeService.runSingleMigration).toHaveBeenNthCalledWith(
+      2,
+      addColumn,
+      CURRENT_VERSION,
+    );
   });
 
   it('should skip already-executed instance commands', async () => {
@@ -423,9 +418,9 @@ describe('UpgradeCommandRunner', () => {
 
     const instanceUpgradeService = module.get(InstanceUpgradeService);
 
-    (
-      instanceUpgradeService.runSingleMigration as jest.Mock
-    ).mockResolvedValue({ status: 'already-executed' });
+    (instanceUpgradeService.runSingleMigration as jest.Mock).mockResolvedValue({
+      status: 'already-executed',
+    });
 
     const passedParams: string[] = [];
     const options: UpgradeCommandOptions = {};
@@ -452,9 +447,7 @@ describe('UpgradeCommandRunner', () => {
 
     const instanceUpgradeService = module.get(InstanceUpgradeService);
 
-    (
-      instanceUpgradeService.runSingleMigration as jest.Mock
-    ).mockResolvedValue({
+    (instanceUpgradeService.runSingleMigration as jest.Mock).mockResolvedValue({
       status: 'failed',
       error: new Error('SQL error'),
     });
@@ -487,9 +480,10 @@ describe('UpgradeCommandRunner', () => {
 
     await upgradeCommandRunner.run(passedParams, options);
 
-    expect(
-      instanceUpgradeService.runSingleMigration,
-    ).toHaveBeenCalledWith(success, CURRENT_VERSION);
+    expect(instanceUpgradeService.runSingleMigration).toHaveBeenCalledWith(
+      success,
+      CURRENT_VERSION,
+    );
     expect(upgradeCommandRunner['logger'].log).toHaveBeenCalledWith(
       expect.stringContaining('executed successfully'),
     );
