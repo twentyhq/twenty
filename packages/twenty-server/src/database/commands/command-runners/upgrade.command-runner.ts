@@ -144,125 +144,131 @@ export abstract class UpgradeCommandRunner extends CommandRunner {
     }
 
     try {
-      const versionContext = this.resolveVersionContext();
-
-      this.logger.log(
-        chalk.blue(
-          [
-            'Initialized upgrade context with:',
-            `- currentVersion (migrating to): ${versionContext.currentAppVersion}`,
-            `- fromWorkspaceVersion: ${versionContext.fromWorkspaceVersion}`,
-            `- ${versionContext.instanceCommands.length} instance commands (from registry)`,
-            `- ${versionContext.workspaceCommands.length} workspace commands`,
-          ].join('\n   '),
-        ),
-      );
-
-      const hasWorkspaces =
-        await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
-
-      if (!hasWorkspaces) {
-        this.logger.log(
-          chalk.blue('Fresh installation detected, skipping migration'),
-        );
-
-        return;
-      }
-
-      const workspacesBelowMinimumVersion =
-        await this.workspaceVersionService.getWorkspacesBelowVersion(
-          versionContext.fromWorkspaceVersion.version,
-        );
-
-      if (workspacesBelowMinimumVersion.length > 0) {
-        const ineligibleIds = workspacesBelowMinimumVersion
-          .map((workspace) => workspace.id)
-          .join(', ');
-
-        throw new Error(
-          `Unable to run the upgrade command. Aborting the upgrade process.
-Workspaces below minimum version (${versionContext.fromWorkspaceVersion.version}): ${ineligibleIds}.
-Please roll back to that version and run the upgrade command again.`,
-        );
-      }
-
-      for (const instanceCommand of versionContext.instanceCommands) {
-        const migrationName = instanceCommand.constructor.name;
-        const result =
-          await this.instanceMigrationService.runSingleMigration(
-            instanceCommand,
-            versionContext.currentVersionMajorMinor,
-          );
-
-        switch (result.status) {
-          case 'already-executed': {
-            this.logger.warn(
-              `Core migration ${migrationName} already executed, skipping`,
-            );
-
-            break;
-          }
-          case 'failed': {
-            this.logger.error(
-              `Core migration ${migrationName} failed`,
-            );
-
-            if (isDefined(result.error)) {
-              this.logger.error(
-                result.error instanceof Error
-                  ? (result.error.stack ?? result.error.message)
-                  : String(result.error),
-              );
-            }
-
-            throw new Error(
-              `Core migration ${migrationName} failed`,
-            );
-          }
-          case 'success': {
-            this.logger.log(
-              `Core migration ${migrationName} executed successfully`,
-            );
-
-            break;
-          }
-          default: {
-            assertUnreachable(result);
-          }
-        }
-      }
-
-      const iteratorReport = await this.workspaceIteratorService.iterate({
-        workspaceIds:
-          options.workspaceId && options.workspaceId.size > 0
-            ? Array.from(options.workspaceId)
-            : undefined,
-        startFromWorkspaceId: options.startFromWorkspaceId,
-        workspaceCountLimit: options.workspaceCountLimit,
-        dryRun: options.dryRun,
-        callback: async (context) => {
-          await this.runOnWorkspace(context, options, versionContext);
-        },
-      });
-
-      if (iteratorReport.fail.length > 0) {
-        this.logger.error(
-          chalk.red(
-            `Upgrade completed with ${iteratorReport.fail.length} workspace failure(s)`,
-          ),
-        );
-      }
-
-      this.logger.log(
-        chalk.blue(
-          `Upgrade summary: ${iteratorReport.success.length} succeeded, ${iteratorReport.fail.length} failed`,
-        ),
-      );
-      this.logger.log(chalk.blue('Command completed!'));
+      await this.executeUpgrade(options);
     } catch (error) {
       this.logger.error(chalk.red(`Upgrade failed: ${error.message}`));
       throw error;
     }
+  }
+
+  private async executeUpgrade(
+    options: UpgradeCommandOptions,
+  ): Promise<void> {
+    const versionContext = this.resolveVersionContext();
+
+    this.logger.log(
+      chalk.blue(
+        [
+          'Initialized upgrade context with:',
+          `- currentVersion (migrating to): ${versionContext.currentAppVersion}`,
+          `- fromWorkspaceVersion: ${versionContext.fromWorkspaceVersion}`,
+          `- ${versionContext.instanceCommands.length} instance commands (from registry)`,
+          `- ${versionContext.workspaceCommands.length} workspace commands`,
+        ].join('\n   '),
+      ),
+    );
+
+    const hasWorkspaces =
+      await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
+
+    if (!hasWorkspaces) {
+      this.logger.log(
+        chalk.blue('Fresh installation detected, skipping migration'),
+      );
+
+      return;
+    }
+
+    const workspacesBelowMinimumVersion =
+      await this.workspaceVersionService.getWorkspacesBelowVersion(
+        versionContext.fromWorkspaceVersion.version,
+      );
+
+    if (workspacesBelowMinimumVersion.length > 0) {
+      const ineligibleIds = workspacesBelowMinimumVersion
+        .map((workspace) => workspace.id)
+        .join(', ');
+
+      throw new Error(
+        `Unable to run the upgrade command. Aborting the upgrade process.
+Workspaces below minimum version (${versionContext.fromWorkspaceVersion.version}): ${ineligibleIds}.
+Please roll back to that version and run the upgrade command again.`,
+      );
+    }
+
+    for (const instanceCommand of versionContext.instanceCommands) {
+      const migrationName = instanceCommand.constructor.name;
+      const result =
+        await this.instanceMigrationService.runSingleMigration(
+          instanceCommand,
+          versionContext.currentVersionMajorMinor,
+        );
+
+      switch (result.status) {
+        case 'already-executed': {
+          this.logger.warn(
+            `Core migration ${migrationName} already executed, skipping`,
+          );
+
+          break;
+        }
+        case 'failed': {
+          this.logger.error(
+            `Core migration ${migrationName} failed`,
+          );
+
+          if (isDefined(result.error)) {
+            this.logger.error(
+              result.error instanceof Error
+                ? (result.error.stack ?? result.error.message)
+                : String(result.error),
+            );
+          }
+
+          throw new Error(
+            `Core migration ${migrationName} failed`,
+          );
+        }
+        case 'success': {
+          this.logger.log(
+            `Core migration ${migrationName} executed successfully`,
+          );
+
+          break;
+        }
+        default: {
+          assertUnreachable(result);
+        }
+      }
+    }
+
+    const iteratorReport = await this.workspaceIteratorService.iterate({
+      workspaceIds:
+        options.workspaceId && options.workspaceId.size > 0
+          ? Array.from(options.workspaceId)
+          : undefined,
+      startFromWorkspaceId: options.startFromWorkspaceId,
+      workspaceCountLimit: options.workspaceCountLimit,
+      dryRun: options.dryRun,
+      callback: async (context) => {
+        await this.runOnWorkspace(context, options, versionContext);
+      },
+    });
+
+    if (iteratorReport.fail.length > 0) {
+      this.logger.error(
+        chalk.red(
+          `Upgrade completed with ${iteratorReport.fail.length} workspace failure(s)`,
+        ),
+      );
+    }
+
+    this.logger.log(
+      chalk.blue(
+        `Upgrade summary: ${iteratorReport.success.length} succeeded, ${iteratorReport.fail.length} failed`,
+      ),
+    );
+    this.logger.log(chalk.blue('Command completed!'));
   }
 
   private resolveVersionContext(): VersionContext {
