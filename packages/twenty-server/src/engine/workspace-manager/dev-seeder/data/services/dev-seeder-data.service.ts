@@ -21,10 +21,6 @@ import {
   generateAttachmentSeedsForWorkspace,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/attachment-data-seeds.constant';
 import {
-  CALENDAR_CHANNEL_DATA_SEED_COLUMNS,
-  CALENDAR_CHANNEL_DATA_SEEDS,
-} from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-channel-data-seeds.constant';
-import {
   CALENDAR_CHANNEL_EVENT_ASSOCIATION_DATA_SEED_COLUMNS,
   CALENDAR_CHANNEL_EVENT_ASSOCIATION_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-channel-event-association-data-seeds.constant';
@@ -41,10 +37,6 @@ import {
   COMPANY_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import {
-  CONNECTED_ACCOUNT_DATA_SEED_COLUMNS,
-  CONNECTED_ACCOUNT_DATA_SEEDS,
-} from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
-import {
   DASHBOARD_DATA_SEED_COLUMNS,
   getDashboardDataSeeds,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/dashboard-data-seeds.constant';
@@ -53,10 +45,6 @@ import {
   EMPLOYMENT_HISTORY_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/employment-history-data-seeds.constant';
 import {
-  MESSAGE_CHANNEL_DATA_SEED_COLUMNS,
-  MESSAGE_CHANNEL_DATA_SEEDS,
-} from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-data-seeds.constant';
-import {
   MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEED_COLUMNS,
   MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-message-association-data-seeds.constant';
@@ -64,10 +52,6 @@ import {
   MESSAGE_DATA_SEED_COLUMNS,
   MESSAGE_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-data-seeds.constant';
-import {
-  MESSAGE_FOLDER_DATA_SEED_COLUMNS,
-  MESSAGE_FOLDER_DATA_SEEDS,
-} from 'src/engine/workspace-manager/dev-seeder/data/constants/message-folder-data-seeds.constant';
 import {
   getMessageParticipantDataSeeds,
   MESSAGE_PARTICIPANT_DATA_SEED_COLUMNS,
@@ -169,11 +153,6 @@ const getRecordSeedsBatches = (
       recordSeeds: COMPANY_DATA_SEEDS,
     },
     {
-      tableName: 'connectedAccount',
-      pgColumns: CONNECTED_ACCOUNT_DATA_SEED_COLUMNS,
-      recordSeeds: CONNECTED_ACCOUNT_DATA_SEEDS,
-    },
-    {
       tableName: 'dashboard',
       pgColumns: DASHBOARD_DATA_SEED_COLUMNS,
       recordSeeds: getDashboardDataSeeds(workspaceId),
@@ -192,25 +171,10 @@ const getRecordSeedsBatches = (
       pgColumns: PET_DATA_SEED_COLUMNS,
       recordSeeds: PET_DATA_SEEDS,
     },
-    {
-      tableName: 'calendarChannel',
-      pgColumns: CALENDAR_CHANNEL_DATA_SEED_COLUMNS,
-      recordSeeds: CALENDAR_CHANNEL_DATA_SEEDS,
-    },
-    {
-      tableName: 'messageChannel',
-      pgColumns: MESSAGE_CHANNEL_DATA_SEED_COLUMNS,
-      recordSeeds: MESSAGE_CHANNEL_DATA_SEEDS,
-    },
   ];
 
   // Batch 4: Depends on person/company/messageChannel or independent
   const batch4: RecordSeedConfig[] = [
-    {
-      tableName: 'messageFolder',
-      pgColumns: MESSAGE_FOLDER_DATA_SEED_COLUMNS,
-      recordSeeds: MESSAGE_FOLDER_DATA_SEEDS,
-    },
     {
       tableName: 'opportunity',
       pgColumns: OPPORTUNITY_DATA_SEED_COLUMNS,

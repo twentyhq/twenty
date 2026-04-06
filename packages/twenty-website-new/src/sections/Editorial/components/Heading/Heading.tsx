@@ -6,6 +6,11 @@ const HeadingWrap = styled.div`
   max-width: 617px;
   min-width: 0;
   width: 100%;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    transform: translateX(8px);
+  }
 `;
 
 type EditorialHeadingProps = {

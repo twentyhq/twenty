@@ -24,6 +24,12 @@ const HeadingWrapper = styled.div`
   max-width: 901px;
   min-width: 0;
   width: 100%;
+  transition: letter-spacing 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    letter-spacing: -0.01em;
+    transform: scale(1.02);
+  }
 `;
 
 type StatementHeadingProps = {

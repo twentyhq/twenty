@@ -9,6 +9,13 @@ const StyledLogo = styled.div`
   flex-shrink: 0;
   position: relative;
   width: 64px;
+  transition:
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.4s ease;
+
+  &:hover {
+    transform: scale(1.05) translateY(-2px);
+  }
 
   @media (min-width: ${theme.breakpoints.md}px) {
     height: 40px;

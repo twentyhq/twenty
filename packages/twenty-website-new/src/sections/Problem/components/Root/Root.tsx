@@ -16,6 +16,23 @@ const StyledContainer = styled(Container)`
   padding-right: ${theme.spacing(4)};
   padding-top: ${theme.spacing(12)};
 
+  /* Smooth transition for the children elements */
+  & > * {
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* When hovering one column, aggressively push the other one down and fade it out */
+  &:has(> div:hover) > div:not(:hover) {
+    opacity: 0.1;
+    transform: translateY(24px) scale(0.95);
+  }
+
+  /* Scale up the hovered column slightly */
+  &:has(> div:hover) > div:hover {
+    transform: scale(1.02);
+    z-index: 2;
+  }
+
   @media (min-width: ${theme.breakpoints.md}px) {
     column-gap: ${theme.spacing(4)};
     grid-template-columns: 1fr 1fr;

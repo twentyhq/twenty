@@ -8,6 +8,11 @@ const PhraseGroup = styled.div`
   column-gap: ${theme.spacing(3)};
   display: flex;
   flex-shrink: 0;
+
+  &:hover > span {
+    opacity: 0.2;
+    transform: scale(0.95);
+  }
 `;
 
 const Segment = styled.span`
@@ -15,6 +20,16 @@ const Segment = styled.span`
   font-weight: ${theme.font.weight.light};
   line-height: 1;
   white-space: nowrap;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    color 0.4s ease;
+
+  &:hover {
+    opacity: 1 !important;
+    transform: scale(1) !important;
+    color: ${theme.colors.highlight[100]} !important;
+  }
 
   &[data-segment-index='0'] {
     color: inherit;

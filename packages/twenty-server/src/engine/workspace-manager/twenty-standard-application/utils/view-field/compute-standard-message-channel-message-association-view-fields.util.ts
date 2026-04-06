@@ -17,8 +17,8 @@ export const computeStandardMessageChannelMessageAssociationViewFields = (
         objectName: 'messageChannelMessageAssociation',
         context: {
           viewName: 'allMessageChannelMessageAssociations',
-          viewFieldName: 'messageChannel',
-          fieldName: 'messageChannel',
+          viewFieldName: 'messageChannelId',
+          fieldName: 'messageChannelId',
           position: 0,
           isVisible: true,
           size: 150,
@@ -83,8 +83,8 @@ export const computeStandardMessageChannelMessageAssociationViewFields = (
         objectName: 'messageChannelMessageAssociation',
         context: {
           viewName: 'messageChannelMessageAssociationRecordPageFields',
-          viewFieldName: 'messageChannel',
-          fieldName: 'messageChannel',
+          viewFieldName: 'messageChannelId',
+          fieldName: 'messageChannelId',
           position: 0,
           isVisible: true,
           size: 150,

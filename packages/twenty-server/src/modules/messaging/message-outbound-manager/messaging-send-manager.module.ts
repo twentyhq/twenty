@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-client-manager/oauth2-client-manager.module';
 import { MessagingIMAPDriverModule } from 'src/modules/messaging/message-import-manager/drivers/imap/messaging-imap-driver.module';
 import { MessagingSmtpDriverModule } from 'src/modules/messaging/message-import-manager/drivers/smtp/messaging-smtp-driver.module';
@@ -13,6 +16,7 @@ import { MessagingMessageOutboundService } from 'src/modules/messaging/message-o
     OAuth2ClientManagerModule,
     MessagingIMAPDriverModule,
     MessagingSmtpDriverModule,
+    TypeOrmModule.forFeature([MessageChannelEntity, MessageFolderEntity]),
   ],
   providers: [
     GmailMessageOutboundService,

@@ -5,7 +5,7 @@ import {
   type MessageFolder,
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
-import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 
 export const computeFoldersToCreate = ({
   discoveredFolders,
@@ -15,7 +15,7 @@ export const computeFoldersToCreate = ({
   discoveredFolders: DiscoveredMessageFolder[];
   existingFolders: MessageFolder[];
   messageChannelId: string;
-}): Partial<MessageFolderWorkspaceEntity>[] => {
+}): Partial<MessageFolderEntity>[] => {
   const existingFoldersByExternalId = new Map(
     existingFolders.map((folder) => [folder.externalId, folder]),
   );
