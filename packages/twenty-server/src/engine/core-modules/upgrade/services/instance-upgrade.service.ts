@@ -31,7 +31,6 @@ export class InstanceUpgradeService {
 
   async runSingleMigration(
     migration: MigrationInterface,
-    version: string,
   ): Promise<RunSingleMigrationResult> {
     const migrationName = migration.constructor.name;
     const runByVersion =
@@ -56,7 +55,6 @@ export class InstanceUpgradeService {
       await this.markAsCompleted({
         queryRunner,
         name: migrationName,
-        version,
         runByVersion,
       });
 
@@ -68,7 +66,6 @@ export class InstanceUpgradeService {
 
       await this.markFailed({
         name: migrationName,
-        version,
         runByVersion,
       });
 
@@ -83,12 +80,10 @@ export class InstanceUpgradeService {
   private async markAsCompleted({
     queryRunner,
     name,
-    version,
     runByVersion,
   }: {
     queryRunner: QueryRunner;
     name: string;
-    version: string;
     runByVersion: string;
   }): Promise<void> {
     const repository =
@@ -98,7 +93,6 @@ export class InstanceUpgradeService {
 
     await repository.save({
       name,
-      version,
       status: 'completed' as UpgradeMigrationStatus,
       retry,
       runByVersion,
@@ -107,11 +101,9 @@ export class InstanceUpgradeService {
 
   private async markFailed({
     name,
-    version,
     runByVersion,
   }: {
     name: string;
-    version: string;
     runByVersion: string;
   }): Promise<void> {
     const retry = await this.upgradeMigrationRepository.count({
@@ -120,7 +112,6 @@ export class InstanceUpgradeService {
 
     await this.upgradeMigrationRepository.save({
       name,
-      version,
       status: 'failed' as UpgradeMigrationStatus,
       retry,
       runByVersion,

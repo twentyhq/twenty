@@ -60,7 +60,7 @@ export class InstanceCommandGenerationService {
       downStatements,
     });
 
-    const versionSlug = version.replace(/\./g, '-');
+    const versionSlug = version.split('.').slice(0, 2).join('-');
     const fileName = `${versionSlug}-instance-command-fast-${timestamp}-${migrationName}.ts`;
 
     return { fileName, fileTemplate, className };
@@ -71,7 +71,9 @@ export class InstanceCommandGenerationService {
     version: string,
     timestamp: number,
   ): string {
-    return `${pascalCase(name)}V${version.replace(/\./g, '')}${timestamp}`;
+    const versionSlug = version.split('.').slice(0, 2).join('_');
+
+    return `V${versionSlug}_${pascalCase(name)}_${timestamp}`;
   }
 
   private formatQueryParams(parameters: unknown[] | undefined): string {

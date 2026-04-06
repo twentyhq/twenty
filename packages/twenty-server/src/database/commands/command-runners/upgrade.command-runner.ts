@@ -203,7 +203,6 @@ Please roll back to that version and run the upgrade command again.`,
       const migrationName = instanceCommand.constructor.name;
       const result = await this.instanceUpgradeService.runSingleMigration(
         instanceCommand,
-        versionContext.currentVersionMajorMinor,
       );
 
       switch (result.status) {

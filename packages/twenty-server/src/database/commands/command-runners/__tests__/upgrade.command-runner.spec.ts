@@ -400,12 +400,10 @@ describe('UpgradeCommandRunner', () => {
     expect(instanceUpgradeService.runSingleMigration).toHaveBeenNthCalledWith(
       1,
       addIndex,
-      CURRENT_VERSION,
     );
     expect(instanceUpgradeService.runSingleMigration).toHaveBeenNthCalledWith(
       2,
       addColumn,
-      CURRENT_VERSION,
     );
   });
 
@@ -488,7 +486,6 @@ describe('UpgradeCommandRunner', () => {
 
     expect(instanceUpgradeService.runSingleMigration).toHaveBeenCalledWith(
       success,
-      CURRENT_VERSION,
     );
     expect(upgradeCommandRunner['logger'].log).toHaveBeenCalledWith(
       expect.stringContaining('executed successfully'),

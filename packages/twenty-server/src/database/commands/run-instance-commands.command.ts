@@ -114,11 +114,10 @@ export class RunInstanceCommandsCommand extends CommandRunner {
       `Running ${instanceCommands.length} instance command(s)...`,
     );
 
-    for (const { version, migration } of instanceCommands) {
+    for (const { migration } of instanceCommands) {
       const migrationName = migration.constructor.name;
       const result = await this.instanceUpgradeService.runSingleMigration(
         migration,
-        version,
       );
 
       switch (result.status) {
