@@ -86,8 +86,9 @@ export class InstanceUpgradeService {
     name: string;
     runByVersion: string;
   }): Promise<void> {
-    const repository =
-      queryRunner.manager.getRepository(UpgradeMigrationEntity);
+    const repository = queryRunner.manager.getRepository(
+      UpgradeMigrationEntity,
+    );
 
     const retry = await repository.count({ where: { name } });
 

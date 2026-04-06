@@ -116,9 +116,8 @@ export class RunInstanceCommandsCommand extends CommandRunner {
 
     for (const { migration } of instanceCommands) {
       const migrationName = migration.constructor.name;
-      const result = await this.instanceUpgradeService.runSingleMigration(
-        migration,
-      );
+      const result =
+        await this.instanceUpgradeService.runSingleMigration(migration);
 
       switch (result.status) {
         case 'success':

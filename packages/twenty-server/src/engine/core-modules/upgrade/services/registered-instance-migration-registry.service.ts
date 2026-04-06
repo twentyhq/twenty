@@ -58,9 +58,7 @@ export class RegisteredInstanceMigrationService implements OnModuleInit {
     }
 
     for (const [, bucket] of this.migrationsByVersion) {
-      bucket.sort(
-        (entryA, entryB) => entryA.timestamp - entryB.timestamp,
-      );
+      bucket.sort((entryA, entryB) => entryA.timestamp - entryB.timestamp);
     }
 
     for (const [version, bucket] of this.migrationsByVersion) {

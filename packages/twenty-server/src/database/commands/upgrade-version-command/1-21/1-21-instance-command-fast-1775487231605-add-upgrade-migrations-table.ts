@@ -2,11 +2,11 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
 
-@RegisteredInstanceMigration('1.21.0', 1775485169179)
-export class V1_21_AddUpgradeMigrationsTable_1775485169179
+@RegisteredInstanceMigration('1.21.0', 1775487231605)
+export class V1_21_AddUpgradeMigrationsTable_1775487231605
   implements MigrationInterface
 {
-  name = 'V1_21_AddUpgradeMigrationsTable_1775485169179';
+  name = 'V1_21_AddUpgradeMigrationsTable_1775487231605';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
