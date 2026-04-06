@@ -10,17 +10,16 @@ import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services
 import { RegisteredInstanceMigrationService } from 'src/engine/core-modules/upgrade/services/registered-instance-migration-registry.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
-type RunCoreMigrationCommandOptions = {
+type RunInstanceCommandsCommandOptions = {
   force?: boolean;
 };
 
 @Command({
-  name: 'run-core-migration',
-  description:
-    'Run TypeORM core migrations then registered instance commands',
+  name: 'run-instance-commands',
+  description: 'Run TypeORM core migrations then registered instance commands',
 })
-export class RunCoreMigrationCommand extends CommandRunner {
-  private readonly logger = new Logger(RunCoreMigrationCommand.name);
+export class RunInstanceCommandsCommand extends CommandRunner {
+  private readonly logger = new Logger(RunInstanceCommandsCommand.name);
 
   constructor(
     private readonly coreEngineVersionService: CoreEngineVersionService,
@@ -44,7 +43,7 @@ export class RunCoreMigrationCommand extends CommandRunner {
 
   async run(
     _passedParams: string[],
-    options: RunCoreMigrationCommandOptions,
+    options: RunInstanceCommandsCommandOptions,
   ): Promise<void> {
     if (options.force) {
       this.logger.warn(
@@ -61,8 +60,7 @@ export class RunCoreMigrationCommand extends CommandRunner {
   }
 
   private async checkWorkspaceVersions(): Promise<void> {
-    const previousVersion =
-      this.coreEngineVersionService.getPreviousVersion();
+    const previousVersion = this.coreEngineVersionService.getPreviousVersion();
 
     const workspacesBelow =
       await this.workspaceVersionService.getWorkspacesBelowVersion(
