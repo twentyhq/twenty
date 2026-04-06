@@ -33,6 +33,10 @@ const StyledPoint = styled.div`
   }
 `;
 
+const StyledBody = styled(Body)`
+  color: ${theme.colors.primary.text[80]};
+`;
+
 export type PointsProps = { points: ProblemPointType[] };
 
 export function Points({ points }: PointsProps) {
@@ -43,7 +47,7 @@ export function Points({ points }: PointsProps) {
           <StyledDivider />
           <StyledPoint>
             <Heading segments={point.heading} weight="medium" size="xs" />
-            <Body body={point.body} size="sm" />
+            <StyledBody body={point.body} size="sm" />
           </StyledPoint>
         </React.Fragment>
       ))}
