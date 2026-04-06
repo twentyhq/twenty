@@ -141,7 +141,7 @@
       "cache": false,
       "options": {
         "cwd": "{projectRoot}",
-        "command": "npm pkg set version={args.releaseVersion}"
+        "command": "node -e \"const fs=require('fs'),p=JSON.parse(fs.readFileSync('package.json','utf8'));p.version='{args.releaseVersion}';fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\\n');\""
       }
     },
     "storybook:build": {
