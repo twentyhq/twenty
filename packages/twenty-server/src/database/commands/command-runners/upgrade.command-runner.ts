@@ -11,7 +11,7 @@ import { CommandLogger } from 'src/database/commands/logger';
 import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
 import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
-import { RegisteredCoreMigrationService } from 'src/engine/core-modules/upgrade/services/registered-core-migration-registry.service';
+import { RegisteredInstanceMigrationService } from 'src/engine/core-modules/upgrade/services/registered-instance-migration-registry.service';
 import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
@@ -45,7 +45,7 @@ export abstract class UpgradeCommandRunner extends CommandRunner {
   constructor(
     protected readonly coreEngineVersionService: CoreEngineVersionService,
     protected readonly workspaceVersionService: WorkspaceVersionService,
-    protected readonly versionedMigrationRegistryService: RegisteredCoreMigrationService,
+    protected readonly versionedMigrationRegistryService: RegisteredInstanceMigrationService,
     protected readonly instanceUpgradeService: InstanceUpgradeService,
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     protected readonly workspaceUpgradeService: WorkspaceUpgradeService,

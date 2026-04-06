@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { getDataSourceToken } from '@nestjs/typeorm';
 
-import { CoreMigrationGeneratorService } from 'src/engine/core-modules/upgrade/services/core-migration-generator.service';
+import { InstanceMigrationGenerationService } from 'src/engine/core-modules/upgrade/services/instance-migration-generation.service';
 
 const FIXED_TIMESTAMP = 1775000000000;
 
@@ -16,14 +16,14 @@ const buildMockDataSource = (
   },
 });
 
-describe('CoreMigrationGeneratorService', () => {
+describe('InstanceMigrationService', () => {
   const buildService = async (
     upQueries: { query: string; parameters?: unknown[] }[] = [],
     downQueries: { query: string; parameters?: unknown[] }[] = [],
   ) => {
     const module = await Test.createTestingModule({
       providers: [
-        CoreMigrationGeneratorService,
+        InstanceMigrationGenerationService,
         {
           provide: getDataSourceToken(),
           useValue: buildMockDataSource(upQueries, downQueries),
@@ -31,7 +31,7 @@ describe('CoreMigrationGeneratorService', () => {
       ],
     }).compile();
 
-    return module.get(CoreMigrationGeneratorService);
+    return module.get(InstanceMigrationGenerationService);
   };
 
   it('should return null when no schema changes are detected', async () => {

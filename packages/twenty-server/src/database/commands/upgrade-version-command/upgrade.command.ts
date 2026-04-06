@@ -6,7 +6,7 @@ import {
   type VersionCommands,
 } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { RegisteredCoreMigrationService } from 'src/engine/core-modules/upgrade/services/registered-core-migration-registry.service';
+import { RegisteredInstanceMigrationService } from 'src/engine/core-modules/upgrade/services/registered-instance-migration-registry.service';
 import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
 import { BackfillCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-command-menu-items.command';
 import { BackfillNavigationMenuItemTypeCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-navigation-menu-item-type.command';
@@ -48,7 +48,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
   constructor(
     protected readonly coreEngineVersionService: CoreEngineVersionService,
     protected readonly workspaceVersionService: WorkspaceVersionService,
-    protected readonly versionedMigrationRegistryService: RegisteredCoreMigrationService,
+    protected readonly versionedMigrationRegistryService: RegisteredInstanceMigrationService,
     protected readonly instanceUpgradeService: InstanceUpgradeService,
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     protected readonly workspaceUpgradeService: WorkspaceUpgradeService,

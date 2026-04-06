@@ -5,10 +5,10 @@ import { getDataSourceToken } from '@nestjs/typeorm';
 
 import { type MigrationInterface } from 'typeorm';
 
-import { RegisteredCoreMigrationService } from 'src/engine/core-modules/upgrade/services/registered-core-migration-registry.service';
-import { RegisteredCoreMigration } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
+import { RegisteredInstanceMigrationService } from 'src/engine/core-modules/upgrade/services/registered-instance-migration-registry.service';
+import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
 
-@RegisteredCoreMigration('1.21.0')
+@RegisteredInstanceMigration('1.21.0')
 class MigrationA1770000000000 implements MigrationInterface {
   name = 'MigrationA1770000000000';
 
@@ -16,7 +16,7 @@ class MigrationA1770000000000 implements MigrationInterface {
   async down(): Promise<void> {}
 }
 
-@RegisteredCoreMigration('1.21.0')
+@RegisteredInstanceMigration('1.21.0')
 class MigrationB1771000000000 implements MigrationInterface {
   name = 'MigrationB1771000000000';
 
@@ -24,7 +24,7 @@ class MigrationB1771000000000 implements MigrationInterface {
   async down(): Promise<void> {}
 }
 
-@RegisteredCoreMigration('1.21.0')
+@RegisteredInstanceMigration('1.21.0')
 class MigrationC1772000000000 implements MigrationInterface {
   name = 'MigrationC1772000000000';
 
@@ -32,7 +32,7 @@ class MigrationC1772000000000 implements MigrationInterface {
   async down(): Promise<void> {}
 }
 
-@RegisteredCoreMigration('1.20.0')
+@RegisteredInstanceMigration('1.20.0')
 class MigrationD1769000000000 implements MigrationInterface {
   name = 'MigrationD1769000000000';
 
@@ -49,10 +49,10 @@ class UndecoratedMigration1768000000000 implements MigrationInterface {
 
 const buildRegistryService = async (
   migrations: MigrationInterface[],
-): Promise<RegisteredCoreMigrationService> => {
+): Promise<RegisteredInstanceMigrationService> => {
   const module = await Test.createTestingModule({
     providers: [
-      RegisteredCoreMigrationService,
+      RegisteredInstanceMigrationService,
       {
         provide: getDataSourceToken(),
         useValue: { migrations },
@@ -60,7 +60,7 @@ const buildRegistryService = async (
     ],
   }).compile();
 
-  const service = module.get(RegisteredCoreMigrationService);
+  const service = module.get(RegisteredInstanceMigrationService);
 
   service.onModuleInit();
 

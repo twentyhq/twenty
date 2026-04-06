@@ -3,15 +3,15 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource, type MigrationInterface } from 'typeorm';
 
-import { getRegisteredCoreMigrationVersion } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
+import { getRegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
 import {
   UPGRADE_COMMAND_SUPPORTED_VERSIONS,
   type UpgradeCommandVersion,
 } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 
 @Injectable()
-export class RegisteredCoreMigrationService implements OnModuleInit {
-  private readonly logger = new Logger(RegisteredCoreMigrationService.name);
+export class RegisteredInstanceMigrationService implements OnModuleInit {
+  private readonly logger = new Logger(RegisteredInstanceMigrationService.name);
 
   private readonly migrationsByVersion = new Map<
     UpgradeCommandVersion,
@@ -28,11 +28,9 @@ export class RegisteredCoreMigrationService implements OnModuleInit {
       this.migrationsByVersion.set(version, []);
     }
 
-    // dataSource.migrations is already sorted by timestamp (TypeORM sorts
-    // ascending by the 13-digit suffix of the class name)
     for (const migration of this.dataSource.migrations) {
       const constructor = migration.constructor;
-      const version = getRegisteredCoreMigrationVersion(constructor);
+      const version = getRegisteredInstanceMigration(constructor);
 
       if (version === undefined) {
         continue;

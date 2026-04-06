@@ -1,14 +1,14 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`CoreMigrationGeneratorService should encode version correctly in file and class names 1`] = `
+exports[`InstanceMigrationService should encode version correctly in file and class names 1`] = `
 {
   "className": "TestV11901775000000000",
   "fileName": "1775000000000-1-19-0-test.ts",
   "fileTemplate": "import { MigrationInterface, QueryRunner } from 'typeorm';
 
-import { RegisteredCoreMigration } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
+import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
 
-@RegisteredCoreMigration('1.19.0')
+@RegisteredInstanceMigration('1.19.0')
 export class TestV11901775000000000 implements MigrationInterface {
   name = 'TestV11901775000000000';
 
@@ -24,15 +24,15 @@ export class TestV11901775000000000 implements MigrationInterface {
 }
 `;
 
-exports[`CoreMigrationGeneratorService should escape backslashes in SQL queries 1`] = `
+exports[`InstanceMigrationService should escape backslashes in SQL queries 1`] = `
 {
   "className": "UpdatePathV12101775000000000",
   "fileName": "1775000000000-1-21-0-update-path.ts",
   "fileTemplate": "import { MigrationInterface, QueryRunner } from 'typeorm';
 
-import { RegisteredCoreMigration } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
+import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
 
-@RegisteredCoreMigration('1.21.0')
+@RegisteredInstanceMigration('1.21.0')
 export class UpdatePathV12101775000000000 implements MigrationInterface {
   name = 'UpdatePathV12101775000000000';
 
@@ -48,15 +48,15 @@ export class UpdatePathV12101775000000000 implements MigrationInterface {
 }
 `;
 
-exports[`CoreMigrationGeneratorService should escape single quotes in SQL queries 1`] = `
+exports[`InstanceMigrationService should escape single quotes in SQL queries 1`] = `
 {
   "className": "UpdateConfigV12101775000000000",
   "fileName": "1775000000000-1-21-0-update-config.ts",
   "fileTemplate": "import { MigrationInterface, QueryRunner } from 'typeorm';
 
-import { RegisteredCoreMigration } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
+import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
 
-@RegisteredCoreMigration('1.21.0')
+@RegisteredInstanceMigration('1.21.0')
 export class UpdateConfigV12101775000000000 implements MigrationInterface {
   name = 'UpdateConfigV12101775000000000';
 
@@ -72,15 +72,15 @@ export class UpdateConfigV12101775000000000 implements MigrationInterface {
 }
 `;
 
-exports[`CoreMigrationGeneratorService should generate a migration with a single up/down query 1`] = `
+exports[`InstanceMigrationService should generate a migration with a single up/down query 1`] = `
 {
   "className": "AddFooColumnV12101775000000000",
   "fileName": "1775000000000-1-21-0-add-foo-column.ts",
   "fileTemplate": "import { MigrationInterface, QueryRunner } from 'typeorm';
 
-import { RegisteredCoreMigration } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
+import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
 
-@RegisteredCoreMigration('1.21.0')
+@RegisteredInstanceMigration('1.21.0')
 export class AddFooColumnV12101775000000000 implements MigrationInterface {
   name = 'AddFooColumnV12101775000000000';
 
@@ -96,15 +96,15 @@ export class AddFooColumnV12101775000000000 implements MigrationInterface {
 }
 `;
 
-exports[`CoreMigrationGeneratorService should generate a migration with multiple queries 1`] = `
+exports[`InstanceMigrationService should generate a migration with multiple queries 1`] = `
 {
   "className": "CreateTaskTableV12101775000000000",
   "fileName": "1775000000000-1-21-0-create-task-table.ts",
   "fileTemplate": "import { MigrationInterface, QueryRunner } from 'typeorm';
 
-import { RegisteredCoreMigration } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
+import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
 
-@RegisteredCoreMigration('1.21.0')
+@RegisteredInstanceMigration('1.21.0')
 export class CreateTaskTableV12101775000000000 implements MigrationInterface {
   name = 'CreateTaskTableV12101775000000000';
 
@@ -122,15 +122,15 @@ export class CreateTaskTableV12101775000000000 implements MigrationInterface {
 }
 `;
 
-exports[`CoreMigrationGeneratorService should generate a migration with query parameters 1`] = `
+exports[`InstanceMigrationService should generate a migration with query parameters 1`] = `
 {
   "className": "SeedSettingV12101775000000000",
   "fileName": "1775000000000-1-21-0-seed-setting.ts",
   "fileTemplate": "import { MigrationInterface, QueryRunner } from 'typeorm';
 
-import { RegisteredCoreMigration } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
+import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
 
-@RegisteredCoreMigration('1.21.0')
+@RegisteredInstanceMigration('1.21.0')
 export class SeedSettingV12101775000000000 implements MigrationInterface {
   name = 'SeedSettingV12101775000000000';
 
@@ -146,15 +146,15 @@ export class SeedSettingV12101775000000000 implements MigrationInterface {
 }
 `;
 
-exports[`CoreMigrationGeneratorService should use default migration name in class and file names 1`] = `
+exports[`InstanceMigrationService should use default migration name in class and file names 1`] = `
 {
   "className": "AutoGeneratedV12101775000000000",
   "fileName": "1775000000000-1-21-0-auto-generated.ts",
   "fileTemplate": "import { MigrationInterface, QueryRunner } from 'typeorm';
 
-import { RegisteredCoreMigration } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
+import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
 
-@RegisteredCoreMigration('1.21.0')
+@RegisteredInstanceMigration('1.21.0')
 export class AutoGeneratedV12101775000000000 implements MigrationInterface {
   name = 'AutoGeneratedV12101775000000000';
 

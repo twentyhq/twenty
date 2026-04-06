@@ -11,9 +11,9 @@ import {
   type AllCommands,
 } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { RegisteredCoreMigrationService } from 'src/engine/core-modules/upgrade/services/registered-core-migration-registry.service';
+import { RegisteredInstanceMigrationService } from 'src/engine/core-modules/upgrade/services/registered-instance-migration-registry.service';
 import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
-import { RegisteredCoreMigration } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
+import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
 import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
@@ -72,12 +72,12 @@ const buildUpgradeCommandModule = async ({
 }: BuildUpgradeCommandModuleArgs) => {
   const registryProvider = migrations
     ? {
-        provide: RegisteredCoreMigrationService,
+        provide: RegisteredInstanceMigrationService,
         useFactory: () => {
           const fakeDataSource = {
             migrations,
           } as unknown as import('typeorm').DataSource;
-          const registry = new RegisteredCoreMigrationService(fakeDataSource);
+          const registry = new RegisteredInstanceMigrationService(fakeDataSource);
 
           registry.onModuleInit();
 
@@ -85,7 +85,7 @@ const buildUpgradeCommandModule = async ({
         },
       }
     : {
-        provide: RegisteredCoreMigrationService,
+        provide: RegisteredInstanceMigrationService,
         useValue: {
           getInstanceCommandsForVersion: jest.fn().mockReturnValue([]),
         },
@@ -98,7 +98,7 @@ const buildUpgradeCommandModule = async ({
         useFactory: (
           coreEngineVersionService: CoreEngineVersionService,
           workspaceVersionService: WorkspaceVersionService,
-          versionedMigrationRegistryService: RegisteredCoreMigrationService,
+          versionedMigrationRegistryService: RegisteredInstanceMigrationService,
           instanceUpgradeService: InstanceUpgradeService,
           workspaceIteratorService: WorkspaceIteratorService,
           workspaceUpgradeService: WorkspaceUpgradeService,
@@ -115,7 +115,7 @@ const buildUpgradeCommandModule = async ({
         inject: [
           CoreEngineVersionService,
           WorkspaceVersionService,
-          RegisteredCoreMigrationService,
+          RegisteredInstanceMigrationService,
           InstanceUpgradeService,
           WorkspaceIteratorService,
           WorkspaceUpgradeService,
@@ -351,19 +351,19 @@ describe('UpgradeCommandRunner', () => {
   });
 
   it('should call runSingleMigration for each current-version instance command', async () => {
-    @RegisteredCoreMigration(CURRENT_VERSION)
+    @RegisteredInstanceMigration(CURRENT_VERSION)
     class AddIndexToUsers1770000000000 implements MigrationInterface {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
     }
 
-    @RegisteredCoreMigration(CURRENT_VERSION)
+    @RegisteredInstanceMigration(CURRENT_VERSION)
     class AddColumnToAccounts1771000000000 implements MigrationInterface {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
     }
 
-    @RegisteredCoreMigration(PREVIOUS_VERSION)
+    @RegisteredInstanceMigration(PREVIOUS_VERSION)
     class DropLegacyTable1769000000000 implements MigrationInterface {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
@@ -404,7 +404,7 @@ describe('UpgradeCommandRunner', () => {
   });
 
   it('should skip already-executed instance commands', async () => {
-    @RegisteredCoreMigration(CURRENT_VERSION)
+    @RegisteredInstanceMigration(CURRENT_VERSION)
     class AlreadyRunMigration1770000000000 implements MigrationInterface {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
@@ -433,7 +433,7 @@ describe('UpgradeCommandRunner', () => {
   });
 
   it('should throw when a migration fails', async () => {
-    @RegisteredCoreMigration(CURRENT_VERSION)
+    @RegisteredInstanceMigration(CURRENT_VERSION)
     class FailingMigration1770000000000 implements MigrationInterface {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
@@ -461,7 +461,7 @@ describe('UpgradeCommandRunner', () => {
   });
 
   it('should log success when a migration succeeds', async () => {
-    @RegisteredCoreMigration(CURRENT_VERSION)
+    @RegisteredInstanceMigration(CURRENT_VERSION)
     class SuccessMigration1770000000000 implements MigrationInterface {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}

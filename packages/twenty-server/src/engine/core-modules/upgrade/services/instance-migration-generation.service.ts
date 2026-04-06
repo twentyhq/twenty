@@ -19,7 +19,7 @@ export type GeneratedMigrationResult = {
 };
 
 @Injectable()
-export class CoreMigrationGeneratorService {
+export class InstanceMigrationGenerationService {
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
@@ -92,9 +92,9 @@ export class CoreMigrationGeneratorService {
   ): string {
     return `import { MigrationInterface, QueryRunner } from 'typeorm';
 
-import { RegisteredCoreMigration } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
+import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
 
-@RegisteredCoreMigration('${version}')
+@RegisteredInstanceMigration('${version}')
 export class ${className} implements MigrationInterface {
   name = '${className}';
 

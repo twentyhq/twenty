@@ -5,8 +5,8 @@ import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
 
-import { CoreMigrationGeneratorService } from 'src/engine/core-modules/upgrade/services/core-migration-generator.service';
 import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
+import { InstanceMigrationGenerationService } from 'src/engine/core-modules/upgrade/services/instance-migration-generation.service';
 
 const MIGRATIONS_DIR = path.resolve(
   process.cwd(),
@@ -20,13 +20,13 @@ type GenerateVersionedMigrationCommandOptions = {
 @Command({
   name: 'generate:versioned-migration',
   description:
-    'Generate a TypeORM migration with @RegisteredCoreMigration decorator for the latest supported version',
+    'Generate a TypeORM migration with @RegisteredInstanceMigration decorator for the latest supported version',
 })
 export class GenerateVersionedMigrationCommand extends CommandRunner {
   private readonly logger = new Logger(GenerateVersionedMigrationCommand.name);
 
   constructor(
-    private readonly coreMigrationGeneratorService: CoreMigrationGeneratorService,
+    private readonly coreMigrationGeneratorService: InstanceMigrationGenerationService,
   ) {
     super();
   }
