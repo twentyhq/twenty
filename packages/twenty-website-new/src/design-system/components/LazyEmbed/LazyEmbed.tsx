@@ -1,5 +1,6 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import {
   type ComponentPropsWithoutRef,
   useEffect,
@@ -12,6 +13,14 @@ const DEFAULT_LOAD_ROOT_MARGIN = '1200px 0px';
 const DEFAULT_UNLOAD_ROOT_MARGIN = '1800px 0px';
 const DEFAULT_UNLOAD_DELAY_MS = 1500;
 
+const LazyGlbIllustration = dynamic(
+  () =>
+    import('./LazyGlbIllustration').then((mod) => ({
+      default: mod.LazyGlbIllustration,
+    })),
+  { loading: () => null, ssr: false },
+);
+
 type LazyEmbedProps = Omit<ComponentPropsWithoutRef<'iframe'>, 'loading' | 'src'> & {
   eager?: boolean;
   rootMargin?: string;
@@ -21,6 +30,10 @@ type LazyEmbedProps = Omit<ComponentPropsWithoutRef<'iframe'>, 'loading' | 'src'
   unloadRootMargin?: string;
 };
 
+function isGlbSrc(src: string) {
+  return src.toLowerCase().endsWith('.glb');
+}
+
 export function LazyEmbed({
   eager = false,
   rootMargin = DEFAULT_LOAD_ROOT_MARGIN,
@@ -28,6 +41,7 @@ export function LazyEmbed({
   unloadWhenHidden = true,
   unloadRootMargin = DEFAULT_UNLOAD_ROOT_MARGIN,
   src,
+  title,
   className,
   style,
   role,
@@ -38,6 +52,7 @@ export function LazyEmbed({
   const [hostNode, setHostNode] = useState<HTMLDivElement | null>(null);
   const [shouldRender, setShouldRender] = useState(eager);
   const unloadTimeoutRef = useRef<number | null>(null);
+  const useGlbRenderer = isGlbSrc(src);
 
   const wrapperProps = useMemo(
     () => ({
@@ -138,19 +153,24 @@ export function LazyEmbed({
       ref={setHostNode}
     >
       {shouldRender ? (
-        <iframe
-          {...iframeProps}
-          aria-hidden={ariaHidden}
-          loading={eager ? 'eager' : 'lazy'}
-          src={src}
-          style={{
-            border: 'none',
-            display: 'block',
-            height: '100%',
-            width: '100%',
-          }}
-          tabIndex={tabIndex}
-        />
+        useGlbRenderer ? (
+          <LazyGlbIllustration src={src} title={title} />
+        ) : (
+          <iframe
+            {...iframeProps}
+            aria-hidden={ariaHidden}
+            loading={eager ? 'eager' : 'lazy'}
+            src={src}
+            style={{
+              border: 'none',
+              display: 'block',
+              height: '100%',
+              width: '100%',
+            }}
+            tabIndex={tabIndex}
+            title={title}
+          />
+        )
       ) : null}
     </div>
   );

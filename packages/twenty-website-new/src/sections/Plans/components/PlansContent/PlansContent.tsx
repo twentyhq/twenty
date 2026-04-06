@@ -1,6 +1,6 @@
 'use client';
 
-import { PLANS_DATA } from '@/app/pricing/constants/plans';
+import { PLANS_DATA } from '@/app/pricing/_constants/plans';
 import type {
   PlansBillingPeriod,
   PlansHostingMode,
