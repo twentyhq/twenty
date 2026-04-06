@@ -1,6 +1,4 @@
 import { MENU_DATA } from '@/app/_constants';
-import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
-import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import {
   EDITORIAL_FOUR,
   EDITORIAL_ONE,
@@ -16,6 +14,8 @@ import {
 } from '@/app/why-twenty/_constants';
 import { LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
+import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { ScrollReveal } from '@/motion/ScrollReveal';
 import { Editorial } from '@/sections/Editorial/components';
 import { Hero } from '@/sections/Hero/components';
@@ -36,10 +36,7 @@ export const metadata: Metadata = {
 
 export default async function WhyTwentyPage() {
   const stats = await fetchCommunityStats();
-  const menuSocialLinks = mergeSocialLinkLabels(
-    MENU_DATA.socialLinks,
-    stats,
-  );
+  const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
     <>
@@ -172,7 +169,7 @@ export default async function WhyTwentyPage() {
 
       <ScrollReveal>
         <Signoff.Root
-          backgroundColor={theme.colors.secondary.background[5]}
+          backgroundColor={theme.colors.primary.text[10]}
           color={theme.colors.secondary.text[100]}
           variant="shaped"
           shapeFillColor={theme.colors.secondary.background[100]}
