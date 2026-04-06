@@ -921,6 +921,7 @@ enum WidgetType {
   WORKFLOW_RUN
   FRONT_COMPONENT
   RECORD_TABLE
+  EMAIL_THREAD
 }
 
 union PageLayoutWidgetPosition = PageLayoutWidgetGridPosition | PageLayoutWidgetVerticalListPosition | PageLayoutWidgetCanvasPosition
@@ -948,7 +949,7 @@ type PageLayoutWidgetCanvasPosition {
   layoutMode: PageLayoutTabLayoutMode!
 }
 
-union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | GaugeChartConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
+union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | GaugeChartConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
 
 type AggregateChartConfiguration {
   configurationType: WidgetConfigurationType!
@@ -989,6 +990,7 @@ enum WidgetConfigurationType {
   WORKFLOW_RUN
   FRONT_COMPONENT
   RECORD_TABLE
+  EMAIL_THREAD
 }
 
 type StandaloneRichTextConfiguration {
@@ -1151,6 +1153,10 @@ type FrontComponentConfiguration {
 }
 
 type EmailsConfiguration {
+  configurationType: WidgetConfigurationType!
+}
+
+type EmailThreadConfiguration {
   configurationType: WidgetConfigurationType!
 }
 
@@ -2633,6 +2639,7 @@ enum EngineComponentKey {
   VIEW_PREVIOUS_AI_CHATS
   TRIGGER_WORKFLOW_VERSION
   FRONT_COMPONENT_RENDERER
+  REPLY_TO_EMAIL_THREAD
   DELETE_SINGLE_RECORD
   DELETE_MULTIPLE_RECORDS
   RESTORE_SINGLE_RECORD

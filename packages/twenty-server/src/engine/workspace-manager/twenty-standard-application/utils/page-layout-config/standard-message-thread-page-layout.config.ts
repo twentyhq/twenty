@@ -26,8 +26,7 @@ const MESSAGE_THREAD_PAGE_TABS = {
 export const STANDARD_MESSAGE_THREAD_PAGE_LAYOUT_CONFIG = {
   name: 'Default Message Thread Layout',
   type: PageLayoutType.RECORD_PAGE,
-  objectUniversalIdentifier:
-    STANDARD_OBJECTS.messageThread.universalIdentifier,
+  objectUniversalIdentifier: STANDARD_OBJECTS.messageThread.universalIdentifier,
   universalIdentifier: '20202020-95bb-40eb-a699-70e7ea02a79e',
   defaultTabUniversalIdentifier: null,
   tabs: MESSAGE_THREAD_PAGE_TABS,

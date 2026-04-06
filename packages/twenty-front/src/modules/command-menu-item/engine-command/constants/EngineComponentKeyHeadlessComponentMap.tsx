@@ -241,9 +241,7 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.FRONT_COMPONENT_RENDERER]: (
     <HeadlessFrontComponentRendererEngineCommand />
   ),
-  [EngineComponentKey.REPLY_TO_EMAIL_THREAD]: (
-    <ReplyToEmailThreadCommand />
-  ),
+  [EngineComponentKey.REPLY_TO_EMAIL_THREAD]: <ReplyToEmailThreadCommand />,
 
   // Deprecated keys kept for backward compatibility until migration runs
   [EngineComponentKey.DELETE_SINGLE_RECORD]: <DeleteRecordsCommand />,

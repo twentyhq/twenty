@@ -31,8 +31,9 @@ export const EmailThreadWidget = ({
 }: EmailThreadWidgetProps) => {
   const targetRecord = useTargetRecord();
 
-  const { thread, messages, fetchMoreMessages, threadLoading } =
-    useEmailThread(targetRecord.id);
+  const { thread, messages, fetchMoreMessages, threadLoading } = useEmailThread(
+    targetRecord.id,
+  );
 
   const messagesCount = messages.length;
   const is5OrMoreMessages = messagesCount >= 5;
@@ -45,16 +46,20 @@ export const EmailThreadWidget = ({
     : [];
   const lastMessage = messages[messagesCount - 1];
 
-  if (!thread || !messages.length) {
-    return null;
+  if (threadLoading || !thread || !messages.length) {
+    return (
+      <StyledWrapper>
+        <StyledContainer>
+          <EmailLoader loadingText={t`Loading thread`} />
+        </StyledContainer>
+      </StyledWrapper>
+    );
   }
 
   return (
     <StyledWrapper>
       <StyledContainer>
-        {threadLoading ? (
-          <EmailLoader loadingText={t`Loading thread`} />
-        ) : (
+        {
           <>
             {firstMessages.map((message) => (
               <EmailThreadMessage
@@ -65,9 +70,7 @@ export const EmailThreadWidget = ({
                 sentAt={message.receivedAt}
               />
             ))}
-            <EmailThreadIntermediaryMessages
-              messages={intermediaryMessages}
-            />
+            <EmailThreadIntermediaryMessages messages={intermediaryMessages} />
             <EmailThreadMessage
               key={lastMessage.id}
               sender={lastMessage.sender}
@@ -81,7 +84,7 @@ export const EmailThreadWidget = ({
               onLastRowVisible={fetchMoreMessages}
             />
           </>
-        )}
+        }
       </StyledContainer>
     </StyledWrapper>
   );
