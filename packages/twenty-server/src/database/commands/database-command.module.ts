@@ -7,6 +7,7 @@ import { GenerateInstanceCommandCommand } from 'src/database/commands/generate-i
 import { InstanceCommandGenerationService } from 'src/database/commands/instance-command-generation.service';
 import { ListOrphanedWorkspaceEntitiesCommand } from 'src/database/commands/list-and-delete-orphaned-workspace-entities.command';
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
+import { RunInstanceCommandsCommand } from 'src/database/commands/run-instance-commands.command';
 import { InstanceCommandProviderModule } from 'src/database/commands/upgrade-version-command/instance-command-provider.module';
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
 import { WorkspaceExportModule } from 'src/database/commands/workspace-export/workspace-export.module';
@@ -24,6 +25,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
+import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -76,6 +78,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     StaleRegistrationCleanupModule,
     CoreEngineVersionModule,
     WorkspaceVersionModule,
+    UpgradeModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,
@@ -83,6 +86,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     CronRegisterAllCommand,
     GenerateInstanceCommandCommand,
     InstanceCommandGenerationService,
+    RunInstanceCommandsCommand,
     ListOrphanedWorkspaceEntitiesCommand,
     EnterpriseKeyValidationCronCommand,
     GenerateApiKeyCommand,

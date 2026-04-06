@@ -207,7 +207,7 @@
       "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "node dist/command/command.js upgrade --instance-fast-only --force"
+        "command": "node dist/command/command.js run-instance-commands --force"
       }
     },
     "database:migrate:generate": {

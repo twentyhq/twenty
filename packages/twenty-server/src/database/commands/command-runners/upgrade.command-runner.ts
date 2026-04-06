@@ -27,8 +27,6 @@ export type UpgradeCommandOptions = {
   workspaceCountLimit?: number;
   dryRun?: boolean;
   verbose?: boolean;
-  force?: boolean;
-  instanceFastOnly?: boolean;
 };
 
 type VersionContext = {
@@ -122,25 +120,6 @@ export abstract class UpgradeCommandRunner extends CommandRunner {
     return limit;
   }
 
-  @Option({
-    flags: '-f, --force',
-    description: 'Skip workspace version safety check',
-    required: false,
-  })
-  parseForce(): boolean {
-    return true;
-  }
-
-  @Option({
-    flags: '--instance-fast-only',
-    description:
-      'Run only legacy TypeORM migrations and instance commands, skip workspace commands',
-    required: false,
-  })
-  parseInstanceFastOnly(): boolean {
-    return true;
-  }
-
   override async run(
     _passedParams: string[],
     options: UpgradeCommandOptions,
@@ -166,39 +145,25 @@ export abstract class UpgradeCommandRunner extends CommandRunner {
         ),
       );
 
-      if (options.force) {
-        this.logger.warn(
-          chalk.yellow('Skipping workspace version check (--force flag used)'),
+      const workspacesBelowMinimumVersion =
+        await this.workspaceVersionService.getWorkspacesBelowVersion(
+          versionContext.fromWorkspaceVersion.version,
         );
-      } else {
-        const workspacesBelowMinimumVersion =
-          await this.workspaceVersionService.getWorkspacesBelowVersion(
-            versionContext.fromWorkspaceVersion.version,
-          );
 
-        if (workspacesBelowMinimumVersion.length > 0) {
-          const ineligibleIds = workspacesBelowMinimumVersion
-            .map((workspace) => workspace.id)
-            .join(', ');
+      if (workspacesBelowMinimumVersion.length > 0) {
+        const ineligibleIds = workspacesBelowMinimumVersion
+          .map((workspace) => workspace.id)
+          .join(', ');
 
-          throw new Error(
-            `Unable to run the upgrade command. Aborting the upgrade process.
+        throw new Error(
+          `Unable to run the upgrade command. Aborting the upgrade process.
 Workspaces below minimum version (${versionContext.fromWorkspaceVersion.version}): ${ineligibleIds}.
 Please roll back to that version and run the upgrade command again.`,
-          );
-        }
+        );
       }
 
       await this.runLegacyPendingTypeOrmMigrations();
       await this.runInstanceCommandsOrThrow(versionContext);
-
-      if (options.instanceFastOnly) {
-        this.logger.log(
-          chalk.blue('Instance-fast-only mode: skipping workspace commands'),
-        );
-
-        return;
-      }
 
       const hasWorkspaces =
         await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
