@@ -1,3 +1,4 @@
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SETTINGS_OBJECT_TABLE_COLUMN_WIDTH } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -37,12 +38,6 @@ const StyledEmptyHeaderContainer = styled.div`
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledEmptyState = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  padding: ${themeCssVariables.spacing[8]};
-  text-align: center;
 `;
 
 export const SettingsApplicationDataTable = ({
@@ -102,7 +97,7 @@ export const SettingsApplicationDataTable = ({
         />
       </StyledSearchInputContainer>
       {hasNoResults ? (
-        <StyledEmptyState>{t`No object found`}</StyledEmptyState>
+        <SettingsEmptyPlaceholder>{t`No object found`}</SettingsEmptyPlaceholder>
       ) : (
         <Table>
           <TableRow gridAutoColumns={MAIN_ROW_GRID_COLUMNS}>

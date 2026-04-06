@@ -1984,6 +1984,11 @@ msgstr "Godkända domäner"
 msgid "Apps"
 msgstr "Appar"
 
+#. js-lingui-id: dEnE1D
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Apps made by other developers published on npm"
+msgstr ""
+
 #. js-lingui-id: 8HV3WN
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -3776,11 +3781,6 @@ msgstr "skapa"
 msgid "Create"
 msgstr "Skapa"
 
-#. js-lingui-id: 5XhrY3
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "Create & Develop"
-msgstr "Skapa & utveckla"
-
 #. js-lingui-id: 8aATyU
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a dashboard"
@@ -3820,6 +3820,11 @@ msgstr "Skapa ett arbetsflöde och återvänd hit för att se dess versioner"
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Create a workspace"
 msgstr "Skapa arbetsyta"
+
+#. js-lingui-id: /WlFSf
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Create an application"
+msgstr ""
 
 #. js-lingui-id: 8ZjIgO
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -4794,6 +4799,7 @@ msgstr "Beskriv vad du vill att AI:n ska göra..."
 
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
@@ -9225,6 +9231,7 @@ msgstr "mySkill"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
@@ -9590,6 +9597,11 @@ msgstr "Inga API-nycklar tillgängliga"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "No API keys match your search"
 msgstr "Inga API-nycklar matchar din sökning"
+
+#. js-lingui-id: /VRg8Z
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "No application found"
+msgstr ""
 
 #. js-lingui-id: rxBnh8
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
@@ -10133,6 +10145,11 @@ msgstr "nu"
 #. js-lingui-id: OduKuG
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Npm package"
+msgstr ""
+
+#. js-lingui-id: p7abaY
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "NPM packages"
 msgstr ""
 
 #. js-lingui-id: VVexZo
@@ -12090,11 +12107,6 @@ msgstr "Spara"
 msgid "Save as new view"
 msgstr "Spara som ny vy"
 
-#. js-lingui-id: veLq3R
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "Scaffold a new app, then use the CLI to develop, publish, and distribute"
-msgstr "Skapa en ny app med grundstruktur och använd sedan CLI för att utveckla, publicera och distribuera"
-
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Schedule"
@@ -12236,6 +12248,7 @@ msgid "Search an agent..."
 msgstr "Sök en agent..."
 
 #. js-lingui-id: fGTI3o
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "Search an application"
@@ -15949,6 +15962,11 @@ msgstr "Du tillhör redan denna arbetsyta"
 msgid "You are not allowed to create records for this object"
 msgstr "Du har inte tillåtelse att skapa poster i detta objekt"
 
+#. js-lingui-id: iibZbD
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "You can either create a private app or share it to others"
+msgstr ""
+
 #. js-lingui-id: CNAoaw
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "You can see the function logic in your application settings."
@@ -16024,10 +16042,10 @@ msgstr "Ditt konto har aktiverats."
 msgid "Your app version is out of date. Please refresh the page."
 msgstr "Din appversion är föråldrad. Ladda om sidan."
 
-#. js-lingui-id: oNUh7z
+#. js-lingui-id: 9pWhO+
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "Your Apps"
-msgstr "Dina appar"
+msgid "Your apps"
+msgstr ""
 
 #. js-lingui-id: +5YqGH
 #: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts

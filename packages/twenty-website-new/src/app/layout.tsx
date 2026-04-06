@@ -1,4 +1,7 @@
-import { FOOTER_DATA } from '@/app/(home)/constants/footer';
+import { FOOTER_DATA } from '@/app/_constants/footer';
+import { GlbWarmCache } from '@/constants/glb-warm-cache.component';
+import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Footer } from '@/sections/Footer/components';
 import { theme } from '@/theme';
 import { cssVariables } from '@/theme/css-variables';
@@ -62,24 +65,29 @@ export const metadata: Metadata = {
   description: 'Modular, scalable open source CRM for modern teams.',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const stats = await fetchCommunityStats();
+  const footerSocialLinks = mergeSocialLinkLabels(
+    FOOTER_DATA.socialLinks,
+    stats,
+  );
+
   return (
-    <html lang="en" className="light">
+    <html lang="en">
       <body
         className={`${cssVariables} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable}`}
       >
+        <GlbWarmCache />
         <StyledMain>{children}</StyledMain>
         <Footer.Root illustration={FOOTER_DATA.illustration}>
           <Footer.Logo />
           <Footer.Nav groups={FOOTER_DATA.navGroups} />
           <Footer.Bottom
             copyright={FOOTER_DATA.bottom.copyright}
-            credit={FOOTER_DATA.bottom.credit}
-          >
-            <Footer.Social links={FOOTER_DATA.socialLinks} />
-          </Footer.Bottom>
+            links={footerSocialLinks}
+          />
         </Footer.Root>
       </body>
     </html>

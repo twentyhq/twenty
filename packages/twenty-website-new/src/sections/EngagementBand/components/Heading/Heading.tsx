@@ -5,6 +5,12 @@ import { styled } from '@linaria/react';
 
 const StyledHeading = styled(BaseHeading)`
   white-space: pre-line;
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    opacity: 0.8;
+    transform: translateY(-4px);
+  }
 
   @media (min-width: ${theme.breakpoints.md}px) {
     max-width: 668px;

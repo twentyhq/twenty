@@ -26,6 +26,7 @@ const SeparatorLine = styled.div`
 
   @media (min-width: ${theme.breakpoints.md}px) {
     height: 100%;
+    justify-self: center;
     min-height: 0;
     width: 1px;
   }

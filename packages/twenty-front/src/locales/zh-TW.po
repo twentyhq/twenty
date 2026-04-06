@@ -1984,6 +1984,11 @@ msgstr "已批准的網域"
 msgid "Apps"
 msgstr "應用程式"
 
+#. js-lingui-id: dEnE1D
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Apps made by other developers published on npm"
+msgstr ""
+
 #. js-lingui-id: 8HV3WN
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Arabic"
@@ -3776,11 +3781,6 @@ msgstr "創建"
 msgid "Create"
 msgstr "創建"
 
-#. js-lingui-id: 5XhrY3
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "Create & Develop"
-msgstr "創建與開發"
-
 #. js-lingui-id: 8aATyU
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a dashboard"
@@ -3820,6 +3820,11 @@ msgstr "創建工作流程並返回此處查看其版本"
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Create a workspace"
 msgstr "建立工作區"
+
+#. js-lingui-id: /WlFSf
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Create an application"
+msgstr ""
 
 #. js-lingui-id: 8ZjIgO
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -4794,6 +4799,7 @@ msgstr "描述您希望 AI 實現的功能..."
 
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
@@ -9223,6 +9229,7 @@ msgstr ""
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
@@ -9588,6 +9595,11 @@ msgstr "沒有可用的 API 密鑰"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "No API keys match your search"
 msgstr "沒有 API 密鑰符合您的搜索"
+
+#. js-lingui-id: /VRg8Z
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "No application found"
+msgstr ""
 
 #. js-lingui-id: rxBnh8
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
@@ -10131,6 +10143,11 @@ msgstr "現在"
 #. js-lingui-id: OduKuG
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Npm package"
+msgstr ""
+
+#. js-lingui-id: p7abaY
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "NPM packages"
 msgstr ""
 
 #. js-lingui-id: VVexZo
@@ -12086,11 +12103,6 @@ msgstr "保存"
 msgid "Save as new view"
 msgstr "另存為新視圖"
 
-#. js-lingui-id: veLq3R
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "Scaffold a new app, then use the CLI to develop, publish, and distribute"
-msgstr "為新的應用程式搭建腳手架，然後使用 CLI 進行開發、發佈與分發"
-
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Schedule"
@@ -12232,6 +12244,7 @@ msgid "Search an agent..."
 msgstr "搜索代理..."
 
 #. js-lingui-id: fGTI3o
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "Search an application"
@@ -15941,6 +15954,11 @@ msgstr "您已經屬於此工作區"
 msgid "You are not allowed to create records for this object"
 msgstr "您無權在此對象中創建記錄"
 
+#. js-lingui-id: iibZbD
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "You can either create a private app or share it to others"
+msgstr ""
+
 #. js-lingui-id: CNAoaw
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "You can see the function logic in your application settings."
@@ -16016,10 +16034,10 @@ msgstr "您的帳戶已啟用。"
 msgid "Your app version is out of date. Please refresh the page."
 msgstr "您的應用程式版本已過期。請重新整理頁面。"
 
-#. js-lingui-id: oNUh7z
+#. js-lingui-id: 9pWhO+
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "Your Apps"
-msgstr "您的應用程式"
+msgid "Your apps"
+msgstr ""
 
 #. js-lingui-id: +5YqGH
 #: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts

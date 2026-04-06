@@ -270,6 +270,7 @@ export const FormDateFieldInput = ({
                 <DatePickerInput
                   date={plainDateValue}
                   onChange={handleInputChange}
+                  readonly={readonly}
                 />
               </StyledDateInputTextContainer>
               {draftValue.mode === 'edit' && !readonly ? (

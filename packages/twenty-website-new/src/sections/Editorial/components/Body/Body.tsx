@@ -6,6 +6,7 @@ import { styled } from '@linaria/react';
 const BodyParagraph = styled.div`
   color: var(--editorial-body-color);
   min-width: 0;
+  transition: color 0.4s ease, opacity 0.4s ease;
 `;
 
 const TwoColumnGrid = styled.div`
@@ -18,6 +19,11 @@ const TwoColumnGrid = styled.div`
   row-gap: ${theme.spacing(6)};
   width: 100%;
 
+  /* When hovering a paragraph, dim the others */
+  &:has(${BodyParagraph}:hover) ${BodyParagraph}:not(:hover) {
+    opacity: 0.4;
+  }
+
   @media (min-width: ${theme.breakpoints.md}px) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -28,6 +34,11 @@ const SingleColumnBody = styled.div`
   max-width: 556px;
   min-width: 0;
   width: 100%;
+
+  /* When hovering a paragraph, dim the others */
+  &:has(${BodyParagraph}:hover) ${BodyParagraph}:not(:hover) {
+    opacity: 0.4;
+  }
 
   @media (min-width: ${theme.breakpoints.md}px) {
     margin-left: 384px;
