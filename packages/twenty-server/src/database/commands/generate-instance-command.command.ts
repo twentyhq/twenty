@@ -97,14 +97,14 @@ export class GenerateInstanceCommandCommand extends CommandRunner {
   ): void {
     const filePath = path.join(
       UPGRADE_VERSION_COMMAND_DIR,
-      'instance-commands.ts',
+      'instance-commands.constant.ts',
     );
 
     const content = fs.readFileSync(filePath, 'utf-8');
 
     if (content.includes(className)) {
       throw new Error(
-        `${className} is already registered in instance-commands.ts`,
+        `${className} is already registered in instance-commands.constant.ts`,
       );
     }
 
@@ -116,6 +116,6 @@ export class GenerateInstanceCommandCommand extends CommandRunner {
 
     fs.writeFileSync(filePath, updatedContent);
 
-    this.logger.log(`Added ${className} to instance-commands.ts`);
+    this.logger.log(`Added ${className} to instance-commands.constant.ts`);
   }
 }
