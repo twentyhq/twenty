@@ -14,8 +14,9 @@ const ContentRoot = styled.div`
   min-width: 0;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    gap: ${theme.spacing(10)};
+    gap: ${theme.spacing(20)};
     height: max-content;
+    margin-left: calc(-1 * ${theme.spacing(4)});
     position: sticky;
     top: calc(50vh - 150px);
   }
@@ -43,15 +44,11 @@ const StepBlock = styled.div`
   grid-template-columns: 1fr;
   opacity: 1;
   row-gap: ${theme.spacing(4)};
-  transition:
-    opacity 0.4s ease,
-    transform 0.4s ease;
+  transition: opacity 0.4s ease;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     opacity: var(--step-opacity, 1);
-    pointer-events: var(--step-pointer-events, auto);
     row-gap: ${theme.spacing(6)};
-    transform: var(--step-translate-y, translateY(0));
   }
 `;
 
@@ -59,14 +56,14 @@ export type WhyTwentyStepperContentProps = {
   activeStepIndex: number;
   body: BodyType[];
   heading: HeadingType;
-  scrollProgress: number;
+  localProgress: number;
 };
 
 export function Content({
   activeStepIndex,
   body,
   heading,
-  scrollProgress,
+  localProgress,
 }: WhyTwentyStepperContentProps) {
   const stepCount = body.length;
 
@@ -75,7 +72,7 @@ export function Content({
       <StepperProgressRail
         activeStepIndex={activeStepIndex}
         inactiveColor={theme.colors.primary.text[20]}
-        scrollProgress={scrollProgress}
+        localProgress={localProgress}
         stepCount={stepCount}
       />
       <StepsColumn>
@@ -83,40 +80,19 @@ export function Content({
           <Heading as="h2" segments={heading} size="xl" weight="light" />
         </HeadingBlock>
         {body.map((bodyItem, index) => {
-          const isActive = index <= activeStepIndex;
-
           let opacity = 1;
-          let translateY = 0;
 
-          if (index > 0) {
-            const globalProgress = scrollProgress * (stepCount - 1);
-            const start = index - 1;
-            const progress = globalProgress - start;
-
-            if (progress >= 1) {
-              opacity = 1;
-              translateY = 0;
-            } else if (progress > 0) {
-              opacity = 0.4 + 0.6 * progress;
-              translateY = 40 * (1 - progress);
-            } else {
-              const p = Math.max(0, progress + 1);
-              opacity = 0.4 * p;
-              translateY = 40 + 40 * (1 - p);
-            }
+          if (index > activeStepIndex + 1) {
+            opacity = 0;
+          } else if (index === activeStepIndex + 1) {
+            opacity = 0.4;
           }
 
           return (
             <StepBlock
-              data-active={String(isActive)}
+              data-active={String(index <= activeStepIndex)}
               key={index}
-              style={
-                {
-                  '--step-opacity': opacity,
-                  '--step-pointer-events': opacity > 0 ? 'auto' : 'none',
-                  '--step-translate-y': `translateY(${translateY}px)`,
-                } as CSSProperties
-              }
+              style={{ '--step-opacity': opacity } as CSSProperties}
             >
               <Body body={bodyItem} family="sans" size="md" weight="regular" />
             </StepBlock>

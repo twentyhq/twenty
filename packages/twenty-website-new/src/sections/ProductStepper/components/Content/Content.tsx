@@ -18,8 +18,9 @@ const ContentRoot = styled.div`
   min-width: 0;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    gap: ${theme.spacing(10)};
+    gap: ${theme.spacing(20)};
     height: max-content;
+    margin-left: calc(-1 * ${theme.spacing(4)});
     position: sticky;
     top: calc(50vh - 150px);
   }
@@ -41,15 +42,11 @@ const StepBlock = styled.div`
   grid-template-columns: 1fr;
   opacity: 1;
   row-gap: ${theme.spacing(4)};
-  transition:
-    opacity 0.4s ease,
-    transform 0.4s ease;
+  transition: opacity 0.4s ease;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     row-gap: ${theme.spacing(6)};
     opacity: var(--step-opacity, 1);
-    transform: var(--step-translate-y, translateY(0));
-    pointer-events: var(--step-pointer-events, auto);
   }
 `;
 
@@ -87,7 +84,7 @@ export function Content({
   body,
   eyebrow,
   heading,
-  scrollProgress,
+  localProgress,
   steps,
 }: ProductStepperContentProps) {
   return (
@@ -95,7 +92,7 @@ export function Content({
       <StepperProgressRail
         activeStepIndex={activeStepIndex}
         inactiveColor={theme.colors.primary.border[80]}
-        scrollProgress={scrollProgress}
+        localProgress={localProgress}
         stepCount={steps.length}
       />
       <StepsColumn>
@@ -112,37 +109,18 @@ export function Content({
             : theme.colors.secondary.text[100];
 
           let opacity = 1;
-          let translateY = 0;
 
-          if (index > 0) {
-            const globalProgress = scrollProgress * (steps.length - 1);
-            const start = index - 1;
-            const progress = globalProgress - start;
-
-            if (progress >= 1) {
-              opacity = 1;
-              translateY = 0;
-            } else if (progress > 0) {
-              opacity = 0.4 + 0.6 * progress;
-              translateY = 40 * (1 - progress);
-            } else {
-              const p = Math.max(0, progress + 1);
-              opacity = 0.4 * p;
-              translateY = 40 + 40 * (1 - p);
-            }
+          if (index > activeStepIndex + 1) {
+            opacity = 0;
+          } else if (index === activeStepIndex + 1) {
+            opacity = 0.4;
           }
 
           return (
             <StepBlock
               data-active={String(isActive)}
               key={index}
-              style={
-                {
-                  '--step-opacity': opacity,
-                  '--step-translate-y': `${translateY}px`,
-                  '--step-pointer-events': opacity > 0 ? 'auto' : 'none',
-                } as React.CSSProperties
-              }
+              style={{ '--step-opacity': opacity } as React.CSSProperties}
             >
               <StepRowHeader>
                 <StepIconBox data-active={String(isActive)}>

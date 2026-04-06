@@ -13,8 +13,13 @@ type FlowProps = {
 };
 
 export function Flow({ scrollContainerRef, steps }: FlowProps) {
-  const [activeStepIndex, setActiveStepIndex] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
+
+  const activeStepIndex = Math.min(
+    steps.length - 1,
+    Math.floor(scrollProgress * steps.length),
+  );
+  const localProgress = scrollProgress * steps.length - activeStepIndex;
 
   return (
     <>
@@ -24,8 +29,7 @@ export function Flow({ scrollContainerRef, steps }: FlowProps) {
       />
       <LeftColumn
         activeStepIndex={activeStepIndex}
-        onActiveStepChange={setActiveStepIndex}
-        scrollProgress={scrollProgress}
+        localProgress={localProgress}
         steps={steps}
       />
       <RightColumn>

@@ -3,19 +3,19 @@ import type { HomeStepperStepType } from '../../types/HomeStepperStep';
 
 type ProgressBarProps = {
   activeStepIndex: number;
-  scrollProgress: number;
+  localProgress: number;
   steps: HomeStepperStepType[];
 };
 
 export function ProgressBar({
   activeStepIndex,
-  scrollProgress,
+  localProgress,
   steps,
 }: ProgressBarProps) {
   return (
     <StepperProgressRail
       activeStepIndex={activeStepIndex}
-      scrollProgress={scrollProgress}
+      localProgress={localProgress}
       stepCount={steps.length}
     />
   );

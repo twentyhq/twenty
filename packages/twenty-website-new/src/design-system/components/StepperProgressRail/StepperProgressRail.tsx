@@ -31,98 +31,98 @@ const Rail = styled.div`
   gap: ${theme.spacing(2)};
 `;
 
-const StepIndicatorRow = styled.div`
-  align-items: flex-start;
+const StepRow = styled.div`
+  align-items: center;
   display: flex;
-  gap: ${theme.spacing(4)};
-  height: 80px;
+  height: 16px;
+  justify-content: center;
+  position: relative;
+  transition: height 0.4s ease;
+  width: ${theme.spacing(1)};
+
+  &[data-active='true'] {
+    height: 80px;
+  }
+`;
+
+const PillTrack = styled.div`
+  border-radius: 50%;
+  display: flex;
+  height: ${theme.spacing(1)};
+  overflow: hidden;
+  transition:
+    height 0.4s ease,
+    border-radius 0.4s ease;
+  width: ${theme.spacing(1)};
+
+  &[data-active='true'] {
+    border-radius: ${theme.radius(8)};
+    height: 100%;
+  }
 `;
 
 const PillFill = styled.div`
   background-color: ${theme.colors.highlight[100]};
   border-radius: ${theme.radius(8)};
-  transition: height 0.1s linear;
+  transition: height 0.15s linear;
   width: 100%;
 `;
 
-const ActiveLabel = styled.p`
+const StepLabel = styled.div`
   color: ${theme.colors.highlight[100]};
   font-family: ${theme.font.family.mono};
   font-size: ${theme.font.size(3)};
   font-weight: 700;
+  left: calc(100% + ${theme.spacing(4)});
   line-height: 16px;
-  margin: 0;
-  margin-top: -2px;
+  opacity: 0;
+  position: absolute;
   text-transform: uppercase;
-`;
+  top: 0;
+  transition: opacity 0.3s ease;
+  white-space: nowrap;
 
-const InactiveDotWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  height: 16px;
-  justify-content: center;
-  width: ${theme.spacing(1)};
+  &[data-visible='true'] {
+    opacity: 1;
+  }
 `;
 
 type StepperProgressRailProps = {
   activeStepIndex: number;
   inactiveColor?: string;
-  scrollProgress: number;
+  localProgress: number;
   stepCount: number;
 };
 
 export function StepperProgressRail({
   activeStepIndex,
   inactiveColor = theme.colors.primary.border[20],
-  scrollProgress,
+  localProgress,
   stepCount,
 }: StepperProgressRailProps) {
-  const globalProgress = scrollProgress * (stepCount - 1);
-
   return (
     <RailContainer>
       <StickyViewportCenter>
         <Rail>
           {Array.from({ length: stepCount }, (_, index) => {
-            if (index === activeStepIndex) {
-              const localProgress = globalProgress - index;
-              const fillPercentage = Math.min(
-                100,
-                Math.max(0, localProgress * 100 * 1.5),
-              );
+            const isActive = index === activeStepIndex;
 
-              return (
-                <StepIndicatorRow key={`step-${index}`}>
-                  <div
-                    style={{
-                      backgroundColor: inactiveColor,
-                      borderRadius: theme.radius(8),
-                      display: 'flex',
-                      height: '100%',
-                      overflow: 'hidden',
-                      width: theme.spacing(1),
-                    }}
-                  >
-                    <PillFill style={{ height: `${fillPercentage}%` }} />
-                  </div>
-                  <ActiveLabel>
-                    {String(index + 1).padStart(2, '0')}
-                  </ActiveLabel>
-                </StepIndicatorRow>
-              );
-            }
+            const fillPercentage = isActive
+              ? Math.min(100, Math.max(0, localProgress * 100))
+              : 0;
 
             return (
-              <InactiveDotWrapper key={`step-${index}`}>
-                <div
-                  style={{
-                    backgroundColor: inactiveColor,
-                    borderRadius: '50%',
-                    height: theme.spacing(1),
-                    width: theme.spacing(1),
-                  }}
-                />
-              </InactiveDotWrapper>
+              <StepRow data-active={String(isActive)} key={`step-${index}`}>
+                <PillTrack
+                  data-active={String(isActive)}
+                  style={{ backgroundColor: inactiveColor }}
+                >
+                  <PillFill style={{ height: `${fillPercentage}%` }} />
+                </PillTrack>
+                <StepLabel data-visible={String(isActive)}>
+                  {String(index + 1).padStart(2, '0')}
+                </StepLabel>
+              </StepRow>
             );
           })}
         </Rail>
