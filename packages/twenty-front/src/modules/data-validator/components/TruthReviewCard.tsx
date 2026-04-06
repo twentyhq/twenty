@@ -10,6 +10,7 @@ type TruthReviewCardProps = {
   truth: JustusTruthRecord;
   animationClass: string;
   onAction: (action: ReviewAction) => void;
+  pendingAction?: string | null;
 };
 
 const DOMAIN_COLORS: Record<string, string> = {
@@ -30,12 +31,18 @@ const cardEnter = keyframes`
   }
 `;
 
-const StyledCardWrapper = styled.div`
+const PENDING_BORDER_COLORS: Record<string, string> = {
+  approve: '#22c55e',
+  reject: '#ef4444',
+  support: '#3b82f6',
+};
+
+const StyledCardWrapper = styled.div<{ $pendingColor?: string }>`
   max-width: 700px;
   width: 100%;
   margin: 0 auto;
   padding: 32px;
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border: 2px solid ${({ $pendingColor, theme }) => $pendingColor ?? theme.border.color.medium};
   border-radius: 12px;
   background: ${({ theme }) => theme.background.primary};
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -166,12 +173,14 @@ export const TruthReviewCard = ({
   truth,
   animationClass,
   onAction,
+  pendingAction,
 }: TruthReviewCardProps) => {
   const domainColor =
     DOMAIN_COLORS[truth.domain ?? 'none'] ?? DOMAIN_COLORS.none;
+  const pendingColor = pendingAction ? PENDING_BORDER_COLORS[pendingAction] : undefined;
 
   return (
-    <StyledCardWrapper className={animationClass}>
+    <StyledCardWrapper className={animationClass} $pendingColor={pendingColor}>
       <StyledBadgeRow>
         {truth.domain && (
           <StyledDomainBadge $color={domainColor}>
@@ -228,7 +237,7 @@ export const TruthReviewCard = ({
           onClick={() => onAction('support')}
         >
           Support
-          <StyledKeyHint>S</StyledKeyHint>
+          <StyledKeyHint>&uarr;</StyledKeyHint>
         </StyledActionButton>
         <StyledActionButton
           $color="#22c55e"

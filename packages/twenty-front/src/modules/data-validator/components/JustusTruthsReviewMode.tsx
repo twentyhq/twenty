@@ -10,6 +10,11 @@ import {
 import { ReviewSessionStats } from './ReviewSessionStats';
 import { TruthReviewCard } from './TruthReviewCard';
 
+type PendingAction = {
+  action: ReviewAction;
+  reason: string;
+} | null;
+
 type JustusTruthsReviewModeProps = {
   currentTruth: JustusTruthRecord | null;
   onAction: (action: ReviewAction) => void;
@@ -18,6 +23,10 @@ type JustusTruthsReviewModeProps = {
   sessionStats: SessionStats;
   averageReviewTime: number;
   totalReviewed: number;
+  pendingAction: PendingAction;
+  onPendingReasonChange: (reason: string) => void;
+  onConfirm: () => void;
+  onCancel: () => void;
 };
 
 type AnimationClass =
@@ -87,6 +96,81 @@ const StyledHintItem = styled.span`
   white-space: nowrap;
 `;
 
+const CONFIRMATION_COLORS: Record<string, { bg: string; border: string; text: string }> = {
+  approve: { bg: 'rgba(34, 197, 94, 0.08)', border: '#22c55e', text: 'Approve this truth?' },
+  reject: { bg: 'rgba(239, 68, 68, 0.08)', border: '#ef4444', text: 'Reject this truth?' },
+  support: { bg: 'rgba(59, 130, 246, 0.08)', border: '#3b82f6', text: 'Mark as needs more evidence?' },
+};
+
+const StyledConfirmationBar = styled.div<{ $borderColor: string; $bgColor: string }>`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(3)};
+  padding: ${({ theme }) => theme.spacing(3)} ${({ theme }) => theme.spacing(4)};
+  border: 1px solid ${({ $borderColor }) => $borderColor};
+  border-radius: 8px;
+  background: ${({ $bgColor }) => $bgColor};
+  max-width: 700px;
+  width: 100%;
+  flex-wrap: wrap;
+`;
+
+const StyledConfirmText = styled.span`
+  font-size: 14px;
+  font-weight: 500;
+  color: ${({ theme }) => theme.font.color.primary};
+`;
+
+const StyledReasonTextarea = styled.textarea`
+  flex: 1;
+  min-width: 180px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: 6px;
+  background: ${({ theme }) => theme.background.primary};
+  color: ${({ theme }) => theme.font.color.primary};
+  resize: none;
+  outline: none;
+
+  &:focus {
+    border-color: ${({ theme }) => theme.color.blue};
+  }
+`;
+
+const StyledConfirmButton = styled.button<{ $color: string }>`
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  color: #ffffff;
+  background: ${({ $color }) => $color};
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
+`;
+
+const StyledCancelButton = styled.button`
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  color: ${({ theme }) => theme.font.color.secondary};
+  background: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
+`;
+
 export const JustusTruthsReviewMode = ({
   currentTruth,
   onAction,
@@ -95,10 +179,15 @@ export const JustusTruthsReviewMode = ({
   sessionStats,
   averageReviewTime,
   totalReviewed,
+  pendingAction,
+  onPendingReasonChange,
+  onConfirm,
+  onCancel,
 }: JustusTruthsReviewModeProps) => {
+  const reasonRef = useRef<HTMLTextAreaElement>(null);
   const [animationClass, setAnimationClass] = useState<AnimationClass>('idle');
   const previousTruthId = useRef<string | null>(null);
-  const pendingAction = useRef<ReviewAction | null>(null);
+  const pendingAnimAction = useRef<ReviewAction | null>(null);
 
   // Detect when currentTruth changes to trigger enter animation
   useEffect(() => {
@@ -114,15 +203,22 @@ export const JustusTruthsReviewMode = ({
     previousTruthId.current = currentTruth?.id ?? null;
   }, [currentTruth, animationClass]);
 
+  // Auto-focus reason textarea when reject is pending
+  useEffect(() => {
+    if (pendingAction?.action === 'reject' && reasonRef.current) {
+      reasonRef.current.focus();
+    }
+  }, [pendingAction]);
+
   const handleAction = useCallback(
     (action: ReviewAction) => {
       if (animationClass !== 'idle') return;
-      pendingAction.current = action;
+      pendingAnimAction.current = action;
       setAnimationClass(ACTION_ANIMATION_MAP[action]);
 
       setTimeout(() => {
         onAction(action);
-        pendingAction.current = null;
+        pendingAnimAction.current = null;
       }, 300);
     },
     [animationClass, onAction],
@@ -169,7 +265,32 @@ export const JustusTruthsReviewMode = ({
           truth={currentTruth}
           animationClass={animationClass}
           onAction={handleAction}
+          pendingAction={pendingAction?.action ?? null}
         />
+        {pendingAction && (() => {
+          const colors = CONFIRMATION_COLORS[pendingAction.action];
+          if (!colors) return null;
+          return (
+            <StyledConfirmationBar $borderColor={colors.border} $bgColor={colors.bg}>
+              <StyledConfirmText>{colors.text}</StyledConfirmText>
+              {pendingAction.action === 'reject' && (
+                <StyledReasonTextarea
+                  ref={reasonRef}
+                  placeholder="Optional reason..."
+                  value={pendingAction.reason}
+                  onChange={(e) => onPendingReasonChange(e.target.value)}
+                  rows={1}
+                />
+              )}
+              <StyledConfirmButton $color={colors.border} onClick={onConfirm}>
+                Confirm (Enter)
+              </StyledConfirmButton>
+              <StyledCancelButton onClick={onCancel}>
+                Cancel (Esc)
+              </StyledCancelButton>
+            </StyledConfirmationBar>
+          );
+        })()}
         <ReviewSessionStats
           sessionStats={sessionStats}
           averageReviewTime={averageReviewTime}
@@ -179,8 +300,10 @@ export const JustusTruthsReviewMode = ({
       <StyledKeyboardHintBar>
         <StyledHintItem>&larr; Reject</StyledHintItem>
         <StyledHintItem>&darr; Skip</StyledHintItem>
-        <StyledHintItem>S Support</StyledHintItem>
+        <StyledHintItem>&uarr; Support</StyledHintItem>
         <StyledHintItem>&rarr; Approve</StyledHintItem>
+        <StyledHintItem>Enter Confirm</StyledHintItem>
+        <StyledHintItem>Esc Cancel</StyledHintItem>
         <StyledHintItem>E Edit</StyledHintItem>
         <StyledHintItem>Z Undo</StyledHintItem>
         <StyledHintItem>? Help</StyledHintItem>

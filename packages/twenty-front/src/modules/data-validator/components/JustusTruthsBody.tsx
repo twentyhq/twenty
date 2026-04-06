@@ -72,6 +72,10 @@ const JustusTruthsBodyContent = () => {
   const [editModalTruthId, setEditModalTruthId] = useState<string | null>(null);
   const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
   const [practiceMode, setPracticeMode] = useState(false);
+  const [pendingAction, setPendingAction] = useState<{
+    action: ReviewAction;
+    reason: string;
+  } | null>(null);
   const [actionToast, setActionToast] = useState<{
     action: string;
     text: string;
@@ -87,8 +91,8 @@ const JustusTruthsBodyContent = () => {
     ? `${currentMember.name?.firstName ?? ''} ${currentMember.name?.lastName ?? ''}`.trim()
     : 'Unknown';
 
-  const handleAction = useCallback(
-    async (action: ReviewAction) => {
+  const executeAction = useCallback(
+    async (action: ReviewAction, reason?: string) => {
       const truth = queue.currentTruth;
       if (!truth) return;
 
@@ -108,13 +112,17 @@ const JustusTruthsBodyContent = () => {
       session.recordAction(action, truth, previousState);
 
       if (action !== 'skip' && !practiceMode) {
+        const approvedByValue =
+          action === 'reject' && reason && reason.trim()
+            ? `${reviewerName} — Reason: ${reason.trim()}`
+            : reviewerName;
         try {
           await updateOneRecord({
             objectNameSingular: JUSTUS_TRUTH_OBJECT_NAME_SINGULAR,
             idToUpdate: truth.id,
             updateOneRecordInput: {
               status: statusMap[action],
-              approvedBy: reviewerName,
+              approvedBy: approvedByValue,
               approvedAt: new Date().toISOString(),
             },
           });
@@ -149,6 +157,27 @@ const JustusTruthsBodyContent = () => {
     },
     [queue, session, updateOneRecord, reviewerName, practiceMode],
   );
+
+  const handleAction = useCallback(
+    (action: ReviewAction) => {
+      if (action === 'skip') {
+        executeAction(action);
+        return;
+      }
+      setPendingAction({ action, reason: '' });
+    },
+    [executeAction],
+  );
+
+  const handleConfirm = useCallback(() => {
+    if (!pendingAction) return;
+    executeAction(pendingAction.action, pendingAction.reason);
+    setPendingAction(null);
+  }, [pendingAction, executeAction]);
+
+  const handleCancel = useCallback(() => {
+    setPendingAction(null);
+  }, []);
 
   const handleUndo = useCallback(async () => {
     const entry = session.undo();
@@ -194,8 +223,10 @@ const JustusTruthsBodyContent = () => {
       },
       onUndo: () => handleUndo(),
       onHelp: () => setShowKeyboardHelp((prev) => !prev),
+      onConfirm: handleConfirm,
+      onCancel: handleCancel,
     }),
-    [handleAction, handleUndo, queue.currentTruth],
+    [handleAction, handleUndo, handleConfirm, handleCancel, queue.currentTruth],
   );
 
   useKeyboardShortcuts(
@@ -226,6 +257,14 @@ const JustusTruthsBodyContent = () => {
           sessionStats={session.stats}
           averageReviewTime={session.averageReviewTime}
           totalReviewed={session.totalReviewed}
+          pendingAction={pendingAction}
+          onPendingReasonChange={(reason: string) =>
+            setPendingAction((prev) =>
+              prev ? { ...prev, reason } : prev,
+            )
+          }
+          onConfirm={handleConfirm}
+          onCancel={handleCancel}
         />
       ) : (
         <JustusTruthsListMode />
