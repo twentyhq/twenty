@@ -316,6 +316,11 @@ msgstr "{jobCount, plural, one {Isso irá removê-lo permanentemente da fila. Es
 msgid "{jobCount, plural, one {This will retry the selected job. It will be re-executed from the beginning.} other {This will retry the selected jobs. They will be re-executed from the beginning.}}"
 msgstr "{jobCount, plural, one {Isso irá reiniciar o trabalho selecionado. Ele será re-executado desde o início.} other {Isso irá reiniciar os trabalhos selecionados. Eles serão re-executados desde o início.}}"
 
+#. js-lingui-id: Y32cMj
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages.tsx
+msgid "{messagesLength} emails"
+msgstr ""
+
 #. js-lingui-id: Koe99p
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationItemTableRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
@@ -5350,11 +5355,6 @@ msgstr "O e-mail ou domínio já está na lista de bloqueio"
 msgid "Email support"
 msgstr ""
 
-#. js-lingui-id: +VjrH/
-#: src/modules/side-panel/hooks/useOpenEmailThreadInSidePanel.ts
-msgid "Email Thread"
-msgstr "Fio de E-mail"
-
 #. js-lingui-id: LimKOG
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email verification"
@@ -8577,7 +8577,7 @@ msgid "Loading skills..."
 msgstr "Carregando habilidades..."
 
 #. js-lingui-id: 7YK6ap
-#: src/modules/side-panel/pages/message-thread/components/SidePanelMessageThreadPage.tsx
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadWidget.tsx
 msgid "Loading thread"
 msgstr "A carregar a conversa"
 
@@ -11750,7 +11750,6 @@ msgid "Reorder options"
 msgstr "Reordenar opções"
 
 #. js-lingui-id: ImOQa9
-#: src/modules/side-panel/pages/message-thread/components/SidePanelMessageThreadPage.tsx
 #: src/modules/activities/emails/components/EmailThreadBottomBar.tsx
 msgid "Reply"
 msgstr "Responder"
