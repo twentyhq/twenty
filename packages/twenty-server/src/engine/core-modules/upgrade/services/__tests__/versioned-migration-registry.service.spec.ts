@@ -5,7 +5,7 @@ import { getDataSourceToken } from '@nestjs/typeorm';
 
 import { type MigrationInterface } from 'typeorm';
 
-import { RegisteredCoreMigrationService } from 'src/database/commands/core-migration/services/registered-core-migration-registry.service';
+import { RegisteredCoreMigrationService } from 'src/engine/core-modules/upgrade/services/registered-core-migration-registry.service';
 import { RegisteredCoreMigration } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
 
 @RegisteredCoreMigration('1.21.0')

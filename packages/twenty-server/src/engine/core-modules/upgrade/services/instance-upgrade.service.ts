@@ -3,7 +3,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { DataSource, MigrationInterface, Repository } from 'typeorm';
 
-import { InstanceUpgradeEntity } from 'src/engine/core-modules/instance-upgrade/instance-upgrade.entity';
+import { InstanceUpgradeEntity } from 'src/engine/core-modules/upgrade/instance-upgrade.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type RunSingleMigrationResult =

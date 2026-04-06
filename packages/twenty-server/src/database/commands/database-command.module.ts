@@ -11,7 +11,7 @@ import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-versi
 import { WorkspaceExportModule } from 'src/database/commands/workspace-export/workspace-export.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { CoreEngineVersionModule } from 'src/engine/core-engine-version/core-engine-version.module';
-import { CoreMigrationModule } from 'src/database/commands/core-migration/core-migration.module';
+import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/generate-api-key.command';
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
@@ -74,7 +74,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     ApplicationUpgradeModule,
     StaleRegistrationCleanupModule,
     CoreEngineVersionModule,
-    CoreMigrationModule,
+    UpgradeModule,
     WorkspaceVersionModule,
   ],
   providers: [

@@ -6,11 +6,11 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type WorkspaceIteratorContext } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import {
   type UpgradeCommandOptions,
   type VersionCommands,
 } from 'src/database/commands/command-runners/upgrade.command-runner';
+import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   type CompareVersionMajorAndMinorReturnType,

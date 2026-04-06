@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { getDataSourceToken } from '@nestjs/typeorm';
 
-import { CoreMigrationGeneratorService } from 'src/database/commands/core-migration/services/core-migration-generator.service';
+import { CoreMigrationGeneratorService } from 'src/engine/core-modules/upgrade/services/core-migration-generator.service';
 
 const FIXED_TIMESTAMP = 1775000000000;
 

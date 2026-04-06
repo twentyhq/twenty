@@ -7,12 +7,12 @@ import { MigrationInterface } from 'typeorm';
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { WorkspaceCommandRunner } from 'src/database/commands/command-runners/workspace.command-runner';
-import { WorkspaceUpgradeService } from 'src/database/commands/command-runners/workspace-upgrade.service';
-import { RegisteredCoreMigrationService } from 'src/database/commands/core-migration/services/registered-core-migration-registry.service';
 import { CommandLogger } from 'src/database/commands/logger';
 import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
-import { InstanceUpgradeService } from 'src/engine/core-modules/instance-upgrade/instance-upgrade.service';
+import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
+import { RegisteredCoreMigrationService } from 'src/engine/core-modules/upgrade/services/registered-core-migration-registry.service';
+import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 export type VersionCommands = (
@@ -172,14 +172,14 @@ Please roll back to that version and run the upgrade command again.`,
         );
       }
 
-      await this.runInstanceMigrations(options, versionContext);
+      await this.runInstanceCommands(options, versionContext);
     } catch (error) {
       this.logger.error(chalk.red(`Upgrade failed: ${error.message}`));
       throw error;
     }
   }
 
-  private async runInstanceMigrations(
+  private async runInstanceCommands(
     options: UpgradeCommandOptions,
     versionContext: VersionContext,
   ): Promise<void> {
