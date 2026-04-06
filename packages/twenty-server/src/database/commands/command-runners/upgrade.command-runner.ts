@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import { CommandRunner, Option } from 'nest-commander';
 import { SemVer } from 'semver';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { MigrationInterface } from 'typeorm';
+import { DataSource, MigrationInterface } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -27,6 +27,8 @@ export type UpgradeCommandOptions = {
   workspaceCountLimit?: number;
   dryRun?: boolean;
   verbose?: boolean;
+  force?: boolean;
+  instanceFastOnly?: boolean;
 };
 
 type VersionContext = {
@@ -49,6 +51,7 @@ export abstract class UpgradeCommandRunner extends CommandRunner {
     protected readonly instanceUpgradeService: InstanceUpgradeService,
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     protected readonly workspaceUpgradeService: WorkspaceUpgradeService,
+    protected readonly dataSource: DataSource,
   ) {
     super();
     this.logger = new CommandLogger({
@@ -119,6 +122,25 @@ export abstract class UpgradeCommandRunner extends CommandRunner {
     return limit;
   }
 
+  @Option({
+    flags: '-f, --force',
+    description: 'Skip workspace version safety check',
+    required: false,
+  })
+  parseForce(): boolean {
+    return true;
+  }
+
+  @Option({
+    flags: '--instance-fast-only',
+    description:
+      'Run only legacy TypeORM migrations and instance commands, skip workspace commands',
+    required: false,
+  })
+  parseInstanceFastOnly(): boolean {
+    return true;
+  }
+
   override async run(
     _passedParams: string[],
     options: UpgradeCommandOptions,
@@ -144,35 +166,52 @@ export abstract class UpgradeCommandRunner extends CommandRunner {
         ),
       );
 
-      const hasWorkspaces =
-        await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
+      if (options.force) {
+        this.logger.warn(
+          chalk.yellow('Skipping workspace version check (--force flag used)'),
+        );
+      } else {
+        const workspacesBelowMinimumVersion =
+          await this.workspaceVersionService.getWorkspacesBelowVersion(
+            versionContext.fromWorkspaceVersion.version,
+          );
 
-      if (!hasWorkspaces) {
+        if (workspacesBelowMinimumVersion.length > 0) {
+          const ineligibleIds = workspacesBelowMinimumVersion
+            .map((workspace) => workspace.id)
+            .join(', ');
+
+          throw new Error(
+            `Unable to run the upgrade command. Aborting the upgrade process.
+Workspaces below minimum version (${versionContext.fromWorkspaceVersion.version}): ${ineligibleIds}.
+Please roll back to that version and run the upgrade command again.`,
+          );
+        }
+      }
+
+      await this.runLegacyPendingTypeOrmMigrations();
+      await this.runInstanceCommandsOrThrow(versionContext);
+
+      if (options.instanceFastOnly) {
         this.logger.log(
-          chalk.blue('Fresh installation detected, skipping migration'),
+          chalk.blue('Instance-fast-only mode: skipping workspace commands'),
         );
 
         return;
       }
 
-      const workspacesBelowMinimumVersion =
-        await this.workspaceVersionService.getWorkspacesBelowVersion(
-          versionContext.fromWorkspaceVersion.version,
+      const hasWorkspaces =
+        await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
+
+      if (!hasWorkspaces) {
+        this.logger.log(
+          chalk.blue(
+            'Fresh installation detected, skipping workspace commands',
+          ),
         );
 
-      if (workspacesBelowMinimumVersion.length > 0) {
-        const ineligibleIds = workspacesBelowMinimumVersion
-          .map((workspace) => workspace.id)
-          .join(', ');
-
-        throw new Error(
-          `Unable to run the upgrade command. Aborting the upgrade process.
-Workspaces below minimum version (${versionContext.fromWorkspaceVersion.version}): ${ineligibleIds}.
-Please roll back to that version and run the upgrade command again.`,
-        );
+        return;
       }
-
-      await this.runInstanceCommandsOrThrow(versionContext);
 
       const iteratorReport = await this.runWorkspaceCommands(
         options,
@@ -193,6 +232,22 @@ Please roll back to that version and run the upgrade command again.`,
     } catch (error) {
       this.logger.error(chalk.red(`Upgrade failed: ${error.message}`));
       throw error;
+    }
+  }
+
+  private async runLegacyPendingTypeOrmMigrations(): Promise<void> {
+    this.logger.log('Running legacy TypeORM migrations...');
+
+    const migrations = await this.dataSource.runMigrations({
+      transaction: 'each',
+    });
+
+    if (migrations.length === 0) {
+      this.logger.log('No pending legacy migrations');
+    } else {
+      this.logger.log(
+        `Executed ${migrations.length} legacy migration(s): ${migrations.map((migration) => migration.name).join(', ')}`,
+      );
     }
   }
 

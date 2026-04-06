@@ -3,7 +3,9 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
-import { type MigrationInterface, type QueryRunner } from 'typeorm';
+import { type DataSource, type MigrationInterface, type QueryRunner } from 'typeorm';
+
+import { getDataSourceToken } from '@nestjs/typeorm';
 
 import {
   UpgradeCommandOptions,
@@ -100,6 +102,12 @@ const buildUpgradeCommandModule = async ({
   const module: TestingModule = await Test.createTestingModule({
     providers: [
       {
+        provide: getDataSourceToken(),
+        useValue: {
+          runMigrations: jest.fn().mockResolvedValue([]),
+        },
+      },
+      {
         provide: commandRunner,
         useFactory: (
           coreEngineVersionService: CoreEngineVersionService,
@@ -108,6 +116,7 @@ const buildUpgradeCommandModule = async ({
           instanceUpgradeService: InstanceUpgradeService,
           workspaceIteratorService: WorkspaceIteratorService,
           workspaceUpgradeService: WorkspaceUpgradeService,
+          dataSource: DataSource,
         ) => {
           return new commandRunner(
             coreEngineVersionService,
@@ -116,6 +125,7 @@ const buildUpgradeCommandModule = async ({
             instanceUpgradeService,
             workspaceIteratorService,
             workspaceUpgradeService,
+            dataSource,
           );
         },
         inject: [
@@ -125,6 +135,7 @@ const buildUpgradeCommandModule = async ({
           InstanceUpgradeService,
           WorkspaceIteratorService,
           WorkspaceUpgradeService,
+          getDataSourceToken(),
         ],
       },
       {

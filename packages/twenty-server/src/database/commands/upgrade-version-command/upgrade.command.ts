@@ -1,4 +1,7 @@
+import { InjectDataSource } from '@nestjs/typeorm';
+
 import { Command } from 'nest-commander';
+import { DataSource } from 'typeorm';
 
 import {
   type AllCommands,
@@ -52,6 +55,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly instanceUpgradeService: InstanceUpgradeService,
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     protected readonly workspaceUpgradeService: WorkspaceUpgradeService,
+    @InjectDataSource()
+    protected readonly dataSource: DataSource,
 
     // 1.20 Commands
     private readonly identifyPermissionFlagMetadataCommand: IdentifyPermissionFlagMetadataCommand,
@@ -90,6 +95,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       instanceUpgradeService,
       workspaceIteratorService,
       workspaceUpgradeService,
+      dataSource,
     );
 
     const commands_1200: VersionCommands = [
