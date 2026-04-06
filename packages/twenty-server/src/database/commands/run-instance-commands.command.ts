@@ -50,7 +50,7 @@ export class RunInstanceCommandsCommand extends CommandRunner {
         chalk.yellow('Skipping workspace version check (--force flag used)'),
       );
     } else {
-      this.checkWorkspaceVersions();
+      await this.checkWorkspaceVersions();
     }
 
     await this.runLegacyTypeOrmMigrations();

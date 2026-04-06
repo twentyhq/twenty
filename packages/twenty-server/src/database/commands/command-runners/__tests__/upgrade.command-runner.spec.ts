@@ -104,7 +104,7 @@ const buildUpgradeCommandModule = async ({
         useFactory: (
           coreEngineVersionService: CoreEngineVersionService,
           workspaceVersionService: WorkspaceVersionService,
-          versionedMigrationRegistryService: RegisteredInstanceMigrationService,
+          registeredInstanceMigrationService: RegisteredInstanceMigrationService,
           instanceUpgradeService: InstanceUpgradeService,
           workspaceIteratorService: WorkspaceIteratorService,
           workspaceUpgradeService: WorkspaceUpgradeService,
@@ -112,7 +112,7 @@ const buildUpgradeCommandModule = async ({
           return new commandRunner(
             coreEngineVersionService,
             workspaceVersionService,
-            versionedMigrationRegistryService,
+            registeredInstanceMigrationService,
             instanceUpgradeService,
             workspaceIteratorService,
             workspaceUpgradeService,

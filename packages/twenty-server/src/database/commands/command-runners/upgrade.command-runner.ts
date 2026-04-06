@@ -45,7 +45,7 @@ export abstract class UpgradeCommandRunner extends CommandRunner {
   constructor(
     protected readonly coreEngineVersionService: CoreEngineVersionService,
     protected readonly workspaceVersionService: WorkspaceVersionService,
-    protected readonly versionedMigrationRegistryService: RegisteredInstanceMigrationService,
+    protected readonly registeredInstanceMigrationService: RegisteredInstanceMigrationService,
     protected readonly instanceUpgradeService: InstanceUpgradeService,
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     protected readonly workspaceUpgradeService: WorkspaceUpgradeService,
@@ -257,7 +257,7 @@ Please roll back to that version and run the upgrade command again.`,
       this.coreEngineVersionService.getPreviousVersion();
 
     const instanceCommands =
-      this.versionedMigrationRegistryService.getInstanceCommandsForVersion(
+      this.registeredInstanceMigrationService.getInstanceCommandsForVersion(
         currentVersionMajorMinor,
       );
 

@@ -56,7 +56,7 @@ export class WorkspaceUpgradeService {
     switch (versionCompareResult) {
       case 'lower': {
         throw new Error(
-          `WORKSPACE_VERSION_MISSMATCH Upgrade for workspace ${workspaceId} failed as its version is beneath fromWorkspaceVersion=${fromWorkspaceVersion.version}`,
+          `WORKSPACE_VERSION_MISMATCH Upgrade for workspace ${workspaceId} failed as its version is beneath fromWorkspaceVersion=${fromWorkspaceVersion.version}`,
         );
       }
       case 'equal': {
