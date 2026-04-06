@@ -172,15 +172,33 @@ Please roll back to that version and run the upgrade command again.`,
         );
       }
 
-      await this.runInstanceCommands(options, versionContext);
+      await this.runInstanceCommandsOrThrow(versionContext);
+
+      const iteratorReport = await this.runWorkspaceCommandsOrThrow(
+        options,
+        versionContext,
+      );
+
+      if (iteratorReport.fail.length > 0) {
+        this.logger.error(
+          chalk.red(
+            `Upgrade completed with ${iteratorReport.fail.length} workspace failure(s)`,
+          ),
+        );
+      }
+
+      this.logger.log(
+        chalk.blue(
+          `Upgrade summary: ${iteratorReport.success.length} succeeded, ${iteratorReport.fail.length} failed`,
+        ),
+      );
     } catch (error) {
       this.logger.error(chalk.red(`Upgrade failed: ${error.message}`));
       throw error;
     }
   }
 
-  private async runInstanceCommands(
-    options: UpgradeCommandOptions,
+  private async runInstanceCommandsOrThrow(
     versionContext: VersionContext,
   ): Promise<void> {
     for (const instanceCommand of versionContext.instanceCommands) {
@@ -223,8 +241,6 @@ Please roll back to that version and run the upgrade command again.`,
         }
       }
     }
-
-    await this.runWorkspaceCommands(options, versionContext);
   }
 
   private resolveVersionContext(): VersionContext {
@@ -256,11 +272,11 @@ Please roll back to that version and run the upgrade command again.`,
     };
   }
 
-  private async runWorkspaceCommands(
+  private async runWorkspaceCommandsOrThrow(
     options: UpgradeCommandOptions,
     versionContext: VersionContext,
-  ): Promise<void> {
-    const iteratorReport = await this.workspaceIteratorService.iterate({
+  ) {
+    return await this.workspaceIteratorService.iterate({
       workspaceIds:
         options.workspaceId && options.workspaceId.size > 0
           ? Array.from(options.workspaceId)
@@ -278,20 +294,5 @@ Please roll back to that version and run the upgrade command again.`,
         });
       },
     });
-
-    if (iteratorReport.fail.length > 0) {
-      this.logger.error(
-        chalk.red(
-          `Upgrade completed with ${iteratorReport.fail.length} workspace failure(s)`,
-        ),
-      );
-    }
-
-    this.logger.log(
-      chalk.blue(
-        `Upgrade summary: ${iteratorReport.success.length} succeeded, ${iteratorReport.fail.length} failed`,
-      ),
-    );
-    this.logger.log(chalk.blue('Command completed!'));
   }
 }
