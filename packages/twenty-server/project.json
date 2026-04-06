@@ -215,7 +215,7 @@
       "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "node dist/command/command.js generate:versioned-migration"
+        "command": "node dist/command/command.js generate:instance-command"
       }
     },
     "generate:integration-test": {

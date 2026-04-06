@@ -13,17 +13,17 @@ const UPGRADE_VERSION_COMMAND_DIR = path.resolve(
   'src/database/commands/upgrade-version-command',
 );
 
-type GenerateVersionedMigrationCommandOptions = {
+type GenerateInstanceCommandOptions = {
   name: string;
 };
 
 @Command({
-  name: 'generate:versioned-migration',
+  name: 'generate:instance-command',
   description:
-    'Generate a TypeORM migration with @RegisteredInstanceMigration decorator for the latest supported version',
+    'Generate an instance command with @RegisteredInstanceMigration decorator for the latest supported version',
 })
-export class GenerateVersionedMigrationCommand extends CommandRunner {
-  private readonly logger = new Logger(GenerateVersionedMigrationCommand.name);
+export class GenerateInstanceCommandCommand extends CommandRunner {
+  private readonly logger = new Logger(GenerateInstanceCommandCommand.name);
 
   constructor(
     private readonly instanceMigrationGenerationService: InstanceCommandGenerationService,
@@ -42,7 +42,7 @@ export class GenerateVersionedMigrationCommand extends CommandRunner {
 
   async run(
     _passedParams: string[],
-    options: GenerateVersionedMigrationCommandOptions,
+    options: GenerateInstanceCommandOptions,
   ): Promise<void> {
     const migrationName = options.name;
 
