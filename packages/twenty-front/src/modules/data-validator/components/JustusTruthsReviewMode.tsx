@@ -24,8 +24,10 @@ type JustusTruthsReviewModeProps = {
   averageReviewTime: number;
   totalReviewed: number;
   pendingAction: PendingAction;
+  confirming: boolean;
   onPendingReasonChange: (reason: string) => void;
   onConfirm: () => void;
+  onConfirmComplete: () => void;
   onCancel: () => void;
 };
 
@@ -180,49 +182,55 @@ export const JustusTruthsReviewMode = ({
   averageReviewTime,
   totalReviewed,
   pendingAction,
+  confirming,
   onPendingReasonChange,
   onConfirm,
+  onConfirmComplete,
   onCancel,
 }: JustusTruthsReviewModeProps) => {
   const reasonRef = useRef<HTMLTextAreaElement>(null);
   const [animationClass, setAnimationClass] = useState<AnimationClass>('idle');
   const previousTruthId = useRef<string | null>(null);
-  const pendingAnimAction = useRef<ReviewAction | null>(null);
+  const isAnimating = useRef(false);
 
   // Detect when currentTruth changes to trigger enter animation
   useEffect(() => {
     if (
       currentTruth &&
       currentTruth.id !== previousTruthId.current &&
-      animationClass !== 'idle'
+      previousTruthId.current !== null
     ) {
       setAnimationClass('enter');
-      const timer = setTimeout(() => setAnimationClass('idle'), 300);
+      const timer = setTimeout(() => {
+        setAnimationClass('idle');
+        isAnimating.current = false;
+      }, 300);
+      previousTruthId.current = currentTruth.id;
       return () => clearTimeout(timer);
     }
     previousTruthId.current = currentTruth?.id ?? null;
-  }, [currentTruth, animationClass]);
+  }, [currentTruth]);
 
-  // Auto-focus reason textarea when reject is pending
-  useEffect(() => {
-    if (pendingAction?.action === 'reject' && reasonRef.current) {
-      reasonRef.current.focus();
-    }
-  }, [pendingAction]);
-
-  const handleAction = useCallback(
+  // Button click: go straight to pending (no animation yet)
+  const handleButtonAction = useCallback(
     (action: ReviewAction) => {
-      if (animationClass !== 'idle') return;
-      pendingAnimAction.current = action;
-      setAnimationClass(ACTION_ANIMATION_MAP[action]);
-
-      setTimeout(() => {
-        onAction(action);
-        pendingAnimAction.current = null;
-      }, 300);
+      if (isAnimating.current) return;
+      onAction(action);
     },
-    [animationClass, onAction],
+    [onAction],
   );
+
+  // When confirming becomes true, play exit animation then call onConfirmComplete
+  useEffect(() => {
+    if (!confirming || !pendingAction || isAnimating.current) return;
+    isAnimating.current = true;
+    setAnimationClass(ACTION_ANIMATION_MAP[pendingAction.action]);
+
+    const timer = setTimeout(() => {
+      onConfirmComplete();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [confirming, pendingAction, onConfirmComplete]);
 
   if (loading) {
     return (
@@ -264,7 +272,7 @@ export const JustusTruthsReviewMode = ({
         <TruthReviewCard
           truth={currentTruth}
           animationClass={animationClass}
-          onAction={handleAction}
+          onAction={handleButtonAction}
           pendingAction={pendingAction?.action ?? null}
         />
         {pendingAction && (() => {

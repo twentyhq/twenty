@@ -76,6 +76,7 @@ const JustusTruthsBodyContent = () => {
     action: ReviewAction;
     reason: string;
   } | null>(null);
+  const [confirming, setConfirming] = useState(false);
   const [actionToast, setActionToast] = useState<{
     action: string;
     text: string;
@@ -170,13 +171,21 @@ const JustusTruthsBodyContent = () => {
   );
 
   const handleConfirm = useCallback(() => {
+    if (!pendingAction || confirming) return;
+    setConfirming(true); // Triggers animation in ReviewMode
+  }, [pendingAction, confirming]);
+
+  // Called by ReviewMode after animation completes
+  const handleConfirmComplete = useCallback(() => {
     if (!pendingAction) return;
     executeAction(pendingAction.action, pendingAction.reason);
     setPendingAction(null);
+    setConfirming(false);
   }, [pendingAction, executeAction]);
 
   const handleCancel = useCallback(() => {
     setPendingAction(null);
+    setConfirming(false);
   }, []);
 
   const handleUndo = useCallback(async () => {
@@ -258,12 +267,14 @@ const JustusTruthsBodyContent = () => {
           averageReviewTime={session.averageReviewTime}
           totalReviewed={session.totalReviewed}
           pendingAction={pendingAction}
+          confirming={confirming}
           onPendingReasonChange={(reason: string) =>
             setPendingAction((prev) =>
               prev ? { ...prev, reason } : prev,
             )
           }
           onConfirm={handleConfirm}
+          onConfirmComplete={handleConfirmComplete}
           onCancel={handleCancel}
         />
       ) : (
