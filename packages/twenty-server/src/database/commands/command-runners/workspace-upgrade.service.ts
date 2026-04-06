@@ -17,6 +17,14 @@ import {
   compareVersionMajorAndMinor,
 } from 'src/utils/version/compare-version-minor-and-major';
 
+export type UpgradeWorkspaceArgs = {
+  iteratorContext: WorkspaceIteratorContext;
+  options: UpgradeCommandOptions;
+  fromWorkspaceVersion: SemVer;
+  currentAppVersion: SemVer;
+  workspaceCommands: VersionCommands;
+};
+
 @Injectable()
 export class WorkspaceUpgradeService {
   private readonly logger = new Logger(WorkspaceUpgradeService.name);
@@ -26,13 +34,13 @@ export class WorkspaceUpgradeService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
-  async upgradeWorkspace(
-    iteratorContext: WorkspaceIteratorContext,
-    options: UpgradeCommandOptions,
-    fromWorkspaceVersion: SemVer,
-    currentAppVersion: SemVer,
-    workspaceCommands: VersionCommands,
-  ): Promise<void> {
+  async upgradeWorkspace({
+    iteratorContext,
+    options,
+    fromWorkspaceVersion,
+    currentAppVersion,
+    workspaceCommands,
+  }: UpgradeWorkspaceArgs): Promise<void> {
     const { workspaceId, index, total } = iteratorContext;
 
     this.logger.log(

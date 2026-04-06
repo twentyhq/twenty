@@ -269,13 +269,13 @@ Please roll back to that version and run the upgrade command again.`,
       workspaceCountLimit: options.workspaceCountLimit,
       dryRun: options.dryRun,
       callback: async (context) => {
-        await this.workspaceUpgradeService.upgradeWorkspace(
-          context,
+        await this.workspaceUpgradeService.upgradeWorkspace({
+          iteratorContext: context,
           options,
-          versionContext.fromWorkspaceVersion,
-          versionContext.currentAppVersion,
-          versionContext.workspaceCommands,
-        );
+          fromWorkspaceVersion: versionContext.fromWorkspaceVersion,
+          currentAppVersion: versionContext.currentAppVersion,
+          workspaceCommands: versionContext.workspaceCommands,
+        });
       },
     });
 
