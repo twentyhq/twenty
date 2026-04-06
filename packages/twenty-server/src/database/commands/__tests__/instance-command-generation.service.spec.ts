@@ -16,7 +16,7 @@ const buildMockDataSource = (
   },
 });
 
-describe('InstanceMigrationService', () => {
+describe('InstanceCommandGenerationService', () => {
   const buildService = async (
     upQueries: { query: string; parameters?: unknown[] }[] = [],
     downQueries: { query: string; parameters?: unknown[] }[] = [],

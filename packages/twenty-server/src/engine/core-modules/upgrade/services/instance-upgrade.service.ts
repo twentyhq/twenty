@@ -90,12 +90,12 @@ export class InstanceUpgradeService {
       UpgradeMigrationEntity,
     );
 
-    const retry = await repository.count({ where: { name } });
+    const previousAttempts = await repository.count({ where: { name } });
 
     await repository.save({
       name,
       status: 'completed' as UpgradeMigrationStatus,
-      retry,
+      attempt: previousAttempts + 1,
       runByVersion,
     });
   }
@@ -107,14 +107,14 @@ export class InstanceUpgradeService {
     name: string;
     runByVersion: string;
   }): Promise<void> {
-    const retry = await this.upgradeMigrationRepository.count({
+    const previousAttempts = await this.upgradeMigrationRepository.count({
       where: { name },
     });
 
     await this.upgradeMigrationRepository.save({
       name,
       status: 'failed' as UpgradeMigrationStatus,
-      retry,
+      attempt: previousAttempts + 1,
       runByVersion,
     });
   }

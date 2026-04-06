@@ -9,7 +9,7 @@ import {
 export type UpgradeMigrationStatus = 'completed' | 'failed';
 
 @Entity({ name: 'upgradeMigration', schema: 'core' })
-@Unique('UQ_upgrade_migration_name_retry', ['name', 'retry'])
+@Unique('UQ_upgrade_migration_name_attempt', ['name', 'attempt'])
 export class UpgradeMigrationEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -20,8 +20,8 @@ export class UpgradeMigrationEntity {
   @Column({ type: 'varchar', nullable: false })
   status: UpgradeMigrationStatus;
 
-  @Column({ type: 'integer', nullable: false, default: 0 })
-  retry: number;
+  @Column({ type: 'integer', nullable: false, default: 1 })
+  attempt: number;
 
   @Column({ type: 'varchar', nullable: false })
   runByVersion: string;
