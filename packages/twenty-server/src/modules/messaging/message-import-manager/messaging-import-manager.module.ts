@@ -29,6 +29,7 @@ import { MessagingOngoingStaleCronJob } from 'src/modules/messaging/message-impo
 import { MessagingRelaunchFailedMessageChannelsCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-relaunch-failed-message-channels.cron.job';
 import { MessagingGmailDriverModule } from 'src/modules/messaging/message-import-manager/drivers/gmail/messaging-gmail-driver.module';
 import { MessagingIMAPDriverModule } from 'src/modules/messaging/message-import-manager/drivers/imap/messaging-imap-driver.module';
+import { ImapSyncWorker } from 'src/modules/messaging/message-import-manager/jobs/imap-sync.worker';
 import { MessagingMicrosoftDriverModule } from 'src/modules/messaging/message-import-manager/drivers/microsoft/messaging-microsoft-driver.module';
 import { MessagingSmtpDriverModule } from 'src/modules/messaging/message-import-manager/drivers/smtp/messaging-smtp-driver.module';
 import { MessagingAddSingleMessageToCacheForImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-add-single-message-to-cache-for-import.job';
@@ -87,6 +88,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingRelaunchFailedMessageChannelsCronCommand,
     MessagingSingleMessageImportCommand,
     MessagingTriggerMessageListFetchCommand,
+    ImapSyncWorker,
     MessagingMessageListFetchJob,
     MessagingMessagesImportJob,
     MessagingOngoingStaleJob,
