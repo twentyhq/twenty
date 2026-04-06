@@ -71,6 +71,7 @@ const JustusTruthsBodyContent = () => {
   const [viewMode, setViewMode] = useState<ValidatorViewMode>('review');
   const [editModalTruthId, setEditModalTruthId] = useState<string | null>(null);
   const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
+  const [practiceMode, setPracticeMode] = useState(false);
   const [actionToast, setActionToast] = useState<{
     action: string;
     text: string;
@@ -106,7 +107,7 @@ const JustusTruthsBodyContent = () => {
 
       session.recordAction(action, truth, previousState);
 
-      if (action !== 'skip') {
+      if (action !== 'skip' && !practiceMode) {
         try {
           await updateOneRecord({
             objectNameSingular: JUSTUS_TRUTH_OBJECT_NAME_SINGULAR,
@@ -146,14 +147,14 @@ const JustusTruthsBodyContent = () => {
         queue.removeCurrent();
       }
     },
-    [queue, session, updateOneRecord, reviewerName],
+    [queue, session, updateOneRecord, reviewerName, practiceMode],
   );
 
   const handleUndo = useCallback(async () => {
     const entry = session.undo();
     if (!entry) return;
 
-    if (entry.action !== 'skip') {
+    if (entry.action !== 'skip' && !practiceMode) {
       try {
         await updateOneRecord({
           objectNameSingular: JUSTUS_TRUTH_OBJECT_NAME_SINGULAR,
@@ -180,7 +181,7 @@ const JustusTruthsBodyContent = () => {
       text: `Undid: "${entry.truthText.slice(0, 60)}..."`,
     });
     setTimeout(() => setActionToast(null), 4000);
-  }, [session, updateOneRecord, queue]);
+  }, [session, updateOneRecord, queue, practiceMode]);
 
   const shortcutHandlers = useMemo(
     () => ({
@@ -213,6 +214,8 @@ const JustusTruthsBodyContent = () => {
         onToggleViewMode={() =>
           setViewMode((v) => (v === 'review' ? 'list' : 'review'))
         }
+        practiceMode={practiceMode}
+        onTogglePracticeMode={() => setPracticeMode((p) => !p)}
       />
       {viewMode === 'review' ? (
         <JustusTruthsReviewMode

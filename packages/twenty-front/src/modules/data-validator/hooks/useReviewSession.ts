@@ -55,9 +55,17 @@ export const useReviewSession = () => {
       });
 
       // Update stats
+      const statKeyMap: Record<ReviewAction, keyof SessionStats> = {
+        approve: 'approved',
+        reject: 'rejected',
+        support: 'supported',
+        skip: 'skipped',
+      };
+      const statKey = statKeyMap[action];
+
       setStats((prev) => ({
         ...prev,
-        [action === 'reject' ? 'rejected' : action]: prev[action === 'reject' ? 'rejected' : action] + 1,
+        [statKey]: (prev[statKey] as number) + 1,
         reviewTimes: [...prev.reviewTimes, elapsed],
       }));
 
@@ -78,10 +86,16 @@ export const useReviewSession = () => {
     setUndoStack(rest);
 
     // Revert stats
-    const key = entry.action === 'reject' ? 'rejected' : entry.action;
+    const statKeyMap: Record<ReviewAction, keyof SessionStats> = {
+      approve: 'approved',
+      reject: 'rejected',
+      support: 'supported',
+      skip: 'skipped',
+    };
+    const key = statKeyMap[entry.action];
     setStats((prev) => ({
       ...prev,
-      [key]: Math.max(0, prev[key as keyof SessionStats] as number - 1),
+      [key]: Math.max(0, (prev[key] as number) - 1),
     }));
 
     // Reset streak on undo
