@@ -192,7 +192,10 @@
     "docs:generate": "tsx packages/twenty-docs/scripts/generate-docs-json.ts",
     "docs:generate-navigation-template": "tsx packages/twenty-docs/scripts/generate-navigation-template.ts",
     "docs:generate-paths": "tsx packages/twenty-docs/scripts/generate-documentation-paths.ts",
-    "start": "npx concurrently --kill-others 'npx nx run-many -t start -p twenty-server twenty-front' 'npx wait-on tcp:3000 && npx nx run twenty-server:worker'"
+    "start": "npx concurrently --kill-others 'npx nx run-many -t start -p twenty-server twenty-front' 'npx wait-on tcp:3000 && npx nx run twenty-server:worker'",
+    "dev:win": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/dev-windows.ps1",
+    "dev:win:reset-db": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/dev-windows.ps1 -ResetDb",
+    "dev:win:stop": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/dev-stop-windows.ps1"
   },
   "workspaces": {
     "packages": [

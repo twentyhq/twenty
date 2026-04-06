@@ -36,6 +36,7 @@
     },
     "start": {
       "executor": "@nx/vite:dev-server",
+      "dependsOn": [],
       "options": {
         "buildTarget": "twenty-front:build",
         "hmr": true

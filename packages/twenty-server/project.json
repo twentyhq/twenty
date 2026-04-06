@@ -54,14 +54,20 @@
       "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "rimraf dist && NODE_ENV=development nest start --watch"
+        "command": "rimraf dist && nest start --watch",
+        "env": {
+          "NODE_ENV": "development"
+        }
       }
     },
     "start:ci": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "NODE_ENV=development nest start"
+        "command": "nest start",
+        "env": {
+          "NODE_ENV": "development"
+        }
       }
     },
     "start:ci-if-needed": {
@@ -77,7 +83,10 @@
       "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "rimraf dist && NODE_ENV=development nest start --watch --debug"
+        "command": "rimraf dist && nest start --watch --debug",
+        "env": {
+          "NODE_ENV": "development"
+        }
       }
     },
     "reset:env": {

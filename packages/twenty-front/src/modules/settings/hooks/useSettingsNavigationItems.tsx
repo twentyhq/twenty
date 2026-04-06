@@ -25,7 +25,6 @@ import {
   type IconComponent,
   IconCurrencyDollar,
   IconDoorEnter,
-  IconHeadset,
   IconHelpCircle,
   IconHierarchy2,
   IconKey,
@@ -216,7 +215,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
         {
           label: t`Support`,
           path: SettingsPath.Support,
-          Icon: IconHeadset,
+          Icon: IconHelpCircle,
         },
         {
           label: t`Projects`,
