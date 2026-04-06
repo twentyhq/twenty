@@ -8,6 +8,8 @@ type ShortcutHandlers = {
   onEdit: () => void;
   onUndo: () => void;
   onHelp: () => void;
+  onConfirm: () => void;
+  onCancel: () => void;
 };
 
 export const useKeyboardShortcuts = (
@@ -20,6 +22,18 @@ export const useKeyboardShortcuts = (
     const handleKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement;
       const tagName = target.tagName.toLowerCase();
+
+      // Allow Enter and Escape even in textareas (for confirm/cancel)
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        handlers.onConfirm();
+        return;
+      }
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        handlers.onCancel();
+        return;
+      }
 
       // Don't trigger shortcuts when typing in inputs
       if (
@@ -44,12 +58,9 @@ export const useKeyboardShortcuts = (
           event.preventDefault();
           handlers.onSkip();
           break;
-        case 's':
-        case 'S':
-          if (!event.ctrlKey && !event.metaKey) {
-            event.preventDefault();
-            handlers.onSupport();
-          }
+        case 'ArrowUp':
+          event.preventDefault();
+          handlers.onSupport();
           break;
         case 'e':
         case 'E':
