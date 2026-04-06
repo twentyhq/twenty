@@ -9,6 +9,8 @@ type ReviewProgressBarProps = {
   streak: number;
   viewMode: ValidatorViewMode;
   onToggleViewMode: () => void;
+  practiceMode: boolean;
+  onTogglePracticeMode: () => void;
 };
 
 const StyledBar = styled.div`
@@ -80,6 +82,25 @@ const StyledToggle = styled.button`
   }
 `;
 
+const StyledPracticeToggle = styled.button<{ $active: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(3)};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-family: ${({ theme }) => theme.font.family};
+  color: ${({ $active }) => ($active ? '#b45309' : '#6b7280')};
+  background: ${({ $active }) => ($active ? '#fef3c7' : 'transparent')};
+  border: 1px solid ${({ $active }) => ($active ? '#f59e0b' : '#d1d5db')};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  cursor: pointer;
+  transition: all 150ms ease;
+
+  &:hover {
+    background: ${({ $active }) => ($active ? '#fde68a' : '#f3f4f6')};
+  }
+`;
+
 export const ReviewProgressBar = ({
   reviewedCount,
   totalCount,
@@ -87,6 +108,8 @@ export const ReviewProgressBar = ({
   streak,
   viewMode,
   onToggleViewMode,
+  practiceMode,
+  onTogglePracticeMode,
 }: ReviewProgressBarProps) => {
   return (
     <StyledBar>
@@ -100,6 +123,13 @@ export const ReviewProgressBar = ({
       </StyledCenter>
       <StyledRight>
         {streak > 0 && <StyledStreak>Streak: {streak}</StyledStreak>}
+        <StyledPracticeToggle
+          $active={practiceMode}
+          onClick={onTogglePracticeMode}
+          title={practiceMode ? 'Practice mode ON — no changes saved' : 'Enable practice mode'}
+        >
+          {practiceMode ? 'Practice ON' : 'Practice'}
+        </StyledPracticeToggle>
         <StyledToggle onClick={onToggleViewMode}>
           {viewMode === 'review' ? 'List' : 'Review'}
         </StyledToggle>
