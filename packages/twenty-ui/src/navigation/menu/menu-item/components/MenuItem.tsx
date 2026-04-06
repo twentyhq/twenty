@@ -2,6 +2,7 @@ import { IconChevronRight, type IconComponent } from '@ui/display';
 import { type LightIconButtonProps } from '@ui/input/button/components/LightIconButton';
 import { LightIconButtonGroup } from '@ui/input/button/components/LightIconButtonGroup';
 import {
+  type HTMLAttributes,
   type FunctionComponent,
   type MouseEvent,
   type ReactElement,
@@ -30,7 +31,7 @@ export type MenuItemIconButton = {
   dataTestId?: string;
 };
 
-export type MenuItemProps = {
+export type MenuItemProps = HTMLAttributes<HTMLDivElement> & {
   accent?: MenuItemAccent;
   className?: string;
   withIconContainer?: boolean;
@@ -87,6 +88,7 @@ export const MenuItem = ({
   selected = false,
   hotKeys,
   isSubMenuOpened = false,
+  ...rest
 }: MenuItemProps) => {
   const { theme } = useContext(ThemeContext);
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
@@ -110,6 +112,7 @@ export const MenuItem = ({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       focused={focused || selected}
+      {...rest}
     >
       <MenuItemLeftContent
         LeftIcon={LeftIcon ?? undefined}

@@ -8,7 +8,7 @@ import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInS
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
 import { t } from '@lingui/core/macro';
-import { type MouseEvent } from 'react';
+import { type AnchorHTMLAttributes, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   AvatarOrIcon,
@@ -33,6 +33,10 @@ export type RecordChipProps = {
   isIconHidden?: boolean;
   triggerEvent?: TriggerEventType;
   onClick?: (event: MouseEvent) => void;
+  linkAttributes?: Omit<
+    AnchorHTMLAttributes<HTMLAnchorElement>,
+    'className' | 'href' | 'onClick' | 'onMouseDown' | 'target'
+  >;
 };
 
 export const RecordChip = ({
@@ -49,6 +53,7 @@ export const RecordChip = ({
   isIconHidden = false,
   triggerEvent = 'MOUSE_DOWN',
   onClick,
+  linkAttributes,
 }: RecordChipProps) => {
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
@@ -132,6 +137,7 @@ export const RecordChip = ({
       to={to ?? getLinkToShowPage(objectNameSingular, record)}
       onClick={handleCustomClick}
       triggerEvent={triggerEvent}
+      {...linkAttributes}
     />
   );
 };

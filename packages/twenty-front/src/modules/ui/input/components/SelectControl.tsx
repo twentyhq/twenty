@@ -1,6 +1,6 @@
 import { type SelectSizeVariant } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { type HTMLAttributes, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
@@ -68,6 +68,7 @@ export type SelectControlProps = {
   selectSizeVariant?: SelectSizeVariant;
   textAccent?: SelectControlTextAccent;
   hasRightElement?: boolean;
+  containerProps?: HTMLAttributes<HTMLDivElement>;
 };
 
 export const SelectControl = ({
@@ -76,6 +77,7 @@ export const SelectControl = ({
   selectSizeVariant,
   textAccent = 'default',
   hasRightElement,
+  containerProps,
 }: SelectControlProps) => {
   const { theme } = useContext(ThemeContext);
   return (
@@ -86,6 +88,7 @@ export const SelectControl = ({
       textAccent={textAccent}
       hasRightElement={hasRightElement}
       title={selectedOption.fullLabel}
+      {...containerProps}
     >
       {isDefined(selectedOption?.Icon) ? (
         <selectedOption.Icon

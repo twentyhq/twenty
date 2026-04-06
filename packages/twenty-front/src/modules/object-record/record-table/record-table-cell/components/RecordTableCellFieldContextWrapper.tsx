@@ -11,11 +11,13 @@ import { type ReactNode } from 'react';
 type RecordTableCellFieldContextWrapperProps = {
   children: ReactNode;
   recordField: RecordField;
+  aicSurface?: 'table' | 'portal';
 };
 
 export const RecordTableCellFieldContextWrapper = ({
   recordField,
   children,
+  aicSurface = 'table',
 }: RecordTableCellFieldContextWrapperProps) => {
   const { recordId } = useRecordTableRowContextOrThrow();
 
@@ -39,7 +41,10 @@ export const RecordTableCellFieldContextWrapper = ({
   return (
     <RecordFieldComponentInstanceContext.Provider value={{ instanceId }}>
       {isLabelIdentifier ? (
-        <RecordTableCellFieldContextLabelIdentifier key={instanceId}>
+        <RecordTableCellFieldContextLabelIdentifier
+          key={instanceId}
+          aicSurface={aicSurface}
+        >
           {children}
         </RecordTableCellFieldContextLabelIdentifier>
       ) : (

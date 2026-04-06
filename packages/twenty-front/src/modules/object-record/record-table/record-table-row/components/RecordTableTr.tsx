@@ -10,6 +10,7 @@ import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/rec
 
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAICElement } from '@aicorg/sdk-react';
 import { forwardRef, type ReactNode } from 'react';
 
 type RecordTableTrProps = {
@@ -50,6 +51,18 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
       objectMetadataId: objectMetadataItem.id,
     });
 
+    const { attributes } = useAICElement({
+      agentId: `${objectMetadataItem.nameSingular}.row.open.${recordId}`,
+      agentAction: 'navigate',
+      agentDescription: `Open the ${objectMetadataItem.labelSingular} record details.`,
+      agentEntityId: recordId,
+      agentEntityLabel: `${objectMetadataItem.labelSingular} ${recordId}`,
+      agentEntityType: objectMetadataItem.nameSingular,
+      agentLabel: `Open ${objectMetadataItem.labelSingular}`,
+      agentRisk: 'low',
+      agentWorkflowStep: `${objectMetadataItem.nameSingular}.locate_record`,
+    });
+
     return (
       <RecordTableRowContextProvider
         value={{
@@ -74,6 +87,7 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
             isRecordTableRowFocused &&
             !isRecordTableRowActive
           }
+          {...attributes}
           // oxlint-disable-next-line react/jsx-props-no-spreading
           {...props}
         >

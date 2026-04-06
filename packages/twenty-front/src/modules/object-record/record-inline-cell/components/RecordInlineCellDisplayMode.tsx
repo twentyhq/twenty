@@ -3,20 +3,28 @@ import { styled } from '@linaria/react';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useIsFieldEmpty } from '@/object-record/record-field/ui/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import {
   useRecordInlineCellContext,
   type RecordInlineCellContextProps,
 } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { RecordInlineCellButton } from '@/object-record/record-inline-cell/components/RecordInlineCellEditButton';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
+import { type HTMLAttributes, useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   Pick<
     RecordInlineCellContextProps,
     'isDisplayModeFixHeight' | 'disableHoverEffect' | 'readonly'
-  > & { isHovered?: boolean }
+  > & {
+    isHovered?: boolean;
+    disablePointerEvents?: boolean;
+    promoteAboveOverlays?: boolean;
+  }
 >`
   align-items: center;
   background-color: ${({ isHovered, readonly, disableHoverEffect }) =>
@@ -38,6 +46,14 @@ const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   overflow: hidden;
   padding-left: ${themeCssVariables.spacing[1]};
   padding-right: ${themeCssVariables.spacing[1]};
+  pointer-events: ${({ disablePointerEvents }) =>
+    disablePointerEvents ? 'none' : 'auto'};
+  position: relative;
+  z-index: ${({ promoteAboveOverlays }) => (promoteAboveOverlays ? 1 : 'auto')};
+
+  * {
+    pointer-events: none;
+  }
 `;
 
 const StyledRecordInlineCellNormalModeInnerContainer = styled.div`
@@ -49,7 +65,6 @@ const StyledRecordInlineCellNormalModeInnerContainer = styled.div`
   overflow: hidden;
   padding-bottom: 2px;
   padding-top: 2px;
-
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
@@ -65,16 +80,26 @@ export const RecordInlineCellDisplayMode = ({
   children,
   onClick,
   isHovered,
+  containerAttributes,
 }: React.PropsWithChildren<{
   isHovered: boolean;
   onClick?: () => void;
+  containerAttributes?: HTMLAttributes<HTMLDivElement>;
 }>) => {
   const { t } = useLingui();
+  const recordFieldInstanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldComponentInstanceContext,
+  );
+  const focusStack = useAtomStateValue(focusStackState);
 
-  const { editModeContentOnly, label, buttonIcon, readonly } =
+  const { editModeContentOnly, label, buttonIcon, readonly, isEditModeOpen } =
     useRecordInlineCellContext();
 
-  const { isForbidden } = useContext(FieldContext);
+  const { isForbidden, recordId, fieldDefinition } = useContext(FieldContext);
+  const isCurrentFieldEditing = focusStack.some(
+    (item) =>
+      item.componentInstance.componentInstanceId === recordFieldInstanceId,
+  );
 
   const isFieldEmpty = useIsFieldEmpty();
   const showEditButton =
@@ -92,12 +117,47 @@ export const RecordInlineCellDisplayMode = ({
 
   const shouldShowEmptyPlaceholder = isFieldEmpty && !isForbidden;
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!onClick || readonly) {
+      return;
+    }
+
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onClick();
+    }
+  };
+
+  const stageAttributes = buildOpportunityStageDisplayAICAttributes({
+    recordId,
+    fieldLabel: label,
+    fieldName: fieldDefinition.metadata.fieldName,
+    isEditModeOpen,
+    isCurrentFieldEditing,
+    objectNameSingular: fieldDefinition.metadata.objectMetadataNameSingular,
+  });
+  const shouldDisableStagePointerEvents =
+    fieldDefinition.metadata.objectMetadataNameSingular === 'opportunity' &&
+    fieldDefinition.metadata.fieldName === 'stage' &&
+    isCurrentFieldEditing &&
+    !isEditModeOpen;
+  const shouldPromoteStageSelectorEntry =
+    stageAttributes?.['data-agent-id']?.includes('.select_trigger.') ?? false;
+
   return (
     <>
       <StyledRecordInlineCellNormalModeOuterContainer
+        disablePointerEvents={shouldDisableStagePointerEvents}
         isHovered={isHovered}
+        promoteAboveOverlays={shouldPromoteStageSelectorEntry}
         readonly={readonly}
         onClick={onClick}
+        onKeyDown={handleKeyDown}
+        data-inline-editable={onClick ? '1' : '0'}
+        role={readonly ? undefined : 'button'}
+        tabIndex={readonly ? -1 : 0}
+        {...containerAttributes}
+        {...stageAttributes}
       >
         <StyledRecordInlineCellNormalModeInnerContainer>
           {shouldShowValue ? (
@@ -112,4 +172,46 @@ export const RecordInlineCellDisplayMode = ({
       )}
     </>
   );
+};
+
+const buildOpportunityStageDisplayAICAttributes = ({
+  recordId,
+  fieldLabel,
+  fieldName,
+  isEditModeOpen,
+  isCurrentFieldEditing,
+  objectNameSingular,
+}: {
+  recordId: string;
+  fieldLabel?: string;
+  fieldName?: string;
+  isEditModeOpen?: boolean;
+  isCurrentFieldEditing?: boolean;
+  objectNameSingular?: string;
+}): HTMLAttributes<HTMLDivElement> | undefined => {
+  if (objectNameSingular !== 'opportunity' || fieldName !== 'stage') {
+    return undefined;
+  }
+
+  const isSelectorEntryActive = isEditModeOpen || isCurrentFieldEditing;
+
+  return {
+    'data-agent-id': isSelectorEntryActive
+      ? `opportunity.stage.select_trigger.${recordId}`
+      : `opportunity.stage.open_editor.${recordId}`,
+    'data-agent-action': 'click',
+    'data-agent-description': isSelectorEntryActive
+      ? 'Open the stage option list for this exact opportunity from the active inline editor.'
+      : 'Open the opportunity stage editor for this exact record before choosing a new stage.',
+    'data-agent-entity-id': recordId,
+    'data-agent-entity-label': `Opportunity ${recordId}`,
+    'data-agent-entity-type': 'opportunity',
+    'data-agent-label': isSelectorEntryActive
+      ? `${fieldLabel ?? 'Stage'} current value`
+      : fieldLabel ?? 'Stage',
+    'data-agent-risk': 'medium',
+    'data-agent-workflow': isSelectorEntryActive
+      ? 'opportunity.stage.open_selector'
+      : 'opportunity.stage.open_editor',
+  } satisfies HTMLAttributes<HTMLDivElement>;
 };

@@ -5,9 +5,13 @@ import { RecordInlineCellAnchoredPortal } from '@/object-record/record-inline-ce
 import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import { FieldWidgetInputContextProvider } from '@/page-layout/widgets/field/components/FieldWidgetInputContextProvider';
 import { useIsFieldWidgetEditing } from '@/page-layout/widgets/field/hooks/useIsFieldWidgetEditing';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { useOpenFieldWidgetFieldInputEditMode } from '@/page-layout/widgets/field/hooks/useOpenFieldWidgetFieldInputEditMode';
 import { fieldWidgetHoverComponentState } from '@/page-layout/widgets/field/states/fieldWidgetHoverComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type FieldWidgetCellEditModePortalProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -22,7 +26,21 @@ export const FieldWidgetCellEditModePortal = ({
   recordId,
   instanceId,
 }: FieldWidgetCellEditModePortalProps) => {
-  const { isEditing } = useIsFieldWidgetEditing();
+  const fieldInstanceId = getRecordFieldInputInstanceId({
+    recordId,
+    fieldName: fieldMetadataItem.name,
+    prefix: instanceId,
+  });
+
+  const { isEditing } = useIsFieldWidgetEditing(fieldInstanceId);
+  const activeDropdownFocusId = useAtomStateValue(activeDropdownFocusIdState);
+  const expectedDropdownFocusId = getDropdownFocusIdForRecordField({
+    recordId,
+    fieldMetadataId: fieldMetadataItem.id,
+    componentType: 'inline-cell',
+    instanceId,
+  });
+  const isDropdownFocused = activeDropdownFocusId === expectedDropdownFocusId;
 
   const setFieldWidgetHover = useSetAtomComponentState(
     fieldWidgetHoverComponentState,
@@ -36,7 +54,7 @@ export const FieldWidgetCellEditModePortal = ({
     closeFieldInput();
   };
 
-  if (!isEditing) {
+  if (!isEditing && !isDropdownFocused) {
     return null;
   }
 

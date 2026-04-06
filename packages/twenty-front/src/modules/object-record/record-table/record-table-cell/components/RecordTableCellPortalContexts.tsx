@@ -64,7 +64,10 @@ export const RecordTableCellPortalContexts = ({
           cellPosition: position,
         }}
       >
-        <RecordTableCellFieldContextWrapper recordField={recordField}>
+        <RecordTableCellFieldContextWrapper
+          recordField={recordField}
+          aicSurface="portal"
+        >
           {children}
         </RecordTableCellFieldContextWrapper>
       </RecordTableCellContext.Provider>

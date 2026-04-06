@@ -111,6 +111,7 @@ type SortOrFilterChipProps = {
   Icon?: IconComponent;
   onRemove: () => void;
   onClick?: () => void;
+  removeButtonProps?: React.ButtonHTMLAttributes<HTMLButtonElement>;
   testId?: string;
   type: SortOrFilterChipType;
 };
@@ -123,6 +124,7 @@ export const SortOrFilterChip = ({
   onRemove,
   testId,
   onClick,
+  removeButtonProps,
   type,
 }: SortOrFilterChipProps) => {
   const { theme } = useContext(ThemeContext);
@@ -151,6 +153,7 @@ export const SortOrFilterChip = ({
         variant={variant}
         onClick={handleDeleteClick}
         data-testid={'remove-icon-' + testId}
+        {...removeButtonProps}
       >
         <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
       </StyledDelete>

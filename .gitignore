@@ -53,3 +53,5 @@ mcp.json
 TRANSLATION_QA_REPORT.md
 .playwright-mcp/
 .playwright-cli/
+packages/twenty-front/tmp*
+.auth-state*

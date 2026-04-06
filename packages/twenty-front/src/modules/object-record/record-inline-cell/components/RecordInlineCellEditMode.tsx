@@ -15,7 +15,7 @@ import {
   useFloating,
   type MiddlewareState,
 } from '@floating-ui/react';
-import { useContext } from 'react';
+import { type HTMLAttributes, useContext } from 'react';
 import { createPortal } from 'react-dom';
 
 const StyledInlineCellEditModeContainer = styled.div`
@@ -37,6 +37,7 @@ export const RecordInlineCellEditMode = ({
   children,
 }: RecordInlineCellEditModeProps) => {
   const { isCentered } = useContext(RecordInlineCellContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const recordFieldComponentInstanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,

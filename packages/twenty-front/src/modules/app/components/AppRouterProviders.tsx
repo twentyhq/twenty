@@ -31,6 +31,7 @@ import { UserThemeProviderEffect } from '@/ui/theme/components/UserThemeProvider
 import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
+import { AICProvider } from '@aicorg/sdk-react';
 import { StrictMode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { getPageTitleFromPath } from '~/utils/title-utils';
@@ -40,54 +41,56 @@ export const AppRouterProviders = () => {
   const pageTitle = getPageTitleFromPath(pathname);
 
   return (
-    <ApolloProvider>
-      <BaseThemeProvider>
-        <ClientConfigProviderEffect />
-        <UserMetadataProviderInitialEffect />
-        <MinimalMetadataLoadEffect />
-        <IsMinimalMetadataReadyEffect />
-        <WorkspaceProviderEffect />
-        <ClientConfigProvider>
-          <CaptchaProvider>
-            <MinimalMetadataGater>
-              <AuthProvider>
-                <ApolloCoreProvider>
-                  <SSEProvider>
-                    <PreComputedChipGeneratorsProvider>
-                      <UserThemeProviderEffect />
-                      <SnackBarProvider>
-                        <ErrorMessageEffect />
-                        <AgentChatProvider>
-                          <DialogComponentInstanceContext.Provider
-                            value={{ instanceId: 'dialog-manager' }}
-                          >
-                            <DialogManager>
-                              <StrictMode>
-                                <PromiseRejectionEffect />
-                                <GotoHotkeysEffectsProvider />
-                                <PageTitle title={pageTitle} />
-                                <PageFavicon />
-                                <Outlet />
-                                <GlobalFilePreviewModal />
-                                <CommandMenuConfirmationModalManager />
-                                <CommandRunner />
-                              </StrictMode>
-                            </DialogManager>
-                          </DialogComponentInstanceContext.Provider>
-                        </AgentChatProvider>
-                      </SnackBarProvider>
-                      <MainContextStoreProvider />
-                      <SupportChatEffect />
-                      <PageChangeEffect />
-                      <SignOutOnOtherTabSignOutEffect />
-                    </PreComputedChipGeneratorsProvider>
-                  </SSEProvider>
-                </ApolloCoreProvider>
-              </AuthProvider>
-            </MinimalMetadataGater>
-          </CaptchaProvider>
-        </ClientConfigProvider>
-      </BaseThemeProvider>
-    </ApolloProvider>
+    <AICProvider>
+      <ApolloProvider>
+        <BaseThemeProvider>
+          <ClientConfigProviderEffect />
+          <UserMetadataProviderInitialEffect />
+          <MinimalMetadataLoadEffect />
+          <IsMinimalMetadataReadyEffect />
+          <WorkspaceProviderEffect />
+          <ClientConfigProvider>
+            <CaptchaProvider>
+              <MinimalMetadataGater>
+                <AuthProvider>
+                  <ApolloCoreProvider>
+                    <SSEProvider>
+                      <PreComputedChipGeneratorsProvider>
+                        <UserThemeProviderEffect />
+                        <SnackBarProvider>
+                          <ErrorMessageEffect />
+                          <AgentChatProvider>
+                            <DialogComponentInstanceContext.Provider
+                              value={{ instanceId: 'dialog-manager' }}
+                            >
+                              <DialogManager>
+                                <StrictMode>
+                                  <PromiseRejectionEffect />
+                                  <GotoHotkeysEffectsProvider />
+                                  <PageTitle title={pageTitle} />
+                                  <PageFavicon />
+                                  <Outlet />
+                                  <GlobalFilePreviewModal />
+                                  <CommandMenuConfirmationModalManager />
+                                  <CommandRunner />
+                                </StrictMode>
+                              </DialogManager>
+                            </DialogComponentInstanceContext.Provider>
+                          </AgentChatProvider>
+                        </SnackBarProvider>
+                        <MainContextStoreProvider />
+                        <SupportChatEffect />
+                        <PageChangeEffect />
+                        <SignOutOnOtherTabSignOutEffect />
+                      </PreComputedChipGeneratorsProvider>
+                    </SSEProvider>
+                  </ApolloCoreProvider>
+                </AuthProvider>
+              </MinimalMetadataGater>
+            </CaptchaProvider>
+          </ClientConfigProvider>
+        </BaseThemeProvider>
+      </ApolloProvider>
+    </AICProvider>
   );
 };

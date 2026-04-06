@@ -28,6 +28,7 @@ import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
 import '@blocknote/react/style.css';
+import { useAICElement } from '@aicorg/sdk-react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
@@ -267,13 +268,89 @@ export const RichTextFieldEditor = ({
     removeFocusItemFromFocusStackById({ focusId });
   }, [focusId, removeFocusItemFromFocusStackById, onBlurOverride]);
 
-  return (
-    <BlockEditor
-      onFocus={handleBlockEditorFocus}
-      onBlur={handleBlockEditorBlur}
-      onChange={handleEditorChange}
-      editor={editor}
-      readonly={isRecordFieldReadOnly}
-    />
+  const editorAIC = buildRichTextEditorAICMetadata(
+    objectNameSingular,
+    fieldName,
+    recordId,
   );
+
+  return (
+    <RichTextEditorAICWrapper metadata={editorAIC}>
+      <BlockEditor
+        onFocus={handleBlockEditorFocus}
+        onBlur={handleBlockEditorBlur}
+        onChange={handleEditorChange}
+        editor={editor}
+        readonly={isRecordFieldReadOnly}
+      />
+    </RichTextEditorAICWrapper>
+  );
+};
+
+const RichTextEditorAICWrapper = ({
+  metadata,
+  children,
+}: {
+  metadata: ReturnType<typeof buildRichTextEditorAICMetadata>;
+  children: React.ReactNode;
+}) => {
+  if (!metadata) {
+    return children;
+  }
+
+  const { attributes } = useAICElement(metadata, {
+    defaultAction: 'edit',
+    role: 'textbox',
+  });
+
+  return <div {...attributes}>{children}</div>;
+};
+
+const buildRichTextEditorAICMetadata = (
+  objectNameSingular: string,
+  fieldName: string,
+  recordId: string,
+) => {
+  if (
+    fieldName !== 'bodyV2' ||
+    (objectNameSingular !== CoreObjectNameSingular.Note &&
+      objectNameSingular !== CoreObjectNameSingular.Task)
+  ) {
+    return null;
+  }
+
+  return {
+    agentId: `${objectNameSingular}.body.edit.${recordId}`,
+    agentAction: 'edit' as const,
+    agentDescription:
+      objectNameSingular === CoreObjectNameSingular.Note
+        ? 'Edit the note body for the current note. Changes autosave after typing settles.'
+        : 'Edit the task description for the current task. Changes autosave after typing settles.',
+    agentEntityId: recordId,
+    agentEntityLabel:
+      objectNameSingular === CoreObjectNameSingular.Note
+        ? `Note ${recordId}`
+        : `Task ${recordId}`,
+    agentEntityType: objectNameSingular,
+    agentExecution: {
+      settled_when: [
+        'Typed rich text remains visible after focus leaves the editor and the side panel stays open.',
+      ],
+    },
+    agentLabel:
+      objectNameSingular === CoreObjectNameSingular.Note
+        ? 'Edit note body'
+        : 'Edit task description',
+    agentRecovery: {
+      partial_state_changed: true,
+      recovery:
+        'If the content does not persist, reopen the same record and verify the body before retrying.',
+      retryable: true,
+    },
+    agentRisk: 'medium' as const,
+    agentWorkflowStep:
+      objectNameSingular === CoreObjectNameSingular.Note
+        ? 'note.edit_body'
+        : 'task.edit_body',
+  };
 };

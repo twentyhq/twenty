@@ -8,7 +8,7 @@ import {
 } from '@ui/components/chip/Chip';
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from '@ui/components/chip/constants/LinkChipClickOutsideId';
 import { type TriggerEventType, useMouseDownNavigation } from '@ui/utilities';
-import { type MouseEvent } from 'react';
+import { type AnchorHTMLAttributes, type MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
 
 export type LinkChipProps = Omit<
@@ -20,7 +20,10 @@ export type LinkChipProps = Omit<
   onMouseDown?: (event: MouseEvent<HTMLElement>) => void;
   triggerEvent?: TriggerEventType;
   target?: '_blank' | '_self';
-};
+} & Omit<
+    AnchorHTMLAttributes<HTMLAnchorElement>,
+    'className' | 'href' | 'onClick' | 'onMouseDown' | 'target'
+  >;
 
 const StyledLinkContainer = styled.span`
   display: inline-flex;
@@ -49,6 +52,7 @@ export const LinkChip = ({
   triggerEvent,
   target,
   emptyLabel,
+  ...linkProps
 }: LinkChipProps) => {
   const { onClick: onClickHandler, onMouseDown: onMouseDownHandler } =
     useMouseDownNavigation({
@@ -69,6 +73,7 @@ export const LinkChip = ({
         data-click-outside-id={LINK_CHIP_CLICK_OUTSIDE_ID}
         target={target}
         rel={target === '_blank' ? 'noopener noreferrer' : undefined}
+        {...linkProps}
       >
         <Chip
           size={size}

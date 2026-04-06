@@ -6,6 +6,7 @@ import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIs
 import {
   RecordInlineCellContext,
   type RecordInlineCellContextProps,
+  useRecordInlineCellContext,
 } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { useContext, type ReactNode } from 'react';
 import { useIcons } from 'twenty-ui/display';
@@ -17,6 +18,7 @@ type RecordInlineCellAnchoredPortalContextProps = {
 export const RecordInlineCellAnchoredPortalContext = ({
   children,
 }: RecordInlineCellAnchoredPortalContextProps) => {
+  const parentInlineCellContext = useRecordInlineCellContext();
   const {
     isRecordFieldReadOnly,
     fieldDefinition,
@@ -44,6 +46,7 @@ export const RecordInlineCellAnchoredPortalContext = ({
     isDisplayModeFixHeight: isDisplayModeFixHeight,
     editModeContentOnly: isFieldInputOnly,
     loading: false,
+    isEditModeOpen: parentInlineCellContext.isEditModeOpen,
     onOpenEditMode,
     onCloseEditMode,
   };

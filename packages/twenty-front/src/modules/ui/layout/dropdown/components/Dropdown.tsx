@@ -24,7 +24,12 @@ import {
   useFloating,
 } from '@floating-ui/react';
 import { styled } from '@linaria/react';
-import { type MouseEvent, type ReactNode, useCallback } from 'react';
+import {
+  type HTMLAttributes,
+  type MouseEvent,
+  type ReactNode,
+  useCallback,
+} from 'react';
 import { flushSync } from 'react-dom';
 import { type Keys } from 'react-hotkeys-hook';
 import { isDefined } from 'twenty-shared/utils';
@@ -46,6 +51,7 @@ const StyledClickableComponent = styled.div<{
 
 export type DropdownProps = {
   clickableComponent?: ReactNode;
+  clickableComponentProps?: HTMLAttributes<HTMLDivElement>;
   clickableComponentWidth?: Width;
   dropdownComponents: ReactNode;
   hotkey?: {
@@ -72,6 +78,7 @@ export type DropdownProps = {
 
 export const Dropdown = ({
   clickableComponent,
+  clickableComponentProps,
   dropdownComponents,
   hotkey,
   dropdownId,
@@ -204,6 +211,7 @@ export const Dropdown = ({
           aria-haspopup={true}
           role="button"
           width={clickableComponentWidth}
+          {...clickableComponentProps}
         >
           {clickableComponent}
         </StyledClickableComponent>

@@ -5,12 +5,14 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledRecordTableCellHoveredPortalContent = styled.div<{
   readonly?: boolean;
   isCentered?: boolean;
+  isDisabled?: boolean;
 }>`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   justify-content: ${({ isCentered }) =>
     isCentered === true ? 'center' : 'normal'};
+  pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
 
   width: 100%;
 `;
@@ -29,12 +31,14 @@ type RecordInlineCellHoveredPortalContentProps = {
   children: React.ReactNode;
   readonly: boolean;
   isCentered?: boolean;
+  isDisabled?: boolean;
   onMouseLeave?: () => void;
 };
 
 export const RecordInlineCellHoveredPortalContent = ({
   children,
   isCentered,
+  isDisabled,
   readonly,
   onMouseLeave,
 }: RecordInlineCellHoveredPortalContentProps) => {
@@ -46,6 +50,7 @@ export const RecordInlineCellHoveredPortalContent = ({
       >
         <StyledRecordTableCellHoveredPortalContent
           isCentered={isCentered}
+          isDisabled={isDisabled}
           readonly={readonly}
         >
           {children}

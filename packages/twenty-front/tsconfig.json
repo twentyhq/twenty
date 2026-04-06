@@ -21,6 +21,9 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "../../.cache/tsc",
     "paths": {
+      "@aicorg/runtime": ["/mnt/c/users/vatsa/agentinteractioncontrol/packages/runtime/src/index.ts"],
+      "@aicorg/sdk-react": ["/mnt/c/users/vatsa/agentinteractioncontrol/packages/sdk-react/src/index.tsx"],
+      "@aicorg/spec": ["/mnt/c/users/vatsa/agentinteractioncontrol/packages/spec/src/index.ts"],
       "@/*": ["./src/modules/*"],
       "~/*": ["./src/*"]
     },

@@ -13,7 +13,5 @@ export const SelectFieldDisplay = () => {
     return <></>;
   }
 
-  return (
-    <SelectDisplay color={selectedOption.color} label={selectedOption.label} />
-  );
+  return <SelectDisplay color={selectedOption.color} label={selectedOption.label} />;
 };

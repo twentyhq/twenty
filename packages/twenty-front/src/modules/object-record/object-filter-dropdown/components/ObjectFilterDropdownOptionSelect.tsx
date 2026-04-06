@@ -19,6 +19,7 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAICElement } from '@aicorg/sdk-react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MAX_OPTIONS_TO_DISPLAY } from 'twenty-shared/constants';
@@ -30,6 +31,46 @@ export const EMPTY_FILTER_VALUE = '';
 
 type SelectOptionForFilter = FieldMetadataItemOption & {
   isSelected: boolean;
+};
+
+const FilterOptionMenuItem = ({
+  option,
+  selected,
+  isKeySelected,
+  onSelectChange,
+  fieldName,
+  fieldLabel,
+}: {
+  option: SelectOptionForFilter;
+  selected: boolean;
+  isKeySelected?: boolean;
+  onSelectChange: (selected: boolean) => void;
+  fieldName: string;
+  fieldLabel: string;
+}) => {
+  const { attributes } = useAICElement({
+    agentId: `opportunity.view.filter.option.${fieldName}.${option.value}`,
+    agentAction: 'select',
+    agentDescription: `Apply the ${option.label} option for the ${fieldLabel} filter on the current opportunities view.`,
+    agentEntityId: option.id,
+    agentEntityLabel: option.label,
+    agentEntityType: 'opportunity_filter_option',
+    agentLabel: `Filter opportunities where ${fieldLabel} includes ${option.label}`,
+    agentRisk: 'low',
+    agentWorkflowStep: 'opportunity.view.select_filter_value',
+  });
+
+  return (
+    <MenuItemMultiSelect
+      selected={selected}
+      isKeySelected={isKeySelected}
+      onSelectChange={onSelectChange}
+      text={option.label}
+      color={option.color}
+      className=""
+      {...attributes}
+    />
+  );
 };
 
 export const ObjectFilterDropdownOptionSelect = ({
@@ -77,6 +118,8 @@ export const ObjectFilterDropdownOptionSelect = ({
   );
 
   const fieldMetaDataId = fieldMetadataItemUsedInDropdown?.id ?? '';
+  const fieldName = fieldMetadataItemUsedInDropdown?.name ?? 'field';
+  const fieldLabel = fieldMetadataItemUsedInDropdown?.label ?? 'field';
 
   const { selectOptions } = useOptionsForSelect(fieldMetaDataId);
 
@@ -163,16 +206,16 @@ export const ObjectFilterDropdownOptionSelect = ({
           <MenuItem text={t`No results`} />
         ) : (
           optionsInDropdown?.map((option) => (
-            <MenuItemMultiSelect
+            <FilterOptionMenuItem
               key={option.id}
+              option={option}
               selected={option.isSelected}
               isKeySelected={option.id === selectedItemId}
               onSelectChange={(selected) =>
                 handleMultipleOptionSelectChange(option, selected)
               }
-              text={option.label}
-              color={option.color}
-              className=""
+              fieldName={fieldName}
+              fieldLabel={fieldLabel}
             />
           ))
         )}

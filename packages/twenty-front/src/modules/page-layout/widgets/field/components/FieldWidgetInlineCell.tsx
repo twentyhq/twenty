@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useState } from 'react';
 
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { FieldInput } from '@/object-record/record-field/ui/components/FieldInput';
@@ -7,14 +7,13 @@ import { FieldFocusContextProvider } from '@/object-record/record-field/ui/conte
 import { useGetButtonIcon } from '@/object-record/record-field/ui/hooks/useGetButtonIcon';
 
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
-import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
-
 import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import {
   FieldInputEventContext,
   type FieldInputClickOutsideEvent,
   type FieldInputEvent,
 } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
+import { useInitDraftValue } from '@/object-record/record-field/ui/hooks/useInitDraftValue';
 import { usePersistFieldFromFieldInputContext } from '@/object-record/record-field/ui/hooks/usePersistFieldFromFieldInputContext';
 import {
   RecordInlineCellContext,
@@ -22,8 +21,12 @@ import {
 } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { FieldWidgetInlineCellContainer } from '@/page-layout/widgets/field/components/FieldWidgetInlineCellContainer';
+import { useOpenFieldWidgetFieldInputEditMode } from '@/page-layout/widgets/field/hooks/useOpenFieldWidgetFieldInputEditMode';
+import { fieldWidgetHoverComponentState } from '@/page-layout/widgets/field/states/fieldWidgetHoverComponentState';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
+import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useStore } from 'jotai';
 
 type FieldWidgetInlineCellProps = {
@@ -33,10 +36,11 @@ type FieldWidgetInlineCellProps = {
 
 export const FieldWidgetInlineCell = ({
   loading,
-  instanceIdPrefix,
+  instanceIdPrefix: _instanceIdPrefix,
 }: FieldWidgetInlineCellProps) => {
   const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
   const store = useStore();
+  const [isEditModeOpen, setIsEditModeOpen] = useState(false);
   const {
     fieldDefinition,
     recordId,
@@ -47,31 +51,43 @@ export const FieldWidgetInlineCell = ({
     isRecordFieldReadOnly: isReadOnly,
   } = useContext(FieldContext);
 
-  const { openFieldInput, closeFieldInput } = useOpenFieldInputEditMode();
+  const { openFieldInput, closeFieldInput } =
+    useOpenFieldWidgetFieldInputEditMode();
+  const initFieldInputDraftValue = useInitDraftValue();
+  const { setActiveDropdownFocusIdAndMemorizePrevious } =
+    useSetActiveDropdownFocusIdAndMemorizePrevious();
+  const setFieldWidgetHover = useSetAtomComponentState(
+    fieldWidgetHoverComponentState,
+  );
 
   const onOpenEditMode = onOpenEditModeFromContext
     ? onOpenEditModeFromContext
-    : () =>
+    : () => {
+        setFieldWidgetHover(false);
+        setIsEditModeOpen(true);
+        initFieldInputDraftValue({
+          recordId,
+          fieldDefinition,
+        });
+        const dropdownId = getDropdownFocusIdForRecordField({
+          recordId,
+          fieldMetadataId: fieldDefinition.fieldMetadataId,
+          componentType: 'inline-cell',
+          instanceId: scopeInstanceId,
+        });
+        setActiveDropdownFocusIdAndMemorizePrevious(dropdownId);
         openFieldInput({
           fieldDefinition,
           recordId,
-          prefix: instanceIdPrefix,
         });
+      };
 
   const onCloseEditMode = useCallback(() => {
-    onCloseEditModeFromContext
-      ? onCloseEditModeFromContext()
-      : closeFieldInput({
-          fieldDefinition,
-          recordId,
-          prefix: instanceIdPrefix,
-        });
+    setIsEditModeOpen(false);
+    onCloseEditModeFromContext ? onCloseEditModeFromContext() : closeFieldInput();
   }, [
     onCloseEditModeFromContext,
     closeFieldInput,
-    fieldDefinition,
-    recordId,
-    instanceIdPrefix,
   ]);
 
   const buttonIcon = useGetButtonIcon();
@@ -182,6 +198,7 @@ export const FieldWidgetInlineCell = ({
     editModeContentOnly: isFieldInputOnly,
     loading: loading,
     isCentered,
+    isEditModeOpen,
     onOpenEditMode,
     onCloseEditMode,
   };

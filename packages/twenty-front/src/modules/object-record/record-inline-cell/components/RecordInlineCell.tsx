@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useState } from 'react';
 
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { FieldInput } from '@/object-record/record-field/ui/components/FieldInput';
@@ -47,19 +47,23 @@ export const RecordInlineCell = ({
   } = useContext(FieldContext);
   const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
   const store = useStore();
+  const [isEditModeOpen, setIsEditModeOpen] = useState(false);
 
   const { openFieldInput, closeFieldInput } = useOpenFieldInputEditMode();
 
   const onOpenEditMode = onOpenEditModeFromContext
     ? onOpenEditModeFromContext
-    : () =>
+    : () => {
+        setIsEditModeOpen(true);
         openFieldInput({
           fieldDefinition,
           recordId,
           prefix: instanceIdPrefix,
         });
+      };
 
   const onCloseEditMode = useCallback(() => {
+    setIsEditModeOpen(false);
     onCloseEditModeFromContext
       ? onCloseEditModeFromContext()
       : closeFieldInput({
@@ -189,6 +193,7 @@ export const RecordInlineCell = ({
     isDisplayModeFixHeight: isDisplayModeFixHeight,
     editModeContentOnly: isFieldInputOnly,
     loading: loading,
+    isEditModeOpen,
     onOpenEditMode,
     onCloseEditMode,
   };

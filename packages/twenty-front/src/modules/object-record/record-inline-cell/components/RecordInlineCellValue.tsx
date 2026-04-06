@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { type HTMLAttributes } from 'react';
 
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
@@ -21,7 +22,11 @@ const StyledClickableContainer = styled.div<{
   width: 100%;
 `;
 
-export const RecordInlineCellValue = () => {
+export const RecordInlineCellValue = ({
+  containerAttributes,
+}: {
+  containerAttributes?: HTMLAttributes<HTMLDivElement>;
+}) => {
   const { readonly, loading, isCentered, onOpenEditMode } =
     useRecordInlineCellContext();
   const { isFocused } = useFieldFocus();
@@ -35,6 +40,7 @@ export const RecordInlineCellValue = () => {
       <RecordInlineCellDisplayMode
         isHovered={isFocused}
         onClick={onOpenEditMode}
+        containerAttributes={containerAttributes}
       >
         <FieldDisplay />
       </RecordInlineCellDisplayMode>

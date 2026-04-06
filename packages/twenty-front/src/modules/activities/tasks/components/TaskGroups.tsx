@@ -7,6 +7,7 @@ import { type ActivityTargetableObject } from '@/activities/types/ActivityTarget
 import { type Task } from '@/activities/types/Task';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { useAICElement } from '@aicorg/sdk-react';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
@@ -65,6 +66,20 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
     (activeTabId !== 'done' && tasks?.length === 0) ||
     (activeTabId === 'done' && tasks?.length === 0);
 
+  const emptyStateTaskAction = useAICElement({
+    agentId: `${targetableObject.targetObjectNameSingular}.task.add.empty_state.${targetableObject.id}`,
+    agentAction: 'open',
+    agentDescription:
+      'Open the task creation flow for the current record from the empty-state tasks view.',
+    agentEntityId: targetableObject.id,
+    agentEntityLabel: `${targetableObject.targetObjectNameSingular} ${targetableObject.id}`,
+    agentEntityType: targetableObject.targetObjectNameSingular,
+    agentExamples: ['Follow up with Google procurement before proposal review.'],
+    agentLabel: `Add task to ${targetableObject.targetObjectNameSingular}`,
+    agentRisk: 'medium',
+    agentWorkflowStep: `${targetableObject.targetObjectNameSingular}.add_task`,
+  });
+
   if (isLoading && isTasksEmpty) {
     return <SkeletonLoader />;
   }
@@ -85,16 +100,18 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
         {hasObjectUpdatePermissions && (
-          <Button
-            Icon={IconPlus}
-            title={t`New task`}
-            variant="secondary"
-            onClick={() =>
-              openCreateActivity({
-                targetableObjects: [targetableObject],
-              })
-            }
-          />
+          <div {...emptyStateTaskAction.attributes}>
+            <Button
+              Icon={IconPlus}
+              title={t`New task`}
+              variant="secondary"
+              onClick={() =>
+                openCreateActivity({
+                  targetableObjects: [targetableObject],
+                })
+              }
+            />
+          </div>
         )}
       </AnimatedPlaceholderEmptyContainer>
     );

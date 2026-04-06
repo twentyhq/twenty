@@ -2,6 +2,7 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderSidePanelButtonClickOutsideId';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAICElement } from '@aicorg/sdk-react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
@@ -29,8 +30,18 @@ export const CommandMenuItemMoreActionsButton = () => {
     ? t`Close side panel`
     : t`Open side panel`;
 
+  const { attributes } = useAICElement({
+    agentId: 'record.more_actions.toggle',
+    agentAction: isSidePanelOpened ? 'close' : 'open',
+    agentDescription:
+      'Toggle the record more-actions side panel to expose record-scoped commands.',
+    agentLabel: 'Toggle record more actions',
+    agentRisk: 'low',
+    agentWorkflowStep: 'record.open_more_actions',
+  });
+
   return (
-    <div id="toggle-side-panel-button">
+    <div id="toggle-side-panel-button" {...attributes}>
       <AnimatedButton
         animatedSvg={
           <AnimatedIconCrossfade

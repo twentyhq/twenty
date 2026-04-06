@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { type HTMLAttributes } from 'react';
 
 import { Tag } from '@ui/components';
 import { type IconComponent } from '@ui/display';
@@ -17,7 +18,7 @@ const StyledLeftContentWithCheckboxContainer = styled.div`
   overflow: hidden;
 `;
 
-type MenuItemMultiSelectProps = {
+type MenuItemMultiSelectProps = HTMLAttributes<HTMLDivElement> & {
   color?: ThemeColor;
   LeftIcon?: IconComponent;
   selected: boolean;
@@ -37,6 +38,7 @@ export const MenuItemMultiSelect = ({
   isKeySelected,
   className,
   onSelectChange,
+  ...rest
 }: MenuItemMultiSelectProps) => {
   const handleOnClick = () => {
     onSelectChange?.(!selected);
@@ -47,6 +49,7 @@ export const MenuItemMultiSelect = ({
       isKeySelected={isKeySelected}
       className={className}
       onClick={handleOnClick}
+      {...rest}
     >
       <StyledLeftContentWithCheckboxContainer>
         <Checkbox checked={selected} />

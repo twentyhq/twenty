@@ -32,7 +32,10 @@ export const RecordTableCellWrapper = ({
       }}
       key={recordField.fieldMetadataItemId}
     >
-      <RecordTableCellFieldContextWrapper recordField={recordField}>
+      <RecordTableCellFieldContextWrapper
+        recordField={recordField}
+        aicSurface="table"
+      >
         {children}
       </RecordTableCellFieldContextWrapper>
     </RecordTableCellContext.Provider>

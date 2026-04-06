@@ -4,6 +4,7 @@ import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryP
 import { useIncrementalDestroyManyRecords } from '@/object-record/hooks/useIncrementalDestroyManyRecords';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { useAICElement } from '@aicorg/sdk-react';
 import { t } from '@lingui/core/macro';
 import { AppPath, type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -71,13 +72,35 @@ export const DestroyRecordsCommand = () => {
     ? t`Are you sure you want to destroy this ${objectMetadataItem.labelSingular}? It cannot be recovered anymore.`
     : t`Are you sure you want to destroy these ${objectMetadataItem.labelPlural}? They won't be recoverable anymore.`;
   const confirmButtonText = `${t`Permanently Destroy`} ${objectLabel}`;
+  const selectedRecord = selectedRecords.at(0);
+  const { attributes } = useAICElement({
+    agentId: `${objectMetadataItem.nameSingular}.destroy.${selectedRecord?.id ?? 'selection'}`,
+    agentAction: 'delete',
+    agentConfirmation: {
+      prompt_template: `Permanently destroy the selected ${objectLabel}. This cannot be undone.`,
+      summary_fields: ['entity_label', 'entity_id'],
+      type: 'human_review',
+    },
+    agentDescription:
+      'Permanently destroy the selected record after explicit confirmation.',
+    agentEntityId: selectedRecord?.id ?? 'selection',
+    agentEntityLabel: selectedRecord?.name ?? objectLabel,
+    agentEntityType: objectMetadataItem.nameSingular,
+    agentLabel: `Destroy ${objectLabel}`,
+    agentRequiresConfirmation: true,
+    agentRisk: 'critical',
+    agentWorkflowStep: `${objectMetadataItem.nameSingular}.confirm_destroy`,
+  });
 
   return (
-    <HeadlessConfirmationModalEngineCommandEffect
-      title={title}
-      subtitle={subtitle}
-      confirmButtonText={confirmButtonText}
-      execute={handleExecute}
-    />
+    <>
+      <span hidden {...attributes} />
+      <HeadlessConfirmationModalEngineCommandEffect
+        title={title}
+        subtitle={subtitle}
+        confirmButtonText={confirmButtonText}
+        execute={handleExecute}
+      />
+    </>
   );
 };

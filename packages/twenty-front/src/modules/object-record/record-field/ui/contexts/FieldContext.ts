@@ -1,4 +1,4 @@
-import { createContext, type MouseEvent } from 'react';
+import { createContext, type AnchorHTMLAttributes, type MouseEvent } from 'react';
 
 import { type TriggerEventType } from 'twenty-ui/utilities';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
@@ -36,6 +36,10 @@ export type GenericFieldContextType = {
   isRecordFieldReadOnly: boolean;
   disableChipClick?: boolean;
   onRecordChipClick?: (event: MouseEvent) => void;
+  recordChipLinkAttributes?: Omit<
+    AnchorHTMLAttributes<HTMLAnchorElement>,
+    'className' | 'href' | 'onClick' | 'onMouseDown' | 'target'
+  >;
   onOpenEditMode?: () => void;
   onCloseEditMode?: () => void;
   onMouseEnter?: () => void;

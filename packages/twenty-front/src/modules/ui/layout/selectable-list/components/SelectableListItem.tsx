@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useRef } from 'react';
+import { type HTMLAttributes, type ReactNode, useEffect, useRef } from 'react';
 
 import { SelectableListItemHotkeyEffect } from '@/ui/layout/selectable-list/components/SelectableListItemHotkeyEffect';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
@@ -19,6 +19,7 @@ export type SelectableListItemProps = {
   children: ReactNode;
   onEnter?: () => void;
   className?: string;
+  containerProps?: HTMLAttributes<HTMLDivElement>;
 };
 
 export const SelectableListItem = ({
@@ -26,6 +27,7 @@ export const SelectableListItem = ({
   children,
   onEnter,
   className,
+  containerProps,
 }: SelectableListItemProps) => {
   const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
@@ -58,7 +60,11 @@ export const SelectableListItem = ({
       {isSelectedItemId && isDefined(onEnter) && (
         <SelectableListItemHotkeyEffect itemId={itemId} onEnter={onEnter} />
       )}
-      <StyledListItemContainer ref={listItemRef} className={className}>
+      <StyledListItemContainer
+        ref={listItemRef}
+        className={className}
+        {...containerProps}
+      >
         {children}
       </StyledListItemContainer>
     </>

@@ -18,6 +18,7 @@ import { createWywProfilingPlugin } from 'twenty-shared/vite';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, __dirname, '');
+  const aicRepoRoot = '/mnt/c/users/vatsa/agentinteractioncontrol';
 
   const {
     REACT_APP_SERVER_BASE_URL,
@@ -65,6 +66,7 @@ export default defineConfig(({ mode }) => {
           }),
       fs: {
         allow: [
+          aicRepoRoot,
           searchForWorkspaceRoot(process.cwd()),
           '**/@blocknote/core/src/fonts/**',
         ],
@@ -247,6 +249,18 @@ export default defineConfig(({ mode }) => {
     },
     resolve: {
       alias: {
+        '@aicorg/runtime': path.resolve(
+          aicRepoRoot,
+          'packages/runtime/src/index.ts',
+        ),
+        '@aicorg/sdk-react': path.resolve(
+          aicRepoRoot,
+          'packages/sdk-react/src/index.tsx',
+        ),
+        '@aicorg/spec': path.resolve(
+          aicRepoRoot,
+          'packages/spec/src/index.ts',
+        ),
         path: 'rollup-plugin-node-polyfills/polyfills/path',
       },
     },

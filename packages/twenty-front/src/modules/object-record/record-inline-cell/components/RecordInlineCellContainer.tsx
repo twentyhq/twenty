@@ -1,5 +1,6 @@
+import { useAICElement } from '@aicorg/sdk-react';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { type HTMLAttributes, useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -70,7 +71,7 @@ export const StyledSkeletonDiv = styled.div`
 `;
 
 export const RecordInlineCellContainer = () => {
-  const { readonly, IconLabel, label, labelWidth, showLabel } =
+  const { readonly, IconLabel, label, labelWidth, showLabel, isEditModeOpen } =
     useRecordInlineCellContext();
   const { theme } = useContext(ThemeContext);
 
@@ -101,6 +102,14 @@ export const RecordInlineCellContainer = () => {
     recordId,
     fieldName: fieldDefinition?.metadata?.fieldName,
   })}`;
+
+  const fieldEntryMetadata = buildOpportunityStageEntryAICMetadata({
+    isEditModeOpen,
+    recordId,
+    fieldName: fieldDefinition?.metadata?.fieldName,
+    objectNameSingular: fieldDefinition?.metadata?.objectMetadataNameSingular,
+    fieldLabel: fieldDefinition?.label,
+  });
 
   return (
     <StyledInlineCellBaseContainer
@@ -135,8 +144,70 @@ export const RecordInlineCellContainer = () => {
         </StyledLabelAndIconContainer>
       )}
       <StyledValueContainer readonly={readonly ?? false} id={anchorId}>
-        <RecordInlineCellValue />
+        <RecordInlineCellAICBridge metadata={fieldEntryMetadata}>
+          {(containerAttributes) => (
+            <RecordInlineCellValue containerAttributes={containerAttributes} />
+          )}
+        </RecordInlineCellAICBridge>
       </StyledValueContainer>
     </StyledInlineCellBaseContainer>
   );
+};
+
+const RecordInlineCellAICBridge = ({
+  metadata,
+  children,
+}: {
+  metadata: ReturnType<typeof buildOpportunityStageEntryAICMetadata>;
+  children: (
+    containerAttributes?: HTMLAttributes<HTMLDivElement>,
+  ) => React.ReactNode;
+}) => {
+  if (!metadata) {
+    return children();
+  }
+
+  const { attributes } = useAICElement(metadata, {
+    defaultAction: 'click',
+  });
+
+  return children(attributes as HTMLAttributes<HTMLDivElement>);
+};
+
+const buildOpportunityStageEntryAICMetadata = ({
+  isEditModeOpen,
+  recordId,
+  fieldName,
+  objectNameSingular,
+  fieldLabel,
+}: {
+  isEditModeOpen?: boolean;
+  recordId: string;
+  fieldName?: string;
+  objectNameSingular?: string;
+  fieldLabel?: string;
+}) => {
+  if (objectNameSingular !== 'opportunity' || fieldName !== 'stage') {
+    return null;
+  }
+
+  return {
+    agentId: isEditModeOpen
+      ? `opportunity.stage.select_trigger.${recordId}`
+      : `opportunity.stage.open_editor.${recordId}`,
+    agentAction: 'click' as const,
+    agentDescription: isEditModeOpen
+      ? 'Open the stage option list for this exact opportunity from the active inline editor.'
+      : 'Open the opportunity stage editor for this exact record before choosing a new stage.',
+    agentEntityId: recordId,
+    agentEntityLabel: `Opportunity ${recordId}`,
+    agentEntityType: 'opportunity',
+    agentLabel: isEditModeOpen
+      ? `${fieldLabel ?? 'Stage'} current value`
+      : fieldLabel ?? 'Stage',
+    agentRisk: 'medium' as const,
+    agentWorkflowStep: isEditModeOpen
+      ? 'opportunity.stage.open_selector'
+      : 'opportunity.stage.open_editor',
+  };
 };

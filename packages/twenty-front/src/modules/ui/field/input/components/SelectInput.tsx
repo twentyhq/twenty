@@ -1,3 +1,4 @@
+import { type HTMLAttributes } from 'react';
 import { SelectInput as SelectBaseInput } from '@/ui/input/components/SelectInput';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { type SelectOption } from 'twenty-ui/input';
@@ -15,6 +16,9 @@ type SelectInputProps = {
   onClear?: (() => void) | undefined;
   clearLabel?: string;
   onAddSelectOption?: (optionName: string) => void;
+  getOptionContainerProps?: (
+    option: SelectOption,
+  ) => HTMLAttributes<HTMLDivElement> | undefined;
 };
 
 export const SelectInput = ({
@@ -29,6 +33,7 @@ export const SelectInput = ({
   onClear,
   clearLabel,
   onAddSelectOption,
+  getOptionContainerProps,
 }: SelectInputProps) => {
   return (
     <SelectableList
@@ -46,6 +51,7 @@ export const SelectInput = ({
         clearLabel={clearLabel}
         focusId={focusId}
         onAddSelectOption={onAddSelectOption}
+        getOptionContainerProps={getOptionContainerProps}
       />
     </SelectableList>
   );

@@ -6,6 +6,7 @@ import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryP
 import { useIncrementalDeleteManyRecords } from '@/object-record/hooks/useIncrementalDeleteManyRecords';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { useAICElement } from '@aicorg/sdk-react';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -41,6 +42,35 @@ export const DeleteRecordsCommand = () => {
   const { removeNavigationMenuItemsByTargetRecordIds } =
     useRemoveNavigationMenuItemByTargetRecordId();
 
+  const isSingleRecord = selectedRecords.length === 1;
+  const selectedRecord = selectedRecords.at(0);
+  const objectLabel = isSingleRecord
+    ? objectMetadataItem.labelSingular
+    : objectMetadataItem.labelPlural;
+
+  const { attributes } = useAICElement({
+    agentAction: 'click',
+    agentDescription:
+      'Soft delete the selected record. This is reversible through the restore action.',
+    agentEntityId: selectedRecord?.id ?? 'selection',
+    agentEntityLabel: selectedRecord?.name ?? objectLabel,
+    agentEntityType: objectMetadataItem.nameSingular,
+    agentExecution: {
+      settled_when: [
+        'Deleted record banner is visible or the record disappears from the current active list view.',
+      ],
+    },
+    agentId: `${objectMetadataItem.nameSingular}.soft_delete.${selectedRecord?.id ?? 'selection'}`,
+    agentLabel: `Delete ${objectLabel}`,
+    agentRecovery: {
+      partial_state_changed: true,
+      recovery: 'Use the restore action to recover the deleted record.',
+      retryable: false,
+    },
+    agentRisk: 'high',
+    agentWorkflowStep: `${objectMetadataItem.nameSingular}.soft_delete`,
+  });
+
   const handleExecute = async () => {
     removeSelectedRecordsFromRecordBoard();
     resetTableRowSelection();
@@ -63,5 +93,10 @@ export const DeleteRecordsCommand = () => {
     await incrementalDeleteManyRecords();
   };
 
-  return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;
+  return (
+    <>
+      <span hidden {...attributes} />
+      <HeadlessEngineCommandWrapperEffect execute={handleExecute} />
+    </>
+  );
 };

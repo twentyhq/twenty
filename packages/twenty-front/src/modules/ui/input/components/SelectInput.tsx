@@ -9,7 +9,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { type HTMLAttributes, useEffect, useMemo, useRef, useState } from 'react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type TagColor } from 'twenty-ui/components';
@@ -27,6 +27,12 @@ interface SelectInputProps {
   clearLabel?: string;
   focusId: string;
   onAddSelectOption?: (optionName: string) => void;
+  getControlContainerProps?: (
+    selectedOption: SelectOption | undefined,
+  ) => HTMLAttributes<HTMLDivElement> | undefined;
+  getOptionContainerProps?: (
+    option: SelectOption,
+  ) => HTMLAttributes<HTMLDivElement> | undefined;
 }
 
 export const SelectInput = ({
@@ -38,6 +44,8 @@ export const SelectInput = ({
   defaultOption,
   onFilterChange,
   onAddSelectOption,
+  getControlContainerProps,
+  getOptionContainerProps,
 }: SelectInputProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -132,6 +140,7 @@ export const SelectInput = ({
               key={option.value}
               itemId={option.value}
               onEnter={() => handleOptionChange(option)}
+              containerProps={getOptionContainerProps?.(option)}
             >
               <MenuItemSelectTag
                 key={option.value}

@@ -9,14 +9,17 @@ import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/co
 import { RecordTableUpdateContext } from '@/object-record/record-table/contexts/RecordTableUpdateContext';
 import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useContext, type ReactNode } from 'react';
+import { useAICElement } from '@aicorg/sdk-react';
+import { useContext, useId, type ReactNode } from 'react';
 
 type RecordTableCellFieldContextLabelIdentifierProps = {
   children: ReactNode;
+  aicSurface?: 'table' | 'portal';
 };
 
 export const RecordTableCellFieldContextLabelIdentifier = ({
   children,
+  aicSurface = 'table',
 }: RecordTableCellFieldContextLabelIdentifierProps) => {
   const {
     objectPermissionsByObjectMetadataId,
@@ -48,6 +51,22 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
 
   const fieldDefinition =
     fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
+  const portalInstanceId = useId().replace(/:/g, '');
+
+  const { attributes } = useAICElement({
+    agentId:
+      aicSurface === 'table'
+        ? `${objectMetadataItem.nameSingular}.row.open_identifier.${recordId}`
+        : `${objectMetadataItem.nameSingular}.row.open_identifier.portal.${recordId}.${portalInstanceId}`,
+    agentAction: 'navigate',
+    agentDescription: `Open the ${objectMetadataItem.labelSingular} record details from the list identifier.`,
+    agentEntityId: recordId,
+    agentEntityLabel: `${objectMetadataItem.labelSingular} ${recordId}`,
+    agentEntityType: objectMetadataItem.nameSingular,
+    agentLabel: `Open ${objectMetadataItem.labelSingular} from list`,
+    agentRisk: 'low',
+    agentWorkflowStep: `${objectMetadataItem.nameSingular}.locate_record`,
+  });
 
   const handleChipClick = () => {
     onRecordIdentifierClick?.(rowIndex, recordId);
@@ -77,7 +96,8 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
         maxWidth: recordField.size,
         onRecordChipClick: handleChipClick,
         isForbidden: !hasObjectReadPermissions,
-        triggerEvent,
+        triggerEvent: aicSurface === 'table' ? 'CLICK' : triggerEvent,
+        recordChipLinkAttributes: attributes,
       }}
     >
       {children}

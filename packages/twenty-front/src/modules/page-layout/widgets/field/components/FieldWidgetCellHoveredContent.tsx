@@ -6,8 +6,11 @@ import { RecordInlineCellDisplayMode } from '@/object-record/record-inline-cell/
 import { RecordInlineCellHoveredPortalContent } from '@/object-record/record-inline-cell/components/RecordInlineCellHoveredPortalContent';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { FieldWidgetInputContextProvider } from '@/page-layout/widgets/field/components/FieldWidgetInputContextProvider';
+import { useIsFieldWidgetEditing } from '@/page-layout/widgets/field/hooks/useIsFieldWidgetEditing';
 import { useOpenFieldWidgetFieldInputEditMode } from '@/page-layout/widgets/field/hooks/useOpenFieldWidgetFieldInputEditMode';
-import { useContext } from 'react';
+import { fieldWidgetHoverComponentState } from '@/page-layout/widgets/field/states/fieldWidgetHoverComponentState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useContext, useState } from 'react';
 
 type FieldWidgetCellHoveredContentProps = {
   onMouseLeave: () => void;
@@ -22,12 +25,23 @@ export const FieldWidgetCellHoveredContent = ({
 
   const { openInlineCell } = useInlineCell();
   const { openFieldInput } = useOpenFieldWidgetFieldInputEditMode();
+  const { isEditing } = useIsFieldWidgetEditing();
+  const setFieldWidgetHover = useSetAtomComponentState(
+    fieldWidgetHoverComponentState,
+  );
+  const [isActivating, setIsActivating] = useState(false);
 
   const shouldContainerBeClickable =
     !isRecordFieldReadOnly && !editModeContentOnly;
 
+  if (isActivating) {
+    return null;
+  }
+
   const handleClick = () => {
     if (shouldContainerBeClickable) {
+      setIsActivating(true);
+      setFieldWidgetHover(false);
       openInlineCell();
       openFieldInput({
         fieldDefinition,
@@ -38,6 +52,7 @@ export const FieldWidgetCellHoveredContent = ({
 
   return (
     <RecordInlineCellHoveredPortalContent
+      isDisabled={isActivating || isEditing}
       readonly={isRecordFieldReadOnly}
       isCentered={isCentered}
       onMouseLeave={onMouseLeave}

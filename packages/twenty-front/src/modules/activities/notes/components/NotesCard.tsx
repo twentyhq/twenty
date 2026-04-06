@@ -7,6 +7,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
+import { useAICElement } from '@aicorg/sdk-react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconPlus } from 'twenty-ui/display';
@@ -55,6 +56,23 @@ export const NotesCard = () => {
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
+  const noteActionId = `${targetRecord.targetObjectNameSingular}.note.add.${targetRecord.id}`;
+  const noteActionLabel = `Add note to ${targetRecord.targetObjectNameSingular}`;
+  const noteWorkflowStep = `${targetRecord.targetObjectNameSingular}.add_note`;
+  const noteAction = useAICElement({
+    agentId: noteActionId,
+    agentAction: 'open',
+    agentDescription:
+      'Open the note creation flow for the current record without changing the destructive-action state.',
+    agentEntityId: targetRecord.id,
+    agentEntityLabel: `${targetRecord.targetObjectNameSingular} ${targetRecord.id}`,
+    agentEntityType: targetRecord.targetObjectNameSingular,
+    agentExamples: ['Requested security review before proposal.'],
+    agentLabel: noteActionLabel,
+    agentRisk: 'medium',
+    agentWorkflowStep: noteWorkflowStep,
+  });
+
   if (loading && isNotesEmpty) {
     return <SkeletonLoader />;
   }
@@ -75,16 +93,18 @@ export const NotesCard = () => {
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
         {hasObjectUpdatePermissions && (
-          <Button
-            Icon={IconPlus}
-            title={t`New note`}
-            variant="secondary"
-            onClick={() =>
-              openCreateActivity({
-                targetableObjects: [targetRecord],
-              })
-            }
-          />
+          <div {...noteAction.attributes}>
+            <Button
+              Icon={IconPlus}
+              title={t`New note`}
+              variant="secondary"
+              onClick={() =>
+                openCreateActivity({
+                  targetableObjects: [targetRecord],
+                })
+              }
+            />
+          </div>
         )}
       </AnimatedPlaceholderEmptyContainer>
     );
@@ -98,17 +118,19 @@ export const NotesCard = () => {
         totalCount={totalCountNotes}
         button={
           hasObjectUpdatePermissions && (
-            <Button
-              Icon={IconPlus}
-              size="small"
-              variant="secondary"
-              title={t`Add note`}
-              onClick={() =>
-                openCreateActivity({
-                  targetableObjects: [targetRecord],
-                })
-              }
-            />
+            <div {...noteAction.attributes}>
+              <Button
+                Icon={IconPlus}
+                size="small"
+                variant="secondary"
+                title={t`Add note`}
+                onClick={() =>
+                  openCreateActivity({
+                    targetableObjects: [targetRecord],
+                  })
+                }
+              />
+            </div>
           )
         }
       />

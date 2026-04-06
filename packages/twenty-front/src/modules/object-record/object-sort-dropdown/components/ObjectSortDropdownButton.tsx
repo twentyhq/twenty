@@ -30,12 +30,57 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAICElement } from '@aicorg/sdk-react';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { type ComponentType } from 'react';
 import { findByProperty } from 'twenty-shared/utils';
 import { IconX, useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 import { v4 } from 'uuid';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
+
+type SortFieldMenuItemProps = {
+  fieldMetadataItem: FieldMetadataItem;
+  focused: boolean;
+  onClick: () => void;
+  testId: string;
+  objectNameSingular: string;
+  objectLabelPlural: string;
+  LeftIcon: ComponentType<any>;
+};
+
+const SortFieldMenuItem = ({
+  fieldMetadataItem,
+  focused,
+  onClick,
+  testId,
+  objectNameSingular,
+  objectLabelPlural,
+  LeftIcon,
+}: SortFieldMenuItemProps) => {
+  const { attributes } = useAICElement({
+    agentId: `${objectNameSingular}.view.sort.field.${fieldMetadataItem.name}`,
+    agentAction: 'select',
+    agentDescription: `Apply a sort on the ${fieldMetadataItem.label} field for the current ${objectLabelPlural} view.`,
+    agentEntityId: fieldMetadataItem.id,
+    agentEntityLabel: fieldMetadataItem.label,
+    agentEntityType: `${objectNameSingular}_field`,
+    agentLabel: `Sort ${objectLabelPlural} by ${fieldMetadataItem.label}`,
+    agentRisk: 'low',
+    agentWorkflowStep: `${objectNameSingular}.view.select_sort_field`,
+  });
+
+  return (
+    <MenuItem
+      focused={focused}
+      testId={testId}
+      onClick={onClick}
+      LeftIcon={LeftIcon}
+      text={fieldMetadataItem.label}
+      {...attributes}
+    />
+  );
+};
 
 export const ObjectSortDropdownButton = () => {
   const { resetRecordSortDropdownSearchInput } =
@@ -164,12 +209,25 @@ export const ObjectSortDropdownButton = () => {
 
   const shouldShowHiddenFields = hiddenFieldMetadataItemsSorted.length > 0;
   const shouldShowVisibleFields = visibleFieldMetadataItems.length > 0;
+  const sortAction = useAICElement({
+    agentId: `${objectMetadataItem.nameSingular}.view.sort.open`,
+    agentAction: 'open',
+    agentDescription:
+      'Open the current record list sort controls for this object view.',
+    agentEntityId: objectMetadataItem.id,
+    agentEntityLabel: objectMetadataItem.labelPlural,
+    agentEntityType: `${objectMetadataItem.nameSingular}_view`,
+    agentLabel: `Open ${objectMetadataItem.labelPlural} sort controls`,
+    agentRisk: 'low',
+    agentWorkflowStep: `${objectMetadataItem.nameSingular}.view.open_sort`,
+  });
 
   return (
     <Dropdown
       dropdownId={OBJECT_SORT_DROPDOWN_ID}
       dropdownOffset={{ y: 8 }}
       onOpen={handleDropdownOpen}
+      clickableComponentProps={sortAction.attributes}
       clickableComponent={
         <StyledHeaderDropdownButton isUnfolded={isDropdownOpen}>
           <Trans>Sort</Trans>
@@ -235,7 +293,8 @@ export const ObjectSortDropdownButton = () => {
                         itemId={visibleFieldMetadataItem.id}
                         onEnter={() => handleAddSort(visibleFieldMetadataItem)}
                       >
-                        <MenuItem
+                        <SortFieldMenuItem
+                          fieldMetadataItem={visibleFieldMetadataItem}
                           focused={
                             selectedItemId === visibleFieldMetadataItem.id
                           }
@@ -244,7 +303,8 @@ export const ObjectSortDropdownButton = () => {
                             handleAddSort(visibleFieldMetadataItem)
                           }
                           LeftIcon={getIcon(visibleFieldMetadataItem.icon)}
-                          text={visibleFieldMetadataItem.label}
+                          objectNameSingular={objectMetadataItem.nameSingular}
+                          objectLabelPlural={objectMetadataItem.labelPlural}
                         />
                       </SelectableListItem>
                     ),
@@ -264,14 +324,16 @@ export const ObjectSortDropdownButton = () => {
                         itemId={hiddenFieldMetadataItem.id}
                         onEnter={() => handleAddSort(hiddenFieldMetadataItem)}
                       >
-                        <MenuItem
+                        <SortFieldMenuItem
+                          fieldMetadataItem={hiddenFieldMetadataItem}
                           focused={
                             selectedItemId === hiddenFieldMetadataItem.id
                           }
                           testId={`hidden-select-sort-${index}`}
                           onClick={() => handleAddSort(hiddenFieldMetadataItem)}
                           LeftIcon={getIcon(hiddenFieldMetadataItem.icon)}
-                          text={hiddenFieldMetadataItem.label}
+                          objectNameSingular={objectMetadataItem.nameSingular}
+                          objectLabelPlural={objectMetadataItem.labelPlural}
                         />
                       </SelectableListItem>
                     ),
