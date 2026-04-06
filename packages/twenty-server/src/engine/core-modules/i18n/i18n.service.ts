@@ -6,6 +6,7 @@ import {
   type Messages,
   setupI18n,
 } from '@lingui/core';
+import { compileMessage } from '@lingui/message-utils/compileMessage';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { messages as afMessages } from 'src/engine/core-modules/i18n/locales/generated/af-ZA';
@@ -85,6 +86,7 @@ export class I18nService implements OnModuleInit {
     ).forEach(([locale, messages]) => {
       const localeI18n = setupI18n();
 
+      localeI18n.setMessagesCompiler(compileMessage);
       localeI18n.load(locale, messages);
       localeI18n.activate(locale);
 
