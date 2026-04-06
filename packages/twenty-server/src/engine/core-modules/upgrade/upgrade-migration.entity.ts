@@ -6,7 +6,7 @@ import {
   Unique,
 } from 'typeorm';
 
-export type UpgradeMigrationStatus = 'completed' | 'failed';
+export type UpgradeMigrationStatus = 'pending' | 'completed' | 'failed';
 
 @Entity({ name: 'upgradeMigration', schema: 'core' })
 @Unique('UQ_upgrade_migration_name', ['name'])

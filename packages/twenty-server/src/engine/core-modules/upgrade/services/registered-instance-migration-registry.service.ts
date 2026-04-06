@@ -3,11 +3,16 @@ import { DiscoveryService } from '@nestjs/core';
 
 import { type MigrationInterface } from 'typeorm';
 
-import { getRegisteredInstanceMigrationVersion } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
+import { getRegisteredInstanceMigrationMetadata } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
 import {
   UPGRADE_COMMAND_SUPPORTED_VERSIONS,
   type UpgradeCommandVersion,
 } from 'src/engine/constants/upgrade-command-supported-versions.constant';
+
+type TimestampedMigration = {
+  migration: MigrationInterface;
+  timestamp: number;
+};
 
 @Injectable()
 export class RegisteredInstanceMigrationService implements OnModuleInit {
@@ -15,7 +20,7 @@ export class RegisteredInstanceMigrationService implements OnModuleInit {
 
   private readonly migrationsByVersion = new Map<
     UpgradeCommandVersion,
-    MigrationInterface[]
+    TimestampedMigration[]
   >();
 
   constructor(private readonly discoveryService: DiscoveryService) {}
@@ -34,25 +39,34 @@ export class RegisteredInstanceMigrationService implements OnModuleInit {
         continue;
       }
 
-      const version = getRegisteredInstanceMigrationVersion(metatype);
+      const metadata = getRegisteredInstanceMigrationMetadata(metatype);
 
-      if (version === undefined) {
+      if (metadata === undefined) {
         continue;
       }
 
-      const bucket = this.migrationsByVersion.get(version);
+      const bucket = this.migrationsByVersion.get(metadata.version);
 
       if (!bucket) {
         continue;
       }
 
-      bucket.push(instance as MigrationInterface);
+      bucket.push({
+        migration: instance as MigrationInterface,
+        timestamp: metadata.timestamp,
+      });
     }
 
-    for (const [version, migrations] of this.migrationsByVersion) {
-      if (migrations.length > 0) {
+    for (const [, bucket] of this.migrationsByVersion) {
+      bucket.sort(
+        (entryA, entryB) => entryA.timestamp - entryB.timestamp,
+      );
+    }
+
+    for (const [version, bucket] of this.migrationsByVersion) {
+      if (bucket.length > 0) {
         this.logger.log(
-          `Registered ${migrations.length} versioned migration(s) for ${version}: ${migrations.map((migration) => migration.constructor.name).join(', ')}`,
+          `Registered ${bucket.length} versioned migration(s) for ${version}: ${bucket.map((entry) => entry.migration.constructor.name).join(', ')}`,
         );
       }
     }
@@ -61,7 +75,9 @@ export class RegisteredInstanceMigrationService implements OnModuleInit {
   getInstanceCommandsForVersion(
     version: UpgradeCommandVersion,
   ): MigrationInterface[] {
-    return this.migrationsByVersion.get(version) ?? [];
+    return (this.migrationsByVersion.get(version) ?? []).map(
+      (entry) => entry.migration,
+    );
   }
 
   getAllInstanceCommands(): {
@@ -74,10 +90,10 @@ export class RegisteredInstanceMigrationService implements OnModuleInit {
     }[] = [];
 
     for (const version of UPGRADE_COMMAND_SUPPORTED_VERSIONS) {
-      const migrations = this.migrationsByVersion.get(version) ?? [];
+      const bucket = this.migrationsByVersion.get(version) ?? [];
 
-      for (const migration of migrations) {
-        result.push({ version, migration });
+      for (const entry of bucket) {
+        result.push({ version, migration: entry.migration });
       }
     }
 

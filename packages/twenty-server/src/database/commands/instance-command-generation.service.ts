@@ -52,12 +52,13 @@ export class InstanceCommandGenerationService {
           `    await queryRunner.query('${this.escapeForSingleQuotedString(query)}'${this.formatQueryParams(parameters)});`,
       );
 
-    const fileTemplate = this.buildMigrationFileContent(
+    const fileTemplate = this.buildMigrationFileContent({
       className,
       version,
+      timestamp,
       upStatements,
       downStatements,
-    );
+    });
 
     const versionSlug = version.replace(/\./g, '-');
     const fileName = `${versionSlug}-instance-command-fast-${timestamp}-${migrationName}.ts`;
@@ -85,17 +86,24 @@ export class InstanceCommandGenerationService {
     return query.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
   }
 
-  private buildMigrationFileContent(
-    className: string,
-    version: string,
-    upStatements: string[],
-    downStatements: string[],
-  ): string {
+  private buildMigrationFileContent({
+    className,
+    version,
+    timestamp,
+    upStatements,
+    downStatements,
+  }: {
+    className: string;
+    version: string;
+    timestamp: number;
+    upStatements: string[];
+    downStatements: string[];
+  }): string {
     return `import { MigrationInterface, QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
 
-@RegisteredInstanceMigration('${version}')
+@RegisteredInstanceMigration('${version}', ${timestamp})
 export class ${className} implements MigrationInterface {
   name = '${className}';
 

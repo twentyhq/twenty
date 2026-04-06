@@ -357,19 +357,19 @@ describe('UpgradeCommandRunner', () => {
   });
 
   it('should call runSingleMigration for each current-version instance command', async () => {
-    @RegisteredInstanceMigration(CURRENT_VERSION)
+    @RegisteredInstanceMigration(CURRENT_VERSION, 1770000000000)
     class AddIndexToUsers1770000000000 implements MigrationInterface {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
     }
 
-    @RegisteredInstanceMigration(CURRENT_VERSION)
+    @RegisteredInstanceMigration(CURRENT_VERSION, 1771000000000)
     class AddColumnToAccounts1771000000000 implements MigrationInterface {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
     }
 
-    @RegisteredInstanceMigration(PREVIOUS_VERSION)
+    @RegisteredInstanceMigration(PREVIOUS_VERSION, 1769000000000)
     class DropLegacyTable1769000000000 implements MigrationInterface {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
@@ -410,7 +410,7 @@ describe('UpgradeCommandRunner', () => {
   });
 
   it('should skip already-executed instance commands', async () => {
-    @RegisteredInstanceMigration(CURRENT_VERSION)
+    @RegisteredInstanceMigration(CURRENT_VERSION, 1770000000000)
     class AlreadyRunMigration1770000000000 implements MigrationInterface {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
@@ -439,7 +439,7 @@ describe('UpgradeCommandRunner', () => {
   });
 
   it('should throw when a migration fails', async () => {
-    @RegisteredInstanceMigration(CURRENT_VERSION)
+    @RegisteredInstanceMigration(CURRENT_VERSION, 1770000000000)
     class FailingMigration1770000000000 implements MigrationInterface {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
@@ -467,7 +467,7 @@ describe('UpgradeCommandRunner', () => {
   });
 
   it('should log success when a migration succeeds', async () => {
-    @RegisteredInstanceMigration(CURRENT_VERSION)
+    @RegisteredInstanceMigration(CURRENT_VERSION, 1770000000000)
     class SuccessMigration1770000000000 implements MigrationInterface {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}

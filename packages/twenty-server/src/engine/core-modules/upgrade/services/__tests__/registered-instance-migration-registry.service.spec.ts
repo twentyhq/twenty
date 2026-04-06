@@ -8,7 +8,7 @@ import { type MigrationInterface } from 'typeorm';
 import { RegisteredInstanceMigrationService } from 'src/engine/core-modules/upgrade/services/registered-instance-migration-registry.service';
 import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
 
-@RegisteredInstanceMigration('1.21.0')
+@RegisteredInstanceMigration('1.21.0', 1770000000000)
 class MigrationA1770000000000 implements MigrationInterface {
   name = 'MigrationA1770000000000';
 
@@ -16,7 +16,7 @@ class MigrationA1770000000000 implements MigrationInterface {
   async down(): Promise<void> {}
 }
 
-@RegisteredInstanceMigration('1.21.0')
+@RegisteredInstanceMigration('1.21.0', 1771000000000)
 class MigrationB1771000000000 implements MigrationInterface {
   name = 'MigrationB1771000000000';
 
@@ -24,7 +24,7 @@ class MigrationB1771000000000 implements MigrationInterface {
   async down(): Promise<void> {}
 }
 
-@RegisteredInstanceMigration('1.21.0')
+@RegisteredInstanceMigration('1.21.0', 1772000000000)
 class MigrationC1772000000000 implements MigrationInterface {
   name = 'MigrationC1772000000000';
 
@@ -32,7 +32,7 @@ class MigrationC1772000000000 implements MigrationInterface {
   async down(): Promise<void> {}
 }
 
-@RegisteredInstanceMigration('1.20.0')
+@RegisteredInstanceMigration('1.20.0', 1769000000000)
 class MigrationD1769000000000 implements MigrationInterface {
   name = 'MigrationD1769000000000';
 
@@ -97,10 +97,10 @@ describe('RegisteredInstanceMigrationService', () => {
     ]);
   });
 
-  it('should preserve input order within a version bucket', async () => {
+  it('should sort migrations by timestamp within a version bucket', async () => {
     const service = await buildRegistryService([
-      new MigrationA1770000000000(),
       new MigrationC1772000000000(),
+      new MigrationA1770000000000(),
       new MigrationB1771000000000(),
     ]);
 
@@ -110,8 +110,8 @@ describe('RegisteredInstanceMigrationService', () => {
 
     expect(names).toStrictEqual([
       'MigrationA1770000000000',
-      'MigrationC1772000000000',
       'MigrationB1771000000000',
+      'MigrationC1772000000000',
     ]);
   });
 
