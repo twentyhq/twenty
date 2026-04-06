@@ -3370,6 +3370,7 @@ enum UsageOperationType {
   AI_WORKFLOW_TOKEN
   WORKFLOW_EXECUTION
   CODE_EXECUTION
+  WEB_SEARCH
 }
 
 type Mutation {

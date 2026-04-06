@@ -2819,7 +2819,7 @@ export type SortNulls = 'NULLS_FIRST' | 'NULLS_LAST'
 
 export type EventLogTable = 'WORKSPACE_EVENT' | 'PAGEVIEW' | 'OBJECT_EVENT' | 'USAGE_EVENT'
 
-export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION'
+export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH'
 
 export interface Mutation {
     addQueryToEventStream: Scalars['Boolean']
@@ -9408,7 +9408,8 @@ export const enumUsageOperationType = {
    AI_CHAT_TOKEN: 'AI_CHAT_TOKEN' as const,
    AI_WORKFLOW_TOKEN: 'AI_WORKFLOW_TOKEN' as const,
    WORKFLOW_EXECUTION: 'WORKFLOW_EXECUTION' as const,
-   CODE_EXECUTION: 'CODE_EXECUTION' as const
+   CODE_EXECUTION: 'CODE_EXECUTION' as const,
+   WEB_SEARCH: 'WEB_SEARCH' as const
 }
 
 export const enumAnalyticsType = {
