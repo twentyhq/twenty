@@ -31,6 +31,13 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
+const StyledWrappingContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[1]};
+  width: 100%;
+`;
+
 export const RelationFromManyFieldDisplay = () => {
   const { fieldValue, fieldDefinition, generateRecordChipData } =
     useRelationFromManyFieldDisplay();
@@ -151,7 +158,7 @@ export const RelationFromManyFieldDisplay = () => {
     }
 
     return (
-      <ExpandableList isChipCountDisplayed={isFocused}>
+      <StyledWrappingContainer>
         {targetRecordsWithMetadata.map(({ record, objectMetadata }) => (
           <RecordChip
             key={record.id}
@@ -161,7 +168,7 @@ export const RelationFromManyFieldDisplay = () => {
             triggerEvent={triggerEvent}
           />
         ))}
-      </ExpandableList>
+      </StyledWrappingContainer>
     );
   }
 
