@@ -174,24 +174,22 @@ Please roll back to that version and run the upgrade command again.`,
 
       await this.runInstanceCommandsOrThrow(versionContext);
 
-      const iteratorReport = await this.runWorkspaceCommandsOrThrow(
+      const iteratorReport = await this.runWorkspaceCommands(
         options,
         versionContext,
       );
-
-      if (iteratorReport.fail.length > 0) {
-        this.logger.error(
-          chalk.red(
-            `Upgrade completed with ${iteratorReport.fail.length} workspace failure(s)`,
-          ),
-        );
-      }
 
       this.logger.log(
         chalk.blue(
           `Upgrade summary: ${iteratorReport.success.length} succeeded, ${iteratorReport.fail.length} failed`,
         ),
       );
+
+      if (iteratorReport.fail.length > 0) {
+        throw new Error(
+          `Upgrade completed with ${iteratorReport.fail.length} workspace failure(s)`,
+        );
+      }
     } catch (error) {
       this.logger.error(chalk.red(`Upgrade failed: ${error.message}`));
       throw error;
@@ -272,7 +270,7 @@ Please roll back to that version and run the upgrade command again.`,
     };
   }
 
-  private async runWorkspaceCommandsOrThrow(
+  private async runWorkspaceCommands(
     options: UpgradeCommandOptions,
     versionContext: VersionContext,
   ) {

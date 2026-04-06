@@ -6,7 +6,7 @@ import { Logger } from '@nestjs/common';
 import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
-import { InstanceCommandGenerationService } from 'src/engine/core-modules/upgrade/services/instance-command-generation.service';
+import { InstanceCommandGenerationService } from 'src/database/commands/instance-command-generation.service';
 
 const UPGRADE_VERSION_COMMAND_DIR = path.resolve(
   process.cwd(),

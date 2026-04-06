@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { getDataSourceToken } from '@nestjs/typeorm';
 
-import { InstanceCommandGenerationService } from 'src/engine/core-modules/upgrade/services/instance-command-generation.service';
+import { InstanceCommandGenerationService } from 'src/database/commands/instance-command-generation.service';
 
 const FIXED_TIMESTAMP = 1775000000000;
 
