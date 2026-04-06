@@ -25,9 +25,11 @@ type JustusTruthsReviewModeProps = {
   totalReviewed: number;
   pendingAction: PendingAction;
   confirming: boolean;
+  skipping: boolean;
   onPendingReasonChange: (reason: string) => void;
   onConfirm: () => void;
   onConfirmComplete: () => void;
+  onSkipComplete: () => void;
   onCancel: () => void;
 };
 
@@ -183,9 +185,11 @@ export const JustusTruthsReviewMode = ({
   totalReviewed,
   pendingAction,
   confirming,
+  skipping,
   onPendingReasonChange,
   onConfirm,
   onConfirmComplete,
+  onSkipComplete,
   onCancel,
 }: JustusTruthsReviewModeProps) => {
   const reasonRef = useRef<HTMLTextAreaElement>(null);
@@ -231,6 +235,18 @@ export const JustusTruthsReviewMode = ({
     }, 300);
     return () => clearTimeout(timer);
   }, [confirming, pendingAction, onConfirmComplete]);
+
+  // When skipping becomes true, play down-slide animation then call onSkipComplete
+  useEffect(() => {
+    if (!skipping || isAnimating.current) return;
+    isAnimating.current = true;
+    setAnimationClass('exit-down');
+
+    const timer = setTimeout(() => {
+      onSkipComplete();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [skipping, onSkipComplete]);
 
   if (loading) {
     return (

@@ -159,16 +159,24 @@ const JustusTruthsBodyContent = () => {
     [queue, session, updateOneRecord, reviewerName, practiceMode],
   );
 
+  const [skipping, setSkipping] = useState(false);
+
   const handleAction = useCallback(
     (action: ReviewAction) => {
       if (action === 'skip') {
-        executeAction(action);
+        setSkipping(true);
         return;
       }
       setPendingAction({ action, reason: '' });
     },
-    [executeAction],
+    [],
   );
+
+  // Called by ReviewMode after skip animation completes
+  const handleSkipComplete = useCallback(() => {
+    executeAction('skip');
+    setSkipping(false);
+  }, [executeAction]);
 
   const handleConfirm = useCallback(() => {
     if (!pendingAction || confirming) return;
@@ -268,6 +276,8 @@ const JustusTruthsBodyContent = () => {
           totalReviewed={session.totalReviewed}
           pendingAction={pendingAction}
           confirming={confirming}
+          skipping={skipping}
+          onSkipComplete={handleSkipComplete}
           onPendingReasonChange={(reason: string) =>
             setPendingAction((prev) =>
               prev ? { ...prev, reason } : prev,
