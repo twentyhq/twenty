@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { DataSource, MigrationInterface, Repository } from 'typeorm';
+import {
+  DataSource,
+  MigrationInterface,
+  type QueryRunner,
+  Repository,
+} from 'typeorm';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   UpgradeMigrationEntity,
-  UpgradeMigrationStatus,
+  type UpgradeMigrationStatus,
 } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 
 export type RunSingleMigrationResult =
@@ -29,8 +34,14 @@ export class InstanceUpgradeService {
     version: string,
   ): Promise<RunSingleMigrationResult> {
     const migrationName = migration.constructor.name;
+    const runByVersion =
+      this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
-    if (await this.isExecuted(migrationName)) {
+    const isAlreadyExecuted = await this.upgradeMigrationRepository.exists({
+      where: { name: migrationName, status: 'completed' },
+    });
+
+    if (isAlreadyExecuted) {
       return { status: 'already-executed' };
     }
 
@@ -39,17 +50,26 @@ export class InstanceUpgradeService {
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
+
       await migration.up(queryRunner);
+
+      await this.markAsCompleted({
+        queryRunner,
+        name: migrationName,
+        version,
+        runByVersion,
+      });
+
       await queryRunner.commitTransaction();
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction();
       }
 
-      await this.markStatus({
+      await this.markFailed({
         name: migrationName,
         version,
-        status: UpgradeMigrationStatus.FAILED,
+        runByVersion,
       });
 
       return { status: 'failed', error };
@@ -57,52 +77,52 @@ export class InstanceUpgradeService {
       await queryRunner.release();
     }
 
-    await this.markStatus({
-      name: migrationName,
-      version,
-      status: UpgradeMigrationStatus.COMPLETED,
-    });
-
     return { status: 'success' };
   }
 
-  private async isExecuted(name: string): Promise<boolean> {
-    return this.upgradeMigrationRepository.exists({
-      where: { name, status: UpgradeMigrationStatus.COMPLETED },
+  private async markAsCompleted({
+    queryRunner,
+    name,
+    version,
+    runByVersion,
+  }: {
+    queryRunner: QueryRunner;
+    name: string;
+    version: string;
+    runByVersion: string;
+  }): Promise<void> {
+    const repository =
+      queryRunner.manager.getRepository(UpgradeMigrationEntity);
+
+    const retry = await repository.count({ where: { name } });
+
+    await repository.save({
+      name,
+      version,
+      status: 'completed' as UpgradeMigrationStatus,
+      retry,
+      runByVersion,
     });
   }
 
-  private async markStatus({
+  private async markFailed({
     name,
-    status,
     version,
+    runByVersion,
   }: {
     name: string;
     version: string;
-    status: UpgradeMigrationStatus;
+    runByVersion: string;
   }): Promise<void> {
-    const runByVersion =
-      this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
-
-    const existing = await this.upgradeMigrationRepository.findOne({
+    const retry = await this.upgradeMigrationRepository.count({
       where: { name },
     });
-
-    if (existing) {
-      await this.upgradeMigrationRepository.update(existing.id, {
-        status,
-        retry: existing.retry + 1,
-        runByVersion,
-      });
-
-      return;
-    }
 
     await this.upgradeMigrationRepository.save({
       name,
       version,
-      status,
-      retry: 0,
+      status: 'failed' as UpgradeMigrationStatus,
+      retry,
       runByVersion,
     });
   }

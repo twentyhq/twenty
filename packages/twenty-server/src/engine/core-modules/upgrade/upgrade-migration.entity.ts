@@ -6,10 +6,10 @@ import {
   Unique,
 } from 'typeorm';
 
-export type UpgradeMigrationStatus = 'pending' | 'completed' | 'failed';
+export type UpgradeMigrationStatus = 'completed' | 'failed';
 
 @Entity({ name: 'upgradeMigration', schema: 'core' })
-@Unique('UQ_upgrade_migration_name', ['name'])
+@Unique('UQ_upgrade_migration_name_retry', ['name', 'retry'])
 export class UpgradeMigrationEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -17,7 +17,7 @@ export class UpgradeMigrationEntity {
   @Column({ type: 'varchar', nullable: false })
   version: string;
 
-  @Column({ type: 'varchar', nullable: false, unique: true })
+  @Column({ type: 'varchar', nullable: false })
   name: string;
 
   @Column({ type: 'varchar', nullable: false })

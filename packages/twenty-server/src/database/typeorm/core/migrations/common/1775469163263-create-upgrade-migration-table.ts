@@ -16,7 +16,7 @@ export class CreateUpgradeMigrationTable1775469163263
         "runByVersion" character varying NOT NULL,
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         CONSTRAINT "PK_upgrade_migration_id" PRIMARY KEY ("id"),
-        CONSTRAINT "UQ_upgrade_migration_name" UNIQUE ("name")
+        CONSTRAINT "UQ_upgrade_migration_name_retry" UNIQUE ("name", "retry")
       )`,
     );
   }
