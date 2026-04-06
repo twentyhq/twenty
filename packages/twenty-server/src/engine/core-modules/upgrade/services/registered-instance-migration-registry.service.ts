@@ -63,4 +63,24 @@ export class RegisteredInstanceMigrationService implements OnModuleInit {
   ): MigrationInterface[] {
     return this.migrationsByVersion.get(version) ?? [];
   }
+
+  getAllInstanceCommands(): {
+    version: UpgradeCommandVersion;
+    migration: MigrationInterface;
+  }[] {
+    const result: {
+      version: UpgradeCommandVersion;
+      migration: MigrationInterface;
+    }[] = [];
+
+    for (const version of UPGRADE_COMMAND_SUPPORTED_VERSIONS) {
+      const migrations = this.migrationsByVersion.get(version) ?? [];
+
+      for (const migration of migrations) {
+        result.push({ version, migration });
+      }
+    }
+
+    return result;
+  }
 }
