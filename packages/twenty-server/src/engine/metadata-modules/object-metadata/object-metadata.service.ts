@@ -386,7 +386,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     workspaceId: string;
     ownerFlatApplication?: FlatApplication;
   }): Promise<FlatObjectMetadata> {
-    const { workspaceCustomFlatApplication } =
+    const {
+      workspaceCustomFlatApplication,
+      twentyStandardFlatApplication,
+    } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
           workspaceId,
@@ -451,11 +454,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       flatRecordPageFieldsViewToCreate =
         this.computeFlatRecordPageFieldsViewToCreate({
           objectMetadata: flatObjectMetadataToCreate,
-          flatApplication: resolvedOwnerFlatApplication,
+          flatApplication: twentyStandardFlatApplication,
         });
 
       flatRecordPageFieldsViewFieldsToCreate = computeFlatViewFieldsToCreate({
-        flatApplication: workspaceCustomFlatApplication,
+        flatApplication: twentyStandardFlatApplication,
         objectFlatFieldMetadatas: flatFieldMetadataToCreateOnObject,
         labelIdentifierFieldMetadataUniversalIdentifier:
           flatObjectMetadataToCreate.labelIdentifierFieldMetadataUniversalIdentifier,
@@ -467,7 +470,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       flatDefaultRecordPageLayoutsToCreate =
         this.computeFlatDefaultRecordPageLayoutToCreate({
           objectMetadata: flatObjectMetadataToCreate,
-          flatApplication: resolvedOwnerFlatApplication,
+          flatApplication: twentyStandardFlatApplication,
           recordPageFieldsView: flatRecordPageFieldsViewToCreate,
           workspaceId,
         });
