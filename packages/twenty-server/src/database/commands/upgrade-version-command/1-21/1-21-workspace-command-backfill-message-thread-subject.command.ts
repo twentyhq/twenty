@@ -38,7 +38,10 @@ export class BackfillMessageThreadSubjectCommand extends ActiveOrSuspendedWorksp
       return;
     }
 
-    await this.ensureSubjectFieldExists({ workspaceId, isDryRun: !!options.dryRun });
+    await this.ensureSubjectFieldExists({
+      workspaceId,
+      isDryRun: !!options.dryRun,
+    });
 
     if (options.dryRun) {
       this.logger.log(
@@ -86,8 +89,7 @@ export class BackfillMessageThreadSubjectCommand extends ActiveOrSuspendedWorksp
     const messageThreadObjectMetadata =
       findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
         flatEntityMaps: flatObjectMetadataMaps,
-        universalIdentifier:
-          STANDARD_OBJECTS.messageThread.universalIdentifier,
+        universalIdentifier: STANDARD_OBJECTS.messageThread.universalIdentifier,
       });
 
     if (!messageThreadObjectMetadata) {
