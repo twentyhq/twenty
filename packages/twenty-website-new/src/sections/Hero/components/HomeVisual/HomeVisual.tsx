@@ -137,7 +137,6 @@ const StyledHomeVisual = styled.div`
 
 const ShellScene = styled.div`
   margin: 0 auto;
-  max-width: 980px;
   transform-origin: center top;
   transition: transform 0.18s ease;
   width: 100%;
@@ -150,8 +149,10 @@ const Frame = styled.div`
   border: 1px solid ${COLORS.border};
   border-radius: 8px;
   box-shadow: ${COLORS.shadow};
+  max-height: 740px;
   overflow: hidden;
   position: relative;
+  width: 100%;
 `;
 
 const AppLayout = styled.div`
