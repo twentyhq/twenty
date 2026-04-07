@@ -78,6 +78,83 @@ const StyledIconPickerSearchRow = styled.div`
   width: 100%;
 `;
 
+type IconPickerSearchRowProps = {
+  closeDropdown: (dropdownId: string) => void;
+  dropdownWidth: number | undefined;
+  iconColorPicker: IconPickerProps['iconColorPicker'];
+  iconColorPickerDropdownId: string;
+  onSearchChange: (searchString: string) => void;
+};
+
+const IconPickerSearchRow = ({
+  closeDropdown,
+  dropdownWidth,
+  iconColorPicker,
+  iconColorPickerDropdownId,
+  onSearchChange,
+}: IconPickerSearchRowProps) => {
+  const searchInput = (
+    <DropdownMenuSearchInput
+      placeholder={t`Search icon`}
+      autoFocus
+      onChange={(event) => {
+        onSearchChange(event.target.value);
+      }}
+    />
+  );
+
+  if (!isDefined(iconColorPicker)) {
+    return searchInput;
+  }
+
+  return (
+    <StyledIconPickerSearchRow>
+      {searchInput}
+      <ClickOutsideListenerContext.Provider
+        value={{
+          excludedClickOutsideId: iconColorPickerDropdownId,
+        }}
+      >
+        <Dropdown
+          dropdownId={iconColorPickerDropdownId}
+          dropdownOffset={{
+            x: 24,
+            y: -24,
+          }}
+          dropdownPlacement="right-start"
+          clickableComponent={
+            <LightIconButton
+              accent="secondary"
+              Icon={() => (
+                <ColorSample
+                  colorName={iconColorPicker.selectedColor}
+                  variant="circle"
+                />
+              )}
+              size="small"
+            />
+          }
+          dropdownComponents={
+            <DropdownContent
+              widthInPixels={
+                dropdownWidth || ICON_PICKER_DROPDOWN_CONTENT_WIDTH
+              }
+            >
+              <ThemeColorPickerMenu
+                selectedColor={iconColorPicker.selectedColor}
+                onSelectColor={(nextColor) => {
+                  iconColorPicker.onColorChange(nextColor);
+                  closeDropdown(iconColorPickerDropdownId);
+                }}
+              />
+            </DropdownContent>
+          }
+        />
+      </ClickOutsideListenerContext.Provider>
+    </StyledIconPickerSearchRow>
+  );
+};
+
 const StyledMenuIconItemsContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -386,71 +463,13 @@ export const IconPicker = ({
                 selectableItemIdMatrix={iconKeys2d}
                 focusId={dropdownId}
               >
-                {isDefined(iconColorPicker) ? (
-                  <StyledIconPickerSearchRow>
-                    <DropdownMenuSearchInput
-                      placeholder={t`Search icon`}
-                      autoFocus
-                      onChange={(event) => {
-                        setSearchString(event.target.value);
-                      }}
-                    />
-                    <ClickOutsideListenerContext.Provider
-                      value={{
-                        excludedClickOutsideId: iconColorPickerDropdownId,
-                      }}
-                    >
-                      <Dropdown
-                        dropdownId={iconColorPickerDropdownId}
-                        dropdownOffset={{
-                          x: 24,
-                          y: -24,
-                        }}
-                        dropdownPlacement="right-start"
-                        clickableComponent={
-                          <LightIconButton
-                            accent="secondary"
-                            Icon={() => (
-                              <ColorSample
-                                colorName={
-                                  isDefined(iconColorPicker)
-                                    ? iconColorPicker.selectedColor
-                                    : 'gray'
-                                }
-                                variant="circle"
-                              />
-                            )}
-                            size="small"
-                          />
-                        }
-                        dropdownComponents={
-                          <DropdownContent
-                            widthInPixels={
-                              dropdownWidth ||
-                              ICON_PICKER_DROPDOWN_CONTENT_WIDTH
-                            }
-                          >
-                            <ThemeColorPickerMenu
-                              selectedColor={iconColorPicker.selectedColor}
-                              onSelectColor={(nextColor) => {
-                                iconColorPicker.onColorChange(nextColor);
-                                closeDropdown(iconColorPickerDropdownId);
-                              }}
-                            />
-                          </DropdownContent>
-                        }
-                      />
-                    </ClickOutsideListenerContext.Provider>
-                  </StyledIconPickerSearchRow>
-                ) : (
-                  <DropdownMenuSearchInput
-                    placeholder={t`Search icon`}
-                    autoFocus
-                    onChange={(event) => {
-                      setSearchString(event.target.value);
-                    }}
-                  />
-                )}
+                <IconPickerSearchRow
+                  closeDropdown={closeDropdown}
+                  dropdownWidth={dropdownWidth}
+                  iconColorPicker={iconColorPicker}
+                  iconColorPickerDropdownId={iconColorPickerDropdownId}
+                  onSearchChange={setSearchString}
+                />
                 <DropdownMenuSeparator />
                 <div
                   onMouseEnter={handleMouseEnter}
