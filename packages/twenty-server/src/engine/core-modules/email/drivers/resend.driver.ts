@@ -26,7 +26,9 @@ export class ResendDriver implements EmailDriverInterface {
     const from =
       typeof sendMailOptions.from === 'string'
         ? sendMailOptions.from
-        : (sendMailOptions.from?.address ?? '');
+        : !Array.isArray(sendMailOptions.from)
+          ? (sendMailOptions.from?.address ?? '')
+          : '';
 
     fetch('https://api.resend.com/emails', {
       method: 'POST',
