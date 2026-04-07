@@ -51,6 +51,7 @@ const loadSources = async (appPath: string): Promise<string[]> => {
 const loadAssets = async (appPath: string) => {
   return await glob([`${ASSETS_DIR}/**/*`], {
     cwd: appPath,
+    absolute: true,
     onlyFiles: true,
   });
 };
@@ -326,13 +327,14 @@ export const buildManifest = async (
   const assetFiles = await loadAssets(appPath);
 
   for (const assetFile of assetFiles) {
+    const relativePath = relative(appPath, assetFile);
     publicAssets.push({
-      filePath: assetFile,
+      filePath: relativePath,
       fileName: basename(assetFile),
       fileType: extname(assetFile).replace(/^\./, ''),
       checksum: null,
     });
-    publicAssetsFilePaths.push(relative(appPath, assetFile));
+    publicAssetsFilePaths.push(relativePath);
   }
 
   if (!application) {
