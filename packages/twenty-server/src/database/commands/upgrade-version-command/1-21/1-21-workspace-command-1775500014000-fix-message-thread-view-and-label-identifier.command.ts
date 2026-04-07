@@ -22,6 +22,26 @@ const MESSAGE_THREAD_SUBJECT_FIELD_UNIVERSAL_IDENTIFIER =
 const ALL_MESSAGE_THREADS_VIEW_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.messageThread.views.allMessageThreads.universalIdentifier;
 
+type WorkspaceFlatEntityMaps = Awaited<
+  ReturnType<WorkspaceCacheService['getOrRecompute']>
+>;
+type FlatViewFieldMaps = WorkspaceFlatEntityMaps['flatViewFieldMaps'];
+type FlatFieldMetadataMaps = WorkspaceFlatEntityMaps['flatFieldMetadataMaps'];
+
+const filterViewFieldsByViewUniversalIdentifier = ({
+  flatViewFieldMaps,
+  viewUniversalIdentifier,
+}: {
+  flatViewFieldMaps: FlatViewFieldMaps;
+  viewUniversalIdentifier: string;
+}): UniversalFlatViewField[] =>
+  Object.values(flatViewFieldMaps.byUniversalIdentifier)
+    .filter(isDefined)
+    .filter(
+      (viewField) =>
+        viewField.viewUniversalIdentifier === viewUniversalIdentifier,
+    );
+
 @RegisteredWorkspaceCommand('1.21.0', 1775500014000)
 @Command({
   name: 'upgrade:1-21:fix-message-thread-view-and-label-identifier',
@@ -59,12 +79,10 @@ export class FixMessageThreadViewAndLabelIdentifierCommand extends ActiveOrSuspe
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-      flatViewMaps: existingFlatViewMaps,
       flatViewFieldMaps: existingFlatViewFieldMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
-      'flatViewMaps',
       'flatViewFieldMaps',
     ]);
 
@@ -160,21 +178,12 @@ export class FixMessageThreadViewAndLabelIdentifierCommand extends ActiveOrSuspe
   private computeMessageThreadViewFieldsToDelete({
     existingFlatViewFieldMaps,
   }: {
-    existingFlatViewFieldMaps: Parameters<
-      WorkspaceCacheService['getOrRecompute']
-    >[1] extends unknown
-      ? Awaited<
-          ReturnType<WorkspaceCacheService['getOrRecompute']>
-        >['flatViewFieldMaps']
-      : never;
+    existingFlatViewFieldMaps: FlatViewFieldMaps;
   }): UniversalFlatViewField[] {
-    return Object.values(existingFlatViewFieldMaps.byUniversalIdentifier)
-      .filter(isDefined)
-      .filter(
-        (viewField) =>
-          viewField.viewUniversalIdentifier ===
-          ALL_MESSAGE_THREADS_VIEW_UNIVERSAL_IDENTIFIER,
-      );
+    return filterViewFieldsByViewUniversalIdentifier({
+      flatViewFieldMaps: existingFlatViewFieldMaps,
+      viewUniversalIdentifier: ALL_MESSAGE_THREADS_VIEW_UNIVERSAL_IDENTIFIER,
+    });
   }
 
   // Recreate view fields from the current standard definition, skipping any that
@@ -187,26 +196,18 @@ export class FixMessageThreadViewAndLabelIdentifierCommand extends ActiveOrSuspe
     standardAllFlatEntityMaps: ReturnType<
       typeof computeTwentyStandardApplicationAllFlatEntityMaps
     >['allFlatEntityMaps'];
-    existingFlatFieldMetadataMaps: Awaited<
-      ReturnType<WorkspaceCacheService['getOrRecompute']>
-    >['flatFieldMetadataMaps'];
+    existingFlatFieldMetadataMaps: FlatFieldMetadataMaps;
   }): UniversalFlatViewField[] {
-    return Object.values(
-      standardAllFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter(
-        (viewField) =>
-          viewField.viewUniversalIdentifier ===
-          ALL_MESSAGE_THREADS_VIEW_UNIVERSAL_IDENTIFIER,
-      )
-      .filter((viewField) =>
-        isDefined(
-          existingFlatFieldMetadataMaps.byUniversalIdentifier[
-            viewField.fieldMetadataUniversalIdentifier
-          ],
-        ),
-      );
+    return filterViewFieldsByViewUniversalIdentifier({
+      flatViewFieldMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
+      viewUniversalIdentifier: ALL_MESSAGE_THREADS_VIEW_UNIVERSAL_IDENTIFIER,
+    }).filter((viewField) =>
+      isDefined(
+        existingFlatFieldMetadataMaps.byUniversalIdentifier[
+          viewField.fieldMetadataUniversalIdentifier
+        ],
+      ),
+    );
   }
 
   // Build the "to" messageThread object metadata with its labelIdentifier repointed
@@ -218,9 +219,7 @@ export class FixMessageThreadViewAndLabelIdentifierCommand extends ActiveOrSuspe
     existingFlatFieldMetadataMaps,
   }: {
     existingMessageThreadObjectMetadata: FlatObjectMetadata;
-    existingFlatFieldMetadataMaps: Awaited<
-      ReturnType<WorkspaceCacheService['getOrRecompute']>
-    >['flatFieldMetadataMaps'];
+    existingFlatFieldMetadataMaps: FlatFieldMetadataMaps;
   }): UniversalFlatObjectMetadata | undefined {
     const existingSubjectField = findFlatEntityByUniversalIdentifier({
       flatEntityMaps: existingFlatFieldMetadataMaps,
