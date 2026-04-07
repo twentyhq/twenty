@@ -7,8 +7,8 @@ import { type DirectExecutionService } from 'src/engine/api/graphql/direct-execu
 import { classifyTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/classify-top-level-fields.util';
 import { findOperationDefinition } from 'src/engine/api/graphql/direct-execution/utils/find-operation-definition.util';
 import { isSubscriptionOperation } from 'src/engine/api/graphql/direct-execution/utils/is-subscription-operation.util';
-import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 export type DirectExecutionPluginConfig = {
   directExecutionService: DirectExecutionService;
@@ -60,9 +60,7 @@ export function useDirectExecution(
           'This query cannot be executed as a single request. Please split it into separate queries.',
         );
 
-        return endResponse(
-          Response.json({ errors: [error.toJSON()] }),
-        );
+        return endResponse(Response.json({ errors: [error.toJSON()] }));
       }
 
       if (hasCoreFields) {
