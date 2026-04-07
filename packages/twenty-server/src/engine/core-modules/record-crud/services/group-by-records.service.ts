@@ -20,6 +20,7 @@ import {
 import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { type GroupByRecordsParams } from 'src/engine/core-modules/record-crud/types/group-by-records-params.type';
 import { type GroupByRecordsResult } from 'src/engine/core-modules/record-crud/types/group-by-records-result.type';
+import { resolveAggregateFieldKey } from 'src/engine/core-modules/record-crud/utils/resolve-aggregate-field-key.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
@@ -180,21 +181,20 @@ export class GroupByRecordsService {
           );
         }
 
-        const matchingEntry = Object.entries(availableAggregations).find(
-          ([, aggregation]) =>
-            aggregation.aggregateOperation ===
-              AggregateOperations[aggregateOperation] &&
-            aggregation.fromField === aggregateFieldName,
+        const resolvedKey = resolveAggregateFieldKey(
+          aggregateOperation,
+          aggregateFieldName,
+          availableAggregations,
         );
 
-        if (!matchingEntry) {
+        if (!resolvedKey) {
           throw new RecordCrudException(
             `No aggregation available for ${aggregateOperation} on field "${aggregateFieldName}"`,
             RecordCrudExceptionCode.INVALID_REQUEST,
           );
         }
 
-        aggregateFieldKey = matchingEntry[0];
+        aggregateFieldKey = resolvedKey;
       }
 
       const selectedFields = {
