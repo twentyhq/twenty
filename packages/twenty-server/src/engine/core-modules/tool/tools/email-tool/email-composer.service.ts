@@ -24,6 +24,8 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
+import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
 import { parseEmailBody } from 'src/utils/parse-email-body';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -209,6 +211,50 @@ export class EmailComposerService {
     return attachments;
   }
 
+  // Look up the provider-specific thread ID (e.g. Gmail threadId) from the
+  // parent message so replies can be explicitly threaded in the provider API.
+  private async getThreadExternalId(
+    workspaceId: string,
+    inReplyTo: string,
+    messageChannelId: string,
+  ): Promise<string | undefined> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const messageRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageWorkspaceEntity>(
+            workspaceId,
+            'message',
+          );
+
+        const parentMessage = await messageRepository.findOne({
+          where: { headerMessageId: inReplyTo },
+        });
+
+        if (!parentMessage) {
+          return undefined;
+        }
+
+        const associationRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+            workspaceId,
+            'messageChannelMessageAssociation',
+          );
+
+        const association = await associationRepository.findOne({
+          where: {
+            messageId: parentMessage.id,
+            messageChannelId,
+          },
+        });
+
+        return association?.messageThreadExternalId ?? undefined;
+      },
+      authContext,
+    );
+  }
+
   async composeEmail(
     parameters: EmailToolInput,
     context: ToolExecutionContext,
@@ -301,6 +347,16 @@ export class EmailComposerService {
     const sanitizedHtmlBody = purify.sanitize(htmlBody || '');
     const sanitizedSubject = purify.sanitize(subject || '');
 
+    let threadExternalId: string | undefined;
+
+    if (inReplyTo) {
+      threadExternalId = await this.getThreadExternalId(
+        workspaceId,
+        inReplyTo,
+        messageChannel.id,
+      );
+    }
+
     return {
       success: true,
       data: {
@@ -311,7 +367,9 @@ export class EmailComposerService {
         sanitizedHtmlBody,
         attachments,
         connectedAccount: connectedAccountWithFreshTokens,
+        messageChannelId: messageChannel.id,
         inReplyTo,
+        threadExternalId,
       },
     };
   }

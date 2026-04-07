@@ -45,6 +45,14 @@ import {
   EMPLOYMENT_HISTORY_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/employment-history-data-seeds.constant';
 import {
+  CONNECTED_ACCOUNT_DATA_SEED_COLUMNS,
+  CONNECTED_ACCOUNT_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
+import {
+  MESSAGE_CHANNEL_DATA_SEED_COLUMNS,
+  MESSAGE_CHANNEL_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-data-seeds.constant';
+import {
   MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEED_COLUMNS,
   MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-message-association-data-seeds.constant';
@@ -157,9 +165,14 @@ const getRecordSeedsBatches = (
       pgColumns: DASHBOARD_DATA_SEED_COLUMNS,
       recordSeeds: getDashboardDataSeeds(workspaceId),
     },
+    {
+      tableName: 'connectedAccount',
+      pgColumns: CONNECTED_ACCOUNT_DATA_SEED_COLUMNS,
+      recordSeeds: CONNECTED_ACCOUNT_DATA_SEEDS,
+    },
   ];
 
-  // Batch 3: Depends on company and connectedAccount
+  // Batch 3: Depends on company, connectedAccount
   const batch3: RecordSeedConfig[] = [
     {
       tableName: 'person',
@@ -170,6 +183,11 @@ const getRecordSeedsBatches = (
       tableName: '_pet',
       pgColumns: PET_DATA_SEED_COLUMNS,
       recordSeeds: PET_DATA_SEEDS,
+    },
+    {
+      tableName: 'messageChannel',
+      pgColumns: MESSAGE_CHANNEL_DATA_SEED_COLUMNS,
+      recordSeeds: MESSAGE_CHANNEL_DATA_SEEDS,
     },
   ];
 

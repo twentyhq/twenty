@@ -10,6 +10,8 @@ import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { mimeEncode } from 'src/modules/messaging/message-import-manager/utils/mime-encode.util';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
+import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
+import { extractMessageIdFromBuffer } from 'src/modules/messaging/message-outbound-manager/utils/extract-message-id-from-buffer.util';
 import { toMailComposerOptions } from 'src/modules/messaging/message-outbound-manager/utils/to-mail-composer-options.util';
 
 @Injectable()
@@ -21,18 +23,25 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
   async sendMessage(
     sendMessageInput: SendMessageInput,
     connectedAccount: ConnectedAccountEntity,
-  ): Promise<void> {
-    const { gmailClient, encodedMessage } = await this.composeGmailMessage(
-      connectedAccount,
-      sendMessageInput,
-    );
+  ): Promise<SendMessageResult> {
+    const { gmailClient, encodedMessage, messageBuffer } =
+      await this.composeGmailMessage(connectedAccount, sendMessageInput);
 
-    await gmailClient.users.messages.send({
+    const { data } = await gmailClient.users.messages.send({
       userId: 'me',
       requestBody: {
         raw: encodedMessage,
+        ...(sendMessageInput.threadExternalId
+          ? { threadId: sendMessageInput.threadExternalId }
+          : {}),
       },
     });
+
+    return {
+      headerMessageId: extractMessageIdFromBuffer(messageBuffer),
+      messageExternalId: data.id ?? undefined,
+      threadExternalId: data.threadId ?? undefined,
+    };
   }
 
   async createDraft(
@@ -60,6 +69,7 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
   ): Promise<{
     gmailClient: gmail_v1.Gmail;
     encodedMessage: string;
+    messageBuffer: Buffer;
   }> {
     const oAuth2Client =
       await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
@@ -104,6 +114,6 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
     const messageBuffer = await compiledMessage.build();
     const encodedMessage = Buffer.from(messageBuffer).toString('base64url');
 
-    return { gmailClient, encodedMessage };
+    return { gmailClient, encodedMessage, messageBuffer };
   }
 }

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { AddComposeEmailCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-add-compose-email-command-menu-item.command';
 import { BackfillMessageThreadSubjectCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-backfill-message-thread-subject.command';
 import { AddGlobalKeyValuePairUniqueIndexCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-add-global-key-value-pair-unique-index.command';
 import { BackfillDatasourceToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-backfill-datasource-to-workspace.command';
@@ -38,6 +39,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceSchemaManagerModule,
   ],
   providers: [
+    AddComposeEmailCommandMenuItemCommand,
     AddGlobalKeyValuePairUniqueIndexCommand,
     BackfillDatasourceToWorkspaceCommand,
     BackfillMessageThreadSubjectCommand,
@@ -50,6 +52,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     MigrateMessageFolderParentIdToExternalIdCommand,
   ],
   exports: [
+    AddComposeEmailCommandMenuItemCommand,
     AddGlobalKeyValuePairUniqueIndexCommand,
     BackfillDatasourceToWorkspaceCommand,
     BackfillMessageThreadSubjectCommand,

@@ -1,5 +1,7 @@
 import type { SalesforceDataType } from '@/sections/Salesforce/types';
 
+const SALESFORCE_POPUP_TITLE = 'Good choice!';
+
 export const SALESFORCE_DATA: SalesforceDataType = {
   body: {
     text: 'Aenean lacinia bibendum nulla sed consectetur. Integer posuere erat a ante venenatis dapibus.',
@@ -11,56 +13,198 @@ export const SALESFORCE_DATA: SalesforceDataType = {
   pricing: {
     addons: [
       {
+        cost: 35,
         id: 'api-access',
         label: 'API access',
-        popupKey: 'wrongChoiceDefault',
+        popup: {
+          body: 'APIs are extra. Simplicity has a price.',
+          titleBar: SALESFORCE_POPUP_TITLE,
+        },
         rightLabel: '+$35/user per month',
       },
       {
+        cost: 0,
+        fixedCost: 7000,
         id: 'webhooks',
-        label: 'Webhooks (Change data capture)',
-        popupKey: 'wrongChoiceLorem',
+        label: 'Webhooks (Change Data Capture)',
+        popup: {
+          body: 'Real-time changes? That will be a premium surprise.',
+          titleBar: SALESFORCE_POPUP_TITLE,
+        },
         rightLabel: '+$7000/org per month',
       },
       {
+        cost: 0,
         disabled: true,
         id: 'live-updates',
         label: 'Live updates',
-        popupKey: 'wrongChoiceDefault',
+        popup: {
+          body: 'Live updates are unavailable, which is almost more honest.',
+          titleBar: SALESFORCE_POPUP_TITLE,
+        },
         rightLabel: 'Unavailable',
       },
       {
+        cost: 0,
         defaultChecked: true,
+        disabled: true,
         id: 'ui-theme',
         label: 'UI theme',
-        popupKey: 'wrongChoiceDefault',
+        popup: {
+          body: 'A retro theme as a paid add-on is somehow the most believable part.',
+          titleBar: SALESFORCE_POPUP_TITLE,
+        },
         rightLabel: 'Retro 2015',
       },
       {
+        cost: 5,
         id: 'sso',
         label: 'SSO',
-        popupKey: 'wrongChoiceDefault',
+        popup: {
+          body: 'Secure logins cost extra. Naturally.',
+          titleBar: SALESFORCE_POPUP_TITLE,
+        },
         rightLabel: '+$5/user per month',
       },
       {
+        cost: 75,
         id: 'permissions',
-        label: '11 permissions groups',
-        popupKey: 'wrongChoiceDefault',
-        rightLabel: '+$75/user per month (Switch to enterprise!)',
+        label: '11 permissions\ngroups',
+        popup: {
+          body: 'Granular permissions live behind yet another paywall.',
+          titleBar: SALESFORCE_POPUP_TITLE,
+        },
+        rightLabel: '+$75/user per month\nSwitch to enterprise!',
+        sharedCostKey: 'enterprise-plan',
       },
       {
+        cost: 105,
         id: 'maps',
         label: 'Maps view',
-        popupKey: 'wrongChoiceDefault',
+        popup: {
+          body: 'Apparently even seeing your deals on a map is a luxury.',
+          titleBar: SALESFORCE_POPUP_TITLE,
+        },
         rightLabel: '+$105/user per month',
       },
+      {
+        cost: 75,
+        id: 'workflows',
+        label: '6 workflows',
+        popup: {
+          body: 'Workflow automation stops being basic the second it becomes useful.',
+          titleBar: SALESFORCE_POPUP_TITLE,
+        },
+        rightLabel: '+$75/user per month\nSwitch to enterprise!',
+        sharedCostKey: 'enterprise-plan',
+      },
+      {
+        cost: 0,
+        id: 'lock-in',
+        label: 'Lock-in',
+        popup: {
+          body: 'The discount gets better the harder it is to leave.',
+          titleBar: SALESFORCE_POPUP_TITLE,
+        },
+        rightLabel: '3 2 years contract\n-33% off',
+        rightLabelParts: [
+          [{ strike: true, text: '3' }, { text: ' 2 years contract' }],
+          [{ text: '-33% off' }],
+        ],
+      },
+      {
+        cost: 0,
+        defaultChecked: true,
+        disabled: true,
+        id: 'apex-tutorials',
+        label: 'APEX tutorials',
+        popup: {
+          body: 'Even the training material is a feature worth celebrating.',
+          titleBar: SALESFORCE_POPUP_TITLE,
+        },
+        rightLabel: 'Free for you!',
+      },
+      {
+        cost: 0,
+        disabled: true,
+        id: 'self-hosting',
+        label: 'Self-hosting',
+        popup: {
+          body: 'Owning your stack remains mysteriously out of stock.',
+          titleBar: SALESFORCE_POPUP_TITLE,
+        },
+        rightLabel: 'Out of stock',
+      },
+      {
+        cost: 0,
+        defaultChecked: true,
+        disabled: true,
+        id: 'salesforce-classic',
+        label: 'Salesforce Classic',
+        popup: {
+          body: 'Classic never dies. It just gets extended one more time.',
+          titleBar: SALESFORCE_POPUP_TITLE,
+        },
+        rightLabel: 'Extended run!',
+      },
+      {
+        cost: 75,
+        id: 'flow-orchestration',
+        label: 'Flow\norchestration',
+        popup: {
+          body: 'Orchestration brings its own fee schedule, naturally.',
+          titleBar: SALESFORCE_POPUP_TITLE,
+        },
+        rightLabel:
+          '$1/orchestration run/org\n+$75/user per month\nSwitch to enterprise!',
+        sharedCostKey: 'enterprise-plan',
+      },
+      {
+        cost: 0,
+        disabled: true,
+        id: 'infinite-scroll',
+        label: 'Infinite scroll',
+        popup: {
+          body: 'Infinite scroll is still coming soon, unlike the invoice.',
+          titleBar: SALESFORCE_POPUP_TITLE,
+        },
+        rightLabel: 'Coming soon!',
+      },
+      {
+        cost: 75,
+        id: 'ai-einstein',
+        label: 'AI (Einstein)',
+        popup: {
+          body: 'AI is available right after an enterprise-sized upgrade.',
+          titleBar: SALESFORCE_POPUP_TITLE,
+        },
+        rightLabel: '+$75/user per month',
+      },
+      {
+        cost: 75,
+        id: 'encrypt-data',
+        label: 'Encrypt your data',
+        netSpendRate: 0.2,
+        popup: {
+          body: 'Data protection is packaged like an optional luxury.',
+          titleBar: SALESFORCE_POPUP_TITLE,
+        },
+        rightLabel:
+          '+20% of net spend\n+$75/user per month\nSwitch to enterprise!',
+        sharedCostKey: 'enterprise-plan',
+      },
     ],
+    basePriceAmount: 100,
     featureSectionHeading: 'Best for Salesforce',
-    priceAmount: '$100 USD',
+    productIconAlt: 'Retro help document icon',
+    productIconSrc: '/images/pricing/salesforce/help-icon.png',
     priceSuffix: ' / seat / month - billed yearly',
-    primaryCtaLabel: 'Do you really want to click and ask your first quote ???',
     productTitle: 'Salesforce Pro',
-    secondaryCtaLabel: "More options available, BUT DON'T CLICK !!",
+    secondaryCtaNote: 'More options available!',
+    secondaryCtaHref:
+      'https://www.salesforce.com/en-us/wp-content/uploads/sites/4/documents/pricing/all-add-ons.pdf',
+    secondaryCtaLabel: 'Check more add-ons',
+    totalPriceLabel: 'total per month with fixed cost',
     windowTitle: 'Salesforce Pro pricing',
   },
 };

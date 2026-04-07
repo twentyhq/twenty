@@ -14,6 +14,8 @@ import { ImapClientProvider } from 'src/modules/messaging/message-import-manager
 import { ImapFindDraftsFolderService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-drafts-folder.service';
 import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
+import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
+import { extractMessageIdFromBuffer } from 'src/modules/messaging/message-outbound-manager/utils/extract-message-id-from-buffer.util';
 import { toMailComposerOptions } from 'src/modules/messaging/message-outbound-manager/utils/to-mail-composer-options.util';
 
 @Injectable()
@@ -31,7 +33,7 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
   async sendMessage(
     sendMessageInput: SendMessageInput,
     connectedAccount: ConnectedAccountEntity,
-  ): Promise<void> {
+  ): Promise<SendMessageResult> {
     const { handle, connectionParameters } = connectedAccount;
 
     const smtpClient =
@@ -80,6 +82,10 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
 
       await this.imapClientProvider.closeClient(imapClient);
     }
+
+    return {
+      headerMessageId: extractMessageIdFromBuffer(messageBuffer),
+    };
   }
 
   async createDraft(

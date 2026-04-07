@@ -1,6 +1,6 @@
+import { useQuery } from '@apollo/client/react';
 import { useCallback, useEffect, useState } from 'react';
 
-import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { fetchAllThreadMessagesOperationSignatureFactory } from '@/activities/emails/graphql/operation-signatures/factories/fetchAllThreadMessagesOperationSignatureFactory';
 import { type EmailThread } from '@/activities/emails/types/EmailThread';
 import { type EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
@@ -10,7 +10,9 @@ import { type MessageChannelMessageAssociation } from '@/activities/emails/types
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
 import {
+  type ConnectedAccountProvider,
   CoreObjectNameSingular,
   MessageParticipantRole,
 } from 'twenty-shared/types';
@@ -19,9 +21,6 @@ import { isDefined } from 'twenty-shared/utils';
 export const useEmailThread = (threadId: string | null) => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const [lastMessageId, setLastMessageId] = useState<string | null>(null);
-  const [lastMessageChannelId, setLastMessageChannelId] = useState<
-    string | null
-  >(null);
   const [isMessagesFetchComplete, setIsMessagesFetchComplete] = useState(false);
 
   const { record: thread } = useFindOneRecord<EmailThread>({
@@ -65,6 +64,14 @@ export const useEmailThread = (threadId: string | null) => {
       setIsMessagesFetchComplete(true);
     }
   }, [fetchMoreRecords, messagesLoading, hasNextPage]);
+
+  // When all messages fit in the first page, fetchMoreMessages is never called,
+  // so we need to mark fetch as complete here to unblock downstream queries
+  useEffect(() => {
+    if (!messagesLoading && !hasNextPage) {
+      setIsMessagesFetchComplete(true);
+    }
+  }, [messagesLoading, hasNextPage]);
 
   useEffect(() => {
     if (messages.length > 0 && isMessagesFetchComplete) {
@@ -116,34 +123,6 @@ export const useEmailThread = (threadId: string | null) => {
       skip: !lastMessageId || !isMessagesFetchComplete,
     });
 
-  useEffect(() => {
-    if (messageChannelMessageAssociationData.length > 0) {
-      setLastMessageChannelId(
-        messageChannelMessageAssociationData[0].messageChannelId,
-      );
-    }
-  }, [messageChannelMessageAssociationData]);
-
-  const { records: messageChannelData, loading: messageChannelLoading } =
-    useFindManyRecords<MessageChannel>({
-      filter: {
-        id: {
-          eq: lastMessageChannelId ?? '',
-        },
-      },
-      objectNameSingular: CoreObjectNameSingular.MessageChannel,
-      recordGqlFields: {
-        id: true,
-        handle: true,
-        connectedAccount: {
-          id: true,
-          provider: true,
-          connectionParameters: true,
-        },
-      },
-      skip: !lastMessageChannelId,
-    });
-
   const messageThreadExternalId =
     messageChannelMessageAssociationData.length > 0
       ? messageChannelMessageAssociationData[0].messageThreadExternalId
@@ -152,8 +131,6 @@ export const useEmailThread = (threadId: string | null) => {
     messageChannelMessageAssociationData.length > 0
       ? messageChannelMessageAssociationData[0].messageExternalId
       : null;
-  const connectedAccountHandle =
-    messageChannelData.length > 0 ? messageChannelData[0].handle : null;
 
   const messagesWithSender: EmailThreadMessageWithSender[] = messages
     .map((message) => {
@@ -172,21 +149,32 @@ export const useEmailThread = (threadId: string | null) => {
     })
     .filter(isDefined);
 
-  const connectedAccount =
-    messageChannelData.length > 0
-      ? messageChannelData[0]?.connectedAccount
-      : null;
-  const connectedAccountProvider = connectedAccount?.provider ?? null;
-  const connectedAccountConnectionParameters =
-    connectedAccount?.connectionParameters;
+  // connectedAccount and messageChannel live in the core schema,
+  // so we resolve the account from the core myConnectedAccounts query
+  // rather than the workspace-level messageChannel records.
+  const { data: myConnectedAccountsData, loading: messageChannelLoading } =
+    useQuery<{
+      myConnectedAccounts: {
+        id: string;
+        handle: string;
+        provider: ConnectedAccountProvider;
+      }[];
+    }>(GET_MY_CONNECTED_ACCOUNTS);
+
+  const resolvedConnectedAccount =
+    myConnectedAccountsData?.myConnectedAccounts[0] ?? null;
+
+  const connectedAccountId = resolvedConnectedAccount?.id ?? null;
+  const connectedAccountHandle = resolvedConnectedAccount?.handle ?? null;
+  const connectedAccountProvider = resolvedConnectedAccount?.provider ?? null;
 
   return {
     thread,
     messages: messagesWithSender,
     messageThreadExternalId,
+    connectedAccountId,
     connectedAccountHandle,
     connectedAccountProvider,
-    connectedAccountConnectionParameters,
     threadLoading: messagesLoading,
     messageChannelLoading,
     lastMessageExternalId,

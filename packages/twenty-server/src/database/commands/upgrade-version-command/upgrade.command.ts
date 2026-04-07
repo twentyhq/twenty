@@ -26,6 +26,7 @@ import { MigrateMessagingInfrastructureToMetadataCommand } from 'src/database/co
 import { MigrateRichTextToTextCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-rich-text-to-text.command';
 import { SeedCliApplicationRegistrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-seed-cli-application-registration.command';
 import { UpdateStandardIndexViewNamesCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-update-standard-index-view-names.command';
+import { AddComposeEmailCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-add-compose-email-command-menu-item.command';
 import { AddGlobalKeyValuePairUniqueIndexCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-add-global-key-value-pair-unique-index.command';
 import { BackfillDatasourceToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-backfill-datasource-to-workspace.command';
 import { BackfillMessageThreadSubjectCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-backfill-message-thread-subject.command';
@@ -74,6 +75,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     private readonly makeWorkflowSearchableCommand: MakeWorkflowSearchableCommand,
 
     // 1.21 Commands
+    private readonly addComposeEmailCommandMenuItemCommand: AddComposeEmailCommandMenuItemCommand,
     private readonly addGlobalKeyValuePairUniqueIndexCommand: AddGlobalKeyValuePairUniqueIndexCommand,
     private readonly backfillDatasourceToWorkspaceCommand: BackfillDatasourceToWorkspaceCommand,
     private readonly backfillMessageThreadSubjectCommand: BackfillMessageThreadSubjectCommand,
@@ -116,6 +118,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     ];
 
     const commands_1210: VersionCommands = [
+      this.addComposeEmailCommandMenuItemCommand,
       this.addGlobalKeyValuePairUniqueIndexCommand,
       this.backfillDatasourceToWorkspaceCommand,
       this.backfillMessageThreadSubjectCommand,
