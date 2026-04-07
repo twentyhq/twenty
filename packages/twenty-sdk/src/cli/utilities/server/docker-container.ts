@@ -6,9 +6,7 @@ export const IMAGE = 'twentycrm/twenty-app-dev:latest';
 export const DEFAULT_PORT = 2020;
 export const DEFAULT_TEST_PORT = 2021;
 
-export const isContainerRunning = (
-  containerName = CONTAINER_NAME,
-): boolean => {
+export const isContainerRunning = (containerName = CONTAINER_NAME): boolean => {
   try {
     const result = execSync(
       `docker inspect -f '{{.State.Running}}' ${containerName}`,

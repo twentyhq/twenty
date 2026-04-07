@@ -82,9 +82,7 @@ export const registerRemoteCommands = (program: Command): void => {
         local?: boolean;
         test?: boolean;
       }) => {
-        const configPath = options.test
-          ? getConfigPath(true)
-          : undefined;
+        const configPath = options.test ? getConfigPath(true) : undefined;
         const configService = new ConfigService(
           configPath ? { configPath } : undefined,
         );

@@ -49,9 +49,7 @@ export const registerServerCommands = (program: Command): void => {
     .description('Stop the local Twenty server')
     .option('--test', 'Stop the test instance')
     .action((options: { test?: boolean }) => {
-      const containerName = options.test
-        ? TEST_CONTAINER_NAME
-        : CONTAINER_NAME;
+      const containerName = options.test ? TEST_CONTAINER_NAME : CONTAINER_NAME;
 
       if (!containerExists(containerName)) {
         console.log(chalk.yellow('No Twenty server container found.'));
@@ -69,9 +67,7 @@ export const registerServerCommands = (program: Command): void => {
     .option('-n, --lines <lines>', 'Number of lines to show', '50')
     .option('--test', 'Show logs for the test instance')
     .action((options: { lines: string; test?: boolean }) => {
-      const containerName = options.test
-        ? TEST_CONTAINER_NAME
-        : CONTAINER_NAME;
+      const containerName = options.test ? TEST_CONTAINER_NAME : CONTAINER_NAME;
 
       if (!containerExists(containerName)) {
         console.log(chalk.yellow('No Twenty server container found.'));
@@ -95,9 +91,7 @@ export const registerServerCommands = (program: Command): void => {
     .description('Show Twenty server status')
     .option('--test', 'Show status of the test instance')
     .action(async (options: { test?: boolean }) => {
-      const containerName = options.test
-        ? TEST_CONTAINER_NAME
-        : CONTAINER_NAME;
+      const containerName = options.test ? TEST_CONTAINER_NAME : CONTAINER_NAME;
       const defaultPort = options.test ? DEFAULT_TEST_PORT : DEFAULT_PORT;
 
       if (!containerExists(containerName)) {
@@ -134,9 +128,7 @@ export const registerServerCommands = (program: Command): void => {
     .description('Delete all data and start fresh')
     .option('--test', 'Reset the test instance')
     .action((options: { test?: boolean }) => {
-      const containerName = options.test
-        ? TEST_CONTAINER_NAME
-        : CONTAINER_NAME;
+      const containerName = options.test ? TEST_CONTAINER_NAME : CONTAINER_NAME;
       const volumeData = options.test
         ? 'twenty-app-dev-test-data'
         : 'twenty-app-dev-data';
