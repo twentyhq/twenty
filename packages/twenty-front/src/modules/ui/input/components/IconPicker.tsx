@@ -156,7 +156,7 @@ type IconPickerIconProps = {
   selectedIconKey?: string;
   Icon: IconComponent;
   focusedIconKey?: string;
-  iconTintColor?: ThemeColor;
+  color?: ThemeColor;
 };
 
 const IconPickerIcon = ({
@@ -165,7 +165,7 @@ const IconPickerIcon = ({
   selectedIconKey,
   Icon,
   focusedIconKey,
-  iconTintColor,
+  color,
 }: IconPickerIconProps) => {
   const { theme } = useContext(ThemeContext);
 
@@ -188,11 +188,7 @@ const IconPickerIcon = ({
             <Icon
               // oxlint-disable-next-line react/jsx-props-no-spreading
               {...iconProps}
-              color={
-                isDefined(iconTintColor)
-                  ? theme.color[iconTintColor]
-                  : iconProps.color
-              }
+              color={isDefined(color) ? theme.color[color] : iconProps.color}
             />
           )}
           onClick={onSelect}
@@ -473,7 +469,7 @@ export const IconPicker = ({
                           selectedIconKey={selectedIconKey}
                           Icon={getIcon(iconKey)}
                           focusedIconKey={focusedIconKey}
-                          iconTintColor={iconColorPicker?.selectedColor}
+                          color={iconColorPicker?.selectedColor}
                         />
                       ))}
                     </StyledMenuIconItemsContainer>
