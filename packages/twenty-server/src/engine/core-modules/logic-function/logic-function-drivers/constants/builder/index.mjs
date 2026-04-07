@@ -49,7 +49,7 @@ export const handler = async (event) => {
       outfile: outFilePath,
       platform: 'node',
       format: 'esm',
-      target: 'es2022',
+      target: 'esnext',
       bundle: true,
       sourcemap: true,
       packages: 'external',
