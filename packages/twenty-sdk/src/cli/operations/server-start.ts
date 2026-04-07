@@ -14,25 +14,86 @@ import {
   checkServerHealth,
   detectLocalServer,
 } from '@/cli/utilities/server/detect-local-server';
-import { execSync, spawnSync } from 'node:child_process';
+import { execSync, spawn, spawnSync } from 'node:child_process';
+import chalk from 'chalk';
 
 const HEALTH_POLL_INTERVAL_MS = 2000;
 const HEALTH_TIMEOUT_MS = 180 * 1000;
+const MILESTONE_START = '==> START ';
+const MILESTONE_DONE = '==> DONE';
 
 const waitForHealthy = async (port: number): Promise<boolean> => {
   const startTime = Date.now();
+  const onProgress = (message: string) =>
+    process.stdout.write(chalk.gray(message));
 
-  while (Date.now() - startTime < HEALTH_TIMEOUT_MS) {
-    if (await checkServerHealth(port)) {
-      return true;
+  const logStream = spawn(
+    'docker',
+    ['logs', '-f', '--since', '1s', CONTAINER_NAME],
+    { stdio: ['ignore', 'pipe', 'pipe'] },
+  );
+
+  logStream.on('error', () => {});
+
+  let hasPendingStep = false;
+
+  const handleLogLine = (line: string) => {
+    const trimmed = line.trim();
+    const startIndex = trimmed.indexOf(MILESTONE_START);
+    const doneIndex = trimmed.indexOf(MILESTONE_DONE);
+
+    if (startIndex !== -1) {
+      if (hasPendingStep) {
+        onProgress('Done\n');
+      }
+
+      const message = trimmed.slice(startIndex + MILESTONE_START.length);
+
+      onProgress(`==>  ${message}... `);
+      hasPendingStep = true;
+    } else if (doneIndex !== -1 && hasPendingStep) {
+      onProgress('Done\n');
+      hasPendingStep = false;
+    }
+  };
+
+  let logBuffer = '';
+
+  const onData = (chunk: Buffer) => {
+    logBuffer += chunk.toString();
+
+    const lines = logBuffer.split('\n');
+
+    logBuffer = lines.pop() ?? '';
+    lines.forEach(handleLogLine);
+  };
+
+  logStream.stdout?.on('data', onData);
+  logStream.stderr?.on('data', onData);
+
+  try {
+    while (Date.now() - startTime < HEALTH_TIMEOUT_MS) {
+      if (await checkServerHealth(port)) {
+        if (hasPendingStep) {
+          onProgress('Done\n');
+        }
+
+        return true;
+      }
+
+      await new Promise((resolve) =>
+        setTimeout(resolve, HEALTH_POLL_INTERVAL_MS),
+      );
     }
 
-    await new Promise((resolve) =>
-      setTimeout(resolve, HEALTH_POLL_INTERVAL_MS),
-    );
-  }
+    if (hasPendingStep) {
+      onProgress('Failed\n');
+    }
 
-  return false;
+    return false;
+  } finally {
+    logStream.kill();
+  }
 };
 
 export type ServerStartOptions = {
@@ -126,8 +187,6 @@ const innerServerStart = async (
   } else {
     onProgress?.('Starting Twenty container...');
 
-    const serverUrl = `http://localhost:${port}`;
-
     const runResult = spawnSync(
       'docker',
       [
@@ -135,14 +194,16 @@ const innerServerStart = async (
         '-d',
         '--name',
         CONTAINER_NAME,
-        '-e',
-        `SERVER_URL=${serverUrl}`,
         '-p',
-        `${port}:3000`,
+        `${port}:${port}`,
+        '-e',
+        `NODE_PORT=${port}`,
+        '-e',
+        `SERVER_URL=http://localhost:${port}`,
         '-v',
         'twenty-app-dev-data:/data/postgres',
         '-v',
-        'twenty-app-dev-storage:/app/.local-storage',
+        'twenty-app-dev-storage:/app/packages/twenty-server/.local-storage',
         IMAGE,
       ],
       { stdio: 'inherit' },

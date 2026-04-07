@@ -1,19 +1,19 @@
 'use client';
 
-import {
-  Accordion as BaseAccordion,
-  type AccordionTriggerState,
-} from '@base-ui/react/accordion';
+import { IconButton } from '@/design-system/components';
 import {
   MinusIcon,
   PlusIcon,
   RectangleFillIcon,
   RectangleOutlineIcon,
 } from '@/icons';
-import { theme } from '@/theme';
-import { styled } from '@linaria/react';
-import { IconButton } from '@/design-system/components';
 import type { FaqQuestionType } from '@/sections/Faq/types/FaqQuestion';
+import { theme } from '@/theme';
+import {
+  Accordion as BaseAccordion,
+  type AccordionTriggerState,
+} from '@base-ui/react/accordion';
+import { styled } from '@linaria/react';
 
 const QuestionText = styled.span`
   color: ${theme.colors.secondary.text[40]};

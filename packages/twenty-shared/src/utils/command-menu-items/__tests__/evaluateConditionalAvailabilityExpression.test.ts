@@ -29,6 +29,7 @@ const buildContext = (
   targetObjectReadPermissions: {},
   targetObjectWritePermissions: {},
   objectMetadataItem: {},
+  objectMetadataLabel: '',
   ...overrides,
 });
 
@@ -301,6 +302,81 @@ describe('evaluateConditionalAvailabilityExpression', () => {
         evaluateConditionalAvailabilityExpression(
           'includesSome(selectedRecords, "statuses", "ACTIVE")',
           context,
+        ),
+      ).toBe(false);
+    });
+  });
+
+  describe('isSelectAll bypasses selectedRecords array checks', () => {
+    it('should return true for "isSelectAll or noneDefined(...)" when isSelectAll is true and selectedRecords is empty', () => {
+      const context = buildContext({
+        isSelectAll: true,
+        selectedRecords: [],
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'isSelectAll or noneDefined(selectedRecords, "deletedAt")',
+          context,
+        ),
+      ).toBe(true);
+    });
+
+    it('should return true for "isSelectAll or everyDefined(...)" when isSelectAll is true and selectedRecords is empty', () => {
+      const context = buildContext({
+        isSelectAll: true,
+        selectedRecords: [],
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'isSelectAll or everyDefined(selectedRecords, "deletedAt")',
+          context,
+        ),
+      ).toBe(true);
+    });
+
+    it('should evaluate the full deleteRecords expression to true in select-all mode', () => {
+      const expression =
+        'numberOfSelectedRecords >= 1 and not hasAnySoftDeleteFilterOnView and objectPermissions.canSoftDeleteObjectRecords and (isSelectAll or noneDefined(selectedRecords, "deletedAt"))';
+
+      const context = buildContext({
+        isSelectAll: true,
+        selectedRecords: [],
+        numberOfSelectedRecords: 50,
+        hasAnySoftDeleteFilterOnView: false,
+        objectPermissions: {
+          objectMetadataId: '',
+          canReadObjectRecords: true,
+          canUpdateObjectRecords: true,
+          canSoftDeleteObjectRecords: true,
+          canDestroyObjectRecords: false,
+          restrictedFields: {},
+          rowLevelPermissionPredicates: [],
+          rowLevelPermissionPredicateGroups: [],
+        },
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(expression, context),
+      ).toBe(true);
+    });
+
+    it('should still respect noneDefined when isSelectAll is false and records are present', () => {
+      const expression =
+        'isSelectAll or noneDefined(selectedRecords, "deletedAt")';
+
+      const contextWithDeletedRecord = buildContext({
+        isSelectAll: false,
+        selectedRecords: [
+          { id: 'id-1', createdAt: '', updatedAt: '', deletedAt: '2024-01-01' },
+        ],
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          expression,
+          contextWithDeletedRecord,
         ),
       ).toBe(false);
     });

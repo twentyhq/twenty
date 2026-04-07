@@ -73,19 +73,15 @@ export const useSaveFieldsWidgetGroups = () => {
                   name: group.name,
                   position: group.position,
                   isVisible: group.isVisible,
-                  fields: group.fields.flatMap((field) => {
-                    if (!isDefined(field.viewFieldId)) {
-                      return [];
-                    }
-
-                    return [
-                      {
-                        viewFieldId: field.viewFieldId,
-                        isVisible: field.isVisible,
-                        position: field.position,
-                      },
-                    ];
-                  }),
+                  fields: group.fields.map((field) => ({
+                    ...(isDefined(field.viewFieldId)
+                      ? { viewFieldId: field.viewFieldId }
+                      : {
+                          fieldMetadataId: field.fieldMetadataItem.id,
+                        }),
+                    isVisible: field.isVisible,
+                    position: field.position,
+                  })),
                 })),
               },
             },
@@ -97,19 +93,15 @@ export const useSaveFieldsWidgetGroups = () => {
             variables: {
               input: {
                 widgetId,
-                fields: ungroupedFields.flatMap((field) => {
-                  if (!isDefined(field.viewFieldId)) {
-                    return [];
-                  }
-
-                  return [
-                    {
-                      viewFieldId: field.viewFieldId,
-                      isVisible: field.isVisible,
-                      position: field.position,
-                    },
-                  ];
-                }),
+                fields: ungroupedFields.map((field) => ({
+                  ...(isDefined(field.viewFieldId)
+                    ? { viewFieldId: field.viewFieldId }
+                    : {
+                        fieldMetadataId: field.fieldMetadataItem.id,
+                      }),
+                  isVisible: field.isVisible,
+                  position: field.position,
+                })),
               },
             },
           });

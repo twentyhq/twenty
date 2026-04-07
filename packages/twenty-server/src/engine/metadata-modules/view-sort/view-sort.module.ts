@@ -8,6 +8,7 @@ import { ViewSortController } from 'src/engine/metadata-modules/view-sort/contro
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { ViewSortResolver } from 'src/engine/metadata-modules/view-sort/resolvers/view-sort.resolver';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
+import { ViewSortToolsFactory } from 'src/engine/metadata-modules/view-sort/tools/view-sort-tools.factory';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -24,7 +25,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
     ViewPermissionsModule,
   ],
   controllers: [ViewSortController],
-  providers: [ViewSortService, ViewSortResolver],
-  exports: [ViewSortService],
+  providers: [ViewSortService, ViewSortResolver, ViewSortToolsFactory],
+  exports: [ViewSortService, ViewSortToolsFactory],
 })
 export class ViewSortModule {}

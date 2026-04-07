@@ -28,5 +28,14 @@ export const validateTsVectorFlatFieldMetadata = ({
     });
   }
 
+  if (!flatEntityToValidate.universalSettings?.asExpression) {
+    errors.push({
+      code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      message:
+        'Field type TS_VECTOR must have an expression. This may have failed to be built because record identifier field does not exist or is not of a searchable type.',
+      userFriendlyMessage: msg`Field type TS_VECTOR must have an expression. This may have failed to be built because record identifier field does not exist or is not of a searchable type.`,
+    });
+  }
+
   return errors;
 };

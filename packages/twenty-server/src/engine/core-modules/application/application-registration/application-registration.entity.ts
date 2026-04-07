@@ -127,6 +127,11 @@ export class ApplicationRegistrationEntity {
   @Column({ type: 'jsonb', nullable: true })
   manifest: Manifest | null;
 
+  @Field(() => String, { nullable: true })
+  get logoUrl(): string | null {
+    return this.manifest?.application?.logoUrl ?? null;
+  }
+
   @OneToMany(
     () => ApplicationRegistrationVariableEntity,
     (variable) => variable.applicationRegistration,

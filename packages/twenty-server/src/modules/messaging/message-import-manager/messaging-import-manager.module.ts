@@ -2,10 +2,11 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
-import { MessageChannelDataAccessModule } from 'src/engine/metadata-modules/message-channel/data-access/message-channel-data-access.module';
-import { MessageFolderDataAccessModule } from 'src/engine/metadata-modules/message-folder/data-access/message-folder-data-access.module';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
@@ -36,7 +37,6 @@ import { MessagingMessageListFetchJob } from 'src/modules/messaging/message-impo
 import { MessagingMessagesImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
 import { MessagingOngoingStaleJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
 import { MessagingRelaunchFailedMessageChannelJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-relaunch-failed-message-channel.job';
-import { MessagingMessageImportManagerMessageChannelListener } from 'src/modules/messaging/message-import-manager/listeners/messaging-import-manager-message-channel.listener';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 import { MessagingDeleteFolderMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-folder-messages.service';
@@ -63,12 +63,13 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingIMAPDriverModule,
     MessagingSmtpDriverModule,
     MessagingCommonModule,
-    MessageChannelDataAccessModule,
-    MessageFolderDataAccessModule,
     TypeOrmModule.forFeature([
       WorkspaceEntity,
       DataSourceEntity,
       ObjectMetadataEntity,
+      MessageChannelEntity,
+      MessageFolderEntity,
+      UserWorkspaceEntity,
     ]),
     EmailAliasManagerModule,
     FeatureFlagModule,
@@ -95,7 +96,6 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingOngoingStaleCronJob,
     MessagingRelaunchFailedMessageChannelsCronJob,
     MessagingAddSingleMessageToCacheForImportJob,
-    MessagingMessageImportManagerMessageChannelListener,
     MessagingCleanCacheJob,
     MessagingMessageService,
     MessagingMessageFolderAssociationService,

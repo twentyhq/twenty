@@ -1,6 +1,6 @@
 import { LinkButton } from '@/design-system/components';
 import { PlusIcon, RectangleFillIcon } from '@/icons';
-import { FOOTER_NAV_GROUPS } from '@/sections/Footer/constants/footer-nav-groups';
+import type { FooterNavGroupType } from '@/sections/Footer/types';
 import { theme } from '@/theme';
 import { NavigationMenu } from '@base-ui/react/navigation-menu';
 import { styled } from '@linaria/react';
@@ -123,10 +123,14 @@ const Actions = styled.div`
   }
 `;
 
-export function Nav() {
+type NavProps = {
+  groups: FooterNavGroupType[];
+};
+
+export function Nav({ groups }: NavProps) {
   return (
     <NavigationMenu.Root render={<FooterNav />}>
-      {FOOTER_NAV_GROUPS.map((group, index) => (
+      {groups.map((group, index) => (
         <React.Fragment key={group.id}>
           {index > 0 && (
             <NavDivider role="separator">
@@ -172,22 +176,18 @@ export function Nav() {
                 </NavigationMenu.Item>
               ))}
             </NavMenuList>
-            {group.showActions && (
+            {group.ctas.length > 0 && (
               <Actions>
-                <LinkButton
-                  color="secondary"
-                  href="https://app.twenty.com/welcome"
-                  label="Talk to us"
-                  type="anchor"
-                  variant="contained"
-                />
-                <LinkButton
-                  color="secondary"
-                  href="https://app.twenty.com/welcome"
-                  label="Get started"
-                  type="anchor"
-                  variant="outlined"
-                />
+                {group.ctas.map((cta) => (
+                  <LinkButton
+                    key={`${cta.label}-${cta.href}`}
+                    color={cta.color}
+                    href={cta.href}
+                    label={cta.label}
+                    type={cta.type}
+                    variant={cta.variant}
+                  />
+                ))}
               </Actions>
             )}
           </NavGroup>

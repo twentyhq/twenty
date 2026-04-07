@@ -11,17 +11,13 @@ import { AIChatEditorFocusEffect } from '@/ai/components/internal/AIChatEditorFo
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { useAIChatEditor } from '@/ai/hooks/useAIChatEditor';
+import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
-import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
 import { Select } from '@/ui/input/components/Select';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { t } from '@lingui/core/macro';
+import { type SelectOption } from 'twenty-ui/input';
 
 const StyledInputArea = styled.div<{ isMobile: boolean }>`
   align-items: flex-end;
@@ -110,45 +106,24 @@ const StyledRightButtonsContainer = styled.div`
 
 export const AIChatEditorSection = () => {
   const isMobile = useIsMobile();
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const aiModels = useAtomStateValue(aiModelsState);
-  const { enabledModels } = useWorkspaceAiModelAvailability();
+  const { options, pinnedOption } = useAiModelOptions({
+    variant: 'pinned-default',
+  });
+
+  const smartModelOptions: SelectOption<string | null>[] = options;
+  const defaultPinnedOption: SelectOption<string | null> | undefined =
+    pinnedOption
+      ? {
+          ...pinnedOption,
+          value: null,
+        }
+      : undefined;
   const setAgentChatUserSelectedModel = useSetAtomState(
     agentChatUserSelectedModelState,
   );
   const { selectedModelId } = useAgentChatModelId();
 
   const { editor, handleSendAndClear } = useAIChatEditor();
-
-  const workspaceSmartModel = aiModels.find(
-    (model) => model.modelId === currentWorkspace?.smartModel,
-  );
-
-  const resolvedDefaultModelId = enabledModels.find(
-    (model) =>
-      model.label === workspaceSmartModel?.label &&
-      model.providerName === workspaceSmartModel?.providerName,
-  )?.modelId;
-
-  const defaultPinnedOption = workspaceSmartModel
-    ? {
-        value: null as string | null,
-        label: workspaceSmartModel.label,
-        Icon: getModelIcon(
-          workspaceSmartModel.modelFamily,
-          workspaceSmartModel.providerName,
-        ),
-        contextualText: t`default`,
-      }
-    : undefined;
-
-  const smartModelOptions = enabledModels
-    .filter((model) => model.modelId !== resolvedDefaultModelId)
-    .map((model) => ({
-      value: model.modelId as string | null,
-      label: model.label,
-      Icon: getModelIcon(model.modelFamily, model.providerName),
-    }));
 
   return (
     <>

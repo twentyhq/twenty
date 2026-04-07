@@ -45,7 +45,7 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
   padding: ${({ isUser }) =>
     isUser ? `0 ${themeCssVariables.spacing[2]}` : '0'};
   white-space: normal;
-  width: fit-content;
+  width: ${({ isUser }) => (isUser ? 'fit-content' : '100%')};
   /* Pre-wrap within the whole container turns every newline between block
      elements into extra spacing; keep normal flow and only pre-wrap code. */
   word-wrap: break-word;
@@ -189,23 +189,22 @@ export const AIChatMessage = ({
           <AIChatErrorRenderer error={error} />
         )}
       </StyledMessageContainer>
-      {agentChatMessage.parts.length > 0 &&
-        agentChatMessage.metadata?.createdAt && (
-          <StyledMessageFooter className="message-footer">
-            <StyledMessageTimestamp>
-              {beautifyPastDateRelativeToNow(
-                agentChatMessage.metadata?.createdAt,
-                localeCatalog,
-              )}
-            </StyledMessageTimestamp>
-            <LightCopyIconButton
-              copyText={
-                agentChatMessage.parts.find((part) => part.type === 'text')
-                  ?.text ?? ''
-              }
-            />
-          </StyledMessageFooter>
-        )}
+      {agentChatMessage.parts.length > 0 && (
+        <StyledMessageFooter className="message-footer">
+          <StyledMessageTimestamp>
+            {beautifyPastDateRelativeToNow(
+              agentChatMessage.metadata?.createdAt ?? new Date(),
+              localeCatalog,
+            )}
+          </StyledMessageTimestamp>
+          <LightCopyIconButton
+            copyText={
+              agentChatMessage.parts.find((part) => part.type === 'text')
+                ?.text ?? ''
+            }
+          />
+        </StyledMessageFooter>
+      )}
     </StyledMessageBubble>
   );
 };

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import { type AiSdkPackage } from 'twenty-shared/ai';
 
 import {
@@ -11,6 +12,7 @@ import {
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
+import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
 import {
   type ClientAIModelConfig,
   type ClientConfig,
@@ -33,6 +35,7 @@ export class ClientConfigService {
     private twentyConfigService: TwentyConfigService,
     private domainServerConfigService: DomainServerConfigService,
     private aiModelRegistryService: AiModelRegistryService,
+    private maintenanceModeService: MaintenanceModeService,
   ) {}
 
   private deriveNativeCapabilities(
@@ -237,7 +240,21 @@ export class ClientConfigService {
         : undefined,
       isCloudflareIntegrationEnabled: this.isCloudflareIntegrationEnabled(),
       isClickHouseConfigured: !!this.twentyConfigService.get('CLICKHOUSE_URL'),
+      isWorkspaceSchemaDDLLocked: this.twentyConfigService.get(
+        'WORKSPACE_SCHEMA_DDL_LOCKED',
+      ),
     };
+
+    const maintenanceMode =
+      await this.maintenanceModeService.getMaintenanceMode();
+
+    if (isDefined(maintenanceMode)) {
+      clientConfig.maintenance = {
+        startAt: new Date(maintenanceMode.startAt),
+        endAt: new Date(maintenanceMode.endAt),
+        link: maintenanceMode.link,
+      };
+    }
 
     return clientConfig;
   }

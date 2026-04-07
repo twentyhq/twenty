@@ -14,8 +14,9 @@ import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/sen
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool';
 import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
+import { WebSearchTool } from 'src/engine/core-modules/tool/tools/web-search-tool/web-search-tool';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
-import { ConnectedAccountDataAccessModule } from 'src/engine/metadata-modules/connected-account/data-access/connected-account-data-access.module';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
@@ -26,7 +27,7 @@ import { MessagingSendManagerModule } from 'src/modules/messaging/message-outbou
   imports: [
     MessagingImportManagerModule,
     MessagingSendManagerModule,
-    TypeOrmModule.forFeature([FileEntity]),
+    TypeOrmModule.forFeature([FileEntity, ConnectedAccountEntity]),
     ApplicationModule,
     FeatureFlagModule,
     FileModule,
@@ -36,7 +37,6 @@ import { MessagingSendManagerModule } from 'src/modules/messaging/message-outbou
     ViewModule,
     NavigationMenuItemModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
-    ConnectedAccountDataAccessModule,
   ],
   providers: [
     HttpTool,
@@ -46,6 +46,7 @@ import { MessagingSendManagerModule } from 'src/modules/messaging/message-outbou
     SearchHelpCenterTool,
     CodeInterpreterTool,
     NavigateAppTool,
+    WebSearchTool,
   ],
   exports: [
     HttpTool,
@@ -55,6 +56,7 @@ import { MessagingSendManagerModule } from 'src/modules/messaging/message-outbou
     SearchHelpCenterTool,
     CodeInterpreterTool,
     NavigateAppTool,
+    WebSearchTool,
   ],
 })
 export class ToolModule {}

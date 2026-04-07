@@ -1,4 +1,6 @@
 import { type Manifest } from 'twenty-shared/application';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { fromCommandMenuItemManifestToUniversalFlatCommandMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-command-menu-item-manifest-to-universal-flat-command-menu-item.util';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
@@ -11,6 +13,7 @@ import { fromPageLayoutTabManifestToUniversalFlatPageLayoutTab } from 'src/engin
 import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
 import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-role.util';
 import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
+import { computeSearchVectorUniversalSettingsFromObjectManifest } from 'src/engine/core-modules/application/application-manifest/utils/compute-search-vector-universal-settings-from-object-manifest.util';
 import { fromViewFieldGroupManifestToUniversalFlatViewFieldGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-field-group-manifest-to-universal-flat-view-field-group.util';
 import { fromViewFieldManifestToUniversalFlatViewField } from 'src/engine/core-modules/application/application-manifest/converters/from-view-field-manifest-to-universal-flat-view-field.util';
 import { fromViewFilterGroupManifestToUniversalFlatViewFilterGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-group-manifest-to-universal-flat-view-filter-group.util';
@@ -49,12 +52,25 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
     });
 
     for (const fieldManifest of objectManifest.fields) {
+      const enrichedFieldManifest =
+        fieldManifest.type === FieldMetadataType.TS_VECTOR &&
+        !isDefined(fieldManifest.universalSettings)
+          ? {
+              ...fieldManifest,
+              objectUniversalIdentifier: objectManifest.universalIdentifier,
+              universalSettings:
+                computeSearchVectorUniversalSettingsFromObjectManifest({
+                  objectManifest,
+                }),
+            }
+          : {
+              ...fieldManifest,
+              objectUniversalIdentifier: objectManifest.universalIdentifier,
+            };
+
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity: fromFieldManifestToUniversalFlatFieldMetadata({
-          fieldManifest: {
-            ...fieldManifest,
-            objectUniversalIdentifier: objectManifest.universalIdentifier,
-          },
+          fieldManifest: enrichedFieldManifest,
           applicationUniversalIdentifier,
           now,
         }),

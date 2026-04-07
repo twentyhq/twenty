@@ -66,6 +66,16 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
         return;
       }
 
+      if (widgetType === WidgetType.FIELD) {
+        navigatePageLayoutSidePanel({
+          sidePanelPage: SidePanelPages.PageLayoutFieldSettings,
+          pageTitle: t`Field widget`,
+          resetNavigationStack: true,
+        });
+        setPageLayoutEditingWidgetId(widgetId);
+        return;
+      }
+
       if (widgetType === WidgetType.RECORD_TABLE) {
         navigatePageLayoutSidePanel({
           sidePanelPage: SidePanelPages.PageLayoutRecordTableSettings,

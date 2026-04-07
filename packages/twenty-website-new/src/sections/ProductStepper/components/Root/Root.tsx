@@ -1,11 +1,15 @@
 import { Container } from '@/design-system/components';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import type { ReactNode } from 'react';
+import type { ReactNode, RefObject } from 'react';
 
 const StyledSection = styled.section`
   background-color: ${theme.colors.primary.text[5]};
   width: 100%;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    height: 300vh;
+  }
 `;
 
 const Grid = styled(Container)`
@@ -23,6 +27,7 @@ const Grid = styled(Container)`
     align-items: start;
     column-gap: ${theme.spacing(10)};
     grid-template-columns: minmax(0, 1fr) minmax(0, 672px);
+    min-height: 100%;
     padding-bottom: ${theme.spacing(20)};
     padding-left: ${theme.spacing(10)};
     padding-right: ${theme.spacing(10)};
@@ -31,11 +36,14 @@ const Grid = styled(Container)`
   }
 `;
 
-type RootProps = { children: ReactNode };
+type RootProps = {
+  children: ReactNode;
+  scrollContainerRef?: RefObject<HTMLElement | null>;
+};
 
-export function Root({ children }: RootProps) {
+export function Root({ children, scrollContainerRef }: RootProps) {
   return (
-    <StyledSection>
+    <StyledSection ref={scrollContainerRef}>
       <Grid>{children}</Grid>
     </StyledSection>
   );

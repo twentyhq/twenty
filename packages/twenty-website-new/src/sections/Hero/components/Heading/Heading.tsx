@@ -11,6 +11,18 @@ const HeadingContainer = styled.div`
   width: 100%;
   word-wrap: break-word;
 
+  /* Target the spans rendered by BaseHeading */
+  span {
+    transition: opacity 0.4s ease;
+  }
+
+  /* When hovering over the heading, dim un-hovered spans */
+  h1:has(span:hover) span:not(:hover),
+  h2:has(span:hover) span:not(:hover),
+  h3:has(span:hover) span:not(:hover) {
+    opacity: 0.2;
+  }
+
   &[data-page=${Pages.WhyTwenty}] {
     color: ${theme.colors.secondary.text[100]};
   }

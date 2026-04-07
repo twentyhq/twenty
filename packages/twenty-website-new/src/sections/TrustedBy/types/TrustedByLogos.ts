@@ -1,3 +1,4 @@
 export type TrustedByLogosType = {
-    icon: string; 
-}
+  fit?: 'contain' | 'cover';
+  src: string;
+};

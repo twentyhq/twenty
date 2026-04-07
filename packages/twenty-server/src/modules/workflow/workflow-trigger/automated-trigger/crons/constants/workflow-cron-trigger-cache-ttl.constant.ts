@@ -1,0 +1,1 @@
+export const WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS = 60 * 60 * 1000;

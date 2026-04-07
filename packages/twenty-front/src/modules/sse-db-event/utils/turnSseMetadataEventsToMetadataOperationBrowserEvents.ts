@@ -1,8 +1,8 @@
+import { type BroadcastEntityName } from '@/browser-event/types/BroadcastEntityName';
 import { type MetadataOperationBrowserEventDetail } from '@/browser-event/types/MetadataOperationBrowserEventDetail';
 import { isDefined } from 'twenty-shared/utils';
 import {
   MetadataEventAction,
-  type AllMetadataName,
   type MetadataEvent,
 } from '~/generated-metadata/graphql';
 
@@ -12,7 +12,7 @@ export const turnSseMetadataEventsToMetadataOperationBrowserEvents = <
   metadataName,
   sseMetadataEvents,
 }: {
-  metadataName: AllMetadataName;
+  metadataName: BroadcastEntityName;
   sseMetadataEvents: MetadataEvent[];
 }): MetadataOperationBrowserEventDetail<T>[] => {
   return sseMetadataEvents

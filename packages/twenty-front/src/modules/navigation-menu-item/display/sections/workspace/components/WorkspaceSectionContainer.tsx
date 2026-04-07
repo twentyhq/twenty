@@ -111,6 +111,10 @@ export const WorkspaceSectionContainer = ({
     return false;
   });
 
+  const workspaceOrphanItemsForSection = isLayoutCustomizationModeEnabled
+    ? flatItems
+    : filteredItems;
+
   const getEditModeProps = (item: NavigationMenuItem): EditModeProps => {
     const itemId = item.id;
     return {
@@ -159,14 +163,14 @@ export const WorkspaceSectionContainer = ({
         <Suspense
           fallback={
             <WorkspaceSectionListEditModeFallback
-              filteredItems={filteredItems}
+              filteredItems={workspaceOrphanItemsForSection}
               folderChildrenById={folderChildrenById}
               onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
             />
           }
         >
           <LazyWorkspaceSectionListDndKit
-            filteredItems={filteredItems}
+            filteredItems={workspaceOrphanItemsForSection}
             getEditModeProps={getEditModeProps}
             folderChildrenById={folderChildrenById}
             onNavigationMenuItemClick={onNavigationMenuItemClick}

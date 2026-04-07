@@ -11,9 +11,18 @@ const BodyContainer = styled.div`
   margin-top: calc(${theme.spacing(2)} - ${theme.spacing(6)});
   max-width: 360px;
   width: 100%;
+  transition: color 0.4s ease;
+
+  &:hover {
+    color: ${theme.colors.primary.text[100]};
+  }
 
   &[data-page=${Pages.WhyTwenty}] {
-    color: ${theme.colors.secondary.text[100]};
+    color: ${theme.colors.secondary.text[60]};
+
+    &:hover {
+      color: ${theme.colors.secondary.text[100]};
+    }
   }
 
   @media (min-width: ${theme.breakpoints.md}px) {
@@ -35,6 +44,10 @@ const BodyContainer = styled.div`
 
     &[data-page=${Pages.WhyTwenty}] {
       max-width: 443px;
+    }
+
+    &[data-page=${Pages.ReleaseNotes}] {
+      max-width: 591px;
     }
   }
 `;

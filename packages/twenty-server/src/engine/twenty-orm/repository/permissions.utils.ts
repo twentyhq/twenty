@@ -139,6 +139,40 @@ export const validateOperationIsPermittedOrThrow = ({
       });
       break;
     case 'insert':
+      if (!permissionsForEntity?.canUpdateObjectRecords) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+        );
+      }
+
+      validateReadFieldPermissionOrThrow({
+        restrictedFields: permissionsForEntity.restrictedFields,
+        selectedColumns,
+        columnNameToFieldMetadataIdMap,
+      });
+
+      if (updatedColumns.length > 0) {
+        const rlsFieldMetadataIds = new Set(
+          permissionsForEntity.rowLevelPermissionPredicates.map(
+            (predicate) => predicate.fieldMetadataId,
+          ),
+        );
+
+        const updatedColumnsWithoutRlsFields = updatedColumns.filter(
+          (column) =>
+            !rlsFieldMetadataIds.has(columnNameToFieldMetadataIdMap[column]),
+        );
+
+        if (updatedColumnsWithoutRlsFields.length > 0) {
+          validateUpdateFieldPermissionOrThrow({
+            restrictedFields: permissionsForEntity.restrictedFields,
+            updatedColumns: updatedColumnsWithoutRlsFields,
+            columnNameToFieldMetadataIdMap,
+          });
+        }
+      }
+      break;
     case 'update':
       if (!permissionsForEntity?.canUpdateObjectRecords) {
         throw new PermissionsException(

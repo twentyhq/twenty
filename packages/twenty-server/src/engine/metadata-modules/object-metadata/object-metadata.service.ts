@@ -188,6 +188,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       ]);
     }
 
+    if (isDefined(updateObjectInput.update.isActive)) {
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId,
+        flatMapsKeys: ['flatNavigationMenuItemMaps'],
+      });
+    }
+
     return updatedFlatObjectMetadata;
   }
 

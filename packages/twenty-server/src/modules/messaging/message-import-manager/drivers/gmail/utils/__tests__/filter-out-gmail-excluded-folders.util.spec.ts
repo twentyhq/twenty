@@ -1,5 +1,5 @@
-import { MessageFolderImportPolicy } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { MessageFolderImportPolicy } from 'twenty-shared/types';
+import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { filterGmailMessagesByFolderPolicy } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/filter-gmail-messages-by-folder-policy.util';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 
@@ -12,8 +12,8 @@ const createMessage = (
 const createFolder = (
   externalId: string,
   isSynced: boolean,
-): MessageFolderWorkspaceEntity =>
-  ({ externalId, isSynced }) as MessageFolderWorkspaceEntity;
+): MessageFolderEntity =>
+  ({ externalId, isSynced }) as unknown as MessageFolderEntity;
 
 describe('filterGmailMessagesByFolderPolicy', () => {
   describe('ALL_FOLDERS policy', () => {
