@@ -40,75 +40,94 @@ const GlbMount = styled.div`
   z-index: 1;
 `;
 
-const partyStripVertexShader = /* glsl */ `
+// Same scanline shader as ProductVisual / IllustrationCardVisual; white uColor for Why Twenty.
+const scanlineVertexShader = /* glsl */ `
+  varying vec3 vLocalPosition;
   varying vec3 vWorldPosition;
-  varying vec3 vNormal;
+  varying vec3 vWorldNormal;
 
   void main() {
+    vLocalPosition = position;
     vec4 worldPosition = modelMatrix * vec4(position, 1.0);
     vWorldPosition = worldPosition.xyz;
-    vNormal = normalize(mat3(modelMatrix) * normal);
+    vWorldNormal = normalize(mat3(modelMatrix) * normal);
     gl_Position = projectionMatrix * viewMatrix * worldPosition;
   }
 `;
 
-const partyStripFragmentShader = /* glsl */ `
-  uniform float uTime;
-  varying vec3 vWorldPosition;
-  varying vec3 vNormal;
+const scanlineFragmentShader = /* glsl */ `
+  uniform vec3 uCameraPosition;
+  uniform vec3 uColor;
+  uniform vec3 uDigitFillColor;
+  uniform vec2 uDigitCenterXY;
+  uniform vec2 uDigitRadiusXY;
+  uniform float uDigitZMin;
+  uniform vec3 uLightDir;
+  uniform float uStripeScale;
 
-  float hash(float n) {
-    return fract(sin(n) * 43758.5453123);
-  }
+  varying vec3 vLocalPosition;
+  varying vec3 vWorldPosition;
+  varying vec3 vWorldNormal;
 
   void main() {
-    // 1. Crisp world-space horizontal slices
-    // Keeps stripes perfectly level even when the object tilts, creating a scanning hologram effect.
-    float stripeScale = 50.0;
-    float posMap = vWorldPosition.y * stripeScale;
+    vec3 normal = normalize(vWorldNormal);
+    vec3 lightDir = normalize(uLightDir);
+    vec3 viewDir = normalize(uCameraPosition - vWorldPosition);
+    float ndotl = max(dot(normal, lightDir), 0.06);
+    float ndotv = abs(dot(normal, viewDir));
 
-    float stripeId = floor(posMap);
-    float stripePos = fract(posMap);
+    vec2 delta =
+      (vLocalPosition.xy - uDigitCenterXY) / max(uDigitRadiusXY, vec2(0.0001));
+    float inDigitXY = 1.0 - smoothstep(0.88, 1.42, length(delta));
+    float inDigitZ = smoothstep(uDigitZMin - 2.5, uDigitZMin + 1.2, vLocalPosition.z);
+    float facing = smoothstep(0.08, 0.72, ndotv);
+    float digitMask = clamp(inDigitXY * mix(0.55, 1.0, inDigitZ) * facing, 0.0, 1.0);
 
-    // Very thin, sharp lines
-    float lineThickness = 0.25;
-    float aa = 0.05;
-    float stripAlpha = smoothstep(lineThickness + aa, lineThickness, stripePos);
+    if (digitMask > 0.62) {
+      gl_FragColor = vec4(uDigitFillColor, 1.0);
+      return;
+    }
 
-    if (stripAlpha < 0.01) {
+    // Single-mesh GLB: offset stripe phase by normal so cutout "20" walls do not line up with the
+    // rear face (reduces moiré / camouflage).
+    float stripePhase =
+      vWorldPosition.y * uStripeScale +
+      (normal.x * 1.15 + normal.z * 0.9 + normal.y * 0.5) * 3.4;
+    float cell = fract(stripePhase);
+
+    // Grazing / engraved faces read brighter and keep slightly wider bands.
+    float groove = smoothstep(0.1, 0.92, 1.0 - ndotv);
+
+    float shadowWeight = mix(1.0, 0.48, ndotl);
+    shadowWeight *= mix(1.0, 0.78, groove * 0.7);
+
+    float lineWidth = 0.58 * shadowWeight;
+    float edge = 0.035;
+    float band = 1.0 - smoothstep(lineWidth, lineWidth + edge, cell);
+
+    float highlight = pow(ndotl, 1.35);
+    float dash = fract(vWorldPosition.x * 20.0 + vWorldPosition.z * 6.0);
+    float dashMask = mix(
+      1.0,
+      smoothstep(0.15, 0.45, dash) * (1.0 - smoothstep(0.55, 0.88, dash)),
+      highlight
+    );
+    band *= dashMask;
+
+    float speckle = fract(
+      sin(dot(vWorldPosition.xz, vec2(127.1, 311.7))) * 43758.5453
+    );
+    band *= mix(1.0, 0.55 + 0.45 * step(0.4, speckle), highlight * 0.85);
+
+    if (band < 0.015) {
       discard;
     }
 
-    // 2. Alternating party-light flicker
-    float isEven = mod(stripeId, 2.0);
-    float isOdd = 1.0 - isEven;
+    vec3 lit = uColor * mix(0.78, 1.22, ndotl);
+    lit *= 1.0 + groove * 0.5;
+    lit *= 1.0 + smoothstep(0.4, 0.92, 1.0 - ndotv) * 0.22;
 
-    // Organic wave pulsing
-    float wave1 = sin(uTime * 3.0 + stripeId * 0.05);
-    float wave2 = cos(uTime * 3.0 - stripeId * 0.05);
-
-    // Stripes alternate their pulse rhythm
-    float glow = isEven * (0.5 + 0.5 * wave1) + isOdd * (0.5 + 0.5 * wave2);
-
-    // Occasional spark/strobe flash
-    float strobeNoise = hash(stripeId * 12.9898 + floor(uTime * 3.0));
-    float strobe = step(0.95, strobeNoise); // 5% chance to flash bright
-
-    // Base brightness composition
-    float brightness = 0.15 + glow * 0.5 + strobe * 0.8;
-    brightness = clamp(brightness, 0.0, 1.0);
-
-    // 3. Fresnel (rim light) to emphasize 3D form and edges
-    vec3 viewDir = normalize(cameraPosition - vWorldPosition);
-    float fresnel = 1.0 - max(dot(normalize(vNormal), viewDir), 0.0);
-    fresnel = pow(fresnel, 2.5);
-
-    // 4. Final output
-    float finalAlpha = stripAlpha * brightness + (stripAlpha * fresnel * 0.5);
-    finalAlpha = clamp(finalAlpha, 0.0, 1.0);
-
-    // Pure white color modulated strictly by alpha
-    gl_FragColor = vec4(vec3(1.0), finalAlpha);
+    gl_FragColor = vec4(lit, band);
   }
 `;
 
@@ -127,26 +146,62 @@ function disposeObjectSubtree(root: THREE.Object3D) {
   });
 }
 
-function applyPremiumStripMaterials(
+function createWhyTwentyScanlineMaterial(lightDirection: THREE.Vector3) {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      uCameraPosition: { value: new THREE.Vector3() },
+      uColor: { value: new THREE.Color('#ffffff') },
+      uDigitFillColor: { value: new THREE.Color('#0a0a0c') },
+      uDigitCenterXY: { value: new THREE.Vector2(0, 0) },
+      uDigitRadiusXY: { value: new THREE.Vector2(1, 1) },
+      uDigitZMin: { value: 0 },
+      uLightDir: { value: lightDirection.clone() },
+      uStripeScale: { value: 16.0 },
+    },
+    vertexShader: scanlineVertexShader,
+    fragmentShader: scanlineFragmentShader,
+    transparent: true,
+    depthWrite: true,
+    depthTest: true,
+    side: THREE.DoubleSide,
+  });
+}
+
+function applyWhyTwentyScanlineMaterials(
   modelRoot: THREE.Object3D,
-  timeUniform: { value: number },
+  lightDirection: THREE.Vector3,
 ) {
   modelRoot.traverse((sceneObject) => {
     if (!(sceneObject instanceof THREE.Mesh)) {
       return;
     }
-    sceneObject.material = new THREE.ShaderMaterial({
-      uniforms: {
-        uTime: timeUniform,
-      },
-      vertexShader: partyStripVertexShader,
-      fragmentShader: partyStripFragmentShader,
-      transparent: true,
-      depthWrite: false,
-      depthTest: true,
-      side: THREE.DoubleSide,
-      blending: THREE.AdditiveBlending,
-    });
+
+    const geometry = sceneObject.geometry;
+    if (!geometry.getAttribute('position')) {
+      return;
+    }
+
+    geometry.computeBoundingBox();
+    const box = geometry.boundingBox;
+    if (!box) {
+      return;
+    }
+
+    const centerX = (box.min.x + box.max.x) / 2;
+    const centerY = (box.min.y + box.max.y) / 2;
+    const sizeX = box.max.x - box.min.x;
+    const sizeY = box.max.y - box.min.y;
+    const sizeZ = box.max.z - box.min.z;
+
+    const material = createWhyTwentyScanlineMaterial(lightDirection);
+    material.uniforms.uDigitCenterXY.value.set(centerX, centerY);
+    material.uniforms.uDigitRadiusXY.value.set(
+      Math.max(sizeX * 0.135, 0.01),
+      Math.max(sizeY * 0.105, 0.01),
+    );
+    material.uniforms.uDigitZMin.value = box.max.z - sizeZ * 0.14;
+
+    sceneObject.material = material;
   });
 }
 
@@ -171,6 +226,7 @@ export function WhyTwentyVisual() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(width, height);
     renderer.setClearColor(0x000000, 0);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     const canvas = renderer.domElement;
     canvas.style.display = 'block';
@@ -180,7 +236,8 @@ export function WhyTwentyVisual() {
     container.appendChild(canvas);
 
     const clock = new THREE.Clock();
-    const timeUniform = { value: 0 };
+    const lightDirectionWorld = new THREE.Vector3(4, 8, 6).normalize();
+    const cameraWorldPosition = new THREE.Vector3();
 
     const pivot = new THREE.Group();
     scene.add(pivot);
@@ -206,9 +263,9 @@ export function WhyTwentyVisual() {
       modelRoot.position.sub(center);
       modelRoot.scale.setScalar(scale);
 
-      modelRoot.rotation.set(0, 0, -0.25);
+      modelRoot.rotation.set(0, -0.2, -0.2);
 
-      applyPremiumStripMaterials(modelRoot, timeUniform);
+      applyWhyTwentyScanlineMaterials(modelRoot, lightDirectionWorld);
 
       pivot.add(modelRoot);
 
@@ -219,7 +276,6 @@ export function WhyTwentyVisual() {
 
         animationFrameId = window.requestAnimationFrame(renderFrame);
         const time = clock.getElapsedTime();
-        timeUniform.value = time;
 
         // Elegant, breathing float animation
         pivot.position.y = Math.sin(time * 1.5) * 0.06;
@@ -227,6 +283,19 @@ export function WhyTwentyVisual() {
         // Fluid, luxurious mouse interaction (damped)
         pivot.rotation.x += (targetRotationX - pivot.rotation.x) * 0.05;
         pivot.rotation.y += (targetRotationY - pivot.rotation.y) * 0.05;
+
+        camera.getWorldPosition(cameraWorldPosition);
+        modelRoot.traverse((sceneObject) => {
+          if (
+            sceneObject instanceof THREE.Mesh &&
+            sceneObject.material instanceof THREE.ShaderMaterial &&
+            sceneObject.material.uniforms.uCameraPosition
+          ) {
+            sceneObject.material.uniforms.uCameraPosition.value.copy(
+              cameraWorldPosition,
+            );
+          }
+        });
 
         renderer.render(scene, camera);
       };
