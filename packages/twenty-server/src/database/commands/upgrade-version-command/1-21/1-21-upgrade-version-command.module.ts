@@ -22,6 +22,7 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
@@ -40,6 +41,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
       UserWorkspaceEntity,
     ]),
     DataSourceModule,
+    FieldMetadataModule,
     WorkspaceCacheModule,
     ApplicationModule,
     WorkspaceMigrationModule,
