@@ -86,42 +86,9 @@ export function normalizeHeroPage(
   item: HeroSidebarItem,
   defaults: HeroPageDefaults,
 ): HeroPageDefinition | null {
-  if (item.page) {
-    return normalizeExplicitPage(item.page, defaults);
-  }
-
-  if (item.pageType === 'dashboard' && item.dashboard) {
-    return {
-      type: 'dashboard',
-      dashboard: item.dashboard,
-      header: {
-        showListIcon: false,
-        title: item.viewLabel ?? item.label,
-      },
-    };
-  }
-
-  const columns = item.columns ?? [];
-  const rows = item.rows ?? [];
-  const hasLegacyTableData = columns.length > 0 || rows.length > 0;
-
-  if (!hasLegacyTableData) {
+  if (!item.page) {
     return null;
   }
 
-  return normalizeTablePage(
-    {
-      type: 'table',
-      columns,
-      rows,
-      header: {
-        actions: defaults.defaultActions,
-        count: item.viewCount ?? rows.length,
-        showListIcon: true,
-        title: item.viewLabel ?? item.label,
-      },
-      width: defaults.defaultTableWidth,
-    },
-    defaults,
-  );
+  return normalizeExplicitPage(item.page, defaults);
 }

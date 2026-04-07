@@ -175,22 +175,10 @@ export type HeroSidebarItem = {
   href?: string;
   icon: HeroSidebarIcon;
   page?: HeroPageDefinition;
-  /** @deprecated Use `page` instead. */
-  pageType?: HeroPageType;
   meta?: string;
   active?: boolean;
   showChevron?: boolean;
   children?: HeroSidebarItem[];
-  /** @deprecated Use `page` instead. */
-  columns?: HeroColumnDef[];
-  /** @deprecated Use `page` instead. */
-  dashboard?: HeroDashboardDataType;
-  /** @deprecated Use `page` instead. */
-  rows?: HeroRowDef[];
-  /** @deprecated Use `page.header.title` instead. */
-  viewLabel?: string;
-  /** @deprecated Use `page.header.count` instead. */
-  viewCount?: number;
 };
 
 export type HeroSidebarFolder = {
