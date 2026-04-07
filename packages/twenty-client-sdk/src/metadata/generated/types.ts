@@ -6703,15 +6703,6 @@ export default {
                     ]
                 }
             ],
-            "getApplicationShareLink": [
-                1,
-                {
-                    "id": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
             "currentUser": [
                 69
             ],
