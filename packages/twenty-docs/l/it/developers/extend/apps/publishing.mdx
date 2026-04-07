@@ -52,17 +52,17 @@ yarn twenty deploy
 
 ### Condivisione di un'app distribuita
 
-Le app in formato tarball non sono elencate nel marketplace pubblico, quindi altri spazi di lavoro sullo stesso server non le troveranno navigando. Per condividere un'app distribuita:
+<Warning>
+Sharing private (tarball) apps across workspaces is an **Enterprise** feature. The **Distribution** tab will show an upgrade prompt instead of the share controls until your workspace has a valid Enterprise key. See [Settings > Admin Panel > Enterprise](/settings/admin-panel#enterprise) to activate it.
+</Warning>
+
+Le app in formato tarball non sono elencate nel marketplace pubblico, quindi altri spazi di lavoro sullo stesso server non le troveranno navigando. Once your workspace is on the Enterprise plan, you can share a deployed app like this:
 
 1. Vai su **Impostazioni > Applicazioni > Registrazioni** e apri la tua app
 2. Nella scheda **Distribuzione**, fai clic su **Copia link di condivisione**
 3. Condividi questo link con utenti su altri spazi di lavoro — li porterà direttamente alla pagina di installazione dell'app
 
 Il link di condivisione utilizza l'URL di base del server (senza alcun sottodominio dello spazio di lavoro) così funziona per qualsiasi spazio di lavoro sul server.
-
-<Warning>
-La condivisione delle app private è una funzionalità Enterprise. Vai a [Impostazioni > Pannello di amministrazione > Enterprise](/settings/admin-panel#enterprise) per abilitarla.
-</Warning>
 
 ### Gestione delle versioni
 

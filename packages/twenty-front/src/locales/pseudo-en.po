@@ -451,10 +451,12 @@ msgstr ""
 msgid "••••••••"
 msgstr ""
 
-#. js-lingui-id: tD9raa
+#. js-lingui-id: SMgdEJ
 #. placeholder {0}: formatNumber(preview.estimatedTokenCount, { abbreviate: true, decimals: 1, })
+#. placeholder {0}: formatNumber( section.estimatedTokenCount, { abbreviate: true, decimals: 1, }, )
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
-msgid "~{0} tokens"
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+msgid "~ {0} tokens"
 msgstr ""
 
 #. js-lingui-id: Cx0xl3
@@ -1948,8 +1950,6 @@ msgstr ""
 #. js-lingui-id: fL7WXr
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-#: src/pages/settings/applications/SettingsApplications.tsx
-#: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -11415,9 +11415,10 @@ msgstr ""
 msgid "Read your profile"
 msgstr ""
 
-#. js-lingui-id: tCXcL7
+#. js-lingui-id: 6pSHJ5
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
-msgid "Read-only — managed by Twenty"
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+msgid "Read-only"
 msgstr ""
 
 #. js-lingui-id: W+ApAD
@@ -13718,11 +13719,6 @@ msgstr ""
 msgid "System Prompt"
 msgstr ""
 
-#. js-lingui-id: BXGTWI
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
-msgid "System Prompt ({totalTokenCount})"
-msgstr ""
-
 #. js-lingui-id: k+7QWO
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 msgid "System relations"
@@ -14985,6 +14981,11 @@ msgstr ""
 msgid "Upgrade to Enterprise to access audit logs."
 msgstr ""
 
+#. js-lingui-id: D+7y/3
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "Upgrade to Enterprise to share private applications."
+msgstr ""
+
 #. js-lingui-id: +Gi3x1
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
@@ -15421,7 +15422,6 @@ msgstr ""
 
 #. js-lingui-id: 7PrSCy
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "View marketplace page"
 msgstr ""
 
@@ -15433,6 +15433,11 @@ msgstr ""
 #. js-lingui-id: ecVcAx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 msgid "View Previous AI Chats"
+msgstr ""
+
+#. js-lingui-id: NnJpTN
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "View private application page"
 msgstr ""
 
 #. js-lingui-id: hAAsm/
@@ -15821,7 +15826,6 @@ msgstr ""
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-#: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
