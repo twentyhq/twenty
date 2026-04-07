@@ -63,7 +63,7 @@ export type IconPickerProps = {
   dropdownWidth?: number;
   dropdownOffset?: DropdownOffset;
   maxIconsVisible?: number;
-  themeColorPicker?: {
+  iconColorPicker?: {
     selectedColor: ThemeColor;
     onColorChange: (color: ThemeColor) => void;
   };
@@ -217,7 +217,7 @@ export const IconPicker = ({
   dropdownWidth,
   dropdownOffset,
   maxIconsVisible,
-  themeColorPicker,
+  iconColorPicker,
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
 
@@ -329,19 +329,19 @@ export const IconPicker = ({
 
   const BaseIcon = selectedIconKey ? getIcon(selectedIconKey) : IconApps;
 
-  const displayIcon: IconComponent = !isDefined(themeColorPicker)
+  const displayIcon: IconComponent = !isDefined(iconColorPicker)
     ? BaseIcon
     : (iconProps) => (
         <BaseIcon
           className={iconProps.className}
-          color={theme.color[themeColorPicker.selectedColor]}
+          color={theme.color[iconColorPicker.selectedColor]}
           size={iconProps.size}
           stroke={iconProps.stroke}
           style={iconProps.style}
         />
       );
 
-  const themeColorPickerDropdownId = `${dropdownId}-theme-color-picker`;
+  const iconColorPickerDropdownId = `${dropdownId}-icon-color-picker`;
 
   const selectableListInstanceId = 'icon-list';
 
@@ -365,7 +365,7 @@ export const IconPicker = ({
         dropdownId={dropdownId}
         dropdownOffset={dropdownOffset}
         excludedClickOutsideIds={
-          isDefined(themeColorPicker) ? [themeColorPickerDropdownId] : undefined
+          isDefined(iconColorPicker) ? [iconColorPickerDropdownId] : undefined
         }
         clickableComponent={
           clickableComponent ?? (
@@ -390,7 +390,7 @@ export const IconPicker = ({
                 selectableItemIdMatrix={iconKeys2d}
                 focusId={dropdownId}
               >
-                {isDefined(themeColorPicker) ? (
+                {isDefined(iconColorPicker) ? (
                   <StyledIconPickerSearchRow>
                     <DropdownMenuSearchInput
                       placeholder={t`Search icon`}
@@ -401,11 +401,11 @@ export const IconPicker = ({
                     />
                     <ClickOutsideListenerContext.Provider
                       value={{
-                        excludedClickOutsideId: themeColorPickerDropdownId,
+                        excludedClickOutsideId: iconColorPickerDropdownId,
                       }}
                     >
                       <Dropdown
-                        dropdownId={themeColorPickerDropdownId}
+                        dropdownId={iconColorPickerDropdownId}
                         dropdownOffset={{
                           x: 24,
                           y: -24,
@@ -417,8 +417,8 @@ export const IconPicker = ({
                             Icon={() => (
                               <ColorSample
                                 colorName={
-                                  isDefined(themeColorPicker)
-                                    ? themeColorPicker.selectedColor
+                                  isDefined(iconColorPicker)
+                                    ? iconColorPicker.selectedColor
                                     : 'gray'
                                 }
                                 variant="circle"
@@ -435,10 +435,10 @@ export const IconPicker = ({
                             }
                           >
                             <ThemeColorPickerMenu
-                              selectedColor={themeColorPicker.selectedColor}
+                              selectedColor={iconColorPicker.selectedColor}
                               onSelectColor={(nextColor) => {
-                                themeColorPicker.onColorChange(nextColor);
-                                closeDropdown(themeColorPickerDropdownId);
+                                iconColorPicker.onColorChange(nextColor);
+                                closeDropdown(iconColorPickerDropdownId);
                               }}
                             />
                           </DropdownContent>
@@ -473,7 +473,7 @@ export const IconPicker = ({
                           selectedIconKey={selectedIconKey}
                           Icon={getIcon(iconKey)}
                           focusedIconKey={focusedIconKey}
-                          iconTintColor={themeColorPicker?.selectedColor}
+                          iconTintColor={iconColorPicker?.selectedColor}
                         />
                       ))}
                     </StyledMenuIconItemsContainer>

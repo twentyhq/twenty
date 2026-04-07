@@ -196,7 +196,7 @@ export const SettingsDataModelObjectAboutForm = ({
                     ? `settings-object-about-icon-${objectMetadataItem.id}`
                     : 'settings-new-object-about-icon'
                 }
-                themeColorPicker={
+                iconColorPicker={
                   showObjectColorInIconPicker
                     ? {
                         selectedColor: parseThemeColor(objectIconColor),
