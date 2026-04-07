@@ -36,7 +36,6 @@ jobs:
     runs-on: ubuntu-latest-4-cores
     env:
       PUBLISHABLE_PACKAGES: twenty-client-sdk twenty-sdk create-twenty-app
-      SEED_API_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC05ZTNiLTQ2ZDQtYTU1Ni04OGI5ZGRjMmIwMzQiLCJ1c2VySWQiOiIyMDIwMjAyMC05ZTNiLTQ2ZDQtYTU1Ni04OGI5ZGRjMmIwMzQiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtMDY4Ny00YzQxLWI3MDctZWQxYmZjYTk3MmE3IiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtOWUzYi00NmQ0LWE1NTYtODhiOWRkYzJiMDM1IiwidHlwZSI6IkFDQ0VTUyIsImF1dGhQcm92aWRlciI6InBhc3N3b3JkIiwiaWF0IjoxNzUxMjgxNzA0LCJleHAiOjQ5MDQ4ODE3MDR9.9S4wc0MOr5iczsomlFxZdOHD1IRDS4dnRSwNVNpctF4'
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -128,7 +127,7 @@ jobs:
       - name: Authenticate with twenty-server
         run: |
           cd /tmp/e2e-test-workspace/test-app
-          npx --no-install twenty remote add --api-key $SEED_API_KEY --api-url ${{ steps.twenty.outputs.server-url }}
+          npx --no-install twenty remote add --api-key ${{ steps.twenty.outputs.api-key }} --api-url ${{ steps.twenty.outputs.server-url }}
 
       - name: Deploy scaffolded app
         run: |
