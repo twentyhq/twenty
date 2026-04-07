@@ -44,6 +44,8 @@ export class BackfillMessageThreadSubjectCommand extends ActiveOrSuspendedWorksp
          AND table_name = 'messageThread'
          AND column_name = 'subject'`,
       [schemaName],
+      undefined,
+      { shouldBypassPermissionChecks: true },
     );
 
     if (columnExists.length === 0) {
@@ -64,6 +66,9 @@ export class BackfillMessageThreadSubjectCommand extends ActiveOrSuspendedWorksp
        ) sub
        WHERE mt.id = sub."messageThreadId"
          AND mt."subject" IS NULL`,
+      undefined,
+      undefined,
+      { shouldBypassPermissionChecks: true },
     );
 
     this.logger.log(
