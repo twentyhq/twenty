@@ -2418,6 +2418,12 @@ msgstr "URL de base"
 msgid "Base URL is required"
 msgstr "L'URL de base est requise"
 
+#. js-lingui-id: /xLNEx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "Bcc"
+msgstr ""
+
 #. js-lingui-id: PFohi3
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "BCC"
@@ -2721,9 +2727,11 @@ msgstr "Impossible de scanner ? Copiez le"
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
+#: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
+#: src/modules/activities/emails/components/EmailComposer.tsx
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -2762,6 +2770,11 @@ msgstr "Annuler le changement de plan"
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel plan switching?"
 msgstr "Annuler le changement de plan ?"
+
+#. js-lingui-id: AnRu/j
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+msgid "Cancel reply"
+msgstr ""
 
 #. js-lingui-id: N6gPiD
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -2831,10 +2844,21 @@ msgstr "Catalan"
 msgid "Category"
 msgstr "Catégorie"
 
+#. js-lingui-id: RpYfjZ
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "Cc"
+msgstr ""
+
 #. js-lingui-id: XdZeJk
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "CC"
 msgstr "Cc"
+
+#. js-lingui-id: Dgsw8A
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "Cc/Bcc"
+msgstr ""
 
 #. js-lingui-id: tHntRt
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardEditorSideMenu.tsx
@@ -5350,6 +5374,11 @@ msgstr "L'adresse e-mail doit être valide"
 msgid "Email or domain is already in blocklist"
 msgstr "Le courriel ou le domaine est déjà dans la liste de blocage"
 
+#. js-lingui-id: Xl929X
+#: src/modules/activities/emails/hooks/useSendEmail.ts
+msgid "Email sent successfully"
+msgstr ""
+
 #. js-lingui-id: jvneza
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Email support"
@@ -6439,6 +6468,12 @@ msgstr ""
 msgid "Failed to save workspace instructions"
 msgstr "Impossible d'enregistrer les instructions de l'espace de travail"
 
+#. js-lingui-id: Lo/GQ5
+#: src/modules/activities/emails/hooks/useSendEmail.ts
+#: src/modules/activities/emails/hooks/useSendEmail.ts
+msgid "Failed to send email"
+msgstr ""
+
 #. js-lingui-id: aj02T8
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "Failed to set maintenance mode."
@@ -6929,6 +6964,11 @@ msgstr "Crédits d'essai gratuits épuisés. Abonnez-vous maintenant pour contin
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "French"
 msgstr "Français"
+
+#. js-lingui-id: ejVYRQ
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "From"
+msgstr ""
 
 #. js-lingui-id: qR8gT9
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -9398,6 +9438,11 @@ msgstr "Nouveau chat"
 msgid "New conversation"
 msgstr "Nouvelle conversation"
 
+#. js-lingui-id: 3RwJHq
+#: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
+msgid "New Email"
+msgstr ""
+
 #. js-lingui-id: wqoYqp
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
@@ -11399,6 +11444,11 @@ msgstr "Recevoir un email contenant un lien de mise à jour du mot de passe"
 msgid "Recent Events (oldest → newest)"
 msgstr "Événements récents (du plus ancien au plus récent)"
 
+#. js-lingui-id: yPrbsy
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "Recipients"
+msgstr ""
+
 #. js-lingui-id: b2+5uV
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Recommended Models"
@@ -11750,6 +11800,8 @@ msgid "Reorder options"
 msgstr "Réordonner les options"
 
 #. js-lingui-id: ImOQa9
+#: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailThreadBottomBar.tsx
 msgid "Reply"
 msgstr "Répondre"
@@ -11758,6 +11810,11 @@ msgstr "Répondre"
 #: src/modules/activities/emails/components/EmailThreadBottomBar.tsx
 msgid "Reply to all"
 msgstr "Répondre à tous"
+
+#. js-lingui-id: fiPYZo
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+msgid "Reply..."
+msgstr ""
 
 #. js-lingui-id: tbmZmI
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -12698,6 +12755,13 @@ msgstr "Sélectionnez les modèles qui apparaissent comme recommandés dans le s
 msgid "Select your preferred language"
 msgstr "Sélectionnez votre langue préférée"
 
+#. js-lingui-id: JlFcis
+#: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+#: src/modules/activities/emails/components/EmailComposer.tsx
+msgid "Send"
+msgstr ""
+
 #. js-lingui-id: mjK8F3
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Send an invite email to your team"
@@ -13413,6 +13477,8 @@ msgstr ""
 
 #. js-lingui-id: UJmAAK
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
 msgid "Subject"
 msgstr "Objet"
 
@@ -14261,6 +14327,7 @@ msgstr "titre"
 
 #. js-lingui-id: /jQctM
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
 msgid "To"
 msgstr "À"
 
@@ -14583,6 +14650,11 @@ msgstr "Tapez '/' pour les commandes, '@' pour les mentions"
 #: src/modules/side-panel/components/SidePanelTopBar.tsx
 msgid "Type anything..."
 msgstr "Tapez n'importe quoi..."
+
+#. js-lingui-id: LaEX5I
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "Type something or press \"/\" to see commands"
+msgstr ""
 
 #. js-lingui-id: UhqKcC
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordSubPage.tsx

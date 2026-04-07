@@ -1,13 +1,18 @@
 import { styled } from '@linaria/react';
+import { useState } from 'react';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { EmailLoader } from '@/activities/emails/components/EmailLoader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
+import { useReplyContext } from '@/activities/emails/hooks/useReplyContext';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { EmailThreadComposer } from '@/page-layout/widgets/email-thread/components/EmailThreadComposer';
 import { EmailThreadIntermediaryMessages } from '@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages';
+import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -30,10 +35,17 @@ export const EmailThreadWidget = ({
   widget: _widget,
 }: EmailThreadWidgetProps) => {
   const targetRecord = useTargetRecord();
+  const { isInSidePanel } = useLayoutRenderingContext();
 
   const { thread, messages, fetchMoreMessages, threadLoading } = useEmailThread(
     targetRecord.id,
   );
+
+  const replyContext = useReplyContext(targetRecord.id);
+
+  const [isComposerOpen, setIsComposerOpen] = useState(false);
+
+  const canReply = isDefined(replyContext) && !replyContext.loading;
 
   const messagesCount = messages.length;
   const is5OrMoreMessages = messagesCount >= 5;
@@ -59,33 +71,38 @@ export const EmailThreadWidget = ({
   return (
     <StyledWrapper>
       <StyledContainer>
-        {
-          <>
-            {firstMessages.map((message) => (
-              <EmailThreadMessage
-                key={message.id}
-                sender={message.sender}
-                participants={message.messageParticipants}
-                body={message.text}
-                sentAt={message.receivedAt}
-              />
-            ))}
-            <EmailThreadIntermediaryMessages messages={intermediaryMessages} />
-            <EmailThreadMessage
-              key={lastMessage.id}
-              sender={lastMessage.sender}
-              participants={lastMessage.messageParticipants}
-              body={lastMessage.text}
-              sentAt={lastMessage.receivedAt}
-              isExpanded
-            />
-            <CustomResolverFetchMoreLoader
-              loading={threadLoading}
-              onLastRowVisible={fetchMoreMessages}
-            />
-          </>
-        }
+        {firstMessages.map((message) => (
+          <EmailThreadMessage
+            key={message.id}
+            sender={message.sender}
+            participants={message.messageParticipants}
+            body={message.text}
+            sentAt={message.receivedAt}
+          />
+        ))}
+        <EmailThreadIntermediaryMessages messages={intermediaryMessages} />
+        <EmailThreadMessage
+          key={lastMessage.id}
+          sender={lastMessage.sender}
+          participants={lastMessage.messageParticipants}
+          body={lastMessage.text}
+          sentAt={lastMessage.receivedAt}
+          isExpanded
+          hideBottomBorder={!isComposerOpen}
+        />
+        <CustomResolverFetchMoreLoader
+          loading={threadLoading}
+          onLastRowVisible={fetchMoreMessages}
+        />
       </StyledContainer>
+      {canReply && (
+        <EmailThreadComposer
+          replyContext={replyContext}
+          isInSidePanel={isInSidePanel}
+          isComposerOpen={isComposerOpen}
+          setIsComposerOpen={setIsComposerOpen}
+        />
+      )}
     </StyledWrapper>
   );
 };

@@ -158,7 +158,7 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     env:
-      NODE_OPTIONS: '--max-old-space-size=4096'
+      NODE_OPTIONS: '--max-old-space-size=6144'
       TASK_CACHE_KEY: front-task-${{ matrix.task }}
     strategy:
       matrix:

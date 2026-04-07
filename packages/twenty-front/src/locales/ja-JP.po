@@ -2418,6 +2418,12 @@ msgstr "ベース URL"
 msgid "Base URL is required"
 msgstr "ベース URL は必須です"
 
+#. js-lingui-id: /xLNEx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "Bcc"
+msgstr ""
+
 #. js-lingui-id: PFohi3
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "BCC"
@@ -2721,9 +2727,11 @@ msgstr "スキャンできませんか？ コピーしてください"
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
+#: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
+#: src/modules/activities/emails/components/EmailComposer.tsx
 msgid "Cancel"
 msgstr "キャンセル"
 
@@ -2762,6 +2770,11 @@ msgstr "プラン切替をキャンセル"
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel plan switching?"
 msgstr "プラン切替をキャンセルしますか？"
+
+#. js-lingui-id: AnRu/j
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+msgid "Cancel reply"
+msgstr ""
 
 #. js-lingui-id: N6gPiD
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -2831,10 +2844,21 @@ msgstr "カタルーニャ語"
 msgid "Category"
 msgstr "カテゴリ"
 
+#. js-lingui-id: RpYfjZ
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "Cc"
+msgstr ""
+
 #. js-lingui-id: XdZeJk
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "CC"
 msgstr "CC"
+
+#. js-lingui-id: Dgsw8A
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "Cc/Bcc"
+msgstr ""
 
 #. js-lingui-id: tHntRt
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardEditorSideMenu.tsx
@@ -5350,6 +5374,11 @@ msgstr "有効なメールアドレスを入力してください"
 msgid "Email or domain is already in blocklist"
 msgstr "メールまたはドメインはすでにブロックリストに登録されています"
 
+#. js-lingui-id: Xl929X
+#: src/modules/activities/emails/hooks/useSendEmail.ts
+msgid "Email sent successfully"
+msgstr ""
+
 #. js-lingui-id: jvneza
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Email support"
@@ -6439,6 +6468,12 @@ msgstr ""
 msgid "Failed to save workspace instructions"
 msgstr "ワークスペースの指示を保存できませんでした"
 
+#. js-lingui-id: Lo/GQ5
+#: src/modules/activities/emails/hooks/useSendEmail.ts
+#: src/modules/activities/emails/hooks/useSendEmail.ts
+msgid "Failed to send email"
+msgstr ""
+
 #. js-lingui-id: aj02T8
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "Failed to set maintenance mode."
@@ -6929,6 +6964,11 @@ msgstr "無料トライアルのクレジットを使い切りました。AI 機
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "French"
 msgstr "フランス語"
+
+#. js-lingui-id: ejVYRQ
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "From"
+msgstr ""
 
 #. js-lingui-id: qR8gT9
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -9398,6 +9438,11 @@ msgstr "新しいチャット"
 msgid "New conversation"
 msgstr "新しい会話"
 
+#. js-lingui-id: 3RwJHq
+#: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
+msgid "New Email"
+msgstr ""
+
 #. js-lingui-id: wqoYqp
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
@@ -11399,6 +11444,11 @@ msgstr "パスワード更新リンクを含むメールを受け取る"
 msgid "Recent Events (oldest → newest)"
 msgstr "最近のイベント（古い順 → 新しい順）"
 
+#. js-lingui-id: yPrbsy
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "Recipients"
+msgstr ""
+
 #. js-lingui-id: b2+5uV
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Recommended Models"
@@ -11750,6 +11800,8 @@ msgid "Reorder options"
 msgstr "オプションを並べ替え"
 
 #. js-lingui-id: ImOQa9
+#: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailThreadBottomBar.tsx
 msgid "Reply"
 msgstr "返信"
@@ -11758,6 +11810,11 @@ msgstr "返信"
 #: src/modules/activities/emails/components/EmailThreadBottomBar.tsx
 msgid "Reply to all"
 msgstr "全員に返信"
+
+#. js-lingui-id: fiPYZo
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+msgid "Reply..."
+msgstr ""
 
 #. js-lingui-id: tbmZmI
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -12698,6 +12755,13 @@ msgstr "ワークスペースのモデルピッカーで推奨として表示す
 msgid "Select your preferred language"
 msgstr "希望の言語を選択してください"
 
+#. js-lingui-id: JlFcis
+#: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+#: src/modules/activities/emails/components/EmailComposer.tsx
+msgid "Send"
+msgstr ""
+
 #. js-lingui-id: mjK8F3
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Send an invite email to your team"
@@ -13413,6 +13477,8 @@ msgstr ""
 
 #. js-lingui-id: UJmAAK
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
 msgid "Subject"
 msgstr "件名"
 
@@ -14259,6 +14325,7 @@ msgstr "タイトル"
 
 #. js-lingui-id: /jQctM
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
 msgid "To"
 msgstr "宛先"
 
@@ -14581,6 +14648,11 @@ msgstr "コマンドは'/'、メンションは'@'を入力してください"
 #: src/modules/side-panel/components/SidePanelTopBar.tsx
 msgid "Type anything..."
 msgstr "何でも入力..."
+
+#. js-lingui-id: LaEX5I
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "Type something or press \"/\" to see commands"
+msgstr ""
 
 #. js-lingui-id: UhqKcC
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordSubPage.tsx

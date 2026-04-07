@@ -4,12 +4,11 @@ import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-t
 import { EmailToolInputZodSchema } from 'src/engine/core-modules/tool/tools/email-tool/email-tool.schema';
 import { EmailToolException } from 'src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception';
 import { isInsufficientPermissionsError } from 'src/engine/core-modules/tool/tools/email-tool/utils/is-insufficient-permissions-error.util';
-import { type ComposedEmail } from 'src/engine/core-modules/tool/tools/email-tool/types/composed-email.type';
 import { type EmailToolInput } from 'src/engine/core-modules/tool/tools/email-tool/types/email-tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import { MessagingMessageOutboundService } from 'src/modules/messaging/message-outbound-manager/services/messaging-message-outbound.service';
+import { SendEmailService } from 'src/modules/messaging/message-outbound-manager/services/send-email.service';
 
 @Injectable()
 export class SendEmailTool implements Tool {
@@ -21,7 +20,7 @@ export class SendEmailTool implements Tool {
 
   constructor(
     private readonly emailComposerService: EmailComposerService,
-    private readonly messageOutboundService: MessagingMessageOutboundService,
+    private readonly sendEmailService: SendEmailService,
   ) {}
 
   async execute(
@@ -40,7 +39,13 @@ export class SendEmailTool implements Tool {
 
       const { data } = result;
 
-      await this.sendEmail(data);
+      const sendResult = await this.sendEmailService.sendComposedEmail(data);
+
+      await this.sendEmailService.persistSentMessage(
+        sendResult,
+        data,
+        context.workspaceId,
+      );
 
       this.logger.log(
         `Email sent successfully to ${data.toRecipientsDisplay}${data.attachments.length > 0 ? ` with ${data.attachments.length} attachments` : ''}`,
@@ -85,21 +90,5 @@ export class SendEmailTool implements Tool {
         error: error instanceof Error ? error.message : 'Failed to send email',
       };
     }
-  }
-
-  private async sendEmail(data: ComposedEmail): Promise<void> {
-    await this.messageOutboundService.sendMessage(
-      {
-        to: data.recipients.to,
-        cc: data.recipients.cc.length > 0 ? data.recipients.cc : undefined,
-        bcc: data.recipients.bcc.length > 0 ? data.recipients.bcc : undefined,
-        subject: data.sanitizedSubject,
-        body: data.plainTextBody,
-        html: data.sanitizedHtmlBody,
-        attachments: data.attachments,
-        inReplyTo: data.inReplyTo,
-      },
-      data.connectedAccount,
-    );
   }
 }

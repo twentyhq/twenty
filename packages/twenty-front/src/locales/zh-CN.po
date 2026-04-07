@@ -2418,6 +2418,12 @@ msgstr "基础 URL"
 msgid "Base URL is required"
 msgstr "基础 URL 为必填项"
 
+#. js-lingui-id: /xLNEx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "Bcc"
+msgstr ""
+
 #. js-lingui-id: PFohi3
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "BCC"
@@ -2721,9 +2727,11 @@ msgstr "无法扫描？复制"
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
+#: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
+#: src/modules/activities/emails/components/EmailComposer.tsx
 msgid "Cancel"
 msgstr "取消"
 
@@ -2762,6 +2770,11 @@ msgstr "取消计划切换"
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel plan switching?"
 msgstr "取消计划切换？"
+
+#. js-lingui-id: AnRu/j
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+msgid "Cancel reply"
+msgstr ""
 
 #. js-lingui-id: N6gPiD
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -2831,10 +2844,21 @@ msgstr "加泰罗尼亚语"
 msgid "Category"
 msgstr "类别"
 
+#. js-lingui-id: RpYfjZ
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "Cc"
+msgstr ""
+
 #. js-lingui-id: XdZeJk
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "CC"
 msgstr "抄送"
+
+#. js-lingui-id: Dgsw8A
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "Cc/Bcc"
+msgstr ""
 
 #. js-lingui-id: tHntRt
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardEditorSideMenu.tsx
@@ -5350,6 +5374,11 @@ msgstr "电子邮件必须为有效邮箱地址"
 msgid "Email or domain is already in blocklist"
 msgstr "电子邮件或域已在拦截列表中"
 
+#. js-lingui-id: Xl929X
+#: src/modules/activities/emails/hooks/useSendEmail.ts
+msgid "Email sent successfully"
+msgstr ""
+
 #. js-lingui-id: jvneza
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Email support"
@@ -6439,6 +6468,12 @@ msgstr ""
 msgid "Failed to save workspace instructions"
 msgstr "保存工作区说明失败"
 
+#. js-lingui-id: Lo/GQ5
+#: src/modules/activities/emails/hooks/useSendEmail.ts
+#: src/modules/activities/emails/hooks/useSendEmail.ts
+msgid "Failed to send email"
+msgstr ""
+
 #. js-lingui-id: aj02T8
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "Failed to set maintenance mode."
@@ -6929,6 +6964,11 @@ msgstr "免费试用额度已用尽。立即订阅以继续使用 AI 功能。"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "French"
 msgstr "法语"
+
+#. js-lingui-id: ejVYRQ
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "From"
+msgstr ""
 
 #. js-lingui-id: qR8gT9
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -9398,6 +9438,11 @@ msgstr "新聊天"
 msgid "New conversation"
 msgstr "新会话"
 
+#. js-lingui-id: 3RwJHq
+#: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
+msgid "New Email"
+msgstr ""
+
 #. js-lingui-id: wqoYqp
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
@@ -11399,6 +11444,11 @@ msgstr "接收包含密码更新链接的电子邮件"
 msgid "Recent Events (oldest → newest)"
 msgstr "最近事件（最旧 → 最新）"
 
+#. js-lingui-id: yPrbsy
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "Recipients"
+msgstr ""
+
 #. js-lingui-id: b2+5uV
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Recommended Models"
@@ -11750,6 +11800,8 @@ msgid "Reorder options"
 msgstr "调整选项顺序"
 
 #. js-lingui-id: ImOQa9
+#: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailThreadBottomBar.tsx
 msgid "Reply"
 msgstr "回复"
@@ -11758,6 +11810,11 @@ msgstr "回复"
 #: src/modules/activities/emails/components/EmailThreadBottomBar.tsx
 msgid "Reply to all"
 msgstr "回复全部"
+
+#. js-lingui-id: fiPYZo
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+msgid "Reply..."
+msgstr ""
 
 #. js-lingui-id: tbmZmI
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -12698,6 +12755,13 @@ msgstr "选择哪些模型在工作区模型选择器中显示为推荐"
 msgid "Select your preferred language"
 msgstr "选择您偏好的语言"
 
+#. js-lingui-id: JlFcis
+#: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+#: src/modules/activities/emails/components/EmailComposer.tsx
+msgid "Send"
+msgstr ""
+
 #. js-lingui-id: mjK8F3
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Send an invite email to your team"
@@ -13413,6 +13477,8 @@ msgstr ""
 
 #. js-lingui-id: UJmAAK
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
 msgid "Subject"
 msgstr "主题"
 
@@ -14259,6 +14325,7 @@ msgstr "标题"
 
 #. js-lingui-id: /jQctM
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
 msgid "To"
 msgstr "收件人"
 
@@ -14581,6 +14648,11 @@ msgstr "输入 '/' 以使用命令，输入 '@' 以提及"
 #: src/modules/side-panel/components/SidePanelTopBar.tsx
 msgid "Type anything..."
 msgstr "输入任何内容..."
+
+#. js-lingui-id: LaEX5I
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "Type something or press \"/\" to see commands"
+msgstr ""
 
 #. js-lingui-id: UhqKcC
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordSubPage.tsx

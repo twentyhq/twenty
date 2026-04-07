@@ -802,4 +802,18 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.REPLY_TO_EMAIL_THREAD,
     hotKeys: null,
   },
+  composeEmail: {
+    universalIdentifier: '96457c5a-b028-4d48-94e3-27f4c41296b8',
+    label: 'Compose Email',
+    icon: 'IconMail',
+    isPinned: false,
+    position: 71,
+    shortLabel: 'Compose',
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression: null,
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.COMPOSE_EMAIL,
+    hotKeys: null,
+  },
 } as const;
