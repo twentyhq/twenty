@@ -15,13 +15,10 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
 import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MultiWorkspaceDropdownId';
 import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
-import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -29,7 +26,6 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useLocation } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
@@ -85,15 +81,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
     multiWorkspaceDropdownState,
   );
 
-  const location = useLocation();
-  const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
-    useAtomState(isNavigationDrawerExpandedState);
-  const setNavigationDrawerExpandedMemorized = useSetAtomState(
-    navigationDrawerExpandedMemorizedState,
-  );
-  const setNavigationMemorizedUrl = useSetAtomState(
-    navigationMemorizedUrlState,
-  );
+  const { openSettingsMenu } = useOpenSettingsMenu();
 
   const handleSupport = () => {
     window.FrontChat?.('show');
@@ -239,9 +227,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
         <UndecoratedLink
           to={getSettingsPath(SettingsPath.ProfilePage)}
           onClick={() => {
-            setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);
-            setIsNavigationDrawerExpanded(true);
-            setNavigationMemorizedUrl(location.pathname + location.search);
+            openSettingsMenu();
             closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
           }}
         >

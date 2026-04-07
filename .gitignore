@@ -53,3 +53,4 @@ mcp.json
 TRANSLATION_QA_REPORT.md
 .playwright-mcp/
 .claude/settings.local.json
+.playwright-cli/

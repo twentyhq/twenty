@@ -15,7 +15,7 @@ export { invalidAvatarUrlsAtomV2 } from './avatar/components/states/invalidAvata
 export { AVATAR_PROPERTIES_BY_SIZE } from './avatar/constants/AvatarPropertiesBySize';
 export type { AvatarSize } from './avatar/types/AvatarSize';
 export type { AvatarType } from './avatar/types/AvatarType';
-export type { BannerVariant } from './banner/components/Banner';
+export type { BannerColor, BannerVariant } from './banner/components/Banner';
 export { Banner } from './banner/components/Banner';
 export type { SidePanelInformationBannerProps } from './banner/components/SidePanelInformationBanner';
 export { SidePanelInformationBanner } from './banner/components/SidePanelInformationBanner';
@@ -86,8 +86,8 @@ export {
   IconAlignLeft,
   IconAlignRight,
   IconApi,
-  IconAppWindow,
   IconApps,
+  IconAppWindow,
   IconArchive,
   IconArchiveOff,
   IconArrowBackUp,
@@ -95,12 +95,12 @@ export {
   IconArrowLeft,
   IconArrowMerge,
   IconArrowRight,
-  IconArrowUp,
-  IconArrowUpRight,
   IconArrowsDiagonal,
   IconArrowsSort,
   IconArrowsSplit2,
   IconArrowsVertical,
+  IconArrowUp,
+  IconArrowUpRight,
   IconAt,
   IconAxisX,
   IconAxisY,
@@ -125,6 +125,7 @@ export {
   IconBrandGoogle,
   IconBrandGraphql,
   IconBrandLinkedin,
+  IconBrandNpm,
   IconBrandOpenai,
   IconBrandX,
   IconBriefcase,
@@ -154,8 +155,8 @@ export {
   IconChevronLeft,
   IconChevronRight,
   IconChevronRightPipe,
-  IconChevronUp,
   IconChevronsRight,
+  IconChevronUp,
   IconCircle,
   IconCircleDashed,
   IconCircleDot,
@@ -260,8 +261,8 @@ export {
   IconFilterCog,
   IconFilterOff,
   IconFilterPlus,
-  IconFilterX,
   IconFilters,
+  IconFilterX,
   IconFlag,
   IconFlask,
   IconFocusCentered,
@@ -387,6 +388,7 @@ export {
   IconPresentation,
   IconPrinter,
   IconProgressCheck,
+  IconPrompt,
   IconPuzzle,
   IconPuzzle2,
   IconQuestionMark,
@@ -422,10 +424,10 @@ export {
   IconShield,
   IconSitemap,
   IconSlash,
-  IconSortAZ,
   IconSortAscending,
   IconSortAscendingLetters,
   IconSortAscendingNumbers,
+  IconSortAZ,
   IconSortDescending,
   IconSortDescendingLetters,
   IconSortDescendingNumbers,

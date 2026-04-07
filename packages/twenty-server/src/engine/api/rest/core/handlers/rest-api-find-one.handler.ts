@@ -36,16 +36,17 @@ export class RestApiFindOneHandler extends RestApiBaseHandler {
         authContext,
       });
 
-      const record = await this.commonFindOneQueryRunnerService.execute(
-        { filter, selectedFields },
-        {
-          authContext,
-          flatObjectMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          objectIdByNameSingular,
-        },
-      );
+      const { results: record } =
+        await this.commonFindOneQueryRunnerService.execute(
+          { filter, selectedFields },
+          {
+            authContext,
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            objectIdByNameSingular,
+          },
+        );
 
       return this.formatRestResponse(record, flatObjectMetadata.nameSingular);
     } catch (error) {

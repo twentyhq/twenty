@@ -6,56 +6,35 @@ import { OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metada
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
-import { type EventStreamPayload } from 'src/engine/subscriptions/types/event-stream-payload.type';
-import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
-import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
+import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { enrichFieldMetadataEventWithRelations } from 'src/engine/subscriptions/metadata-event/utils/enrich-field-metadata-event-with-relations.util';
 
 @Injectable()
 export class MetadataEventPublisher {
   constructor(
-    private readonly subscriptionService: SubscriptionService,
-    private readonly eventStreamService: EventStreamService,
+    private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly navigationMenuItemRecordIdentifierService: NavigationMenuItemRecordIdentifierService,
   ) {}
 
   async publish(metadataEventBatch: MetadataEventBatch): Promise<void> {
-    const workspaceId = metadataEventBatch.workspaceId;
-
-    const activeStreamIds =
-      await this.eventStreamService.getActiveStreamIds(workspaceId);
-
-    if (activeStreamIds.length === 0) {
+    if (!isNonEmptyArray(metadataEventBatch.events)) {
       return;
     }
-
-    const streamsData = await this.eventStreamService.getStreamsData(
-      workspaceId,
-      activeStreamIds,
-    );
 
     const enrichedBatch =
       await this.enrichMetadataEventBatch(metadataEventBatch);
 
-    const streamIdsToRemove: string[] = [];
-
-    for (const [streamChannelId, streamData] of streamsData) {
-      if (!isDefined(streamData)) {
-        streamIdsToRemove.push(streamChannelId);
-        continue;
-      }
-
-      await this.publishToStream({
-        streamChannelId,
-        metadataEventBatch: enrichedBatch,
-      });
-    }
-
-    await this.eventStreamService.removeFromActiveStreams(
-      workspaceId,
-      streamIdsToRemove,
-    );
+    await this.workspaceEventBroadcaster.broadcast({
+      workspaceId: enrichedBatch.workspaceId,
+      updatedCollectionHash: enrichedBatch.updatedCollectionHash,
+      events: enrichedBatch.events.map((event) => ({
+        type: event.type,
+        entityName: event.metadataName,
+        recordId: event.recordId,
+        properties: event.properties as Record<string, unknown>,
+      })),
+    });
   }
 
   private async enrichMetadataEventBatch(
@@ -77,34 +56,6 @@ export class MetadataEventPublisher {
       default:
         return metadataEventBatch;
     }
-  }
-
-  private async publishToStream({
-    streamChannelId,
-    metadataEventBatch,
-  }: {
-    streamChannelId: string;
-    metadataEventBatch: MetadataEventBatch;
-  }): Promise<void> {
-    if (!isNonEmptyArray(metadataEventBatch.events)) {
-      return;
-    }
-
-    const metadataEvents = metadataEventBatch.events.map((metadataEvent) => ({
-      ...metadataEvent,
-      updatedCollectionHash: metadataEventBatch.updatedCollectionHash,
-    }));
-
-    const payload: EventStreamPayload = {
-      objectRecordEventsWithQueryIds: [],
-      metadataEvents,
-    };
-
-    await this.subscriptionService.publishToEventStream({
-      workspaceId: metadataEventBatch.workspaceId,
-      eventStreamChannelId: streamChannelId,
-      payload,
-    });
   }
 
   private async enrichFieldMetadataEventsWithRelations(

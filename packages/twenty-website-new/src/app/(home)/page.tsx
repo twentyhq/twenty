@@ -1,32 +1,49 @@
-import { FAQ_DATA } from '@/app/(home)/constants/faq';
-import { HERO_DATA } from '@/app/(home)/constants/hero';
-import { MENU_DATA } from '@/app/(home)/constants/menu';
-import { PROBLEM_DATA } from '@/app/(home)/constants/problem';
-import { THREE_CARDS_FEATURE_DATA } from '@/app/(home)/constants/three-cards-feature';
-import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/(home)/constants/three-cards-illustration';
-import { TRUSTED_BY_DATA } from '@/app/(home)/constants/trusted-by';
+import {
+  HELPED_DATA,
+  HERO_DATA,
+  HOME_STEPPER_DATA,
+  PROBLEM_DATA,
+  TESTIMONIALS_DATA,
+  THREE_CARDS_FEATURE_DATA,
+  THREE_CARDS_ILLUSTRATION_DATA,
+} from '@/app/(home)/_constants';
+import { FAQ_DATA, MENU_DATA, TRUSTED_BY_DATA } from '@/app/_constants';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
+import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Faq } from '@/sections/Faq/components';
+import { Helped } from '@/sections/Helped/components';
 import { Hero } from '@/sections/Hero/components';
+import { HomeStepper } from '@/sections/HomeStepper/components';
 import { Menu } from '@/sections/Menu/components';
 import { Problem } from '@/sections/Problem/components';
+import { Testimonials } from '@/sections/Testimonials/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
+import type { Metadata } from 'next';
 
-export default function HomePage() {
+export const metadata: Metadata = {
+  title: 'Twenty — Open Source CRM',
+  description: 'Modular, scalable open source CRM for modern teams.',
+};
+
+export default async function HomePage() {
+  const stats = await fetchCommunityStats();
+  const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
+
   return (
     <>
       <Menu.Root
         backgroundColor={theme.colors.primary.background[100]}
         scheme="primary"
         navItems={MENU_DATA.navItems}
-        socialLinks={MENU_DATA.socialLinks}
+        socialLinks={menuSocialLinks}
       >
         <Menu.Logo scheme="primary" />
         <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="primary" socialLinks={MENU_DATA.socialLinks} />
+        <Menu.Social scheme="primary" socialLinks={menuSocialLinks} />
         <Menu.Cta scheme="primary" />
       </Menu.Root>
 
@@ -42,10 +59,7 @@ export default function HomePage() {
             variant="contained"
           />
         </Hero.Cta>
-        <Hero.HomeVisual
-          background={HERO_DATA.background}
-          foreground={HERO_DATA.foreground}
-        />
+        <Hero.HomeVisual visual={HERO_DATA.visual} />
       </Hero.Root>
 
       <TrustedBy.Root>
@@ -86,7 +100,7 @@ export default function HomePage() {
         />
       </ThreeCards.Root>
 
-      {/* <HeroStepper.Flow steps={STEPPER_DATA.steps} /> */}
+      <HomeStepper.ScrollSection steps={HOME_STEPPER_DATA.steps} />
 
       <ThreeCards.Root backgroundColor={theme.colors.primary.background[100]}>
         <ThreeCards.Intro page={Pages.Home} align="center">
@@ -105,12 +119,25 @@ export default function HomePage() {
         />
       </ThreeCards.Root>
 
+      <Helped.Root backgroundColor={theme.colors.secondary.background[5]}>
+        <Helped.Scene data={HELPED_DATA} />
+      </Helped.Root>
+
+      <Testimonials.Root
+        backgroundColor={theme.colors.secondary.background[5]}
+        color={theme.colors.primary.text[100]}
+        shapeFillColor={theme.colors.primary.background[100]}
+      >
+        <Testimonials.Carousel
+          eyebrow={TESTIMONIALS_DATA.eyebrow}
+          illustration={TESTIMONIALS_DATA.illustration}
+          testimonials={TESTIMONIALS_DATA.testimonials}
+        />
+      </Testimonials.Root>
+
       <Faq.Root illustration={FAQ_DATA.illustration}>
         <Faq.Intro>
-          <Eyebrow
-            colorScheme="secondary"
-            heading={FAQ_DATA.eyebrow.heading}
-          />
+          <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
           <Faq.Heading segments={FAQ_DATA.heading} />
           <Faq.Cta>
             <LinkButton

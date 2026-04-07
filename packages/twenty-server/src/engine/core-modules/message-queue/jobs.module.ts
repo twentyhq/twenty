@@ -20,6 +20,7 @@ import { HandleWorkspaceMemberDeletedJob } from 'src/engine/core-modules/workspa
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { AiAgentMonitorModule } from 'src/engine/metadata-modules/ai/ai-agent-monitor/ai-agent-monitor.module';
+import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
@@ -28,6 +29,8 @@ import { WebhookJobModule } from 'src/engine/metadata-modules/webhook/jobs/webho
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { CleanOnboardingWorkspacesJob } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-onboarding-workspaces.job';
 import { CleanSuspendedWorkspacesJob } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-suspended-workspaces.job';
+import { GenerateSdkClientJob } from 'src/engine/core-modules/sdk-client/jobs/generate-sdk-client.job';
+import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { CleanWorkspaceDeletionWarningUserVarsJob } from 'src/engine/workspace-manager/workspace-cleaner/jobs/clean-workspace-deletion-warning-user-vars.job';
 import { WorkspaceCleanerModule } from 'src/engine/workspace-manager/workspace-cleaner/workspace-cleaner.module';
 import { CalendarEventParticipantManagerModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant-manager.module';
@@ -63,10 +66,12 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     WorkflowModule,
     FavoriteModule,
     NavigationMenuItemModule,
+    SdkClientModule,
     WorkspaceCleanerModule,
     SubscriptionsModule,
     AuditJobModule,
     AiAgentMonitorModule,
+    AiChatModule,
     LogicFunctionModule,
     EnterpriseModule,
   ],
@@ -78,6 +83,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     HandleWorkspaceMemberDeletedJob,
     CleanWorkspaceDeletionWarningUserVarsJob,
     UpdateWorkspaceMemberEmailJob,
+    GenerateSdkClientJob,
   ],
 })
 export class JobsModule {

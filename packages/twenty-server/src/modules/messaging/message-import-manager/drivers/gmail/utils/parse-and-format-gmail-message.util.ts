@@ -2,7 +2,7 @@ import { type gmail_v1 as gmailV1 } from 'googleapis';
 import planer from 'planer';
 import { MessageParticipantRole } from 'twenty-shared/types';
 
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
 import { parseGmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-message.util';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
@@ -11,10 +11,7 @@ import { sanitizeString } from 'src/modules/messaging/message-import-manager/uti
 
 export const parseAndFormatGmailMessage = (
   message: gmailV1.Schema$Message,
-  connectedAccount: Pick<
-    ConnectedAccountWorkspaceEntity,
-    'handle' | 'handleAliases'
-  >,
+  connectedAccount: Pick<ConnectedAccountEntity, 'handle' | 'handleAliases'>,
 ): MessageWithParticipants | null => {
   const {
     id,

@@ -2,9 +2,10 @@ import { styled } from '@linaria/react';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
-import { useOpenEmailThreadInSidePanel } from '@/side-panel/hooks/useOpenEmailThreadInSidePanel';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useContext } from 'react';
 
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -77,7 +78,7 @@ type EmailThreadPreviewProps = {
 
 export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
   const { theme } = useContext(ThemeContext);
-  const { openEmailThreadInSidePanel } = useOpenEmailThreadInSidePanel();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const visibility = thread.visibility;
 
@@ -104,7 +105,10 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
       thread.visibility === MessageChannelVisibility.SHARE_EVERYTHING;
 
     if (canOpen) {
-      openEmailThreadInSidePanel(thread.id);
+      openRecordInSidePanel({
+        recordId: thread.id,
+        objectNameSingular: CoreObjectNameSingular.MessageThread,
+      });
     }
   };
 

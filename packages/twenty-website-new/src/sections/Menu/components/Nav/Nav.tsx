@@ -27,6 +27,7 @@ const NavLink = styled(NavigationMenu.Link)`
   letter-spacing: 0;
   text-decoration: none;
   text-transform: uppercase;
+  transition: color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
   &[data-scheme='primary'] {
     color: ${theme.colors.primary.text[100]};
@@ -34,6 +35,10 @@ const NavLink = styled(NavigationMenu.Link)`
 
   &[data-scheme='secondary'] {
     color: ${theme.colors.secondary.text[100]};
+  }
+
+  &:hover {
+    color: ${theme.colors.highlight[100]};
   }
 
   &:focus-visible {

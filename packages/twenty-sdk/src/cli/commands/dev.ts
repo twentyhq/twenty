@@ -8,6 +8,7 @@ import { checkSdkVersionCompatibility } from '@/cli/utilities/version/check-sdk-
 export type AppDevOptions = {
   appPath?: string;
   headless?: boolean;
+  verbose?: boolean;
 };
 
 export class AppDevCommand {
@@ -45,6 +46,7 @@ export class AppDevCommand {
 
     this.orchestrator = new DevModeOrchestrator({
       state: orchestratorState,
+      verbose: options.verbose,
     });
 
     await this.orchestrator.start();

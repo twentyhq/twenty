@@ -1,6 +1,6 @@
 import { isArray, isNumber, isObject, isString } from 'class-validator';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
 import {
   GraphqlDirectExecutionException,
@@ -66,7 +66,13 @@ export function assertFindManyArgs(
     );
   }
 
-  if ('orderBy' in args && isDefined(args.orderBy) && !isArray(args.orderBy)) {
+  if (
+    'orderBy' in args &&
+    isDefined(args.orderBy) &&
+    !isEmptyObject(args.orderBy) &&
+    !isArray(args.orderBy) &&
+    !isObject(args.orderBy)
+  ) {
     throw new GraphqlDirectExecutionException(
       'Invalid argument: "orderBy" must be an array',
       GraphqlDirectExecutionExceptionCode.INVALID_QUERY_INPUT,

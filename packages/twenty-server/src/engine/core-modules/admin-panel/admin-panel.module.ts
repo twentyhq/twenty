@@ -6,6 +6,7 @@ import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/adm
 import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
 import { AdminPanelResolver } from 'src/engine/core-modules/admin-panel/admin-panel.resolver';
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
+import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
@@ -24,7 +25,9 @@ import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-clie
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { KeyValuePairModule } from 'src/engine/core-modules/key-value-pair/key-value-pair.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
 @Module({
@@ -44,18 +47,21 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     SecureHttpClientModule,
     ApplicationRegistrationModule,
     UsageModule,
+    KeyValuePairModule,
+    UserVarsModule,
   ],
   providers: [
     AdminPanelResolver,
     AdminPanelService,
     AdminPanelHealthService,
     AdminPanelQueueService,
+    MaintenanceModeService,
     DatabaseHealthIndicator,
     RedisHealthIndicator,
     WorkerHealthIndicator,
     ConnectedAccountHealth,
     AppHealthIndicator,
   ],
-  exports: [AdminPanelService],
+  exports: [AdminPanelService, MaintenanceModeService],
 })
 export class AdminPanelModule {}

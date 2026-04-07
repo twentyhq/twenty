@@ -2,7 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import {
   convertToModelMessages,
+  type LanguageModelUsage,
   stepCountIs,
+  type StepResult,
   streamText,
   type SystemModelMessage,
   type ToolSet,
@@ -15,8 +17,9 @@ import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
-import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/code-execution-stream-emitter.type';
 
+import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
@@ -36,7 +39,9 @@ import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import {
   extractCodeInterpreterFiles,
@@ -48,12 +53,13 @@ import {
   AI_SDK_OPENAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
-import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import {
   AiModelRegistryService,
   type RegisteredAIModel,
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
+import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+import { WebSearchService } from 'src/engine/core-modules/web-search/web-search.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
 export type ChatExecutionOptions = {
@@ -62,7 +68,10 @@ export type ChatExecutionOptions = {
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
   browsingContext: BrowsingContextType | null;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
+  onCompaction?: () => void;
   modelId?: string;
+  abortSignal?: AbortSignal;
+  conversationSizeTokens: number;
 };
 
 export type ChatExecutionResult = {
@@ -81,9 +90,12 @@ export class ChatExecutionService {
     private readonly aiBillingService: AiBillingService,
     private readonly agentActorContextService: AgentActorContextService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
+    private readonly codeInterpreterService: CodeInterpreterService,
     private readonly systemPromptBuilder: SystemPromptBuilderService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly sdkProviderFactory: SdkProviderFactoryService,
+    private readonly messagePruningService: MessagePruningService,
+    private readonly webSearchService: WebSearchService,
   ) {}
 
   async streamChat({
@@ -92,7 +104,10 @@ export class ChatExecutionService {
     messages,
     browsingContext,
     onCodeExecutionUpdate,
+    onCompaction,
     modelId,
+    abortSignal,
+    conversationSizeTokens,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
     const { actorContext, roleId, userId, userContext } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
@@ -148,8 +163,12 @@ export class ChatExecutionService {
       registeredModel.modelId,
     );
 
+    const useNativeSearch = this.webSearchService.shouldUseNativeSearch();
+
     const { tools: nativeSearchTools, callableToolNames: searchToolNames } =
-      this.getNativeWebSearchTools(registeredModel);
+      useNativeSearch
+        ? this.getNativeWebSearchTools(registeredModel)
+        : { tools: {}, callableToolNames: [] };
 
     // Direct tools: native provider tools + preloaded tools.
     // These are callable directly AND as fallback through execute_tool.
@@ -181,19 +200,24 @@ export class ChatExecutionService {
       ),
     };
 
-    const { processedMessages, extractedFiles } =
-      extractCodeInterpreterFiles(messages);
+    let processedMessages: UIMessage[] = messages;
 
     let storedFiles: Array<{
       filename: string;
       fileId: string;
     }> = [];
 
-    if (extractedFiles.length > 0) {
-      storedFiles = await this.storeExtractedFiles(
-        extractedFiles,
-        workspace.id,
-      );
+    if (this.codeInterpreterService.isEnabled()) {
+      const extracted = extractCodeInterpreterFiles(messages);
+
+      processedMessages = extracted.processedMessages;
+
+      if (extracted.extractedFiles.length > 0) {
+        storedFiles = await this.storeExtractedFiles(
+          extracted.extractedFiles,
+          workspace.id,
+        );
+      }
     }
 
     const systemPrompt = this.systemPromptBuilder.buildFullPrompt(
@@ -221,14 +245,100 @@ export class ChatExecutionService {
             : undefined,
     };
 
-    const modelMessages = await convertToModelMessages(processedMessages);
+    const rawModelMessages = await convertToModelMessages(processedMessages);
+
+    const pruningResult =
+      this.messagePruningService.pruneIfOverContextWindowLimit(
+        rawModelMessages,
+        modelConfig.contextWindowTokens,
+        conversationSizeTokens,
+      );
+
+    if (pruningResult.isStillOverLimit) {
+      throw new Error(
+        'This conversation is too long for the model to process. Please start a new thread.',
+      );
+    }
+
+    if (pruningResult.wasPruned) {
+      onCompaction?.();
+    }
+
+    const modelMessages = pruningResult.messages;
+
+    const billUsageFromSteps = (steps: StepResult<ToolSet>[]) => {
+      const usage = steps.reduce<LanguageModelUsage>(
+        (acc, step) => ({
+          inputTokens: (acc.inputTokens ?? 0) + (step.usage.inputTokens ?? 0),
+          outputTokens:
+            (acc.outputTokens ?? 0) + (step.usage.outputTokens ?? 0),
+          totalTokens: (acc.totalTokens ?? 0) + (step.usage.totalTokens ?? 0),
+          inputTokenDetails: {
+            noCacheTokens:
+              (acc.inputTokenDetails?.noCacheTokens ?? 0) +
+              (step.usage.inputTokenDetails?.noCacheTokens ?? 0),
+            cacheReadTokens:
+              (acc.inputTokenDetails?.cacheReadTokens ?? 0) +
+              (step.usage.inputTokenDetails?.cacheReadTokens ?? 0),
+            cacheWriteTokens:
+              (acc.inputTokenDetails?.cacheWriteTokens ?? 0) +
+              (step.usage.inputTokenDetails?.cacheWriteTokens ?? 0),
+          },
+          outputTokenDetails: {
+            textTokens:
+              (acc.outputTokenDetails?.textTokens ?? 0) +
+              (step.usage.outputTokenDetails?.textTokens ?? 0),
+            reasoningTokens:
+              (acc.outputTokenDetails?.reasoningTokens ?? 0) +
+              (step.usage.outputTokenDetails?.reasoningTokens ?? 0),
+          },
+        }),
+        {
+          inputTokens: 0,
+          outputTokens: 0,
+          totalTokens: 0,
+          inputTokenDetails: {
+            noCacheTokens: 0,
+            cacheReadTokens: 0,
+            cacheWriteTokens: 0,
+          },
+          outputTokenDetails: { textTokens: 0, reasoningTokens: 0 },
+        },
+      );
+
+      const cacheCreationTokens = extractCacheCreationTokensFromSteps(steps);
+
+      this.aiBillingService.calculateAndBillUsage(
+        registeredModel.modelId,
+        { usage, cacheCreationTokens },
+        workspace.id,
+        UsageOperationType.AI_CHAT_TOKEN,
+        null,
+        userWorkspaceId,
+      );
+
+      if (useNativeSearch) {
+        const nativeWebSearchCallCount =
+          countNativeWebSearchCallsFromSteps(steps);
+
+        this.aiBillingService.billNativeWebSearchUsage(
+          nativeWebSearchCallCount,
+          workspace.id,
+          userWorkspaceId,
+        );
+      }
+    };
 
     const stream = streamText({
       model: registeredModel.model,
       messages: [systemMessage, ...modelMessages],
       tools: activeTools,
+      abortSignal,
       stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
       experimental_telemetry: AI_TELEMETRY_CONFIG,
+      onAbort: ({ steps }) => {
+        billUsageFromSteps(steps);
+      },
       experimental_repairToolCall: async ({
         toolCall,
         tools: toolsForRepair,
@@ -246,19 +356,13 @@ export class ChatExecutionService {
     });
 
     Promise.all([stream.usage, stream.steps])
-      .then(([usage, steps]) => {
-        const cacheCreationTokens = extractCacheCreationTokensFromSteps(steps);
-
-        this.aiBillingService.calculateAndBillUsage(
-          registeredModel.modelId,
-          { usage, cacheCreationTokens },
-          workspace.id,
-          UsageOperationType.AI_CHAT_TOKEN,
-          null,
-          userWorkspaceId,
-        );
+      .then(([, steps]) => {
+        billUsageFromSteps(steps);
       })
       .catch((error) => {
+        if (error?.name === 'AbortError') {
+          return;
+        }
         this.exceptionHandlerService.captureExceptions([error]);
       });
 
@@ -363,21 +467,8 @@ export class ChatExecutionService {
           callableToolNames: ['web_search'],
         };
       }
-      case AI_SDK_BEDROCK: {
-        const provider =
-          this.sdkProviderFactory.getRawBedrockProvider(providerName);
-
-        if (!provider) {
-          return empty;
-        }
-
-        return {
-          tools: {
-            web_search: provider.tools.webSearch_20250305() as ToolSet[string],
-          },
-          callableToolNames: ['web_search'],
-        };
-      }
+      case AI_SDK_BEDROCK:
+        return empty;
       case AI_SDK_OPENAI: {
         const provider =
           this.sdkProviderFactory.getRawOpenAIProvider(providerName);

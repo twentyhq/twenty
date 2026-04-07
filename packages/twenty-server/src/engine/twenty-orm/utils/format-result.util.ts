@@ -182,8 +182,13 @@ function formatResultInternal<T>(
       continue;
     }
 
+    const formattedFieldValue = formatFieldMetadataValue(
+      value,
+      fieldMetadata.type,
+    );
+
     // @ts-expect-error legacy noImplicitAny
-    newData[key] = formatFieldMetadataValue(value, fieldMetadata.type);
+    newData[key] = formattedFieldValue;
   }
 
   // After assembling composite fields, handle those with missing required subfields

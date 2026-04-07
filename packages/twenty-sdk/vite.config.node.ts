@@ -27,7 +27,8 @@ export default defineConfig(() => {
           index: 'src/sdk/index.ts',
           cli: 'src/cli/cli.ts',
           operations: 'src/cli/operations/index.ts',
-          build: 'src/build/index.ts',
+          'front-component-renderer/build':
+            'src/front-component-renderer/build/index.ts',
         },
         name: 'twenty-sdk',
       },

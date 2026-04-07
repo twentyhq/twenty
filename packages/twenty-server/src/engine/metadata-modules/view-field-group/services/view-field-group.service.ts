@@ -347,6 +347,7 @@ export class ViewFieldGroupService {
       where: {
         workspaceId,
         viewId,
+        isActive: true,
         deletedAt: IsNull(),
       },
       order: { position: 'ASC' },

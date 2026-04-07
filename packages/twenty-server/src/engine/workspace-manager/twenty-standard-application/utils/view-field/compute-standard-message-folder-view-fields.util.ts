@@ -25,8 +25,8 @@ export const computeStandardMessageFolderViewFields = (
       objectName: 'messageFolder',
       context: {
         viewName: 'allMessageFolders',
-        viewFieldName: 'messageChannel',
-        fieldName: 'messageChannel',
+        viewFieldName: 'messageChannelId',
+        fieldName: 'messageChannelId',
         position: 1,
         isVisible: true,
         size: 150,
@@ -75,8 +75,8 @@ export const computeStandardMessageFolderViewFields = (
         objectName: 'messageFolder',
         context: {
           viewName: 'messageFolderRecordPageFields',
-          viewFieldName: 'messageChannel',
-          fieldName: 'messageChannel',
+          viewFieldName: 'messageChannelId',
+          fieldName: 'messageChannelId',
           position: 1,
           isVisible: true,
           size: 150,

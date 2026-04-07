@@ -1,7 +1,9 @@
 import { Container } from '@/design-system/components';
+import type { IllustrationType } from '@/design-system/components/Illustration/types/Illustration';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
+import { FooterBackground } from '../FooterBackground/FooterBackground';
 import { FooterShape } from '../../FooterShape';
 
 const FooterRoot = styled.footer`
@@ -25,11 +27,6 @@ const FooterContainer = styled(Container)`
   }
 `;
 
-const FooterBackground = styled.div`
-  position: absolute;
-  z-index: 0;
-`;
-
 const FooterContent = styled.div`
   margin-top: auto;
   padding-bottom: ${theme.spacing(12)};
@@ -51,13 +48,16 @@ const FooterContent = styled.div`
   }
 `;
 
-type RootProps = { children: ReactNode };
+type RootProps = {
+  children: ReactNode;
+  illustration: IllustrationType;
+};
 
-export function Root({ children }: RootProps) {
+export function Root({ children, illustration }: RootProps) {
   return (
     <FooterRoot>
       <FooterContainer>
-        <FooterBackground aria-hidden />
+        <FooterBackground aria-hidden illustration={illustration} />
         <FooterContent>
           <FooterShape fillColor={theme.colors.primary.background[100]} />
           {children}

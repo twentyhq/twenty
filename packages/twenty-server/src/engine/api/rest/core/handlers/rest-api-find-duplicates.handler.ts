@@ -36,7 +36,7 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
         authContext,
       });
 
-      const duplicateConnections =
+      const { results: duplicateConnections } =
         await this.commonFindDuplicatesQueryRunnerService.execute(
           { data, ids, selectedFields },
           {

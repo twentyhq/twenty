@@ -1,15 +1,16 @@
 import { Logger, Scope } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { In } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
+import { MessageChannelSyncStage } from 'twenty-shared/types';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/data-access/services/message-channel-data-access.service';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
-import { MessageChannelSyncStage } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { isSyncStale } from 'src/modules/messaging/message-import-manager/utils/is-sync-stale.util';
 
 const toIsoStringOrNull = (
@@ -34,7 +35,8 @@ export class MessagingOngoingStaleJob {
   private readonly logger = new Logger(MessagingOngoingStaleJob.name);
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly messageChannelDataAccessService: MessageChannelDataAccessService,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
   ) {}
 
@@ -45,17 +47,17 @@ export class MessagingOngoingStaleJob {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageChannels = await this.messageChannelDataAccessService.find(
-        workspaceId,
-        {
+      const messageChannels = await this.messageChannelRepository.find({
+        where: {
           syncStage: In([
             MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
             MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
             MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
             MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
           ]),
+          workspaceId,
         },
-      );
+      });
 
       for (const messageChannel of messageChannels) {
         if (isSyncStale(toIsoStringOrNull(messageChannel.syncStageStartedAt))) {

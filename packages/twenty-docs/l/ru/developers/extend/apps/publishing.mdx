@@ -4,33 +4,75 @@ description: Распространяйте своё приложение Twenty
 ---
 
 <Warning>
-Приложения сейчас проходят альфа-тестирование. Функциональность работает, но продолжает развиваться.
+  Приложения сейчас проходят альфа-тестирование. Функция работает, но продолжает развиваться.
 </Warning>
 
 ## Обзор
 
 После того как ваше приложение [собрано и протестировано локально](/l/ru/developers/extend/apps/building), у вас есть два пути для его распространения:
 
-* **Опубликовать в npm** — разместите ваше приложение в маркетплейсе Twenty, чтобы любое рабочее пространство могло его найти и установить.
 * **Разверните tar-архив** — загрузите своё приложение напрямую на конкретный сервер Twenty для внутреннего или частного использования.
+* **Опубликовать в npm** — разместите ваше приложение в маркетплейсе Twenty, чтобы любое рабочее пространство могло его найти и установить.
 
 Оба пути начинаются с одного и того же шага **build**.
 
 ## Сборка вашего приложения
 
-Команда `build` компилирует ваши исходники TypeScript, транспилирует функции логики и фронтенд-компоненты и генерирует `manifest.json`, который описывает содержимое вашего приложения:
+Выполните команду сборки, чтобы скомпилировать приложение и сгенерировать готовый к распространению `manifest.json`:
 
 ```bash filename="Terminal"
 yarn twenty build
 ```
 
-Выходные данные записываются в `.twenty/output/`. This directory contains everything needed for distribution: compiled code, assets, the manifest, and a copy of your `package.json`.
+Это компилирует исходные файлы TypeScript, транспилирует функции логики и фронтенд-компоненты и записывает всё в `.twenty/output/`. Добавьте `--tarball`, чтобы также создать пакет `.tgz` для ручного распространения или для команды deploy.
 
-To also create a `.tgz` tarball (used by the deploy command internally, or for manual distribution):
+## Развертывание на сервер (tarball)
+
+Для приложений, которые вы не хотите делать общедоступными — собственные инструменты, интеграции только для предприятий или экспериментальные сборки — вы можете развернуть tarball напрямую на сервер Twenty.
+
+### Требования
+
+Перед развертыванием вам нужен настроенный remote, указывающий на целевой сервер. Remotes локально хранят URL сервера и учётные данные аутентификации в `~/.twenty/config.json`.
+
+Добавьте remote:
 
 ```bash filename="Terminal"
-yarn twenty build --tarball
+yarn twenty remote add --api-url https://your-twenty-server.com --as production
 ```
+
+### Развертывание
+
+Соберите и загрузите ваше приложение на сервер в одном шаге:
+
+```bash filename="Terminal"
+yarn twenty deploy
+# To deploy to a specific remote:
+# yarn twenty deploy --remote production
+```
+
+### Общий доступ к развернутому приложению
+
+Приложения в формате tarball не отображаются в публичном маркетплейсе, поэтому другие рабочие пространства на том же сервере не найдут их при просмотре. Чтобы поделиться развернутым приложением:
+
+1. Перейдите в **Настройки > Приложения > Регистрации** и откройте ваше приложение
+2. На вкладке **Распространение** нажмите **Копировать ссылку для общего доступа**
+3. Поделитесь этой ссылкой с пользователями в других рабочих пространствах — она ведёт их прямо на страницу установки приложения
+
+Ссылка общего доступа использует базовый URL сервера (без какого-либо поддомена рабочего пространства), поэтому она работает для любого рабочего пространства на сервере.
+
+<Warning>
+Возможность делиться частными приложениями — функция Enterprise. Перейдите в [Настройки > Панель администратора > Enterprise](/settings/admin-panel#enterprise), чтобы включить её.
+</Warning>
+
+### Управление версиями
+
+Чтобы выпустить обновление:
+
+1. Обновите значение поля `version` в файле `package.json`
+2. Выполните `yarn twenty deploy` (или `yarn twenty deploy --remote production`)
+3. Рабочие пространства, в которых установлено приложение, увидят доступное обновление в своих настройках
+
+{/* TODO: add screenshot of the Upgrade button */}
 
 ## Публикация в npm
 
@@ -39,72 +81,69 @@ yarn twenty build --tarball
 ### Требования
 
 * Учётная запись [npm](https://www.npmjs.com)
-* The `twenty-app` keyword **must** be listed in your `package.json` `keywords` array
-
-### Adding the required keyword
-
-The Twenty marketplace discovers apps by searching the npm registry for packages with the `twenty-app` keyword. Add it to your `package.json`:
+* Ключевое слово `twenty-app` в массиве `keywords` вашего `package.json` (уже добавлено при создании проекта с помощью `create-twenty-app`)
 
 ```json filename="package.json"
 {
   "name": "twenty-app-postcard-sender",
   "version": "1.0.0",
-  "keywords": ["twenty-app"],
-  ...
+  "keywords": ["twenty-app"]
 }
 ```
 
-<Note>
-The marketplace searches for `keywords:twenty-app` on the npm registry. Without this keyword, your package won't appear in the marketplace even if it has the `twenty-app-` name prefix.
-</Note>
+### Метаданные маркетплейса
 
-### Шаги
+Конфигурация `defineApplication()` поддерживает необязательные поля, которые определяют, как ваше приложение отображается в маркетплейсе. Используйте `logoUrl` и `screenshots`, чтобы ссылаться на изображения из папки `public/`:
 
-1. **Build your app:**
-
-```bash filename="Terminal"
-yarn twenty build
+```ts src/application-config.ts
+export default defineApplication({
+  universalIdentifier: '...',
+  displayName: 'My App',
+  description: 'A great app',
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  logoUrl: 'public/logo.png',
+  screenshots: [
+    'public/screenshot-1.png',
+    'public/screenshot-2.png',
+  ],
+});
 ```
 
-2. **Publish to npm:**
+См. [аккордеон defineApplication](/l/ru/developers/extend/apps/building#defineentity-functions) на странице «Создание приложений» для полного списка полей маркетплейса (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl` и т. д.).
+
+### Публикация
 
 ```bash filename="Terminal"
 yarn twenty publish
 ```
 
-This runs `npm publish` from the `.twenty/output/` directory.
-
-To publish under a specific dist-tag (e.g., `beta` or `next`):
+Чтобы опубликовать с определённым dist-tag (например, `beta` или `next`):
 
 ```bash filename="Terminal"
 yarn twenty publish --tag beta
 ```
 
-### How marketplace discovery works
+### Как работает обнаружение приложений в маркетплейсе
 
-The Twenty server syncs its marketplace catalog from the npm registry **every hour**:
+Сервер Twenty синхронизирует каталог маркетплейса из реестра npm **каждый час**.
 
-1. It searches for all npm packages with the `keywords:twenty-app` keyword
-2. For each package, it fetches the `manifest.json` from the npm CDN
-3. The app's metadata (name, description, author, logo, screenshots, category) is extracted from the manifest and displayed in the marketplace
-
-After publishing, your app can take up to one hour to appear in the marketplace. To trigger the sync immediately instead of waiting for the next hourly run:
+Вы можете запустить синхронизацию немедленно, вместо ожидания:
 
 ```bash filename="Terminal"
 yarn twenty catalog-sync
+# To target a specific remote:
+# yarn twenty catalog-sync --remote production
 ```
 
-To target a specific remote:
+Метаданные, отображаемые в маркетплейсе, берутся из конфигурации `defineApplication()` — из таких полей, как `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` и `termsUrl`.
 
-```bash filename="Terminal"
-yarn twenty catalog-sync -r production
-```
-
-The metadata shown in the marketplace comes from your `defineApplication()` call in your app source code — fields like `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl`, and `termsUrl`.
+<Note>
+Если ваше приложение не определяет `aboutDescription` в `defineApplication()`, маркетплейс автоматически использует `README.md` вашего пакета из npm в качестве содержимого страницы «О приложении». Это означает, что вы можете поддерживать единый README как для npm, так и для маркетплейса Twenty. Если вы хотите другое описание в маркетплейсе, явно задайте `aboutDescription`.
+</Note>
 
 ### Публикация через CI
 
-Сгенерированный шаблоном проект включает рабочий процесс GitHub Actions, который выполняет публикацию при каждом релизе:
+Используйте этот workflow GitHub Actions, чтобы публиковать автоматически при каждом релизе (использует [OIDC](https://docs.npmjs.com/trusted-publishers)):
 
 ```yaml filename=".github/workflows/publish.yml"
 name: Publish
@@ -129,121 +168,24 @@ jobs:
       - run: npx twenty build
       - run: npm publish --provenance --access public
         working-directory: .twenty/output
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
-For other CI systems (GitLab CI, CircleCI, etc.), the same three commands apply: `yarn install`, `yarn twenty build`, then `npm publish` from `.twenty/output`.
+Для других CI-систем (GitLab CI, CircleCI и др.) применимы те же три команды: `yarn install`, `yarn twenty build`, затем `npm publish` из `.twenty/output`.
 
-<Tip>
+<Note>
 **npm provenance** — опционально, но рекомендуется. Публикация с флагом `--provenance` добавляет к вашему пакету в npm значок доверия, позволяя пользователям проверить, что пакет был собран из конкретного коммита в общедоступном конвейере CI. См. инструкции по настройке в [документации по npm provenance](https://docs.npmjs.com/generating-provenance-statements).
-</Tip>
+</Note>
 
-## Deploying to a server (tarball)
+## Установка приложений
 
-For apps you don't want publicly available — proprietary tools, enterprise-only integrations, or experimental builds — you can deploy a tarball directly to a Twenty server.
+После публикации приложения (npm) или его развертывания (tarball) рабочие пространства могут установить его через интерфейс.
 
-### Требования
+Перейдите на страницу **Настройки > Приложения** в Twenty, где можно просматривать и устанавливать как приложения из маркетплейса, так и развернутые через tarball.
 
-Before deploying, you need a configured remote pointing to the target server. Remotes store the server URL and authentication credentials locally in `~/.twenty/config.json`.
+{/* TODO: add screenshot of the UI when the app is registered */}
 
-Add a remote:
-
-```bash filename="Terminal"
-yarn twenty remote add --url https://your-twenty-server.com --as production
-```
-
-For a local development server:
-
-```bash filename="Terminal"
-yarn twenty remote add --local --as local
-```
-
-You can also authenticate with an API key for non-interactive environments:
-
-```bash filename="Terminal"
-yarn twenty remote add --url https://your-twenty-server.com --token <api-key> --as production
-```
-
-Manage your remotes:
-
-```bash filename="Terminal"
-yarn twenty remote list       # List all configured remotes
-yarn twenty remote switch prod # Set the default remote
-yarn twenty remote status     # Show active remote and auth status
-yarn twenty remote remove old # Remove a remote
-```
-
-### Deploying
-
-Build and upload your app to the server in one step:
-
-```bash filename="Terminal"
-yarn twenty deploy
-```
-
-This builds the app with `--tarball`, then uploads the tarball to the default remote via a GraphQL multipart upload.
-
-To deploy to a specific remote:
-
-```bash filename="Terminal"
-yarn twenty deploy -r production
-```
-
-### Sharing a deployed app
-
-Tarball apps are not listed in the public marketplace, so other workspaces on the same server won't discover them by browsing. To share a deployed app:
-
-1. Go to **Settings > Applications > Registrations** and open your app
-2. In the **Distribution** tab, click **Copy share link**
-3. Share this link with users on other workspaces — it takes them directly to the app's install page
-
-The share link uses the server's base URL (without any workspace subdomain) so it works for any workspace on the server.
-
-### Управление версиями
-
-Чтобы выпустить обновление:
-
-1. Обновите значение поля `version` в файле `package.json`
-2. Run `yarn twenty deploy` (or `yarn twenty deploy -r production`)
-3. Workspaces that have the app installed will see the upgrade available in their settings
-
-## Installing apps
-
-Once an app is published (npm) or deployed (tarball), workspaces install it through the UI:
+Вы также можете устанавливать приложения из командной строки:
 
 ```bash filename="Terminal"
 yarn twenty install
 ```
-
-Or from the **Settings > Applications** page in the Twenty UI, where both marketplace and tarball-deployed apps can be browsed and installed.
-
-## App distribution categories
-
-Twenty группирует приложения в три категории в зависимости от способа их распространения:
-
-| Категория              | Как это работает                                                                                                                        | Отображается в маркетплейсе? |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
-| **Разработка**         | Локальные приложения в режиме разработки, запущенные через `yarn twenty dev`. Используются для сборки и тестирования.                   | Нет                          |
-| **Published (npm)**    | Apps published to npm with the `twenty-app` keyword. Отображаются в маркетплейсе, доступные для установки любому рабочему пространству. | Да                           |
-| **Internal (tarball)** | Приложения, развернутые через tarball на конкретном сервере. Available only to workspaces on that server via a share link.              | Нет                          |
-
-<Tip>
-Начните в режиме **Разработка** во время создания приложения. Когда будет готово, выберите **Опубликовано** (npm) для широкого распространения или **Внутренний** (tarball) для приватного развертывания.
-</Tip>
-
-## CLI reference
-
-| Команда                     | Описание                                       | Key flags                                           |
-| --------------------------- | ---------------------------------------------- | --------------------------------------------------- |
-| `yarn twenty build`         | Compile app and generate manifest              | `--tarball` — also create a `.tgz` package          |
-| `yarn twenty publish`       | Build and publish to npm                       | `--tag <tag>` — npm dist-tag (e.g., `beta`, `next`) |
-| `yarn twenty deploy`        | Build and upload tarball to a server           | `-r, --remote <name>` — target remote               |
-| `yarn twenty catalog-sync`  | Trigger marketplace catalog sync on the server | `-r, --remote <name>` — target remote               |
-| `yarn twenty install`       | Install a deployed app on a workspace          | `-r, --remote <name>` — target remote               |
-| `yarn twenty dev`           | Watch and sync local changes                   | Uses default remote                                 |
-| `yarn twenty remote add`    | Add a server connection                        | `--url`, `--token`, `--as`, `--local`, `--port`     |
-| `yarn twenty remote list`   | List configured remotes                        | —                                                   |
-| `yarn twenty remote switch` | Set default remote                             | —                                                   |
-| `yarn twenty remote status` | Show connection status                         | —                                                   |
-| `yarn twenty remote remove` | Remove a remote                                | —                                                   |

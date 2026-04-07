@@ -1,31 +1,47 @@
-import { FAQ_DATA } from '@/app/(home)/constants/faq';
-import { MENU_DATA } from '@/app/(home)/constants/menu';
-import { TRUSTED_BY_DATA } from '@/app/(home)/constants/trusted-by';
-import { ENGAGEMENT_BAND_DATA } from '@/app/partner/constants/engagement-band';
-import { HERO_DATA } from '@/app/partner/constants/hero';
-import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/partner/constants/three-cards-illustration';
+import { FAQ_DATA, MENU_DATA, TRUSTED_BY_DATA } from '@/app/_constants';
+import {
+  ENGAGEMENT_BAND_DATA,
+  HERO_DATA,
+  SIGNOFF_DATA,
+  TESTIMONIALS_DATA,
+  THREE_CARDS_ILLUSTRATION_DATA,
+} from '@/app/partner/_constants';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
+import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { EngagementBand } from '@/sections/EngagementBand/components';
 import { Faq } from '@/sections/Faq/components';
 import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
+import { Signoff } from '@/sections/Signoff/components';
+import { Testimonials } from '@/sections/Testimonials/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
+import type { Metadata } from 'next';
 
-export default function PartnerPage() {
+export const metadata: Metadata = {
+  title: 'Partners — Twenty',
+  description:
+    'Join our partner ecosystem and grow with us as we build the #1 open-source CRM.',
+};
+
+export default async function PartnerPage() {
+  const stats = await fetchCommunityStats();
+  const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
+
   return (
     <>
       <Menu.Root
         backgroundColor={theme.colors.primary.background[100]}
         scheme="primary"
         navItems={MENU_DATA.navItems}
-        socialLinks={MENU_DATA.socialLinks}
+        socialLinks={menuSocialLinks}
       >
         <Menu.Logo scheme="primary" />
         <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="primary" socialLinks={MENU_DATA.socialLinks} />
+        <Menu.Social scheme="primary" socialLinks={menuSocialLinks} />
         <Menu.Cta scheme="primary" />
       </Menu.Root>
 
@@ -103,6 +119,41 @@ export default function PartnerPage() {
           variant="simple"
         />
       </ThreeCards.Root>
+
+      <Testimonials.Root
+        backgroundColor={theme.colors.secondary.background[5]}
+        color={theme.colors.primary.text[100]}
+      >
+        <Testimonials.Carousel
+          eyebrow={TESTIMONIALS_DATA.eyebrow}
+          illustration={TESTIMONIALS_DATA.illustration}
+          testimonials={TESTIMONIALS_DATA.testimonials}
+        />
+      </Testimonials.Root>
+
+      <Signoff.Root
+        backgroundColor={theme.colors.primary.background[100]}
+        color={theme.colors.primary.text[100]}
+      >
+        <Signoff.Heading segments={SIGNOFF_DATA.heading} />
+        <Signoff.Body body={SIGNOFF_DATA.body} />
+        <Signoff.Cta>
+          <LinkButton
+            color="secondary"
+            href="https://app.twenty.com/welcome"
+            label="Become a partner"
+            type="anchor"
+            variant="outlined"
+          />
+          <LinkButton
+            color="secondary"
+            href="https://twenty.com/contact"
+            label="Talk to us"
+            type="anchor"
+            variant="contained"
+          />
+        </Signoff.Cta>
+      </Signoff.Root>
 
       <Faq.Root illustration={FAQ_DATA.illustration}>
         <Faq.Intro>

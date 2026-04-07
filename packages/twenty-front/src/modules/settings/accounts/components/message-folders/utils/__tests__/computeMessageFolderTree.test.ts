@@ -147,7 +147,7 @@ describe('computeMessageFolderTree', () => {
     expect(result[0].children[1].folder.name).toBe('Projects');
   });
 
-  it('should resolve parent-child when parentFolderId references parent id instead of externalId', () => {
+  it('should resolve parent-child when parentFolderId references parent externalId', () => {
     const parent = createFolder(
       '20202020-aaaa-bbbb-cccc-000000000001',
       'custom folder',
@@ -157,7 +157,7 @@ describe('computeMessageFolderTree', () => {
     const child = createFolder(
       '20202020-aaaa-bbbb-cccc-000000000002',
       'child folder',
-      '20202020-aaaa-bbbb-cccc-000000000001',
+      'Label_5900090362003645629',
       'Label_7713410187110265162',
     );
     const result = computeMessageFolderTree([parent, child]);

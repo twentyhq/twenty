@@ -95,6 +95,10 @@ export class PromiseMemoizer<T> {
     }
   }
 
+  getSize(): { cache: number; pending: number } {
+    return { cache: this.cache.size, pending: this.pending.size };
+  }
+
   async clearAll(onDelete?: (value: T) => Promise<void> | void): Promise<void> {
     for (const [, entry] of this.cache.entries()) {
       await onDelete?.(entry.value);

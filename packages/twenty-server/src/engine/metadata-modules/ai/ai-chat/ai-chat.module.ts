@@ -19,6 +19,7 @@ import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.mod
 import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -32,14 +33,18 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { DashboardToolsModule } from 'src/modules/dashboard/tools/dashboard-tools.module';
 import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
-import { AgentChatController } from './controllers/agent-chat.controller';
 import { AgentChatThreadDTO } from './dtos/agent-chat-thread.dto';
 import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
+import { StreamAgentChatJob } from './jobs/stream-agent-chat.job';
 import { AgentChatResolver } from './resolvers/agent-chat.resolver';
+import { AgentChatSubscriptionResolver } from './resolvers/agent-chat-subscription.resolver';
+import { AgentChatCancelSubscriberService } from './services/agent-chat-cancel-subscriber.service';
+import { AgentChatEventPublisherService } from './services/agent-chat-event-publisher.service';
 import { AgentChatStreamingService } from './services/agent-chat-streaming.service';
 import { AgentChatService } from './services/agent-chat.service';
 import { AgentTitleGenerationService } from './services/agent-title-generation.service';
 import { ChatExecutionService } from './services/chat-execution.service';
+import { MessagePruningService } from './services/message-pruning.service';
 import { SystemPromptBuilderService } from './services/system-prompt-builder.service';
 
 @Module({
@@ -48,6 +53,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
       AgentChatThreadEntity,
       FileEntity,
       UserWorkspaceEntity,
+      WorkspaceEntity,
     ]),
     NestjsQueryGraphQLModule.forFeature({
       imports: [
@@ -96,13 +102,17 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     DashboardToolsModule,
     WorkflowToolsModule,
   ],
-  controllers: [AgentChatController],
   providers: [
+    AgentChatCancelSubscriberService,
+    AgentChatEventPublisherService,
     AgentChatResolver,
+    AgentChatSubscriptionResolver,
     AgentChatService,
     AgentChatStreamingService,
     AgentTitleGenerationService,
     ChatExecutionService,
+    MessagePruningService,
+    StreamAgentChatJob,
     SystemPromptBuilderService,
   ],
   exports: [

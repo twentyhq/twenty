@@ -1,15 +1,18 @@
 import { Scope } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/data-access/services/message-channel-data-access.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { Repository } from 'typeorm';
+
 import {
   MessageChannelSyncStage,
   MessageChannelSyncStatus,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+} from 'twenty-shared/types';
+import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 export type MessagingRelaunchFailedMessageChannelJobData = {
   workspaceId: string;
@@ -23,7 +26,8 @@ export type MessagingRelaunchFailedMessageChannelJobData = {
 export class MessagingRelaunchFailedMessageChannelJob {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly messageChannelDataAccessService: MessageChannelDataAccessService,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
   ) {}
 
   @Process(MessagingRelaunchFailedMessageChannelJob.name)
@@ -33,14 +37,12 @@ export class MessagingRelaunchFailedMessageChannelJob {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageChannel = await this.messageChannelDataAccessService.findOne(
-        workspaceId,
-        {
-          where: {
-            id: messageChannelId,
-          },
+      const messageChannel = await this.messageChannelRepository.findOne({
+        where: {
+          id: messageChannelId,
+          workspaceId,
         },
-      );
+      });
 
       if (
         !messageChannel ||
@@ -50,9 +52,8 @@ export class MessagingRelaunchFailedMessageChannelJob {
         return;
       }
 
-      await this.messageChannelDataAccessService.update(
-        workspaceId,
-        { id: messageChannelId },
+      await this.messageChannelRepository.update(
+        { id: messageChannelId, workspaceId },
         {
           syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
           syncStatus: MessageChannelSyncStatus.ACTIVE,

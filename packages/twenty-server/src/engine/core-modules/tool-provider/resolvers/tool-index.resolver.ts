@@ -28,6 +28,9 @@ export class ToolIndexEntryDTO {
   @Field({ nullable: true })
   objectName?: string;
 
+  @Field({ nullable: true })
+  icon?: string;
+
   @Field(() => graphqlTypeJson, { nullable: true })
   inputSchema?: object;
 }

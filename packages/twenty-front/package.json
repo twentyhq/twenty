@@ -29,7 +29,6 @@
     "workerDirectory": "public"
   },
   "dependencies": {
-    "@ai-sdk/react": "3.0.99",
     "@apollo/client": "^4.0.0",
     "@blocknote/mantine": "^0.47.1",
     "@blocknote/react": "^0.47.1",
@@ -115,7 +114,7 @@
     "react-textarea-autosize": "^8.4.1",
     "remark-gfm": "^4.0.1",
     "transliteration": "^2.3.5",
-    "twenty-sdk": "workspace:*",
+    "twenty-front-component-renderer": "workspace:*",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*",
     "use-debounce": "^10.0.0"

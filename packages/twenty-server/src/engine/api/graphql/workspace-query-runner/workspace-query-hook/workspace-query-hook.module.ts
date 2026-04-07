@@ -10,7 +10,6 @@ import { CalendarQueryHookModule } from 'src/modules/calendar/common/query-hooks
 import { DeskQueryHookModule } from 'src/modules/desk/query-hooks/desk-query-hook.module';
 import { QuoteQueryHookModule } from 'src/modules/quote/query-hooks/quote-query-hook.module';
 import { OpportunityQueryHookModule } from 'src/modules/opportunity/query-hooks/opportunity-query-hook.module';
-import { ConnectedAccountQueryHookModule } from 'src/modules/connected-account/query-hooks/connected-account-query-hook.module';
 import { DashboardQueryHookModule } from 'src/modules/dashboard/query-hooks/dashboard-query-hook.module';
 import { MessagingQueryHookModule } from 'src/modules/messaging/common/query-hooks/messaging-query-hook.module';
 import { NoteQueryHookModule } from 'src/modules/note/query-hooks/note-query-hook.module';
@@ -21,7 +20,6 @@ import { WorkspaceMemberQueryHookModule } from 'src/modules/workspace-member/que
   imports: [
     MessagingQueryHookModule,
     CalendarQueryHookModule,
-    ConnectedAccountQueryHookModule,
     DashboardQueryHookModule,
     BlocklistQueryHookModule,
     DeskQueryHookModule,

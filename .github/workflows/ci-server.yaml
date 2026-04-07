@@ -83,15 +83,10 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: twentycrm/twenty-postgres-spilo
-        credentials:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        image: postgres:18
         env:
-          PGUSER_SUPERUSER: postgres
-          PGPASSWORD_SUPERUSER: postgres
-          ALLOW_NOSSL: 'true'
-          SPILO_PROVIDER: 'local'
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
         options: >-
@@ -101,9 +96,6 @@ jobs:
           --health-retries 5
       redis:
         image: redis
-        credentials:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
         ports:
           - 6379:6379
     steps:
@@ -152,15 +144,15 @@ jobs:
           exit 1
       - name: Server / Check for Pending Migrations
         run: |
-          CORE_MIGRATION_OUTPUT=$(npx nx run twenty-server:typeorm migration:generate core-migration-check -d src/database/typeorm/core/core.datasource.ts || true)
+          CORE_MIGRATION_OUTPUT=$(npx nx database:migrate:generate twenty-server -- --name core-migration-check || true)
 
-          CORE_MIGRATION_FILE=$(ls packages/twenty-server/*core-migration-check.ts 2>/dev/null || echo "")
+          CORE_MIGRATION_FILE=$(ls packages/twenty-server/src/database/typeorm/core/migrations/common/*core-migration-check.ts 2>/dev/null || echo "")
 
           if [ -n "$CORE_MIGRATION_FILE" ]; then
-            echo "::error::Unexpected migration files were generated. Please create a proper migration manually."
+            echo "::error::Unexpected migration files were generated. Please run 'npx nx database:migrate:generate twenty-server -- --name <migration-name>' and commit the result."
             echo "$CORE_MIGRATION_OUTPUT"
 
-            rm -f packages/twenty-server/*core-migration-check.ts
+            rm -f packages/twenty-server/src/database/typeorm/core/migrations/common/*core-migration-check.ts
 
             exit 1
           fi
@@ -231,15 +223,10 @@ jobs:
         shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     services:
       postgres:
-        image: twentycrm/twenty-postgres-spilo
-        credentials:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        image: postgres:18
         env:
-          PGUSER_SUPERUSER: postgres
-          PGPASSWORD_SUPERUSER: postgres
-          ALLOW_NOSSL: 'true'
-          SPILO_PROVIDER: 'local'
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
         options: >-
@@ -249,16 +236,10 @@ jobs:
           --health-retries 5
       redis:
         image: redis
-        credentials:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
         ports:
           - 6379:6379
       clickhouse:
         image: clickhouse/clickhouse-server:25.8.8
-        credentials:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
         env:
           CLICKHOUSE_PASSWORD: clickhousePassword
           CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"

@@ -130,8 +130,8 @@ export class FieldPermissionService {
         {
           objectMetadataId: fieldPermission.objectMetadataId,
           fieldMetadataId: fieldPermission.fieldMetadataId,
-          canReadFieldValue: fieldPermission.canReadFieldValue ?? undefined,
-          canUpdateFieldValue: fieldPermission.canUpdateFieldValue ?? undefined,
+          canReadFieldValue: fieldPermission.canReadFieldValue,
+          canUpdateFieldValue: fieldPermission.canUpdateFieldValue,
         },
       );
     }
@@ -183,9 +183,13 @@ export class FieldPermissionService {
         );
       } else {
         const effectiveCanRead =
-          desired.canReadFieldValue ?? current.canReadFieldValue;
+          desired.canReadFieldValue !== undefined
+            ? desired.canReadFieldValue
+            : current.canReadFieldValue;
         const effectiveCanUpdate =
-          desired.canUpdateFieldValue ?? current.canUpdateFieldValue;
+          desired.canUpdateFieldValue !== undefined
+            ? desired.canUpdateFieldValue
+            : current.canUpdateFieldValue;
         const changed =
           effectiveCanRead !== current.canReadFieldValue ||
           effectiveCanUpdate !== current.canUpdateFieldValue;
@@ -201,8 +205,8 @@ export class FieldPermissionService {
               current.objectMetadataUniversalIdentifier,
             fieldMetadataUniversalIdentifier:
               current.fieldMetadataUniversalIdentifier,
-            canReadFieldValue: effectiveCanRead ?? undefined,
-            canUpdateFieldValue: effectiveCanUpdate ?? undefined,
+            canReadFieldValue: effectiveCanRead,
+            canUpdateFieldValue: effectiveCanUpdate,
             createdAt: current.createdAt,
             updatedAt: now,
           });
@@ -210,9 +214,16 @@ export class FieldPermissionService {
       }
     }
 
+    const inputFieldKeys = new Set(
+      input.fieldPermissions.map((fp) =>
+        keyFrom(fp.objectMetadataId, fp.fieldMetadataId),
+      ),
+    );
+
     for (const current of currentFieldPermissionsForRole) {
       const key = keyFrom(current.objectMetadataId, current.fieldMetadataId);
-      if (!desiredMap.has(key)) {
+
+      if (inputFieldKeys.has(key) && !desiredMap.has(key)) {
         flatEntityToDelete.push({
           universalIdentifier: current.universalIdentifier,
           applicationUniversalIdentifier:
@@ -324,9 +335,9 @@ export class FieldPermissionService {
     }
 
     if (
-      (fieldPermission.canUpdateFieldValue !== null &&
+      (isDefined(fieldPermission.canUpdateFieldValue) &&
         fieldPermission.canUpdateFieldValue !== false) ||
-      (fieldPermission.canReadFieldValue !== null &&
+      (isDefined(fieldPermission.canReadFieldValue) &&
         fieldPermission.canReadFieldValue !== false)
     ) {
       throw new PermissionsException(
