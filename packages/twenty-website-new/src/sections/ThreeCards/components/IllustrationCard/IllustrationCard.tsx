@@ -1,15 +1,10 @@
-import {
-  Body,
-  Heading,
-  IconButton,
-  LazyEmbed,
-} from '@/design-system/components';
+import { Body, Heading, IconButton } from '@/design-system/components';
 import { ArrowRightIcon } from '@/icons';
 import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
+import { IllustrationCardVisual } from './IllustrationCardVisual';
 import { ThreeCardsCardShape } from './CardShape';
-import { GlbViewer } from './GlbViewer';
 
 const IllustrationCardContainer = styled.div`
   position: relative;
@@ -91,17 +86,10 @@ export function IllustrationCard({
       />
       <CardRule />
       <CardEmbed>
-        {illustrationCard.illustration.src.endsWith('.glb') ? (
-          <GlbViewer src={illustrationCard.illustration.src} />
-        ) : (
-          <LazyEmbed
-            src={illustrationCard.illustration.src}
-            title={illustrationCard.illustration.title}
-            allow="clipboard-write; encrypted-media; gyroscope; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-          />
-        )}
+        <IllustrationCardVisual
+          src={illustrationCard.illustration.src}
+          title={illustrationCard.illustration.title}
+        />
       </CardEmbed>
       <CardRule />
       <CardBodyCell>
