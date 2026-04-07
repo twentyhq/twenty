@@ -143,8 +143,7 @@ export class RunInstanceCommandsCommand extends CommandRunner {
       return;
     }
 
-    const previousVersion =
-      this.coreEngineVersionService.getPreviousVersion();
+    const previousVersion = this.coreEngineVersionService.getPreviousVersion();
 
     const workspacesBelow =
       await this.workspaceVersionService.getWorkspacesBelowVersion(
