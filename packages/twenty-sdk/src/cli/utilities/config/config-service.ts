@@ -27,8 +27,8 @@ export class ConfigService {
   private readonly configPath: string;
   private static activeRemote = DEFAULT_REMOTE_NAME;
 
-  constructor() {
-    this.configPath = getConfigPath();
+  constructor(options?: { configPath?: string }) {
+    this.configPath = options?.configPath ?? getConfigPath();
   }
 
   static setActiveRemote(name?: string) {
@@ -127,13 +127,6 @@ export class ConfigService {
   }
 
   async getConfig(): Promise<RemoteConfig> {
-    if (process.env.TWENTY_TOKEN && process.env.TWENTY_API_URL) {
-      return {
-        apiUrl: process.env.TWENTY_API_URL,
-        accessToken: process.env.TWENTY_TOKEN,
-      };
-    }
-
     return this.getConfigForRemote(this.getActiveRemoteName());
   }
 

@@ -145,12 +145,6 @@ export class ApiClient {
       return this.tokenOverride;
     }
 
-    const envToken = process.env.TWENTY_TOKEN;
-
-    if (envToken) {
-      return envToken;
-    }
-
     const config = await this.configService.getConfig();
     const accessToken = config.accessToken;
 
