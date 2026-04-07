@@ -19,6 +19,7 @@ import { generateUpdateRecordInputSchema } from 'src/engine/core-modules/record-
 import { DeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/delete-tool.zod-schema';
 import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
+import { sanitizeJsonSchemaForGemini } from 'src/engine/metadata-modules/ai/ai-models/utils/sanitize-tools-for-gemini.util';
 import { ToolCategory } from 'twenty-shared/ai';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
@@ -108,9 +109,9 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. To find by ID, use filter: { id: { eq: "record-id" } }. Returns an array of matching records with their full data.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(
+            inputSchema: sanitizeJsonSchemaForGemini(z.toJSONSchema(
               generateFindToolInputSchema(objectMetadata, restrictedFields),
-            ),
+            )),
           }),
           executionRef: {
             kind: 'database_crud',
@@ -127,7 +128,7 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Retrieve a single ${objectMetadata.labelSingular} record by its unique ID. Use this when you know the exact record ID and need the complete record data. Returns the full record or an error if not found.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(FindOneToolInputSchema),
+            inputSchema: sanitizeJsonSchemaForGemini(z.toJSONSchema(FindOneToolInputSchema)),
           }),
           executionRef: {
             kind: 'database_crud',
@@ -146,9 +147,9 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(
+            inputSchema: sanitizeJsonSchemaForGemini(z.toJSONSchema(
               generateCreateRecordInputSchema(objectMetadata, restrictedFields),
-            ),
+            )),
           }),
           executionRef: {
             kind: 'database_crud',
@@ -165,12 +166,12 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Create multiple ${objectMetadata.labelPlural} records in a single call. Provide an array of records, each containing the required fields. Maximum 20 records per call. Returns the created records.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(
+            inputSchema: sanitizeJsonSchemaForGemini(z.toJSONSchema(
               generateCreateManyRecordInputSchema(
                 objectMetadata,
                 restrictedFields,
               ),
-            ),
+            )),
           }),
           executionRef: {
             kind: 'database_crud',
@@ -187,9 +188,9 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Update an existing ${objectMetadata.labelSingular} record. Provide the record ID and only the fields you want to change. Unspecified fields will remain unchanged. Returns the updated record with all current data.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(
+            inputSchema: sanitizeJsonSchemaForGemini(z.toJSONSchema(
               generateUpdateRecordInputSchema(objectMetadata, restrictedFields),
-            ),
+            )),
           }),
           executionRef: {
             kind: 'database_crud',
@@ -206,12 +207,12 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Update multiple ${objectMetadata.labelPlural} records matching a filter in a single operation. All matching records will receive the same field values. WARNING: Use specific filters to avoid unintended mass updates. Always verify the filter scope with a find query first. Returns the updated records.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(
+            inputSchema: sanitizeJsonSchemaForGemini(z.toJSONSchema(
               generateUpdateManyRecordInputSchema(
                 objectMetadata,
                 restrictedFields,
               ),
-            ),
+            )),
           }),
           executionRef: {
             kind: 'database_crud',
@@ -230,7 +231,7 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record is hidden from normal queries. This is reversible. Use this to remove records.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(DeleteToolInputSchema),
+            inputSchema: sanitizeJsonSchemaForGemini(z.toJSONSchema(DeleteToolInputSchema)),
           }),
           executionRef: {
             kind: 'database_crud',
