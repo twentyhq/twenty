@@ -4,9 +4,12 @@ import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { FieldWidgetFieldDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetFieldDropdownContent';
 import { FieldWidgetLayoutDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent';
-import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
+import { WidgetSettingsManageSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsManageSection';
+import { WidgetSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection';
+import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
+import { useWidgetSettingsPlacementSelectableItemIds } from '@/side-panel/pages/page-layout/hooks/useWidgetSettingsPlacementSelectableItemIds';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { styled } from '@linaria/react';
@@ -31,9 +34,12 @@ const StyledSidePanelContainer = styled.div`
   overflow: hidden;
 `;
 
-export const SidePanelPageLayoutFieldSettings = () => {
+export const SidePanelRecordPageFieldSettings = () => {
   const { t } = useLingui();
   const { pageLayoutId } = usePageLayoutIdFromContextStore();
+
+  const { placementSelectableItemIds } =
+    useWidgetSettingsPlacementSelectableItemIds(pageLayoutId);
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
@@ -62,7 +68,14 @@ export const SidePanelPageLayoutFieldSettings = () => {
     ? (displayModeLabels[currentDisplayMode] ?? '')
     : '';
 
-  const selectableItemIds = ['field', 'layout'];
+  const selectableItemIds = [
+    'field',
+    'layout',
+    WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT,
+    WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.REPLACE_WIDGET,
+    WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.DELETE_WIDGET,
+    ...placementSelectableItemIds,
+  ];
 
   return (
     <StyledContainer>
@@ -102,9 +115,10 @@ export const SidePanelPageLayoutFieldSettings = () => {
               />
             </SelectableListItem>
           </SidePanelGroup>
+          <WidgetSettingsManageSection pageLayoutId={pageLayoutId} />
+          <WidgetSettingsPlacementSection pageLayoutId={pageLayoutId} />
         </SidePanelList>
       </StyledSidePanelContainer>
-      <WidgetSettingsFooter pageLayoutId={pageLayoutId} />
     </StyledContainer>
   );
 };

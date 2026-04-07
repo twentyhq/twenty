@@ -36,7 +36,7 @@ const StyledSettingsContainer = styled.div`
   overflow: hidden;
 `;
 
-export const SidePanelPageLayoutRecordTableSettings = () => {
+export const SidePanelDashboardRecordTableSettings = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStore();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();

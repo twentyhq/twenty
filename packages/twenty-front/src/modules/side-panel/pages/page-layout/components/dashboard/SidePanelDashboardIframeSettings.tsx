@@ -1,5 +1,8 @@
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
+import { SidePanelGroupFormContainer } from '@/side-panel/components/SidePanelGroupFormContainer';
+import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
@@ -8,24 +11,22 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined, isValidUrl } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
-const StyledOuterContainer = styled.div`
+const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
 `;
 
-const StyledContainer = styled.div`
+const StyledSidePanelContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
-  padding: ${themeCssVariables.spacing[2]};
+  overflow: hidden;
 `;
 
-export const SidePanelPageLayoutIframeSettings = () => {
+export const SidePanelDashboardIframeSettings = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStore();
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
@@ -84,17 +85,22 @@ export const SidePanelPageLayoutIframeSettings = () => {
   };
 
   return (
-    <StyledOuterContainer>
-      <StyledContainer>
-        <FormTextFieldInput
-          label={t`URL to Embed`}
-          placeholder={t`https://example.com/embed`}
-          defaultValue={url}
-          onChange={handleUrlChange}
-          error={urlError}
-        />
-      </StyledContainer>
+    <StyledContainer>
+      <StyledSidePanelContainer>
+        <SidePanelList commandGroups={[]} selectableItemIds={[]}>
+          <SidePanelGroup heading={t`URL to Embed`}>
+            <SidePanelGroupFormContainer>
+              <FormTextFieldInput
+                placeholder={t`https://example.com/embed`}
+                defaultValue={url}
+                onChange={handleUrlChange}
+                error={urlError}
+              />
+            </SidePanelGroupFormContainer>
+          </SidePanelGroup>
+        </SidePanelList>
+      </StyledSidePanelContainer>
       <WidgetSettingsFooter pageLayoutId={pageLayoutId} />
-    </StyledOuterContainer>
+    </StyledContainer>
   );
 };

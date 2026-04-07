@@ -8,10 +8,12 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
+import { widgetInsertionContextComponentState } from '@/page-layout/states/widgetInsertionContextComponentState';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { SIDE_PANEL_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/side-panel/constants/SidePanelContextChipGroupsDropdownId';
 import { SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelPreviousComponentInstanceId';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
+import { isPageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/utils/isPageLayoutSidePanelPage';
 import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -69,13 +71,7 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
       resetContextStoreStates(SIDE_PANEL_COMPONENT_INSTANCE_ID);
       resetContextStoreStates(SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID);
 
-      const isPageLayoutEditingPage =
-        currentPage === SidePanelPages.PageLayoutWidgetTypeSelect ||
-        currentPage === SidePanelPages.PageLayoutGraphTypeSelect ||
-        currentPage === SidePanelPages.PageLayoutIframeSettings ||
-        currentPage === SidePanelPages.PageLayoutTabSettings;
-
-      if (isPageLayoutEditingPage) {
+      if (isDefined(currentPage) && isPageLayoutSidePanelPage(currentPage)) {
         if (
           targetedRecordsRule.mode === 'selection' &&
           targetedRecordsRule.selectedRecordIds.length === 1
@@ -98,6 +94,12 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
             );
             store.set(
               pageLayoutDraggedAreaComponentState.atomFamily({
+                instanceId: record.pageLayoutId,
+              }),
+              null,
+            );
+            store.set(
+              widgetInsertionContextComponentState.atomFamily({
                 instanceId: record.pageLayoutId,
               }),
               null,

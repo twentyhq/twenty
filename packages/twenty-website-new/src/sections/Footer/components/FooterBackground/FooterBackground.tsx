@@ -12,15 +12,18 @@ const FooterBackgroundCanvas = dynamic(
   { ssr: false },
 );
 
-type FooterBackgroundProps = ComponentPropsWithoutRef<'div'> & {
+type FooterBackgroundProps = {
   illustration: IllustrationType;
-};
+} & Pick<ComponentPropsWithoutRef<'div'>, 'aria-hidden'>;
 
 export function FooterBackground({
   illustration,
-  ...rest
+  'aria-hidden': ariaHidden,
 }: FooterBackgroundProps) {
   return (
-    <FooterBackgroundCanvas {...rest} illustration={illustration} />
+    <FooterBackgroundCanvas
+      aria-hidden={ariaHidden}
+      illustration={illustration}
+    />
   );
 }

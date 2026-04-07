@@ -15,7 +15,7 @@ const StyledContainer = styled.div`
   height: 100%;
 `;
 
-export const SidePanelPageLayoutChartSettings = () => {
+export const SidePanelDashboardChartSettings = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStore();
 
   const pageLayoutDraft = useAtomComponentStateValue(

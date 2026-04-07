@@ -1,32 +1,24 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemToggle } from '@/command-menu/components/CommandMenuItemToggle';
-import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
-import { useResetPageLayoutWidgetToDefault } from '@/page-layout/hooks/useResetPageLayoutWidgetToDefault';
 import { useFieldsWidgetGroups } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetGroups';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { NewFieldDefaultVisibilityToggle } from '@/side-panel/pages/page-layout/components/NewFieldDefaultVisibilityToggle';
-import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
+import { WidgetSettingsManageSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsManageSection';
+import { WidgetSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection';
+import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
+import { useWidgetSettingsPlacementSelectableItemIds } from '@/side-panel/pages/page-layout/hooks/useWidgetSettingsPlacementSelectableItemIds';
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconChevronDown,
-  IconLayoutSidebarRight,
-  IconRefreshDot,
-  IconTrash,
-} from 'twenty-ui/display';
+import { IconChevronDown, IconLayoutSidebarRight } from 'twenty-ui/display';
 import { type FieldsConfiguration } from '~/generated-metadata/graphql';
-
-const RESET_WIDGET_TO_DEFAULT_MODAL_ID = 'reset-widget-to-default-modal';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -41,21 +33,17 @@ const StyledSidePanelContainer = styled.div`
   overflow: hidden;
 `;
 
-export const SidePanelPageLayoutFieldsSettings = () => {
+export const SidePanelRecordPageFieldsSettings = () => {
   const { t } = useLingui();
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
   const { pageLayoutId, objectNameSingular } =
     usePageLayoutIdFromContextStore();
 
+  const { placementSelectableItemIds } =
+    useWidgetSettingsPlacementSelectableItemIds(pageLayoutId);
+
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
-
-  const { deletePageLayoutWidget } = useDeletePageLayoutWidget(pageLayoutId);
-
-  const { resetPageLayoutWidgetToDefault } =
-    useResetPageLayoutWidgetToDefault(pageLayoutId);
-
-  const { openModal } = useModal();
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
@@ -93,30 +81,15 @@ export const SidePanelPageLayoutFieldsSettings = () => {
     });
   };
 
-  const handleResetToDefault = () => {
-    openModal(RESET_WIDGET_TO_DEFAULT_MODAL_ID);
-  };
-
-  const handleConfirmReset = () => {
-    resetPageLayoutWidgetToDefault(widgetInEditMode.id);
-  };
-
-  const handleDelete = () => {
-    deletePageLayoutWidget(widgetInEditMode.id);
-  };
-
   const selectableItemIds = [
     'layout',
     'new-field-default-visibility',
     'display-more-fields-button',
     'action-button',
-    'move-down',
-    'move-up',
-    'move-to-tab',
-    'add-widget-above',
-    'add-widget-below',
-    'reset-to-default',
-    'delete',
+    WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT,
+    WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.REPLACE_WIDGET,
+    WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.DELETE_WIDGET,
+    ...placementSelectableItemIds,
   ];
 
   return (
@@ -155,38 +128,10 @@ export const SidePanelPageLayoutFieldsSettings = () => {
               widgetId={widgetInEditMode.id}
             />
           </SidePanelGroup>
-          <SidePanelGroup heading={t`Manage`}>
-            <SelectableListItem
-              itemId="reset-to-default"
-              onEnter={handleResetToDefault}
-            >
-              <CommandMenuItem
-                id="reset-to-default"
-                Icon={IconRefreshDot}
-                label={t`Reset to default`}
-                onClick={handleResetToDefault}
-              />
-            </SelectableListItem>
-            <SelectableListItem itemId="delete" onEnter={handleDelete}>
-              <CommandMenuItem
-                id="delete"
-                Icon={IconTrash}
-                label={t`Delete widget`}
-                onClick={handleDelete}
-              />
-            </SelectableListItem>
-          </SidePanelGroup>
+          <WidgetSettingsManageSection pageLayoutId={pageLayoutId} />
+          <WidgetSettingsPlacementSection pageLayoutId={pageLayoutId} />
         </SidePanelList>
       </StyledSidePanelContainer>
-      <WidgetSettingsFooter pageLayoutId={pageLayoutId} />
-      <ConfirmationModal
-        modalInstanceId={RESET_WIDGET_TO_DEFAULT_MODAL_ID}
-        title={t`Reset to default`}
-        subtitle={t`This will cancel all modifications done on the widget. This action cannot be undone.`}
-        onConfirmClick={handleConfirmReset}
-        confirmButtonText={t`Reset`}
-        confirmButtonAccent="danger"
-      />
     </StyledContainer>
   );
 };

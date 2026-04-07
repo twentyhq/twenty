@@ -38,7 +38,7 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 
-export const SidePanelPageLayoutWidgetTypeSelect = () => {
+export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
   const { pageLayoutId, recordId } = usePageLayoutIdFromContextStore();
 
   const { closeSidePanelMenu } = useSidePanelMenu();
@@ -132,7 +132,7 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
     }
 
     navigatePageLayoutSidePanel({
-      sidePanelPage: SidePanelPages.PageLayoutGraphTypeSelect,
+      sidePanelPage: SidePanelPages.DashboardChartSettings,
       focusTitleInput: true,
     });
   };
@@ -153,7 +153,7 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
     }
 
     navigatePageLayoutSidePanel({
-      sidePanelPage: SidePanelPages.PageLayoutIframeSettings,
+      sidePanelPage: SidePanelPages.DashboardIframeSettings,
       focusTitleInput: true,
     });
   };
@@ -196,7 +196,7 @@ export const SidePanelPageLayoutWidgetTypeSelect = () => {
     }
 
     navigatePageLayoutSidePanel({
-      sidePanelPage: SidePanelPages.PageLayoutRecordTableSettings,
+      sidePanelPage: SidePanelPages.DashboardRecordTableSettings,
       focusTitleInput: false,
     });
   };

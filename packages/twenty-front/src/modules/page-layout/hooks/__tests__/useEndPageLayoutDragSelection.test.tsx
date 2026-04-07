@@ -1,8 +1,8 @@
-import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useEndPageLayoutDragSelection } from '@/page-layout/hooks/useEndPageLayoutDragSelection';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutSelectedCellsComponentState } from '@/page-layout/states/pageLayoutSelectedCellsComponentState';
 import { calculateGridBoundsFromSelectedCells } from '@/page-layout/utils/calculateGridBoundsFromSelectedCells';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { act, renderHook } from '@testing-library/react';
 import { createStore } from 'jotai';
@@ -102,7 +102,7 @@ describe('useEndPageLayoutDragSelection', () => {
     expect(result.current.selectedCells.size).toBe(0);
 
     expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalledWith({
-      sidePanelPage: SidePanelPages.PageLayoutWidgetTypeSelect,
+      sidePanelPage: SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
       resetNavigationStack: true,
     });
   });
