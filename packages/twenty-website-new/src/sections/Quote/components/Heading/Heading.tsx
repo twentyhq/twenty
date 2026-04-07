@@ -10,30 +10,6 @@ const HeadingWrapper = styled.div`
   white-space: pre-line;
   width: 100%;
   position: relative;
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-
-  /* Apple-style floating quote marks on hover */
-  &::before {
-    content: '"';
-    position: absolute;
-    left: -32px;
-    top: -16px;
-    font-size: 64px;
-    color: ${theme.colors.secondary.border[20]};
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.4s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    font-family: ${theme.font.family.serif};
-  }
-
-  &:hover {
-    transform: translateX(12px);
-  }
-
-  &:hover::before {
-    opacity: 1;
-    transform: translateY(0);
-  }
 
   @media (min-width: ${theme.breakpoints.md}px) {
     max-width: 517px;

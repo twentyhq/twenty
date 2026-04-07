@@ -9,7 +9,7 @@ import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/display';
+import { H2Title, H3Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetAiSystemPromptPreviewDocument } from '~/generated-metadata/graphql';
@@ -21,14 +21,11 @@ const StyledFormContainer = styled.div`
   gap: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledTokenBadge = styled.span`
-  background: ${themeCssVariables.background.transparent.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.xs};
-  padding: ${themeCssVariables.spacing['0.5']}
-    ${themeCssVariables.spacing['1.5']};
-  white-space: nowrap;
+const StyledTitleContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[4]};
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsAIPrompts = () => {
@@ -67,18 +64,14 @@ export const SettingsAIPrompts = () => {
   );
 
   const totalTokenCount = isDefined(preview)
-    ? t`~${formatNumber(preview.estimatedTokenCount, {
+    ? t`~ ${formatNumber(preview.estimatedTokenCount, {
         abbreviate: true,
         decimals: 1,
       })} tokens`
     : '';
-  const pageTitle = isDefined(preview)
-    ? t`System Prompt (${totalTokenCount})`
-    : t`System Prompt`;
 
   return (
     <SubMenuTopBarContainer
-      title={pageTitle}
       links={[
         {
           children: t`Workspace`,
@@ -89,46 +82,60 @@ export const SettingsAIPrompts = () => {
       ]}
     >
       <SettingsPageContainer>
-        {promptSections.map((section) => (
-          <Section key={section.title}>
-            <H2Title
-              title={section.title}
-              description={t`Read-only — managed by Twenty`}
-              adornment={
-                <StyledTokenBadge>
-                  {formatNumber(section.estimatedTokenCount, {
-                    abbreviate: true,
-                    decimals: 1,
-                  })}
-                </StyledTokenBadge>
-              }
+        <Section>
+          <StyledTitleContainer>
+            <H3Title
+              title={t`System Prompt`}
+              description={[t`Read-only`, totalTokenCount]
+                .filter(Boolean)
+                .join(' ')}
             />
-            <StyledFormContainer>
-              <FormAdvancedTextFieldInput
-                key={
-                  previewLoading ? `loading-${section.title}` : section.title
-                }
-                label={section.title}
-                readonly={true}
-                defaultValue={section.content}
-                contentType="markdown"
-                onChange={() => {}}
-                enableFullScreen={true}
-                fullScreenBreadcrumbs={[
-                  {
-                    children: t`System Prompt`,
-                    href: '#',
-                  },
-                  {
-                    children: section.title,
-                  },
-                ]}
-                minHeight={120}
-                maxWidth={700}
+          </StyledTitleContainer>
+        </Section>
+        {promptSections.map((section) => {
+          const sectionTokenCount = t`~ ${formatNumber(
+            section.estimatedTokenCount,
+            {
+              abbreviate: true,
+              decimals: 1,
+            },
+          )} tokens`;
+
+          return (
+            <Section key={section.title}>
+              <H2Title
+                title={section.title}
+                description={[t`Read-only`, sectionTokenCount]
+                  .filter(Boolean)
+                  .join(' ')}
               />
-            </StyledFormContainer>
-          </Section>
-        ))}
+              <StyledFormContainer>
+                <FormAdvancedTextFieldInput
+                  key={
+                    previewLoading ? `loading-${section.title}` : section.title
+                  }
+                  label={section.title}
+                  readonly={true}
+                  defaultValue={section.content}
+                  contentType="markdown"
+                  onChange={() => {}}
+                  enableFullScreen={true}
+                  fullScreenBreadcrumbs={[
+                    {
+                      children: t`System Prompt`,
+                      href: '#',
+                    },
+                    {
+                      children: section.title,
+                    },
+                  ]}
+                  minHeight={120}
+                  maxWidth={700}
+                />
+              </StyledFormContainer>
+            </Section>
+          );
+        })}
 
         <Section>
           <H2Title

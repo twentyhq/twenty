@@ -27,6 +27,7 @@ export const HELPED_DATA: HelpedDataType = {
       illustration: {
         src: '/illustrations/home/helped/one.glb',
         title: '',
+        color: '#DE8CF6',
       },
     },
     {
@@ -38,6 +39,7 @@ export const HELPED_DATA: HelpedDataType = {
       illustration: {
         src: '/illustrations/home/helped/two.glb',
         title: '',
+        color: '#89FC9A',
       },
     },
 
@@ -50,6 +52,7 @@ export const HELPED_DATA: HelpedDataType = {
       illustration: {
         src: '/illustrations/home/helped/three.glb',
         title: '',
+        color: '#E4E58A',
       },
     },
   ],

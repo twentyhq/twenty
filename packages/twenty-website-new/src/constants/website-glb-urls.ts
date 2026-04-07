@@ -8,7 +8,6 @@ import { THREE_CARDS_ILLUSTRATION_DATA as PARTNER_THREE_CARDS_DATA } from '@/app
 import { PLANS_DATA } from '@/app/pricing/_constants/plans';
 import { HERO_DATA as PRODUCT_HERO_DATA } from '@/app/product/_constants/hero';
 import { THREE_CARDS_ILLUSTRATION_DATA as PRODUCT_THREE_CARDS_DATA } from '@/app/product/_constants/three-cards';
-import { HERO_DATA as WHY_TWENTY_HERO_DATA } from '@/app/why-twenty/_constants/hero';
 import { QUOTE_DATA } from '@/app/why-twenty/_constants/quote';
 import { STEPPER_DATA } from '@/app/why-twenty/_constants/stepper';
 
@@ -49,7 +48,6 @@ export const getAllWebsiteGlbUrls = (): string[] => {
 
   addIfGlb(urls, PARTNER_TESTIMONIALS_DATA.illustration.src);
 
-  addIfGlb(urls, WHY_TWENTY_HERO_DATA.illustration.src);
   addIfGlb(urls, STEPPER_DATA.illustration.src);
   addIfGlb(urls, QUOTE_DATA.illustration.src);
 

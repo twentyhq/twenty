@@ -231,16 +231,18 @@ export class MessagingMessageService {
           }
         }
 
-        const threadsToUpsert = [
-          ...messageThreadsToCreate,
-          ...Array.from(threadSubjectUpdates.entries()).map(
-            ([id, { subject }]) => ({ id, subject }),
-          ),
-        ];
+        if (messageThreadsToCreate.length > 0) {
+          await messageThreadRepository.insert(
+            messageThreadsToCreate,
+            transactionManager,
+          );
+        }
 
-        if (threadsToUpsert.length > 0) {
+        if (threadSubjectUpdates.size > 0) {
           await messageThreadRepository.upsert(
-            threadsToUpsert,
+            Array.from(threadSubjectUpdates.entries()).map(
+              ([id, { subject }]) => ({ id, subject }),
+            ),
             ['id'],
             transactionManager,
           );
@@ -433,11 +435,8 @@ export class MessagingMessageService {
         );
 
       if (existingMessageChannelMessageAssociation) {
-        messageAccumulatorMap.set(message.externalId, {
-          existingMessageInDB: existingMessage,
-          existingMessageChannelMessageAssociationInDB:
-            existingMessageChannelMessageAssociation,
-        });
+        messageAccumulator.existingMessageChannelMessageAssociationInDB =
+          existingMessageChannelMessageAssociation;
       }
     }
   }
