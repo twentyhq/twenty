@@ -32,6 +32,7 @@ const buildHeadlessContextApi = (
   targetedRecordsRule: { mode: 'selection', selectedRecordIds: [] },
   selectedRecords: [],
   graphqlFilter: null,
+  payload: null,
   ...overrides,
 });
 

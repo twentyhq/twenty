@@ -1,5 +1,4 @@
 import { FOOTER_DATA } from '@/app/_constants/footer';
-import { GlbWarmCache } from '@/constants/glb-warm-cache.component';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Footer } from '@/sections/Footer/components';
@@ -85,7 +84,6 @@ export default async function RootLayout({
       <body
         className={`${cssVariables} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable} ${vt323.variable}`}
       >
-        <GlbWarmCache />
         <StyledMain>{children}</StyledMain>
         <Footer.Root illustration={FOOTER_DATA.illustration}>
           <Footer.Logo />

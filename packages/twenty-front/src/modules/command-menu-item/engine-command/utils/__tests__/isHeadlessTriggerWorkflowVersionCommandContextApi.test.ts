@@ -11,6 +11,7 @@ const baseContextApi: HeadlessCommandContextApi = {
   targetedRecordsRule: { mode: 'selection', selectedRecordIds: [] },
   selectedRecords: [],
   graphqlFilter: null,
+  payload: null,
 };
 
 describe('isHeadlessTriggerWorkflowVersionCommandContextApi', () => {

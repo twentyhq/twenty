@@ -37,6 +37,7 @@ import {
 } from 'twenty-shared/application';
 import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
+import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -145,7 +146,7 @@ export const buildManifest = async (
 
         const objectManifest: ObjectManifest = {
           ...extract.config,
-          fields: objectFieldsWithDefaults,
+          fields: objectFieldsWithDefaults.map(addMissingFieldOptionIds),
           labelIdentifierFieldMetadataUniversalIdentifier,
         };
 
@@ -161,7 +162,8 @@ export const buildManifest = async (
           appPath,
           filePath,
         });
-        fields.push(extract.config);
+        const fieldConfig = addMissingFieldOptionIds(extract.config);
+        fields.push(fieldConfig);
         errors.push(...extract.errors);
         fieldsFilePaths.push(relativePath);
         break;

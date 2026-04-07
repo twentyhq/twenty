@@ -334,7 +334,9 @@ const HiddenCheckbox = styled.input`
 const CheckboxFace = styled.span<{ checked: boolean }>`
   aspect-ratio: 1 / 1;
   background-color: ${({ checked }) =>
-    checked ? theme.colors.primary.background[100] : 'rgba(255, 255, 255, 0.05)'};
+    checked
+      ? theme.colors.primary.background[100]
+      : 'rgba(255, 255, 255, 0.05)'};
   border-radius: 0;
   box-sizing: border-box;
   box-shadow:
@@ -381,9 +383,11 @@ const AddonRightText = styled.span`
   text-align: right;
 `;
 
-const AddonRightLine = styled.span<{ muted?: boolean }>`
-  color: ${({ muted }) =>
-    muted ? theme.colors.primary.text[60] : theme.colors.primary.text[100]};
+const AddonRightLine = styled.span<{ 'data-muted'?: boolean }>`
+  color: ${(props) =>
+    props['data-muted']
+      ? theme.colors.primary.text[60]
+      : theme.colors.primary.text[100]};
   display: block;
 `;
 
@@ -394,7 +398,7 @@ const AddonRightPart = styled.span`
 
 const renderRightLabelParts = (lines: SalesforceRichTextPartType[][]) =>
   lines.map((line, lineIndex) => (
-    <AddonRightLine key={lineIndex} muted={lineIndex > 0}>
+    <AddonRightLine key={lineIndex} data-muted={lineIndex > 0 || undefined}>
       {line.map((part, partIndex) => (
         <AddonRightPart
           key={partIndex}
@@ -415,7 +419,10 @@ const renderRightLabelParts = (lines: SalesforceRichTextPartType[][]) =>
 
 const renderRightLabel = (label: string) =>
   label.split('\n').map((line, lineIndex) => (
-    <AddonRightLine key={`${lineIndex}-${line}`} muted={lineIndex > 0}>
+    <AddonRightLine
+      key={`${lineIndex}-${line}`}
+      data-muted={lineIndex > 0 || undefined}
+    >
       {line}
     </AddonRightLine>
   ));
@@ -447,13 +454,15 @@ export function PricingWindow({
   const panelRef = useRef<HTMLDivElement | null>(null);
   const stickyHeaderRef = useRef<HTMLDivElement | null>(null);
   const addonAnchorRefs = useRef<Record<string, HTMLLabelElement | null>>({});
-  const [stickyHeaderState, setStickyHeaderState] = useState<StickyHeaderState>({
-    absoluteTop: 0,
-    height: 0,
-    left: 0,
-    mode: 'absolute',
-    width: 0,
-  });
+  const [stickyHeaderState, setStickyHeaderState] = useState<StickyHeaderState>(
+    {
+      absoluteTop: 0,
+      height: 0,
+      left: 0,
+      mode: 'absolute',
+      width: 0,
+    },
+  );
   const { fixedPriceAmount, perSeatPriceAmount, totalPriceAmount } =
     calculatePriceAmounts(pricing, checkedIds);
 
@@ -587,7 +596,9 @@ export function PricingWindow({
                 <ProductCopy>
                   <ProductTitle>{pricing.productTitle}</ProductTitle>
                   <PriceRow>
-                    <PriceAmount>{formatPriceAmount(perSeatPriceAmount)}</PriceAmount>
+                    <PriceAmount>
+                      {formatPriceAmount(perSeatPriceAmount)}
+                    </PriceAmount>
                     <PriceSuffix>{pricing.priceSuffix}</PriceSuffix>
                   </PriceRow>
                   {fixedPriceAmount > 0 ? (
@@ -595,7 +606,9 @@ export function PricingWindow({
                       <TotalPriceAmount>
                         {formatPriceAmount(totalPriceAmount)}
                       </TotalPriceAmount>
-                      <TotalPriceLabel>{pricing.totalPriceLabel}</TotalPriceLabel>
+                      <TotalPriceLabel>
+                        {pricing.totalPriceLabel}
+                      </TotalPriceLabel>
                     </TotalPriceRow>
                   ) : null}
                 </ProductCopy>
@@ -628,8 +641,9 @@ export function PricingWindow({
                     onChange={() =>
                       onAddonToggle(
                         addon,
-                        addonAnchorRefs.current[addon.id]?.getBoundingClientRect() ??
-                          null,
+                        addonAnchorRefs.current[
+                          addon.id
+                        ]?.getBoundingClientRect() ?? null,
                       )
                     }
                     type="checkbox"

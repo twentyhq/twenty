@@ -10,6 +10,7 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
+import { GraphQLJSON } from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
@@ -67,6 +68,10 @@ export class CommandMenuItemDTO {
   @IsEnum(CommandMenuItemAvailabilityType)
   @Field(() => CommandMenuItemAvailabilityType)
   availabilityType: CommandMenuItemAvailabilityType;
+
+  @IsOptional()
+  @Field(() => GraphQLJSON, { nullable: true })
+  payload?: Record<string, unknown>;
 
   @IsString({ each: true })
   @IsOptional()

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { RefactorNavigationCommandsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-refactor-navigation-commands.command';
 import { AddComposeEmailCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500001000-add-compose-email-command-menu-item.command';
 import { AddGlobalKeyValuePairUniqueIndexCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500002000-add-global-key-value-pair-unique-index.command';
 import { BackfillDatasourceToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500003000-backfill-datasource-to-workspace.command';
@@ -59,6 +60,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     FixSelectAllCommandMenuItemsCommand,
     MigrateAiAgentTextToJsonResponseFormatCommand,
     UpdateEditLayoutCommandMenuItemLabelCommand,
+    RefactorNavigationCommandsCommand,
     DropWorkspaceMessagingFksCommand,
     MigrateMessageFolderParentIdToExternalIdCommand,
     MigrateMessagingInfrastructureToMetadataCommand,

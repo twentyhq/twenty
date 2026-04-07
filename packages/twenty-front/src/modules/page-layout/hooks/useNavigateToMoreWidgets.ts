@@ -7,7 +7,7 @@ export const useNavigateToMoreWidgets = () => {
 
   const navigateToMoreWidgets = useCallback(() => {
     navigatePageLayoutSidePanel({
-      sidePanelPage: SidePanelPages.PageLayoutWidgetTypeSelect,
+      sidePanelPage: SidePanelPages.PageLayoutRecordPageWidgetTypeSelect,
     });
   }, [navigatePageLayoutSidePanel]);
 

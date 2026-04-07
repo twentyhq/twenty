@@ -20,10 +20,12 @@ export const buildHeadlessCommandContextApi = ({
   store,
   contextStoreInstanceId,
   engineComponentKey,
+  payload,
 }: {
   store: Store;
   contextStoreInstanceId: string;
   engineComponentKey: EngineComponentKey;
+  payload?: Record<string, unknown> | null;
 }): HeadlessEngineCommandContextApi => {
   const objectMetadataItemId = store.get(
     contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
@@ -115,5 +117,6 @@ export const buildHeadlessCommandContextApi = ({
     targetedRecordsRule,
     selectedRecords,
     graphqlFilter,
+    payload: payload ?? null,
   };
 };

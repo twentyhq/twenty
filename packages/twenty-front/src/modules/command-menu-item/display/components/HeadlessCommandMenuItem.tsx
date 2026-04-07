@@ -60,6 +60,7 @@ export const HeadlessCommandMenuItem = ({
       workflowVersionId: item.workflowVersionId ?? undefined,
       availabilityType: item.availabilityType,
       availabilityObjectMetadataId: item.availabilityObjectMetadataId,
+      payload: item.payload ?? undefined,
     });
   };
 

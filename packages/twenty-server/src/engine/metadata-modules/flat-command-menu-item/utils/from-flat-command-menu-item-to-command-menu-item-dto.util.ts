@@ -13,6 +13,7 @@ export const fromFlatCommandMenuItemToCommandMenuItemDto = (
   shortLabel: flatCommandMenuItem.shortLabel ?? undefined,
   position: flatCommandMenuItem.position,
   isPinned: flatCommandMenuItem.isPinned,
+  payload: flatCommandMenuItem.payload ?? undefined,
   hotKeys: flatCommandMenuItem.hotKeys ?? undefined,
   availabilityType: flatCommandMenuItem.availabilityType,
   conditionalAvailabilityExpression:

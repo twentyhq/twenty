@@ -18,6 +18,7 @@ type MountCommandParams = {
   workflowVersionId?: string;
   availabilityType?: CommandMenuItemAvailabilityType;
   availabilityObjectMetadataId?: string | null;
+  payload?: Record<string, unknown> | null;
 };
 
 export const useMountCommand = () => {
@@ -36,11 +37,13 @@ export const useMountCommand = () => {
       workflowVersionId,
       availabilityType,
       availabilityObjectMetadataId,
+      payload,
     }: MountCommandParams) => {
       const headlessEngineCommandContextApi = buildHeadlessCommandContextApi({
         store,
         contextStoreInstanceId,
         engineComponentKey,
+        payload,
       });
 
       const commandState = isDefined(frontComponentId)

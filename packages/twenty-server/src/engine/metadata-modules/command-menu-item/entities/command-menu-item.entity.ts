@@ -31,7 +31,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 ])
 @Check(
   'CHK_CMD_MENU_ITEM_ENGINE_KEY_COHERENCE',
-  `("engineComponentKey" = 'TRIGGER_WORKFLOW_VERSION' AND "workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL) OR ("engineComponentKey" = 'FRONT_COMPONENT_RENDERER' AND "frontComponentId" IS NOT NULL AND "workflowVersionId" IS NULL) OR ("engineComponentKey" NOT IN ('TRIGGER_WORKFLOW_VERSION', 'FRONT_COMPONENT_RENDERER') AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL)`,
+  `("engineComponentKey" = 'TRIGGER_WORKFLOW_VERSION' AND "workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "payload" IS NULL) OR ("engineComponentKey" = 'FRONT_COMPONENT_RENDERER' AND "frontComponentId" IS NOT NULL AND "workflowVersionId" IS NULL AND "payload" IS NULL) OR ("engineComponentKey" = 'NAVIGATION' AND "payload" IS NOT NULL AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL) OR ("engineComponentKey" NOT IN ('TRIGGER_WORKFLOW_VERSION', 'FRONT_COMPONENT_RENDERER', 'NAVIGATION') AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "payload" IS NULL)`,
 )
 export class CommandMenuItemEntity
   extends SyncableEntity
@@ -78,6 +78,9 @@ export class CommandMenuItemEntity
     default: CommandMenuItemAvailabilityType.GLOBAL,
   })
   availabilityType: CommandMenuItemAvailabilityType;
+
+  @Column({ type: 'jsonb', nullable: true })
+  payload: Record<string, unknown> | null;
 
   @Column({ type: 'text', array: true, nullable: true })
   hotKeys: string[] | null;

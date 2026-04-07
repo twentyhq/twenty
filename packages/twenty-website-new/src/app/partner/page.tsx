@@ -123,9 +123,10 @@ export default async function PartnerPage() {
       >
         <Testimonials.Carousel
           eyebrow={TESTIMONIALS_DATA.eyebrow}
-          illustration={TESTIMONIALS_DATA.illustration}
           testimonials={TESTIMONIALS_DATA.testimonials}
-        />
+        >
+          <Testimonials.PartnerVisual />
+        </Testimonials.Carousel>
       </Testimonials.Root>
 
       <Signoff.Root

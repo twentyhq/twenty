@@ -29,10 +29,6 @@ export const SettingsApplications = () => {
     PermissionFlagType.API_KEYS_AND_WEBHOOKS,
   );
 
-  const isMarketplaceEnabled = useIsFeatureEnabled(
-    'IS_MARKETPLACE_ENABLED' as FeatureFlagKey,
-  );
-
   const isMarketplaceSettingTabVisible = useIsFeatureEnabled(
     FeatureFlagKey.IS_MARKETPLACE_SETTING_TAB_VISIBLE,
   );
@@ -41,32 +37,6 @@ export const SettingsApplications = () => {
     activeTabIdComponentState,
     APPLICATIONS_TAB_LIST_ID,
   );
-
-  const { data } = useQuery(FindManyApplicationsDocument);
-
-  const applications = data?.findManyApplications ?? [];
-
-  if (!isMarketplaceEnabled) {
-    return (
-      <SubMenuTopBarContainer
-        title={t`Applications`}
-        links={[
-          {
-            children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
-          },
-          { children: t`Applications` },
-        ]}
-      >
-        <SettingsPageContainer>
-          {applications.length > 0 && (
-            <SettingsApplicationsTable applications={applications} />
-          )}
-          {hasDeveloperAccess && <SettingsApplicationsDeveloperTab />}
-        </SettingsPageContainer>
-      </SubMenuTopBarContainer>
-    );
-  }
 
   const tabs = [
     ...(isMarketplaceSettingTabVisible

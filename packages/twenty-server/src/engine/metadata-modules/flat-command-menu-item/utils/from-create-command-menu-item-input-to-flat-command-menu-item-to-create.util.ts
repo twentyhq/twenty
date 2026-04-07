@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CreateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/create-command-menu-item.input';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
@@ -49,6 +50,11 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
     shortLabel: createCommandMenuItemInput.shortLabel ?? null,
     position: createCommandMenuItemInput.position ?? 0,
     isPinned: createCommandMenuItemInput.isPinned ?? false,
+    payload:
+      createCommandMenuItemInput.engineComponentKey ===
+      EngineComponentKey.NAVIGATION
+        ? (createCommandMenuItemInput.payload ?? null)
+        : null,
     hotKeys: createCommandMenuItemInput.hotKeys ?? null,
     availabilityType:
       createCommandMenuItemInput.availabilityType ??
