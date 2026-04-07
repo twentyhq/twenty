@@ -372,8 +372,10 @@ Esegui i seguenti comandi:
 
 ```
 yarn database:migrate:prod
+yarn command:prod workspace:sync-metadata -f
 yarn command:prod upgrade-0.22
 ```
 
 Il comando `yarn database:migrate:prod` applicherà le migrazioni al database.
+Il comando `yarn command:prod workspace:sync-metadata -f` sincronizzerà la definizione degli oggetti standard nelle tabelle dei metadati e applicherà le migrazioni necessarie agli spazi di lavoro esistenti.
 Il comando `yarn command:prod upgrade-0.22` applicherà specifiche trasformazioni dei dati per adattarsi alle nuove opzioni di strumentazione richiesta predefinita dell'oggetto.

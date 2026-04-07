@@ -43,6 +43,13 @@ npx nx run twenty-server:database:reset
 ```
 
 ### عمليات الترحيل
+
+#### للكائنات داخل مخططات Core/Metadata (TypeORM)
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
 ## "التقنية المستخدمة"
 
 تستخدم Twenty بشكل أساسي NestJS للواجهة الخلفية.

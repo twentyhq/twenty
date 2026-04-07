@@ -372,8 +372,10 @@ Spusťte následující příkazy:
 
 ```
 yarn database:migrate:prod
+yarn command:prod workspace:sync-metadata -f
 yarn command:prod upgrade-0.22
 ```
 
 Příkaz `yarn database:migrate:prod` aplikuje změny na databázi.
+Příkaz `yarn command:prod workspace:sync-metadata -f` synchronizuje definici standardních objektů s tabulkami metadata a aplikuje nezbytné migrace na existující pracovní prostory.
 Příkaz `yarn command:prod upgrade-0.22` aplikuje specifické datové transformace pro adaptaci na nové objektové defaultRequestInstrumentationOptions.
