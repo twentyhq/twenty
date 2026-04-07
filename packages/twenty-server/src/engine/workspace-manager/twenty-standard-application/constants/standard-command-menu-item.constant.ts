@@ -705,7 +705,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   goToSettingsExperience: {
     universalIdentifier: 'bceb0328-c018-48ba-80d8-a1a97dc0a8ba',
-    label: 'Go to Experience',
+    label: 'Go to Experience Settings',
     icon: 'IconColorSwatch',
     isPinned: false,
     position: 64,
@@ -720,7 +720,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   goToSettingsAccounts: {
     universalIdentifier: '447a65cc-8535-408e-9c48-db24affb7530',
-    label: 'Go to Accounts',
+    label: 'Go to Accounts Settings',
     icon: 'IconAt',
     isPinned: false,
     position: 65,
@@ -735,7 +735,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   goToSettingsAccountsEmails: {
     universalIdentifier: '4feab22c-165f-4d13-81ca-c9eb6082ca50',
-    label: 'Go to Emails',
+    label: 'Go to Emails Settings',
     icon: 'IconMail',
     isPinned: false,
     position: 66,
@@ -750,7 +750,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   goToSettingsAccountsCalendars: {
     universalIdentifier: '3267ec0e-9dee-4d9b-8f1b-6005bfd90202',
-    label: 'Go to Calendars',
+    label: 'Go to Calendars Settings',
     icon: 'IconCalendarEvent',
     isPinned: false,
     position: 67,
@@ -765,7 +765,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   goToSettingsGeneral: {
     universalIdentifier: 'ad68e516-96ea-455a-a838-c59788e88c23',
-    label: 'Go to General',
+    label: 'Go to General Settings',
     icon: 'IconSettings',
     isPinned: false,
     position: 68,
@@ -780,7 +780,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   goToSettingsObjects: {
     universalIdentifier: '9302bfeb-f6cd-4858-ab5b-5f70f4d358c4',
-    label: 'Go to Data Model',
+    label: 'Go to Data Model Settings',
     icon: 'IconHierarchy2',
     isPinned: false,
     position: 69,
@@ -795,7 +795,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   goToSettingsMembers: {
     universalIdentifier: 'fb4d9f1b-5b13-49d9-8353-80041719d411',
-    label: 'Go to Members',
+    label: 'Go to Members Settings',
     icon: 'IconUsers',
     isPinned: false,
     position: 70,
@@ -810,7 +810,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   goToSettingsRoles: {
     universalIdentifier: '4050f307-c592-4c9f-ad91-89cde330fbf7',
-    label: 'Go to Roles',
+    label: 'Go to Roles Settings',
     icon: 'IconLock',
     isPinned: false,
     position: 71,
@@ -825,7 +825,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   goToSettingsDomains: {
     universalIdentifier: '2d071684-fb5e-4222-b560-4c7ab2597fb4',
-    label: 'Go to Domains',
+    label: 'Go to Domains Settings',
     icon: 'IconWorld',
     isPinned: false,
     position: 72,
@@ -840,7 +840,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   goToSettingsBilling: {
     universalIdentifier: 'f46a0fb9-14e9-4d48-801d-c33bdd543f74',
-    label: 'Go to Billing',
+    label: 'Go to Billing Settings',
     icon: 'IconCurrencyDollar',
     isPinned: false,
     position: 73,
@@ -855,7 +855,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   goToSettingsApiWebhooks: {
     universalIdentifier: 'ed2c2fde-1e7a-4a42-ba63-221eaa7c9759',
-    label: 'Go to APIs & Webhooks',
+    label: 'Go to APIs & Webhooks Settings',
     icon: 'IconApi',
     isPinned: false,
     position: 74,
@@ -870,7 +870,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   goToSettingsApplications: {
     universalIdentifier: '44db6d7a-79ac-485e-b3da-da8776bd7777',
-    label: 'Go to Apps',
+    label: 'Go to Apps Settings',
     icon: 'IconPlug',
     isPinned: false,
     position: 75,
@@ -885,7 +885,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   goToSettingsAI: {
     universalIdentifier: '3eaec228-809d-452d-b5ef-7b777398c538',
-    label: 'Go to AI',
+    label: 'Go to AI Settings',
     icon: 'IconSparkles',
     isPinned: false,
     position: 76,
@@ -900,7 +900,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   goToSettingsSecurity: {
     universalIdentifier: '358e69b2-0789-44e2-add7-bdef68413be8',
-    label: 'Go to Security',
+    label: 'Go to Security Settings',
     icon: 'IconKey',
     isPinned: false,
     position: 77,
@@ -915,7 +915,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   goToSettingsAdminPanel: {
     universalIdentifier: 'dd22798b-fca6-42af-ba3b-0d48f263afbd',
-    label: 'Go to Admin Panel',
+    label: 'Go to Admin Panel Settings',
     icon: 'IconServer',
     isPinned: false,
     position: 78,
@@ -930,7 +930,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   goToSettingsUpdates: {
     universalIdentifier: '5d1ba354-0090-4a42-9a43-601461b26068',
-    label: 'Go to Updates',
+    label: 'Go to Updates Settings',
     icon: 'IconRocket',
     isPinned: false,
     position: 79,
