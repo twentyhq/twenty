@@ -1,12 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import {
-  type FindOptionsWhere,
-  IsNull,
-  type QueryRunner,
-  Repository,
-} from 'typeorm';
+import { IsNull, type QueryRunner, Repository } from 'typeorm';
 
 import { UpgradeMigrationEntity } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 
@@ -25,7 +20,11 @@ export class UpgradeMigrationService {
     workspaceId: string | null;
   }): Promise<boolean> {
     return this.upgradeMigrationRepository.exists({
-      where: this.buildWhereClause({ name, workspaceId }),
+      where: {
+        name,
+        workspaceId: workspaceId === null ? IsNull() : workspaceId,
+        status: 'completed',
+      },
     });
   }
 
@@ -43,9 +42,12 @@ export class UpgradeMigrationService {
     const repository = queryRunner
       ? queryRunner.manager.getRepository(UpgradeMigrationEntity)
       : this.upgradeMigrationRepository;
-    const whereClause = this.buildWhereClause({ name, workspaceId });
-
-    const previousAttempts = await repository.count({ where: whereClause });
+    const previousAttempts = await repository.count({
+      where: {
+        name,
+        workspaceId: workspaceId === null ? IsNull() : workspaceId,
+      },
+    });
 
     await repository.save({
       name,
@@ -65,10 +67,11 @@ export class UpgradeMigrationService {
     workspaceId: string | null;
     executedByVersion: string;
   }): Promise<void> {
-    const whereClause = this.buildWhereClause({ name, workspaceId });
-
     const previousAttempts = await this.upgradeMigrationRepository.count({
-      where: whereClause,
+      where: {
+        name,
+        workspaceId: workspaceId === null ? IsNull() : workspaceId,
+      },
     });
 
     await this.upgradeMigrationRepository.save({
@@ -78,19 +81,5 @@ export class UpgradeMigrationService {
       executedByVersion,
       workspaceId,
     });
-  }
-
-  private buildWhereClause({
-    name,
-    workspaceId,
-  }: {
-    name: string;
-    workspaceId: string | null;
-  }): FindOptionsWhere<UpgradeMigrationEntity> {
-    return {
-      name,
-      status: 'completed',
-      workspaceId: workspaceId === null ? IsNull() : workspaceId,
-    };
   }
 }

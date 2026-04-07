@@ -156,17 +156,21 @@ export class WorkspaceUpgradeService {
         total: iteratorContext.total,
       });
 
-      await this.upgradeMigrationService.markAsCompleted({
-        name: commandName,
-        workspaceId,
-        executedByVersion,
-      });
+      if (!options.dryRun) {
+        await this.upgradeMigrationService.markAsCompleted({
+          name: commandName,
+          workspaceId,
+          executedByVersion,
+        });
+      }
     } catch (error) {
-      await this.upgradeMigrationService.markAsFailed({
-        name: commandName,
-        workspaceId,
-        executedByVersion,
-      });
+      if (!options.dryRun) {
+        await this.upgradeMigrationService.markAsFailed({
+          name: commandName,
+          workspaceId,
+          executedByVersion,
+        });
+      }
 
       throw error;
     }
