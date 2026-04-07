@@ -58,10 +58,7 @@ export default async function WhyTwentyPage() {
           size="xl"
         />
         <Hero.Body page={Pages.WhyTwenty} body={HERO_DATA.body} />
-        <Hero.WhyTwentyVisual
-          image={HERO_DATA.image}
-          illustration={HERO_DATA.illustration}
-        />
+        <Hero.WhyTwentyVisual />
       </Hero.Root>
 
       <Editorial.Root

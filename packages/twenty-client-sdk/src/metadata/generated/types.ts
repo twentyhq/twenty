@@ -5479,6 +5479,9 @@ export default {
             "scopes": [
                 1
             ],
+            "connectionParameters": [
+                291
+            ],
             "lastSignedInAt": [
                 4
             ],
@@ -7776,6 +7779,15 @@ export default {
                     "input": [
                         413,
                         "UpdatePageLayoutWithTabsInput!"
+                    ]
+                }
+            ],
+            "resetPageLayoutWidgetToDefault": [
+                75,
+                {
+                    "id": [
+                        1,
+                        "String!"
                     ]
                 }
             ],

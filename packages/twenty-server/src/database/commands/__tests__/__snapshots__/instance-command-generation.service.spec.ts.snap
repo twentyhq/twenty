@@ -1,0 +1,171 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`InstanceCommandGenerationService should encode version correctly in file and class names 1`] = `
+{
+  "className": "V1_19_Test_1775000000000",
+  "fileName": "1-19-instance-command-fast-1775000000000-test.ts",
+  "fileTemplate": "import { MigrationInterface, QueryRunner } from 'typeorm';
+
+import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
+
+@RegisteredInstanceMigration('1.19.0', 1775000000000)
+export class V1_19_Test_1775000000000 implements MigrationInterface {
+  name = 'V1_19_Test_1775000000000';
+
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('SELECT 1');
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('SELECT 1');
+  }
+}
+",
+}
+`;
+
+exports[`InstanceCommandGenerationService should escape backslashes in SQL queries 1`] = `
+{
+  "className": "V1_21_UpdatePath_1775000000000",
+  "fileName": "1-21-instance-command-fast-1775000000000-update-path.ts",
+  "fileTemplate": "import { MigrationInterface, QueryRunner } from 'typeorm';
+
+import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
+
+@RegisteredInstanceMigration('1.21.0', 1775000000000)
+export class V1_21_UpdatePath_1775000000000 implements MigrationInterface {
+  name = 'V1_21_UpdatePath_1775000000000';
+
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('UPDATE "core"."config" SET "value" = E\\'path\\\\\\\\to\\\\\\\\file\\'');
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('UPDATE "core"."config" SET "value" = NULL');
+  }
+}
+",
+}
+`;
+
+exports[`InstanceCommandGenerationService should escape single quotes in SQL queries 1`] = `
+{
+  "className": "V1_21_UpdateConfig_1775000000000",
+  "fileName": "1-21-instance-command-fast-1775000000000-update-config.ts",
+  "fileTemplate": "import { MigrationInterface, QueryRunner } from 'typeorm';
+
+import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
+
+@RegisteredInstanceMigration('1.21.0', 1775000000000)
+export class V1_21_UpdateConfig_1775000000000 implements MigrationInterface {
+  name = 'V1_21_UpdateConfig_1775000000000';
+
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('UPDATE "core"."config" SET "value" = \\'it\\'\\'s done\\'');
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('UPDATE "core"."config" SET "value" = \\'original\\'');
+  }
+}
+",
+}
+`;
+
+exports[`InstanceCommandGenerationService should generate a migration with a single up/down query 1`] = `
+{
+  "className": "V1_21_AddFooColumn_1775000000000",
+  "fileName": "1-21-instance-command-fast-1775000000000-add-foo-column.ts",
+  "fileTemplate": "import { MigrationInterface, QueryRunner } from 'typeorm';
+
+import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
+
+@RegisteredInstanceMigration('1.21.0', 1775000000000)
+export class V1_21_AddFooColumn_1775000000000 implements MigrationInterface {
+  name = 'V1_21_AddFooColumn_1775000000000';
+
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('ALTER TABLE "core"."user" ADD "foo" varchar');
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('ALTER TABLE "core"."user" DROP COLUMN "foo"');
+  }
+}
+",
+}
+`;
+
+exports[`InstanceCommandGenerationService should generate a migration with multiple queries 1`] = `
+{
+  "className": "V1_21_CreateTaskTable_1775000000000",
+  "fileName": "1-21-instance-command-fast-1775000000000-create-task-table.ts",
+  "fileTemplate": "import { MigrationInterface, QueryRunner } from 'typeorm';
+
+import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
+
+@RegisteredInstanceMigration('1.21.0', 1775000000000)
+export class V1_21_CreateTaskTable_1775000000000 implements MigrationInterface {
+  name = 'V1_21_CreateTaskTable_1775000000000';
+
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('CREATE TABLE "core"."task" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" varchar NOT NULL)');
+    await queryRunner.query('ALTER TABLE "core"."task" ADD CONSTRAINT "PK_task" PRIMARY KEY ("id")');
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('DROP TABLE "core"."task"');
+    await queryRunner.query('ALTER TABLE "core"."task" DROP CONSTRAINT "PK_task"');
+  }
+}
+",
+}
+`;
+
+exports[`InstanceCommandGenerationService should generate a migration with query parameters 1`] = `
+{
+  "className": "V1_21_SeedSetting_1775000000000",
+  "fileName": "1-21-instance-command-fast-1775000000000-seed-setting.ts",
+  "fileTemplate": "import { MigrationInterface, QueryRunner } from 'typeorm';
+
+import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
+
+@RegisteredInstanceMigration('1.21.0', 1775000000000)
+export class V1_21_SeedSetting_1775000000000 implements MigrationInterface {
+  name = 'V1_21_SeedSetting_1775000000000';
+
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('INSERT INTO "core"."setting" ("key", "value") VALUES ($1, $2)', ["theme","dark"]);
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('DELETE FROM "core"."setting" WHERE "key" = $1', ["theme"]);
+  }
+}
+",
+}
+`;
+
+exports[`InstanceCommandGenerationService should use default migration name in class and file names 1`] = `
+{
+  "className": "V1_21_AutoGenerated_1775000000000",
+  "fileName": "1-21-instance-command-fast-1775000000000-auto-generated.ts",
+  "fileTemplate": "import { MigrationInterface, QueryRunner } from 'typeorm';
+
+import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
+
+@RegisteredInstanceMigration('1.21.0', 1775000000000)
+export class V1_21_AutoGenerated_1775000000000 implements MigrationInterface {
+  name = 'V1_21_AutoGenerated_1775000000000';
+
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('ALTER TABLE "core"."user" ADD "bar" integer');
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('ALTER TABLE "core"."user" DROP COLUMN "bar"');
+  }
+}
+",
+}
+`;

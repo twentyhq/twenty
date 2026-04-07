@@ -113,7 +113,7 @@ export const WorkflowEditActionEmailBase = ({
   const filter: { or: object[] } = {
     or: [
       {
-        accountOwnerId: {
+        userWorkspaceId: {
           eq: currentWorkspaceMember?.id,
         },
       },
@@ -139,7 +139,7 @@ export const WorkflowEditActionEmailBase = ({
       handle: true,
       provider: true,
       scopes: true,
-      accountOwnerId: true,
+      userWorkspaceId: true,
       connectionParameters: true,
     },
   });
@@ -181,7 +181,7 @@ export const WorkflowEditActionEmailBase = ({
       label: account.handle,
       value: account.id,
     };
-    if (account.accountOwnerId === currentWorkspaceMember?.id) {
+    if (account.userWorkspaceId === currentWorkspaceMember?.id) {
       connectedAccountOptions.push(selectOption);
     } else {
       emptyOption = selectOption;

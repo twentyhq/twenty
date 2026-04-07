@@ -64,10 +64,7 @@ export default async function PartnerPage() {
             variant="contained"
           />
         </Hero.Cta>
-        <Hero.Illustration
-          illustration={HERO_DATA.illustration}
-          backgroundColor={theme.colors.secondary.background[100]}
-        />
+        <Hero.PartnerVisual />
       </Hero.Root>
 
       <TrustedBy.Root>

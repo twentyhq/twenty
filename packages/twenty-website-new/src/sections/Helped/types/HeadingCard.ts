@@ -4,7 +4,7 @@ import type { IllustrationType } from '@/design-system/components/Illustration/t
 
 export type HeadingCardType = {
   icon: string;
-  illustration: IllustrationType;
+  illustration: IllustrationType & { color: string };
   heading: HeadingType;
   body: BodyType;
 };

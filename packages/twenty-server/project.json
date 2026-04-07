@@ -207,7 +207,7 @@
       "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "node dist/command/command.js run-core-migration --force"
+        "command": "node dist/command/command.js run-instance-commands --force"
       }
     },
     "database:migrate:generate": {
@@ -215,7 +215,7 @@
       "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "node dist/command/command.js generate:versioned-migration"
+        "command": "node dist/command/command.js generate:instance-command"
       }
     },
     "generate:integration-test": {

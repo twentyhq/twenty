@@ -2424,6 +2424,7 @@ export interface ConnectedAccountDTO {
     authFailedAt?: Scalars['DateTime']
     handleAliases?: Scalars['String'][]
     scopes?: Scalars['String'][]
+    connectionParameters?: ImapSmtpCaldavConnectionParameters
     lastSignedInAt?: Scalars['DateTime']
     userWorkspaceId: Scalars['UUID']
     createdAt: Scalars['DateTime']
@@ -2905,6 +2906,7 @@ export interface Mutation {
     updatePageLayout: PageLayout
     destroyPageLayout: Scalars['Boolean']
     updatePageLayoutWithTabsAndWidgets: PageLayout
+    resetPageLayoutWidgetToDefault: PageLayoutWidget
     createPageLayoutWidget: PageLayoutWidget
     updatePageLayoutWidget: PageLayoutWidget
     destroyPageLayoutWidget: Scalars['Boolean']
@@ -5630,6 +5632,7 @@ export interface ConnectedAccountDTOGenqlSelection{
     authFailedAt?: boolean | number
     handleAliases?: boolean | number
     scopes?: boolean | number
+    connectionParameters?: ImapSmtpCaldavConnectionParametersGenqlSelection
     lastSignedInAt?: boolean | number
     userWorkspaceId?: boolean | number
     createdAt?: boolean | number
@@ -6153,6 +6156,7 @@ export interface MutationGenqlSelection{
     updatePageLayout?: (PageLayoutGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutInput} })
     destroyPageLayout?: { __args: {id: Scalars['String']} }
     updatePageLayoutWithTabsAndWidgets?: (PageLayoutGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutWithTabsInput} })
+    resetPageLayoutWidgetToDefault?: (PageLayoutWidgetGenqlSelection & { __args: {id: Scalars['String']} })
     createPageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {input: CreatePageLayoutWidgetInput} })
     updatePageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutWidgetInput} })
     destroyPageLayoutWidget?: { __args: {id: Scalars['String']} }

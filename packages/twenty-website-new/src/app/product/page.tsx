@@ -59,10 +59,7 @@ export default async function ProductPage() {
             variant="contained"
           />
         </Hero.Cta>
-        <Hero.Illustration
-          illustration={HERO_DATA.illustration}
-          backgroundColor={theme.colors.secondary.background[5]}
-        />
+        <Hero.ProductVisual />
       </Hero.Root>
 
       <TrustedBy.Root>

@@ -8,6 +8,7 @@ import { classifyTopLevelFields } from 'src/engine/api/graphql/direct-execution/
 import { findOperationDefinition } from 'src/engine/api/graphql/direct-execution/utils/find-operation-definition.util';
 import { isSubscriptionOperation } from 'src/engine/api/graphql/direct-execution/utils/is-subscription-operation.util';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 export type DirectExecutionPluginConfig = {
   directExecutionService: DirectExecutionService;
@@ -54,8 +55,12 @@ export function useDirectExecution(
       const { hasIntrospectionFields, hasWorkspaceFields, hasCoreFields } =
         classifyTopLevelFields(document, operationName, workspaceResolverNames);
 
-      if (!hasCoreFields) {
-        req.skipWorkspaceSchemaCreation = true;
+      if (hasCoreFields && hasWorkspaceFields) {
+        const error = new UserInputError(
+          'This query cannot be executed as a single request. Please split it into separate queries.',
+        );
+
+        return endResponse(Response.json({ errors: [error.toJSON()] }));
       }
 
       if (hasCoreFields) {

@@ -7797,19 +7797,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch::locator=twenty-server%40workspace%3Apackages%2Ftwenty-server":
-  version: 2.1.0
-  resolution: "@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@npm%3A2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch::version=2.1.0&hash=aafdfe&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
-  peerDependencies:
-    "@nestjs/common": ^10.0.0
-    "@nestjs/core": ^10.0.0
-    "@nestjs/graphql": ^12.0.0
-    graphql: ^15.0.0 || ^16.0.0
-    graphql-yoga: ^4.0.4
-  checksum: 10c0/7ebb5bd5bf630cbad7ef99ac4a04017c1294a6a40623b0142cf4990d790fb4252efa71abe3a7923f66845320fb9cba536426743eb5d93a1e9353700b730efb28
-  languageName: node
-  linkType: hard
-
 "@graphql-yoga/subscription@npm:^4.0.0":
   version: 4.0.0
   resolution: "@graphql-yoga/subscription@npm:4.0.0"
@@ -60506,7 +60493,7 @@ __metadata:
     "@file-type/pdf": "npm:^0.2.0"
     "@graphql-tools/schema": "npm:10.0.4"
     "@graphql-tools/utils": "npm:9.2.1"
-    "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch"
+    "@graphql-yoga/nestjs": "npm:2.1.0"
     "@jrmdayn/googleapis-batcher": "npm:^0.10.1"
     "@lingui/cli": "npm:^5.1.2"
     "@lingui/conf": "npm:5.1.2"

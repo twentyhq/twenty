@@ -115,12 +115,6 @@ export class SyncMessageFoldersService {
     messageChannelId: string,
     workspaceId: string,
   ): Promise<MessageFolder[]> {
-    const externalIdToUuidMap = new Map(
-      existingFolders
-        .filter((folder) => isDefined(folder.externalId))
-        .map((folder) => [folder.externalId as string, folder.id]),
-    );
-
     const foldersToCreate = computeFoldersToCreate({
       discoveredFolders,
       existingFolders,
@@ -130,7 +124,6 @@ export class SyncMessageFoldersService {
     const foldersToUpdate = computeFoldersToUpdate({
       discoveredFolders,
       existingFolders,
-      externalIdToUuidMap,
     });
 
     const folderIdsToDelete = computeFolderIdsToDelete({

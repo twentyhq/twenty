@@ -5,24 +5,16 @@ import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChan
 import { useApolloClient, useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
 
-type MetadataConnectedAccount = {
-  id: string;
-  handle: string;
-  provider: string;
-  authFailedAt: string | null;
-  scopes: string[] | null;
-  handleAliases: string[] | null;
-  lastSignedInAt: string | null;
-  userWorkspaceId: string;
-  createdAt: string;
-  updatedAt: string;
-};
+type CoreConnectedAccount = Omit<
+  ConnectedAccount,
+  'messageChannels' | 'calendarChannels'
+>;
 
 export const useMyConnectedAccounts = () => {
   const apolloClient = useApolloClient();
 
-  const { data: metadataData, loading: metadataLoading } = useQuery<{
-    myConnectedAccounts: MetadataConnectedAccount[];
+  const { data, loading: accountsLoading } = useQuery<{
+    myConnectedAccounts: CoreConnectedAccount[];
   }>(GET_MY_CONNECTED_ACCOUNTS, {
     client: apolloClient,
   });
@@ -33,48 +25,24 @@ export const useMyConnectedAccounts = () => {
     useMyCalendarChannels();
 
   const accounts = useMemo<ConnectedAccount[]>(() => {
-    if (!metadataData?.myConnectedAccounts) {
+    if (!data?.myConnectedAccounts) {
       return [];
     }
 
-    return metadataData.myConnectedAccounts
-      .map(
-        (account: MetadataConnectedAccount) =>
-          ({
-            id: account.id,
-            handle: account.handle,
-            provider: account.provider,
-            accessToken: '',
-            refreshToken: '',
-            accountOwnerId: account.userWorkspaceId,
-            lastSyncHistoryId: '',
-            authFailedAt: account.authFailedAt
-              ? new Date(account.authFailedAt)
-              : null,
-            messageChannels: messageChannels.filter(
-              (channel) =>
-                'connectedAccountId' in channel &&
-                channel.connectedAccountId === account.id,
-            ),
-            calendarChannels: calendarChannels.filter(
-              (channel) =>
-                'connectedAccountId' in channel &&
-                channel.connectedAccountId === account.id,
-            ),
-            scopes: account.scopes,
-            __typename: 'ConnectedAccount',
-          }) as ConnectedAccount,
-      )
-      .filter(
-        (account) =>
-          account.messageChannels.length > 0 ||
-          account.calendarChannels.length > 0,
-      );
-  }, [metadataData, messageChannels, calendarChannels]);
+    return data.myConnectedAccounts.map((account) => ({
+      ...account,
+      messageChannels: messageChannels.filter(
+        (channel) => channel.connectedAccountId === account.id,
+      ),
+      calendarChannels: calendarChannels.filter(
+        (channel) => channel.connectedAccountId === account.id,
+      ),
+    }));
+  }, [data, messageChannels, calendarChannels]);
 
   return {
     accounts,
     loading:
-      metadataLoading || messageChannelsLoading || calendarChannelsLoading,
+      accountsLoading || messageChannelsLoading || calendarChannelsLoading,
   };
 };

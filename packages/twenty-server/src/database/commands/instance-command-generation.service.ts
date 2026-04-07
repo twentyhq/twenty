@@ -19,7 +19,7 @@ export type GeneratedMigrationResult = {
 };
 
 @Injectable()
-export class CoreMigrationGeneratorService {
+export class InstanceCommandGenerationService {
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
@@ -52,14 +52,16 @@ export class CoreMigrationGeneratorService {
           `    await queryRunner.query('${this.escapeForSingleQuotedString(query)}'${this.formatQueryParams(parameters)});`,
       );
 
-    const fileTemplate = this.buildMigrationFileContent(
+    const fileTemplate = this.buildMigrationFileContent({
       className,
       version,
+      timestamp,
       upStatements,
       downStatements,
-    );
+    });
 
-    const fileName = `${timestamp}-${version.replace(/\./g, '-')}-${migrationName}.ts`;
+    const versionSlug = version.split('.').slice(0, 2).join('-');
+    const fileName = `${versionSlug}-instance-command-fast-${timestamp}-${migrationName}.ts`;
 
     return { fileName, fileTemplate, className };
   }
@@ -69,7 +71,9 @@ export class CoreMigrationGeneratorService {
     version: string,
     timestamp: number,
   ): string {
-    return `${pascalCase(name)}V${version.replace(/\./g, '')}${timestamp}`;
+    const versionSlug = version.split('.').slice(0, 2).join('_');
+
+    return `V${versionSlug}_${pascalCase(name)}_${timestamp}`;
   }
 
   private formatQueryParams(parameters: unknown[] | undefined): string {
@@ -84,17 +88,24 @@ export class CoreMigrationGeneratorService {
     return query.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
   }
 
-  private buildMigrationFileContent(
-    className: string,
-    version: string,
-    upStatements: string[],
-    downStatements: string[],
-  ): string {
+  private buildMigrationFileContent({
+    className,
+    version,
+    timestamp,
+    upStatements,
+    downStatements,
+  }: {
+    className: string;
+    version: string;
+    timestamp: number;
+    upStatements: string[];
+    downStatements: string[];
+  }): string {
     return `import { MigrationInterface, QueryRunner } from 'typeorm';
 
-import { RegisteredCoreMigration } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
+import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
 
-@RegisteredCoreMigration('${version}')
+@RegisteredInstanceMigration('${version}', ${timestamp})
 export class ${className} implements MigrationInterface {
   name = '${className}';
 
