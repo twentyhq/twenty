@@ -1,4 +1,4 @@
-export const compareObjectMetadataForNavigationPosition = (
+export const seedCompareObjectMetadataForNavigationPosition = (
   a: { isSystem: boolean },
   b: { isSystem: boolean },
 ): number => {

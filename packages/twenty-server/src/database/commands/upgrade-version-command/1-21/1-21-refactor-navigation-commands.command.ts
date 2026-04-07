@@ -20,7 +20,7 @@ import {
   buildNavigationFlatCommandMenuItem,
   NAVIGATION_COMMAND_UUID_NAMESPACE,
 } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util';
-import { compareObjectMetadataForNavigationPosition } from 'src/engine/metadata-modules/flat-command-menu-item/utils/compare-object-metadata-for-navigation-position.util';
+import { seedCompareObjectMetadataForNavigationPosition } from 'src/engine/metadata-modules/flat-command-menu-item/utils/seed-compare-object-metadata-for-navigation-position.util';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -141,7 +141,7 @@ export class RefactorNavigationCommandsCommand extends ActiveOrSuspendedWorkspac
     )
       .filter(isDefined)
       .filter((objectMetadata) => objectMetadata.isActive)
-      .sort(compareObjectMetadataForNavigationPosition);
+      .sort(seedCompareObjectMetadataForNavigationPosition);
 
     this.logger.log(
       `Found ${activeObjects.length} active object(s) for workspace ${workspaceId}`,
