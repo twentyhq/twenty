@@ -18,8 +18,6 @@ export default defineConfig({
       truncateThreshold: 0,
     },
     fileParallelism: false,
-    setupFiles: [
-      'src/cli/__tests__/integration/utils/setup-app-dev-mocks.ts',
-    ],
+    setupFiles: ['src/cli/__tests__/integration/utils/setup-app-dev-mocks.ts'],
   },
 });
