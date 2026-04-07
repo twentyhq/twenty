@@ -30,5 +30,12 @@ export default defineField({
       color: 'orange',
       position: 2,
     },
+    {
+      // No id — exercises addMissingFieldOptionIds in the standalone field branch
+      value: 'OTHER',
+      label: 'Other',
+      color: 'gray',
+      position: 3,
+    },
   ],
 });
