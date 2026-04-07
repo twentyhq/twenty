@@ -1,9 +1,11 @@
 import { Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
-import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/data-access/services/message-channel-data-access.service';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
@@ -24,7 +26,8 @@ export class MessagingResetChannelCommand extends CommandRunner {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly messageChannelDataAccessService: MessageChannelDataAccessService,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly messagingChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly messagingMessageCleanerService: MessagingMessageCleanerService,
   ) {
@@ -44,10 +47,12 @@ export class MessagingResetChannelCommand extends CommandRunner {
         `No message channel ID provided, resetting all message channels in workspace ${workspaceId}`,
       );
 
-      const messageChannels = await this.messageChannelDataAccessService.find(
-        workspaceId,
-        isDefined(messageChannelId) ? { id: messageChannelId } : {},
-      );
+      const messageChannels = await this.messageChannelRepository.find({
+        where: {
+          ...(isDefined(messageChannelId) ? { id: messageChannelId } : {}),
+          workspaceId,
+        },
+      });
 
       if (messageChannels.length === 0) {
         this.logger.log(

@@ -6,7 +6,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { type CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import {
   CalendarChannelDeletionCleanupJob,
   type CalendarChannelDeletionCleanupJobData,
@@ -24,7 +24,7 @@ export class CalendarEventCleanerCalendarChannelListener {
   @OnDatabaseBatchEvent('calendarChannel', DatabaseEventAction.DESTROYED)
   async handleDestroyedEvent(
     payload: WorkspaceEventBatch<
-      ObjectRecordDeleteEvent<CalendarChannelWorkspaceEntity>
+      ObjectRecordDeleteEvent<CalendarChannelEntity>
     >,
   ) {
     await Promise.all(

@@ -144,6 +144,13 @@ const buildUsageEventFixtures = (): UsageEventFixture[] => {
       baseQuantity: 1,
       unit: 'INVOCATION',
     },
+    {
+      resourceType: 'AI',
+      operationType: 'WEB_SEARCH',
+      baseCreditsMicro: 7000,
+      baseQuantity: 1,
+      unit: 'INVOCATION',
+    },
   ];
 
   // Pseudo-random using a seed for reproducibility across runs

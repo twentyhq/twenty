@@ -1,13 +1,18 @@
-import { Body, Heading, LazyEmbed, LinkButton } from '@/design-system/components';
+import { styled } from '@linaria/react';
+
+import { Body, Heading, LinkButton } from '@/design-system/components';
 import { CheckIcon } from '@/icons/informative/Check';
 import type { PlanCardType } from '@/sections/Plans/types';
 import { theme } from '@/theme';
-import { styled } from '@linaria/react';
+import { css } from '@linaria/core';
+
+import { PlanCardVisual } from './PlanCardVisual';
 
 const FIXED_ROWS = 4;
 
 const StyledCard = styled.div`
   background-color: ${theme.colors.primary.background[100]};
+  border: 1px solid transparent;
   border-radius: ${theme.radius(1)};
   display: grid;
   grid-template-columns: 1fr;
@@ -18,48 +23,68 @@ const StyledCard = styled.div`
   padding-right: ${theme.spacing(4)};
   padding-top: ${theme.spacing(4)};
   row-gap: ${theme.spacing(4)};
-
-  &[data-highlighted='true'] {
-    border: 1px solid ${theme.colors.highlight[100]};
-  }
+  position: relative;
+  z-index: 1;
 `;
 
 const CardHeader = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  justify-content: space-between;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    grid-template-columns: 1fr auto;
+    align-items: flex-start;
+    flex-direction: row;
+    justify-content: space-between;
   }
 `;
 
 const CardHeaderInfo = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   min-width: 0;
   overflow: hidden;
-  row-gap: ${theme.spacing(4)};
+  gap: ${theme.spacing(4)};
+`;
+
+const cardPlanTitleClassName = css`
+  &[data-size='xs'] {
+    line-height: ${theme.lineHeight(5)};
+  }
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    &[data-size='xs'] {
+      line-height: ${theme.lineHeight(6)};
+    }
+  }
+`;
+
+const priceBodyClassName = css`
+  color: ${theme.colors.primary.text[60]};
 `;
 
 const PriceLine = styled.div`
   align-items: baseline;
   display: flex;
+  gap: ${theme.spacing(1)};
   white-space: nowrap;
 `;
 
-const CardIllustration = styled(LazyEmbed)`
+const CardIllustrationEmbed = styled.div`
   background-color: ${theme.colors.primary.background[100]};
   border: none;
-  display: none;
+  border-radius: ${theme.radius(2)};
+  display: block;
   flex-shrink: 0;
-  height: 112px;
+  height: 80px;
   overflow: hidden;
   width: 197px;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     display: block;
+    margin-left: auto;
+    transform: translateX(${theme.spacing(4)});
   }
 `;
 
@@ -98,16 +123,14 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
   const totalRows = FIXED_ROWS + maxBullets;
 
   return (
-    <StyledCard
-      data-highlighted={highlighted}
-      style={{ gridRow: `span ${totalRows}` }}
-    >
+    <StyledCard style={{ gridRow: `span ${totalRows}` }}>
       <CardHeader>
         <CardHeaderInfo>
           <Heading
             as="h3"
+            className={cardPlanTitleClassName}
             segments={card.heading}
-            size="md"
+            size="xs"
             weight="light"
           />
           <PriceLine>
@@ -120,16 +143,17 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
             <Body
               as="span"
               body={card.price.body}
+              className={priceBodyClassName}
               size="sm"
             />
           </PriceLine>
         </CardHeaderInfo>
-        <CardIllustration
-          allow="clipboard-write; encrypted-media; gyroscope; web-share"
-          referrerPolicy="strict-origin-when-cross-origin"
-          src={card.illustration.src}
-          title={card.illustration.title}
-        />
+        <CardIllustrationEmbed>
+          <PlanCardVisual
+            src={card.illustration.src}
+            title={card.illustration.title}
+          />
+        </CardIllustrationEmbed>
       </CardHeader>
 
       <LinkButton
@@ -137,7 +161,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
         href="https://app.twenty.com/welcome"
         label="Start for free"
         type="anchor"
-        variant="contained"
+        variant={highlighted ? 'contained' : 'outlined'}
       />
 
       <CardRule />

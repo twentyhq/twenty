@@ -6,6 +6,7 @@ import {
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/admin-panel/constants/health-error-messages.constants';
 import { withHealthCheckTimeout } from 'src/engine/core-modules/admin-panel/utils/health-check-timeout.util';
@@ -89,7 +90,9 @@ export class DatabaseHealthIndicator {
         },
         databaseSize: databaseSize.size,
         performance: {
-          cacheHitRatio: Math.round(parseFloat(cacheHitRatio.ratio)) + '%',
+          cacheHitRatio: isDefined(cacheHitRatio.ratio)
+            ? Math.round(parseFloat(cacheHitRatio.ratio)) + '%'
+            : 'N/A',
           deadlocks: parseInt(deadlocks.deadlocks),
           slowQueries: parseInt(slowQueries.count),
         },

@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { CalDAVClient } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/caldav.client';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 @Injectable()
 export class CalDavClientProvider {
@@ -14,7 +14,7 @@ export class CalDavClientProvider {
 
   public async getCalDavCalendarClient(
     connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
+      ConnectedAccountEntity,
       'id' | 'provider' | 'connectionParameters' | 'handle'
     >,
   ): Promise<CalDAVClient> {

@@ -1092,6 +1092,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    payload: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     hotKeys: {
       toCompare: true,
       toStringify: true,

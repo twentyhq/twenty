@@ -3,8 +3,8 @@ import type { IllustrationType } from '@/design-system/components/Illustration/t
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
-import { FooterBackground } from '../FooterBackground/FooterBackground';
 import { FooterShape } from '../../FooterShape';
+import { FooterBackground } from '../FooterBackground/FooterBackground';
 
 const FooterRoot = styled.footer`
   background-color: ${theme.colors.secondary.background[100]};
@@ -14,13 +14,18 @@ const FooterRoot = styled.footer`
 const FooterContainer = styled(Container)`
   display: flex;
   flex-direction: column;
-  height: 1280px;
+  height: 880px;
   position: relative;
   padding-bottom: ${theme.spacing(4)};
   padding-left: ${theme.spacing(4)};
   padding-right: ${theme.spacing(4)};
 
+  @media (min-width: ${theme.breakpoints.md}px) {
+    height: 920px;
+  }
+
   @media (min-width: ${theme.breakpoints.lg}px) {
+    height: 1080px;
     padding-bottom: ${theme.spacing(10)};
     padding-left: ${theme.spacing(10)};
     padding-right: ${theme.spacing(10)};
@@ -40,11 +45,6 @@ const FooterContent = styled.div`
     padding-left: ${theme.spacing(20)};
     padding-right: ${theme.spacing(20)};
     padding-top: ${theme.spacing(20)};
-  }
-
-  @media (min-width: ${theme.breakpoints.lg}px) {
-    padding-left: ${theme.spacing(30)};
-    padding-right: ${theme.spacing(30)};
   }
 `;
 

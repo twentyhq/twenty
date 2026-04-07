@@ -6,6 +6,7 @@ export type EmailThreadMessage = {
   text: string;
   receivedAt: string;
   subject: string;
+  headerMessageId: string;
   messageThreadId: string;
   messageParticipants: EmailThreadMessageParticipant[];
   messageThread: MessageThread;

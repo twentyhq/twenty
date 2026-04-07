@@ -14,13 +14,27 @@ import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { styled } from '@linaria/react';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
+
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { SidePanelPageInfoLayout } from './SidePanelPageInfoLayout';
+
+const StyledClickableTitle = styled.div`
+  cursor: pointer;
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+`;
 
 export const SidePanelRecordInfo = ({
   sidePanelPageInstanceId,
@@ -85,6 +99,11 @@ export const SidePanelRecordInfo = ({
     objectNameSingular,
   });
 
+  const recordShowPagePath = getAppPath(AppPath.RecordShowPage, {
+    objectNameSingular,
+    objectRecordId,
+  });
+
   const fieldDefinition = {
     type: labelIdentifierFieldMetadataItem?.type ?? FieldMetadataType.TEXT,
     iconName: '',
@@ -96,6 +115,25 @@ export const SidePanelRecordInfo = ({
     },
     defaultValue: labelIdentifierFieldMetadataItem?.defaultValue,
   };
+
+  const titleContent = (
+    <FieldContext.Provider
+      value={{
+        recordId: objectRecordId,
+        isLabelIdentifier: false,
+        fieldDefinition,
+        useUpdateRecord: useUpdateOneObjectRecordMutation,
+        isCentered: false,
+        isDisplayModeFixHeight: true,
+        isRecordFieldReadOnly: isTitleReadOnly,
+      }}
+    >
+      <RecordTitleCell
+        sizeVariant="sm"
+        containerType={RecordTitleCellContainerType.PageHeader}
+      />
+    </FieldContext.Provider>
+  );
 
   return (
     <SidePanelPageInfoLayout
@@ -111,22 +149,15 @@ export const SidePanelRecordInfo = ({
         ) : undefined
       }
       title={
-        <FieldContext.Provider
-          value={{
-            recordId: objectRecordId,
-            isLabelIdentifier: false,
-            fieldDefinition,
-            useUpdateRecord: useUpdateOneObjectRecordMutation,
-            isCentered: false,
-            isDisplayModeFixHeight: true,
-            isRecordFieldReadOnly: isTitleReadOnly,
-          }}
-        >
-          <RecordTitleCell
-            sizeVariant="sm"
-            containerType={RecordTitleCellContainerType.PageHeader}
-          />
-        </FieldContext.Provider>
+        isTitleReadOnly ? (
+          <StyledClickableTitle>
+            <UndecoratedLink to={recordShowPagePath}>
+              {titleContent}
+            </UndecoratedLink>
+          </StyledClickableTitle>
+        ) : (
+          titleContent
+        )
       }
       label={
         beautifiedCreatedAt ? (

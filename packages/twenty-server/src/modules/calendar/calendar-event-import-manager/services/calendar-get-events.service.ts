@@ -10,7 +10,7 @@ import {
   CalendarEventImportExceptionCode,
 } from 'src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 export type GetCalendarEventsResponse = {
   fullEvents: boolean;
@@ -29,7 +29,7 @@ export class CalendarGetCalendarEventsService {
 
   public async getCalendarEvents(
     connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
+      ConnectedAccountEntity,
       | 'provider'
       | 'accessToken'
       | 'refreshToken'

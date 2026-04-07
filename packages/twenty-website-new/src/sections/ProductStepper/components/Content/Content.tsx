@@ -1,6 +1,11 @@
 'use client';
 
-import { Body, Eyebrow, Heading } from '@/design-system/components';
+import {
+  Body,
+  Eyebrow,
+  Heading,
+  StepperProgressRail,
+} from '@/design-system/components';
 import { INFORMATIVE_ICONS } from '@/icons';
 import type { ProductStepperContentProps } from '@/sections/ProductStepper/types';
 import { theme } from '@/theme';
@@ -13,70 +18,10 @@ const ContentRoot = styled.div`
   min-width: 0;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    gap: ${theme.spacing(10)};
-    height: max-content;
-    position: sticky;
-    top: calc(50vh - 150px);
+    align-self: stretch;
+    gap: ${theme.spacing(20)};
+    margin-left: calc(-1 * ${theme.spacing(4)});
   }
-`;
-
-const ProgressRail = styled.div`
-  display: none;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: ${theme.spacing(2)};
-    position: sticky;
-    top: calc(50vh - ${theme.spacing(10)});
-    height: max-content;
-  }
-`;
-
-const StepIndicatorRow = styled.div`
-  display: flex;
-  align-items: flex-start;
-  gap: ${theme.spacing(4)};
-`;
-
-const PillBackground = styled.div`
-  background-color: ${theme.colors.primary.border[80]};
-  border-radius: ${theme.radius(8)};
-  display: flex;
-  height: ${theme.spacing(20)};
-  overflow: hidden;
-  width: ${theme.spacing(1)};
-`;
-
-const PillFill = styled.div`
-  background-color: ${theme.colors.highlight[100]};
-  border-radius: ${theme.radius(10)};
-  transition: height 0.4s ease;
-  width: 100%;
-`;
-
-const ActiveLabel = styled.p`
-  color: ${theme.colors.highlight[100]};
-  font-family: ${theme.font.family.mono};
-  font-size: ${theme.font.size(3)};
-  font-weight: ${theme.font.weight.medium};
-  margin: 0;
-  text-transform: uppercase;
-  line-height: ${theme.spacing(4)};
-`;
-
-const InactiveDotWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${theme.spacing(4)};
-`;
-
-const InactiveDot = styled.div`
-  background-color: ${theme.colors.primary.border[80]};
-  border-radius: 50%;
-  height: ${theme.spacing(1)};
-  width: ${theme.spacing(1)};
 `;
 
 const StepsColumn = styled.div`
@@ -86,7 +31,10 @@ const StepsColumn = styled.div`
   gap: ${theme.spacing(8)};
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    max-width: 520px;
+    height: max-content;
+    max-width: 556px;
+    position: sticky;
+    top: ${theme.spacing(20)};
   }
 `;
 
@@ -94,64 +42,22 @@ const StepBlock = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   opacity: 1;
-  row-gap: ${theme.spacing(4)};
-  transition: opacity 0.4s ease;
+  row-gap: ${theme.spacing(2)};
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    row-gap: ${theme.spacing(6)};
     opacity: var(--step-opacity, 1);
-    transform: var(--step-translate-y, translateY(0));
-    pointer-events: var(--step-pointer-events, auto);
+    transform: translateY(var(--step-translate-y, 0px));
   }
 `;
 
 const IntroBlock = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  row-gap: ${theme.spacing(4)};
+  row-gap: ${theme.spacing(2)};
 `;
-
-type ProgressRailProps = {
-  activeStepIndex: number;
-  scrollProgress: number;
-  stepCount: number;
-};
-
-function ProductProgressRail({
-  activeStepIndex,
-  scrollProgress,
-  stepCount,
-}: ProgressRailProps) {
-  const globalProgress = scrollProgress * (stepCount - 1);
-
-  const fillPercentage =
-    globalProgress >= stepCount - 1
-      ? 100
-      : (globalProgress - activeStepIndex) * 100;
-
-  const nodes = [];
-
-  for (let index = 0; index < stepCount; index += 1) {
-    if (index === activeStepIndex) {
-      nodes.push(
-        <StepIndicatorRow key={`step-${index}`}>
-          <PillBackground>
-            <PillFill style={{ height: `${fillPercentage}%` }} />
-          </PillBackground>
-          <ActiveLabel>{String(index + 1).padStart(2, '0')}</ActiveLabel>
-        </StepIndicatorRow>,
-      );
-    } else {
-      nodes.push(
-        <InactiveDotWrapper key={`step-${index}`}>
-          <InactiveDot />
-        </InactiveDotWrapper>,
-      );
-    }
-  }
-
-  return <ProgressRail>{nodes}</ProgressRail>;
-}
 
 const StepRowHeader = styled.div`
   display: flex;
@@ -181,14 +87,15 @@ export function Content({
   body,
   eyebrow,
   heading,
-  scrollProgress,
+  localProgress,
   steps,
 }: ProductStepperContentProps) {
   return (
     <ContentRoot>
-      <ProductProgressRail
+      <StepperProgressRail
         activeStepIndex={activeStepIndex}
-        scrollProgress={scrollProgress}
+        inactiveColor={theme.colors.primary.border[80]}
+        localProgress={localProgress}
         stepCount={steps.length}
       />
       <StepsColumn>
@@ -207,22 +114,12 @@ export function Content({
           let opacity = 1;
           let translateY = 0;
 
-          if (index > 0) {
-            const globalProgress = scrollProgress * (steps.length - 1);
-            const start = index - 1;
-            const progress = globalProgress - start;
-
-            if (progress >= 1) {
-              opacity = 1;
-              translateY = 0;
-            } else if (progress > 0) {
-              opacity = 0.4 + 0.6 * progress;
-              translateY = 40 * (1 - progress);
-            } else {
-              const p = Math.max(0, progress + 1);
-              opacity = 0.4 * p;
-              translateY = 40 + 40 * (1 - p);
-            }
+          if (index > activeStepIndex + 1) {
+            opacity = 0;
+            translateY = 300;
+          } else if (index === activeStepIndex + 1) {
+            opacity = 0.4;
+            translateY = 300 * (1 - localProgress);
           }
 
           return (
@@ -233,7 +130,6 @@ export function Content({
                 {
                   '--step-opacity': opacity,
                   '--step-translate-y': `${translateY}px`,
-                  '--step-pointer-events': opacity > 0 ? 'auto' : 'none',
                 } as React.CSSProperties
               }
             >

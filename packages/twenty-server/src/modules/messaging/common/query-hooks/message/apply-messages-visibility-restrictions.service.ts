@@ -1,16 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import groupBy from 'lodash.groupby';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
+import { MessageChannelVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
-import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -18,7 +21,12 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 export class ApplyMessagesVisibilityRestrictionsService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
+    @InjectRepository(ConnectedAccountEntity)
+    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
   ) {}
 
   public async applyMessagesVisibilityRestrictions(
@@ -41,8 +49,27 @@ export class ApplyMessagesVisibilityRestrictionsService {
             where: {
               messageId: In(messages.map((message) => message.id)),
             },
-            relations: ['messageChannel'],
           });
+
+        const messageChannelIds = [
+          ...new Set(
+            messageChannelMessagesAssociations.map((a) => a.messageChannelId),
+          ),
+        ];
+
+        const messageChannelsFromCore =
+          messageChannelIds.length > 0
+            ? await this.messageChannelRepository.find({
+                where: {
+                  id: In(messageChannelIds),
+                  workspaceId,
+                },
+              })
+            : [];
+
+        const messageChannelMap = new Map(
+          messageChannelsFromCore.map((ch) => [ch.id, ch]),
+        );
 
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -51,17 +78,15 @@ export class ApplyMessagesVisibilityRestrictionsService {
           );
 
         for (let i = messages.length - 1; i >= 0; i--) {
-          const messageChannelMessageAssociations =
-            messageChannelMessagesAssociations.filter(
-              (association) => association.messageId === messages[i].id,
-            );
+          const associations = messageChannelMessagesAssociations.filter(
+            (association) => association.messageId === messages[i].id,
+          );
 
-          const messageChannels = messageChannelMessageAssociations
-            .map((association) => association.messageChannel)
-            .filter(
-              (channel): channel is NonNullable<typeof channel> =>
-                channel !== null,
-            );
+          const messageChannels = associations
+            .map((association) =>
+              messageChannelMap.get(association.messageChannelId),
+            )
+            .filter(isDefined);
 
           if (messageChannels.length === 0) {
             throw new NotFoundError('Associated message channels not found');
@@ -86,16 +111,26 @@ export class ApplyMessagesVisibilityRestrictionsService {
                 userId,
               });
 
-            const connectedAccounts =
-              await this.connectedAccountDataAccessService.find(workspaceId, {
-                messageChannels: {
-                  id: In(messageChannels.map((channel) => channel.id)),
-                },
-                accountOwnerId: workspaceMember.id,
-              });
+            const userWorkspace = await this.userWorkspaceRepository.findOne({
+              where: { userId: workspaceMember.userId, workspaceId },
+            });
 
-            if (connectedAccounts.length > 0) {
-              continue;
+            if (userWorkspace) {
+              const connectedAccounts =
+                await this.connectedAccountRepository.find({
+                  where: {
+                    userWorkspaceId: userWorkspace.id,
+                    workspaceId,
+                    messageChannels: {
+                      id: In(messageChannels.map((channel) => channel.id)),
+                    },
+                  },
+                  relations: { messageChannels: true },
+                });
+
+              if (connectedAccounts.length > 0) {
+                continue;
+              }
             }
           }
 

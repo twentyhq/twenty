@@ -74,17 +74,17 @@ const headingRootClassName = css`
 const StyledSpan = styled.span`
   &[data-family='sans'] {
     font-family: ${theme.font.family.sans};
-    letter-spacing: -0.02em;
+    letter-spacing: -0.04em;
   }
 
   &[data-family='serif'] {
     font-family: ${theme.font.family.serif};
-    letter-spacing: 0;
+    letter-spacing: -0.02em;
   }
 
   &[data-family='mono'] {
     font-family: ${theme.font.family.mono};
-    letter-spacing: -0.02em;
+    letter-spacing: -0.04em;
   }
 `;
 

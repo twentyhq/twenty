@@ -1,9 +1,10 @@
-import { Body, Heading, LazyEmbed, LinkButton } from '@/design-system/components';
+import { Body, Heading, LinkButton } from '@/design-system/components';
 import { CLIENT_ICONS } from '@/icons';
 import { HelpedCardShape } from '@/sections/Helped/HelpedCardShape';
 import type { HeadingCardType } from '@/sections/Helped/types/HeadingCard';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
+import { HelpedCardVisual } from './HelpedCardVisual';
 
 const CardRoot = styled.article`
   display: grid;
@@ -19,6 +20,11 @@ const CardRoot = styled.article`
   position: relative;
   row-gap: ${theme.spacing(2.5)};
   width: 100%;
+  transition:
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.6s ease;
+  transform-style: preserve-3d;
+  perspective: 1200px;
 `;
 
 const LogoRow = styled.div`
@@ -41,26 +47,6 @@ const VisualShell = styled.div`
   overflow: hidden;
   position: relative;
   width: 100%;
-`;
-
-const StyledIframe = styled(LazyEmbed)`
-  border: none;
-  height: 200%;
-  left: 51.5%;
-  mix-blend-mode: lighten;
-  pointer-events: none;
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 200%;
-`;
-
-const HueOverlay = styled.div`
-  background-color: ${theme.colors.highlight[100]};
-  inset: 0;
-  mix-blend-mode: hue;
-  pointer-events: none;
-  position: absolute;
 `;
 
 const CopyBlock = styled.div`
@@ -107,14 +93,11 @@ export function Card({ card }: CardProps) {
       </LogoRow>
       <Rule aria-hidden="true" />
       <VisualShell>
-        <StyledIframe
-          allow="clipboard-write; encrypted-media; gyroscope; web-share"
-          allowFullScreen
-          referrerPolicy="strict-origin-when-cross-origin"
+        <HelpedCardVisual
           src={card.illustration.src}
+          stripeColor={card.illustration.color}
           title={card.illustration.title || 'Case illustration'}
         />
-        <HueOverlay aria-hidden="true" />
       </VisualShell>
       <Rule aria-hidden="true" />
       <CopyBlock>

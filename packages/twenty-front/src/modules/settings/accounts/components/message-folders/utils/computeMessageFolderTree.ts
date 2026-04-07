@@ -11,21 +11,17 @@ export const computeMessageFolderTree = (
   folders: MessageFolder[],
 ): MessageFolderTreeNode[] => {
   const folderByExternalIdMap = new Map<string, MessageFolder>();
-  const folderByIdMap = new Map<string, MessageFolder>();
   const childrenMap = new Map<string, MessageFolder[]>();
 
   folders.forEach((folder) => {
     if (isDefined(folder.externalId)) {
       folderByExternalIdMap.set(folder.externalId, folder);
     }
-    folderByIdMap.set(folder.id, folder);
   });
 
   folders.forEach((folder) => {
     if (isDefined(folder.parentFolderId)) {
-      const parent =
-        folderByExternalIdMap.get(folder.parentFolderId) ??
-        folderByIdMap.get(folder.parentFolderId);
+      const parent = folderByExternalIdMap.get(folder.parentFolderId);
 
       if (isDefined(parent)) {
         const siblings = childrenMap.get(parent.id) || [];
@@ -51,10 +47,7 @@ export const computeMessageFolderTree = (
   const rootFolders = folders.filter((folder) => {
     if (!folder.parentFolderId) return true;
 
-    return (
-      !folderByExternalIdMap.has(folder.parentFolderId) &&
-      !folderByIdMap.has(folder.parentFolderId)
-    );
+    return !folderByExternalIdMap.has(folder.parentFolderId);
   });
 
   rootFolders.sort((a, b) => a.name.localeCompare(b.name));

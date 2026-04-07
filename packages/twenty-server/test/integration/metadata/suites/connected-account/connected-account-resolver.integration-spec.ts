@@ -1,28 +1,10 @@
 import { gql } from 'graphql-tag';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
 
 describe('connectedAccountResolver (e2e)', () => {
-  beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED,
-      value: true,
-      expectToFail: false,
-    });
-  });
-
-  afterAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED,
-      value: false,
-      expectToFail: false,
-    });
-  });
-
   describe('myConnectedAccounts', () => {
     it('should return only the current user connected accounts', async () => {
       const response = await makeMetadataAPIRequest({
@@ -41,14 +23,10 @@ describe('connectedAccountResolver (e2e)', () => {
       expect(response.body.errors).toBeUndefined();
 
       const accounts = response.body.data.myConnectedAccounts;
-      const accountIds = accounts.map(
-        (account: { id: string }) => account.id,
-      );
+      const accountIds = accounts.map((account: { id: string }) => account.id);
 
       expect(accountIds).toContain(CONNECTED_ACCOUNT_DATA_SEED_IDS.JANE);
-      expect(accountIds).not.toContain(
-        CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY,
-      );
+      expect(accountIds).not.toContain(CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY);
     });
 
     it('should not return sensitive fields', async () => {
@@ -123,9 +101,7 @@ describe('connectedAccountResolver (e2e)', () => {
       expect(response.body.errors).toBeUndefined();
 
       const accounts = response.body.data.connectedAccounts;
-      const accountIds = accounts.map(
-        (account: { id: string }) => account.id,
-      );
+      const accountIds = accounts.map((account: { id: string }) => account.id);
 
       expect(accountIds).toContain(CONNECTED_ACCOUNT_DATA_SEED_IDS.JANE);
       expect(accountIds).toContain(CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY);

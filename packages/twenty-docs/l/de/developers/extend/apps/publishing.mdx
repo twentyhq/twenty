@@ -52,17 +52,17 @@ yarn twenty deploy
 
 ### Eine bereitgestellte App freigeben
 
-Tarball-Apps werden nicht im öffentlichen Marktplatz gelistet, daher entdecken andere Arbeitsbereiche auf demselben Server sie nicht durch Stöbern. So geben Sie eine bereitgestellte App frei:
+<Warning>
+Das Teilen privater (Tarball-)Apps über Arbeitsbereiche hinweg ist eine **Enterprise**-Funktion. Die Registerkarte **Distribution** zeigt anstelle der Freigabeoptionen eine Aufforderung zum Upgrade an, bis Ihr Arbeitsbereich über einen gültigen Enterprise-Schlüssel verfügt. Gehen Sie zu [Einstellungen > Admin-Panel > Enterprise](/settings/admin-panel#enterprise), um es zu aktivieren.
+</Warning>
+
+Tarball-Apps werden nicht im öffentlichen Marktplatz gelistet, daher entdecken andere Arbeitsbereiche auf demselben Server sie nicht durch Stöbern. Sobald sich Ihr Arbeitsbereich im Enterprise-Plan befindet, können Sie eine bereitgestellte App wie folgt freigeben:
 
 1. Gehen Sie zu **Einstellungen > Anwendungen > Registrierungen** und öffnen Sie Ihre App
 2. Klicken Sie im Tab **Distribution** auf **Freigabelink kopieren**
 3. Teilen Sie diesen Link mit Nutzern in anderen Arbeitsbereichen — er führt sie direkt zur Installationsseite der App
 
 Der Freigabelink verwendet die Basis-URL des Servers (ohne Workspace-Subdomain), sodass er für jeden Arbeitsbereich auf dem Server funktioniert.
-
-<Warning>
-Das Teilen privater Apps ist eine Enterprise-Funktion. Gehen Sie zu [Einstellungen > Admin-Panel > Enterprise](/settings/admin-panel#enterprise), um es zu aktivieren.
-</Warning>
 
 ### Versionsverwaltung
 

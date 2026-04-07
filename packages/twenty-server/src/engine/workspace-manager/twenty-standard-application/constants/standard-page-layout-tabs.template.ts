@@ -223,4 +223,10 @@ export const WIDGET_PROPS = {
     gridPosition: GRID_POSITIONS.FULL_WIDTH,
     position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
   },
+  emailThread: {
+    title: 'Thread',
+    type: WidgetType.EMAIL_THREAD,
+    gridPosition: GRID_POSITIONS.FULL_WIDTH,
+    position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
+  },
 } as const;

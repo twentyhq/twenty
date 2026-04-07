@@ -921,6 +921,7 @@ enum WidgetType {
   WORKFLOW_RUN
   FRONT_COMPONENT
   RECORD_TABLE
+  EMAIL_THREAD
 }
 
 union PageLayoutWidgetPosition = PageLayoutWidgetGridPosition | PageLayoutWidgetVerticalListPosition | PageLayoutWidgetCanvasPosition
@@ -948,7 +949,7 @@ type PageLayoutWidgetCanvasPosition {
   layoutMode: PageLayoutTabLayoutMode!
 }
 
-union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | GaugeChartConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
+union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | GaugeChartConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
 
 type AggregateChartConfiguration {
   configurationType: WidgetConfigurationType!
@@ -989,6 +990,7 @@ enum WidgetConfigurationType {
   WORKFLOW_RUN
   FRONT_COMPONENT
   RECORD_TABLE
+  EMAIL_THREAD
 }
 
 type StandaloneRichTextConfiguration {
@@ -1151,6 +1153,10 @@ type FrontComponentConfiguration {
 }
 
 type EmailsConfiguration {
+  configurationType: WidgetConfigurationType!
+}
+
+type EmailThreadConfiguration {
   configurationType: WidgetConfigurationType!
 }
 
@@ -1723,17 +1729,16 @@ enum FeatureFlagKey {
   IS_JSON_FILTER_ENABLED
   IS_AI_ENABLED
   IS_COMMAND_MENU_ITEM_ENABLED
-  IS_MARKETPLACE_ENABLED
+  IS_MARKETPLACE_SETTING_TAB_VISIBLE
   IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED
   IS_PUBLIC_DOMAIN_ENABLED
   IS_EMAILING_DOMAIN_ENABLED
   IS_JUNCTION_RELATIONS_ENABLED
   IS_DRAFT_EMAIL_ENABLED
+  IS_CONNECTED_ACCOUNT_MIGRATED
   IS_USAGE_ANALYTICS_ENABLED
   IS_RICH_TEXT_V1_MIGRATED
-  IS_DIRECT_GRAPHQL_EXECUTION_ENABLED
   IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED
-  IS_CONNECTED_ACCOUNT_MIGRATED
   IS_RECORD_TABLE_WIDGET_ENABLED
   IS_DATASOURCE_MIGRATED
 }
@@ -2542,7 +2547,7 @@ type ConnectedImapSmtpCaldavAccount {
   id: UUID!
   handle: String!
   provider: String!
-  accountOwnerId: UUID!
+  userWorkspaceId: UUID!
   connectionParameters: ImapSmtpCaldavConnectionParameters
 }
 
@@ -2570,6 +2575,7 @@ type CommandMenuItem {
   position: Float!
   isPinned: Boolean!
   availabilityType: CommandMenuItemAvailabilityType!
+  payload: JSON
   hotKeys: [String!]
   conditionalAvailabilityExpression: String
   availabilityObjectMetadataId: UUID
@@ -2596,19 +2602,11 @@ enum EngineComponentKey {
   SEE_DELETED_RECORDS
   CREATE_NEW_VIEW
   HIDE_DELETED_RECORDS
-  GO_TO_PEOPLE
-  GO_TO_COMPANIES
-  GO_TO_DASHBOARDS
-  GO_TO_OPPORTUNITIES
-  GO_TO_SETTINGS
-  GO_TO_TASKS
-  GO_TO_NOTES
   EDIT_RECORD_PAGE_LAYOUT
   EDIT_DASHBOARD_LAYOUT
   SAVE_DASHBOARD_LAYOUT
   CANCEL_DASHBOARD_LAYOUT
   DUPLICATE_DASHBOARD
-  GO_TO_WORKFLOWS
   ACTIVATE_WORKFLOW
   DEACTIVATE_WORKFLOW
   DISCARD_DRAFT_WORKFLOW
@@ -2619,7 +2617,6 @@ enum EngineComponentKey {
   ADD_NODE_WORKFLOW
   TIDY_UP_WORKFLOW
   DUPLICATE_WORKFLOW
-  GO_TO_RUNS
   SEE_VERSION_WORKFLOW_RUN
   SEE_WORKFLOW_WORKFLOW_RUN
   STOP_WORKFLOW_RUN
@@ -2631,8 +2628,20 @@ enum EngineComponentKey {
   SEARCH_RECORDS_FALLBACK
   ASK_AI
   VIEW_PREVIOUS_AI_CHATS
+  NAVIGATION
   TRIGGER_WORKFLOW_VERSION
   FRONT_COMPONENT_RENDERER
+  REPLY_TO_EMAIL_THREAD
+  COMPOSE_EMAIL
+  GO_TO_PEOPLE
+  GO_TO_COMPANIES
+  GO_TO_DASHBOARDS
+  GO_TO_OPPORTUNITIES
+  GO_TO_SETTINGS
+  GO_TO_TASKS
+  GO_TO_NOTES
+  GO_TO_WORKFLOWS
+  GO_TO_RUNS
   DELETE_SINGLE_RECORD
   DELETE_MULTIPLE_RECORDS
   RESTORE_SINGLE_RECORD
@@ -2754,6 +2763,26 @@ type DuplicatedDashboard {
   position: Float!
   createdAt: String!
   updatedAt: String!
+}
+
+type ConnectedAccountDTO {
+  id: UUID!
+  handle: String!
+  provider: String!
+  lastCredentialsRefreshedAt: DateTime
+  authFailedAt: DateTime
+  handleAliases: [String!]
+  scopes: [String!]
+  connectionParameters: ImapSmtpCaldavConnectionParameters
+  lastSignedInAt: DateTime
+  userWorkspaceId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type SendEmailOutput {
+  success: Boolean!
+  error: String
 }
 
 type EventLogRecord {
@@ -2924,20 +2953,6 @@ enum CalendarChannelContactAutoCreationPolicy {
   NONE
 }
 
-type ConnectedAccountDTO {
-  id: UUID!
-  handle: String!
-  provider: String!
-  lastCredentialsRefreshedAt: DateTime
-  authFailedAt: DateTime
-  handleAliases: [String!]
-  scopes: [String!]
-  lastSignedInAt: DateTime
-  userWorkspaceId: UUID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
 type MessageChannel {
   id: UUID!
   visibility: MessageChannelVisibility!
@@ -3013,7 +3028,7 @@ type MessageFolder {
   name: String
   isSentFolder: Boolean!
   isSynced: Boolean!
-  parentFolderId: UUID
+  parentFolderId: String
   externalId: String
   pendingSyncAction: MessageFolderPendingSyncAction!
   messageChannelId: UUID!
@@ -3220,7 +3235,6 @@ type Query {
   findApplicationRegistrationStats(id: String!): ApplicationRegistrationStats!
   findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariable!]!
   applicationRegistrationTarballUrl(id: String!): String
-  getApplicationShareLink(id: String!): String!
   currentUser: User!
   currentWorkspace: Workspace!
   getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
@@ -3370,6 +3384,7 @@ enum UsageOperationType {
   AI_WORKFLOW_TOKEN
   WORKFLOW_EXECUTION
   CODE_EXECUTION
+  WEB_SEARCH
 }
 
 type Mutation {
@@ -3445,6 +3460,7 @@ type Mutation {
   updatePageLayout(id: String!, input: UpdatePageLayoutInput!): PageLayout!
   destroyPageLayout(id: String!): Boolean!
   updatePageLayoutWithTabsAndWidgets(id: String!, input: UpdatePageLayoutWithTabsInput!): PageLayout!
+  resetPageLayoutWidgetToDefault(id: String!): PageLayoutWidget!
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
   updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
   destroyPageLayoutWidget(id: String!): Boolean!
@@ -3545,6 +3561,7 @@ type Mutation {
   deleteSSOIdentityProvider(input: DeleteSsoInput!): DeleteSso!
   editSSOIdentityProvider(input: EditSsoInput!): EditSso!
   impersonate(userId: UUID!, workspaceId: UUID!): Impersonate!
+  sendEmail(input: SendEmailInput!): SendEmailOutput!
   startChannelSync(connectedAccountId: UUID!): ChannelSyncSuccess!
   saveImapSmtpCaldavAccount(accountOwnerId: UUID!, handle: String!, connectionParameters: EmailAccountConnectionParameters!, id: UUID): ImapSmtpCaldavConnectionSuccess!
   updateLabPublicFeatureFlag(input: UpdateLabPublicFeatureFlagInput!): FeatureFlag!
@@ -4034,6 +4051,7 @@ input CreateCommandMenuItemInput {
   hotKeys: [String!]
   conditionalAvailabilityExpression: String
   availabilityObjectMetadataId: UUID
+  payload: JSON
 }
 
 input UpdateCommandMenuItemInput {
@@ -4513,6 +4531,16 @@ input DeleteSsoInput {
 input EditSsoInput {
   id: UUID!
   status: SSOIdentityProviderStatus!
+}
+
+input SendEmailInput {
+  connectedAccountId: String!
+  to: String!
+  cc: String
+  bcc: String
+  subject: String!
+  body: String!
+  inReplyTo: String
 }
 
 input EmailAccountConnectionParameters {

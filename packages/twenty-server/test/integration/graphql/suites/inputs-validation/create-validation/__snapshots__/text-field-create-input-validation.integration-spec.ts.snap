@@ -1,5 +1,5 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Create input validation - TEXT Gql create input - failure TEXT - should fail with : {"textField":1} 1`] = `"String cannot represent a non string value: 1"`;
+exports[`Create input validation - TEXT Gql create input - failure TEXT - should fail with : {"textField":1} 1`] = `"Invalid string value 1 for text field "textField""`;
 
 exports[`Create input validation - TEXT Rest create input - failure TEXT - should fail with : {"textField":1} 1`] = `"["Invalid string value 1 for text field \\"textField\\""]"`;

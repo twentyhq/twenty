@@ -3,12 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { type ToolSet } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  type NativeToolProvider,
-  type ToolProviderContext,
-} from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+import { type NativeToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/native-tool-provider.interface';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 
 import { ToolCategory } from 'twenty-shared/ai';
+import { WebSearchService } from 'src/engine/core-modules/web-search/web-search.service';
 import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
@@ -21,6 +20,7 @@ export class NativeModelToolProvider implements NativeToolProvider {
   constructor(
     private readonly agentModelConfigService: AgentModelConfigService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly webSearchService: WebSearchService,
   ) {}
 
   async isAvailable(context: ToolProviderContext): Promise<boolean> {
@@ -29,6 +29,10 @@ export class NativeModelToolProvider implements NativeToolProvider {
 
   async generateTools(context: ToolProviderContext): Promise<ToolSet> {
     if (!context.agent) {
+      return {};
+    }
+
+    if (!this.webSearchService.shouldUseNativeSearch()) {
       return {};
     }
 

@@ -17,8 +17,8 @@ export const computeStandardCalendarChannelEventAssociationViewFields = (
         objectName: 'calendarChannelEventAssociation',
         context: {
           viewName: 'allCalendarChannelEventAssociations',
-          viewFieldName: 'calendarChannel',
-          fieldName: 'calendarChannel',
+          viewFieldName: 'calendarChannelId',
+          fieldName: 'calendarChannelId',
           position: 0,
           isVisible: true,
           size: 150,
@@ -70,8 +70,8 @@ export const computeStandardCalendarChannelEventAssociationViewFields = (
         objectName: 'calendarChannelEventAssociation',
         context: {
           viewName: 'calendarChannelEventAssociationRecordPageFields',
-          viewFieldName: 'calendarChannel',
-          fieldName: 'calendarChannel',
+          viewFieldName: 'calendarChannelId',
+          fieldName: 'calendarChannelId',
           position: 0,
           isVisible: true,
           size: 150,

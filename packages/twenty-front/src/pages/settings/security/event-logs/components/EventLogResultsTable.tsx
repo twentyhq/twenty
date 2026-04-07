@@ -1,3 +1,4 @@
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -130,12 +131,6 @@ const StyledResizeHandle = styled.div<{ isResizing: boolean }>`
   &:hover {
     background: ${themeCssVariables.color.blue};
   }
-`;
-
-const StyledEmptyState = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  padding: ${themeCssVariables.spacing[8]};
-  text-align: center;
 `;
 
 const StyledLoadingMore = styled.div`
@@ -292,9 +287,9 @@ export const EventLogResultsTable = ({
 
   if (!loading && records.length === 0) {
     return (
-      <StyledEmptyState>
+      <SettingsEmptyPlaceholder>
         <Trans>No event logs found</Trans>
-      </StyledEmptyState>
+      </SettingsEmptyPlaceholder>
     );
   }
 

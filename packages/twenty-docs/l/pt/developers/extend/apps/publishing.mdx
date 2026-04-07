@@ -52,17 +52,17 @@ yarn twenty deploy
 
 ### Compartilhando um aplicativo implantado
 
-Aplicativos em tarball não são listados no marketplace público, então outros espaços de trabalho no mesmo servidor não os descobrirão ao navegar. Para compartilhar um aplicativo implantado:
+<Warning>
+Compartilhar aplicativos privados (tarball) entre espaços de trabalho é um recurso do plano **Enterprise**. A guia **Distribution** exibirá um aviso de atualização em vez dos controles de compartilhamento até que seu espaço de trabalho tenha uma chave Enterprise válida. Vá para [Configurações > Painel de Administração > Enterprise](/settings/admin-panel#enterprise) para ativá-lo.
+</Warning>
+
+Aplicativos em tarball não são listados no marketplace público, então outros espaços de trabalho no mesmo servidor não os descobrirão ao navegar. Assim que o seu espaço de trabalho estiver no plano Enterprise, você pode compartilhar um app implantado desta forma:
 
 1. Vá para **Configurações > Aplicações > Registros** e abra seu aplicativo
 2. Na guia **Distribuição**, clique em **Copiar link de compartilhamento**
 3. Compartilhe esse link com usuários de outros espaços de trabalho — ele os leva diretamente para a página de instalação do aplicativo
 
 O link de compartilhamento usa a URL base do servidor (sem qualquer subdomínio de espaço de trabalho), para funcionar em qualquer espaço de trabalho no servidor.
-
-<Warning>
-Compartilhar apps privados é um recurso do plano Enterprise. Vá para [Configurações > Painel de Administração > Enterprise](/settings/admin-panel#enterprise) para ativá-lo.
-</Warning>
 
 ### Gerenciamento de versões
 

@@ -1,19 +1,18 @@
 import { Scope } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
+import { Repository } from 'typeorm';
+
+import { CalendarChannelSyncStage } from 'twenty-shared/types';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { CalendarChannelDataAccessService } from 'src/engine/metadata-modules/calendar-channel/data-access/services/calendar-channel-data-access.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
-import {
-  CalendarChannelSyncStage,
-  type CalendarChannelWorkspaceEntity,
-} from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
+import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 
 export type CalendarEventsImportJobData = {
   calendarChannelId: string;
@@ -29,7 +28,8 @@ export class CalendarEventsImportJob {
     private readonly calendarEventsImportService: CalendarEventsImportService,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly calendarChannelDataAccessService: CalendarChannelDataAccessService,
+    @InjectRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
   ) {}
 
   @Process(CalendarEventsImportJob.name)
@@ -39,14 +39,14 @@ export class CalendarEventsImportJob {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const calendarChannel =
-        await this.calendarChannelDataAccessService.findOne(workspaceId, {
-          where: {
-            id: calendarChannelId,
-            isSyncEnabled: true,
-          },
-          relations: ['connectedAccount'],
-        });
+      const calendarChannel = await this.calendarChannelRepository.findOne({
+        where: {
+          id: calendarChannelId,
+          isSyncEnabled: true,
+          workspaceId,
+        },
+        relations: ['connectedAccount'],
+      });
 
       if (!calendarChannel?.isSyncEnabled) {
         return;
@@ -62,7 +62,10 @@ export class CalendarEventsImportJob {
       const syncStageStartedAt = calendarChannel.syncStageStartedAt;
 
       if (
-        isThrottled(syncStageStartedAt, calendarChannel.throttleFailureCount)
+        isThrottled(
+          syncStageStartedAt?.toISOString() ?? null,
+          calendarChannel.throttleFailureCount,
+        )
       ) {
         await this.calendarChannelSyncStatusService.markAsCalendarEventsImportPending(
           [calendarChannel.id],
@@ -74,8 +77,8 @@ export class CalendarEventsImportJob {
       }
 
       await this.calendarEventsImportService.processCalendarEventsImport(
-        calendarChannel as unknown as CalendarChannelWorkspaceEntity,
-        calendarChannel.connectedAccount as unknown as ConnectedAccountWorkspaceEntity,
+        calendarChannel as unknown as CalendarChannelEntity,
+        calendarChannel.connectedAccount,
         workspaceId,
       );
     }, authContext);

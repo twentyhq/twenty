@@ -216,7 +216,7 @@ export const STANDARD_OBJECTS = {
       deletedAt: {
         universalIdentifier: '20202020-c01d-4024-9d24-cffef9effef1',
       },
-      calendarChannel: {
+      calendarChannelId: {
         universalIdentifier: '20202020-93ee-4da4-8d58-0282c4a9cb7d',
       },
       calendarEvent: {
@@ -253,7 +253,7 @@ export const STANDARD_OBJECTS = {
       allCalendarChannelEventAssociations: {
         universalIdentifier: '001893be-c06c-4ba1-9f18-53bd26f0179f',
         viewFields: {
-          calendarChannel: {
+          calendarChannelId: {
             universalIdentifier: 'e3adffd2-d820-4c89-912c-34908d90057e',
           },
           calendarEvent: {
@@ -278,7 +278,7 @@ export const STANDARD_OBJECTS = {
           },
         },
         viewFields: {
-          calendarChannel: {
+          calendarChannelId: {
             universalIdentifier: 'cd6c6714-fc1d-4511-a664-ec5e8dfd8692',
           },
           calendarEvent: {
@@ -330,9 +330,6 @@ export const STANDARD_OBJECTS = {
       },
       syncCursor: {
         universalIdentifier: '20202020-bac2-4852-a5cb-7a7898992b70',
-      },
-      calendarChannelEventAssociations: {
-        universalIdentifier: '20202020-afb0-4a9f-979f-2d5087d71d09',
       },
       throttleFailureCount: {
         universalIdentifier: '20202020-525c-4b76-b9bd-0dd57fd11d61',
@@ -1256,7 +1253,7 @@ export const STANDARD_OBJECTS = {
       deletedAt: {
         universalIdentifier: '20202020-b01d-40b4-9db4-8d9eafbacbdc',
       },
-      messageChannel: {
+      messageChannelId: {
         universalIdentifier: '20202020-b658-408f-bd46-3bd2d15d7e52',
       },
       message: {
@@ -1305,7 +1302,7 @@ export const STANDARD_OBJECTS = {
       allMessageChannelMessageAssociations: {
         universalIdentifier: 'a4f465ac-d5cb-4f24-93ac-7a24bafd398e',
         viewFields: {
-          messageChannel: {
+          messageChannelId: {
             universalIdentifier: 'b86e652b-04ce-4089-9f71-e190eaf5b798',
           },
           message: {
@@ -1333,7 +1330,7 @@ export const STANDARD_OBJECTS = {
           },
         },
         viewFields: {
-          messageChannel: {
+          messageChannelId: {
             universalIdentifier: '376c7685-9ebe-4c95-b820-424b1c2f264f',
           },
           message: {
@@ -1385,7 +1382,7 @@ export const STANDARD_OBJECTS = {
       messageChannelMessageAssociation: {
         universalIdentifier: '7411cfa3-4fd9-4b90-a636-940015fd7243',
       },
-      messageFolder: {
+      messageFolderId: {
         universalIdentifier: 'b3369d31-3856-4a7a-b007-ee353918127c',
       },
     },
@@ -1407,7 +1404,7 @@ export const STANDARD_OBJECTS = {
           messageChannelMessageAssociation: {
             universalIdentifier: '1251e67a-e795-4bc2-a468-6cfc838b6a0a',
           },
-          messageFolder: {
+          messageFolderId: {
             universalIdentifier: 'aff2203d-6439-43b8-9cb4-55e8d78bba43',
           },
           createdAt: {
@@ -1429,7 +1426,7 @@ export const STANDARD_OBJECTS = {
           messageChannelMessageAssociation: {
             universalIdentifier: 'd34ed53e-5156-4a18-a8df-572269496aac',
           },
-          messageFolder: {
+          messageFolderId: {
             universalIdentifier: '04f14582-caf9-49ee-81ea-e5d4f977bfe1',
           },
           createdAt: {
@@ -1476,12 +1473,6 @@ export const STANDARD_OBJECTS = {
       },
       excludeGroupEmails: {
         universalIdentifier: '20202020-45a0-4be4-9164-5820a6a109fb',
-      },
-      messageChannelMessageAssociations: {
-        universalIdentifier: '20202020-49b8-4766-88fd-75f1e21b3d5f',
-      },
-      messageFolders: {
-        universalIdentifier: '20202020-cc39-4432-9fe8-ec8ab8bbed94',
       },
       messageFolderImportPolicy: {
         universalIdentifier: '20202020-cc39-4432-9fe8-ec8ab8bbed95',
@@ -1611,7 +1602,7 @@ export const STANDARD_OBJECTS = {
       parentFolderId: {
         universalIdentifier: '20202020-e45d-49de-a4aa-587bbf9601f3',
       },
-      messageChannel: {
+      messageChannelId: {
         universalIdentifier: '20202020-c9f8-43db-a3e7-7f2e8b5d9c1a',
       },
       syncCursor: {
@@ -1641,9 +1632,6 @@ export const STANDARD_OBJECTS = {
       searchVector: {
         universalIdentifier: '5f2d3937-bafd-4d71-b4cb-b34037efd2e1',
       },
-      messageChannelMessageAssociationMessageFolders: {
-        universalIdentifier: 'cce5ce1e-31d0-42e6-83cd-90059244a484',
-      },
     },
     indexes: {
       messageChannelIdIndex: {
@@ -1657,7 +1645,7 @@ export const STANDARD_OBJECTS = {
           name: {
             universalIdentifier: '72b2d56f-5245-4cb6-933c-3d5031de0778',
           },
-          messageChannel: {
+          messageChannelId: {
             universalIdentifier: '121abdf0-c89f-4313-b156-e8a3c0cb77ec',
           },
           isSentFolder: {
@@ -1682,7 +1670,7 @@ export const STANDARD_OBJECTS = {
           },
         },
         viewFields: {
-          messageChannel: {
+          messageChannelId: {
             universalIdentifier: '2fb6ff09-bed5-4b31-af0f-7fa3df5612da',
           },
           isSentFolder: {
@@ -1850,14 +1838,23 @@ export const STANDARD_OBJECTS = {
       searchVector: {
         universalIdentifier: 'c63e091f-6528-4657-ad2a-b0a158f9e483',
       },
+      subject: {
+        universalIdentifier: 'a8ddbf8c-1137-45d1-b89e-5ffbd83f67c8',
+      },
     },
     indexes: {},
     views: {
       allMessageThreads: {
         universalIdentifier: '20202020-d002-4d02-8d02-ae55a9ba2002',
         viewFields: {
+          subject: {
+            universalIdentifier: 'e5f0d32b-2b6a-47bc-b3bd-f32c96594ec1',
+          },
           messages: {
             universalIdentifier: '20202020-df02-4d02-8d02-ae55a9ba2f01',
+          },
+          updatedAt: {
+            universalIdentifier: 'af2c6ac9-7083-4609-8172-d518441f5e9e',
           },
           createdAt: {
             universalIdentifier: '20202020-df02-4d02-8d02-ae55a9ba2f02',

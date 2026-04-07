@@ -1898,13 +1898,22 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
       }
 
       if (
-        node.scrollWidth <= node.clientWidth ||
         Math.abs(event.deltaY) <= Math.abs(event.deltaX)
       ) {
         return;
       }
 
-      node.scrollLeft += event.deltaY;
+      const maxScrollLeft = Math.max(node.scrollWidth - node.clientWidth, 0);
+      const nextScrollLeft = Math.min(
+        Math.max(node.scrollLeft + event.deltaY, 0),
+        maxScrollLeft,
+      );
+
+      if (Math.abs(nextScrollLeft - node.scrollLeft) < 0.5) {
+        return;
+      }
+
+      node.scrollLeft = nextScrollLeft;
       event.preventDefault();
     };
 
