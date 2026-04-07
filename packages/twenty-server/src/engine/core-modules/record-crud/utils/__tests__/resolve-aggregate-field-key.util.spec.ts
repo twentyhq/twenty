@@ -79,6 +79,16 @@ describe('resolveAggregateFieldKey', () => {
     ).toBeNull();
   });
 
+  it('rejects invalid multi-level dot notation', () => {
+    expect(
+      resolveAggregateFieldKey(
+        'SUM',
+        'amount.amountMicros.extra',
+        availableAggregations,
+      ),
+    ).toBeNull();
+  });
+
   it('returns null for a non-existent field', () => {
     expect(
       resolveAggregateFieldKey('SUM', 'nonExistent', availableAggregations),

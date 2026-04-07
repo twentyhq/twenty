@@ -7,9 +7,16 @@ export const resolveAggregateFieldKey = (
   aggregateFieldName: string,
   availableAggregations: Record<string, AggregationField>,
 ): string | null => {
-  const [parentField, subField] = aggregateFieldName.includes('.')
-    ? aggregateFieldName.split('.')
-    : [aggregateFieldName, undefined];
+  const fieldPathParts = aggregateFieldName.split('.');
+
+  if (
+    fieldPathParts.length > 2 ||
+    fieldPathParts.some((fieldPathPart) => fieldPathPart.length === 0)
+  ) {
+    return null;
+  }
+
+  const [parentField, subField] = fieldPathParts;
 
   const targetOperation = AggregateOperations[aggregateOperation];
 

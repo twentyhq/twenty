@@ -6,7 +6,7 @@ import {
   OrderByDirection,
   type OrderByWithGroupBy,
 } from 'twenty-shared/types';
-import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import { isFieldMetadataDateKind } from 'twenty-shared/utils';
 
 import { type ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -96,82 +96,108 @@ export class GroupByRecordsService {
         );
       }
 
+      if (dateGranularity && dateFieldCount === 0) {
+        throw new RecordCrudException(
+          'dateGranularity requires exactly one date field in groupBy',
+          RecordCrudExceptionCode.INVALID_REQUEST,
+        );
+      }
+
       const dimensionLabels: string[] = [];
+      const objectRecordGroupBy: ObjectRecordGroupBy = [];
 
-      const objectRecordGroupBy: ObjectRecordGroupBy = groupBy.map(
-        (fieldName) => {
-          if (fieldName.includes('.')) {
-            const [parentField, subField] = fieldName.split('.');
+      for (const fieldName of groupBy) {
+        if (fieldName.includes('.')) {
+          const fieldPathParts = fieldName.split('.');
 
-            dimensionLabels.push(fieldName);
-
-            return { [parentField]: { [subField]: true } };
+          if (
+            fieldPathParts.length !== 2 ||
+            fieldPathParts.some((fieldPathPart) => fieldPathPart.length === 0)
+          ) {
+            throw new RecordCrudException(
+              `Invalid groupBy field "${fieldName}"`,
+              RecordCrudExceptionCode.INVALID_REQUEST,
+            );
           }
 
-          if (fieldIdByJoinColumnName[fieldName]) {
-            const relationFieldId = fieldIdByJoinColumnName[fieldName];
-            const relationFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-              flatEntityId: relationFieldId,
-              flatEntityMaps: flatFieldMetadataMaps,
-            });
+          const [parentField, subField] = fieldPathParts;
 
-            if (relationFieldMetadata) {
-              const targetObject =
-                relationFieldMetadata.relationTargetObjectMetadataId &&
-                isDefined(flatObjectMetadataMaps)
-                  ? findFlatEntityByIdInFlatEntityMaps({
-                      flatEntityId:
-                        relationFieldMetadata.relationTargetObjectMetadataId,
-                      flatEntityMaps: flatObjectMetadataMaps,
-                    })
-                  : undefined;
-
-              dimensionLabels.push(
-                targetObject
-                  ? `${fieldName} (${targetObject.labelSingular} ID)`
-                  : fieldName,
-              );
-
-              return { [relationFieldMetadata.name]: { id: true } };
-            }
-
-            dimensionLabels.push(fieldName);
-
-            return { [fieldName]: true };
-          }
-
-          const fieldId = fieldIdByName[fieldName];
-
-          if (fieldId) {
-            const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-              flatEntityId: fieldId,
-              flatEntityMaps: flatFieldMetadataMaps,
-            });
-
-            if (fieldMetadata && isFieldMetadataDateKind(fieldMetadata.type)) {
-              dimensionLabels.push(fieldName);
-
-              return {
-                [fieldName]: {
-                  granularity:
-                    dateGranularity ?? ObjectRecordGroupByDateGranularity.MONTH,
-                  timeZone: timeZone ?? 'UTC',
-                },
-              };
-            }
-          }
-
+          objectRecordGroupBy.push({ [parentField]: { [subField]: true } });
           dimensionLabels.push(fieldName);
 
-          return { [fieldName]: true };
-        },
-      );
+          continue;
+        }
+
+        if (fieldIdByJoinColumnName[fieldName]) {
+          const relationFieldId = fieldIdByJoinColumnName[fieldName];
+          const relationFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: relationFieldId,
+            flatEntityMaps: flatFieldMetadataMaps,
+          });
+
+          if (!relationFieldMetadata) {
+            throw new RecordCrudException(
+              `Invalid relation groupBy field "${fieldName}"`,
+              RecordCrudExceptionCode.INVALID_REQUEST,
+            );
+          }
+
+          const targetObject = relationFieldMetadata.relationTargetObjectMetadataId
+            ? findFlatEntityByIdInFlatEntityMaps({
+                flatEntityId:
+                  relationFieldMetadata.relationTargetObjectMetadataId,
+                flatEntityMaps: flatObjectMetadataMaps,
+              })
+            : undefined;
+
+          objectRecordGroupBy.push({ [relationFieldMetadata.name]: { id: true } });
+          dimensionLabels.push(
+            targetObject
+              ? `${fieldName} (${targetObject.labelSingular} ID)`
+              : fieldName,
+          );
+
+          continue;
+        }
+
+        const fieldId = fieldIdByName[fieldName];
+
+        if (fieldId) {
+          const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: fieldId,
+            flatEntityMaps: flatFieldMetadataMaps,
+          });
+
+          if (fieldMetadata && isFieldMetadataDateKind(fieldMetadata.type)) {
+            objectRecordGroupBy.push({
+              [fieldName]: {
+                granularity:
+                  dateGranularity ?? ObjectRecordGroupByDateGranularity.MONTH,
+                timeZone: timeZone ?? 'UTC',
+              },
+            });
+            dimensionLabels.push(fieldName);
+
+            continue;
+          }
+        }
+
+        objectRecordGroupBy.push({ [fieldName]: true });
+        dimensionLabels.push(fieldName);
+      }
 
       const availableAggregations =
         getAvailableAggregationsFromObjectFields(fields);
       let aggregateFieldKey: string;
 
       if (aggregateOperation === AggregateOperations.COUNT) {
+        if (aggregateFieldName) {
+          throw new RecordCrudException(
+            'aggregateFieldName is not supported for COUNT operation',
+            RecordCrudExceptionCode.INVALID_REQUEST,
+          );
+        }
+
         aggregateFieldKey = 'totalCount';
       } else {
         if (!aggregateFieldName) {
