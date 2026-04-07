@@ -124,22 +124,25 @@ export class BackfillMessageThreadSubjectCommand extends ActiveOrSuspendedWorksp
         { workspaceId },
       );
 
-    const flatFieldMetadataToCreate = getDefaultFlatFieldMetadata({
-      createFieldInput: {
-        name: 'subject',
-        type: FieldMetadataType.TEXT,
-        label: 'Subject',
-        description: 'Subject',
-        icon: 'IconMessage',
-        isNullable: true,
-        isUIReadOnly: true,
-        universalIdentifier:
-          STANDARD_OBJECTS.messageThread.fields.subject.universalIdentifier,
-      },
-      flatApplication: twentyStandardFlatApplication,
-      objectMetadataUniversalIdentifier:
-        messageThreadObjectMetadata.universalIdentifier,
-    });
+    const flatFieldMetadataToCreate = {
+      ...getDefaultFlatFieldMetadata({
+        createFieldInput: {
+          name: 'subject',
+          type: FieldMetadataType.TEXT,
+          label: 'Subject',
+          description: 'Subject',
+          icon: 'IconMessage',
+          isNullable: true,
+          isUIReadOnly: true,
+          universalIdentifier:
+            STANDARD_OBJECTS.messageThread.fields.subject.universalIdentifier,
+        },
+        flatApplication: twentyStandardFlatApplication,
+        objectMetadataUniversalIdentifier:
+          messageThreadObjectMetadata.universalIdentifier,
+      }),
+      isCustom: false,
+    };
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
