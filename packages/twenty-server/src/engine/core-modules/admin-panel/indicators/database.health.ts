@@ -89,7 +89,10 @@ export class DatabaseHealthIndicator {
         },
         databaseSize: databaseSize.size,
         performance: {
-          cacheHitRatio: Math.round(parseFloat(cacheHitRatio.ratio)) + '%',
+          cacheHitRatio:
+            cacheHitRatio.ratio != null
+              ? Math.round(parseFloat(cacheHitRatio.ratio)) + '%'
+              : 'N/A',
           deadlocks: parseInt(deadlocks.deadlocks),
           slowQueries: parseInt(slowQueries.count),
         },

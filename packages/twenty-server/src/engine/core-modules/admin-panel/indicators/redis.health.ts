@@ -70,14 +70,17 @@ export class RedisHealthIndicator {
         },
         performance: {
           opsPerSecond: parseInt(statsData.instantaneous_ops_per_sec),
-          hitRate: statsData.keyspace_hits
-            ? Math.round(
-                (parseInt(statsData.keyspace_hits) /
-                  (parseInt(statsData.keyspace_hits) +
-                    parseInt(statsData.keyspace_misses))) *
-                  100,
-              ) + '%'
-            : '0%',
+          hitRate: (() => {
+            const hits = parseInt(statsData.keyspace_hits);
+            const misses = parseInt(statsData.keyspace_misses);
+            const total = hits + misses;
+
+            if (!total || isNaN(total)) {
+              return '0%';
+            }
+
+            return Math.round((hits / total) * 100) + '%';
+          })(),
           evictedKeys: parseInt(statsData.evicted_keys),
           expiredKeys: parseInt(statsData.expired_keys),
         },
