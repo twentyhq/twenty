@@ -21,7 +21,7 @@ export class OAuthDiscoveryController {
   async getAuthorizationServerMetadata() {
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
 
-    const frontUrl = this.domainServerConfigService.getFrontUrl().toString();
+    const frontUrl = this.domainServerConfigService.getBaseUrl().toString();
 
     const cliRegistration =
       await this.applicationRegistrationService.findOneByUniversalIdentifier(

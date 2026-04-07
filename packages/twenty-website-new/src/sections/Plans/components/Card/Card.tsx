@@ -1,14 +1,12 @@
-import {
-  Body,
-  Heading,
-  LazyEmbed,
-  LinkButton,
-} from '@/design-system/components';
+import { styled } from '@linaria/react';
+
+import { Body, Heading, LinkButton } from '@/design-system/components';
 import { CheckIcon } from '@/icons/informative/Check';
 import type { PlanCardType } from '@/sections/Plans/types';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
-import { styled } from '@linaria/react';
+
+import { PlanCardVisual } from './PlanCardVisual';
 
 const FIXED_ROWS = 4;
 
@@ -73,10 +71,11 @@ const PriceLine = styled.div`
   white-space: nowrap;
 `;
 
-const CardIllustration = styled(LazyEmbed)`
+const CardIllustrationEmbed = styled.div`
   background-color: ${theme.colors.primary.background[100]};
   border: none;
-  display: none;
+  border-radius: ${theme.radius(2)};
+  display: block;
   flex-shrink: 0;
   height: 80px;
   overflow: hidden;
@@ -149,12 +148,12 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
             />
           </PriceLine>
         </CardHeaderInfo>
-        <CardIllustration
-          allow="clipboard-write; encrypted-media; gyroscope; web-share"
-          referrerPolicy="strict-origin-when-cross-origin"
-          src={card.illustration.src}
-          title={card.illustration.title}
-        />
+        <CardIllustrationEmbed>
+          <PlanCardVisual
+            src={card.illustration.src}
+            title={card.illustration.title}
+          />
+        </CardIllustrationEmbed>
       </CardHeader>
 
       <LinkButton

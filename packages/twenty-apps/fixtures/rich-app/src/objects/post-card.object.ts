@@ -5,6 +5,7 @@ enum PostCardStatus {
   SENT = 'SENT',
   DELIVERED = 'DELIVERED',
   RETURNED = 'RETURNED',
+  LOST = 'LOST',
 }
 
 export const POST_CARD_UNIVERSAL_IDENTIFIER =
@@ -53,32 +54,39 @@ export default defineObject({
       defaultValue: `'${PostCardStatus.DRAFT}'`,
       options: [
         {
-          id: 'a1b2c3d4-0001-4000-8000-000000000001',
+          id: '1b008e19-1e59-4a07-b187-65a20e547c4e',
           value: PostCardStatus.DRAFT,
           label: 'Draft',
           position: 0,
           color: 'gray',
         },
         {
-          id: 'a1b2c3d4-0002-4000-8000-000000000002',
+          id: '452b9d40-889c-4342-9697-98319394db04',
           value: PostCardStatus.SENT,
           label: 'Sent',
           position: 1,
           color: 'orange',
         },
         {
-          id: 'a1b2c3d4-0003-4000-8000-000000000003',
+          id: 'c2ed0b8c-a3ed-4383-aef9-e0441267bcfe',
           value: PostCardStatus.DELIVERED,
           label: 'Delivered',
           position: 2,
           color: 'green',
         },
         {
-          id: 'a1b2c3d4-0004-4000-8000-000000000004',
+          id: 'c57a5e08-7ef7-49b8-87e6-32d720d22802',
           value: PostCardStatus.RETURNED,
           label: 'Returned',
           position: 3,
           color: 'orange',
+        },
+        {
+          // No id — exercises addMissingFieldOptionIds in the object branch
+          value: PostCardStatus.LOST,
+          label: 'Lost',
+          position: 4,
+          color: 'red',
         },
       ],
       name: 'status',

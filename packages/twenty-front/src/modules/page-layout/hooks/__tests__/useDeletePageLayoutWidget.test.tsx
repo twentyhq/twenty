@@ -1,18 +1,27 @@
+import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
+import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { act, renderHook } from '@testing-library/react';
+import { createStore } from 'jotai';
+import { type ReactNode } from 'react';
 import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from './PageLayoutTestWrapper';
-import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
-import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
-import { createStore } from 'jotai';
-import { type ReactNode } from 'react';
 
 jest.mock(
   '@/page-layout/widgets/record-table/hooks/useDeleteViewForRecordTableWidget',
   () => ({
     useDeleteViewForRecordTableWidget: () => ({
       deleteViewForRecordTableWidget: jest.fn(),
+    }),
+  }),
+);
+
+jest.mock(
+  '@/page-layout/widgets/fields/hooks/useDeleteViewForFieldsWidget',
+  () => ({
+    useDeleteViewForFieldsWidget: () => ({
+      deleteViewForFieldsWidget: jest.fn(),
     }),
   }),
 );
