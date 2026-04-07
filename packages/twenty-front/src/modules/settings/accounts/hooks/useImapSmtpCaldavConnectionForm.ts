@@ -41,20 +41,18 @@ export const useImapSmtpCaldavConnectionForm = ({
   const navigate = useNavigateSettings();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
+  const defaultProtocolValues: Record<string, ConnectionParameters> = {
+    IMAP: { host: '', port: 993, password: '', secure: true },
+    SMTP: { host: '', username: '', port: 587, password: '', secure: true },
+    CALDAV: { host: '', port: 443, password: '', secure: true },
+  };
+
   const formMethods = useForm<ConnectionFormData>({
     mode: 'onSubmit',
     resolver: zodResolver(connectionImapSmtpCalDav),
     defaultValues: {
       handle: '',
-      IMAP: { host: '', port: 993, password: '', secure: true },
-      SMTP: { host: '', username: '', port: 587, password: '', secure: true },
-      CALDAV: {
-        host: '',
-        port: 443,
-        password: '',
-        secure: true,
-        username: undefined,
-      },
+      ...defaultProtocolValues,
     },
   });
 
@@ -71,9 +69,15 @@ export const useImapSmtpCaldavConnectionForm = ({
     if (isDefined(connectedAccount)) {
       reset({
         handle: connectedAccount.handle || '',
-        IMAP: connectedAccount.connectionParameters?.IMAP || undefined,
-        SMTP: connectedAccount.connectionParameters?.SMTP || undefined,
-        CALDAV: connectedAccount.connectionParameters?.CALDAV || undefined,
+        IMAP:
+          connectedAccount.connectionParameters?.IMAP ||
+          defaultProtocolValues.IMAP,
+        SMTP:
+          connectedAccount.connectionParameters?.SMTP ||
+          defaultProtocolValues.SMTP,
+        CALDAV:
+          connectedAccount.connectionParameters?.CALDAV ||
+          defaultProtocolValues.CALDAV,
       });
     }
   }, [connectedAccount, reset]);
