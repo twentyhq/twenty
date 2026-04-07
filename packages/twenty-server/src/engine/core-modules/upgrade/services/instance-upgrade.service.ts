@@ -33,7 +33,7 @@ export class InstanceUpgradeService {
     migration: MigrationInterface,
   ): Promise<RunSingleMigrationResult> {
     const migrationName = migration.constructor.name;
-    const runByVersion =
+    const executedByVersion =
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
     const isAlreadyExecuted = await this.upgradeMigrationRepository.exists({
@@ -55,7 +55,7 @@ export class InstanceUpgradeService {
       await this.markAsCompleted({
         queryRunner,
         name: migrationName,
-        runByVersion,
+        executedByVersion,
       });
 
       await queryRunner.commitTransaction();
@@ -66,7 +66,7 @@ export class InstanceUpgradeService {
 
       await this.markFailed({
         name: migrationName,
-        runByVersion,
+        executedByVersion,
       });
 
       return { status: 'failed', error };
@@ -80,11 +80,11 @@ export class InstanceUpgradeService {
   private async markAsCompleted({
     queryRunner,
     name,
-    runByVersion,
+    executedByVersion,
   }: {
     queryRunner: QueryRunner;
     name: string;
-    runByVersion: string;
+    executedByVersion: string;
   }): Promise<void> {
     const repository = queryRunner.manager.getRepository(
       UpgradeMigrationEntity,
@@ -96,16 +96,16 @@ export class InstanceUpgradeService {
       name,
       status: 'completed' as UpgradeMigrationStatus,
       attempt: previousAttempts + 1,
-      runByVersion,
+      executedByVersion,
     });
   }
 
   private async markFailed({
     name,
-    runByVersion,
+    executedByVersion,
   }: {
     name: string;
-    runByVersion: string;
+    executedByVersion: string;
   }): Promise<void> {
     const previousAttempts = await this.upgradeMigrationRepository.count({
       where: { name },
@@ -115,7 +115,7 @@ export class InstanceUpgradeService {
       name,
       status: 'failed' as UpgradeMigrationStatus,
       attempt: previousAttempts + 1,
-      runByVersion,
+      executedByVersion,
     });
   }
 }

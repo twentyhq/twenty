@@ -24,7 +24,7 @@ export class UpgradeMigrationEntity {
   attempt: number;
 
   @Column({ type: 'varchar', nullable: false })
-  runByVersion: string;
+  executedByVersion: string;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
