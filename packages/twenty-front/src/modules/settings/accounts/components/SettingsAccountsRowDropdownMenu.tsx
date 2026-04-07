@@ -1,8 +1,11 @@
-import { useApolloClient, useMutation } from '@apollo/client/react';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { CalendarChannelSyncStage } from '@/accounts/types/CalendarChannel';
-import { MessageChannelSyncStage } from '@/accounts/types/MessageChannel';
-import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
+import { useApolloClient, useMutation } from '@apollo/client/react';
+import {
+  CalendarChannelSyncStage,
+  ConnectedAccountProvider,
+  MessageChannelSyncStage,
+  SettingsPath,
+} from 'twenty-shared/types';
 
 import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';

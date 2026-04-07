@@ -2771,6 +2771,7 @@ type ConnectedAccountDTO {
   authFailedAt: DateTime
   handleAliases: [String!]
   scopes: [String!]
+  connectionParameters: ImapSmtpCaldavConnectionParameters
   lastSignedInAt: DateTime
   userWorkspaceId: UUID!
   createdAt: DateTime!
@@ -3458,6 +3459,7 @@ type Mutation {
   updatePageLayout(id: String!, input: UpdatePageLayoutInput!): PageLayout!
   destroyPageLayout(id: String!): Boolean!
   updatePageLayoutWithTabsAndWidgets(id: String!, input: UpdatePageLayoutWithTabsInput!): PageLayout!
+  resetPageLayoutWidgetToDefault(id: String!): PageLayoutWidget!
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
   updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
   destroyPageLayoutWidget(id: String!): Boolean!

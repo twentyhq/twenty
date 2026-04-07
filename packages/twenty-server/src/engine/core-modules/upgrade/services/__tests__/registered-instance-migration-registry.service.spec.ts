@@ -1,14 +1,14 @@
 import 'reflect-metadata';
 
 import { Test } from '@nestjs/testing';
-import { getDataSourceToken } from '@nestjs/typeorm';
+import { DiscoveryService } from '@nestjs/core';
 
 import { type MigrationInterface } from 'typeorm';
 
-import { RegisteredCoreMigrationService } from 'src/database/commands/core-migration/services/registered-core-migration-registry.service';
-import { RegisteredCoreMigration } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
+import { RegisteredInstanceMigrationService } from 'src/engine/core-modules/upgrade/services/registered-instance-migration-registry.service';
+import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
 
-@RegisteredCoreMigration('1.21.0')
+@RegisteredInstanceMigration('1.21.0', 1770000000000)
 class MigrationA1770000000000 implements MigrationInterface {
   name = 'MigrationA1770000000000';
 
@@ -16,7 +16,7 @@ class MigrationA1770000000000 implements MigrationInterface {
   async down(): Promise<void> {}
 }
 
-@RegisteredCoreMigration('1.21.0')
+@RegisteredInstanceMigration('1.21.0', 1771000000000)
 class MigrationB1771000000000 implements MigrationInterface {
   name = 'MigrationB1771000000000';
 
@@ -24,7 +24,7 @@ class MigrationB1771000000000 implements MigrationInterface {
   async down(): Promise<void> {}
 }
 
-@RegisteredCoreMigration('1.21.0')
+@RegisteredInstanceMigration('1.21.0', 1772000000000)
 class MigrationC1772000000000 implements MigrationInterface {
   name = 'MigrationC1772000000000';
 
@@ -32,7 +32,7 @@ class MigrationC1772000000000 implements MigrationInterface {
   async down(): Promise<void> {}
 }
 
-@RegisteredCoreMigration('1.20.0')
+@RegisteredInstanceMigration('1.20.0', 1769000000000)
 class MigrationD1769000000000 implements MigrationInterface {
   name = 'MigrationD1769000000000';
 
@@ -47,27 +47,34 @@ class UndecoratedMigration1768000000000 implements MigrationInterface {
   async down(): Promise<void> {}
 }
 
+const buildProviderWrapper = (migration: MigrationInterface) => ({
+  instance: migration,
+  metatype: migration.constructor,
+});
+
 const buildRegistryService = async (
   migrations: MigrationInterface[],
-): Promise<RegisteredCoreMigrationService> => {
+): Promise<RegisteredInstanceMigrationService> => {
   const module = await Test.createTestingModule({
     providers: [
-      RegisteredCoreMigrationService,
+      RegisteredInstanceMigrationService,
       {
-        provide: getDataSourceToken(),
-        useValue: { migrations },
+        provide: DiscoveryService,
+        useValue: {
+          getProviders: () => migrations.map(buildProviderWrapper),
+        },
       },
     ],
   }).compile();
 
-  const service = module.get(RegisteredCoreMigrationService);
+  const service = module.get(RegisteredInstanceMigrationService);
 
   service.onModuleInit();
 
   return service;
 };
 
-describe('VersionedMigrationRegistryService', () => {
+describe('RegisteredInstanceMigrationService', () => {
   it('should group migrations by version', async () => {
     const service = await buildRegistryService([
       new MigrationD1769000000000(),
@@ -90,10 +97,10 @@ describe('VersionedMigrationRegistryService', () => {
     ]);
   });
 
-  it('should preserve input order within a version bucket', async () => {
+  it('should sort migrations by timestamp within a version bucket', async () => {
     const service = await buildRegistryService([
-      new MigrationA1770000000000(),
       new MigrationC1772000000000(),
+      new MigrationA1770000000000(),
       new MigrationB1771000000000(),
     ]);
 
@@ -103,8 +110,8 @@ describe('VersionedMigrationRegistryService', () => {
 
     expect(names).toStrictEqual([
       'MigrationA1770000000000',
-      'MigrationC1772000000000',
       'MigrationB1771000000000',
+      'MigrationC1772000000000',
     ]);
   });
 
