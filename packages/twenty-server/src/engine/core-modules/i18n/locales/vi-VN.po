@@ -134,6 +134,11 @@ msgstr "Đã xảy ra lỗi xử lý thanh toán."
 msgid "A person"
 msgstr ""
 
+#. js-lingui-id: o6M+GO
+#: src/modules/quote/query-hooks/quote-update-one.pre-query.hook.ts
+msgid "A quote must have at least one section containing a line item before it can be sent."
+msgstr ""
+
 #. js-lingui-id: sieBE7
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "A record with this relationship already exists."
@@ -1206,6 +1211,11 @@ msgstr "Không thể sửa đổi điều kiện để thay đổi vai trò củ
 msgid "Cannot modify predicate to change its role from {existingRoleIdentifier} to {updatedRoleIdentifier}"
 msgstr "Không thể sửa đổi điều kiện để thay đổi vai trò của nó từ {existingRoleIdentifier} sang {updatedRoleIdentifier}"
 
+#. js-lingui-id: irz3ot
+#: src/modules/desk/query-hooks/desk-update-one.pre-query.hook.ts
+msgid "Cannot reassign a Desk that has associated Opportunities. Remove all Opportunities from this Desk before changing its Owning Company."
+msgstr ""
+
 #. js-lingui-id: Q0diyJ
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
@@ -2087,6 +2097,11 @@ msgstr "Biến môi trường CLOUDFLARE_API_KEY phải được định nghĩa 
 msgid "Error"
 msgstr "Lỗi"
 
+#. js-lingui-id: NWpzI9
+#: src/modules/quote/query-hooks/quote-line-item-mutate.pre-query.hook.ts
+msgid "Estimated Hours is required for a Time & Materials line item."
+msgstr ""
+
 #. js-lingui-id: kJDmsI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgid "Event details"
@@ -2773,6 +2788,11 @@ msgstr "Tập tin"
 msgid "Files field is not supported for unique fields"
 msgstr "Trường Files không được hỗ trợ cho các trường duy nhất"
 
+#. js-lingui-id: 4xOu5g
+#: src/modules/quote/query-hooks/quote-line-item-mutate.pre-query.hook.ts
+msgid "Fixed Fee Amount is required for a Fixed Price line item."
+msgstr ""
+
 #. js-lingui-id: ylQd2j
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Flow"
@@ -2984,6 +3004,11 @@ msgstr ""
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Home"
 msgstr "Trang chủ"
+
+#. js-lingui-id: 5Hi3YW
+#: src/modules/quote/query-hooks/quote-line-item-mutate.pre-query.hook.ts
+msgid "Hourly Rate is required for a Time & Materials line item."
+msgstr ""
 
 #. js-lingui-id: NNJnBi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -5200,6 +5225,11 @@ msgstr "Một hoặc nhiều URI chuyển hướng không hợp lệ."
 msgid "One or more requested scopes are invalid."
 msgstr "Một hoặc nhiều phạm vi được yêu cầu không hợp lệ."
 
+#. js-lingui-id: Z4TYNh
+#: src/engine/core-modules/state-transition/state-transition-validator.service.ts
+msgid "One or more required fields must be filled before advancing to this stage."
+msgstr ""
+
 #. js-lingui-id: J6n7sl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util.ts
@@ -5247,6 +5277,11 @@ msgstr ""
 #. js-lingui-id: 3NYczb
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgid "Opportunity company"
+msgstr ""
+
+#. js-lingui-id: Gnvall
+#: src/modules/opportunity/query-hooks/opportunity-update-one.pre-query.hook.ts
+msgid "Opportunity not found."
 msgstr ""
 
 #. js-lingui-id: r3rEzW
@@ -5801,6 +5836,11 @@ msgstr "Truy vấn thất bại."
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Query timed out. Please try again."
 msgstr "Truy vấn hết thời gian chờ. Vui lòng thử lại."
+
+#. js-lingui-id: BbJ8yT
+#: src/modules/quote/query-hooks/quote-update-one.pre-query.hook.ts
+msgid "Quote not found."
+msgstr ""
 
 #. js-lingui-id: xD2MTL
 #: src/engine/core-modules/throttler/throttler.exception.ts
@@ -7188,6 +7228,16 @@ msgstr "Không thể chỉnh sửa vai trò này."
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "Vai trò này không thể sửa đổi vì nó là vai trò hệ thống. Chỉ có thể chỉnh sửa vai trò tùy chỉnh."
 
+#. js-lingui-id: 23F0Wt
+#: src/modules/quote/query-hooks/quote-update-one.pre-query.hook.ts
+msgid "This status can only be set by the system."
+msgstr ""
+
+#. js-lingui-id: LD0k4t
+#: src/modules/quote/query-hooks/quote-update-one.pre-query.hook.ts
+msgid "This status transition is not allowed."
+msgstr ""
+
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This subdomain is already taken."
@@ -7615,6 +7665,11 @@ msgstr "Không tìm thấy không gian làm việc của người dùng."
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "User workspace role configuration not found."
 msgstr "Không tìm thấy cấu hình vai trò không gian làm việc của người dùng."
+
+#. js-lingui-id: U+nUdL
+#: src/modules/opportunity/query-hooks/__tests__/opportunity-update-one.pre-query.hook.spec.ts
+msgid "Validation failed."
+msgstr ""
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
