@@ -18,11 +18,13 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import {
   ApplicationRegistrationSourceType,
   FindApplicationRegistrationStatsDocument,
-  GetApplicationShareLinkDocument,
 } from '~/generated-metadata/graphql';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { type ApplicationRegistrationData } from '~/pages/settings/applications/tabs/types/ApplicationRegistrationData';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 
 const StyledButtonGroup = styled.div`
   display: flex;
@@ -41,18 +43,15 @@ export const SettingsApplicationRegistrationDistributionTab = ({
 
   const { copyToClipboard } = useCopyToClipboard();
 
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+
+  const hasEnterpriseAccess = currentWorkspace?.hasValidEnterpriseKey === true;
+
   const isNpmSource =
     registration.sourceType === ApplicationRegistrationSourceType.NPM;
 
   const isTarballSource =
     registration.sourceType === ApplicationRegistrationSourceType.TARBALL;
-
-  const { data: shareLinkData } = useQuery(GetApplicationShareLinkDocument, {
-    variables: { id: applicationRegistrationId },
-    skip: !isTarballSource || !applicationRegistrationId,
-  });
-
-  const shareLink = shareLinkData?.getApplicationShareLink;
 
   const { data: statsData } = useQuery(
     FindApplicationRegistrationStatsDocument,
@@ -62,12 +61,9 @@ export const SettingsApplicationRegistrationDistributionTab = ({
     },
   );
 
-  const marketplacePageUrl = getSettingsPath(
-    SettingsPath.AvailableApplicationDetail,
-    {
-      availableApplicationId: registration.universalIdentifier,
-    },
-  );
+  const shareLink = getSettingsPath(SettingsPath.AvailableApplicationDetail, {
+    availableApplicationId: registration.universalIdentifier,
+  });
 
   const stats = statsData?.findApplicationRegistrationStats;
   const hasStats = (stats?.activeInstalls ?? 0) > 0;
@@ -120,39 +116,47 @@ export const SettingsApplicationRegistrationDistributionTab = ({
               Icon={IconExternalLink}
               title={t`View marketplace page`}
               variant="secondary"
-              to={marketplacePageUrl}
+              to={shareLink}
             />
           </StyledButtonGroup>
         </Section>
       )}
 
-      {isTarballSource && (
-        <Section>
-          <H2Title
-            title={t`Share`}
-            description={t`Share this link with other workspaces on this server to let them install this application.`}
+      {isTarballSource &&
+        (!hasEnterpriseAccess ? (
+          <SettingsEnterpriseFeatureGateCard
+            description={t`Upgrade to Enterprise to share private applications.`}
           />
-          <StyledButtonGroup>
-            <Button
-              Icon={IconCopy}
-              title={t`Copy share link`}
-              variant="secondary"
-              disabled={!shareLink}
-              onClick={() => {
-                if (shareLink) {
-                  copyToClipboard(shareLink, t`Share link copied to clipboard`);
-                }
-              }}
+        ) : (
+          <Section>
+            <H2Title
+              title={t`Share`}
+              description={t`Share this link with other workspaces on this server to let them install this application.`}
             />
-            <Button
-              Icon={IconExternalLink}
-              title={t`View marketplace page`}
-              variant="secondary"
-              to={marketplacePageUrl}
-            />
-          </StyledButtonGroup>
-        </Section>
-      )}
+            <StyledButtonGroup>
+              <Button
+                Icon={IconCopy}
+                title={t`Copy share link`}
+                variant="secondary"
+                disabled={!shareLink}
+                onClick={async () => {
+                  if (shareLink) {
+                    await copyToClipboard(
+                      shareLink,
+                      t`Share link copied to clipboard`,
+                    );
+                  }
+                }}
+              />
+              <Button
+                Icon={IconExternalLink}
+                title={t`View private application page`}
+                variant="secondary"
+                to={shareLink}
+              />
+            </StyledButtonGroup>
+          </Section>
+        ))}
 
       {hasStats && (
         <Section>

@@ -128,7 +128,7 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
       return;
     }
 
-    const { twentyStandardFlatApplication, workspaceCustomFlatApplication } =
+    const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
@@ -140,13 +140,12 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
 
     await this.backfillCustomObjectPageLayouts({
       workspaceId,
-      workspaceCustomFlatApplication,
+      twentyStandardFlatApplication,
     });
 
     await this.backfillFieldWidgets({
       workspaceId,
       twentyStandardFlatApplication,
-      workspaceCustomFlatApplication,
     });
 
     await this.featureFlagService.enableFeatureFlags(
@@ -403,10 +402,10 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
 
   private async backfillCustomObjectPageLayouts({
     workspaceId,
-    workspaceCustomFlatApplication,
+    twentyStandardFlatApplication,
   }: {
     workspaceId: string;
-    workspaceCustomFlatApplication: FlatApplication;
+    twentyStandardFlatApplication: FlatApplication;
   }): Promise<void> {
     const {
       flatObjectMetadataMaps,
@@ -464,7 +463,7 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
     for (const customObject of customObjectsWithoutPageLayout) {
       const flatRecordPageFieldsView = computeFlatRecordPageFieldsViewToCreate({
         objectMetadata: customObject,
-        flatApplication: workspaceCustomFlatApplication,
+        flatApplication: twentyStandardFlatApplication,
       });
 
       const objectFieldMetadatas = Object.values(
@@ -476,7 +475,7 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
       const viewFields = computeFlatViewFieldsToCreate({
         objectFlatFieldMetadatas: objectFieldMetadatas,
         viewUniversalIdentifier: flatRecordPageFieldsView.universalIdentifier,
-        flatApplication: workspaceCustomFlatApplication,
+        flatApplication: twentyStandardFlatApplication,
         labelIdentifierFieldMetadataUniversalIdentifier:
           customObject.labelIdentifierFieldMetadataUniversalIdentifier,
         excludeLabelIdentifier: true,
@@ -485,7 +484,7 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
       const { pageLayouts, pageLayoutTabs, pageLayoutWidgets } =
         computeFlatDefaultRecordPageLayoutToCreate({
           objectMetadata: customObject,
-          flatApplication: workspaceCustomFlatApplication,
+          flatApplication: twentyStandardFlatApplication,
           recordPageFieldsView: flatRecordPageFieldsView,
           workspaceId,
         });
@@ -529,7 +528,7 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
           },
           workspaceId,
           applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
+            twentyStandardFlatApplication.universalIdentifier,
         },
       );
 
@@ -550,11 +549,9 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
   private async backfillFieldWidgets({
     workspaceId,
     twentyStandardFlatApplication,
-    workspaceCustomFlatApplication,
   }: {
     workspaceId: string;
     twentyStandardFlatApplication: FlatApplication;
-    workspaceCustomFlatApplication: FlatApplication;
   }): Promise<void> {
     const {
       flatObjectMetadataMaps,
@@ -675,8 +672,7 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
 
     const now = new Date().toISOString();
 
-    const standardWidgetsToCreate: FlatPageLayoutWidget[] = [];
-    const customWidgetsToCreate: FlatPageLayoutWidget[] = [];
+    const widgetsToCreate: FlatPageLayoutWidget[] = [];
     const processedMorphIds = new Set<string>();
 
     for (const object of objectById.values()) {
@@ -691,14 +687,6 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
       if (!isDefined(homeTab)) {
         continue;
       }
-
-      const flatApplication: FlatApplication = object.isCustom
-        ? workspaceCustomFlatApplication
-        : twentyStandardFlatApplication;
-
-      const targetList: FlatPageLayoutWidget[] = object.isCustom
-        ? customWidgetsToCreate
-        : standardWidgetsToCreate;
 
       const fields = fieldsByObjectId.get(object.id) ?? [];
       let nextWidgetIndex = homeTab.widgetCount;
@@ -758,8 +746,9 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
         const widget: FlatPageLayoutWidget = {
           id: v4(),
           universalIdentifier: v4(),
-          applicationId: flatApplication.id,
-          applicationUniversalIdentifier: flatApplication.universalIdentifier,
+          applicationId: twentyStandardFlatApplication.id,
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
           workspaceId,
           pageLayoutTabId: homeTab.id,
           pageLayoutTabUniversalIdentifier: homeTab.universalIdentifier,
@@ -790,16 +779,13 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
           overrides: null,
         };
 
-        targetList.push(widget);
+        widgetsToCreate.push(widget);
         existingFieldWidgetFieldIds.add(field.id);
         nextWidgetIndex++;
       }
     }
 
-    const totalWidgets =
-      standardWidgetsToCreate.length + customWidgetsToCreate.length;
-
-    if (totalWidgets === 0) {
+    if (widgetsToCreate.length === 0) {
       this.logger.log(
         `All FIELD widgets already exist for workspace ${workspaceId}, skipping`,
       );
@@ -808,65 +794,36 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
     }
 
     this.logger.log(
-      `Found ${totalWidgets} FIELD widget(s) to create for workspace ${workspaceId} (${standardWidgetsToCreate.length} standard, ${customWidgetsToCreate.length} custom)`,
+      `Found ${widgetsToCreate.length} FIELD widget(s) to create for workspace ${workspaceId}`,
     );
 
-    if (standardWidgetsToCreate.length > 0) {
-      const result =
-        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-          {
-            allFlatEntityOperationByMetadataName: {
-              pageLayoutWidget: {
-                flatEntityToCreate: standardWidgetsToCreate,
-                flatEntityToDelete: [],
-                flatEntityToUpdate: [],
-              },
+    const result =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            pageLayoutWidget: {
+              flatEntityToCreate: widgetsToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
             },
-            workspaceId,
-            applicationUniversalIdentifier:
-              twentyStandardFlatApplication.universalIdentifier,
           },
-        );
+          workspaceId,
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
+        },
+      );
 
-      if (result.status === 'fail') {
-        this.logger.error(
-          `Failed to create standard FIELD widgets:\n${JSON.stringify(result, null, 2)}`,
-        );
-        throw new Error(
-          `Failed to create standard FIELD widgets for workspace ${workspaceId}`,
-        );
-      }
-    }
-
-    if (customWidgetsToCreate.length > 0) {
-      const result =
-        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-          {
-            allFlatEntityOperationByMetadataName: {
-              pageLayoutWidget: {
-                flatEntityToCreate: customWidgetsToCreate,
-                flatEntityToDelete: [],
-                flatEntityToUpdate: [],
-              },
-            },
-            workspaceId,
-            applicationUniversalIdentifier:
-              workspaceCustomFlatApplication.universalIdentifier,
-          },
-        );
-
-      if (result.status === 'fail') {
-        this.logger.error(
-          `Failed to create custom FIELD widgets:\n${JSON.stringify(result, null, 2)}`,
-        );
-        throw new Error(
-          `Failed to create custom FIELD widgets for workspace ${workspaceId}`,
-        );
-      }
+    if (result.status === 'fail') {
+      this.logger.error(
+        `Failed to create FIELD widgets:\n${JSON.stringify(result, null, 2)}`,
+      );
+      throw new Error(
+        `Failed to create FIELD widgets for workspace ${workspaceId}`,
+      );
     }
 
     this.logger.log(
-      `Successfully created ${totalWidgets} FIELD widget(s) for workspace ${workspaceId}`,
+      `Successfully created ${widgetsToCreate.length} FIELD widget(s) for workspace ${workspaceId}`,
     );
   }
 }
