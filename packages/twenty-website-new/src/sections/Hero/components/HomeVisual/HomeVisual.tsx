@@ -5,7 +5,6 @@ import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
   IconBook,
-  IconBox,
   IconBrandLinkedin,
   IconBuildingFactory2,
   IconBuildingSkyscraper,
@@ -18,6 +17,7 @@ import {
   IconDotsVertical,
   IconFolder,
   IconHome2,
+  IconLayoutDashboard,
   IconLayoutKanban,
   IconLayoutSidebarLeftCollapse,
   IconLink,
@@ -394,6 +394,7 @@ const SidebarScroll = styled.div`
 const SidebarSection = styled.div`
   display: grid;
   gap: 2px;
+  padding-bottom: 8px;
 `;
 
 const SidebarSectionLabel = styled.span<{ $workspace?: boolean }>`
@@ -525,9 +526,11 @@ const SidebarItemMeta = styled.span`
   }
 `;
 
-const SidebarChevron = styled.div`
+const SidebarChevron = styled.div<{ $expanded?: boolean }>`
   color: ${COLORS.textTertiary};
   display: none;
+  transform: rotate(${({ $expanded }) => ($expanded ? '0deg' : '-90deg')});
+  transition: transform 0.16s ease;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     display: flex;
@@ -1144,10 +1147,10 @@ const FaviconImage = styled.img`
 
 const TABLER_ICON_MAP: Record<string, typeof IconBuildingSkyscraper> = {
   book: IconBook,
-  box: IconBox,
   buildingSkyscraper: IconBuildingSkyscraper,
   checkbox: IconCheckbox,
   folder: IconFolder,
+  layoutDashboard: IconLayoutDashboard,
   notes: IconNotes,
   playerPlay: IconPlayerPlay,
   settings: IconSettings,
@@ -1258,10 +1261,36 @@ function findActiveItem(
   return undefined;
 }
 
-function renderPageDefinition(page: HeroPageDefinition) {
+function findContainingFolderId(
+  entries: HeroSidebarEntry[],
+  label: string,
+): string | undefined {
+  for (const entry of entries) {
+    if (!isFolder(entry)) {
+      continue;
+    }
+
+    if (
+      entry.items.some(
+        (item) =>
+          item.label === label ||
+          item.children?.some((child) => child.label === label) === true,
+      )
+    ) {
+      return entry.id;
+    }
+  }
+
+  return undefined;
+}
+
+function renderPageDefinition(
+  page: HeroPageDefinition,
+  onNavigateToLabel?: (label: string) => void,
+) {
   switch (page.type) {
     case 'table':
-      return PAGE_RENDERERS.table(page);
+      return <TablePage page={page} onNavigateToLabel={onNavigateToLabel} />;
     case 'kanban':
       return PAGE_RENDERERS.kanban(page);
     case 'dashboard':
@@ -1661,23 +1690,30 @@ function renderSidebarIcon(icon: HeroSidebarIcon): ReactNode {
 // -- Sidebar item component --
 
 function SidebarItemComponent({
+  collapsible = false,
+  expanded = false,
   depth = 0,
   interactive = true,
   isLastChild = false,
   item,
+  onToggleExpanded,
   onSelect,
   selectedLabel,
 }: {
+  collapsible?: boolean;
+  expanded?: boolean;
   depth?: number;
   interactive?: boolean;
   isLastChild?: boolean;
   item: HeroSidebarItem;
+  onToggleExpanded?: () => void;
   onSelect?: (label: string) => void;
   selectedLabel?: string;
 }) {
   const showBranch = depth > 0;
-  const rowSelectable = interactive && item.href === undefined;
-  const rowInteractive = rowSelectable || item.href !== undefined;
+  const rowSelectable = interactive && item.href === undefined && !collapsible;
+  const rowInteractive =
+    rowSelectable || item.href !== undefined || (interactive && collapsible);
   const rowActive =
     rowSelectable &&
     selectedLabel !== undefined &&
@@ -1694,7 +1730,7 @@ function SidebarItemComponent({
         </SidebarItemText>
       </SidebarRowMain>
       {item.showChevron || (item.children && item.children.length > 0) ? (
-        <SidebarChevron>
+        <SidebarChevron $expanded={!collapsible || expanded}>
           <ChevronDownMini color={COLORS.textTertiary} size={12} />
         </SidebarChevron>
       ) : null}
@@ -1722,13 +1758,19 @@ function SidebarItemComponent({
           $depth={depth}
           $interactive={rowInteractive}
           $withBranch={showBranch}
-          onClick={rowSelectable ? () => onSelect?.(item.label) : undefined}
+          onClick={
+            collapsible
+              ? onToggleExpanded
+              : rowSelectable
+                ? () => onSelect?.(item.label)
+                : undefined
+          }
           style={{ cursor: rowInteractive ? 'pointer' : 'default' }}
         >
           {rowContent}
         </SidebarItemRow>
       )}
-      {childItems.length > 0 ? (
+      {childItems.length > 0 && (!collapsible || expanded) ? (
         <SidebarChildStack>
           <BranchLine />
           {childItems.map((child, index) => (
@@ -1955,12 +1997,31 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
   const shellRef = useRef<HTMLDivElement>(null);
 
   const defaultActiveLabel =
+    visual.favoritesNav?.find((item) => item.active)?.label ??
     visual.workspaceNav.find((entry) => !isFolder(entry) && entry.active)
       ?.label ??
     visual.workspaceNav[0]?.label ??
     '';
 
   const [activeLabel, setActiveLabel] = useState(defaultActiveLabel);
+  const [openFolderIds, setOpenFolderIds] = useState(() => {
+    const activeFolderId = findContainingFolderId(
+      visual.workspaceNav,
+      defaultActiveLabel,
+    );
+
+    return visual.workspaceNav.flatMap((entry) => {
+      if (!isFolder(entry)) {
+        return [];
+      }
+
+      if (entry.defaultOpen || entry.id === activeFolderId) {
+        return [entry.id];
+      }
+
+      return [];
+    });
+  });
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const pageDefaults = useMemo(
     () => ({
@@ -1971,8 +2032,12 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
   );
 
   const activeItem = useMemo(
-    () => findActiveItem(visual.workspaceNav, activeLabel, pageDefaults),
-    [activeLabel, pageDefaults, visual.workspaceNav],
+    () =>
+      (visual.favoritesNav
+        ? findActiveItem(visual.favoritesNav, activeLabel, pageDefaults)
+        : undefined) ??
+      findActiveItem(visual.workspaceNav, activeLabel, pageDefaults),
+    [activeLabel, pageDefaults, visual.favoritesNav, visual.workspaceNav],
   );
   const activePage = useMemo(
     () => (activeItem ? normalizeHeroPage(activeItem, pageDefaults) : null),
@@ -2008,10 +2073,36 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
     setTilt({ x: 0, y: 0 });
   };
 
+  const handleSelectLabel = (label: string) => {
+    setActiveLabel(label);
+
+    const containingFolderId = findContainingFolderId(visual.workspaceNav, label);
+
+    if (!containingFolderId) {
+      return;
+    }
+
+    setOpenFolderIds((current) =>
+      current.includes(containingFolderId)
+        ? current
+        : [...current, containingFolderId],
+    );
+  };
+
+  const handleToggleFolder = (folderId: string) => {
+    setOpenFolderIds((current) =>
+      current.includes(folderId)
+        ? current.filter((id) => id !== folderId)
+        : [...current, folderId],
+    );
+  };
+
   const renderSidebarEntry = (entry: HeroSidebarEntry) => {
     if (isFolder(entry)) {
       return (
         <SidebarItemComponent
+          collapsible
+          expanded={openFolderIds.includes(entry.id)}
           key={entry.id}
           item={{
             id: entry.id,
@@ -2020,7 +2111,8 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
             showChevron: entry.showChevron,
             children: entry.items,
           }}
-          onSelect={setActiveLabel}
+          onSelect={handleSelectLabel}
+          onToggleExpanded={() => handleToggleFolder(entry.id)}
           selectedLabel={activeLabel}
         />
       );
@@ -2030,7 +2122,7 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
       <SidebarItemComponent
         key={entry.id}
         item={entry}
-        onSelect={setActiveLabel}
+        onSelect={handleSelectLabel}
         selectedLabel={activeLabel}
       />
     );
@@ -2093,8 +2185,9 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
                     {visual.favoritesNav.map((item) => (
                       <SidebarItemComponent
                         key={item.id}
-                        interactive={false}
                         item={item}
+                        onSelect={handleSelectLabel}
+                        selectedLabel={activeLabel}
                       />
                     ))}
                   </SidebarSection>
@@ -2192,7 +2285,9 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
                   </ViewbarBar>
                 ) : null}
 
-                {activePage ? renderPageDefinition(activePage) : null}
+                {activePage
+                  ? renderPageDefinition(activePage, handleSelectLabel)
+                  : null}
               </IndexSurface>
             </RightPane>
           </AppLayout>

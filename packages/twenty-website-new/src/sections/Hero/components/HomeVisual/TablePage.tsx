@@ -64,6 +64,7 @@ const PERSON_TONES: Record<string, { background: string; color: string }> = {
   blue: { background: '#dbeafe', color: '#1d4ed8' },
   gray: { background: '#e5e7eb', color: '#4b5563' },
   green: { background: '#dcfce7', color: '#15803d' },
+  orange: { background: '#ffdcc3', color: '#ED5F00' },
   pink: { background: '#ffe4e6', color: '#be123c' },
   purple: { background: '#ede9fe', color: '#6d28d9' },
   red: { background: '#fee2e2', color: '#b91c1c' },
@@ -706,10 +707,18 @@ function RelationCellComponent({
 function TextCellComponent({
   cell,
   isFirstColumn,
+  onNavigateToLabel,
 }: {
   cell: HeroCellText;
   isFirstColumn: boolean;
+  onNavigateToLabel?: (label: string) => void;
 }) {
+  const targetLabel = cell.targetLabel;
+  const handleNavigate =
+    targetLabel && onNavigateToLabel
+      ? () => onNavigateToLabel(targetLabel)
+      : undefined;
+
   if (!isFirstColumn || !cell.shortLabel) {
     return <InlineText>{cell.value}</InlineText>;
   }
@@ -718,13 +727,14 @@ function TextCellComponent({
 
   return (
     <CellChip
-      clickable={false}
+      clickable={handleNavigate !== undefined}
       label={cell.value}
       leftComponent={
         <PersonAvatarCircle $background={tone.background} $color={tone.color}>
           {cell.shortLabel}
         </PersonAvatarCircle>
       }
+      onClick={handleNavigate}
     />
   );
 }
@@ -734,12 +744,19 @@ function renderCellValue(
   hovered: boolean,
   isFirstColumn: boolean,
   columnId: string,
+  onNavigateToLabel?: (label: string) => void,
 ): ReactNode {
   const showHoverAction = !ROW_HOVER_ACTION_DISABLED_COLUMNS.has(columnId);
 
   switch (cell.type) {
     case 'text':
-      return <TextCellComponent cell={cell} isFirstColumn={isFirstColumn} />;
+      return (
+        <TextCellComponent
+          cell={cell}
+          isFirstColumn={isFirstColumn}
+          onNavigateToLabel={onNavigateToLabel}
+        />
+      );
     case 'number':
       return <RightAlignedText>{cell.value}</RightAlignedText>;
     case 'link':
@@ -807,7 +824,13 @@ function renderHeaderIcon(columnId: string): ReactNode {
   );
 }
 
-export function TablePage({ page }: { page: HeroTablePageDefinition }) {
+export function TablePage({
+  page,
+  onNavigateToLabel,
+}: {
+  page: HeroTablePageDefinition;
+  onNavigateToLabel?: (label: string) => void;
+}) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef({
     active: false,
@@ -995,6 +1018,7 @@ export function TablePage({ page }: { page: HeroTablePageDefinition }) {
                             hovered,
                             !!column.isFirstColumn,
                             column.id,
+                            onNavigateToLabel,
                           )
                         : null}
                     </TableCell>

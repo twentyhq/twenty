@@ -1,5 +1,6 @@
 import type {
   HeroDashboardDataType,
+  HeroDashboardPageDefinition,
   HeroHomeDataType,
   HeroKanbanPageDefinition,
   HeroTablePageDefinition,
@@ -53,6 +54,14 @@ const SALES_DASHBOARD_DATA: HeroDashboardDataType = {
     src: '/images/home/hero/sales-dashboard/distribution.png',
     width: 756,
   },
+};
+
+const SALES_DASHBOARD_PAGE: HeroDashboardPageDefinition = {
+  type: 'dashboard',
+  header: {
+    title: 'Sales Dashboard',
+  },
+  dashboard: SALES_DASHBOARD_DATA,
 };
 
 const OPPORTUNITY_KANBAN_PAGE: HeroKanbanPageDefinition = {
@@ -316,6 +325,15 @@ export const HERO_DATA: HeroHomeDataType = {
     workspace: { icon: 'apple', name: 'Apple' },
     tableWidth: 1700,
     actions: ['Filter', 'Sort', 'Options'],
+    favoritesNav: [
+      {
+        id: 'sales-dashboard',
+        label: 'Sales Dashboard',
+        icon: { kind: 'avatar', label: 'S', tone: 'amber', shape: 'circle' },
+        meta: 'Dashboard',
+        page: SALES_DASHBOARD_PAGE,
+      },
+    ],
     workspaceNav: [
       {
         id: 'companies',
@@ -1237,24 +1255,66 @@ export const HERO_DATA: HeroHomeDataType = {
         }),
       },
       {
-        id: 'sales-dashboard',
-        label: 'Sales Dashboard',
-        icon: { kind: 'avatar', label: 'S', tone: 'amber', shape: 'circle' },
-        meta: 'Dashboard',
-        page: {
-          type: 'dashboard',
-          header: {
-            title: 'Sales Dashboard',
-          },
-          dashboard: SALES_DASHBOARD_DATA,
-        },
+        id: 'dashboards',
+        label: 'Dashboards',
+        icon: { kind: 'tabler', name: 'layoutDashboard', tone: 'gray' },
+        page: createTablePage({
+          title: 'All Dashboards',
+          count: 2,
+          columns: [
+            { id: 'name', label: 'Name', width: 240, isFirstColumn: true },
+            { id: 'createdBy', label: 'Created By', width: 160 },
+            { id: 'added', label: 'Last Edited', width: 160 },
+          ],
+          rows: [
+            {
+              id: 'sales-dashboard',
+              cells: {
+                name: {
+                  type: 'text',
+                  value: 'Sales Dashboard',
+                  shortLabel: 'S',
+                  targetLabel: 'Sales Dashboard',
+                  tone: 'amber',
+                },
+                createdBy: {
+                  type: 'person',
+                  name: 'Phil Schiller',
+                  tone: 'amber',
+                  kind: 'person',
+                  avatarUrl: PEOPLE_AVATAR_URLS.philSchiller,
+                },
+                added: { type: 'text', value: 'Oct 24, 2023' },
+              },
+            },
+            {
+              id: 'pipeline-health',
+              cells: {
+                name: {
+                  type: 'text',
+                  value: 'Pipeline Health',
+                  shortLabel: 'P',
+                  tone: 'blue',
+                },
+                createdBy: {
+                  type: 'person',
+                  name: 'Jeff Williams',
+                  tone: 'blue',
+                  kind: 'person',
+                  avatarUrl: PEOPLE_AVATAR_URLS.jeffWilliams,
+                },
+                added: { type: 'text', value: 'Oct 19, 2023' },
+              },
+            },
+          ],
+        }),
       },
       {
         id: 'workflows',
         label: 'Workflows',
         icon: { kind: 'tabler', name: 'settingsAutomation', tone: 'orange' },
         showChevron: true,
-        children: [
+        items: [
           {
             id: 'workflow-create-company-when-adding-a-new-person',
             label: 'Create company when adding a new person',
@@ -1295,13 +1355,14 @@ export const HERO_DATA: HeroHomeDataType = {
               ],
               rows: [
                 {
-                  id: 'new-lead',
+                  id: 'create-company-when-adding-a-new-person',
                   cells: {
                     name: {
                       type: 'text',
-                      value: 'New Lead Assignment',
-                      shortLabel: 'N',
-                      tone: 'amber',
+                      value: 'Create company when adding a new person',
+                      shortLabel: 'C',
+                      targetLabel: 'Create company when adding a new person',
+                      tone: 'orange',
                     },
                     status: { type: 'tag', value: 'Active' },
                     lastRun: { type: 'text', value: 'Oct 24, 2023 10:00 am' },

@@ -305,14 +305,14 @@ const NodeIconContainer = styled.div`
 `;
 
 const NodeContent = styled.div`
-  align-items: flex-start;
+  align-items: stretch;
   align-self: stretch;
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
   justify-content: space-between;
   max-width: 184px;
-  min-width: 80px;
+  min-width: 0;
   padding-bottom: 2px;
 `;
 

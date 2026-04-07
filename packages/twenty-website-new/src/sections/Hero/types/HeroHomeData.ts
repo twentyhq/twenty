@@ -4,6 +4,7 @@ import type { HeroBaseDataType } from '@/sections/Hero/types/HeroBaseData';
 
 export type HeroCellText = {
   type: 'text';
+  targetLabel?: string;
   value: string;
   shortLabel?: string;
   tone?: string;
