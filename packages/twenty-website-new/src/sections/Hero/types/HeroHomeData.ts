@@ -58,6 +58,96 @@ export type HeroRowDef = {
   cells: Record<string, HeroCellValue>;
 };
 
+export type HeroDashboardMetricType = {
+  id: string;
+  title: string;
+  value: string;
+};
+
+export type HeroDashboardChartImageType = {
+  alt: string;
+  height: number;
+  src: string;
+  width: number;
+};
+
+export type HeroDashboardDataType = {
+  distributionChart: HeroDashboardChartImageType;
+  metrics: HeroDashboardMetricType[];
+  revenueChart: HeroDashboardChartImageType;
+  visitsChart: HeroDashboardChartImageType;
+};
+
+export type HeroNavbarActionType = {
+  desktopOnly?: boolean;
+  icon: string;
+  label?: string;
+  labelTone?: 'primary' | 'secondary' | 'tertiary';
+  trailingLabel?: string;
+  variant?: 'button' | 'icon';
+};
+
+export type HeroPageHeaderType = {
+  actions?: string[];
+  count?: number;
+  navbarActions?: HeroNavbarActionType[];
+  showListIcon?: boolean;
+  title: string;
+};
+
+export type HeroTablePageDefinition = {
+  columns: HeroColumnDef[];
+  header: HeroPageHeaderType;
+  rows: HeroRowDef[];
+  type: 'table';
+  width?: number;
+};
+
+export type HeroDashboardPageDefinition = {
+  dashboard: HeroDashboardDataType;
+  header: HeroPageHeaderType;
+  type: 'dashboard';
+};
+
+export type HeroWorkflowPageDefinition = {
+  header: HeroPageHeaderType;
+  type: 'workflow';
+};
+
+export type HeroKanbanCardType = {
+  accountOwner: HeroCellPerson;
+  amount: string;
+  checked?: boolean;
+  company: HeroCellEntity;
+  date: string;
+  id: string;
+  mainContact: HeroCellPerson;
+  rating: number;
+  recordId: string;
+  title: string;
+};
+
+export type HeroKanbanLaneType = {
+  cards: HeroKanbanCardType[];
+  id: string;
+  label: string;
+  tone: string;
+};
+
+export type HeroKanbanPageDefinition = {
+  header: HeroPageHeaderType;
+  lanes: HeroKanbanLaneType[];
+  type: 'kanban';
+};
+
+export type HeroPageDefinition =
+  | HeroDashboardPageDefinition
+  | HeroKanbanPageDefinition
+  | HeroTablePageDefinition
+  | HeroWorkflowPageDefinition;
+
+export type HeroPageType = HeroPageDefinition['type'];
+
 // -- Sidebar icon --
 
 export type HeroSidebarIcon =
@@ -70,6 +160,7 @@ export type HeroSidebarIcon =
       overlay?: 'link';
     }
   | {
+      color?: string;
       kind: 'avatar';
       label: string;
       tone: string;
@@ -83,13 +174,22 @@ export type HeroSidebarItem = {
   label: string;
   href?: string;
   icon: HeroSidebarIcon;
+  page?: HeroPageDefinition;
+  /** @deprecated Use `page` instead. */
+  pageType?: HeroPageType;
   meta?: string;
   active?: boolean;
   showChevron?: boolean;
   children?: HeroSidebarItem[];
+  /** @deprecated Use `page` instead. */
   columns?: HeroColumnDef[];
+  /** @deprecated Use `page` instead. */
+  dashboard?: HeroDashboardDataType;
+  /** @deprecated Use `page` instead. */
   rows?: HeroRowDef[];
+  /** @deprecated Use `page.header.title` instead. */
   viewLabel?: string;
+  /** @deprecated Use `page.header.count` instead. */
   viewCount?: number;
 };
 

@@ -6,6 +6,10 @@ import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import {
+  createCompanyWhenAddingANewPersonWorkflowTemplateNavigationMenuItem,
+  isWorkflowsFolder,
+} from '@/workflow/constants/workflowTemplateNavigation';
 
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 
@@ -82,9 +86,17 @@ export const useNavigationMenuItemsByFolder = () => {
 
     return sortedFolders.reduce<NavigationMenuItemFolder[]>((acc, folder) => {
       const itemsInFolder = itemsByFolderId.get(folder.id) || [];
+      const itemsInFolderWithTemplates = isWorkflowsFolder(folder.folderName)
+        ? [
+            createCompanyWhenAddingANewPersonWorkflowTemplateNavigationMenuItem(
+              folder.id,
+            ),
+            ...itemsInFolder,
+          ]
+        : itemsInFolder;
 
       const sortedItems = filterAndSortNavigationMenuItems(
-        itemsInFolder,
+        itemsInFolderWithTemplates,
         views,
         objectMetadataItems,
       );

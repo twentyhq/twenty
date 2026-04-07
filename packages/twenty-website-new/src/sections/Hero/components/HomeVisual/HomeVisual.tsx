@@ -1,5 +1,6 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
@@ -17,6 +18,7 @@ import {
   IconDotsVertical,
   IconFolder,
   IconHome2,
+  IconLayoutKanban,
   IconLayoutSidebarLeftCollapse,
   IconLink,
   IconList,
@@ -26,8 +28,12 @@ import {
   IconMoneybag,
   IconNotes,
   IconPencil,
+  IconChevronUp,
+  IconHeart,
+  IconPlayerPause,
   IconPlayerPlay,
   IconPlus,
+  IconRepeat,
   IconSearch,
   IconSettings,
   IconSettingsAutomation,
@@ -40,7 +46,6 @@ import {
   IconX,
 } from '@tabler/icons-react';
 import {
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -48,21 +53,30 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 import type {
+  HeroDashboardPageDefinition,
   HeroCellEntity,
+  HeroKanbanPageDefinition,
   HeroCellPerson,
   HeroCellRelation,
   HeroCellText,
   HeroCellValue,
-  HeroColumnDef,
-  HeroRowDef,
+  HeroNavbarActionType,
+  HeroPageDefinition,
+  HeroPageType,
   HeroSidebarEntry,
   HeroSidebarFolder,
   HeroSidebarIcon,
   HeroSidebarItem,
+  HeroTablePageDefinition,
+  HeroWorkflowPageDefinition,
   HeroVisualType,
 } from '../../types/HeroHomeData';
 import { Chip, ChipVariant } from './homeVisualChip';
 import { VISUAL_TOKENS } from './homeVisualTokens';
+import { normalizeHeroPage, type HeroPageDefaults } from './normalizeHeroPage';
+import { KanbanPage } from './KanbanPage';
+import { PagePreviewLoader } from './PagePreviewLoader';
+import { TablePage } from './TablePage';
 
 const APP_FONT = VISUAL_TOKENS.font.family;
 const DEFAULT_TABLE_WIDTH = 1700;
@@ -120,6 +134,57 @@ const ROW_HOVER_ACTION_DISABLED_COLUMNS = new Set([
   'createdBy',
   'accountOwner',
 ]);
+
+const NAVBAR_ACTION_ICON_MAP: Record<string, typeof IconPlus> = {
+  chevronDown: IconChevronDown,
+  chevronUp: IconChevronUp,
+  dotsVertical: IconDotsVertical,
+  heart: IconHeart,
+  playerPause: IconPlayerPause,
+  plus: IconPlus,
+  repeat: IconRepeat,
+};
+
+const SalesDashboardPage = dynamic(
+  () =>
+    import('./SalesDashboardPage').then((mod) => ({
+      default: mod.SalesDashboardPage,
+    })),
+  {
+    loading: () => (
+      <PagePreviewLoader ariaLabel="Loading sales dashboard preview" />
+    ),
+    ssr: false,
+  },
+);
+
+const WorkflowPage = dynamic(
+  () =>
+    import('./WorkflowPage').then((mod) => ({
+      default: mod.WorkflowPage,
+    })),
+  {
+    loading: () => <PagePreviewLoader ariaLabel="Loading workflow preview" />,
+    ssr: false,
+  },
+);
+
+const PAGE_RENDERERS = {
+  table: (page: HeroTablePageDefinition) => <TablePage page={page} />,
+  kanban: (page: HeroKanbanPageDefinition) => <KanbanPage page={page} />,
+  dashboard: (page: HeroDashboardPageDefinition) => (
+    <DashboardViewport
+      aria-label={`Interactive preview of the ${page.header.title.toLowerCase()}`}
+    >
+      <SalesDashboardPage page={page} />
+    </DashboardViewport>
+  ),
+  workflow: (page: HeroWorkflowPageDefinition) => <WorkflowPage page={page} />,
+} satisfies {
+  [K in HeroPageType]: (
+    page: Extract<HeroPageDefinition, { type: K }>,
+  ) => ReactNode;
+};
 
 // -- Styled Components --
 
@@ -270,8 +335,7 @@ const SegmentedRail = styled.div`
 
 const Segment = styled.div<{ $selected?: boolean }>`
   align-items: center;
-  background: ${({ $selected }) =>
-    $selected ? '#0000000a' : 'transparent'};
+  background: ${({ $selected }) => ($selected ? '#0000000a' : 'transparent')};
   border-radius: 16px;
   display: flex;
   height: 22px;
@@ -339,8 +403,7 @@ const SidebarSectionLabel = styled.span<{ $workspace?: boolean }>`
   font-size: 11px;
   font-weight: 600;
   line-height: 1;
-  padding: ${({ $workspace }) =>
-    $workspace ? '4px 4px 8px' : '0 4px 4px'};
+  padding: ${({ $workspace }) => ($workspace ? '4px 4px 8px' : '0 4px 4px')};
 
   @media (min-width: ${theme.breakpoints.md}px) {
     display: block;
@@ -577,18 +640,6 @@ const BreadcrumbTag = styled.div`
   padding: 0 2px;
 `;
 
-const AccentIconSurface = styled.div`
-  align-items: center;
-  background: ${COLORS.accentSurface};
-  border: 1px solid ${COLORS.accentBorder};
-  border-radius: 4px;
-  color: ${COLORS.accent};
-  display: flex;
-  height: 16px;
-  justify-content: center;
-  width: 16px;
-`;
-
 const CrumbLabel = styled.span`
   color: ${COLORS.text};
   font-family: ${APP_FONT};
@@ -618,7 +669,7 @@ const DesktopOnlyNavbarAction = styled.div`
 
 const NAVBAR_ACTION_BORDER = 'rgba(0, 0, 0, 0.08)';
 
-const NavbarActionButton = styled.div`
+const NavbarActionButton = styled.div<{ $iconOnly?: boolean }>`
   align-items: center;
   background: transparent;
   border: 1px solid ${NAVBAR_ACTION_BORDER};
@@ -629,7 +680,10 @@ const NavbarActionButton = styled.div`
   font-weight: ${VISUAL_TOKENS.font.weight.medium};
   gap: ${VISUAL_TOKENS.spacing[1]};
   height: 24px;
-  padding: 0 ${VISUAL_TOKENS.spacing[2]};
+  justify-content: center;
+  min-width: ${({ $iconOnly }) => ($iconOnly ? '24px' : 'auto')};
+  padding: ${({ $iconOnly }) =>
+    $iconOnly ? '0' : `0 ${VISUAL_TOKENS.spacing[2]}`};
   white-space: nowrap;
 `;
 
@@ -743,10 +797,23 @@ const ViewAction = styled.span`
 const TableShell = styled.div`
   display: flex;
   flex: 1 1 auto;
-  min-width: 0;
   min-height: 0;
+  min-width: 0;
   overflow: hidden;
   width: 100%;
+`;
+
+const DashboardViewport = styled.div`
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+  scrollbar-width: none;
+  width: 100%;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const GripRail = styled.div`
@@ -1003,8 +1070,9 @@ const HoverActions = styled.div<{ $rightInset?: number; $visible: boolean }>`
   padding: 0 4px;
   pointer-events: none;
   position: absolute;
-  right: ${({ $rightInset = HOVER_ACTION_EDGE_INSET - TABLE_CELL_HORIZONTAL_PADDING }) =>
-    `${$rightInset}px`};
+  right: ${({
+    $rightInset = HOVER_ACTION_EDGE_INSET - TABLE_CELL_HORIZONTAL_PADDING,
+  }) => `${$rightInset}px`};
   top: 4px;
   transform: translateX(${({ $visible }) => ($visible ? '0' : '4px')});
   transition:
@@ -1137,9 +1205,17 @@ function isFolder(entry: HeroSidebarEntry): entry is HeroSidebarFolder {
   return 'items' in entry;
 }
 
+function hasRenderablePage(
+  item: HeroSidebarItem,
+  pageDefaults: HeroPageDefaults,
+): boolean {
+  return normalizeHeroPage(item, pageDefaults) !== null;
+}
+
 function findActiveItem(
   entries: HeroSidebarEntry[],
   activeLabel: string,
+  pageDefaults: HeroPageDefaults,
 ): HeroSidebarItem | undefined {
   for (const entry of entries) {
     if (isFolder(entry)) {
@@ -1161,17 +1237,17 @@ function findActiveItem(
     }
 
     if (entry.label === activeLabel) {
-      const entryHasTable =
-        (entry.columns?.length ?? 0) > 0 || (entry.rows?.length ?? 0) > 0;
-
-      if (!entryHasTable && entry.children && entry.children.length > 0) {
-        const firstChildWithTable = entry.children.find(
-          (child) =>
-            (child.columns?.length ?? 0) > 0 || (child.rows?.length ?? 0) > 0,
+      if (
+        !hasRenderablePage(entry, pageDefaults) &&
+        entry.children &&
+        entry.children.length > 0
+      ) {
+        const firstChildWithRenderablePage = entry.children.find((child) =>
+          hasRenderablePage(child, pageDefaults),
         );
 
-        if (firstChildWithTable) {
-          return firstChildWithTable;
+        if (firstChildWithRenderablePage) {
+          return firstChildWithRenderablePage;
         }
       }
 
@@ -1180,6 +1256,83 @@ function findActiveItem(
   }
 
   return undefined;
+}
+
+function renderPageDefinition(page: HeroPageDefinition) {
+  switch (page.type) {
+    case 'table':
+      return PAGE_RENDERERS.table(page);
+    case 'kanban':
+      return PAGE_RENDERERS.kanban(page);
+    case 'dashboard':
+      return PAGE_RENDERERS.dashboard(page);
+    case 'workflow':
+      return PAGE_RENDERERS.workflow(page);
+  }
+}
+
+function getNavbarActionToneColor(
+  tone: HeroNavbarActionType['labelTone'],
+): string {
+  if (tone === 'primary') {
+    return VISUAL_TOKENS.font.color.primary;
+  }
+
+  if (tone === 'tertiary') {
+    return VISUAL_TOKENS.font.color.light;
+  }
+
+  return VISUAL_TOKENS.font.color.secondary;
+}
+
+function renderNavbarAction(
+  action: HeroNavbarActionType,
+  index: number,
+): ReactNode {
+  const ActionIcon = NAVBAR_ACTION_ICON_MAP[action.icon];
+  const isIconOnly =
+    action.variant === 'icon' || (!action.label && !action.trailingLabel);
+  const labelColor = getNavbarActionToneColor(action.labelTone);
+
+  const button = (
+    <NavbarActionButton
+      key={`${action.icon}-${index}-${action.label ?? action.trailingLabel ?? ''}`}
+      $iconOnly={isIconOnly}
+    >
+      {ActionIcon ? (
+        <NavbarActionIconWrap>
+          <ActionIcon
+            aria-hidden
+            size={VISUAL_TOKENS.icon.size.sm}
+            stroke={VISUAL_TOKENS.icon.stroke.sm}
+          />
+        </NavbarActionIconWrap>
+      ) : null}
+      {action.label ? (
+        <NavbarActionLabel $color={labelColor}>
+          {action.label}
+        </NavbarActionLabel>
+      ) : null}
+      {action.trailingLabel ? (
+        <>
+          <NavbarActionSeparator />
+          <NavbarActionLabel $color={VISUAL_TOKENS.font.color.light}>
+            {action.trailingLabel}
+          </NavbarActionLabel>
+        </>
+      ) : null}
+    </NavbarActionButton>
+  );
+
+  if (action.desktopOnly) {
+    return (
+      <DesktopOnlyNavbarAction key={`desktop-${index}`}>
+        {button}
+      </DesktopOnlyNavbarAction>
+    );
+  }
+
+  return button;
 }
 
 // -- Small icon wrappers --
@@ -1267,6 +1420,20 @@ function LinkMini({ color = COLORS.textTertiary, size = 16 }: MiniIconProps) {
 function ListMini({ color = COLORS.textSecondary, size = 16 }: MiniIconProps) {
   return (
     <IconList aria-hidden color={color} size={size} stroke={TABLER_STROKE} />
+  );
+}
+
+function KanbanMini({
+  color = COLORS.textSecondary,
+  size = 16,
+}: MiniIconProps) {
+  return (
+    <IconLayoutKanban
+      aria-hidden
+      color={color}
+      size={size}
+      stroke={TABLER_STROKE}
+    />
   );
 }
 
@@ -1436,7 +1603,7 @@ function renderSidebarIcon(icon: HeroSidebarIcon): ReactNode {
     return (
       <SidebarAvatar
         $background={tone.background}
-        $color={tone.color}
+        $color={icon.color ?? tone.color}
         $shape={icon.shape}
       >
         <span
@@ -1512,7 +1679,9 @@ function SidebarItemComponent({
   const rowSelectable = interactive && item.href === undefined;
   const rowInteractive = rowSelectable || item.href !== undefined;
   const rowActive =
-    rowSelectable && selectedLabel !== undefined && item.label === selectedLabel;
+    rowSelectable &&
+    selectedLabel !== undefined &&
+    item.label === selectedLabel;
   const childItems = item.children ?? [];
   const rowContent = (
     <>
@@ -1718,10 +1887,7 @@ function TextCellComponent({
       clickable={false}
       label={cell.value}
       leftComponent={
-        <PersonAvatarCircle
-          $background={tone.background}
-          $color={tone.color}
-        >
+        <PersonAvatarCircle $background={tone.background} $color={tone.color}>
           {cell.shortLabel}
         </PersonAvatarCircle>
       }
@@ -1787,13 +1953,6 @@ function renderCellValue(
 
 export function HomeVisual({ visual }: { visual: HeroVisualType }) {
   const shellRef = useRef<HTMLDivElement>(null);
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const dragRef = useRef({
-    active: false,
-    pointerId: -1,
-    startScrollLeft: 0,
-    startX: 0,
-  });
 
   const defaultActiveLabel =
     visual.workspaceNav.find((entry) => !isFolder(entry) && entry.active)
@@ -1802,27 +1961,36 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
     '';
 
   const [activeLabel, setActiveLabel] = useState(defaultActiveLabel);
-  const [dragging, setDragging] = useState(false);
-  const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
-
-  const activeItem = useMemo(
-    () => findActiveItem(visual.workspaceNav, activeLabel),
-    [activeLabel, visual.workspaceNav],
+  const pageDefaults = useMemo(
+    () => ({
+      defaultActions: visual.actions ?? [],
+      defaultTableWidth: visual.tableWidth ?? DEFAULT_TABLE_WIDTH,
+    }),
+    [visual.actions, visual.tableWidth],
   );
 
-  const columns: HeroColumnDef[] = activeItem?.columns ?? [];
-  const rows: HeroRowDef[] = activeItem?.rows ?? [];
-  const viewLabel = activeItem?.viewLabel ?? activeLabel;
-  const viewCount = activeItem?.viewCount ?? rows.length;
-  const totalTableWidth = visual.tableWidth ?? DEFAULT_TABLE_WIDTH;
-  const actions = visual.actions ?? [];
-
-  const columnWidth = columns.reduce((sum, column) => sum + column.width, 0);
-  const fillerWidth = Math.max(totalTableWidth - columnWidth, 0);
+  const activeItem = useMemo(
+    () => findActiveItem(visual.workspaceNav, activeLabel, pageDefaults),
+    [activeLabel, pageDefaults, visual.workspaceNav],
+  );
+  const activePage = useMemo(
+    () => (activeItem ? normalizeHeroPage(activeItem, pageDefaults) : null),
+    [activeItem, pageDefaults],
+  );
+  const activeHeader = activePage?.header;
+  const activeActions = activeHeader?.actions ?? [];
+  const navbarActions = activeHeader?.navbarActions;
+  const showPageCount = activeHeader?.count !== undefined;
+  const showListIcon = activeHeader?.showListIcon ?? false;
+  const showViewBar =
+    activePage !== null &&
+    activePage !== undefined &&
+    activePage.type !== 'dashboard' &&
+    activePage.type !== 'workflow';
 
   const handleShellPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (event.pointerType !== 'mouse' || dragging || !shellRef.current) {
+    if (event.pointerType !== 'mouse' || !shellRef.current) {
       return;
     }
 
@@ -1839,91 +2007,6 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
   const resetTilt = () => {
     setTilt({ x: 0, y: 0 });
   };
-
-  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (
-      event.pointerType !== 'mouse' ||
-      event.button !== 0 ||
-      !viewportRef.current
-    ) {
-      return;
-    }
-
-    dragRef.current = {
-      active: true,
-      pointerId: event.pointerId,
-      startScrollLeft: viewportRef.current.scrollLeft,
-      startX: event.clientX,
-    };
-
-    viewportRef.current.setPointerCapture(event.pointerId);
-    setDragging(true);
-    event.preventDefault();
-  };
-
-  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!dragRef.current.active || !viewportRef.current) {
-      return;
-    }
-
-    viewportRef.current.scrollLeft =
-      dragRef.current.startScrollLeft -
-      (event.clientX - dragRef.current.startX);
-  };
-
-  const endDragging = () => {
-    dragRef.current.active = false;
-    dragRef.current.pointerId = -1;
-    setDragging(false);
-  };
-
-  const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!viewportRef.current || dragRef.current.pointerId !== event.pointerId) {
-      return;
-    }
-
-    viewportRef.current.releasePointerCapture(event.pointerId);
-    endDragging();
-  };
-
-  useEffect(() => {
-    const node = viewportRef.current;
-
-    if (!node) {
-      return;
-    }
-
-    const onWheel: EventListener = (event) => {
-      if (!(event instanceof WheelEvent)) {
-        return;
-      }
-
-      if (
-        Math.abs(event.deltaY) <= Math.abs(event.deltaX)
-      ) {
-        return;
-      }
-
-      const maxScrollLeft = Math.max(node.scrollWidth - node.clientWidth, 0);
-      const nextScrollLeft = Math.min(
-        Math.max(node.scrollLeft + event.deltaY, 0),
-        maxScrollLeft,
-      );
-
-      if (Math.abs(nextScrollLeft - node.scrollLeft) < 0.5) {
-        return;
-      }
-
-      node.scrollLeft = nextScrollLeft;
-      event.preventDefault();
-    };
-
-    node.addEventListener('wheel', onWheel, { passive: false });
-
-    return () => {
-      node.removeEventListener('wheel', onWheel);
-    };
-  }, []);
 
   const renderSidebarEntry = (entry: HeroSidebarEntry) => {
     if (isFolder(entry)) {
@@ -2017,7 +2100,9 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
                   </SidebarSection>
                 ) : null}
                 <SidebarSection>
-                  <SidebarSectionLabel $workspace>Workspace</SidebarSectionLabel>
+                  <SidebarSectionLabel $workspace>
+                    Workspace
+                  </SidebarSectionLabel>
                   {visual.workspaceNav.map(renderSidebarEntry)}
                 </SidebarSection>
               </SidebarScroll>
@@ -2027,194 +2112,87 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
               <NavbarBar>
                 <Breadcrumb>
                   <BreadcrumbTag>
-                    <AccentIconSurface>
-                      <IconBuildingSkyscraper
-                        aria-hidden
-                        color={COLORS.accent}
-                        size={14}
-                      />
-                    </AccentIconSurface>
+                    {activeItem ? renderSidebarIcon(activeItem.icon) : null}
                     <CrumbLabel>{activeLabel}</CrumbLabel>
                   </BreadcrumbTag>
                 </Breadcrumb>
 
                 <NavbarActions aria-hidden>
-                  <DesktopOnlyNavbarAction>
-                    <NavbarActionButton>
-                      <NavbarActionIconWrap>
-                        <IconPlus
-                          aria-hidden
-                          size={VISUAL_TOKENS.icon.size.sm}
-                          stroke={VISUAL_TOKENS.icon.stroke.sm}
-                        />
-                      </NavbarActionIconWrap>
-                      <NavbarActionLabel>New Record</NavbarActionLabel>
-                    </NavbarActionButton>
-                  </DesktopOnlyNavbarAction>
-                  <NavbarActionButton>
-                    <NavbarActionIconWrap>
-                      <IconDotsVertical
-                        aria-hidden
-                        size={VISUAL_TOKENS.icon.size.sm}
-                        stroke={VISUAL_TOKENS.icon.stroke.sm}
-                      />
-                    </NavbarActionIconWrap>
-                    <NavbarActionSeparator />
-                    <NavbarActionLabel $color={VISUAL_TOKENS.font.color.light}>
-                      ⌘K
-                    </NavbarActionLabel>
-                  </NavbarActionButton>
+                  {navbarActions ? (
+                    navbarActions.map(renderNavbarAction)
+                  ) : (
+                    <>
+                      <DesktopOnlyNavbarAction>
+                        <NavbarActionButton>
+                          <NavbarActionIconWrap>
+                            <IconPlus
+                              aria-hidden
+                              size={VISUAL_TOKENS.icon.size.sm}
+                              stroke={VISUAL_TOKENS.icon.stroke.sm}
+                            />
+                          </NavbarActionIconWrap>
+                          <NavbarActionLabel>New Record</NavbarActionLabel>
+                        </NavbarActionButton>
+                      </DesktopOnlyNavbarAction>
+                      <NavbarActionButton>
+                        <NavbarActionIconWrap>
+                          <IconDotsVertical
+                            aria-hidden
+                            size={VISUAL_TOKENS.icon.size.sm}
+                            stroke={VISUAL_TOKENS.icon.stroke.sm}
+                          />
+                        </NavbarActionIconWrap>
+                        <NavbarActionSeparator />
+                        <NavbarActionLabel
+                          $color={VISUAL_TOKENS.font.color.light}
+                        >
+                          ⌘K
+                        </NavbarActionLabel>
+                      </NavbarActionButton>
+                    </>
+                  )}
                 </NavbarActions>
               </NavbarBar>
 
               <IndexSurface>
-                <ViewbarBar>
-                  <ViewSwitcher aria-hidden="true">
-                    <ListMini />
-                    <ViewName>{viewLabel}</ViewName>
-                    <TinyDot />
-                    <ViewCount>{viewCount}</ViewCount>
-                    <ChevronDownMini color={COLORS.textLight} />
-                  </ViewSwitcher>
-                  <ViewActions>
-                    {actions.map((action) => (
-                      <ViewAction key={action}>{action}</ViewAction>
-                    ))}
-                  </ViewActions>
-                </ViewbarBar>
-
-                <TableShell>
-                  <GripRail aria-hidden="true">
-                    <GripCell />
-                    {rows.map((row) => (
-                      <GripCell key={`grip-${row.id}`} />
-                    ))}
-                    <GripCell />
-                  </GripRail>
-
-                  <TableViewport
-                    ref={viewportRef}
-                    $dragging={dragging}
-                    aria-label={`Interactive preview of the ${activeLabel} table`}
-                    onPointerCancel={endDragging}
-                    onPointerDown={handlePointerDown}
-                    onPointerLeave={endDragging}
-                    onPointerMove={handlePointerMove}
-                    onPointerUp={handlePointerUp}
-                  >
-                    <TableCanvas $width={totalTableWidth}>
-                      <HeaderRow>
-                        {columns.map((column) => (
-                          <TableCell
-                            key={column.id}
-                            $align={column.align}
-                            $header
-                            $sticky={column.isFirstColumn}
-                            $width={column.width}
-                          >
-                            <HeaderCellContent>
-                              {column.isFirstColumn ? (
-                                <>
-                                  <CheckboxContainer>
-                                    <CheckboxBox />
-                                  </CheckboxContainer>
-                                  {renderHeaderIcon(column.id)}
-                                  <HeaderLabel>{column.label}</HeaderLabel>
-                                  <EdgePlus aria-hidden="true">
-                                    <PlusMini
-                                      color={COLORS.textTertiary}
-                                      size={12}
-                                    />
-                                  </EdgePlus>
-                                </>
-                              ) : (
-                                <>
-                                  {renderHeaderIcon(column.id)}
-                                  <HeaderLabel>{column.label}</HeaderLabel>
-                                </>
-                              )}
-                            </HeaderCellContent>
-                          </TableCell>
-                        ))}
-                        <EmptyFillCell $header $width={fillerWidth}>
-                          {fillerWidth > 0 ? (
-                            <HeaderFillContent>
-                              <PlusMini color={COLORS.textTertiary} size={16} />
-                            </HeaderFillContent>
+                {showViewBar ? (
+                  <ViewbarBar>
+                    <ViewSwitcher aria-hidden="true">
+                      {showListIcon ? (
+                        <>
+                          {activePage?.type === 'kanban' ? (
+                            <KanbanMini />
+                          ) : (
+                            <ListMini />
+                          )}
+                          <ViewName>
+                            {activeHeader?.title ?? activeLabel}
+                          </ViewName>
+                          {showPageCount ? (
+                            <>
+                              <TinyDot />
+                              <ViewCount>{activeHeader?.count}</ViewCount>
+                              <ChevronDownMini color={COLORS.textLight} />
+                            </>
                           ) : null}
-                        </EmptyFillCell>
-                      </HeaderRow>
-
-                      {rows.map((row) => {
-                        const hovered = hoveredRowId === row.id;
-
-                        return (
-                          <DataRow
-                            key={row.id}
-                            onMouseEnter={() => setHoveredRowId(row.id)}
-                            onMouseLeave={() =>
-                              setHoveredRowId((current) =>
-                                current === row.id ? null : current,
-                              )
-                            }
-                          >
-                            {columns.map((column) => {
-                              const cell = row.cells[column.id];
-
-                              return (
-                                <TableCell
-                                  key={`${row.id}-${column.id}`}
-                                  $align={column.align}
-                                  $hovered={hovered}
-                                  $sticky={column.isFirstColumn}
-                                  $width={column.width}
-                                >
-                                  {cell
-                                    ? renderCellValue(
-                                        cell,
-                                        hovered,
-                                        !!column.isFirstColumn,
-                                        column.id,
-                                      )
-                                    : null}
-                                </TableCell>
-                              );
-                            })}
-                            <EmptyFillCell
-                              $hovered={hovered}
-                              $width={fillerWidth}
-                            />
-                          </DataRow>
-                        );
-                      })}
-
-                      <FooterRow>
-                        {columns.length > 0 ? (
-                          <TableCell
-                            $sticky={columns[0].isFirstColumn}
-                            $width={columns[0].width}
-                          >
-                            <FooterFirstContent>
-                              <MutedText>Calculate</MutedText>
-                              <ChevronDownMini
-                                color={COLORS.textTertiary}
-                                size={14}
-                              />
-                            </FooterFirstContent>
-                          </TableCell>
-                        ) : null}
-                        {columns.slice(1).map((column) => (
-                          <TableCell
-                            key={`footer-${column.id}`}
-                            $align={column.align}
-                            $width={column.width}
-                          />
+                        </>
+                      ) : (
+                        <ViewName>
+                          {activeHeader?.title ?? activeLabel}
+                        </ViewName>
+                      )}
+                    </ViewSwitcher>
+                    {activeActions.length > 0 ? (
+                      <ViewActions>
+                        {activeActions.map((action) => (
+                          <ViewAction key={action}>{action}</ViewAction>
                         ))}
-                        <EmptyFillCell $footer $width={fillerWidth} />
-                      </FooterRow>
-                    </TableCanvas>
-                  </TableViewport>
-                </TableShell>
+                      </ViewActions>
+                    ) : null}
+                  </ViewbarBar>
+                ) : null}
+
+                {activePage ? renderPageDefinition(activePage) : null}
               </IndexSurface>
             </RightPane>
           </AppLayout>
