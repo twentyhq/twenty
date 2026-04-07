@@ -15,8 +15,12 @@ import { CloseDrawerWhenNavigationExpandsEffect } from '../../effect-components/
 import { MenuDrawer } from '../Drawer/Drawer';
 
 const StyledSection = styled.section`
+  backdrop-filter: blur(10px);
   min-width: 0;
+  position: sticky;
+  top: 0;
   width: 100%;
+  z-index: 200;
 `;
 
 const StyledContainer = styled(Container)`

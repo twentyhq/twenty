@@ -23,7 +23,6 @@ const TwoColumnGrid = styled.div`
   }
 `;
 
-// 1440 artboard: 384 + 556 + 500 — only two-column uses horizontal centering.
 const SingleColumnBody = styled.div`
   max-width: 556px;
   min-width: 0;

@@ -3,7 +3,6 @@ export enum SidePanelPages {
   ViewRecord = 'view-record',
   MergeRecords = 'merge-records',
   UpdateRecords = 'update-records',
-  ViewEmailThread = 'view-email-thread',
   ViewCalendarEvent = 'view-calendar-event',
   EditRichText = 'edit-rich-text',
   Copilot = 'copilot',
@@ -27,4 +26,5 @@ export enum SidePanelPages {
   NavigationMenuItemEdit = 'navigation-menu-item-edit',
   NavigationMenuAddItem = 'navigation-menu-add-item',
   CommandMenuEdit = 'command-menu-edit',
+  ComposeEmail = 'compose-email',
 }

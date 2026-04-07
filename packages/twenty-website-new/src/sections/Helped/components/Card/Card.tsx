@@ -1,4 +1,9 @@
-import { Body, Heading, LazyEmbed, LinkButton } from '@/design-system/components';
+import {
+  Body,
+  Heading,
+  LazyEmbed,
+  LinkButton,
+} from '@/design-system/components';
 import { CLIENT_ICONS } from '@/icons';
 import { HelpedCardShape } from '@/sections/Helped/HelpedCardShape';
 import type { HeadingCardType } from '@/sections/Helped/types/HeadingCard';
@@ -19,6 +24,11 @@ const CardRoot = styled.article`
   position: relative;
   row-gap: ${theme.spacing(2.5)};
   width: 100%;
+  transition:
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.6s ease;
+  transform-style: preserve-3d;
+  perspective: 1200px;
 `;
 
 const LogoRow = styled.div`

@@ -21,11 +21,12 @@ export function Flow({ body, eyebrow, heading, steps }: FlowProps) {
   const [scrollProgress, setScrollProgress] = useState(0);
   const scrollContainerRef = useRef<HTMLElement>(null);
 
-  const globalProgress = scrollProgress * (steps.length - 1);
   const activeStepIndex = Math.min(
     steps.length - 1,
-    Math.max(0, Math.floor(globalProgress)),
+    Math.floor(scrollProgress * steps.length),
   );
+  const localProgress =
+    scrollProgress * steps.length - activeStepIndex;
 
   const contentSteps = useMemo(
     () =>
@@ -50,7 +51,7 @@ export function Flow({ body, eyebrow, heading, steps }: FlowProps) {
         body={body}
         eyebrow={eyebrow}
         heading={heading}
-        scrollProgress={scrollProgress}
+        localProgress={localProgress}
         steps={contentSteps}
       />
       <Visual activeStepIndex={activeStepIndex} images={images} />

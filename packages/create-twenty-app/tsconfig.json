@@ -24,5 +24,9 @@
     "vite.config.ts",
     "jest.config.mjs"
   ],
-  "exclude": ["src/constants/base-application/vitest.config.ts"]
+  "exclude": [
+    "src/constants/template/vitest.config.ts",
+    "src/constants/template/src/**",
+    "src/constants/template/tsconfig.spec.json"
+  ]
 }

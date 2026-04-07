@@ -1,21 +1,25 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { MessageChannelDataAccessService } from 'src/engine/metadata-modules/message-channel/data-access/services/message-channel-data-access.service';
-import { MessageFolderDataAccessService } from 'src/engine/metadata-modules/message-folder/data-access/services/message-folder-data-access.service';
+import { Repository } from 'typeorm';
+
+import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
 @Injectable()
 export class MessagingCursorService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly messageChannelDataAccessService: MessageChannelDataAccessService,
-    private readonly messageFolderDataAccessService: MessageFolderDataAccessService,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
+    @InjectRepository(MessageFolderEntity)
+    private readonly messageFolderRepository: Repository<MessageFolderEntity>,
   ) {}
 
   public async updateCursor(
-    messageChannel: MessageChannelWorkspaceEntity,
+    messageChannel: MessageChannelEntity,
     nextSyncCursor: string,
     workspaceId: string,
     folderId?: string,
@@ -24,11 +28,8 @@ export class MessagingCursorService {
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       if (!folderId) {
-        await this.messageChannelDataAccessService.update(
-          workspaceId,
-          {
-            id: messageChannel.id,
-          },
+        await this.messageChannelRepository.update(
+          { id: messageChannel.id, workspaceId },
           {
             throttleFailureCount: 0,
             throttleRetryAfter: null,
@@ -41,20 +42,14 @@ export class MessagingCursorService {
           },
         );
       } else {
-        await this.messageFolderDataAccessService.update(
-          workspaceId,
-          {
-            id: folderId,
-          },
+        await this.messageFolderRepository.update(
+          { id: folderId, workspaceId },
           {
             syncCursor: nextSyncCursor,
           },
         );
-        await this.messageChannelDataAccessService.update(
-          workspaceId,
-          {
-            id: messageChannel.id,
-          },
+        await this.messageChannelRepository.update(
+          { id: messageChannel.id, workspaceId },
           {
             throttleFailureCount: 0,
             throttleRetryAfter: null,

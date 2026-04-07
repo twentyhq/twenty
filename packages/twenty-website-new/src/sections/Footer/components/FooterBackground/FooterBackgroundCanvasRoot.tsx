@@ -7,6 +7,7 @@ export const FooterBackgroundCanvasRoot = styled.div`
   pointer-events: none;
   overflow: hidden;
 
+  & canvas,
   & iframe {
     display: block;
     height: 100%;

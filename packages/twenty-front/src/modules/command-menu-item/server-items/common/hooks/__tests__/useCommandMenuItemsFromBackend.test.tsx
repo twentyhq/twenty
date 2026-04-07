@@ -24,7 +24,7 @@ jest.mock('twenty-shared/utils', () => {
 
   return {
     ...actual,
-    interpolateCommandMenuItemLabel: jest.fn(
+    interpolateCommandMenuItemTemplate: jest.fn(
       ({ label }: { label?: string | null }) => label ?? null,
     ),
     evaluateConditionalAvailabilityExpression: jest.fn(

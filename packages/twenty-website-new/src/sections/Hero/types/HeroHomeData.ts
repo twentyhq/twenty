@@ -2,7 +2,12 @@ import type { HeroBaseDataType } from '@/sections/Hero/types/HeroBaseData';
 
 // -- Cell value types --
 
-export type HeroCellText = { type: 'text'; value: string };
+export type HeroCellText = {
+  type: 'text';
+  value: string;
+  shortLabel?: string;
+  tone?: string;
+};
 export type HeroCellNumber = { type: 'number'; value: string };
 export type HeroCellLink = { type: 'link'; value: string };
 export type HeroCellBoolean = { type: 'boolean'; value: boolean };
@@ -57,7 +62,13 @@ export type HeroRowDef = {
 
 export type HeroSidebarIcon =
   | { kind: 'tabler'; name: string; tone: string; overlay?: 'link' }
-  | { kind: 'brand'; brand: string; overlay?: 'link' }
+  | {
+      kind: 'brand';
+      brand: string;
+      domain?: string;
+      imageSrc?: string;
+      overlay?: 'link';
+    }
   | {
       kind: 'avatar';
       label: string;
@@ -70,6 +81,7 @@ export type HeroSidebarIcon =
 export type HeroSidebarItem = {
   id: string;
   label: string;
+  href?: string;
   icon: HeroSidebarIcon;
   meta?: string;
   active?: boolean;

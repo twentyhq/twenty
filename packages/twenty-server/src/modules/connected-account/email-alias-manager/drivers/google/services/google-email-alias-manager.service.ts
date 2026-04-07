@@ -4,7 +4,7 @@ import { google } from 'googleapis';
 
 import { GmailEmailAliasErrorHandlerService } from 'src/modules/connected-account/email-alias-manager/drivers/google/services/google-email-alias-error-handler.service';
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 @Injectable()
 export class GoogleEmailAliasManagerService {
@@ -13,9 +13,7 @@ export class GoogleEmailAliasManagerService {
     private readonly gmailEmailAliasErrorHandlerService: GmailEmailAliasErrorHandlerService,
   ) {}
 
-  public async getHandleAliases(
-    connectedAccount: ConnectedAccountWorkspaceEntity,
-  ) {
+  public async getHandleAliases(connectedAccount: ConnectedAccountEntity) {
     const oAuth2Client =
       await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
         connectedAccount,

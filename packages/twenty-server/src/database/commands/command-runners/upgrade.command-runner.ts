@@ -1,31 +1,24 @@
-import { InjectRepository } from '@nestjs/typeorm';
-
 import chalk from 'chalk';
 import { CommandRunner, Option } from 'nest-commander';
 import { SemVer } from 'semver';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { DataSource, MigrationInterface } from 'typeorm';
 
-import {
-  type RunOnWorkspaceArgs,
-  WorkspaceCommandRunner,
-} from 'src/database/commands/command-runners/workspace.command-runner';
-import {
-  type WorkspaceIteratorContext,
-  WorkspaceIteratorService,
-} from 'src/database/commands/command-runners/workspace-iterator.service';
-import { CoreMigrationRunnerService } from 'src/database/commands/core-migration-runner/services/core-migration-runner.service';
+import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceCommandRunner } from 'src/database/commands/command-runners/workspace.command-runner';
 import { CommandLogger } from 'src/database/commands/logger';
 import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
+import { RegisteredInstanceMigrationService } from 'src/engine/core-modules/upgrade/services/registered-instance-migration-registry.service';
+import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
-import {
-  type CompareVersionMajorAndMinorReturnType,
-  compareVersionMajorAndMinor,
-} from 'src/utils/version/compare-version-minor-and-major';
 
-export type VersionCommands = WorkspaceCommandRunner[];
+export type VersionCommands = (
+  | WorkspaceCommandRunner
+  | ActiveOrSuspendedWorkspaceCommandRunner
+)[];
 export type AllCommands = Record<UpgradeCommandVersion, VersionCommands>;
 
 export type UpgradeCommandOptions = {
@@ -39,7 +32,9 @@ export type UpgradeCommandOptions = {
 type VersionContext = {
   fromWorkspaceVersion: SemVer;
   currentAppVersion: SemVer;
-  commands: VersionCommands;
+  currentVersionMajorMinor: UpgradeCommandVersion;
+  instanceCommands: MigrationInterface[];
+  workspaceCommands: VersionCommands;
 };
 
 export abstract class UpgradeCommandRunner extends CommandRunner {
@@ -48,12 +43,13 @@ export abstract class UpgradeCommandRunner extends CommandRunner {
   public abstract allCommands: AllCommands;
 
   constructor(
-    @InjectRepository(WorkspaceEntity)
-    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly coreEngineVersionService: CoreEngineVersionService,
     protected readonly workspaceVersionService: WorkspaceVersionService,
-    protected readonly coreMigrationRunnerService: CoreMigrationRunnerService,
+    protected readonly registeredInstanceMigrationService: RegisteredInstanceMigrationService,
+    protected readonly instanceUpgradeService: InstanceUpgradeService,
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    protected readonly workspaceUpgradeService: WorkspaceUpgradeService,
+    protected readonly dataSource: DataSource,
   ) {
     super();
     this.logger = new CommandLogger({
@@ -137,17 +133,17 @@ export abstract class UpgradeCommandRunner extends CommandRunner {
 
     try {
       const versionContext = this.resolveVersionContext();
-
-      const hasWorkspaces =
-        await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
-
-      if (!hasWorkspaces) {
-        this.logger.log(
-          chalk.blue('Fresh installation detected, skipping migration'),
-        );
-
-        return;
-      }
+      this.logger.log(
+        chalk.blue(
+          [
+            'Initialized upgrade context with:',
+            `- currentVersion (migrating to): ${versionContext.currentAppVersion}`,
+            `- fromWorkspaceVersion: ${versionContext.fromWorkspaceVersion}`,
+            `- ${versionContext.instanceCommands.length} instance commands (from registry)`,
+            `- ${versionContext.workspaceCommands.length} workspace commands`,
+          ].join('\n   '),
+        ),
+      );
 
       const workspacesBelowMinimumVersion =
         await this.workspaceVersionService.getWorkspacesBelowVersion(
@@ -166,38 +162,100 @@ Please roll back to that version and run the upgrade command again.`,
         );
       }
 
-      await this.coreMigrationRunnerService.run();
+      await this.runLegacyPendingTypeOrmMigrations();
+      await this.runInstanceCommandsOrThrow(versionContext);
 
-      const iteratorReport = await this.workspaceIteratorService.iterate({
-        workspaceIds:
-          options.workspaceId && options.workspaceId.size > 0
-            ? Array.from(options.workspaceId)
-            : undefined,
-        startFromWorkspaceId: options.startFromWorkspaceId,
-        workspaceCountLimit: options.workspaceCountLimit,
-        dryRun: options.dryRun,
-        callback: async (context) => {
-          await this.runOnWorkspace(context, options, versionContext);
-        },
-      });
+      const hasWorkspaces =
+        await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
 
-      if (iteratorReport.fail.length > 0) {
-        this.logger.error(
-          chalk.red(
-            `Upgrade completed with ${iteratorReport.fail.length} workspace failure(s)`,
+      if (!hasWorkspaces) {
+        this.logger.log(
+          chalk.blue(
+            'Fresh installation detected, skipping workspace commands',
           ),
         );
+
+        return;
       }
+
+      const iteratorReport = await this.runWorkspaceCommands(
+        options,
+        versionContext,
+      );
 
       this.logger.log(
         chalk.blue(
           `Upgrade summary: ${iteratorReport.success.length} succeeded, ${iteratorReport.fail.length} failed`,
         ),
       );
-      this.logger.log(chalk.blue('Command completed!'));
+
+      if (iteratorReport.fail.length > 0) {
+        throw new Error(
+          `Upgrade completed with ${iteratorReport.fail.length} workspace failure(s)`,
+        );
+      }
     } catch (error) {
       this.logger.error(chalk.red(`Upgrade failed: ${error.message}`));
       throw error;
+    }
+  }
+
+  private async runLegacyPendingTypeOrmMigrations(): Promise<void> {
+    this.logger.log('Running legacy TypeORM migrations...');
+
+    const migrations = await this.dataSource.runMigrations({
+      transaction: 'each',
+    });
+
+    if (migrations.length === 0) {
+      this.logger.log('No pending legacy migrations');
+    } else {
+      this.logger.log(
+        `Executed ${migrations.length} legacy migration(s): ${migrations.map((migration) => migration.name).join(', ')}`,
+      );
+    }
+  }
+
+  private async runInstanceCommandsOrThrow(
+    versionContext: VersionContext,
+  ): Promise<void> {
+    for (const instanceCommand of versionContext.instanceCommands) {
+      const migrationName = instanceCommand.constructor.name;
+      const result =
+        await this.instanceUpgradeService.runSingleMigration(instanceCommand);
+
+      switch (result.status) {
+        case 'already-executed': {
+          this.logger.warn(
+            `Core migration ${migrationName} already executed, skipping`,
+          );
+
+          break;
+        }
+        case 'failed': {
+          this.logger.error(`Core migration ${migrationName} failed`);
+
+          if (isDefined(result.error)) {
+            this.logger.error(
+              result.error instanceof Error
+                ? (result.error.stack ?? result.error.message)
+                : String(result.error),
+            );
+          }
+
+          throw new Error(`Core migration ${migrationName} failed`);
+        }
+        case 'success': {
+          this.logger.log(
+            `Core migration ${migrationName} executed successfully`,
+          );
+
+          break;
+        }
+        default: {
+          assertUnreachable(result);
+        }
+      }
     }
   }
 
@@ -205,9 +263,9 @@ Please roll back to that version and run the upgrade command again.`,
     const currentAppVersion = this.coreEngineVersionService.getCurrentVersion();
     const currentVersionMajorMinor =
       `${currentAppVersion.major}.${currentAppVersion.minor}.0` as UpgradeCommandVersion;
-    const commands = this.allCommands[currentVersionMajorMinor];
+    const workspaceCommands = this.allCommands[currentVersionMajorMinor];
 
-    if (!isDefined(commands)) {
+    if (!isDefined(workspaceCommands)) {
       throw new Error(
         `No command found for version ${currentAppVersion}. Please check the commands record.`,
       );
@@ -216,102 +274,41 @@ Please roll back to that version and run the upgrade command again.`,
     const fromWorkspaceVersion =
       this.coreEngineVersionService.getPreviousVersion();
 
-    this.logger.log(
-      chalk.blue(
-        [
-          'Initialized upgrade context with:',
-          `- currentVersion (migrating to): ${currentAppVersion}`,
-          `- fromWorkspaceVersion: ${fromWorkspaceVersion}`,
-          `- ${commands.length} commands`,
-        ].join('\n   '),
-      ),
-    );
-
-    return { fromWorkspaceVersion, currentAppVersion, commands };
-  }
-
-  private async runOnWorkspace(
-    iteratorContext: WorkspaceIteratorContext,
-    options: UpgradeCommandOptions,
-    versionContext: VersionContext,
-  ): Promise<void> {
-    const { workspaceId, index, total } = iteratorContext;
-    const { fromWorkspaceVersion, currentAppVersion, commands } =
-      versionContext;
-
-    this.logger.log(
-      chalk.blue(
-        `${options.dryRun ? '(dry run) ' : ''}Upgrading workspace ${workspaceId} from=${fromWorkspaceVersion} to=${currentAppVersion} ${index + 1}/${total}`,
-      ),
-    );
-
-    const versionCompareResult =
-      await this.compareWorkspaceVersionToFromVersion(
-        workspaceId,
-        fromWorkspaceVersion,
+    const instanceCommands =
+      this.registeredInstanceMigrationService.getInstanceCommandsForVersion(
+        currentVersionMajorMinor,
       );
 
-    switch (versionCompareResult) {
-      case 'lower': {
-        throw new Error(
-          `WORKSPACE_VERSION_MISSMATCH Upgrade for workspace ${workspaceId} failed as its version is beneath fromWorkspaceVersion=${fromWorkspaceVersion.version}`,
-        );
-      }
-      case 'equal': {
-        for (const command of commands) {
-          await command.runOnWorkspace({
-            options: options as RunOnWorkspaceArgs['options'],
-            workspaceId,
-            dataSource: iteratorContext.dataSource,
-            index,
-            total,
-          });
-        }
-
-        if (!options.dryRun) {
-          await this.workspaceRepository.update(
-            { id: workspaceId },
-            { version: currentAppVersion.version },
-          );
-        }
-
-        this.logger.log(
-          chalk.blue(`Upgrade for workspace ${workspaceId} completed.`),
-        );
-
-        return;
-      }
-      case 'higher': {
-        this.logger.log(
-          chalk.blue(
-            `Upgrade for workspace ${workspaceId} ignored as is already at a higher version.`,
-          ),
-        );
-
-        return;
-      }
-      default: {
-        assertUnreachable(versionCompareResult);
-      }
-    }
+    return {
+      fromWorkspaceVersion,
+      currentAppVersion,
+      currentVersionMajorMinor,
+      workspaceCommands,
+      instanceCommands,
+    };
   }
 
-  private async compareWorkspaceVersionToFromVersion(
-    workspaceId: string,
-    fromWorkspaceVersion: SemVer,
-  ): Promise<CompareVersionMajorAndMinorReturnType> {
-    const workspace = await this.workspaceRepository.findOneByOrFail({
-      id: workspaceId,
+  private async runWorkspaceCommands(
+    options: UpgradeCommandOptions,
+    versionContext: VersionContext,
+  ) {
+    return await this.workspaceIteratorService.iterate({
+      workspaceIds:
+        options.workspaceId && options.workspaceId.size > 0
+          ? Array.from(options.workspaceId)
+          : undefined,
+      startFromWorkspaceId: options.startFromWorkspaceId,
+      workspaceCountLimit: options.workspaceCountLimit,
+      dryRun: options.dryRun,
+      callback: async (context) => {
+        await this.workspaceUpgradeService.upgradeWorkspace({
+          iteratorContext: context,
+          options,
+          fromWorkspaceVersion: versionContext.fromWorkspaceVersion,
+          currentAppVersion: versionContext.currentAppVersion,
+          workspaceCommands: versionContext.workspaceCommands,
+        });
+      },
     });
-    const currentWorkspaceVersion = workspace.version;
-
-    if (!isDefined(currentWorkspaceVersion)) {
-      throw new Error(`WORKSPACE_VERSION_NOT_DEFINED workspace=${workspaceId}`);
-    }
-
-    return compareVersionMajorAndMinor(
-      currentWorkspaceVersion,
-      fromWorkspaceVersion.version,
-    );
   }
 }

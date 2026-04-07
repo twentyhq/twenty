@@ -229,25 +229,17 @@ export const buildMessageChannelMessageAssociationMessageFolderStandardFlatField
       twentyStandardApplicationId,
       now,
     }),
-    messageFolder: createStandardRelationFieldFlatMetadata({
+    messageFolderId: createStandardFieldFlatMetadata({
       objectName,
       workspaceId,
       context: {
-        type: FieldMetadataType.RELATION,
-        morphId: null,
-        fieldName: 'messageFolder',
+        fieldName: 'messageFolderId',
+        type: FieldMetadataType.UUID,
         label: i18nLabel(msg`Message Folder`),
         description: i18nLabel(msg`Message Folder`),
         icon: 'IconFolder',
         isNullable: false,
         isUIReadOnly: true,
-        targetObjectName: 'messageFolder',
-        targetFieldName: 'messageChannelMessageAssociationMessageFolders',
-        settings: {
-          relationType: RelationType.MANY_TO_ONE,
-          onDelete: RelationOnDeleteAction.CASCADE,
-          joinColumnName: 'messageFolderId',
-        },
       },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,

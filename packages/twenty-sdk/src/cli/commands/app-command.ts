@@ -33,10 +33,11 @@ export const registerCommands = (program: Command): void => {
     .command('dev [appPath]')
     .description('Watch and sync local application changes')
     .option('-v, --verbose', 'Show detailed logs')
+    .option('-d, --debug', 'Show detailed logs (alias for --verbose)')
     .action(async (appPath, options) => {
       await devCommand.execute({
         appPath: formatPath(appPath),
-        verbose: options.verbose,
+        verbose: options.verbose || options.debug,
       });
     });
 

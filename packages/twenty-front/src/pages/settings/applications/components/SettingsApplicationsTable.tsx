@@ -22,8 +22,9 @@ const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledTableHeaderRowContainer = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[2]};
+const StyledTableRowsContainer = styled.div`
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  padding: ${themeCssVariables.spacing[2]} 0;
 `;
 
 const StyledSearchInputContainer = styled.div`
@@ -64,47 +65,47 @@ export const SettingsApplicationsTable = ({
       </StyledSearchInputContainer>
       <StyledTableContainer>
         <Table>
-          <StyledTableHeaderRowContainer>
-            <TableRow
-              gridTemplateColumns={APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
-            >
-              <TableHeader> {t`Name`}</TableHeader>
-              <TableHeader> {t`Description`}</TableHeader>
-              <TableHeader> {''}</TableHeader>
-              <TableHeader />
-            </TableRow>
-          </StyledTableHeaderRowContainer>
-          {filteredApplications.map((application) => {
-            const isNpmApp =
-              application.applicationRegistration?.sourceType ===
-              ApplicationRegistrationSourceType.NPM;
+          <TableRow
+            gridTemplateColumns={APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+          >
+            <TableHeader> {t`Name`}</TableHeader>
+            <TableHeader> {t`Description`}</TableHeader>
+            <TableHeader> {''}</TableHeader>
+            <TableHeader />
+          </TableRow>
+          <StyledTableRowsContainer>
+            {filteredApplications.map((application) => {
+              const isNpmApp =
+                application.applicationRegistration?.sourceType ===
+                ApplicationRegistrationSourceType.NPM;
 
-            const latestVersion =
-              application.applicationRegistration?.latestAvailableVersion;
+              const latestVersion =
+                application.applicationRegistration?.latestAvailableVersion;
 
-            const hasUpdate =
-              isNpmApp &&
-              isDefined(latestVersion) &&
-              isDefined(application.version) &&
-              isNewerSemver(latestVersion, application.version);
+              const hasUpdate =
+                isNpmApp &&
+                isDefined(latestVersion) &&
+                isDefined(application.version) &&
+                isNewerSemver(latestVersion, application.version);
 
-            return (
-              <SettingsApplicationTableRow
-                key={application.id}
-                application={application}
-                hasUpdate={hasUpdate}
-                action={
-                  <IconChevronRight
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.sm}
-                  />
-                }
-                link={getSettingsPath(SettingsPath.ApplicationDetail, {
-                  applicationId: application.id,
-                })}
-              />
-            );
-          })}
+              return (
+                <SettingsApplicationTableRow
+                  key={application.id}
+                  application={application}
+                  hasUpdate={hasUpdate}
+                  action={
+                    <IconChevronRight
+                      size={theme.icon.size.md}
+                      stroke={theme.icon.stroke.sm}
+                    />
+                  }
+                  link={getSettingsPath(SettingsPath.ApplicationDetail, {
+                    applicationId: application.id,
+                  })}
+                />
+              );
+            })}
+          </StyledTableRowsContainer>
         </Table>
       </StyledTableContainer>
     </Section>

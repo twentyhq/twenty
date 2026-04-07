@@ -10,9 +10,12 @@ import { usePageLayoutIdForRecord } from '@/page-layout/hooks/usePageLayoutIdFor
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
+import { sidePanelWidgetFooterActionsState } from '@/ui/layout/side-panel/states/sidePanelWidgetFooterActionsState';
 import { styled } from '@linaria/react';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
@@ -54,6 +57,16 @@ export const PageLayoutRecordPageRenderer = ({
     id: targetRecordIdentifier.id,
     targetObjectNameSingular: targetRecordIdentifier.targetObjectNameSingular,
   });
+
+  const sidePanelWidgetFooterActions = useAtomStateValue(
+    sidePanelWidgetFooterActionsState,
+  );
+
+  const pinnedWidgetActions = sidePanelWidgetFooterActions.filter(
+    (action) => action.isPinned !== false,
+  );
+
+  const hasPinnedWidgetActions = pinnedWidgetActions.length > 0;
 
   return (
     <>
@@ -101,13 +114,30 @@ export const PageLayoutRecordPageRenderer = ({
         {isInSidePanel && (
           <SidePanelFooter
             actions={[
-              <RecordPageSidePanelCommandMenu />,
-              <RecordShowSidePanelOpenRecordButton
-                objectNameSingular={
-                  targetRecordIdentifier.targetObjectNameSingular
-                }
-                recordId={targetRecordIdentifier.id}
-              />,
+              <RecordPageSidePanelCommandMenu key="options" />,
+              ...(hasPinnedWidgetActions
+                ? pinnedWidgetActions.map((action) => (
+                    <Button
+                      key={action.key}
+                      size="small"
+                      variant={action.isPrimaryCTA ? 'primary' : 'secondary'}
+                      accent={action.isPrimaryCTA ? 'blue' : 'default'}
+                      title={action.label}
+                      Icon={action.Icon}
+                      hotkeys={action.hotkeys}
+                      onClick={action.onClick}
+                      disabled={action.disabled}
+                    />
+                  ))
+                : [
+                    <RecordShowSidePanelOpenRecordButton
+                      key="open"
+                      objectNameSingular={
+                        targetRecordIdentifier.targetObjectNameSingular
+                      }
+                      recordId={targetRecordIdentifier.id}
+                    />,
+                  ]),
             ]}
           />
         )}

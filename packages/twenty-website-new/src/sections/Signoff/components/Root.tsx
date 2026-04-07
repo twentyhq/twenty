@@ -25,6 +25,8 @@ const StyledContainer = styled(Container)`
   padding-right: ${theme.spacing(4)};
   padding-top: ${theme.spacing(20)};
   text-align: center;
+  position: relative;
+  z-index: 10;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     padding-bottom: ${theme.spacing(28)};
