@@ -5479,6 +5479,9 @@ export default {
             "scopes": [
                 1
             ],
+            "connectionParameters": [
+                291
+            ],
             "lastSignedInAt": [
                 4
             ],

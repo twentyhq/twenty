@@ -2771,6 +2771,7 @@ type ConnectedAccountDTO {
   authFailedAt: DateTime
   handleAliases: [String!]
   scopes: [String!]
+  connectionParameters: ImapSmtpCaldavConnectionParameters
   lastSignedInAt: DateTime
   userWorkspaceId: UUID!
   createdAt: DateTime!
