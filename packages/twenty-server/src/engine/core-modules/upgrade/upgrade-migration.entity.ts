@@ -2,14 +2,21 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   PrimaryGeneratedColumn,
-  Unique,
 } from 'typeorm';
 
 export type UpgradeMigrationStatus = 'completed' | 'failed';
 
 @Entity({ name: 'upgradeMigration', schema: 'core' })
-@Unique('UQ_upgrade_migration_name_attempt', ['name', 'attempt'])
+@Index('UQ_upgrade_migration_instance', ['name', 'attempt'], {
+  unique: true,
+  where: '"workspaceId" IS NULL',
+})
+@Index('UQ_upgrade_migration_workspace', ['name', 'attempt', 'workspaceId'], {
+  unique: true,
+  where: '"workspaceId" IS NOT NULL',
+})
 export class UpgradeMigrationEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -25,6 +32,9 @@ export class UpgradeMigrationEntity {
 
   @Column({ type: 'varchar', nullable: false })
   executedByVersion: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  workspaceId: string | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
