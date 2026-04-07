@@ -93,8 +93,8 @@ describe('ImapGetAllFoldersService', () => {
       mockImapClient.list.mockResolvedValue(mailboxList);
       mockImapClient.status.mockImplementation(async (path: string) => {
         const uidMap: Record<string, bigint> = {
-          INBOX: 1n,
-          'INBOX.Others.Sub1': 2n,
+          INBOX: BigInt(1),
+          'INBOX.Others.Sub1': BigInt(2),
         };
 
         if (path in uidMap) {
@@ -141,8 +141,8 @@ describe('ImapGetAllFoldersService', () => {
       mockImapClient.list.mockResolvedValue(mailboxList);
       mockImapClient.status.mockImplementation(async (path: string) => {
         const uidMap: Record<string, bigint> = {
-          'INBOX.Others.Sub1': 10n,
-          'INBOX.Others.Sub2': 11n,
+          'INBOX.Others.Sub1': BigInt(10),
+          'INBOX.Others.Sub2': BigInt(11),
         };
 
         return { uidValidity: uidMap[path] } as any;
@@ -171,7 +171,7 @@ describe('ImapGetAllFoldersService', () => {
 
       mockImapClient.list.mockResolvedValue(mailboxList);
       mockImapClient.status.mockImplementation(async () => {
-        return { uidValidity: 1n } as any;
+        return { uidValidity: BigInt(1) } as any;
       });
 
       imapFindSentFolderService.findSentFolder.mockResolvedValue({
