@@ -135,7 +135,7 @@ export class WorkspaceUpgradeService {
     const commandName = workspaceCommand.constructor.name;
 
     const isAlreadyCompleted =
-      await this.upgradeMigrationService.hasBeenCompleted({
+      await this.upgradeMigrationService.isLastAttemptCompleted({
         name: commandName,
         workspaceId,
       });

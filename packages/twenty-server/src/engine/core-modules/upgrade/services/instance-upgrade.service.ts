@@ -28,7 +28,7 @@ export class InstanceUpgradeService {
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
     const isAlreadyCompleted =
-      await this.upgradeMigrationService.hasBeenCompleted({
+      await this.upgradeMigrationService.isLastAttemptCompleted({
         name: migrationName,
         workspaceId: null,
       });

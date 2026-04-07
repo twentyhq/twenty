@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { IsNull, type QueryRunner, Repository } from 'typeorm';
 
 import { UpgradeMigrationEntity } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
@@ -12,20 +13,22 @@ export class UpgradeMigrationService {
     private readonly upgradeMigrationRepository: Repository<UpgradeMigrationEntity>,
   ) {}
 
-  async hasBeenCompleted({
+  async isLastAttemptCompleted({
     name,
     workspaceId,
   }: {
     name: string;
     workspaceId: string | null;
   }): Promise<boolean> {
-    return this.upgradeMigrationRepository.exists({
+    const latestAttempt = await this.upgradeMigrationRepository.findOne({
       where: {
         name,
         workspaceId: workspaceId === null ? IsNull() : workspaceId,
-        status: 'completed',
       },
+      order: { attempt: 'DESC' },
     });
+
+    return isDefined(latestAttempt) && latestAttempt.status === 'completed';
   }
 
   async markAsCompleted({
