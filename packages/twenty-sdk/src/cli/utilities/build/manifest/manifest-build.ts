@@ -146,9 +146,7 @@ export const buildManifest = async (
 
         const objectManifest: ObjectManifest = {
           ...extract.config,
-          fields: objectFieldsWithDefaults.map((field) =>
-            addMissingFieldOptionIds(field),
-          ),
+          fields: objectFieldsWithDefaults.map(addMissingFieldOptionIds),
           labelIdentifierFieldMetadataUniversalIdentifier,
         };
 
