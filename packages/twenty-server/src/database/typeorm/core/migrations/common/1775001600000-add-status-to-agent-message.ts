@@ -1,8 +1,5 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-import { RegisteredCoreMigration } from 'src/database/typeorm/core/decorators/registered-core-migration.decorator';
-
-@RegisteredCoreMigration('1.21.0')
 export class AddStatusToAgentMessage1775001600000
   implements MigrationInterface
 {
