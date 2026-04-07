@@ -6,11 +6,12 @@ import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/c
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Command({
   name: 'upgrade:1-21:backfill-message-thread-subject',
@@ -21,8 +22,8 @@ export class BackfillMessageThreadSubjectCommand extends ActiveOrSuspendedWorksp
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
-    private readonly fieldMetadataService: FieldMetadataService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {
     super(workspaceIteratorService);
   }
@@ -123,7 +124,7 @@ export class BackfillMessageThreadSubjectCommand extends ActiveOrSuspendedWorksp
         { workspaceId },
       );
 
-    await this.fieldMetadataService.createOneField({
+    const flatFieldMetadataToCreate = getDefaultFlatFieldMetadata({
       createFieldInput: {
         name: 'subject',
         type: FieldMetadataType.TEXT,
@@ -132,13 +133,39 @@ export class BackfillMessageThreadSubjectCommand extends ActiveOrSuspendedWorksp
         icon: 'IconMessage',
         isNullable: true,
         isUIReadOnly: true,
-        objectMetadataId: messageThreadObjectMetadata.id,
         universalIdentifier:
           STANDARD_OBJECTS.messageThread.fields.subject.universalIdentifier,
       },
-      workspaceId,
-      ownerFlatApplication: twentyStandardFlatApplication,
+      flatApplication: twentyStandardFlatApplication,
+      objectMetadataUniversalIdentifier:
+        messageThreadObjectMetadata.universalIdentifier,
     });
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            fieldMetadata: {
+              flatEntityToCreate: [flatFieldMetadataToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+          },
+          workspaceId,
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
+        },
+      );
+
+    if (validateAndBuildResult.status === 'fail') {
+      this.logger.error(
+        `Failed to create messageThread.subject field for workspace ${workspaceId}:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
+      );
+
+      throw new Error(
+        `Failed to create messageThread.subject field for workspace ${workspaceId}`,
+      );
+    }
 
     this.logger.log(
       `Created messageThread.subject field for workspace ${workspaceId}`,
