@@ -13,7 +13,6 @@ import {
 } from 'src/database/commands/command-runners/workspace.command-runner';
 import { addPayloadCheckConstraintToCommandMenuItem } from 'src/database/typeorm/core/migrations/utils/1775129635528-add-payload-to-command-menu-item.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import {
@@ -21,9 +20,9 @@ import {
   NAVIGATION_COMMAND_UUID_NAMESPACE,
 } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util';
 import { seedCompareObjectMetadataForNavigationPosition } from 'src/engine/metadata-modules/flat-command-menu-item/utils/seed-compare-object-metadata-for-navigation-position.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const GO_TO_ENGINE_KEYS = [
@@ -37,6 +36,26 @@ const GO_TO_ENGINE_KEYS = [
   'GO_TO_WORKFLOWS',
   'GO_TO_RUNS',
 ];
+
+const SETTINGS_NAVIGATION_ITEM_KEYS = [
+  'goToSettings',
+  'goToSettingsExperience',
+  'goToSettingsAccounts',
+  'goToSettingsAccountsEmails',
+  'goToSettingsAccountsCalendars',
+  'goToSettingsGeneral',
+  'goToSettingsObjects',
+  'goToSettingsMembers',
+  'goToSettingsRoles',
+  'goToSettingsDomains',
+  'goToSettingsBilling',
+  'goToSettingsApiWebhooks',
+  'goToSettingsApplications',
+  'goToSettingsAI',
+  'goToSettingsSecurity',
+  'goToSettingsAdminPanel',
+  'goToSettingsUpdates',
+] as const satisfies ReadonlyArray<keyof typeof STANDARD_COMMAND_MENU_ITEMS>;
 
 @Command({
   name: 'upgrade:1-21:refactor-navigation-commands',
@@ -179,31 +198,37 @@ export class RefactorNavigationCommandsCommand extends ActiveOrSuspendedWorkspac
       );
     }
 
-    const settingsUniversalIdentifier =
-      STANDARD_COMMAND_MENU_ITEMS.goToSettings.universalIdentifier;
+    for (const settingsItemKey of SETTINGS_NAVIGATION_ITEM_KEYS) {
+      const commandMenuItem = STANDARD_COMMAND_MENU_ITEMS[settingsItemKey];
 
-    if (
-      !existingNavigationUniversalIdentifiers.has(settingsUniversalIdentifier)
-    ) {
+      if (
+        existingNavigationUniversalIdentifiers.has(
+          commandMenuItem.universalIdentifier,
+        )
+      ) {
+        continue;
+      }
+
       flatCommandMenuItemsToCreate.push({
         id: v4(),
-        universalIdentifier: settingsUniversalIdentifier,
+        universalIdentifier: commandMenuItem.universalIdentifier,
         applicationId: twentyStandardFlatApplication.id,
         applicationUniversalIdentifier:
           TWENTY_STANDARD_APPLICATION.universalIdentifier,
         workspaceId,
-        label: 'Go to Settings',
-        shortLabel: 'Settings',
-        icon: 'IconSettings',
+        label: commandMenuItem.label,
+        shortLabel: commandMenuItem.shortLabel,
+        icon: commandMenuItem.icon,
         position: nextPosition++,
-        isPinned: false,
-        availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-        conditionalAvailabilityExpression: null,
+        isPinned: commandMenuItem.isPinned,
+        availabilityType: commandMenuItem.availabilityType,
+        conditionalAvailabilityExpression:
+          commandMenuItem.conditionalAvailabilityExpression ?? null,
         frontComponentId: null,
         frontComponentUniversalIdentifier: null,
         engineComponentKey: EngineComponentKey.NAVIGATION,
-        payload: { path: '/settings/profile' },
-        hotKeys: ['G', 'S'],
+        payload: { ...commandMenuItem.payload },
+        hotKeys: commandMenuItem.hotKeys ? [...commandMenuItem.hotKeys] : null,
         workflowVersionId: null,
         availabilityObjectMetadataId: null,
         availabilityObjectMetadataUniversalIdentifier: null,
