@@ -8,6 +8,7 @@ import { type EmailThreadMessageParticipant } from '@/activities/emails/types/Em
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
 import { type MessageChannelMessageAssociation } from '@/activities/emails/types/MessageChannelMessageAssociation';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
 import {
