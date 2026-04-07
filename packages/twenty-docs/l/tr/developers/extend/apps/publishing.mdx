@@ -52,17 +52,17 @@ yarn twenty deploy
 
 ### Dağıtılmış bir uygulamayı paylaşma
 
-Tarball uygulamaları genel pazar yerinde listelenmez; bu nedenle aynı sunucudaki diğer çalışma alanları gezinerek onları keşfedemez. Dağıtılmış bir uygulamayı paylaşmak için:
+<Warning>
+Sharing private (tarball) apps across workspaces is an **Enterprise** feature. The **Distribution** tab will show an upgrade prompt instead of the share controls until your workspace has a valid Enterprise key. See [Settings > Admin Panel > Enterprise](/settings/admin-panel#enterprise) to activate it.
+</Warning>
+
+Tarball uygulamaları genel pazar yerinde listelenmez; bu nedenle aynı sunucudaki diğer çalışma alanları gezinerek onları keşfedemez. Once your workspace is on the Enterprise plan, you can share a deployed app like this:
 
 1. **Ayarlar > Uygulamalar > Kayıtlar** bölümüne gidin ve uygulamanızı açın
 2. **Dağıtım** sekmesinde, **Paylaşım bağlantısını kopyala**’ya tıklayın
 3. Bu bağlantıyı diğer çalışma alanlarındaki kullanıcılarla paylaşın — onları doğrudan uygulamanın yükleme sayfasına götürür
 
 Paylaşım bağlantısı, sunucunun temel URL’sini (herhangi bir çalışma alanı alt alan adı olmadan) kullanır; böylece sunucudaki herhangi bir çalışma alanı için çalışır.
-
-<Warning>
-Özel uygulamaları paylaşma bir Kurumsal özelliktir. [Ayarlar > Yönetim Paneli > Kurumsal](/settings/admin-panel#enterprise) bölümüne giderek etkinleştirin.
-</Warning>
 
 ### Sürüm yönetimi
 
