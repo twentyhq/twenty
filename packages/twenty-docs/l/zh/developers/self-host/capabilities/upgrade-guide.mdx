@@ -372,10 +372,8 @@ yarn command:prod upgrade-0.23
 
 ```
 yarn database:migrate:prod
-yarn command:prod workspace:sync-metadata -f
 yarn command:prod upgrade-0.22
 ```
 
 `yarn database:migrate:prod` 命令将迁移应用于数据库。
-该 `yarn command:prod workspace:sync-metadata -f` 命令将把标准对象的定义同步到元数据表，并将所需的迁移应用到现有工作区。
 该 `yarn command:prod upgrade-0.22` 命令将应用特定的数据转换，以适配新的对象 defaultRequestInstrumentationOptions。

@@ -365,10 +365,8 @@ Twenty 인스턴스를 v0.22.0 이미지로 업그레이드하십시오.
 
 ```
 yarn database:migrate:prod
-yarn command:prod workspace:sync-metadata -f
 yarn command:prod upgrade-0.22
 ```
 
 `yarn database:migrate:prod` 명령은 데이터베이스에 마이그레이션을 적용합니다.
-`yarn command:prod workspace:sync-metadata -f` 명령은 표준 객체의 정의를 메타데이터 테이블에 동기화하고 기존 워크스페이스에 필요한 마이그레이션을 적용합니다.
 `yarn command:prod upgrade-0.22` 명령은 새 객체 defaultRequestInstrumentationOptions에 적응하기 위한 특정 데이터 변환을 적용합니다.

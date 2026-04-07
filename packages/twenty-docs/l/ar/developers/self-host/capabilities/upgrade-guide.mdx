@@ -372,10 +372,8 @@ yarn command:prod upgrade-0.23
 
 ```
 yarn database:migrate:prod
-yarn command:prod workspace:sync-metadata -f
 yarn command:prod upgrade-0.22
 ```
 
 أمر `yarn database:migrate:prod` سيقوم بتطبيق الترقيات على قاعدة البيانات.
-الأمر `yarn command:prod workspace:sync-metadata -f` سيزامن تعريف الكائنات القياسية مع جداول البيانات الوصفية ويطبق الترقيات المطلوبة على مساحات العمل الموجودة.
 الأمر `yarn command:prod upgrade-0.22` سيقوم بتطبيق تحويلات بيانات محددة للتكيف مع الخيارات الافتراضية الجديدة لتوثيق الطلبات في الكائنات.

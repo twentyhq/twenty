@@ -372,10 +372,8 @@ Rulați următoarele comenzi:
 
 ```
 yarn database:migrate:prod
-yarn command:prod workspace:sync-metadata -f
 yarn command:prod upgrade-0.22
 ```
 
 Comanda `yarn database:migrate:prod` va aplica migrațiile pe baza de date.
-Comanda `yarn command:prod workspace:sync-metadata -f` va sincroniza definiția obiectelor standard cu tabelele de metadate și va aplica migrațiile necesare în spațiile de lucru existente.
 Comanda `yarn command:prod upgrade-0.22` va aplica transformări specifice de date pentru a se adapta la noile opțiuni defaultRequestInstrumentationOptions ale obiectului.

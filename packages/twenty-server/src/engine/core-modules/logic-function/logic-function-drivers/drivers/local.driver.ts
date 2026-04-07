@@ -151,7 +151,7 @@ export class LocalDriver implements LogicFunctionDriver {
         outfile: builtBundleFilePath,
         platform: 'node',
         format: 'esm',
-        target: 'es2017',
+        target: 'esnext',
         bundle: true,
         sourcemap: true,
         packages: 'external',

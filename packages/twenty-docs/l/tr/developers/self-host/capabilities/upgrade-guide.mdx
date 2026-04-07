@@ -365,10 +365,8 @@ Aşağıdaki komutları çalıştırın:
 
 ```
 yarn database:migrate:prod
-yarn command:prod workspace:sync-metadata -f
 yarn command:prod upgrade-0.22
 ```
 
 `yarn database:migrate:prod` komutu veritabanı yapısına göçleri uygular.
-`yarn command:prod workspace:sync-metadata -f` komutu, standart nesnelerin tanımını meta veri tablolarıyla eşitleyecek ve mevcut çalışma alanlarına gerekli geçişleri uygulayacaktır.
 `yarn command:prod upgrade-0.22` komutu, yeni nesnenin defaultRequestInstrumentationOptions değerine uyum sağlamak için belirli veri dönüşümlerini uygulayacaktır.
