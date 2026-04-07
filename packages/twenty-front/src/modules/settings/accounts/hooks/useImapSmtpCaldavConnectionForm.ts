@@ -69,15 +69,18 @@ export const useImapSmtpCaldavConnectionForm = ({
     if (isDefined(connectedAccount)) {
       reset({
         handle: connectedAccount.handle || '',
-        IMAP:
-          connectedAccount.connectionParameters?.IMAP ||
-          defaultProtocolValues.IMAP,
-        SMTP:
-          connectedAccount.connectionParameters?.SMTP ||
-          defaultProtocolValues.SMTP,
-        CALDAV:
-          connectedAccount.connectionParameters?.CALDAV ||
-          defaultProtocolValues.CALDAV,
+        IMAP: {
+          ...defaultProtocolValues.IMAP,
+          ...connectedAccount.connectionParameters?.IMAP,
+        },
+        SMTP: {
+          ...defaultProtocolValues.SMTP,
+          ...connectedAccount.connectionParameters?.SMTP,
+        },
+        CALDAV: {
+          ...defaultProtocolValues.CALDAV,
+          ...connectedAccount.connectionParameters?.CALDAV,
+        },
       });
     }
   }, [connectedAccount, reset]);
