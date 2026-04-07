@@ -134,14 +134,15 @@ export class WorkspaceUpgradeService {
   }): Promise<void> {
     const commandName = workspaceCommand.constructor.name;
 
-    const alreadyExecuted = await this.upgradeMigrationService.hasBeenExecuted({
-      name: commandName,
-      workspaceId,
-    });
+    const isAlreadyCompleted =
+      await this.upgradeMigrationService.hasBeenCompleted({
+        name: commandName,
+        workspaceId,
+      });
 
-    if (alreadyExecuted) {
+    if (isAlreadyCompleted) {
       this.logger.log(
-        `Workspace command ${commandName} already executed for workspace ${workspaceId}, skipping`,
+        `Workspace command ${commandName} already completed for workspace ${workspaceId}, skipping`,
       );
 
       return;

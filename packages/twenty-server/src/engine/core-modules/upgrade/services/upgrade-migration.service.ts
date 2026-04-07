@@ -12,7 +12,7 @@ export class UpgradeMigrationService {
     private readonly upgradeMigrationRepository: Repository<UpgradeMigrationEntity>,
   ) {}
 
-  async hasBeenExecuted({
+  async hasBeenCompleted({
     name,
     workspaceId,
   }: {

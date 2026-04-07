@@ -27,13 +27,13 @@ export class InstanceUpgradeService {
     const executedByVersion =
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
-    const isAlreadyExecuted =
-      await this.upgradeMigrationService.hasBeenExecuted({
+    const isAlreadyCompleted =
+      await this.upgradeMigrationService.hasBeenCompleted({
         name: migrationName,
         workspaceId: null,
       });
 
-    if (isAlreadyExecuted) {
+    if (isAlreadyCompleted) {
       return { status: 'already-executed' };
     }
 

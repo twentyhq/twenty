@@ -3,8 +3,13 @@ import {
   CreateDateColumn,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
+  type Relation,
 } from 'typeorm';
+
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export type UpgradeMigrationStatus = 'completed' | 'failed';
 
@@ -33,7 +38,11 @@ export class UpgradeMigrationEntity {
   @Column({ type: 'varchar', nullable: false })
   executedByVersion: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @ManyToOne(() => WorkspaceEntity, { onDelete: 'CASCADE', nullable: true })
+  @JoinColumn({ name: 'workspaceId' })
+  workspace: Relation<WorkspaceEntity> | null;
+
+  @Column({ type: 'uuid', nullable: true })
   workspaceId: string | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
