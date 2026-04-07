@@ -43,7 +43,7 @@ export const SettingsLogicFunctionsTable = ({
     <Table>
       <StyledTableRow>
         <TableHeader>{t`Name`}</TableHeader>
-        <TableHeader align={'right'}>{t`Triggers`}</TableHeader>
+        <TableHeader align={'right'}>{t`Trigger`}</TableHeader>
         <TableHeader></TableHeader>
       </StyledTableRow>
       <StyledTableBodyContainer>

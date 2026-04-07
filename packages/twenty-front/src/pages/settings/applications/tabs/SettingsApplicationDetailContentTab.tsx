@@ -127,7 +127,7 @@ export const SettingsApplicationDetailContentTab = ({
       {shouldDisplayLogicFunctions && (
         <Section>
           <H2Title
-            title={t`Functions`}
+            title={t`Logic`}
             description={t`Logic functions powering this app`}
           />
           <SettingsLogicFunctionsTable logicFunctions={logicFunctions} />
