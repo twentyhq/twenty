@@ -1,3 +1,4 @@
+import { ConfigService } from '@/cli/utilities/config/config-service';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { DevModeOrchestrator } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator';
 import { OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
@@ -29,9 +30,11 @@ export class AppDevCommand {
 
     await checkSdkVersionCompatibility(appPath);
 
+    const config = await new ConfigService().getConfig();
+
     const orchestratorState = new OrchestratorState({
       appPath,
-      frontendUrl: process.env.FRONTEND_URL,
+      frontendUrl: config.apiUrl,
     });
 
     if (!options.headless) {
