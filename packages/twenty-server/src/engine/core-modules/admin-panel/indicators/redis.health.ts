@@ -4,6 +4,8 @@ import {
   HealthIndicatorService,
 } from '@nestjs/terminus';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/admin-panel/constants/health-error-messages.constants';
 import { withHealthCheckTimeout } from 'src/engine/core-modules/admin-panel/utils/health-check-timeout.util';
 import { HealthStateManager } from 'src/engine/core-modules/admin-panel/utils/health-state-manager.util';
@@ -70,17 +72,19 @@ export class RedisHealthIndicator {
         },
         performance: {
           opsPerSecond: parseInt(statsData.instantaneous_ops_per_sec),
-          hitRate: (() => {
-            const hits = parseInt(statsData.keyspace_hits);
-            const misses = parseInt(statsData.keyspace_misses);
-            const total = hits + misses;
+          hitRate:
+            isDefined(statsData.keyspace_hits) &&
+            isDefined(statsData.keyspace_misses)
+              ? (() => {
+                  const hits = parseInt(statsData.keyspace_hits);
+                  const misses = parseInt(statsData.keyspace_misses);
+                  const total = hits + misses;
 
-            if (!total || isNaN(total)) {
-              return '0%';
-            }
-
-            return Math.round((hits / total) * 100) + '%';
-          })(),
+                  return total > 0
+                    ? Math.round((hits / total) * 100) + '%'
+                    : '0%';
+                })()
+              : '0%',
           evictedKeys: parseInt(statsData.evicted_keys),
           expiredKeys: parseInt(statsData.expired_keys),
         },
