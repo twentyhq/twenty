@@ -14,6 +14,7 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
+import { SEARCH_FIELDS_FOR_MESSAGE_THREAD } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 
 export const buildMessageThreadStandardFlatFieldMetadatas = ({
   now,
@@ -183,10 +184,27 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
       isNullable: true,
       settings: {
         generatedType: 'STORED',
-        asExpression: getTsVectorColumnExpressionFromFields([
-          { name: 'id', type: FieldMetadataType.UUID },
-        ]),
+        asExpression: getTsVectorColumnExpressionFromFields(
+          SEARCH_FIELDS_FOR_MESSAGE_THREAD,
+        ),
       },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  subject: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'subject',
+      type: FieldMetadataType.TEXT,
+      label: i18nLabel(msg`Subject`),
+      description: i18nLabel(msg`Subject`),
+      icon: 'IconMessage',
+      isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

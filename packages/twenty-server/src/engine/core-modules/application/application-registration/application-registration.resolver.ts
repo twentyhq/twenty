@@ -294,25 +294,6 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
-  )
-  @Query(() => String)
-  async getApplicationShareLink(
-    @Args('id') id: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<string> {
-    const registration = await this.applicationRegistrationService.findOneById(
-      id,
-      workspaceId,
-    );
-
-    const frontUrl = this.domainServerConfigService.getFrontUrl();
-
-    return `${frontUrl.origin}/settings/applications/available/${registration.universalIdentifier}`;
-  }
-
-  @UseGuards(
-    WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
   )
   @Mutation(() => ApplicationRegistrationEntity)

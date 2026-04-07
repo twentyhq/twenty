@@ -316,6 +316,11 @@ msgstr "{jobCount, plural, one {זה יסיר אותה מהתור לצמיתות
 msgid "{jobCount, plural, one {This will retry the selected job. It will be re-executed from the beginning.} other {This will retry the selected jobs. They will be re-executed from the beginning.}}"
 msgstr "{jobCount, plural, one {זה ינסה להפעיל מחדש את העבודה הנבחרת. היא תבוצע שוב מההתחלה.} two {זה ינסה להפעיל מחדש את העבודות הנבחרות. הן תבוצענה שוב מההתחלה.} many {זה ינסה להפעיל מחדש את העבודות הנבחרות. הן תבוצענה שוב מההתחלה.} other {זה ינסה להפעיל מחדש את העבודות הנבחרות. הן תבוצענה שוב מההתחלה.}}"
 
+#. js-lingui-id: Y32cMj
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages.tsx
+msgid "{messagesLength} emails"
+msgstr ""
+
 #. js-lingui-id: Koe99p
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationItemTableRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
@@ -451,11 +456,13 @@ msgstr "{workspaceMemberName} יוסר מהתפקיד הבא:"
 msgid "••••••••"
 msgstr "••••••••"
 
-#. js-lingui-id: tD9raa
+#. js-lingui-id: SMgdEJ
 #. placeholder {0}: formatNumber(preview.estimatedTokenCount, { abbreviate: true, decimals: 1, })
+#. placeholder {0}: formatNumber( section.estimatedTokenCount, { abbreviate: true, decimals: 1, }, )
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
-msgid "~{0} tokens"
-msgstr "~{0} אסימונים"
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+msgid "~ {0} tokens"
+msgstr ""
 
 #. js-lingui-id: Cx0xl3
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -1702,6 +1709,7 @@ msgstr "אירעה שגיאה בעת העלאת התמונה."
 #: src/modules/views/hooks/internal/usePerformViewAPIPersist.ts
 #: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets.ts
+#: src/modules/page-layout/hooks/useResetPageLayoutWidgetToDefault.ts
 #: src/modules/object-metadata/hooks/useUpdateOneObjectMetadataItem.ts
 #: src/modules/object-metadata/hooks/useUpdateOneFieldMetadataItem.ts
 #: src/modules/object-metadata/hooks/useDeleteOneObjectMetadataItem.ts
@@ -1949,8 +1957,6 @@ msgstr "היישום שודרג בהצלחה."
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
-#: src/pages/settings/applications/SettingsApplications.tsx
-#: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -1983,6 +1989,11 @@ msgstr "דומיינים מאושרים"
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Apps"
 msgstr "אפליקציות"
+
+#. js-lingui-id: dEnE1D
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Apps made by other developers published on npm"
+msgstr ""
 
 #. js-lingui-id: 8HV3WN
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -2408,6 +2419,12 @@ msgstr "כתובת URL בסיסית"
 msgid "Base URL is required"
 msgstr "נדרשת כתובת URL בסיסית"
 
+#. js-lingui-id: /xLNEx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "Bcc"
+msgstr ""
+
 #. js-lingui-id: PFohi3
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "BCC"
@@ -2711,9 +2728,11 @@ msgstr "לא ניתן לסרוק? העתק את"
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
+#: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
+#: src/modules/activities/emails/components/EmailComposer.tsx
 msgid "Cancel"
 msgstr "בטל"
 
@@ -2752,6 +2771,11 @@ msgstr "ביטול החלפת תכנית"
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Cancel plan switching?"
 msgstr "האם לבטל את החלפת התכנית?"
+
+#. js-lingui-id: AnRu/j
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+msgid "Cancel reply"
+msgstr ""
 
 #. js-lingui-id: N6gPiD
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -2821,10 +2845,21 @@ msgstr "קטלאנית"
 msgid "Category"
 msgstr "קטגוריה"
 
+#. js-lingui-id: RpYfjZ
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "Cc"
+msgstr ""
+
 #. js-lingui-id: XdZeJk
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "CC"
 msgstr "CC"
+
+#. js-lingui-id: Dgsw8A
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "Cc/Bcc"
+msgstr ""
 
 #. js-lingui-id: tHntRt
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardEditorSideMenu.tsx
@@ -3776,11 +3811,6 @@ msgstr "צור"
 msgid "Create"
 msgstr "צור"
 
-#. js-lingui-id: 5XhrY3
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "Create & Develop"
-msgstr "יצירה ופיתוח"
-
 #. js-lingui-id: 8aATyU
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Create a dashboard"
@@ -3820,6 +3850,11 @@ msgstr "צור זרימת עבודה וחזור לכאן כדי לצפות בג�
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Create a workspace"
 msgstr "צור מרחב עבודה"
+
+#. js-lingui-id: /WlFSf
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Create an application"
+msgstr ""
 
 #. js-lingui-id: 8ZjIgO
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -4794,6 +4829,7 @@ msgstr "תאר מה אתה רוצה שהבינה המלאכותית תעשה..."
 
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
@@ -5339,15 +5375,15 @@ msgstr "יש להזין כתובת דוא\"ל תקינה"
 msgid "Email or domain is already in blocklist"
 msgstr "דוא\"ל או תחום כבר נמצאים ברשימת החסימה"
 
+#. js-lingui-id: Xl929X
+#: src/modules/activities/emails/hooks/useSendEmail.ts
+msgid "Email sent successfully"
+msgstr ""
+
 #. js-lingui-id: jvneza
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Email support"
 msgstr ""
-
-#. js-lingui-id: +VjrH/
-#: src/modules/side-panel/hooks/useOpenEmailThreadInSidePanel.ts
-msgid "Email Thread"
-msgstr "שרשור דוא\"ל"
 
 #. js-lingui-id: LimKOG
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -6433,6 +6469,12 @@ msgstr ""
 msgid "Failed to save workspace instructions"
 msgstr "אירע כשל בשמירת הנחיות סביבת העבודה"
 
+#. js-lingui-id: Lo/GQ5
+#: src/modules/activities/emails/hooks/useSendEmail.ts
+#: src/modules/activities/emails/hooks/useSendEmail.ts
+msgid "Failed to send email"
+msgstr ""
+
 #. js-lingui-id: aj02T8
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "Failed to set maintenance mode."
@@ -6923,6 +6965,11 @@ msgstr "קרדיטי הניסיון בחינם אזלו. הירשם כעת כד�
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "French"
 msgstr "צרפתית"
+
+#. js-lingui-id: ejVYRQ
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "From"
+msgstr ""
 
 #. js-lingui-id: qR8gT9
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -8571,7 +8618,7 @@ msgid "Loading skills..."
 msgstr "טוען מיומנויות..."
 
 #. js-lingui-id: 7YK6ap
-#: src/modules/side-panel/pages/message-thread/components/SidePanelMessageThreadPage.tsx
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadWidget.tsx
 msgid "Loading thread"
 msgstr "טוען שרשור"
 
@@ -9223,10 +9270,10 @@ msgstr "mySkill"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTableRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
@@ -9391,6 +9438,11 @@ msgstr "צ'אט חדש"
 #: src/modules/side-panel/components/SidePanelTopBarRightCornerIcon.tsx
 msgid "New conversation"
 msgstr "שיחה חדשה"
+
+#. js-lingui-id: 3RwJHq
+#: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
+msgid "New Email"
+msgstr ""
 
 #. js-lingui-id: wqoYqp
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
@@ -9589,6 +9641,11 @@ msgstr "אין מפתחות API זמינים"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "No API keys match your search"
 msgstr "לא נמצאו מפתחות API תואמים לחיפוש שלך"
+
+#. js-lingui-id: /VRg8Z
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "No application found"
+msgstr ""
 
 #. js-lingui-id: rxBnh8
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
@@ -10018,6 +10075,7 @@ msgid "No variables found"
 msgstr "לא נמצאו משתנים"
 
 #. js-lingui-id: OCektF
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 msgid "No variables to set for this application"
 msgstr ""
@@ -10131,6 +10189,11 @@ msgstr "עכשיו"
 #. js-lingui-id: OduKuG
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Npm package"
+msgstr ""
+
+#. js-lingui-id: p7abaY
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "NPM packages"
 msgstr ""
 
 #. js-lingui-id: VVexZo
@@ -11357,10 +11420,11 @@ msgstr ""
 msgid "Read your profile"
 msgstr "קריאת הפרופיל שלך"
 
-#. js-lingui-id: tCXcL7
+#. js-lingui-id: 6pSHJ5
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
-msgid "Read-only — managed by Twenty"
-msgstr "קריאה בלבד — מנוהל על ידי Twenty"
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+msgid "Read-only"
+msgstr ""
 
 #. js-lingui-id: W+ApAD
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -11381,6 +11445,11 @@ msgstr "\\"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "Recent Events (oldest → newest)"
 msgstr "אירועים אחרונים (ישן → חדש)"
+
+#. js-lingui-id: yPrbsy
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "Recipients"
+msgstr ""
 
 #. js-lingui-id: b2+5uV
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -11733,7 +11802,8 @@ msgid "Reorder options"
 msgstr "סדר אופציות מחדש"
 
 #. js-lingui-id: ImOQa9
-#: src/modules/side-panel/pages/message-thread/components/SidePanelMessageThreadPage.tsx
+#: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/activities/emails/components/EmailThreadBottomBar.tsx
 msgid "Reply"
 msgstr "תגובה"
@@ -11742,6 +11812,11 @@ msgstr "תגובה"
 #: src/modules/activities/emails/components/EmailThreadBottomBar.tsx
 msgid "Reply to all"
 msgstr "השב לכולם"
+
+#. js-lingui-id: fiPYZo
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+msgid "Reply..."
+msgstr ""
 
 #. js-lingui-id: tbmZmI
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -11768,6 +11843,7 @@ msgstr "שלח שוב את הדוא\"ל"
 #. js-lingui-id: OfhWJH
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
 msgid "Reset"
 msgstr "איפוס"
 
@@ -11788,6 +11864,8 @@ msgid "Reset to"
 msgstr "\\"
 
 #. js-lingui-id: L+rMC9
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 #: src/modules/command-menu-item/server-items/edit/components/SidePanelCommandMenuItemEditPage.tsx
 msgid "Reset to default"
@@ -12086,11 +12164,6 @@ msgstr "שמור"
 msgid "Save as new view"
 msgstr "שמור כתצוגה חדשה"
 
-#. js-lingui-id: veLq3R
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "Scaffold a new app, then use the CLI to develop, publish, and distribute"
-msgstr "צור שלד לאפליקציה חדשה, ולאחר מכן השתמש ב-CLI כדי לפתח, לפרסם ולהפיץ"
-
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Schedule"
@@ -12232,6 +12305,7 @@ msgid "Search an agent..."
 msgstr "חפש סוכן..."
 
 #. js-lingui-id: fGTI3o
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "Search an application"
@@ -12685,6 +12759,13 @@ msgstr "בחרו אילו מודלים יופיעו כמומלצים בבורר 
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Select your preferred language"
 msgstr "\\"
+
+#. js-lingui-id: JlFcis
+#: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+#: src/modules/activities/emails/components/EmailComposer.tsx
+msgid "Send"
+msgstr ""
 
 #. js-lingui-id: mjK8F3
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
@@ -13401,6 +13482,8 @@ msgstr ""
 
 #. js-lingui-id: UJmAAK
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
 msgid "Subject"
 msgstr "נושא"
 
@@ -13640,11 +13723,6 @@ msgstr ""
 #: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
 msgid "System Prompt"
 msgstr "הנחיית מערכת"
-
-#. js-lingui-id: BXGTWI
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
-msgid "System Prompt ({totalTokenCount})"
-msgstr "הנחיית מערכת ({totalTokenCount})"
 
 #. js-lingui-id: k+7QWO
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -14132,6 +14210,11 @@ msgstr ""
 msgid "This week"
 msgstr "השבוע"
 
+#. js-lingui-id: VbVocX
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
+msgid "This will cancel all modifications done on the widget. This action cannot be undone."
+msgstr ""
+
 #. js-lingui-id: h4VeOo
 #: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "This will cancel the scheduled interval change and keep your current billing interval ({currentIntervalLabel})."
@@ -14247,6 +14330,7 @@ msgstr "כותרת"
 
 #. js-lingui-id: /jQctM
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
 msgid "To"
 msgstr "אל"
 
@@ -14548,7 +14632,6 @@ msgstr "הגדרת האימות הדו-שלבי הושלמה בהצלחה!"
 
 #. js-lingui-id: +zy2Nq
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTableRow.tsx
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
@@ -14570,6 +14653,11 @@ msgstr "הקלד/י '/' עבור פקודות, '@' עבור אזכורים"
 #: src/modules/side-panel/components/SidePanelTopBar.tsx
 msgid "Type anything..."
 msgstr "הקלד כל דבר..."
+
+#. js-lingui-id: LaEX5I
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
+msgid "Type something or press \"/\" to see commands"
+msgstr ""
 
 #. js-lingui-id: UhqKcC
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordSubPage.tsx
@@ -14896,6 +14984,11 @@ msgstr "שדרגו כדי לגשת"
 #. js-lingui-id: Wurpq2
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Upgrade to Enterprise to access audit logs."
+msgstr ""
+
+#. js-lingui-id: D+7y/3
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "Upgrade to Enterprise to share private applications."
 msgstr ""
 
 #. js-lingui-id: +Gi3x1
@@ -15334,7 +15427,6 @@ msgstr "צפה ביומנים"
 
 #. js-lingui-id: 7PrSCy
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "View marketplace page"
 msgstr "צפייה בדף המרקטפלייס"
 
@@ -15347,6 +15439,11 @@ msgstr ""
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 msgid "View Previous AI Chats"
 msgstr "הצג שיחות AI קודמות"
+
+#. js-lingui-id: NnJpTN
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "View private application page"
+msgstr ""
 
 #. js-lingui-id: hAAsm/
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
@@ -15737,7 +15834,6 @@ msgstr "זרימות עבודה"
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
-#: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
@@ -15942,6 +16038,11 @@ msgstr "אתה כבר משתייך לסביבת העבודה הזו"
 msgid "You are not allowed to create records for this object"
 msgstr "אין לך הרשאה ליצור רשומות באובייקט זה"
 
+#. js-lingui-id: iibZbD
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "You can either create a private app or share it to others"
+msgstr ""
+
 #. js-lingui-id: CNAoaw
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "You can see the function logic in your application settings."
@@ -16017,10 +16118,10 @@ msgstr "החשבון שלך הופעל."
 msgid "Your app version is out of date. Please refresh the page."
 msgstr "גרסת האפליקציה שלך אינה מעודכנת. אנא רענן את הדף."
 
-#. js-lingui-id: oNUh7z
+#. js-lingui-id: 9pWhO+
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "Your Apps"
-msgstr "האפליקציות שלך"
+msgid "Your apps"
+msgstr ""
 
 #. js-lingui-id: +5YqGH
 #: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts

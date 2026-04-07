@@ -46,7 +46,7 @@ export const seedFeatureFlags = async ({
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_MARKETPLACE_ENABLED,
+        key: FeatureFlagKey.IS_MARKETPLACE_SETTING_TAB_VISIBLE,
         workspaceId: workspaceId,
         value: true,
       },

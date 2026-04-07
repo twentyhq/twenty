@@ -1,17 +1,20 @@
 'use client';
 
 import { Body, Heading } from '@/design-system/components';
-import { SALESFORCE_POPUPS } from '@/sections/Salesforce/constants';
 import type {
   SalesforceAddonRowType,
   SalesforceDataType,
+  SalesforceWrongChoicePopupType,
 } from '@/sections/Salesforce/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { PricingWindow } from '../PricingWindow/PricingWindow';
 import { Root } from '../Root/Root';
-import { WrongChoicePopup } from '../WrongChoicePopup/WrongChoicePopup';
+import {
+  WrongChoicePopup,
+  WRONG_CHOICE_POPUP_WIDTH,
+} from '../WrongChoicePopup/WrongChoicePopup';
 
 const CopyColumn = styled.div`
   display: flex;
@@ -29,23 +32,66 @@ const RightColumn = styled.div`
 `;
 
 type OpenWrongChoicePopup = {
-  addonId: string;
   body: string;
   key: string;
-  stackIndex: number;
+  layerIndex: number;
+  left: number;
+  sourceId: string;
+  top: number;
   titleBar: string;
 };
 
-const reindexPopups = (
-  list: OpenWrongChoicePopup[],
-): OpenWrongChoicePopup[] =>
-  list.map((popup, index) => ({ ...popup, stackIndex: index }));
+const POPUP_MARGIN = 12;
+const POPUP_X_OFFSET = 32;
+const POPUP_Y_OFFSET = 12;
+const POPUP_STACK_OFFSET = 14;
+
+const getPopupPosition = (
+  anchorRect: DOMRect | null,
+  containerRect: DOMRect | null,
+  stackIndex = 0,
+) => {
+  if (!anchorRect || !containerRect) {
+    return {
+      left: 24 + stackIndex * POPUP_STACK_OFFSET,
+      top: 120 + stackIndex * POPUP_STACK_OFFSET,
+    };
+  }
+
+  const maxLeft = Math.max(
+    POPUP_MARGIN,
+    containerRect.width - WRONG_CHOICE_POPUP_WIDTH - POPUP_MARGIN,
+  );
+
+  return {
+    left: Math.min(
+      Math.max(
+        anchorRect.left -
+          containerRect.left +
+          POPUP_X_OFFSET +
+          stackIndex * POPUP_STACK_OFFSET,
+        POPUP_MARGIN,
+      ),
+      maxLeft,
+    ),
+    top: Math.max(
+      anchorRect.top -
+        containerRect.top -
+        POPUP_Y_OFFSET +
+        stackIndex * POPUP_STACK_OFFSET,
+      POPUP_MARGIN,
+    ),
+  };
+};
 
 type FlowProps = SalesforceDataType & {
   backgroundColor: string;
 };
 
 export function Flow({ backgroundColor, body, heading, pricing }: FlowProps) {
+  const rightColumnRef = useRef<HTMLDivElement>(null);
+  const popupSequenceRef = useRef(0);
+  const [isPricingWindowVisible, setIsPricingWindowVisible] = useState(true);
   const [checkedIds, setCheckedIds] = useState(() => {
     const initial = new Set<string>();
     for (const row of pricing.addons) {
@@ -58,22 +104,51 @@ export function Flow({ backgroundColor, body, heading, pricing }: FlowProps) {
 
   const [popups, setPopups] = useState<OpenWrongChoicePopup[]>([]);
 
+  const openPopup = useCallback(
+    (
+      sourceId: string,
+      popup: SalesforceWrongChoicePopupType,
+      anchorRect: DOMRect | null,
+    ) => {
+      const popupSequence = popupSequenceRef.current;
+      popupSequenceRef.current += 1;
+
+      setPopups((previous) => {
+        const popupCountForSource = previous.filter(
+          (entry) => entry.sourceId === sourceId,
+        ).length;
+        const popupPosition = getPopupPosition(
+          anchorRect,
+          rightColumnRef.current?.getBoundingClientRect() ?? null,
+          popupCountForSource,
+        );
+
+        return [
+          ...previous,
+          {
+            body: popup.body,
+            key: `${sourceId}-${popupSequence}`,
+            layerIndex: popupSequence,
+            left: popupPosition.left,
+            sourceId,
+            top: popupPosition.top,
+            titleBar: popup.titleBar,
+          },
+        ];
+      });
+    },
+    [],
+  );
+
   const handleAddonToggle = useCallback(
-    (addon: SalesforceAddonRowType) => {
+    (addon: SalesforceAddonRowType, anchorRect: DOMRect | null) => {
       if (addon.disabled) {
         return;
       }
 
-      const popupTemplate = SALESFORCE_POPUPS[addon.popupKey];
-      if (!popupTemplate) {
-        return;
-      }
-
-      const wasChecked = checkedIds.has(addon.id);
-
       setCheckedIds((previous) => {
         const next = new Set(previous);
-        if (wasChecked) {
+        if (next.has(addon.id)) {
           next.delete(addon.id);
         } else {
           next.add(addon.id);
@@ -81,32 +156,18 @@ export function Flow({ backgroundColor, body, heading, pricing }: FlowProps) {
         return next;
       });
 
-      if (wasChecked) {
-        setPopups((previous) =>
-          reindexPopups(
-            previous.filter((popup) => popup.addonId !== addon.id),
-          ),
-        );
-      } else {
-        setPopups((previous) => [
-          ...previous,
-          {
-            addonId: addon.id,
-            body: popupTemplate.body,
-            key: `${addon.id}-${Date.now()}`,
-            stackIndex: previous.length,
-            titleBar: popupTemplate.titleBar,
-          },
-        ]);
-      }
+      openPopup(addon.id, addon.popup, anchorRect);
     },
-    [checkedIds],
+    [openPopup],
   );
 
   const handleClosePopup = useCallback((key: string) => {
-    setPopups((previous) =>
-      reindexPopups(previous.filter((popup) => popup.key !== key)),
-    );
+    setPopups((previous) => previous.filter((popup) => popup.key !== key));
+  }, []);
+
+  const handleClosePricingWindow = useCallback(() => {
+    setIsPricingWindowVisible(false);
+    setPopups([]);
   }, []);
 
   return (
@@ -115,24 +176,31 @@ export function Flow({ backgroundColor, body, heading, pricing }: FlowProps) {
         <Heading as="h2" segments={heading} size="xl" weight="light" />
         <Body body={body} family="sans" size="md" weight="regular" />
       </CopyColumn>
-      <RightColumn>
-        <PricingWindow
-          checkedIds={checkedIds}
-          onAddonToggle={handleAddonToggle}
-          pricing={pricing}
-        />
-        {popups.map((popup) => (
-          <WrongChoicePopup
-            body={popup.body}
-            key={popup.key}
-            onClose={() => {
-              handleClosePopup(popup.key);
-            }}
-            stackIndex={popup.stackIndex}
-            titleBar={popup.titleBar}
-            titleId={`sf-wrong-choice-${popup.key}`}
+      <RightColumn ref={rightColumnRef}>
+        {isPricingWindowVisible ? (
+          <PricingWindow
+            checkedIds={checkedIds}
+            onAddonToggle={handleAddonToggle}
+            onClose={handleClosePricingWindow}
+            pricing={pricing}
           />
-        ))}
+        ) : null}
+        {isPricingWindowVisible
+          ? popups.map((popup) => (
+              <WrongChoicePopup
+                body={popup.body}
+                key={popup.key}
+                layerIndex={popup.layerIndex}
+                left={popup.left}
+                onClose={() => {
+                  handleClosePopup(popup.key);
+                }}
+                top={popup.top}
+                titleBar={popup.titleBar}
+                titleId={`sf-wrong-choice-${popup.key}`}
+              />
+            ))
+          : null}
       </RightColumn>
     </Root>
   );

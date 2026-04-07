@@ -1,13 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type ToolSet } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 
 import {
   AuthException,
@@ -20,28 +19,19 @@ import { CreateManyRecordsService } from 'src/engine/core-modules/record-crud/se
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
+import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { UpdateManyRecordsService } from 'src/engine/core-modules/record-crud/services/update-many-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { type ToolCategory } from 'twenty-shared/ai';
-import {
-  type ToolDescriptor,
-  type ToolIndexEntry,
-} from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
-import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
+import { type StaticToolHandler } from 'src/engine/core-modules/tool-provider/interfaces/static-tool-handler.interface';
+import { type CategoryToolGenerator } from 'src/engine/core-modules/tool-provider/types/category-tool-generator.type';
+import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import { type ToolExecutionRef } from 'src/engine/core-modules/tool-provider/types/tool-execution-ref.type';
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { stripLoadingMessage } from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-// Handler for individually registered static tools (e.g., action tools)
-export interface StaticToolHandler {
-  execute(args: ToolInput, context: ToolProviderContext): Promise<unknown>;
-}
-
-// Generator that produces a ToolSet on demand for a category (workflow, view, etc.)
-// Used as a fallback when no per-tool handler is registered.
-export type CategoryToolGenerator = (
-  context: ToolProviderContext,
-) => Promise<ToolSet>;
 
 @Injectable()
 export class ToolExecutorService {
@@ -84,7 +74,7 @@ export class ToolExecutorService {
     descriptor: ToolIndexEntry | ToolDescriptor,
     args: Record<string, unknown>,
     context: ToolProviderContext,
-  ): Promise<unknown> {
+  ): Promise<ToolOutput> {
     const cleanArgs = stripLoadingMessage(args);
 
     switch (descriptor.executionRef.kind) {
@@ -106,10 +96,10 @@ export class ToolExecutorService {
   }
 
   private async dispatchDatabaseCrud(
-    ref: { objectNameSingular: string; operation: string },
+    ref: Extract<ToolExecutionRef, { kind: 'database_crud' }>,
     args: Record<string, unknown>,
     context: ToolProviderContext,
-  ): Promise<unknown> {
+  ): Promise<ToolOutput> {
     const authContext =
       context.authContext ?? (await this.buildAuthContext(context));
 
@@ -120,7 +110,7 @@ export class ToolExecutorService {
         return this.findRecordsService.execute({
           objectName: ref.objectNameSingular,
           filter,
-          orderBy: orderBy as never,
+          orderBy: orderBy as FindRecordsParams['orderBy'],
           limit: limit as number | undefined,
           offset: offset as number | undefined,
           authContext,
@@ -191,9 +181,6 @@ export class ToolExecutorService {
           rolePermissionConfig: context.rolePermissionConfig,
           soft: true,
         });
-
-      default:
-        throw new Error(`Unknown database_crud operation: ${ref.operation}`);
     }
   }
 
@@ -201,7 +188,7 @@ export class ToolExecutorService {
     descriptor: ToolIndexEntry | ToolDescriptor,
     args: Record<string, unknown>,
     context: ToolProviderContext,
-  ): Promise<unknown> {
+  ): Promise<ToolOutput> {
     if (descriptor.executionRef.kind !== 'static') {
       throw new Error('Expected static executionRef');
     }
@@ -231,19 +218,17 @@ export class ToolExecutorService {
       );
     }
 
-    // The tool's execute expects (args, ToolExecutionOptions). Pass args with
-    // a dummy loadingMessage since the tool's internal strip is harmless.
     return tool.execute(
       { loadingMessage: '', ...args },
       { toolCallId: '', messages: [] },
-    );
+    ) as Promise<ToolOutput>;
   }
 
   private async dispatchLogicFunction(
-    ref: { logicFunctionId: string },
+    ref: Extract<ToolExecutionRef, { kind: 'logic_function' }>,
     args: Record<string, unknown>,
     context: ToolProviderContext,
-  ): Promise<unknown> {
+  ): Promise<ToolOutput> {
     const result = await this.logicFunctionExecutorService.execute({
       logicFunctionId: ref.logicFunctionId,
       workspaceId: context.workspaceId,
@@ -253,13 +238,15 @@ export class ToolExecutorService {
     if (result.error) {
       return {
         success: false,
+        message: 'Logic function execution failed',
         error: result.error.errorMessage,
       };
     }
 
     return {
       success: true,
-      result: result.data,
+      message: 'Logic function executed successfully',
+      result: result.data ?? undefined,
     };
   }
 

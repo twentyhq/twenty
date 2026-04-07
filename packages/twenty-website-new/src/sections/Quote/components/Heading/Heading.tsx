@@ -9,9 +9,16 @@ const HeadingWrapper = styled.div`
   min-width: 0;
   white-space: pre-line;
   width: 100%;
+  position: relative;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     max-width: 517px;
+
+    &::before {
+      left: -48px;
+      top: -24px;
+      font-size: 96px;
+    }
   }
 `;
 

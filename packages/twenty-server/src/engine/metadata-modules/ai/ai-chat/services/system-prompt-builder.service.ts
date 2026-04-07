@@ -10,7 +10,7 @@ import {
   LEARN_TOOLS_TOOL_NAME,
   LOAD_SKILL_TOOL_NAME,
 } from 'src/engine/core-modules/tool-provider/tools';
-import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import {
   AgentActorContextService,
   type UserContext,

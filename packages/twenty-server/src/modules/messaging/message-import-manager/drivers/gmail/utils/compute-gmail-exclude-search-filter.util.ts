@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { MessageFolderImportPolicy } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { MessageFolderImportPolicy } from 'twenty-shared/types';
+import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { MESSAGING_GMAIL_DEFAULT_EXCLUDED_LABELS } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-default-excluded-labels.constant';
 import { MESSAGING_GMAIL_EXCLUDED_SYSTEM_LABELS } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-excluded-system-labels.constant';
 import { MESSAGING_GMAIL_FOLDERS_WITH_CATEGORY_EXCLUSIONS } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-folders-with-category-exclusions.constant';
@@ -10,7 +10,7 @@ import { computeGmailDefaultNotSyncedLabelsSearchFilter } from 'src/modules/mess
 
 export const computeGmailExcludeSearchFilter = (
   messageFolders: Pick<
-    MessageFolderWorkspaceEntity,
+    MessageFolderEntity,
     'externalId' | 'isSynced' | 'name' | 'parentFolderId'
   >[],
   messageFolderImportPolicy: MessageFolderImportPolicy,

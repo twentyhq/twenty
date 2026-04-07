@@ -1,11 +1,12 @@
 export type MessageFolder = {
   id: string;
   name: string;
-  syncCursor: string;
-  isSentFolder: boolean;
   isSynced: boolean;
-  messageChannelId: string;
+  isSentFolder: boolean;
   parentFolderId: string | null;
   externalId: string | null;
+  messageChannelId: string;
+  createdAt: string;
+  updatedAt: string;
   __typename: 'MessageFolder';
 };

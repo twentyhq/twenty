@@ -1,10 +1,12 @@
 import { Test, type TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { FieldActorSource } from 'twenty-shared/types';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { CreateCompanyAndPersonService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
 import { CreateCompanyService } from 'src/modules/contact-creation-manager/services/create-company.service';
 import { CreatePersonService } from 'src/modules/contact-creation-manager/services/create-person.service';
@@ -19,7 +21,7 @@ describe('CreateCompanyAndPersonService', () => {
     accountOwner: {
       id: 'workspace-member-1',
     },
-  } as unknown as ConnectedAccountWorkspaceEntity;
+  } as unknown as ConnectedAccountEntity;
 
   beforeEach(async () => {
     const mockCreateCompaniesService = {
@@ -47,6 +49,12 @@ describe('CreateCompanyAndPersonService', () => {
         {
           provide: ExceptionHandlerService,
           useValue: {},
+        },
+        {
+          provide: getRepositoryToken(UserWorkspaceEntity),
+          useValue: {
+            findOne: jest.fn(),
+          },
         },
       ],
     }).compile();
@@ -106,6 +114,7 @@ describe('CreateCompanyAndPersonService', () => {
           mockExistingPeople,
           FieldActorSource.CALENDAR,
           mockConnectedAccount,
+          null,
         );
 
       expect(result.contactsThatNeedPersonCreate).toHaveLength(1);
@@ -121,6 +130,7 @@ describe('CreateCompanyAndPersonService', () => {
           mockExistingPeople,
           FieldActorSource.CALENDAR,
           mockConnectedAccount,
+          null,
         );
 
       expect(result.contactsThatNeedPersonRestore).toHaveLength(2);

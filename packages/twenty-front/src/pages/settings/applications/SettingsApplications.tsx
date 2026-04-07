@@ -11,7 +11,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { IconApps, IconCode, IconDownload } from 'twenty-ui/display';
 import { useQuery } from '@apollo/client/react';
 import {
-  type FeatureFlagKey,
+  FeatureFlagKey,
   PermissionFlagType,
   FindManyApplicationsDocument,
 } from '~/generated-metadata/graphql';
@@ -29,8 +29,8 @@ export const SettingsApplications = () => {
     PermissionFlagType.API_KEYS_AND_WEBHOOKS,
   );
 
-  const isMarketplaceEnabled = useIsFeatureEnabled(
-    'IS_MARKETPLACE_ENABLED' as FeatureFlagKey,
+  const isMarketplaceSettingTabVisible = useIsFeatureEnabled(
+    FeatureFlagKey.IS_MARKETPLACE_SETTING_TAB_VISIBLE,
   );
 
   const activeTabId = useAtomComponentStateValue(
@@ -38,34 +38,10 @@ export const SettingsApplications = () => {
     APPLICATIONS_TAB_LIST_ID,
   );
 
-  const { data } = useQuery(FindManyApplicationsDocument);
-
-  const applications = data?.findManyApplications ?? [];
-
-  if (!isMarketplaceEnabled) {
-    return (
-      <SubMenuTopBarContainer
-        title={t`Applications`}
-        links={[
-          {
-            children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
-          },
-          { children: t`Applications` },
-        ]}
-      >
-        <SettingsPageContainer>
-          {applications.length > 0 && (
-            <SettingsApplicationsTable applications={applications} />
-          )}
-          {hasDeveloperAccess && <SettingsApplicationsDeveloperTab />}
-        </SettingsPageContainer>
-      </SubMenuTopBarContainer>
-    );
-  }
-
   const tabs = [
-    { id: 'marketplace', title: t`Marketplace`, Icon: IconDownload },
+    ...(isMarketplaceSettingTabVisible
+      ? [{ id: 'marketplace', title: t`Marketplace`, Icon: IconDownload }]
+      : []),
     { id: 'installed', title: t`Installed`, Icon: IconApps },
     ...(hasDeveloperAccess
       ? [{ id: 'developer', title: t`Developer`, Icon: IconCode }]
@@ -81,7 +57,11 @@ export const SettingsApplications = () => {
       case 'developer':
         return <SettingsApplicationsDeveloperTab />;
       default:
-        return <SettingsApplicationsAvailableTab />;
+        return isMarketplaceSettingTabVisible ? (
+          <SettingsApplicationsAvailableTab />
+        ) : (
+          <SettingsApplicationsInstalledTab />
+        );
     }
   };
 
@@ -97,11 +77,7 @@ export const SettingsApplications = () => {
       ]}
     >
       <SettingsPageContainer>
-        <TabList
-          tabs={tabs}
-          componentInstanceId={APPLICATIONS_TAB_LIST_ID}
-          behaveAsLinks={false}
-        />
+        <TabList tabs={tabs} componentInstanceId={APPLICATIONS_TAB_LIST_ID} />
         {renderActiveTabContent()}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

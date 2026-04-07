@@ -52,17 +52,17 @@ yarn twenty deploy
 
 ### Общий доступ к развернутому приложению
 
-Приложения в формате tarball не отображаются в публичном маркетплейсе, поэтому другие рабочие пространства на том же сервере не найдут их при просмотре. Чтобы поделиться развернутым приложением:
+<Warning>
+Sharing private (tarball) apps across workspaces is an **Enterprise** feature. The **Distribution** tab will show an upgrade prompt instead of the share controls until your workspace has a valid Enterprise key. See [Settings > Admin Panel > Enterprise](/settings/admin-panel#enterprise) to activate it.
+</Warning>
+
+Приложения в формате tarball не отображаются в публичном маркетплейсе, поэтому другие рабочие пространства на том же сервере не найдут их при просмотре. Once your workspace is on the Enterprise plan, you can share a deployed app like this:
 
 1. Перейдите в **Настройки > Приложения > Регистрации** и откройте ваше приложение
 2. На вкладке **Распространение** нажмите **Копировать ссылку для общего доступа**
 3. Поделитесь этой ссылкой с пользователями в других рабочих пространствах — она ведёт их прямо на страницу установки приложения
 
 Ссылка общего доступа использует базовый URL сервера (без какого-либо поддомена рабочего пространства), поэтому она работает для любого рабочего пространства на сервере.
-
-<Warning>
-Возможность делиться частными приложениями — функция Enterprise. Перейдите в [Настройки > Панель администратора > Enterprise](/settings/admin-panel#enterprise), чтобы включить её.
-</Warning>
 
 ### Управление версиями
 

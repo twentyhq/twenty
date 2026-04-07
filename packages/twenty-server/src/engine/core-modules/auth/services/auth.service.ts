@@ -9,11 +9,7 @@ import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import {
-  AppPath,
-  ConnectedAccountProvider,
-  FeatureFlagKey,
-} from 'twenty-shared/types';
+import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
@@ -1081,19 +1077,6 @@ export class AuthService {
     oidcTokenClaims?: Record<string, unknown>;
     connectedAccountProvider?: ConnectedAccountProvider;
   }): Promise<void> {
-    const isConnectedAccountMigrated =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED,
-        input.workspaceId,
-      );
-
-    // const willBeEnabledByDefault = DEFAULT_FEATURE_FLAGS.includes(FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED);
-    const willBeEnabledByDefault = false;
-
-    if (!isConnectedAccountMigrated && !willBeEnabledByDefault) {
-      return;
-    }
-
     const provider =
       input.connectedAccountProvider ??
       this.mapAuthProviderToConnectedAccountProvider(input.authProvider);

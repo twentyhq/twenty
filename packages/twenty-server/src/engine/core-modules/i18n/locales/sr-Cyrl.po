@@ -937,8 +937,6 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util.ts
 msgid "Calendar Channel Event Associations"
 msgstr "Удружења календарских канала и догађаја"
 
@@ -1223,11 +1221,6 @@ msgstr "Није могуће променити интервал претпла
 msgid "Cannot switch subscription plan."
 msgstr "Није могуће променити план претплате."
 
-#. js-lingui-id: PjZIyI
-#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
-msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
-msgstr "Не могу ажурирати канал порука док је синхронизација у току. Молимо вас да сачекате да се синхронизација заврши."
-
 #. js-lingui-id: fpzw+t
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-validator.service.ts
@@ -1502,6 +1495,11 @@ msgstr "Правила за аутоматско креирање контака
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-required-properties.util.ts
 msgid "Content cannot be empty"
 msgstr "Садржај не може бити празан"
+
+#. js-lingui-id: 869Uds
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
+msgid "Content contains a URL with a dangerous protocol."
+msgstr ""
 
 #. js-lingui-id: cmBz2p
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -3373,6 +3371,11 @@ msgstr "Неважећи параметар филтера."
 msgid "Invalid filter value: \"{value}\""
 msgstr "Неважећа вредност филтера: \"{value}\""
 
+#. js-lingui-id: NOU3zh
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-string-operator-value-or-throw.util.ts
+msgid "Invalid filter: \"{operator}\" operator requires a String"
+msgstr ""
+
 #. js-lingui-id: +GVjEm
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-array-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"{operator}\" operator requires an array"
@@ -3392,6 +3395,16 @@ msgstr "Неисправан филтер: тачно један операто�
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
 msgid "Invalid filter: filter value must be an object"
 msgstr "Неважећи филтер: вредност филтера мора бити објекат"
+
+#. js-lingui-id: rpkTUe
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Invalid filter: filtering by relation field \"{key}\" is not supported"
+msgstr ""
+
+#. js-lingui-id: bNNDED
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Invalid filter: use \"{joinColumnName}\" to filter by this relation field"
+msgstr ""
 
 #. js-lingui-id: rFH0az
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -4348,16 +4361,6 @@ msgstr ""
 msgid "Message"
 msgstr ""
 
-#. js-lingui-id: bNl1yz
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
-msgid "Message Association Folders"
-msgstr ""
-
-#. js-lingui-id: z16zGy
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
-msgid "Message Association Folders (supports multiple folders/labels)"
-msgstr ""
-
 #. js-lingui-id: g+QGD6
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
@@ -4368,7 +4371,6 @@ msgstr ""
 #. js-lingui-id: DzU4a3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 msgid "Message Channel Association"
 msgstr ""
 
@@ -4409,11 +4411,6 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Message Channel Message Associations"
 msgstr ""
-
-#. js-lingui-id: LOU3x5
-#: src/modules/messaging/common/query-hooks/message/message-channel-update-one.pre-query.hook.ts
-msgid "Message channel not found"
-msgstr "Канал порука није пронађен"
 
 #. js-lingui-id: vjIbbe
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
@@ -4470,8 +4467,6 @@ msgstr ""
 #. js-lingui-id: p4ANpY
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgid "Message Folders"
 msgstr ""
@@ -4562,7 +4557,6 @@ msgstr ""
 #. js-lingui-id: WoWdku
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 msgid "Messages from the channel."
 msgstr ""
 
@@ -6396,6 +6390,8 @@ msgid "Subdomain not found."
 msgstr "Поддомен није пронађен."
 
 #. js-lingui-id: UJmAAK
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts

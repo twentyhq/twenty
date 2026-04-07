@@ -1,4 +1,9 @@
-import { Body, Heading, LazyEmbed, LinkButton } from '@/design-system/components';
+import {
+  Body,
+  Heading,
+  LazyEmbed,
+  LinkButton,
+} from '@/design-system/components';
 import { CheckIcon } from '@/icons/informative/Check';
 import type { PlanCardType } from '@/sections/Plans/types';
 import { theme } from '@/theme';
@@ -8,6 +13,7 @@ const FIXED_ROWS = 4;
 
 const StyledCard = styled.div`
   background-color: ${theme.colors.primary.background[100]};
+  border: 1px solid transparent;
   border-radius: ${theme.radius(1)};
   display: grid;
   grid-template-columns: 1fr;
@@ -18,10 +24,8 @@ const StyledCard = styled.div`
   padding-right: ${theme.spacing(4)};
   padding-top: ${theme.spacing(4)};
   row-gap: ${theme.spacing(4)};
-
-  &[data-highlighted='true'] {
-    border: 1px solid ${theme.colors.highlight[100]};
-  }
+  position: relative;
+  z-index: 1;
 `;
 
 const CardHeader = styled.div`
@@ -98,18 +102,10 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
   const totalRows = FIXED_ROWS + maxBullets;
 
   return (
-    <StyledCard
-      data-highlighted={highlighted}
-      style={{ gridRow: `span ${totalRows}` }}
-    >
+    <StyledCard style={{ gridRow: `span ${totalRows}` }}>
       <CardHeader>
         <CardHeaderInfo>
-          <Heading
-            as="h3"
-            segments={card.heading}
-            size="md"
-            weight="light"
-          />
+          <Heading as="h3" segments={card.heading} size="md" weight="light" />
           <PriceLine>
             <Heading
               as="h4"
@@ -117,11 +113,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
               size="sm"
               weight="regular"
             />
-            <Body
-              as="span"
-              body={card.price.body}
-              size="sm"
-            />
+            <Body as="span" body={card.price.body} size="sm" />
           </PriceLine>
         </CardHeaderInfo>
         <CardIllustration
@@ -137,7 +129,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
         href="https://app.twenty.com/welcome"
         label="Start for free"
         type="anchor"
-        variant="contained"
+        variant={highlighted ? 'contained' : 'outlined'}
       />
 
       <CardRule />

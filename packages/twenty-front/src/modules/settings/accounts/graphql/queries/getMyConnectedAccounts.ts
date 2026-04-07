@@ -11,6 +11,27 @@ export const GET_MY_CONNECTED_ACCOUNTS = gql`
       handleAliases
       lastSignedInAt
       userWorkspaceId
+      connectionParameters {
+        IMAP {
+          host
+          port
+          secure
+          username
+          password
+        }
+        SMTP {
+          host
+          port
+          secure
+          username
+          password
+        }
+        CALDAV {
+          host
+          username
+          password
+        }
+      }
       createdAt
       updatedAt
     }

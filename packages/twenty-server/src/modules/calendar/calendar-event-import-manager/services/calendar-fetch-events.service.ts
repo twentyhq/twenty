@@ -1,9 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { CalendarChannelDataAccessService } from 'src/engine/metadata-modules/calendar-channel/data-access/services/calendar-channel-data-access.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -18,8 +20,8 @@ import {
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 import { CalendarGetCalendarEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
-import { type CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 
 @Injectable()
 export class CalendarFetchEventsService {
@@ -28,7 +30,8 @@ export class CalendarFetchEventsService {
     @InjectCacheStorage(CacheStorageNamespace.ModuleCalendar)
     private readonly cacheStorage: CacheStorageService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly calendarChannelDataAccessService: CalendarChannelDataAccessService,
+    @InjectRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
     private readonly getCalendarEventsService: CalendarGetCalendarEventsService,
     private readonly calendarEventImportErrorHandlerService: CalendarEventImportErrorHandlerService,
@@ -37,8 +40,8 @@ export class CalendarFetchEventsService {
   ) {}
 
   public async fetchCalendarEvents(
-    calendarChannel: CalendarChannelWorkspaceEntity,
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    calendarChannel: CalendarChannelEntity,
+    connectedAccount: ConnectedAccountEntity,
     workspaceId: string,
   ): Promise<void> {
     this.logger.log(
@@ -84,11 +87,8 @@ export class CalendarFetchEventsService {
         const nextSyncCursor = getCalendarEventsResponse.nextSyncCursor;
 
         if (!calendarEvents || calendarEvents?.length === 0) {
-          await this.calendarChannelDataAccessService.update(
-            workspaceId,
-            {
-              id: calendarChannel.id,
-            },
+          await this.calendarChannelRepository.update(
+            { id: calendarChannel.id, workspaceId },
             {
               syncCursor: nextSyncCursor,
             },
@@ -100,11 +100,8 @@ export class CalendarFetchEventsService {
           );
         }
 
-        await this.calendarChannelDataAccessService.update(
-          workspaceId,
-          {
-            id: calendarChannel.id,
-          },
+        await this.calendarChannelRepository.update(
+          { id: calendarChannel.id, workspaceId },
           {
             syncCursor: nextSyncCursor,
           },

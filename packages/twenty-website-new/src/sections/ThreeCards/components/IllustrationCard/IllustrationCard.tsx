@@ -1,8 +1,9 @@
-import { Body, Heading, IconButton, LazyEmbed } from '@/design-system/components';
+import { Body, Heading, IconButton } from '@/design-system/components';
 import { ArrowRightIcon } from '@/icons';
-import { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
+import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
+import { IllustrationCardVisual } from './IllustrationCardVisual';
 import { ThreeCardsCardShape } from './CardShape';
 
 const IllustrationCardContainer = styled.div`
@@ -26,7 +27,7 @@ const CardRule = styled.div`
   width: 100%;
 `;
 
-const CardEmbed = styled(LazyEmbed)`
+const CardEmbed = styled.div`
   width: 100%;
   height: 240px;
   border: none;
@@ -84,13 +85,12 @@ export function IllustrationCard({
         weight="medium"
       />
       <CardRule />
-      <CardEmbed
-        src={illustrationCard.illustration.src}
-        title={illustrationCard.illustration.title}
-        allow="clipboard-write; encrypted-media; gyroscope; web-share"
-        referrerPolicy="strict-origin-when-cross-origin"
-        allowFullScreen
-      />
+      <CardEmbed>
+        <IllustrationCardVisual
+          src={illustrationCard.illustration.src}
+          title={illustrationCard.illustration.title}
+        />
+      </CardEmbed>
       <CardRule />
       <CardBodyCell>
         <Body body={illustrationCard.body} size="sm" weight="regular" />

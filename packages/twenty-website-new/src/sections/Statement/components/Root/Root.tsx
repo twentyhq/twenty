@@ -2,7 +2,6 @@ import { Container } from '@/design-system/components';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { CSSProperties, ReactNode } from 'react';
-import { Decoration } from '../Decoration/Decoration';
 
 const StyledSection = styled.section`
   min-width: 0;
@@ -43,10 +42,7 @@ export function Root({ backgroundColor, children, color }: RootProps) {
 
   return (
     <StyledSection style={{ ...cssVariables, backgroundColor, color }}>
-      <StyledContainer>
-        <Decoration />
-        {children}
-      </StyledContainer>
+      <StyledContainer>{children}</StyledContainer>
     </StyledSection>
   );
 }

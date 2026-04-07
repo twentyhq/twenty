@@ -1,11 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
-import {
-  DateDisplayFormat,
-  FieldMetadataType,
-  RelationOnDeleteAction,
-  RelationType,
-} from 'twenty-shared/types';
+import { DateDisplayFormat, FieldMetadataType } from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -13,7 +8,6 @@ import {
   type CreateStandardFieldArgs,
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
-import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { SEARCH_FIELDS_FOR_MESSAGE_FOLDER } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 
@@ -333,55 +327,21 @@ export const buildMessageFolderStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  messageChannel: createStandardRelationFieldFlatMetadata({
+  messageChannelId: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'messageChannel',
+      fieldName: 'messageChannelId',
+      type: FieldMetadataType.UUID,
       label: i18nLabel(msg`Message Channel`),
       description: i18nLabel(msg`Message Channel`),
       icon: 'IconMessage',
       isNullable: false,
       isUIReadOnly: true,
-      targetObjectName: 'messageChannel',
-      targetFieldName: 'messageFolders',
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'messageChannelId',
-      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
   }),
-  messageChannelMessageAssociationMessageFolders:
-    createStandardRelationFieldFlatMetadata({
-      objectName,
-      workspaceId,
-      context: {
-        type: FieldMetadataType.RELATION,
-        morphId: null,
-        fieldName: 'messageChannelMessageAssociationMessageFolders',
-        label: i18nLabel(msg`Message Association Folders`),
-        description: i18nLabel(
-          msg`Message Association Folders (supports multiple folders/labels)`,
-        ),
-        icon: 'IconFolders',
-        isNullable: true,
-        isUIReadOnly: true,
-        targetObjectName: 'messageChannelMessageAssociationMessageFolder',
-        targetFieldName: 'messageFolder',
-        settings: {
-          relationType: RelationType.ONE_TO_MANY,
-        },
-      },
-      standardObjectMetadataRelatedEntityIds,
-      dependencyFlatEntityMaps,
-      twentyStandardApplicationId,
-      now,
-    }),
 });

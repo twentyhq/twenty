@@ -47,6 +47,8 @@ export enum EngineComponentKey {
   NAVIGATION = 'NAVIGATION',
   TRIGGER_WORKFLOW_VERSION = 'TRIGGER_WORKFLOW_VERSION',
   FRONT_COMPONENT_RENDERER = 'FRONT_COMPONENT_RENDERER',
+  REPLY_TO_EMAIL_THREAD = 'REPLY_TO_EMAIL_THREAD',
+  COMPOSE_EMAIL = 'COMPOSE_EMAIL',
 
   // TODO: Remove deprecated keys once upgrade:1-21:refactor-navigation-commands has run on all workspaces
   // Deprecated: replaced by NAVIGATION engine key with payload

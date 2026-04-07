@@ -2,6 +2,7 @@ import { HeadlessFrontComponentRendererEngineCommand } from '@/command-menu-item
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
 import { HeadlessOpenSidePanelPageEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessOpenSidePanelPageEngineCommand';
 import { NavigationEngineCommand } from '@/command-menu-item/engine-command/components/NavigationEngineCommand';
+import { ComposeEmailCommand } from '@/command-menu-item/engine-command/global/components/ComposeEmailCommand';
 import { DeleteRecordsCommand } from '@/command-menu-item/engine-command/record/components/DeleteRecordsCommand';
 import { DestroyRecordsCommand } from '@/command-menu-item/engine-command/record/components/DestroyRecordsCommand';
 import { ExportRecordsCommand } from '@/command-menu-item/engine-command/record/components/ExportRecordsCommand';
@@ -23,6 +24,7 @@ import { CancelDashboardSingleRecordCommand } from '@/command-menu-item/engine-c
 import { DuplicateDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand';
 import { EditDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/EditDashboardSingleRecordCommand';
 import { SaveDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/SaveDashboardSingleRecordCommand';
+import { ReplyToEmailThreadCommand } from '@/command-menu-item/engine-command/record/single-record/message-thread/components/ReplyToEmailThreadCommand';
 import { EditRecordPageLayoutSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/record-page-layout/components/EditRecordPageLayoutSingleRecordCommand';
 import { SeeVersionWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/SeeVersionWorkflowRunSingleRecordCommand';
 import { SeeWorkflowWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/SeeWorkflowWorkflowRunSingleRecordCommand';
@@ -244,6 +246,8 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.FRONT_COMPONENT_RENDERER]: (
     <HeadlessFrontComponentRendererEngineCommand />
   ),
+  [EngineComponentKey.REPLY_TO_EMAIL_THREAD]: <ReplyToEmailThreadCommand />,
+  [EngineComponentKey.COMPOSE_EMAIL]: <ComposeEmailCommand />,
 
   // Deprecated keys kept for backward compatibility until migration runs
   [EngineComponentKey.DELETE_SINGLE_RECORD]: <DeleteRecordsCommand />,
