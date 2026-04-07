@@ -1,0 +1,529 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "TOB Subscription Management API",
+    "description": "API endpoints for customer subscription management. Built on n8n webhooks connecting WordPress to Twenty CRM. All endpoints require X-API-Key header authentication.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Lascha Schreier",
+      "email": "lascha@original-body.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://flow.tob.sh/webhook/api/v1",
+      "description": "Production"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/subscriptions": {
+      "get": {
+        "summary": "Get subscription details",
+        "description": "Returns subscription data including periods, calculated end date, and status.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "description": "Twenty subscription UUID",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscription data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "subscription": {
+                      "$ref": "#/components/schemas/Subscription"
+                    },
+                    "periods": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Period"
+                      }
+                    },
+                    "calculatedEndDate": {
+                      "type": "string",
+                      "format": "date",
+                      "example": "2027-02-28"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["active", "inactive"],
+                      "example": "active"
+                    },
+                    "totalPeriodDays": {
+                      "type": "integer",
+                      "example": 45
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/periods": {
+      "get": {
+        "summary": "Get subscription periods",
+        "description": "Returns all periods for a subscription, sorted by startDate.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "description": "Twenty subscription UUID",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of periods",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "periods": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Period"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/active-until": {
+      "get": {
+        "summary": "Get active-until per product",
+        "description": "Returns active-until dates and access status per product for a WordPress user.",
+        "parameters": [
+          {
+            "name": "wpUserId",
+            "in": "query",
+            "required": true,
+            "description": "WordPress user ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Products with active-until dates",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "accountId": {
+                      "type": "string",
+                      "example": "1803"
+                    },
+                    "products": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Product"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/change-requests": {
+      "get": {
+        "summary": "Get change requests for a subscription",
+        "description": "Returns all change requests for a subscription, sorted by createdAt descending. Optionally filter by status.",
+        "parameters": [
+          {
+            "name": "subscriptionId",
+            "in": "query",
+            "required": true,
+            "description": "Twenty subscription UUID",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "Filter by request status",
+            "schema": {
+              "type": "string",
+              "enum": ["PENDING", "APPROVED", "REJECTED"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of change requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "subscriptionId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "total": {
+                      "type": "integer",
+                      "example": 3
+                    },
+                    "changeRequests": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ChangeRequest"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new change request",
+        "description": "Creates a new change request (pause, extension, or cancellation). Status starts as PENDING.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["subscriptionId", "periodType", "startDate", "duration"],
+                "properties": {
+                  "subscriptionId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Twenty subscription UUID"
+                  },
+                  "periodType": {
+                    "type": "string",
+                    "enum": ["PAUSE", "extension_grace", "cancellation"],
+                    "description": "Type of period to request"
+                  },
+                  "startDate": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2026-04-15",
+                    "description": "Requested start date"
+                  },
+                  "duration": {
+                    "type": "integer",
+                    "example": 14,
+                    "description": "Duration in days"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Customer's reason for the request"
+                  },
+                  "notes": {
+                    "type": "string",
+                    "description": "Optional internal notes"
+                  },
+                  "proofReference": {
+                    "type": "string",
+                    "description": "Optional ticket ID or document link"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created change request (raw Twenty object)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeRequest"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/change-requests/approve": {
+      "post": {
+        "summary": "Approve a change request",
+        "description": "Approves a pending change request. Automatically creates the corresponding period. Internal use only.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["changeRequestId"],
+                "properties": {
+                  "changeRequestId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Change request UUID to approve"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created period object (raw Twenty object)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Period"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/change-requests/reject": {
+      "post": {
+        "summary": "Reject a change request",
+        "description": "Rejects a pending change request with a reason. Internal use only.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["changeRequestId", "reason"],
+                "properties": {
+                  "changeRequestId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Change request UUID to reject"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Reason for rejection"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated change request object (raw Twenty object)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeRequest"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "API key for authenticating requests to the subscription management endpoints."
+      }
+    },
+    "schemas": {
+      "Subscription": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Twenty subscription UUID"
+          },
+          "subscriptionId": {
+            "type": "string",
+            "example": "SN486001",
+            "description": "Readable subscription ID"
+          },
+          "customerName": {
+            "type": "string",
+            "example": "Jane Doe"
+          },
+          "customerEmail": {
+            "type": "string",
+            "format": "email",
+            "example": "jane.doe@example.com"
+          },
+          "programName": {
+            "type": "string",
+            "example": "AKI Schmerzfrei Akut"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-03-01T00:00:00.000Z"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2027-02-28T00:00:00.000Z"
+          },
+          "durationDays": {
+            "type": "integer",
+            "example": 364
+          },
+          "wpUserId": {
+            "type": "string",
+            "example": "1803"
+          },
+          "lifecycleStatus": {
+            "type": "integer",
+            "example": 21
+          }
+        }
+      },
+      "Period": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "periodType": {
+            "type": "string",
+            "enum": ["PAUSE", "EXTENSION_GRACE", "cancellation"],
+            "description": "Type of period"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-15T00:00:00.000Z"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-29T00:00:00.000Z"
+          },
+          "source": {
+            "type": "string",
+            "enum": ["CHANGE_REQUEST", "MANUAL"],
+            "description": "How this period was created"
+          },
+          "subscriptionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "changeRequestId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Product/program ID"
+          },
+          "name": {
+            "type": "string",
+            "example": "AKI Schmerzfrei Akut"
+          },
+          "activeUntil": {
+            "type": "string",
+            "format": "date",
+            "example": "2027-02-28"
+          },
+          "hasAccess": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "ChangeRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "subscriptionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "periodType": {
+            "type": "string",
+            "enum": ["PAUSE", "extension_grace", "cancellation"]
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "duration": {
+            "type": "integer",
+            "example": 14
+          },
+          "requestStatus": {
+            "type": "string",
+            "enum": ["PENDING", "APPROVED", "REJECTED"]
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "proofReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "processedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  }
+}
