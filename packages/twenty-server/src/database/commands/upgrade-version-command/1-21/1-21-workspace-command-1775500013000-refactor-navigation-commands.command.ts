@@ -12,6 +12,7 @@ import {
   type WorkspaceCommandOptions,
 } from 'src/database/commands/command-runners/workspace.command-runner';
 import { addPayloadCheckConstraintToCommandMenuItem } from 'src/database/typeorm/core/migrations/utils/1775129635528-add-payload-to-command-menu-item.util';
+import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -38,6 +39,7 @@ const GO_TO_ENGINE_KEYS = [
   'GO_TO_RUNS',
 ];
 
+@RegisteredWorkspaceCommand('1.21.0', 1775500013000)
 @Command({
   name: 'upgrade:1-21:refactor-navigation-commands',
   description:
