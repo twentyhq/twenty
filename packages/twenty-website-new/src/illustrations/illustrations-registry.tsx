@@ -18,6 +18,7 @@ import { Diamond } from './ThreeCards/Diamond';
 import { Eye } from './ThreeCards/Eye';
 import { Flash } from './ThreeCards/Flash';
 import { Grow } from './ThreeCards/Grow';
+import { HalftoneDashes } from './ThreeCards/HalftoneDashes';
 import { Lock } from './ThreeCards/Lock';
 import { Programming } from './ThreeCards/Programming';
 import { SingleScreen } from './ThreeCards/SingleScreen';
@@ -28,6 +29,7 @@ export const THREE_CARDS_ILLUSTRATIONS = {
   diamond: Diamond,
   eye: Eye,
   flash: Flash,
+  halftoneDashes: HalftoneDashes,
   lock: Lock,
   connect: Connect,
   grow: Grow,
