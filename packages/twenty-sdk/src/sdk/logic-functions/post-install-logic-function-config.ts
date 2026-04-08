@@ -1,4 +1,4 @@
-import type { InstallLogicFunctionHandler, LogicFunctionConfig } from '@/sdk';
+import type { PostInstallHandler, LogicFunctionConfig } from '@/sdk';
 
 export type PostInstallLogicFunctionConfig = Omit<
   LogicFunctionConfig,
@@ -8,6 +8,6 @@ export type PostInstallLogicFunctionConfig = Omit<
   | 'isTool'
   | 'handler'
 > & {
-  handler: InstallLogicFunctionHandler;
+  handler: PostInstallHandler;
   shouldRunOnVersionUpgrade?: boolean;
 };

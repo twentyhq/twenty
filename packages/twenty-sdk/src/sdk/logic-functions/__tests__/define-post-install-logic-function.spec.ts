@@ -1,7 +1,7 @@
 import { definePostInstallLogicFunction } from '@/sdk/logic-functions/define-post-install-logic-function';
-import { type InstallLogicFunctionPayload } from '@/sdk/logic-functions/install-logic-function-payload-type';
+import { type PostInstallPayload } from '@/sdk/logic-functions/post-install-payload-type';
 
-const mockHandler = async (payload: InstallLogicFunctionPayload) => ({
+const mockHandler = async (payload: PostInstallPayload) => ({
   success: true,
   previousVersion: payload.previousVersion,
 });

@@ -124,7 +124,11 @@ export class ApplicationInstallService {
           universalIdentifier,
           workspaceId: params.workspaceId,
         });
-      const previousVersion = existingApplication?.version ?? '';
+
+      const previousVersion = existingApplication?.version ?? undefined;
+
+      const newVersion = resolvedPackage.packageJson.version;
+
       const isVersionUpgrade = isDefined(existingApplication);
 
       const { application, wasCreated } = await this.ensureApplicationExists({
@@ -158,13 +162,20 @@ export class ApplicationInstallService {
         });
       }
 
-      await this.runPostInstallHook({
-        manifest: resolvedPackage.manifest,
-        workspaceId: params.workspaceId,
-        previousVersion,
-        isVersionUpgrade,
-        universalIdentifier,
-      });
+      if (!newVersion) {
+        this.logger.log(
+          `Skipping post-install hook for app ${universalIdentifier}: version upgrade and shouldRunOnVersionUpgrade is false`,
+        );
+      } else {
+        await this.runPostInstallHook({
+          manifest: resolvedPackage.manifest,
+          workspaceId: params.workspaceId,
+          previousVersion,
+          newVersion,
+          isVersionUpgrade,
+          universalIdentifier,
+        });
+      }
 
       this.logger.log(
         `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
@@ -189,7 +200,8 @@ export class ApplicationInstallService {
   private async runPostInstallHook(params: {
     manifest: Manifest;
     workspaceId: string;
-    previousVersion: string;
+    previousVersion?: string;
+    newVersion: string;
     isVersionUpgrade: boolean;
     universalIdentifier: string;
   }): Promise<void> {
@@ -197,6 +209,7 @@ export class ApplicationInstallService {
       manifest,
       workspaceId,
       previousVersion,
+      newVersion,
       isVersionUpgrade,
       universalIdentifier,
     } = params;
@@ -236,13 +249,14 @@ export class ApplicationInstallService {
     }
 
     this.logger.log(
-      `Running post-install hook for app ${universalIdentifier} (previousVersion="${previousVersion}")`,
+      `Running post-install hook for app ${universalIdentifier} with payload:`,
+      JSON.stringify({ previousVersion, newVersion }),
     );
 
     const result = await this.logicFunctionExecutorService.execute({
       logicFunctionId: flatLogicFunction.id,
       workspaceId,
-      payload: { previousVersion },
+      payload: { previousVersion, newVersion },
     });
 
     if (result.status !== LogicFunctionExecutionStatus.SUCCESS) {

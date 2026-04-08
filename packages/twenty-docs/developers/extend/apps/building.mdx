@@ -650,9 +650,9 @@ export default defineLogicFunction({
 A post-install function is a logic function that runs automatically once your app has finished installing on a workspace. The server executes it after the app's metadata has been synchronized and the SDK client has been generated, so the workspace is fully ready to use. Typical use cases include seeding default data, creating initial records, configuring workspace settings, or provisioning resources on third-party services.
 
 ```ts src/logic-functions/post-install.ts
-import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+import { definePostInstallLogicFunction, type PostInstallPayload } from 'twenty-sdk';
 
-const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+const handler = async (payload: PostInstallPayload): Promise<void> => {
   console.log('Post install logic function executed successfully!', payload.previousVersion);
 };
 
@@ -674,7 +674,7 @@ yarn twenty exec --postInstall
 
 Key points:
 - Post-install functions use `definePostInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
-- The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed, or an empty string for fresh installs. Use this value to distinguish fresh installs from upgrades and to run version-specific migration logic.
+- The handler receives a `PostInstallPayload` with `{ previousVersion?: string; newVersion: string }` — `newVersion` is the version being installed, and `previousVersion` is the version that was previously installed (or `undefined` on a fresh install). Use these values to distinguish fresh installs from upgrades and to run version-specific migration logic.
 - **When the hook runs**: on fresh installs only, by default. Pass `shouldRunOnVersionUpgrade: true` if you also want it to run when the app is upgraded from a previous version. When omitted, the flag defaults to `false` and upgrades skip the hook.
 - If the hook throws or returns an error, the install (or upgrade) is treated as failed and the error is surfaced to the caller. Make sure your handler is idempotent, especially when `shouldRunOnVersionUpgrade: true` — it may run more than once over the lifetime of the app.
 - The environment variables `APPLICATION_ID`, `APP_ACCESS_TOKEN`, and `API_URL` are available inside the handler (same as any other logic function), so you can call the Twenty API with an application access token scoped to your app.
