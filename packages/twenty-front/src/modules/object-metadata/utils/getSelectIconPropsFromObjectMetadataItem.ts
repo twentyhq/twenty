@@ -9,7 +9,10 @@ export type ObjectMetadataItemForSelectIcon = Pick<
 >;
 
 export const getSelectIconPropsFromObjectMetadataItem = (
-  getIcon: (iconKey?: string | null, customDefaultIcon?: string) => IconComponent,
+  getIcon: (
+    iconKey?: string | null,
+    customDefaultIcon?: string,
+  ) => IconComponent,
   objectMetadataItem: ObjectMetadataItemForSelectIcon,
 ): { Icon: IconComponent; iconThemeColor: ThemeColor } => ({
   Icon: getIcon(objectMetadataItem.icon),
