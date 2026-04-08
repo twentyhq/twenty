@@ -1,5 +1,5 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
-import { getSelectOptionIconFromObjectMetadataItem } from '@/object-metadata/utils/getSelectOptionIconFromObjectMetadataItem';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -34,6 +34,8 @@ export const WorkflowStepFilterFieldSelect = ({
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
   const { getIcon } = useIcons();
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
 
   const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
     shouldDisplayRecordFields: true,
@@ -89,13 +91,19 @@ export const WorkflowStepFilterFieldSelect = ({
     ? t`Select a field from a previous step`
     : variableLabel;
 
-  const icon = stepFilter.isFullRecord
+  const fullRecordIconProps = stepFilter.isFullRecord
     ? isDefined(filterObjectMetadataItem)
-      ? getSelectOptionIconFromObjectMetadataItem(filterObjectMetadataItem)
+      ? getSelectIconPropsFromObjectMetadataItem(filterObjectMetadataItem)
       : undefined
+    : undefined;
+
+  const icon = stepFilter.isFullRecord
+    ? fullRecordIconProps?.Icon
     : filterFieldMetadataItem?.icon
       ? getIcon(filterFieldMetadataItem.icon)
       : undefined;
+
+  const iconThemeColor = fullRecordIconProps?.iconThemeColor;
 
   if (readonly || noAvailableVariables) {
     const disabledLabel = noAvailableVariables
@@ -112,6 +120,7 @@ export const WorkflowStepFilterFieldSelect = ({
               label: disabledLabel,
               fullLabel: variablePathLabel,
               Icon: icon,
+              iconThemeColor,
             }}
             isDisabled={true}
           />
@@ -131,6 +140,7 @@ export const WorkflowStepFilterFieldSelect = ({
             fullLabel: variablePathLabel,
             value: stepFilter.stepOutputKey,
             Icon: icon,
+            iconThemeColor,
           }}
           textAccent={isSelectedFieldNotFound ? 'placeholder' : 'default'}
           isDisabled={readonly}

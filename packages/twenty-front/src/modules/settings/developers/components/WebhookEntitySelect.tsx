@@ -1,5 +1,5 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { getSelectOptionIconFromObjectMetadataItem } from '@/object-metadata/utils/getSelectOptionIconFromObjectMetadataItem';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -25,6 +25,7 @@ import {
   IconSettings,
   IconTable,
 } from 'twenty-ui/display';
+import { type SelectOption } from 'twenty-ui/input';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -85,6 +86,8 @@ export const WebhookEntitySelect = ({
   dropdownId = WEBHOOK_ENTITY_DROPDOWN_ID,
 }: WebhookEntitySelectProps) => {
   const { theme } = useContext(ThemeContext);
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
   const [searchInput, setSearchInput] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
   const { closeDropdown } = useCloseDropdown();
@@ -104,12 +107,12 @@ export const WebhookEntitySelect = ({
     { label: t`Webhook`, value: 'metadata.webhook', icon: IconCode },
   ];
 
-  const objectOptions = [
+  const objectOptions: SelectOption<string>[] = [
     { label: t`All Objects`, value: '*', Icon: IconNorthStar },
     ...objectMetadataItems.map((item) => ({
       label: item.labelPlural,
       value: item.nameSingular,
-      Icon: getSelectOptionIconFromObjectMetadataItem(item),
+      ...getSelectIconPropsFromObjectMetadataItem(item),
     })),
   ];
 
@@ -198,6 +201,7 @@ export const WebhookEntitySelect = ({
                     >
                       <MenuItemSelect
                         LeftIcon={option.Icon}
+                        iconThemeColor={option.iconThemeColor}
                         text={option.label}
                         selected={value === option.value}
                         focused={selectedItemId === option.value}

@@ -8,7 +8,7 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { getSelectOptionIconFromObjectMetadataItem } from '@/object-metadata/utils/getSelectOptionIconFromObjectMetadataItem';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { MultiSelectControl } from '@/ui/input/components/MultiSelectControl';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -102,6 +102,8 @@ export const SettingsMorphRelationMultiSelect = ({
 
   const [searchInputValue, setSearchInputValue] = useState('');
 
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
   const [localSelectedObjectMetadataIds, setLocalSelectedObjectMetadataIds] =
@@ -114,8 +116,8 @@ export const SettingsMorphRelationMultiSelect = ({
     )
     .map((objectMetadataItem) => ({
       label: objectMetadataItem.labelSingular,
-      Icon: getSelectOptionIconFromObjectMetadataItem(objectMetadataItem),
       objectMetadataId: objectMetadataItem.id,
+      ...getSelectIconPropsFromObjectMetadataItem(objectMetadataItem),
     }));
 
   const selectedOptions = options.filter((option) =>
@@ -256,6 +258,7 @@ export const SettingsMorphRelationMultiSelect = ({
                         <MenuItemMultiSelect
                           className=""
                           LeftIcon={option.Icon ?? undefined}
+                          iconThemeColor={option.iconThemeColor}
                           text={option.label}
                           selected={selectedObjectMetadataIds.some(
                             (selectedObjectMetadataId) =>

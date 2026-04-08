@@ -1,9 +1,9 @@
-import { t } from '@lingui/core/macro';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { getSelectOptionIconFromObjectMetadataItem } from '@/object-metadata/utils/getSelectOptionIconFromObjectMetadataItem';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { Select } from '@/ui/input/components/Select';
 import { type WorkflowDeleteRecordAction } from '@/workflow/types/Workflow';
+import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -38,6 +38,8 @@ export const WorkflowEditActionDeleteRecord = ({
   action,
   actionOptions,
 }: WorkflowEditActionDeleteRecordProps) => {
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
 
@@ -50,9 +52,9 @@ export const WorkflowEditActionDeleteRecord = ({
         }),
       )
       .map((item) => ({
-        Icon: getSelectOptionIconFromObjectMetadataItem(item),
         label: item.labelPlural,
         value: item.nameSingular,
+        ...getSelectIconPropsFromObjectMetadataItem(item),
       }));
 
   const [formData, setFormData] = useState<DeleteRecordFormData>({

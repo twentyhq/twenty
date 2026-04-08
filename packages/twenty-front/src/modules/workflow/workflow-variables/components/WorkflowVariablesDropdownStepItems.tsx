@@ -4,7 +4,7 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { getSelectOptionIconFromObjectMetadataItem } from '@/object-metadata/utils/getSelectOptionIconFromObjectMetadataItem';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -39,6 +39,8 @@ export const WorkflowVariablesDropdownStepItems = ({
 }: WorkflowVariablesDropdownStepItemsProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
   const {
     searchInputValue,
     setSearchInputValue,
@@ -98,6 +100,12 @@ export const WorkflowVariablesDropdownStepItems = ({
   const shouldDisplaySubStepObject =
     shouldDisplayRecordObjects && isObjectFoundThroughSearch;
 
+  const displayedSubStepObjectIconProps = isDefined(
+    displayedSubStepObjectMetadata,
+  )
+    ? getSelectIconPropsFromObjectMetadataItem(displayedSubStepObjectMetadata)
+    : undefined;
+
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <DropdownMenuHeader
@@ -126,13 +134,8 @@ export const WorkflowVariablesDropdownStepItems = ({
             onClick={handleSelectObject}
             text={objectLabel || ''}
             hasSubMenu={false}
-            LeftIcon={
-              isDefined(displayedSubStepObjectMetadata)
-                ? getSelectOptionIconFromObjectMetadataItem(
-                    displayedSubStepObjectMetadata,
-                  )
-                : undefined
-            }
+            LeftIcon={displayedSubStepObjectIconProps?.Icon}
+            iconThemeColor={displayedSubStepObjectIconProps?.iconThemeColor}
             contextualText={t`Pick a ${objectLabel} record`}
           />
         )}

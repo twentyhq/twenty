@@ -1,5 +1,5 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { getSelectOptionIconFromObjectMetadataItem } from '@/object-metadata/utils/getSelectOptionIconFromObjectMetadataItem';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -65,6 +65,8 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
   triggerOptions,
 }: WorkflowEditTriggerDatabaseEventFormProps) => {
   const { t } = useLingui();
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
   const [searchInputValue, setSearchInputValue] = useState('');
   const [isSystemObjectsOpen, setIsSystemObjectsOpen] = useState(false);
   const dropdownId = 'workflow-edit-trigger-record-type';
@@ -90,7 +92,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     .map((item) => ({
       label: item.labelPlural,
       value: item.nameSingular,
-      Icon: getSelectOptionIconFromObjectMetadataItem(item),
+      ...getSelectIconPropsFromObjectMetadataItem(item),
     }));
 
   const systemObjects = objectMetadataItems
@@ -98,7 +100,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     .map((item) => ({
       label: item.labelPlural,
       value: item.nameSingular,
-      Icon: getSelectOptionIconFromObjectMetadataItem(item),
+      ...getSelectIconPropsFromObjectMetadataItem(item),
     }));
 
   const selectedOption =

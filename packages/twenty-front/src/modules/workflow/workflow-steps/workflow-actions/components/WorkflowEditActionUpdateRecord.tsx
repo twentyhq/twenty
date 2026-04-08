@@ -1,6 +1,6 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
-import { getSelectOptionIconFromObjectMetadataItem } from '@/object-metadata/utils/getSelectOptionIconFromObjectMetadataItem';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
@@ -39,6 +39,8 @@ export const WorkflowEditActionUpdateRecord = ({
   action,
   actionOptions,
 }: WorkflowEditActionUpdateRecordProps) => {
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
 
@@ -51,9 +53,9 @@ export const WorkflowEditActionUpdateRecord = ({
         }),
       )
       .map((item) => ({
-        Icon: getSelectOptionIconFromObjectMetadataItem(item),
         label: item.labelPlural,
         value: item.nameSingular,
+        ...getSelectIconPropsFromObjectMetadataItem(item),
       }));
 
   const [formData, setFormData] = useState<UpdateRecordFormData>({

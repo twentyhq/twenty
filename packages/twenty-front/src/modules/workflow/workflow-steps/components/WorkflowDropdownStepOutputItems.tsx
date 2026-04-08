@@ -5,7 +5,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { getSelectOptionIconFromObjectMetadataItem } from '@/object-metadata/utils/getSelectOptionIconFromObjectMetadataItem';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { useGetInitialFilterValue } from '@/object-record/object-filter-dropdown/hooks/useGetInitialFilterValue';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -53,6 +53,8 @@ export const WorkflowDropdownStepOutputItems = ({
 }: WorkflowDropdownStepOutputItemsProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
 
   const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
   const { getFieldMetadataItemByIdOrThrow } =
@@ -204,6 +206,10 @@ export const WorkflowDropdownStepOutputItems = ({
 
   const objectLabel = subStepObjectMetadataItem?.labelSingular;
 
+  const subStepObjectIconProps = isDefined(subStepObjectMetadataItem)
+    ? getSelectIconPropsFromObjectMetadataItem(subStepObjectMetadataItem)
+    : undefined;
+
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <DropdownMenuHeader
@@ -232,13 +238,8 @@ export const WorkflowDropdownStepOutputItems = ({
             onClick={handleSelectObject}
             text={objectLabel || ''}
             hasSubMenu={false}
-            LeftIcon={
-              isDefined(subStepObjectMetadataItem)
-                ? getSelectOptionIconFromObjectMetadataItem(
-                    subStepObjectMetadataItem,
-                  )
-                : undefined
-            }
+            LeftIcon={subStepObjectIconProps?.Icon}
+            iconThemeColor={subStepObjectIconProps?.iconThemeColor}
             contextualText={t`Pick a ${objectLabel} record`}
           />
         )}

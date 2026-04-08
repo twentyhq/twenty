@@ -1,7 +1,7 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
-import { getSelectOptionIconFromObjectMetadataItem } from '@/object-metadata/utils/getSelectOptionIconFromObjectMetadataItem';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
@@ -76,6 +76,8 @@ export const WorkflowEditActionUpsertRecord = ({
   action,
   actionOptions,
 }: WorkflowEditActionUpsertRecordProps) => {
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
 
@@ -88,9 +90,9 @@ export const WorkflowEditActionUpsertRecord = ({
         }),
       )
       .map((item) => ({
-        Icon: getSelectOptionIconFromObjectMetadataItem(item),
         label: item.labelPlural,
         value: item.nameSingular,
+        ...getSelectIconPropsFromObjectMetadataItem(item),
       }));
 
   const [formData, setFormData] = useState<UpsertRecordFormData>({

@@ -1,7 +1,7 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
-import { getSelectOptionIconFromObjectMetadataItem } from '@/object-metadata/utils/getSelectOptionIconFromObjectMetadataItem';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { Select } from '@/ui/input/components/Select';
@@ -66,6 +66,8 @@ export const WorkflowEditActionCreateRecord = ({
   action,
   actionOptions,
 }: WorkflowEditActionCreateRecordProps) => {
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
 
@@ -78,9 +80,9 @@ export const WorkflowEditActionCreateRecord = ({
         }),
       )
       .map((item) => ({
-        Icon: getSelectOptionIconFromObjectMetadataItem(item),
         label: item.labelPlural,
         value: item.nameSingular,
+        ...getSelectIconPropsFromObjectMetadataItem(item),
       }));
 
   const [formData, setFormData] = useState<CreateRecordFormData>({
