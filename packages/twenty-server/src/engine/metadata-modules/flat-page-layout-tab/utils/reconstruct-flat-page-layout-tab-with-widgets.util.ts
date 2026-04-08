@@ -17,12 +17,25 @@ export const reconstructFlatPageLayoutTabWithWidgets = ({
 }): FlatPageLayoutTabWithWidgets => {
   const widgets = Object.values(
     flatPageLayoutWidgetMaps.byUniversalIdentifier,
-  ).filter(
-    (widget): widget is FlatPageLayoutWidget =>
-      isDefined(widget) &&
-      widget.pageLayoutTabId === tab.id &&
-      !isDefined(widget.deletedAt),
-  );
+  )
+    .filter(
+      (widget): widget is FlatPageLayoutWidget =>
+        isDefined(widget) &&
+        widget.pageLayoutTabId === tab.id &&
+        !isDefined(widget.deletedAt),
+    )
+    .sort((a, b) => {
+      const aIndex =
+        isDefined(a.position) && 'index' in a.position
+          ? a.position.index
+          : Infinity;
+      const bIndex =
+        isDefined(b.position) && 'index' in b.position
+          ? b.position.index
+          : Infinity;
+
+      return aIndex - bIndex;
+    });
 
   return {
     ...tab,
