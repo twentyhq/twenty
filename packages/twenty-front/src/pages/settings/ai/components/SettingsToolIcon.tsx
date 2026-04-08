@@ -3,10 +3,10 @@ import { useContext } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
-import { getIconTileColorShades } from '@/ui/display/utils/getIconTileColorShades';
 import { isDefined } from 'twenty-shared/utils';
 import {
   Avatar,
+  getIconTileColorShades,
   IconCode,
   IconEdit,
   IconPlus,
