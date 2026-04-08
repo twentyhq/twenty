@@ -14,10 +14,14 @@ import {
 import { addPayloadCheckConstraintToCommandMenuItem } from 'src/database/typeorm/core/migrations/utils/1775129635528-add-payload-to-command-menu-item.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
+import { isNavigationPayloadWithObjectMetadataItemId } from 'src/engine/metadata-modules/command-menu-item/utils/resolve-command-menu-item-navigation-fields.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import {
   buildNavigationFlatCommandMenuItem,
   NAVIGATION_COMMAND_UUID_NAMESPACE,
+  NAVIGATION_INTERPOLATED_ICON,
+  NAVIGATION_INTERPOLATED_LABEL,
+  NAVIGATION_INTERPOLATED_SHORT_LABEL,
 } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util';
 import { seedCompareObjectMetadataForNavigationPosition } from 'src/engine/metadata-modules/flat-command-menu-item/utils/seed-compare-object-metadata-for-navigation-position.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -237,19 +241,38 @@ export class RefactorNavigationCommandsCommand extends ActiveOrSuspendedWorkspac
       });
     }
 
+    const staleNavigationItemsToUpdate = allCommandMenuItems
+      .filter(
+        (item) =>
+          item.engineComponentKey === EngineComponentKey.NAVIGATION &&
+          isNavigationPayloadWithObjectMetadataItemId(item.payload) &&
+          (item.label !== NAVIGATION_INTERPOLATED_LABEL ||
+            item.shortLabel !== NAVIGATION_INTERPOLATED_SHORT_LABEL ||
+            item.icon !== NAVIGATION_INTERPOLATED_ICON),
+      )
+      .map((item) => ({
+        ...item,
+        label: NAVIGATION_INTERPOLATED_LABEL,
+        shortLabel: NAVIGATION_INTERPOLATED_SHORT_LABEL,
+        icon: NAVIGATION_INTERPOLATED_ICON,
+        updatedAt: now,
+      }));
+
     if (
       goToItemsToDelete.length === 0 &&
-      flatCommandMenuItemsToCreate.length === 0
+      flatCommandMenuItemsToCreate.length === 0 &&
+      staleNavigationItemsToUpdate.length === 0
     ) {
       this.logger.log(
-        `All NAVIGATION commands already exist for workspace ${workspaceId}, skipping`,
+        `All NAVIGATION commands already exist and use interpolation for workspace ${workspaceId}, skipping`,
       );
 
       return;
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] Would create' : 'Creating'} ${flatCommandMenuItemsToCreate.length} NAVIGATION command(s) for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] Would create' : 'Creating'} ${flatCommandMenuItemsToCreate.length} NAVIGATION command(s) ` +
+        `and update ${staleNavigationItemsToUpdate.length} stale item(s) for workspace ${workspaceId}`,
     );
 
     if (isDryRun) {
@@ -263,7 +286,7 @@ export class RefactorNavigationCommandsCommand extends ActiveOrSuspendedWorkspac
             commandMenuItem: {
               flatEntityToCreate: flatCommandMenuItemsToCreate,
               flatEntityToDelete: goToItemsToDelete,
-              flatEntityToUpdate: [],
+              flatEntityToUpdate: staleNavigationItemsToUpdate,
             },
           },
           workspaceId,
