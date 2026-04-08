@@ -3,6 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
 
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
+import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 describe('FileStorageDriverFactory', () => {
@@ -20,6 +21,10 @@ describe('FileStorageDriverFactory', () => {
         {
           provide: TwentyConfigService,
           useValue: mockTwentyConfigService,
+        },
+        {
+          provide: ConfigGroupHashService,
+          useValue: { computeHash: jest.fn().mockReturnValue('') },
         },
       ],
     }).compile();

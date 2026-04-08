@@ -2,6 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { EmailDriverFactory } from 'src/engine/core-modules/email/email-driver.factory';
 import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.enum';
+import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 describe('EmailDriverFactory', () => {
@@ -19,6 +20,10 @@ describe('EmailDriverFactory', () => {
         {
           provide: TwentyConfigService,
           useValue: mockTwentyConfigService,
+        },
+        {
+          provide: ConfigGroupHashService,
+          useValue: { computeHash: jest.fn().mockReturnValue('') },
         },
       ],
     }).compile();

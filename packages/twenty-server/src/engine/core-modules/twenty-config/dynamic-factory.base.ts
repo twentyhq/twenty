@@ -1,12 +1,15 @@
 import { type ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
+import { type ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { getConfigGroupHash } from 'src/engine/core-modules/twenty-config/utils/get-config-group-hash.util';
 
 export abstract class DriverFactoryBase<TDriver> {
   private currentDriver: TDriver | null = null;
   private currentConfigKey: string | null = null;
 
-  constructor(protected readonly twentyConfigService: TwentyConfigService) {}
+  constructor(
+    protected readonly twentyConfigService: TwentyConfigService,
+    protected readonly configGroupHashService: ConfigGroupHashService,
+  ) {}
 
   getCurrentDriver(): TDriver {
     let configKey: string;
@@ -41,7 +44,7 @@ export abstract class DriverFactoryBase<TDriver> {
   }
 
   protected getConfigGroupHash(group: ConfigVariablesGroup): string {
-    return getConfigGroupHash(this.twentyConfigService, group);
+    return this.configGroupHashService.computeHash(group);
   }
 
   protected abstract buildConfigKey(): string;
