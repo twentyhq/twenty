@@ -1,0 +1,61 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+env:
+  TWENTY_DEPLOY_URL: http://localhost:3000
+
+concurrency:
+  group: cd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: >-
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && github.event.label.name == 'deploy')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Configure remote
+        run: |
+          mkdir -p ~/.twenty
+          node -e "
+            const path = require('path'), os = require('os'), fs = require('fs');
+            fs.writeFileSync(path.join(os.homedir(), '.twenty', 'config.json'), JSON.stringify({
+              version: 1,
+              remotes: { prod: { apiUrl: process.env.TWENTY_DEPLOY_URL, apiKey: process.env.TWENTY_DEPLOY_API_KEY } }
+            }, null, 2));
+          "
+        env:
+          TWENTY_DEPLOY_API_KEY: ${{ secrets.TWENTY_DEPLOY_API_KEY }}
+
+      - name: Deploy
+        run: yarn twenty deploy --remote prod
+
+      - name: Install
+        run: yarn twenty install --remote prod
