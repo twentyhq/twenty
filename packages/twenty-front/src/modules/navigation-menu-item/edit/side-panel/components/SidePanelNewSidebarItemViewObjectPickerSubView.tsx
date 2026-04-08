@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { IconSettings } from 'twenty-ui/display';
+import { IconSettings, TintedIconTile } from 'twenty-ui/display';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
@@ -9,7 +9,6 @@ import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
 import { useSidePanelFilteredPickerItems } from '@/side-panel/hooks/useSidePanelFilteredPickerItems';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { TintedIconTile } from 'twenty-ui/display';
 
 type SidePanelNewSidebarItemViewObjectPickerSubViewProps = {
   objects: EnrichedObjectMetadataItem[];

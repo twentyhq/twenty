@@ -1,13 +1,16 @@
 import { styled } from '@linaria/react';
 import { useContext, type ReactNode } from 'react';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconGripVertical, type IconComponent } from 'twenty-ui/display';
+import {
+  IconGripVertical,
+  TintedIconTile,
+  type IconComponent,
+} from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import type { AddToNavigationDragPayload } from '@/navigation-menu-item/common/types/add-to-navigation-drag-payload';
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
-import { NavigationMenuItemType } from 'twenty-shared/types';
-import { TintedIconTile } from 'twenty-ui/display';
 
 const StyledIconSlot = styled.div<{
   $hasFixedSize: boolean;

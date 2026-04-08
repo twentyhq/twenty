@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { useIcons } from 'twenty-ui/display';
+import { TintedIconTile, useIcons } from 'twenty-ui/display';
 
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
@@ -14,7 +14,6 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { TintedIconTile } from 'twenty-ui/display';
 
 const StyledClickableIconWrapper = styled.div`
   cursor: pointer;

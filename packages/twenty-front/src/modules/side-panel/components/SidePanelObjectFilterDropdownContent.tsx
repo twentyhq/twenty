@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
-import { IconCube } from 'twenty-ui/display';
+import { IconCube, TintedIconTile } from 'twenty-ui/display';
 import { MenuItemSelectAvatar, MenuItemToggle } from 'twenty-ui/navigation';
 
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
@@ -19,7 +19,6 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { TintedIconTile } from 'twenty-ui/display';
 
 const ALL_OBJECTS_ITEM_ID = 'all-objects';
 

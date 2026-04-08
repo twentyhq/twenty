@@ -7,6 +7,7 @@ import {
   IconFolder,
   IconLink,
   IconTable,
+  TintedIconTile,
 } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -20,7 +21,6 @@ import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/Si
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { TintedIconTile } from 'twenty-ui/display';
 
 type SidePanelNewSidebarItemMainMenuProps = {
   onSelectObject: () => void;

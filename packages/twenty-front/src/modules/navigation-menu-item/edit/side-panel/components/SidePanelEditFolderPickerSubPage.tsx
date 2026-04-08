@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { useIcons } from 'twenty-ui/display';
+import { TintedIconTile, useIcons } from 'twenty-ui/display';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
@@ -10,7 +10,6 @@ import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { TintedIconTile } from 'twenty-ui/display';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const SidePanelEditFolderPickerSubPage = () => {

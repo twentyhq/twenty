@@ -1,6 +1,13 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar, IconLink, IconWorld, useIcons } from 'twenty-ui/display';
+import {
+  Avatar,
+  IconLink,
+  IconWorld,
+  StyledTintedIconTileContainer,
+  getIconTileColorShades,
+  useIcons,
+} from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -15,10 +22,6 @@ import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandard
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
-import {
-  getIconTileColorShades,
-  StyledTintedIconTileContainer,
-} from 'twenty-ui/display';
 
 export const NavigationMenuItemIcon = ({
   navigationMenuItem,
