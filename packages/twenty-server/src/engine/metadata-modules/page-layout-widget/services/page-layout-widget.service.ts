@@ -18,6 +18,7 @@ import {
 import { CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
 import { type PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
+import { resolveOverridableEntityProperty } from 'src/engine/metadata-modules/utils/resolve-overridable-entity-property.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import {
   PageLayoutWidgetException,
@@ -162,8 +163,8 @@ export class PageLayoutWidgetService {
       .filter(isDefined)
       .filter(
         (widget) =>
-          widget.pageLayoutTabId === pageLayoutTabId &&
-          !isDefined(widget.deletedAt),
+          resolveOverridableEntityProperty(widget, 'pageLayoutTabId') ===
+            pageLayoutTabId && !isDefined(widget.deletedAt),
       )
       .sort(
         (widgetA, widgetB) =>

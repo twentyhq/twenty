@@ -99,6 +99,11 @@ export class PageLayoutWidgetResolver {
   }
 
   @ResolveField(() => String)
+  pageLayoutTabId(@Parent() widget: PageLayoutWidgetDTO): string {
+    return resolveOverridableEntityProperty(widget, 'pageLayoutTabId');
+  }
+
+  @ResolveField(() => String)
   title(@Parent() widget: PageLayoutWidgetDTO): string {
     return resolveOverridableEntityProperty(widget, 'title');
   }
