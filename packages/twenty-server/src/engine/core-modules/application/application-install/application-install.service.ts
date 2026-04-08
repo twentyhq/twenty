@@ -24,9 +24,14 @@ import {
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import {
+  LogicFunctionTriggerJob,
+  type LogicFunctionTriggerJobData,
+} from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
-import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -42,7 +47,8 @@ export class ApplicationInstallService {
     private readonly fileStorageService: FileStorageService,
     private readonly cacheLockService: CacheLockService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
-    private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
+    @InjectMessageQueue(MessageQueue.logicFunctionQueue)
+    private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -249,24 +255,21 @@ export class ApplicationInstallService {
     }
 
     this.logger.log(
-      `Running post-install hook for app ${universalIdentifier} with payload:`,
+      `Enqueuing post-install hook for app ${universalIdentifier} with payload:`,
       JSON.stringify({ previousVersion, newVersion }),
     );
 
-    const result = await this.logicFunctionExecutorService.execute({
-      logicFunctionId: flatLogicFunction.id,
-      workspaceId,
-      payload: { previousVersion, newVersion },
-    });
-
-    if (result.status !== LogicFunctionExecutionStatus.SUCCESS) {
-      throw new ApplicationException(
-        `Post-install hook failed for application "${universalIdentifier}": ${
-          result.error?.errorMessage ?? 'Unknown error'
-        }`,
-        ApplicationExceptionCode.INSTALL_HOOK_FAILED,
-      );
-    }
+    await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+      LogicFunctionTriggerJob.name,
+      [
+        {
+          logicFunctionId: flatLogicFunction.id,
+          workspaceId,
+          payload: { previousVersion, newVersion },
+        },
+      ],
+      { retryLimit: 3 },
+    );
   }
 
   private async writeFilesToStorage(
