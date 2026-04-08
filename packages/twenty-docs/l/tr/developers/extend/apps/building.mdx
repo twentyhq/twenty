@@ -756,7 +756,7 @@ export default defineFrontComponent({
 });
 ```
 
-`yarn twenty dev` ile senkronize ettikten sonra, hızlı işlem sayfanın sağ üst köşesinde görünür:
+`yarn twenty dev` ile senkronize ettikten sonra (veya tek seferlik bir `yarn twenty dev --once` çalıştırdıktan sonra), hızlı işlem sayfanın sağ üst köşesinde görünür:
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Sağ üst köşedeki hızlı işlem düğmesi" />
@@ -1402,7 +1402,7 @@ export default defineFrontComponent({
 
 ### Paketleme nasıl çalışır
 
-Derleme adımı (`yarn twenty dev` veya `yarn twenty build`), her mantık işlevi ve her ön uç bileşeni için tek bir bağımsız dosya üretmek üzere esbuild kullanır. Tüm içe aktarılan paketler pakete satır içi eklenir.
+Derleme adımı, her mantık işlevi ve her ön uç bileşeni için tek bir bağımsız dosya üretmek üzere esbuild kullanır. Tüm içe aktarılan paketler pakete satır içi eklenir.
 
 **Mantık işlevleri**, Node.js ortamında çalışır. Node yerleşik modülleri (`fs`, `path`, `crypto`, `http` vb.) kullanılabilir ve kurulmaları gerekmez.
 

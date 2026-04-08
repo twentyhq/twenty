@@ -756,7 +756,7 @@ export default defineFrontComponent({
 });
 ```
 
-După sincronizarea cu `yarn twenty dev`, acțiunea rapidă apare în colțul din dreapta sus al paginii:
+După sincronizarea cu `yarn twenty dev` (sau prin rularea o singură dată a comenzii `yarn twenty dev --once`), acțiunea rapidă apare în colțul din dreapta sus al paginii:
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Buton de acțiune rapidă în colțul din dreapta sus" />
@@ -1402,7 +1402,7 @@ export default defineFrontComponent({
 
 ### Cum funcționează împachetarea
 
-Pasul de build (`yarn twenty dev` sau `yarn twenty build`) folosește esbuild pentru a produce un singur fișier autonom per funcție logică și per componentă frontend. Toate pachetele importate sunt integrate în bundle.
+Pasul de build folosește esbuild pentru a produce un singur fișier autonom pentru fiecare funcție logică și pentru fiecare componentă frontend. Toate pachetele importate sunt integrate în bundle.
 
 **Funcțiile logice** rulează într-un mediu Node.js. Modulele built-in Node (`fs`, `path`, `crypto`, `http` etc.) sunt disponibile și nu trebuie instalate.
 

@@ -755,7 +755,7 @@ export default defineFrontComponent({
 });
 ```
 
-Após sincronizar com `yarn twenty dev`, a ação rápida aparece no canto superior direito da página:
+Após sincronizar com `yarn twenty dev` (ou executando uma única vez o `yarn twenty dev --once`), a ação rápida aparece no canto superior direito da página:
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Botão de ação rápida no canto superior direito" />
@@ -1401,7 +1401,7 @@ export default defineFrontComponent({
 
 ### Como o empacotamento funciona
 
-A etapa de build (`yarn twenty dev` ou `yarn twenty build`) usa o esbuild para produzir um único arquivo independente por função lógica e por componente de front-end. Todos os pacotes importados são incorporados ao bundle.
+A etapa de build usa o esbuild para produzir um único arquivo independente por função lógica e por componente de front-end. Todos os pacotes importados são incorporados ao bundle.
 
 **Funções lógicas** são executadas em um ambiente Node.js. Módulos nativos do Node (`fs`, `path`, `crypto`, `http`, etc.) estão disponíveis e não precisam ser instalados.
 
