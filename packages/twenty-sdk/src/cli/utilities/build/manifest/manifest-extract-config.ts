@@ -4,7 +4,6 @@ export enum TargetFunction {
   DefineApplication = 'defineApplication',
   DefineField = 'defineField',
   DefineLogicFunction = 'defineLogicFunction',
-  DefinePreInstallLogicFunction = 'definePreInstallLogicFunction',
   DefinePostInstallLogicFunction = 'definePostInstallLogicFunction',
   DefineObject = 'defineObject',
   DefineRole = 'defineRole',
@@ -40,8 +39,6 @@ export const TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING: Record<
   [TargetFunction.DefineApplication]: ManifestEntityKey.Application,
   [TargetFunction.DefineField]: ManifestEntityKey.Fields,
   [TargetFunction.DefineLogicFunction]: ManifestEntityKey.LogicFunctions,
-  [TargetFunction.DefinePreInstallLogicFunction]:
-    ManifestEntityKey.LogicFunctions,
   [TargetFunction.DefinePostInstallLogicFunction]:
     ManifestEntityKey.LogicFunctions,
   [TargetFunction.DefineObject]: ManifestEntityKey.Objects,

@@ -33,6 +33,7 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
       case ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED:
       case ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED:
       case ApplicationExceptionCode.UPGRADE_FAILED:
+      case ApplicationExceptionCode.INSTALL_HOOK_FAILED:
         throw new InternalServerError(exception);
       default: {
         assertUnreachable(exception.code);

@@ -24,12 +24,14 @@ describe('definePostInstallLogicFunction', () => {
       ...validRouteConfig,
       description: 'Send a postcard to a contact',
       timeoutSeconds: 30,
+      shouldRunOnVersionUpgrade: true,
     };
 
     const result = definePostInstallLogicFunction(config as any);
 
     expect(result.config.description).toBe('Send a postcard to a contact');
     expect(result.config.timeoutSeconds).toBe(30);
+    expect(result.config.shouldRunOnVersionUpgrade).toBe(true);
   });
 
   it('should return error when universalIdentifier is missing', () => {

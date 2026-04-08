@@ -15,7 +15,6 @@ export type FunctionExecuteOptions = {
   remote?: string;
   payload?: Record<string, unknown>;
 } & (
-  | { preInstall: true }
   | { postInstall: true }
   | { functionUniversalIdentifier: string }
   | { functionName: string }
@@ -39,7 +38,6 @@ const belongsToApplication = (
 };
 
 const resolveIdentifier = (options: FunctionExecuteOptions): string => {
-  if ('preInstall' in options) return 'pre install';
   if ('postInstall' in options) return 'post install';
   if ('functionUniversalIdentifier' in options)
     return options.functionUniversalIdentifier;
@@ -92,16 +90,10 @@ const innerFunctionExecute = async (
   );
 
   const targetFunction = appFunctions.find((logicFunction) => {
-    if ('preInstall' in options && options.preInstall) {
-      return (
-        logicFunction.universalIdentifier ===
-        manifest.application.preInstallLogicFunctionUniversalIdentifier
-      );
-    }
     if ('postInstall' in options && options.postInstall) {
       return (
         logicFunction.universalIdentifier ===
-        manifest.application.postInstallLogicFunctionUniversalIdentifier
+        manifest.application.postInstallLogicFunction?.universalIdentifier
       );
     }
     if ('functionUniversalIdentifier' in options) {

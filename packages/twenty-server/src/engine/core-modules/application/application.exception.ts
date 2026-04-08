@@ -18,6 +18,7 @@ export enum ApplicationExceptionCode {
   PACKAGE_RESOLUTION_FAILED = 'PACKAGE_RESOLUTION_FAILED',
   TARBALL_EXTRACTION_FAILED = 'TARBALL_EXTRACTION_FAILED',
   UPGRADE_FAILED = 'UPGRADE_FAILED',
+  INSTALL_HOOK_FAILED = 'INSTALL_HOOK_FAILED',
 }
 
 const getApplicationExceptionUserFriendlyMessage = (
@@ -50,6 +51,8 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`Failed to extract tarball.`;
     case ApplicationExceptionCode.UPGRADE_FAILED:
       return msg`Application upgrade failed.`;
+    case ApplicationExceptionCode.INSTALL_HOOK_FAILED:
+      return msg`Application install hook failed.`;
     default:
       assertUnreachable(code);
   }

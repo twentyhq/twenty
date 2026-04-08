@@ -645,43 +645,9 @@ export default defineLogicFunction({
 </Note>
 
 </Accordion>
-<Accordion title="definePreInstallLogicFunction" description="Define a pre-install logic function (one per app)">
-
-A pre-install function is a logic function that runs automatically before your app is installed on a workspace. This is useful for validation tasks, prerequisite checks, or preparing workspace state before the main installation proceeds.
-
-```ts src/logic-functions/pre-install.ts
-import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
-
-const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
-  console.log('Pre install logic function executed successfully!', payload.previousVersion);
-};
-
-export default definePreInstallLogicFunction({
-  universalIdentifier: 'e0604b9e-e946-456b-886d-3f27d9a6b324',
-  name: 'pre-install',
-  description: 'Runs before installation to prepare the application.',
-  timeoutSeconds: 300,
-  handler,
-});
-```
-
-You can also manually execute the pre-install function at any time using the CLI:
-
-```bash filename="Terminal"
-yarn twenty exec --preInstall
-```
-
-Key points:
-- Pre-install functions use `definePreInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
-- The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
-- Only one pre-install function is allowed per application. The manifest build will error if more than one is detected.
-- The function's `universalIdentifier` is automatically set as `preInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
-- The default timeout is set to 300 seconds (5 minutes) to allow for longer preparation tasks.
-
-</Accordion>
 <Accordion title="definePostInstallLogicFunction" description="Define a post-install logic function (one per app)">
 
-A post-install function is a logic function that runs automatically after your app is installed on a workspace. This is useful for one-time setup tasks such as seeding default data, creating initial records, or configuring workspace settings.
+A post-install function is a logic function that runs automatically once your app has finished installing on a workspace. The server executes it after the app's metadata has been synchronized and the SDK client has been generated, so the workspace is fully ready to use. Typical use cases include seeding default data, creating initial records, configuring workspace settings, or provisioning resources on third-party services.
 
 ```ts src/logic-functions/post-install.ts
 import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
@@ -695,6 +661,7 @@ export default definePostInstallLogicFunction({
   name: 'post-install',
   description: 'Runs after installation to set up the application.',
   timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
   handler,
 });
 ```
@@ -707,9 +674,12 @@ yarn twenty exec --postInstall
 
 Key points:
 - Post-install functions use `definePostInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
-- The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed (or an empty string for fresh installs).
+- The handler receives an `InstallLogicFunctionPayload` with `{ previousVersion: string }` — the version of the app that was previously installed, or an empty string for fresh installs. Use this value to distinguish fresh installs from upgrades and to run version-specific migration logic.
+- **When the hook runs**: on fresh installs only, by default. Pass `shouldRunOnVersionUpgrade: true` if you also want it to run when the app is upgraded from a previous version. When omitted, the flag defaults to `false` and upgrades skip the hook.
+- If the hook throws or returns an error, the install (or upgrade) is treated as failed and the error is surfaced to the caller. Make sure your handler is idempotent, especially when `shouldRunOnVersionUpgrade: true` — it may run more than once over the lifetime of the app.
+- The environment variables `APPLICATION_ID`, `APP_ACCESS_TOKEN`, and `API_URL` are available inside the handler (same as any other logic function), so you can call the Twenty API with an application access token scoped to your app.
 - Only one post-install function is allowed per application. The manifest build will error if more than one is detected.
-- The function's `universalIdentifier` is automatically set as `postInstallLogicFunctionUniversalIdentifier` on the application manifest during the build — you do not need to reference it in `defineApplication()`.
+- The function's `universalIdentifier` and `shouldRunOnVersionUpgrade` are automatically attached to the application manifest under the `postInstallLogicFunction` field during the build — you do not need to reference either of them in `defineApplication()`.
 - The default timeout is set to 300 seconds (5 minutes) to allow for longer setup tasks like data seeding.
 
 </Accordion>
@@ -1818,8 +1788,7 @@ yarn twenty exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 # Pass a JSON payload
 yarn twenty exec -n create-new-post-card -p '{"name": "Hello"}'
 
-# Execute pre-install or post-install functions
-yarn twenty exec --preInstall
+# Execute the post-install function
 yarn twenty exec --postInstall
 ```
 

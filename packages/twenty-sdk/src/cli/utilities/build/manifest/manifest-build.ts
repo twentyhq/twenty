@@ -38,6 +38,7 @@ import {
 import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
+import { type PostInstallLogicFunctionConfig } from '@/sdk/logic-functions/post-install-logic-function-config';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -78,8 +79,10 @@ export const buildManifest = async (
   const views: ViewManifest[] = [];
   const navigationMenuItems: NavigationMenuItemManifest[] = [];
   const pageLayouts: PageLayoutManifest[] = [];
-  const preInstallLogicFunctionUniversalIdentifiers: string[] = [];
-  const postInstallLogicFunctionUniversalIdentifiers: string[] = [];
+  const postInstallLogicFunctions: {
+    universalIdentifier: string;
+    shouldRunOnVersionUpgrade: boolean;
+  }[] = [];
 
   const applicationFilePaths: string[] = [];
   const objectsFilePaths: string[] = [];
@@ -228,19 +231,16 @@ export const buildManifest = async (
         logicFunctionsFilePaths.push(relativePath);
 
         if (
-          targetFunctionName === TargetFunction.DefinePreInstallLogicFunction
-        ) {
-          preInstallLogicFunctionUniversalIdentifiers.push(
-            extract.config.universalIdentifier,
-          );
-        }
-
-        if (
           targetFunctionName === TargetFunction.DefinePostInstallLogicFunction
         ) {
-          postInstallLogicFunctionUniversalIdentifiers.push(
-            extract.config.universalIdentifier,
-          );
+          const postInstallHookConfig =
+            extract.config as PostInstallLogicFunctionConfig;
+
+          postInstallLogicFunctions.push({
+            universalIdentifier: extract.config.universalIdentifier,
+            shouldRunOnVersionUpgrade:
+              postInstallHookConfig.shouldRunOnVersionUpgrade ?? false,
+          });
         }
 
         break;
@@ -343,31 +343,16 @@ export const buildManifest = async (
     );
   }
 
-  if (preInstallLogicFunctionUniversalIdentifiers.length > 1) {
-    errors.push(
-      'Only one pre install logic function is allowed per application',
-    );
-  }
-
-  if (postInstallLogicFunctionUniversalIdentifiers.length > 1) {
+  if (postInstallLogicFunctions.length > 1) {
     errors.push(
       'Only one post install logic function is allowed per application',
     );
   }
 
-  if (application && preInstallLogicFunctionUniversalIdentifiers.length >= 1) {
+  if (application && postInstallLogicFunctions.length >= 1) {
     application = {
       ...application,
-      preInstallLogicFunctionUniversalIdentifier:
-        preInstallLogicFunctionUniversalIdentifiers[0],
-    };
-  }
-
-  if (application && postInstallLogicFunctionUniversalIdentifiers.length >= 1) {
-    application = {
-      ...application,
-      postInstallLogicFunctionUniversalIdentifier:
-        postInstallLogicFunctionUniversalIdentifiers[0],
+      postInstallLogicFunction: postInstallLogicFunctions[0],
     };
   }
 

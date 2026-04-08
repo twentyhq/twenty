@@ -24,7 +24,11 @@ import {
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
+import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
 @Injectable()
 export class ApplicationInstallService {
   private readonly logger = new Logger(ApplicationInstallService.name);
@@ -38,6 +42,8 @@ export class ApplicationInstallService {
     private readonly fileStorageService: FileStorageService,
     private readonly cacheLockService: CacheLockService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
+    private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async installApplication(params: {
@@ -109,7 +115,20 @@ export class ApplicationInstallService {
 
       const universalIdentifier = appRegistration.universalIdentifier;
 
+      // Capture the existing install BEFORE ensuring the app exists, so fresh
+      // installs report an empty previousVersion and upgrades report the
+      // installed version. Pass the lookup result into ensureApplicationExists
+      // so we don't re-query the repository on the hot path.
+      const existingApplication =
+        await this.applicationService.findByUniversalIdentifier({
+          universalIdentifier,
+          workspaceId: params.workspaceId,
+        });
+      const previousVersion = existingApplication?.version ?? '';
+      const isVersionUpgrade = isDefined(existingApplication);
+
       const { application, wasCreated } = await this.ensureApplicationExists({
+        existingApplication,
         universalIdentifier,
         name: resolvedPackage.manifest.application.displayName,
         workspaceId: params.workspaceId,
@@ -139,6 +158,16 @@ export class ApplicationInstallService {
         });
       }
 
+      // Post-install hook runs after everything else — schema is synced, SDK
+      // client is generated, the app is fully installed.
+      await this.runPostInstallHook({
+        manifest: resolvedPackage.manifest,
+        workspaceId: params.workspaceId,
+        previousVersion,
+        isVersionUpgrade,
+        universalIdentifier,
+      });
+
       this.logger.log(
         `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
       );
@@ -156,6 +185,75 @@ export class ApplicationInstallService {
           resolvedPackage.cleanupDir,
         );
       }
+    }
+  }
+
+  private async runPostInstallHook(params: {
+    manifest: Manifest;
+    workspaceId: string;
+    previousVersion: string;
+    isVersionUpgrade: boolean;
+    universalIdentifier: string;
+  }): Promise<void> {
+    const {
+      manifest,
+      workspaceId,
+      previousVersion,
+      isVersionUpgrade,
+      universalIdentifier,
+    } = params;
+
+    if (!isDefined(manifest.application.postInstallLogicFunction)) {
+      return;
+    }
+
+    const {
+      universalIdentifier: postInstallLogicFunctionUniversalIdentifier,
+      shouldRunOnVersionUpgrade,
+    } = manifest.application.postInstallLogicFunction;
+
+    if (isVersionUpgrade && !shouldRunOnVersionUpgrade) {
+      this.logger.log(
+        `Skipping post-install hook for app ${universalIdentifier}: version upgrade and shouldRunOnVersionUpgrade is false`,
+      );
+
+      return;
+    }
+
+    const { flatLogicFunctionMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatLogicFunctionMaps',
+      ]);
+
+    const flatLogicFunction =
+      flatLogicFunctionMaps.byUniversalIdentifier[
+        postInstallLogicFunctionUniversalIdentifier
+      ];
+
+    if (!isDefined(flatLogicFunction)) {
+      throw new ApplicationException(
+        `Post-install logic function "${postInstallLogicFunctionUniversalIdentifier}" not found for application "${universalIdentifier}" after sync. Manifest may reference a stale identifier.`,
+        ApplicationExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+
+    this.logger.log(
+      `Running post-install hook for app ${universalIdentifier} (previousVersion="${previousVersion}")`,
+    );
+
+    const result = await this.logicFunctionExecutorService.execute({
+      logicFunctionId: flatLogicFunction.id,
+      workspaceId,
+      payload: { previousVersion },
+    });
+
+    if (result.status !== LogicFunctionExecutionStatus.SUCCESS) {
+      throw new ApplicationException(
+        `Post-install hook failed for application "${universalIdentifier}": ${
+          result.error?.errorMessage ?? 'Unknown error'
+        }`,
+        ApplicationExceptionCode.INSTALL_HOOK_FAILED,
+      );
     }
   }
 
@@ -237,19 +335,15 @@ export class ApplicationInstallService {
   }
 
   private async ensureApplicationExists(params: {
+    existingApplication: ApplicationEntity | null;
     universalIdentifier: string;
     name: string;
     workspaceId: string;
     applicationRegistrationId: string;
     sourceType: ApplicationRegistrationSourceType;
   }): Promise<{ application: ApplicationEntity; wasCreated: boolean }> {
-    const existing = await this.applicationService.findByUniversalIdentifier({
-      universalIdentifier: params.universalIdentifier,
-      workspaceId: params.workspaceId,
-    });
-
-    if (isDefined(existing)) {
-      return { application: existing, wasCreated: false };
+    if (isDefined(params.existingApplication)) {
+      return { application: params.existingApplication, wasCreated: false };
     }
 
     const application = await this.applicationService.create({

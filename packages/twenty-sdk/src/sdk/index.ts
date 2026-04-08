@@ -38,7 +38,6 @@ export type {
 export { getPublicAssetUrl } from './get-public-asset-url';
 export { defineLogicFunction } from './logic-functions/define-logic-function';
 export { definePostInstallLogicFunction } from './logic-functions/define-post-install-logic-function';
-export { definePreInstallLogicFunction } from './logic-functions/define-pre-install-logic-function';
 export type {
   InstallLogicFunctionHandler,
   InstallLogicFunctionPayload,
