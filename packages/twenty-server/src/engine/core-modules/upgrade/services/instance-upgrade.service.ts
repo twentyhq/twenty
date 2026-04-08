@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { DataSource, MigrationInterface } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 
 export type RunSingleMigrationResult =
@@ -20,8 +22,8 @@ export class InstanceUpgradeService {
     private readonly upgradeMigrationService: UpgradeMigrationService,
   ) {}
 
-  async runSingleMigration(
-    migration: MigrationInterface,
+  async runFastInstanceCommand(
+    migration: FastInstanceCommand,
   ): Promise<RunSingleMigrationResult> {
     const migrationName = migration.constructor.name;
     const executedByVersion =
@@ -70,5 +72,30 @@ export class InstanceUpgradeService {
     }
 
     return { status: 'success' };
+  }
+
+  async runSlowInstanceCommand(
+    migration: SlowInstanceCommand,
+    options?: { skipDataMigration?: boolean },
+  ): Promise<RunSingleMigrationResult> {
+    if (!options?.skipDataMigration) {
+      const migrationName = migration.constructor.name;
+      const executedByVersion =
+        this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
+
+      try {
+        await migration.runDataMigration(this.dataSource);
+      } catch (error) {
+        await this.upgradeMigrationService.markAsFailed({
+          name: migrationName,
+          workspaceId: null,
+          executedByVersion,
+        });
+
+        return { status: 'failed', error };
+      }
+    }
+
+    return this.runFastInstanceCommand(migration);
   }
 }

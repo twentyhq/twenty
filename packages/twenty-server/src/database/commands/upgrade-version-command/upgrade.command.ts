@@ -4,7 +4,7 @@ import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { SemVer } from 'semver';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { DataSource, MigrationInterface } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -12,6 +12,8 @@ import { WorkspaceCommandRunner } from 'src/database/commands/command-runners/wo
 import { CommandLogger } from 'src/database/commands/logger';
 import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
+import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
 import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
@@ -34,7 +36,8 @@ type VersionContext = {
   fromWorkspaceVersion: SemVer;
   currentAppVersion: SemVer;
   currentVersionMajorMinor: UpgradeCommandVersion;
-  instanceCommands: MigrationInterface[];
+  fastInstanceCommands: FastInstanceCommand[];
+  slowInstanceCommands: SlowInstanceCommand[];
   workspaceCommands: VersionCommands;
 };
 
@@ -143,7 +146,8 @@ export class UpgradeCommand extends CommandRunner {
             'Initialized upgrade context with:',
             `- currentVersion (migrating to): ${versionContext.currentAppVersion}`,
             `- fromWorkspaceVersion: ${versionContext.fromWorkspaceVersion}`,
-            `- ${versionContext.instanceCommands.length} instance commands (from registry)`,
+            `- ${versionContext.fastInstanceCommands.length} fast instance commands (from registry)`,
+            `- ${versionContext.slowInstanceCommands.length} slow instance commands (from registry)`,
             `- ${versionContext.workspaceCommands.length} workspace commands`,
           ].join('\n   '),
         ),
@@ -167,10 +171,14 @@ Please roll back to that version and run the upgrade command again.`,
       }
 
       await this.runLegacyPendingTypeOrmMigrations();
-      await this.runInstanceCommandsOrThrow(versionContext);
+      await this.runFastInstanceCommandsOrThrow(versionContext);
 
       const hasWorkspaces =
         await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
+
+      await this.runSlowInstanceCommandsOrThrow(versionContext, {
+        skipDataMigration: !hasWorkspaces,
+      });
 
       if (!hasWorkspaces) {
         this.logger.log(
@@ -220,13 +228,13 @@ Please roll back to that version and run the upgrade command again.`,
     }
   }
 
-  private async runInstanceCommandsOrThrow(
+  private async runFastInstanceCommandsOrThrow(
     versionContext: VersionContext,
   ): Promise<void> {
-    for (const instanceCommand of versionContext.instanceCommands) {
+    for (const instanceCommand of versionContext.fastInstanceCommands) {
       const migrationName = instanceCommand.constructor.name;
       const result =
-        await this.instanceUpgradeService.runSingleMigration(instanceCommand);
+        await this.instanceUpgradeService.runFastInstanceCommand(instanceCommand);
 
       switch (result.status) {
         case 'already-executed': {
@@ -263,6 +271,52 @@ Please roll back to that version and run the upgrade command again.`,
     }
   }
 
+  private async runSlowInstanceCommandsOrThrow(
+    versionContext: VersionContext,
+    options: { skipDataMigration: boolean },
+  ): Promise<void> {
+    for (const slowCommand of versionContext.slowInstanceCommands) {
+      const migrationName = slowCommand.constructor.name;
+      const result = await this.instanceUpgradeService.runSlowInstanceCommand(
+        slowCommand,
+        { skipDataMigration: options.skipDataMigration },
+      );
+
+      switch (result.status) {
+        case 'already-executed': {
+          this.logger.warn(
+            `Slow migration ${migrationName} already executed, skipping`,
+          );
+
+          break;
+        }
+        case 'failed': {
+          this.logger.error(`Slow migration ${migrationName} failed`);
+
+          if (isDefined(result.error)) {
+            this.logger.error(
+              result.error instanceof Error
+                ? (result.error.stack ?? result.error.message)
+                : String(result.error),
+            );
+          }
+
+          throw new Error(`Slow migration ${migrationName} failed`);
+        }
+        case 'success': {
+          this.logger.log(
+            `Slow migration ${migrationName} executed successfully`,
+          );
+
+          break;
+        }
+        default: {
+          assertUnreachable(result);
+        }
+      }
+    }
+  }
+
   private resolveVersionContext(): VersionContext {
     const currentAppVersion = this.coreEngineVersionService.getCurrentVersion();
     const currentVersionMajorMinor =
@@ -276,8 +330,13 @@ Please roll back to that version and run the upgrade command again.`,
     const fromWorkspaceVersion =
       this.coreEngineVersionService.getPreviousVersion();
 
-    const instanceCommands =
-      this.upgradeCommandRegistryService.getInstanceCommandsForVersion(
+    const fastInstanceCommands =
+      this.upgradeCommandRegistryService.getFastInstanceCommandsForVersion(
+        currentVersionMajorMinor,
+      );
+
+    const slowInstanceCommands =
+      this.upgradeCommandRegistryService.getSlowInstanceCommandsForVersion(
         currentVersionMajorMinor,
       );
 
@@ -286,7 +345,8 @@ Please roll back to that version and run the upgrade command again.`,
       currentAppVersion,
       currentVersionMajorMinor,
       workspaceCommands,
-      instanceCommands,
+      fastInstanceCommands,
+      slowInstanceCommands,
     };
   }
 

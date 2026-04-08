@@ -52,7 +52,7 @@ export class InstanceCommandGenerationService {
           `    await queryRunner.query('${this.escapeForSingleQuotedString(query)}'${this.formatQueryParams(parameters)});`,
       );
 
-    const fileTemplate = this.buildMigrationFileContent({
+    const fileTemplate = this.buildFastMigrationFileContent({
       className,
       version,
       timestamp,
@@ -62,6 +62,24 @@ export class InstanceCommandGenerationService {
 
     const versionSlug = version.split('.').slice(0, 2).join('-');
     const fileName = `${versionSlug}-instance-command-fast-${timestamp}-${migrationName}.ts`;
+
+    return { fileName, fileTemplate, className };
+  }
+
+  generateSlow({
+    migrationName,
+    version,
+    timestamp,
+  }: GenerateMigrationArgs): GeneratedMigrationResult {
+    const className = this.buildClassName(migrationName);
+    const versionSlug = version.split('.').slice(0, 2).join('-');
+    const fileName = `${versionSlug}-instance-command-slow-${timestamp}-${migrationName}.ts`;
+
+    const fileTemplate = this.buildSlowMigrationFileContent({
+      className,
+      version,
+      timestamp,
+    });
 
     return { fileName, fileTemplate, className };
   }
@@ -82,7 +100,7 @@ export class InstanceCommandGenerationService {
     return query.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
   }
 
-  private buildMigrationFileContent({
+  private buildFastMigrationFileContent({
     className,
     version,
     timestamp,
@@ -95,18 +113,57 @@ export class InstanceCommandGenerationService {
     upStatements: string[];
     downStatements: string[];
   }): string {
-    return `import { MigrationInterface, QueryRunner } from 'typeorm';
+    return `import { QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
+import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('${version}', ${timestamp})
-export class ${className} implements MigrationInterface {
+export class ${className} implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
 ${upStatements.join('\n')}
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
 ${downStatements.join('\n')}
+  }
+}
+`;
+  }
+
+  private buildSlowMigrationFileContent({
+    className,
+    version,
+    timestamp,
+  }: {
+    className: string;
+    version: string;
+    timestamp: number;
+  }): string {
+    return `import { InjectDataSource } from '@nestjs/typeorm';
+
+import { DataSource, QueryRunner } from 'typeorm';
+
+import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
+import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
+
+@RegisteredInstanceCommand('${version}', ${timestamp}, { type: 'slow' })
+export class ${className} implements SlowInstanceCommand {
+  constructor(
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
+  ) {}
+
+  async runDataMigration(): Promise<void> {
+    // TODO: implement data backfill before the DDL migration
+  }
+
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    // TODO: implement DDL migration (runs after data migration)
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    // TODO: implement rollback
   }
 }
 `;

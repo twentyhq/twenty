@@ -177,4 +177,31 @@ describe('InstanceCommandGenerationService', () => {
 
     expect(result).toMatchSnapshot();
   });
+
+  it('should generate a slow instance command template', async () => {
+    const service = await buildService();
+
+    const result = service.generateSlow({
+      migrationName: 'make-column-not-nullable',
+      version: '1.21.0',
+      timestamp: FIXED_TIMESTAMP,
+    });
+
+    expect(result).toMatchSnapshot();
+  });
+
+  it('should use correct file naming for slow instance commands', async () => {
+    const service = await buildService();
+
+    const result = service.generateSlow({
+      migrationName: 'backfill-data',
+      version: '1.20.0',
+      timestamp: FIXED_TIMESTAMP,
+    });
+
+    expect(result.fileName).toBe(
+      '1-20-instance-command-slow-1775000000000-backfill-data.ts',
+    );
+    expect(result.className).toBe('BackfillDataCommand');
+  });
 });

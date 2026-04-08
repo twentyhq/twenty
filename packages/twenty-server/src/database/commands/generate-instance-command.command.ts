@@ -7,6 +7,7 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { InstanceCommandGenerationService } from 'src/database/commands/instance-command-generation.service';
 import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
+import { type InstanceCommandType } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 
 const UPGRADE_VERSION_COMMAND_DIR = path.resolve(
   process.cwd(),
@@ -15,6 +16,7 @@ const UPGRADE_VERSION_COMMAND_DIR = path.resolve(
 
 type GenerateInstanceCommandOptions = {
   name: string;
+  type: InstanceCommandType;
 };
 
 @Command({
@@ -40,6 +42,19 @@ export class GenerateInstanceCommandCommand extends CommandRunner {
     return value;
   }
 
+  @Option({
+    flags: '-t, --type <type>',
+    description: 'Command type: fast (schema diff) or slow (data migration + DDL)',
+    defaultValue: 'fast',
+  })
+  parseType(value: string): InstanceCommandType {
+    if (value !== 'fast' && value !== 'slow') {
+      throw new Error(`Invalid type "${value}". Must be "fast" or "slow".`);
+    }
+
+    return value;
+  }
+
   async run(
     _passedParams: string[],
     options: GenerateInstanceCommandOptions,
@@ -52,10 +67,37 @@ export class GenerateInstanceCommandCommand extends CommandRunner {
       throw new Error('No supported versions found');
     }
 
-    this.logger.log(`Generating versioned migration for version ${version}...`);
+    const commandType = options.type;
+
+    this.logger.log(
+      `Generating ${commandType} instance command for version ${version}...`,
+    );
 
     const versionDir = this.getVersionDir(version);
     const timestamp = Date.now();
+
+    if (commandType === 'slow') {
+      const result = this.instanceMigrationGenerationService.generateSlow({
+        migrationName,
+        version,
+        timestamp,
+      });
+
+      const filePath = path.join(versionDir, result.fileName);
+
+      fs.writeFileSync(filePath, result.fileTemplate);
+
+      this.logger.log(`Slow command generated successfully: ${filePath}`);
+      this.logger.log(`  Class: ${result.className}`);
+      this.logger.log(`  Version: ${version}`);
+
+      const versionSlug = version.split('.').slice(0, 2).join('-');
+      const newImportPath = `src/database/commands/upgrade-version-command/${versionSlug}/${result.fileName.replace('.ts', '')}`;
+
+      this.appendToInstanceCommandsConstant(result.className, newImportPath);
+
+      return;
+    }
 
     const result = await this.instanceMigrationGenerationService.generate({
       migrationName,

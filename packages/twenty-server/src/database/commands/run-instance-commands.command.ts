@@ -13,6 +13,7 @@ import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-
 
 type RunInstanceCommandsOptions = {
   force?: boolean;
+  includeSlow?: boolean;
 };
 
 @Command({
@@ -43,6 +44,15 @@ export class RunInstanceCommandsCommand extends CommandRunner {
     return true;
   }
 
+  @Option({
+    flags: '--include-slow',
+    description: 'Also run slow instance commands (data migration + DDL)',
+    required: false,
+  })
+  parseIncludeSlow(): boolean {
+    return true;
+  }
+
   async run(
     _passedParams: string[],
     options: RunInstanceCommandsOptions,
@@ -50,7 +60,16 @@ export class RunInstanceCommandsCommand extends CommandRunner {
     try {
       await this.checkWorkspaceVersionSafety(options);
       await this.runLegacyPendingTypeOrmMigrations();
-      await this.runAllInstanceCommands();
+      await this.runAllFastInstanceCommands();
+
+      if (options.includeSlow) {
+        const hasWorkspaces =
+          await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
+
+        await this.runAllSlowInstanceCommands({
+          skipDataMigration: !hasWorkspaces,
+        });
+      }
 
       this.logger.log(chalk.green('Instance commands completed'));
     } catch (error) {
@@ -77,24 +96,24 @@ export class RunInstanceCommandsCommand extends CommandRunner {
     }
   }
 
-  private async runAllInstanceCommands(): Promise<void> {
-    const allInstanceCommands =
-      this.upgradeCommandRegistryService.getAllInstanceCommands();
+  private async runAllFastInstanceCommands(): Promise<void> {
+    const allFastInstanceCommands =
+      this.upgradeCommandRegistryService.getAllFastInstanceCommands();
 
-    if (allInstanceCommands.length === 0) {
-      this.logger.log('No registered instance commands');
+    if (allFastInstanceCommands.length === 0) {
+      this.logger.log('No registered fast instance commands');
 
       return;
     }
 
     this.logger.log(
-      `Running ${allInstanceCommands.length} instance command(s) across all versions...`,
+      `Running ${allFastInstanceCommands.length} fast instance command(s) across all versions...`,
     );
 
-    for (const { version, migration } of allInstanceCommands) {
+    for (const { version, migration } of allFastInstanceCommands) {
       const migrationName = migration.constructor.name;
       const result =
-        await this.instanceUpgradeService.runSingleMigration(migration);
+        await this.instanceUpgradeService.runFastInstanceCommand(migration);
 
       switch (result.status) {
         case 'already-executed': {
@@ -124,6 +143,65 @@ export class RunInstanceCommandsCommand extends CommandRunner {
         case 'success': {
           this.logger.log(
             `Instance command ${migrationName} (${version}) executed successfully`,
+          );
+
+          break;
+        }
+      }
+    }
+  }
+
+  private async runAllSlowInstanceCommands(options: {
+    skipDataMigration: boolean;
+  }): Promise<void> {
+    const allSlowInstanceCommands =
+      this.upgradeCommandRegistryService.getAllSlowInstanceCommands();
+
+    if (allSlowInstanceCommands.length === 0) {
+      this.logger.log('No registered slow instance commands');
+
+      return;
+    }
+
+    this.logger.log(
+      `Running ${allSlowInstanceCommands.length} slow instance command(s) across all versions...`,
+    );
+
+    for (const { version, migration } of allSlowInstanceCommands) {
+      const migrationName = migration.constructor.name;
+      const result = await this.instanceUpgradeService.runSlowInstanceCommand(
+        migration,
+        { skipDataMigration: options.skipDataMigration },
+      );
+
+      switch (result.status) {
+        case 'already-executed': {
+          this.logger.log(
+            `Slow instance command ${migrationName} (${version}) already executed, skipping`,
+          );
+
+          break;
+        }
+        case 'failed': {
+          this.logger.error(
+            `Slow instance command ${migrationName} (${version}) failed`,
+          );
+
+          if (isDefined(result.error)) {
+            this.logger.error(
+              result.error instanceof Error
+                ? (result.error.stack ?? result.error.message)
+                : String(result.error),
+            );
+          }
+
+          throw new Error(
+            `Slow instance command ${migrationName} (${version}) failed`,
+          );
+        }
+        case 'success': {
+          this.logger.log(
+            `Slow instance command ${migrationName} (${version}) executed successfully`,
           );
 
           break;

@@ -3,11 +3,10 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
-import {
-  type DataSource,
-  type MigrationInterface,
-  type QueryRunner,
-} from 'typeorm';
+import { type DataSource, type QueryRunner } from 'typeorm';
+
+import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
 import { getDataSourceToken } from '@nestjs/typeorm';
 
@@ -61,7 +60,7 @@ type BuildUpgradeCommandModuleArgs = {
   workspaces: WorkspaceEntity[];
   appVersion: string | null;
   commandRunner: CommandRunnerValues;
-  migrations?: MigrationInterface[];
+  migrations?: FastInstanceCommand[];
 };
 const buildUpgradeCommandModule = async ({
   workspaces,
@@ -92,7 +91,8 @@ const buildUpgradeCommandModule = async ({
     : {
         provide: UpgradeCommandRegistryService,
         useValue: {
-          getInstanceCommandsForVersion: jest.fn().mockReturnValue([]),
+          getFastInstanceCommandsForVersion: jest.fn().mockReturnValue([]),
+          getSlowInstanceCommandsForVersion: jest.fn().mockReturnValue([]),
           getWorkspaceCommandsForVersion: jest.fn().mockReturnValue([]),
         },
       };
@@ -184,7 +184,10 @@ const buildUpgradeCommandModule = async ({
       {
         provide: InstanceUpgradeService,
         useValue: {
-          runSingleMigration: jest
+          runFastInstanceCommand: jest
+            .fn()
+            .mockResolvedValue({ status: 'success' }),
+          runSlowInstanceCommand: jest
             .fn()
             .mockResolvedValue({ status: 'success' }),
         },
@@ -242,7 +245,7 @@ describe('UpgradeCommandRunner', () => {
     workspaces?: WorkspaceEntity[];
     appVersion?: string | null;
     commandRunner?: CommandRunnerValues;
-    migrations?: MigrationInterface[];
+    migrations?: FastInstanceCommand[];
   };
   const buildModuleAndSetupSpies = async ({
     numberOfWorkspace = 1,
@@ -365,26 +368,26 @@ describe('UpgradeCommandRunner', () => {
     );
   });
 
-  it('should call runSingleMigration for each current-version instance command', async () => {
+  it('should call runFastInstanceCommand for each current-version instance command', async () => {
     @RegisteredInstanceCommand(CURRENT_VERSION, 1770000000000)
-    class AddIndexToUsers1770000000000 implements MigrationInterface {
+    class AddIndexToUsers1770000000000 implements FastInstanceCommand {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
     }
 
     @RegisteredInstanceCommand(CURRENT_VERSION, 1771000000000)
-    class AddColumnToAccounts1771000000000 implements MigrationInterface {
+    class AddColumnToAccounts1771000000000 implements FastInstanceCommand {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
     }
 
     @RegisteredInstanceCommand(PREVIOUS_VERSION, 1769000000000)
-    class DropLegacyTable1769000000000 implements MigrationInterface {
+    class DropLegacyTable1769000000000 implements FastInstanceCommand {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
     }
 
-    class UndecoratedMigration1768000000000 implements MigrationInterface {
+    class UndecoratedMigration1768000000000 implements FastInstanceCommand {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
     }
@@ -405,12 +408,12 @@ describe('UpgradeCommandRunner', () => {
 
     await upgradeCommandRunner.run(passedParams, options);
 
-    expect(instanceUpgradeService.runSingleMigration).toHaveBeenCalledTimes(2);
-    expect(instanceUpgradeService.runSingleMigration).toHaveBeenNthCalledWith(
+    expect(instanceUpgradeService.runFastInstanceCommand).toHaveBeenCalledTimes(2);
+    expect(instanceUpgradeService.runFastInstanceCommand).toHaveBeenNthCalledWith(
       1,
       addIndex,
     );
-    expect(instanceUpgradeService.runSingleMigration).toHaveBeenNthCalledWith(
+    expect(instanceUpgradeService.runFastInstanceCommand).toHaveBeenNthCalledWith(
       2,
       addColumn,
     );
@@ -418,7 +421,7 @@ describe('UpgradeCommandRunner', () => {
 
   it('should skip already-executed instance commands', async () => {
     @RegisteredInstanceCommand(CURRENT_VERSION, 1770000000000)
-    class AlreadyRunMigration1770000000000 implements MigrationInterface {
+    class AlreadyRunMigration1770000000000 implements FastInstanceCommand {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
     }
@@ -431,7 +434,7 @@ describe('UpgradeCommandRunner', () => {
 
     const instanceUpgradeService = module.get(InstanceUpgradeService);
 
-    (instanceUpgradeService.runSingleMigration as jest.Mock).mockResolvedValue({
+    (instanceUpgradeService.runFastInstanceCommand as jest.Mock).mockResolvedValue({
       status: 'already-executed',
     });
 
@@ -447,7 +450,7 @@ describe('UpgradeCommandRunner', () => {
 
   it('should throw when a migration fails', async () => {
     @RegisteredInstanceCommand(CURRENT_VERSION, 1770000000000)
-    class FailingMigration1770000000000 implements MigrationInterface {
+    class FailingMigration1770000000000 implements FastInstanceCommand {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
     }
@@ -460,7 +463,7 @@ describe('UpgradeCommandRunner', () => {
 
     const instanceUpgradeService = module.get(InstanceUpgradeService);
 
-    (instanceUpgradeService.runSingleMigration as jest.Mock).mockResolvedValue({
+    (instanceUpgradeService.runFastInstanceCommand as jest.Mock).mockResolvedValue({
       status: 'failed',
       error: new Error('SQL error'),
     });
@@ -475,7 +478,7 @@ describe('UpgradeCommandRunner', () => {
 
   it('should log success when a migration succeeds', async () => {
     @RegisteredInstanceCommand(CURRENT_VERSION, 1770000000000)
-    class SuccessMigration1770000000000 implements MigrationInterface {
+    class SuccessMigration1770000000000 implements FastInstanceCommand {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
     }
@@ -493,7 +496,7 @@ describe('UpgradeCommandRunner', () => {
 
     await upgradeCommandRunner.run(passedParams, options);
 
-    expect(instanceUpgradeService.runSingleMigration).toHaveBeenCalledWith(
+    expect(instanceUpgradeService.runFastInstanceCommand).toHaveBeenCalledWith(
       success,
     );
     expect(upgradeCommandRunner['logger'].log).toHaveBeenCalledWith(
@@ -563,6 +566,169 @@ describe('UpgradeCommandRunner', () => {
           upgradeCommandRunner.run(passedParams, options),
         ).rejects.toThrow(expectedErrorMessage);
       },
+    );
+  });
+
+  it('should call runSlowInstanceCommand for slow instance commands', async () => {
+    @RegisteredInstanceCommand(CURRENT_VERSION, 1780000000000, {
+      type: 'slow',
+    })
+    class SlowMigration1780000000000 implements SlowInstanceCommand {
+      async runDataMigration(_dataSource: DataSource): Promise<void> {}
+      async up(_queryRunner: QueryRunner) {}
+      async down(_queryRunner: QueryRunner) {}
+    }
+
+    const slowMigration = new SlowMigration1780000000000();
+
+    const module = await buildModuleAndSetupSpies({
+      migrations: [slowMigration],
+    });
+
+    const instanceUpgradeService = module.get(InstanceUpgradeService);
+
+    await upgradeCommandRunner.run([], {});
+
+    expect(instanceUpgradeService.runSlowInstanceCommand).toHaveBeenCalledTimes(1);
+    expect(instanceUpgradeService.runSlowInstanceCommand).toHaveBeenCalledWith(
+      slowMigration,
+      { skipDataMigration: false },
+    );
+  });
+
+  it('should run slow commands after fast commands but before workspace commands', async () => {
+    const executionOrder: string[] = [];
+
+    @RegisteredInstanceCommand(CURRENT_VERSION, 1770000000000)
+    class FastMigration1770000000000 implements FastInstanceCommand {
+      async up(_queryRunner: QueryRunner) {}
+      async down(_queryRunner: QueryRunner) {}
+    }
+
+    @RegisteredInstanceCommand(CURRENT_VERSION, 1780000000000, {
+      type: 'slow',
+    })
+    class SlowMigration1780000000000 implements SlowInstanceCommand {
+      async runDataMigration(_dataSource: DataSource): Promise<void> {}
+      async up(_queryRunner: QueryRunner) {}
+      async down(_queryRunner: QueryRunner) {}
+    }
+
+    const module = await buildModuleAndSetupSpies({
+      migrations: [
+        new FastMigration1770000000000(),
+        new SlowMigration1780000000000(),
+      ],
+    });
+
+    const instanceUpgradeService = module.get(InstanceUpgradeService);
+
+    (instanceUpgradeService.runFastInstanceCommand as jest.Mock).mockImplementation(
+      async () => {
+        executionOrder.push('fast');
+
+        return { status: 'success' };
+      },
+    );
+
+    (instanceUpgradeService.runSlowInstanceCommand as jest.Mock).mockImplementation(
+      async () => {
+        executionOrder.push('slow');
+
+        return { status: 'success' };
+      },
+    );
+
+    const workspaceIteratorService = module.get(WorkspaceIteratorService);
+
+    (workspaceIteratorService.iterate as jest.Mock).mockImplementation(
+      async () => {
+        executionOrder.push('workspace');
+
+        return { success: [], fail: [] };
+      },
+    );
+
+    await upgradeCommandRunner.run([], {});
+
+    expect(executionOrder).toStrictEqual(['fast', 'slow', 'workspace']);
+  });
+
+  it('should skip already-executed slow instance commands', async () => {
+    @RegisteredInstanceCommand(CURRENT_VERSION, 1780000000000, {
+      type: 'slow',
+    })
+    class AlreadyRunSlowMigration implements SlowInstanceCommand {
+      async runDataMigration(_dataSource: DataSource): Promise<void> {}
+      async up(_queryRunner: QueryRunner) {}
+      async down(_queryRunner: QueryRunner) {}
+    }
+
+    const module = await buildModuleAndSetupSpies({
+      migrations: [new AlreadyRunSlowMigration()],
+    });
+
+    const instanceUpgradeService = module.get(InstanceUpgradeService);
+
+    (instanceUpgradeService.runSlowInstanceCommand as jest.Mock).mockResolvedValue({
+      status: 'already-executed',
+    });
+
+    await upgradeCommandRunner.run([], {});
+
+    expect(upgradeCommandRunner['logger'].warn).toHaveBeenCalledWith(
+      expect.stringContaining('already executed'),
+    );
+  });
+
+  it('should pass skipDataMigration: true on fresh install (no workspaces)', async () => {
+    @RegisteredInstanceCommand(CURRENT_VERSION, 1780000000000, {
+      type: 'slow',
+    })
+    class SlowMigrationFreshInstall implements SlowInstanceCommand {
+      async runDataMigration(_dataSource: DataSource): Promise<void> {}
+      async up(_queryRunner: QueryRunner) {}
+      async down(_queryRunner: QueryRunner) {}
+    }
+
+    const module = await buildModuleAndSetupSpies({
+      numberOfWorkspace: 0,
+      migrations: [new SlowMigrationFreshInstall()],
+    });
+
+    const instanceUpgradeService = module.get(InstanceUpgradeService);
+
+    await upgradeCommandRunner.run([], {});
+
+    expect(instanceUpgradeService.runSlowInstanceCommand).toHaveBeenCalledWith(
+      expect.any(SlowMigrationFreshInstall),
+      { skipDataMigration: true },
+    );
+  });
+
+  it('should throw when a slow migration fails', async () => {
+    @RegisteredInstanceCommand(CURRENT_VERSION, 1780000000000, {
+      type: 'slow',
+    })
+    class FailingSlowMigration implements SlowInstanceCommand {
+      async runDataMigration(_dataSource: DataSource): Promise<void> {}
+      async up(_queryRunner: QueryRunner) {}
+      async down(_queryRunner: QueryRunner) {}
+    }
+
+    const module = await buildModuleAndSetupSpies({
+      migrations: [new FailingSlowMigration()],
+    });
+
+    const instanceUpgradeService = module.get(InstanceUpgradeService);
+
+    (instanceUpgradeService.runSlowInstanceCommand as jest.Mock).mockResolvedValue({
+      status: 'failed',
+      error: new Error('Data migration error'),
+    });
+
+    await expect(upgradeCommandRunner.run([], {})).rejects.toThrow(
+      'Slow migration FailingSlowMigration failed',
     );
   });
 });
