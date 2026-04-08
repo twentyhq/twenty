@@ -75,7 +75,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     updateObjectInput: UpdateOneObjectInput;
     ownerFlatApplication?: FlatApplication;
   }): Promise<FlatObjectMetadata> {
-    const { workspaceCustomFlatApplication } =
+    const { workspaceCustomFlatApplication, twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
@@ -146,7 +146,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         existingFlatObjectMetadata,
         flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps,
         workspaceId,
-        applicationId: workspaceCustomFlatApplication.id,
+        applicationId: twentyStandardFlatApplication.id,
       });
 
     const validateAndBuildResult =
@@ -176,11 +176,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               flatEntityToDelete: [],
               flatEntityToUpdate: flatViewFieldsToUpdate,
             },
-            commandMenuItem: {
-              flatEntityToCreate: commandMenuItemsToCreate,
-              flatEntityToDelete: commandMenuItemsToDelete,
-              flatEntityToUpdate: [],
-            },
           },
           workspaceId,
           isSystemBuild: false,
@@ -194,6 +189,35 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         validateAndBuildResult,
         'Multiple validation errors occurred while updating object',
       );
+    }
+
+    const hasCommandMenuItemChanges =
+      commandMenuItemsToCreate.length > 0 ||
+      commandMenuItemsToDelete.length > 0;
+
+    if (hasCommandMenuItemChanges) {
+      const commandMenuItemMigrationResult =
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+          {
+            allFlatEntityOperationByMetadataName: {
+              commandMenuItem: {
+                flatEntityToCreate: commandMenuItemsToCreate,
+                flatEntityToDelete: commandMenuItemsToDelete,
+                flatEntityToUpdate: [],
+              },
+            },
+            workspaceId,
+            applicationUniversalIdentifier:
+              twentyStandardFlatApplication.universalIdentifier,
+          },
+        );
+
+      if (commandMenuItemMigrationResult.status === 'fail') {
+        throw new WorkspaceMigrationBuilderException(
+          commandMenuItemMigrationResult,
+          'Multiple validation errors occurred while updating command menu items',
+        );
+      }
     }
 
     const { flatObjectMetadataMaps: recomputedFlatObjectMetadataMaps } =
@@ -509,7 +533,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       {
         objectMetadata: flatObjectMetadataToCreate,
         workspaceId,
-        applicationId: workspaceCustomFlatApplication.id,
+        applicationId: twentyStandardFlatApplication.id,
         flatCommandMenuItemMaps,
       },
     );
@@ -555,11 +579,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
                   },
                 }
               : {}),
-            commandMenuItem: {
-              flatEntityToCreate: [flatCommandMenuItemToCreate],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
           },
           workspaceId,
           isSystemBuild: false,
@@ -572,6 +591,29 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while creating object',
+      );
+    }
+
+    const commandMenuItemMigrationResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            commandMenuItem: {
+              flatEntityToCreate: [flatCommandMenuItemToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+          },
+          workspaceId,
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
+        },
+      );
+
+    if (commandMenuItemMigrationResult.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        commandMenuItemMigrationResult,
+        'Multiple validation errors occurred while creating command menu item',
       );
     }
 
