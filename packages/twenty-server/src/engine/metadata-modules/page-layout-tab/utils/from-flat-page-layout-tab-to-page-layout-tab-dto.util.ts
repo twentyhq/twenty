@@ -1,5 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type PageLayoutTabDTO } from 'src/engine/metadata-modules/page-layout-tab/dtos/page-layout-tab.dto';
 
@@ -15,13 +13,10 @@ export const fromFlatPageLayoutTabToPageLayoutTabDto = (
     ...rest
   } = flatPageLayoutTab;
 
-  const resolvedOverrides = isDefined(overrides) ? overrides : {};
-
   return {
     ...rest,
-    ...resolvedOverrides,
-    overrides,
-    isOverridden: isDefined(overrides) && Object.keys(overrides).length > 0,
+    ...(overrides ?? {}),
+    isOverridden: false,
     createdAt: new Date(createdAt),
     updatedAt: new Date(updatedAt),
     deletedAt: deletedAt ? new Date(deletedAt) : null,
