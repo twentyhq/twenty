@@ -1,5 +1,44 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`settingsDataModelObjectAboutFormSchema fails when color is not a valid theme color 1`] = `
+[ZodError: [
+  {
+    "code": "invalid_value",
+    "values": [
+      "red",
+      "ruby",
+      "crimson",
+      "tomato",
+      "orange",
+      "amber",
+      "yellow",
+      "lime",
+      "grass",
+      "green",
+      "jade",
+      "mint",
+      "turquoise",
+      "cyan",
+      "sky",
+      "blue",
+      "iris",
+      "violet",
+      "purple",
+      "plum",
+      "pink",
+      "bronze",
+      "gold",
+      "brown",
+      "gray"
+    ],
+    "path": [
+      "color"
+    ],
+    "message": "Invalid option: expected one of \\"red\\"|\\"ruby\\"|\\"crimson\\"|\\"tomato\\"|\\"orange\\"|\\"amber\\"|\\"yellow\\"|\\"lime\\"|\\"grass\\"|\\"green\\"|\\"jade\\"|\\"mint\\"|\\"turquoise\\"|\\"cyan\\"|\\"sky\\"|\\"blue\\"|\\"iris\\"|\\"violet\\"|\\"purple\\"|\\"plum\\"|\\"pink\\"|\\"bronze\\"|\\"gold\\"|\\"brown\\"|\\"gray\\""
+  }
+]]
+`;
+
 exports[`settingsDataModelObjectAboutFormSchema fails when isLabelSyncedWithName is not a boolean 1`] = `
 [ZodError: [
   {
