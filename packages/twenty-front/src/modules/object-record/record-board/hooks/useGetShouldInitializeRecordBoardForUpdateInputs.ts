@@ -2,11 +2,10 @@ import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFi
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
+import { shouldInitializeRecordBoardFromUpdateInputs } from '@/object-record/record-board/utils/shouldInitializeRecordBoardFromUpdateInputs';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { type ObjectRecordOperationUpdateInput } from '@/object-record/types/ObjectRecordOperationUpdateInput';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, mapById } from 'twenty-shared/utils';
 
 export const useGetShouldInitializeRecordBoardForUpdateInputs = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
@@ -29,70 +28,14 @@ export const useGetShouldInitializeRecordBoardForUpdateInputs = () => {
 
   const getShouldInitializeRecordBoardForUpdateInputs = (
     updateInputs: ObjectRecordOperationUpdateInput[],
-  ) => {
-    const updatedFieldNames = new Set<string>();
-    let thereIsAnUpdateOnAFilteredField = false;
-    let thereIsAnUpdateOnASortedField = false;
-    let thereIsAnUpdateOnAGroupField = false;
-
-    for (const updateInput of updateInputs) {
-      const fieldNamesForUpdateInput = updateInput.updatedFields.flatMap(
-        (updatedField) => Object.keys(updatedField ?? {}),
-      );
-
-      for (const fieldName of fieldNamesForUpdateInput) {
-        updatedFieldNames.add(fieldName);
-      }
-
-      const updatedFieldMetadataItems = activeFieldMetadataItems.filter(
-        (fieldMetadataItemToFilter) =>
-          fieldNamesForUpdateInput.includes(fieldMetadataItemToFilter.name) ||
-          (fieldMetadataItemToFilter.type === FieldMetadataType.RELATION &&
-            fieldNamesForUpdateInput.includes(
-              `${fieldMetadataItemToFilter.name}Id`,
-            )),
-      );
-
-      const updatedFieldMetadataItemIds =
-        updatedFieldMetadataItems.map(mapById);
-
-      const updateOnAFilteredField = currentRecordFilters.some((recordFilter) =>
-        updatedFieldMetadataItemIds.includes(recordFilter.fieldMetadataId),
-      );
-
-      const updateOnASortedField = currentRecordSorts.some((recordSort) =>
-        updatedFieldMetadataItemIds.includes(recordSort.fieldMetadataId),
-      );
-
-      if (isDefined(recordIndexGroupFieldMetadataItem)) {
-        if (
-          updatedFieldMetadataItemIds.includes(
-            recordIndexGroupFieldMetadataItem.id,
-          )
-        ) {
-          thereIsAnUpdateOnAGroupField = true;
-        }
-      }
-
-      if (updateOnAFilteredField) {
-        thereIsAnUpdateOnAFilteredField = true;
-      }
-
-      if (updateOnASortedField) {
-        thereIsAnUpdateOnASortedField = true;
-      }
-    }
-
-    if (updatedFieldNames.has('position')) {
-      return false;
-    }
-
-    return (
-      thereIsAnUpdateOnAFilteredField ||
-      thereIsAnUpdateOnASortedField ||
-      thereIsAnUpdateOnAGroupField
-    );
-  };
+  ) =>
+    shouldInitializeRecordBoardFromUpdateInputs({
+      updateInputs,
+      activeFieldMetadataItems,
+      currentRecordFilters,
+      currentRecordSorts,
+      recordIndexGroupFieldMetadataItem,
+    });
 
   return {
     getShouldInitializeRecordBoardForUpdateInputs,
