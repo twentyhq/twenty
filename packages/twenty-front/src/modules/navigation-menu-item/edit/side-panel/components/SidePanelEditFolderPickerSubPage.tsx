@@ -5,12 +5,12 @@ import { useIcons } from 'twenty-ui/display';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
+import { useFolderPickerSelectionData } from '@/navigation-menu-item/edit/side-panel/hooks/useFolderPickerSelectionData';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
-import { useFolderPickerSelectionData } from '@/navigation-menu-item/edit/side-panel/hooks/useFolderPickerSelectionData';
-import { TintedIconTile } from '@/ui/display/components/TintedIconTile';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { TintedIconTile } from 'twenty-ui/display';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const SidePanelEditFolderPickerSubPage = () => {

@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import type { IconComponent } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { getIconTileColorShades } from '@/ui/display/utils/getIconTileColorShades';
+import { getIconTileColorShades } from 'twenty-ui/display';
 
 const StyledCompositeContainer = styled.div`
   align-items: center;

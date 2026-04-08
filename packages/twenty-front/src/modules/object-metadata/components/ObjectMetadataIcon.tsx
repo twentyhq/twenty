@@ -1,7 +1,6 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
-import { TintedIconTile } from '@/ui/display/components/TintedIconTile';
-import { useIcons } from 'twenty-ui/display';
+import { TintedIconTile, useIcons } from 'twenty-ui/display';
 
 export type ObjectMetadataIconInput = Pick<
   EnrichedObjectMetadataItem,

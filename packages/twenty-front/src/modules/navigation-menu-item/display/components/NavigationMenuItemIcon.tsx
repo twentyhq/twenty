@@ -13,10 +13,12 @@ import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { StyledTintedIconTileContainer } from '@/ui/display/components/StyledTintedIconTileContainer';
-import { getIconTileColorShades } from '@/ui/display/utils/getIconTileColorShades';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import {
+  getIconTileColorShades,
+  StyledTintedIconTileContainer,
+} from 'twenty-ui/display';
 
 export const NavigationMenuItemIcon = ({
   navigationMenuItem,

@@ -18,9 +18,9 @@ import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SideP
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { TintedIconTile } from '@/ui/display/components/TintedIconTile';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { TintedIconTile } from 'twenty-ui/display';
 
 type SidePanelNewSidebarItemMainMenuProps = {
   onSelectObject: () => void;

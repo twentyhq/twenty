@@ -4,10 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconGripVertical, type IconComponent } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { TintedIconTile } from '@/ui/display/components/TintedIconTile';
-import { NavigationMenuItemType } from 'twenty-shared/types';
 import type { AddToNavigationDragPayload } from '@/navigation-menu-item/common/types/add-to-navigation-drag-payload';
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
+import { NavigationMenuItemType } from 'twenty-shared/types';
+import { TintedIconTile } from 'twenty-ui/display';
 
 const StyledIconSlot = styled.div<{
   $hasFixedSize: boolean;

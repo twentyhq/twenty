@@ -8,8 +8,8 @@ import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
 import { useSidePanelFilteredPickerItems } from '@/side-panel/hooks/useSidePanelFilteredPickerItems';
-import { TintedIconTile } from '@/ui/display/components/TintedIconTile';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { TintedIconTile } from 'twenty-ui/display';
 
 type SidePanelNewSidebarItemViewObjectPickerSubViewProps = {
   objects: EnrichedObjectMetadataItem[];

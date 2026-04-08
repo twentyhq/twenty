@@ -8,7 +8,6 @@ import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataI
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/side-panel/components/SidePanelObjectFilterDropdown';
 import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
-import { TintedIconTile } from '@/ui/display/components/TintedIconTile';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -20,6 +19,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { TintedIconTile } from 'twenty-ui/display';
 
 const ALL_OBJECTS_ITEM_ID = 'all-objects';
 

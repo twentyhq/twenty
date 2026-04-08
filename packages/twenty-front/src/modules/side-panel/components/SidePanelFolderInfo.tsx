@@ -5,16 +5,16 @@ import { useIcons } from 'twenty-ui/display';
 
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
-import { useUpdateFolderInDraft } from '@/navigation-menu-item/edit/folder/hooks/useUpdateFolderInDraft';
 import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
+import { useUpdateFolderInDraft } from '@/navigation-menu-item/edit/folder/hooks/useUpdateFolderInDraft';
 import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
-import { TintedIconTile } from '@/ui/display/components/TintedIconTile';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { TintedIconTile } from 'twenty-ui/display';
 
 const StyledClickableIconWrapper = styled.div`
   cursor: pointer;
