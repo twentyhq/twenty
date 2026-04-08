@@ -140,6 +140,42 @@ describe('useAddressAutocomplete', () => {
     });
   });
 
+  it('should prefer the parsed street over the raw autocomplete text', async () => {
+    const mockOnChange = jest.fn();
+    const mockPlaceData = {
+      street: '123 Main St',
+      city: 'New York',
+      state: 'NY',
+      country: 'US',
+      postcode: '10001',
+      location: { lat: 40.7128, lng: -74.006 },
+    };
+
+    mockGetPlaceDetailsData.mockResolvedValue(mockPlaceData);
+    mockFindCountryNameByCountryCode.mockReturnValue('United States');
+
+    const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
+
+    await act(async () => {
+      await result.current.autoFillInputsFromPlaceDetails(
+        'place123',
+        'token123',
+        '123 Main St, New York, NY 10001, USA',
+      );
+    });
+
+    expect(mockOnChange).toHaveBeenCalledWith({
+      addressStreet1: '123 Main St',
+      addressStreet2: null,
+      addressCity: 'New York',
+      addressState: 'NY',
+      addressCountry: 'United States',
+      addressPostcode: '10001',
+      addressLat: 40.7128,
+      addressLng: -74.006,
+    });
+  });
+
   it('should preserve existing values when place data is missing', async () => {
     const mockOnChange = jest.fn();
     const mockPlaceData = {
