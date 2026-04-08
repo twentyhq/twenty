@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from '@ui/theme-constants';
 
 export const StyledTintedIconTileContainer = styled.div<{
   $backgroundColor?: string;
