@@ -12398,7 +12398,7 @@ msgid "Search colors"
 msgstr "Пошук кольорів"
 
 #. js-lingui-id: AR3FV/
-#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditColorOption.tsx
+#: src/modules/ui/input/components/ThemeColorPickerMenu.tsx
 msgid "Search colors..."
 msgstr "Пошук кольорів..."
 
