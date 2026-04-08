@@ -9,12 +9,12 @@ import {
 import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import { type OrchestratorFailureReport } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 
-import { formatErrorForStorage } from 'src/engine/core-modules/upgrade/utils/format-error-for-storage.util';
+import { formatUpgradeErrorForStorage } from 'src/engine/core-modules/upgrade/utils/format-upgrade-error-for-storage.util';
 
 const stripStack = (output: string): string =>
   output.replace(/\n\s+at .+/g, '');
 
-describe('formatErrorForStorage', () => {
+describe('formatUpgradeErrorForStorage', () => {
   it('should format a QueryFailedError with driver details', () => {
     const driverError = new Error(
       'duplicate key value violates unique constraint "UQ_name"',
@@ -31,7 +31,7 @@ describe('formatErrorForStorage', () => {
       driverError,
     );
 
-    expect(stripStack(formatErrorForStorage(error))).toMatchSnapshot();
+    expect(stripStack(formatUpgradeErrorForStorage(error))).toMatchSnapshot();
   });
 
   it('should format a QueryFailedError without driver code or detail', () => {
@@ -41,7 +41,7 @@ describe('formatErrorForStorage', () => {
       new Error('relation "missing_table" does not exist'),
     );
 
-    expect(stripStack(formatErrorForStorage(error))).toMatchSnapshot();
+    expect(stripStack(formatUpgradeErrorForStorage(error))).toMatchSnapshot();
   });
 
   it('should format a WorkspaceMigrationRunnerException with INTERNAL_SERVER_ERROR', () => {
@@ -50,7 +50,7 @@ describe('formatErrorForStorage', () => {
       code: WorkspaceMigrationRunnerExceptionCode.INTERNAL_SERVER_ERROR,
     });
 
-    expect(stripStack(formatErrorForStorage(error))).toMatchSnapshot();
+    expect(stripStack(formatUpgradeErrorForStorage(error))).toMatchSnapshot();
   });
 
   it('should format a WorkspaceMigrationRunnerException with EXECUTION_FAILED', () => {
@@ -68,7 +68,7 @@ describe('formatErrorForStorage', () => {
       code: WorkspaceMigrationRunnerExceptionCode.EXECUTION_FAILED,
     });
 
-    expect(stripStack(formatErrorForStorage(error))).toMatchSnapshot();
+    expect(stripStack(formatUpgradeErrorForStorage(error))).toMatchSnapshot();
   });
 
   it('should format a WorkspaceMigrationBuilderException', () => {
@@ -85,30 +85,30 @@ describe('formatErrorForStorage', () => {
       report,
     });
 
-    expect(stripStack(formatErrorForStorage(error))).toMatchSnapshot();
+    expect(stripStack(formatUpgradeErrorForStorage(error))).toMatchSnapshot();
   });
 
   it('should format a CustomError with code', () => {
     const error = new CustomError('Workspace not found', 'WORKSPACE_NOT_FOUND');
 
-    expect(stripStack(formatErrorForStorage(error))).toMatchSnapshot();
+    expect(stripStack(formatUpgradeErrorForStorage(error))).toMatchSnapshot();
   });
 
   it('should format a generic Error', () => {
     const error = new Error('Something unexpected happened');
 
-    expect(stripStack(formatErrorForStorage(error))).toMatchSnapshot();
+    expect(stripStack(formatUpgradeErrorForStorage(error))).toMatchSnapshot();
   });
 
   it('should format a string value', () => {
-    expect(formatErrorForStorage('raw string error')).toMatchSnapshot();
+    expect(formatUpgradeErrorForStorage('raw string error')).toMatchSnapshot();
   });
 
   it('should format an undefined value', () => {
-    expect(formatErrorForStorage(undefined)).toMatchSnapshot();
+    expect(formatUpgradeErrorForStorage(undefined)).toMatchSnapshot();
   });
 
   it('should format a number value', () => {
-    expect(formatErrorForStorage(42)).toMatchSnapshot();
+    expect(formatUpgradeErrorForStorage(42)).toMatchSnapshot();
   });
 });

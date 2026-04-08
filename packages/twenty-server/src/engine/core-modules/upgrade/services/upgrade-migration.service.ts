@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IsNull, type QueryRunner, Repository } from 'typeorm';
 
 import { UpgradeMigrationEntity } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
-import { formatErrorForStorage } from 'src/engine/core-modules/upgrade/utils/format-error-for-storage.util';
+import { formatUpgradeErrorForStorage } from 'src/engine/core-modules/upgrade/utils/format-upgrade-error-for-storage.util';
 
 @Injectable()
 export class UpgradeMigrationService {
@@ -86,7 +86,7 @@ export class UpgradeMigrationService {
       attempt: previousAttempts + 1,
       executedByVersion,
       workspaceId,
-      errorMessage: formatErrorForStorage(error),
+      errorMessage: formatUpgradeErrorForStorage(error),
     });
   }
 }

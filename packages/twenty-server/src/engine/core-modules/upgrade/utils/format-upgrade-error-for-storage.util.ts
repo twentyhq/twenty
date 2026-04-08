@@ -71,6 +71,6 @@ const buildErrorParts = (error: unknown): (string | null)[] => {
   return [String(error)];
 };
 
-export const formatErrorForStorage = (error: unknown): string => {
+export const formatUpgradeErrorForStorage = (error: unknown): string => {
   return joinParts(buildErrorParts(error));
 };
