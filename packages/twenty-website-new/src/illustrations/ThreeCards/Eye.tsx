@@ -7,8 +7,6 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 const GLB_URL = '/illustrations/product/three-cards/eye.glb';
 
-const HALFTONE_NUM_ROWS = 65;
-
 const halftoneVertexShader = /* glsl */ `
   varying vec3 vWorldNormal;
 
@@ -77,7 +75,7 @@ function createHalftoneDashMaterial(
       uColor: { value: new THREE.Color('#1e5bff') },
       uLightDir: { value: lightDirection.clone() },
       uResolution: { value: resolution.clone() },
-      uNumRows: { value: HALFTONE_NUM_ROWS },
+      uNumRows: { value: 65 },
     },
     vertexShader: halftoneVertexShader,
     fragmentShader: halftoneFragmentShader,

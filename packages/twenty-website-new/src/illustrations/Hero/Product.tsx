@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-const HERO_GLB_URL = '/illustrations/product/hero/hero.glb';
+const GLB_URL = '/illustrations/product/hero/hero.glb';
 
 const StyledContainer = styled.div`
   background-color: ${theme.colors.secondary.background[5]};
@@ -181,7 +181,7 @@ export function Product() {
 
     const loader = new GLTFLoader();
     loader.load(
-      HERO_GLB_URL,
+      GLB_URL,
       (gltf) => {
         if (cancelled) {
           disposeObjectSubtree(gltf.scene);

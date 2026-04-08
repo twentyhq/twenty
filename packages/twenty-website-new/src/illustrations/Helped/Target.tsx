@@ -5,11 +5,7 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-// Multiplies pointer tilt, idle follow, hover zoom, and mesh wobble amplitudes.
-const HELPED_CARD_VISUAL_MOTION_SCALE = 1.1;
-
-// Model scale in the 240px frame — larger = bigger asset on screen.
-const HELPED_CARD_VISUAL_MODEL_FIT_SCALE = 2.75 * 1.1;
+const GLB_URL = '/illustrations/home/helped/target.glb';
 
 const scanlineVertexShader = /* glsl */ `
   varying vec3 vWorldPosition;
@@ -153,9 +149,6 @@ const StyledVisualMount = styled.div`
   width: 100%;
 `;
 
-const GLB_URL = '/illustrations/home/helped/target.glb';
-const HELPED_TARGET_STRIPE_COLOR = '#DE8CF6';
-
 export function Target() {
   const mountReference = useRef<HTMLDivElement>(null);
 
@@ -212,16 +205,12 @@ export function Target() {
         const center = bounds.getCenter(new THREE.Vector3());
         const size = bounds.getSize(new THREE.Vector3());
         const maxAxis = Math.max(size.x, size.y, size.z, 0.001);
-        const scale = HELPED_CARD_VISUAL_MODEL_FIT_SCALE / maxAxis;
+        const scale = (2.75 * 1.1) / maxAxis;
 
         modelRoot.position.sub(center);
         modelRoot.scale.setScalar(scale);
 
-        applyScanlineMaterials(
-          modelRoot,
-          lightDirectionWorld,
-          HELPED_TARGET_STRIPE_COLOR,
-        );
+        applyScanlineMaterials(modelRoot, lightDirectionWorld, '#DE8CF6');
         pivot.add(modelRoot);
 
         const renderFrame = () => {
@@ -232,7 +221,7 @@ export function Target() {
           animationFrameId = window.requestAnimationFrame(renderFrame);
           const delta = Math.min(clock.getDelta(), 0.1);
 
-          const motion = HELPED_CARD_VISUAL_MOTION_SCALE;
+          const motion = 1.1;
           const rotationDamp = 6.8;
           const influence = pointer.inside ? 1 : 0.38;
           targetRotation.y = pointer.x * 0.78 * motion * influence;

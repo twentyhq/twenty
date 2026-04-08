@@ -8,15 +8,6 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 const GLB_URL = '/illustrations/common/footer/footer.glb';
 
 // Framing for the extruded “ZO” hero shot (low angle, centered, room below for links).
-const FOOTER_VISUAL_MODEL_FIT_SCALE = 5;
-const FOOTER_VISUAL_MODEL_OFFSET_Y = 0.42;
-const FOOTER_VISUAL_CAMERA_POSITION: readonly [number, number, number] = [
-  0, -1.35, 7.4,
-];
-const FOOTER_VISUAL_CAMERA_LOOK_AT: readonly [number, number, number] = [
-  0, 0.55, 0,
-];
-
 const scanlineVertexShader = /* glsl */ `
   varying vec3 vWorldPosition;
   varying vec3 vWorldNormal;
@@ -176,18 +167,8 @@ export function FooterBackground() {
     const height = container.clientHeight;
 
     const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 100);
-    camera.position.set(
-      FOOTER_VISUAL_CAMERA_POSITION[0],
-      FOOTER_VISUAL_CAMERA_POSITION[1],
-      FOOTER_VISUAL_CAMERA_POSITION[2],
-    );
-    camera.lookAt(
-      new THREE.Vector3(
-        FOOTER_VISUAL_CAMERA_LOOK_AT[0],
-        FOOTER_VISUAL_CAMERA_LOOK_AT[1],
-        FOOTER_VISUAL_CAMERA_LOOK_AT[2],
-      ),
-    );
+    camera.position.set(0, -1.35, 7.4);
+    camera.lookAt(new THREE.Vector3(0, 0.55, 0));
 
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -221,11 +202,11 @@ export function FooterBackground() {
         const center = bounds.getCenter(new THREE.Vector3());
         const size = bounds.getSize(new THREE.Vector3());
         const maxAxis = Math.max(size.x, size.y, size.z, 0.001);
-        const scale = FOOTER_VISUAL_MODEL_FIT_SCALE / maxAxis;
+        const scale = 5 / maxAxis;
 
         modelRoot.position.sub(center);
         modelRoot.scale.setScalar(scale);
-        modelRoot.position.y += FOOTER_VISUAL_MODEL_OFFSET_Y;
+        modelRoot.position.y += 0.42;
 
         applyFooterScanlineMaterials(modelRoot, lightDirectionWorld);
         pivot.add(modelRoot);

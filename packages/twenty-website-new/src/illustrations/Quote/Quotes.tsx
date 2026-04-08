@@ -8,8 +8,6 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 const GLB_URL = '/illustrations/why-twenty/quote/quote.glb';
 
-const QUOTE_VISUAL_MODEL_FIT_SCALE = 3.05;
-
 const scanlineVertexShader = /* glsl */ `
   varying vec3 vWorldPosition;
   varying vec3 vWorldNormal;
@@ -205,7 +203,7 @@ export function Quotes() {
         const center = bounds.getCenter(new THREE.Vector3());
         const size = bounds.getSize(new THREE.Vector3());
         const maxAxis = Math.max(size.x, size.y, size.z, 0.001);
-        const scale = QUOTE_VISUAL_MODEL_FIT_SCALE / maxAxis;
+        const scale = 3.05 / maxAxis;
 
         modelRoot.position.sub(center);
         modelRoot.scale.setScalar(scale);

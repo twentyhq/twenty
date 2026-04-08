@@ -8,14 +8,8 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 const GLB_URL = '/illustrations/common/faq/faq.glb';
 
-const FAQ_VISUAL_MODEL_FIT_SCALE = 4;
-const FAQ_VISUAL_ROTATION_RADIANS_PER_SECOND = 0.5;
-const FAQ_VISUAL_WORLD_OFFSET_Y = 0.52;
-
 // World spin axis (x, y, z). Camera on +Z: (0,0,1) = spinner in the view plane.
 // Try (0,1,0) or (1,0,0) if motion or framing looks wrong.
-const FAQ_VISUAL_SPIN_AXIS_XYZ: readonly [number, number, number] = [0, 0, 1];
-
 const scanlineVertexShader = /* glsl */ `
   varying vec3 vWorldPosition;
   varying vec3 vWorldNormal;
@@ -180,11 +174,7 @@ export function FaqBackground() {
     const wheel = new THREE.Group();
     scene.add(wheel);
 
-    const spinAxisWorld = new THREE.Vector3(
-      FAQ_VISUAL_SPIN_AXIS_XYZ[0],
-      FAQ_VISUAL_SPIN_AXIS_XYZ[1],
-      FAQ_VISUAL_SPIN_AXIS_XYZ[2],
-    ).normalize();
+    const spinAxisWorld = new THREE.Vector3(0, 0, 1).normalize();
 
     const clock = new THREE.Clock();
 
@@ -202,14 +192,14 @@ export function FaqBackground() {
         const center = bounds.getCenter(new THREE.Vector3());
         const size = bounds.getSize(new THREE.Vector3());
         const maxAxis = Math.max(size.x, size.y, size.z, 0.001);
-        const scale = FAQ_VISUAL_MODEL_FIT_SCALE / maxAxis;
+        const scale = 4 / maxAxis;
 
         modelRoot.position.sub(center);
         modelRoot.scale.setScalar(scale);
 
         applyScanlineMaterials(modelRoot, lightDirectionWorld);
         wheel.add(modelRoot);
-        wheel.position.y = FAQ_VISUAL_WORLD_OFFSET_Y;
+        wheel.position.y = 0.52;
 
         const renderFrame = () => {
           if (cancelled) {
@@ -218,10 +208,7 @@ export function FaqBackground() {
 
           animationFrameId = window.requestAnimationFrame(renderFrame);
           const delta = Math.min(clock.getDelta(), 0.1);
-          wheel.rotateOnWorldAxis(
-            spinAxisWorld,
-            -delta * FAQ_VISUAL_ROTATION_RADIANS_PER_SECOND,
-          );
+          wheel.rotateOnWorldAxis(spinAxisWorld, -delta * 0.5);
           renderer.render(scene, camera);
         };
 

@@ -8,9 +8,6 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 const GLB_URL = '/illustrations/why-twenty/stepper/logo.glb';
 
-const STEP_VISUAL_MODEL_SCALE = 2.72;
-const STEP_VISUAL_STRIPE_SCALE = 22.0;
-
 const VisualColumn = styled.div`
   min-width: 0;
   width: 100%;
@@ -139,7 +136,7 @@ function createRetroScreenStripeMaterial() {
       uDigitCenterXY: { value: new THREE.Vector2(0, 0) },
       uDigitRadiusXY: { value: new THREE.Vector2(1, 1) },
       uDigitZMin: { value: 0 },
-      uStripeScale: { value: STEP_VISUAL_STRIPE_SCALE },
+      uStripeScale: { value: 22.0 },
     },
     vertexShader: retroVertexShader,
     fragmentShader: retroFragmentShader,
@@ -281,7 +278,7 @@ export function Logo() {
       const size = bounds.getSize(new THREE.Vector3());
       const maxAxis = Math.max(size.x, size.y, size.z, 0.001);
 
-      const scale = STEP_VISUAL_MODEL_SCALE / maxAxis;
+      const scale = 2.72 / maxAxis;
 
       modelRoot.position.sub(center);
       modelRoot.scale.setScalar(scale);

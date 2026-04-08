@@ -1,34 +1,11 @@
 'use client';
 
-import { theme } from '@/theme';
-import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import NextImage from 'next/image';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-const HERO_BACKGROUND_SRC = '/images/why-twenty/hero/background.png';
-const HERO_GLB_URL = '/illustrations/why-twenty/hero/hero.glb';
-
-const VisualContainer = styled.div`
-  border-radius: ${theme.radius(1)};
-  height: 462px;
-  overflow: hidden;
-  position: relative;
-  width: 100%;
-`;
-
-const BackgroundLayer = styled.div`
-  inset: 0;
-  position: absolute;
-  z-index: 0;
-`;
-
-const backgroundImageClassName = css`
-  object-fit: cover;
-  object-position: center;
-`;
+const GLB_URL = '/illustrations/why-twenty/hero/hero.glb';
 
 const GlbMount = styled.div`
   display: block;
@@ -246,7 +223,7 @@ export function WhyTwenty() {
     let targetRotationY = 0;
 
     const loader = new GLTFLoader();
-    loader.load(HERO_GLB_URL, (gltf) => {
+    loader.load(GLB_URL, (gltf) => {
       if (cancelled) {
         disposeObjectSubtree(gltf.scene);
         return;
@@ -345,19 +322,5 @@ export function WhyTwenty() {
     };
   }, []);
 
-  return (
-    <VisualContainer>
-      <BackgroundLayer>
-        <NextImage
-          alt="Why Twenty hero background"
-          className={backgroundImageClassName}
-          fill
-          priority
-          sizes="100vw"
-          src={HERO_BACKGROUND_SRC}
-        />
-      </BackgroundLayer>
-      <GlbMount ref={glbMountReference} />
-    </VisualContainer>
-  );
+  return <GlbMount aria-hidden ref={glbMountReference} />;
 }

@@ -6,9 +6,7 @@ import { useLayoutEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-const HOURGLASS_VISUAL_GLB_URL =
-  '/illustrations/home/testimonials/hourglass.glb';
-const HOURGLASS_VISUAL_MODEL_FIT_SCALE = 2.85;
+const GLB_URL = '/illustrations/home/testimonials/hourglass.glb';
 
 const scanlineVertexShader = /* glsl */ `
   varying vec3 vWorldPosition;
@@ -192,7 +190,7 @@ export function Hourglass() {
 
     const loader = new GLTFLoader();
     loader.load(
-      HOURGLASS_VISUAL_GLB_URL,
+      GLB_URL,
       (gltf) => {
         if (cancelled) {
           disposeObjectSubtree(gltf.scene);
@@ -204,7 +202,7 @@ export function Hourglass() {
         const center = bounds.getCenter(new THREE.Vector3());
         const size = bounds.getSize(new THREE.Vector3());
         const maxAxis = Math.max(size.x, size.y, size.z, 0.001);
-        const scale = HOURGLASS_VISUAL_MODEL_FIT_SCALE / maxAxis;
+        const scale = 2.85 / maxAxis;
 
         modelRoot.position.sub(center);
         modelRoot.scale.setScalar(scale);

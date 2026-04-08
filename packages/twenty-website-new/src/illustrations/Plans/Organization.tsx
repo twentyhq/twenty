@@ -4,12 +4,7 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-const PLAN_CARD_VISUAL_MODEL_FIT_SCALE = 2.35;
-const PLAN_CARD_IDLE_TILT_INFLUENCE = 0.22;
-const PLAN_CARD_HOVER_SCALE_LIFT = 0.06;
-const PLAN_CARD_ROTATION_DAMP = 8.2;
-const PLAN_CARD_TILT_X = 0.42;
-const PLAN_CARD_TILT_Y = 0.52;
+const GLB_URL = '/illustrations/pricing/Price/organization.glb';
 
 const scanlineVertexShader = /* glsl */ `
   varying vec3 vWorldPosition;
@@ -127,16 +122,6 @@ function applyScanlineMaterials(
   });
 }
 
-// Plain div + stable inline style: Linaria on this node caused SSR/client className mismatches.
-const planCardVisualMountStyle = {
-  display: 'block' as const,
-  height: '100%',
-  minWidth: 0,
-  width: '100%',
-};
-
-const GLB_URL = '/illustrations/pricing/Price/organization.glb';
-
 export function Organization() {
   const mountReference = useRef<HTMLDivElement>(null);
 
@@ -200,7 +185,7 @@ export function Organization() {
         const center = bounds.getCenter(new THREE.Vector3());
         const size = bounds.getSize(new THREE.Vector3());
         const maxAxis = Math.max(size.x, size.y, size.z, 0.001);
-        const scale = PLAN_CARD_VISUAL_MODEL_FIT_SCALE / maxAxis;
+        const scale = 2.35 / maxAxis;
 
         modelRoot.position.sub(center);
         modelRoot.scale.setScalar(scale);
@@ -216,37 +201,30 @@ export function Organization() {
           animationFrameId = window.requestAnimationFrame(renderFrame);
           const delta = Math.min(clock.getDelta(), 0.1);
 
-          const influence = pointer.inside ? 1 : PLAN_CARD_IDLE_TILT_INFLUENCE;
-          targetRotation.y = pointer.x * PLAN_CARD_TILT_Y * influence;
-          targetRotation.x = pointer.y * PLAN_CARD_TILT_X * influence;
+          const influence = pointer.inside ? 1 : 0.22;
+          targetRotation.y = pointer.x * 0.52 * influence;
+          targetRotation.x = pointer.y * 0.42 * influence;
 
           pivot.rotation.y = THREE.MathUtils.damp(
             pivot.rotation.y,
             targetRotation.y,
-            PLAN_CARD_ROTATION_DAMP,
+            8.2,
             delta,
           );
           pivot.rotation.x = THREE.MathUtils.damp(
             pivot.rotation.x,
             targetRotation.x,
-            PLAN_CARD_ROTATION_DAMP,
+            8.2,
             delta,
           );
 
           const hoverLift = pointer.inside ? 1 : 0;
           pivot.scale.setScalar(
-            THREE.MathUtils.damp(
-              pivot.scale.x,
-              1 + hoverLift * PLAN_CARD_HOVER_SCALE_LIFT,
-              7,
-              delta,
-            ),
+            THREE.MathUtils.damp(pivot.scale.x, 1 + hoverLift * 0.06, 7, delta),
           );
 
-          const mx =
-            pointer.x * (pointer.inside ? 1 : PLAN_CARD_IDLE_TILT_INFLUENCE);
-          const my =
-            pointer.y * (pointer.inside ? 1 : PLAN_CARD_IDLE_TILT_INFLUENCE);
+          const mx = pointer.x * (pointer.inside ? 1 : 0.22);
+          const my = pointer.y * (pointer.inside ? 1 : 0.22);
 
           modelRoot.traverse((sceneObject) => {
             if (!(sceneObject instanceof THREE.Mesh)) {
@@ -354,6 +332,15 @@ export function Organization() {
   }, []);
 
   return (
-    <div aria-hidden ref={mountReference} style={planCardVisualMountStyle} />
+    <div
+      aria-hidden
+      ref={mountReference}
+      style={{
+        display: 'block',
+        height: '100%',
+        minWidth: 0,
+        width: '100%',
+      }}
+    />
   );
 }
