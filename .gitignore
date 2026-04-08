@@ -2,7 +2,6 @@
 .DS_Store
 /.idea
 .claude/settings.json
-.claude/worktrees/
 **/**/node_modules/
 .cache
 
