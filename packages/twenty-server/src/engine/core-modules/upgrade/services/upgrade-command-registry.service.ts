@@ -80,11 +80,11 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
         getRegisteredInstanceCommandMetadata(metatype);
 
       if (isDefined(instanceCommandMetadata)) {
-        const bucket = this.bundlesByVersion.get(
+        const bundle = this.bundlesByVersion.get(
           instanceCommandMetadata.version,
         );
 
-        if (isDefined(bucket)) {
+        if (isDefined(bundle)) {
           const entry = {
             name: this.computeCommandName(
               instanceCommandMetadata.version,
@@ -95,12 +95,12 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
           };
 
           if (instanceCommandMetadata.type === 'slow') {
-            bucket.slowInstanceCommands.push({
+            bundle.slowInstanceCommands.push({
               ...entry,
               command: instance as SlowInstanceCommand,
             });
           } else {
-            bucket.fastInstanceCommands.push({
+            bundle.fastInstanceCommands.push({
               ...entry,
               command: instance as FastInstanceCommand,
             });
@@ -114,12 +114,12 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
         getRegisteredWorkspaceCommandMetadata(metatype);
 
       if (isDefined(workspaceCommandMetadata)) {
-        const bucket = this.bundlesByVersion.get(
+        const bundle = this.bundlesByVersion.get(
           workspaceCommandMetadata.version,
         );
 
-        if (isDefined(bucket)) {
-          bucket.workspaceCommands.push({
+        if (isDefined(bundle)) {
+          bundle.workspaceCommands.push({
             name: this.computeCommandName(
               workspaceCommandMetadata.version,
               (instance as WorkspaceCommand).constructor.name,
@@ -132,29 +132,29 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
       }
     }
 
-    for (const [, bucket] of this.bundlesByVersion) {
-      bucket.fastInstanceCommands.sort(
+    for (const [, bundle] of this.bundlesByVersion) {
+      bundle.fastInstanceCommands.sort(
         (entryA, entryB) => entryA.timestamp - entryB.timestamp,
       );
-      bucket.slowInstanceCommands.sort(
+      bundle.slowInstanceCommands.sort(
         (entryA, entryB) => entryA.timestamp - entryB.timestamp,
       );
-      bucket.workspaceCommands.sort(
+      bundle.workspaceCommands.sort(
         (entryA, entryB) => entryA.timestamp - entryB.timestamp,
       );
     }
 
     this.validateNoDuplicates();
 
-    for (const [version, bucket] of this.bundlesByVersion) {
+    for (const [version, bundle] of this.bundlesByVersion) {
       const totalCount =
-        bucket.fastInstanceCommands.length +
-        bucket.slowInstanceCommands.length +
-        bucket.workspaceCommands.length;
+        bundle.fastInstanceCommands.length +
+        bundle.slowInstanceCommands.length +
+        bundle.workspaceCommands.length;
 
       if (totalCount > 0) {
         this.logger.log(
-          `Registered ${bucket.fastInstanceCommands.length} fast instance, ${bucket.slowInstanceCommands.length} slow instance, and ${bucket.workspaceCommands.length} workspace command(s) for ${version}`,
+          `Registered ${bundle.fastInstanceCommands.length} fast instance, ${bundle.slowInstanceCommands.length} slow instance, and ${bundle.workspaceCommands.length} workspace command(s) for ${version}`,
         );
       }
     }
@@ -185,29 +185,29 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
   }
 
   private validateNoDuplicates(): void {
-    for (const [version, bucket] of this.bundlesByVersion) {
+    for (const [version, bundle] of this.bundlesByVersion) {
       this.validateNoTimestampDuplicatesWithinKind(
         version,
         'fast-instance',
-        bucket.fastInstanceCommands,
+        bundle.fastInstanceCommands,
       );
       this.validateNoTimestampDuplicatesWithinKind(
         version,
         'slow-instance',
-        bucket.slowInstanceCommands,
+        bundle.slowInstanceCommands,
       );
       this.validateNoTimestampDuplicatesWithinKind(
         version,
         'workspace',
-        bucket.workspaceCommands,
+        bundle.workspaceCommands,
       );
 
       const seenNames = new Set<string>();
 
       const allNames = [
-        ...bucket.fastInstanceCommands.map((entry) => entry.name),
-        ...bucket.slowInstanceCommands.map((entry) => entry.name),
-        ...bucket.workspaceCommands.map((entry) => entry.name),
+        ...bundle.fastInstanceCommands.map((entry) => entry.name),
+        ...bundle.slowInstanceCommands.map((entry) => entry.name),
+        ...bundle.workspaceCommands.map((entry) => entry.name),
       ];
 
       for (const name of allNames) {
