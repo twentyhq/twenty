@@ -23,7 +23,6 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
         company: { text: 'Mid-Market Fintech' },
       },
       illustration: {
-        glbTreatment: 'stacked-dash',
         src: '/illustrations/home/three-cards-illustration/one.glb',
         title: 'Production grade illustration',
       },
