@@ -1,7 +1,7 @@
 import { type ThemeColor } from '@ui/theme';
 import { themeColorSchema } from '@ui/utilities';
 
-import { DEFAULT_THEME_COLOR_FALLBACK } from '@ui/display/tinted-icon-tile/internal/constants/defaultThemeColorFallback.constant';
+import { DEFAULT_THEME_COLOR_FALLBACK } from '@ui/theme';
 
 export const parseThemeColor = (
   color: string | null | undefined,

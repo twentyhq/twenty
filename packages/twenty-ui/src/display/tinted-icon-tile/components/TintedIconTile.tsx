@@ -1,7 +1,7 @@
-import { StyledTintedIconTileContainer } from '@ui/display/tinted-icon-tile/components/StyledTintedIconTileContainer';
-import { DEFAULT_THEME_COLOR_FALLBACK } from '@ui/display/tinted-icon-tile/internal/constants/defaultThemeColorFallback.constant';
-import { getIconTileColorShades } from '@ui/display/tinted-icon-tile/utils/getIconTileColorShades';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
+import { StyledTintedIconTileContainer } from '@ui/display/tinted-icon-tile/components/StyledTintedIconTileContainer';
+import { getIconTileColorShades } from '@ui/display/tinted-icon-tile/utils/getIconTileColorShades';
+import { DEFAULT_THEME_COLOR_FALLBACK } from '@ui/theme';
 import { ThemeContext } from '@ui/theme-constants';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';

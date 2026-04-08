@@ -5,9 +5,7 @@ import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { type ThemeColor } from 'twenty-ui/theme';
-
-const DEFAULT_NAVIGATION_THEME_COLOR_FALLBACK: ThemeColor = 'gray';
+import { DEFAULT_THEME_COLOR_FALLBACK, type ThemeColor } from 'twenty-ui/theme';
 
 export const getNavigationMenuItemColor = (
   navigationMenuItem: {
@@ -36,8 +34,8 @@ export const getNavigationMenuItemColor = (
     if (objectMetadataItem) {
       return getObjectColorWithFallback(objectMetadataItem);
     }
-    return DEFAULT_NAVIGATION_THEME_COLOR_FALLBACK;
+    return DEFAULT_THEME_COLOR_FALLBACK;
   }
 
-  return DEFAULT_NAVIGATION_THEME_COLOR_FALLBACK;
+  return DEFAULT_THEME_COLOR_FALLBACK;
 };
