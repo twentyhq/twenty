@@ -1,5 +1,8 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getRelationObjectMetadataNameSingular } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 import { ObjectFilterDropdownRecordPinnedItems } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordPinnedItems';
 import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
@@ -79,9 +82,37 @@ export const ObjectFilterDropdownRecordSelect = ({
     throw new Error('fieldMetadataItemUsedInFilterDropdown is not defined');
   }
 
-  const objectNameSingular = getRelationObjectMetadataNameSingular({
-    field: fieldMetadataItemUsedInFilterDropdown,
-  });
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  // For junction (many-to-many) relations, resolve the actual target object
+  // (e.g. "tag") rather than the junction table (e.g. "personTag")
+  const junctionTargetObjectNameSingular = (() => {
+    if (!hasJunctionConfig(fieldMetadataItemUsedInFilterDropdown.settings)) {
+      return undefined;
+    }
+
+    const relationObjectMetadataId =
+      fieldMetadataItemUsedInFilterDropdown.relation?.targetObjectMetadata.id;
+
+    if (!isDefined(relationObjectMetadataId)) {
+      return undefined;
+    }
+
+    const junctionConfig = getJunctionConfig({
+      settings: fieldMetadataItemUsedInFilterDropdown.settings,
+      relationObjectMetadataId,
+      objectMetadataItems,
+    });
+
+    return junctionConfig?.targetFields[0]?.relation?.targetObjectMetadata
+      .nameSingular;
+  })();
+
+  const objectNameSingular =
+    junctionTargetObjectNameSingular ??
+    getRelationObjectMetadataNameSingular({
+      field: fieldMetadataItemUsedInFilterDropdown,
+    });
 
   if (!isDefined(objectNameSingular)) {
     throw new Error('relationObjectMetadataNameSingular is not defined');
