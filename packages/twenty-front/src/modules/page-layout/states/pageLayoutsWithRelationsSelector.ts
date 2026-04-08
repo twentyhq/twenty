@@ -45,7 +45,17 @@ export const pageLayoutsWithRelationsSelector = createAtomSelector<
       ...flatPageLayout,
       tabs: (tabsByPageLayoutId.get(flatPageLayout.id) ?? []).map((tab) => ({
         ...tab,
-        widgets: widgetsByTabId.get(tab.id) ?? [],
+        widgets: (widgetsByTabId.get(tab.id) ?? []).sort((a, b) => {
+          const aIndex =
+            isDefined(a.position) && 'index' in a.position
+              ? a.position.index
+              : Infinity;
+          const bIndex =
+            isDefined(b.position) && 'index' in b.position
+              ? b.position.index
+              : Infinity;
+          return aIndex - bIndex;
+        }),
       })),
     }));
   },
