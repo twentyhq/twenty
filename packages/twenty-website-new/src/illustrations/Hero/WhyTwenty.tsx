@@ -1,6 +1,5 @@
 'use client';
 
-import type { IllustrationProps } from '@/illustrations/types';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -206,7 +205,7 @@ function applyWhyTwentyScanlineMaterials(
   });
 }
 
-export function WhyTwenty(_properties: IllustrationProps) {
+export function WhyTwenty() {
   const glbMountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

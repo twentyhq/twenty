@@ -1,12 +1,11 @@
 'use client';
 
-import type { IllustrationProps } from '@/illustrations/types';
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-const GLB_URL = '/illustrations/product/three-cards-illustration/three.glb';
+const GLB_URL = '/illustrations/product/three-cards/single-screen.glb';
 
 const HALFTONE_NUM_ROWS = 65;
 
@@ -144,7 +143,7 @@ const StyledVisualMount = styled.div`
   width: 100%;
 `;
 
-export function SingleScreen(_properties: IllustrationProps) {
+export function SingleScreen() {
   const mountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

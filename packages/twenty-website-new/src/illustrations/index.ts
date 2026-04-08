@@ -5,4 +5,3 @@ export {
   type IllustrationId,
   type ThreeCardsIllustrationId,
 } from './illustrations-registry';
-export type { IllustrationProps } from './types';

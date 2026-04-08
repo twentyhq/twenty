@@ -5,7 +5,6 @@ import type { IllustrationId } from '@/illustrations';
 export type HeadingCardType = {
   icon: string;
   illustration: IllustrationId;
-  color: string;
   heading: HeadingType;
   body: BodyType;
 };

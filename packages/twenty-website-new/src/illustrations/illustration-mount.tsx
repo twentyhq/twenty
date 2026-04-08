@@ -4,17 +4,13 @@ import {
   ILLUSTRATIONS,
   type IllustrationId,
 } from '@/illustrations/illustrations-registry';
-import type { IllustrationProps } from '@/illustrations/types';
 
 type IllustrationMountProps = {
   illustration: IllustrationId;
-} & IllustrationProps;
+};
 
-export function IllustrationMount({
-  illustration,
-  ...rest
-}: IllustrationMountProps) {
+export function IllustrationMount({ illustration }: IllustrationMountProps) {
   const IllustrationComponent = ILLUSTRATIONS[illustration];
 
-  return <IllustrationComponent {...rest} />;
+  return <IllustrationComponent />;
 }

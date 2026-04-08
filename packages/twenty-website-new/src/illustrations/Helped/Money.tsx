@@ -1,7 +1,6 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import type { IllustrationProps } from '@/illustrations/types';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -154,9 +153,10 @@ const StyledVisualMount = styled.div`
   width: 100%;
 `;
 
-const GLB_URL = '/illustrations/home/helped/one.glb';
+const GLB_URL = '/illustrations/home/helped/money.glb';
+const HELPED_MONEY_STRIPE_COLOR = '#E4E58A';
 
-export function Money({ stripeColor = '#ffffff' }: IllustrationProps) {
+export function Money() {
   const mountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -217,7 +217,11 @@ export function Money({ stripeColor = '#ffffff' }: IllustrationProps) {
         modelRoot.position.sub(center);
         modelRoot.scale.setScalar(scale);
 
-        applyScanlineMaterials(modelRoot, lightDirectionWorld, stripeColor);
+        applyScanlineMaterials(
+          modelRoot,
+          lightDirectionWorld,
+          HELPED_MONEY_STRIPE_COLOR,
+        );
         pivot.add(modelRoot);
 
         const renderFrame = () => {
@@ -369,7 +373,7 @@ export function Money({ stripeColor = '#ffffff' }: IllustrationProps) {
         container.removeChild(canvas);
       }
     };
-  }, [stripeColor]);
+  }, []);
 
   return <StyledVisualMount aria-hidden ref={mountReference} />;
 }

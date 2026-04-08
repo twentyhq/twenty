@@ -24,8 +24,7 @@ export const HELPED_DATA: HelpedDataType = {
       body: {
         text: 'Realytics built lead scoring into their CRM and increased qualified outbound by 40%.',
       },
-      illustration: 'helpedMoney',
-      color: '#DE8CF6',
+      illustration: 'target',
     },
     {
       icon: 'beagle',
@@ -33,8 +32,7 @@ export const HELPED_DATA: HelpedDataType = {
       body: {
         text: 'Beagle launched a custom onboarding pipeline and shortened their sales cycle by 30%.',
       },
-      illustration: 'helpedSpaceship',
-      color: '#89FC9A',
+      illustration: 'spaceship',
     },
 
     {
@@ -43,8 +41,7 @@ export const HELPED_DATA: HelpedDataType = {
       body: {
         text: 'Evergreen unified sales and CS workflows, boosting expansion revenue by 25%.',
       },
-      illustration: 'helpedTarget',
-      color: '#E4E58A',
+      illustration: 'money',
     },
   ],
 };

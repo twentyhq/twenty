@@ -1,12 +1,11 @@
 'use client';
 
-import type { IllustrationProps } from '@/illustrations/types';
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-const GLB_URL = '/illustrations/partner/three-cards-illustration/two.glb';
+const GLB_URL = '/illustrations/partner/three-cards/programming.glb';
 
 const HALFTONE_NUM_ROWS = 65;
 
@@ -133,7 +132,7 @@ function applyHalftoneDashMaterials(
       quaternion: mesh.quaternion.clone(),
       wobblePhase: mesh.position.y * 4.2 + mesh.position.x * 1.7,
     };
-    mesh.userData.partnerCommunityMeshRest = rest;
+    mesh.userData.partnerTechnologyMeshRest = rest;
   });
 }
 
@@ -144,7 +143,7 @@ const StyledVisualMount = styled.div`
   width: 100%;
 `;
 
-export function PartnerCommunity(_properties: IllustrationProps) {
+export function Programming() {
   const mountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -254,7 +253,7 @@ export function PartnerCommunity(_properties: IllustrationProps) {
               return;
             }
 
-            const rest = sceneObject.userData.partnerCommunityMeshRest as
+            const rest = sceneObject.userData.partnerTechnologyMeshRest as
               | MeshRestPose
               | undefined;
             if (!rest) {

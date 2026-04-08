@@ -1,6 +1,5 @@
 'use client';
 
-import type { IllustrationProps } from '@/illustrations/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
@@ -146,7 +145,7 @@ const FaqVisualCanvasMount = styled.div`
   width: 100%;
 `;
 
-export function FaqBackground(_properties: IllustrationProps) {
+export function FaqBackground() {
   const mountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

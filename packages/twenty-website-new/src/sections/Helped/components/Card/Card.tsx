@@ -93,10 +93,7 @@ export function Card({ card }: CardProps) {
       </LogoRow>
       <Rule aria-hidden="true" />
       <VisualShell>
-        <IllustrationMount
-          illustration={card.illustration}
-          stripeColor={card.color}
-        />
+        <IllustrationMount illustration={card.illustration} />
       </VisualShell>
       <Rule aria-hidden="true" />
       <CopyBlock>

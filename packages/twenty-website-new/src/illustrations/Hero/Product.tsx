@@ -1,6 +1,5 @@
 'use client';
 
-import type { IllustrationProps } from '@/illustrations/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
@@ -139,7 +138,7 @@ function applyScanlineMaterials(
   });
 }
 
-export function Product(_properties: IllustrationProps) {
+export function Product() {
   const containerReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

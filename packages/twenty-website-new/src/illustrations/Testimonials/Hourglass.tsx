@@ -1,6 +1,5 @@
 'use client';
 
-import type { IllustrationProps } from '@/illustrations/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { useLayoutEffect, useRef } from 'react';
@@ -8,8 +7,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 const HOURGLASS_VISUAL_GLB_URL =
-  '/illustrations/home/testimonials/testimonials.glb';
-const HOURGLASS_VISUAL_TITLE = 'Testimonials illustration';
+  '/illustrations/home/testimonials/hourglass.glb';
 const HOURGLASS_VISUAL_MODEL_FIT_SCALE = 2.85;
 
 const scanlineVertexShader = /* glsl */ `
@@ -151,7 +149,7 @@ const CanvasMount = styled.div`
   width: 100%;
 `;
 
-export function Hourglass(_properties: IllustrationProps) {
+export function Hourglass() {
   const mountReference = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -345,11 +343,7 @@ export function Hourglass(_properties: IllustrationProps) {
 
   return (
     <VisualFrame>
-      <CanvasMount
-        aria-label={HOURGLASS_VISUAL_TITLE}
-        ref={mountReference}
-        role="img"
-      />
+      <CanvasMount aria-hidden ref={mountReference} />
     </VisualFrame>
   );
 }

@@ -1,12 +1,11 @@
 'use client';
 
-import type { IllustrationProps } from '@/illustrations/types';
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-const GLB_URL = '/illustrations/partner/three-cards-illustration/three.glb';
+const GLB_URL = '/illustrations/partner/three-cards/grow.glb';
 
 const HALFTONE_NUM_ROWS = 65;
 
@@ -144,7 +143,7 @@ const StyledVisualMount = styled.div`
   width: 100%;
 `;
 
-export function PartnerSolutions(_properties: IllustrationProps) {
+export function Grow() {
   const mountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

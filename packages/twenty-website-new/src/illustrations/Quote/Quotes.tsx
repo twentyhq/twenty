@@ -1,6 +1,5 @@
 'use client';
 
-import type { IllustrationProps } from '@/illustrations/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { useLayoutEffect, useRef } from 'react';
@@ -151,7 +150,7 @@ const CanvasMount = styled.div`
   width: 100%;
 `;
 
-export function Quotes(_properties: IllustrationProps) {
+export function Quotes() {
   const mountReference = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {

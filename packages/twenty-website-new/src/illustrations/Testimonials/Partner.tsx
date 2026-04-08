@@ -1,6 +1,5 @@
 'use client';
 
-import type { IllustrationProps } from '@/illustrations/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { useLayoutEffect, useRef } from 'react';
@@ -8,8 +7,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 const PARTNER_TESTIMONIALS_VISUAL_GLB_URL =
-  '/illustrations/partner/testimonials/testimonials.glb';
-const PARTNER_TESTIMONIALS_VISUAL_TITLE = 'Partner testimonials illustration';
+  '/illustrations/partner/testimonials/quote.glb';
 const PARTNER_TESTIMONIALS_VISUAL_MODEL_FIT_SCALE = 2.85;
 
 const scanlineVertexShader = /* glsl */ `
@@ -151,7 +149,7 @@ const CanvasMount = styled.div`
   width: 100%;
 `;
 
-export function Partner(_properties: IllustrationProps) {
+export function Partner() {
   const mountReference = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -341,11 +339,7 @@ export function Partner(_properties: IllustrationProps) {
 
   return (
     <VisualFrame>
-      <CanvasMount
-        aria-label={PARTNER_TESTIMONIALS_VISUAL_TITLE}
-        ref={mountReference}
-        role="img"
-      />
+      <CanvasMount aria-hidden ref={mountReference} />
     </VisualFrame>
   );
 }

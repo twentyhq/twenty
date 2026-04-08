@@ -1,6 +1,5 @@
 'use client';
 
-import type { IllustrationProps } from '@/illustrations/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { useLayoutEffect, useRef } from 'react';
@@ -186,7 +185,7 @@ function applyRetroScreenStripeMaterials(modelRoot: THREE.Object3D) {
   });
 }
 
-export function Logo(_properties: IllustrationProps) {
+export function Logo() {
   const glbMountReference = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {

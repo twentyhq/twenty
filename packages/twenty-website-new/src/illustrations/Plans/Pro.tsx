@@ -1,6 +1,5 @@
 'use client';
 
-import type { IllustrationProps } from '@/illustrations/types';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -138,7 +137,7 @@ const planCardVisualMountStyle = {
 
 const GLB_URL = '/illustrations/pricing/Price/pro.glb';
 
-export function Pro(_properties: IllustrationProps) {
+export function Pro() {
   const mountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

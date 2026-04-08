@@ -1,6 +1,5 @@
 'use client';
 
-import type { IllustrationProps } from '@/illustrations/types';
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
@@ -156,9 +155,7 @@ const FooterVisualCanvasMount = styled.div`
   width: 100%;
 `;
 
-export function FooterBackground({
-  'aria-hidden': ariaHidden,
-}: IllustrationProps) {
+export function FooterBackground() {
   const mountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -359,7 +356,7 @@ export function FooterBackground({
   }, []);
 
   return (
-    <FooterBackgroundCanvasRoot aria-hidden={ariaHidden}>
+    <FooterBackgroundCanvasRoot aria-hidden>
       <FooterVisualCanvasMount ref={mountReference} />
     </FooterBackgroundCanvasRoot>
   );

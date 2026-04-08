@@ -1,12 +1,11 @@
 'use client';
 
-import type { IllustrationProps } from '@/illustrations/types';
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-const GLB_URL = '/illustrations/product/three-cards-illustration/two.glb';
+const GLB_URL = '/illustrations/product/three-cards/eye.glb';
 
 const HALFTONE_NUM_ROWS = 65;
 
@@ -144,7 +143,7 @@ const StyledVisualMount = styled.div`
   width: 100%;
 `;
 
-export function Eye(_properties: IllustrationProps) {
+export function Eye() {
   const mountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
