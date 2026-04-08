@@ -1,4 +1,5 @@
 import { StyledTintedIconTileContainer } from '@/ui/display/components/StyledTintedIconTileContainer';
+import { DEFAULT_THEME_COLOR_FALLBACK } from '@/ui/display/constants/defaultThemeColorFallback.constant';
 import { getIconTileColorShades } from '@/ui/display/utils/getIconTileColorShades';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,7 +15,7 @@ export type TintedIconTileProps = {
 
 export const TintedIconTile = ({
   Icon,
-  color,
+  color = DEFAULT_THEME_COLOR_FALLBACK,
   size: sizeFromProps,
   stroke: strokeFromProps,
 }: TintedIconTileProps) => {

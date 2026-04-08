@@ -19,7 +19,6 @@ import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { TintedIconTile } from '@/ui/display/components/TintedIconTile';
-import { DEFAULT_THEME_COLOR_FALLBACK } from '@/ui/display/constants/defaultThemeColorFallback.constant';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -87,12 +86,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
                 onEnter={onSelectView}
               >
                 <CommandMenuItem
-                  Icon={() => (
-                    <TintedIconTile
-                      Icon={IconTable}
-                      color={DEFAULT_THEME_COLOR_FALLBACK}
-                    />
-                  )}
+                  Icon={() => <TintedIconTile Icon={IconTable} />}
                   label={t`View`}
                   id={NavigationMenuItemType.VIEW}
                   hasSubMenu={true}
