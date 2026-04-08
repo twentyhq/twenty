@@ -170,6 +170,7 @@ export class WorkspaceUpgradeService {
           name: commandName,
           workspaceId,
           executedByVersion,
+          error,
         });
       }
 

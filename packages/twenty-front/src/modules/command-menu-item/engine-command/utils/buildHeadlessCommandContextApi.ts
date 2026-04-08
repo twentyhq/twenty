@@ -14,7 +14,10 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { isDefined } from 'twenty-shared/utils';
-import { type EngineComponentKey } from '~/generated-metadata/graphql';
+import {
+  type EngineComponentKey,
+  type CommandMenuItemPayload,
+} from '~/generated-metadata/graphql';
 
 export const buildHeadlessCommandContextApi = ({
   store,
@@ -25,7 +28,7 @@ export const buildHeadlessCommandContextApi = ({
   store: Store;
   contextStoreInstanceId: string;
   engineComponentKey: EngineComponentKey;
-  payload?: Record<string, unknown> | null;
+  payload?: CommandMenuItemPayload | null;
 }): HeadlessEngineCommandContextApi => {
   const objectMetadataItemId = store.get(
     contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({

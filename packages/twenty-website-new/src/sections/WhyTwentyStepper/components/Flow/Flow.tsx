@@ -1,11 +1,11 @@
 'use client';
 
+import { IllustrationMount } from '@/illustrations';
 import { SyncScrollProgressFromContainerEffect } from '@/sections/WhyTwentyStepper/effect-components/SyncScrollProgressFromContainerEffect';
 import type { WhyTwentyStepperDataType } from '@/sections/WhyTwentyStepper/types';
 import { useRef, useState } from 'react';
 import { Content } from '../Content/Content';
 import { Root } from '../Root/Root';
-import { Visual } from '../Visual/Visual';
 
 type FlowProps = WhyTwentyStepperDataType;
 
@@ -32,7 +32,7 @@ export function Flow({ body, heading, illustration }: FlowProps) {
         heading={heading}
         localProgress={localProgress}
       />
-      <Visual illustration={illustration} />
+      <IllustrationMount illustration={illustration} />
     </Root>
   );
 }

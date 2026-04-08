@@ -1,10 +1,9 @@
 import { Container } from '@/design-system/components';
-import type { IllustrationType } from '@/design-system/components/Illustration/types/Illustration';
+import { IllustrationMount, type IllustrationId } from '@/illustrations';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 import { FooterShape } from '../../FooterShape';
-import { FooterBackground } from '../FooterBackground/FooterBackground';
 
 const FooterRoot = styled.footer`
   background-color: ${theme.colors.secondary.background[100]};
@@ -50,14 +49,14 @@ const FooterContent = styled.div`
 
 type RootProps = {
   children: ReactNode;
-  illustration: IllustrationType;
+  illustration: IllustrationId;
 };
 
 export function Root({ children, illustration }: RootProps) {
   return (
     <FooterRoot>
       <FooterContainer>
-        <FooterBackground aria-hidden illustration={illustration} />
+        <IllustrationMount illustration={illustration} />
         <FooterContent>
           <FooterShape fillColor={theme.colors.primary.background[100]} />
           {children}

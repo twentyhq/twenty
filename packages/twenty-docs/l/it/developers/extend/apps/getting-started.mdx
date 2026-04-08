@@ -98,20 +98,20 @@ La modalità di sviluppo è disponibile solo sulle istanze di Twenty in esecuzio
   <img src="/images/docs/developers/extends/apps/dev.jpg" alt="Output del terminale in modalità sviluppo" />
 </div>
 
-#### One-shot sync with `yarn twenty dev --once`
+#### Sincronizzazione una tantum con `yarn twenty dev --once`
 
-If you do not want a watcher running in the background (for example in a CI pipeline, a git hook, or a scripted workflow), pass the `--once` flag. It runs the same pipeline as `yarn twenty dev` — build manifest, bundle files, upload, sync, regenerate the typed API client — but **exits as soon as the sync completes**:
+Se non vuoi un watcher in esecuzione in background (ad esempio in una pipeline CI, un hook di Git o un flusso di lavoro scriptato), passa il flag `--once`. Esegue la stessa pipeline di `yarn twenty dev` — genera il manifest, effettua il bundling dei file, carica, sincronizza, rigenera il client API tipizzato — ma **termina non appena la sincronizzazione è completata**:
 
 ```bash filename="Terminal"
 yarn twenty dev --once
 ```
 
-| Comando                  | Comportamento                                                                            | When to use                                                                               |
-| ------------------------ | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `yarn twenty dev`        | Watches your source files and re-syncs on every change. Keeps running until you stop it. | Interactive local development — you want the live status panel and instant feedback loop. |
-| `yarn twenty dev --once` | Performs a single build + sync, then exits with code `0` on success or `1` on failure.   | Scripts, CI, pre-commit hooks, AI agents, and any non-interactive workflow.               |
+| Comando                  | Comportamento                                                                                                           | Quando usarlo                                                                                            |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `yarn twenty dev`        | Monitora i file sorgente e risincronizza a ogni modifica. Rimane in esecuzione finché non lo interrompi.                | Sviluppo locale interattivo — vuoi il pannello di stato in tempo reale e un ciclo di feedback immediato. |
+| `yarn twenty dev --once` | Esegue una singola build + sincronizzazione, quindi termina con codice `0` in caso di successo o `1` in caso di errore. | Script, CI, hook pre-commit, agenti IA e qualsiasi flusso di lavoro non interattivo.                     |
 
-Both modes require a Twenty server running in development mode and an authenticated remote — the same prerequisites apply.
+Entrambe le modalità richiedono un server Twenty in esecuzione in modalità di sviluppo e un remote autenticato — si applicano gli stessi prerequisiti.
 
 ### Visualizza la tua app in Twenty
 

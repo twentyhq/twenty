@@ -2286,7 +2286,7 @@ export interface CommandMenuItem {
     position: Scalars['Float']
     isPinned: Scalars['Boolean']
     availabilityType: CommandMenuItemAvailabilityType
-    payload?: Scalars['JSON']
+    payload?: CommandMenuItemPayload
     hotKeys?: Scalars['String'][]
     conditionalAvailabilityExpression?: Scalars['String']
     availabilityObjectMetadataId?: Scalars['UUID']
@@ -2299,6 +2299,18 @@ export interface CommandMenuItem {
 export type EngineComponentKey = 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'CREATE_NEW_RECORD' | 'DELETE_RECORDS' | 'RESTORE_RECORDS' | 'DESTROY_RECORDS' | 'ADD_TO_FAVORITES' | 'REMOVE_FROM_FAVORITES' | 'EXPORT_NOTE_TO_PDF' | 'EXPORT_RECORDS' | 'UPDATE_MULTIPLE_RECORDS' | 'MERGE_MULTIPLE_RECORDS' | 'IMPORT_RECORDS' | 'EXPORT_VIEW' | 'SEE_DELETED_RECORDS' | 'CREATE_NEW_VIEW' | 'HIDE_DELETED_RECORDS' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EDIT_DASHBOARD_LAYOUT' | 'SAVE_DASHBOARD_LAYOUT' | 'CANCEL_DASHBOARD_LAYOUT' | 'DUPLICATE_DASHBOARD' | 'ACTIVATE_WORKFLOW' | 'DEACTIVATE_WORKFLOW' | 'DISCARD_DRAFT_WORKFLOW' | 'TEST_WORKFLOW' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_RUNS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'DUPLICATE_WORKFLOW' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'STOP_WORKFLOW_RUN' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'ASK_AI' | 'VIEW_PREVIOUS_AI_CHATS' | 'NAVIGATION' | 'TRIGGER_WORKFLOW_VERSION' | 'FRONT_COMPONENT_RENDERER' | 'REPLY_TO_EMAIL_THREAD' | 'COMPOSE_EMAIL' | 'GO_TO_PEOPLE' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_NOTES' | 'GO_TO_WORKFLOWS' | 'GO_TO_RUNS' | 'DELETE_SINGLE_RECORD' | 'DELETE_MULTIPLE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RESTORE_MULTIPLE_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS'
 
 export type CommandMenuItemAvailabilityType = 'GLOBAL' | 'RECORD_SELECTION' | 'FALLBACK'
+
+export type CommandMenuItemPayload = (PathCommandMenuItemPayload | ObjectMetadataCommandMenuItemPayload) & { __isUnion?: true }
+
+export interface PathCommandMenuItemPayload {
+    path: Scalars['String']
+    __typename: 'PathCommandMenuItemPayload'
+}
+
+export interface ObjectMetadataCommandMenuItemPayload {
+    objectMetadataItemId: Scalars['UUID']
+    __typename: 'ObjectMetadataCommandMenuItemPayload'
+}
 
 export interface ToolIndexEntry {
     name: Scalars['String']
@@ -5486,13 +5498,31 @@ export interface CommandMenuItemGenqlSelection{
     position?: boolean | number
     isPinned?: boolean | number
     availabilityType?: boolean | number
-    payload?: boolean | number
+    payload?: CommandMenuItemPayloadGenqlSelection
     hotKeys?: boolean | number
     conditionalAvailabilityExpression?: boolean | number
     availabilityObjectMetadataId?: boolean | number
     applicationId?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface CommandMenuItemPayloadGenqlSelection{
+    on_PathCommandMenuItemPayload?:PathCommandMenuItemPayloadGenqlSelection,
+    on_ObjectMetadataCommandMenuItemPayload?:ObjectMetadataCommandMenuItemPayloadGenqlSelection,
+    __typename?: boolean | number
+}
+
+export interface PathCommandMenuItemPayloadGenqlSelection{
+    path?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ObjectMetadataCommandMenuItemPayloadGenqlSelection{
+    objectMetadataItemId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8425,6 +8455,30 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isCommandMenuItem = (obj?: { __typename?: any } | null): obj is CommandMenuItem => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isCommandMenuItem"')
       return CommandMenuItem_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CommandMenuItemPayload_possibleTypes: string[] = ['PathCommandMenuItemPayload','ObjectMetadataCommandMenuItemPayload']
+    export const isCommandMenuItemPayload = (obj?: { __typename?: any } | null): obj is CommandMenuItemPayload => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCommandMenuItemPayload"')
+      return CommandMenuItemPayload_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PathCommandMenuItemPayload_possibleTypes: string[] = ['PathCommandMenuItemPayload']
+    export const isPathCommandMenuItemPayload = (obj?: { __typename?: any } | null): obj is PathCommandMenuItemPayload => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPathCommandMenuItemPayload"')
+      return PathCommandMenuItemPayload_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ObjectMetadataCommandMenuItemPayload_possibleTypes: string[] = ['ObjectMetadataCommandMenuItemPayload']
+    export const isObjectMetadataCommandMenuItemPayload = (obj?: { __typename?: any } | null): obj is ObjectMetadataCommandMenuItemPayload => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectMetadataCommandMenuItemPayload"')
+      return ObjectMetadataCommandMenuItemPayload_possibleTypes.includes(obj.__typename)
     }
     
 
