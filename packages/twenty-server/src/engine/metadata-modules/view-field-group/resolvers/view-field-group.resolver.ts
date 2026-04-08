@@ -23,7 +23,6 @@ import { DestroyViewFieldGroupInput } from 'src/engine/metadata-modules/view-fie
 import { UpdateViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/update-view-field-group.input';
 import { UpsertFieldsWidgetInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/upsert-fields-widget.input';
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
-import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { FieldsWidgetUpsertService } from 'src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service';
 import { ViewFieldGroupService } from 'src/engine/metadata-modules/view-field-group/services/view-field-group.service';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
@@ -45,7 +44,7 @@ export class ViewFieldGroupResolver {
   async getViewFieldGroups(
     @Args('viewId', { type: () => String }) viewId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<ViewFieldGroupEntity[]> {
+  ): Promise<ViewFieldGroupDTO[]> {
     return this.viewFieldGroupService.findByViewId(workspace.id, viewId);
   }
 
@@ -54,7 +53,7 @@ export class ViewFieldGroupResolver {
   async getViewFieldGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<ViewFieldGroupEntity | null> {
+  ): Promise<ViewFieldGroupDTO | null> {
     return this.viewFieldGroupService.findById(id, workspace.id);
   }
 

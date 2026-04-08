@@ -11,7 +11,6 @@ import { DeleteViewFieldInput } from 'src/engine/metadata-modules/view-field/dto
 import { DestroyViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/destroy-view-field.input';
 import { UpdateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/update-view-field.input';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
-import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { CreateViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-field-permission.guard';
 import { DeleteViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-field-permission.guard';
@@ -30,7 +29,7 @@ export class ViewFieldResolver {
   async getViewFields(
     @Args('viewId', { type: () => String }) viewId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<ViewFieldEntity[]> {
+  ): Promise<ViewFieldDTO[]> {
     return this.viewFieldService.findByViewId(workspace.id, viewId);
   }
 
@@ -39,7 +38,7 @@ export class ViewFieldResolver {
   async getViewField(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<ViewFieldEntity | null> {
+  ): Promise<ViewFieldDTO | null> {
     return this.viewFieldService.findById(id, workspace.id);
   }
 
