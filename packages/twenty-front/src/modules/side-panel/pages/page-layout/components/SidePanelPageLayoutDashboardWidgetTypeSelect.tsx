@@ -251,7 +251,7 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
           >
             <CommandMenuItem
               Icon={IconTable}
-              label={t`Record Table`}
+              label={t`Object View`}
               id="record-table"
               onClick={handleNavigateToRecordTableSettings}
             />
