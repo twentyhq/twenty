@@ -376,7 +376,10 @@ export class ViewFieldGroupService {
       flatEntityMaps: flatViewFieldGroupMaps,
     });
 
-    if (!isDefined(flatViewFieldGroup)) {
+    if (
+      !isDefined(flatViewFieldGroup) ||
+      isDefined(flatViewFieldGroup.deletedAt)
+    ) {
       return null;
     }
 
