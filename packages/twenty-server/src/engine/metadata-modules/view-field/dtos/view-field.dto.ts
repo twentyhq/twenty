@@ -51,7 +51,10 @@ export class ViewFieldDTO {
   @Field(() => Date, { nullable: true })
   deletedAt?: Date | null;
 
-  @Field(() => Boolean, { nullable: false })
+  @Field(() => Boolean, {
+    nullable: false,
+    deprecationReason: 'isOverridden is deprecated',
+  })
   isOverridden: boolean;
 
   @HideField()

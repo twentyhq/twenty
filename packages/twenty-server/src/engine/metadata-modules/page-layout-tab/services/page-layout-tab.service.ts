@@ -52,7 +52,8 @@ export class PageLayoutTabService {
     return Object.values(flatPageLayoutTabMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter(
-        (tab) => tab.pageLayoutId === pageLayoutId && !isDefined(tab.deletedAt),
+        (tab) =>
+          tab.pageLayoutId === pageLayoutId && !isDefined(tab.deletedAt),
       )
       .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
       .map((tab) =>
