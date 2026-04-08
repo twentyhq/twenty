@@ -144,21 +144,14 @@ ${downStatements.join('\n')}
     upStatements: string[];
     downStatements: string[];
   }): string {
-    return `import { InjectDataSource } from '@nestjs/typeorm';
-
-import { DataSource, QueryRunner } from 'typeorm';
+    return `import { DataSource, QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
 @RegisteredInstanceCommand('${version}', ${timestamp}, { type: 'slow' })
 export class ${className} implements SlowInstanceCommand {
-  constructor(
-    @InjectDataSource()
-    private readonly dataSource: DataSource,
-  ) {}
-
-  async runDataMigration(): Promise<void> {
+  async runDataMigration(dataSource: DataSource): Promise<void> {
     // TODO: implement data backfill before the DDL migration
   }
 

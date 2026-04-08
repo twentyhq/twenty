@@ -144,21 +144,14 @@ exports[`InstanceCommandGenerationService should generate a slow instance comman
 {
   "className": "MakeColumnNotNullableSlowInstanceCommand",
   "fileName": "1-21-instance-command-slow-1775000000000-make-column-not-nullable.ts",
-  "fileTemplate": "import { InjectDataSource } from '@nestjs/typeorm';
-
-import { DataSource, QueryRunner } from 'typeorm';
+  "fileTemplate": "import { DataSource, QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
 @RegisteredInstanceCommand('1.21.0', 1775000000000, { type: 'slow' })
 export class MakeColumnNotNullableSlowInstanceCommand implements SlowInstanceCommand {
-  constructor(
-    @InjectDataSource()
-    private readonly dataSource: DataSource,
-  ) {}
-
-  async runDataMigration(): Promise<void> {
+  async runDataMigration(dataSource: DataSource): Promise<void> {
     // TODO: implement data backfill before the DDL migration
   }
 
