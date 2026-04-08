@@ -51,9 +51,7 @@ export const useRefreshPageLayoutAfterReset = (
   );
 
   const refreshPageLayoutAfterReset = useCallback(
-    async (
-      collectAffectedViewIds: (layout: PageLayout) => Set<string>,
-    ) => {
+    async (collectAffectedViewIds: (layout: PageLayout) => Set<string>) => {
       const { data } = await client.query({
         query: FindOnePageLayoutDocument,
         variables: { id: pageLayoutId },

@@ -4053,7 +4053,7 @@ export type PageLayoutTab = {
   icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   /** @deprecated isOverridden is deprecated */
-  isOverridden: Scalars['Boolean'];
+  isOverridden?: Maybe<Scalars['Boolean']>;
   layoutMode?: Maybe<PageLayoutTabLayoutMode>;
   pageLayoutId: Scalars['UUID'];
   position: Scalars['Float'];
@@ -4083,7 +4083,7 @@ export type PageLayoutWidget = {
   gridPosition: GridPosition;
   id: Scalars['UUID'];
   /** @deprecated isOverridden is deprecated */
-  isOverridden: Scalars['Boolean'];
+  isOverridden?: Maybe<Scalars['Boolean']>;
   objectMetadataId?: Maybe<Scalars['UUID']>;
   pageLayoutTabId: Scalars['UUID'];
   position?: Maybe<PageLayoutWidgetPosition>;
@@ -5899,7 +5899,7 @@ export type ViewField = {
   fieldMetadataId: Scalars['UUID'];
   id: Scalars['UUID'];
   /** @deprecated isOverridden is deprecated */
-  isOverridden: Scalars['Boolean'];
+  isOverridden?: Maybe<Scalars['Boolean']>;
   isVisible: Scalars['Boolean'];
   position: Scalars['Float'];
   size: Scalars['Float'];

@@ -1,4 +1,4 @@
-import { type Store } from 'jotai';
+import type { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -12,7 +12,7 @@ const VIEW_RELATED_METADATA_KEYS: MetadataEntityKey[] = [
 ];
 
 export const evictViewMetadataForViewIds = (
-  store: Store,
+  store: ReturnType<typeof useStore>,
   viewIds: Set<string>,
 ) => {
   if (viewIds.size === 0) {

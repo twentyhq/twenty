@@ -4,8 +4,7 @@ import { type ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/v
 export const fromFlatViewFieldToViewFieldDto = (
   flatViewField: FlatViewField,
 ): ViewFieldDTO => {
-  const { createdAt, updatedAt, deletedAt, overrides, ...rest } =
-    flatViewField;
+  const { createdAt, updatedAt, deletedAt, overrides, ...rest } = flatViewField;
 
   return {
     ...rest,
