@@ -94,14 +94,12 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       objectMetadataNameSingular,
     );
 
-    const groupByFields =
-      args.groupByFields ??
-      parseGroupByArgs(
-        args,
-        flatObjectMetadata,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      );
+    const groupByFields = parseGroupByArgs(
+      args,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    );
 
     const objectAlias = getObjectAlias(flatObjectMetadata);
 

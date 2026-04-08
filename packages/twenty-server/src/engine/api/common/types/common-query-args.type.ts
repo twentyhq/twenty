@@ -9,7 +9,6 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { type GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
 import {
   type CommonSelectedFields,
   type CommonSelectedFieldsResult,
@@ -68,8 +67,6 @@ export interface GroupByQueryArgs {
   orderBy?: OrderByWithGroupBy;
   orderByForRecords?: ObjectRecordOrderBy;
   groupBy: ObjectRecordGroupBy;
-  // Optional optimization for callers that already parsed groupBy args.
-  groupByFields?: GroupByField[];
   viewId?: string;
   includeRecords?: boolean;
   selectedFields: CommonSelectedFields;

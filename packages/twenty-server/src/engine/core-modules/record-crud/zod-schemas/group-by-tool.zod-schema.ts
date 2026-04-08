@@ -1,6 +1,7 @@
 import {
   AggregateOperations,
   compositeTypeDefinitions,
+  FirstDayOfTheWeek,
   FieldMetadataType,
   ObjectRecordGroupByDateGranularity,
   RelationType,
@@ -15,9 +16,36 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { shouldExcludeFieldFromAgentToolSchema } from 'src/engine/metadata-modules/field-metadata/utils/should-exclude-field-from-agent-tool-schema.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
-const getGroupableSubFieldsForCompositeType = (
-  type: FieldMetadataType,
-): string[] | null => {
+const dateGranularityValues = Object.values(
+  ObjectRecordGroupByDateGranularity,
+).filter((v) => v !== ObjectRecordGroupByDateGranularity.NONE) as [
+  string,
+  ...string[],
+];
+
+const dateGroupBySchema = z
+  .object({
+    granularity: z
+      .enum(dateGranularityValues)
+      .default(ObjectRecordGroupByDateGranularity.MONTH)
+      .describe('Date grouping granularity. Default: MONTH.'),
+    weekStartDay: z
+      .nativeEnum(FirstDayOfTheWeek)
+      .optional()
+      .describe(
+        'First day of week (MONDAY, SUNDAY, SATURDAY). Only used when granularity is WEEK.',
+      ),
+    timeZone: z
+      .string()
+      .default('UTC')
+      .describe(
+        'IANA timezone for date groupings (e.g. "America/New_York"). Default: UTC.',
+      ),
+  })
+  .strict()
+  .describe('Date field grouping configuration');
+
+const getGroupableSubFields = (type: FieldMetadataType): string[] | null => {
   const compositeTypeDefinition = compositeTypeDefinitions.get(type);
 
   if (!compositeTypeDefinition) {
@@ -25,7 +53,11 @@ const getGroupableSubFieldsForCompositeType = (
   }
 
   return compositeTypeDefinition.properties
-    .filter((property) => property.hidden !== true)
+    .filter(
+      (property) =>
+        property.hidden !== true &&
+        property.type !== FieldMetadataType.RAW_JSON,
+    )
     .map((property) => property.name);
 };
 
@@ -33,7 +65,8 @@ export const generateGroupByToolInputSchema = (
   objectMetadata: ObjectMetadataForToolSchema,
   restrictedFields?: RestrictedFieldsPermissions,
 ): z.ZodTypeAny | null => {
-  const groupableFieldNames: string[] = [];
+  const groupByEntries: z.ZodTypeAny[] = [];
+  const fieldNameDescriptions: string[] = [];
 
   for (const field of objectMetadata.fields) {
     if (restrictedFields?.[field.id]?.canRead === false) {
@@ -49,9 +82,15 @@ export const generateGroupByToolInputSchema = (
     }
 
     if (isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION)) {
-      // v1: expose FK-like grouping only for MANY_TO_ONE relations.
       if (field.settings?.relationType === RelationType.MANY_TO_ONE) {
-        groupableFieldNames.push(`${field.name}Id`);
+        groupByEntries.push(
+          z
+            .object({
+              [`${field.name}Id`]: z.object({ id: z.literal(true) }).strict(),
+            })
+            .strict(),
+        );
+        fieldNameDescriptions.push(`${field.name}Id`);
       }
 
       continue;
@@ -62,63 +101,59 @@ export const generateGroupByToolInputSchema = (
     }
 
     if (isFieldMetadataDateKind(field.type)) {
-      groupableFieldNames.push(field.name);
+      groupByEntries.push(
+        z.object({ [field.name]: dateGroupBySchema }).strict(),
+      );
+      fieldNameDescriptions.push(`${field.name} (date)`);
       continue;
     }
 
     if (isCompositeFieldMetadataType(field.type)) {
-      const subFields = getGroupableSubFieldsForCompositeType(field.type);
+      const subFields = getGroupableSubFields(field.type);
 
       if (subFields) {
         for (const subField of subFields) {
-          groupableFieldNames.push(`${field.name}.${subField}`);
+          groupByEntries.push(
+            z
+              .object({
+                [field.name]: z
+                  .object({ [subField]: z.literal(true) })
+                  .strict(),
+              })
+              .strict(),
+          );
+          fieldNameDescriptions.push(`${field.name}.${subField}`);
         }
       }
 
       continue;
     }
 
-    groupableFieldNames.push(field.name);
+    groupByEntries.push(z.object({ [field.name]: z.literal(true) }).strict());
+    fieldNameDescriptions.push(field.name);
   }
 
-  if (groupableFieldNames.length === 0) {
+  if (groupByEntries.length === 0) {
     return null;
   }
 
-  const groupByEnum = z.enum(groupableFieldNames as [string, ...string[]]);
+  const groupByEntrySchema = z.union(
+    groupByEntries as [z.ZodTypeAny, z.ZodTypeAny, ...z.ZodTypeAny[]],
+  );
 
   const { filterShape, filterSchema } = generateRecordFilterSchema(
     objectMetadata,
     restrictedFields,
   );
 
-  const dateGranularityValues = Object.values(
-    ObjectRecordGroupByDateGranularity,
-  ).filter((v) => v !== ObjectRecordGroupByDateGranularity.NONE) as [
-    string,
-    ...string[],
-  ];
-
   return z
     .object({
       groupBy: z
-        .array(groupByEnum)
+        .array(groupByEntrySchema)
         .min(1)
         .max(2)
         .describe(
-          `Fields to group by (max 2). Available: ${groupableFieldNames.join(', ')}. Use dot notation for composite fields (e.g. "name.firstName"). Date fields use a separate dateGranularity param.`,
-        ),
-      dateGranularity: z
-        .enum(dateGranularityValues)
-        .optional()
-        .describe(
-          'Granularity for date field grouping. Applies to whichever groupBy field is a date type. Default: MONTH. Cannot use if both groupBy fields are dates.',
-        ),
-      timeZone: z
-        .string()
-        .optional()
-        .describe(
-          'IANA timezone for date groupings (e.g. "America/New_York"). Default: UTC.',
+          `Fields to group by (max 2). Each entry must be an object with exactly one field key. Examples: {"status": true}, {"companyId": {"id": true}}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: ${fieldNameDescriptions.join(', ')}.`,
         ),
       aggregateOperation: z
         .enum(Object.keys(AggregateOperations) as [string, ...string[]])

@@ -1,10 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import {
-  type AggregateOperations,
-  type ObjectRecordGroupByDateGranularity,
-} from 'twenty-shared/types';
+import { type AggregateOperations } from 'twenty-shared/types';
+
+import { type ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -191,8 +190,6 @@ export class ToolExecutorService {
       case 'group_by': {
         const {
           groupBy,
-          dateGranularity,
-          timeZone,
           aggregateOperation,
           aggregateFieldName,
           limit: groupByLimit,
@@ -202,11 +199,7 @@ export class ToolExecutorService {
 
         return this.groupByRecordsService.execute({
           objectName: ref.objectNameSingular,
-          groupBy: groupBy as string[],
-          dateGranularity: dateGranularity as
-            | ObjectRecordGroupByDateGranularity
-            | undefined,
-          timeZone: timeZone as string | undefined,
+          groupBy: groupBy as ObjectRecordGroupBy,
           aggregateOperation: aggregateOperation as
             | keyof typeof AggregateOperations
             | undefined,
