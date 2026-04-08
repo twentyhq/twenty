@@ -756,7 +756,7 @@ export default defineFrontComponent({
 });
 ```
 
-Po synchronizaci pomocí `yarn twenty dev` se rychlá akce zobrazí v pravém horním rohu stránky:
+Po synchronizaci pomocí `yarn twenty dev` (nebo po jednorázovém spuštění `yarn twenty dev --once`) se rychlá akce zobrazí v pravém horním rohu stránky:
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Tlačítko rychlé akce v pravém horním rohu" />
@@ -1402,7 +1402,7 @@ export default defineFrontComponent({
 
 ### Jak funguje bundlování
 
-Krok sestavení (`yarn twenty dev` nebo `yarn twenty build`) používá esbuild k vytvoření jediného samostatného souboru pro každou logickou funkci a každou frontendovou komponentu. Všechny importované balíčky jsou vloženy přímo do bundlu.
+Krok sestavení používá esbuild k vytvoření jediného samostatného souboru pro každou logickou funkci a každou frontendovou komponentu. Všechny importované balíčky jsou vloženy přímo do bundlu.
 
 **Logické funkce** běží v prostředí Node.js. Vestavěné moduly Node (`fs`, `path`, `crypto`, `http` atd.) jsou k dispozici a není je třeba instalovat.
 
