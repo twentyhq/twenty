@@ -81,11 +81,7 @@ export class SdkProviderFactoryService {
   }
 
   getRawOpenAIProvider(providerName: string): OpenAIProvider | undefined {
-    return this.getRawProvider<OpenAIProvider>(
-      providerName,
-      AI_SDK_OPENAI,
-      AI_SDK_OPENAI_COMPATIBLE,
-    );
+    return this.getRawProvider<OpenAIProvider>(providerName, AI_SDK_OPENAI);
   }
 
   clearCache(): void {
@@ -162,7 +158,7 @@ export class SdkProviderFactoryService {
     const provider = createOpenAICompatible({
       name: config.name ?? 'openai-compatible',
       baseURL: config.baseUrl,
-      apiKey: config.apiKey ?? '',
+      ...(config.apiKey && { apiKey: config.apiKey }),
     });
 
     return {
