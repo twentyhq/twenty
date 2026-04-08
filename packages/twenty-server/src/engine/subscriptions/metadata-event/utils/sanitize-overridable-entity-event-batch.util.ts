@@ -1,7 +1,6 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 import {
   type CreateMetadataEvent,
@@ -9,6 +8,13 @@ import {
   type MetadataEvent,
   type UpdateMetadataEvent,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
+
+const OVERRIDABLE_ENTITY_METADATA_NAMES = new Set<AllMetadataName>([
+  'viewField',
+  'viewFieldGroup',
+  'pageLayoutTab',
+  'pageLayoutWidget',
+]);
 
 const resolveRecordOverrides = (
   record: Record<string, unknown>,
@@ -89,12 +95,7 @@ const sanitizeUpdatedEvent = (
 export const sanitizeOverridableEntityEventBatch = (
   metadataEventBatch: MetadataEventBatch,
 ): MetadataEventBatch => {
-  const config =
-    ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME[
-      metadataEventBatch.metadataName
-    ];
-
-  if (!('overrides' in config)) {
+  if (!OVERRIDABLE_ENTITY_METADATA_NAMES.has(metadataEventBatch.metadataName)) {
     return metadataEventBatch;
   }
 

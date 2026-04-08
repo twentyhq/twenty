@@ -76,7 +76,9 @@ describe('sanitizeOverridableEntityEventBatch', () => {
 
       const result = sanitizeOverridableEntityEventBatch(batch);
 
-      const createdRecord = (result.events[0] as { properties: { after: Record<string, unknown> } }).properties.after;
+      const createdRecord = (
+        result.events[0] as { properties: { after: Record<string, unknown> } }
+      ).properties.after;
 
       expect(createdRecord.isVisible).toBe(false);
       expect(createdRecord).not.toHaveProperty('overrides');
@@ -97,7 +99,9 @@ describe('sanitizeOverridableEntityEventBatch', () => {
 
       const result = sanitizeOverridableEntityEventBatch(batch);
 
-      const createdRecord = (result.events[0] as { properties: { after: Record<string, unknown> } }).properties.after;
+      const createdRecord = (
+        result.events[0] as { properties: { after: Record<string, unknown> } }
+      ).properties.after;
 
       expect(createdRecord.isVisible).toBe(true);
       expect(createdRecord).not.toHaveProperty('overrides');
@@ -123,7 +127,9 @@ describe('sanitizeOverridableEntityEventBatch', () => {
 
       const result = sanitizeOverridableEntityEventBatch(batch);
 
-      const createdRecord = (result.events[0] as { properties: { after: Record<string, unknown> } }).properties.after;
+      const createdRecord = (
+        result.events[0] as { properties: { after: Record<string, unknown> } }
+      ).properties.after;
 
       expect(createdRecord.isVisible).toBe(false);
       expect(createdRecord.size).toBe(300);
@@ -184,7 +190,9 @@ describe('sanitizeOverridableEntityEventBatch', () => {
 
       const result = sanitizeOverridableEntityEventBatch(batch);
 
-      const deletedRecord = (result.events[0] as { properties: { before: Record<string, unknown> } }).properties.before;
+      const deletedRecord = (
+        result.events[0] as { properties: { before: Record<string, unknown> } }
+      ).properties.before;
 
       expect(deletedRecord.isVisible).toBe(false);
       expect(deletedRecord).not.toHaveProperty('overrides');
@@ -233,7 +241,11 @@ describe('sanitizeOverridableEntityEventBatch', () => {
       expect(result.events).toHaveLength(1);
       expect(result.events[0].type).toBe('deleted');
       expect(
-        (result.events[0] as { properties: { before: Record<string, unknown> } }).properties.before,
+        (
+          result.events[0] as {
+            properties: { before: Record<string, unknown> };
+          }
+        ).properties.before,
       ).not.toHaveProperty('isActive');
     });
 
@@ -263,7 +275,9 @@ describe('sanitizeOverridableEntityEventBatch', () => {
       expect(result.events).toHaveLength(1);
       expect(result.events[0].type).toBe('created');
 
-      const createdRecord = (result.events[0] as { properties: { after: Record<string, unknown> } }).properties.after;
+      const createdRecord = (
+        result.events[0] as { properties: { after: Record<string, unknown> } }
+      ).properties.after;
 
       expect(createdRecord.isVisible).toBe(false);
       expect(createdRecord).not.toHaveProperty('overrides');
@@ -352,7 +366,9 @@ describe('sanitizeOverridableEntityEventBatch', () => {
 
       const result = sanitizeOverridableEntityEventBatch(batch);
 
-      const createdRecord = (result.events[0] as { properties: { after: Record<string, unknown> } }).properties.after;
+      const createdRecord = (
+        result.events[0] as { properties: { after: Record<string, unknown> } }
+      ).properties.after;
 
       expect(createdRecord.title).toBe('Overridden Title');
       expect(createdRecord).not.toHaveProperty('overrides');
