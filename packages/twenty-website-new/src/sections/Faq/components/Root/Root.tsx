@@ -1,6 +1,5 @@
 import { Container } from '@/design-system/components';
-import type { IllustrationType } from '@/design-system/components/Illustration/types/Illustration';
-import { FaqVisual } from '../FaqVisual/FaqVisual';
+import { IllustrationMount, type IllustrationId } from '@/illustrations';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
@@ -41,14 +40,14 @@ const StyledContainer = styled(Container)`
 
 type RootProps = {
   children: ReactNode;
-  illustration: IllustrationType;
+  illustration: IllustrationId;
 };
 
 export function Root({ children, illustration }: RootProps) {
   return (
     <StyledSection>
       <IllustrationLayer aria-hidden>
-        <FaqVisual src={illustration.src} title={illustration.title} />
+        <IllustrationMount illustration={illustration} />
       </IllustrationLayer>
       <StyledContainer>{children}</StyledContainer>
     </StyledSection>

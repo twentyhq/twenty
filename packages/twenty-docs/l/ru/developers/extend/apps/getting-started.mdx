@@ -98,20 +98,20 @@ yarn twenty dev --verbose
   <img src="/images/docs/developers/extends/apps/dev.jpg" alt="Вывод терминала в режиме разработки" />
 </div>
 
-#### One-shot sync with `yarn twenty dev --once`
+#### Разовая синхронизация с `yarn twenty dev --once`
 
-If you do not want a watcher running in the background (for example in a CI pipeline, a git hook, or a scripted workflow), pass the `--once` flag. It runs the same pipeline as `yarn twenty dev` — build manifest, bundle files, upload, sync, regenerate the typed API client — but **exits as soon as the sync completes**:
+Если вы не хотите, чтобы в фоновом режиме работал наблюдатель (например, в конвейере CI, хуке Git или скриптовом рабочем процессе), передайте флаг `--once`. Он запускает тот же конвейер, что и `yarn twenty dev` — собирает манифест, упаковывает файлы, загружает, синхронизирует, повторно генерирует типизированный клиент API — но **выходит сразу после завершения синхронизации**:
 
 ```bash filename="Terminal"
 yarn twenty dev --once
 ```
 
-| Команда                  | Поведение                                                                                | When to use                                                                               |
-| ------------------------ | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `yarn twenty dev`        | Watches your source files and re-syncs on every change. Keeps running until you stop it. | Interactive local development — you want the live status panel and instant feedback loop. |
-| `yarn twenty dev --once` | Performs a single build + sync, then exits with code `0` on success or `1` on failure.   | Scripts, CI, pre-commit hooks, AI agents, and any non-interactive workflow.               |
+| Команда                  | Поведение                                                                                                                       | Когда использовать                                                                                            |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `yarn twenty dev`        | Отслеживает ваши исходные файлы и повторно синхронизирует при каждом изменении. Продолжает работать, пока вы его не остановите. | Интерактивная локальная разработка — вам нужна панель статуса в реальном времени и мгновенная обратная связь. |
+| `yarn twenty dev --once` | Выполняет одну сборку и синхронизацию, затем завершает работу с кодом `0` при успехе или `1` при ошибке.                        | Скрипты, CI, хуки pre-commit, AI-агенты и любые неинтерактивные рабочие процессы.                             |
 
-Both modes require a Twenty server running in development mode and an authenticated remote — the same prerequisites apply.
+Оба режима требуют сервер Twenty, запущенный в режиме разработки, и аутентифицированный удалённый ресурс — действуют те же предварительные требования.
 
 ### Посмотрите своё приложение в Twenty
 

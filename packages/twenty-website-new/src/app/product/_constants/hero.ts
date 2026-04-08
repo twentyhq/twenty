@@ -8,8 +8,5 @@ export const HERO_DATA: HeroIllustrationDataType = {
   body: {
     text: 'Modern interface. AI assistance. All the features you need, ready from day one.',
   },
-  illustration: {
-    src: '/illustrations/product/hero/hero.glb',
-    title: 'Product hero illustration',
-  },
+  illustration: 'heroProduct',
 };

@@ -17,10 +17,7 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
       },
       benefits: undefined,
       attribution: undefined,
-      illustration: {
-        src: '/illustrations/product/three-cards-illustration/one.glb',
-        title: 'Built for speed illustration',
-      },
+      illustration: 'speed',
     },
     {
       heading: { text: 'Real-time data', fontFamily: 'sans' },
@@ -29,10 +26,7 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
       },
       benefits: undefined,
       attribution: undefined,
-      illustration: {
-        src: '/illustrations/product/three-cards-illustration/two.glb',
-        title: 'Real-time data illustration',
-      },
+      illustration: 'eye',
     },
     {
       heading: { text: 'Stay in Flow', fontFamily: 'sans' },
@@ -41,10 +35,7 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
       },
       benefits: undefined,
       attribution: undefined,
-      illustration: {
-        src: '/illustrations/product/three-cards-illustration/three.glb',
-        title: 'Stay in flow illustration',
-      },
+      illustration: 'singleScreen',
     },
   ],
 };
