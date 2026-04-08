@@ -7016,11 +7016,6 @@ msgstr "フルアクセス"
 msgid "Function name"
 msgstr "関数名"
 
-#. js-lingui-id: xANKBj
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Functions"
-msgstr "機能"
-
 #. js-lingui-id: tkr79G
 #: src/utils/title-utils.ts
 msgid "Functions - Settings"
@@ -8675,6 +8670,11 @@ msgstr "ログ保持"
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
 msgid "Logged in as {impersonatedUser}"
 msgstr "{impersonatedUser}としてログイン中"
+
+#. js-lingui-id: wuCnq1
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Logic"
+msgstr ""
 
 #. js-lingui-id: sTlKkx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -12181,11 +12181,6 @@ msgstr "関数を実行中"
 msgid "Running..."
 msgstr "実行中..."
 
-#. js-lingui-id: eo1n1s
-#: src/modules/settings/logic-functions/components/SettingsLogicFunctionsTable.tsx
-msgid "Runtime"
-msgstr "ランタイム"
-
 #. js-lingui-id: nji0/X
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Russian"
@@ -14531,6 +14526,7 @@ msgstr "トライアル期間が終了しました。請求先の詳細を更新
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
+#: src/modules/settings/logic-functions/components/SettingsLogicFunctionsTable.tsx
 msgid "Trigger"
 msgstr "トリガー"
 

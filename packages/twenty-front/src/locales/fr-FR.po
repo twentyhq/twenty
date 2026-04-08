@@ -7016,11 +7016,6 @@ msgstr "Accès complet"
 msgid "Function name"
 msgstr "Nom de la fonction"
 
-#. js-lingui-id: xANKBj
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Functions"
-msgstr "Fonctions"
-
 #. js-lingui-id: tkr79G
 #: src/utils/title-utils.ts
 msgid "Functions - Settings"
@@ -8675,6 +8670,11 @@ msgstr "Rétention des journaux"
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
 msgid "Logged in as {impersonatedUser}"
 msgstr "Connecté en tant que {impersonatedUser}"
+
+#. js-lingui-id: wuCnq1
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Logic"
+msgstr ""
 
 #. js-lingui-id: sTlKkx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -12181,11 +12181,6 @@ msgstr "Exécution de la fonction"
 msgid "Running..."
 msgstr "Exécution en cours..."
 
-#. js-lingui-id: eo1n1s
-#: src/modules/settings/logic-functions/components/SettingsLogicFunctionsTable.tsx
-msgid "Runtime"
-msgstr "Environnement d'exécution"
-
 #. js-lingui-id: nji0/X
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Russian"
@@ -14533,6 +14528,7 @@ msgstr "Essai expiré. Veuillez mettre à jour vos informations de facturation."
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
+#: src/modules/settings/logic-functions/components/SettingsLogicFunctionsTable.tsx
 msgid "Trigger"
 msgstr "Déclencheur"
 

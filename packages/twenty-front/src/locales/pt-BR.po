@@ -7016,11 +7016,6 @@ msgstr "Acesso total"
 msgid "Function name"
 msgstr "Nome da função"
 
-#. js-lingui-id: xANKBj
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Functions"
-msgstr "Funções"
-
 #. js-lingui-id: tkr79G
 #: src/utils/title-utils.ts
 msgid "Functions - Settings"
@@ -8675,6 +8670,11 @@ msgstr "Retenção de logs"
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
 msgid "Logged in as {impersonatedUser}"
 msgstr "Logado como {impersonatedUser}"
+
+#. js-lingui-id: wuCnq1
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Logic"
+msgstr ""
 
 #. js-lingui-id: sTlKkx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -12181,11 +12181,6 @@ msgstr "Executando função"
 msgid "Running..."
 msgstr "Executando..."
 
-#. js-lingui-id: eo1n1s
-#: src/modules/settings/logic-functions/components/SettingsLogicFunctionsTable.tsx
-msgid "Runtime"
-msgstr "Ambiente de execução"
-
 #. js-lingui-id: nji0/X
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Russian"
@@ -14531,6 +14526,7 @@ msgstr "Teste expirado. Por favor, atualize suas informações de faturamento."
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
+#: src/modules/settings/logic-functions/components/SettingsLogicFunctionsTable.tsx
 msgid "Trigger"
 msgstr "Acionar"
 
