@@ -7,6 +7,9 @@ export const resolveAggregateFieldKey = (
   aggregateFieldName: string,
   availableAggregations: Record<string, AggregationField>,
 ): string | null => {
+  // Tool inputs expose aggregate operation + field name separately (e.g. SUM +
+  // "employees"), unlike GraphQL/REST that already use concrete aggregation keys
+  // (e.g. "sumEmployees"). We resolve that tool-specific contract here.
   const fieldPathParts = aggregateFieldName.split('.');
 
   if (

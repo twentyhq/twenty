@@ -1,5 +1,6 @@
 import {
   AggregateOperations,
+  compositeTypeDefinitions,
   FieldMetadataType,
   ObjectRecordGroupByDateGranularity,
   RelationType,
@@ -17,26 +18,15 @@ import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-
 const getGroupableSubFieldsForCompositeType = (
   type: FieldMetadataType,
 ): string[] | null => {
-  // AI tool schemas intentionally maintain their own exposure rules (similar to
-  // record-filter/record-properties) instead of reusing GraphQL generators.
-  // Keep this allowlist aligned with the AI group_by contract when composite
-  // metadata changes.
-  switch (type) {
-    case FieldMetadataType.CURRENCY:
-      return ['currencyCode'];
-    case FieldMetadataType.FULL_NAME:
-      return ['firstName', 'lastName'];
-    case FieldMetadataType.ADDRESS:
-      return ['addressCity', 'addressCountry', 'addressState'];
-    case FieldMetadataType.EMAILS:
-      return ['primaryEmail'];
-    case FieldMetadataType.PHONES:
-      return ['primaryPhoneNumber'];
-    case FieldMetadataType.LINKS:
-      return ['primaryLinkUrl'];
-    default:
-      return null;
+  const compositeTypeDefinition = compositeTypeDefinitions.get(type);
+
+  if (!compositeTypeDefinition) {
+    return null;
   }
+
+  return compositeTypeDefinition.properties
+    .filter((property) => property.hidden !== true)
+    .map((property) => property.name);
 };
 
 export const generateGroupByToolInputSchema = (
@@ -55,15 +45,6 @@ export const generateGroupByToolInputSchema = (
       (field.name === 'createdAt' || field.name === 'updatedAt');
 
     if (!isGroupableDateField && shouldExcludeFieldFromAgentToolSchema(field)) {
-      continue;
-    }
-
-    if (
-      field.type === FieldMetadataType.TS_VECTOR ||
-      field.type === FieldMetadataType.FILES ||
-      field.type === FieldMetadataType.POSITION ||
-      field.type === FieldMetadataType.RAW_JSON
-    ) {
       continue;
     }
 

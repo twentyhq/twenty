@@ -11,6 +11,7 @@ import { isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { type ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-group-by-query-runner.service';
+import { parseGroupByArgs } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/parse-group-by-args.util';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { getAvailableAggregationsFromObjectFields } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import {
@@ -22,7 +23,9 @@ import { type GroupByRecordsParams } from 'src/engine/core-modules/record-crud/t
 import { type GroupByRecordsResult } from 'src/engine/core-modules/record-crud/types/group-by-records-result.type';
 import { resolveAggregateFieldKey } from 'src/engine/core-modules/record-crud/utils/resolve-aggregate-field-key.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 
 @Injectable()
@@ -66,125 +69,41 @@ export class GroupByRecordsService {
         flatFieldMetadataMaps,
       );
 
-      const { fieldIdByName, fieldIdByJoinColumnName } =
-        buildFieldMapsFromFlatObjectMetadata(
+      const { fieldIdByJoinColumnName } = buildFieldMapsFromFlatObjectMetadata(
+        flatFieldMetadataMaps,
+        flatObjectMetadata,
+      );
+      const dateFieldNames = new Set(
+        fields
+          .filter((field) => isFieldMetadataDateKind(field.type))
+          .map((field) => field.name),
+      );
+      const dateFieldCount = groupBy.filter((fieldName) =>
+        dateFieldNames.has(fieldName),
+      ).length;
+
+      this.validateDateGranularity({
+        dateGranularity,
+        dateFieldCount,
+      });
+
+      const { objectRecordGroupBy, dimensionLabels } =
+        this.buildObjectRecordGroupBy({
+          groupBy,
+          dateFieldNames,
+          dateGranularity,
+          timeZone,
+          fieldIdByJoinColumnName,
           flatFieldMetadataMaps,
-          flatObjectMetadata,
-        );
-
-      const dateFieldCount = groupBy.filter((fieldName) => {
-        const baseName = fieldName.split('.')[0];
-        const fieldId =
-          fieldIdByName[baseName] ?? fieldIdByJoinColumnName[fieldName];
-
-        if (!fieldId) {
-          return false;
-        }
-
-        const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: fieldId,
-          flatEntityMaps: flatFieldMetadataMaps,
         });
-
-        return fieldMetadata && isFieldMetadataDateKind(fieldMetadata.type);
-      }).length;
-
-      if (dateFieldCount > 1) {
-        throw new RecordCrudException(
-          'Cannot group by two date fields — dateGranularity is ambiguous',
-          RecordCrudExceptionCode.INVALID_REQUEST,
-        );
-      }
-
-      if (dateGranularity && dateFieldCount === 0) {
-        throw new RecordCrudException(
-          'dateGranularity requires exactly one date field in groupBy',
-          RecordCrudExceptionCode.INVALID_REQUEST,
-        );
-      }
-
-      const dimensionLabels: string[] = [];
-      const objectRecordGroupBy: ObjectRecordGroupBy = [];
-
-      for (const fieldName of groupBy) {
-        if (fieldName.includes('.')) {
-          const fieldPathParts = fieldName.split('.');
-
-          if (
-            fieldPathParts.length !== 2 ||
-            fieldPathParts.some((fieldPathPart) => fieldPathPart.length === 0)
-          ) {
-            throw new RecordCrudException(
-              `Invalid groupBy field "${fieldName}"`,
-              RecordCrudExceptionCode.INVALID_REQUEST,
-            );
-          }
-
-          const [parentField, subField] = fieldPathParts;
-
-          objectRecordGroupBy.push({ [parentField]: { [subField]: true } });
-          dimensionLabels.push(fieldName);
-
-          continue;
-        }
-
-        if (fieldIdByJoinColumnName[fieldName]) {
-          const relationFieldId = fieldIdByJoinColumnName[fieldName];
-          const relationFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: relationFieldId,
-            flatEntityMaps: flatFieldMetadataMaps,
-          });
-
-          if (!relationFieldMetadata) {
-            throw new RecordCrudException(
-              `Invalid relation groupBy field "${fieldName}"`,
-              RecordCrudExceptionCode.INVALID_REQUEST,
-            );
-          }
-
-          const targetObject = relationFieldMetadata.relationTargetObjectMetadataId
-            ? findFlatEntityByIdInFlatEntityMaps({
-                flatEntityId:
-                  relationFieldMetadata.relationTargetObjectMetadataId,
-                flatEntityMaps: flatObjectMetadataMaps,
-              })
-            : undefined;
-
-          objectRecordGroupBy.push({ [relationFieldMetadata.name]: { id: true } });
-          dimensionLabels.push(
-            targetObject
-              ? `${fieldName} (${targetObject.labelSingular} ID)`
-              : fieldName,
-          );
-
-          continue;
-        }
-
-        const fieldId = fieldIdByName[fieldName];
-
-        if (fieldId) {
-          const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: fieldId,
-            flatEntityMaps: flatFieldMetadataMaps,
-          });
-
-          if (fieldMetadata && isFieldMetadataDateKind(fieldMetadata.type)) {
-            objectRecordGroupBy.push({
-              [fieldName]: {
-                granularity:
-                  dateGranularity ?? ObjectRecordGroupByDateGranularity.MONTH,
-                timeZone: timeZone ?? 'UTC',
-              },
-            });
-            dimensionLabels.push(fieldName);
-
-            continue;
-          }
-        }
-
-        objectRecordGroupBy.push({ [fieldName]: true });
-        dimensionLabels.push(fieldName);
-      }
+      const groupByFields = parseGroupByArgs(
+        {
+          groupBy: objectRecordGroupBy,
+        },
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      );
 
       const availableAggregations =
         getAvailableAggregationsFromObjectFields(fields);
@@ -243,6 +162,7 @@ export class GroupByRecordsService {
         {
           filter: filter ?? {},
           groupBy: objectRecordGroupBy,
+          groupByFields,
           orderBy: mappedOrderBy,
           selectedFields,
           limit,
@@ -285,5 +205,113 @@ export class GroupByRecordsService {
           error instanceof Error ? error.message : 'Failed to group records',
       };
     }
+  }
+
+  private validateDateGranularity({
+    dateGranularity,
+    dateFieldCount,
+  }: {
+    dateGranularity?: ObjectRecordGroupByDateGranularity;
+    dateFieldCount: number;
+  }): void {
+    if (dateFieldCount > 1) {
+      throw new RecordCrudException(
+        'Cannot group by two date fields — dateGranularity is ambiguous',
+        RecordCrudExceptionCode.INVALID_REQUEST,
+      );
+    }
+
+    if (dateGranularity && dateFieldCount === 0) {
+      throw new RecordCrudException(
+        'dateGranularity requires exactly one date field in groupBy',
+        RecordCrudExceptionCode.INVALID_REQUEST,
+      );
+    }
+  }
+
+  private buildObjectRecordGroupBy({
+    groupBy,
+    dateFieldNames,
+    dateGranularity,
+    timeZone,
+    fieldIdByJoinColumnName,
+    flatFieldMetadataMaps,
+  }: {
+    groupBy: string[];
+    dateFieldNames: Set<string>;
+    dateGranularity?: ObjectRecordGroupByDateGranularity;
+    timeZone?: string;
+    fieldIdByJoinColumnName: Record<string, string>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  }): {
+    objectRecordGroupBy: ObjectRecordGroupBy;
+    dimensionLabels: string[];
+  } {
+    const objectRecordGroupBy: ObjectRecordGroupBy = [];
+    const dimensionLabels: string[] = [];
+
+    for (const fieldName of groupBy) {
+      if (fieldName.includes('.')) {
+        const fieldPathParts = fieldName.split('.');
+
+        if (
+          fieldPathParts.length !== 2 ||
+          fieldPathParts.some((fieldPathPart) => fieldPathPart.length === 0)
+        ) {
+          throw new RecordCrudException(
+            `Invalid groupBy field "${fieldName}"`,
+            RecordCrudExceptionCode.INVALID_REQUEST,
+          );
+        }
+
+        const [parentField, subField] = fieldPathParts;
+
+        objectRecordGroupBy.push({ [parentField]: { [subField]: true } });
+        dimensionLabels.push(fieldName);
+        continue;
+      }
+
+      const relationFieldId = fieldIdByJoinColumnName[fieldName];
+
+      if (relationFieldId) {
+        const relationFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: relationFieldId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        });
+
+        if (!relationFieldMetadata) {
+          throw new RecordCrudException(
+            `Invalid relation groupBy field "${fieldName}"`,
+            RecordCrudExceptionCode.INVALID_REQUEST,
+          );
+        }
+
+        objectRecordGroupBy.push({
+          [relationFieldMetadata.name]: { id: true },
+        });
+        dimensionLabels.push(fieldName);
+        continue;
+      }
+
+      if (dateFieldNames.has(fieldName)) {
+        objectRecordGroupBy.push({
+          [fieldName]: {
+            granularity:
+              dateGranularity ?? ObjectRecordGroupByDateGranularity.MONTH,
+            timeZone: timeZone ?? 'UTC',
+          },
+        });
+        dimensionLabels.push(fieldName);
+        continue;
+      }
+
+      objectRecordGroupBy.push({ [fieldName]: true });
+      dimensionLabels.push(fieldName);
+    }
+
+    return {
+      objectRecordGroupBy,
+      dimensionLabels,
+    };
   }
 }
