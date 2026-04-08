@@ -12,7 +12,7 @@ export type FormRelationToOneFieldInputProps = {
   label?: string;
   objectNameSingular?: string;
   defaultValue?: FieldRelationValue<FieldRelationToOneValue> | string | null;
-  onChange: (value: JsonValue | undefined) => void;
+  onChange: (value: JsonValue) => void;
   onClear?: () => void;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;

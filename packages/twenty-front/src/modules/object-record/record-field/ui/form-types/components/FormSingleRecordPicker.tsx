@@ -53,7 +53,7 @@ type FormSingleRecordPickerValue =
 export type FormSingleRecordPickerProps = {
   label?: string;
   defaultValue?: RecordId | Variable | null;
-  onChange: (value: RecordId | Variable | null | undefined) => void;
+  onChange: (value: RecordId | Variable | null) => void;
   onClear?: () => void;
   objectNameSingulars: string[];
   disabled?: boolean;
@@ -117,9 +117,10 @@ export const FormSingleRecordPicker = ({
   ) => {
     if (!isDefined(selectedMorphItem) || selectedMorphItem === null) {
       if (defaultValue === null) {
-        onChange(undefined);
+        // Toggle off: already "No record", go back to undefined
         onClear?.();
       } else {
+        // Select "No record"
         onChange(null);
       }
       closeDropdown(dropdownId);
@@ -128,7 +129,7 @@ export const FormSingleRecordPicker = ({
     }
 
     if (defaultValue === selectedMorphItem.recordId) {
-      onChange(undefined);
+      // Toggle off: already this record, go back to undefined
       onClear?.();
     } else {
       onChange(selectedMorphItem.recordId);
