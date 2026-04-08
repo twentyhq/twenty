@@ -8,49 +8,9 @@ import {
 
 import { type CommandMenuItemDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item.dto';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
+import { buildNavigationInterpolationContext } from 'src/engine/metadata-modules/command-menu-item/utils/build-navigation-interpolation-context.util';
 import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
-import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
-
-const buildNavigationInterpolationContext = ({
-  objectMetadata,
-  locale,
-  i18nInstance,
-}: {
-  objectMetadata: ObjectMetadataDTO;
-  locale: keyof typeof APP_LOCALES | undefined;
-  i18nInstance: I18n;
-}): Record<string, unknown> => {
-  const overrideInput = {
-    labelPlural: objectMetadata.labelPlural,
-    labelSingular: objectMetadata.labelSingular,
-    description: objectMetadata.description ?? undefined,
-    icon: objectMetadata.icon ?? undefined,
-    isCustom: objectMetadata.isCustom,
-    standardOverrides: objectMetadata.standardOverrides ?? undefined,
-  };
-
-  const resolvedLabelPlural = resolveObjectMetadataStandardOverride(
-    overrideInput,
-    'labelPlural',
-    locale,
-    i18nInstance,
-  );
-
-  const resolvedIcon = resolveObjectMetadataStandardOverride(
-    overrideInput,
-    'icon',
-    locale,
-    i18nInstance,
-  );
-
-  return {
-    navigateToObjectMetadataItem: {
-      labelPlural: resolvedLabelPlural,
-      icon: resolvedIcon,
-    },
-  };
-};
 
 export const interpolateNavigationCommandMenuItemField = ({
   commandMenuItem,
