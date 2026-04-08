@@ -20,6 +20,10 @@ export const CommandMenuItemPayloadUnion = createUnionType({
       return PathCommandMenuItemPayloadDTO;
     }
 
-    return ObjectMetadataCommandMenuItemPayloadDTO;
+    if ('objectMetadataItemId' in payload) {
+      return ObjectMetadataCommandMenuItemPayloadDTO;
+    }
+
+    return undefined;
   },
 });
