@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  deploy-and-install:
     if: >-
       github.event_name == 'push' ||
       (github.event_name == 'pull_request' && github.event.label.name == 'deploy')
@@ -29,33 +29,14 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: yarn
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: Configure remote
-        run: |
-          mkdir -p ~/.twenty
-          node -e "
-            const path = require('path'), os = require('os'), fs = require('fs');
-            fs.writeFileSync(path.join(os.homedir(), '.twenty', 'config.json'), JSON.stringify({
-              version: 1,
-              remotes: { prod: { apiUrl: process.env.TWENTY_DEPLOY_URL, apiKey: process.env.TWENTY_DEPLOY_API_KEY } }
-            }, null, 2));
-          "
-        env:
-          TWENTY_DEPLOY_API_KEY: ${{ secrets.TWENTY_DEPLOY_API_KEY }}
-
       - name: Deploy
-        run: yarn twenty deploy --remote prod
+        uses: ./.github/actions/deploy
+        with:
+          api-url: ${{ env.TWENTY_DEPLOY_URL }}
+          api-key: ${{ secrets.TWENTY_DEPLOY_API_KEY }}
 
       - name: Install
-        run: yarn twenty install --remote prod
+        uses: ./.github/actions/install
+        with:
+          api-url: ${{ env.TWENTY_DEPLOY_URL }}
+          api-key: ${{ secrets.TWENTY_DEPLOY_API_KEY }}
