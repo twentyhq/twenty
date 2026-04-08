@@ -7,7 +7,7 @@ import {
 } from 'twenty-shared/types';
 import {
   type EngineComponentKey,
-  type NavigationPayload,
+  type CommandMenuItemPayload,
 } from '~/generated-metadata/graphql';
 
 export type HeadlessEngineCommandContextApi = {
@@ -19,7 +19,7 @@ export type HeadlessEngineCommandContextApi = {
   targetedRecordsRule: ContextStoreTargetedRecordsRule;
   selectedRecords: ObjectRecord[];
   graphqlFilter: Nullable<RecordGqlOperationFilter>;
-  payload: Nullable<NavigationPayload>;
+  payload: Nullable<CommandMenuItemPayload>;
 };
 
 export type HeadlessFrontComponentCommandContextApi =

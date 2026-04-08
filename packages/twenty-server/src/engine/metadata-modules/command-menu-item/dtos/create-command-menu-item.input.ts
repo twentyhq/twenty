@@ -79,6 +79,8 @@ export class CreateCommandMenuItemInput {
   @Field(() => UUIDScalarType, { nullable: true })
   availabilityObjectMetadataId?: string;
 
+  // GraphQL does not support union types as inputs, so we use JSON here.
+  // The output DTO uses the typed CommandMenuItemPayloadUnion instead.
   @IsObject()
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })

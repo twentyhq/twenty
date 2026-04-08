@@ -1,7 +1,7 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
-import { isObjectMetadataNavigationPayload } from '@/command-menu-item/engine-command/utils/isObjectMetadataNavigationPayload';
-import { isPathNavigationPayload } from '@/command-menu-item/engine-command/utils/isPathNavigationPayload';
+import { isObjectMetadataCommandMenuItemPayload } from '@/command-menu-item/engine-command/utils/isObjectMetadataCommandMenuItemPayload';
+import { isPathCommandMenuItemPayload } from '@/command-menu-item/engine-command/utils/isPathCommandMenuItemPayload';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useNavigate } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
@@ -17,7 +17,7 @@ export const NavigationEngineCommand = () => {
       return;
     }
 
-    if (isObjectMetadataNavigationPayload(payload)) {
+    if (isObjectMetadataCommandMenuItemPayload(payload)) {
       const objectMetadataItem = objectMetadataItems.find(
         (item) => item.id === payload.objectMetadataItemId,
       );
@@ -36,7 +36,7 @@ export const NavigationEngineCommand = () => {
       return;
     }
 
-    if (isPathNavigationPayload(payload)) {
+    if (isPathCommandMenuItemPayload(payload)) {
       // eslint-disable-next-line twenty/no-navigate-prefer-link
       navigate(payload.path);
     }

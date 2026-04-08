@@ -16,7 +16,7 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { isDefined } from 'twenty-shared/utils';
 import {
   type EngineComponentKey,
-  type NavigationPayload,
+  type CommandMenuItemPayload,
 } from '~/generated-metadata/graphql';
 
 export const buildHeadlessCommandContextApi = ({
@@ -28,7 +28,7 @@ export const buildHeadlessCommandContextApi = ({
   store: Store;
   contextStoreInstanceId: string;
   engineComponentKey: EngineComponentKey;
-  payload?: NavigationPayload | null;
+  payload?: CommandMenuItemPayload | null;
 }): HeadlessEngineCommandContextApi => {
   const objectMetadataItemId = store.get(
     contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({

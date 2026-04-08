@@ -17,10 +17,10 @@ export const COMMAND_MENU_ITEM_FRAGMENT = gql`
     position
     isPinned
     payload {
-      ... on PathNavigationPayload {
+      ... on PathCommandMenuItemPayload {
         path
       }
-      ... on ObjectMetadataNavigationPayload {
+      ... on ObjectMetadataCommandMenuItemPayload {
         objectMetadataItemId
       }
     }

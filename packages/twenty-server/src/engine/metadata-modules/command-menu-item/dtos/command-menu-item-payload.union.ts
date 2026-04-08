@@ -1,22 +1,25 @@
 import { createUnionType } from '@nestjs/graphql';
 
-import { ObjectMetadataNavigationPayloadDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/object-metadata-navigation-payload.dto';
-import { PathNavigationPayloadDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/path-navigation-payload.dto';
-import { type ObjectMetadataNavigationPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/object-metadata-navigation-payload.type';
-import { type PathNavigationPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/path-navigation-payload.type';
+import { ObjectMetadataCommandMenuItemPayloadDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/object-metadata-command-menu-item-payload.dto';
+import { PathCommandMenuItemPayloadDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/path-command-menu-item-payload.dto';
+import { type ObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/object-metadata-command-menu-item-payload.type';
+import { type PathCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/path-command-menu-item-payload.type';
 
 export type CommandMenuItemPayload =
-  | PathNavigationPayload
-  | ObjectMetadataNavigationPayload;
+  | PathCommandMenuItemPayload
+  | ObjectMetadataCommandMenuItemPayload;
 
 export const CommandMenuItemPayloadUnion = createUnionType({
-  name: 'NavigationPayload',
-  types: () => [PathNavigationPayloadDTO, ObjectMetadataNavigationPayloadDTO],
+  name: 'CommandMenuItemPayload',
+  types: () => [
+    PathCommandMenuItemPayloadDTO,
+    ObjectMetadataCommandMenuItemPayloadDTO,
+  ],
   resolveType(payload: CommandMenuItemPayload) {
     if ('path' in payload) {
-      return PathNavigationPayloadDTO;
+      return PathCommandMenuItemPayloadDTO;
     }
 
-    return ObjectMetadataNavigationPayloadDTO;
+    return ObjectMetadataCommandMenuItemPayloadDTO;
   },
 });
