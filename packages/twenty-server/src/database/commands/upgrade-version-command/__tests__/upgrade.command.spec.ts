@@ -91,9 +91,11 @@ const buildUpgradeCommandModule = async ({
     : {
         provide: UpgradeCommandRegistryService,
         useValue: {
-          getFastInstanceCommandsForVersion: jest.fn().mockReturnValue([]),
-          getSlowInstanceCommandsForVersion: jest.fn().mockReturnValue([]),
-          getWorkspaceCommandsForVersion: jest.fn().mockReturnValue([]),
+          getBucketForVersion: jest.fn().mockReturnValue({
+            fastInstanceCommands: [],
+            slowInstanceCommands: [],
+            workspaceCommands: [],
+          }),
         },
       };
 

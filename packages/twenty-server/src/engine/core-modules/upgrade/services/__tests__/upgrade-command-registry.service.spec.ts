@@ -97,14 +97,20 @@ describe('UpgradeCommandRegistryService', () => {
       new MigrationC1772000000000(),
     ]);
 
-    const v120 = service.getFastInstanceCommandsForVersion('1.20.0');
-    const v121 = service.getFastInstanceCommandsForVersion('1.21.0');
+    const v120 = service.getBucketForVersion('1.20.0');
+    const v121 = service.getBucketForVersion('1.21.0');
 
-    expect(v120.map((entry) => entry.command.constructor.name)).toStrictEqual([
-      'MigrationD1769000000000',
-    ]);
+    expect(
+      v120.fastInstanceCommands.map(
+        (entry) => entry.command.constructor.name,
+      ),
+    ).toStrictEqual(['MigrationD1769000000000']);
 
-    expect(v121.map((entry) => entry.command.constructor.name)).toStrictEqual([
+    expect(
+      v121.fastInstanceCommands.map(
+        (entry) => entry.command.constructor.name,
+      ),
+    ).toStrictEqual([
       'MigrationA1770000000000',
       'MigrationB1771000000000',
       'MigrationC1772000000000',
@@ -119,8 +125,8 @@ describe('UpgradeCommandRegistryService', () => {
     ]);
 
     const names = service
-      .getFastInstanceCommandsForVersion('1.21.0')
-      .map((entry) => entry.command.constructor.name);
+      .getBucketForVersion('1.21.0')
+      .fastInstanceCommands.map((entry) => entry.command.constructor.name);
 
     expect(names).toStrictEqual([
       'MigrationA1770000000000',
@@ -135,32 +141,32 @@ describe('UpgradeCommandRegistryService', () => {
       new MigrationA1770000000000(),
     ]);
 
-    const v121 = service.getFastInstanceCommandsForVersion('1.21.0');
+    const v121 = service.getBucketForVersion('1.21.0');
 
-    expect(v121).toHaveLength(1);
-    expect(v121[0].command.constructor.name).toBe('MigrationA1770000000000');
+    expect(v121.fastInstanceCommands).toHaveLength(1);
+    expect(v121.fastInstanceCommands[0].command.constructor.name).toBe(
+      'MigrationA1770000000000',
+    );
   });
 
   it('should return empty array for version with no commands', async () => {
     const service = await buildRegistryService([]);
 
-    expect(service.getFastInstanceCommandsForVersion('1.20.0')).toStrictEqual(
-      [],
-    );
-    expect(service.getFastInstanceCommandsForVersion('1.21.0')).toStrictEqual(
-      [],
-    );
-    expect(service.getWorkspaceCommandsForVersion('1.20.0')).toStrictEqual([]);
-    expect(service.getWorkspaceCommandsForVersion('1.21.0')).toStrictEqual([]);
+    const v120 = service.getBucketForVersion('1.20.0');
+    const v121 = service.getBucketForVersion('1.21.0');
+
+    expect(v120.fastInstanceCommands).toStrictEqual([]);
+    expect(v121.fastInstanceCommands).toStrictEqual([]);
+    expect(v120.workspaceCommands).toStrictEqual([]);
+    expect(v121.workspaceCommands).toStrictEqual([]);
   });
 
   it('should return empty array for unsupported version', async () => {
     const service = await buildRegistryService([]);
 
     expect(
-      service.getFastInstanceCommandsForVersion(
-        '99.0.0' as unknown as '1.21.0',
-      ),
+      service.getBucketForVersion('99.0.0' as unknown as '1.21.0')
+        .fastInstanceCommands,
     ).toStrictEqual([]);
   });
 
@@ -170,10 +176,10 @@ describe('UpgradeCommandRegistryService', () => {
       new WorkspaceCommandA(),
     ]);
 
-    const commands = service.getWorkspaceCommandsForVersion('1.21.0');
+    const { workspaceCommands } = service.getBucketForVersion('1.21.0');
 
     expect(
-      commands.map((entry) => entry.command.constructor.name),
+      workspaceCommands.map((entry) => entry.command.constructor.name),
     ).toStrictEqual(['WorkspaceCommandA', 'WorkspaceCommandB']);
   });
 
@@ -185,12 +191,10 @@ describe('UpgradeCommandRegistryService', () => {
       new WorkspaceCommandB(),
     ]);
 
-    const instanceCommands =
-      service.getFastInstanceCommandsForVersion('1.21.0');
-    const workspaceCommands = service.getWorkspaceCommandsForVersion('1.21.0');
+    const bucket = service.getBucketForVersion('1.21.0');
 
-    expect(instanceCommands).toHaveLength(2);
-    expect(workspaceCommands).toHaveLength(2);
+    expect(bucket.fastInstanceCommands).toHaveLength(2);
+    expect(bucket.workspaceCommands).toHaveLength(2);
   });
 
   it('should allow same timestamp across different kinds', async () => {
@@ -204,8 +208,10 @@ describe('UpgradeCommandRegistryService', () => {
       new WorkspaceCommandSameTimestamp(),
     ]);
 
-    expect(service.getFastInstanceCommandsForVersion('1.21.0')).toHaveLength(1);
-    expect(service.getWorkspaceCommandsForVersion('1.21.0')).toHaveLength(1);
+    const bucket = service.getBucketForVersion('1.21.0');
+
+    expect(bucket.fastInstanceCommands).toHaveLength(1);
+    expect(bucket.workspaceCommands).toHaveLength(1);
   });
 
   it('should throw on duplicate timestamps within the same kind', async () => {
@@ -286,8 +292,10 @@ describe('UpgradeCommandRegistryService', () => {
       new MigrationA1770000000000_WS(),
     ]);
 
-    expect(service.getFastInstanceCommandsForVersion('1.21.0')).toHaveLength(1);
-    expect(service.getWorkspaceCommandsForVersion('1.21.0')).toHaveLength(1);
+    const bucket = service.getBucketForVersion('1.21.0');
+
+    expect(bucket.fastInstanceCommands).toHaveLength(1);
+    expect(bucket.workspaceCommands).toHaveLength(1);
   });
 
   it('should discover slow instance commands and sort by timestamp', async () => {
@@ -314,10 +322,10 @@ describe('UpgradeCommandRegistryService', () => {
       new SlowMigrationA1779000000000(),
     ]);
 
-    const slowCommands = service.getSlowInstanceCommandsForVersion('1.21.0');
+    const { slowInstanceCommands } = service.getBucketForVersion('1.21.0');
 
     expect(
-      slowCommands.map((entry) => entry.command.constructor.name),
+      slowInstanceCommands.map((entry) => entry.command.constructor.name),
     ).toStrictEqual([
       'SlowMigrationA1779000000000',
       'SlowMigrationB1780000000000',
@@ -339,8 +347,10 @@ describe('UpgradeCommandRegistryService', () => {
       new SlowMigration1780000000000(),
     ]);
 
-    expect(service.getFastInstanceCommandsForVersion('1.21.0')).toHaveLength(1);
-    expect(service.getSlowInstanceCommandsForVersion('1.21.0')).toHaveLength(1);
+    const bucket = service.getBucketForVersion('1.21.0');
+
+    expect(bucket.fastInstanceCommands).toHaveLength(1);
+    expect(bucket.slowInstanceCommands).toHaveLength(1);
   });
 
   it('should throw on duplicate timestamps within slow instance commands', async () => {
@@ -387,8 +397,10 @@ describe('UpgradeCommandRegistryService', () => {
       new SlowMigrationSameTimestamp(),
     ]);
 
-    expect(service.getFastInstanceCommandsForVersion('1.21.0')).toHaveLength(1);
-    expect(service.getSlowInstanceCommandsForVersion('1.21.0')).toHaveLength(1);
+    const bucket = service.getBucketForVersion('1.21.0');
+
+    expect(bucket.fastInstanceCommands).toHaveLength(1);
+    expect(bucket.slowInstanceCommands).toHaveLength(1);
   });
 
   it('should return all slow instance commands across versions', async () => {

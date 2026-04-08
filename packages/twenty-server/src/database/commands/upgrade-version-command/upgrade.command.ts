@@ -13,10 +13,8 @@ import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
 import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
 import {
-  type RegisteredFastInstanceCommand,
-  type RegisteredSlowInstanceCommand,
-  type RegisteredWorkspaceCommand,
   UpgradeCommandRegistryService,
+  type VersionBucket,
 } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
@@ -34,13 +32,10 @@ export type UpgradeCommandOptions = {
   verbose?: boolean;
 };
 
-type VersionContext = {
+type VersionContext = VersionBucket & {
   fromWorkspaceVersion: SemVer;
   currentAppVersion: SemVer;
   currentVersionMajorMinor: UpgradeCommandVersion;
-  fastInstanceCommands: RegisteredFastInstanceCommand[];
-  slowInstanceCommands: RegisteredSlowInstanceCommand[];
-  workspaceCommands: RegisteredWorkspaceCommand[];
 };
 
 @Command({
@@ -260,18 +255,8 @@ Please roll back to that version and run the upgrade command again.`,
     const fromWorkspaceVersion =
       this.coreEngineVersionService.getPreviousVersion();
 
-    const fastInstanceCommands =
-      this.upgradeCommandRegistryService.getFastInstanceCommandsForVersion(
-        currentVersionMajorMinor,
-      );
-
-    const slowInstanceCommands =
-      this.upgradeCommandRegistryService.getSlowInstanceCommandsForVersion(
-        currentVersionMajorMinor,
-      );
-
-    const workspaceCommands =
-      this.upgradeCommandRegistryService.getWorkspaceCommandsForVersion(
+    const { fastInstanceCommands, slowInstanceCommands, workspaceCommands } =
+      this.upgradeCommandRegistryService.getBucketForVersion(
         currentVersionMajorMinor,
       );
 
@@ -279,9 +264,9 @@ Please roll back to that version and run the upgrade command again.`,
       fromWorkspaceVersion,
       currentAppVersion,
       currentVersionMajorMinor,
-      workspaceCommands,
       fastInstanceCommands,
       slowInstanceCommands,
+      workspaceCommands,
     };
   }
 

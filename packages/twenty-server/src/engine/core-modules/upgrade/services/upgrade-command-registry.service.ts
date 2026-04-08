@@ -35,7 +35,7 @@ export type RegisteredWorkspaceCommand = {
   timestamp: number;
 };
 
-type VersionBucket = {
+export type VersionBucket = {
   fastInstanceCommands: RegisteredFastInstanceCommand[];
   slowInstanceCommands: RegisteredSlowInstanceCommand[];
   workspaceCommands: RegisteredWorkspaceCommand[];
@@ -154,42 +154,26 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
     }
   }
 
-  getFastInstanceCommandsForVersion(
-    version: UpgradeCommandVersion,
-  ): RegisteredFastInstanceCommand[] {
-    return this.bucketsByVersion.get(version)?.fastInstanceCommands ?? [];
-  }
+  private static readonly EMPTY_BUCKET: VersionBucket = {
+    fastInstanceCommands: [],
+    slowInstanceCommands: [],
+    workspaceCommands: [],
+  };
 
-  getSlowInstanceCommandsForVersion(
-    version: UpgradeCommandVersion,
-  ): RegisteredSlowInstanceCommand[] {
-    return this.bucketsByVersion.get(version)?.slowInstanceCommands ?? [];
-  }
-
-  getWorkspaceCommandsForVersion(
-    version: UpgradeCommandVersion,
-  ): RegisteredWorkspaceCommand[] {
-    return this.bucketsByVersion.get(version)?.workspaceCommands ?? [];
+  getBucketForVersion(version: UpgradeCommandVersion): VersionBucket {
+    return this.bucketsByVersion.get(version) ?? UpgradeCommandRegistryService.EMPTY_BUCKET;
   }
 
   getAllFastInstanceCommands(): RegisteredFastInstanceCommand[] {
-    const result: RegisteredFastInstanceCommand[] = [];
-
-    for (const version of UPGRADE_COMMAND_SUPPORTED_VERSIONS) {
-      result.push(...this.getFastInstanceCommandsForVersion(version));
-    }
-
-    return result;
+    return UPGRADE_COMMAND_SUPPORTED_VERSIONS.flatMap(
+      (version) => this.getBucketForVersion(version).fastInstanceCommands,
+    );
   }
 
   getAllSlowInstanceCommands(): RegisteredSlowInstanceCommand[] {
-    const result: RegisteredSlowInstanceCommand[] = [];
-
-    for (const version of UPGRADE_COMMAND_SUPPORTED_VERSIONS) {
-      result.push(...this.getSlowInstanceCommandsForVersion(version));
-    }
-
-    return result;
+    return UPGRADE_COMMAND_SUPPORTED_VERSIONS.flatMap(
+      (version) => this.getBucketForVersion(version).slowInstanceCommands,
+    );
   }
 
   private computeCommandName(
