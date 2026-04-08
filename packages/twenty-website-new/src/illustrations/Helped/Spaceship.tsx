@@ -1,26 +1,16 @@
 'use client';
 
-import { theme } from '@/theme';
 import { styled } from '@linaria/react';
+import type { IllustrationProps } from '@/illustrations/types';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-const HERO_GLB_URL = '/illustrations/product/hero/hero.glb';
+// Multiplies pointer tilt, idle follow, hover zoom, and mesh wobble amplitudes.
+const HELPED_CARD_VISUAL_MOTION_SCALE = 1.1;
 
-const StyledContainer = styled.div`
-  background-color: ${theme.colors.secondary.background[5]};
-  height: 462px;
-  margin-top: ${theme.spacing(6)};
-  width: 100%;
-`;
-
-const StyledGlbMount = styled.div`
-  display: block;
-  height: 100%;
-  min-width: 0;
-  width: 100%;
-`;
+// Model scale in the 240px frame — larger = bigger asset on screen.
+const HELPED_CARD_VISUAL_MODEL_FIT_SCALE = 2.75 * 1.1;
 
 const scanlineVertexShader = /* glsl */ `
   varying vec3 vWorldPosition;
@@ -35,6 +25,7 @@ const scanlineVertexShader = /* glsl */ `
 `;
 
 const scanlineFragmentShader = /* glsl */ `
+  uniform vec3 uCameraPosition;
   uniform vec3 uColor;
   uniform vec3 uLightDir;
   uniform float uStripeScale;
@@ -45,45 +36,62 @@ const scanlineFragmentShader = /* glsl */ `
   void main() {
     vec3 normal = normalize(vWorldNormal);
     vec3 lightDir = normalize(uLightDir);
-    float ndotl = max(dot(normal, lightDir), 0.06);
+    vec3 viewDir = normalize(uCameraPosition - vWorldPosition);
+    float ndotl = max(dot(normal, lightDir), 0.05);
+    float ndotv = abs(dot(normal, viewDir));
 
     float y = vWorldPosition.y * uStripeScale;
     float cell = fract(y);
 
-    float shadowWeight = mix(1.0, 0.5, ndotl);
-    float lineWidth = 0.58 * shadowWeight;
-    float edge = 0.035;
+    // Narrow colored bands so most of each stripe period reads as background.
+    float shadowWeight = mix(1.0, 0.62, ndotl);
+    float lineWidth = 0.26 * shadowWeight;
+    float edge = 0.024;
     float band = 1.0 - smoothstep(lineWidth, lineWidth + edge, cell);
 
-    float highlight = pow(ndotl, 1.35);
-    float dash = fract(vWorldPosition.x * 20.0 + vWorldPosition.z * 6.0);
+    float highlight = pow(ndotl, 1.25);
+    float dash = fract(vWorldPosition.x * 18.0 + vWorldPosition.z * 5.0);
     float dashMask = mix(
       1.0,
-      smoothstep(0.15, 0.45, dash) * (1.0 - smoothstep(0.55, 0.88, dash)),
-      highlight
+      smoothstep(0.18, 0.48, dash) * (1.0 - smoothstep(0.58, 0.86, dash)),
+      highlight * 0.4
     );
     band *= dashMask;
 
     float speckle = fract(
       sin(dot(vWorldPosition.xz, vec2(127.1, 311.7))) * 43758.5453
     );
-    band *= mix(1.0, 0.55 + 0.45 * step(0.4, speckle), highlight * 0.85);
+    band *= mix(1.0, 0.62 + 0.38 * step(0.42, speckle), highlight * 0.42);
 
-    if (band < 0.015) {
+    // Silhouettes and shadowed sides fall back to transparent (card shows through).
+    float viewFacing = pow(clamp(ndotv, 0.04, 1.0), 0.52);
+    float lightFacing = pow(clamp(ndotl, 0.1, 1.0), 0.88);
+    float alpha = band * viewFacing * lightFacing;
+
+    // Brighten RGB vs flat uColor; alpha above still drives edge transparency.
+    float lightTint = mix(0.72, 1.58, pow(ndotl, 0.82));
+    float viewTint = mix(0.88, 1.14, viewFacing);
+    const float colorGain = 1.22;
+    vec3 lit = uColor * lightTint * viewTint * colorGain;
+
+    if (alpha < 0.02) {
       discard;
     }
 
-    vec3 lit = uColor * mix(0.72, 1.18, ndotl);
-    gl_FragColor = vec4(lit, band);
+    gl_FragColor = vec4(lit, alpha);
   }
 `;
 
-function createScanlineMaterial(lightDirection: THREE.Vector3) {
+function createScanlineMaterial(
+  lightDirection: THREE.Vector3,
+  stripeColor: string,
+) {
   return new THREE.ShaderMaterial({
     uniforms: {
-      uColor: { value: new THREE.Color('#1e5bff') },
+      uCameraPosition: { value: new THREE.Vector3() },
+      uColor: { value: new THREE.Color(stripeColor) },
       uLightDir: { value: lightDirection.clone() },
-      uStripeScale: { value: 16.0 },
+      uStripeScale: { value: 23.0 },
     },
     vertexShader: scanlineVertexShader,
     fragmentShader: scanlineFragmentShader,
@@ -120,13 +128,14 @@ type MeshRestPose = {
 function applyScanlineMaterials(
   modelRoot: THREE.Object3D,
   lightDirection: THREE.Vector3,
+  stripeColor: string,
 ) {
   modelRoot.traverse((sceneObject) => {
     if (!(sceneObject instanceof THREE.Mesh)) {
       return;
     }
 
-    sceneObject.material = createScanlineMaterial(lightDirection);
+    sceneObject.material = createScanlineMaterial(lightDirection, stripeColor);
 
     const mesh = sceneObject;
     const rest: MeshRestPose = {
@@ -134,15 +143,24 @@ function applyScanlineMaterials(
       quaternion: mesh.quaternion.clone(),
       wobblePhase: mesh.position.y * 4.2 + mesh.position.x * 1.7,
     };
-    mesh.userData.productVisualRest = rest;
+    mesh.userData.helpedSpaceshipMeshRest = rest;
   });
 }
 
-export function ProductVisual() {
-  const containerReference = useRef<HTMLDivElement>(null);
+const StyledVisualMount = styled.div`
+  display: block;
+  height: 100%;
+  min-width: 0;
+  width: 100%;
+`;
+
+const GLB_URL = '/illustrations/home/helped/two.glb';
+
+export function Spaceship({ stripeColor = '#ffffff' }: IllustrationProps) {
+  const mountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const container = containerReference.current;
+    const container = mountReference.current;
     if (!container) {
       return;
     }
@@ -177,11 +195,12 @@ export function ProductVisual() {
     const pivot = new THREE.Group();
     scene.add(pivot);
 
+    const cameraWorldPosition = new THREE.Vector3();
     const clock = new THREE.Clock();
 
     const loader = new GLTFLoader();
     loader.load(
-      HERO_GLB_URL,
+      GLB_URL,
       (gltf) => {
         if (cancelled) {
           disposeObjectSubtree(gltf.scene);
@@ -193,14 +212,13 @@ export function ProductVisual() {
         const center = bounds.getCenter(new THREE.Vector3());
         const size = bounds.getSize(new THREE.Vector3());
         const maxAxis = Math.max(size.x, size.y, size.z, 0.001);
-        const scale = 4.85 / maxAxis;
+        const scale = HELPED_CARD_VISUAL_MODEL_FIT_SCALE / maxAxis;
 
         modelRoot.position.sub(center);
         modelRoot.scale.setScalar(scale);
 
-        applyScanlineMaterials(modelRoot, lightDirectionWorld);
+        applyScanlineMaterials(modelRoot, lightDirectionWorld, stripeColor);
         pivot.add(modelRoot);
-        pivot.rotation.z = 0.9;
 
         const renderFrame = () => {
           if (cancelled) {
@@ -210,10 +228,11 @@ export function ProductVisual() {
           animationFrameId = window.requestAnimationFrame(renderFrame);
           const delta = Math.min(clock.getDelta(), 0.1);
 
+          const motion = HELPED_CARD_VISUAL_MOTION_SCALE;
           const rotationDamp = 6.8;
           const influence = pointer.inside ? 1 : 0.38;
-          targetRotation.y = pointer.x * 0.78 * influence;
-          targetRotation.x = pointer.y * 0.62 * influence;
+          targetRotation.y = pointer.x * 0.78 * motion * influence;
+          targetRotation.x = pointer.y * 0.62 * motion * influence;
 
           pivot.rotation.y = THREE.MathUtils.damp(
             pivot.rotation.y,
@@ -230,18 +249,25 @@ export function ProductVisual() {
 
           const hoverLift = pointer.inside ? 1 : 0;
           pivot.scale.setScalar(
-            THREE.MathUtils.damp(pivot.scale.x, 1 + hoverLift * 0.12, 7, delta),
+            THREE.MathUtils.damp(
+              pivot.scale.x,
+              1 + hoverLift * 0.12 * motion,
+              7,
+              delta,
+            ),
           );
 
-          const mx = pointer.x * (pointer.inside ? 1 : 0.32);
-          const my = pointer.y * (pointer.inside ? 1 : 0.32);
+          const pointerFollow = pointer.inside ? 1 : 0.32;
+          const mx = pointer.x * pointerFollow;
+          const my = pointer.y * pointerFollow;
+          const wobbleAttenuation = pointer.inside ? 1 : 0.36;
 
           modelRoot.traverse((sceneObject) => {
             if (!(sceneObject instanceof THREE.Mesh)) {
               return;
             }
 
-            const rest = sceneObject.userData.productVisualRest as
+            const rest = sceneObject.userData.helpedSpaceshipMeshRest as
               | MeshRestPose
               | undefined;
             if (!rest) {
@@ -249,17 +275,35 @@ export function ProductVisual() {
             }
 
             const phase = rest.wobblePhase;
-            const wobble = pointer.inside ? 1 : 0.36;
             sceneObject.position.x =
-              rest.position.x + mx * 0.22 * Math.sin(phase * 1.8);
+              rest.position.x + mx * motion * 0.22 * Math.sin(phase * 1.8);
             sceneObject.position.z =
-              rest.position.z + my * 0.19 * Math.cos(phase * 1.4);
+              rest.position.z + my * motion * 0.19 * Math.cos(phase * 1.4);
             sceneObject.position.y =
-              rest.position.y + (mx + my) * 0.055 * Math.sin(phase * 2.5);
+              rest.position.y +
+              (mx + my) * motion * 0.055 * Math.sin(phase * 2.5);
 
-            const twist = (mx * 0.34 + my * 0.24) * wobble * Math.sin(phase);
+            const twist =
+              motion *
+              (mx * 0.34 + my * 0.24) *
+              wobbleAttenuation *
+              Math.sin(phase);
             sceneObject.quaternion.copy(rest.quaternion);
             sceneObject.rotateY(twist);
+          });
+
+          camera.getWorldPosition(cameraWorldPosition);
+          modelRoot.traverse((sceneObject) => {
+            if (!(sceneObject instanceof THREE.Mesh)) {
+              return;
+            }
+            const material = sceneObject.material;
+            if (
+              material instanceof THREE.ShaderMaterial &&
+              material.uniforms.uCameraPosition
+            ) {
+              material.uniforms.uCameraPosition.value.copy(cameraWorldPosition);
+            }
           });
 
           renderer.render(scene, camera);
@@ -298,12 +342,12 @@ export function ProductVisual() {
     canvas.addEventListener('pointermove', handlePointerMove);
 
     const handleResize = () => {
-      if (!containerReference.current || cancelled) {
+      if (!mountReference.current || cancelled) {
         return;
       }
 
-      const nextWidth = containerReference.current.clientWidth;
-      const nextHeight = containerReference.current.clientHeight;
+      const nextWidth = mountReference.current.clientWidth;
+      const nextHeight = mountReference.current.clientHeight;
       camera.aspect = nextWidth / nextHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(nextWidth, nextHeight);
@@ -325,11 +369,7 @@ export function ProductVisual() {
         container.removeChild(canvas);
       }
     };
-  }, []);
+  }, [stripeColor]);
 
-  return (
-    <StyledContainer>
-      <StyledGlbMount ref={containerReference} />
-    </StyledContainer>
-  );
+  return <StyledVisualMount aria-hidden ref={mountReference} />;
 }

@@ -1,81 +1,87 @@
 'use client';
 
-import { theme } from '@/theme';
+import type { IllustrationProps } from '@/illustrations/types';
 import { styled } from '@linaria/react';
-import { useLayoutEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-const PARTNER_TESTIMONIALS_VISUAL_GLB_URL =
-  '/illustrations/partner/testimonials/testimonials.glb';
-const PARTNER_TESTIMONIALS_VISUAL_TITLE = 'Partner testimonials illustration';
-const PARTNER_TESTIMONIALS_VISUAL_MODEL_FIT_SCALE = 2.85;
+const GLB_URL = '/illustrations/home/three-cards-illustration/three.glb';
 
-const scanlineVertexShader = /* glsl */ `
-  varying vec3 vWorldPosition;
+const HALFTONE_NUM_ROWS = 65;
+
+const halftoneVertexShader = /* glsl */ `
   varying vec3 vWorldNormal;
 
   void main() {
     vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-    vWorldPosition = worldPosition.xyz;
     vWorldNormal = normalize(mat3(modelMatrix) * normal);
     gl_Position = projectionMatrix * viewMatrix * worldPosition;
   }
 `;
 
-const scanlineFragmentShader = /* glsl */ `
+const halftoneFragmentShader = /* glsl */ `
   uniform vec3 uColor;
   uniform vec3 uLightDir;
-  uniform float uStripeScale;
+  uniform vec2 uResolution;
+  uniform float uNumRows;
 
-  varying vec3 vWorldPosition;
   varying vec3 vWorldNormal;
 
   void main() {
     vec3 normal = normalize(vWorldNormal);
     vec3 lightDir = normalize(uLightDir);
-    float ndotl = max(dot(normal, lightDir), 0.06);
+    float ndotl = max(dot(normal, lightDir), 0.0);
+    float lum = mix(0.35, 1.0, ndotl);
 
-    float y = vWorldPosition.y * uStripeScale;
-    float cell = fract(y);
+    float rowH = uResolution.y / uNumRows;
+    float rowFrac = gl_FragCoord.y / rowH - floor(gl_FragCoord.y / rowH);
+    float dy = abs(rowFrac - 0.5);
 
-    float shadowWeight = mix(1.0, 0.5, ndotl);
-    float lineWidth = 0.58 * shadowWeight;
-    float edge = 0.035;
-    float band = 1.0 - smoothstep(lineWidth, lineWidth + edge, cell);
+    float cellW = rowH * 2.2;
+    float cellFrac = (gl_FragCoord.x - floor(gl_FragCoord.x / cellW) * cellW) / cellW;
 
-    float highlight = pow(ndotl, 1.35);
-    float dash = fract(vWorldPosition.x * 20.0 + vWorldPosition.z * 6.0);
-    float dashMask = mix(
-      1.0,
-      smoothstep(0.15, 0.45, dash) * (1.0 - smoothstep(0.55, 0.88, dash)),
-      highlight
-    );
-    band *= dashMask;
+    float fill = pow(lum, 0.45) * 0.95;
 
-    float speckle = fract(
-      sin(dot(vWorldPosition.xz, vec2(127.1, 311.7))) * 43758.5453
-    );
-    band *= mix(1.0, 0.55 + 0.45 * step(0.4, speckle), highlight * 0.85);
+    float dynamicBarHalf = mix(0.15, 0.34, smoothstep(0.05, 0.8, lum));
 
-    if (band < 0.015) {
+    float dx2 = abs(cellFrac - 0.5);
+    float halfFill = fill * 0.5;
+    float bodyHalfW = max(halfFill - dynamicBarHalf * (rowH / cellW), 0.0);
+    float capR = dynamicBarHalf * rowH;
+
+    float inDash = 0.0;
+    if (dx2 <= bodyHalfW) {
+      float edgeDist = dynamicBarHalf - dy;
+      inDash = smoothstep(-0.03, 0.03, edgeDist);
+    } else {
+      float cdx = (dx2 - bodyHalfW) * cellW;
+      float cdy = dy * rowH;
+      float d = sqrt(cdx * cdx + cdy * cdy);
+      inDash = 1.0 - smoothstep(capR - 1.5, capR + 1.5, d);
+    }
+
+    if (inDash < 0.01) {
       discard;
     }
 
-    vec3 lit = uColor * mix(0.72, 1.18, ndotl);
-    gl_FragColor = vec4(lit, band);
+    gl_FragColor = vec4(uColor, inDash);
   }
 `;
 
-function createScanlineMaterial(lightDirection: THREE.Vector3) {
+function createHalftoneDashMaterial(
+  lightDirection: THREE.Vector3,
+  resolution: THREE.Vector2,
+) {
   return new THREE.ShaderMaterial({
     uniforms: {
       uColor: { value: new THREE.Color('#1e5bff') },
       uLightDir: { value: lightDirection.clone() },
-      uStripeScale: { value: 16.0 },
+      uResolution: { value: resolution.clone() },
+      uNumRows: { value: HALFTONE_NUM_ROWS },
     },
-    vertexShader: scanlineVertexShader,
-    fragmentShader: scanlineFragmentShader,
+    vertexShader: halftoneVertexShader,
+    fragmentShader: halftoneFragmentShader,
     transparent: true,
     depthWrite: true,
     depthTest: true,
@@ -106,16 +112,20 @@ type MeshRestPose = {
   wobblePhase: number;
 };
 
-function applyScanlineMaterials(
+function applyHalftoneDashMaterials(
   modelRoot: THREE.Object3D,
   lightDirection: THREE.Vector3,
+  resolution: THREE.Vector2,
 ) {
   modelRoot.traverse((sceneObject) => {
     if (!(sceneObject instanceof THREE.Mesh)) {
       return;
     }
 
-    sceneObject.material = createScanlineMaterial(lightDirection);
+    sceneObject.material = createHalftoneDashMaterial(
+      lightDirection,
+      resolution,
+    );
 
     const mesh = sceneObject;
     const rest: MeshRestPose = {
@@ -123,37 +133,21 @@ function applyScanlineMaterials(
       quaternion: mesh.quaternion.clone(),
       wobblePhase: mesh.position.y * 4.2 + mesh.position.x * 1.7,
     };
-    mesh.userData.partnerTestimonialsVisualRest = rest;
+    mesh.userData.lockMeshRest = rest;
   });
 }
 
-const VisualFrame = styled.div`
-  background-color: transparent;
-  border-radius: ${theme.radius(1)};
-  height: 279px;
-  overflow: hidden;
-  position: relative;
-  width: 198px;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    height: 476px;
-    width: 336px;
-  }
-`;
-
-const CanvasMount = styled.div`
+const StyledVisualMount = styled.div`
   display: block;
   height: 100%;
-  inset: 0;
   min-width: 0;
-  position: absolute;
   width: 100%;
 `;
 
-export function PartnerVisual() {
+export function Lock(_properties: IllustrationProps) {
   const mountReference = useRef<HTMLDivElement>(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const container = mountReference.current;
     if (!container) {
       return;
@@ -173,17 +167,17 @@ export function PartnerVisual() {
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
     camera.position.set(0, 0, 5.05);
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
+    renderer.setPixelRatio(1);
     renderer.setSize(width, height);
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     const canvas = renderer.domElement;
-    canvas.style.cursor = 'pointer';
     canvas.style.display = 'block';
     canvas.style.height = '100%';
     canvas.style.touchAction = 'none';
     canvas.style.width = '100%';
+    canvas.style.cursor = 'pointer';
     container.appendChild(canvas);
 
     const pivot = new THREE.Group();
@@ -193,7 +187,7 @@ export function PartnerVisual() {
 
     const loader = new GLTFLoader();
     loader.load(
-      PARTNER_TESTIMONIALS_VISUAL_GLB_URL,
+      GLB_URL,
       (gltf) => {
         if (cancelled) {
           disposeObjectSubtree(gltf.scene);
@@ -205,12 +199,20 @@ export function PartnerVisual() {
         const center = bounds.getCenter(new THREE.Vector3());
         const size = bounds.getSize(new THREE.Vector3());
         const maxAxis = Math.max(size.x, size.y, size.z, 0.001);
-        const scale = PARTNER_TESTIMONIALS_VISUAL_MODEL_FIT_SCALE / maxAxis;
+        const scale = 2.75 / maxAxis;
 
         modelRoot.position.sub(center);
         modelRoot.scale.setScalar(scale);
 
-        applyScanlineMaterials(modelRoot, lightDirectionWorld);
+        const canvasResolution = new THREE.Vector2(
+          renderer.domElement.width,
+          renderer.domElement.height,
+        );
+        applyHalftoneDashMaterials(
+          modelRoot,
+          lightDirectionWorld,
+          canvasResolution,
+        );
         pivot.add(modelRoot);
 
         const renderFrame = () => {
@@ -252,7 +254,7 @@ export function PartnerVisual() {
               return;
             }
 
-            const rest = sceneObject.userData.partnerTestimonialsVisualRest as
+            const rest = sceneObject.userData.lockMeshRest as
               | MeshRestPose
               | undefined;
             if (!rest) {
@@ -315,9 +317,25 @@ export function PartnerVisual() {
 
       const nextWidth = mountReference.current.clientWidth;
       const nextHeight = mountReference.current.clientHeight;
+      if (nextWidth < 1 || nextHeight < 1) {
+        return;
+      }
+
       camera.aspect = nextWidth / nextHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(nextWidth, nextHeight);
+
+      const rw = renderer.domElement.width;
+      const rh = renderer.domElement.height;
+      pivot.traverse((sceneObject) => {
+        if (
+          sceneObject instanceof THREE.Mesh &&
+          sceneObject.material instanceof THREE.ShaderMaterial &&
+          sceneObject.material.uniforms.uResolution
+        ) {
+          sceneObject.material.uniforms.uResolution.value.set(rw, rh);
+        }
+      });
     };
 
     window.addEventListener('resize', handleResize);
@@ -338,13 +356,5 @@ export function PartnerVisual() {
     };
   }, []);
 
-  return (
-    <VisualFrame>
-      <CanvasMount
-        aria-label={PARTNER_TESTIMONIALS_VISUAL_TITLE}
-        ref={mountReference}
-        role="img"
-      />
-    </VisualFrame>
-  );
+  return <StyledVisualMount aria-hidden ref={mountReference} />;
 }

@@ -1,81 +1,87 @@
 'use client';
 
+import type { IllustrationProps } from '@/illustrations/types';
+import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-const PLAN_CARD_VISUAL_MODEL_FIT_SCALE = 2.35;
-const PLAN_CARD_IDLE_TILT_INFLUENCE = 0.22;
-const PLAN_CARD_HOVER_SCALE_LIFT = 0.06;
-const PLAN_CARD_ROTATION_DAMP = 8.2;
-const PLAN_CARD_TILT_X = 0.42;
-const PLAN_CARD_TILT_Y = 0.52;
+const GLB_URL = '/illustrations/product/three-cards-illustration/two.glb';
 
-const scanlineVertexShader = /* glsl */ `
-  varying vec3 vWorldPosition;
+const HALFTONE_NUM_ROWS = 65;
+
+const halftoneVertexShader = /* glsl */ `
   varying vec3 vWorldNormal;
 
   void main() {
     vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-    vWorldPosition = worldPosition.xyz;
     vWorldNormal = normalize(mat3(modelMatrix) * normal);
     gl_Position = projectionMatrix * viewMatrix * worldPosition;
   }
 `;
 
-const scanlineFragmentShader = /* glsl */ `
+const halftoneFragmentShader = /* glsl */ `
   uniform vec3 uColor;
   uniform vec3 uLightDir;
-  uniform float uStripeScale;
+  uniform vec2 uResolution;
+  uniform float uNumRows;
 
-  varying vec3 vWorldPosition;
   varying vec3 vWorldNormal;
 
   void main() {
     vec3 normal = normalize(vWorldNormal);
     vec3 lightDir = normalize(uLightDir);
-    float ndotl = max(dot(normal, lightDir), 0.06);
+    float ndotl = max(dot(normal, lightDir), 0.0);
+    float lum = mix(0.35, 1.0, ndotl);
 
-    float y = vWorldPosition.y * uStripeScale;
-    float cell = fract(y);
+    float rowH = uResolution.y / uNumRows;
+    float rowFrac = gl_FragCoord.y / rowH - floor(gl_FragCoord.y / rowH);
+    float dy = abs(rowFrac - 0.5);
 
-    float shadowWeight = mix(1.0, 0.5, ndotl);
-    float lineWidth = 0.58 * shadowWeight;
-    float edge = 0.035;
-    float band = 1.0 - smoothstep(lineWidth, lineWidth + edge, cell);
+    float cellW = rowH * 2.2;
+    float cellFrac = (gl_FragCoord.x - floor(gl_FragCoord.x / cellW) * cellW) / cellW;
 
-    float highlight = pow(ndotl, 1.35);
-    float dash = fract(vWorldPosition.x * 20.0 + vWorldPosition.z * 6.0);
-    float dashMask = mix(
-      1.0,
-      smoothstep(0.15, 0.45, dash) * (1.0 - smoothstep(0.55, 0.88, dash)),
-      highlight
-    );
-    band *= dashMask;
+    float fill = pow(lum, 0.45) * 0.95;
 
-    float speckle = fract(
-      sin(dot(vWorldPosition.xz, vec2(127.1, 311.7))) * 43758.5453
-    );
-    band *= mix(1.0, 0.55 + 0.45 * step(0.4, speckle), highlight * 0.85);
+    float dynamicBarHalf = mix(0.15, 0.34, smoothstep(0.05, 0.8, lum));
 
-    if (band < 0.015) {
+    float dx2 = abs(cellFrac - 0.5);
+    float halfFill = fill * 0.5;
+    float bodyHalfW = max(halfFill - dynamicBarHalf * (rowH / cellW), 0.0);
+    float capR = dynamicBarHalf * rowH;
+
+    float inDash = 0.0;
+    if (dx2 <= bodyHalfW) {
+      float edgeDist = dynamicBarHalf - dy;
+      inDash = smoothstep(-0.03, 0.03, edgeDist);
+    } else {
+      float cdx = (dx2 - bodyHalfW) * cellW;
+      float cdy = dy * rowH;
+      float d = sqrt(cdx * cdx + cdy * cdy);
+      inDash = 1.0 - smoothstep(capR - 1.5, capR + 1.5, d);
+    }
+
+    if (inDash < 0.01) {
       discard;
     }
 
-    vec3 lit = uColor * mix(0.72, 1.18, ndotl);
-    gl_FragColor = vec4(lit, band);
+    gl_FragColor = vec4(uColor, inDash);
   }
 `;
 
-function createScanlineMaterial(lightDirection: THREE.Vector3) {
+function createHalftoneDashMaterial(
+  lightDirection: THREE.Vector3,
+  resolution: THREE.Vector2,
+) {
   return new THREE.ShaderMaterial({
     uniforms: {
       uColor: { value: new THREE.Color('#1e5bff') },
       uLightDir: { value: lightDirection.clone() },
-      uStripeScale: { value: 16.0 },
+      uResolution: { value: resolution.clone() },
+      uNumRows: { value: HALFTONE_NUM_ROWS },
     },
-    vertexShader: scanlineVertexShader,
-    fragmentShader: scanlineFragmentShader,
+    vertexShader: halftoneVertexShader,
+    fragmentShader: halftoneFragmentShader,
     transparent: true,
     depthWrite: true,
     depthTest: true,
@@ -106,16 +112,20 @@ type MeshRestPose = {
   wobblePhase: number;
 };
 
-function applyScanlineMaterials(
+function applyHalftoneDashMaterials(
   modelRoot: THREE.Object3D,
   lightDirection: THREE.Vector3,
+  resolution: THREE.Vector2,
 ) {
   modelRoot.traverse((sceneObject) => {
     if (!(sceneObject instanceof THREE.Mesh)) {
       return;
     }
 
-    sceneObject.material = createScanlineMaterial(lightDirection);
+    sceneObject.material = createHalftoneDashMaterial(
+      lightDirection,
+      resolution,
+    );
 
     const mesh = sceneObject;
     const rest: MeshRestPose = {
@@ -123,24 +133,18 @@ function applyScanlineMaterials(
       quaternion: mesh.quaternion.clone(),
       wobblePhase: mesh.position.y * 4.2 + mesh.position.x * 1.7,
     };
-    mesh.userData.planCardVisualRest = rest;
+    mesh.userData.eyeMeshRest = rest;
   });
 }
 
-// Plain div + stable inline style: Linaria on this node caused SSR/client className mismatches.
-const planCardVisualMountStyle = {
-  display: 'block' as const,
-  height: '100%',
-  minWidth: 0,
-  width: '100%',
-};
+const StyledVisualMount = styled.div`
+  display: block;
+  height: 100%;
+  min-width: 0;
+  width: 100%;
+`;
 
-type PlanCardVisualProps = {
-  src: string;
-  title: string;
-};
-
-export function PlanCardVisual({ src, title }: PlanCardVisualProps) {
+export function Eye(_properties: IllustrationProps) {
   const mountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -157,31 +161,23 @@ export function PlanCardVisual({ src, title }: PlanCardVisualProps) {
     const lightDirectionWorld = new THREE.Vector3(4, 8, 6).normalize();
 
     const scene = new THREE.Scene();
-    const readSize = () => {
-      const nextWidth = container.clientWidth;
-      const nextHeight = container.clientHeight;
-      return {
-        width: Math.max(nextWidth, 1),
-        height: Math.max(nextHeight, 1),
-      };
-    };
-
-    const { width, height } = readSize();
+    const width = container.clientWidth;
+    const height = container.clientHeight;
 
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
     camera.position.set(0, 0, 5.05);
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
+    renderer.setPixelRatio(1);
     renderer.setSize(width, height);
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     const canvas = renderer.domElement;
-    canvas.style.cursor = 'default';
     canvas.style.display = 'block';
     canvas.style.height = '100%';
     canvas.style.touchAction = 'none';
     canvas.style.width = '100%';
+    canvas.style.cursor = 'pointer';
     container.appendChild(canvas);
 
     const pivot = new THREE.Group();
@@ -191,7 +187,7 @@ export function PlanCardVisual({ src, title }: PlanCardVisualProps) {
 
     const loader = new GLTFLoader();
     loader.load(
-      src,
+      GLB_URL,
       (gltf) => {
         if (cancelled) {
           disposeObjectSubtree(gltf.scene);
@@ -203,12 +199,20 @@ export function PlanCardVisual({ src, title }: PlanCardVisualProps) {
         const center = bounds.getCenter(new THREE.Vector3());
         const size = bounds.getSize(new THREE.Vector3());
         const maxAxis = Math.max(size.x, size.y, size.z, 0.001);
-        const scale = PLAN_CARD_VISUAL_MODEL_FIT_SCALE / maxAxis;
+        const scale = 2.75 / maxAxis;
 
         modelRoot.position.sub(center);
         modelRoot.scale.setScalar(scale);
 
-        applyScanlineMaterials(modelRoot, lightDirectionWorld);
+        const canvasResolution = new THREE.Vector2(
+          renderer.domElement.width,
+          renderer.domElement.height,
+        );
+        applyHalftoneDashMaterials(
+          modelRoot,
+          lightDirectionWorld,
+          canvasResolution,
+        );
         pivot.add(modelRoot);
 
         const renderFrame = () => {
@@ -219,44 +223,38 @@ export function PlanCardVisual({ src, title }: PlanCardVisualProps) {
           animationFrameId = window.requestAnimationFrame(renderFrame);
           const delta = Math.min(clock.getDelta(), 0.1);
 
-          const influence = pointer.inside ? 1 : PLAN_CARD_IDLE_TILT_INFLUENCE;
-          targetRotation.y = pointer.x * PLAN_CARD_TILT_Y * influence;
-          targetRotation.x = pointer.y * PLAN_CARD_TILT_X * influence;
+          const rotationDamp = 6.8;
+          const influence = pointer.inside ? 1 : 0.38;
+          targetRotation.y = pointer.x * 0.78 * influence;
+          targetRotation.x = pointer.y * 0.62 * influence;
 
           pivot.rotation.y = THREE.MathUtils.damp(
             pivot.rotation.y,
             targetRotation.y,
-            PLAN_CARD_ROTATION_DAMP,
+            rotationDamp,
             delta,
           );
           pivot.rotation.x = THREE.MathUtils.damp(
             pivot.rotation.x,
             targetRotation.x,
-            PLAN_CARD_ROTATION_DAMP,
+            rotationDamp,
             delta,
           );
 
           const hoverLift = pointer.inside ? 1 : 0;
           pivot.scale.setScalar(
-            THREE.MathUtils.damp(
-              pivot.scale.x,
-              1 + hoverLift * PLAN_CARD_HOVER_SCALE_LIFT,
-              7,
-              delta,
-            ),
+            THREE.MathUtils.damp(pivot.scale.x, 1 + hoverLift * 0.12, 7, delta),
           );
 
-          const mx =
-            pointer.x * (pointer.inside ? 1 : PLAN_CARD_IDLE_TILT_INFLUENCE);
-          const my =
-            pointer.y * (pointer.inside ? 1 : PLAN_CARD_IDLE_TILT_INFLUENCE);
+          const mx = pointer.x * (pointer.inside ? 1 : 0.32);
+          const my = pointer.y * (pointer.inside ? 1 : 0.32);
 
           modelRoot.traverse((sceneObject) => {
             if (!(sceneObject instanceof THREE.Mesh)) {
               return;
             }
 
-            const rest = sceneObject.userData.planCardVisualRest as
+            const rest = sceneObject.userData.eyeMeshRest as
               | MeshRestPose
               | undefined;
             if (!rest) {
@@ -264,15 +262,15 @@ export function PlanCardVisual({ src, title }: PlanCardVisualProps) {
             }
 
             const phase = rest.wobblePhase;
-            const wobble = pointer.inside ? 0.55 : 0.22;
+            const wobble = pointer.inside ? 1 : 0.36;
             sceneObject.position.x =
-              rest.position.x + mx * 0.12 * Math.sin(phase * 1.8);
+              rest.position.x + mx * 0.22 * Math.sin(phase * 1.8);
             sceneObject.position.z =
-              rest.position.z + my * 0.1 * Math.cos(phase * 1.4);
+              rest.position.z + my * 0.19 * Math.cos(phase * 1.4);
             sceneObject.position.y =
-              rest.position.y + (mx + my) * 0.03 * Math.sin(phase * 2.5);
+              rest.position.y + (mx + my) * 0.055 * Math.sin(phase * 2.5);
 
-            const twist = (mx * 0.18 + my * 0.14) * wobble * Math.sin(phase);
+            const twist = (mx * 0.34 + my * 0.24) * wobble * Math.sin(phase);
             sceneObject.quaternion.copy(rest.quaternion);
             sceneObject.rotateY(twist);
           });
@@ -312,7 +310,7 @@ export function PlanCardVisual({ src, title }: PlanCardVisualProps) {
     canvas.addEventListener('pointerleave', handlePointerLeave);
     canvas.addEventListener('pointermove', handlePointerMove);
 
-    const syncCanvasToContainer = () => {
+    const handleResize = () => {
       if (!mountReference.current || cancelled) {
         return;
       }
@@ -326,23 +324,25 @@ export function PlanCardVisual({ src, title }: PlanCardVisualProps) {
       camera.aspect = nextWidth / nextHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(nextWidth, nextHeight);
+
+      const rw = renderer.domElement.width;
+      const rh = renderer.domElement.height;
+      pivot.traverse((sceneObject) => {
+        if (
+          sceneObject instanceof THREE.Mesh &&
+          sceneObject.material instanceof THREE.ShaderMaterial &&
+          sceneObject.material.uniforms.uResolution
+        ) {
+          sceneObject.material.uniforms.uResolution.value.set(rw, rh);
+        }
+      });
     };
 
-    const resizeObserver = new ResizeObserver(() => {
-      syncCanvasToContainer();
-    });
-    resizeObserver.observe(container);
-
-    const handleWindowResize = () => {
-      syncCanvasToContainer();
-    };
-
-    window.addEventListener('resize', handleWindowResize);
+    window.addEventListener('resize', handleResize);
 
     return () => {
       cancelled = true;
-      resizeObserver.disconnect();
-      window.removeEventListener('resize', handleWindowResize);
+      window.removeEventListener('resize', handleResize);
       canvas.removeEventListener('pointerenter', handlePointerEnter);
       canvas.removeEventListener('pointerleave', handlePointerLeave);
       canvas.removeEventListener('pointermove', handlePointerMove);
@@ -354,14 +354,7 @@ export function PlanCardVisual({ src, title }: PlanCardVisualProps) {
         container.removeChild(canvas);
       }
     };
-  }, [src]);
+  }, []);
 
-  return (
-    <div
-      aria-label={title}
-      ref={mountReference}
-      role="img"
-      style={planCardVisualMountStyle}
-    />
-  );
+  return <StyledVisualMount aria-hidden ref={mountReference} />;
 }

@@ -1,99 +1,87 @@
 'use client';
 
+import type { IllustrationProps } from '@/illustrations/types';
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-// Multiplies pointer tilt, idle follow, hover zoom, and mesh wobble amplitudes.
-const HELPED_CARD_VISUAL_MOTION_SCALE = 1.1;
+const GLB_URL = '/illustrations/partner/three-cards-illustration/one.glb';
 
-// Model scale in the 240px frame — larger = bigger asset on screen.
-const HELPED_CARD_VISUAL_MODEL_FIT_SCALE = 2.75 * 1.1;
+const HALFTONE_NUM_ROWS = 65;
 
-const scanlineVertexShader = /* glsl */ `
-  varying vec3 vWorldPosition;
+const halftoneVertexShader = /* glsl */ `
   varying vec3 vWorldNormal;
 
   void main() {
     vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-    vWorldPosition = worldPosition.xyz;
     vWorldNormal = normalize(mat3(modelMatrix) * normal);
     gl_Position = projectionMatrix * viewMatrix * worldPosition;
   }
 `;
 
-const scanlineFragmentShader = /* glsl */ `
-  uniform vec3 uCameraPosition;
+const halftoneFragmentShader = /* glsl */ `
   uniform vec3 uColor;
   uniform vec3 uLightDir;
-  uniform float uStripeScale;
+  uniform vec2 uResolution;
+  uniform float uNumRows;
 
-  varying vec3 vWorldPosition;
   varying vec3 vWorldNormal;
 
   void main() {
     vec3 normal = normalize(vWorldNormal);
     vec3 lightDir = normalize(uLightDir);
-    vec3 viewDir = normalize(uCameraPosition - vWorldPosition);
-    float ndotl = max(dot(normal, lightDir), 0.05);
-    float ndotv = abs(dot(normal, viewDir));
+    float ndotl = max(dot(normal, lightDir), 0.0);
+    float lum = mix(0.35, 1.0, ndotl);
 
-    float y = vWorldPosition.y * uStripeScale;
-    float cell = fract(y);
+    float rowH = uResolution.y / uNumRows;
+    float rowFrac = gl_FragCoord.y / rowH - floor(gl_FragCoord.y / rowH);
+    float dy = abs(rowFrac - 0.5);
 
-    // Narrow colored bands so most of each stripe period reads as background.
-    float shadowWeight = mix(1.0, 0.62, ndotl);
-    float lineWidth = 0.26 * shadowWeight;
-    float edge = 0.024;
-    float band = 1.0 - smoothstep(lineWidth, lineWidth + edge, cell);
+    float cellW = rowH * 2.2;
+    float cellFrac = (gl_FragCoord.x - floor(gl_FragCoord.x / cellW) * cellW) / cellW;
 
-    float highlight = pow(ndotl, 1.25);
-    float dash = fract(vWorldPosition.x * 18.0 + vWorldPosition.z * 5.0);
-    float dashMask = mix(
-      1.0,
-      smoothstep(0.18, 0.48, dash) * (1.0 - smoothstep(0.58, 0.86, dash)),
-      highlight * 0.4
-    );
-    band *= dashMask;
+    float fill = pow(lum, 0.45) * 0.95;
 
-    float speckle = fract(
-      sin(dot(vWorldPosition.xz, vec2(127.1, 311.7))) * 43758.5453
-    );
-    band *= mix(1.0, 0.62 + 0.38 * step(0.42, speckle), highlight * 0.42);
+    float dynamicBarHalf = mix(0.15, 0.34, smoothstep(0.05, 0.8, lum));
 
-    // Silhouettes and shadowed sides fall back to transparent (card shows through).
-    float viewFacing = pow(clamp(ndotv, 0.04, 1.0), 0.52);
-    float lightFacing = pow(clamp(ndotl, 0.1, 1.0), 0.88);
-    float alpha = band * viewFacing * lightFacing;
+    float dx2 = abs(cellFrac - 0.5);
+    float halfFill = fill * 0.5;
+    float bodyHalfW = max(halfFill - dynamicBarHalf * (rowH / cellW), 0.0);
+    float capR = dynamicBarHalf * rowH;
 
-    // Brighten RGB vs flat uColor; alpha above still drives edge transparency.
-    float lightTint = mix(0.72, 1.58, pow(ndotl, 0.82));
-    float viewTint = mix(0.88, 1.14, viewFacing);
-    const float colorGain = 1.22;
-    vec3 lit = uColor * lightTint * viewTint * colorGain;
+    float inDash = 0.0;
+    if (dx2 <= bodyHalfW) {
+      float edgeDist = dynamicBarHalf - dy;
+      inDash = smoothstep(-0.03, 0.03, edgeDist);
+    } else {
+      float cdx = (dx2 - bodyHalfW) * cellW;
+      float cdy = dy * rowH;
+      float d = sqrt(cdx * cdx + cdy * cdy);
+      inDash = 1.0 - smoothstep(capR - 1.5, capR + 1.5, d);
+    }
 
-    if (alpha < 0.02) {
+    if (inDash < 0.01) {
       discard;
     }
 
-    gl_FragColor = vec4(lit, alpha);
+    gl_FragColor = vec4(uColor, inDash);
   }
 `;
 
-function createScanlineMaterial(
+function createHalftoneDashMaterial(
   lightDirection: THREE.Vector3,
-  stripeColor: string,
+  resolution: THREE.Vector2,
 ) {
   return new THREE.ShaderMaterial({
     uniforms: {
-      uCameraPosition: { value: new THREE.Vector3() },
-      uColor: { value: new THREE.Color(stripeColor) },
+      uColor: { value: new THREE.Color('#1e5bff') },
       uLightDir: { value: lightDirection.clone() },
-      uStripeScale: { value: 23.0 },
+      uResolution: { value: resolution.clone() },
+      uNumRows: { value: HALFTONE_NUM_ROWS },
     },
-    vertexShader: scanlineVertexShader,
-    fragmentShader: scanlineFragmentShader,
+    vertexShader: halftoneVertexShader,
+    fragmentShader: halftoneFragmentShader,
     transparent: true,
     depthWrite: true,
     depthTest: true,
@@ -124,17 +112,20 @@ type MeshRestPose = {
   wobblePhase: number;
 };
 
-function applyScanlineMaterials(
+function applyHalftoneDashMaterials(
   modelRoot: THREE.Object3D,
   lightDirection: THREE.Vector3,
-  stripeColor: string,
+  resolution: THREE.Vector2,
 ) {
   modelRoot.traverse((sceneObject) => {
     if (!(sceneObject instanceof THREE.Mesh)) {
       return;
     }
 
-    sceneObject.material = createScanlineMaterial(lightDirection, stripeColor);
+    sceneObject.material = createHalftoneDashMaterial(
+      lightDirection,
+      resolution,
+    );
 
     const mesh = sceneObject;
     const rest: MeshRestPose = {
@@ -142,7 +133,7 @@ function applyScanlineMaterials(
       quaternion: mesh.quaternion.clone(),
       wobblePhase: mesh.position.y * 4.2 + mesh.position.x * 1.7,
     };
-    mesh.userData.helpedCardVisualRest = rest;
+    mesh.userData.partnerTechnologyMeshRest = rest;
   });
 }
 
@@ -153,17 +144,7 @@ const StyledVisualMount = styled.div`
   width: 100%;
 `;
 
-export type HelpedCardVisualProps = {
-  src: string;
-  stripeColor: string;
-  title: string;
-};
-
-export function HelpedCardVisual({
-  src,
-  stripeColor,
-  title,
-}: HelpedCardVisualProps) {
+export function PartnerTechnology(_properties: IllustrationProps) {
   const mountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -186,8 +167,8 @@ export function HelpedCardVisual({
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
     camera.position.set(0, 0, 5.05);
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
+    renderer.setPixelRatio(1);
     renderer.setSize(width, height);
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -202,12 +183,11 @@ export function HelpedCardVisual({
     const pivot = new THREE.Group();
     scene.add(pivot);
 
-    const cameraWorldPosition = new THREE.Vector3();
     const clock = new THREE.Clock();
 
     const loader = new GLTFLoader();
     loader.load(
-      src,
+      GLB_URL,
       (gltf) => {
         if (cancelled) {
           disposeObjectSubtree(gltf.scene);
@@ -219,12 +199,20 @@ export function HelpedCardVisual({
         const center = bounds.getCenter(new THREE.Vector3());
         const size = bounds.getSize(new THREE.Vector3());
         const maxAxis = Math.max(size.x, size.y, size.z, 0.001);
-        const scale = HELPED_CARD_VISUAL_MODEL_FIT_SCALE / maxAxis;
+        const scale = 2.75 / maxAxis;
 
         modelRoot.position.sub(center);
         modelRoot.scale.setScalar(scale);
 
-        applyScanlineMaterials(modelRoot, lightDirectionWorld, stripeColor);
+        const canvasResolution = new THREE.Vector2(
+          renderer.domElement.width,
+          renderer.domElement.height,
+        );
+        applyHalftoneDashMaterials(
+          modelRoot,
+          lightDirectionWorld,
+          canvasResolution,
+        );
         pivot.add(modelRoot);
 
         const renderFrame = () => {
@@ -235,11 +223,10 @@ export function HelpedCardVisual({
           animationFrameId = window.requestAnimationFrame(renderFrame);
           const delta = Math.min(clock.getDelta(), 0.1);
 
-          const motion = HELPED_CARD_VISUAL_MOTION_SCALE;
           const rotationDamp = 6.8;
           const influence = pointer.inside ? 1 : 0.38;
-          targetRotation.y = pointer.x * 0.78 * motion * influence;
-          targetRotation.x = pointer.y * 0.62 * motion * influence;
+          targetRotation.y = pointer.x * 0.78 * influence;
+          targetRotation.x = pointer.y * 0.62 * influence;
 
           pivot.rotation.y = THREE.MathUtils.damp(
             pivot.rotation.y,
@@ -256,25 +243,18 @@ export function HelpedCardVisual({
 
           const hoverLift = pointer.inside ? 1 : 0;
           pivot.scale.setScalar(
-            THREE.MathUtils.damp(
-              pivot.scale.x,
-              1 + hoverLift * 0.12 * motion,
-              7,
-              delta,
-            ),
+            THREE.MathUtils.damp(pivot.scale.x, 1 + hoverLift * 0.12, 7, delta),
           );
 
-          const pointerFollow = pointer.inside ? 1 : 0.32;
-          const mx = pointer.x * pointerFollow;
-          const my = pointer.y * pointerFollow;
-          const wobbleAttenuation = pointer.inside ? 1 : 0.36;
+          const mx = pointer.x * (pointer.inside ? 1 : 0.32);
+          const my = pointer.y * (pointer.inside ? 1 : 0.32);
 
           modelRoot.traverse((sceneObject) => {
             if (!(sceneObject instanceof THREE.Mesh)) {
               return;
             }
 
-            const rest = sceneObject.userData.helpedCardVisualRest as
+            const rest = sceneObject.userData.partnerTechnologyMeshRest as
               | MeshRestPose
               | undefined;
             if (!rest) {
@@ -282,35 +262,17 @@ export function HelpedCardVisual({
             }
 
             const phase = rest.wobblePhase;
+            const wobble = pointer.inside ? 1 : 0.36;
             sceneObject.position.x =
-              rest.position.x + mx * motion * 0.22 * Math.sin(phase * 1.8);
+              rest.position.x + mx * 0.22 * Math.sin(phase * 1.8);
             sceneObject.position.z =
-              rest.position.z + my * motion * 0.19 * Math.cos(phase * 1.4);
+              rest.position.z + my * 0.19 * Math.cos(phase * 1.4);
             sceneObject.position.y =
-              rest.position.y +
-              (mx + my) * motion * 0.055 * Math.sin(phase * 2.5);
+              rest.position.y + (mx + my) * 0.055 * Math.sin(phase * 2.5);
 
-            const twist =
-              motion *
-              (mx * 0.34 + my * 0.24) *
-              wobbleAttenuation *
-              Math.sin(phase);
+            const twist = (mx * 0.34 + my * 0.24) * wobble * Math.sin(phase);
             sceneObject.quaternion.copy(rest.quaternion);
             sceneObject.rotateY(twist);
-          });
-
-          camera.getWorldPosition(cameraWorldPosition);
-          modelRoot.traverse((sceneObject) => {
-            if (!(sceneObject instanceof THREE.Mesh)) {
-              return;
-            }
-            const material = sceneObject.material;
-            if (
-              material instanceof THREE.ShaderMaterial &&
-              material.uniforms.uCameraPosition
-            ) {
-              material.uniforms.uCameraPosition.value.copy(cameraWorldPosition);
-            }
           });
 
           renderer.render(scene, camera);
@@ -355,9 +317,25 @@ export function HelpedCardVisual({
 
       const nextWidth = mountReference.current.clientWidth;
       const nextHeight = mountReference.current.clientHeight;
+      if (nextWidth < 1 || nextHeight < 1) {
+        return;
+      }
+
       camera.aspect = nextWidth / nextHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(nextWidth, nextHeight);
+
+      const rw = renderer.domElement.width;
+      const rh = renderer.domElement.height;
+      pivot.traverse((sceneObject) => {
+        if (
+          sceneObject instanceof THREE.Mesh &&
+          sceneObject.material instanceof THREE.ShaderMaterial &&
+          sceneObject.material.uniforms.uResolution
+        ) {
+          sceneObject.material.uniforms.uResolution.value.set(rw, rh);
+        }
+      });
     };
 
     window.addEventListener('resize', handleResize);
@@ -376,9 +354,7 @@ export function HelpedCardVisual({
         container.removeChild(canvas);
       }
     };
-  }, [src, stripeColor]);
+  }, []);
 
-  return (
-    <StyledVisualMount aria-label={title} ref={mountReference} role="img" />
-  );
+  return <StyledVisualMount aria-hidden ref={mountReference} />;
 }
