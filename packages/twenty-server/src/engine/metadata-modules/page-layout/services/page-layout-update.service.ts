@@ -280,8 +280,6 @@ export class PageLayoutUpdateService {
       .filter(isDefined)
       .filter((tab) => tab.pageLayoutId === existingPageLayout.id);
 
-    // Compare against resolved properties so overridden values
-    // don't trigger false-positive diffs
     const resolvedExistingTabs = existingTabs.map(
       resolveFlatEntityOverridableProperties,
     );
@@ -349,7 +347,7 @@ export class PageLayoutUpdateService {
         const editableProperties = {
           title: tabInput.title,
           position: tabInput.position,
-          icon: tabInput.icon ?? existingTab.icon,
+          ...(tabInput.icon !== undefined && { icon: tabInput.icon }),
           layoutMode: tabInput.layoutMode ?? existingTab.layoutMode,
         };
 
@@ -388,7 +386,7 @@ export class PageLayoutUpdateService {
         const editableProperties = {
           title: tabInput.title,
           position: tabInput.position,
-          icon: tabInput.icon ?? existingTab.icon,
+          ...(tabInput.icon !== undefined && { icon: tabInput.icon }),
           layoutMode: tabInput.layoutMode ?? existingTab.layoutMode,
         };
 
