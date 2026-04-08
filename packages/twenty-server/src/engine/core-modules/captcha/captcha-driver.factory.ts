@@ -28,7 +28,7 @@ export class CaptchaDriverFactory extends DriverFactoryBase<CaptchaDriver | null
       return 'disabled';
     }
 
-    return `${driver}|${this.getConfigGroupHash(ConfigVariablesGroup.CAPTCHA_CONFIG)}`;
+    return `${driver}|${this.configGroupHashService.computeHash(ConfigVariablesGroup.CAPTCHA_CONFIG)}`;
   }
 
   protected createDriver(): CaptchaDriver | null {

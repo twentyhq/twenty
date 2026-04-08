@@ -25,7 +25,7 @@ export class CodeInterpreterDriverFactory extends DriverFactoryBase<CodeInterpre
     const driverType = this.twentyConfigService.get('CODE_INTERPRETER_TYPE');
 
     if (driverType === CodeInterpreterDriverType.E_2_B) {
-      return `e2b|${this.getConfigGroupHash(ConfigVariablesGroup.CODE_INTERPRETER_CONFIG)}`;
+      return `e2b|${this.configGroupHashService.computeHash(ConfigVariablesGroup.CODE_INTERPRETER_CONFIG)}`;
     }
 
     return driverType;

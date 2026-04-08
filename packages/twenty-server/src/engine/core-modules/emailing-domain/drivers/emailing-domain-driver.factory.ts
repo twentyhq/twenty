@@ -27,7 +27,7 @@ export class EmailingDomainDriverFactory extends DriverFactoryBase<EmailingDomai
     const driver = EmailingDomainDriver.AWS_SES;
 
     if (driver === EmailingDomainDriver.AWS_SES) {
-      const awsConfigHash = this.getConfigGroupHash(
+      const awsConfigHash = this.configGroupHashService.computeHash(
         ConfigVariablesGroup.AWS_SES_SETTINGS,
       );
 

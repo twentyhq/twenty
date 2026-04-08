@@ -1,4 +1,3 @@
-import { type ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { type ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -41,10 +40,6 @@ export abstract class DriverFactoryBase<TDriver> {
     }
 
     return this.currentDriver;
-  }
-
-  protected getConfigGroupHash(group: ConfigVariablesGroup): string {
-    return this.configGroupHashService.computeHash(group);
   }
 
   protected abstract buildConfigKey(): string;

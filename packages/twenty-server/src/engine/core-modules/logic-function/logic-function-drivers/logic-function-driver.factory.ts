@@ -32,7 +32,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
     const driverType = this.twentyConfigService.get('LOGIC_FUNCTION_TYPE');
 
     if (driverType === LogicFunctionDriverType.LAMBDA) {
-      return `lambda|${this.getConfigGroupHash(ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG)}`;
+      return `lambda|${this.configGroupHashService.computeHash(ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG)}`;
     }
 
     return driverType;

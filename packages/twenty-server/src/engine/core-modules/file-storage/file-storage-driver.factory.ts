@@ -33,7 +33,7 @@ export class FileStorageDriverFactory extends DriverFactoryBase<StorageDriver> {
     }
 
     if (storageType === StorageDriverType.S_3) {
-      const storageConfigHash = this.getConfigGroupHash(
+      const storageConfigHash = this.configGroupHashService.computeHash(
         ConfigVariablesGroup.STORAGE_CONFIG,
       );
 

@@ -9,9 +9,13 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 describe('FileStorageDriverFactory', () => {
   let factory: FileStorageDriverFactory;
   let twentyConfigService: TwentyConfigService;
+  let configGroupHashService: ConfigGroupHashService;
 
   const mockTwentyConfigService = {
     get: jest.fn(),
+  };
+  const mockConfigGroupHashService = {
+    computeHash: jest.fn().mockReturnValue(''),
   };
 
   beforeEach(async () => {
@@ -24,13 +28,16 @@ describe('FileStorageDriverFactory', () => {
         },
         {
           provide: ConfigGroupHashService,
-          useValue: { computeHash: jest.fn().mockReturnValue('') },
+          useValue: mockConfigGroupHashService,
         },
       ],
     }).compile();
 
     factory = module.get<FileStorageDriverFactory>(FileStorageDriverFactory);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
+    configGroupHashService = module.get<ConfigGroupHashService>(
+      ConfigGroupHashService,
+    );
 
     jest.clearAllMocks();
   });
@@ -62,7 +69,7 @@ describe('FileStorageDriverFactory', () => {
         .spyOn(twentyConfigService, 'get')
         .mockReturnValue(StorageDriverType.S_3);
       jest
-        .spyOn(factory as any, 'getConfigGroupHash')
+        .spyOn(configGroupHashService, 'computeHash')
         .mockReturnValue('s3-hash-123');
 
       const result = factory['buildConfigKey']();
@@ -264,7 +271,7 @@ describe('FileStorageDriverFactory', () => {
           }
         });
       jest
-        .spyOn(factory as any, 'getConfigGroupHash')
+        .spyOn(configGroupHashService, 'computeHash')
         .mockReturnValue('s3-hash-123');
 
       const driver2 = factory.getCurrentDriver();
