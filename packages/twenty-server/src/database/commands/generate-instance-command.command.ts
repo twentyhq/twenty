@@ -76,34 +76,13 @@ export class GenerateInstanceCommandCommand extends CommandRunner {
     const versionDir = this.getVersionDir(version);
     const timestamp = Date.now();
 
-    if (commandType === 'slow') {
-      const result = this.instanceMigrationGenerationService.generateSlow({
+    const result =
+      await this.instanceMigrationGenerationService.generateInstanceCommand({
         migrationName,
         version,
         timestamp,
+        type: commandType,
       });
-
-      const filePath = path.join(versionDir, result.fileName);
-
-      fs.writeFileSync(filePath, result.fileTemplate);
-
-      this.logger.log(`Slow command generated successfully: ${filePath}`);
-      this.logger.log(`  Class: ${result.className}`);
-      this.logger.log(`  Version: ${version}`);
-
-      const versionSlug = version.split('.').slice(0, 2).join('-');
-      const newImportPath = `src/database/commands/upgrade-version-command/${versionSlug}/${result.fileName.replace('.ts', '')}`;
-
-      this.appendToInstanceCommandsConstant(result.className, newImportPath);
-
-      return;
-    }
-
-    const result = await this.instanceMigrationGenerationService.generate({
-      migrationName,
-      version,
-      timestamp,
-    });
 
     if (!result) {
       this.logger.warn(
@@ -113,11 +92,13 @@ export class GenerateInstanceCommandCommand extends CommandRunner {
       return;
     }
 
-    const migrationFilePath = path.join(versionDir, result.fileName);
+    const filePath = path.join(versionDir, result.fileName);
 
-    fs.writeFileSync(migrationFilePath, result.fileTemplate);
+    fs.writeFileSync(filePath, result.fileTemplate);
 
-    this.logger.log(`Migration generated successfully: ${migrationFilePath}`);
+    this.logger.log(
+      `${commandType} instance command generated successfully: ${filePath}`,
+    );
     this.logger.log(`  Class: ${result.className}`);
     this.logger.log(`  Version: ${version}`);
 

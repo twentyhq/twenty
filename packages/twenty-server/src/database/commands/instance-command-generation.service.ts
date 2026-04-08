@@ -5,11 +5,13 @@ import { pascalCase } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
+import { type InstanceCommandType } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 
-type GenerateMigrationArgs = {
+type GenerateInstanceCommandArgs = {
   migrationName: string;
   version: UpgradeCommandVersion;
   timestamp: number;
+  type?: InstanceCommandType;
 };
 
 export type GeneratedMigrationResult = {
@@ -25,11 +27,12 @@ export class InstanceCommandGenerationService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async generate({
+  async generateInstanceCommand({
     migrationName,
     version,
     timestamp,
-  }: GenerateMigrationArgs): Promise<GeneratedMigrationResult | null> {
+    type = 'fast',
+  }: GenerateInstanceCommandArgs): Promise<GeneratedMigrationResult | null> {
     const sqlInMemory = await this.dataSource.driver
       .createSchemaBuilder()
       .log();
@@ -38,7 +41,7 @@ export class InstanceCommandGenerationService {
       return null;
     }
 
-    const className = this.buildClassName(migrationName);
+    const className = this.buildClassName({ name: migrationName, type });
 
     const upStatements = sqlInMemory.upQueries.map(
       ({ query, parameters }) =>
@@ -52,40 +55,37 @@ export class InstanceCommandGenerationService {
           `    await queryRunner.query('${this.escapeForSingleQuotedString(query)}'${this.formatQueryParams(parameters)});`,
       );
 
-    const fileTemplate = this.buildFastMigrationFileContent({
-      className,
-      version,
-      timestamp,
-      upStatements,
-      downStatements,
-    });
+    const fileTemplate =
+      type === 'slow'
+        ? this.buildSlowMigrationFileContent({
+            className,
+            version,
+            timestamp,
+            upStatements,
+            downStatements,
+          })
+        : this.buildFastMigrationFileContent({
+            className,
+            version,
+            timestamp,
+            upStatements,
+            downStatements,
+          });
 
     const versionSlug = version.split('.').slice(0, 2).join('-');
-    const fileName = `${versionSlug}-instance-command-fast-${timestamp}-${migrationName}.ts`;
+    const fileName = `${versionSlug}-instance-command-${type}-${timestamp}-${migrationName}.ts`;
 
     return { fileName, fileTemplate, className };
   }
 
-  generateSlow({
-    migrationName,
-    version,
-    timestamp,
-  }: GenerateMigrationArgs): GeneratedMigrationResult {
-    const className = this.buildClassName(migrationName);
-    const versionSlug = version.split('.').slice(0, 2).join('-');
-    const fileName = `${versionSlug}-instance-command-slow-${timestamp}-${migrationName}.ts`;
-
-    const fileTemplate = this.buildSlowMigrationFileContent({
-      className,
-      version,
-      timestamp,
-    });
-
-    return { fileName, fileTemplate, className };
-  }
-
-  private buildClassName(name: string): string {
-    return `${pascalCase(name)}Command`;
+  private buildClassName({
+    name,
+    type,
+  }: {
+    name: string;
+    type: InstanceCommandType;
+  }): string {
+    return `${pascalCase(name)}${pascalCase(type)}InstanceCommand`;
   }
 
   private formatQueryParams(parameters: unknown[] | undefined): string {
@@ -135,10 +135,14 @@ ${downStatements.join('\n')}
     className,
     version,
     timestamp,
+    upStatements,
+    downStatements,
   }: {
     className: string;
     version: string;
     timestamp: number;
+    upStatements: string[];
+    downStatements: string[];
   }): string {
     return `import { InjectDataSource } from '@nestjs/typeorm';
 
@@ -159,11 +163,11 @@ export class ${className} implements SlowInstanceCommand {
   }
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // TODO: implement DDL migration (runs after data migration)
+${upStatements.join('\n')}
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // TODO: implement rollback
+${downStatements.join('\n')}
   }
 }
 `;
