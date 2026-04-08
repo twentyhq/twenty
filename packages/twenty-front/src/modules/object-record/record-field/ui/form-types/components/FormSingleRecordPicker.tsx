@@ -117,10 +117,8 @@ export const FormSingleRecordPicker = ({
   ) => {
     if (!isDefined(selectedMorphItem) || selectedMorphItem === null) {
       if (defaultValue === null) {
-        // Toggle off: already "No record", go back to undefined
         onClear?.();
       } else {
-        // Select "No record"
         onChange(null);
       }
       closeDropdown(dropdownId);
@@ -129,7 +127,6 @@ export const FormSingleRecordPicker = ({
     }
 
     if (defaultValue === selectedMorphItem.recordId) {
-      // Toggle off: already this record, go back to undefined
       onClear?.();
     } else {
       onChange(selectedMorphItem.recordId);
