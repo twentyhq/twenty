@@ -7,6 +7,10 @@ import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPa
 import { NewFieldDefaultVisibilityToggle } from '@/side-panel/pages/page-layout/components/NewFieldDefaultVisibilityToggle';
 import { WidgetSettingsManageSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsManageSection';
 import { WidgetSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection';
+import {
+  WIDGET_SETTINGS_VISIBILITY_SELECTABLE_ITEM_ID,
+  WidgetSettingsVisibilitySection,
+} from '@/side-panel/pages/page-layout/components/WidgetSettingsVisibilitySection';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
@@ -86,6 +90,7 @@ export const SidePanelRecordPageFieldsSettings = () => {
     'new-field-default-visibility',
     'display-more-fields-button',
     'action-button',
+    WIDGET_SETTINGS_VISIBILITY_SELECTABLE_ITEM_ID,
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT,
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.REPLACE_WIDGET,
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.DELETE_WIDGET,
@@ -128,6 +133,7 @@ export const SidePanelRecordPageFieldsSettings = () => {
               widgetId={widgetInEditMode.id}
             />
           </SidePanelGroup>
+          <WidgetSettingsVisibilitySection pageLayoutId={pageLayoutId} />
           <WidgetSettingsManageSection pageLayoutId={pageLayoutId} />
           <WidgetSettingsPlacementSection pageLayoutId={pageLayoutId} />
         </SidePanelList>

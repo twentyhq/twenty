@@ -530,7 +530,9 @@ export class PageLayoutUpdateService {
           applicationId: workspaceCustomApplicationId,
           applicationUniversalIdentifier:
             workspaceCustomApplicationUniversalIdentifier,
-          conditionalDisplay: null,
+          conditionalDisplay: widgetInput.conditionalDisplay ?? null,
+          conditionalAvailabilityExpression:
+            widgetInput.conditionalAvailabilityExpression ?? null,
           overrides: null,
           isActive: true,
           universalConfiguration:
@@ -565,6 +567,12 @@ export class PageLayoutUpdateService {
             flatObjectMetadataMaps,
           }),
           configuration: updatedConfiguration,
+          conditionalDisplay:
+            widgetInput.conditionalDisplay ??
+            existingWidget.conditionalDisplay,
+          conditionalAvailabilityExpression:
+            widgetInput.conditionalAvailabilityExpression ??
+            existingWidget.conditionalAvailabilityExpression,
           updatedAt: now.toISOString(),
           ...(isDefined(updatedConfiguration) && {
             universalConfiguration:
@@ -601,6 +609,12 @@ export class PageLayoutUpdateService {
             flatObjectMetadataMaps,
           }),
           configuration: restoredConfiguration,
+          conditionalDisplay:
+            widgetInput.conditionalDisplay ??
+            existingWidget.conditionalDisplay,
+          conditionalAvailabilityExpression:
+            widgetInput.conditionalAvailabilityExpression ??
+            existingWidget.conditionalAvailabilityExpression,
           isActive: true,
           updatedAt: now.toISOString(),
           ...(isDefined(restoredConfiguration) && {

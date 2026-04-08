@@ -6,6 +6,10 @@ import { FieldWidgetFieldDropdownContent } from '@/side-panel/pages/page-layout/
 import { FieldWidgetLayoutDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent';
 import { WidgetSettingsManageSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsManageSection';
 import { WidgetSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection';
+import {
+  WIDGET_SETTINGS_VISIBILITY_SELECTABLE_ITEM_ID,
+  WidgetSettingsVisibilitySection,
+} from '@/side-panel/pages/page-layout/components/WidgetSettingsVisibilitySection';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
@@ -71,6 +75,7 @@ export const SidePanelRecordPageFieldSettings = () => {
   const selectableItemIds = [
     'field',
     'layout',
+    WIDGET_SETTINGS_VISIBILITY_SELECTABLE_ITEM_ID,
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT,
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.REPLACE_WIDGET,
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.DELETE_WIDGET,
@@ -115,6 +120,7 @@ export const SidePanelRecordPageFieldSettings = () => {
               />
             </SelectableListItem>
           </SidePanelGroup>
+          <WidgetSettingsVisibilitySection pageLayoutId={pageLayoutId} />
           <WidgetSettingsManageSection pageLayoutId={pageLayoutId} />
           <WidgetSettingsPlacementSection pageLayoutId={pageLayoutId} />
         </SidePanelList>

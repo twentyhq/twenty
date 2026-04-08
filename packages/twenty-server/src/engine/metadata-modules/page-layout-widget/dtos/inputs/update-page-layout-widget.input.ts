@@ -57,4 +57,9 @@ export class UpdatePageLayoutWidgetInput {
   @IsObject()
   @IsOptional()
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  conditionalAvailabilityExpression?: string | null;
 }

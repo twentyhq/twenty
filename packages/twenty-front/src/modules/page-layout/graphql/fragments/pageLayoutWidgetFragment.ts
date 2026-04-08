@@ -11,6 +11,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
     updatedAt
     deletedAt
     conditionalDisplay
+    conditionalAvailabilityExpression
     gridPosition {
       column
       columnSpan
