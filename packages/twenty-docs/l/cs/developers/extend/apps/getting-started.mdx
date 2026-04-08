@@ -106,10 +106,10 @@ Pokud nechcete, aby na pozadí běžel watcher (například v CI pipeline, git h
 yarn twenty dev --once
 ```
 
-| Příkaz                   | Chování                                                                                                              | Kdy použít                                                                      |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `yarn twenty dev`        | Sleduje vaše zdrojové soubory a při každé změně znovu spustí synchronizaci. Zůstává spuštěný, dokud jej nezastavíte. | Interaktivní lokální vývoj — chcete živý panel stavu a okamžitou zpětnou vazbu. |
-| `yarn twenty dev --once` | Provede jedno sestavení + synchronizaci, poté ukončí běh s kódem `0` při úspěchu nebo `1` při neúspěchu.             | Skripty, CI, pre-commit hooky, AI agenti a jakýkoli neinteraktivní workflow.    |
+| Příkaz                   | Chování                                                                                                              | Kdy použít                                                                              |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `yarn twenty dev`        | Sleduje vaše zdrojové soubory a při každé změně znovu spustí synchronizaci. Zůstává spuštěný, dokud jej nezastavíte. | Interaktivní lokální vývoj — chcete živý panel stavu a okamžitou zpětnovazebnou smyčku. |
+| `yarn twenty dev --once` | Provede jedno sestavení + synchronizaci, poté ukončí běh s kódem `0` při úspěchu nebo `1` při neúspěchu.             | Skripty, CI, pre-commit hooky, AI agenti a jakýkoli neinteraktivní pracovní postup.     |
 
 Oba režimy vyžadují server Twenty běžící v režimu vývoje a autentizovaný remote — platí stejné požadavky.
 
