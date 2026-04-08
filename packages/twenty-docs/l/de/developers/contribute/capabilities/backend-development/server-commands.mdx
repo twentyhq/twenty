@@ -43,6 +43,13 @@ npx nx run twenty-server:database:reset
 ```
 
 ### Migrationen
+
+#### Für Objekte in Core/Metadata-Schemas (TypeORM)
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
 ## Technologie-Stack
 
 Twenty verwendet in erster Linie NestJS für das Backend.

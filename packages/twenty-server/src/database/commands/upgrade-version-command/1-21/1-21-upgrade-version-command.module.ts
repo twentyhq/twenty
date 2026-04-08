@@ -2,19 +2,20 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
-import { AddComposeEmailCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-add-compose-email-command-menu-item.command';
-import { MigrateMessagingInfrastructureToMetadataCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-migrate-messaging-infrastructure-to-metadata.command';
-import { RefactorNavigationCommandsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-refactor-navigation-commands.command';
-import { AddGlobalKeyValuePairUniqueIndexCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-add-global-key-value-pair-unique-index.command';
-import { BackfillDatasourceToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-backfill-datasource-to-workspace.command';
-import { BackfillMessageThreadSubjectCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-backfill-message-thread-subject.command';
-import { BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-backfill-page-layouts-and-fields-widget-view-fields.command';
-import { DeduplicateEngineCommandsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-deduplicate-engine-commands.command';
-import { DropWorkspaceMessagingFksCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-drop-workspace-messaging-fks.command';
-import { FixSelectAllCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-fix-select-all-command-menu-items.command';
-import { MigrateAiAgentTextToJsonResponseFormatCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-migrate-ai-agent-text-to-json-response-format.command';
-import { MigrateMessageFolderParentIdToExternalIdCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-migrate-message-folder-parent-id-to-external-id.command';
-import { UpdateEditLayoutCommandMenuItemLabelCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-update-edit-layout-command-menu-item-label.command';
+import { RefactorNavigationCommandsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500013000-refactor-navigation-commands.command';
+import { AddComposeEmailCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500001000-add-compose-email-command-menu-item.command';
+import { AddGlobalKeyValuePairUniqueIndexCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500002000-add-global-key-value-pair-unique-index.command';
+import { BackfillDatasourceToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500003000-backfill-datasource-to-workspace.command';
+import { BackfillMessageThreadSubjectCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500004000-backfill-message-thread-subject.command';
+import { BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500005000-backfill-page-layouts-and-fields-widget-view-fields.command';
+import { DeduplicateEngineCommandsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500006000-deduplicate-engine-commands.command';
+import { FixSelectAllCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500007000-fix-select-all-command-menu-items.command';
+import { MigrateAiAgentTextToJsonResponseFormatCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500008000-migrate-ai-agent-text-to-json-response-format.command';
+import { UpdateEditLayoutCommandMenuItemLabelCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500009000-update-edit-layout-command-menu-item-label.command';
+import { DropWorkspaceMessagingFksCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500010000-drop-workspace-messaging-fks.command';
+import { MigrateMessageFolderParentIdToExternalIdCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500011000-migrate-message-folder-parent-id-to-external-id.command';
+import { MigrateMessagingInfrastructureToMetadataCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500012000-migrate-messaging-infrastructure-to-metadata.command';
+import { FixMessageThreadViewAndLabelIdentifierCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500014000-fix-message-thread-view-and-label-identifier.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -64,21 +65,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     DropWorkspaceMessagingFksCommand,
     MigrateMessageFolderParentIdToExternalIdCommand,
     MigrateMessagingInfrastructureToMetadataCommand,
-  ],
-  exports: [
-    AddComposeEmailCommandMenuItemCommand,
-    AddGlobalKeyValuePairUniqueIndexCommand,
-    BackfillDatasourceToWorkspaceCommand,
-    BackfillMessageThreadSubjectCommand,
-    BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
-    DeduplicateEngineCommandsCommand,
-    FixSelectAllCommandMenuItemsCommand,
-    MigrateAiAgentTextToJsonResponseFormatCommand,
-    UpdateEditLayoutCommandMenuItemLabelCommand,
-    RefactorNavigationCommandsCommand,
-    DropWorkspaceMessagingFksCommand,
-    MigrateMessageFolderParentIdToExternalIdCommand,
-    MigrateMessagingInfrastructureToMetadataCommand,
+    FixMessageThreadViewAndLabelIdentifierCommand,
   ],
 })
 export class V1_21_UpgradeVersionCommandModule {}

@@ -43,6 +43,13 @@ npx nx run twenty-server:database:reset
 ```
 
 ### Миграции
+
+#### Для объектов в схемах Core/Metadata (TypeORM)
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
 ## Технологический стек
 
 Для работы с серверной частью Twenty в основном использует NestJS.

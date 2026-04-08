@@ -1,0 +1,46 @@
+name: Deploy Twenty App
+description: Build and deploy a Twenty app to a remote instance
+
+inputs:
+  api-url:
+    description: Base URL of the target Twenty instance (e.g. https://my.twenty.instance)
+    required: true
+  api-key:
+    description: API key or access token for the target instance
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Enable Corepack
+      shell: bash
+      run: corepack enable
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: '.nvmrc'
+        cache: yarn
+
+    - name: Install dependencies
+      shell: bash
+      run: yarn install --immutable
+
+    - name: Configure remote
+      shell: bash
+      run: |
+        mkdir -p ~/.twenty
+        node -e "
+          const fs = require('fs'), path = require('path'), os = require('os');
+          fs.writeFileSync(path.join(os.homedir(), '.twenty', 'config.json'), JSON.stringify({
+            version: 1,
+            remotes: { target: { apiUrl: process.env.API_URL, apiKey: process.env.API_KEY } }
+          }, null, 2));
+        "
+      env:
+        API_URL: ${{ inputs.api-url }}
+        API_KEY: ${{ inputs.api-key }}
+
+    - name: Deploy
+      shell: bash
+      run: yarn twenty deploy --remote target

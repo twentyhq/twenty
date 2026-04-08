@@ -1,0 +1,64 @@
+name: CI Example App Hello World
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  changed-files-check:
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        packages/twenty-apps/examples/hello-world/**
+        packages/twenty-sdk/**
+        packages/twenty-client-sdk/**
+        packages/twenty-shared/**
+        !packages/twenty-sdk/package.json
+        !packages/twenty-client-sdk/package.json
+        !packages/twenty-shared/package.json
+
+  example-app-hello-world:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+
+      - name: Build SDK packages
+        run: npx nx build twenty-sdk
+
+      - name: Spawn Twenty test instance
+        id: twenty
+        uses: ./.github/actions/spawn-twenty-app-dev-test
+
+      - name: Run integration tests
+        working-directory: packages/twenty-apps/examples/hello-world
+        env:
+          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
+          TWENTY_API_KEY: ${{ steps.twenty.outputs.api-key }}
+        run: npx vitest run
+
+  ci-example-app-hello-world-status-check:
+    if: always() && !cancelled()
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs: [changed-files-check, example-app-hello-world]
+    steps:
+      - name: Fail job if any needs failed
+        if: contains(needs.*.result, 'failure')
+        run: exit 1

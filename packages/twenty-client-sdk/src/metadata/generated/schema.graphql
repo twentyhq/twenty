@@ -2575,7 +2575,7 @@ type CommandMenuItem {
   position: Float!
   isPinned: Boolean!
   availabilityType: CommandMenuItemAvailabilityType!
-  payload: JSON
+  payload: CommandMenuItemPayload
   hotKeys: [String!]
   conditionalAvailabilityExpression: String
   availabilityObjectMetadataId: UUID
@@ -2657,6 +2657,16 @@ enum CommandMenuItemAvailabilityType {
   GLOBAL
   RECORD_SELECTION
   FALLBACK
+}
+
+union CommandMenuItemPayload = PathCommandMenuItemPayload | ObjectMetadataCommandMenuItemPayload
+
+type PathCommandMenuItemPayload {
+  path: String!
+}
+
+type ObjectMetadataCommandMenuItemPayload {
+  objectMetadataItemId: UUID!
 }
 
 type ToolIndexEntry {

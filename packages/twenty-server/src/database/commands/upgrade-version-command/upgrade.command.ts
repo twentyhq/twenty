@@ -1,146 +1,298 @@
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { Command } from 'nest-commander';
+import chalk from 'chalk';
+import { Command, CommandRunner, Option } from 'nest-commander';
+import { SemVer } from 'semver';
 import { DataSource } from 'typeorm';
 
-import {
-  type AllCommands,
-  UpgradeCommandRunner,
-  type VersionCommands,
-} from 'src/database/commands/command-runners/upgrade.command-runner';
+import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { BackfillCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-command-menu-items.command';
-import { BackfillNavigationMenuItemTypeCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-navigation-menu-item-type.command';
-import { BackfillSelectFieldOptionIdsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-select-field-option-ids.command';
-import { DeleteOrphanNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-delete-orphan-navigation-menu-items.command';
-import { IdentifyFieldPermissionMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-identify-field-permission-metadata.command';
-import { IdentifyObjectPermissionMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-identify-object-permission-metadata.command';
-import { IdentifyPermissionFlagMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-identify-permission-flag-metadata.command';
-import { MakeFieldPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-make-field-permission-universal-identifier-and-application-id-not-nullable-migration.command';
-import { MakeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-make-object-permission-universal-identifier-and-application-id-not-nullable-migration.command';
-import { MakePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-make-permission-flag-universal-identifier-and-application-id-not-nullable-migration.command';
-import { MakeWorkflowSearchableCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-make-workflow-searchable.command';
-import { MigrateMessagingInfrastructureToMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-messaging-infrastructure-to-metadata.command';
-import { MigrateRichTextToTextCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-rich-text-to-text.command';
-import { SeedCliApplicationRegistrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-seed-cli-application-registration.command';
-import { UpdateStandardIndexViewNamesCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-update-standard-index-view-names.command';
-
-import { AddComposeEmailCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-add-compose-email-command-menu-item.command';
-import { RefactorNavigationCommandsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-refactor-navigation-commands.command';
-import { AddGlobalKeyValuePairUniqueIndexCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-add-global-key-value-pair-unique-index.command';
-import { BackfillDatasourceToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-backfill-datasource-to-workspace.command';
-import { BackfillMessageThreadSubjectCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-backfill-message-thread-subject.command';
-import { BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-backfill-page-layouts-and-fields-widget-view-fields.command';
-import { DeduplicateEngineCommandsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-deduplicate-engine-commands.command';
-import { DropWorkspaceMessagingFksCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-drop-workspace-messaging-fks.command';
-import { FixSelectAllCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-fix-select-all-command-menu-items.command';
-import { MigrateAiAgentTextToJsonResponseFormatCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-migrate-ai-agent-text-to-json-response-format.command';
-import { MigrateMessageFolderParentIdToExternalIdCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-migrate-message-folder-parent-id-to-external-id.command';
-import { UpdateEditLayoutCommandMenuItemLabelCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-update-edit-layout-command-menu-item-label.command';
+import { WorkspaceCommandRunner } from 'src/database/commands/command-runners/workspace.command-runner';
+import { CommandLogger } from 'src/database/commands/logger';
+import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
 import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
-import { RegisteredInstanceMigrationService } from 'src/engine/core-modules/upgrade/services/registered-instance-migration-registry.service';
+import {
+  UpgradeCommandRegistryService,
+  type VersionBundle,
+} from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
+
+export type VersionCommands = (
+  | WorkspaceCommandRunner
+  | ActiveOrSuspendedWorkspaceCommandRunner
+)[];
+
+export type UpgradeCommandOptions = {
+  workspaceId?: Set<string>;
+  startFromWorkspaceId?: string;
+  workspaceCountLimit?: number;
+  dryRun?: boolean;
+  verbose?: boolean;
+};
+
+type VersionContext = VersionBundle & {
+  fromWorkspaceVersion: SemVer;
+  currentAppVersion: SemVer;
+  currentVersionMajorMinor: UpgradeCommandVersion;
+};
 
 @Command({
   name: 'upgrade',
   description: 'Upgrade workspaces to the latest version',
 })
-export class UpgradeCommand extends UpgradeCommandRunner {
-  override allCommands: AllCommands;
+export class UpgradeCommand extends CommandRunner {
+  protected logger: CommandLogger;
 
   constructor(
     protected readonly coreEngineVersionService: CoreEngineVersionService,
     protected readonly workspaceVersionService: WorkspaceVersionService,
-    protected readonly registeredInstanceMigrationService: RegisteredInstanceMigrationService,
+    protected readonly upgradeCommandRegistryService: UpgradeCommandRegistryService,
     protected readonly instanceUpgradeService: InstanceUpgradeService,
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     protected readonly workspaceUpgradeService: WorkspaceUpgradeService,
     @InjectDataSource()
     protected readonly dataSource: DataSource,
-
-    // 1.20 Commands
-    private readonly identifyPermissionFlagMetadataCommand: IdentifyPermissionFlagMetadataCommand,
-    private readonly makePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-    private readonly identifyObjectPermissionMetadataCommand: IdentifyObjectPermissionMetadataCommand,
-    private readonly makeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-    private readonly identifyFieldPermissionMetadataCommand: IdentifyFieldPermissionMetadataCommand,
-    private readonly makeFieldPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeFieldPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-    private readonly backfillNavigationMenuItemTypeCommand: BackfillNavigationMenuItemTypeCommand,
-    private readonly backfillCommandMenuItemsCommand: BackfillCommandMenuItemsCommand,
-    private readonly deleteOrphanNavigationMenuItemsCommand: DeleteOrphanNavigationMenuItemsCommand,
-    private readonly seedCliApplicationRegistrationCommand: SeedCliApplicationRegistrationCommand,
-    private readonly migrateRichTextToTextCommand: MigrateRichTextToTextCommand,
-    private readonly migrateMessagingInfrastructureToMetadataCommand: MigrateMessagingInfrastructureToMetadataCommand,
-    private readonly backfillSelectFieldOptionIdsCommand: BackfillSelectFieldOptionIdsCommand,
-    private readonly updateStandardIndexViewNamesCommand: UpdateStandardIndexViewNamesCommand,
-    private readonly makeWorkflowSearchableCommand: MakeWorkflowSearchableCommand,
-
-    // 1.21 Commands
-    private readonly addComposeEmailCommandMenuItemCommand: AddComposeEmailCommandMenuItemCommand,
-    private readonly addGlobalKeyValuePairUniqueIndexCommand: AddGlobalKeyValuePairUniqueIndexCommand,
-    private readonly backfillDatasourceToWorkspaceCommand: BackfillDatasourceToWorkspaceCommand,
-    private readonly backfillMessageThreadSubjectCommand: BackfillMessageThreadSubjectCommand,
-    private readonly backfillPageLayoutsAndFieldsWidgetViewFieldsCommand: BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
-    private readonly deduplicateEngineCommandsCommand: DeduplicateEngineCommandsCommand,
-    private readonly fixSelectAllCommandMenuItemsCommand: FixSelectAllCommandMenuItemsCommand,
-    private readonly migrateAiAgentTextToJsonResponseFormatCommand: MigrateAiAgentTextToJsonResponseFormatCommand,
-    private readonly updateEditLayoutCommandMenuItemLabelCommand: UpdateEditLayoutCommandMenuItemLabelCommand,
-    private readonly refactorNavigationCommandsCommand: RefactorNavigationCommandsCommand,
-    private readonly dropWorkspaceMessagingFksCommand: DropWorkspaceMessagingFksCommand,
-    private readonly migrateMessageFolderParentIdToExternalIdCommand: MigrateMessageFolderParentIdToExternalIdCommand,
   ) {
-    super(
-      coreEngineVersionService,
-      workspaceVersionService,
-      registeredInstanceMigrationService,
-      instanceUpgradeService,
-      workspaceIteratorService,
-      workspaceUpgradeService,
-      dataSource,
-    );
+    super();
+    this.logger = new CommandLogger({
+      verbose: false,
+      constructorName: this.constructor.name,
+    });
+  }
 
-    const commands_1200: VersionCommands = [
-      this.identifyPermissionFlagMetadataCommand,
-      this
-        .makePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-      this.identifyObjectPermissionMetadataCommand,
-      this
-        .makeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-      this.identifyFieldPermissionMetadataCommand,
-      this
-        .makeFieldPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-      this.backfillNavigationMenuItemTypeCommand,
-      this.migrateRichTextToTextCommand,
-      this.deleteOrphanNavigationMenuItemsCommand,
-      this.backfillCommandMenuItemsCommand,
-      this.seedCliApplicationRegistrationCommand,
-      this.migrateMessagingInfrastructureToMetadataCommand,
-      this.backfillSelectFieldOptionIdsCommand,
-      this.updateStandardIndexViewNamesCommand,
-      this.makeWorkflowSearchableCommand,
-    ];
+  @Option({
+    flags: '-d, --dry-run',
+    description: 'Simulate the command without making actual changes',
+    required: false,
+  })
+  parseDryRun(): boolean {
+    return true;
+  }
 
-    const commands_1210: VersionCommands = [
-      this.addComposeEmailCommandMenuItemCommand,
-      this.addGlobalKeyValuePairUniqueIndexCommand,
-      this.backfillDatasourceToWorkspaceCommand,
-      this.backfillMessageThreadSubjectCommand,
-      this.backfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
-      this.deduplicateEngineCommandsCommand,
-      this.fixSelectAllCommandMenuItemsCommand,
-      this.migrateAiAgentTextToJsonResponseFormatCommand,
-      this.updateEditLayoutCommandMenuItemLabelCommand,
-      this.refactorNavigationCommandsCommand,
-      this.dropWorkspaceMessagingFksCommand,
-      this.migrateMessageFolderParentIdToExternalIdCommand,
-    ];
+  @Option({
+    flags: '-v, --verbose',
+    description: 'Verbose output',
+    required: false,
+  })
+  parseVerbose(): boolean {
+    return true;
+  }
 
-    this.allCommands = {
-      '1.19.0': [],
-      '1.20.0': commands_1200,
-      '1.21.0': commands_1210,
+  @Option({
+    flags: '-w, --workspace-id [workspace_id]',
+    description:
+      'workspace id. Command runs on all active/suspended workspaces if not provided.',
+    required: false,
+  })
+  parseWorkspaceId(val: string, previous?: Set<string>): Set<string> {
+    const accumulator = previous ?? new Set<string>();
+
+    accumulator.add(val);
+
+    return accumulator;
+  }
+
+  @Option({
+    flags: '--start-from-workspace-id [workspace_id]',
+    description:
+      'Start from a specific workspace id. Workspaces are processed in ascending order of id.',
+    required: false,
+  })
+  parseStartFromWorkspaceId(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '--workspace-count-limit [count]',
+    description:
+      'Limit the number of workspaces to process. Workspaces are processed in ascending order of id.',
+    required: false,
+  })
+  parseWorkspaceCountLimit(val: string): number {
+    const limit = parseInt(val);
+
+    if (isNaN(limit)) {
+      throw new Error('Workspace count limit must be a number');
+    }
+
+    if (limit <= 0) {
+      throw new Error('Workspace count limit must be greater than 0');
+    }
+
+    return limit;
+  }
+
+  override async run(
+    _passedParams: string[],
+    options: UpgradeCommandOptions,
+  ): Promise<void> {
+    if (options.verbose) {
+      this.logger = new CommandLogger({
+        verbose: true,
+        constructorName: this.constructor.name,
+      });
+    }
+
+    try {
+      const versionContext = this.resolveVersionContext();
+      this.logger.log(
+        chalk.blue(
+          [
+            'Initialized upgrade context with:',
+            `- currentVersion (migrating to): ${versionContext.currentAppVersion}`,
+            `- fromWorkspaceVersion: ${versionContext.fromWorkspaceVersion}`,
+            `- ${versionContext.fastInstanceCommands.length} fast instance commands (from registry)`,
+            `- ${versionContext.slowInstanceCommands.length} slow instance commands (from registry)`,
+            `- ${versionContext.workspaceCommands.length} workspace commands`,
+          ].join('\n   '),
+        ),
+      );
+
+      const workspacesBelowMinimumVersion =
+        await this.workspaceVersionService.getWorkspacesBelowVersion(
+          versionContext.fromWorkspaceVersion.version,
+        );
+
+      if (workspacesBelowMinimumVersion.length > 0) {
+        const ineligibleIds = workspacesBelowMinimumVersion
+          .map((workspace) => workspace.id)
+          .join(', ');
+
+        throw new Error(
+          `Unable to run the upgrade command. Aborting the upgrade process.
+Workspaces below minimum version (${versionContext.fromWorkspaceVersion.version}): ${ineligibleIds}.
+Please roll back to that version and run the upgrade command again.`,
+        );
+      }
+
+      await this.runLegacyPendingTypeOrmMigrations();
+
+      for (const { command, name } of versionContext.fastInstanceCommands) {
+        const result = await this.instanceUpgradeService.runFastInstanceCommand(
+          {
+            command,
+            name,
+          },
+        );
+
+        if (result.status === 'failed') {
+          throw result.error;
+        }
+      }
+
+      const hasWorkspaces =
+        await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
+
+      for (const { command, name } of versionContext.slowInstanceCommands) {
+        const result = await this.instanceUpgradeService.runSlowInstanceCommand(
+          {
+            command,
+            name,
+            skipDataMigration: !hasWorkspaces,
+          },
+        );
+
+        if (result.status === 'failed') {
+          throw result.error;
+        }
+      }
+
+      if (!hasWorkspaces) {
+        this.logger.log(
+          chalk.blue(
+            'Fresh installation detected, skipping workspace commands',
+          ),
+        );
+
+        return;
+      }
+
+      const iteratorReport = await this.runWorkspaceCommands(
+        options,
+        versionContext,
+      );
+
+      this.logger.log(
+        chalk.blue(
+          `Upgrade summary: ${iteratorReport.success.length} succeeded, ${iteratorReport.fail.length} failed`,
+        ),
+      );
+
+      if (iteratorReport.fail.length > 0) {
+        throw new Error(
+          `Upgrade completed with ${iteratorReport.fail.length} workspace failure(s)`,
+        );
+      }
+    } catch (error) {
+      this.logger.error(chalk.red(`Upgrade failed: ${error.message}`));
+      throw error;
+    }
+  }
+
+  private async runLegacyPendingTypeOrmMigrations(): Promise<void> {
+    this.logger.log('Running legacy TypeORM migrations...');
+
+    const migrations = await this.dataSource.runMigrations({
+      transaction: 'each',
+    });
+
+    if (migrations.length === 0) {
+      this.logger.log('No pending legacy migrations');
+    } else {
+      this.logger.log(
+        `Executed ${migrations.length} legacy migration(s): ${migrations.map((migration) => migration.name).join(', ')}`,
+      );
+    }
+  }
+
+  private resolveVersionContext(): VersionContext {
+    const currentAppVersion = this.coreEngineVersionService.getCurrentVersion();
+    const currentVersionMajorMinor =
+      `${currentAppVersion.major}.${currentAppVersion.minor}.0` as UpgradeCommandVersion;
+
+    const fromWorkspaceVersion =
+      this.coreEngineVersionService.getPreviousVersion();
+
+    const { fastInstanceCommands, slowInstanceCommands, workspaceCommands } =
+      this.upgradeCommandRegistryService.getBundleForVersion(
+        currentVersionMajorMinor,
+      );
+
+    return {
+      fromWorkspaceVersion,
+      currentAppVersion,
+      currentVersionMajorMinor,
+      fastInstanceCommands,
+      slowInstanceCommands,
+      workspaceCommands,
     };
+  }
+
+  private async runWorkspaceCommands(
+    options: UpgradeCommandOptions,
+    versionContext: VersionContext,
+  ) {
+    return await this.workspaceIteratorService.iterate({
+      workspaceIds:
+        options.workspaceId && options.workspaceId.size > 0
+          ? Array.from(options.workspaceId)
+          : undefined,
+      startFromWorkspaceId: options.startFromWorkspaceId,
+      workspaceCountLimit: options.workspaceCountLimit,
+      dryRun: options.dryRun,
+      callback: async (context) => {
+        await this.workspaceUpgradeService.upgradeWorkspace({
+          iteratorContext: context,
+          options,
+          fromWorkspaceVersion: versionContext.fromWorkspaceVersion,
+          currentAppVersion: versionContext.currentAppVersion,
+          workspaceCommands: versionContext.workspaceCommands.map(
+            (entry) => entry.command,
+          ),
+        });
+      },
+    });
   }
 }

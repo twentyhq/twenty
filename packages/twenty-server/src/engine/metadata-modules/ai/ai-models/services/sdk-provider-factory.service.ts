@@ -8,6 +8,7 @@ import { createAnthropic, type AnthropicProvider } from '@ai-sdk/anthropic';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createMistral } from '@ai-sdk/mistral';
 import { createOpenAI, type OpenAIProvider } from '@ai-sdk/openai';
+import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { createXai } from '@ai-sdk/xai';
 import { type LanguageModel } from 'ai';
 import { type AiSdkPackage } from 'twenty-shared/ai';
@@ -80,11 +81,7 @@ export class SdkProviderFactoryService {
   }
 
   getRawOpenAIProvider(providerName: string): OpenAIProvider | undefined {
-    return this.getRawProvider<OpenAIProvider>(
-      providerName,
-      AI_SDK_OPENAI,
-      AI_SDK_OPENAI_COMPATIBLE,
-    );
+    return this.getRawProvider<OpenAIProvider>(providerName, AI_SDK_OPENAI);
   }
 
   clearCache(): void {
@@ -158,9 +155,10 @@ export class SdkProviderFactoryService {
       throw new Error('baseUrl is required for openai-compatible providers');
     }
 
-    const provider = createOpenAI({
+    const provider = createOpenAICompatible({
+      name: config.name ?? 'openai-compatible',
       baseURL: config.baseUrl,
-      apiKey: config.apiKey ?? '',
+      ...(config.apiKey && { apiKey: config.apiKey }),
     });
 
     return {
