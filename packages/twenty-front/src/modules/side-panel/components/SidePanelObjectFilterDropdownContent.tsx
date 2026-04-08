@@ -6,9 +6,10 @@ import { MenuItemSelectAvatar, MenuItemToggle } from 'twenty-ui/navigation';
 
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
-import { TintedIconTile } from '@/ui/display/components/TintedIconTile';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/side-panel/components/SidePanelObjectFilterDropdown';
 import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
+import { TintedIconTile } from '@/ui/display/components/TintedIconTile';
+import { DEFAULT_THEME_COLOR_FALLBACK } from '@/ui/display/constants/defaultThemeColorFallback.constant';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -92,7 +93,12 @@ export const SidePanelObjectFilterDropdownContent = ({
             onEnter={() => handleSelect(null)}
           >
             <MenuItemSelectAvatar
-              avatar={<TintedIconTile Icon={IconCube} color="gray" />}
+              avatar={
+                <TintedIconTile
+                  Icon={IconCube}
+                  color={DEFAULT_THEME_COLOR_FALLBACK}
+                />
+              }
               text={t`All objects`}
               selected={selectedObjectNameSingular === null}
               onClick={() => handleSelect(null)}
