@@ -71,6 +71,7 @@ export class InstanceUpgradeService {
         name,
         workspaceId: null,
         executedByVersion,
+        error,
       });
 
       this.logger.error(
@@ -120,6 +121,7 @@ export class InstanceUpgradeService {
           name,
           workspaceId: null,
           executedByVersion,
+          error,
         });
 
         this.logger.error(
