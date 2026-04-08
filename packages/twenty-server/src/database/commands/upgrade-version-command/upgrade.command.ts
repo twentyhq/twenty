@@ -11,10 +11,13 @@ import { WorkspaceCommandRunner } from 'src/database/commands/command-runners/wo
 import { CommandLogger } from 'src/database/commands/logger';
 import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
-import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
-import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
-import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
+import {
+  type RegisteredFastInstanceCommand,
+  type RegisteredSlowInstanceCommand,
+  type RegisteredWorkspaceCommand,
+  UpgradeCommandRegistryService,
+} from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
@@ -35,9 +38,9 @@ type VersionContext = {
   fromWorkspaceVersion: SemVer;
   currentAppVersion: SemVer;
   currentVersionMajorMinor: UpgradeCommandVersion;
-  fastInstanceCommands: FastInstanceCommand[];
-  slowInstanceCommands: SlowInstanceCommand[];
-  workspaceCommands: VersionCommands;
+  fastInstanceCommands: RegisteredFastInstanceCommand[];
+  slowInstanceCommands: RegisteredSlowInstanceCommand[];
+  workspaceCommands: RegisteredWorkspaceCommand[];
 };
 
 @Command({
@@ -171,9 +174,13 @@ Please roll back to that version and run the upgrade command again.`,
 
       await this.runLegacyPendingTypeOrmMigrations();
 
-      for (const command of versionContext.fastInstanceCommands) {
-        const result =
-          await this.instanceUpgradeService.runFastInstanceCommand(command);
+      for (const { command, name } of versionContext.fastInstanceCommands) {
+        const result = await this.instanceUpgradeService.runFastInstanceCommand(
+          {
+            command,
+            name,
+          },
+        );
 
         if (result.status === 'failed') {
           throw result.error;
@@ -183,10 +190,11 @@ Please roll back to that version and run the upgrade command again.`,
       const hasWorkspaces =
         await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
 
-      for (const command of versionContext.slowInstanceCommands) {
+      for (const { command, name } of versionContext.slowInstanceCommands) {
         const result = await this.instanceUpgradeService.runSlowInstanceCommand(
-          command,
           {
+            command,
+            name,
             skipDataMigration: !hasWorkspaces,
           },
         );
@@ -249,11 +257,6 @@ Please roll back to that version and run the upgrade command again.`,
     const currentVersionMajorMinor =
       `${currentAppVersion.major}.${currentAppVersion.minor}.0` as UpgradeCommandVersion;
 
-    const workspaceCommands =
-      this.upgradeCommandRegistryService.getWorkspaceCommandsForVersion(
-        currentVersionMajorMinor,
-      );
-
     const fromWorkspaceVersion =
       this.coreEngineVersionService.getPreviousVersion();
 
@@ -264,6 +267,11 @@ Please roll back to that version and run the upgrade command again.`,
 
     const slowInstanceCommands =
       this.upgradeCommandRegistryService.getSlowInstanceCommandsForVersion(
+        currentVersionMajorMinor,
+      );
+
+    const workspaceCommands =
+      this.upgradeCommandRegistryService.getWorkspaceCommandsForVersion(
         currentVersionMajorMinor,
       );
 
@@ -295,7 +303,9 @@ Please roll back to that version and run the upgrade command again.`,
           options,
           fromWorkspaceVersion: versionContext.fromWorkspaceVersion,
           currentAppVersion: versionContext.currentAppVersion,
-          workspaceCommands: versionContext.workspaceCommands,
+          workspaceCommands: versionContext.workspaceCommands.map(
+            (entry) => entry.command,
+          ),
         });
       },
     });

@@ -410,10 +410,16 @@ describe('UpgradeCommandRunner', () => {
     );
     expect(
       instanceUpgradeService.runFastInstanceCommand,
-    ).toHaveBeenNthCalledWith(1, addIndex);
+    ).toHaveBeenNthCalledWith(1, {
+      command: addIndex,
+      name: `${CURRENT_VERSION}_AddIndexToUsers1770000000000_1770000000000`,
+    });
     expect(
       instanceUpgradeService.runFastInstanceCommand,
-    ).toHaveBeenNthCalledWith(2, addColumn);
+    ).toHaveBeenNthCalledWith(2, {
+      command: addColumn,
+      name: `${CURRENT_VERSION}_AddColumnToAccounts1771000000000_1771000000000`,
+    });
   });
 
   it('should propagate errors from runFastInstanceCommand', async () => {
@@ -527,10 +533,11 @@ describe('UpgradeCommandRunner', () => {
     expect(instanceUpgradeService.runSlowInstanceCommand).toHaveBeenCalledTimes(
       1,
     );
-    expect(instanceUpgradeService.runSlowInstanceCommand).toHaveBeenCalledWith(
-      slowMigration,
-      { skipDataMigration: false },
-    );
+    expect(instanceUpgradeService.runSlowInstanceCommand).toHaveBeenCalledWith({
+      command: slowMigration,
+      name: `${CURRENT_VERSION}_SlowMigration1780000000000_1780000000000`,
+      skipDataMigration: false,
+    });
   });
 
   it('should run slow commands after fast commands but before workspace commands', async () => {
@@ -610,12 +617,11 @@ describe('UpgradeCommandRunner', () => {
 
     await upgradeCommandRunner.run([], {});
 
-    expect(instanceUpgradeService.runSlowInstanceCommand).toHaveBeenCalledWith(
-      expect.any(SlowMigrationFreshInstall),
-      {
-        skipDataMigration: true,
-      },
-    );
+    expect(instanceUpgradeService.runSlowInstanceCommand).toHaveBeenCalledWith({
+      command: expect.any(SlowMigrationFreshInstall),
+      name: `${CURRENT_VERSION}_SlowMigrationFreshInstall_1780000000000`,
+      skipDataMigration: true,
+    });
   });
 
   it('should propagate errors from runSlowInstanceCommand', async () => {

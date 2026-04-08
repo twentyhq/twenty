@@ -17,19 +17,19 @@ type WorkspaceCommand =
   | WorkspaceCommandRunner
   | ActiveOrSuspendedWorkspaceCommandRunner;
 
-type RegisteredFastInstanceCommand = {
+export type RegisteredFastInstanceCommand = {
   name: string;
   command: FastInstanceCommand;
   timestamp: number;
 };
 
-type RegisteredSlowInstanceCommand = {
+export type RegisteredSlowInstanceCommand = {
   name: string;
   command: SlowInstanceCommand;
   timestamp: number;
 };
 
-type RegisteredWorkspaceCommand = {
+export type RegisteredWorkspaceCommand = {
   name: string;
   command: WorkspaceCommand;
   timestamp: number;
@@ -156,65 +156,37 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
 
   getFastInstanceCommandsForVersion(
     version: UpgradeCommandVersion,
-  ): FastInstanceCommand[] {
-    return (
-      this.bucketsByVersion
-        .get(version)
-        ?.fastInstanceCommands.map((entry) => entry.command) ?? []
-    );
+  ): RegisteredFastInstanceCommand[] {
+    return this.bucketsByVersion.get(version)?.fastInstanceCommands ?? [];
   }
 
   getSlowInstanceCommandsForVersion(
     version: UpgradeCommandVersion,
-  ): SlowInstanceCommand[] {
-    return (
-      this.bucketsByVersion
-        .get(version)
-        ?.slowInstanceCommands.map((entry) => entry.command) ?? []
-    );
+  ): RegisteredSlowInstanceCommand[] {
+    return this.bucketsByVersion.get(version)?.slowInstanceCommands ?? [];
   }
 
   getWorkspaceCommandsForVersion(
     version: UpgradeCommandVersion,
-  ): WorkspaceCommand[] {
-    return (
-      this.bucketsByVersion
-        .get(version)
-        ?.workspaceCommands.map((entry) => entry.command) ?? []
-    );
+  ): RegisteredWorkspaceCommand[] {
+    return this.bucketsByVersion.get(version)?.workspaceCommands ?? [];
   }
 
-  getAllFastInstanceCommands(): {
-    version: UpgradeCommandVersion;
-    migration: FastInstanceCommand;
-  }[] {
-    const result: {
-      version: UpgradeCommandVersion;
-      migration: FastInstanceCommand;
-    }[] = [];
+  getAllFastInstanceCommands(): RegisteredFastInstanceCommand[] {
+    const result: RegisteredFastInstanceCommand[] = [];
 
     for (const version of UPGRADE_COMMAND_SUPPORTED_VERSIONS) {
-      for (const command of this.getFastInstanceCommandsForVersion(version)) {
-        result.push({ version, migration: command });
-      }
+      result.push(...this.getFastInstanceCommandsForVersion(version));
     }
 
     return result;
   }
 
-  getAllSlowInstanceCommands(): {
-    version: UpgradeCommandVersion;
-    migration: SlowInstanceCommand;
-  }[] {
-    const result: {
-      version: UpgradeCommandVersion;
-      migration: SlowInstanceCommand;
-    }[] = [];
+  getAllSlowInstanceCommands(): RegisteredSlowInstanceCommand[] {
+    const result: RegisteredSlowInstanceCommand[] = [];
 
     for (const version of UPGRADE_COMMAND_SUPPORTED_VERSIONS) {
-      for (const command of this.getSlowInstanceCommandsForVersion(version)) {
-        result.push({ version, migration: command });
-      }
+      result.push(...this.getSlowInstanceCommandsForVersion(version));
     }
 
     return result;

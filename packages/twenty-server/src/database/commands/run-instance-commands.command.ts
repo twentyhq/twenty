@@ -61,10 +61,14 @@ export class RunInstanceCommandsCommand extends CommandRunner {
       await this.runLegacyPendingTypeOrmMigrations();
 
       for (const {
-        migration,
+        command,
+        name,
       } of this.upgradeCommandRegistryService.getAllFastInstanceCommands()) {
         const result =
-          await this.instanceUpgradeService.runFastInstanceCommand(migration);
+          await this.instanceUpgradeService.runFastInstanceCommand({
+            command,
+            name,
+          });
 
         if (result.status === 'failed') {
           throw result.error;
@@ -76,13 +80,15 @@ export class RunInstanceCommandsCommand extends CommandRunner {
           await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
 
         for (const {
-          migration,
+          command,
+          name,
         } of this.upgradeCommandRegistryService.getAllSlowInstanceCommands()) {
           const result =
-            await this.instanceUpgradeService.runSlowInstanceCommand(
-              migration,
-              { skipDataMigration: !hasWorkspaces },
-            );
+            await this.instanceUpgradeService.runSlowInstanceCommand({
+              command,
+              name,
+              skipDataMigration: !hasWorkspaces,
+            });
 
           if (result.status === 'failed') {
             throw result.error;

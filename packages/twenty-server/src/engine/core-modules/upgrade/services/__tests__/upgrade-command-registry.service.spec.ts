@@ -100,11 +100,11 @@ describe('UpgradeCommandRegistryService', () => {
     const v120 = service.getFastInstanceCommandsForVersion('1.20.0');
     const v121 = service.getFastInstanceCommandsForVersion('1.21.0');
 
-    expect(v120.map((migration) => migration.constructor.name)).toStrictEqual([
+    expect(v120.map((entry) => entry.command.constructor.name)).toStrictEqual([
       'MigrationD1769000000000',
     ]);
 
-    expect(v121.map((migration) => migration.constructor.name)).toStrictEqual([
+    expect(v121.map((entry) => entry.command.constructor.name)).toStrictEqual([
       'MigrationA1770000000000',
       'MigrationB1771000000000',
       'MigrationC1772000000000',
@@ -120,7 +120,7 @@ describe('UpgradeCommandRegistryService', () => {
 
     const names = service
       .getFastInstanceCommandsForVersion('1.21.0')
-      .map((migration) => migration.constructor.name);
+      .map((entry) => entry.command.constructor.name);
 
     expect(names).toStrictEqual([
       'MigrationA1770000000000',
@@ -138,7 +138,7 @@ describe('UpgradeCommandRegistryService', () => {
     const v121 = service.getFastInstanceCommandsForVersion('1.21.0');
 
     expect(v121).toHaveLength(1);
-    expect(v121[0].constructor.name).toBe('MigrationA1770000000000');
+    expect(v121[0].command.constructor.name).toBe('MigrationA1770000000000');
   });
 
   it('should return empty array for version with no commands', async () => {
@@ -172,10 +172,9 @@ describe('UpgradeCommandRegistryService', () => {
 
     const commands = service.getWorkspaceCommandsForVersion('1.21.0');
 
-    expect(commands.map((command) => command.constructor.name)).toStrictEqual([
-      'WorkspaceCommandA',
-      'WorkspaceCommandB',
-    ]);
+    expect(
+      commands.map((entry) => entry.command.constructor.name),
+    ).toStrictEqual(['WorkspaceCommandA', 'WorkspaceCommandB']);
   });
 
   it('should discover both instance and workspace commands for the same version', async () => {
@@ -258,23 +257,11 @@ describe('UpgradeCommandRegistryService', () => {
 
     const allCommands = service.getAllFastInstanceCommands();
 
-    expect(allCommands).toStrictEqual([
-      {
-        version: '1.20.0',
-        migration: expect.objectContaining({ name: 'MigrationD1769000000000' }),
-      },
-      {
-        version: '1.21.0',
-        migration: expect.objectContaining({ name: 'MigrationA1770000000000' }),
-      },
-      {
-        version: '1.21.0',
-        migration: expect.objectContaining({ name: 'MigrationB1771000000000' }),
-      },
-      {
-        version: '1.21.0',
-        migration: expect.objectContaining({ name: 'MigrationC1772000000000' }),
-      },
+    expect(allCommands.map((entry) => entry.name)).toStrictEqual([
+      '1.20.0_MigrationD1769000000000_1769000000000',
+      '1.21.0_MigrationA1770000000000_1770000000000',
+      '1.21.0_MigrationB1771000000000_1771000000000',
+      '1.21.0_MigrationC1772000000000_1772000000000',
     ]);
   });
 
@@ -330,7 +317,7 @@ describe('UpgradeCommandRegistryService', () => {
     const slowCommands = service.getSlowInstanceCommandsForVersion('1.21.0');
 
     expect(
-      slowCommands.map((command) => command.constructor.name),
+      slowCommands.map((entry) => entry.command.constructor.name),
     ).toStrictEqual([
       'SlowMigrationA1779000000000',
       'SlowMigrationB1780000000000',
@@ -430,19 +417,9 @@ describe('UpgradeCommandRegistryService', () => {
 
     const allSlowCommands = service.getAllSlowInstanceCommands();
 
-    expect(allSlowCommands).toStrictEqual([
-      {
-        version: '1.20.0',
-        migration: expect.objectContaining({
-          name: 'SlowMigration1768000000000',
-        }),
-      },
-      {
-        version: '1.21.0',
-        migration: expect.objectContaining({
-          name: 'SlowMigration1780000000000',
-        }),
-      },
+    expect(allSlowCommands.map((entry) => entry.name)).toStrictEqual([
+      '1.20.0_SlowMigration1768000000000_1768000000000',
+      '1.21.0_SlowMigration1780000000000_1780000000000',
     ]);
   });
 });

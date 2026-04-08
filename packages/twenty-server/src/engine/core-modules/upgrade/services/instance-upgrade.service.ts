@@ -24,10 +24,14 @@ export class InstanceUpgradeService {
     private readonly upgradeMigrationService: UpgradeMigrationService,
   ) {}
 
-  async runFastInstanceCommand(
-    migration: FastInstanceCommand,
-  ): Promise<RunSingleMigrationResult> {
-    const migrationName = migration.constructor.name;
+  async runFastInstanceCommand({
+    command,
+    name,
+  }: {
+    command: FastInstanceCommand;
+    name: string;
+  }): Promise<RunSingleMigrationResult> {
+    const migrationName = name;
     const executedByVersion =
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
@@ -49,7 +53,7 @@ export class InstanceUpgradeService {
       await queryRunner.connect();
       await queryRunner.startTransaction();
 
-      await migration.up(queryRunner);
+      await command.up(queryRunner);
 
       await this.upgradeMigrationService.markAsCompleted({
         name: migrationName,
@@ -85,17 +89,22 @@ export class InstanceUpgradeService {
     return { status: 'success' };
   }
 
-  async runSlowInstanceCommand(
-    migration: SlowInstanceCommand,
-    options?: { skipDataMigration?: boolean },
-  ): Promise<RunSingleMigrationResult> {
-    if (!options?.skipDataMigration) {
-      const migrationName = migration.constructor.name;
+  async runSlowInstanceCommand({
+    command,
+    name,
+    skipDataMigration,
+  }: {
+    command: SlowInstanceCommand;
+    name: string;
+    skipDataMigration?: boolean;
+  }): Promise<RunSingleMigrationResult> {
+    if (!skipDataMigration) {
+      const migrationName = name;
       const executedByVersion =
         this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
       try {
-        await migration.runDataMigration(this.dataSource);
+        await command.runDataMigration(this.dataSource);
       } catch (error) {
         await this.upgradeMigrationService.markAsFailed({
           name: migrationName,
@@ -112,6 +121,6 @@ export class InstanceUpgradeService {
       }
     }
 
-    return this.runFastInstanceCommand(migration);
+    return this.runFastInstanceCommand({ command, name });
   }
 }
