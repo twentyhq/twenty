@@ -5,26 +5,26 @@ import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
 import { MINIMAL_APP_PATH } from '@/cli/__tests__/apps/fixture-paths';
 import { EXPECTED_MANIFEST } from '@/cli/__tests__/apps/minimal-app/__integration__/app-dev/expected-manifest';
 import { normalizeManifestForComparison } from '@/cli/__tests__/integration/utils/normalize-manifest.util';
-import { appSync, type AppSyncResult } from '@/cli/operations/sync';
+import { appDevOnce, type AppDevOnceResult } from '@/cli/operations/dev-once';
 import { type CommandResult } from '@/cli/types';
 import { pathExists, readJson, remove } from '@/cli/utilities/file/fs-utils';
 
 const OUTPUT_PATH = join(MINIMAL_APP_PATH, OUTPUT_DIR);
 const MANIFEST_PATH = join(OUTPUT_PATH, 'manifest.json');
 
-describe('minimal-app sync', () => {
-  let result: CommandResult<AppSyncResult>;
+describe('minimal-app dev-once', () => {
+  let result: CommandResult<AppDevOnceResult>;
 
   beforeAll(async () => {
     // Make sure we are starting from a clean slate so we know the
     // generated files come from this run, not a previous one.
     await remove(OUTPUT_PATH);
 
-    result = await appSync({ appPath: MINIMAL_APP_PATH });
+    result = await appDevOnce({ appPath: MINIMAL_APP_PATH });
 
     if (!result.success) {
       throw new Error(
-        `appSync did not succeed: ${result.error.code} - ${result.error.message}`,
+        `appDevOnce did not succeed: ${result.error.code} - ${result.error.message}`,
       );
     }
   }, 60000);

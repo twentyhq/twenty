@@ -756,7 +756,7 @@ export default defineFrontComponent({
 });
 ```
 
-After syncing with `yarn twenty dev` (or running a one-shot `yarn twenty sync`), the quick action appears in the top-right corner of the page:
+After syncing with `yarn twenty dev` (or running a one-shot `yarn twenty dev --once`), the quick action appears in the top-right corner of the page:
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Quick action button in the top-right corner" />
@@ -1477,7 +1477,7 @@ The `twenty-client-sdk` package provides two typed GraphQL clients for interacti
 <AccordionGroup>
 <Accordion title="CoreApiClient" description="Query and mutate workspace data (records, objects)">
 
-`CoreApiClient` is the main client for querying and mutating workspace data. It is **generated from your workspace schema** during `yarn twenty dev`, `yarn twenty sync`, or `yarn twenty build`, so it is fully typed to match your objects and fields.
+`CoreApiClient` is the main client for querying and mutating workspace data. It is **generated from your workspace schema** during `yarn twenty dev` or `yarn twenty build`, so it is fully typed to match your objects and fields.
 
 ```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -1517,7 +1517,7 @@ const { createCompany } = await client.mutation({
 The client uses a selection-set syntax: pass `true` to include a field, use `__args` for arguments, and nest objects for relations. You get full autocompletion and type checking based on your workspace schema.
 
 <Note>
-**CoreApiClient is generated at dev/sync/build time.** If you use it without running `yarn twenty dev`, `yarn twenty sync`, or `yarn twenty build` first, it throws an error. The generation happens automatically — the CLI introspects your workspace's GraphQL schema and generates a typed client using `@genql/cli`.
+**CoreApiClient is generated at dev/build time.** If you use it without running `yarn twenty dev` or `yarn twenty build` first, it throws an error. The generation happens automatically — the CLI introspects your workspace's GraphQL schema and generates a typed client using `@genql/cli`.
 </Note>
 
 #### Using CoreSchema for type annotations

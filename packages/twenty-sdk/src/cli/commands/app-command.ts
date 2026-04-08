@@ -13,14 +13,14 @@ import { LogicFunctionLogsCommand } from './logs';
 import { AppPublishCommand } from './publish';
 import { registerRemoteCommands } from './remote';
 import { registerServerCommands } from './server';
-import { AppSyncCommand } from './sync';
+import { AppDevOnceCommand } from './dev-once';
 import { AppTypecheckCommand } from './typecheck';
 import { AppUninstallCommand } from './uninstall';
 
 export const registerCommands = (program: Command): void => {
   const buildCommand = new AppBuildCommand();
   const devCommand = new AppDevCommand();
-  const syncCommand = new AppSyncCommand();
+  const devOnceCommand = new AppDevOnceCommand();
   const installCommand = new AppInstallCommand();
   const publishCommand = new AppPublishCommand();
   const typecheckCommand = new AppTypecheckCommand();
@@ -33,26 +33,40 @@ export const registerCommands = (program: Command): void => {
 
   program
     .command('dev [appPath]')
-    .description('Watch and sync local application changes')
+    .description(
+      'Build and sync local application changes (watches by default; use --once for a one-shot sync)',
+    )
+    .option(
+      '-w, --watch',
+      'Watch source files and re-sync on every change (default behavior)',
+    )
+    .option(
+      '-o, --once',
+      'Build and sync once, then exit (useful for CI, scripts, and pre-commit hooks)',
+    )
     .option('-v, --verbose', 'Show detailed logs')
     .option('-d, --debug', 'Show detailed logs (alias for --verbose)')
     .action(async (appPath, options) => {
-      await devCommand.execute({
-        appPath: formatPath(appPath),
-        verbose: options.verbose || options.debug,
-      });
-    });
+      if (options.once && options.watch) {
+        console.error(
+          chalk.red(
+            'Error: --once and --watch are mutually exclusive. Watch mode is the default.',
+          ),
+        );
+        process.exit(1);
+      }
 
-  program
-    .command('sync [appPath]')
-    .description('Build and sync local application changes once, then exit')
-    .option('-v, --verbose', 'Show detailed logs')
-    .option('-d, --debug', 'Show detailed logs (alias for --verbose)')
-    .action(async (appPath, options) => {
-      await syncCommand.execute({
+      const commonOptions = {
         appPath: formatPath(appPath),
         verbose: options.verbose || options.debug,
-      });
+      };
+
+      if (options.once) {
+        await devOnceCommand.execute(commonOptions);
+        return;
+      }
+
+      await devCommand.execute(commonOptions);
     });
 
   program

@@ -15,22 +15,22 @@ import { FileUploader } from '@/cli/utilities/file/file-uploader';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
 
-export type AppSyncOptions = {
+export type AppDevOnceOptions = {
   appPath: string;
   verbose?: boolean;
   onProgress?: (message: string) => void;
 };
 
-export type AppSyncResult = {
+export type AppDevOnceResult = {
   outputDir: string;
   fileCount: number;
   applicationDisplayName: string;
   applicationUniversalIdentifier: string;
 };
 
-const innerAppSync = async (
-  options: AppSyncOptions,
-): Promise<CommandResult<AppSyncResult>> => {
+const innerAppDevOnce = async (
+  options: AppDevOnceOptions,
+): Promise<CommandResult<AppDevOnceResult>> => {
   const { appPath, onProgress, verbose } = options;
 
   onProgress?.('Checking server...');
@@ -267,7 +267,7 @@ const innerAppSync = async (
   };
 };
 
-export const appSync = (
-  options: AppSyncOptions,
-): Promise<CommandResult<AppSyncResult>> =>
-  runSafe(() => innerAppSync(options), APP_ERROR_CODES.SYNC_FAILED);
+export const appDevOnce = (
+  options: AppDevOnceOptions,
+): Promise<CommandResult<AppDevOnceResult>> =>
+  runSafe(() => innerAppDevOnce(options), APP_ERROR_CODES.SYNC_FAILED);
