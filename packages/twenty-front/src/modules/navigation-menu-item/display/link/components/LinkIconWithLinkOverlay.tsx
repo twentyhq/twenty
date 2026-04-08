@@ -6,7 +6,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
 import { getLinkFaviconUrl } from '@/navigation-menu-item/display/link/utils/getLinkFaviconUrl';
-import { getTintedIconTileStyleFromColor } from '@/ui/display/utils/getTintedIconTileStyleFromColor';
+import { getIconTileColorShades } from '@/ui/display/utils/getIconTileColorShades';
 
 const failedFaviconUrls = new Set<string>();
 
@@ -83,7 +83,7 @@ export const LinkIconWithLinkOverlay = ({
   const showFavicon =
     isDefined(faviconUrl) && !isKnownFailed && localFailedLink !== linkKey;
 
-  const linkStyle = getTintedIconTileStyleFromColor(
+  const linkStyle = getIconTileColorShades(
     navItemColor ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK,
   );
 

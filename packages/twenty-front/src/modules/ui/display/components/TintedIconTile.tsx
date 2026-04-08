@@ -1,5 +1,5 @@
 import { StyledTintedIconTileContainer } from '@/ui/display/components/StyledTintedIconTileContainer';
-import { getTintedIconTileStyleFromColor } from '@/ui/display/utils/getTintedIconTileStyleFromColor';
+import { getIconTileColorShades } from '@/ui/display/utils/getIconTileColorShades';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import type { IconComponent } from 'twenty-ui/display';
@@ -19,7 +19,7 @@ export const TintedIconTile = ({
   stroke: strokeFromProps,
 }: TintedIconTileProps) => {
   const { theme } = useContext(ThemeContext);
-  const style = getTintedIconTileStyleFromColor(color);
+  const style = getIconTileColorShades(color);
   const iconSize = sizeFromProps ?? theme.icon.size.md;
   const iconStroke = strokeFromProps ?? theme.icon.stroke.md;
   const tileDimension = isDefined(sizeFromProps)

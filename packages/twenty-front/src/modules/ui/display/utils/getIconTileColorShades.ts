@@ -2,15 +2,15 @@ import { TINTED_ICON_TILE_COLOR_SHADES } from '@/ui/display/constants/tintedIcon
 import { getColorFromTheme } from '@/ui/display/utils/getColorFromTheme';
 import { parseThemeColor } from '@/ui/display/utils/parseThemeColor';
 
-type TintedIconTileStyle = {
+export type IconTileColorShades = {
   backgroundColor: string;
   iconColor: string;
   borderColor: string;
 };
 
-export const getTintedIconTileStyleFromColor = (
+export const getIconTileColorShades = (
   color: string | null | undefined,
-): TintedIconTileStyle => {
+): IconTileColorShades => {
   const themeColor = parseThemeColor(color);
   return {
     backgroundColor: getColorFromTheme(
