@@ -268,7 +268,11 @@ Please roll back to that version and run the upgrade command again.`,
 
   private async runWorkspaceCommands(
     options: UpgradeCommandOptions,
-    versionContext: VersionContext,
+    {
+      currentAppVersion,
+      fromWorkspaceVersion,
+      workspaceCommands,
+    }: VersionContext,
   ) {
     return await this.workspaceIteratorService.iterate({
       workspaceIds:
@@ -282,9 +286,9 @@ Please roll back to that version and run the upgrade command again.`,
         await this.workspaceUpgradeService.upgradeWorkspace({
           iteratorContext: context,
           options,
-          fromWorkspaceVersion: versionContext.fromWorkspaceVersion,
-          currentAppVersion: versionContext.currentAppVersion,
-          workspaceCommands: versionContext.workspaceCommands,
+          fromWorkspaceVersion,
+          currentAppVersion,
+          workspaceCommands,
         });
       },
     });
