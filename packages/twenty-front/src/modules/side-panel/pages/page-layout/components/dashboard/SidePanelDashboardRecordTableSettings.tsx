@@ -8,6 +8,7 @@ import { RecordTableDataSourceDropdownContent } from '@/side-panel/pages/page-la
 import { RecordTableFieldsDropdownContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableFieldsDropdownContent';
 import { WidgetSettingsFooter } from '@/side-panel/pages/page-layout/components/WidgetSettingsFooter';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { useRecordTableSettingsDescriptions } from '@/side-panel/pages/page-layout/hooks/useRecordTableSettingsDescriptions';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -41,21 +42,27 @@ export const SidePanelDashboardRecordTableSettings = () => {
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
 
-  if (!isDefined(widgetInEditMode)) {
-    return null;
-  }
-
-  const { configuration } = widgetInEditMode;
-
+  const configuration = widgetInEditMode?.configuration;
   const isRecordTableConfiguration =
-    configuration.configurationType === WidgetConfigurationType.RECORD_TABLE;
+    configuration?.configurationType === WidgetConfigurationType.RECORD_TABLE;
 
   const viewId =
     isRecordTableConfiguration &&
+    isDefined(configuration) &&
     'viewId' in configuration &&
     isDefined(configuration.viewId)
       ? (configuration.viewId as string)
-      : undefined;
+      : null;
+
+  const { sourceDescription, fieldsDescription, filterDescription, sortDescription } =
+    useRecordTableSettingsDescriptions({
+      objectMetadataId: widgetInEditMode?.objectMetadataId,
+      viewId,
+    });
+
+  if (!isDefined(widgetInEditMode)) {
+    return null;
+  }
 
   const hasViewId = isDefined(viewId);
 
@@ -98,6 +105,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                   }
                   dropdownPlacement="bottom-end"
                   hasSubMenu
+                  description={sourceDescription}
                   contextualTextPosition="right"
                 />
               </SelectableListItem>
@@ -117,6 +125,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                       }
                       dropdownPlacement="bottom-end"
                       hasSubMenu
+                      description={fieldsDescription}
                       contextualTextPosition="right"
                     />
                   </SelectableListItem>
@@ -130,6 +139,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                       Icon={IconFilter}
                       hasSubMenu
                       onClick={handleFilterClick}
+                      description={filterDescription}
                       contextualTextPosition="right"
                     />
                   </SelectableListItem>
@@ -143,6 +153,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                       Icon={IconArrowsSort}
                       hasSubMenu
                       onClick={handleSortClick}
+                      description={sortDescription}
                       contextualTextPosition="right"
                     />
                   </SelectableListItem>
