@@ -15,7 +15,7 @@ import { addPayloadCheckConstraintToCommandMenuItem } from 'src/database/typeorm
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
-import { isNavigationPayloadWithObjectMetadataItemId } from 'src/engine/metadata-modules/command-menu-item/utils/resolve-command-menu-item-navigation-fields.util';
+import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import {
   buildNavigationFlatCommandMenuItem,
@@ -247,7 +247,7 @@ export class RefactorNavigationCommandsCommand extends ActiveOrSuspendedWorkspac
       .filter(
         (item) =>
           item.engineComponentKey === EngineComponentKey.NAVIGATION &&
-          isNavigationPayloadWithObjectMetadataItemId(item.payload) &&
+          isObjectMetadataCommandMenuItemPayload(item.payload) &&
           (item.label !== NAVIGATION_INTERPOLATED_LABEL ||
             item.shortLabel !== NAVIGATION_INTERPOLATED_SHORT_LABEL ||
             item.icon !== NAVIGATION_INTERPOLATED_ICON),

@@ -8,17 +8,9 @@ import {
 
 import { type CommandMenuItemDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item.dto';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
+import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
-import { Nullable } from 'twenty-shared/types';
-
-export const isNavigationPayloadWithObjectMetadataItemId = (
-  payload?: Nullable<Record<string, unknown>>,
-): payload is { objectMetadataItemId: string } =>
-  typeof payload === 'object' &&
-  payload !== null &&
-  'objectMetadataItemId' in payload &&
-  typeof payload.objectMetadataItemId === 'string';
 
 const buildNavigationInterpolationContext = ({
   objectMetadata,
@@ -77,7 +69,7 @@ export const resolveNavigationCommandMenuItemField = ({
 
   if (
     commandMenuItem.engineComponentKey !== EngineComponentKey.NAVIGATION ||
-    !isNavigationPayloadWithObjectMetadataItemId(commandMenuItem.payload)
+    !isObjectMetadataCommandMenuItemPayload(commandMenuItem.payload)
   ) {
     return rawValue;
   }
