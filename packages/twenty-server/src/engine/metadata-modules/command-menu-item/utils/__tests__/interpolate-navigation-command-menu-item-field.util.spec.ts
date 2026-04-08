@@ -2,7 +2,7 @@ import { type I18n } from '@lingui/core';
 
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
-import { resolveNavigationCommandMenuItemField } from 'src/engine/metadata-modules/command-menu-item/utils/resolve-command-menu-item-navigation-fields.util';
+import { interpolateNavigationCommandMenuItemField } from 'src/engine/metadata-modules/command-menu-item/utils/interpolate-navigation-command-menu-item-field.util';
 import {
   NAVIGATION_INTERPOLATED_ICON,
   NAVIGATION_INTERPOLATED_LABEL,
@@ -39,9 +39,9 @@ const baseCommandMenuItem = {
   updatedAt: new Date(),
 };
 
-describe('resolveNavigationCommandMenuItemField', () => {
+describe('interpolateNavigationCommandMenuItemField', () => {
   it('should resolve label template for NAVIGATION items', () => {
-    const result = resolveNavigationCommandMenuItemField({
+    const result = interpolateNavigationCommandMenuItemField({
       commandMenuItem: baseCommandMenuItem,
       fieldName: 'label',
       objectMetadata: mockObjectMetadata,
@@ -53,7 +53,7 @@ describe('resolveNavigationCommandMenuItemField', () => {
   });
 
   it('should resolve shortLabel template for NAVIGATION items', () => {
-    const result = resolveNavigationCommandMenuItemField({
+    const result = interpolateNavigationCommandMenuItemField({
       commandMenuItem: baseCommandMenuItem,
       fieldName: 'shortLabel',
       objectMetadata: mockObjectMetadata,
@@ -65,7 +65,7 @@ describe('resolveNavigationCommandMenuItemField', () => {
   });
 
   it('should resolve icon template for NAVIGATION items', () => {
-    const result = resolveNavigationCommandMenuItemField({
+    const result = interpolateNavigationCommandMenuItemField({
       commandMenuItem: baseCommandMenuItem,
       fieldName: 'icon',
       objectMetadata: mockObjectMetadata,
@@ -84,7 +84,7 @@ describe('resolveNavigationCommandMenuItemField', () => {
       label: 'Create New Record',
     };
 
-    const result = resolveNavigationCommandMenuItemField({
+    const result = interpolateNavigationCommandMenuItemField({
       commandMenuItem: nonNavigationItem,
       fieldName: 'label',
       objectMetadata: null,
@@ -96,7 +96,7 @@ describe('resolveNavigationCommandMenuItemField', () => {
   });
 
   it('should return undefined when object metadata is null for a NAVIGATION item', () => {
-    const result = resolveNavigationCommandMenuItemField({
+    const result = interpolateNavigationCommandMenuItemField({
       commandMenuItem: baseCommandMenuItem,
       fieldName: 'label',
       objectMetadata: null,
@@ -113,7 +113,7 @@ describe('resolveNavigationCommandMenuItemField', () => {
       shortLabel: undefined,
     };
 
-    const result = resolveNavigationCommandMenuItemField({
+    const result = interpolateNavigationCommandMenuItemField({
       commandMenuItem: itemWithoutShortLabel,
       fieldName: 'shortLabel',
       objectMetadata: mockObjectMetadata,
@@ -132,7 +132,7 @@ describe('resolveNavigationCommandMenuItemField', () => {
       icon: 'IconCustom',
     } as unknown as ObjectMetadataDTO;
 
-    const result = resolveNavigationCommandMenuItemField({
+    const result = interpolateNavigationCommandMenuItemField({
       commandMenuItem: baseCommandMenuItem,
       fieldName: 'label',
       objectMetadata: customObjectMetadata,
@@ -150,7 +150,7 @@ describe('resolveNavigationCommandMenuItemField', () => {
       icon: 'IconCustom',
     } as unknown as ObjectMetadataDTO;
 
-    const result = resolveNavigationCommandMenuItemField({
+    const result = interpolateNavigationCommandMenuItemField({
       commandMenuItem: baseCommandMenuItem,
       fieldName: 'icon',
       objectMetadata: customObjectMetadata,
@@ -167,7 +167,7 @@ describe('resolveNavigationCommandMenuItemField', () => {
       payload: { path: '/settings/profile' },
     };
 
-    const result = resolveNavigationCommandMenuItemField({
+    const result = interpolateNavigationCommandMenuItemField({
       commandMenuItem: itemWithPathPayload,
       fieldName: 'label',
       objectMetadata: null,
@@ -184,7 +184,7 @@ describe('resolveNavigationCommandMenuItemField', () => {
       label: 'Go to People',
     };
 
-    const result = resolveNavigationCommandMenuItemField({
+    const result = interpolateNavigationCommandMenuItemField({
       commandMenuItem: itemWithLiteralLabel,
       fieldName: 'label',
       objectMetadata: mockObjectMetadata,

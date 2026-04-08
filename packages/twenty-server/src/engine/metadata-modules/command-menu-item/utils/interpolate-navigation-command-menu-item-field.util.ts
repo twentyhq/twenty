@@ -52,7 +52,7 @@ const buildNavigationInterpolationContext = ({
   };
 };
 
-export const resolveNavigationCommandMenuItemField = ({
+export const interpolateNavigationCommandMenuItemField = ({
   commandMenuItem,
   fieldName,
   objectMetadata,

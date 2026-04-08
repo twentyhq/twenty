@@ -16,7 +16,7 @@ import { type CreateCommandMenuItemInput } from 'src/engine/metadata-modules/com
 import { type UpdateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/update-command-menu-item.input';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
-import { resolveNavigationCommandMenuItemField } from 'src/engine/metadata-modules/command-menu-item/utils/resolve-command-menu-item-navigation-fields.util';
+import { interpolateNavigationCommandMenuItemField } from 'src/engine/metadata-modules/command-menu-item/utils/interpolate-navigation-command-menu-item-field.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-create-command-menu-item-input-to-flat-command-menu-item-to-create.util';
@@ -338,7 +338,7 @@ export class CommandMenuItemService {
       workspaceId,
     });
 
-    return resolveNavigationCommandMenuItemField({
+    return interpolateNavigationCommandMenuItemField({
       commandMenuItem,
       fieldName,
       objectMetadata,
