@@ -1,4 +1,3 @@
-import { TintedIconTile } from '@/ui/display/components/TintedIconTile';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
@@ -21,6 +20,7 @@ import {
   Label,
   OverflowingTextWithTooltip,
   type TablerIconsProps,
+  TintedIconTile,
   TooltipDelay,
   TooltipPosition,
 } from 'twenty-ui/display';
