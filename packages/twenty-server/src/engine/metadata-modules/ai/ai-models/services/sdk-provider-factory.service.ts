@@ -133,9 +133,6 @@ export class SdkProviderFactoryService {
     config: AiProviderConfig,
   ): AiSdkProviderInstance {
     const region = config.region ?? 'us-east-1';
-    // When authType is 'role', defer credential resolution to the AWS SDK
-    // default provider chain so IRSA (web-identity token) and other ambient
-    // credentials work. The bedrock SDK does not walk this chain on its own.
     const useRoleCredentials = config.authType === 'role';
     const awsCredentialProvider = useRoleCredentials
       ? fromNodeProviderChain({ clientConfig: { region } })
