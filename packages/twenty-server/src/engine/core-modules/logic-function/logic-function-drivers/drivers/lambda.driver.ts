@@ -905,9 +905,9 @@ export class LambdaDriver implements LogicFunctionDriver {
       return;
     }
 
-    const buildLockTtlMs = 30_000;
+    const buildLockTtlMs = 120_000;
     const buildLockRetryMs = 500;
-    const buildLockMaxRetries = 10;
+    const buildLockMaxRetries = 240;
 
     await this.cacheLockService.withLock(
       async () => {
