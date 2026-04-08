@@ -6,43 +6,94 @@ on:
       - main
   pull_request: {}
 
-permissions:
-  contents: read
-
 env:
   TWENTY_VERSION: latest
-
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+    env:
+      PG_DATABASE_URL: postgres://postgres:postgres@localhost:5432/default
+      REDIS_URL: redis://localhost:6379
+      APP_SECRET: replace_me_with_a_random_string
+      NODE_ENV: development
+      # Tim Apple admin access token for seeded dev data
+      TWENTY_ACCESS_TOKEN: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ1c2VySWQiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtNDYzZi00MzViLTgyOGMtMTA3ZTAwN2EyNzExIiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWU3Yy00M2Q5LWE1ZGItNjg1YjUwNjlkODE2IiwidHlwZSI6IkFDQ0VTUyIsImF1dGhQcm92aWRlciI6InBhc3N3b3JkIiwiaWF0IjoxNzUxMjgxNzA0LCJleHAiOjIwNjY4NTc3MDR9.HMGqCsVlOAPVUBhKSGlD1X86VoHKt4LIUtET3CGIdik
     steps:
-      - name: Checkout
+      - name: Checkout Twenty
         uses: actions/checkout@v4
-
-      - name: Spawn Twenty test instance
-        id: twenty
-        uses: twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main
         with:
-          twenty-version: ${{ env.TWENTY_VERSION }}
+          repository: twentyhq/twenty
+          ref: main
+          path: twenty
+
+      - name: Checkout app
+        uses: actions/checkout@v4
+        with:
+          path: app
 
       - name: Enable Corepack
         run: corepack enable
 
-      - name: Setup Node.js
+      - name: Setup Node.js (Twenty)
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-          cache: yarn
+          node-version-file: 'twenty/.nvmrc'
+          cache: 'yarn'
+          cache-dependency-path: 'twenty/yarn.lock'
 
-      - name: Install dependencies
+      - name: Install Twenty dependencies
+        working-directory: twenty
+        run: yarn install --immutable
+
+      - name: Build Twenty server
+        working-directory: twenty
+        run: npx nx build twenty-server
+
+      - name: Create database
+        run: PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -c 'CREATE DATABASE "default";' || true
+
+      - name: Setup database
+        working-directory: twenty
+        run: npx nx database:reset twenty-server
+
+      - name: Start Twenty server
+        working-directory: twenty
+        run: |
+          nohup npx nx start:ci twenty-server &
+          npx wait-on http://localhost:3000/healthz --timeout 120000 --interval 1000
+
+      - name: Setup Node.js (app)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: 'app/.nvmrc'
+          cache: 'yarn'
+          cache-dependency-path: 'app/yarn.lock'
+
+      - name: Install app dependencies
+        working-directory: app
         run: yarn install --immutable
 
       - name: Run integration tests
+        working-directory: app
         run: yarn test
         env:
-          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
-          TWENTY_API_KEY: ${{ steps.twenty.outputs.api-key }}
+          TWENTY_API_URL: http://localhost:3000
+          TWENTY_API_KEY: ${{ env.TWENTY_ACCESS_TOKEN }}
