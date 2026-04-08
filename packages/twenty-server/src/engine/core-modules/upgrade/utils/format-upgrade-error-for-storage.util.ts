@@ -70,10 +70,7 @@ const buildErrorParts = (error: unknown): (string | null)[] => {
   }
 
   if (error instanceof Error) {
-    return [
-      `[Error] ${error.message}`,
-      formatStack(error.stack),
-    ];
+    return [`[Error] ${error.message}`, formatStack(error.stack)];
   }
 
   return [String(error)];
