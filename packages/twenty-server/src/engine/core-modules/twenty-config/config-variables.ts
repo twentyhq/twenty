@@ -247,7 +247,8 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description: 'Number of messages fetched per batch during message import',
+    description:
+      'Number of messages fetched per batch during message import, adjust incase of rate limiting caused by Gmail, Outlook or IMAP',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
