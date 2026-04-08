@@ -1,5 +1,10 @@
+import {
+  type NavigationPayload,
+  type ObjectMetadataNavigationPayload,
+} from '~/generated-metadata/graphql';
+
 export const isObjectMetadataNavigationPayload = (
-  payload: Record<string, unknown>,
-): payload is { objectMetadataItemId: string } =>
+  payload: NavigationPayload,
+): payload is ObjectMetadataNavigationPayload =>
   'objectMetadataItemId' in payload &&
   typeof payload.objectMetadataItemId === 'string';

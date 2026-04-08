@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type CommandMenuItemAvailabilityType,
   type EngineComponentKey,
+  type NavigationPayload,
 } from '~/generated-metadata/graphql';
 
 type MountCommandParams = {
@@ -18,7 +19,7 @@ type MountCommandParams = {
   workflowVersionId?: string;
   availabilityType?: CommandMenuItemAvailabilityType;
   availabilityObjectMetadataId?: string | null;
-  payload?: Record<string, unknown> | null;
+  payload?: NavigationPayload | null;
 };
 
 export const useMountCommand = () => {

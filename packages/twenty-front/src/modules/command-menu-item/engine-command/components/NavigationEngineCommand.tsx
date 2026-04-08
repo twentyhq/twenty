@@ -17,11 +17,9 @@ export const NavigationEngineCommand = () => {
       return;
     }
 
-    const navigationPayload = payload;
-
-    if (isObjectMetadataNavigationPayload(navigationPayload)) {
+    if (isObjectMetadataNavigationPayload(payload)) {
       const objectMetadataItem = objectMetadataItems.find(
-        (item) => item.id === navigationPayload.objectMetadataItemId,
+        (item) => item.id === payload.objectMetadataItemId,
       );
 
       if (!isDefined(objectMetadataItem)) {
@@ -38,9 +36,9 @@ export const NavigationEngineCommand = () => {
       return;
     }
 
-    if (isPathNavigationPayload(navigationPayload)) {
+    if (isPathNavigationPayload(payload)) {
       // eslint-disable-next-line twenty/no-navigate-prefer-link
-      navigate(navigationPayload.path);
+      navigate(payload.path);
     }
   };
 
