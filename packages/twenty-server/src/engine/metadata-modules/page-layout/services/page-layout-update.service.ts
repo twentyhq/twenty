@@ -10,6 +10,7 @@ import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { splitEntitiesByRemovalStrategy } from 'src/engine/metadata-modules/flat-entity/utils/split-entities-by-removal-strategy.util';
 import { FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-tab/constants/flat-page-layout-tab-editable-properties.constant';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
@@ -18,6 +19,7 @@ import { FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES } from 'src/engine/metadata
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { buildFlatPageLayoutWidgetCommonProperties } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/build-flat-page-layout-widget-common-properties.util';
 import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
+import { fromPageLayoutWidgetOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-overrides-to-universal-overrides.util';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab-with-widgets.input';
@@ -33,6 +35,8 @@ import {
   generatePageLayoutExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import { fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-with-tabs-and-widgets-to-page-layout-dto.util';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
+import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/utils/sanitize-overridable-entity-input.util';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -532,6 +536,7 @@ export class PageLayoutUpdateService {
             workspaceCustomApplicationUniversalIdentifier,
           conditionalDisplay: null,
           overrides: null,
+          universalOverrides: null,
           isActive: true,
           universalConfiguration:
             fromPageLayoutWidgetConfigurationToUniversalConfiguration({
@@ -555,32 +560,100 @@ export class PageLayoutUpdateService {
           flatEntityMaps: flatPageLayoutWidgetMaps,
         });
 
+        const shouldOverride = isCallerOverridingEntity({
+          callerApplicationUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
+          entityApplicationUniversalIdentifier:
+            existingWidget.applicationUniversalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier,
+        });
+
         const updatedConfiguration = widgetInput.configuration ?? null;
 
-        return {
-          ...existingWidget,
-          ...buildFlatPageLayoutWidgetCommonProperties({
-            widgetInput,
-            flatPageLayoutTabMaps,
-            flatObjectMetadataMaps,
-          }),
+        const editableProperties: Record<string, unknown> = {
+          title: widgetInput.title,
+          type: widgetInput.type,
+          objectMetadataId: widgetInput.objectMetadataId ?? null,
+          gridPosition: widgetInput.gridPosition,
+          position: widgetInput.position ?? null,
           configuration: updatedConfiguration,
-          updatedAt: now.toISOString(),
-          ...(isDefined(updatedConfiguration) && {
-            universalConfiguration:
-              fromPageLayoutWidgetConfigurationToUniversalConfiguration({
-                configuration: updatedConfiguration,
-                fieldMetadataUniversalIdentifierById:
-                  flatFieldMetadataMaps.universalIdentifierById,
-                frontComponentUniversalIdentifierById:
-                  flatFrontComponentMaps.universalIdentifierById,
-                viewFieldGroupUniversalIdentifierById:
-                  flatViewFieldGroupMaps.universalIdentifierById,
-                viewUniversalIdentifierById:
-                  flatViewMaps.universalIdentifierById,
-              }),
-          }),
+          pageLayoutTabId: widgetInput.pageLayoutTabId,
         };
+
+        if (widgetInput.conditionalDisplay !== undefined) {
+          editableProperties.conditionalDisplay =
+            widgetInput.conditionalDisplay ?? null;
+        }
+
+        const { overrides, updatedEditableProperties } =
+          sanitizeOverridableEntityInput({
+            metadataName: 'pageLayoutWidget',
+            existingFlatEntity: existingWidget,
+            updatedEditableProperties: editableProperties,
+            shouldOverride,
+          });
+
+        const updatedWidget = {
+          ...existingWidget,
+          ...updatedEditableProperties,
+          overrides,
+          updatedAt: now.toISOString(),
+        } as FlatPageLayoutWidget;
+
+        if (updatedEditableProperties.pageLayoutTabId !== undefined) {
+          const { pageLayoutTabUniversalIdentifier } =
+            resolveEntityRelationUniversalIdentifiers({
+              metadataName: 'pageLayoutWidget',
+              foreignKeyValues: {
+                pageLayoutTabId: updatedWidget.pageLayoutTabId,
+              },
+              flatEntityMaps: { flatPageLayoutTabMaps },
+            });
+
+          updatedWidget.pageLayoutTabUniversalIdentifier =
+            pageLayoutTabUniversalIdentifier;
+        }
+
+        if (updatedEditableProperties.objectMetadataId !== undefined) {
+          const { objectMetadataUniversalIdentifier } =
+            resolveEntityRelationUniversalIdentifiers({
+              metadataName: 'pageLayoutWidget',
+              foreignKeyValues: {
+                objectMetadataId: updatedWidget.objectMetadataId,
+              },
+              flatEntityMaps: { flatObjectMetadataMaps },
+            });
+
+          updatedWidget.objectMetadataUniversalIdentifier =
+            objectMetadataUniversalIdentifier;
+        }
+
+        if (isDefined(overrides)) {
+          updatedWidget.universalOverrides =
+            fromPageLayoutWidgetOverridesToUniversalOverrides({
+              overrides,
+              pageLayoutTabUniversalIdentifierById:
+                flatPageLayoutTabMaps.universalIdentifierById,
+            });
+        } else {
+          updatedWidget.universalOverrides = null;
+        }
+
+        if (isDefined(updatedConfiguration)) {
+          updatedWidget.universalConfiguration =
+            fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+              configuration: updatedConfiguration,
+              fieldMetadataUniversalIdentifierById:
+                flatFieldMetadataMaps.universalIdentifierById,
+              frontComponentUniversalIdentifierById:
+                flatFrontComponentMaps.universalIdentifierById,
+              viewFieldGroupUniversalIdentifierById:
+                flatViewFieldGroupMaps.universalIdentifierById,
+              viewUniversalIdentifierById: flatViewMaps.universalIdentifierById,
+            });
+        }
+
+        return updatedWidget;
       },
     );
 
@@ -591,33 +664,101 @@ export class PageLayoutUpdateService {
           flatEntityMaps: flatPageLayoutWidgetMaps,
         });
 
+        const shouldOverride = isCallerOverridingEntity({
+          callerApplicationUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
+          entityApplicationUniversalIdentifier:
+            existingWidget.applicationUniversalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier,
+        });
+
         const restoredConfiguration = widgetInput.configuration ?? null;
 
-        return {
-          ...existingWidget,
-          ...buildFlatPageLayoutWidgetCommonProperties({
-            widgetInput,
-            flatPageLayoutTabMaps,
-            flatObjectMetadataMaps,
-          }),
+        const editableProperties: Record<string, unknown> = {
+          title: widgetInput.title,
+          type: widgetInput.type,
+          objectMetadataId: widgetInput.objectMetadataId ?? null,
+          gridPosition: widgetInput.gridPosition,
+          position: widgetInput.position ?? null,
           configuration: restoredConfiguration,
+          pageLayoutTabId: widgetInput.pageLayoutTabId,
+        };
+
+        if (widgetInput.conditionalDisplay !== undefined) {
+          editableProperties.conditionalDisplay =
+            widgetInput.conditionalDisplay ?? null;
+        }
+
+        const { overrides, updatedEditableProperties } =
+          sanitizeOverridableEntityInput({
+            metadataName: 'pageLayoutWidget',
+            existingFlatEntity: existingWidget,
+            updatedEditableProperties: editableProperties,
+            shouldOverride,
+          });
+
+        const updatedWidget = {
+          ...existingWidget,
+          ...updatedEditableProperties,
+          overrides,
           isActive: true,
           updatedAt: now.toISOString(),
-          ...(isDefined(restoredConfiguration) && {
-            universalConfiguration:
-              fromPageLayoutWidgetConfigurationToUniversalConfiguration({
-                configuration: restoredConfiguration,
-                fieldMetadataUniversalIdentifierById:
-                  flatFieldMetadataMaps.universalIdentifierById,
-                frontComponentUniversalIdentifierById:
-                  flatFrontComponentMaps.universalIdentifierById,
-                viewFieldGroupUniversalIdentifierById:
-                  flatViewFieldGroupMaps.universalIdentifierById,
-                viewUniversalIdentifierById:
-                  flatViewMaps.universalIdentifierById,
-              }),
-          }),
-        };
+        } as FlatPageLayoutWidget;
+
+        if (updatedEditableProperties.pageLayoutTabId !== undefined) {
+          const { pageLayoutTabUniversalIdentifier } =
+            resolveEntityRelationUniversalIdentifiers({
+              metadataName: 'pageLayoutWidget',
+              foreignKeyValues: {
+                pageLayoutTabId: updatedWidget.pageLayoutTabId,
+              },
+              flatEntityMaps: { flatPageLayoutTabMaps },
+            });
+
+          updatedWidget.pageLayoutTabUniversalIdentifier =
+            pageLayoutTabUniversalIdentifier;
+        }
+
+        if (updatedEditableProperties.objectMetadataId !== undefined) {
+          const { objectMetadataUniversalIdentifier } =
+            resolveEntityRelationUniversalIdentifiers({
+              metadataName: 'pageLayoutWidget',
+              foreignKeyValues: {
+                objectMetadataId: updatedWidget.objectMetadataId,
+              },
+              flatEntityMaps: { flatObjectMetadataMaps },
+            });
+
+          updatedWidget.objectMetadataUniversalIdentifier =
+            objectMetadataUniversalIdentifier;
+        }
+
+        if (isDefined(overrides)) {
+          updatedWidget.universalOverrides =
+            fromPageLayoutWidgetOverridesToUniversalOverrides({
+              overrides,
+              pageLayoutTabUniversalIdentifierById:
+                flatPageLayoutTabMaps.universalIdentifierById,
+            });
+        } else {
+          updatedWidget.universalOverrides = null;
+        }
+
+        if (isDefined(restoredConfiguration)) {
+          updatedWidget.universalConfiguration =
+            fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+              configuration: restoredConfiguration,
+              fieldMetadataUniversalIdentifierById:
+                flatFieldMetadataMaps.universalIdentifierById,
+              frontComponentUniversalIdentifierById:
+                flatFrontComponentMaps.universalIdentifierById,
+              viewFieldGroupUniversalIdentifierById:
+                flatViewFieldGroupMaps.universalIdentifierById,
+              viewUniversalIdentifierById: flatViewMaps.universalIdentifierById,
+            });
+        }
+
+        return updatedWidget;
       });
 
     const widgetsToRemove = idsToRemove

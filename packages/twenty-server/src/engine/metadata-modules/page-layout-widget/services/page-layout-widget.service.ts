@@ -317,6 +317,7 @@ export class PageLayoutWidgetService {
         flatFrontComponentMaps: existingFlatFrontComponentMaps,
         flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
         flatViewMaps: existingFlatViewMaps,
+        flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps,
       },
       { workspaceCustomFlatApplication },
     ] = await Promise.all([
@@ -329,6 +330,7 @@ export class PageLayoutWidgetService {
             'flatFrontComponentMaps',
             'flatViewFieldGroupMaps',
             'flatViewMaps',
+            'flatPageLayoutTabMaps',
           ],
         },
       ),
@@ -368,6 +370,7 @@ export class PageLayoutWidgetService {
         flatFrontComponentMaps: existingFlatFrontComponentMaps,
         flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
         flatViewMaps: existingFlatViewMaps,
+        flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps,
         callerApplicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
         workspaceCustomApplicationUniversalIdentifier:
