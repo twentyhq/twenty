@@ -137,9 +137,12 @@ export const generateGroupByToolInputSchema = (
     return null;
   }
 
-  const groupByEntrySchema = z.union(
-    groupByEntries as [z.ZodTypeAny, z.ZodTypeAny, ...z.ZodTypeAny[]],
-  );
+  const groupByEntrySchema =
+    groupByEntries.length === 1
+      ? groupByEntries[0]
+      : z.union(
+          groupByEntries as [z.ZodTypeAny, z.ZodTypeAny, ...z.ZodTypeAny[]],
+        );
 
   const { filterShape, filterSchema } = generateRecordFilterSchema(
     objectMetadata,
