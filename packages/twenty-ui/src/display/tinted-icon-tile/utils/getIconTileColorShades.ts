@@ -1,6 +1,6 @@
 import { TINTED_ICON_TILE_COLOR_SHADES } from '@ui/display/tinted-icon-tile/internal/constants/tintedIconTileColorShades.constant';
 import { getColorFromTheme } from '@ui/display/tinted-icon-tile/internal/utils/getColorFromTheme';
-import { parseThemeColor } from '@ui/display/tinted-icon-tile/internal/utils/parseThemeColor';
+import { parseThemeColor } from '@ui/utilities';
 
 export type IconTileColorShades = {
   backgroundColor: string;
