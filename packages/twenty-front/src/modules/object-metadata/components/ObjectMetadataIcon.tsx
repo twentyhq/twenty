@@ -3,14 +3,13 @@ import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectCol
 import { TintedIconTile } from '@/ui/display/components/TintedIconTile';
 import { useIcons } from 'twenty-ui/display';
 
+export type ObjectMetadataIconInput = Pick<
+  EnrichedObjectMetadataItem,
+  'icon' | 'nameSingular' | 'color' | 'isSystem'
+>;
+
 export type ObjectMetadataIconProps = {
-  objectMetadataItem:
-    | Pick<
-        EnrichedObjectMetadataItem,
-        'icon' | 'nameSingular' | 'color' | 'isSystem'
-      >
-    | null
-    | undefined;
+  objectMetadataItem?: ObjectMetadataIconInput | null;
   size?: number;
   stroke?: number;
 };
