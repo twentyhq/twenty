@@ -38,8 +38,7 @@ const makeFlatObjectMetadataMaps = (
   flatObjectMetadata: FlatObjectMetadata,
 ): FlatEntityMaps<FlatObjectMetadata> => ({
   byUniversalIdentifier: {
-    [flatObjectMetadata.universalIdentifier]:
-      flatObjectMetadata,
+    [flatObjectMetadata.universalIdentifier]: flatObjectMetadata,
   },
   universalIdentifierById: {
     [flatObjectMetadata.id]: flatObjectMetadata.universalIdentifier,
