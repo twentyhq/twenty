@@ -20,7 +20,7 @@ type GenerateInstanceCommandOptions = {
 @Command({
   name: 'generate:instance-command',
   description:
-    'Generate an instance command with @RegisteredInstanceMigration decorator for the latest supported version',
+    'Generate an instance command with @RegisteredInstanceCommand decorator for the latest supported version',
 })
 export class GenerateInstanceCommandCommand extends CommandRunner {
   private readonly logger = new Logger(GenerateInstanceCommandCommand.name);

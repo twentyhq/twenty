@@ -2286,6 +2286,7 @@ export interface CommandMenuItem {
     position: Scalars['Float']
     isPinned: Scalars['Boolean']
     availabilityType: CommandMenuItemAvailabilityType
+    payload?: Scalars['JSON']
     hotKeys?: Scalars['String'][]
     conditionalAvailabilityExpression?: Scalars['String']
     availabilityObjectMetadataId?: Scalars['UUID']
@@ -2295,7 +2296,7 @@ export interface CommandMenuItem {
     __typename: 'CommandMenuItem'
 }
 
-export type EngineComponentKey = 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'CREATE_NEW_RECORD' | 'DELETE_RECORDS' | 'RESTORE_RECORDS' | 'DESTROY_RECORDS' | 'ADD_TO_FAVORITES' | 'REMOVE_FROM_FAVORITES' | 'EXPORT_NOTE_TO_PDF' | 'EXPORT_RECORDS' | 'UPDATE_MULTIPLE_RECORDS' | 'MERGE_MULTIPLE_RECORDS' | 'IMPORT_RECORDS' | 'EXPORT_VIEW' | 'SEE_DELETED_RECORDS' | 'CREATE_NEW_VIEW' | 'HIDE_DELETED_RECORDS' | 'GO_TO_PEOPLE' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_NOTES' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EDIT_DASHBOARD_LAYOUT' | 'SAVE_DASHBOARD_LAYOUT' | 'CANCEL_DASHBOARD_LAYOUT' | 'DUPLICATE_DASHBOARD' | 'GO_TO_WORKFLOWS' | 'ACTIVATE_WORKFLOW' | 'DEACTIVATE_WORKFLOW' | 'DISCARD_DRAFT_WORKFLOW' | 'TEST_WORKFLOW' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_RUNS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'DUPLICATE_WORKFLOW' | 'GO_TO_RUNS' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'STOP_WORKFLOW_RUN' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'ASK_AI' | 'VIEW_PREVIOUS_AI_CHATS' | 'TRIGGER_WORKFLOW_VERSION' | 'FRONT_COMPONENT_RENDERER' | 'REPLY_TO_EMAIL_THREAD' | 'COMPOSE_EMAIL' | 'DELETE_SINGLE_RECORD' | 'DELETE_MULTIPLE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RESTORE_MULTIPLE_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS'
+export type EngineComponentKey = 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'CREATE_NEW_RECORD' | 'DELETE_RECORDS' | 'RESTORE_RECORDS' | 'DESTROY_RECORDS' | 'ADD_TO_FAVORITES' | 'REMOVE_FROM_FAVORITES' | 'EXPORT_NOTE_TO_PDF' | 'EXPORT_RECORDS' | 'UPDATE_MULTIPLE_RECORDS' | 'MERGE_MULTIPLE_RECORDS' | 'IMPORT_RECORDS' | 'EXPORT_VIEW' | 'SEE_DELETED_RECORDS' | 'CREATE_NEW_VIEW' | 'HIDE_DELETED_RECORDS' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EDIT_DASHBOARD_LAYOUT' | 'SAVE_DASHBOARD_LAYOUT' | 'CANCEL_DASHBOARD_LAYOUT' | 'DUPLICATE_DASHBOARD' | 'ACTIVATE_WORKFLOW' | 'DEACTIVATE_WORKFLOW' | 'DISCARD_DRAFT_WORKFLOW' | 'TEST_WORKFLOW' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_RUNS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'DUPLICATE_WORKFLOW' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'STOP_WORKFLOW_RUN' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'ASK_AI' | 'VIEW_PREVIOUS_AI_CHATS' | 'NAVIGATION' | 'TRIGGER_WORKFLOW_VERSION' | 'FRONT_COMPONENT_RENDERER' | 'REPLY_TO_EMAIL_THREAD' | 'COMPOSE_EMAIL' | 'GO_TO_PEOPLE' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_NOTES' | 'GO_TO_WORKFLOWS' | 'GO_TO_RUNS' | 'DELETE_SINGLE_RECORD' | 'DELETE_MULTIPLE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RESTORE_MULTIPLE_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS'
 
 export type CommandMenuItemAvailabilityType = 'GLOBAL' | 'RECORD_SELECTION' | 'FALLBACK'
 
@@ -5485,6 +5486,7 @@ export interface CommandMenuItemGenqlSelection{
     position?: boolean | number
     isPinned?: boolean | number
     availabilityType?: boolean | number
+    payload?: boolean | number
     hotKeys?: boolean | number
     conditionalAvailabilityExpression?: boolean | number
     availabilityObjectMetadataId?: boolean | number
@@ -6458,7 +6460,7 @@ update: UpdateLogicFunctionFromSourceInputUpdates}
 
 export interface UpdateLogicFunctionFromSourceInputUpdates {name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),timeoutSeconds?: (Scalars['Float'] | null),sourceHandlerCode?: (Scalars['String'] | null),toolInputSchema?: (Scalars['JSON'] | null),handlerName?: (Scalars['String'] | null),sourceHandlerPath?: (Scalars['String'] | null),isTool?: (Scalars['Boolean'] | null),cronTriggerSettings?: (Scalars['JSON'] | null),databaseEventTriggerSettings?: (Scalars['JSON'] | null),httpRouteTriggerSettings?: (Scalars['JSON'] | null)}
 
-export interface CreateCommandMenuItemInput {workflowVersionId?: (Scalars['UUID'] | null),frontComponentId?: (Scalars['UUID'] | null),engineComponentKey: EngineComponentKey,label: Scalars['String'],icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),hotKeys?: (Scalars['String'][] | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null)}
+export interface CreateCommandMenuItemInput {workflowVersionId?: (Scalars['UUID'] | null),frontComponentId?: (Scalars['UUID'] | null),engineComponentKey: EngineComponentKey,label: Scalars['String'],icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),hotKeys?: (Scalars['String'][] | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null),payload?: (Scalars['JSON'] | null)}
 
 export interface UpdateCommandMenuItemInput {id: Scalars['UUID'],label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null),engineComponentKey?: (EngineComponentKey | null),hotKeys?: (Scalars['String'][] | null)}
 
@@ -9263,19 +9265,11 @@ export const enumEngineComponentKey = {
    SEE_DELETED_RECORDS: 'SEE_DELETED_RECORDS' as const,
    CREATE_NEW_VIEW: 'CREATE_NEW_VIEW' as const,
    HIDE_DELETED_RECORDS: 'HIDE_DELETED_RECORDS' as const,
-   GO_TO_PEOPLE: 'GO_TO_PEOPLE' as const,
-   GO_TO_COMPANIES: 'GO_TO_COMPANIES' as const,
-   GO_TO_DASHBOARDS: 'GO_TO_DASHBOARDS' as const,
-   GO_TO_OPPORTUNITIES: 'GO_TO_OPPORTUNITIES' as const,
-   GO_TO_SETTINGS: 'GO_TO_SETTINGS' as const,
-   GO_TO_TASKS: 'GO_TO_TASKS' as const,
-   GO_TO_NOTES: 'GO_TO_NOTES' as const,
    EDIT_RECORD_PAGE_LAYOUT: 'EDIT_RECORD_PAGE_LAYOUT' as const,
    EDIT_DASHBOARD_LAYOUT: 'EDIT_DASHBOARD_LAYOUT' as const,
    SAVE_DASHBOARD_LAYOUT: 'SAVE_DASHBOARD_LAYOUT' as const,
    CANCEL_DASHBOARD_LAYOUT: 'CANCEL_DASHBOARD_LAYOUT' as const,
    DUPLICATE_DASHBOARD: 'DUPLICATE_DASHBOARD' as const,
-   GO_TO_WORKFLOWS: 'GO_TO_WORKFLOWS' as const,
    ACTIVATE_WORKFLOW: 'ACTIVATE_WORKFLOW' as const,
    DEACTIVATE_WORKFLOW: 'DEACTIVATE_WORKFLOW' as const,
    DISCARD_DRAFT_WORKFLOW: 'DISCARD_DRAFT_WORKFLOW' as const,
@@ -9286,7 +9280,6 @@ export const enumEngineComponentKey = {
    ADD_NODE_WORKFLOW: 'ADD_NODE_WORKFLOW' as const,
    TIDY_UP_WORKFLOW: 'TIDY_UP_WORKFLOW' as const,
    DUPLICATE_WORKFLOW: 'DUPLICATE_WORKFLOW' as const,
-   GO_TO_RUNS: 'GO_TO_RUNS' as const,
    SEE_VERSION_WORKFLOW_RUN: 'SEE_VERSION_WORKFLOW_RUN' as const,
    SEE_WORKFLOW_WORKFLOW_RUN: 'SEE_WORKFLOW_WORKFLOW_RUN' as const,
    STOP_WORKFLOW_RUN: 'STOP_WORKFLOW_RUN' as const,
@@ -9298,10 +9291,20 @@ export const enumEngineComponentKey = {
    SEARCH_RECORDS_FALLBACK: 'SEARCH_RECORDS_FALLBACK' as const,
    ASK_AI: 'ASK_AI' as const,
    VIEW_PREVIOUS_AI_CHATS: 'VIEW_PREVIOUS_AI_CHATS' as const,
+   NAVIGATION: 'NAVIGATION' as const,
    TRIGGER_WORKFLOW_VERSION: 'TRIGGER_WORKFLOW_VERSION' as const,
    FRONT_COMPONENT_RENDERER: 'FRONT_COMPONENT_RENDERER' as const,
    REPLY_TO_EMAIL_THREAD: 'REPLY_TO_EMAIL_THREAD' as const,
    COMPOSE_EMAIL: 'COMPOSE_EMAIL' as const,
+   GO_TO_PEOPLE: 'GO_TO_PEOPLE' as const,
+   GO_TO_COMPANIES: 'GO_TO_COMPANIES' as const,
+   GO_TO_DASHBOARDS: 'GO_TO_DASHBOARDS' as const,
+   GO_TO_OPPORTUNITIES: 'GO_TO_OPPORTUNITIES' as const,
+   GO_TO_SETTINGS: 'GO_TO_SETTINGS' as const,
+   GO_TO_TASKS: 'GO_TO_TASKS' as const,
+   GO_TO_NOTES: 'GO_TO_NOTES' as const,
+   GO_TO_WORKFLOWS: 'GO_TO_WORKFLOWS' as const,
+   GO_TO_RUNS: 'GO_TO_RUNS' as const,
    DELETE_SINGLE_RECORD: 'DELETE_SINGLE_RECORD' as const,
    DELETE_MULTIPLE_RECORDS: 'DELETE_MULTIPLE_RECORDS' as const,
    RESTORE_SINGLE_RECORD: 'RESTORE_SINGLE_RECORD' as const,

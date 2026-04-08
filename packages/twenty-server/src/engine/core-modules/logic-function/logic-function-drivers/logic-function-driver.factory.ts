@@ -7,6 +7,7 @@ import {
   LogicFunctionDriverType,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { DisabledDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/disabled.driver';
 import { LambdaDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda.driver';
 import { LocalDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local.driver';
@@ -22,6 +23,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
     twentyConfigService: TwentyConfigService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
     private readonly sdkClientArchiveService: SdkClientArchiveService,
+    private readonly cacheLockService: CacheLockService,
   ) {
     super(twentyConfigService);
   }
@@ -77,6 +79,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
 
         return new LambdaDriver({
           logicFunctionResourceService: this.logicFunctionResourceService,
+          cacheLockService: this.cacheLockService,
           credentials: accessKeyId
             ? { accessKeyId, secretAccessKey }
             : fromNodeProviderChain({ clientConfig: { region } }),

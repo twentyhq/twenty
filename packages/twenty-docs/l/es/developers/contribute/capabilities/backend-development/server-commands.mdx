@@ -50,20 +50,6 @@ npx nx run twenty-server:database:reset
 npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
 ```
 
-#### Para objetos de Workspace
-
-No hay archivos de migraciones, las migraciones se generan automáticamente para cada espacio de trabajo, se almacenan en la base de datos y se aplican con este comando
-
-```bash
-npx nx run twenty-server:command workspace:sync-metadata -f
-```
-
-<Warning>
-  Esto eliminará la base de datos y volverá a ejecutar las migraciones y semillas.
-
-  Asegúrate de respaldar cualquier dato que desees conservar antes de ejecutar este comando.
-</Warning>
-
 ## Stack Tecnológico
 
 Twenty utiliza principalmente NestJS para el backend.

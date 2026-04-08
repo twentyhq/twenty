@@ -171,7 +171,7 @@ describe('InstanceCommandGenerationService', () => {
 
     const result = await service.generate({
       migrationName: 'test',
-      version: '1.19.0',
+      version: '1.20.0',
       timestamp: FIXED_TIMESTAMP,
     });
 

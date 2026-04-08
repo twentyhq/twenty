@@ -5,11 +5,11 @@ import { SemVer } from 'semver';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { type WorkspaceIteratorContext } from 'src/database/commands/command-runners/workspace-iterator.service';
 import {
   type UpgradeCommandOptions,
   type VersionCommands,
-} from 'src/database/commands/command-runners/upgrade.command-runner';
-import { type WorkspaceIteratorContext } from 'src/database/commands/command-runners/workspace-iterator.service';
+} from 'src/database/commands/upgrade-version-command/upgrade.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';

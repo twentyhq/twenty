@@ -14,8 +14,8 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { splitEntitiesByRemovalStrategy } from 'src/engine/metadata-modules/flat-entity/utils/split-entities-by-removal-strategy.util';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
+import { splitEntitiesByRemovalStrategy } from 'src/engine/metadata-modules/flat-entity/utils/split-entities-by-removal-strategy.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { isFlatPageLayoutWidgetConfigurationOfType } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/is-flat-page-layout-widget-configuration-of-type.util';
@@ -409,6 +409,72 @@ export class FieldsWidgetUpsertService {
           continue;
         }
 
+        const existingField = existingViewFields.find(
+          (field) => field.fieldMetadataId === inputField.fieldMetadataId,
+        );
+
+        if (isDefined(existingField)) {
+          const {
+            viewFieldGroupUniversalIdentifier:
+              newViewFieldGroupUniversalIdentifier,
+          } = resolveEntityRelationUniversalIdentifiers({
+            metadataName: 'viewField',
+            foreignKeyValues: {
+              viewFieldGroupId: inputGroup.id,
+            },
+            flatEntityMaps: {
+              flatViewFieldGroupMaps: optimisticFlatViewFieldGroupMaps,
+            },
+          });
+
+          const shouldOverride = isCallerOverridingEntity({
+            callerApplicationUniversalIdentifier:
+              applicationUniversalIdentifier,
+            entityApplicationUniversalIdentifier:
+              existingField.applicationUniversalIdentifier,
+            workspaceCustomApplicationUniversalIdentifier:
+              applicationUniversalIdentifier,
+          });
+
+          const { overrides, updatedEditableProperties: sanitizedFieldProps } =
+            sanitizeOverridableEntityInput({
+              metadataName: 'viewField',
+              existingFlatEntity: existingField,
+              updatedEditableProperties: {
+                isVisible: inputField.isVisible,
+                position: inputField.position,
+                viewFieldGroupId: inputGroup.id,
+              },
+              shouldOverride,
+            });
+
+          const updatedField: FlatViewField = {
+            ...existingField,
+            ...sanitizedFieldProps,
+            overrides,
+            updatedAt: now,
+          };
+
+          if (sanitizedFieldProps.viewFieldGroupId !== undefined) {
+            updatedField.viewFieldGroupUniversalIdentifier =
+              newViewFieldGroupUniversalIdentifier;
+          }
+
+          if (isDefined(overrides)) {
+            updatedField.universalOverrides =
+              fromViewFieldOverridesToUniversalOverrides({
+                overrides,
+                viewFieldGroupUniversalIdentifierById:
+                  optimisticFlatViewFieldGroupMaps.universalIdentifierById,
+              });
+          } else {
+            updatedField.universalOverrides = null;
+          }
+
+          viewFieldsToUpdate.push(updatedField);
+          continue;
+        }
+
         const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: inputField.fieldMetadataId,
           flatEntityMaps: flatFieldMetadataMaps,
@@ -612,68 +678,120 @@ export class FieldsWidgetUpsertService {
       return [updatedField];
     });
 
-    const viewFieldsToCreate: FlatViewField[] = inputFields
-      .filter((inputField) => {
-        if (
-          isDefined(inputField.viewFieldId) ||
-          !isDefined(inputField.fieldMetadataId)
-        ) {
-          return false;
-        }
+    const viewFieldsToCreate: FlatViewField[] = [];
 
-        const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: inputField.fieldMetadataId,
-          flatEntityMaps: flatFieldMetadataMaps,
+    for (const inputField of inputFields) {
+      if (
+        isDefined(inputField.viewFieldId) ||
+        !isDefined(inputField.fieldMetadataId)
+      ) {
+        continue;
+      }
+
+      const existingField = existingViewFields.find(
+        (field) => field.fieldMetadataId === inputField.fieldMetadataId,
+      );
+
+      if (isDefined(existingField)) {
+        const shouldOverride = isCallerOverridingEntity({
+          callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
+          entityApplicationUniversalIdentifier:
+            existingField.applicationUniversalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier:
+            applicationUniversalIdentifier,
         });
 
-        return (
-          isDefined(fieldMetadata) &&
-          isFieldMetadataEligibleForFieldsWidget({
-            fieldName: fieldMetadata.name,
-            fieldType: fieldMetadata.type,
-            isLabelIdentifierField:
-              fieldMetadata.id === labelIdentifierFieldMetadataId,
-          })
-        );
-      })
-      .map((inputField) => {
-        const { fieldMetadataUniversalIdentifier, viewUniversalIdentifier } =
-          resolveEntityRelationUniversalIdentifiers({
+        const { overrides, updatedEditableProperties: sanitizedFieldProps } =
+          sanitizeOverridableEntityInput({
             metadataName: 'viewField',
-            foreignKeyValues: {
-              fieldMetadataId: inputField.fieldMetadataId!,
-              viewId,
+            existingFlatEntity: existingField,
+            updatedEditableProperties: {
+              isVisible: inputField.isVisible,
+              position: inputField.position,
+              viewFieldGroupId: null,
             },
-            flatEntityMaps: {
-              flatFieldMetadataMaps,
-              flatViewMaps,
-            },
+            shouldOverride,
           });
 
-        return {
-          id: v4(),
-          workspaceId,
-          applicationId,
-          universalIdentifier: v4(),
-          applicationUniversalIdentifier,
-          fieldMetadataId: inputField.fieldMetadataId!,
-          fieldMetadataUniversalIdentifier,
-          viewId,
-          viewUniversalIdentifier,
-          viewFieldGroupId: null,
-          viewFieldGroupUniversalIdentifier: null,
-          isVisible: inputField.isVisible,
-          size: DEFAULT_VIEW_FIELD_SIZE,
-          position: inputField.position,
-          aggregateOperation: null,
-          overrides: null,
-          universalOverrides: null,
-          isActive: true,
-          createdAt: now,
+        const updatedField: FlatViewField = {
+          ...existingField,
+          ...sanitizedFieldProps,
+          overrides,
           updatedAt: now,
-          deletedAt: null,
         };
+
+        if (sanitizedFieldProps.viewFieldGroupId !== undefined) {
+          updatedField.viewFieldGroupUniversalIdentifier = null;
+        }
+
+        if (isDefined(overrides)) {
+          updatedField.universalOverrides =
+            fromViewFieldOverridesToUniversalOverrides({
+              overrides,
+              viewFieldGroupUniversalIdentifierById: {},
+            });
+        } else {
+          updatedField.universalOverrides = null;
+        }
+
+        viewFieldsToUpdate.push(updatedField);
+        continue;
+      }
+
+      const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: inputField.fieldMetadataId,
+        flatEntityMaps: flatFieldMetadataMaps,
       });
+
+      if (
+        !isDefined(fieldMetadata) ||
+        !isFieldMetadataEligibleForFieldsWidget({
+          fieldName: fieldMetadata.name,
+          fieldType: fieldMetadata.type,
+          isLabelIdentifierField:
+            fieldMetadata.id === labelIdentifierFieldMetadataId,
+        })
+      ) {
+        continue;
+      }
+
+      const { fieldMetadataUniversalIdentifier, viewUniversalIdentifier } =
+        resolveEntityRelationUniversalIdentifiers({
+          metadataName: 'viewField',
+          foreignKeyValues: {
+            fieldMetadataId: inputField.fieldMetadataId,
+            viewId,
+          },
+          flatEntityMaps: {
+            flatFieldMetadataMaps,
+            flatViewMaps,
+          },
+        });
+
+      viewFieldsToCreate.push({
+        id: v4(),
+        workspaceId,
+        applicationId,
+        universalIdentifier: v4(),
+        applicationUniversalIdentifier,
+        fieldMetadataId: inputField.fieldMetadataId,
+        fieldMetadataUniversalIdentifier,
+        viewId,
+        viewUniversalIdentifier,
+        viewFieldGroupId: null,
+        viewFieldGroupUniversalIdentifier: null,
+        isVisible: inputField.isVisible,
+        size: DEFAULT_VIEW_FIELD_SIZE,
+        position: inputField.position,
+        aggregateOperation: null,
+        overrides: null,
+        universalOverrides: null,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+        deletedAt: null,
+      });
+    }
 
     const {
       toHardDelete: customGroupsToDelete,
