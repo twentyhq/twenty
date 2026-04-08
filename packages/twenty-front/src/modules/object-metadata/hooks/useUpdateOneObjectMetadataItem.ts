@@ -1,6 +1,7 @@
-import { useMutation } from '@apollo/client/react';
+import { useApolloClient, useMutation } from '@apollo/client/react';
 import {
   type UpdateOneObjectInput,
+  FindManyCommandMenuItemsDocument,
   UpdateOneObjectMetadataItemDocument,
 } from '~/generated-metadata/graphql';
 
@@ -20,9 +21,11 @@ export const useUpdateOneObjectMetadataItem = () => {
     UpdateOneObjectMetadataItemDocument,
   );
 
+  const client = useApolloClient();
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
+  const { updateInDraft, replaceDraft, applyChanges } =
+    useUpdateMetadataStoreDraft();
 
   const updateOneObjectMetadataItem = async ({
     idToUpdate,
@@ -51,6 +54,17 @@ export const useUpdateOneObjectMetadataItem = () => {
         updateInDraft('objectMetadataItems', [
           objectData as FlatObjectMetadataItem,
         ]);
+        applyChanges();
+
+        const commandMenuItemsResult = await client.query({
+          query: FindManyCommandMenuItemsDocument,
+          fetchPolicy: 'network-only',
+        });
+
+        replaceDraft(
+          'commandMenuItems',
+          commandMenuItemsResult.data?.commandMenuItems ?? [],
+        );
         applyChanges();
       }
 
