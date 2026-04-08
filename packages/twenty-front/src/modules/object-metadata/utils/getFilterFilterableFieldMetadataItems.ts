@@ -1,5 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
+import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 export const getFilterFilterableFieldMetadataItems = ({
@@ -17,7 +18,8 @@ export const getFilterFilterableFieldMetadataItems = ({
 
     const isRelationFieldHandled = !(
       field.type === FieldMetadataType.RELATION &&
-      field.relation?.type !== RelationType.MANY_TO_ONE
+      field.relation?.type !== RelationType.MANY_TO_ONE &&
+      !isJunctionRelationField(field)
     );
 
     const isFieldTypeFilterable = [

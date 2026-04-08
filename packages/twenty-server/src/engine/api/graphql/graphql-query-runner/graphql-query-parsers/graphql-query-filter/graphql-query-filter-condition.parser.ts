@@ -9,6 +9,12 @@ import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/reposito
 
 import { GraphqlQueryFilterFieldParser } from './graphql-query-filter-field.parser';
 
+type JunctionFilterContext = {
+  workspaceId: string;
+  workspaceFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  workspaceFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+};
+
 export class GraphqlQueryFilterConditionParser {
   private flatObjectMetadata: FlatObjectMetadata;
   private queryFilterFieldParser: GraphqlQueryFilterFieldParser;
@@ -35,10 +41,25 @@ export class GraphqlQueryFilterConditionParser {
       return queryBuilder;
     }
 
+    const junctionContext: JunctionFilterContext = {
+      workspaceId: queryBuilder.internalContext.workspaceId,
+      workspaceFlatObjectMetadataMaps:
+        queryBuilder.internalContext.flatObjectMetadataMaps,
+      workspaceFlatFieldMetadataMaps:
+        queryBuilder.internalContext.flatFieldMetadataMaps,
+    };
+
     return queryBuilder.where(
       new Brackets((qb) => {
         Object.entries(filter).forEach(([key, value], index) => {
-          this.parseKeyFilter(qb, objectNameSingular, key, value, index === 0);
+          this.parseKeyFilter(
+            qb,
+            objectNameSingular,
+            key,
+            value,
+            index === 0,
+            junctionContext,
+          );
         });
       }),
     );
@@ -51,6 +72,7 @@ export class GraphqlQueryFilterConditionParser {
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     value: any,
     isFirst = false,
+    junctionContext?: JunctionFilterContext,
   ): void {
     switch (key) {
       case 'and': {
@@ -65,6 +87,7 @@ export class GraphqlQueryFilterConditionParser {
                     subFilterkey,
                     subFilterValue,
                     index === 0,
+                    junctionContext,
                   );
                 },
               );
@@ -97,6 +120,7 @@ export class GraphqlQueryFilterConditionParser {
                     subFilterkey,
                     subFilterValue,
                     index === 0,
+                    junctionContext,
                   );
                 },
               );
@@ -128,6 +152,7 @@ export class GraphqlQueryFilterConditionParser {
                 subFilterkey,
                 subFilterValue,
                 index === 0,
+                junctionContext,
               );
             },
           );
@@ -148,6 +173,10 @@ export class GraphqlQueryFilterConditionParser {
           key,
           value,
           isFirst,
+          false,
+          junctionContext?.workspaceId,
+          junctionContext?.workspaceFlatObjectMetadataMaps,
+          junctionContext?.workspaceFlatFieldMetadataMaps,
         );
         break;
     }

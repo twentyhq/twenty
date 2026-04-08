@@ -23,10 +23,13 @@ import { type RecordFilter } from '@/utils/filter/turnRecordFilterGroupIntoGqlOp
 import { generateILikeFiltersForCompositeFields } from '@/utils/filter/utils/generateILikeFiltersForCompositeFields';
 import { getFilterTypeFromFieldType } from '@/utils/filter/utils/getFilterTypeFromFieldType';
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from '@/utils/validation/isDefined';
 
 type GetEmptyRecordGqlOperationFilterParams = {
   operand: ViewFilterOperand;
-  correspondingField: Pick<PartialFieldMetadataItem, 'id' | 'name' | 'type'>;
+  correspondingField: Pick<PartialFieldMetadataItem, 'id' | 'name' | 'type'> & {
+    settings?: { junctionTargetFieldId?: string } | null;
+  };
   recordFilter: Omit<RecordFilter, 'id'>;
 };
 
@@ -323,9 +326,19 @@ export const getEmptyRecordGqlOperationFilter = ({
       };
       break;
     case 'RELATION':
-      emptyRecordFilter = {
-        [correspondingField.name + 'Id']: { is: 'NULL' } as RelationFilter,
-      };
+      if (
+        isDefined(correspondingField.settings?.junctionTargetFieldId)
+      ) {
+        // Junction relation: IS_EMPTY = no junction rows exist for this record
+        emptyRecordFilter = {
+          [correspondingField.name]: { none: {} },
+        };
+      } else {
+        // MANY_TO_ONE relation: IS_EMPTY = FK column is NULL
+        emptyRecordFilter = {
+          [correspondingField.name + 'Id']: { is: 'NULL' } as RelationFilter,
+        };
+      }
       break;
     case 'ACTOR':
       emptyRecordFilter = {

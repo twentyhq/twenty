@@ -60,6 +60,7 @@ type FieldShared = {
   name: string;
   type: FieldMetadataType;
   label: string;
+  settings?: { junctionTargetFieldId?: string } | null;
 };
 
 type TurnRecordFilterIntoRecordGqlOperationFilterParams = {
@@ -532,6 +533,35 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
 
       if (!isDefined(recordIds) || recordIds.length === 0) return;
 
+      // Junction (many-to-many) relation: use some/none operators
+      if (
+        isDefined(
+          correspondingFieldMetadataItem.settings?.junctionTargetFieldId,
+        )
+      ) {
+        switch (recordFilter.operand) {
+          case RecordFilterOperand.IS:
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                some: { in: recordIds },
+              },
+            };
+          case RecordFilterOperand.IS_NOT:
+            return {
+              not: {
+                [correspondingFieldMetadataItem.name]: {
+                  some: { in: recordIds },
+                },
+              },
+            };
+          default:
+            throw new Error(
+              `Unknown operand ${recordFilter.operand} for junction RELATION filter`,
+            );
+        }
+      }
+
+      // MANY_TO_ONE relation: use direct FK column
       switch (recordFilter.operand) {
         case RecordFilterOperand.IS:
           return {
