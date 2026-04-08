@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`formatUpgradeErrorForStorage should format a CustomError with code 1`] = `
-"[Error] Workspace not found
+"[CustomError] Workspace not found
 Code: WORKSPACE_NOT_FOUND"
 `;
 

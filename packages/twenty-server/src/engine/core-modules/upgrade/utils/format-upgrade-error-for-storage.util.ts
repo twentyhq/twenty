@@ -4,12 +4,20 @@ import { QueryFailedError } from 'typeorm';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 
+const MAX_ERROR_MESSAGE_LENGTH = 10_000;
+
 const formatStack = (stack: string | undefined): string => {
   return (stack ?? '').split('\n').slice(1).join('\n');
 };
 
 const joinParts = (parts: (string | null)[]): string => {
-  return parts.filter(Boolean).join('\n');
+  const joined = parts.filter(Boolean).join('\n');
+
+  if (joined.length <= MAX_ERROR_MESSAGE_LENGTH) {
+    return joined;
+  }
+
+  return joined.slice(0, MAX_ERROR_MESSAGE_LENGTH) + '\n[truncated]';
 };
 
 const buildErrorParts = (error: unknown): (string | null)[] => {
@@ -55,7 +63,7 @@ const buildErrorParts = (error: unknown): (string | null)[] => {
 
   if (error instanceof CustomError) {
     return [
-      `[${error.name ?? 'CustomError'}] ${error.message}`,
+      `[CustomError] ${error.message}`,
       error.code ? `Code: ${error.code}` : null,
       formatStack(error.stack),
     ];
@@ -63,7 +71,7 @@ const buildErrorParts = (error: unknown): (string | null)[] => {
 
   if (error instanceof Error) {
     return [
-      `[${error.name ?? 'Error'}] ${error.message}`,
+      `[Error] ${error.message}`,
       formatStack(error.stack),
     ];
   }
