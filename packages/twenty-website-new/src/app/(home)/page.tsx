@@ -130,9 +130,10 @@ export default async function HomePage() {
       >
         <Testimonials.Carousel
           eyebrow={TESTIMONIALS_DATA.eyebrow}
-          illustration={TESTIMONIALS_DATA.illustration}
           testimonials={TESTIMONIALS_DATA.testimonials}
-        />
+        >
+          <Testimonials.HomeVisual />
+        </Testimonials.Carousel>
       </Testimonials.Root>
 
       <Faq.Root illustration={FAQ_DATA.illustration}>

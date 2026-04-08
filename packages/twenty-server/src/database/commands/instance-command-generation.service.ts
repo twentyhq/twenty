@@ -38,7 +38,7 @@ export class InstanceCommandGenerationService {
       return null;
     }
 
-    const className = this.buildClassName(migrationName, version, timestamp);
+    const className = this.buildClassName(migrationName);
 
     const upStatements = sqlInMemory.upQueries.map(
       ({ query, parameters }) =>
@@ -66,14 +66,8 @@ export class InstanceCommandGenerationService {
     return { fileName, fileTemplate, className };
   }
 
-  private buildClassName(
-    name: string,
-    version: string,
-    timestamp: number,
-  ): string {
-    const versionSlug = version.split('.').slice(0, 2).join('_');
-
-    return `V${versionSlug}_${pascalCase(name)}_${timestamp}`;
+  private buildClassName(name: string): string {
+    return `${pascalCase(name)}Command`;
   }
 
   private formatQueryParams(parameters: unknown[] | undefined): string {
@@ -103,12 +97,10 @@ export class InstanceCommandGenerationService {
   }): string {
     return `import { MigrationInterface, QueryRunner } from 'typeorm';
 
-import { RegisteredInstanceMigration } from 'src/database/typeorm/core/decorators/registered-instance-migration.decorator';
+import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 
-@RegisteredInstanceMigration('${version}', ${timestamp})
+@RegisteredInstanceCommand('${version}', ${timestamp})
 export class ${className} implements MigrationInterface {
-  name = '${className}';
-
   public async up(queryRunner: QueryRunner): Promise<void> {
 ${upStatements.join('\n')}
   }

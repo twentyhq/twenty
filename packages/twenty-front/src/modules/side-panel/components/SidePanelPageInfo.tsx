@@ -16,6 +16,7 @@ import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageIn
 import { SidePanelPageLayoutInfo } from '@/side-panel/components/SidePanelPageLayoutInfo';
 import { SidePanelRecordInfo } from '@/side-panel/components/SidePanelRecordInfo';
 import { SidePanelWorkflowStepInfo } from '@/side-panel/components/SidePanelWorkflowStepInfo';
+import { isPageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/utils/isPageLayoutSidePanelPage';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { NavigationMenuItemType, SidePanelPages } from 'twenty-shared/types';
 
@@ -95,15 +96,7 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
   }
 
   const isPageLayoutPage = pageChip.page?.page
-    ? [
-        SidePanelPages.PageLayoutWidgetTypeSelect,
-        SidePanelPages.PageLayoutGraphTypeSelect,
-        SidePanelPages.PageLayoutIframeSettings,
-        SidePanelPages.PageLayoutTabSettings,
-        SidePanelPages.PageLayoutFieldsSettings,
-        SidePanelPages.PageLayoutFieldSettings,
-        SidePanelPages.PageLayoutRecordTableSettings,
-      ].includes(pageChip.page?.page)
+    ? isPageLayoutSidePanelPage(pageChip.page.page)
     : false;
 
   if (isPageLayoutPage) {

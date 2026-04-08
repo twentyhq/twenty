@@ -5,10 +5,12 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsObject,
   IsOptional,
   IsString,
   IsUUID,
 } from 'class-validator';
+import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
@@ -75,4 +77,9 @@ export class CreateCommandMenuItemInput {
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
   availabilityObjectMetadataId?: string;
+
+  @IsObject()
+  @IsOptional()
+  @Field(() => GraphQLJSON, { nullable: true })
+  payload?: Record<string, unknown>;
 }

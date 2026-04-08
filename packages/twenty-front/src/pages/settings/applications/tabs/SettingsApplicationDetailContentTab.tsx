@@ -114,7 +114,9 @@ export const SettingsApplicationDetailContentTab = ({
   const shouldDisplayLogicFunctions =
     isDefined(logicFunctions) && logicFunctions?.length > 0;
 
-  const shouldDisplayAgents = isDefined(agents) && agents.length > 0;
+  // TODO: uncomment when adding back agents in application settings
+  // const shouldDisplayAgents = isDefined(agents) && agents.length > 0;
+  const shouldDisplayAgents = false;
 
   return (
     <>

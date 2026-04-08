@@ -8,7 +8,7 @@ import { DataSource } from 'typeorm';
 
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
 import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
-import { RegisteredInstanceMigrationService } from 'src/engine/core-modules/upgrade/services/registered-instance-migration-registry.service';
+import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 type RunInstanceCommandsOptions = {
@@ -28,7 +28,7 @@ export class RunInstanceCommandsCommand extends CommandRunner {
     private readonly dataSource: DataSource,
     private readonly coreEngineVersionService: CoreEngineVersionService,
     private readonly workspaceVersionService: WorkspaceVersionService,
-    private readonly registeredInstanceMigrationService: RegisteredInstanceMigrationService,
+    private readonly upgradeCommandRegistryService: UpgradeCommandRegistryService,
     private readonly instanceUpgradeService: InstanceUpgradeService,
   ) {
     super();
@@ -79,7 +79,7 @@ export class RunInstanceCommandsCommand extends CommandRunner {
 
   private async runAllInstanceCommands(): Promise<void> {
     const allInstanceCommands =
-      this.registeredInstanceMigrationService.getAllInstanceCommands();
+      this.upgradeCommandRegistryService.getAllInstanceCommands();
 
     if (allInstanceCommands.length === 0) {
       this.logger.log('No registered instance commands');
