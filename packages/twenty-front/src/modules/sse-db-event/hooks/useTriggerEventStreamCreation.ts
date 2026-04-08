@@ -20,6 +20,19 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { type EventSubscription } from '~/generated-metadata/graphql';
 
+const isRecoverableEventStreamError = ({
+  subCode,
+  code,
+}: {
+  subCode?: string;
+  code?: string;
+}) =>
+  subCode === 'EVENT_STREAM_DOES_NOT_EXIST' ||
+  subCode === 'EVENT_STREAM_ALREADY_EXISTS' ||
+  subCode === 'NOT_AUTHORIZED' ||
+  code === 'UNAUTHENTICATED' ||
+  code === 'FORBIDDEN';
+
 export const useTriggerEventStreamCreation = () => {
   const store = useStore();
   const setIsCreatingSseEventStream = useSetAtomState(
@@ -80,9 +93,17 @@ export const useTriggerEventStreamCreation = () => {
           }>,
         ) => {
           if (isDefined(value?.errors) && Array.isArray(value.errors)) {
-            captureException(
-              new Error(`SSE subscription error: ${value.errors[0]?.message}`),
-            );
+            const subCode = value.errors[0]?.extensions?.subCode;
+            const code = value.errors[0]?.extensions?.code;
+
+            if (!isRecoverableEventStreamError({ subCode, code })) {
+              captureException(
+                new Error(
+                  `SSE subscription error: ${value.errors[0]?.message}`,
+                ),
+              );
+            }
+
             store.set(shouldDestroyEventStreamState.atom, true);
 
             return;
@@ -129,16 +150,11 @@ export const useTriggerEventStreamCreation = () => {
             if (event === 'next') {
               if (isDefined(result?.errors)) {
                 const subCode = result.errors[0]?.extensions?.subCode;
+                const code = result.errors[0]?.extensions?.code;
 
-                switch (subCode) {
-                  case 'EVENT_STREAM_ALREADY_EXISTS': {
-                    store.set(shouldDestroyEventStreamState.atom, true);
-                    break;
-                  }
-                  default: {
-                    for (const error of result.errors) {
-                      captureException(error);
-                    }
+                if (!isRecoverableEventStreamError({ subCode, code })) {
+                  for (const error of result.errors) {
+                    captureException(error);
                   }
                 }
 
