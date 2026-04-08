@@ -14,7 +14,7 @@ import { CoreEngineVersionService } from 'src/engine/core-engine-version/service
 import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
 import {
   UpgradeCommandRegistryService,
-  type VersionBucket,
+  type VersionBundle,
 } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
@@ -32,7 +32,7 @@ export type UpgradeCommandOptions = {
   verbose?: boolean;
 };
 
-type VersionContext = VersionBucket & {
+type VersionContext = VersionBundle & {
   fromWorkspaceVersion: SemVer;
   currentAppVersion: SemVer;
   currentVersionMajorMinor: UpgradeCommandVersion;
@@ -256,7 +256,7 @@ Please roll back to that version and run the upgrade command again.`,
       this.coreEngineVersionService.getPreviousVersion();
 
     const { fastInstanceCommands, slowInstanceCommands, workspaceCommands } =
-      this.upgradeCommandRegistryService.getBucketForVersion(
+      this.upgradeCommandRegistryService.getBundleForVersion(
         currentVersionMajorMinor,
       );
 

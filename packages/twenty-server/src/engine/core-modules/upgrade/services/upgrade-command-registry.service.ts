@@ -35,7 +35,7 @@ export type RegisteredWorkspaceCommand = {
   timestamp: number;
 };
 
-export type VersionBucket = {
+export type VersionBundle = {
   fastInstanceCommands: RegisteredFastInstanceCommand[];
   slowInstanceCommands: RegisteredSlowInstanceCommand[];
   workspaceCommands: RegisteredWorkspaceCommand[];
@@ -45,16 +45,16 @@ export type VersionBucket = {
 export class UpgradeCommandRegistryService implements OnModuleInit {
   private readonly logger = new Logger(UpgradeCommandRegistryService.name);
 
-  private readonly bucketsByVersion = new Map<
+  private readonly bundlesByVersion = new Map<
     UpgradeCommandVersion,
-    VersionBucket
+    VersionBundle
   >();
 
   constructor(private readonly discoveryService: DiscoveryService) {}
 
   onModuleInit(): void {
     for (const version of UPGRADE_COMMAND_SUPPORTED_VERSIONS) {
-      this.bucketsByVersion.set(version, {
+      this.bundlesByVersion.set(version, {
         fastInstanceCommands: [],
         slowInstanceCommands: [],
         workspaceCommands: [],
@@ -74,7 +74,7 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
         getRegisteredInstanceCommandMetadata(metatype);
 
       if (isDefined(instanceCommandMetadata)) {
-        const bucket = this.bucketsByVersion.get(
+        const bucket = this.bundlesByVersion.get(
           instanceCommandMetadata.version,
         );
 
@@ -108,7 +108,7 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
         getRegisteredWorkspaceCommandMetadata(metatype);
 
       if (isDefined(workspaceCommandMetadata)) {
-        const bucket = this.bucketsByVersion.get(
+        const bucket = this.bundlesByVersion.get(
           workspaceCommandMetadata.version,
         );
 
@@ -126,7 +126,7 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
       }
     }
 
-    for (const [, bucket] of this.bucketsByVersion) {
+    for (const [, bucket] of this.bundlesByVersion) {
       bucket.fastInstanceCommands.sort(
         (entryA, entryB) => entryA.timestamp - entryB.timestamp,
       );
@@ -140,7 +140,7 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
 
     this.validateNoDuplicates();
 
-    for (const [version, bucket] of this.bucketsByVersion) {
+    for (const [version, bucket] of this.bundlesByVersion) {
       const totalCount =
         bucket.fastInstanceCommands.length +
         bucket.slowInstanceCommands.length +
@@ -154,25 +154,25 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
     }
   }
 
-  private static readonly EMPTY_BUCKET: VersionBucket = {
+  private static readonly EMPTY_BUNDLE: VersionBundle = {
     fastInstanceCommands: [],
     slowInstanceCommands: [],
     workspaceCommands: [],
   };
 
-  getBucketForVersion(version: UpgradeCommandVersion): VersionBucket {
-    return this.bucketsByVersion.get(version) ?? UpgradeCommandRegistryService.EMPTY_BUCKET;
+  getBundleForVersion(version: UpgradeCommandVersion): VersionBundle {
+    return this.bundlesByVersion.get(version) ?? UpgradeCommandRegistryService.EMPTY_BUNDLE;
   }
 
   getAllFastInstanceCommands(): RegisteredFastInstanceCommand[] {
     return UPGRADE_COMMAND_SUPPORTED_VERSIONS.flatMap(
-      (version) => this.getBucketForVersion(version).fastInstanceCommands,
+      (version) => this.getBundleForVersion(version).fastInstanceCommands,
     );
   }
 
   getAllSlowInstanceCommands(): RegisteredSlowInstanceCommand[] {
     return UPGRADE_COMMAND_SUPPORTED_VERSIONS.flatMap(
-      (version) => this.getBucketForVersion(version).slowInstanceCommands,
+      (version) => this.getBundleForVersion(version).slowInstanceCommands,
     );
   }
 
@@ -185,7 +185,7 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
   }
 
   private validateNoDuplicates(): void {
-    for (const [version, bucket] of this.bucketsByVersion) {
+    for (const [version, bucket] of this.bundlesByVersion) {
       this.validateNoTimestampDuplicatesWithinKind(
         version,
         'fast-instance',

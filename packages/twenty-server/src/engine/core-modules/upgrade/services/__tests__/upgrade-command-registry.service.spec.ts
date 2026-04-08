@@ -97,8 +97,8 @@ describe('UpgradeCommandRegistryService', () => {
       new MigrationC1772000000000(),
     ]);
 
-    const v120 = service.getBucketForVersion('1.20.0');
-    const v121 = service.getBucketForVersion('1.21.0');
+    const v120 = service.getBundleForVersion('1.20.0');
+    const v121 = service.getBundleForVersion('1.21.0');
 
     expect(
       v120.fastInstanceCommands.map(
@@ -125,7 +125,7 @@ describe('UpgradeCommandRegistryService', () => {
     ]);
 
     const names = service
-      .getBucketForVersion('1.21.0')
+      .getBundleForVersion('1.21.0')
       .fastInstanceCommands.map((entry) => entry.command.constructor.name);
 
     expect(names).toStrictEqual([
@@ -141,7 +141,7 @@ describe('UpgradeCommandRegistryService', () => {
       new MigrationA1770000000000(),
     ]);
 
-    const v121 = service.getBucketForVersion('1.21.0');
+    const v121 = service.getBundleForVersion('1.21.0');
 
     expect(v121.fastInstanceCommands).toHaveLength(1);
     expect(v121.fastInstanceCommands[0].command.constructor.name).toBe(
@@ -152,8 +152,8 @@ describe('UpgradeCommandRegistryService', () => {
   it('should return empty array for version with no commands', async () => {
     const service = await buildRegistryService([]);
 
-    const v120 = service.getBucketForVersion('1.20.0');
-    const v121 = service.getBucketForVersion('1.21.0');
+    const v120 = service.getBundleForVersion('1.20.0');
+    const v121 = service.getBundleForVersion('1.21.0');
 
     expect(v120.fastInstanceCommands).toStrictEqual([]);
     expect(v121.fastInstanceCommands).toStrictEqual([]);
@@ -165,7 +165,7 @@ describe('UpgradeCommandRegistryService', () => {
     const service = await buildRegistryService([]);
 
     expect(
-      service.getBucketForVersion('99.0.0' as unknown as '1.21.0')
+      service.getBundleForVersion('99.0.0' as unknown as '1.21.0')
         .fastInstanceCommands,
     ).toStrictEqual([]);
   });
@@ -176,7 +176,7 @@ describe('UpgradeCommandRegistryService', () => {
       new WorkspaceCommandA(),
     ]);
 
-    const { workspaceCommands } = service.getBucketForVersion('1.21.0');
+    const { workspaceCommands } = service.getBundleForVersion('1.21.0');
 
     expect(
       workspaceCommands.map((entry) => entry.command.constructor.name),
@@ -191,7 +191,7 @@ describe('UpgradeCommandRegistryService', () => {
       new WorkspaceCommandB(),
     ]);
 
-    const bucket = service.getBucketForVersion('1.21.0');
+    const bucket = service.getBundleForVersion('1.21.0');
 
     expect(bucket.fastInstanceCommands).toHaveLength(2);
     expect(bucket.workspaceCommands).toHaveLength(2);
@@ -208,7 +208,7 @@ describe('UpgradeCommandRegistryService', () => {
       new WorkspaceCommandSameTimestamp(),
     ]);
 
-    const bucket = service.getBucketForVersion('1.21.0');
+    const bucket = service.getBundleForVersion('1.21.0');
 
     expect(bucket.fastInstanceCommands).toHaveLength(1);
     expect(bucket.workspaceCommands).toHaveLength(1);
@@ -292,7 +292,7 @@ describe('UpgradeCommandRegistryService', () => {
       new MigrationA1770000000000_WS(),
     ]);
 
-    const bucket = service.getBucketForVersion('1.21.0');
+    const bucket = service.getBundleForVersion('1.21.0');
 
     expect(bucket.fastInstanceCommands).toHaveLength(1);
     expect(bucket.workspaceCommands).toHaveLength(1);
@@ -322,7 +322,7 @@ describe('UpgradeCommandRegistryService', () => {
       new SlowMigrationA1779000000000(),
     ]);
 
-    const { slowInstanceCommands } = service.getBucketForVersion('1.21.0');
+    const { slowInstanceCommands } = service.getBundleForVersion('1.21.0');
 
     expect(
       slowInstanceCommands.map((entry) => entry.command.constructor.name),
@@ -347,7 +347,7 @@ describe('UpgradeCommandRegistryService', () => {
       new SlowMigration1780000000000(),
     ]);
 
-    const bucket = service.getBucketForVersion('1.21.0');
+    const bucket = service.getBundleForVersion('1.21.0');
 
     expect(bucket.fastInstanceCommands).toHaveLength(1);
     expect(bucket.slowInstanceCommands).toHaveLength(1);
@@ -397,7 +397,7 @@ describe('UpgradeCommandRegistryService', () => {
       new SlowMigrationSameTimestamp(),
     ]);
 
-    const bucket = service.getBucketForVersion('1.21.0');
+    const bucket = service.getBundleForVersion('1.21.0');
 
     expect(bucket.fastInstanceCommands).toHaveLength(1);
     expect(bucket.slowInstanceCommands).toHaveLength(1);
