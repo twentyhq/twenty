@@ -3,6 +3,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { type LanguageModel } from 'ai';
 import { type AiSdkPackage } from 'twenty-shared/ai';
 
+import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { getConfigGroupHash } from 'src/engine/core-modules/twenty-config/utils/get-config-group-hash.util';
 import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
 
 import {
@@ -44,26 +47,66 @@ export interface RegisteredAIModel {
 @Injectable()
 export class AiModelRegistryService {
   private readonly logger = new Logger(AiModelRegistryService.name);
-  private modelRegistry: Map<string, RegisteredAIModel> = new Map();
-  private modelConfigCache: Map<string, AIModelConfig> = new Map();
-  private providerModelDefCache: Map<
+  private _modelRegistry: Map<string, RegisteredAIModel> = new Map();
+  private _modelConfigCache: Map<string, AIModelConfig> = new Map();
+  private _providerModelDefCache: Map<
     string,
     { providerName: string; modelDef: AiProviderModelConfig }
   > = new Map();
+  private currentConfigKey: string | null = null;
 
   constructor(
     private readonly providerConfigService: ProviderConfigService,
     private readonly sdkProviderFactory: SdkProviderFactoryService,
     private readonly preferencesService: AiModelPreferencesService,
-  ) {
-    this.buildModelRegistry();
+    private readonly twentyConfigService: TwentyConfigService,
+  ) {}
+
+  // The registry is rebuilt lazily whenever the LLM-group config hash changes,
+  // so any mutation to an LLM-tagged config variable is picked up automatically
+  // on the next read — no explicit refresh from callers needed.
+  private get modelRegistry(): Map<string, RegisteredAIModel> {
+    this.ensureFresh();
+
+    return this._modelRegistry;
   }
 
+  private get modelConfigCache(): Map<string, AIModelConfig> {
+    this.ensureFresh();
+
+    return this._modelConfigCache;
+  }
+
+  private get providerModelDefCache(): Map<
+    string,
+    { providerName: string; modelDef: AiProviderModelConfig }
+  > {
+    this.ensureFresh();
+
+    return this._providerModelDefCache;
+  }
+
+  private ensureFresh(): void {
+    const configKey = getConfigGroupHash(
+      this.twentyConfigService,
+      ConfigVariablesGroup.LLM,
+    );
+
+    if (configKey === this.currentConfigKey) {
+      return;
+    }
+
+    this.buildModelRegistry();
+    this.currentConfigKey = configKey;
+  }
+
+  // Must use the underscored backing fields directly: accessing the public
+  // getters here would re-trigger ensureFresh() and recurse.
   private buildModelRegistry(): void {
-    this.modelRegistry.clear();
+    this._modelRegistry.clear();
     this.sdkProviderFactory.clearCache();
-    this.modelConfigCache.clear();
-    this.providerModelDefCache.clear();
+    this._modelConfigCache.clear();
+    this._providerModelDefCache.clear();
 
     const providers = this.providerConfigService.getResolvedProviders();
 
@@ -92,18 +135,18 @@ export class AiModelRegistryService {
       for (const modelDef of models) {
         const compositeId = buildCompositeModelId(providerKey, modelDef.name);
 
-        this.modelConfigCache.set(
+        this._modelConfigCache.set(
           compositeId,
           this.toAIModelConfig(compositeId, config, modelDef),
         );
 
-        this.providerModelDefCache.set(compositeId, {
+        this._providerModelDefCache.set(compositeId, {
           providerName: providerKey,
           modelDef,
         });
 
         if (sdkInstance) {
-          this.modelRegistry.set(compositeId, {
+          this._modelRegistry.set(compositeId, {
             modelId: compositeId,
             sdkPackage: config.npm,
             model: sdkInstance.createModel(modelDef.name),
@@ -354,10 +397,6 @@ export class AiModelRegistryService {
 
   getCatalogProviderNames(): Set<string> {
     return this.providerConfigService.getCatalogProviderNames();
-  }
-
-  refreshRegistry(): void {
-    this.buildModelRegistry();
   }
 
   resolveModelForAgent(agent: { modelId: string } | null): RegisteredAIModel {

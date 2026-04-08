@@ -1,9 +1,6 @@
-import { createHash } from 'crypto';
-
-import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { type ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { TypedReflect } from 'src/utils/typed-reflect';
+import { getConfigGroupHash } from 'src/engine/core-modules/twenty-config/utils/get-config-group-hash.util';
 
 export abstract class DriverFactoryBase<TDriver> {
   private currentDriver: TDriver | null = null;
@@ -44,28 +41,7 @@ export abstract class DriverFactoryBase<TDriver> {
   }
 
   protected getConfigGroupHash(group: ConfigVariablesGroup): string {
-    const groupVariables = this.getConfigVariablesByGroup(group);
-
-    const configValues = groupVariables
-      .map((key) => `${key}=${this.twentyConfigService.get(key)}`)
-      .sort()
-      .join('|');
-
-    return createHash('sha256')
-      .update(configValues)
-      .digest('hex')
-      .substring(0, 16);
-  }
-
-  private getConfigVariablesByGroup(
-    group: ConfigVariablesGroup,
-  ): Array<keyof ConfigVariables> {
-    const metadata =
-      TypedReflect.getMetadata('config-variables', ConfigVariables) ?? {};
-
-    return Object.keys(metadata)
-      .filter((key) => metadata[key]?.group === group)
-      .map((key) => key as keyof ConfigVariables);
+    return getConfigGroupHash(this.twentyConfigService, group);
   }
 
   protected abstract buildConfigKey(): string;
