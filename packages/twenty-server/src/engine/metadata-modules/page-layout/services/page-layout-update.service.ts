@@ -568,8 +568,7 @@ export class PageLayoutUpdateService {
           }),
           configuration: updatedConfiguration,
           conditionalDisplay:
-            widgetInput.conditionalDisplay ??
-            existingWidget.conditionalDisplay,
+            widgetInput.conditionalDisplay ?? existingWidget.conditionalDisplay,
           conditionalAvailabilityExpression:
             widgetInput.conditionalAvailabilityExpression ??
             existingWidget.conditionalAvailabilityExpression,
@@ -610,8 +609,7 @@ export class PageLayoutUpdateService {
           }),
           configuration: restoredConfiguration,
           conditionalDisplay:
-            widgetInput.conditionalDisplay ??
-            existingWidget.conditionalDisplay,
+            widgetInput.conditionalDisplay ?? existingWidget.conditionalDisplay,
           conditionalAvailabilityExpression:
             widgetInput.conditionalAvailabilityExpression ??
             existingWidget.conditionalAvailabilityExpression,
