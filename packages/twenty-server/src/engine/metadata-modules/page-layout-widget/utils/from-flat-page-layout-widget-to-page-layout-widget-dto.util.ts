@@ -21,8 +21,7 @@ export const fromFlatPageLayoutWidgetToPageLayoutWidgetDto = (
     ...rest,
     ...resolvedOverrides,
     overrides,
-    isOverridden:
-      isDefined(overrides) && Object.keys(overrides).length > 0,
+    isOverridden: isDefined(overrides) && Object.keys(overrides).length > 0,
     objectMetadataId: objectMetadataId ?? undefined,
     createdAt: new Date(createdAt),
     updatedAt: new Date(updatedAt),

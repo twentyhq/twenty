@@ -74,7 +74,8 @@ export const SidePanelPageLayoutTabSettingsContent = ({
     tabListInstanceId,
   });
   const { setAsPinnedTab } = useSetAsPinnedTab(pageLayoutId);
-  const { resetPageLayoutTabToDefault } = useResetPageLayoutTabToDefault();
+  const { resetPageLayoutTabToDefault } =
+    useResetPageLayoutTabToDefault(pageLayoutId);
   const { openModal } = useModal();
 
   if (!isDefined(pageLayoutTabSettingsOpenTabId)) {

@@ -99,5 +99,4 @@ export class PageLayoutWidgetResolver {
   configuration(@Parent() widget: PageLayoutWidgetDTO) {
     return widget.configuration;
   }
-
 }

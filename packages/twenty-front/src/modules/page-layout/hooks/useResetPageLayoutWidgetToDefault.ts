@@ -1,103 +1,63 @@
-import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
-import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
-import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
-import { fieldsWidgetEditorModePersistedComponentState } from '@/page-layout/states/fieldsWidgetEditorModePersistedComponentState';
-import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
-import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
-import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
-import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsPersistedComponentState';
-import { hasInitializedFieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/hasInitializedFieldsWidgetGroupsDraftComponentState';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useMutation } from '@apollo/client/react';
+import { useApolloClient } from '@apollo/client/react';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { CrudOperationType } from 'twenty-shared/types';
-import { ResetPageLayoutWidgetToDefaultDocument } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  FindOnePageLayoutDocument,
+  ResetPageLayoutWidgetToDefaultDocument,
+} from '~/generated-metadata/graphql';
+
+import { useExitLayoutCustomizationMode } from '@/layout-customization/hooks/useExitLayoutCustomizationMode';
+import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
+import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
+import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
+import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 export const useResetPageLayoutWidgetToDefault = (
-  pageLayoutIdFromProps?: string,
+  pageLayoutIdFromProps: string,
 ) => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
   );
 
+  const client = useApolloClient();
   const [resetMutation] = useMutation(ResetPageLayoutWidgetToDefaultDocument);
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { closeSidePanelMenu } = useSidePanelMenu();
   const { invalidateMetadataStore } = useInvalidateMetadataStore();
+  const { setIsPageLayoutInEditMode } =
+    useSetIsPageLayoutInEditMode(pageLayoutId);
+  const { exitLayoutCustomizationMode } = useExitLayoutCustomizationMode();
 
   const store = useStore();
 
-  const hasInitializedState = useAtomComponentStateCallbackState(
-    hasInitializedFieldsWidgetGroupsDraftComponentState,
+  const pageLayoutPersistedState = useAtomComponentStateCallbackState(
+    pageLayoutPersistedComponentState,
     pageLayoutId,
   );
 
-  const groupsDraftState = useAtomComponentStateCallbackState(
-    fieldsWidgetGroupsDraftComponentState,
+  const pageLayoutDraftState = useAtomComponentStateCallbackState(
+    pageLayoutDraftComponentState,
     pageLayoutId,
   );
 
-  const groupsPersistedState = useAtomComponentStateCallbackState(
-    fieldsWidgetGroupsPersistedComponentState,
+  const pageLayoutCurrentLayoutsState = useAtomComponentStateCallbackState(
+    pageLayoutCurrentLayoutsComponentState,
     pageLayoutId,
-  );
-
-  const ungroupedDraftState = useAtomComponentStateCallbackState(
-    fieldsWidgetUngroupedFieldsDraftComponentState,
-    pageLayoutId,
-  );
-
-  const ungroupedPersistedState = useAtomComponentStateCallbackState(
-    fieldsWidgetUngroupedFieldsPersistedComponentState,
-    pageLayoutId,
-  );
-
-  const editorModeDraftState = useAtomComponentStateCallbackState(
-    fieldsWidgetEditorModeDraftComponentState,
-    pageLayoutId,
-  );
-
-  const editorModePersistedState = useAtomComponentStateCallbackState(
-    fieldsWidgetEditorModePersistedComponentState,
-    pageLayoutId,
-  );
-
-  const clearWidgetDraftState = useCallback(
-    (widgetId: string) => {
-      const removeWidgetEntry = <T>(prev: Record<string, T>) => {
-        const { [widgetId]: _, ...rest } = prev;
-
-        return rest;
-      };
-
-      store.set(hasInitializedState, removeWidgetEntry);
-      store.set(groupsDraftState, removeWidgetEntry);
-      store.set(groupsPersistedState, removeWidgetEntry);
-      store.set(ungroupedDraftState, removeWidgetEntry);
-      store.set(ungroupedPersistedState, removeWidgetEntry);
-      store.set(editorModeDraftState, removeWidgetEntry);
-      store.set(editorModePersistedState, removeWidgetEntry);
-    },
-    [
-      store,
-      hasInitializedState,
-      groupsDraftState,
-      groupsPersistedState,
-      ungroupedDraftState,
-      ungroupedPersistedState,
-      editorModeDraftState,
-      editorModePersistedState,
-    ],
   );
 
   const resetPageLayoutWidgetToDefault = useCallback(
@@ -107,8 +67,33 @@ export const useResetPageLayoutWidgetToDefault = (
           variables: { id: widgetId },
         });
 
-        closeSidePanelMenu();
-        clearWidgetDraftState(widgetId);
+        const { data } = await client.query({
+          query: FindOnePageLayoutDocument,
+          variables: { id: pageLayoutId },
+          fetchPolicy: 'network-only',
+        });
+
+        if (isDefined(data?.getPageLayout)) {
+          const freshLayout = transformPageLayout(data.getPageLayout);
+
+          store.set(pageLayoutPersistedState, freshLayout);
+          store.set(pageLayoutDraftState, {
+            id: freshLayout.id,
+            name: freshLayout.name,
+            type: freshLayout.type,
+            objectMetadataId: freshLayout.objectMetadataId,
+            tabs: freshLayout.tabs,
+            defaultTabToFocusOnMobileAndSidePanelId:
+              freshLayout.defaultTabToFocusOnMobileAndSidePanelId,
+          });
+          store.set(
+            pageLayoutCurrentLayoutsState,
+            convertPageLayoutToTabLayouts(freshLayout),
+          );
+        }
+
+        setIsPageLayoutInEditMode(false);
+        exitLayoutCustomizationMode();
         invalidateMetadataStore();
       } catch (error) {
         if (CombinedGraphQLErrors.is(error)) {
@@ -123,11 +108,17 @@ export const useResetPageLayoutWidgetToDefault = (
     },
     [
       resetMutation,
-      closeSidePanelMenu,
-      clearWidgetDraftState,
+      client,
+      pageLayoutId,
+      pageLayoutPersistedState,
+      pageLayoutDraftState,
+      pageLayoutCurrentLayoutsState,
+      setIsPageLayoutInEditMode,
+      exitLayoutCustomizationMode,
       invalidateMetadataStore,
       handleMetadataError,
       enqueueErrorSnackBar,
+      store,
     ],
   );
 

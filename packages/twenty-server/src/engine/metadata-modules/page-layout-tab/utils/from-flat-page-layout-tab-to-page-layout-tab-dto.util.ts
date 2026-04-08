@@ -21,8 +21,7 @@ export const fromFlatPageLayoutTabToPageLayoutTabDto = (
     ...rest,
     ...resolvedOverrides,
     overrides,
-    isOverridden:
-      isDefined(overrides) && Object.keys(overrides).length > 0,
+    isOverridden: isDefined(overrides) && Object.keys(overrides).length > 0,
     createdAt: new Date(createdAt),
     updatedAt: new Date(updatedAt),
     deletedAt: deletedAt ? new Date(deletedAt) : null,
