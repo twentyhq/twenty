@@ -1,5 +1,6 @@
 # ===========================================================================
 # Shared build stages (used by both targets)
+# Cache-bust: 2026-04-08 (force full rebuild for v1.21 upgrade command fix)
 # ===========================================================================
 
 FROM node:24-alpine AS common-deps
