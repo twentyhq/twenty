@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
+import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
@@ -23,6 +24,7 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
     CacheLockModule,
     MetricsModule,
     DataSourceModule,
+    WorkspaceIteratorModule,
   ],
   providers: [WorkflowRunWorkspaceService, DeleteWorkflowRunsCommand],
   exports: [WorkflowRunWorkspaceService, DeleteWorkflowRunsCommand],

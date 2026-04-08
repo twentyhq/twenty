@@ -59,6 +59,7 @@ const YARN_INSTALL_LAMBDA_MEMORY_MB = 1024;
 const COMMON_LAYER_NAME_PREFIX = 'twenty-common-layer';
 const BUILDER_LAMBDA_TIMEOUT_SECONDS = 60;
 const BUILDER_LAMBDA_MEMORY_MB = 512;
+const LAMBDA_EPHEMERAL_STORAGE_MB = 2048;
 
 const YARN_INSTALL_HANDLER_PATH = resolve(
   __dirname,
@@ -390,6 +391,7 @@ export class LambdaDriver implements LogicFunctionDriver {
         Runtime: LogicFunctionRuntime.NODE22,
         Timeout: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
         MemorySize: YARN_INSTALL_LAMBDA_MEMORY_MB,
+        EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
       };
 
       await lambdaClient.send(new CreateFunctionCommand(params));
@@ -479,6 +481,7 @@ export class LambdaDriver implements LogicFunctionDriver {
         Runtime: LogicFunctionRuntime.NODE22,
         Timeout: BUILDER_LAMBDA_TIMEOUT_SECONDS,
         MemorySize: BUILDER_LAMBDA_MEMORY_MB,
+        EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
       };
 
       await lambdaClient.send(new CreateFunctionCommand(params));
@@ -934,6 +937,7 @@ export class LambdaDriver implements LogicFunctionDriver {
         Role: this.options.lambdaRole,
         Runtime: flatLogicFunction.runtime,
         Timeout: 900,
+        EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
       };
 
       const command = new CreateFunctionCommand(params);

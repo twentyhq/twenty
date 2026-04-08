@@ -1,7 +1,7 @@
 import {
-  type HasAllProperties,
   type Equal,
   type Expect,
+  type HasAllProperties,
 } from 'twenty-shared/testing';
 
 import { type FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-update.type';
@@ -49,6 +49,7 @@ type Assertions = [
       | 'labelPlural'
       | 'labelIdentifierFieldMetadataId'
       | 'labelIdentifierFieldMetadataUniversalIdentifier'
+      | 'isSearchable'
     >
   >,
 

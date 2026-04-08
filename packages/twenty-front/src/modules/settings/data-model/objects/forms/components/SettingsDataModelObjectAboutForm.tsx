@@ -1,3 +1,4 @@
+import { parseThemeColor } from '@/navigation-menu-item/common/utils/parseThemeColor';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
@@ -7,9 +8,9 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { plural } from 'pluralize';
+import { useContext } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
@@ -127,8 +128,12 @@ export const SettingsDataModelObjectAboutForm = ({
   const labelPlural = watch('labelPlural');
   const isStandardObject =
     isDefined(objectMetadataItem?.isCustom) && !objectMetadataItem.isCustom;
+  const showObjectColorInIconPicker =
+    !isStandardObject &&
+    (!isDefined(objectMetadataItem) || objectMetadataItem.isCustom);
   watch('description');
   watch('icon');
+  const objectIconColor = watch('color');
 
   const apiNameTooltipText =
     !isDefined(objectMetadataItem) || objectMetadataItem.isCustom
@@ -186,6 +191,25 @@ export const SettingsDataModelObjectAboutForm = ({
               <IconPicker
                 selectedIconKey={value}
                 disabled={disableEdition}
+                dropdownId={
+                  isDefined(objectMetadataItem)
+                    ? `settings-object-about-icon-${objectMetadataItem.id}`
+                    : 'settings-new-object-about-icon'
+                }
+                iconColorPicker={
+                  showObjectColorInIconPicker
+                    ? {
+                        selectedColor: parseThemeColor(objectIconColor),
+                        onColorChange: (nextColor) => {
+                          setValue('color', nextColor, {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                          });
+                          onNewDirtyField?.();
+                        },
+                      }
+                    : undefined
+                }
                 onChange={({ iconKey }) => {
                   if (disableEdition) {
                     return;

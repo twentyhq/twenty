@@ -1,12 +1,16 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import {
+  FieldMetadataType,
   OrderByDirection,
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
 
+import { ViewCalendarLayout } from 'src/engine/metadata-modules/view/enums/view-calendar-layout.enum';
+
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewToolsFactory } from 'src/engine/metadata-modules/view/tools/view-tools.factory';
@@ -14,6 +18,7 @@ import { ViewToolsFactory } from 'src/engine/metadata-modules/view/tools/view-to
 describe('ViewToolsFactory', () => {
   let viewToolsFactory: ViewToolsFactory;
   let viewService: jest.Mocked<ViewService>;
+  let viewFieldService: jest.Mocked<ViewFieldService>;
   let viewQueryParamsService: jest.Mocked<ViewQueryParamsService>;
   let _flatEntityMapsCacheService: jest.Mocked<WorkspaceManyOrAllFlatEntityMapsCacheService>;
 
@@ -22,6 +27,36 @@ describe('ViewToolsFactory', () => {
   const mockViewId = 'view-id';
   const mockObjectMetadataId = 'object-metadata-id';
   const mockObjectNameSingular = 'company';
+  const mockCalendarFieldMetadataId = 'calendar-field-metadata-id';
+
+  const mockNameFieldMetadataId = 'name-field-metadata-id';
+  const mockStageFieldMetadataId = 'stage-field-metadata-id';
+
+  const mockFlatFieldMetadataMaps = {
+    byUniversalIdentifier: {
+      'field-universal-id': {
+        id: mockCalendarFieldMetadataId,
+        name: 'dueAt',
+        type: FieldMetadataType.DATE_TIME,
+        objectMetadataId: mockObjectMetadataId,
+        universalIdentifier: 'field-universal-id',
+      },
+      'name-field-universal-id': {
+        id: mockNameFieldMetadataId,
+        name: 'name',
+        type: FieldMetadataType.TEXT,
+        objectMetadataId: mockObjectMetadataId,
+        universalIdentifier: 'name-field-universal-id',
+      },
+      'stage-field-universal-id': {
+        id: mockStageFieldMetadataId,
+        name: 'stage',
+        type: FieldMetadataType.SELECT,
+        objectMetadataId: mockObjectMetadataId,
+        universalIdentifier: 'stage-field-universal-id',
+      },
+    },
+  };
 
   const mockView = {
     id: mockViewId,
@@ -71,6 +106,12 @@ describe('ViewToolsFactory', () => {
           },
         },
         {
+          provide: ViewFieldService,
+          useValue: {
+            createMany: jest.fn().mockResolvedValue([]),
+          },
+        },
+        {
           provide: ViewQueryParamsService,
           useValue: {
             resolveViewToQueryParams: jest.fn(),
@@ -81,6 +122,7 @@ describe('ViewToolsFactory', () => {
           useValue: {
             getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
               flatObjectMetadataMaps: mockFlatObjectMetadataMaps,
+              flatFieldMetadataMaps: mockFlatFieldMetadataMaps,
             }),
           },
         },
@@ -89,6 +131,7 @@ describe('ViewToolsFactory', () => {
 
     viewToolsFactory = module.get<ViewToolsFactory>(ViewToolsFactory);
     viewService = module.get(ViewService);
+    viewFieldService = module.get(ViewFieldService);
     viewQueryParamsService = module.get(ViewQueryParamsService);
     _flatEntityMapsCacheService = module.get(
       WorkspaceManyOrAllFlatEntityMapsCacheService,
@@ -272,6 +315,175 @@ describe('ViewToolsFactory', () => {
           objectNameSingular: mockObjectNameSingular,
           type: ViewType.TABLE,
           icon: 'IconTable',
+          visibility: ViewVisibility.WORKSPACE,
+        });
+      });
+
+      it('should create view fields when fieldNames is provided', async () => {
+        const createdView = {
+          id: 'new-view-id',
+          name: 'Kanban View',
+          objectMetadataId: mockObjectMetadataId,
+          type: ViewType.KANBAN,
+          icon: 'IconLayoutKanban',
+          visibility: ViewVisibility.WORKSPACE,
+        };
+
+        viewService.createOne.mockResolvedValue(createdView as any);
+
+        const tools = viewToolsFactory.generateWriteTools(
+          mockWorkspaceId,
+          mockUserWorkspaceId,
+        );
+
+        await callExecute(tools['create_view'], {
+          name: 'Kanban View',
+          objectNameSingular: mockObjectNameSingular,
+          icon: 'IconLayoutKanban',
+          type: ViewType.KANBAN,
+          mainGroupByFieldName: 'stage',
+          fieldNames: ['name', 'stage'],
+        });
+
+        expect(viewFieldService.createMany).toHaveBeenCalledWith({
+          createViewFieldInputs: [
+            {
+              viewId: 'new-view-id',
+              fieldMetadataId: mockNameFieldMetadataId,
+              isVisible: true,
+              size: 150,
+              position: 0,
+            },
+            {
+              viewId: 'new-view-id',
+              fieldMetadataId: mockStageFieldMetadataId,
+              isVisible: true,
+              size: 150,
+              position: 1,
+            },
+          ],
+          workspaceId: mockWorkspaceId,
+        });
+      });
+
+      it('should throw when KANBAN view missing mainGroupByFieldName', async () => {
+        const tools = viewToolsFactory.generateWriteTools(
+          mockWorkspaceId,
+          mockUserWorkspaceId,
+        );
+
+        await expect(
+          callExecute(tools['create_view'], {
+            name: 'Kanban View',
+            objectNameSingular: mockObjectNameSingular,
+            type: ViewType.KANBAN,
+          }),
+        ).rejects.toThrow('KANBAN views require mainGroupByFieldName');
+      });
+
+      it('should throw when CALENDAR view missing calendarFieldName', async () => {
+        const tools = viewToolsFactory.generateWriteTools(
+          mockWorkspaceId,
+          mockUserWorkspaceId,
+        );
+
+        await expect(
+          callExecute(tools['create_view'], {
+            name: 'Calendar View',
+            objectNameSingular: mockObjectNameSingular,
+            type: ViewType.CALENDAR,
+            calendarLayout: ViewCalendarLayout.WEEK,
+          }),
+        ).rejects.toThrow('CALENDAR views require calendarFieldName');
+      });
+
+      it('should throw when CALENDAR view missing calendarLayout', async () => {
+        const tools = viewToolsFactory.generateWriteTools(
+          mockWorkspaceId,
+          mockUserWorkspaceId,
+        );
+
+        await expect(
+          callExecute(tools['create_view'], {
+            name: 'Calendar View',
+            objectNameSingular: mockObjectNameSingular,
+            type: ViewType.CALENDAR,
+            calendarFieldName: 'dueAt',
+          }),
+        ).rejects.toThrow('CALENDAR views require calendarLayout');
+      });
+
+      it('should not create view fields when fieldNames is not provided', async () => {
+        const createdView = {
+          id: 'new-view-id',
+          name: 'New View',
+          objectMetadataId: mockObjectMetadataId,
+          type: ViewType.TABLE,
+          icon: 'IconTable',
+          visibility: ViewVisibility.WORKSPACE,
+        };
+
+        viewService.createOne.mockResolvedValue(createdView as any);
+
+        const tools = viewToolsFactory.generateWriteTools(
+          mockWorkspaceId,
+          mockUserWorkspaceId,
+        );
+
+        await callExecute(tools['create_view'], {
+          name: 'New View',
+          objectNameSingular: mockObjectNameSingular,
+          icon: 'IconTable',
+        });
+
+        expect(viewFieldService.createMany).not.toHaveBeenCalled();
+      });
+
+      it('should create a calendar view with layout and field', async () => {
+        const createdView = {
+          id: 'new-calendar-view-id',
+          name: 'Calendar View',
+          objectMetadataId: mockObjectMetadataId,
+          type: ViewType.CALENDAR,
+          icon: 'IconCalendar',
+          visibility: ViewVisibility.WORKSPACE,
+        };
+
+        viewService.createOne.mockResolvedValue(createdView as any);
+
+        const tools = viewToolsFactory.generateWriteTools(
+          mockWorkspaceId,
+          mockUserWorkspaceId,
+        );
+
+        const result = await callExecute(tools['create_view'], {
+          name: 'Calendar View',
+          objectNameSingular: mockObjectNameSingular,
+          icon: 'IconCalendar',
+          type: ViewType.CALENDAR,
+          calendarLayout: ViewCalendarLayout.WEEK,
+          calendarFieldName: 'dueAt',
+        });
+
+        expect(viewService.createOne).toHaveBeenCalledWith({
+          createViewInput: {
+            name: 'Calendar View',
+            objectMetadataId: mockObjectMetadataId,
+            icon: 'IconCalendar',
+            type: ViewType.CALENDAR,
+            visibility: ViewVisibility.WORKSPACE,
+            calendarLayout: ViewCalendarLayout.WEEK,
+            calendarFieldMetadataId: mockCalendarFieldMetadataId,
+          },
+          workspaceId: mockWorkspaceId,
+          createdByUserWorkspaceId: mockUserWorkspaceId,
+        });
+        expect(result).toEqual({
+          id: 'new-calendar-view-id',
+          name: 'Calendar View',
+          objectNameSingular: mockObjectNameSingular,
+          type: ViewType.CALENDAR,
+          icon: 'IconCalendar',
           visibility: ViewVisibility.WORKSPACE,
         });
       });

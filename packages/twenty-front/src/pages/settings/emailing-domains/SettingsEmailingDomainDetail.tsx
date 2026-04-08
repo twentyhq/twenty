@@ -1,3 +1,4 @@
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 
 import { SettingsEmailingDomainVerificationRecords } from '@/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords';
@@ -26,11 +27,15 @@ export const SettingsEmailingDomainDetail = () => {
   );
 
   if (loading) {
-    return <div>{t`Loading...`}</div>;
+    return <SettingsEmptyPlaceholder>{t`Loading...`}</SettingsEmptyPlaceholder>;
   }
 
   if (isDefined(error) || !isDefined(emailingDomain)) {
-    return <Trans>Domain not found</Trans>;
+    return (
+      <SettingsEmptyPlaceholder>
+        <Trans>Domain not found</Trans>
+      </SettingsEmptyPlaceholder>
+    );
   }
 
   return (

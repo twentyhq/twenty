@@ -4,7 +4,6 @@ import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconPencil } from 'twenty-ui/display';
 
-import { commandMenuItemEditSelectionModeState } from '@/command-menu-item/server-items/edit/states/commandMenuItemEditSelectionModeState';
 import { commandMenuItemsDraftState } from '@/command-menu-item/server-items/edit/states/commandMenuItemsDraftState';
 import { commandMenuItemsSelector } from '@/command-menu-item/server-items/common/states/commandMenuItemsSelector';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
@@ -51,8 +50,6 @@ export const useEnterLayoutCustomizationMode = () => {
       isSidePanelOpened &&
       currentSidePanelPage === SidePanelPages.CommandMenuDisplay
     ) {
-      store.set(commandMenuItemEditSelectionModeState.atom, 'selection');
-
       navigateSidePanel({
         page: SidePanelPages.CommandMenuEdit,
         pageTitle: t`Edit actions`,

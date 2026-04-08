@@ -6,11 +6,9 @@ import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useMemo, useState } from 'react';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, IconArchive, IconPlus } from 'twenty-ui/display';
-import { Button, SearchInput } from 'twenty-ui/input';
-import { MenuItemToggle, UndecoratedLink } from 'twenty-ui/navigation';
+import { H2Title, IconArchive } from 'twenty-ui/display';
+import { SearchInput } from 'twenty-ui/input';
+import { MenuItemToggle } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -29,13 +27,6 @@ const StyledCoverImage = styled.div`
   background-size: cover;
   height: 160px;
   overflow: hidden;
-`;
-
-const StyledFooterContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: flex-end;
-  margin-top: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledSearchInput = styled(SearchInput)`
@@ -147,16 +138,6 @@ export const SettingsAgentSkills = () => {
           onActivate={handleActivate}
           onDelete={handleDelete}
         />
-        <StyledFooterContainer>
-          <UndecoratedLink to={getSettingsPath(SettingsPath.AINewSkill)}>
-            <Button
-              Icon={IconPlus}
-              title={t`New Skill`}
-              size="small"
-              variant="secondary"
-            />
-          </UndecoratedLink>
-        </StyledFooterContainer>
       </Section>
     </>
   );

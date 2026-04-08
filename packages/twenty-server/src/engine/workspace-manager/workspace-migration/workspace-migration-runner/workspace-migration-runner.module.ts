@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -27,6 +28,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
     WorkspaceCacheStorageModule,
     WorkspaceCacheModule,
     TypeOrmModule.forFeature([WorkspaceEntity]),
+    WorkspaceIteratorModule,
   ],
   providers: [
     WorkspaceMigrationRunnerService,

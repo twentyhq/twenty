@@ -6,7 +6,7 @@ import { formatMicrosoftCalendarEvents } from 'src/modules/calendar/calendar-eve
 import { parseMicrosoftCalendarError } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/utils/parse-microsoft-calendar-error.util';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 @Injectable()
 export class MicrosoftCalendarImportEventsService {
@@ -16,7 +16,7 @@ export class MicrosoftCalendarImportEventsService {
 
   public async getCalendarEvents(
     connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
+      ConnectedAccountEntity,
       'provider' | 'accessToken' | 'refreshToken' | 'id'
     >,
     changedEventIds: string[],

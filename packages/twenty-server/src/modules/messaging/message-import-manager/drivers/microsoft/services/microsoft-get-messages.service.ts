@@ -4,7 +4,7 @@ import { type EmailAddress } from 'addressparser';
 import { MessageParticipantRole } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
 import { MicrosoftImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception';
@@ -17,7 +17,7 @@ import { MicrosoftFetchByBatchService } from './microsoft-fetch-by-batch.service
 import { MicrosoftMessagesImportErrorHandler } from './microsoft-messages-import-error-handler.service';
 
 type ConnectedAccountType = Pick<
-  ConnectedAccountWorkspaceEntity,
+  ConnectedAccountEntity,
   | 'accessToken'
   | 'refreshToken'
   | 'id'

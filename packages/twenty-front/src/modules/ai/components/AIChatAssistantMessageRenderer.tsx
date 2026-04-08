@@ -1,3 +1,4 @@
+import { AIChatCompactionIndicator } from '@/ai/components/AIChatCompactionIndicator';
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { RoutingStatusDisplay } from '@/ai/components/RoutingStatusDisplay';
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
@@ -58,6 +59,8 @@ const MessagePartRenderer = ({
       return <LazyMarkdownRenderer text={part.text} />;
     case 'data-routing-status':
       return <RoutingStatusDisplay data={part.data} />;
+    case 'data-compaction':
+      return <AIChatCompactionIndicator />;
     case 'data-code-execution':
       return (
         <CodeExecutionDisplay

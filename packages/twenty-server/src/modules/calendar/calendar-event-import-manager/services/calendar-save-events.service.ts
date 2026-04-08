@@ -3,15 +3,15 @@ import { Injectable } from '@nestjs/common';
 import { Any } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
+import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
-import { type CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 type FetchedCalendarEventWithDBEvent = {
   fetchedCalendarEvent: FetchedCalendarEvent;
@@ -28,8 +28,8 @@ export class CalendarSaveEventsService {
 
   public async saveCalendarEventsAndEnqueueContactCreationJob(
     fetchedCalendarEvents: FetchedCalendarEvent[],
-    calendarChannel: CalendarChannelWorkspaceEntity,
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    calendarChannel: CalendarChannelEntity,
+    connectedAccount: ConnectedAccountEntity,
     workspaceId: string,
   ): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);

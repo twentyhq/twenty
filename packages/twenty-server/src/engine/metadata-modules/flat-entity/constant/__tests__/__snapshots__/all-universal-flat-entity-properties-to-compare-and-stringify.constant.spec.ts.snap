@@ -31,9 +31,11 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "conditionalAvailabilityExpression",
       "availabilityObjectMetadataUniversalIdentifier",
       "engineComponentKey",
+      "payload",
       "hotKeys",
     ],
     "propertiesToStringify": [
+      "payload",
       "hotKeys",
     ],
   },
@@ -142,6 +144,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "nameSingular",
       "labelIdentifierFieldMetadataUniversalIdentifier",
       "standardOverrides",
+      "isSearchable",
     ],
     "propertiesToStringify": [
       "standardOverrides",
@@ -174,6 +177,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "position",
       "deletedAt",
       "icon",
+      "isActive",
       "overrides",
     ],
     "propertiesToStringify": [
@@ -190,6 +194,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "universalConfiguration",
       "deletedAt",
       "conditionalDisplay",
+      "isActive",
       "overrides",
     ],
     "propertiesToStringify": [
@@ -299,6 +304,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "aggregateOperation",
       "viewFieldGroupUniversalIdentifier",
       "deletedAt",
+      "isActive",
       "universalOverrides",
     ],
     "propertiesToStringify": [
@@ -310,6 +316,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "name",
       "position",
       "isVisible",
+      "isActive",
       "deletedAt",
       "overrides",
     ],

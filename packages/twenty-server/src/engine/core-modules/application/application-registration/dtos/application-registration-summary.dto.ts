@@ -17,4 +17,9 @@ export class ApplicationRegistrationSummaryDTO {
 
   @Field(() => ApplicationRegistrationSourceType)
   sourceType: ApplicationRegistrationSourceType;
+
+  @IsOptional()
+  @IsString()
+  @Field(() => String, { nullable: true })
+  logoUrl?: string | null;
 }

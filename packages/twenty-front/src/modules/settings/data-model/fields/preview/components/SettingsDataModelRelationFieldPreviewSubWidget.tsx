@@ -22,7 +22,9 @@ export type SettingsDataModelRelationFieldPreviewSubWidgetProps = {
 };
 
 const StyledCardContainer = styled.div`
-  margin: auto;
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
 
   > * {
     border-radius: ${themeCssVariables.border.radius.md};

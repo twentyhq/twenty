@@ -1,4 +1,6 @@
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { useResetRecordIndexSelection } from '@/object-record/record-index/hooks/useResetRecordIndexSelection';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
@@ -21,6 +23,9 @@ export const useSidePanelMenu = () => {
   const store = useStore();
   const { navigateSidePanel } = useNavigateSidePanel();
   const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
+  const { resetRecordIndexSelection } = useResetRecordIndexSelection(
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
 
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
@@ -29,6 +34,14 @@ export const useSidePanelMenu = () => {
     const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);
 
     if (isSidePanelOpened) {
+      const isLayoutCustomizationModeEnabled = store.get(
+        isLayoutCustomizationModeEnabledState.atom,
+      );
+
+      if (isLayoutCustomizationModeEnabled) {
+        resetRecordIndexSelection();
+      }
+
       store.set(sidePanelNavigationStackState.atom, []);
       store.set(isSidePanelOpenedState.atom, false);
       store.set(isSidePanelClosingState.atom, true);
@@ -37,7 +50,12 @@ export const useSidePanelMenu = () => {
         focusId: SIDE_PANEL_FOCUS_ID,
       });
     }
-  }, [closeAnyOpenDropdown, removeFocusItemFromFocusStackById, store]);
+  }, [
+    closeAnyOpenDropdown,
+    removeFocusItemFromFocusStackById,
+    store,
+    resetRecordIndexSelection,
+  ]);
 
   const openSidePanelMenu = useCallback(() => {
     emitSidePanelOpenEvent();
@@ -45,6 +63,7 @@ export const useSidePanelMenu = () => {
     const isLayoutCustomizationModeEnabled = store.get(
       isLayoutCustomizationModeEnabledState.atom,
     );
+
     const selectedNavigationItemId = store.get(
       selectedNavigationMenuItemIdInEditModeState.atom,
     );

@@ -14,7 +14,7 @@ const PatternBackdrop = styled.div`
   opacity: 0.55;
   pointer-events: none;
   position: absolute;
-  z-index: 0;
+  z-index: 1;
 `;
 
 const patternImageClassName = css`
@@ -23,16 +23,16 @@ const patternImageClassName = css`
 `;
 
 const SlideArea = styled.div`
-  inset: 0;
+  inset: 6%;
   position: absolute;
-  z-index: 1;
+  z-index: 2;
 `;
 
 const ShapeOverlay = styled.div`
   inset: 0;
   pointer-events: none;
   position: absolute;
-  z-index: 2;
+  z-index: 0;
 `;
 
 const shapeImageClassName = css`
@@ -55,16 +55,6 @@ export function StepperVisualFrame({
 }: StepperVisualFrameProps) {
   return (
     <FrameRoot>
-      <PatternBackdrop aria-hidden>
-        <NextImage
-          alt=""
-          className={patternImageClassName}
-          fill
-          sizes="(min-width: 921px) 672px, 100vw"
-          src={backgroundSrc}
-        />
-      </PatternBackdrop>
-      <SlideArea>{children}</SlideArea>
       <ShapeOverlay aria-hidden>
         <NextImage
           alt=""
@@ -75,6 +65,16 @@ export function StepperVisualFrame({
           src={shapeSrc}
         />
       </ShapeOverlay>
+      <PatternBackdrop aria-hidden>
+        <NextImage
+          alt=""
+          className={patternImageClassName}
+          fill
+          sizes="(min-width: 921px) 672px, 100vw"
+          src={backgroundSrc}
+        />
+      </PatternBackdrop>
+      <SlideArea>{children}</SlideArea>
     </FrameRoot>
   );
 }

@@ -81,7 +81,7 @@ import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
 export default defineApplication({
-  universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',
   icon: 'IconWorld',
@@ -717,6 +717,13 @@ yarn twenty exec --postInstall
 
 Ön uç bileşenler, Twenty'nin UI'si içinde doğrudan görüntülenen React bileşenleridir. Remote DOM kullanan izole bir Web Worker içinde çalışırlar — kodunuz izole bir ortamda (sandbox) çalışır ancak bir iframe içinde değil, sayfada yerel olarak işlenir.
 
+#### Ön bileşenlerin kullanılabileceği yerler
+
+Ön bileşenler, Twenty içinde iki konumda işlenebilir:
+
+* **Yan panel** — Headless olmayan ön bileşenler, sağ taraftaki yan panelde açılır. Bir ön bileşen komut menüsünden tetiklendiğinde varsayılan davranış budur.
+* **Widget'lar (panolar ve kayıt sayfaları)** — Ön bileşenler, sayfa düzenlerine widget olarak gömülebilir. Bir pano veya kayıt sayfası düzeni yapılandırılırken kullanıcılar bir ön bileşen widget'ı ekleyebilir.
+
 #### Basit örnek
 
 Bir ön uç bileşenini çalışırken görmenin en hızlı yolu, onu bir komut olarak kaydetmektir. `isPinned: true` ile bir `command` alanı eklemek, sayfanın sağ üst köşesinde hızlı işlem düğmesi olarak görünmesini sağlar — herhangi bir sayfa düzenine gerek yoktur:
@@ -774,9 +781,13 @@ Bileşeni satır içi işlemek için üzerine tıklayın.
 
 Komutların ötesinde, bir ön uç bileşenini bir **sayfa düzeninde** widget olarak ekleyerek doğrudan bir kayıt sayfasına gömebilirsiniz. Ayrıntılar için [definePageLayout](#definepagelayout) bölümüne bakın.
 
-#### Headless bileşenler (`isHeadless: true`)
+#### Headless ve headless olmayan
 
-Headless bileşenler görünür bir kullanıcı arayüzü oluşturmaz ancak yine de React mantığını çalıştırır. Bu, **etki bileşenleri** için kullanışlıdır — bağlandıklarında veri senkronizasyonu yapmak, bir zamanlayıcı başlatmak, olayları dinlemek veya bir bildirimi tetiklemek gibi yan etkiler gerçekleştiren bileşenler.
+Ön bileşenler, `isHeadless` seçeneğiyle kontrol edilen iki işleme kipiyle gelir:
+
+**Headless olmayan (varsayılan)** — Bileşen görünür bir kullanıcı arayüzü (UI) oluşturur. Komut menüsünden tetiklendiğinde yan panelde açılır. `isHeadless` `false` olduğunda veya belirtilmediğinde bu varsayılan davranıştır.
+
+**Headless (`isHeadless: true`)** — Bileşen arka planda görünmez şekilde bağlanır. Yan paneli açmaz. Headless bileşenler, mantığı çalıştırıp ardından kendilerini kaldıran eylemler için tasarlanmıştır — örneğin, bir async görevi çalıştırma, bir sayfaya gitme veya bir onay modalı gösterme. Aşağıda açıklanan SDK Command bileşenleriyle doğal olarak eşleşirler.
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent, useRecordId, enqueueSnackbar } from 'twenty-sdk';
@@ -802,6 +813,89 @@ export default defineFrontComponent({
 ```
 
 Bileşen `null` döndürdüğü için, Twenty bunun için bir kapsayıcı oluşturmayı atlar — düzende boş alan görünmez. Bileşen yine de tüm hook'lara ve host iletişim API'sine erişime sahiptir.
+
+#### SDK Command bileşenleri
+
+`twenty-sdk` paketi, headless ön bileşenler için tasarlanmış dört Command yardımcı bileşeni sağlar. Her bileşen bağlandığında bir eylem yürütür, hataları bir snackbar bildirimi göstererek ele alır ve tamamlandığında ön bileşeni otomatik olarak kaldırır.
+
+Bunları `twenty-sdk/command` içinden içe aktarın:
+
+* **`Command`** — `execute` prop'u aracılığıyla async bir geri çağrıyı çalıştırır.
+* **`CommandLink`** — Bir uygulama yoluna gider. Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — Bir onay modalı açar. Kullanıcı onaylarsa `execute` geri çağrısını yürütür. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — Belirli bir yan panel sayfasını açar. Props: `page`, `pageTitle`, `pageIcon`.
+
+`Command` kullanarak komut menüsünden bir eylem çalıştıran headless bir ön bileşenin tam örneği:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+    label: 'Run my action',
+    icon: 'IconPlayerPlay',
+  },
+});
+```
+
+Ve yürütmeden önce onay istemek için `CommandModal` kullanan bir örnek:
+
+```tsx src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+    label: 'Delete draft',
+    icon: 'IconTrash',
+  },
+});
+```
 
 #### Çalışma zamanı bağlamına erişme
 
@@ -858,6 +952,50 @@ Kullanılabilir hook'lar:
 | `enqueueSnackbar(params)`                       | Bir toast bildirimi göster         |
 | `unmountFrontComponent()`                       | Bileşeni kaldır (unmount)          |
 | `updateProgress(progress)`                      | Bir ilerleme göstergesini güncelle |
+
+Bir eylem tamamlandıktan sonra bir snackbar göstermek ve yan paneli kapatmak için host API'sini kullanan bir örnek:
+
+```tsx src/front-components/archive-record.tsx
+import { defineFrontComponent, useRecordId } from 'twenty-sdk';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
 
 #### Komut seçenekleri
 
@@ -1713,3 +1851,86 @@ yarn twenty uninstall
 # Skip the confirmation prompt
 yarn twenty uninstall --yes
 ```
+
+## Uzakları yönetme
+
+Bir **uzak**, uygulamanızın bağlandığı Twenty sunucusudur. Kurulum sırasında iskelet oluşturucu sizin için otomatik olarak bir tane oluşturur. Dilediğiniz zaman daha fazla uzak ekleyebilir veya aralarında geçiş yapabilirsiniz.
+
+```bash filename="Terminal"
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote add
+
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote add --local
+
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+
+# List all configured remotes
+yarn twenty remote list
+
+# Switch the active remote
+yarn twenty remote switch <name>
+```
+
+Kimlik bilgileriniz `~/.twenty/config.json` içinde saklanır.
+
+## GitHub Actions ile CI
+
+İskelet oluşturucu, `.github/workflows/ci.yml` konumunda kullanıma hazır bir GitHub Actions iş akışı üretir. Entegrasyon testlerinizi `main` dalına yapılan her itmede ve çekme isteklerinde otomatik olarak çalıştırır.
+
+İş akışı:
+
+1. Kodunuzu çalışma alanına alır
+2. `twentyhq/twenty/.github/actions/spawn-twenty-docker-image` eylemini kullanarak geçici bir Twenty sunucusu başlatır
+3. `yarn install --immutable` ile bağımlılıkları kurar
+4. Eylem çıktılarından enjekte edilen `TWENTY_API_URL` ve `TWENTY_API_KEY` ile `yarn test` çalıştırır
+
+```yaml .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+
+env:
+  TWENTY_VERSION: latest
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Spawn Twenty instance
+        id: twenty
+        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
+        with:
+          twenty-version: ${{ env.TWENTY_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run integration tests
+        run: yarn test
+        env:
+          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
+          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
+```
+
+Herhangi bir gizli değişken yapılandırmanız gerekmez — `spawn-twenty-docker-image` eylemi, koşucu içinde doğrudan geçici bir Twenty sunucusu başlatır ve bağlantı ayrıntılarını çıktı olarak verir. `GITHUB_TOKEN` gizli değişkeni GitHub tarafından otomatik olarak sağlanır.
+
+`latest` yerine belirli bir Twenty sürümünü sabitlemek için iş akışının başındaki `TWENTY_VERSION` ortam değişkenini değiştirin.

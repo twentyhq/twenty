@@ -48,14 +48,15 @@ export class UpsertRecordService {
       const cleanedRecord = removeUndefinedFromRecord(objectRecord);
 
       // Use Common API with upsert flag - it handles conflict detection automatically
-      const upsertedRecord = await this.commonCreateOneRunner.execute(
-        {
-          data: cleanedRecord,
-          selectedFields,
-          upsert: true,
-        },
-        queryRunnerContext,
-      );
+      const { results: upsertedRecord } =
+        await this.commonCreateOneRunner.execute(
+          {
+            data: cleanedRecord,
+            selectedFields,
+            upsert: true,
+          },
+          queryRunnerContext,
+        );
 
       this.logger.log(`Record upserted successfully in ${objectName}`);
 

@@ -25,7 +25,7 @@ export const metadataModuleFactory = async (
   cacheStorageService: CacheStorageService,
   metricsService: MetricsService,
   i18nService: I18nService,
-  featureFlagService: FeatureFlagService,
+  _featureFlagService: FeatureFlagService,
 ): Promise<YogaDriverConfig> => {
   const config: YogaDriverConfig = {
     autoSchemaFile: true,

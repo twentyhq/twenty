@@ -1,5 +1,7 @@
 import { DEFAULT_COMPANY_RECORD_PAGE_LAYOUT } from '@/page-layout/constants/DefaultCompanyRecordPageLayout';
 import { DEFAULT_COMPANY_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultCompanyRecordPageLayoutId';
+import { DEFAULT_MESSAGE_THREAD_RECORD_PAGE_LAYOUT } from '@/page-layout/constants/DefaultMessageThreadRecordPageLayout';
+import { DEFAULT_MESSAGE_THREAD_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultMessageThreadRecordPageLayoutId';
 import { DEFAULT_NOTE_RECORD_PAGE_LAYOUT } from '@/page-layout/constants/DefaultNoteRecordPageLayout';
 import { DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultNoteRecordPageLayoutId';
 import { DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT } from '@/page-layout/constants/DefaultOpportunityRecordPageLayout';
@@ -42,6 +44,8 @@ const getDefaultLayoutById = (layoutId: string): PageLayout => {
       return DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT;
     case DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID:
       return DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT;
+    case DEFAULT_MESSAGE_THREAD_RECORD_PAGE_LAYOUT_ID:
+      return DEFAULT_MESSAGE_THREAD_RECORD_PAGE_LAYOUT;
     case DEFAULT_RECORD_PAGE_LAYOUT_ID:
     default:
       return DEFAULT_RECORD_PAGE_LAYOUT;
@@ -57,7 +61,8 @@ const isDefaultLayoutId = (layoutId: string): boolean =>
   layoutId === DEFAULT_TASK_RECORD_PAGE_LAYOUT_ID ||
   layoutId === DEFAULT_WORKFLOW_PAGE_LAYOUT_ID ||
   layoutId === DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID ||
-  layoutId === DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID;
+  layoutId === DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID ||
+  layoutId === DEFAULT_MESSAGE_THREAD_RECORD_PAGE_LAYOUT_ID;
 
 export const useBasePageLayout = (
   pageLayoutId: string,

@@ -1,4 +1,4 @@
-import { MessageFolderPendingSyncAction } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
 import { computeFoldersToUpdate } from 'src/modules/messaging/message-folder-manager/utils/compute-folders-to-update.util';
 
 describe('computeFoldersToUpdate', () => {
@@ -41,7 +41,7 @@ describe('computeFoldersToUpdate', () => {
         externalId: 'sub-1',
         isSynced: true,
         isSentFolder: false,
-        parentFolderId: 'new-parent-id',
+        parentFolderId: 'new-parent-ext',
       },
     ];
 
@@ -52,7 +52,7 @@ describe('computeFoldersToUpdate', () => {
         externalId: 'sub-1',
         isSynced: true,
         isSentFolder: false,
-        parentFolderId: 'old-parent-id',
+        parentFolderId: 'old-parent-ext',
         syncCursor: 'cursor',
         pendingSyncAction: MessageFolderPendingSyncAction.NONE,
       },
@@ -63,7 +63,7 @@ describe('computeFoldersToUpdate', () => {
       existingFolders,
     });
 
-    expect(result.get('folder-id')?.parentFolderId).toBe('new-parent-id');
+    expect(result.get('folder-id')?.parentFolderId).toBe('new-parent-ext');
   });
 
   it('should not flag unchanged folders for update', () => {

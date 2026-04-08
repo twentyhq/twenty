@@ -1,0 +1,11 @@
+export { EDITORIAL_FOUR } from './editorial-four';
+export { EDITORIAL_ONE } from './editorial-one';
+export { EDITORIAL_THREE } from './editorial-three';
+export { EDITORIAL_TWO } from './editorial-two';
+export { HERO_DATA } from './hero';
+export { MARQUEE_DATA } from './marquee';
+export { QUOTE_DATA } from './quote';
+export { SIGNOFF_DATA } from './signoff';
+export { STATEMENT_ONE } from './statement-one';
+export { STATEMENT_TWO } from './statement-two';
+export { STEPPER_DATA } from './stepper';

@@ -49,8 +49,8 @@ export class CreateMessageFolderInput {
   @Field(() => UUIDScalarType)
   messageChannelId: string;
 
-  @IsUUID()
+  @IsString()
   @IsOptional()
-  @Field(() => UUIDScalarType, { nullable: true })
+  @Field(() => String, { nullable: true })
   parentFolderId?: string;
 }

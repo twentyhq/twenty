@@ -28,6 +28,16 @@ export interface LocalDriverOptions {
   sdkClientArchiveService: SdkClientArchiveService;
 }
 
+const pathExists = async (targetPath: string): Promise<boolean> => {
+  try {
+    await fs.access(targetPath);
+
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 export class LocalDriver implements LogicFunctionDriver {
   private readonly logicFunctionResourceService: LogicFunctionResourceService;
   private readonly sdkClientArchiveService: SdkClientArchiveService;
@@ -65,14 +75,16 @@ export class LocalDriver implements LogicFunctionDriver {
     applicationUniversalIdentifier: string;
   }): Promise<void> {
     const depsLayerPath = this.getDepsLayerPath(flatApplication);
+    const depsNodeModulesPath = join(depsLayerPath, 'node_modules');
 
-    try {
-      await fs.access(depsLayerPath);
+    const nodeModulesExist = await pathExists(depsNodeModulesPath);
 
+    if (nodeModulesExist) {
       return;
-    } catch {
-      // Layer doesn't exist yet
     }
+
+    // Wipe any partial leftovers from a previously failed build
+    await fs.rm(depsLayerPath, { recursive: true, force: true });
 
     await this.logicFunctionResourceService.copyDependenciesInMemory({
       applicationUniversalIdentifier,
@@ -93,23 +105,17 @@ export class LocalDriver implements LogicFunctionDriver {
       workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
     });
+    const sdkNodeModulesPath = join(sdkLayerPath, 'node_modules');
 
-    const layerExists = await fs
-      .access(sdkLayerPath)
-      .then(() => true)
-      .catch(() => false);
+    const nodeModulesExist = await pathExists(sdkNodeModulesPath);
 
-    if (layerExists && !flatApplication.isSdkLayerStale) {
+    if (nodeModulesExist && !flatApplication.isSdkLayerStale) {
       return;
     }
 
     await fs.rm(sdkLayerPath, { recursive: true, force: true });
 
-    const sdkPackagePath = join(
-      sdkLayerPath,
-      'node_modules',
-      'twenty-client-sdk',
-    );
+    const sdkPackagePath = join(sdkNodeModulesPath, 'twenty-client-sdk');
 
     await this.sdkClientArchiveService.downloadAndExtractToPackage({
       workspaceId: flatApplication.workspaceId,
@@ -145,7 +151,7 @@ export class LocalDriver implements LogicFunctionDriver {
         outfile: builtBundleFilePath,
         platform: 'node',
         format: 'esm',
-        target: 'es2017',
+        target: 'esnext',
         bundle: true,
         sourcemap: true,
         packages: 'external',

@@ -5,12 +5,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type gmail_v1 as gmailV1, google } from 'googleapis';
 import { isDefined } from 'twenty-shared/utils';
 
+import { MessageFolderImportPolicy } from 'twenty-shared/types';
+import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import {
-  type MessageChannelWorkspaceEntity,
-  MessageFolderImportPolicy,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GmailMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-messages-import-error-handler.service';
 import { filterGmailMessagesByFolderPolicy } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/filter-gmail-messages-by-folder-policy.util';
 import { parseAndFormatGmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-and-format-gmail-message.util';
@@ -28,7 +26,7 @@ export class GmailGetMessagesService {
   async getMessages(
     messageIds: string[],
     connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
+      ConnectedAccountEntity,
       | 'provider'
       | 'accessToken'
       | 'refreshToken'
@@ -37,7 +35,7 @@ export class GmailGetMessagesService {
       | 'handleAliases'
     >,
     messageChannel: Pick<
-      MessageChannelWorkspaceEntity,
+      MessageChannelEntity,
       'messageFolders' | 'messageFolderImportPolicy'
     >,
   ): Promise<MessageWithParticipants[]> {
@@ -169,10 +167,7 @@ export class GmailGetMessagesService {
   private async fetchMessages(
     gmailClient: gmailV1.Gmail,
     messageIds: string[],
-    connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'handle' | 'handleAliases'
-    >,
+    connectedAccount: Pick<ConnectedAccountEntity, 'handle' | 'handleAliases'>,
   ): Promise<MessageWithParticipants[]> {
     const results = await Promise.all(
       messageIds.map((messageId) =>

@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ContextIdFactory, ModuleRef } from '@nestjs/core';
 import { type GqlOptionsFactory } from '@nestjs/graphql';
 
@@ -7,14 +7,11 @@ import {
   type YogaDriverServerContext,
 } from '@graphql-yoga/nestjs';
 import * as Sentry from '@sentry/node';
-import { GraphQLError, GraphQLSchema } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
 import {
   type GraphQLSchemaWithContext,
   type YogaInitialContext,
 } from 'graphql-yoga';
-import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
-import { isDefined } from 'twenty-shared/utils';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
@@ -31,10 +28,10 @@ import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hook
 import { useValidateGraphqlQueryComplexity } from 'src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
-import { handleExceptionAndConvertToGraphQLError } from 'src/engine/utils/global-exception-handler.util';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
 
 export interface GraphQLContext extends YogaDriverServerContext<'express'> {
@@ -93,63 +90,6 @@ export class GraphQLConfigService
       include: [CoreEngineModule],
       resolverSchemaScope: 'core',
       buildSchemaOptions: {},
-      conditionalSchema: async (context) => {
-        const { workspace, user, application, skipWorkspaceSchemaCreation } =
-          context.req;
-
-        try {
-          if (!isDefined(workspace) || skipWorkspaceSchemaCreation) {
-            return new GraphQLSchema({});
-          }
-
-          return await this.createSchema(context, workspace, application?.id);
-        } catch (error) {
-          if (error instanceof UnauthorizedException) {
-            throw new GraphQLError('Unauthenticated', {
-              extensions: {
-                code: 'UNAUTHENTICATED',
-              },
-            });
-          }
-
-          if (error instanceof JsonWebTokenError) {
-            //mockedUserJWT
-            throw new GraphQLError('Unauthenticated', {
-              extensions: {
-                code: 'UNAUTHENTICATED',
-              },
-            });
-          }
-
-          if (error instanceof TokenExpiredError) {
-            throw new GraphQLError('Unauthenticated', {
-              extensions: {
-                code: 'UNAUTHENTICATED',
-              },
-            });
-          }
-
-          throw handleExceptionAndConvertToGraphQLError(
-            error,
-            this.exceptionHandlerService,
-            isDefined(user)
-              ? {
-                  id: user.id,
-                  email: user.email,
-                  firstName: user.firstName,
-                  lastName: user.lastName,
-                }
-              : undefined,
-            isDefined(workspace)
-              ? {
-                  id: workspace.id,
-                  displayName: workspace.displayName,
-                  activationStatus: workspace.activationStatus,
-                }
-              : undefined,
-          );
-        }
-      },
       resolvers: { JSON: GraphQLJSON },
       plugins: plugins,
       context: () => ({
@@ -187,6 +127,11 @@ export class GraphQLConfigService
         strict: false,
       },
     );
+
+    await this.metricsService.incrementCounter({
+      key: MetricsKeys.GraphqlSchemaBuild,
+      shouldStoreInCache: false,
+    });
 
     return await workspaceFactory.createGraphQLSchema(workspace, applicationId);
   }

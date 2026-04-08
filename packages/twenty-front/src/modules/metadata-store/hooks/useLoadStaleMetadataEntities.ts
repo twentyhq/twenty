@@ -5,10 +5,8 @@ import { splitPageLayoutWithRelated } from '@/metadata-store/utils/splitPageLayo
 import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelated';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
-import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useApolloClient } from '@apollo/client/react';
-import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -56,7 +54,6 @@ const hasOverlap = (
 
 export const useLoadStaleMetadataEntities = () => {
   const client = useApolloClient();
-  const store = useStore();
   const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
@@ -166,10 +163,6 @@ export const useLoadStaleMetadataEntities = () => {
                 return;
               }
 
-              store.set(
-                logicFunctionsState.atom,
-                result.data.findManyLogicFunctions,
-              );
               replaceDraft(
                 'logicFunctions',
                 result.data.findManyLogicFunctions,
@@ -240,7 +233,7 @@ export const useLoadStaleMetadataEntities = () => {
       await Promise.all(fetchPromises);
       applyChanges();
     },
-    [client, store, replaceDraft, applyChanges, isAiEnabled],
+    [client, replaceDraft, applyChanges, isAiEnabled],
   );
 
   return { loadStaleMetadataEntities };

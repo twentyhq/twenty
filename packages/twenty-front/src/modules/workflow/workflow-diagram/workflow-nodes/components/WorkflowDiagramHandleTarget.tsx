@@ -8,6 +8,7 @@ type WorkflowDiagramHandleTargetProps = {
 };
 
 const StyledHandleContainer = styled.div`
+  inset: 0;
   position: absolute;
 
   & .react-flow__handle {

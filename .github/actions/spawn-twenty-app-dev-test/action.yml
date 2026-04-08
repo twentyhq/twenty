@@ -1,0 +1,47 @@
+name: Spawn Twenty App Dev Test
+description: >
+  Starts a Twenty all-in-one test instance (server, worker, database, redis)
+  using the twentycrm/twenty-app-dev Docker image on port 2021.
+  The server is available at http://localhost:2021 with seeded demo data.
+
+inputs:
+  twenty-version:
+    description: 'Twenty Docker Hub image tag for twenty-app-dev (e.g., "latest" or "v1.20.0").'
+    required: false
+    default: 'latest'
+
+outputs:
+  server-url:
+    description: 'URL where the Twenty test server can be reached'
+    value: http://localhost:2021
+  api-key:
+    description: 'API key for the Twenty test instance'
+    value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC05ZTNiLTQ2ZDQtYTU1Ni04OGI5ZGRjMmIwMzQiLCJ1c2VySWQiOiIyMDIwMjAyMC05ZTNiLTQ2ZDQtYTU1Ni04OGI5ZGRjMmIwMzQiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtMDY4Ny00YzQxLWI3MDctZWQxYmZjYTk3MmE3IiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtOWUzYi00NmQ0LWE1NTYtODhiOWRkYzJiMDM1IiwidHlwZSI6IkFDQ0VTUyIsImF1dGhQcm92aWRlciI6InBhc3N3b3JkIiwiaWF0IjoxNzUxMjgxNzA0LCJleHAiOjQ5MDQ4ODE3MDR9.9S4wc0MOr5iczsomlFxZdOHD1IRDS4dnRSwNVNpctF4
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Start twenty-app-dev-test container
+      shell: bash
+      run: |
+        docker run -d \
+          --name twenty-app-dev-test \
+          -p 2021:2021 \
+          -e NODE_PORT=2021 \
+          -e SERVER_URL=http://localhost:2021 \
+          twentycrm/twenty-app-dev:${{ inputs.twenty-version }}
+
+        echo "Waiting for Twenty test instance to become healthy…"
+        TIMEOUT=180
+        ELAPSED=0
+        until curl -sf http://localhost:2021/healthz > /dev/null 2>&1; do
+          if [ "$ELAPSED" -ge "$TIMEOUT" ]; then
+            echo "::error::Twenty did not become healthy within ${TIMEOUT}s"
+            docker logs twenty-app-dev-test 2>&1 | tail -80
+            exit 1
+          fi
+          sleep 3
+          ELAPSED=$((ELAPSED + 3))
+          echo "  … waited ${ELAPSED}s"
+        done
+        echo "Twenty test instance is ready at http://localhost:2021 (took ~${ELAPSED}s)"

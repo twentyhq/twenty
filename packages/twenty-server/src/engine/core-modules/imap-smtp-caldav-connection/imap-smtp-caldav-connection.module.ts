@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { ImapSmtpCaldavValidatorModule } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.module';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
-import { ConnectedAccountDataAccessModule } from 'src/engine/metadata-modules/connected-account/data-access/connected-account-data-access.module';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
@@ -22,7 +23,7 @@ import { ImapSmtpCaldavService } from './services/imap-smtp-caldav-connection.se
     IMAPAPIsModule,
     MessagingImportManagerModule,
     MessageQueueModule,
-    ConnectedAccountDataAccessModule,
+    TypeOrmModule.forFeature([ConnectedAccountEntity]),
     TwentyORMModule,
     FeatureFlagModule,
     ImapSmtpCaldavValidatorModule,

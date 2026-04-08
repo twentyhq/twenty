@@ -1,7 +1,7 @@
 ## Base documentation
 
-- Documentation: https://docs.twenty.com/developers/extend/capabilities/apps
-- Rich app example: https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/fixtures/postcard-app
+- Documentation: https://docs.twenty.com/developers/extend/apps/getting-started
+- Rich app example: https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/fixtures/rich-app
 
 ## Common Pitfalls
 

@@ -7,10 +7,10 @@ export const FooterBackgroundCanvasRoot = styled.div`
   pointer-events: none;
   overflow: hidden;
 
-  & iframe {
+  & canvas {
     display: block;
     height: 100%;
-    mix-blend-mode: color-dodge;
+    pointer-events: auto;
     width: 100%;
   }
 `;

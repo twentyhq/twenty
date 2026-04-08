@@ -22,10 +22,6 @@ const StyledInvertedIconButton = styled(IconButton)`
   color: ${themeCssVariables.font.color.inverted} !important;
 `;
 
-const StyledSecondaryIconButton = styled(IconButton)`
-  color: inherit !important;
-`;
-
 const StyledContent = styled.div<{ hasCloseButton: boolean }>`
   align-items: center;
   display: flex;
@@ -62,10 +58,7 @@ export const InformationBanner = ({
   );
 
   const isPrimary = variant === 'primary';
-
-  const CloseIconButton = isPrimary
-    ? StyledInvertedIconButton
-    : StyledSecondaryIconButton;
+  const buttonAccent = color === 'danger' ? 'danger' : 'blue';
 
   return (
     <InformationBannerComponentInstanceContext.Provider
@@ -80,6 +73,7 @@ export const InformationBanner = ({
             {buttonTitle && buttonOnClick && (
               <Button
                 variant="secondary"
+                accent={buttonAccent}
                 title={buttonTitle}
                 Icon={buttonIcon}
                 size="small"
@@ -89,15 +83,25 @@ export const InformationBanner = ({
               />
             )}
           </StyledContent>
-          {onClose && (
-            <CloseIconButton
-              Icon={IconX}
-              size="small"
-              variant="tertiary"
-              onClick={onClose}
-              ariaLabel={t`Close banner`}
-            />
-          )}
+          {onClose &&
+            (isPrimary ? (
+              <StyledInvertedIconButton
+                Icon={IconX}
+                size="small"
+                variant="tertiary"
+                onClick={onClose}
+                ariaLabel={t`Close banner`}
+              />
+            ) : (
+              <IconButton
+                Icon={IconX}
+                size="small"
+                variant="tertiary"
+                accent={buttonAccent}
+                onClick={onClose}
+                ariaLabel={t`Close banner`}
+              />
+            ))}
         </Banner>
       )}
     </InformationBannerComponentInstanceContext.Provider>

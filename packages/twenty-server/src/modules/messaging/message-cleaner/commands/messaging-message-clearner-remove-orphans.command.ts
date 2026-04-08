@@ -1,28 +1,20 @@
-import { InjectRepository } from '@nestjs/typeorm';
-
 import { Command } from 'nest-commander';
-import { Repository } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 
 @Command({
   name: 'messaging:message-cleaner-remove-orphans',
   description: 'Remove orphan message and threads from messaging',
 })
-export class MessagingMessageCleanerRemoveOrphansCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+export class MessagingMessageCleanerRemoveOrphansCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(
-    @InjectRepository(WorkspaceEntity)
-    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
-    protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly messagingMessageCleanerService: MessagingMessageCleanerService,
-    protected readonly dataSourceService: DataSourceService,
   ) {
-    super(workspaceRepository, globalWorkspaceOrmManager, dataSourceService);
+    super(workspaceIteratorService);
   }
 
   override async runOnWorkspace({

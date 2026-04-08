@@ -15,7 +15,6 @@ import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type JsonValue } from 'type-fest';
 
-import { ToolOutputResultSchema } from '@/ai/schemas/toolOutputResultSchema';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 import {
   getToolDisplayMessage,
@@ -275,15 +274,13 @@ const ThinkingToolStepRow = ({
   const hasError = isDefined(part.errorText);
   const isExpandable = isDefined(part.output) || hasError;
 
-  const outputResult = ToolOutputResultSchema.safeParse(part.output);
-  const unwrappedOutput =
-    rawToolName === 'execute_tool' && outputResult.success
-      ? outputResult.data.result
-      : part.output;
-  const unwrappedResult = ToolOutputResultSchema.safeParse(unwrappedOutput);
-  const toolOutput = unwrappedResult.success
-    ? unwrappedResult.data.result
-    : unwrappedOutput;
+  const outputObj =
+    typeof part.output === 'object' && part.output !== null
+      ? (part.output as Record<string, unknown>)
+      : null;
+  const toolError =
+    typeof outputObj?.error === 'string' ? outputObj.error : null;
+  const toolOutput = toolError ? { error: toolError } : outputObj;
   const toolTabListComponentInstanceId = `ai-thinking-tool-tabs-${part.toolCallId ?? rawToolName}-${rowIndex}`;
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,

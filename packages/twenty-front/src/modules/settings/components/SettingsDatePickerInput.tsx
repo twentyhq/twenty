@@ -15,6 +15,7 @@ import {
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/DateTimePicker';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
@@ -81,6 +82,7 @@ export const SettingsDatePickerInput = ({
   const { t } = useLingui();
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { userTimezone } = useUserTimezone();
 
   const { refs, floatingStyles } = useFloating({
     open: isOpen,
@@ -105,10 +107,13 @@ export const SettingsDatePickerInput = ({
     ],
   });
 
-  const handleDateTimeSelect = (newDateTime: Temporal.ZonedDateTime | null) => {
+  const handleDateTimeChange = (newDateTime: Temporal.ZonedDateTime | null) => {
     if (isDefined(newDateTime)) {
       onChange(new Date(newDateTime.epochMilliseconds));
     }
+  };
+
+  const handleDateTimeClose = (_newDateTime: Temporal.ZonedDateTime | null) => {
     handleClose();
   };
 
@@ -128,13 +133,14 @@ export const SettingsDatePickerInput = ({
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
+      timeZone: userTimezone,
     });
   };
 
   const zonedDateTime = isDefined(value)
     ? Temporal.Instant.fromEpochMilliseconds(
         value.getTime(),
-      ).toZonedDateTimeISO(Temporal.Now.timeZoneId())
+      ).toZonedDateTimeISO(userTimezone)
     : null;
 
   return (
@@ -161,8 +167,8 @@ export const SettingsDatePickerInput = ({
               <DateTimePicker
                 instanceId={`settings-date-picker-${label}`}
                 date={zonedDateTime}
-                onChange={handleDateTimeSelect}
-                onClose={handleClose}
+                onChange={handleDateTimeChange}
+                onClose={handleDateTimeClose}
                 onClear={handleClear}
                 clearable
               />

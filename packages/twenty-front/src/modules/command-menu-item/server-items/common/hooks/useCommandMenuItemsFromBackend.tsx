@@ -2,14 +2,14 @@ import { FrontComponentCommandMenuItem } from '@/command-menu-item/display/compo
 import { HeadlessCommandMenuItem } from '@/command-menu-item/display/components/HeadlessCommandMenuItem';
 import { commandMenuItemsSelector } from '@/command-menu-item/server-items/common/states/commandMenuItemsSelector';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/server-items/common/utils/doesCommandMenuItemMatchObjectMetadataId';
-import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
+import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import {
   evaluateConditionalAvailabilityExpression,
-  interpolateCommandMenuItemLabel,
+  interpolateCommandMenuItemTemplate,
   isDefined,
 } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
@@ -47,17 +47,22 @@ const buildCommandMenuItemFromFrontComponent = ({
   getIcon,
   commandMenuContextApi,
 }: BuildCommandMenuItemFromFrontComponentParams): CommandMenuItemConfig => {
-  const displayLabel = interpolateCommandMenuItemLabel({
+  const displayLabel = interpolateCommandMenuItemTemplate({
     label: item.label,
     context: commandMenuContextApi,
   });
 
-  const displayShortLabel = interpolateCommandMenuItemLabel({
+  const displayShortLabel = interpolateCommandMenuItemTemplate({
     label: item.shortLabel,
     context: commandMenuContextApi,
   });
 
-  const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
+  const interpolatedIcon = interpolateCommandMenuItemTemplate({
+    label: item.icon,
+    context: commandMenuContextApi,
+  });
+
+  const Icon = getIcon(interpolatedIcon, COMMAND_MENU_DEFAULT_ICON);
 
   const isHeadless = item.frontComponent?.isHeadless === true;
 
@@ -97,18 +102,22 @@ const buildCommandItemFromEngineKey = ({
   getIcon,
   commandMenuContextApi,
 }: BuildCommandMenuItemFromStandardKeyParams): CommandMenuItemConfig => {
-  const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
+  const interpolatedIcon = interpolateCommandMenuItemTemplate({
+    label: item.icon,
+    context: commandMenuContextApi,
+  });
+  const Icon = getIcon(interpolatedIcon, COMMAND_MENU_DEFAULT_ICON);
 
   return {
     type,
     key: `command-menu-item-engine-${item.id}`,
     id: item.id,
     scope,
-    label: interpolateCommandMenuItemLabel({
+    label: interpolateCommandMenuItemTemplate({
       label: item.label,
       context: commandMenuContextApi,
     }),
-    shortLabel: interpolateCommandMenuItemLabel({
+    shortLabel: interpolateCommandMenuItemTemplate({
       label: item.shortLabel,
       context: commandMenuContextApi,
     }),

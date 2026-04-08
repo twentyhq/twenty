@@ -17,6 +17,7 @@ import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsO
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { InputHint } from '@/ui/input/components/InputHint';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -39,6 +40,7 @@ export const SettingsAdminMaintenanceMode = () => {
   const maintenanceMode = useAtomStateValue(maintenanceModeState);
   const setMaintenanceMode = useSetAtomState(maintenanceModeState);
 
+  const { userTimezone } = useUserTimezone();
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const [setMaintenanceModeMutation] = useMutation(SET_MAINTENANCE_MODE);
@@ -171,6 +173,7 @@ export const SettingsAdminMaintenanceMode = () => {
         month: '2-digit',
         day: '2-digit',
         year: 'numeric',
+        timeZone: userTimezone,
       })
     : '';
 

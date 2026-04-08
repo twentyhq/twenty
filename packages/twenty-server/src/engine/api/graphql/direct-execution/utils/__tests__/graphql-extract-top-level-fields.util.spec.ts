@@ -73,4 +73,39 @@ describe('graphQLExtractTopLevelFields', () => {
 
     expect(fields).toEqual([]);
   });
+
+  it('should expand fragment spreads at the top level', () => {
+    const query = `
+      query {
+        __schema { types { name } }
+        ...DataFragment
+      }
+      fragment DataFragment on Query {
+        companies { id }
+      }
+    `;
+
+    const fields = graphQLExtractTopLevelFields(parse(query), undefined);
+
+    expect(fields).toHaveLength(2);
+    expect(fields[0].name.value).toBe('__schema');
+    expect(fields[1].name.value).toBe('companies');
+  });
+
+  it('should expand inline fragments at the top level', () => {
+    const query = `
+      query {
+        __schema { types { name } }
+        ... on Query {
+          companies { id }
+        }
+      }
+    `;
+
+    const fields = graphQLExtractTopLevelFields(parse(query), undefined);
+
+    expect(fields).toHaveLength(2);
+    expect(fields[0].name.value).toBe('__schema');
+    expect(fields[1].name.value).toBe('companies');
+  });
 });

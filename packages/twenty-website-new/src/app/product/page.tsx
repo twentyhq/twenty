@@ -1,17 +1,19 @@
-import { FAQ_DATA } from '@/app/(home)/constants/faq';
-import { MENU_DATA } from '@/app/(home)/constants/menu';
-import { TRUSTED_BY_DATA } from '@/app/(home)/constants/trusted-by';
-import { DEMO_DATA } from '@/app/product/constants/demo';
-import { FEATURE_DATA } from '@/app/product/constants/feature';
-import { HERO_DATA } from '@/app/product/constants/hero';
-import { STEPPER_DATA } from '@/app/product/constants/stepper';
-import { TABS_DATA } from '@/app/product/constants/tabs';
-import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/product/constants/three-cards';
+import { FAQ_DATA, MENU_DATA, TRUSTED_BY_DATA } from '@/app/_constants';
+import {
+  DEMO_DATA,
+  FEATURE_DATA,
+  HERO_DATA,
+  STEPPER_DATA,
+  TABS_DATA,
+  THREE_CARDS_ILLUSTRATION_DATA,
+} from '@/app/product/_constants';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
+import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Demo } from '@/sections/Demo/components';
-import { Feature } from '@/sections/Feature/components';
 import { Faq } from '@/sections/Faq/components';
+import { Feature } from '@/sections/Feature/components';
 import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
 import { ProductStepper } from '@/sections/ProductStepper/components';
@@ -19,19 +21,29 @@ import { Tabs } from '@/sections/Tabs/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
+import type { Metadata } from 'next';
 
-export default function ProductPage() {
+export const metadata: Metadata = {
+  title: 'Product — Twenty',
+  description:
+    'Modern interface. AI assistance. All the features you need, ready from day one.',
+};
+
+export default async function ProductPage() {
+  const stats = await fetchCommunityStats();
+  const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
+
   return (
     <>
       <Menu.Root
         backgroundColor={theme.colors.primary.background[100]}
         scheme="primary"
         navItems={MENU_DATA.navItems}
-        socialLinks={MENU_DATA.socialLinks}
+        socialLinks={menuSocialLinks}
       >
         <Menu.Logo scheme="primary" />
         <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="primary" socialLinks={MENU_DATA.socialLinks} />
+        <Menu.Social scheme="primary" socialLinks={menuSocialLinks} />
         <Menu.Cta scheme="primary" />
       </Menu.Root>
 
@@ -47,10 +59,7 @@ export default function ProductPage() {
             variant="contained"
           />
         </Hero.Cta>
-        <Hero.Illustration
-          illustration={HERO_DATA.illustration}
-          backgroundColor={theme.colors.secondary.background[5]}
-        />
+        <Hero.ProductVisual />
       </Hero.Root>
 
       <TrustedBy.Root>

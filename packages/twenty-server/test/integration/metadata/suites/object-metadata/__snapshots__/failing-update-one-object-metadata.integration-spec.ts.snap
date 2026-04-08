@@ -12,7 +12,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
               {
                 "code": "INVALID_OBJECT_INPUT",
                 "message": "labelIdentifierFieldMetadataUniversalIdentifier validation failed: field type not compatible",
-                "userFriendlyMessage": "Field cannot be used as label identifier",
+                "userFriendlyMessage": "Field cannot be used as label identifier due to its type: should be of type UUID, text or full name",
               },
             ],
             "flatEntityMinimalInformation": {

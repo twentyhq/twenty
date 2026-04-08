@@ -2,6 +2,7 @@ import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuCont
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/server-items/display/constants/PinnedCommandMenuItemsGap';
 import { commandMenuPinnedInlineLayoutState } from '@/command-menu-item/server-items/display/states/commandMenuPinnedInlineLayoutState';
 import { getVisibleCommandMenuItemCountForContainerWidth } from '@/command-menu-item/server-items/display/utils/getVisibleCommandMenuItemCountForContainerWidth';
+import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -14,8 +15,8 @@ import { type SidePanelCommandMenuItemGroupConfig } from '@/side-panel/types/Sid
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { isNumber } from '@sniptt/guards';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const SidePanelCommandMenuItemDisplayPage = () => {
@@ -41,12 +42,20 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     );
 
   const unpinnedCommandMenuItems = commandMenuItems
-    .filter((commandMenuItem) => commandMenuItem.isPinned !== true)
+    .filter(
+      (commandMenuItem) =>
+        commandMenuItem.isPinned !== true &&
+        commandMenuItem.type !== CommandMenuItemType.Fallback,
+    )
     .sort(
       (firstUnpinnedCommandMenuItem, secondUnpinnedCommandMenuItem) =>
         firstUnpinnedCommandMenuItem.position -
         secondUnpinnedCommandMenuItem.position,
     );
+
+  const fallbackCommandMenuItems = commandMenuItems.filter(
+    (commandMenuItem) => commandMenuItem.type === CommandMenuItemType.Fallback,
+  );
 
   const pinnedCommandMenuItemKeysInDisplayOrder = pinnedCommandMenuItems.map(
     (pinnedCommandMenuItem) => pinnedCommandMenuItem.key,
@@ -94,6 +103,10 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     {
       heading: t`Other`,
       items: matchingOtherItems,
+    },
+    {
+      heading: t`Fallback`,
+      items: noResults ? fallbackCommandMenuItems : [],
     },
   ];
 

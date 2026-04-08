@@ -7,11 +7,9 @@ import {
 import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import {
-  type GenerateDescriptorOptions,
-  type ToolProvider,
-  type ToolProviderContext,
-} from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
+import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { generateCreateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-many-record-input-schema.util';
@@ -21,11 +19,9 @@ import { generateUpdateRecordInputSchema } from 'src/engine/core-modules/record-
 import { DeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/delete-tool.zod-schema';
 import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
-import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
-import {
-  type ToolDescriptor,
-  type ToolIndexEntry,
-} from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import { ToolCategory } from 'twenty-shared/ai';
+import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { isFavoriteRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-favorite-related-object.util';
 import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-workflow-related-object.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -122,6 +118,7 @@ export class DatabaseToolProvider implements ToolProvider {
             operation: 'find',
           },
           objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
           operation: 'find',
         });
 
@@ -138,6 +135,7 @@ export class DatabaseToolProvider implements ToolProvider {
             operation: 'find_one',
           },
           objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
           operation: 'find_one',
         });
       }
@@ -158,6 +156,7 @@ export class DatabaseToolProvider implements ToolProvider {
             operation: 'create',
           },
           objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
           operation: 'create',
         });
 
@@ -179,6 +178,7 @@ export class DatabaseToolProvider implements ToolProvider {
             operation: 'create_many',
           },
           objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
           operation: 'create_many',
         });
 
@@ -197,6 +197,7 @@ export class DatabaseToolProvider implements ToolProvider {
             operation: 'update',
           },
           objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
           operation: 'update',
         });
 
@@ -218,6 +219,7 @@ export class DatabaseToolProvider implements ToolProvider {
             operation: 'update_many',
           },
           objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
           operation: 'update_many',
         });
       }
@@ -236,6 +238,7 @@ export class DatabaseToolProvider implements ToolProvider {
             operation: 'delete',
           },
           objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
           operation: 'delete',
         });
       }

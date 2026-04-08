@@ -25,6 +25,8 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
+import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
+import { ViewSortModule } from 'src/engine/metadata-modules/view-sort/view-sort.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -48,6 +50,8 @@ import { ToolRegistryService } from './services/tool-registry.service';
     PermissionsModule,
     ViewModule,
     ViewFieldModule,
+    ViewFilterModule,
+    ViewSortModule,
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     LogicFunctionModule,

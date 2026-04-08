@@ -32,6 +32,15 @@ export const STANDARD_SKILL = {
   'workspace-demo-seeding': {
     universalIdentifier: '20202020-c81b-4af8-9255-4c34bd0eac9c',
   },
+  'view-building': {
+    universalIdentifier: '20202020-e4a2-4b3f-9c71-d8f6a2b51e3a',
+  },
+  'view-filters-and-sorts': {
+    universalIdentifier: '20202020-f5b3-4c4e-8d82-e9a7b3c62f4b',
+  },
+  'custom-objects-cleanup': {
+    universalIdentifier: '20202020-a1d3-4e5f-b6c7-8d9e0f1a2b3c',
+  },
 } as const satisfies Record<
   string,
   {

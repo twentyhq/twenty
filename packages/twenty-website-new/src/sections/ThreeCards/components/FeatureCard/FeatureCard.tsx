@@ -46,10 +46,6 @@ const CardIcon = styled.div`
   height: 22px;
 `;
 
-const HeadingWrap = styled.div`
-  min-width: 0;
-`;
-
 type FeatureCardProps = { featureCard: ThreeCardsFeatureCardType };
 
 export function FeatureCard({ featureCard }: FeatureCardProps) {
@@ -71,14 +67,12 @@ export function FeatureCard({ featureCard }: FeatureCardProps) {
               fillColor={theme.colors.highlight[100]}
             />
           </CardIcon>
-          <HeadingWrap>
-            <Heading
-              as="h3"
-              segments={featureCard.heading}
-              size="xs"
-              weight="medium"
-            />
-          </HeadingWrap>
+          <Heading
+            as="h3"
+            segments={featureCard.heading}
+            size="xs"
+            weight="medium"
+          />
         </CardTitleRow>
         <Body body={featureCard.body} size="sm" weight="regular" />
       </CardContent>

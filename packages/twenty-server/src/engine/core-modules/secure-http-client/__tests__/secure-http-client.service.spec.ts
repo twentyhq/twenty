@@ -11,6 +11,17 @@ jest.mock('axios-retry', () => ({
   default: jest.fn(),
 }));
 
+jest.mock(
+  'src/engine/core-modules/secure-http-client/utils/resolve-and-validate-hostname.util',
+  () => ({
+    resolveAndValidateHostname: jest.fn(),
+  }),
+);
+
+import { resolveAndValidateHostname } from 'src/engine/core-modules/secure-http-client/utils/resolve-and-validate-hostname.util';
+
+const mockResolveAndValidate = jest.mocked(resolveAndValidateHostname);
+
 const createMockConfigService = (
   overrides: Record<string, unknown> = {},
 ): TwentyConfigService => {
@@ -257,6 +268,50 @@ describe('SecureHttpClientService', () => {
       ).handlers;
 
       expect(interceptorHandlers.length).toBe(0);
+    });
+  });
+
+  describe('getValidatedHost', () => {
+    it('should return the original hostname when safe mode is off', async () => {
+      const service = new SecureHttpClientService(createMockConfigService());
+
+      const result = await service.getValidatedHost(
+        'https://caldav.icloud.com/principals/',
+      );
+
+      expect(result).toBe('https://caldav.icloud.com/principals/');
+      expect(mockResolveAndValidate).not.toHaveBeenCalled();
+    });
+
+    it('should validate and return resolved IP when safe mode is on', async () => {
+      mockResolveAndValidate.mockResolvedValue('17.248.239.66');
+      const service = new SecureHttpClientService(
+        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
+      );
+
+      const result = await service.getValidatedHost(
+        'https://caldav.icloud.com/principals/',
+      );
+
+      expect(mockResolveAndValidate).toHaveBeenCalledWith(
+        'https://caldav.icloud.com/principals/',
+      );
+      expect(result).toBe('17.248.239.66');
+    });
+
+    it('should throw when hostname resolves to a private IP', async () => {
+      mockResolveAndValidate.mockRejectedValue(
+        new Error(
+          'Connection to internal IP address 192.168.1.1 is not allowed.',
+        ),
+      );
+      const service = new SecureHttpClientService(
+        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
+      );
+
+      await expect(
+        service.getValidatedHost('https://my-local-server.local/'),
+      ).rejects.toThrow('internal IP address');
     });
   });
 

@@ -32,7 +32,7 @@
     "@sniptt/guards": "^0.2.0",
     "class-validator": "^0.14.0",
     "expr-eval-fork": "3.0.3",
-    "handlebars": "^4.7.8",
+    "handlebars": "^4.7.9",
     "libphonenumber-js": "^1.10.26",
     "lodash.camelcase": "^4.3.0",
     "qs": "^6.11.2",

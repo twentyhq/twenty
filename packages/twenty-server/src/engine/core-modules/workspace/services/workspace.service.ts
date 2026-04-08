@@ -337,15 +337,15 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       workspace.id,
     );
 
-    await this.featureFlagService.enableFeatureFlags(
-      DEFAULT_FEATURE_FLAGS,
-      workspace.id,
-    );
-
     await this.workspaceManagerService.init({
       workspace,
       userId: user.id,
     });
+
+    await this.featureFlagService.enableFeatureFlags(
+      DEFAULT_FEATURE_FLAGS,
+      workspace.id,
+    );
 
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 

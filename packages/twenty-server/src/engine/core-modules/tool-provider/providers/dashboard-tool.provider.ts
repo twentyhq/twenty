@@ -2,21 +2,19 @@ import { Inject, Injectable, OnModuleInit, Optional } from '@nestjs/common';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
-import {
-  type GenerateDescriptorOptions,
-  type ToolProvider,
-  type ToolProviderContext,
-} from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
+import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 
 import { DASHBOARD_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/dashboard-tool-service.token';
-import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import { ToolCategory } from 'twenty-shared/ai';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
-import {
-  type ToolDescriptor,
-  type ToolIndexEntry,
-} from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { toolSetToDescriptors } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import type { DashboardToolWorkspaceService } from 'src/modules/dashboard/tools/services/dashboard-tool.workspace-service';
 
 @Injectable()
@@ -29,6 +27,7 @@ export class DashboardToolProvider implements ToolProvider, OnModuleInit {
     private readonly dashboardToolService: DashboardToolWorkspaceService | null,
     private readonly permissionsService: PermissionsService,
     private readonly toolExecutorService: ToolExecutorService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   onModuleInit(): void {
@@ -71,8 +70,33 @@ export class DashboardToolProvider implements ToolProvider, OnModuleInit {
       context.rolePermissionConfig,
     );
 
+    const icon = await this.resolveObjectIcon(
+      context.workspaceId,
+      CoreObjectNameSingular.Dashboard,
+    );
+
     return toolSetToDescriptors(toolSet, ToolCategory.DASHBOARD, {
       includeSchemas: options?.includeSchemas ?? true,
+      icon,
     });
+  }
+
+  private async resolveObjectIcon(
+    workspaceId: string,
+    nameSingular: string,
+  ): Promise<string | undefined> {
+    const { flatObjectMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
+
+    const flatObject = Object.values(
+      flatObjectMetadataMaps.byUniversalIdentifier,
+    ).find((obj) => obj?.nameSingular === nameSingular);
+
+    return flatObject?.icon ?? undefined;
   }
 }

@@ -8,9 +8,11 @@ const ToggleRow = styled.label`
   align-items: center;
   column-gap: ${theme.spacing(2)};
   cursor: pointer;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  width: 100%;
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  justify-self: end;
+  position: relative;
+  white-space: nowrap;
 `;
 
 const Checkbox = styled.span`
@@ -62,9 +64,9 @@ const HiddenInput = styled.input`
 const LabelText = styled.span`
   color: ${theme.colors.primary.text[80]};
   font-family: ${theme.font.family.sans};
-  font-size: ${theme.font.size(4)};
+  font-size: ${theme.font.size(3.5)};
   font-weight: ${theme.font.weight.regular};
-  line-height: ${theme.lineHeight(5.5)};
+  line-height: ${theme.lineHeight(3.5)};
 `;
 
 type SelfHostToggleProps = {
@@ -87,10 +89,10 @@ export function SelfHostToggle({
         }
         type="checkbox"
       />
+      <LabelText>Selfhosting</LabelText>
       <Checkbox data-checked={isSelfHost}>
         {isSelfHost && <CheckmarkIcon />}
       </Checkbox>
-      <LabelText>Selfhosting</LabelText>
     </ToggleRow>
   );
 }

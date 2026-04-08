@@ -7,7 +7,7 @@ import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { manifestValidate } from '@/cli/utilities/build/manifest/manifest-validate';
 
 const validApplication: ApplicationManifest = {
-  universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
+  universalIdentifier: '8e8ee827-5a0b-46b0-bb63-c13ccd734ac6',
   displayName: 'Test App',
   description: 'Test app for Twenty',
   defaultRoleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',

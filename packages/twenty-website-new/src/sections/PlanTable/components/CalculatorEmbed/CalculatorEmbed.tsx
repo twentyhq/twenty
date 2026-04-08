@@ -15,6 +15,12 @@ const Shell = styled.div`
   overflow: clip;
   padding: ${theme.spacing(4)} ${theme.spacing(10)};
   width: 100%;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+
+  &:hover {
+    border-color: ${theme.colors.highlight[100]};
+    box-shadow: 0 0 20px rgba(74, 56, 245, 0.15);
+  }
 
   @media (min-width: ${theme.breakpoints.md}px) {
     align-items: center;

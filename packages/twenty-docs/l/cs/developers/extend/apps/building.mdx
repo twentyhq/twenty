@@ -81,7 +81,7 @@ import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
 export default defineApplication({
-  universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',
   icon: 'IconWorld',
@@ -717,6 +717,13 @@ Hlavní body:
 
 Frontendové komponenty jsou React komponenty, které se vykreslují přímo v uživatelském rozhraní Twenty. Běží v **izolovaném Web Workeru** s využitím Remote DOM — váš kód je sandboxovaný, ale vykresluje se nativně na stránce, nikoli v iframu.
 
+#### Kde lze použít front komponenty
+
+Front komponenty se mohou vykreslovat na dvou místech v rámci Twenty:
+
+* **Postranní panel** — Ne-headless front komponenty se otevírají v pravém postranním panelu. Toto je výchozí chování, když je front komponenta vyvolána z menu příkazů.
+* **Widgety (nástěnky a stránky záznamů)** — Front komponenty lze vkládat jako widgety do rozložení stránek. Při konfiguraci nástěnky nebo rozložení stránky záznamu mohou uživatelé přidat widget front komponenty.
+
 #### Základní příklad
 
 Nejrychlejší způsob, jak vidět frontendovou komponentu v akci, je zaregistrovat ji jako **příkaz**. Přidáním pole `command` s `isPinned: true` se zobrazí jako tlačítko rychlé akce v pravém horním rohu stránky — není potřeba žádné rozvržení stránky:
@@ -774,9 +781,13 @@ Kliknutím na něj vykreslíte komponentu přímo ve stránce.
 
 Mimo příkazy můžete frontendovou komponentu vložit přímo na stránku záznamu přidáním jako widget v **rozvržení stránky**. Podrobnosti viz sekce [definePageLayout](#definepagelayout).
 
-#### Headless komponenty (`isHeadless: true`)
+#### Headless vs. ne-headless
 
-Headless komponenty nevykreslují viditelné UI, ale stále spouštějí logiku Reactu. To je užitečné pro **efektové komponenty** — komponenty, které po připojení provádějí vedlejší efekty, jako je synchronizace dat, spuštění časovače, naslouchání událostem nebo vyvolání oznámení.
+Front komponenty existují ve dvou režimech vykreslování řízených volbou `isHeadless`:
+
+**Ne-headless (výchozí)** — Komponenta vykreslí viditelné uživatelské rozhraní. Po vyvolání z menu příkazů se otevře v postranním panelu. Toto je výchozí chování, když je `isHeadless` `false` nebo když tato volba není uvedena.
+
+**Headless (`isHeadless: true`)** — Komponenta se neviditelně inicializuje na pozadí. Neotevírá postranní panel. Headless komponenty jsou určené pro akce, které provedou logiku a poté se odpojí — například spuštění asynchronního úkolu, navigaci na stránku nebo zobrazení potvrzovacího modálního okna. Přirozeně se hodí ke komponentám SDK Command popsaným níže.
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent, useRecordId, enqueueSnackbar } from 'twenty-sdk';
@@ -802,6 +813,89 @@ export default defineFrontComponent({
 ```
 
 Protože komponenta vrací `null`, Twenty přeskočí vykreslení kontejneru — v rozvržení se neobjeví žádné prázdné místo. Komponenta má však stále přístup ke všem hookům a API komunikace s hostitelem.
+
+#### Komponenty SDK Command
+
+Balíček `twenty-sdk` poskytuje čtyři pomocné komponenty Command navržené pro headless front komponenty. Každá komponenta při připojení provede akci, chyby zpracuje zobrazením oznámení ve snackbaru a po dokončení automaticky odpojí front komponentu.
+
+Importujte je z `twenty-sdk/command`:
+
+* **`Command`** — Spustí asynchronní callback přes prop `execute`.
+* **`CommandLink`** — Naviguje na cestu v aplikaci. Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — Otevře potvrzovací modální okno. Pokud uživatel potvrdí, provede callback `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — Otevře konkrétní stránku postranního panelu. Props: `page`, `pageTitle`, `pageIcon`.
+
+Zde je kompletní příklad headless front komponenty, která pomocí `Command` spouští akci z menu příkazů:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+    label: 'Run my action',
+    icon: 'IconPlayerPlay',
+  },
+});
+```
+
+A příklad s použitím `CommandModal` k vyžádání potvrzení před provedením:
+
+```tsx src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+    label: 'Delete draft',
+    icon: 'IconTrash',
+  },
+});
+```
 
 #### Přístup k běhovému kontextu
 
@@ -858,6 +952,50 @@ Frontendové komponenty mohou pomocí funkcí z `twenty-sdk` vyvolávat navigaci
 | `enqueueSnackbar(params)`                       | Zobrazit oznámení typu toast   |
 | `unmountFrontComponent()`                       | Odmontovat komponentu          |
 | `updateProgress(progress)`                      | Aktualizovat indikátor průběhu |
+
+Zde je příklad, který používá hostitelské API k zobrazení snackbaru a zavření postranního panelu po dokončení akce:
+
+```tsx src/front-components/archive-record.tsx
+import { defineFrontComponent, useRecordId } from 'twenty-sdk';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
 
 #### Možnosti příkazu
 
@@ -1713,3 +1851,86 @@ yarn twenty uninstall
 # Skip the confirmation prompt
 yarn twenty uninstall --yes
 ```
+
+## Správa vzdálených serverů
+
+**Remote** je server Twenty, ke kterému se vaše aplikace připojuje. Během nastavení jej generátor kostry automaticky vytvoří. Můžete kdykoli přidat další vzdálené servery nebo mezi nimi přepínat.
+
+```bash filename="Terminal"
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote add
+
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote add --local
+
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+
+# List all configured remotes
+yarn twenty remote list
+
+# Switch the active remote
+yarn twenty remote switch <name>
+```
+
+Vaše přihlašovací údaje jsou uloženy v `~/.twenty/config.json`.
+
+## CI s GitHub Actions
+
+Generátor kostry vytvoří připravený k použití workflow GitHub Actions v `.github/workflows/ci.yml`. Automaticky spouští integrační testy při každém pushi do `main` a u pull requestů.
+
+Workflow:
+
+1. Načte váš kód (checkout).
+2. Spustí dočasný server Twenty pomocí akce `twentyhq/twenty/.github/actions/spawn-twenty-docker-image`
+3. Nainstaluje závislosti pomocí `yarn install --immutable`
+4. Spustí `yarn test` s proměnnými `TWENTY_API_URL` a `TWENTY_API_KEY` vloženými z výstupů akce
+
+```yaml .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+
+env:
+  TWENTY_VERSION: latest
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Spawn Twenty instance
+        id: twenty
+        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
+        with:
+          twenty-version: ${{ env.TWENTY_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run integration tests
+        run: yarn test
+        env:
+          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
+          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
+```
+
+Není potřeba konfigurovat žádné secrets — akce `spawn-twenty-docker-image` spustí efemérní server Twenty přímo v runneru a vypíše podrobnosti připojení. Secret `GITHUB_TOKEN` je poskytován GitHubem automaticky.
+
+Chcete-li připnout konkrétní verzi Twenty místo `latest`, změňte proměnnou prostředí `TWENTY_VERSION` na začátku workflow.

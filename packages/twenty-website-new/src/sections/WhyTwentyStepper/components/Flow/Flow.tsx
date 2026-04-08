@@ -14,11 +14,11 @@ export function Flow({ body, heading, illustration }: FlowProps) {
   const scrollContainerRef = useRef<HTMLElement>(null);
 
   const stepCount = body.length;
-  const globalProgress = scrollProgress * (stepCount - 1);
   const activeStepIndex = Math.min(
     stepCount - 1,
-    Math.max(0, Math.floor(globalProgress)),
+    Math.floor(scrollProgress * stepCount),
   );
+  const localProgress = scrollProgress * stepCount - activeStepIndex;
 
   return (
     <Root scrollContainerRef={scrollContainerRef}>
@@ -30,7 +30,7 @@ export function Flow({ body, heading, illustration }: FlowProps) {
         activeStepIndex={activeStepIndex}
         body={body}
         heading={heading}
-        scrollProgress={scrollProgress}
+        localProgress={localProgress}
       />
       <Visual illustration={illustration} />
     </Root>

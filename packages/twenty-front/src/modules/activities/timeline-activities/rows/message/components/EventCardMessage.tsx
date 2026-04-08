@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { type EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
 import { EventCardMessageBodyNotShared } from '@/activities/timeline-activities/rows/message/components/EventCardMessageBodyNotShared';
 import { EventCardMessageForbidden } from '@/activities/timeline-activities/rows/message/components/EventCardMessageForbidden';
-import { useOpenEmailThreadInSidePanel } from '@/side-panel/hooks/useOpenEmailThreadInSidePanel';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -62,7 +62,7 @@ export const EventCardMessage = ({
   authorFullName: string;
 }) => {
   const { t } = useLingui();
-  const { openEmailThreadInSidePanel } = useOpenEmailThreadInSidePanel();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const {
     record: message,
@@ -133,7 +133,10 @@ export const EventCardMessage = ({
 
   const handleClick = () => {
     if (canOpen && isDefined(message.messageThreadId)) {
-      openEmailThreadInSidePanel(message.messageThreadId);
+      openRecordInSidePanel({
+        recordId: message.messageThreadId,
+        objectNameSingular: CoreObjectNameSingular.MessageThread,
+      });
     }
   };
 

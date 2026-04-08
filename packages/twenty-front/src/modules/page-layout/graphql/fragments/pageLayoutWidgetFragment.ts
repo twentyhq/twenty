@@ -159,6 +159,9 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       ... on EmailsConfiguration {
         configurationType
       }
+      ... on EmailThreadConfiguration {
+        configurationType
+      }
       ... on FieldConfiguration {
         configurationType
         fieldDisplayMode
