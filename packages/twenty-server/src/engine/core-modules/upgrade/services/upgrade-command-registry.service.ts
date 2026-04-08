@@ -161,7 +161,10 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
   };
 
   getBundleForVersion(version: UpgradeCommandVersion): VersionBundle {
-    return this.bundlesByVersion.get(version) ?? UpgradeCommandRegistryService.EMPTY_BUNDLE;
+    return (
+      this.bundlesByVersion.get(version) ??
+      UpgradeCommandRegistryService.EMPTY_BUNDLE
+    );
   }
 
   getAllFastInstanceCommands(): RegisteredFastInstanceCommand[] {

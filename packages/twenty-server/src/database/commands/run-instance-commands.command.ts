@@ -64,11 +64,12 @@ export class RunInstanceCommandsCommand extends CommandRunner {
         command,
         name,
       } of this.upgradeCommandRegistryService.getAllFastInstanceCommands()) {
-        const result =
-          await this.instanceUpgradeService.runFastInstanceCommand({
+        const result = await this.instanceUpgradeService.runFastInstanceCommand(
+          {
             command,
             name,
-          });
+          },
+        );
 
         if (result.status === 'failed') {
           throw result.error;

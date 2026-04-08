@@ -101,15 +101,11 @@ describe('UpgradeCommandRegistryService', () => {
     const v121 = service.getBundleForVersion('1.21.0');
 
     expect(
-      v120.fastInstanceCommands.map(
-        (entry) => entry.command.constructor.name,
-      ),
+      v120.fastInstanceCommands.map((entry) => entry.command.constructor.name),
     ).toStrictEqual(['MigrationD1769000000000']);
 
     expect(
-      v121.fastInstanceCommands.map(
-        (entry) => entry.command.constructor.name,
-      ),
+      v121.fastInstanceCommands.map((entry) => entry.command.constructor.name),
     ).toStrictEqual([
       'MigrationA1770000000000',
       'MigrationB1771000000000',
