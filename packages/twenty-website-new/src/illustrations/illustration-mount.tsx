@@ -6,10 +6,15 @@ import {
 } from '@/illustrations/illustrations-registry';
 import type { IllustrationProps } from '@/illustrations/types';
 
-type IllustrationMountProps = { id: IllustrationId } & IllustrationProps;
+type IllustrationMountProps = {
+  illustration: IllustrationId;
+} & IllustrationProps;
 
-export function IllustrationMount({ id, ...rest }: IllustrationMountProps) {
-  const IllustrationComponent = ILLUSTRATIONS[id];
+export function IllustrationMount({
+  illustration,
+  ...rest
+}: IllustrationMountProps) {
+  const IllustrationComponent = ILLUSTRATIONS[illustration];
 
   return <IllustrationComponent {...rest} />;
 }

@@ -148,7 +148,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
           </PriceLine>
         </CardHeaderInfo>
         <CardIllustrationEmbed>
-          <IllustrationMount id={card.illustration} />
+          <IllustrationMount illustration={card.illustration} />
         </CardIllustrationEmbed>
       </CardHeader>
 

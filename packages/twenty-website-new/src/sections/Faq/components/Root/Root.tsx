@@ -47,7 +47,7 @@ export function Root({ children, illustration }: RootProps) {
   return (
     <StyledSection>
       <IllustrationLayer aria-hidden>
-        <IllustrationMount id={illustration} />
+        <IllustrationMount illustration={illustration} />
       </IllustrationLayer>
       <StyledContainer>{children}</StyledContainer>
     </StyledSection>

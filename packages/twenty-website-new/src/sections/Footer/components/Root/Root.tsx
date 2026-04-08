@@ -56,7 +56,7 @@ export function Root({ children, illustration }: RootProps) {
   return (
     <FooterRoot>
       <FooterContainer>
-        <IllustrationMount aria-hidden id={illustration} />
+        <IllustrationMount aria-hidden illustration={illustration} />
         <FooterContent>
           <FooterShape fillColor={theme.colors.primary.background[100]} />
           {children}
