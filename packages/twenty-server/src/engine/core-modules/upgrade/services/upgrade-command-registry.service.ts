@@ -41,6 +41,12 @@ export type VersionBundle = {
   workspaceCommands: RegisteredWorkspaceCommand[];
 };
 
+const buildEmptyVersionBundle = (): VersionBundle => ({
+  fastInstanceCommands: [],
+  slowInstanceCommands: [],
+  workspaceCommands: [],
+});
+
 @Injectable()
 export class UpgradeCommandRegistryService implements OnModuleInit {
   private readonly logger = new Logger(UpgradeCommandRegistryService.name);
@@ -154,17 +160,8 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
     }
   }
 
-  private static readonly EMPTY_BUNDLE: VersionBundle = {
-    fastInstanceCommands: [],
-    slowInstanceCommands: [],
-    workspaceCommands: [],
-  };
-
   getBundleForVersion(version: UpgradeCommandVersion): VersionBundle {
-    return (
-      this.bundlesByVersion.get(version) ??
-      UpgradeCommandRegistryService.EMPTY_BUNDLE
-    );
+    return this.bundlesByVersion.get(version) ?? buildEmptyVersionBundle();
   }
 
   getAllFastInstanceCommands(): RegisteredFastInstanceCommand[] {

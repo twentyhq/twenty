@@ -31,18 +31,17 @@ export class InstanceUpgradeService {
     command: FastInstanceCommand;
     name: string;
   }): Promise<RunSingleMigrationResult> {
-    const migrationName = name;
     const executedByVersion =
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
     const isAlreadyCompleted =
       await this.upgradeMigrationService.isLastAttemptCompleted({
-        name: migrationName,
+        name,
         workspaceId: null,
       });
 
     if (isAlreadyCompleted) {
-      this.logger.log(`${migrationName} already executed, skipping`);
+      this.logger.log(`${name} already executed, skipping`);
 
       return { status: 'already-executed' };
     }
@@ -56,7 +55,7 @@ export class InstanceUpgradeService {
       await command.up(queryRunner);
 
       await this.upgradeMigrationService.markAsCompleted({
-        name: migrationName,
+        name,
         workspaceId: null,
         executedByVersion,
         queryRunner,
@@ -69,13 +68,13 @@ export class InstanceUpgradeService {
       }
 
       await this.upgradeMigrationService.markAsFailed({
-        name: migrationName,
+        name,
         workspaceId: null,
         executedByVersion,
       });
 
       this.logger.error(
-        `${migrationName} failed`,
+        `${name} failed`,
         error instanceof Error ? error.stack : String(error),
       );
 
@@ -84,7 +83,7 @@ export class InstanceUpgradeService {
       await queryRunner.release();
     }
 
-    this.logger.log(`${migrationName} executed successfully`);
+    this.logger.log(`${name} executed successfully`);
 
     return { status: 'success' };
   }
@@ -98,8 +97,19 @@ export class InstanceUpgradeService {
     name: string;
     skipDataMigration?: boolean;
   }): Promise<RunSingleMigrationResult> {
+    const isAlreadyCompleted =
+      await this.upgradeMigrationService.isLastAttemptCompleted({
+        name,
+        workspaceId: null,
+      });
+
+    if (isAlreadyCompleted) {
+      this.logger.log(`${name} already executed, skipping`);
+
+      return { status: 'already-executed' };
+    }
+
     if (!skipDataMigration) {
-      const migrationName = name;
       const executedByVersion =
         this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
@@ -107,13 +117,13 @@ export class InstanceUpgradeService {
         await command.runDataMigration(this.dataSource);
       } catch (error) {
         await this.upgradeMigrationService.markAsFailed({
-          name: migrationName,
+          name,
           workspaceId: null,
           executedByVersion,
         });
 
         this.logger.error(
-          `${migrationName} data migration failed`,
+          `${name} data migration failed`,
           error instanceof Error ? error.stack : String(error),
         );
 
