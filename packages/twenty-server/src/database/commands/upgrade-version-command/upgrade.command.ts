@@ -184,10 +184,12 @@ Please roll back to that version and run the upgrade command again.`,
         await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
 
       for (const command of versionContext.slowInstanceCommands) {
-        const result =
-          await this.instanceUpgradeService.runSlowInstanceCommand(command, {
+        const result = await this.instanceUpgradeService.runSlowInstanceCommand(
+          command,
+          {
             skipDataMigration: !hasWorkspaces,
-          });
+          },
+        );
 
         if (result.status === 'failed') {
           throw result.error;

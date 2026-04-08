@@ -193,8 +193,16 @@ describe('InstanceCommandGenerationService', () => {
 
   it('should generate a slow instance command with populated up/down', async () => {
     const service = await buildService(
-      [{ query: 'ALTER TABLE "core"."user" ALTER COLUMN "email" SET NOT NULL' }],
-      [{ query: 'ALTER TABLE "core"."user" ALTER COLUMN "email" DROP NOT NULL' }],
+      [
+        {
+          query: 'ALTER TABLE "core"."user" ALTER COLUMN "email" SET NOT NULL',
+        },
+      ],
+      [
+        {
+          query: 'ALTER TABLE "core"."user" ALTER COLUMN "email" DROP NOT NULL',
+        },
+      ],
     );
 
     const result = await service.generateInstanceCommand({

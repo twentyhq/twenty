@@ -44,7 +44,8 @@ export class GenerateInstanceCommandCommand extends CommandRunner {
 
   @Option({
     flags: '-t, --type <type>',
-    description: 'Command type: fast (schema diff) or slow (data migration + DDL)',
+    description:
+      'Command type: fast (schema diff) or slow (data migration + DDL)',
     defaultValue: 'fast',
   })
   parseType(value: string): InstanceCommandType {

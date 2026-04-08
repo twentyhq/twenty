@@ -60,7 +60,9 @@ export class RunInstanceCommandsCommand extends CommandRunner {
       await this.checkWorkspaceVersionSafety(options);
       await this.runLegacyPendingTypeOrmMigrations();
 
-      for (const { migration } of this.upgradeCommandRegistryService.getAllFastInstanceCommands()) {
+      for (const {
+        migration,
+      } of this.upgradeCommandRegistryService.getAllFastInstanceCommands()) {
         const result =
           await this.instanceUpgradeService.runFastInstanceCommand(migration);
 
@@ -73,7 +75,9 @@ export class RunInstanceCommandsCommand extends CommandRunner {
         const hasWorkspaces =
           await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
 
-        for (const { migration } of this.upgradeCommandRegistryService.getAllSlowInstanceCommands()) {
+        for (const {
+          migration,
+        } of this.upgradeCommandRegistryService.getAllSlowInstanceCommands()) {
           const result =
             await this.instanceUpgradeService.runSlowInstanceCommand(
               migration,

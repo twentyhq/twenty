@@ -405,9 +405,9 @@ describe('UpgradeCommandRunner', () => {
 
     await upgradeCommandRunner.run([], {});
 
-    expect(
-      instanceUpgradeService.runFastInstanceCommand,
-    ).toHaveBeenCalledTimes(2);
+    expect(instanceUpgradeService.runFastInstanceCommand).toHaveBeenCalledTimes(
+      2,
+    );
     expect(
       instanceUpgradeService.runFastInstanceCommand,
     ).toHaveBeenNthCalledWith(1, addIndex);
@@ -436,9 +436,7 @@ describe('UpgradeCommandRunner', () => {
       error: new Error('SQL error'),
     });
 
-    await expect(upgradeCommandRunner.run([], {})).rejects.toThrow(
-      'SQL error',
-    );
+    await expect(upgradeCommandRunner.run([], {})).rejects.toThrow('SQL error');
   });
 
   describe('Workspace upgrade should fail', () => {
@@ -526,12 +524,13 @@ describe('UpgradeCommandRunner', () => {
 
     await upgradeCommandRunner.run([], {});
 
-    expect(
-      instanceUpgradeService.runSlowInstanceCommand,
-    ).toHaveBeenCalledTimes(1);
-    expect(
-      instanceUpgradeService.runSlowInstanceCommand,
-    ).toHaveBeenCalledWith(slowMigration, { skipDataMigration: false });
+    expect(instanceUpgradeService.runSlowInstanceCommand).toHaveBeenCalledTimes(
+      1,
+    );
+    expect(instanceUpgradeService.runSlowInstanceCommand).toHaveBeenCalledWith(
+      slowMigration,
+      { skipDataMigration: false },
+    );
   });
 
   it('should run slow commands after fast commands but before workspace commands', async () => {
@@ -611,11 +610,12 @@ describe('UpgradeCommandRunner', () => {
 
     await upgradeCommandRunner.run([], {});
 
-    expect(
-      instanceUpgradeService.runSlowInstanceCommand,
-    ).toHaveBeenCalledWith(expect.any(SlowMigrationFreshInstall), {
-      skipDataMigration: true,
-    });
+    expect(instanceUpgradeService.runSlowInstanceCommand).toHaveBeenCalledWith(
+      expect.any(SlowMigrationFreshInstall),
+      {
+        skipDataMigration: true,
+      },
+    );
   });
 
   it('should propagate errors from runSlowInstanceCommand', async () => {
