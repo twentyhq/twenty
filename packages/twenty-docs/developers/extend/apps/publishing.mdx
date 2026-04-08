@@ -66,11 +66,17 @@ The share link uses the server's base URL (without any workspace subdomain) so i
 
 ### Version management
 
+The server enforces semver versioning on every deploy. Each new deploy must use a `version` in `package.json` that is **strictly higher** (per [semver](https://semver.org) ordering) than the version currently deployed for this app. Re-deploying the same version, or pushing a lower one, is rejected before the tarball is stored — you'll see a `VERSION_NOT_BUMPED` error from the CLI.
+
 To release an update:
 
-1. Bump the `version` field in your `package.json`
+1. Bump the `version` field in your `package.json` (e.g. `1.2.3` → `1.2.4`, `1.3.0`, or `2.0.0`)
 2. Run `yarn twenty deploy` (or `yarn twenty deploy --remote production`)
 3. Workspaces that have the app installed will see the upgrade available in their settings
+
+<Note>
+Pre-release tags work as expected: bumping `1.0.0-rc.1` → `1.0.0-rc.2` is allowed, and a final release like `1.0.0` is correctly recognized as higher than `1.0.0-rc.5`. The version in `package.json` must itself be a valid semver string — values like `v1.0.0` (with a leading `v`) are rejected as `INVALID_INPUT`.
+</Note>
 
 {/* TODO: add screenshot of the Upgrade button */}
 
@@ -189,3 +195,7 @@ You can also install apps from the command line:
 ```bash filename="Terminal"
 yarn twenty install
 ```
+
+<Note>
+Install is idempotent: if the version of the app currently registered on the server is already installed in your workspace, the command exits successfully as a no-op — file writes, manifest sync, and SDK regeneration are all skipped. To install a newer version, deploy or publish it first, then re-run `yarn twenty install`.
+</Note>

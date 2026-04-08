@@ -117,6 +117,21 @@ export class ApplicationInstallService {
         sourceType: appRegistration.sourceType,
       });
 
+      const incomingVersion = resolvedPackage.packageJson.version;
+
+      if (
+        !wasCreated &&
+        isDefined(application.version) &&
+        isDefined(incomingVersion) &&
+        application.version === incomingVersion
+      ) {
+        this.logger.log(
+          `${universalIdentifier}@${incomingVersion} is already installed`,
+        );
+
+        return true;
+      }
+
       await this.writeFilesToStorage(
         resolvedPackage.extractedDir,
         resolvedPackage.manifest,
