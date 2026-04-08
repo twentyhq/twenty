@@ -403,104 +403,41 @@ describe('UpgradeCommandRunner', () => {
 
     const instanceUpgradeService = module.get(InstanceUpgradeService);
 
-    const passedParams: string[] = [];
-    const options: UpgradeCommandOptions = {};
+    await upgradeCommandRunner.run([], {});
 
-    await upgradeCommandRunner.run(passedParams, options);
-
-    expect(instanceUpgradeService.runFastInstanceCommand).toHaveBeenCalledTimes(2);
-    expect(instanceUpgradeService.runFastInstanceCommand).toHaveBeenNthCalledWith(
-      1,
-      addIndex,
-    );
-    expect(instanceUpgradeService.runFastInstanceCommand).toHaveBeenNthCalledWith(
-      2,
-      addColumn,
-    );
+    expect(
+      instanceUpgradeService.runFastInstanceCommand,
+    ).toHaveBeenCalledTimes(2);
+    expect(
+      instanceUpgradeService.runFastInstanceCommand,
+    ).toHaveBeenNthCalledWith(1, addIndex);
+    expect(
+      instanceUpgradeService.runFastInstanceCommand,
+    ).toHaveBeenNthCalledWith(2, addColumn);
   });
 
-  it('should skip already-executed instance commands', async () => {
-    @RegisteredInstanceCommand(CURRENT_VERSION, 1770000000000)
-    class AlreadyRunMigration1770000000000 implements FastInstanceCommand {
-      async up(_queryRunner: QueryRunner) {}
-      async down(_queryRunner: QueryRunner) {}
-    }
-
-    const alreadyRun = new AlreadyRunMigration1770000000000();
-
-    const module = await buildModuleAndSetupSpies({
-      migrations: [alreadyRun],
-    });
-
-    const instanceUpgradeService = module.get(InstanceUpgradeService);
-
-    (instanceUpgradeService.runFastInstanceCommand as jest.Mock).mockResolvedValue({
-      status: 'already-executed',
-    });
-
-    const passedParams: string[] = [];
-    const options: UpgradeCommandOptions = {};
-
-    await upgradeCommandRunner.run(passedParams, options);
-
-    expect(upgradeCommandRunner['logger'].warn).toHaveBeenCalledWith(
-      expect.stringContaining('already executed'),
-    );
-  });
-
-  it('should throw when a migration fails', async () => {
+  it('should propagate errors from runFastInstanceCommand', async () => {
     @RegisteredInstanceCommand(CURRENT_VERSION, 1770000000000)
     class FailingMigration1770000000000 implements FastInstanceCommand {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
     }
 
-    const failing = new FailingMigration1770000000000();
-
     const module = await buildModuleAndSetupSpies({
-      migrations: [failing],
+      migrations: [new FailingMigration1770000000000()],
     });
 
     const instanceUpgradeService = module.get(InstanceUpgradeService);
 
-    (instanceUpgradeService.runFastInstanceCommand as jest.Mock).mockResolvedValue({
+    (
+      instanceUpgradeService.runFastInstanceCommand as jest.Mock
+    ).mockResolvedValue({
       status: 'failed',
       error: new Error('SQL error'),
     });
 
-    const passedParams: string[] = [];
-    const options: UpgradeCommandOptions = {};
-
-    await expect(
-      upgradeCommandRunner.run(passedParams, options),
-    ).rejects.toThrow('Core migration FailingMigration1770000000000 failed');
-  });
-
-  it('should log success when a migration succeeds', async () => {
-    @RegisteredInstanceCommand(CURRENT_VERSION, 1770000000000)
-    class SuccessMigration1770000000000 implements FastInstanceCommand {
-      async up(_queryRunner: QueryRunner) {}
-      async down(_queryRunner: QueryRunner) {}
-    }
-
-    const success = new SuccessMigration1770000000000();
-
-    const module = await buildModuleAndSetupSpies({
-      migrations: [success],
-    });
-
-    const instanceUpgradeService = module.get(InstanceUpgradeService);
-
-    const passedParams: string[] = [];
-    const options: UpgradeCommandOptions = {};
-
-    await upgradeCommandRunner.run(passedParams, options);
-
-    expect(instanceUpgradeService.runFastInstanceCommand).toHaveBeenCalledWith(
-      success,
-    );
-    expect(upgradeCommandRunner['logger'].log).toHaveBeenCalledWith(
-      expect.stringContaining('executed successfully'),
+    await expect(upgradeCommandRunner.run([], {})).rejects.toThrow(
+      'SQL error',
     );
   });
 
@@ -569,7 +506,7 @@ describe('UpgradeCommandRunner', () => {
     );
   });
 
-  it('should call runSlowInstanceCommand for slow instance commands', async () => {
+  it('should call runSlowInstanceCommand for each current-version slow command', async () => {
     @RegisteredInstanceCommand(CURRENT_VERSION, 1780000000000, {
       type: 'slow',
     })
@@ -589,11 +526,12 @@ describe('UpgradeCommandRunner', () => {
 
     await upgradeCommandRunner.run([], {});
 
-    expect(instanceUpgradeService.runSlowInstanceCommand).toHaveBeenCalledTimes(1);
-    expect(instanceUpgradeService.runSlowInstanceCommand).toHaveBeenCalledWith(
-      slowMigration,
-      { skipDataMigration: false },
-    );
+    expect(
+      instanceUpgradeService.runSlowInstanceCommand,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      instanceUpgradeService.runSlowInstanceCommand,
+    ).toHaveBeenCalledWith(slowMigration, { skipDataMigration: false });
   });
 
   it('should run slow commands after fast commands but before workspace commands', async () => {
@@ -623,21 +561,21 @@ describe('UpgradeCommandRunner', () => {
 
     const instanceUpgradeService = module.get(InstanceUpgradeService);
 
-    (instanceUpgradeService.runFastInstanceCommand as jest.Mock).mockImplementation(
-      async () => {
-        executionOrder.push('fast');
+    (
+      instanceUpgradeService.runFastInstanceCommand as jest.Mock
+    ).mockImplementation(async () => {
+      executionOrder.push('fast');
 
-        return { status: 'success' };
-      },
-    );
+      return { status: 'success' };
+    });
 
-    (instanceUpgradeService.runSlowInstanceCommand as jest.Mock).mockImplementation(
-      async () => {
-        executionOrder.push('slow');
+    (
+      instanceUpgradeService.runSlowInstanceCommand as jest.Mock
+    ).mockImplementation(async () => {
+      executionOrder.push('slow');
 
-        return { status: 'success' };
-      },
-    );
+      return { status: 'success' };
+    });
 
     const workspaceIteratorService = module.get(WorkspaceIteratorService);
 
@@ -652,33 +590,6 @@ describe('UpgradeCommandRunner', () => {
     await upgradeCommandRunner.run([], {});
 
     expect(executionOrder).toStrictEqual(['fast', 'slow', 'workspace']);
-  });
-
-  it('should skip already-executed slow instance commands', async () => {
-    @RegisteredInstanceCommand(CURRENT_VERSION, 1780000000000, {
-      type: 'slow',
-    })
-    class AlreadyRunSlowMigration implements SlowInstanceCommand {
-      async runDataMigration(_dataSource: DataSource): Promise<void> {}
-      async up(_queryRunner: QueryRunner) {}
-      async down(_queryRunner: QueryRunner) {}
-    }
-
-    const module = await buildModuleAndSetupSpies({
-      migrations: [new AlreadyRunSlowMigration()],
-    });
-
-    const instanceUpgradeService = module.get(InstanceUpgradeService);
-
-    (instanceUpgradeService.runSlowInstanceCommand as jest.Mock).mockResolvedValue({
-      status: 'already-executed',
-    });
-
-    await upgradeCommandRunner.run([], {});
-
-    expect(upgradeCommandRunner['logger'].warn).toHaveBeenCalledWith(
-      expect.stringContaining('already executed'),
-    );
   });
 
   it('should pass skipDataMigration: true on fresh install (no workspaces)', async () => {
@@ -700,13 +611,14 @@ describe('UpgradeCommandRunner', () => {
 
     await upgradeCommandRunner.run([], {});
 
-    expect(instanceUpgradeService.runSlowInstanceCommand).toHaveBeenCalledWith(
-      expect.any(SlowMigrationFreshInstall),
-      { skipDataMigration: true },
-    );
+    expect(
+      instanceUpgradeService.runSlowInstanceCommand,
+    ).toHaveBeenCalledWith(expect.any(SlowMigrationFreshInstall), {
+      skipDataMigration: true,
+    });
   });
 
-  it('should throw when a slow migration fails', async () => {
+  it('should propagate errors from runSlowInstanceCommand', async () => {
     @RegisteredInstanceCommand(CURRENT_VERSION, 1780000000000, {
       type: 'slow',
     })
@@ -722,13 +634,15 @@ describe('UpgradeCommandRunner', () => {
 
     const instanceUpgradeService = module.get(InstanceUpgradeService);
 
-    (instanceUpgradeService.runSlowInstanceCommand as jest.Mock).mockResolvedValue({
+    (
+      instanceUpgradeService.runSlowInstanceCommand as jest.Mock
+    ).mockResolvedValue({
       status: 'failed',
       error: new Error('Data migration error'),
     });
 
     await expect(upgradeCommandRunner.run([], {})).rejects.toThrow(
-      'Slow migration FailingSlowMigration failed',
+      'Data migration error',
     );
   });
 });

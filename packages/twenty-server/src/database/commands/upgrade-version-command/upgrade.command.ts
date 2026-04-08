@@ -3,7 +3,6 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { SemVer } from 'semver';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
@@ -171,14 +170,29 @@ Please roll back to that version and run the upgrade command again.`,
       }
 
       await this.runLegacyPendingTypeOrmMigrations();
-      await this.runFastInstanceCommandsOrThrow(versionContext);
+
+      for (const command of versionContext.fastInstanceCommands) {
+        const result =
+          await this.instanceUpgradeService.runFastInstanceCommand(command);
+
+        if (result.status === 'failed') {
+          throw result.error;
+        }
+      }
 
       const hasWorkspaces =
         await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
 
-      await this.runSlowInstanceCommandsOrThrow(versionContext, {
-        skipDataMigration: !hasWorkspaces,
-      });
+      for (const command of versionContext.slowInstanceCommands) {
+        const result =
+          await this.instanceUpgradeService.runSlowInstanceCommand(command, {
+            skipDataMigration: !hasWorkspaces,
+          });
+
+        if (result.status === 'failed') {
+          throw result.error;
+        }
+      }
 
       if (!hasWorkspaces) {
         this.logger.log(
@@ -225,95 +239,6 @@ Please roll back to that version and run the upgrade command again.`,
       this.logger.log(
         `Executed ${migrations.length} legacy migration(s): ${migrations.map((migration) => migration.name).join(', ')}`,
       );
-    }
-  }
-
-  private async runFastInstanceCommandsOrThrow(
-    versionContext: VersionContext,
-  ): Promise<void> {
-    for (const instanceCommand of versionContext.fastInstanceCommands) {
-      const migrationName = instanceCommand.constructor.name;
-      const result =
-        await this.instanceUpgradeService.runFastInstanceCommand(instanceCommand);
-
-      switch (result.status) {
-        case 'already-executed': {
-          this.logger.warn(
-            `Core migration ${migrationName} already executed, skipping`,
-          );
-
-          break;
-        }
-        case 'failed': {
-          this.logger.error(`Core migration ${migrationName} failed`);
-
-          if (isDefined(result.error)) {
-            this.logger.error(
-              result.error instanceof Error
-                ? (result.error.stack ?? result.error.message)
-                : String(result.error),
-            );
-          }
-
-          throw new Error(`Core migration ${migrationName} failed`);
-        }
-        case 'success': {
-          this.logger.log(
-            `Core migration ${migrationName} executed successfully`,
-          );
-
-          break;
-        }
-        default: {
-          assertUnreachable(result);
-        }
-      }
-    }
-  }
-
-  private async runSlowInstanceCommandsOrThrow(
-    versionContext: VersionContext,
-    options: { skipDataMigration: boolean },
-  ): Promise<void> {
-    for (const slowCommand of versionContext.slowInstanceCommands) {
-      const migrationName = slowCommand.constructor.name;
-      const result = await this.instanceUpgradeService.runSlowInstanceCommand(
-        slowCommand,
-        { skipDataMigration: options.skipDataMigration },
-      );
-
-      switch (result.status) {
-        case 'already-executed': {
-          this.logger.warn(
-            `Slow migration ${migrationName} already executed, skipping`,
-          );
-
-          break;
-        }
-        case 'failed': {
-          this.logger.error(`Slow migration ${migrationName} failed`);
-
-          if (isDefined(result.error)) {
-            this.logger.error(
-              result.error instanceof Error
-                ? (result.error.stack ?? result.error.message)
-                : String(result.error),
-            );
-          }
-
-          throw new Error(`Slow migration ${migrationName} failed`);
-        }
-        case 'success': {
-          this.logger.log(
-            `Slow migration ${migrationName} executed successfully`,
-          );
-
-          break;
-        }
-        default: {
-          assertUnreachable(result);
-        }
-      }
     }
   }
 

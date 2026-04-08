@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource } from 'typeorm';
@@ -8,13 +8,15 @@ import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 
-export type RunSingleMigrationResult =
+type RunSingleMigrationResult =
   | { status: 'success' }
   | { status: 'already-executed' }
   | { status: 'failed'; error: unknown };
 
 @Injectable()
 export class InstanceUpgradeService {
+  private readonly logger = new Logger(InstanceUpgradeService.name);
+
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
@@ -36,6 +38,8 @@ export class InstanceUpgradeService {
       });
 
     if (isAlreadyCompleted) {
+      this.logger.log(`${migrationName} already executed, skipping`);
+
       return { status: 'already-executed' };
     }
 
@@ -66,10 +70,17 @@ export class InstanceUpgradeService {
         executedByVersion,
       });
 
+      this.logger.error(
+        `${migrationName} failed`,
+        error instanceof Error ? error.stack : String(error),
+      );
+
       return { status: 'failed', error };
     } finally {
       await queryRunner.release();
     }
+
+    this.logger.log(`${migrationName} executed successfully`);
 
     return { status: 'success' };
   }
@@ -91,6 +102,11 @@ export class InstanceUpgradeService {
           workspaceId: null,
           executedByVersion,
         });
+
+        this.logger.error(
+          `${migrationName} data migration failed`,
+          error instanceof Error ? error.stack : String(error),
+        );
 
         return { status: 'failed', error };
       }
