@@ -7,19 +7,22 @@ export const CARD_WIDTH_DESKTOP = 443;
 const CARD_WIDTH_MOBILE_MAX = 360;
 const HORIZONTAL_PAD = 32;
 
-// Scroll progress 0..1 through the tall section
-const HEADLINE_FADE_START = 0.76;
-const HEADLINE_FADE_END = 0.92;
-const HEADLINE_LIFT_PX = 48;
-
-// Each card fades/slides in over the same window, shifted along the scroll
 const CARD_WINDOW = 0.2;
 const CARD_STAGGER = 0.12;
 const CARD_FIRST_START = 0.06;
 const ENTER_OFFSET_Y_RATIO = 0.34;
+const EXIT_LIFT_Y_RATIO = 0.28;
 
 function clamp01(value: number) {
   return Math.min(1, Math.max(0, value));
+}
+
+function allCardsFullyInEnd(cardCount: number): number {
+  if (cardCount <= 0) {
+    return CARD_FIRST_START;
+  }
+  const lastIndex = cardCount - 1;
+  return CARD_FIRST_START + lastIndex * CARD_STAGGER + CARD_WINDOW;
 }
 
 function cardRestPosition(
@@ -81,7 +84,7 @@ export function applyHelpedSceneLayout(
 
   const rect = section.getBoundingClientRect();
   const scrollRange = Math.max(1, section.offsetHeight - window.innerHeight);
-  const progress = clamp01(-rect.top / scrollRange);
+  const cardProgress = clamp01(-rect.top / scrollRange);
 
   const innerWidth = inner.offsetWidth;
   const innerHeight = inner.offsetHeight;
@@ -91,15 +94,19 @@ export function applyHelpedSceneLayout(
   );
 
   if (headlineRef.current) {
-    const headlineT = clamp01(
-      (progress - HEADLINE_FADE_START) /
-        (HEADLINE_FADE_END - HEADLINE_FADE_START),
-    );
-    headlineRef.current.style.opacity = String(1 - headlineT);
-    headlineRef.current.style.transform = `translate3d(0, ${-headlineT * HEADLINE_LIFT_PX}px, 0)`;
+    headlineRef.current.style.opacity = '1';
+    headlineRef.current.style.transform = 'none';
   }
 
   const enterOffsetY = innerHeight * ENTER_OFFSET_Y_RATIO;
+  const exitLiftY = innerHeight * EXIT_LIFT_Y_RATIO;
+  const allInEnd = allCardsFullyInEnd(cards.length);
+  const exitStart = allInEnd + 0.05;
+  const exitEnd = Math.min(0.88, exitStart + 0.22);
+  const exitT =
+    cardProgress < exitStart
+      ? 0
+      : clamp01((cardProgress - exitStart) / (exitEnd - exitStart));
 
   cards.forEach((_, index) => {
     const node = cardRefs.current[index];
@@ -128,12 +135,15 @@ export function applyHelpedSceneLayout(
 
     const windowStart = CARD_FIRST_START + index * CARD_STAGGER;
     const windowEnd = windowStart + CARD_WINDOW;
-    const cardT = clamp01(
-      (progress - windowStart) / (windowEnd - windowStart),
+    const enterT = clamp01(
+      (cardProgress - windowStart) / (windowEnd - windowStart),
     );
+    const visibility = enterT * (1 - exitT);
+    const restY = restTop + enterOffsetY * (1 - enterT);
+    const topPx = restY - exitLiftY * exitT;
 
     node.style.left = `${restLeft}px`;
-    node.style.top = `${restTop + enterOffsetY * (1 - cardT)}px`;
-    node.style.opacity = String(cardT);
+    node.style.top = `${topPx}px`;
+    node.style.opacity = String(visibility);
   });
 }
