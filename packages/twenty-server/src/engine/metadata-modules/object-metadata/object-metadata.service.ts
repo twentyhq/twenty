@@ -15,8 +15,6 @@ import { v4, v5 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import {
   buildNavigationFlatCommandMenuItem,
@@ -48,7 +46,6 @@ import {
 import { computeFlatDefaultRecordPageLayoutToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-default-record-page-layout-to-create.util';
 import { computeFlatRecordPageFieldsViewToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-record-page-fields-view-to-create.util';
 import { computeFlatViewFieldsToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-view-fields-to-create.util';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -64,10 +61,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly applicationService: ApplicationService,
-    private readonly featureFlagService: FeatureFlagService,
-    private readonly twentyConfigService: TwentyConfigService,
   ) {
     super(objectMetadataRepository);
   }
@@ -511,13 +505,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         },
       );
 
-    const flatCommandMenuItemToCreate =
-      this.buildFlatNavigationCommandMenuItem({
+    const flatCommandMenuItemToCreate = this.buildFlatNavigationCommandMenuItem(
+      {
         objectMetadata: flatObjectMetadataToCreate,
         workspaceId,
         applicationId: workspaceCustomFlatApplication.id,
         flatCommandMenuItemMaps,
-      });
+      },
+    );
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
