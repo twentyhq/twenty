@@ -24,6 +24,7 @@ import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-fiel
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 const ARRAY_OPERATORS = ['in', 'contains', 'notContains'];
@@ -199,7 +200,10 @@ export class GraphqlQueryFilterFieldParser {
 
     const sourceField = junctionSourceFields[0];
     const schemaName = getWorkspaceSchemaName(workspaceId);
-    const junctionTableName = junctionObject.nameSingular;
+    const junctionTableName = computeTableName(
+      junctionObject.nameSingular,
+      junctionObject.isCustom,
+    );
     const sourceColumnName = computeMorphOrRelationFieldJoinColumnName({
       name: sourceField.name,
     });
