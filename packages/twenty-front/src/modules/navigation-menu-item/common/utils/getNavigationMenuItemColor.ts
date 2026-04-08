@@ -25,9 +25,7 @@ export const getNavigationMenuItemColor = (
   }
 
   if (navigationMenuItem.type === NavigationMenuItemType.LINK) {
-    return isNonEmptyString(navigationMenuItem.color)
-      ? (navigationMenuItem.color as ThemeColor)
-      : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK;
+    return DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK;
   }
 
   if (

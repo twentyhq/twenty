@@ -21,6 +21,7 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+
 const LazyWorkspaceSectionListDndKit = lazy(() =>
   import(
     '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListDndKit'

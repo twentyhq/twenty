@@ -87,6 +87,7 @@ export function IllustrationCard({
       <CardRule />
       <CardEmbed>
         <IllustrationCardVisual
+          glbTreatment={illustrationCard.illustration.glbTreatment}
           src={illustrationCard.illustration.src}
           title={illustrationCard.illustration.title}
         />

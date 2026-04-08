@@ -70,30 +70,6 @@ export const NavigationMenuItemIcon = ({
   }
 
   if (navigationMenuItem.type === NavigationMenuItemType.LINK) {
-    const customLinkIcon = isDefined(navigationMenuItem.icon)
-      ? getIcon(navigationMenuItem.icon)
-      : undefined;
-
-    if (isDefined(customLinkIcon)) {
-      const effectiveColor = getNavigationMenuItemColor(navigationMenuItem);
-      const iconStyle = getNavigationMenuItemIconStyleFromColor(effectiveColor);
-
-      return (
-        <StyledNavigationMenuItemIconContainer
-          $backgroundColor={iconStyle.backgroundColor}
-          $borderColor={iconStyle.borderColor}
-        >
-          <Avatar
-            size="sm"
-            type="icon"
-            Icon={customLinkIcon}
-            iconColor={iconStyle.iconColor}
-            placeholder=""
-          />
-        </StyledNavigationMenuItemIconContainer>
-      );
-    }
-
     const computedLink = getNavigationMenuItemComputedLink(
       navigationMenuItem,
       objectMetadataItems,

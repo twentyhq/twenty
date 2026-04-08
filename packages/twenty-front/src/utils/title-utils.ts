@@ -1,5 +1,4 @@
 import { t } from '@lingui/core/macro';
-import { CREATE_COMPANY_WHEN_ADDING_A_NEW_PERSON_WORKFLOW_TEMPLATE_PATH } from '@/workflow/constants/workflowTemplateNavigation';
 import { AppBasePath, AppPath, SettingsPath } from 'twenty-shared/types';
 
 enum SettingsPathPrefixes {
@@ -54,8 +53,6 @@ export const getPageTitleFromPath = (pathname: string): string => {
       return t`Integrations - Settings`;
     case SettingsPathPrefixes.General:
       return t`General - Settings`;
-    case CREATE_COMPANY_WHEN_ADDING_A_NEW_PERSON_WORKFLOW_TEMPLATE_PATH:
-      return t`Create company when adding a new person`;
     default:
       return 'Twenty';
   }

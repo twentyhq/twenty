@@ -7,7 +7,6 @@ import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import indexAppPath from '@/navigation/utils/indexAppPath';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
-import { CREATE_COMPANY_WHEN_ADDING_A_NEW_PERSON_WORKFLOW_TEMPLATE_PATH } from '@/workflow/constants/workflowTemplateNavigation';
 import { AppPath } from 'twenty-shared/types';
 
 import { lazy } from 'react';
@@ -99,14 +98,6 @@ const NotFound = lazy(() =>
   import('~/pages/not-found/NotFound').then((module) => ({
     default: module.NotFound,
   })),
-);
-
-const CreateCompanyWhenAddingANewPersonWorkflowPage = lazy(() =>
-  import('~/pages/workflow/CreateCompanyWhenAddingANewPersonWorkflowPage').then(
-    (module) => ({
-      default: module.CreateCompanyWhenAddingANewPersonWorkflowPage,
-    }),
-  ),
 );
 
 export const useCreateAppRouter = (
@@ -213,16 +204,6 @@ export const useCreateAppRouter = (
             }
           />
           <Route path={indexAppPath.getIndexAppPath()} element={<></>} />
-          <Route
-            path={
-              CREATE_COMPANY_WHEN_ADDING_A_NEW_PERSON_WORKFLOW_TEMPLATE_PATH
-            }
-            element={
-              <LazyRoute>
-                <CreateCompanyWhenAddingANewPersonWorkflowPage />
-              </LazyRoute>
-            }
-          />
           <Route
             path={AppPath.RecordIndexPage}
             element={

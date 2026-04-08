@@ -1,5 +1,6 @@
 'use client';
 
+import type { IllustrationGlbTreatmentType } from '@/design-system/components/Illustration/types/Illustration';
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
@@ -18,9 +19,139 @@ const scanlineVertexShader = /* glsl */ `
 `;
 
 const scanlineFragmentShader = /* glsl */ `
+  float hash21(vec2 p) {
+    p = fract(p * vec2(123.34, 345.45));
+    p += dot(p, p + 34.23);
+    return fract(p.x * p.y);
+  }
+
+  float noise21(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    vec2 u = f * f * (3.0 - 2.0 * f);
+
+    return mix(
+      mix(hash21(i), hash21(i + vec2(1.0, 0.0)), u.x),
+      mix(hash21(i + vec2(0.0, 1.0)), hash21(i + vec2(1.0, 1.0)), u.x),
+      u.y
+    );
+  }
+
+  float fbm(vec2 p) {
+    float value = 0.0;
+    float amplitude = 0.5;
+
+    for (int i = 0; i < 4; i++) {
+      value += amplitude * noise21(p);
+      p = p * 2.03 + vec2(17.1, 11.7);
+      amplitude *= 0.5;
+    }
+
+    return value;
+  }
+
+  float animatedLightField(vec3 position, float time) {
+    vec2 uv = vec2(
+      position.x * 1.65 + position.z * 0.35,
+      position.y * 1.95 - position.z * 0.55
+    );
+    float t = time * 0.9;
+
+    float sweep = 0.5 + 0.5 * sin(uv.y * 6.8 - uv.x * 2.1 + t * 2.4);
+    float arc = 0.5 + 0.5 * sin(
+      length(vec2(position.x * 1.4 + 0.2, position.y * 1.1 - 0.1)) * 8.0 -
+        t * 2.1
+    );
+    float cells = fbm(uv * 2.2 + vec2(t * 0.45, -t * 0.38));
+    float pockets = smoothstep(
+      0.4,
+      0.78,
+      fbm(uv * 3.7 - vec2(t * 0.3, t * 0.72))
+    );
+
+    return smoothstep(0.18, 0.92, sweep * 0.33 + arc * 0.27 + cells * 0.2 + pockets * 0.2);
+  }
+
+  float sdRoundedBox(vec2 p, vec2 b, float r) {
+    vec2 q = abs(p) - b + vec2(r);
+    return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - r;
+  }
+
+  vec3 frostedGlassColor(
+    vec3 position,
+    vec3 normal,
+    float ndotl,
+    vec3 glassColor,
+    vec3 glassHighlightColor
+  ) {
+    vec2 glassUv = vec2(
+      position.x * 8.2 + position.z * 2.4,
+      position.y * 10.6 - position.z * 1.6
+    );
+    float grain = fbm(glassUv * 0.85);
+    float ripples = 0.5 + 0.5 * sin(glassUv.y * 3.5 + glassUv.x * 1.25 + grain * 4.4);
+    float shards = fbm(glassUv * 1.9 + vec2(9.4, -7.1));
+
+    vec3 viewDir = normalize(cameraPosition - position);
+    float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 2.5);
+
+    vec3 glassBase = mix(
+      glassColor,
+      glassHighlightColor,
+      0.24 + ripples * 0.28 + shards * 0.18
+    );
+    glassBase *= mix(0.86, 1.06, ndotl);
+    glassBase += vec3(0.018, 0.018, 0.022) * grain;
+    glassBase = mix(
+      glassBase,
+      glassHighlightColor,
+      fresnel * (0.34 + shards * 0.22)
+    );
+
+    return glassBase;
+  }
+
+  float patternedTileMask(vec2 position, float scaleX, float scaleY) {
+    vec2 uv = vec2(position.x * scaleX, position.y * scaleY);
+    float row = floor(uv.y);
+    uv.x += 0.5 * mod(row, 2.0);
+
+    vec2 cell = fract(uv) - 0.5;
+
+    float pill = 1.0 - smoothstep(
+      0.012,
+      0.04,
+      sdRoundedBox(cell, vec2(0.30, 0.13), 0.13)
+    );
+
+    vec2 connectorCell = cell - vec2(0.48, 0.0);
+    float connector = 1.0 - smoothstep(
+      0.82,
+      1.03,
+      abs(connectorCell.x) / 0.13 + abs(connectorCell.y) / 0.15
+    );
+
+    return max(pill, connector * 0.92);
+  }
+
   uniform vec3 uColor;
+  uniform vec3 uGlassColor;
+  uniform vec3 uGlassHighlightColor;
   uniform vec3 uLightDir;
   uniform float uStripeScale;
+  uniform float uStripeWidth;
+  uniform float uStripeEdge;
+  uniform float uDashScaleX;
+  uniform float uDashScaleZ;
+  uniform float uDashStart;
+  uniform float uDashMidStart;
+  uniform float uDashMidEnd;
+  uniform float uDashEnd;
+  uniform float uBandOpacity;
+  uniform float uPatternAsBase;
+  uniform float uPatternScaleX;
+  uniform float uPatternScaleY;
+  uniform float uTime;
 
   varying vec3 vWorldPosition;
   varying vec3 vWorldNormal;
@@ -34,43 +165,109 @@ const scanlineFragmentShader = /* glsl */ `
     float cell = fract(y);
 
     float shadowWeight = mix(1.0, 0.5, ndotl);
-    float lineWidth = 0.58 * shadowWeight;
-    float edge = 0.035;
-    float band = 1.0 - smoothstep(lineWidth, lineWidth + edge, cell);
+    float lineWidth = uStripeWidth * shadowWeight;
+    float edge = uStripeEdge;
+    float stripeBand = 1.0 - smoothstep(lineWidth, lineWidth + edge, cell);
 
     float highlight = pow(ndotl, 1.35);
-    float dash = fract(vWorldPosition.x * 20.0 + vWorldPosition.z * 6.0);
+    float dash = fract(
+      vWorldPosition.x * uDashScaleX + vWorldPosition.z * uDashScaleZ
+    );
     float dashMask = mix(
       1.0,
-      smoothstep(0.15, 0.45, dash) * (1.0 - smoothstep(0.55, 0.88, dash)),
+      smoothstep(uDashStart, uDashMidStart, dash) *
+        (1.0 - smoothstep(uDashMidEnd, uDashEnd, dash)),
       highlight
     );
-    band *= dashMask;
+    stripeBand *= dashMask;
 
     float speckle = fract(
       sin(dot(vWorldPosition.xz, vec2(127.1, 311.7))) * 43758.5453
     );
-    band *= mix(1.0, 0.55 + 0.45 * step(0.4, speckle), highlight * 0.85);
+    stripeBand *= mix(1.0, 0.55 + 0.45 * step(0.4, speckle), highlight * 0.85);
 
-    if (band < 0.015) {
+    vec2 patternUv = vec2(vWorldPosition.x, vWorldPosition.y);
+    float patternBand = patternedTileMask(
+      patternUv,
+      uPatternScaleX,
+      uPatternScaleY
+    );
+
+    float alpha = mix(stripeBand, 1.0, uPatternAsBase);
+
+    if (alpha < 0.015) {
       discard;
     }
 
-    vec3 lit = uColor * mix(0.72, 1.18, ndotl);
-    gl_FragColor = vec4(lit, band);
+    float lightField = smoothstep(
+      0.34,
+      0.86,
+      animatedLightField(vWorldPosition, uTime)
+    );
+    float shadowField = smoothstep(0.18, 0.78, 1.0 - lightField);
+    float patternLift = mix(0.48, 1.72, lightField);
+    float glassLift = mix(0.84, 1.18, lightField);
+    float glow = pow(lightField, 1.8);
+
+    vec3 stripeLit = uColor * mix(0.72, 1.18, ndotl);
+    vec3 patternLit = uColor * mix(0.82, 1.14, ndotl) * patternLift;
+    patternLit += uColor * glow * 0.28;
+    vec3 glassLit = frostedGlassColor(
+      vWorldPosition,
+      normal,
+      ndotl,
+      uGlassColor,
+      uGlassHighlightColor
+    );
+    glassLit *= glassLift;
+    glassLit *= 1.0 - shadowField * 0.12;
+    glassLit = mix(glassLit, mix(uColor, uGlassHighlightColor, 0.18), glow * 0.1);
+    vec3 stackedDashLit = mix(glassLit, patternLit, patternBand);
+
+    vec3 lit = mix(stripeLit, stackedDashLit, uPatternAsBase);
+
+    gl_FragColor = vec4(lit, alpha);
   }
 `;
 
-function createScanlineMaterial(lightDirection: THREE.Vector3) {
+function createScanlineMaterial(
+  lightDirection: THREE.Vector3,
+  glbTreatment: IllustrationGlbTreatmentType = 'default',
+) {
+  const isStackedDashTreatment = glbTreatment === 'stacked-dash';
+
   return new THREE.ShaderMaterial({
     uniforms: {
+      uBandOpacity: { value: isStackedDashTreatment ? 1.0 : 0.0 },
       uColor: { value: new THREE.Color('#1e5bff') },
+      uDashEnd: { value: isStackedDashTreatment ? 0.98 : 0.88 },
+      uDashMidEnd: { value: isStackedDashTreatment ? 0.82 : 0.55 },
+      uDashMidStart: { value: isStackedDashTreatment ? 0.18 : 0.45 },
+      uDashScaleX: { value: isStackedDashTreatment ? 10.0 : 20.0 },
+      uDashScaleZ: { value: isStackedDashTreatment ? 3.0 : 6.0 },
+      uDashStart: { value: isStackedDashTreatment ? 0.02 : 0.15 },
+      uGlassColor: {
+        value: new THREE.Color(
+          isStackedDashTreatment ? '#ffffff' : '#1e5bff',
+        ),
+      },
+      uGlassHighlightColor: {
+        value: new THREE.Color(
+          isStackedDashTreatment ? '#ffffff' : '#1e5bff',
+        ),
+      },
       uLightDir: { value: lightDirection.clone() },
-      uStripeScale: { value: 16.0 },
+      uPatternAsBase: { value: isStackedDashTreatment ? 1.0 : 0.0 },
+      uPatternScaleX: { value: isStackedDashTreatment ? 12.4 : 1.0 },
+      uPatternScaleY: { value: isStackedDashTreatment ? 10.8 : 1.0 },
+      uStripeEdge: { value: isStackedDashTreatment ? 0.02 : 0.035 },
+      uStripeScale: { value: isStackedDashTreatment ? 15.0 : 16.0 },
+      uStripeWidth: { value: isStackedDashTreatment ? 0.74 : 0.58 },
+      uTime: { value: 0 },
     },
     vertexShader: scanlineVertexShader,
     fragmentShader: scanlineFragmentShader,
-    transparent: true,
+    transparent: !isStackedDashTreatment,
     depthWrite: true,
     depthTest: true,
     side: THREE.DoubleSide,
@@ -103,13 +300,17 @@ type MeshRestPose = {
 function applyScanlineMaterials(
   modelRoot: THREE.Object3D,
   lightDirection: THREE.Vector3,
+  glbTreatment: IllustrationGlbTreatmentType = 'default',
 ) {
   modelRoot.traverse((sceneObject) => {
     if (!(sceneObject instanceof THREE.Mesh)) {
       return;
     }
 
-    sceneObject.material = createScanlineMaterial(lightDirection);
+    sceneObject.material = createScanlineMaterial(
+      lightDirection,
+      glbTreatment,
+    );
 
     const mesh = sceneObject;
     const rest: MeshRestPose = {
@@ -129,11 +330,13 @@ const StyledVisualMount = styled.div`
 `;
 
 export type IllustrationCardVisualProps = {
+  glbTreatment?: IllustrationGlbTreatmentType;
   src: string;
   title: string;
 };
 
 export function IllustrationCardVisual({
+  glbTreatment = 'default',
   src,
   title,
 }: IllustrationCardVisualProps) {
@@ -159,8 +362,14 @@ export function IllustrationCardVisual({
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
     camera.position.set(0, 0, 5.05);
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    const isStackedDashTreatment = glbTreatment === 'stacked-dash';
+    const renderer = new THREE.WebGLRenderer({
+      alpha: true,
+      antialias: !isStackedDashTreatment,
+    });
+    renderer.setPixelRatio(
+      isStackedDashTreatment ? 1 : Math.min(window.devicePixelRatio, 2),
+    );
     renderer.setSize(width, height);
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -170,6 +379,7 @@ export function IllustrationCardVisual({
     canvas.style.touchAction = 'none';
     canvas.style.width = '100%';
     canvas.style.cursor = 'pointer';
+    canvas.style.imageRendering = isStackedDashTreatment ? 'pixelated' : 'auto';
     container.appendChild(canvas);
 
     const pivot = new THREE.Group();
@@ -196,7 +406,11 @@ export function IllustrationCardVisual({
         modelRoot.position.sub(center);
         modelRoot.scale.setScalar(scale);
 
-        applyScanlineMaterials(modelRoot, lightDirectionWorld);
+        applyScanlineMaterials(
+          modelRoot,
+          lightDirectionWorld,
+          glbTreatment,
+        );
         pivot.add(modelRoot);
 
         const renderFrame = () => {
@@ -232,6 +446,7 @@ export function IllustrationCardVisual({
 
           const mx = pointer.x * (pointer.inside ? 1 : 0.32);
           const my = pointer.y * (pointer.inside ? 1 : 0.32);
+          const elapsedTime = clock.elapsedTime;
 
           modelRoot.traverse((sceneObject) => {
             if (!(sceneObject instanceof THREE.Mesh)) {
@@ -243,6 +458,10 @@ export function IllustrationCardVisual({
               | undefined;
             if (!rest) {
               return;
+            }
+
+            if (sceneObject.material instanceof THREE.ShaderMaterial) {
+              sceneObject.material.uniforms.uTime.value = elapsedTime;
             }
 
             const phase = rest.wobblePhase;
@@ -322,7 +541,7 @@ export function IllustrationCardVisual({
         container.removeChild(canvas);
       }
     };
-  }, [src]);
+  }, [glbTreatment, src]);
 
   return (
     <StyledVisualMount aria-label={title} ref={mountReference} role="img" />

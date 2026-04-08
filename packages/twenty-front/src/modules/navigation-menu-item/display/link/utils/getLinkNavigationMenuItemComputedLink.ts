@@ -4,9 +4,6 @@ export const getLinkNavigationMenuItemComputedLink = (
   item: Pick<NavigationMenuItem, 'link'>,
 ): string => {
   const linkUrl = (item.link ?? '').trim();
-  if (linkUrl.startsWith('/')) {
-    return linkUrl;
-  }
   if (linkUrl.startsWith('http://') || linkUrl.startsWith('https://')) {
     return linkUrl;
   }

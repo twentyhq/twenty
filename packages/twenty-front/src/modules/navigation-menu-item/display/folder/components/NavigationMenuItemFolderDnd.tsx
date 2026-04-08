@@ -275,8 +275,9 @@ export const NavigationMenuItemFolderDnd = ({
     : true;
 
   const folderContentLength =
-    navigationMenuItems.length +
-    (isWorkspace && isLayoutCustomizationModeEnabled ? 1 : 0);
+    isWorkspace && isLayoutCustomizationModeEnabled
+      ? navigationMenuItems.length + 1
+      : navigationMenuItems.length;
 
   const handleAddMenuItemToFolder = useCallback(() => {
     openAddItemToFolderPage({
