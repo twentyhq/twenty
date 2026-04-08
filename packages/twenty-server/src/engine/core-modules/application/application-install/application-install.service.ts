@@ -158,8 +158,6 @@ export class ApplicationInstallService {
         });
       }
 
-      // Post-install hook runs after everything else — schema is synced, SDK
-      // client is generated, the app is fully installed.
       await this.runPostInstallHook({
         manifest: resolvedPackage.manifest,
         workspaceId: params.workspaceId,
