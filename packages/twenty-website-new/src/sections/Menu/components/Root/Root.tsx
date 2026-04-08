@@ -24,7 +24,8 @@ const StyledSection = styled.section`
 `;
 
 const StyledContainer = styled(Container)`
-  padding-top: ${theme.spacing(4)};
+  padding-top: ${theme.spacing(2)};
+  padding-bottom: ${theme.spacing(2)};
   position: relative;
   z-index: 100;
 `;
