@@ -152,6 +152,17 @@ export class FilterArgProcessorService {
           FieldMetadataType.MORPH_RELATION,
         ))
     ) {
+      // Junction (many-to-many) relation filters are supported via some/none operators
+      const isJunctionRelation = isDefined(
+        (fieldMetadata.settings as Record<string, unknown> | null)
+          ?.junctionTargetFieldId,
+      );
+
+      if (isJunctionRelation) {
+        // Pass through as-is — the filter field parser handles some/none operators
+        return filterValue;
+      }
+
       if (fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE) {
         const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
           name: key,
