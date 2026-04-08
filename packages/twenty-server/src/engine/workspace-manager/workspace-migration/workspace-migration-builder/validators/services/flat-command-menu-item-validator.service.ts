@@ -135,7 +135,10 @@ export class FlatCommandMenuItemValidatorService {
       flatEntityUpdate.engineComponentKey ??
       fromFlatCommandMenuItem.engineComponentKey;
 
-    const payload = flatEntityUpdate.payload ?? fromFlatCommandMenuItem.payload;
+    const payload =
+      flatEntityUpdate.payload !== undefined
+        ? flatEntityUpdate.payload
+        : fromFlatCommandMenuItem.payload;
 
     this.validateEngineComponentKeyCoherence({
       engineComponentKey,
