@@ -105,14 +105,15 @@ export const RecordTableDataSourceDropdownContent = () => {
       (item) => item.id === newObjectMetadataItemId,
     );
 
-    if (isDefined(selectedObjectMetadataItem)) {
-      await createViewForRecordTableWidget(selectedObjectMetadataItem);
+    if (isDefined(selectedObjectMetadataItem) && isDefined(widgetInEditMode)) {
+      await createViewForRecordTableWidget(
+        widgetInEditMode.id,
+        selectedObjectMetadataItem,
+      );
 
-      if (isDefined(widgetInEditMode)) {
-        updatePageLayoutWidget(widgetInEditMode.id, {
-          title: selectedObjectMetadataItem.labelPlural,
-        });
-      }
+      updatePageLayoutWidget(widgetInEditMode.id, {
+        title: selectedObjectMetadataItem.labelPlural,
+      });
     }
 
     closeDropdown();
