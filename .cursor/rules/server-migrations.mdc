@@ -11,13 +11,11 @@ alwaysApply: false
 
 - **When changing an entity, always generate a migration**
   - If you modify a `*.entity.ts` file in `packages/twenty-server/src`, you **must** generate a corresponding TypeORM migration instead of manually editing the database schema.
-  - Use the Nx + TypeORM command from the project root:
+  - Use the Nx command from the project root:
 
     ```bash
-    npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/common/[name] -d src/database/typeorm/core/core.datasource.ts
+    npx nx run twenty-server:database:migrate:generate
     ```
-
-  - Replace `[name]` with a descriptive, kebab-case migration name that reflects the change (for example, `add-agent-turn-evaluation`).
 
 - **Prefer generated migrations over manual edits**
   - Let TypeORM infer schema changes from the updated entities; only adjust the generated migration file manually if absolutely necessary (for example, for data backfills or complex constraints).

@@ -886,7 +886,7 @@ export interface FieldConfiguration {
 
 
 /** Display mode for field configuration widgets */
-export type FieldDisplayMode = 'CARD' | 'FIELD' | 'VIEW'
+export type FieldDisplayMode = 'CARD' | 'EDITOR' | 'FIELD' | 'VIEW'
 
 export interface FieldRichTextConfiguration {
     configurationType: WidgetConfigurationType
@@ -9203,6 +9203,7 @@ export const enumBarChartLayout = {
 
 export const enumFieldDisplayMode = {
    CARD: 'CARD' as const,
+   EDITOR: 'EDITOR' as const,
    FIELD: 'FIELD' as const,
    VIEW: 'VIEW' as const
 }

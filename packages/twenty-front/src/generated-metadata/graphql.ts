@@ -1819,6 +1819,7 @@ export type FieldConnection = {
 /** Display mode for field configuration widgets */
 export enum FieldDisplayMode {
   CARD = 'CARD',
+  EDITOR = 'EDITOR',
   FIELD = 'FIELD',
   VIEW = 'VIEW'
 }
