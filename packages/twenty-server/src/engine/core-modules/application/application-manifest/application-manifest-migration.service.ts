@@ -62,6 +62,12 @@ export class ApplicationManifestMigrationService {
       );
     }
 
+    const defaultRoleManifest = manifest.roles.find(
+      (role) =>
+        role.universalIdentifier ===
+        manifest.application.defaultRoleUniversalIdentifier,
+    );
+
     // Pared-down manifest: only the pre-install logic function, every other
     // entity array intentionally empty. Combined with
     // inferDeletionFromMissingEntities: false below, this produces a purely
@@ -73,7 +79,7 @@ export class ApplicationManifestMigrationService {
       fields: [],
       logicFunctions: [preInstallLogicFunctionManifest],
       frontComponents: [],
-      roles: [],
+      roles: isDefined(defaultRoleManifest) ? [defaultRoleManifest] : [],
       skills: [],
       agents: [],
       publicAssets: [],
@@ -148,6 +154,12 @@ export class ApplicationManifestMigrationService {
         'Validation errors occurred while syncing pre-install logic function',
       );
     }
+
+    await this.syncDefaultRoleAndSettingsCustomTab({
+      manifest,
+      workspaceId,
+      ownerFlatApplication,
+    });
 
     this.logger.log(
       `Pre-install logic function synced for application ${ownerFlatApplication.universalIdentifier}`,

@@ -281,13 +281,22 @@ export class ApplicationInstallService {
       JSON.stringify(payload),
     );
 
-    await this.logicFunctionExecutorService.execute({
+    const result = await this.logicFunctionExecutorService.execute({
       logicFunctionId: flatLogicFunction.id,
       workspaceId,
       payload,
     });
 
-    this.logger.log('Pre-install hook executed successfully');
+    if (!isDefined(result)) {
+      this.logger.log('Pre-install hook executed successfully');
+    }
+
+    if (result.error) {
+      throw new ApplicationException(
+        result.error.errorMessage,
+        ApplicationExceptionCode.APP_NOT_INSTALLED,
+      );
+    }
   }
 
   private async runPostInstallHook(params: {
