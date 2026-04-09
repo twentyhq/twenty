@@ -70,6 +70,20 @@ export const computeStandardNoteViewFields = (
     }),
 
     // noteRecordPageFields view fields
+    // General group
+    noteRecordPageFieldsBodyV2: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'note',
+      context: {
+        viewName: 'noteRecordPageFields',
+        viewFieldName: 'bodyV2',
+        fieldName: 'bodyV2',
+        position: 0,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
     noteRecordPageFieldsNoteTargets: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'note',
@@ -81,71 +95,6 @@ export const computeStandardNoteViewFields = (
         isVisible: true,
         size: 150,
         viewFieldGroupName: 'general',
-      },
-    }),
-    noteRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'note',
-      context: {
-        viewName: 'noteRecordPageFields',
-        viewFieldName: 'createdAt',
-        fieldName: 'createdAt',
-        position: 0,
-        isVisible: true,
-        size: 150,
-        viewFieldGroupName: 'other',
-      },
-    }),
-    noteRecordPageFieldsCreatedBy: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'note',
-      context: {
-        viewName: 'noteRecordPageFields',
-        viewFieldName: 'createdBy',
-        fieldName: 'createdBy',
-        position: 1,
-        isVisible: true,
-        size: 150,
-        viewFieldGroupName: 'other',
-      },
-    }),
-    noteRecordPageFieldsBodyV2: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'note',
-      context: {
-        viewName: 'noteRecordPageFields',
-        viewFieldName: 'bodyV2',
-        fieldName: 'bodyV2',
-        position: 0,
-        isVisible: false,
-        size: 150,
-        viewFieldGroupName: 'additional',
-      },
-    }),
-    noteRecordPageFieldsUpdatedAt: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'note',
-      context: {
-        viewName: 'noteRecordPageFields',
-        viewFieldName: 'updatedAt',
-        fieldName: 'updatedAt',
-        position: 2,
-        isVisible: false,
-        size: 150,
-        viewFieldGroupName: 'other',
-      },
-    }),
-    noteRecordPageFieldsUpdatedBy: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'note',
-      context: {
-        viewName: 'noteRecordPageFields',
-        viewFieldName: 'updatedBy',
-        fieldName: 'updatedBy',
-        position: 3,
-        isVisible: false,
-        size: 150,
-        viewFieldGroupName: 'other',
       },
     }),
     noteRecordPageFieldsAttachments: createStandardViewFieldFlatMetadata({
@@ -187,6 +136,59 @@ export const computeStandardNoteViewFields = (
         isVisible: false,
         size: 150,
         viewFieldGroupName: 'general',
+      },
+    }),
+    // System group
+    noteRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'note',
+      context: {
+        viewName: 'noteRecordPageFields',
+        viewFieldName: 'createdAt',
+        fieldName: 'createdAt',
+        position: 0,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'system',
+      },
+    }),
+    noteRecordPageFieldsCreatedBy: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'note',
+      context: {
+        viewName: 'noteRecordPageFields',
+        viewFieldName: 'createdBy',
+        fieldName: 'createdBy',
+        position: 1,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'system',
+      },
+    }),
+    noteRecordPageFieldsUpdatedAt: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'note',
+      context: {
+        viewName: 'noteRecordPageFields',
+        viewFieldName: 'updatedAt',
+        fieldName: 'updatedAt',
+        position: 2,
+        isVisible: false,
+        size: 150,
+        viewFieldGroupName: 'system',
+      },
+    }),
+    noteRecordPageFieldsUpdatedBy: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'note',
+      context: {
+        viewName: 'noteRecordPageFields',
+        viewFieldName: 'updatedBy',
+        fieldName: 'updatedBy',
+        position: 3,
+        isVisible: false,
+        size: 150,
+        viewFieldGroupName: 'system',
       },
     }),
   };

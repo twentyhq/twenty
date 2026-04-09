@@ -3,6 +3,7 @@
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 const GLB_URL = '/illustrations/why-twenty/hero/hero.glb';
@@ -209,7 +210,6 @@ export function WhyTwenty() {
     canvas.style.display = 'block';
     canvas.style.height = '100%';
     canvas.style.width = '100%';
-    canvas.style.cursor = 'crosshair';
     container.appendChild(canvas);
 
     const clock = new THREE.Clock();
@@ -222,7 +222,14 @@ export function WhyTwenty() {
     let targetRotationX = 0;
     let targetRotationY = 0;
 
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath(
+      'https://www.gstatic.com/draco/versioned/decoders/1.5.6/',
+    );
+
     const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
+
     loader.load(GLB_URL, (gltf) => {
       if (cancelled) {
         disposeObjectSubtree(gltf.scene);
@@ -316,6 +323,7 @@ export function WhyTwenty() {
       window.cancelAnimationFrame(animationFrameId);
       disposeObjectSubtree(scene);
       renderer.dispose();
+      dracoLoader.dispose();
       if (canvas.parentNode === container) {
         container.removeChild(canvas);
       }

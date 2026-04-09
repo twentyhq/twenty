@@ -173,7 +173,7 @@ export const computeStandardMessageChannelViewFields = (
           position: 0,
           isVisible: true,
           size: 150,
-          viewFieldGroupName: 'other',
+          viewFieldGroupName: 'system',
         },
       }),
     messageChannelRecordPageFieldsCreatedBy:
@@ -187,7 +187,7 @@ export const computeStandardMessageChannelViewFields = (
           position: 1,
           isVisible: true,
           size: 150,
-          viewFieldGroupName: 'other',
+          viewFieldGroupName: 'system',
         },
       }),
   };

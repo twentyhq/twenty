@@ -10,17 +10,18 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
-import { SettingsAdminAiModelsTable } from '@/settings/admin-panel/ai/components/SettingsAdminAiModelsTable';
+import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
 import { SettingsAdminAiProviderListCard } from '@/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard';
 import { AI_PROVIDER_SOURCE } from '@/settings/admin-panel/ai/constants/AiProviderSource';
 import { SET_ADMIN_AI_MODEL_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelRecommended';
+import { SET_ADMIN_AI_MODELS_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelsRecommended';
 import { SET_ADMIN_DEFAULT_AI_MODEL } from '@/settings/admin-panel/ai/graphql/mutations/setAdminDefaultAiModel';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_ADMIN_AI_USAGE_BY_WORKSPACE } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiUsageByWorkspace';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
 import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
-import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
 import { parseProviderItems } from '@/settings/admin-panel/ai/utils/parseProviderItems';
+import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
 import { SettingsAdminTabSkeletonLoader } from '@/settings/admin-panel/components/SettingsAdminTabSkeletonLoader';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
@@ -62,7 +63,11 @@ export const SettingsAdminAI = () => {
   const periodOptions = getPeriodOptions();
   const usageDates = getPeriodDates(usagePeriod);
 
-  const { data, loading: isLoadingModels } = useQuery<{
+  const {
+    data,
+    loading: isLoadingModels,
+    refetch: refetchModels,
+  } = useQuery<{
     getAdminAiModels: {
       defaultSmartModelId?: string | null;
       defaultFastModelId?: string | null;
@@ -71,6 +76,7 @@ export const SettingsAdminAI = () => {
   }>(GET_ADMIN_AI_MODELS);
 
   const [setModelRecommended] = useMutation(SET_ADMIN_AI_MODEL_RECOMMENDED);
+  const [setModelsRecommended] = useMutation(SET_ADMIN_AI_MODELS_RECOMMENDED);
   const [setDefaultModel] = useMutation(SET_ADMIN_DEFAULT_AI_MODEL);
 
   const { data: providersData, loading: isLoadingProviders } =
@@ -244,10 +250,35 @@ export const SettingsAdminAI = () => {
             description={t`Select which models appear as recommended in the workspace model picker`}
           />
 
-          <SettingsAdminAiModelsTable
+          <SettingsAiModelsTable
             models={enabledModels}
+            isChecked={(model) => model.isRecommended === true}
             onToggle={handleRecommendedToggle}
-            checkedField="isRecommended"
+            onToggleAll={async (shouldCheckAll) => {
+              const modelIds = enabledModels
+                .filter(
+                  (model) => (model.isRecommended === true) !== shouldCheckAll,
+                )
+                .map((model) => model.modelId);
+
+              if (modelIds.length === 0) return;
+
+              try {
+                await setModelsRecommended({
+                  variables: {
+                    modelIds,
+                    recommended: shouldCheckAll,
+                  },
+                });
+              } catch {
+                enqueueErrorSnackBar({
+                  message: t`Failed to update model recommendations`,
+                });
+              } finally {
+                await refetchModels();
+                await refetchClientConfig();
+              }
+            }}
             anchorPrefix="recommended-model-row"
           />
         </Section>

@@ -9,6 +9,13 @@ import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty
 export const NAVIGATION_COMMAND_UUID_NAMESPACE =
   'b31830da-2ae0-48eb-a915-12fa4ab96dd3';
 
+export const NAVIGATION_INTERPOLATED_LABEL =
+  'Go to ${navigateToObjectMetadataItem.labelPlural}';
+export const NAVIGATION_INTERPOLATED_SHORT_LABEL =
+  '${navigateToObjectMetadataItem.labelPlural}';
+export const NAVIGATION_INTERPOLATED_ICON =
+  '${navigateToObjectMetadataItem.icon}';
+
 export const buildNavigationFlatCommandMenuItem = ({
   objectMetadata,
   commandMenuItemId,
@@ -20,8 +27,6 @@ export const buildNavigationFlatCommandMenuItem = ({
   objectMetadata: {
     id: string;
     universalIdentifier: string;
-    labelPlural: string;
-    icon: string | null;
     nameSingular: string;
     shortcut: string | null;
   };
@@ -43,9 +48,9 @@ export const buildNavigationFlatCommandMenuItem = ({
     applicationUniversalIdentifier:
       TWENTY_STANDARD_APPLICATION.universalIdentifier,
     workspaceId,
-    label: `Go to ${objectMetadata.labelPlural}`,
-    shortLabel: objectMetadata.labelPlural,
-    icon: objectMetadata.icon,
+    label: NAVIGATION_INTERPOLATED_LABEL,
+    shortLabel: NAVIGATION_INTERPOLATED_SHORT_LABEL,
+    icon: NAVIGATION_INTERPOLATED_ICON,
     position,
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,

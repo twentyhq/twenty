@@ -15,14 +15,12 @@ type HelpedSceneScrollLayoutEffectProps = HelpedSceneLayoutRefs & {
 export function HelpedSceneScrollLayoutEffect({
   cardRefs,
   cards,
-  headlineRef,
   innerRef,
   sectionRef,
 }: HelpedSceneScrollLayoutEffectProps) {
   useEffect(() => {
     const refs: HelpedSceneLayoutRefs = {
       cardRefs,
-      headlineRef,
       innerRef,
       sectionRef,
     };
@@ -51,7 +49,7 @@ export function HelpedSceneScrollLayoutEffect({
         window.cancelAnimationFrame(rafId);
       }
     };
-  }, [cardRefs, cards, headlineRef, innerRef, sectionRef]);
+  }, [cardRefs, cards, innerRef, sectionRef]);
 
   return null;
 }
