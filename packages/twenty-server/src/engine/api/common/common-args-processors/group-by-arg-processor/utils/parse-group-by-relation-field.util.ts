@@ -233,6 +233,8 @@ export const parseGroupByRelationField = ({
       nestedFieldMetadata,
       groupByFields,
     });
+
+    return;
   }
 
   if (nestedFieldGroupByDefinition === true) {
@@ -243,4 +245,10 @@ export const parseGroupByRelationField = ({
 
     return;
   }
+
+  throw new CommonQueryRunnerException(
+    `Invalid groupBy definition for nested field "${fieldName}.${nestedFieldName}"`,
+    CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+    { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+  );
 };

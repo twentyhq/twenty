@@ -152,12 +152,21 @@ export const parseAndValidateGroupByFieldsOrThrow = ({
         continue;
       }
 
-      if (typeof fieldNames[fieldName] === 'object') {
-        const supportedCompositeSubFields = isCompositeFieldMetadataType(
+      if (
+        typeof fieldNames[fieldName] === 'object' &&
+        fieldNames[fieldName] !== null
+      ) {
+        if (!isCompositeFieldMetadataType(fieldMetadata.type)) {
+          throw new CommonQueryRunnerException(
+            `Field "${fieldName}" does not support nested subfields in groupBy`,
+            CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+            { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+          );
+        }
+
+        const supportedCompositeSubFields = getGroupableSubFieldsForCompositeType(
           fieldMetadata.type,
-        )
-          ? getGroupableSubFieldsForCompositeType(fieldMetadata.type)
-          : null;
+        );
 
         validateSingleKeyForGroupByOrThrow({
           groupByKeys: Object.keys(fieldNames[fieldName]),
@@ -178,16 +187,30 @@ export const parseAndValidateGroupByFieldsOrThrow = ({
           }
 
           if (
-            (fieldNames[fieldName] as Record<string, boolean>)[subFieldName] ===
+            (fieldNames[fieldName] as Record<string, boolean>)[subFieldName] !==
             true
           ) {
-            groupByFields.push({
-              fieldMetadata,
-              subFieldName,
-            });
+            throw new CommonQueryRunnerException(
+              `Composite subfield "${subFieldName}" must be set to true in groupBy for "${fieldName}"`,
+              CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+              { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+            );
           }
+
+          groupByFields.push({
+            fieldMetadata,
+            subFieldName,
+          });
         }
+
+        continue;
       }
+
+      throw new CommonQueryRunnerException(
+        `Invalid groupBy definition for field "${fieldName}"`,
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
     }
   }
 
