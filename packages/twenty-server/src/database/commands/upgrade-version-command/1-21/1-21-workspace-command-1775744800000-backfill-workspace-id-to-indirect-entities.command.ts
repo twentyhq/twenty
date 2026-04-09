@@ -18,6 +18,11 @@ type BackfillDefinition = {
 
 const BACKFILL_DEFINITIONS: BackfillDefinition[] = [
   {
+    table: 'twoFactorAuthenticationMethod',
+    parentTable: 'userWorkspace',
+    foreignKey: 'userWorkspaceId',
+  },
+  {
     table: 'agentChatThread',
     parentTable: 'userWorkspace',
     foreignKey: 'userWorkspaceId',
