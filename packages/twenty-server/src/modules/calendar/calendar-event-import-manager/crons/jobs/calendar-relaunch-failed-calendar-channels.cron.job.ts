@@ -52,19 +52,19 @@ export class CalendarRelaunchFailedCalendarChannelsCronJob {
       (workspace) => workspace.id,
     );
 
-    try {
-      const failedCalendarChannels = await this.calendarChannelRepository.find({
-        where: {
-          syncStage: CalendarChannelSyncStage.FAILED,
-          syncStatus: CalendarChannelSyncStatus.FAILED_UNKNOWN,
-        },
-      });
+    const failedCalendarChannels = await this.calendarChannelRepository.find({
+      where: {
+        syncStage: CalendarChannelSyncStage.FAILED,
+        syncStatus: CalendarChannelSyncStatus.FAILED_UNKNOWN,
+      },
+    });
 
-      for (const calendarChannel of failedCalendarChannels) {
-        if (!activeWorkspaceIds.includes(calendarChannel.workspaceId)) {
-          continue;
-        }
+    for (const calendarChannel of failedCalendarChannels) {
+      if (!activeWorkspaceIds.includes(calendarChannel.workspaceId)) {
+        continue;
+      }
 
+      try {
         await this.messageQueueService.add<CalendarRelaunchFailedCalendarChannelJobData>(
           CalendarRelaunchFailedCalendarChannelJob.name,
           {
@@ -72,9 +72,13 @@ export class CalendarRelaunchFailedCalendarChannelsCronJob {
             calendarChannelId: calendarChannel.id,
           },
         );
+      } catch (error) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          workspace: {
+            id: calendarChannel.workspaceId,
+          },
+        });
       }
-    } catch (error) {
-      this.exceptionHandlerService.captureExceptions([error]);
     }
   }
 }

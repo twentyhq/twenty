@@ -52,19 +52,19 @@ export class MessagingRelaunchFailedMessageChannelsCronJob {
       (workspace) => workspace.id,
     );
 
-    try {
-      const failedMessageChannels = await this.messageChannelRepository.find({
-        where: {
-          syncStage: MessageChannelSyncStage.FAILED,
-          syncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN,
-        },
-      });
+    const failedMessageChannels = await this.messageChannelRepository.find({
+      where: {
+        syncStage: MessageChannelSyncStage.FAILED,
+        syncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN,
+      },
+    });
 
-      for (const messageChannel of failedMessageChannels) {
-        if (!activeWorkspaceIds.includes(messageChannel.workspaceId)) {
-          continue;
-        }
+    for (const messageChannel of failedMessageChannels) {
+      if (!activeWorkspaceIds.includes(messageChannel.workspaceId)) {
+        continue;
+      }
 
+      try {
         await this.messageQueueService.add<MessagingRelaunchFailedMessageChannelJobData>(
           MessagingRelaunchFailedMessageChannelJob.name,
           {
@@ -72,9 +72,13 @@ export class MessagingRelaunchFailedMessageChannelsCronJob {
             messageChannelId: messageChannel.id,
           },
         );
+      } catch (error) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          workspace: {
+            id: messageChannel.workspaceId,
+          },
+        });
       }
-    } catch (error) {
-      this.exceptionHandlerService.captureExceptions([error]);
     }
   }
 }
