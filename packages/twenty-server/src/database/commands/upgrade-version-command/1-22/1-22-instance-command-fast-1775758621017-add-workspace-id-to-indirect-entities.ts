@@ -5,7 +5,6 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 
 const TABLES = [
   'applicationVariable',
-  'billingSubscriptionItem',
   'indexFieldMetadata',
   'twoFactorAuthenticationMethod',
   'agentMessagePart',
