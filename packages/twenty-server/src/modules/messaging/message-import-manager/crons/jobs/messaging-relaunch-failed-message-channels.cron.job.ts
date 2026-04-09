@@ -1,7 +1,7 @@
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { DataSource, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import {
   MessageChannelSyncStage,
@@ -14,8 +14,8 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import {
   MessagingRelaunchFailedMessageChannelJob,
   type MessagingRelaunchFailedMessageChannelJobData,
@@ -29,10 +29,10 @@ export class MessagingRelaunchFailedMessageChannelsCronJob {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
@@ -48,27 +48,41 @@ export class MessagingRelaunchFailedMessageChannelsCronJob {
       },
     });
 
-    for (const activeWorkspace of activeWorkspaces) {
+    const activeWorkspaceIds = activeWorkspaces.map(
+      (workspace) => workspace.id,
+    );
+
+    if (activeWorkspaceIds.length === 0) {
+      return;
+    }
+
+    const failedMessageChannels = await this.messageChannelRepository
+      .find({
+        where: {
+          syncStage: MessageChannelSyncStage.FAILED,
+          syncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN,
+          workspaceId: In(activeWorkspaceIds),
+        },
+      })
+      .catch((error) => {
+        this.exceptionHandlerService.captureExceptions([error]);
+
+        return [];
+      });
+
+    for (const messageChannel of failedMessageChannels) {
       try {
-        const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
-
-        const failedMessageChannels = await this.coreDataSource.query(
-          `SELECT * FROM ${schemaName}."messageChannel" WHERE "syncStage" = '${MessageChannelSyncStage.FAILED}' AND "syncStatus" = '${MessageChannelSyncStatus.FAILED_UNKNOWN}'`,
+        await this.messageQueueService.add<MessagingRelaunchFailedMessageChannelJobData>(
+          MessagingRelaunchFailedMessageChannelJob.name,
+          {
+            workspaceId: messageChannel.workspaceId,
+            messageChannelId: messageChannel.id,
+          },
         );
-
-        for (const messageChannel of failedMessageChannels) {
-          await this.messageQueueService.add<MessagingRelaunchFailedMessageChannelJobData>(
-            MessagingRelaunchFailedMessageChannelJob.name,
-            {
-              workspaceId: activeWorkspace.id,
-              messageChannelId: messageChannel.id,
-            },
-          );
-        }
       } catch (error) {
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: {
-            id: activeWorkspace.id,
+            id: messageChannel.workspaceId,
           },
         });
       }

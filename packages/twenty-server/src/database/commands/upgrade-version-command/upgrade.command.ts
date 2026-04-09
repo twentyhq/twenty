@@ -5,24 +5,20 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { SemVer } from 'semver';
 import { DataSource } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { WorkspaceCommandRunner } from 'src/database/commands/command-runners/workspace.command-runner';
 import { CommandLogger } from 'src/database/commands/logger';
 import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
 import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
 import {
   UpgradeCommandRegistryService,
+  type RegisteredWorkspaceCommand,
   type VersionBundle,
 } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
-export type VersionCommands = (
-  | WorkspaceCommandRunner
-  | ActiveOrSuspendedWorkspaceCommandRunner
-)[];
+export type VersionCommands = RegisteredWorkspaceCommand[];
 
 export type UpgradeCommandOptions = {
   workspaceId?: Set<string>;
@@ -272,7 +268,11 @@ Please roll back to that version and run the upgrade command again.`,
 
   private async runWorkspaceCommands(
     options: UpgradeCommandOptions,
-    versionContext: VersionContext,
+    {
+      currentAppVersion,
+      fromWorkspaceVersion,
+      workspaceCommands,
+    }: VersionContext,
   ) {
     return await this.workspaceIteratorService.iterate({
       workspaceIds:
@@ -286,11 +286,9 @@ Please roll back to that version and run the upgrade command again.`,
         await this.workspaceUpgradeService.upgradeWorkspace({
           iteratorContext: context,
           options,
-          fromWorkspaceVersion: versionContext.fromWorkspaceVersion,
-          currentAppVersion: versionContext.currentAppVersion,
-          workspaceCommands: versionContext.workspaceCommands.map(
-            (entry) => entry.command,
-          ),
+          fromWorkspaceVersion,
+          currentAppVersion,
+          workspaceCommands,
         });
       },
     });

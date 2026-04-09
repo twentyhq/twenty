@@ -7,19 +7,23 @@ import { ExaDriver } from 'src/engine/core-modules/web-search/drivers/exa.driver
 import { WebSearchDriverType } from 'src/engine/core-modules/web-search/web-search.interface';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
+import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class WebSearchDriverFactory extends DriverFactoryBase<WebSearchDriver> {
-  constructor(twentyConfigService: TwentyConfigService) {
-    super(twentyConfigService);
+  constructor(
+    twentyConfigService: TwentyConfigService,
+    configGroupHashService: ConfigGroupHashService,
+  ) {
+    super(twentyConfigService, configGroupHashService);
   }
 
   protected buildConfigKey(): string {
     const driverType = this.twentyConfigService.get('WEB_SEARCH_DRIVER');
 
     if (driverType !== WebSearchDriverType.DISABLED) {
-      return `${driverType}|${this.getConfigGroupHash(ConfigVariablesGroup.LLM)}`;
+      return `${driverType}|${this.configGroupHashService.computeHash(ConfigVariablesGroup.LLM)}`;
     }
 
     return driverType;

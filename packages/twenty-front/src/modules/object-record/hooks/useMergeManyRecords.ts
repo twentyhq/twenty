@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 
+import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
@@ -8,10 +9,9 @@ import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQue
 import { useMergeManyRecordsMutation } from '@/object-record/hooks/useMergeManyRecordsMutation';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getMergeManyRecordsMutationResponseField } from '@/object-record/utils/getMergeManyRecordsMutationResponseField';
-import { getOperationName } from '~/utils/getOperationName';
 import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
+import { getOperationName } from '~/utils/getOperationName';
 
 export type MergeManySettings = {
   conflictPriorityIndex: number;
@@ -88,7 +88,6 @@ export const useMergeManyRecords = <
           // Prevent cache updates during dry run to avoid overwriting original record data
           ...(preview && {
             fetchPolicy: 'no-cache',
-            errorPolicy: 'ignore',
           }),
           refetchQueries: [
             getOperationName(findOneRecordQuery) ?? '',

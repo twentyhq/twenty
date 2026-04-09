@@ -1,5 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AiModelPreferencesService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-preferences.service';
 import { ProviderConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-config.service';
@@ -118,6 +119,10 @@ describe('AiModelRegistryService', () => {
         {
           provide: AiModelPreferencesService,
           useValue: mockPreferencesService,
+        },
+        {
+          provide: ConfigGroupHashService,
+          useValue: { computeHash: jest.fn().mockReturnValue('') },
         },
       ],
     }).compile();

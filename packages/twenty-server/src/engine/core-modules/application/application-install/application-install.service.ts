@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { promises as fs } from 'fs';
 import { resolve } from 'path';
 
+import semver from 'semver';
 import { Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -116,6 +117,37 @@ export class ApplicationInstallService {
         applicationRegistrationId: appRegistration.id,
         sourceType: appRegistration.sourceType,
       });
+
+      const incomingVersion = resolvedPackage.packageJson.version;
+
+      if (
+        !wasCreated &&
+        isDefined(application.version) &&
+        isDefined(incomingVersion)
+      ) {
+        if (!isDefined(semver.valid(incomingVersion))) {
+          throw new ApplicationException(
+            `Invalid version "${incomingVersion}" in package.json. Must be a valid semver version.`,
+            ApplicationExceptionCode.INVALID_INPUT,
+          );
+        }
+
+        if (isDefined(semver.valid(application.version))) {
+          if (semver.eq(incomingVersion, application.version)) {
+            throw new ApplicationException(
+              `${universalIdentifier}@${incomingVersion} is already installed in this workspace.`,
+              ApplicationExceptionCode.APP_ALREADY_INSTALLED,
+            );
+          }
+
+          if (semver.lt(incomingVersion, application.version)) {
+            throw new ApplicationException(
+              `Cannot install ${universalIdentifier}@${incomingVersion}: version ${application.version} is already installed and downgrading is not allowed.`,
+              ApplicationExceptionCode.CANNOT_DOWNGRADE_APPLICATION,
+            );
+          }
+        }
+      }
 
       await this.writeFilesToStorage(
         resolvedPackage.extractedDir,

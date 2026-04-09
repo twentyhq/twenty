@@ -584,7 +584,7 @@ type ViewField {
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
-  isOverridden: Boolean!
+  isOverridden: Boolean @deprecated(reason: "isOverridden is deprecated")
 }
 
 enum AggregateOperations {
@@ -693,7 +693,7 @@ type ViewFieldGroup {
   updatedAt: DateTime!
   deletedAt: DateTime
   viewFields: [ViewField!]!
-  isOverridden: Boolean!
+  isOverridden: Boolean! @deprecated(reason: "isOverridden is deprecated")
 }
 
 type View {
@@ -899,7 +899,7 @@ type PageLayoutWidget {
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
-  isOverridden: Boolean!
+  isOverridden: Boolean @deprecated(reason: "isOverridden is deprecated")
 }
 
 enum WidgetType {
@@ -1233,7 +1233,7 @@ type PageLayoutTab {
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
-  isOverridden: Boolean!
+  isOverridden: Boolean @deprecated(reason: "isOverridden is deprecated")
 }
 
 type PageLayout {
@@ -3471,6 +3471,7 @@ type Mutation {
   destroyPageLayout(id: String!): Boolean!
   updatePageLayoutWithTabsAndWidgets(id: String!, input: UpdatePageLayoutWithTabsInput!): PageLayout!
   resetPageLayoutWidgetToDefault(id: String!): PageLayoutWidget!
+  resetPageLayoutTabToDefault(id: String!): PageLayoutTab!
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
   updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
   destroyPageLayoutWidget(id: String!): Boolean!

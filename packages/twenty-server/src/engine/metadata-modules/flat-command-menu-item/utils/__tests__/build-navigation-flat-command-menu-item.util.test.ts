@@ -2,7 +2,12 @@ import { v5 } from 'uuid';
 
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
-import { buildNavigationFlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util';
+import {
+  buildNavigationFlatCommandMenuItem,
+  NAVIGATION_INTERPOLATED_ICON,
+  NAVIGATION_INTERPOLATED_LABEL,
+  NAVIGATION_INTERPOLATED_SHORT_LABEL,
+} from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 const NAVIGATION_COMMAND_UUID_NAMESPACE =
@@ -11,8 +16,6 @@ const NAVIGATION_COMMAND_UUID_NAMESPACE =
 const baseObjectMetadata = {
   id: 'obj-id-1',
   universalIdentifier: 'obj-universal-1',
-  labelPlural: 'People',
-  icon: 'IconUser',
   nameSingular: 'person',
   shortcut: 'P',
 };
@@ -38,17 +41,17 @@ describe('buildNavigationFlatCommandMenuItem', () => {
     expect(result.universalIdentifier).toBe(expectedUniversalIdentifier);
   });
 
-  it('should set label and shortLabel from objectMetadata', () => {
+  it('should set label and shortLabel as interpolation templates', () => {
     const result = buildNavigationFlatCommandMenuItem(baseArgs);
 
-    expect(result.label).toBe('Go to People');
-    expect(result.shortLabel).toBe('People');
+    expect(result.label).toBe(NAVIGATION_INTERPOLATED_LABEL);
+    expect(result.shortLabel).toBe(NAVIGATION_INTERPOLATED_SHORT_LABEL);
   });
 
-  it('should set icon from objectMetadata', () => {
+  it('should set icon as interpolation template', () => {
     const result = buildNavigationFlatCommandMenuItem(baseArgs);
 
-    expect(result.icon).toBe('IconUser');
+    expect(result.icon).toBe(NAVIGATION_INTERPOLATED_ICON);
   });
 
   it('should set payload with objectMetadataItemId', () => {

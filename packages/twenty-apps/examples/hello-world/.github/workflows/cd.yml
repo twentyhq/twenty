@@ -30,13 +30,13 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Deploy
-        uses: ./.github/actions/deploy
+        uses: twentyhq/twenty/.github/actions/deploy-twenty-app@main
         with:
           api-url: ${{ env.TWENTY_DEPLOY_URL }}
           api-key: ${{ secrets.TWENTY_DEPLOY_API_KEY }}
 
       - name: Install
-        uses: ./.github/actions/install
+        uses: twentyhq/twenty/.github/actions/install-twenty-app@main
         with:
           api-url: ${{ env.TWENTY_DEPLOY_URL }}
           api-key: ${{ secrets.TWENTY_DEPLOY_API_KEY }}

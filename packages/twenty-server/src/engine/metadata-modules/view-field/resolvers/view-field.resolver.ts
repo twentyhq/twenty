@@ -1,30 +1,16 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import {
-  Args,
-  Float,
-  Int,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-} from '@nestjs/graphql';
-
-import { AggregateOperations } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { resolveOverridableEntityProperty } from 'src/engine/metadata-modules/utils/resolve-overridable-entity-property.util';
 import { CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
 import { DeleteViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/delete-view-field.input';
 import { DestroyViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/destroy-view-field.input';
 import { UpdateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/update-view-field.input';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
-import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { CreateViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-field-permission.guard';
 import { DeleteViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-field-permission.guard';
@@ -38,49 +24,12 @@ import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/
 export class ViewFieldResolver {
   constructor(private readonly viewFieldService: ViewFieldService) {}
 
-  @ResolveField(() => Boolean)
-  isVisible(@Parent() viewField: ViewFieldDTO): boolean {
-    return resolveOverridableEntityProperty(viewField, 'isVisible');
-  }
-
-  @ResolveField(() => Int)
-  size(@Parent() viewField: ViewFieldDTO): number {
-    return resolveOverridableEntityProperty(viewField, 'size');
-  }
-
-  @ResolveField(() => Float)
-  position(@Parent() viewField: ViewFieldDTO): number {
-    return resolveOverridableEntityProperty(viewField, 'position');
-  }
-
-  @ResolveField(() => AggregateOperations, { nullable: true })
-  aggregateOperation(
-    @Parent() viewField: ViewFieldDTO,
-  ): AggregateOperations | null | undefined {
-    return resolveOverridableEntityProperty(viewField, 'aggregateOperation');
-  }
-
-  @ResolveField(() => UUIDScalarType, { nullable: true })
-  viewFieldGroupId(
-    @Parent() viewField: ViewFieldDTO,
-  ): string | null | undefined {
-    return resolveOverridableEntityProperty(viewField, 'viewFieldGroupId');
-  }
-
-  @ResolveField(() => Boolean)
-  isOverridden(@Parent() viewField: ViewFieldDTO): boolean {
-    return (
-      isDefined(viewField.overrides) &&
-      Object.keys(viewField.overrides).length > 0
-    );
-  }
-
   @Query(() => [ViewFieldDTO])
   @UseGuards(NoPermissionGuard)
   async getViewFields(
     @Args('viewId', { type: () => String }) viewId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<ViewFieldEntity[]> {
+  ): Promise<ViewFieldDTO[]> {
     return this.viewFieldService.findByViewId(workspace.id, viewId);
   }
 
@@ -89,7 +38,7 @@ export class ViewFieldResolver {
   async getViewField(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<ViewFieldEntity | null> {
+  ): Promise<ViewFieldDTO | null> {
     return this.viewFieldService.findById(id, workspace.id);
   }
 

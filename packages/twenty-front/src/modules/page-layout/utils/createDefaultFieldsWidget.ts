@@ -42,7 +42,6 @@ export const createDefaultFieldsWidget = ({
       index: positionIndex,
     },
     objectMetadataId: objectMetadataId ?? null,
-    isOverridden: false,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     deletedAt: null,

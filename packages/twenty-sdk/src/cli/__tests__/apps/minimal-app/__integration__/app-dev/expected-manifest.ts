@@ -363,6 +363,9 @@ export const EXPECTED_MANIFEST: Manifest = {
       canBeAssignedToAgents: false,
       canBeAssignedToUsers: true,
       canBeAssignedToApiKeys: false,
+      fieldPermissions: [],
+      objectPermissions: [],
+      permissionFlags: [],
     },
   ],
 };

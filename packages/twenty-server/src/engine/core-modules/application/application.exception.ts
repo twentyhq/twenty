@@ -18,6 +18,8 @@ export enum ApplicationExceptionCode {
   PACKAGE_RESOLUTION_FAILED = 'PACKAGE_RESOLUTION_FAILED',
   TARBALL_EXTRACTION_FAILED = 'TARBALL_EXTRACTION_FAILED',
   UPGRADE_FAILED = 'UPGRADE_FAILED',
+  APP_ALREADY_INSTALLED = 'APP_ALREADY_INSTALLED',
+  CANNOT_DOWNGRADE_APPLICATION = 'CANNOT_DOWNGRADE_APPLICATION',
 }
 
 const getApplicationExceptionUserFriendlyMessage = (
@@ -50,6 +52,10 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`Failed to extract tarball.`;
     case ApplicationExceptionCode.UPGRADE_FAILED:
       return msg`Application upgrade failed.`;
+    case ApplicationExceptionCode.APP_ALREADY_INSTALLED:
+      return msg`This version of the application is already installed in this workspace.`;
+    case ApplicationExceptionCode.CANNOT_DOWNGRADE_APPLICATION:
+      return msg`A higher version of this application is already installed. Downgrading is not allowed.`;
     default:
       assertUnreachable(code);
   }

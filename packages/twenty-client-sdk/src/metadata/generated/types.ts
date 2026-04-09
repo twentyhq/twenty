@@ -7812,6 +7812,15 @@ export default {
                     ]
                 }
             ],
+            "resetPageLayoutTabToDefault": [
+                113,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "createPageLayoutWidget": [
                 75,
                 {

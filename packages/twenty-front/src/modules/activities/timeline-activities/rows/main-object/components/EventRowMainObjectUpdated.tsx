@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { EventCard } from '@/activities/timeline-activities/rows/components/EventCard';
 import { EventCardToggleButton } from '@/activities/timeline-activities/rows/components/EventCardToggleButton';
-import { StyledEventRowItemColumn } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
+import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
 import { EventFieldDiffContainer } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffContainer';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -79,7 +79,7 @@ export const EventRowMainObjectUpdated = ({
     <StyledEventRowMainObjectUpdatedContainer>
       <StyledRowContainer>
         <StyledRow>
-          <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
+          <EventRowItem>{authorFullName}</EventRowItem>
           {t`updated`}
           {diffEntries.length === 1 && (
             <EventFieldDiffContainer

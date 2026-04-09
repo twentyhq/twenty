@@ -38,6 +38,8 @@ import {
 import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
+import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
+import { type RoleConfig } from '@/sdk/roles/role-config';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -170,11 +172,12 @@ export const buildManifest = async (
         break;
       }
       case ManifestEntityKey.Roles: {
-        const extract = await extractManifestFromFile<RoleManifest>({
+        const extract = await extractManifestFromFile<RoleConfig>({
           appPath,
           filePath,
         });
-        roles.push(extract.config);
+        const roleConfig = fromRoleConfigToRoleManifest(extract.config);
+        roles.push(roleConfig);
         errors.push(...extract.errors);
         rolesFilePaths.push(relativePath);
         break;
