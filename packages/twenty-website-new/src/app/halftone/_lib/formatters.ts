@@ -1,21 +1,5 @@
-export function formatLightIntensity(value: number) {
-  return value.toFixed(1);
-}
-
-export function formatFillIntensity(value: number) {
-  return value.toFixed(2);
-}
-
-export function formatAmbientIntensity(value: number) {
-  return value.toFixed(2);
-}
-
 export function formatAngle(value: number) {
   return `${value}°`;
-}
-
-export function formatHeight(value: number) {
-  return value.toFixed(1);
 }
 
 export function formatDecimal(value: number, digits = 2) {
@@ -26,23 +10,33 @@ export function formatPercent(value: number, digits = 0) {
   return `${(value * 100).toFixed(digits)}%`;
 }
 
-export function formatRows(value: number) {
-  return String(value);
-}
-
 export function formatAnimationName(animation: {
   autoRotateEnabled: boolean;
   breatheEnabled: boolean;
   cameraParallaxEnabled: boolean;
+  dragFlowEnabled: boolean;
   followHoverEnabled: boolean;
   followDragEnabled: boolean;
   floatEnabled: boolean;
+  hoverLightEnabled: boolean;
   lightSweepEnabled: boolean;
   rotateEnabled: boolean;
   rotatePreset: string;
   springReturnEnabled: boolean;
-}) {
+}, sourceMode: 'shape' | 'image') {
   const activeModes: string[] = [];
+
+  if (sourceMode === 'image') {
+    if (animation.hoverLightEnabled) {
+      activeModes.push('hoverLight');
+    }
+
+    if (animation.dragFlowEnabled) {
+      activeModes.push('dragSmear');
+    }
+
+    return activeModes.length > 0 ? activeModes.join(' + ') : 'still';
+  }
 
   if (animation.autoRotateEnabled) {
     activeModes.push('autoRotate');

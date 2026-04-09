@@ -2,12 +2,18 @@ import type * as THREE from 'three';
 
 export type HalftoneTabId = 'design' | 'animations' | 'export';
 
-export type HalftoneRotateAxis = 'x' | 'y' | 'z' | 'xy';
-export type HalftoneRotatePreset =
-  | 'axis'
-  | 'lissajous'
-  | 'orbit'
-  | 'tumble';
+export type HalftoneSourceMode = 'shape' | 'image';
+
+export type HalftoneRotateAxis =
+  | 'x'
+  | 'y'
+  | 'z'
+  | 'xy'
+  | '-x'
+  | '-y'
+  | '-z'
+  | '-xy';
+export type HalftoneRotatePreset = 'axis' | 'lissajous' | 'orbit' | 'tumble';
 
 export type HalftoneModelLoader = 'fbx' | 'glb';
 
@@ -49,6 +55,8 @@ export interface HalftoneAnimationSettings {
   followHoverEnabled: boolean;
   followDragEnabled: boolean;
   floatEnabled: boolean;
+  hoverLightEnabled: boolean;
+  dragFlowEnabled: boolean;
   lightSweepEnabled: boolean;
   rotateEnabled: boolean;
   autoSpeed: number;
@@ -76,6 +84,17 @@ export interface HalftoneAnimationSettings {
   springDamping: number;
   springReturnEnabled: boolean;
   springStrength: number;
+  hoverLightIntensity: number;
+  hoverLightRadius: number;
+  dragFlowDecay: number;
+  dragFlowRadius: number;
+  dragFlowStrength: number;
+  hoverWarpStrength: number;
+  hoverWarpRadius: number;
+  dragWarpStrength: number;
+  waveEnabled: boolean;
+  waveSpeed: number;
+  waveAmount: number;
 }
 
 export interface HalftoneExportPose {
@@ -90,6 +109,7 @@ export interface HalftoneExportPose {
 }
 
 export interface HalftoneStudioSettings {
+  sourceMode: HalftoneSourceMode;
   shapeKey: string;
   lighting: HalftoneLightingSettings;
   material: HalftoneMaterialSettings;
@@ -121,6 +141,7 @@ export interface HalftoneStudioState {
 
 export type HalftoneStudioAction =
   | { type: 'setTab'; value: HalftoneTabId }
+  | { type: 'setSourceMode'; value: HalftoneSourceMode }
   | { type: 'setShapeKey'; value: string }
   | { type: 'patchLighting'; value: Partial<HalftoneLightingSettings> }
   | { type: 'patchMaterial'; value: Partial<HalftoneMaterialSettings> }

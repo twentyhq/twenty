@@ -37,55 +37,63 @@ export const PanelShell = styled.aside`
   }
 `;
 
-export const ControlsHeader = styled.div`
-  padding: 20px 20px 0;
-`;
-
-export const ControlsTitle = styled.div`
-  color: rgba(255, 255, 255, 0.92);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-`;
-
 export const TabsBar = styled.div`
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: 10px;
   display: flex;
   flex-shrink: 0;
-  gap: 2px;
-  margin: 16px 16px 0;
-  padding: 3px;
+  gap: 6px;
+  margin: 0;
+  padding: 14px 16px 10px;
+  position: relative;
+
+  &::after {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    bottom: 0;
+    content: '';
+    left: 20px;
+    position: absolute;
+    right: 20px;
+  }
 `;
 
 export const TabButton = styled.button<{ $active: boolean }>`
   background: ${(props) =>
-    props.$active ? 'rgba(255, 255, 255, 0.1)' : 'transparent'};
+    props.$active ? 'rgba(255, 255, 255, 0.08)' : 'transparent'};
   border: none;
-  border-radius: 8px;
+  border-radius: 7px;
   color: ${(props) =>
-    props.$active ? 'rgba(255, 255, 255, 0.92)' : 'rgba(255, 255, 255, 0.38)'};
+    props.$active ? 'rgba(255, 255, 255, 0.94)' : 'rgba(255, 255, 255, 0.52)'};
   cursor: pointer;
-  flex: 1;
   font-family: ${theme.font.family.sans};
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  padding: 6px 0;
-  transition: all 0.15s ease;
+  font-size: 12px;
+  font-weight: ${(props) => (props.$active ? 600 : 500)};
+  letter-spacing: 0;
+  line-height: 1;
+  padding: 8px 10px;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 
   &:hover {
     background: ${(props) =>
-      props.$active ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.05)'};
+      props.$active
+        ? 'rgba(255, 255, 255, 0.1)'
+        : 'rgba(255, 255, 255, 0.04)'};
     color: ${(props) =>
-      props.$active ? 'rgba(255, 255, 255, 0.92)' : 'rgba(255, 255, 255, 0.55)'};
+      props.$active
+        ? 'rgba(255, 255, 255, 0.94)'
+        : 'rgba(255, 255, 255, 0.74)'};
+  }
+
+  &:focus-visible {
+    outline: 1px solid rgba(255, 255, 255, 0.35);
+    outline-offset: 1px;
   }
 `;
 
 export const TabContent = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding: 20px;
+  padding: 18px 20px 20px;
 `;
 
 export const Section = styled.section<{ $first?: boolean }>`
@@ -129,6 +137,7 @@ export const SliderLabel = styled.label`
 `;
 
 export const SelectLabel = styled.label`
+  align-items: center;
   cursor: pointer;
   display: grid;
   gap: 10px;
@@ -206,6 +215,23 @@ export const SelectInput = styled.select`
   &:hover {
     border-color: rgba(255, 255, 255, 0.25);
   }
+`;
+
+export const ValueDisplay = styled.div`
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  font-family: ${theme.font.family.sans};
+  font-size: 11px;
+  min-height: 31px;
+  overflow: hidden;
+  padding: 7px 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
 `;
 
 export const ToggleRow = styled.div`
@@ -303,7 +329,7 @@ export const ToggleInput = styled.input`
   width: 0;
 
   &:checked + span {
-    background: #4A38F5;
+    background: #4a38f5;
   }
 
   &:checked + span::after {
@@ -424,7 +450,7 @@ export const ExportNameInput = styled.input`
   }
 
   &:focus {
-    border-color: #4A38F5;
+    border-color: #4a38f5;
   }
 
   &::placeholder {
@@ -448,25 +474,31 @@ export const ExportPreview = styled.div`
 
 export const ExportButton = styled.button<{ $primary?: boolean }>`
   align-items: center;
-  background: ${(props) => (props.$primary ? '#4A38F5' : 'rgba(255, 255, 255, 0.08)')};
-  border: none;
-  border-radius: 10px;
+  background: ${(props) =>
+    props.$primary ? '#4A38F5' : 'rgba(255, 255, 255, 0.08)'};
+  border: 1px solid
+    ${(props) =>
+      props.$primary ? 'rgba(116, 98, 255, 0.7)' : 'rgba(255, 255, 255, 0.12)'};
+  border-radius: 8px;
   color: ${(props) => (props.$primary ? '#fff' : 'rgba(255, 255, 255, 0.8)')};
   cursor: pointer;
   display: flex;
   font-family: ${theme.font.family.sans};
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   gap: 8px;
   justify-content: center;
   margin-top: ${(props) => (props.$primary ? '0' : '8px')};
-  padding: 11px 16px;
+  min-height: 31px;
+  padding: 7px 12px;
   transition: all 0.2s ease;
   width: 100%;
 
   &:hover {
     background: ${(props) =>
       props.$primary ? '#5a4af7' : 'rgba(255, 255, 255, 0.14)'};
+    border-color: ${(props) =>
+      props.$primary ? 'rgba(130, 114, 255, 0.9)' : 'rgba(255, 255, 255, 0.22)'};
   }
 `;
 

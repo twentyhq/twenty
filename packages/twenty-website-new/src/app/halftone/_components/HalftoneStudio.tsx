@@ -1,6 +1,9 @@
 'use client';
 
-import { HalftoneCanvas } from '@/app/halftone/_components/HalftoneCanvas';
+import {
+  HalftoneCanvas,
+  type HalftoneSnapshotFn,
+} from '@/app/halftone/_components/HalftoneCanvas';
 import { ControlsPanel } from '@/app/halftone/_components/ControlsPanel';
 import {
   createFallbackGeometry,
@@ -21,13 +24,21 @@ import type {
   GeometryCacheEntry,
   HalftoneExportPose,
   HalftoneGeometrySpec,
+  HalftoneSourceMode,
 } from '@/app/halftone/_lib/types';
 import { Logo as LogoIcon } from '@/icons';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import Link from 'next/link';
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import * as THREE from 'three';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
+import type * as THREE from 'three';
 
 const StudioShell = styled.div<{ $background: string }>`
   background: ${(props) => props.$background};
@@ -52,7 +63,9 @@ const LogoLink = styled(Link)`
 
 const Hint = styled.div<{ $tone: 'dark' | 'light'; $visible: boolean }>`
   color: ${(props) =>
-    props.$tone === 'dark' ? 'rgba(255, 255, 255, 0.34)' : 'rgba(0, 0, 0, 0.3)'};
+    props.$tone === 'dark'
+      ? 'rgba(255, 255, 255, 0.34)'
+      : 'rgba(0, 0, 0, 0.3)'};
   font-family: ${theme.font.family.mono};
   font-size: 11px;
   left: 50%;
@@ -112,9 +125,22 @@ const HiddenFileInput = styled.input`
   display: none;
 `;
 
+const DEFAULT_IMAGE_ASSET_PATH = '/images/shared/halftone/twenty-logo.svg';
+const DEFAULT_IMAGE_FILENAME = 'twenty-logo.svg';
+
 type PendingFilePicker = {
   resolve: (file: File | null) => void;
 };
+
+function isLightColor(hex: string) {
+  const color = hex.replace('#', '');
+  const r = parseInt(color.substring(0, 2), 16);
+  const g = parseInt(color.substring(2, 4), 16);
+  const b = parseInt(color.substring(4, 6), 16);
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+  return luminance > 0.5;
+}
 
 function downloadBlob(filename: string, blob: Blob) {
   const anchor = document.createElement('a');
@@ -151,10 +177,17 @@ export function HalftoneStudio() {
     createInitialHalftoneStudioState,
   );
   const [previewDistance, setPreviewDistance] = useState(4);
-  const [activeGeometry, setActiveGeometry] = useState<THREE.BufferGeometry>(() =>
-    createFallbackGeometry(),
+  const [activeGeometry, setActiveGeometry] = useState<THREE.BufferGeometry>(
+    () => createFallbackGeometry(),
   );
   const [exportName, setExportName] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageElement, setImageElement] = useState<HTMLImageElement | null>(
+    null,
+  );
+  const defaultImageFileReference = useRef<File | null>(null);
+  const defaultImageFilePromiseReference = useRef<Promise<File> | null>(null);
+  const snapshotReference = useRef<HalftoneSnapshotFn | null>(null);
   const fileInputReference = useRef<HTMLInputElement>(null);
   const pendingFilePickerReference = useRef<PendingFilePicker | null>(null);
   const geometryCacheReference = useRef<Map<string, GeometryCacheEntry>>(
@@ -167,7 +200,9 @@ export function HalftoneStudio() {
 
   const selectedShape = useMemo(
     () =>
-      state.geometrySpecs.find((shape) => shape.key === state.settings.shapeKey),
+      state.geometrySpecs.find(
+        (shape) => shape.key === state.settings.shapeKey,
+      ),
     [state.geometrySpecs, state.settings.shapeKey],
   );
   const shapeOptions = useMemo(
@@ -286,7 +321,9 @@ export function HalftoneStudio() {
 
   const handleShapeChange = useCallback(
     async (key: string) => {
-      const shape = state.geometrySpecs.find((candidate) => candidate.key === key);
+      const shape = state.geometrySpecs.find(
+        (candidate) => candidate.key === key,
+      );
 
       if (!shape) {
         return;
@@ -336,6 +373,65 @@ export function HalftoneStudio() {
     });
   }, [openFilePicker]);
 
+  const handleUploadImage = useCallback(async () => {
+    const file = await openFilePicker('.png,.jpg,.jpeg,.webp,.gif');
+
+    if (!file) {
+      return;
+    }
+
+    setImageFile(file);
+    dispatch({ type: 'setSourceMode', value: 'image' });
+  }, [openFilePicker]);
+
+  const loadDefaultImageFile = useCallback(async () => {
+    if (defaultImageFileReference.current) {
+      return defaultImageFileReference.current;
+    }
+
+    if (!defaultImageFilePromiseReference.current) {
+      defaultImageFilePromiseReference.current = fetch(DEFAULT_IMAGE_ASSET_PATH)
+        .then(async (response) => {
+          if (!response.ok) {
+            throw new Error('Could not load the default image.');
+          }
+
+          const blob = await response.blob();
+          const file = new File([blob], DEFAULT_IMAGE_FILENAME, {
+            type: blob.type || 'image/jpeg',
+          });
+
+          defaultImageFileReference.current = file;
+
+          return file;
+        })
+        .finally(() => {
+          defaultImageFilePromiseReference.current = null;
+        });
+    }
+
+    return defaultImageFilePromiseReference.current;
+  }, []);
+
+  const handleSourceModeChange = useCallback(
+    (mode: HalftoneSourceMode) => {
+      dispatch({ type: 'setSourceMode', value: mode });
+
+      if (mode !== 'image' || imageFile) {
+        return;
+      }
+
+      void loadDefaultImageFile()
+        .then((file) => {
+          setImageFile((currentFile) => currentFile ?? file);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    [imageFile, loadDefaultImageFile],
+  );
+
   const handlePoseChange = useCallback((pose: HalftoneExportPose) => {
     exportPoseReference.current = pose;
   }, []);
@@ -345,12 +441,16 @@ export function HalftoneStudio() {
     const kebabName = componentName
       .replace(/([a-z])([A-Z])/g, '$1-$2')
       .toLowerCase();
+    const isImageMode = state.settings.sourceMode === 'image';
     const importedFile = selectedImportedFile;
 
-    const modelFilename =
-      importedFile
-        ? `${kebabName}${importedFile.name.replace(/^[^.]*/, '')}`
-        : undefined;
+    const modelFilename = importedFile
+      ? `${kebabName}${importedFile.name.replace(/^[^.]*/, '')}`
+      : undefined;
+
+    const imageExportFilename = imageFile
+      ? `${kebabName}${imageFile.name.replace(/^[^.]*/, '')}`
+      : undefined;
 
     downloadText(
       `${componentName}.tsx`,
@@ -361,54 +461,107 @@ export function HalftoneStudio() {
         modelFilename,
         exportPoseReference.current,
         importedFile ?? undefined,
+        imageExportFilename,
       ),
     );
 
-    if (importedFile) {
+    if (isImageMode && imageFile) {
+      downloadBlob(imageExportFilename ?? imageFile.name, imageFile);
+    } else if (importedFile) {
       downloadBlob(modelFilename ?? importedFile.name, importedFile);
     }
   }, [
     defaultExportName,
     exportName,
+    imageFile,
     selectedImportedFile,
     selectedShape,
     state.settings,
   ]);
 
-  const handleExportHtml = useCallback(() => {
+  const handleExportHalftoneImage = useCallback(
+    async (width: number, height: number) => {
+      const snapshotFn = snapshotReference.current;
+
+      if (!snapshotFn) {
+        return;
+      }
+
+      const blob = await snapshotFn(width, height);
+
+      if (!blob) {
+        return;
+      }
+
+      downloadBlob(`halftone-${width}x${height}.png`, blob);
+    },
+    [],
+  );
+
+  const handleExportHtml = useCallback(async () => {
     const componentName = exportName || defaultExportName;
     const kebabName = componentName
       .replace(/([a-z])([A-Z])/g, '$1-$2')
       .toLowerCase();
+    const isImageMode = state.settings.sourceMode === 'image';
     const importedFile = selectedImportedFile;
 
-    const modelFilename =
-      importedFile
-        ? `${kebabName}${importedFile.name.replace(/^[^.]*/, '')}`
-        : undefined;
+    const modelFilename = importedFile
+      ? `${kebabName}${importedFile.name.replace(/^[^.]*/, '')}`
+      : undefined;
+
+    const imageExportFilename = imageFile
+      ? `${kebabName}${imageFile.name.replace(/^[^.]*/, '')}`
+      : undefined;
 
     downloadText(
       `${kebabName}.html`,
-      generateStandaloneHtml(
+      await generateStandaloneHtml(
         state.settings,
         selectedShape,
         componentName,
         modelFilename,
         exportPoseReference.current,
         importedFile ?? undefined,
+        imageExportFilename,
       ),
     );
 
-    if (importedFile) {
-      downloadBlob(modelFilename ?? importedFile.name, importedFile);
+    if (isImageMode && imageFile) {
+      downloadBlob(imageExportFilename ?? imageFile.name, imageFile);
     }
   }, [
     defaultExportName,
     exportName,
+    imageFile,
     selectedImportedFile,
     selectedShape,
     state.settings,
   ]);
+
+  useEffect(() => {
+    void loadDefaultImageFile()
+      .then((file) => {
+        setImageFile((currentFile) => currentFile ?? file);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [loadDefaultImageFile]);
+
+  useEffect(() => {
+    if (!imageFile) {
+      setImageElement(null);
+      return;
+    }
+
+    const url = URL.createObjectURL(imageFile);
+    const img = new Image();
+    img.onload = () => setImageElement(img);
+    img.src = url;
+
+    return () => URL.revokeObjectURL(url);
+  }, [imageFile]);
 
   useEffect(() => {
     return () => {
@@ -475,8 +628,8 @@ export function HalftoneStudio() {
     };
   }, [selectedShape, state.importedFiles]);
 
-  const background = '#000000';
-  const backgroundTone = 'dark';
+  const background = state.settings.background.color;
+  const backgroundTone = isLightColor(background) ? 'light' : 'dark';
   const handleFirstInteraction = useCallback(() => {
     dispatch({ type: 'hideHint' });
   }, []);
@@ -492,7 +645,9 @@ export function HalftoneStudio() {
       </LogoLink>
 
       <Hint $tone={backgroundTone} $visible={state.showHint}>
-        Click &amp; drag to rotate
+        {state.settings.sourceMode === 'image'
+          ? 'Drag to shift the halftone pattern'
+          : 'Click & drag to rotate'}
       </Hint>
       <Status
         $error={state.statusIsError}
@@ -505,10 +660,12 @@ export function HalftoneStudio() {
       <CanvasLayer>
         <HalftoneCanvas
           geometry={activeGeometry}
+          imageElement={imageElement}
           onFirstInteraction={handleFirstInteraction}
           onPoseChange={handlePoseChange}
           previewDistance={previewDistance}
           settings={state.settings}
+          snapshotRef={snapshotReference}
         />
       </CanvasLayer>
 
@@ -517,6 +674,7 @@ export function HalftoneStudio() {
           activeTab={state.activeTab}
           defaultExportName={defaultExportName}
           exportName={exportName}
+          imageFileName={imageFile?.name ?? null}
           onAnimationSettingsChange={(value) =>
             dispatch({ type: 'patchAnimation', value })
           }
@@ -526,9 +684,17 @@ export function HalftoneStudio() {
               value: { dashColor: value },
             })
           }
-          onExportHtml={handleExportHtml}
+          onExportHalftoneImage={(width, height) => {
+            void handleExportHalftoneImage(width, height);
+          }}
+          onExportHtml={() => {
+            void handleExportHtml();
+          }}
           onExportNameChange={setExportName}
           onExportReact={handleExportReact}
+          onBackgroundChange={(value) =>
+            dispatch({ type: 'patchBackground', value })
+          }
           onHalftoneChange={(value) =>
             dispatch({ type: 'patchHalftone', value })
           }
@@ -542,7 +708,11 @@ export function HalftoneStudio() {
           onShapeChange={(value) => {
             void handleShapeChange(value);
           }}
+          onSourceModeChange={handleSourceModeChange}
           onTabChange={(value) => dispatch({ type: 'setTab', value })}
+          onUploadImage={() => {
+            void handleUploadImage();
+          }}
           onUploadModel={() => {
             void handleUploadModel();
           }}
@@ -554,7 +724,7 @@ export function HalftoneStudio() {
       </ControlsPositioner>
 
       <HiddenFileInput
-        accept=".fbx,.glb"
+        accept=".fbx,.glb,.png,.jpg,.jpeg,.webp,.gif"
         onChange={handleFileInputChange}
         ref={fileInputReference}
         type="file"

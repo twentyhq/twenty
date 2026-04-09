@@ -2,6 +2,7 @@ import {
   VIRTUAL_RENDER_HEIGHT,
   blurFragmentShader,
   halftoneFragmentShader,
+  imagePassthroughFragmentShader,
   passThroughVertexShader,
 } from './rendering';
 import type {
@@ -601,9 +602,7 @@ function normalizeExportPose(
 
   return {
     autoElapsed: Number.isFinite(pose.autoElapsed) ? pose.autoElapsed : 0,
-    rotateElapsed: Number.isFinite(pose.rotateElapsed)
-      ? pose.rotateElapsed
-      : 0,
+    rotateElapsed: Number.isFinite(pose.rotateElapsed) ? pose.rotateElapsed : 0,
     rotationX: Number.isFinite(pose.rotationX) ? pose.rotationX : 0,
     rotationY: Number.isFinite(pose.rotationY) ? pose.rotationY : 0,
     rotationZ: Number.isFinite(pose.rotationZ) ? pose.rotationZ : 0,
@@ -671,15 +670,65 @@ function createShapeDescriptor(
     modelFilenameOverride ?? importedFile?.name ?? shape.filename ?? null;
 
   return {
-    filename: shape.kind === 'imported' ? effectiveImportedFilename : shape.filename ?? null,
+    filename:
+      shape.kind === 'imported'
+        ? effectiveImportedFilename
+        : (shape.filename ?? null),
     key: shape.key,
     kind: shape.kind,
     label:
       shape.kind === 'imported'
-        ? effectiveImportedFilename ?? shape.label
+        ? (effectiveImportedFilename ?? shape.label)
         : shape.label,
     loader: shape.loader ?? null,
   };
+}
+
+function getModelMimeType(
+  file: File,
+  loader: HalftoneGeometrySpec['loader'] | null,
+) {
+  if (file.type) {
+    return file.type;
+  }
+
+  if (loader === 'glb' || file.name.toLowerCase().endsWith('.glb')) {
+    return 'model/gltf-binary';
+  }
+
+  if (loader === 'fbx' || file.name.toLowerCase().endsWith('.fbx')) {
+    return 'application/octet-stream';
+  }
+
+  return 'application/octet-stream';
+}
+
+async function fileToDataUrl(
+  file: File,
+  loader: HalftoneGeometrySpec['loader'] | null,
+) {
+  const buffer = await file.arrayBuffer();
+  const blob = new Blob([buffer], {
+    type: getModelMimeType(file, loader),
+  });
+
+  return await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onerror = () => {
+      reject(reader.error ?? new Error(`Unable to read ${file.name}.`));
+    };
+    reader.onload = () => {
+      if (typeof reader.result !== 'string') {
+        reject(new Error(`Unable to encode ${file.name}.`));
+        return;
+      }
+
+      resolve(reader.result);
+    };
+
+    reader.readAsDataURL(blob);
+  });
 }
 
 function serializeRuntimeSource(
@@ -687,6 +736,8 @@ function serializeRuntimeSource(
   shape: ExportedShapeDescriptor,
   initialPose: HalftoneExportPose,
 ) {
+  const isImageMode = settings.sourceMode === 'image';
+
   return `
 const settings = ${JSON.stringify(settings, null, 2)};
 const shape = ${JSON.stringify(shape, null, 2)};
@@ -695,10 +746,11 @@ const VIRTUAL_RENDER_HEIGHT = ${VIRTUAL_RENDER_HEIGHT};
 const passThroughVertexShader = ${JSON.stringify(passThroughVertexShader)};
 const blurFragmentShader = ${JSON.stringify(blurFragmentShader)};
 const halftoneFragmentShader = ${JSON.stringify(halftoneFragmentShader)};
+${isImageMode ? `const imagePassthroughFragmentShader = ${JSON.stringify(imagePassthroughFragmentShader)};` : ''}
 
-${GEOMETRY_RUNTIME_SOURCE}
+${isImageMode ? '' : GEOMETRY_RUNTIME_SOURCE}
 
-${IMPORTED_RUNTIME_SOURCE}
+${isImageMode ? '' : IMPORTED_RUNTIME_SOURCE}
 
 function createRenderTarget(width, height) {
   return new THREE.WebGLRenderTarget(width, height, {
@@ -711,9 +763,15 @@ function createRenderTarget(width, height) {
 function createInteractionState() {
   return {
     autoElapsed: initialPose.autoElapsed,
+    activePointerId: null,
+    dragOffsetX: 0,
+    dragOffsetY: 0,
     dragging: false,
     mouseX: 0.5,
     mouseY: 0.5,
+    pointerInside: false,
+    pointerVelocityX: 0,
+    pointerVelocityY: 0,
     pointerX: 0,
     pointerY: 0,
     rotateElapsed: initialPose.rotateElapsed,
@@ -723,6 +781,8 @@ function createInteractionState() {
     rotationVelocityY: 0,
     rotationZ: initialPose.rotationZ,
     rotationVelocityZ: 0,
+    smoothedMouseX: 0.5,
+    smoothedMouseY: 0.5,
     targetRotationX: initialPose.targetRotationX,
     targetRotationY: initialPose.targetRotationY,
     velocityX: 0,
@@ -730,6 +790,7 @@ function createInteractionState() {
   };
 }
 
+${isImageMode ? '' : `
 function setPrimaryLightPosition(light, angleDegrees, height) {
   const lightAngle = (angleDegrees * Math.PI) / 180;
   light.position.set(Math.cos(lightAngle) * 5, height, Math.sin(lightAngle) * 5);
@@ -766,6 +827,7 @@ async function createGeometry(modelUrl) {
 
   return createBuiltinGeometry(shape.key);
 }
+`}
 `;
 }
 
@@ -905,6 +967,19 @@ async function mountHalftoneCanvas(options) {
       cutoff: { value: settings.halftone.cutoff },
       dashColor: { value: new THREE.Color(settings.halftone.dashColor) },
       time: { value: 0 },
+      waveAmount: { value: 0 },
+      waveSpeed: { value: 1 },
+      distanceScale: { value: 1.0 },
+      interactionUv: { value: new THREE.Vector2(0.5, 0.5) },
+      interactionVelocity: { value: new THREE.Vector2(0, 0) },
+      dragOffset: { value: new THREE.Vector2(0, 0) },
+      hoverLightStrength: { value: 0 },
+      hoverLightRadius: { value: 0.2 },
+      hoverFlowStrength: { value: 0 },
+      hoverFlowRadius: { value: 0.18 },
+      dragFlowStrength: { value: 0 },
+      dragFlowRadius: { value: 0.24 },
+      cropToBounds: { value: 0 },
     },
     vertexShader: passThroughVertexShader,
     fragmentShader: halftoneFragmentShader,
@@ -1091,16 +1166,33 @@ async function mountHalftoneCanvas(options) {
         : interaction.rotateElapsed * settings.animation.rotateSpeed;
 
       if (settings.animation.rotatePreset === 'axis') {
-        if (settings.animation.rotateAxis === 'x' || settings.animation.rotateAxis === 'xy') {
-          baseRotationX += rotateProgress;
+        const axisDirection =
+          settings.animation.rotateAxis.startsWith('-') ? -1 : 1;
+        const axisProgress = rotateProgress * axisDirection;
+
+        if (
+          settings.animation.rotateAxis === 'x' ||
+          settings.animation.rotateAxis === 'xy' ||
+          settings.animation.rotateAxis === '-x' ||
+          settings.animation.rotateAxis === '-xy'
+        ) {
+          baseRotationX += axisProgress;
         }
 
-        if (settings.animation.rotateAxis === 'y' || settings.animation.rotateAxis === 'xy') {
-          baseRotationY += rotateProgress;
+        if (
+          settings.animation.rotateAxis === 'y' ||
+          settings.animation.rotateAxis === 'xy' ||
+          settings.animation.rotateAxis === '-y' ||
+          settings.animation.rotateAxis === '-xy'
+        ) {
+          baseRotationY += axisProgress;
         }
 
-        if (settings.animation.rotateAxis === 'z') {
-          baseRotationZ += rotateProgress;
+        if (
+          settings.animation.rotateAxis === 'z' ||
+          settings.animation.rotateAxis === '-z'
+        ) {
+          baseRotationZ += axisProgress;
         }
       } else if (settings.animation.rotatePreset === 'lissajous') {
         baseRotationX += Math.sin(rotateProgress * 0.85) * 0.65;
@@ -1277,8 +1369,8 @@ async function mountHalftoneCanvas(options) {
     resizeObserver.disconnect();
     canvas.removeEventListener('pointermove', handlePointerMove);
     canvas.removeEventListener('pointerleave', handlePointerLeave);
-    window.removeEventListener('pointerup', handlePointerUp);
-    window.removeEventListener('pointermove', handleWindowPointerMove);
+    canvas.removeEventListener('pointerup', handlePointerUp);
+    canvas.removeEventListener('pointercancel', handlePointerCancel);
     window.removeEventListener('blur', handleWindowBlur);
     canvas.removeEventListener('pointerdown', handlePointerDown);
     blurHorizontalMaterial.dispose();
@@ -1290,6 +1382,432 @@ async function mountHalftoneCanvas(options) {
     blurTargetA.dispose();
     blurTargetB.dispose();
     environmentTexture.dispose();
+    renderer.dispose();
+
+    if (canvas.parentNode === container) {
+      container.removeChild(canvas);
+    }
+  };
+}
+`;
+}
+
+function createImageMountScript() {
+  return `
+async function mountHalftoneCanvas(options) {
+  const {
+    container,
+    imageUrl,
+    onError,
+  } = options;
+
+  const getWidth = () => Math.max(container.clientWidth, 1);
+  const getHeight = () => Math.max(container.clientHeight, 1);
+  const getVirtualHeight = () => Math.max(VIRTUAL_RENDER_HEIGHT, getHeight());
+  const getVirtualWidth = () =>
+    Math.max(
+      Math.round(getVirtualHeight() * (getWidth() / Math.max(getHeight(), 1))),
+      1,
+    );
+
+  // Load image
+  const image = await new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('Failed to load image'));
+    img.src = imageUrl;
+  });
+
+  const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.setPixelRatio(1);
+  renderer.setClearColor(0x000000, 0);
+  renderer.setSize(getVirtualWidth(), getVirtualHeight(), false);
+
+  const canvas = renderer.domElement;
+  canvas.style.cursor = 'default';
+  canvas.style.display = 'block';
+  canvas.style.height = '100%';
+  canvas.style.touchAction = 'none';
+  canvas.style.width = '100%';
+  container.appendChild(canvas);
+
+  const imageTexture = new THREE.Texture(image);
+  imageTexture.colorSpace = THREE.SRGBColorSpace;
+  imageTexture.needsUpdate = true;
+
+  const sceneTarget = createRenderTarget(getVirtualWidth(), getVirtualHeight());
+  const blurTargetA = createRenderTarget(getVirtualWidth(), getVirtualHeight());
+  const blurTargetB = createRenderTarget(getVirtualWidth(), getVirtualHeight());
+  const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
+  const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+  const imageMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      tImage: { value: imageTexture },
+      imageSize: { value: new THREE.Vector2(image.width, image.height) },
+      viewportSize: { value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()) },
+      zoom: { value: 1 },
+    },
+    vertexShader: passThroughVertexShader,
+    fragmentShader: imagePassthroughFragmentShader,
+  });
+
+  const imageScene = new THREE.Scene();
+  imageScene.add(new THREE.Mesh(fullScreenGeometry, imageMaterial));
+
+  const blurHorizontalMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      tInput: { value: null },
+      dir: { value: new THREE.Vector2(1, 0) },
+      res: { value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()) },
+    },
+    vertexShader: passThroughVertexShader,
+    fragmentShader: blurFragmentShader,
+  });
+
+  const blurVerticalMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      tInput: { value: null },
+      dir: { value: new THREE.Vector2(0, 1) },
+      res: { value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()) },
+    },
+    vertexShader: passThroughVertexShader,
+    fragmentShader: blurFragmentShader,
+  });
+
+  const halftoneMaterial = new THREE.ShaderMaterial({
+    transparent: true,
+    uniforms: {
+      tScene: { value: sceneTarget.texture },
+      tGlow: { value: blurTargetB.texture },
+      resolution: {
+        value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
+      },
+      numRows: { value: settings.halftone.numRows },
+      glowStr: { value: 0 },
+      contrast: { value: settings.halftone.contrast },
+      power: { value: settings.halftone.power },
+      shading: { value: settings.halftone.shading },
+      baseInk: { value: settings.halftone.baseInk },
+      maxBar: { value: settings.halftone.maxBar },
+      cellRatio: { value: settings.halftone.cellRatio },
+      cutoff: { value: settings.halftone.cutoff },
+      dashColor: { value: new THREE.Color(settings.halftone.dashColor) },
+      time: { value: 0 },
+      waveAmount: { value: 0 },
+      waveSpeed: { value: settings.animation.waveSpeed },
+      distanceScale: { value: 1.0 },
+      interactionUv: { value: new THREE.Vector2(0.5, 0.5) },
+      interactionVelocity: { value: new THREE.Vector2(0, 0) },
+      dragOffset: { value: new THREE.Vector2(0, 0) },
+      hoverLightStrength: { value: 0 },
+      hoverLightRadius: { value: settings.animation.hoverLightRadius },
+      hoverFlowStrength: { value: 0 },
+      hoverFlowRadius: { value: 0.18 },
+      dragFlowStrength: { value: 0 },
+      dragFlowRadius: { value: settings.animation.dragFlowRadius },
+      cropToBounds: { value: 1 },
+    },
+    vertexShader: passThroughVertexShader,
+    fragmentShader: halftoneFragmentShader,
+  });
+
+  const blurHorizontalScene = new THREE.Scene();
+  blurHorizontalScene.add(new THREE.Mesh(fullScreenGeometry, blurHorizontalMaterial));
+
+  const blurVerticalScene = new THREE.Scene();
+  blurVerticalScene.add(new THREE.Mesh(fullScreenGeometry, blurVerticalMaterial));
+
+  const postScene = new THREE.Scene();
+  postScene.add(new THREE.Mesh(fullScreenGeometry, halftoneMaterial));
+
+  const interaction = createInteractionState();
+  const imagePointerFollow = 0.38;
+  const imagePointerVelocityDamping = 0.82;
+  const imageDragOffsetLimit = 0.08;
+
+  const syncSize = () => {
+    const virtualWidth = getVirtualWidth();
+    const virtualHeight = getVirtualHeight();
+
+    renderer.setSize(virtualWidth, virtualHeight, false);
+    sceneTarget.setSize(virtualWidth, virtualHeight);
+    blurTargetA.setSize(virtualWidth, virtualHeight);
+    blurTargetB.setSize(virtualWidth, virtualHeight);
+    blurHorizontalMaterial.uniforms.res.value.set(virtualWidth, virtualHeight);
+    blurVerticalMaterial.uniforms.res.value.set(virtualWidth, virtualHeight);
+    halftoneMaterial.uniforms.resolution.value.set(virtualWidth, virtualHeight);
+    imageMaterial.uniforms.viewportSize.value.set(virtualWidth, virtualHeight);
+  };
+
+  const resizeObserver = new ResizeObserver(syncSize);
+  resizeObserver.observe(container);
+
+  const updatePointerPosition = (event, options = {}) => {
+    const rect = canvas.getBoundingClientRect();
+    const width = Math.max(rect.width, 1);
+    const height = Math.max(rect.height, 1);
+
+    const nextMouseX = THREE.MathUtils.clamp(
+      (event.clientX - rect.left) / width, 0, 1,
+    );
+    const nextMouseY = THREE.MathUtils.clamp(
+      (event.clientY - rect.top) / height, 0, 1,
+    );
+
+    const deltaX = nextMouseX - interaction.mouseX;
+    const deltaY = nextMouseY - interaction.mouseY;
+
+    interaction.mouseX = nextMouseX;
+    interaction.mouseY = nextMouseY;
+    interaction.pointerInside =
+      interaction.dragging ||
+      (event.clientX >= rect.left &&
+        event.clientX <= rect.right &&
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom);
+
+    if (options.resetVelocity) {
+      interaction.pointerVelocityX = 0;
+      interaction.pointerVelocityY = 0;
+      interaction.smoothedMouseX = nextMouseX;
+      interaction.smoothedMouseY = nextMouseY;
+    } else {
+      interaction.pointerVelocityX = deltaX;
+      interaction.pointerVelocityY = deltaY;
+    }
+
+    return { deltaX, deltaY };
+  };
+
+  const releasePointerCapture = (pointerId) => {
+    if (pointerId === null) {
+      return;
+    }
+
+    if (!canvas.hasPointerCapture(pointerId)) {
+      return;
+    }
+
+    try {
+      canvas.releasePointerCapture(pointerId);
+    } catch {
+      // Ignore capture release failures during teardown.
+    }
+  };
+
+  const handlePointerDown = (event) => {
+    updatePointerPosition(event, { resetVelocity: true });
+    interaction.pointerX = event.clientX;
+    interaction.pointerY = event.clientY;
+
+    if (!settings.animation.dragFlowEnabled) {
+      return;
+    }
+
+    interaction.dragging = true;
+    interaction.activePointerId = event.pointerId;
+    interaction.velocityX = 0;
+    interaction.velocityY = 0;
+
+    try {
+      canvas.setPointerCapture(event.pointerId);
+    } catch {
+      // Pointer capture can fail if the canvas is detached.
+    }
+  };
+
+  const handlePointerMove = (event) => {
+    const resetVelocity = !interaction.pointerInside && !interaction.dragging;
+    const pointerStep = updatePointerPosition(
+      event,
+      resetVelocity ? { resetVelocity: true } : undefined,
+    );
+
+    if (!interaction.dragging) {
+      return;
+    }
+
+    if (
+      interaction.activePointerId !== null &&
+      event.pointerId !== interaction.activePointerId
+    ) {
+      return;
+    }
+
+    if (!settings.animation.dragFlowEnabled) {
+      return;
+    }
+
+    interaction.dragOffsetX = THREE.MathUtils.clamp(
+      interaction.dragOffsetX + pointerStep.deltaX * 2.2,
+      -imageDragOffsetLimit,
+      imageDragOffsetLimit,
+    );
+    interaction.dragOffsetY = THREE.MathUtils.clamp(
+      interaction.dragOffsetY + pointerStep.deltaY * 2.2,
+      -imageDragOffsetLimit,
+      imageDragOffsetLimit,
+    );
+  };
+
+  const handlePointerLeave = () => {
+    if (interaction.dragging) {
+      return;
+    }
+
+    interaction.pointerInside = false;
+    interaction.pointerVelocityX = 0;
+    interaction.pointerVelocityY = 0;
+  };
+
+  const handlePointerUp = (event) => {
+    updatePointerPosition(event, { resetVelocity: true });
+    releasePointerCapture(interaction.activePointerId);
+    interaction.activePointerId = null;
+    interaction.dragging = false;
+    const rect = canvas.getBoundingClientRect();
+    interaction.pointerInside =
+      event.clientX >= rect.left &&
+      event.clientX <= rect.right &&
+      event.clientY >= rect.top &&
+      event.clientY <= rect.bottom;
+  };
+
+  const handlePointerCancel = () => {
+    releasePointerCapture(interaction.activePointerId);
+    interaction.activePointerId = null;
+    interaction.dragging = false;
+    interaction.dragOffsetX = 0;
+    interaction.dragOffsetY = 0;
+    interaction.pointerInside = false;
+    interaction.pointerVelocityX = 0;
+    interaction.pointerVelocityY = 0;
+  };
+
+  const handleWindowBlur = () => {
+    handlePointerCancel();
+  };
+
+  canvas.addEventListener('pointermove', handlePointerMove);
+  canvas.addEventListener('pointerleave', handlePointerLeave);
+  canvas.addEventListener('pointerup', handlePointerUp);
+  canvas.addEventListener('pointercancel', handlePointerCancel);
+  window.addEventListener('blur', handleWindowBlur);
+  canvas.addEventListener('pointerdown', handlePointerDown);
+
+  const clock = new THREE.Clock();
+  let animationFrameId = 0;
+
+  const renderFrame = () => {
+    animationFrameId = window.requestAnimationFrame(renderFrame);
+
+    const elapsedTime = clock.getElapsedTime();
+    halftoneMaterial.uniforms.time.value = elapsedTime;
+    const pointerFollow = interaction.dragging ? 0.46 : imagePointerFollow;
+    const pointerActive = interaction.pointerInside || interaction.dragging;
+
+    interaction.smoothedMouseX +=
+      (interaction.mouseX - interaction.smoothedMouseX) * pointerFollow;
+    interaction.smoothedMouseY +=
+      (interaction.mouseY - interaction.smoothedMouseY) * pointerFollow;
+    interaction.pointerVelocityX *= imagePointerVelocityDamping;
+    interaction.pointerVelocityY *= imagePointerVelocityDamping;
+
+    if (settings.animation.dragFlowEnabled) {
+      const dragDecay = 1 - settings.animation.dragFlowDecay;
+      interaction.dragOffsetX *= dragDecay;
+      interaction.dragOffsetY *= dragDecay;
+
+      if (Math.abs(interaction.dragOffsetX) < 0.00005) {
+        interaction.dragOffsetX = 0;
+      }
+
+      if (Math.abs(interaction.dragOffsetY) < 0.00005) {
+        interaction.dragOffsetY = 0;
+      }
+    } else {
+      interaction.dragOffsetX = 0;
+      interaction.dragOffsetY = 0;
+    }
+
+    const dragActive =
+      settings.animation.dragFlowEnabled &&
+      (interaction.dragging ||
+        Math.abs(interaction.dragOffsetX) > 0.0005 ||
+        Math.abs(interaction.dragOffsetY) > 0.0005);
+
+    halftoneMaterial.uniforms.interactionUv.value.set(
+      interaction.smoothedMouseX,
+      1 - interaction.smoothedMouseY,
+    );
+    halftoneMaterial.uniforms.interactionVelocity.value.set(
+      interaction.pointerVelocityX * getVirtualWidth(),
+      -interaction.pointerVelocityY * getVirtualHeight(),
+    );
+    halftoneMaterial.uniforms.dragOffset.value.set(
+      interaction.dragOffsetX * getVirtualWidth(),
+      -interaction.dragOffsetY * getVirtualHeight(),
+    );
+    halftoneMaterial.uniforms.hoverLightStrength.value =
+      pointerActive && settings.animation.hoverLightEnabled
+        ? settings.animation.hoverLightIntensity
+        : 0;
+    halftoneMaterial.uniforms.hoverLightRadius.value =
+      settings.animation.hoverLightRadius;
+    halftoneMaterial.uniforms.hoverFlowStrength.value = 0;
+    halftoneMaterial.uniforms.hoverFlowRadius.value = 0.18;
+    halftoneMaterial.uniforms.dragFlowStrength.value = dragActive
+      ? settings.animation.dragFlowStrength
+      : 0;
+    halftoneMaterial.uniforms.dragFlowRadius.value =
+      settings.animation.dragFlowRadius;
+
+    renderer.setRenderTarget(sceneTarget);
+    renderer.render(imageScene, orthographicCamera);
+
+    blurHorizontalMaterial.uniforms.tInput.value = sceneTarget.texture;
+    renderer.setRenderTarget(blurTargetA);
+    renderer.render(blurHorizontalScene, orthographicCamera);
+
+    blurVerticalMaterial.uniforms.tInput.value = blurTargetA.texture;
+    renderer.setRenderTarget(blurTargetB);
+    renderer.render(blurVerticalScene, orthographicCamera);
+
+    blurHorizontalMaterial.uniforms.tInput.value = blurTargetB.texture;
+    renderer.setRenderTarget(blurTargetA);
+    renderer.render(blurHorizontalScene, orthographicCamera);
+
+    blurVerticalMaterial.uniforms.tInput.value = blurTargetA.texture;
+    renderer.setRenderTarget(blurTargetB);
+    renderer.render(blurVerticalScene, orthographicCamera);
+
+    renderer.setRenderTarget(null);
+    renderer.clear();
+    renderer.render(postScene, orthographicCamera);
+  };
+
+  renderFrame();
+
+  return () => {
+    window.cancelAnimationFrame(animationFrameId);
+    resizeObserver.disconnect();
+    canvas.removeEventListener('pointermove', handlePointerMove);
+    canvas.removeEventListener('pointerleave', handlePointerLeave);
+    canvas.removeEventListener('pointerup', handlePointerUp);
+    canvas.removeEventListener('pointercancel', handlePointerCancel);
+    window.removeEventListener('blur', handleWindowBlur);
+    canvas.removeEventListener('pointerdown', handlePointerDown);
+    blurHorizontalMaterial.dispose();
+    blurVerticalMaterial.dispose();
+    halftoneMaterial.dispose();
+    imageMaterial.dispose();
+    imageTexture.dispose();
+    fullScreenGeometry.dispose();
+    sceneTarget.dispose();
+    blurTargetA.dispose();
+    blurTargetB.dispose();
     renderer.dispose();
 
     if (canvas.parentNode === container) {
@@ -1318,7 +1836,9 @@ export function generateReactComponent(
   modelFilenameOverride?: string,
   initialPose?: HalftoneExportPose,
   importedFile?: File,
+  imageFilename?: string,
 ) {
+  const isImageMode = settings.sourceMode === 'image';
   const shape = createShapeDescriptor(
     selectedShape,
     settings,
@@ -1326,8 +1846,64 @@ export function generateReactComponent(
     modelFilenameOverride,
   );
   const pose = normalizeExportPose(initialPose);
-  const defaultModelUrl = modelFilenameOverride ?? shape.filename ?? 'model.glb';
+  const defaultModelUrl =
+    modelFilenameOverride ?? shape.filename ?? 'model.glb';
+  const defaultImageUrl = imageFilename ?? 'image.png';
   const background = 'transparent';
+
+  if (isImageMode) {
+    return `import { useEffect, useRef, type CSSProperties } from 'react';
+import * as THREE from 'three';
+
+${serializeRuntimeSource(settings, shape, pose)}
+
+${createImageMountScript()}
+
+type ${componentName}Props = {
+  imageUrl?: string;
+  style?: CSSProperties;
+};
+
+export default function ${componentName}({
+  imageUrl = ${JSON.stringify(`./${defaultImageUrl}`)},
+  style,
+}: ${componentName}Props) {
+  const mountReference = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = mountReference.current;
+
+    if (!container) {
+      return;
+    }
+
+    const unmount = mountHalftoneCanvas({
+      container,
+      imageUrl,
+      onError: (error) => {
+        console.error(error);
+      },
+    });
+
+    return () => {
+      void Promise.resolve(unmount).then((dispose) => dispose?.());
+    };
+  }, [imageUrl]);
+
+  return (
+    <div
+      ref={mountReference}
+      style={{
+        background: ${JSON.stringify(background)},
+        height: '100%',
+        width: '100%',
+        ...style,
+      }}
+    />
+  );
+}
+`;
+  }
 
   return `import { useEffect, useRef, type CSSProperties } from 'react';
 import * as THREE from 'three';
@@ -1385,14 +1961,16 @@ export default function ${componentName}({
 `;
 }
 
-export function generateStandaloneHtml(
+export async function generateStandaloneHtml(
   settings: HalftoneStudioSettings,
   selectedShape: HalftoneGeometrySpec | undefined,
   componentName = 'HalftoneDashes',
   modelFilenameOverride?: string,
   initialPose?: HalftoneExportPose,
   importedFile?: File,
+  imageFilename?: string,
 ) {
+  const isImageMode = settings.sourceMode === 'image';
   const shape = createShapeDescriptor(
     selectedShape,
     settings,
@@ -1400,8 +1978,53 @@ export function generateStandaloneHtml(
     modelFilenameOverride,
   );
   const pose = normalizeExportPose(initialPose);
-  const defaultModelUrl = modelFilenameOverride ?? shape.filename ?? 'model.glb';
+  const defaultImageUrl = imageFilename ?? 'image.png';
   const background = 'transparent';
+  const embeddedImportedModelUrl =
+    !isImageMode && shape.kind === 'imported' && importedFile
+      ? await fileToDataUrl(importedFile, shape.loader)
+      : null;
+  const defaultModelUrl =
+    embeddedImportedModelUrl ??
+    modelFilenameOverride ??
+    shape.filename ??
+    'model.glb';
+
+  const threeImports = isImageMode
+    ? `import * as THREE from 'three';`
+    : `import * as THREE from 'three';
+      import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+      import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+      import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';`;
+
+  const mountScript = isImageMode
+    ? createImageMountScript()
+    : createMountScript();
+
+  const mountCall = isImageMode
+    ? `mountHalftoneCanvas({
+        container,
+        imageUrl: ${JSON.stringify(`./${defaultImageUrl}`)},
+        onError: (error) => {
+          console.error(error);
+        },
+      });`
+    : `mountHalftoneCanvas({
+        container,
+        modelUrl: ${JSON.stringify(`./${defaultModelUrl}`)},
+        onError: (error) => {
+          console.error(error);
+        },
+      });`;
+
+  const captionText = isImageMode
+    ? `Place <code>${defaultImageUrl}</code> next to this HTML file.`
+    : `Standalone export of the current halftone scene.
+        ${shape.kind === 'imported'
+          ? embeddedImportedModelUrl
+            ? 'The uploaded model is embedded directly in this HTML file.'
+            : `Place <code>${defaultModelUrl}</code> next to this HTML file to keep the current uploaded shape.`
+          : ''}`;
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -1464,8 +2087,7 @@ export function generateStandaloneHtml(
     <div id="app">
       <div id="canvas-root"></div>
       <div class="caption">
-        Standalone export of the current halftone scene.
-        ${shape.kind === 'imported' ? `Place <code>${defaultModelUrl}</code> next to this HTML file to keep the current uploaded shape.` : ''}
+        ${captionText}
       </div>
     </div>
 
@@ -1478,24 +2100,15 @@ export function generateStandaloneHtml(
       }
     </script>
     <script type="module">
-      import * as THREE from 'three';
-      import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-      import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
-      import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+      ${threeImports}
 
       ${serializeRuntimeSource(settings, shape, pose)}
 
-      ${createMountScript()}
+      ${mountScript}
 
       const container = document.getElementById('canvas-root');
 
-      mountHalftoneCanvas({
-        container,
-        modelUrl: ${JSON.stringify(`./${defaultModelUrl}`)},
-        onError: (error) => {
-          console.error(error);
-        },
-      });
+      ${mountCall}
     </script>
   </body>
 </html>`;

@@ -1,5 +1,6 @@
 import type {
   HalftoneGeometrySpec,
+  HalftoneSourceMode,
   HalftoneStudioAction,
   HalftoneStudioSettings,
   HalftoneStudioState,
@@ -40,7 +41,24 @@ export const DEFAULT_GEOMETRY_SPECS: HalftoneGeometrySpec[] = [
   },
 ];
 
+export const DEFAULT_IMAGE_HALFTONE_SETTINGS: Partial<HalftoneStudioSettings> =
+  {
+    halftone: {
+      enabled: true,
+      numRows: 80,
+      contrast: 1.5,
+      power: 1.2,
+      shading: 0.8,
+      baseInk: 0.08,
+      maxBar: 0.32,
+      cellRatio: 2.0,
+      cutoff: 0.02,
+      dashColor: '#4A38F5',
+    },
+  };
+
 export const DEFAULT_HALFTONE_SETTINGS: HalftoneStudioSettings = {
+  sourceMode: 'shape' as HalftoneSourceMode,
   shapeKey: 'torusKnot',
   lighting: {
     intensity: 1.5,
@@ -67,7 +85,7 @@ export const DEFAULT_HALFTONE_SETTINGS: HalftoneStudioSettings = {
   },
   background: {
     transparent: true,
-    color: '#000000',
+    color: '#ffffff',
   },
   animation: {
     autoRotateEnabled: true,
@@ -76,6 +94,8 @@ export const DEFAULT_HALFTONE_SETTINGS: HalftoneStudioSettings = {
     followHoverEnabled: false,
     followDragEnabled: false,
     floatEnabled: false,
+    hoverLightEnabled: false,
+    dragFlowEnabled: false,
     lightSweepEnabled: false,
     rotateEnabled: false,
     autoSpeed: 0.3,
@@ -103,6 +123,17 @@ export const DEFAULT_HALFTONE_SETTINGS: HalftoneStudioSettings = {
     springDamping: 0.72,
     springReturnEnabled: false,
     springStrength: 0.18,
+    hoverLightIntensity: 0.8,
+    hoverLightRadius: 0.2,
+    dragFlowDecay: 0.08,
+    dragFlowRadius: 0.24,
+    dragFlowStrength: 1.8,
+    hoverWarpStrength: 3,
+    hoverWarpRadius: 0.15,
+    dragWarpStrength: 5,
+    waveEnabled: false,
+    waveSpeed: 1,
+    waveAmount: 2,
   },
 };
 
@@ -127,6 +158,14 @@ export function halftoneStudioReducer(
       return {
         ...state,
         activeTab: action.value,
+      };
+    case 'setSourceMode':
+      return {
+        ...state,
+        settings: {
+          ...state.settings,
+          sourceMode: action.value,
+        },
       };
     case 'setShapeKey':
       return {

@@ -41,6 +41,42 @@ export const blurFragmentShader = /* glsl */ `
   }
 `;
 
+export const imagePassthroughFragmentShader = /* glsl */ `
+  precision highp float;
+
+  uniform sampler2D tImage;
+  uniform vec2 imageSize;
+  uniform vec2 viewportSize;
+  uniform float zoom;
+
+  varying vec2 vUv;
+
+  void main() {
+    float imageAspect = imageSize.x / imageSize.y;
+    float viewAspect = viewportSize.x / viewportSize.y;
+
+    vec2 uv = vUv;
+
+    // Contain: show full image, letterbox/pillarbox as needed
+    if (imageAspect > viewAspect) {
+      float scale = viewAspect / imageAspect;
+      uv.y = (uv.y - 0.5) / scale + 0.5;
+    } else {
+      float scale = imageAspect / viewAspect;
+      uv.x = (uv.x - 0.5) / scale + 0.5;
+    }
+
+    uv = (uv - 0.5) / zoom + 0.5;
+
+    float inBounds = step(0.0, uv.x) * step(uv.x, 1.0)
+                   * step(0.0, uv.y) * step(uv.y, 1.0);
+
+    vec4 color = texture2D(tImage, clamp(uv, 0.0, 1.0));
+
+    gl_FragColor = vec4(color.rgb, inBounds);
+  }
+`;
+
 export const halftoneFragmentShader = /* glsl */ `
   precision highp float;
 
@@ -58,19 +94,91 @@ export const halftoneFragmentShader = /* glsl */ `
   uniform float cutoff;
   uniform vec3 dashColor;
   uniform float time;
+  uniform float waveAmount;
+  uniform float waveSpeed;
+  uniform float distanceScale;
+  uniform vec2 interactionUv;
+  uniform vec2 interactionVelocity;
+  uniform vec2 dragOffset;
+  uniform float hoverLightStrength;
+  uniform float hoverLightRadius;
+  uniform float hoverFlowStrength;
+  uniform float hoverFlowRadius;
+  uniform float dragFlowStrength;
+  uniform float dragFlowRadius;
+  uniform float cropToBounds;
 
   varying vec2 vUv;
 
   void main() {
-    float rowH = resolution.y / numRows;
-    float row = floor(gl_FragCoord.y / rowH);
-    float rowFrac = gl_FragCoord.y / rowH - row;
+    // Crop to image bounds: discard fragments outside source image (image mode only)
+    if (cropToBounds > 0.5) {
+      vec4 boundsCheck = texture2D(tScene, vUv);
+      if (boundsCheck.a < 0.01) {
+        gl_FragColor = vec4(0.0);
+        return;
+      }
+    }
+
+    float baseRowH = resolution.y / (numRows * distanceScale);
+    vec2 pointerPx = interactionUv * resolution;
+    vec2 fragDelta = gl_FragCoord.xy - pointerPx;
+    float fragDist = length(fragDelta);
+    vec2 radialDir = fragDist > 0.001 ? fragDelta / fragDist : vec2(0.0, 1.0);
+    float velocityMagnitude = length(interactionVelocity);
+    vec2 motionDir = velocityMagnitude > 0.001
+      ? interactionVelocity / velocityMagnitude
+      : vec2(0.0, 0.0);
+    float motionBias = velocityMagnitude > 0.001
+      ? dot(-radialDir, motionDir) * 0.5 + 0.5
+      : 0.5;
+
+    float hoverLightMask = 0.0;
+    if (hoverLightStrength > 0.0) {
+      float lightRadiusPx = hoverLightRadius * resolution.y;
+      hoverLightMask = smoothstep(lightRadiusPx, 0.0, fragDist);
+    }
+
+    float hoverFlowMask = 0.0;
+    if (hoverFlowStrength > 0.0) {
+      float hoverRadiusPx = hoverFlowRadius * resolution.y;
+      hoverFlowMask = smoothstep(hoverRadiusPx, 0.0, fragDist);
+    }
+
+    float dragFlowMask = 0.0;
+    if (dragFlowStrength > 0.0) {
+      float dragRadiusPx = dragFlowRadius * resolution.y;
+      dragFlowMask = smoothstep(dragRadiusPx, 0.0, fragDist);
+    }
+
+    vec2 hoverDisplacement =
+      radialDir * hoverFlowStrength * hoverFlowMask * baseRowH * 0.55 +
+      motionDir * hoverFlowStrength * hoverFlowMask * (0.4 + motionBias) * baseRowH * 1.15;
+    vec2 dragDisplacement = dragOffset * dragFlowMask * dragFlowStrength * 0.8;
+    vec2 effectCoord = gl_FragCoord.xy + hoverDisplacement + dragDisplacement;
+
+    float densityBoost =
+      hoverFlowStrength * hoverFlowMask * 0.22 +
+      dragFlowStrength * dragFlowMask * 0.16;
+    float rowH = baseRowH / (1.0 + densityBoost);
+
+    float offsetY = effectCoord.y;
+    float row = floor(offsetY / rowH);
+    float rowFrac = offsetY / rowH - row;
     float rowV = (row + 0.5) * rowH / resolution.y;
     float dy = abs(rowFrac - 0.5);
 
-    float cellW = rowH * cellRatio;
-    float cellIdx = floor(gl_FragCoord.x / cellW);
-    float cellFrac = (gl_FragCoord.x - cellIdx * cellW) / cellW;
+    float waveOffset = waveAmount * sin(time * waveSpeed + row * 0.5) * rowH;
+    float effectiveX = effectCoord.x + waveOffset;
+
+    float localCellRatio = cellRatio * (
+      1.0 +
+      hoverFlowStrength * hoverFlowMask * 0.08 +
+      dragFlowStrength * dragFlowMask * 0.1 * motionBias
+    );
+    float cellW = rowH * localCellRatio;
+    float cellIdx = floor(effectiveX / cellW);
+    float cellFrac = (effectiveX - cellIdx * cellW) / cellW;
     float cellU = (cellIdx + 0.5) * cellW / resolution.x;
 
     vec2 sampleUv = vec2(
@@ -88,8 +196,12 @@ export const halftoneFragmentShader = /* glsl */ `
 
     float litLum = lum + max(detail, 0.0) * shading
       - max(-detail, 0.0) * shading * 0.55;
+    float lightLift =
+      hoverLightStrength * hoverLightMask * mix(0.78, 1.18, motionBias) * 0.34;
+    float lightFocus = hoverLightStrength * hoverLightMask * 0.12;
+    litLum = clamp(litLum + lightLift, 0.0, 1.0);
     litLum = clamp((litLum - cutoff) / max(1.0 - cutoff, 0.001), 0.0, 1.0);
-    litLum = pow(litLum, contrast);
+    litLum = pow(litLum, max(contrast - lightFocus, 0.25));
 
     float ink = mix(baseInk, 1.0, 1.0 - litLum);
     float fill = pow(ink, 1.05) * power;

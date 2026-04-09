@@ -1,3 +1,4 @@
+import { mergeGeometries } from './geometry-utils';
 import { loadImportedGeometry } from './model-loaders';
 import type {
   GeometryCacheEntry,
@@ -98,97 +99,6 @@ function makeReliefGeometry(
   return geometry;
 }
 
-function mergeGeometries(geometries: THREE.BufferGeometry[]) {
-  if (geometries.length === 1) {
-    return geometries[0];
-  }
-
-  let totalVertices = 0;
-  let totalIndices = 0;
-  let hasUv = false;
-
-  const geometryInfos = geometries.map((geometry) => {
-    const position = geometry.attributes.position;
-    const normal = geometry.attributes.normal;
-    const uv = geometry.attributes.uv ?? null;
-    const index = geometry.index;
-    const indexCount = index ? index.count : position.count;
-
-    totalVertices += position.count;
-    totalIndices += indexCount;
-    hasUv = hasUv || uv !== null;
-
-    return {
-      index,
-      indexCount,
-      normal,
-      position,
-      uv,
-      vertexCount: position.count,
-    };
-  });
-
-  const positions = new Float32Array(totalVertices * 3);
-  const normals = new Float32Array(totalVertices * 3);
-  const uvs = hasUv ? new Float32Array(totalVertices * 2) : null;
-  const indices = new Uint32Array(totalIndices);
-
-  let vertexOffset = 0;
-  let indexOffset = 0;
-
-  for (const geometryInfo of geometryInfos) {
-    for (let vertexIndex = 0; vertexIndex < geometryInfo.vertexCount; vertexIndex += 1) {
-      const positionOffset = (vertexOffset + vertexIndex) * 3;
-      positions[positionOffset] = geometryInfo.position.getX(vertexIndex);
-      positions[positionOffset + 1] = geometryInfo.position.getY(vertexIndex);
-      positions[positionOffset + 2] = geometryInfo.position.getZ(vertexIndex);
-      normals[positionOffset] = geometryInfo.normal.getX(vertexIndex);
-      normals[positionOffset + 1] = geometryInfo.normal.getY(vertexIndex);
-      normals[positionOffset + 2] = geometryInfo.normal.getZ(vertexIndex);
-
-      if (uvs !== null) {
-        const uvOffset = (vertexOffset + vertexIndex) * 2;
-        uvs[uvOffset] = geometryInfo.uv?.getX(vertexIndex) ?? 0;
-        uvs[uvOffset + 1] = geometryInfo.uv?.getY(vertexIndex) ?? 0;
-      }
-    }
-
-    if (geometryInfo.index) {
-      for (
-        let localIndex = 0;
-        localIndex < geometryInfo.indexCount;
-        localIndex += 1
-      ) {
-        indices[indexOffset + localIndex] =
-          geometryInfo.index.getX(localIndex) + vertexOffset;
-      }
-    } else {
-      for (
-        let localIndex = 0;
-        localIndex < geometryInfo.indexCount;
-        localIndex += 1
-      ) {
-        indices[indexOffset + localIndex] = localIndex + vertexOffset;
-      }
-    }
-
-    vertexOffset += geometryInfo.vertexCount;
-    indexOffset += geometryInfo.indexCount;
-  }
-
-  const merged = new THREE.BufferGeometry();
-  merged.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  merged.setAttribute('normal', new THREE.BufferAttribute(normals, 3));
-
-  if (uvs !== null) {
-    merged.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
-  }
-
-  merged.setIndex(new THREE.BufferAttribute(indices, 1));
-
-  return merged;
-}
-
 function makeArrowTarget() {
   const targetParts: THREE.BufferGeometry[] = [];
   const arrowParts: THREE.BufferGeometry[] = [];
@@ -237,15 +147,31 @@ function makeArrowTarget() {
     targetParts.push(ring);
   }
 
-  const bump = new THREE.SphereGeometry(0.32, 32, 24, 0, Math.PI * 2, 0, Math.PI / 2);
+  const bump = new THREE.SphereGeometry(
+    0.32,
+    32,
+    24,
+    0,
+    Math.PI * 2,
+    0,
+    Math.PI / 2,
+  );
   bump.applyMatrix4(new THREE.Matrix4().makeRotationX(-Math.PI / 2));
   bump.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 0, baseDepth / 2));
   targetParts.push(bump);
 
   const shaftLength = 1.5;
   const shaftRadius = 0.05;
-  const shaft = new THREE.CylinderGeometry(shaftRadius, shaftRadius, shaftLength, 10, 1);
-  shaft.applyMatrix4(new THREE.Matrix4().makeTranslation(0, shaftLength / 2, 0));
+  const shaft = new THREE.CylinderGeometry(
+    shaftRadius,
+    shaftRadius,
+    shaftLength,
+    10,
+    1,
+  );
+  shaft.applyMatrix4(
+    new THREE.Matrix4().makeTranslation(0, shaftLength / 2, 0),
+  );
   arrowParts.push(shaft);
 
   const head = new THREE.ConeGeometry(0.12, 0.35, 10);
@@ -264,7 +190,9 @@ function makeArrowTarget() {
       bevelEnabled: false,
     });
 
-    finGeometry.applyMatrix4(new THREE.Matrix4().makeTranslation(0.05, 0, -0.006));
+    finGeometry.applyMatrix4(
+      new THREE.Matrix4().makeTranslation(0.05, 0, -0.006),
+    );
     finGeometry.applyMatrix4(
       new THREE.Matrix4().makeRotationY((finIndex * Math.PI * 2) / 3),
     );
@@ -275,7 +203,9 @@ function makeArrowTarget() {
   }
 
   const nock = new THREE.SphereGeometry(0.065, 8, 8);
-  nock.applyMatrix4(new THREE.Matrix4().makeTranslation(0, shaftLength + 0.03, 0));
+  nock.applyMatrix4(
+    new THREE.Matrix4().makeTranslation(0, shaftLength + 0.03, 0),
+  );
   arrowParts.push(nock);
 
   const aim = new THREE.Matrix4().makeRotationX(Math.PI / 2.15);
@@ -344,7 +274,13 @@ function makeDollarCoin() {
     const bar = new THREE.CylinderGeometry(0.05, 0.05, 1.3, 12);
     geometries.push(bar);
 
-    const topArc = new THREE.TorusGeometry(curveRadius, tubeRadius, 16, 32, Math.PI);
+    const topArc = new THREE.TorusGeometry(
+      curveRadius,
+      tubeRadius,
+      16,
+      32,
+      Math.PI,
+    );
     topArc.applyMatrix4(new THREE.Matrix4().makeRotationZ(Math.PI / 2));
     topArc.applyMatrix4(
       new THREE.Matrix4().makeTranslation(0.05, verticalOffset, 0),
@@ -364,10 +300,19 @@ function makeDollarCoin() {
     );
     geometries.push(bottomArc);
 
-    const topSerif = new THREE.CylinderGeometry(tubeRadius, tubeRadius, 0.22, 12);
+    const topSerif = new THREE.CylinderGeometry(
+      tubeRadius,
+      tubeRadius,
+      0.22,
+      12,
+    );
     topSerif.applyMatrix4(new THREE.Matrix4().makeRotationZ(Math.PI / 2));
     topSerif.applyMatrix4(
-      new THREE.Matrix4().makeTranslation(0.16, verticalOffset + curveRadius, 0),
+      new THREE.Matrix4().makeTranslation(
+        0.16,
+        verticalOffset + curveRadius,
+        0,
+      ),
     );
     geometries.push(topSerif);
 
@@ -379,7 +324,11 @@ function makeDollarCoin() {
     );
     bottomSerif.applyMatrix4(new THREE.Matrix4().makeRotationZ(Math.PI / 2));
     bottomSerif.applyMatrix4(
-      new THREE.Matrix4().makeTranslation(-0.16, -verticalOffset - curveRadius, 0),
+      new THREE.Matrix4().makeTranslation(
+        -0.16,
+        -verticalOffset - curveRadius,
+        0,
+      ),
     );
     geometries.push(bottomSerif);
 
@@ -457,7 +406,11 @@ async function createGeometry(
       throw new Error(`No file is available for ${spec.label}.`);
     }
 
-    return loadImportedGeometry(spec.loader as HalftoneModelLoader, file, spec.label);
+    return loadImportedGeometry(
+      spec.loader as HalftoneModelLoader,
+      file,
+      spec.label,
+    );
   }
 
   const factory = BUILTIN_GEOMETRIES[spec.key];
