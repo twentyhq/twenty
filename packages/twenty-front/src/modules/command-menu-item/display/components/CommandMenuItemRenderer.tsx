@@ -18,16 +18,55 @@ import { Loader } from 'twenty-ui/feedback';
 import { MenuItem } from 'twenty-ui/navigation';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
-// oxlint-disable-next-line twenty/effect-components
-export const CommandMenuItemRenderer = ({
-  item,
-}: {
+type CommandMenuItemRendererProps = {
   item: CommandMenuItemFieldsFragment;
-}) => {
-  const { displayType, commandMenuContextApi } = useContext(CommandMenuContext);
+};
+
+type CommandMenuItemButtonRendererProps = CommandMenuItemRendererProps;
+
+const CommandMenuItemButtonRenderer = ({
+  item,
+}: CommandMenuItemButtonRendererProps) => {
+  const { commandMenuContextApi } = useContext(CommandMenuContext);
   const { getIcon } = useIcons();
 
   const { iconKey, label, shortLabel } = interpolateCommandMenuItemFields(
+    item,
+    commandMenuContextApi,
+  );
+
+  const Icon = getIcon(iconKey, COMMAND_MENU_DEFAULT_ICON);
+
+  const { handleClick, disabled } = useCommandMenuItemClick({
+    item,
+    Icon,
+    label,
+  });
+
+  return (
+    <CommandMenuButton
+      command={{
+        key: item.id,
+        label,
+        shortLabel,
+        Icon,
+      }}
+      onClick={disabled ? undefined : handleClick}
+      disabled={disabled}
+    />
+  );
+};
+
+const CommandMenuItemSelectableRenderer = ({
+  item,
+  displayType,
+}: CommandMenuItemRendererProps & {
+  displayType: 'listItem' | 'dropdownItem';
+}) => {
+  const { commandMenuContextApi } = useContext(CommandMenuContext);
+  const { getIcon } = useIcons();
+
+  const { iconKey, label } = interpolateCommandMenuItemFields(
     item,
     commandMenuContextApi,
   );
@@ -46,21 +85,6 @@ export const CommandMenuItemRenderer = ({
     item.id,
     selectableListInstanceId,
   );
-
-  if (displayType === 'button') {
-    return (
-      <CommandMenuButton
-        command={{
-          key: item.id,
-          label,
-          shortLabel,
-          Icon,
-        }}
-        onClick={disabled ? undefined : handleClick}
-        disabled={disabled}
-      />
-    );
-  }
 
   const onItemClick = () => {
     if (disabled) {
@@ -94,17 +118,35 @@ export const CommandMenuItemRenderer = ({
     );
   }
 
-  if (displayType === 'dropdownItem') {
+  return (
+    <SelectableListItem itemId={item.id} onEnter={onItemClick}>
+      <MenuItem
+        focused={isSelectedItemId}
+        LeftIcon={Icon}
+        onClick={onItemClick}
+        text={getCommandMenuItemLabel(label)}
+        disabled={disabled}
+      />
+    </SelectableListItem>
+  );
+};
+
+// oxlint-disable-next-line twenty/effect-components
+export const CommandMenuItemRenderer = ({
+  item,
+}: CommandMenuItemRendererProps) => {
+  const { displayType } = useContext(CommandMenuContext);
+
+  if (displayType === 'button') {
+    return <CommandMenuItemButtonRenderer item={item} />;
+  }
+
+  if (displayType === 'listItem' || displayType === 'dropdownItem') {
     return (
-      <SelectableListItem itemId={item.id} onEnter={onItemClick}>
-        <MenuItem
-          focused={isSelectedItemId}
-          LeftIcon={Icon}
-          onClick={onItemClick}
-          text={getCommandMenuItemLabel(label)}
-          disabled={disabled}
-        />
-      </SelectableListItem>
+      <CommandMenuItemSelectableRenderer
+        item={item}
+        displayType={displayType}
+      />
     );
   }
 
