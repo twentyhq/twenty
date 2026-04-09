@@ -35,17 +35,17 @@ export const useRecordTableSettingsDescriptions = ({
         )
       : PLACEHOLDER_INSTANCE_ID;
 
-  const draftFilters = useAtomComponentStateValue(
+  const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,
     recordIndexId,
   );
 
-  const draftSorts = useAtomComponentStateValue(
+  const currentRecordSorts = useAtomComponentStateValue(
     currentRecordSortsComponentState,
     recordIndexId,
   );
 
-  const draftFields = useAtomComponentStateValue(
+  const currentRecordFields = useAtomComponentStateValue(
     currentRecordFieldsComponentState,
     recordIndexId,
   );
@@ -53,7 +53,7 @@ export const useRecordTableSettingsDescriptions = ({
   const hasViewId = isDefined(viewId);
 
   const activeVisibleFieldLabels: Array<string | undefined> = hasViewId
-    ? draftFields
+    ? currentRecordFields
         .filter((field) => field.isVisible)
         .map(
           (field) =>
@@ -64,8 +64,8 @@ export const useRecordTableSettingsDescriptions = ({
     : [];
 
   const activeFilterLabels: Array<string | undefined> =
-    draftFilters.length > 0
-      ? draftFilters.map((filter) => filter.label)
+    currentRecordFilters.length > 0
+      ? currentRecordFilters.map((filter) => filter.label)
       : (view?.viewFilters ?? []).map(
           (filter) =>
             sourceObjectMetadataItem?.fields.find(
@@ -74,7 +74,7 @@ export const useRecordTableSettingsDescriptions = ({
         );
 
   const activeSortLabels: Array<string | undefined> = (
-    draftSorts.length > 0 ? draftSorts : (view?.viewSorts ?? [])
+    currentRecordSorts.length > 0 ? currentRecordSorts : (view?.viewSorts ?? [])
   ).map(
     (sort) =>
       sourceObjectMetadataItem?.fields.find(
