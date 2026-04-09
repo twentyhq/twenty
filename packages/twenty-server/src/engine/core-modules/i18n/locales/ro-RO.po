@@ -552,6 +552,16 @@ msgstr "Aplicația nu este instalată în acest spațiu de lucru. Instalează-o 
 msgid "Application not found."
 msgstr "Aplicația nu a fost găsită."
 
+#. js-lingui-id: kuNcoR
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application post-install logic function failed."
+msgstr ""
+
+#. js-lingui-id: UTxpa1
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application pre-install logic function failed."
+msgstr ""
+
 #. js-lingui-id: DE/icK
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Application registration not found."

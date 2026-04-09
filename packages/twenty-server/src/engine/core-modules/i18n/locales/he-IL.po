@@ -552,6 +552,16 @@ msgstr "היישום אינו מותקן בסביבת עבודה זו. התקן 
 msgid "Application not found."
 msgstr "היישום לא נמצא."
 
+#. js-lingui-id: kuNcoR
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application post-install logic function failed."
+msgstr ""
+
+#. js-lingui-id: UTxpa1
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application pre-install logic function failed."
+msgstr ""
+
 #. js-lingui-id: DE/icK
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Application registration not found."
