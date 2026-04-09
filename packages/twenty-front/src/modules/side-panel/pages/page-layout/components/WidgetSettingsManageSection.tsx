@@ -1,10 +1,14 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useResetPageLayoutWidgetToDefault } from '@/page-layout/hooks/useResetPageLayoutWidgetToDefault';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
+import { WidgetVisibilityDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityDropdownContent';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
+import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -13,10 +17,33 @@ import { useLingui } from '@lingui/react/macro';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  IconEyeX,
   IconRefreshDot,
   IconSwitchHorizontal,
   IconTrash,
 } from 'twenty-ui/display';
+
+const EXPRESSION_DEVICE_MOBILE = 'device == "MOBILE"';
+const EXPRESSION_DEVICE_DESKTOP = 'device == "DESKTOP"';
+
+const getVisibilityLabel = (
+  expression: string | null | undefined,
+  labels: { anyDevice: string; mobile: string; desktop: string },
+): string => {
+  if (!isDefined(expression)) {
+    return labels.anyDevice;
+  }
+
+  if (expression === EXPRESSION_DEVICE_MOBILE) {
+    return labels.mobile;
+  }
+
+  if (expression === EXPRESSION_DEVICE_DESKTOP) {
+    return labels.desktop;
+  }
+
+  return labels.anyDevice;
+};
 
 const RESET_WIDGET_TO_DEFAULT_MODAL_ID = 'reset-widget-to-default-modal';
 
@@ -28,6 +55,8 @@ export const WidgetSettingsManageSection = ({
   pageLayoutId,
 }: WidgetSettingsManageSectionProps) => {
   const { t } = useLingui();
+
+  const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
   const pageLayoutEditingWidgetId = useAtomComponentStateValue(
     pageLayoutEditingWidgetIdComponentState,
@@ -46,6 +75,15 @@ export const WidgetSettingsManageSection = ({
   if (!isDefined(pageLayoutEditingWidgetId)) {
     return null;
   }
+
+  const visibilityLabel = getVisibilityLabel(
+    widgetInEditMode?.conditionalAvailabilityExpression,
+    {
+      anyDevice: t`Any device`,
+      mobile: t`Mobile`,
+      desktop: t`Desktop`,
+    },
+  );
 
   const handleResetToDefault = () => {
     openModal(RESET_WIDGET_TO_DEFAULT_MODAL_ID);
@@ -68,6 +106,26 @@ export const WidgetSettingsManageSection = ({
   return (
     <>
       <SidePanelGroup heading={t`Manage`}>
+        <SelectableListItem
+          itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
+        >
+          <CommandMenuItemDropdown
+            id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
+            label={t`Visibility Restriction`}
+            Icon={IconEyeX}
+            dropdownId={
+              WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION
+            }
+            dropdownComponents={
+              <DropdownContent>
+                <WidgetVisibilityDropdownContent />
+              </DropdownContent>
+            }
+            dropdownPlacement="bottom-end"
+            description={visibilityLabel}
+            contextualTextPosition="right"
+          />
+        </SelectableListItem>
         <SelectableListItem
           itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
           onEnter={handleResetToDefault}
