@@ -25,7 +25,9 @@ export const commandMenuItemsSelector = createAtomSelector<
     return commandMenuItems.map((item) => ({
       ...item,
       frontComponent: isDefined(item.frontComponentId)
-        ? (frontComponentsById.get(item.frontComponentId) ?? null)
+        ? (frontComponentsById.get(item.frontComponentId) ??
+          item.frontComponent ??
+          null)
         : null,
     })) as CommandMenuItemFieldsFragment[];
   },
