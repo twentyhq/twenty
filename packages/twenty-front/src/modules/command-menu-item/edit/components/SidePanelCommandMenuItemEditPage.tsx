@@ -102,7 +102,8 @@ export const SidePanelCommandMenuItemEditPage = () => {
     .filter(
       doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
     )
-    .filter((item) => allowedAvailabilityTypes.has(item.availabilityType));
+    .filter((item) => allowedAvailabilityTypes.has(item.availabilityType))
+    .sort((firstItem, secondItem) => firstItem.position - secondItem.position);
 
   const filteredCommandMenuItemIds = new Set(
     filteredCommandMenuItems.map((item) => item.id),

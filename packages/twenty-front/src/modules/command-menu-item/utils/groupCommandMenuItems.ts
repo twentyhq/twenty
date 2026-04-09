@@ -1,10 +1,5 @@
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
-const compareByPosition = (
-  firstItem: CommandMenuItemFieldsFragment,
-  secondItem: CommandMenuItemFieldsFragment,
-) => firstItem.position - secondItem.position;
-
 export const groupCommandMenuItems = (
   items: CommandMenuItemFieldsFragment[],
 ) => {
@@ -18,9 +13,6 @@ export const groupCommandMenuItems = (
       other.push(item);
     }
   }
-
-  pinned.sort(compareByPosition);
-  other.sort(compareByPosition);
 
   return { pinned, other };
 };
