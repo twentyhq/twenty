@@ -3299,10 +3299,10 @@ export default {
             "sdkPackage": [
                 1
             ],
-            "inputCostPerMillionTokensInCredits": [
+            "inputCostPerMillionTokens": [
                 11
             ],
-            "outputCostPerMillionTokensInCredits": [
+            "outputCostPerMillionTokens": [
                 11
             ],
             "nativeCapabilities": [

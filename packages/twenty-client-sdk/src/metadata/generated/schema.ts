@@ -1345,8 +1345,8 @@ export interface ClientAIModelConfig {
     modelFamily?: ModelFamily
     modelFamilyLabel?: Scalars['String']
     sdkPackage?: Scalars['String']
-    inputCostPerMillionTokensInCredits: Scalars['Float']
-    outputCostPerMillionTokensInCredits: Scalars['Float']
+    inputCostPerMillionTokens?: Scalars['Float']
+    outputCostPerMillionTokens?: Scalars['Float']
     nativeCapabilities?: NativeModelCapabilities
     isDeprecated?: Scalars['Boolean']
     isRecommended?: Scalars['Boolean']
@@ -4487,8 +4487,8 @@ export interface ClientAIModelConfigGenqlSelection{
     modelFamily?: boolean | number
     modelFamilyLabel?: boolean | number
     sdkPackage?: boolean | number
-    inputCostPerMillionTokensInCredits?: boolean | number
-    outputCostPerMillionTokensInCredits?: boolean | number
+    inputCostPerMillionTokens?: boolean | number
+    outputCostPerMillionTokens?: boolean | number
     nativeCapabilities?: NativeModelCapabilitiesGenqlSelection
     isDeprecated?: boolean | number
     isRecommended?: boolean | number

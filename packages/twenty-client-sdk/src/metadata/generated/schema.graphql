@@ -1634,8 +1634,8 @@ type ClientAIModelConfig {
   modelFamily: ModelFamily
   modelFamilyLabel: String
   sdkPackage: String
-  inputCostPerMillionTokensInCredits: Float!
-  outputCostPerMillionTokensInCredits: Float!
+  inputCostPerMillionTokens: Float
+  outputCostPerMillionTokens: Float
   nativeCapabilities: NativeModelCapabilities
   isDeprecated: Boolean
   isRecommended: Boolean

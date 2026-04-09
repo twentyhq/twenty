@@ -869,7 +869,7 @@ export type ClientAiModelConfig = {
   __typename?: 'ClientAIModelConfig';
   contextWindowTokens?: Maybe<Scalars['Float']>;
   dataResidency?: Maybe<Scalars['String']>;
-  inputCostPerMillionTokensInCredits: Scalars['Float'];
+  inputCostPerMillionTokens?: Maybe<Scalars['Float']>;
   isDeprecated?: Maybe<Scalars['Boolean']>;
   isRecommended?: Maybe<Scalars['Boolean']>;
   label: Scalars['String'];
@@ -878,7 +878,7 @@ export type ClientAiModelConfig = {
   modelFamilyLabel?: Maybe<Scalars['String']>;
   modelId: Scalars['String'];
   nativeCapabilities?: Maybe<NativeModelCapabilities>;
-  outputCostPerMillionTokensInCredits: Scalars['Float'];
+  outputCostPerMillionTokens?: Maybe<Scalars['Float']>;
   providerLabel?: Maybe<Scalars['String']>;
   providerName?: Maybe<Scalars['String']>;
   sdkPackage?: Maybe<Scalars['String']>;
