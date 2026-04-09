@@ -1,45 +1,27 @@
-import { type MigrationInterface, type QueryRunner } from 'typeorm';
+import { type DataSource, type QueryRunner } from 'typeorm';
 
+import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
+import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import { addPayloadCheckConstraintToCommandMenuItem } from 'src/database/typeorm/core/migrations/utils/1775129635528-add-payload-to-command-menu-item.util';
 
-export class AddPayloadToCommandMenuItem1775129635528
-  implements MigrationInterface
+@RegisteredInstanceCommand('1.21.0', 1775129635528, { type: 'slow' })
+export class AddPayloadToCommandMenuItemSlowInstanceCommand
+  implements SlowInstanceCommand
 {
-  name = 'AddPayloadToCommandMenuItem1775129635528';
+  async runDataMigration(dataSource: DataSource): Promise<void> {
+    const queryRunner = dataSource.createQueryRunner();
+
+    try {
+      await addPayloadCheckConstraintToCommandMenuItem(queryRunner);
+    } finally {
+      await queryRunner.release();
+    }
+  }
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TABLE "core"."commandMenuItem" ADD "payload" jsonb`,
     );
-
-    const savepointName =
-      'sp_add_payload_check_constraint_to_command_menu_item';
-
-    try {
-      await queryRunner.query(`SAVEPOINT ${savepointName}`);
-
-      await addPayloadCheckConstraintToCommandMenuItem(queryRunner);
-
-      await queryRunner.query(`RELEASE SAVEPOINT ${savepointName}`);
-    } catch (e) {
-      try {
-        await queryRunner.query(`ROLLBACK TO SAVEPOINT ${savepointName}`);
-        await queryRunner.query(`RELEASE SAVEPOINT ${savepointName}`);
-      } catch (rollbackError) {
-        // oxlint-disable-next-line no-console
-        console.error(
-          'Failed to rollback to savepoint in AddPayloadToCommandMenuItem1775129635528',
-          rollbackError,
-        );
-        throw rollbackError;
-      }
-
-      // oxlint-disable-next-line no-console
-      console.error(
-        'Swallowing AddPayloadToCommandMenuItem1775129635528 error',
-        e,
-      );
-    }
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
