@@ -51,15 +51,9 @@ export const EventRowMainObject = ({
         <StyledMainContainer>
           <StyledRowContainer>
             <StyledRow>
-              <EventRowItem>
-                {labelIdentifierValue}
-              </EventRowItem>
-              <EventRowItem variant="action">
-                {t`was created by`}
-              </EventRowItem>
-              <EventRowItem>
-                {authorFullName}
-              </EventRowItem>
+              <EventRowItem>{labelIdentifierValue}</EventRowItem>
+              <EventRowItem variant="action">{t`was created by`}</EventRowItem>
+              <EventRowItem>{authorFullName}</EventRowItem>
             </StyledRow>
             <StyledItemTitleDate>{createdAt}</StyledItemTitleDate>
           </StyledRowContainer>
@@ -82,15 +76,9 @@ export const EventRowMainObject = ({
         <StyledMainContainer>
           <StyledRowContainer>
             <StyledRow>
-              <EventRowItem>
-                {labelIdentifierValue}
-              </EventRowItem>
-              <EventRowItem variant="action">
-                {t`was deleted by`}
-              </EventRowItem>
-              <EventRowItem>
-                {authorFullName}
-              </EventRowItem>
+              <EventRowItem>{labelIdentifierValue}</EventRowItem>
+              <EventRowItem variant="action">{t`was deleted by`}</EventRowItem>
+              <EventRowItem>{authorFullName}</EventRowItem>
             </StyledRow>
             <StyledItemTitleDate>{createdAt}</StyledItemTitleDate>
           </StyledRowContainer>
@@ -102,15 +90,9 @@ export const EventRowMainObject = ({
         <StyledMainContainer>
           <StyledRowContainer>
             <StyledRow>
-              <EventRowItem>
-                {labelIdentifierValue}
-              </EventRowItem>
-              <EventRowItem variant="action">
-                {t`was restored by`}
-              </EventRowItem>
-              <EventRowItem>
-                {authorFullName}
-              </EventRowItem>
+              <EventRowItem>{labelIdentifierValue}</EventRowItem>
+              <EventRowItem variant="action">{t`was restored by`}</EventRowItem>
+              <EventRowItem>{authorFullName}</EventRowItem>
             </StyledRow>
             <StyledItemTitleDate>{createdAt}</StyledItemTitleDate>
           </StyledRowContainer>
