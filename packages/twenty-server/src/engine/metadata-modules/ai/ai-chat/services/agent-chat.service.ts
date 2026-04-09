@@ -175,10 +175,12 @@ export class AgentChatService {
     threadId,
     text,
     id,
+    fileIds,
   }: {
     threadId: string;
     text: string;
     id?: string;
+    fileIds?: string[];
   }): Promise<AgentMessageEntity> {
     const message = this.messageRepository.create({
       ...(id ? { id } : {}),
@@ -191,14 +193,24 @@ export class AgentChatService {
 
     const savedMessage = await this.messageRepository.save(message);
 
-    const part = this.messagePartRepository.create({
-      messageId: savedMessage.id,
-      orderIndex: 0,
-      type: 'text',
-      textContent: text,
-    });
+    const parts = [
+      this.messagePartRepository.create({
+        messageId: savedMessage.id,
+        orderIndex: 0,
+        type: 'text',
+        textContent: text,
+      }),
+      ...(fileIds ?? []).map((fileId, index) =>
+        this.messagePartRepository.create({
+          messageId: savedMessage.id,
+          orderIndex: index + 1,
+          type: 'file',
+          fileId,
+        }),
+      ),
+    ];
 
-    await this.messagePartRepository.save(part);
+    await this.messagePartRepository.save(parts);
 
     return savedMessage;
   }
@@ -210,7 +222,7 @@ export class AgentChatService {
         status: AgentMessageStatus.QUEUED,
       },
       order: { createdAt: 'ASC' },
-      relations: ['parts'],
+      relations: ['parts', 'parts.file'],
     });
   }
 

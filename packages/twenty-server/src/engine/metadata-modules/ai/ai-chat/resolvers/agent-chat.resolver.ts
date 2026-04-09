@@ -176,6 +176,7 @@ export class AgentChatResolver {
         threadId,
         text,
         id: messageId,
+        fileIds: fileIds ?? undefined,
       });
 
       await this.eventPublisherService.publish({

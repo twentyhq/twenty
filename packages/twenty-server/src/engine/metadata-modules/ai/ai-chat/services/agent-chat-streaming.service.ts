@@ -8,7 +8,7 @@ import {
   isExtendedFileUIPart,
 } from 'twenty-shared/ai';
 import { FileFolder } from 'twenty-shared/types';
-import { In, type Repository } from 'typeorm';
+import { In, Like, type Repository } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -149,8 +149,19 @@ export class AgentChatStreamingService {
 
     const textPart = nextQueued.parts?.find((part) => part.type === 'text');
     const messageText = textPart?.textContent ?? '';
+    const fileParts = (nextQueued.parts ?? [])
+      .filter((part) => part.type === 'file')
+      .map(
+        (part): ExtendedFileUIPart => ({
+          type: 'file',
+          mediaType: part.file?.mimeType ?? 'application/octet-stream',
+          filename: part.fileFilename ?? '',
+          url: '',
+          fileId: part.fileId ?? '',
+        }),
+      );
 
-    if (messageText === '') {
+    if (messageText === '' && fileParts.length === 0) {
       await this.agentChatService.deleteQueuedMessage(nextQueued.id);
 
       return;
@@ -184,6 +195,13 @@ export class AgentChatStreamingService {
 
     const streamId = generateId();
 
+    const lastUserMessageParts: ExtendedUIMessagePart[] = [
+      ...(messageText !== ''
+        ? [{ type: 'text' as const, text: messageText }]
+        : []),
+      ...fileParts,
+    ];
+
     await this.messageQueueService.add<StreamAgentChatJobData>(
       STREAM_AGENT_CHAT_JOB_NAME,
       {
@@ -194,7 +212,7 @@ export class AgentChatStreamingService {
         messages: uiMessages,
         browsingContext: null,
         lastUserMessageText: messageText,
-        lastUserMessageParts: [{ type: 'text', text: messageText }],
+        lastUserMessageParts,
         hasTitle,
         conversationSizeTokens: thread.conversationSize,
         existingTurnId: turnId,
@@ -250,7 +268,11 @@ export class AgentChatStreamingService {
     }
 
     const files = await this.fileRepository.find({
-      where: { id: In(fileIds), workspaceId },
+      where: {
+        id: In(fileIds),
+        workspaceId,
+        path: Like(`%/${FileFolder.AgentChat}/%`),
+      },
     });
 
     return files.map(
