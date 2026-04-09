@@ -4,15 +4,15 @@ import { type Manifest } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
+import { computeApplicationManifestAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/compute-application-manifest-all-universal-flat-entity-maps.util';
+import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
-import { computeApplicationManifestAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/compute-application-manifest-all-universal-flat-entity-maps.util';
-import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -73,13 +73,23 @@ export class ApplicationManifestMigrationService {
     // inferDeletionFromMissingEntities: false below, this produces a purely
     // additive migration that registers the pre-install logic function without
     // touching any previously-synced metadata (important on upgrades).
+    const strippedDefaultRoleManifest = isDefined(defaultRoleManifest)
+      ? {
+          ...defaultRoleManifest,
+          objectPermissions: [],
+          fieldPermissions: [],
+        }
+      : undefined;
+
     const preInstallOnlyManifest: Manifest = {
       application: manifest.application,
       objects: [],
       fields: [],
       logicFunctions: [preInstallLogicFunctionManifest],
       frontComponents: [],
-      roles: isDefined(defaultRoleManifest) ? [defaultRoleManifest] : [],
+      roles: isDefined(strippedDefaultRoleManifest)
+        ? [strippedDefaultRoleManifest]
+        : [],
       skills: [],
       agents: [],
       publicAssets: [],
