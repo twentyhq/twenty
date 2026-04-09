@@ -102,6 +102,39 @@ const USAGE_EVENT_COLUMNS: ColumnConfig[] = [
   },
 ];
 
+const APPLICATION_LOG_COLUMNS: ColumnConfig[] = [
+  {
+    id: 'event',
+    label: msg`Function`,
+    minWidth: 100,
+    defaultWidth: 160,
+  },
+  {
+    id: 'timestamp',
+    label: msg`Timestamp`,
+    minWidth: 100,
+    defaultWidth: 140,
+  },
+  {
+    id: 'level',
+    label: msg`Level`,
+    minWidth: 60,
+    defaultWidth: 80,
+  },
+  {
+    id: 'message',
+    label: msg`Message`,
+    minWidth: 200,
+    defaultWidth: 400,
+  },
+  {
+    id: 'executionId',
+    label: msg`Execution ID`,
+    minWidth: 100,
+    defaultWidth: 140,
+  },
+];
+
 const StyledScrollWrapperContainer = styled.div`
   height: 100%;
   overflow: hidden;
@@ -176,12 +209,16 @@ export const EventLogResultsTable = ({
   const { t } = useLingui();
 
   const showObjectEventColumns = selectedTable === EventLogTable.OBJECT_EVENT;
+  const showApplicationLogColumns =
+    selectedTable === EventLogTable.APPLICATION_LOG;
   const baseColumns =
     selectedTable === EventLogTable.OBJECT_EVENT
       ? OBJECT_EVENT_COLUMNS
       : selectedTable === EventLogTable.USAGE_EVENT
         ? USAGE_EVENT_COLUMNS
-        : DEFAULT_COLUMNS;
+        : selectedTable === EventLogTable.APPLICATION_LOG
+          ? APPLICATION_LOG_COLUMNS
+          : DEFAULT_COLUMNS;
 
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>(() =>
     Object.fromEntries(baseColumns.map((col) => [col.id, col.defaultWidth])),
@@ -333,38 +370,69 @@ export const EventLogResultsTable = ({
                 >
                   {beautifyPastDateRelativeToNow(record.timestamp)}
                 </TableCell>
-                <TableCell
-                  overflow="hidden"
-                  textOverflow="ellipsis"
-                  whiteSpace="nowrap"
-                >
-                  {record.userId ?? '-'}
-                </TableCell>
-                {showObjectEventColumns && (
+                {showApplicationLogColumns ? (
                   <>
                     <TableCell
                       overflow="hidden"
                       textOverflow="ellipsis"
                       whiteSpace="nowrap"
                     >
-                      {record.recordId ?? '-'}
+                      {((record.properties as Record<string, unknown>)
+                        ?.level as string) ?? '-'}
                     </TableCell>
                     <TableCell
                       overflow="hidden"
                       textOverflow="ellipsis"
                       whiteSpace="nowrap"
                     >
-                      {record.objectMetadataId ?? '-'}
+                      {((record.properties as Record<string, unknown>)
+                        ?.message as string) ?? '-'}
+                    </TableCell>
+                    <TableCell
+                      overflow="hidden"
+                      textOverflow="ellipsis"
+                      whiteSpace="nowrap"
+                    >
+                      {((record.properties as Record<string, unknown>)
+                        ?.executionId as string) ?? '-'}
+                    </TableCell>
+                  </>
+                ) : (
+                  <>
+                    <TableCell
+                      overflow="hidden"
+                      textOverflow="ellipsis"
+                      whiteSpace="nowrap"
+                    >
+                      {record.userId ?? '-'}
+                    </TableCell>
+                    {showObjectEventColumns && (
+                      <>
+                        <TableCell
+                          overflow="hidden"
+                          textOverflow="ellipsis"
+                          whiteSpace="nowrap"
+                        >
+                          {record.recordId ?? '-'}
+                        </TableCell>
+                        <TableCell
+                          overflow="hidden"
+                          textOverflow="ellipsis"
+                          whiteSpace="nowrap"
+                        >
+                          {record.objectMetadataId ?? '-'}
+                        </TableCell>
+                      </>
+                    )}
+                    <TableCell
+                      overflow="hidden"
+                      textOverflow="ellipsis"
+                      whiteSpace="nowrap"
+                    >
+                      <EventLogJsonCell value={record.properties} />
                     </TableCell>
                   </>
                 )}
-                <TableCell
-                  overflow="hidden"
-                  textOverflow="ellipsis"
-                  whiteSpace="nowrap"
-                >
-                  <EventLogJsonCell value={record.properties} />
-                </TableCell>
               </TableRow>
             ))}
           </Table>

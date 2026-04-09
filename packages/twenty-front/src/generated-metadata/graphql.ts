@@ -1706,6 +1706,7 @@ export type EventLogRecord = {
 };
 
 export enum EventLogTable {
+  APPLICATION_LOG = 'APPLICATION_LOG',
   OBJECT_EVENT = 'OBJECT_EVENT',
   PAGEVIEW = 'PAGEVIEW',
   USAGE_EVENT = 'USAGE_EVENT',
