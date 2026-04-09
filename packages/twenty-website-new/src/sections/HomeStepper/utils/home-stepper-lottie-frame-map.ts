@@ -28,11 +28,6 @@ const STEP_3_TAIL_SCROLL_FRACTION = 0.42;
 
 const STEP_3_TAIL_FRAME_FRACTION = 0.16;
 
-function easeOutQuint(scrollUnit: number): number {
-  const clamped = clampUnit(scrollUnit);
-  return 1 - (1 - clamped) ** 5;
-}
-
 function step3LocalProgressToFrame(
   localProgress: number,
   rangeStart: number,
@@ -52,7 +47,7 @@ function step3LocalProgressToFrame(
   if (localProgress <= headScroll) {
     const headUnit =
       headScroll <= 0 ? 1 : clampUnit(localProgress / headScroll);
-    const eased = easeOutQuint(headUnit);
+    const eased = easeInOutCubic(headUnit);
     return rangeStart + eased * (pivot - rangeStart);
   }
 

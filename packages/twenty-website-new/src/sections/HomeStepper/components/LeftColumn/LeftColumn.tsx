@@ -12,6 +12,7 @@ const LeftColumnRoot = styled.div`
   min-width: 0;
 
   @media (min-width: ${theme.breakpoints.md}px) {
+    display: grid;
     margin-left: calc(-1 * ${theme.spacing(4)});
   }
 `;
@@ -22,13 +23,28 @@ const StickyPanel = styled.div`
   grid-template-columns: auto 1fr;
 
   @media (min-width: ${theme.breakpoints.md}px) {
+    align-items: center;
+    align-self: start;
     gap: ${theme.spacing(20)};
+    grid-area: 1 / 1;
     height: 100vh;
-    margin-bottom: -100vh;
+    overflow: hidden;
     position: sticky;
     top: 0;
-    z-index: 1;
   }
+`;
+
+const SpacerStack = styled.div`
+  display: none;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    display: block;
+    grid-area: 1 / 1;
+  }
+`;
+
+const StepSpacer = styled.div`
+  min-height: 100vh;
 `;
 
 const StepsContainer = styled.div`
@@ -66,16 +82,8 @@ const StepBlock = styled.div`
     &,
     &[data-active='true'] {
       opacity: var(--step-opacity, 0);
+      transform: var(--step-transform, translateY(40vh));
     }
-  }
-`;
-
-const StepSpacer = styled.div`
-  display: none;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    display: block;
-    min-height: 100vh;
   }
 `;
 
@@ -89,26 +97,35 @@ function clampUnit(value: number): number {
   return Math.max(0, Math.min(1, value));
 }
 
-function computeDesktopStepOpacity(
+function computeDesktopStepStyle(
   index: number,
   activeStepIndex: number,
   localProgress: number,
   stepCount: number,
-): number {
+): { opacity: number; transform: string } {
   const holdMax = HOME_STEPPER_LEFT_HOLD_LOCAL_PROGRESS_MAX;
+  const transitionRange = 1 - holdMax;
 
   if (index === activeStepIndex) {
     if (index === stepCount - 1 || localProgress <= holdMax) {
-      return 1;
+      return { opacity: 1, transform: 'translateY(0)' };
     }
-    return 1 - clampUnit((localProgress - holdMax) / (1 - holdMax));
+    const t = clampUnit((localProgress - holdMax) / transitionRange);
+    return {
+      opacity: 1 - t,
+      transform: `translateY(${-40 * t}vh)`,
+    };
   }
 
   if (index === activeStepIndex + 1 && localProgress > holdMax) {
-    return clampUnit((localProgress - holdMax) / (1 - holdMax));
+    const t = clampUnit((localProgress - holdMax) / transitionRange);
+    return {
+      opacity: t,
+      transform: `translateY(${40 * (1 - t)}vh)`,
+    };
   }
 
-  return 0;
+  return { opacity: 0, transform: 'translateY(40vh)' };
 }
 
 export function LeftColumn({
@@ -126,7 +143,7 @@ export function LeftColumn({
         />
         <StepsContainer>
           {steps.map((step, index) => {
-            const desktopOpacity = computeDesktopStepOpacity(
+            const { opacity, transform } = computeDesktopStepStyle(
               index,
               activeStepIndex,
               localProgress,
@@ -138,7 +155,10 @@ export function LeftColumn({
                 data-active={String(index === activeStepIndex)}
                 key={index}
                 style={
-                  { '--step-opacity': desktopOpacity } as CSSProperties
+                  {
+                    '--step-opacity': opacity,
+                    '--step-transform': transform,
+                  } as CSSProperties
                 }
               >
                 <Heading segments={step.heading} size="lg" weight="light" />
@@ -148,9 +168,11 @@ export function LeftColumn({
           })}
         </StepsContainer>
       </StickyPanel>
-      {steps.map((_, index) => (
-        <StepSpacer key={`spacer-${index}`} />
-      ))}
+      <SpacerStack>
+        {steps.map((_, index) => (
+          <StepSpacer key={index} />
+        ))}
+      </SpacerStack>
     </LeftColumnRoot>
   );
 }
