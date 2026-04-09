@@ -221,10 +221,7 @@ export const useLoadStaleMetadataEntities = () => {
                 return;
               }
 
-              replaceDraft(
-                'frontComponents',
-                result.data.frontComponents,
-              );
+              replaceDraft('frontComponents', result.data.frontComponents);
             }),
         );
       }
