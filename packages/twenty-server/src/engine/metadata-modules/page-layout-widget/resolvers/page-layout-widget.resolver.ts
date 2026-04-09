@@ -6,9 +6,7 @@ import {
 } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
-import GraphQLJSON from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -23,7 +21,6 @@ import { PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-wid
 import { WidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/dtos/widget-configuration.interface';
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
-import { resolveOverridableEntityProperty } from 'src/engine/metadata-modules/utils/resolve-overridable-entity-property.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
 @MetadataResolver(() => PageLayoutWidgetDTO)
@@ -98,30 +95,8 @@ export class PageLayoutWidgetResolver {
     });
   }
 
-  @ResolveField(() => String)
-  title(@Parent() widget: PageLayoutWidgetDTO): string {
-    return resolveOverridableEntityProperty(widget, 'title');
-  }
-
-  @ResolveField(() => GraphQLJSON, { nullable: true })
-  position(@Parent() widget: PageLayoutWidgetDTO) {
-    return resolveOverridableEntityProperty(widget, 'position');
-  }
-
-  @ResolveField(() => GraphQLJSON, { nullable: true })
-  conditionalDisplay(@Parent() widget: PageLayoutWidgetDTO) {
-    return resolveOverridableEntityProperty(widget, 'conditionalDisplay');
-  }
-
   @ResolveField(() => WidgetConfiguration, { nullable: true })
   configuration(@Parent() widget: PageLayoutWidgetDTO) {
     return widget.configuration;
-  }
-
-  @ResolveField(() => Boolean)
-  isOverridden(@Parent() widget: PageLayoutWidgetDTO): boolean {
-    return (
-      isDefined(widget.overrides) && Object.keys(widget.overrides).length > 0
-    );
   }
 }

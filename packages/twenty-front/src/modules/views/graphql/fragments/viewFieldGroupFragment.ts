@@ -9,7 +9,6 @@ export const VIEW_FIELD_GROUP_FRAGMENT = gql`
     position
     isVisible
     viewId
-    isOverridden
     createdAt
     updatedAt
     deletedAt

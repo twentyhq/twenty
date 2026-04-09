@@ -403,7 +403,6 @@ export class AdminPanelResolver {
 
     customProviders[providerName] = providerConfig;
     await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
-    this.aiModelRegistryService.refreshRegistry();
 
     return true;
   }
@@ -420,7 +419,6 @@ export class AdminPanelResolver {
 
     delete customProviders[providerName];
     await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
-    this.aiModelRegistryService.refreshRegistry();
 
     return true;
   }
@@ -475,7 +473,6 @@ export class AdminPanelResolver {
     };
 
     await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
-    this.aiModelRegistryService.refreshRegistry();
 
     return true;
   }
@@ -508,7 +505,6 @@ export class AdminPanelResolver {
     };
 
     await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
-    this.aiModelRegistryService.refreshRegistry();
 
     return true;
   }

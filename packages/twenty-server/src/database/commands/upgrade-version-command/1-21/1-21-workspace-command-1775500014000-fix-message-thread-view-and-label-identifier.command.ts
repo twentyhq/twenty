@@ -155,6 +155,7 @@ export class FixMessageThreadViewAndLabelIdentifierCommand extends ActiveOrSuspe
           workspaceId,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,
+          isSystemBuild: true,
         },
       );
 
