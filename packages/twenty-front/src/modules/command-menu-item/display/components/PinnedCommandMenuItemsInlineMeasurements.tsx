@@ -1,6 +1,6 @@
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/constants/PinnedCommandMenuItemsGap';
-import { interpolateCommandMenuItemFields } from '@/command-menu-item/display/hooks/useInterpolatedCommandMenuItemFields';
+import { interpolateCommandMenuItemFields } from '@/command-menu-item/display/utils/interpolateCommandMenuItemFields';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';

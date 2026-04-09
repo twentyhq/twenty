@@ -1,15 +1,15 @@
-import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMenuContextApi';
-import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { PinnedCommandMenuItemsInlineMeasurements } from '@/command-menu-item/display/components/PinnedCommandMenuItemsInlineMeasurements';
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/constants/PinnedCommandMenuItemsGap';
-import { interpolateCommandMenuItemFields } from '@/command-menu-item/display/hooks/useInterpolatedCommandMenuItemFields';
 import { usePinnedCommandMenuItemsInlineLayout } from '@/command-menu-item/display/hooks/usePinnedCommandMenuItemsInlineLayout';
-import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
-import { mainContextStoreHasSelectedRecordsSelector } from '@/context-store/states/selectors/mainContextStoreHasSelectedRecordsSelector';
+import { interpolateCommandMenuItemFields } from '@/command-menu-item/display/utils/interpolateCommandMenuItemFields';
 import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
+import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMenuContextApi';
+import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
+import { mainContextStoreHasSelectedRecordsSelector } from '@/context-store/states/selectors/mainContextStoreHasSelectedRecordsSelector';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useContext, useMemo } from 'react';
@@ -69,20 +69,12 @@ export const PinnedCommandMenuItemButtonsEditMode = () => {
     [mainContextStoreHasSelectedRecords],
   );
 
-  const pinnedCommandMenuItems = useMemo(
-    () =>
-      commandMenuItemsDraft
-        .filter(
-          doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
-        )
-        .filter((item) => allowedAvailabilityTypes.has(item.availabilityType))
-        .filter((item) => item.isPinned),
-    [
-      commandMenuItemsDraft,
-      currentObjectMetadataItemId,
-      allowedAvailabilityTypes,
-    ],
-  );
+  const pinnedCommandMenuItems = commandMenuItemsDraft
+    .filter(
+      doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
+    )
+    .filter((item) => allowedAvailabilityTypes.has(item.availabilityType))
+    .filter((item) => item.isPinned);
 
   const {
     pinnedInlineCommandMenuItems,
