@@ -1,28 +1,17 @@
-const ROOT_FRAME_COUNT = 1380;
-const THIRD = ROOT_FRAME_COUNT / 3;
-
 const STEP_1_GOOD_FRACTION = 4 / 5;
-
-const STEP_1_FRAME_START = 0;
-const STEP_1_FRAME_END = THIRD * STEP_1_GOOD_FRACTION - 1;
 
 const STEP_2_GOOD_FRACTION = 4 / 5;
 
-const STEP_2_FRAME_START = THIRD;
-const STEP_2_FRAME_END = THIRD + THIRD * STEP_2_GOOD_FRACTION - 1;
-
-const STEP_3_FRAME_START = STEP_2_FRAME_END + 1;
-const STEP_3_FRAME_END = ROOT_FRAME_COUNT - 1;
-
-const STEP_FRAME_RANGES: readonly [number, number][] = [
-  [STEP_1_FRAME_START, STEP_1_FRAME_END],
-  [STEP_2_FRAME_START, STEP_2_FRAME_END],
-  [STEP_3_FRAME_START, STEP_3_FRAME_END],
-];
-
-const STEP_COUNT = STEP_FRAME_RANGES.length;
+const STEP_COUNT = 3;
 
 const STEP_3_INDEX = 2;
+
+// Fallback when JSON metadata is not available yet (matches current home stepper asset)
+export const HOME_STEPPER_LOTTIE_DEFAULT_TOTAL_FRAMES = 1499;
+
+// While local scroll progress is below this, the left column stays visually fixed (Lottie-only scroll).
+// Matches the main portion of each step in the Lottie map; the remainder is the step-to-step transition.
+export const HOME_STEPPER_LEFT_HOLD_LOCAL_PROGRESS_MAX = STEP_1_GOOD_FRACTION;
 
 function clampUnit(value: number): number {
   return Math.max(0, Math.min(1, value));
@@ -72,20 +61,57 @@ function step3LocalProgressToFrame(
   return pivot + easedTail * (rangeEnd - pivot);
 }
 
+function homeStepperStepFrameRanges(
+  totalFrames: number,
+): readonly [number, number][] {
+  const lastFrameIndex = Math.max(0, totalFrames - 1);
+  const third = totalFrames / STEP_COUNT;
+
+  const step1End = third * STEP_1_GOOD_FRACTION - 1;
+  const step2Start = third;
+  const step2End = third + third * STEP_2_GOOD_FRACTION - 1;
+  const step3Start = step2End + 1;
+
+  return [
+    [0, step1End],
+    [step2Start, step2End],
+    [step3Start, lastFrameIndex],
+  ] as const;
+}
+
 export function scrollProgressToHomeStepperLottieFrame(
   scrollProgress: number,
+  totalFrames: number,
 ): number {
+  const rounded = Math.round(totalFrames);
+  const safeTotal =
+    Number.isFinite(rounded) && rounded >= STEP_COUNT
+      ? rounded
+      : HOME_STEPPER_LOTTIE_DEFAULT_TOTAL_FRAMES;
+  const lastIndex = safeTotal - 1;
+  const stepFrameRanges = homeStepperStepFrameRanges(safeTotal);
+
   const clamped = clampUnit(scrollProgress);
   const stepFloat = clamped * STEP_COUNT;
   const stepIndex = Math.min(STEP_COUNT - 1, Math.floor(stepFloat));
   const localProgress = stepFloat - stepIndex;
 
-  const [rangeStart, rangeEnd] = STEP_FRAME_RANGES[stepIndex];
+  const [rangeStart, rangeEnd] = stepFrameRanges[stepIndex];
+  const clampedEnd = Math.min(rangeEnd, lastIndex);
+  const clampedStart = Math.min(rangeStart, clampedEnd);
 
+  let frame: number;
   if (stepIndex === STEP_3_INDEX) {
-    return step3LocalProgressToFrame(localProgress, rangeStart, rangeEnd);
+    frame = step3LocalProgressToFrame(
+      localProgress,
+      clampedStart,
+      clampedEnd,
+    );
+  } else {
+    const frameProgress = easeInOutCubic(localProgress);
+    frame =
+      clampedStart + frameProgress * (clampedEnd - clampedStart);
   }
 
-  const frameProgress = easeInOutCubic(localProgress);
-  return rangeStart + frameProgress * (rangeEnd - rangeStart);
+  return Math.max(0, Math.min(lastIndex, frame));
 }

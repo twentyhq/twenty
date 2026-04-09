@@ -1,6 +1,9 @@
 'use client';
 
-import { scrollProgressToHomeStepperLottieFrame } from '@/sections/HomeStepper/utils/home-stepper-lottie-frame-map';
+import {
+  HOME_STEPPER_LOTTIE_DEFAULT_TOTAL_FRAMES,
+  scrollProgressToHomeStepperLottieFrame,
+} from '@/sections/HomeStepper/utils/home-stepper-lottie-frame-map';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import Lottie, { type LottieRefCurrentProps } from 'lottie-react';
@@ -17,20 +20,39 @@ const LottieSlot = styled.div`
   width: 100%;
 `;
 
-type LottieAnimationData = Record<string, unknown>;
+type LottieAnimationData = {
+  fr?: number;
+  ip?: number;
+  op?: number;
+} & Record<string, unknown>;
 
 type StepperLottieProps = {
   scrollProgress: number;
 };
 
+function lottieTotalFrameCount(animationData: LottieAnimationData): number {
+  const op = typeof animationData.op === 'number' ? animationData.op : 0;
+  const ip = typeof animationData.ip === 'number' ? animationData.ip : 0;
+  const span = op - ip;
+  const rounded = Math.round(span);
+  if (rounded >= 1) {
+    return rounded;
+  }
+  return HOME_STEPPER_LOTTIE_DEFAULT_TOTAL_FRAMES;
+}
+
 function applyScrollToLottie(
   lottieApi: LottieRefCurrentProps | null,
   scrollProgress: number,
+  totalFrames: number,
 ) {
   if (!lottieApi?.animationLoaded) {
     return;
   }
-  const frame = scrollProgressToHomeStepperLottieFrame(scrollProgress);
+  const frame = scrollProgressToHomeStepperLottieFrame(
+    scrollProgress,
+    totalFrames,
+  );
   lottieApi.goToAndStop(frame, true);
 }
 
@@ -38,9 +60,14 @@ export function StepperLottie({ scrollProgress }: StepperLottieProps) {
   const [animationData, setAnimationData] = useState<LottieAnimationData | null>(
     null,
   );
+  const [totalFrames, setTotalFrames] = useState(
+    HOME_STEPPER_LOTTIE_DEFAULT_TOTAL_FRAMES,
+  );
   const lottieRef = useRef<LottieRefCurrentProps | null>(null);
   const scrollProgressRef = useRef(scrollProgress);
   scrollProgressRef.current = scrollProgress;
+  const totalFramesRef = useRef(totalFrames);
+  totalFramesRef.current = totalFrames;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -53,7 +80,9 @@ export function StepperLottie({ scrollProgress }: StepperLottieProps) {
         return response.json() as Promise<LottieAnimationData>;
       })
       .then((data) => {
-        setAnimationData(data);
+        const parsed = data as LottieAnimationData;
+        setAnimationData(parsed);
+        setTotalFrames(lottieTotalFrameCount(parsed));
       })
       .catch((error: unknown) => {
         if (error instanceof Error && error.name === 'AbortError') {
@@ -71,8 +100,8 @@ export function StepperLottie({ scrollProgress }: StepperLottieProps) {
     if (!animationData) {
       return;
     }
-    applyScrollToLottie(lottieRef.current, scrollProgress);
-  }, [animationData, scrollProgress]);
+    applyScrollToLottie(lottieRef.current, scrollProgress, totalFrames);
+  }, [animationData, scrollProgress, totalFrames]);
 
   if (!animationData) {
     return <LottieSlot aria-hidden />;
@@ -88,7 +117,11 @@ export function StepperLottie({ scrollProgress }: StepperLottieProps) {
         style={{ height: '100%', maxWidth: '100%', width: '100%' }}
         onDOMLoaded={() => {
           lottieRef.current?.setSubframe(true);
-          applyScrollToLottie(lottieRef.current, scrollProgressRef.current);
+          applyScrollToLottie(
+            lottieRef.current,
+            scrollProgressRef.current,
+            totalFramesRef.current,
+          );
         }}
       />
     </LottieSlot>
