@@ -86,10 +86,15 @@ export const useBulkCreateTagJunctionRecords = ({
       }
 
       const junctionFieldName = junctionField?.name;
+      const targetFieldName = targetField?.name;
 
       const recordsToCreate = selectedRecordIds.flatMap((recordId) => {
         // Skip (recordId, tagId) pairs that already exist in the record store
         // to prevent duplicate junction rows.
+        // Junction records from GQL queries only carry the nested target object
+        // (e.g. { tag: { id } }) — the raw join column (e.g. tagId) is NOT
+        // fetched. Optimistically-written records have both. Check via the
+        // nested target id first, fall back to the raw join column.
         const existingTagIds =
           isDefined(junctionFieldName)
             ? new Set(
@@ -97,7 +102,12 @@ export const useBulkCreateTagJunctionRecords = ({
                   (store.get(
                     recordStoreFamilyState.atomFamily(recordId),
                   )?.[junctionFieldName] as ObjectRecord[] | undefined) ?? []
-                ).map((jr) => jr[targetJoinColumnName] as string),
+                ).map(
+                  (jr) =>
+                    (isDefined(targetFieldName)
+                      ? (jr[targetFieldName] as ObjectRecord | undefined)?.id
+                      : undefined) ?? (jr[targetJoinColumnName] as string | undefined),
+                ),
               )
             : new Set<string>();
 
@@ -122,6 +132,7 @@ export const useBulkCreateTagJunctionRecords = ({
     [
       isConfigValid,
       junctionField?.name,
+      targetField?.name,
       sourceJoinColumnName,
       targetJoinColumnName,
       createManyRecords,
