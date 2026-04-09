@@ -1,11 +1,8 @@
 import { type ApplicationVariables } from './applicationVariablesType';
 import { type ServerVariables } from './server-variables.type';
 import { type SyncableEntityOptions } from './syncableEntityOptionsType';
-
-type InstallLogicFunctionApplicationManifest = SyncableEntityOptions & {
-  universalIdentifier: string;
-  shouldRunOnVersionUpgrade?: boolean;
-};
+import { PostInstallLogicFunctionApplicationManifest } from '@/application/postInstallLogicFunctionApplicationType';
+import { PreInstallLogicFunctionApplicationManifest } from '@/application/preInstallLogicFunctionApplicationType';
 
 export type ApplicationManifest = SyncableEntityOptions & {
   defaultRoleUniversalIdentifier: string;
@@ -23,8 +20,8 @@ export type ApplicationManifest = SyncableEntityOptions & {
   termsUrl?: string;
   emailSupport?: string;
   issueReportUrl?: string;
-  postInstallLogicFunction?: InstallLogicFunctionApplicationManifest;
-  preInstallLogicFunction?: InstallLogicFunctionApplicationManifest;
+  postInstallLogicFunction?: PostInstallLogicFunctionApplicationManifest;
+  preInstallLogicFunction?: PreInstallLogicFunctionApplicationManifest;
   settingsCustomTabFrontComponentUniversalIdentifier?: string;
   packageJsonChecksum: string | null;
   yarnLockChecksum: string | null;

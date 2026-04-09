@@ -1,3 +1,13 @@
-import { PostInstallLogicFunctionConfig } from '@/sdk/logic-functions/post-install-logic-function-config';
+import type { InstallHandler, LogicFunctionConfig } from '@/sdk';
 
-export type PreInstallLogicFunctionConfig = PostInstallLogicFunctionConfig;
+export type PreInstallLogicFunctionConfig = Omit<
+  LogicFunctionConfig,
+  | 'cronTriggerSettings'
+  | 'databaseEventTriggerSettings'
+  | 'httpRouteTriggerSettings'
+  | 'isTool'
+  | 'handler'
+> & {
+  handler: InstallHandler;
+  shouldRunOnVersionUpgrade?: boolean;
+};

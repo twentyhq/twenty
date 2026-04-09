@@ -294,7 +294,7 @@ export class ApplicationInstallService {
     if (result.error) {
       throw new ApplicationException(
         result.error.errorMessage,
-        ApplicationExceptionCode.APP_NOT_INSTALLED,
+        ApplicationExceptionCode.PRE_INSTALL_ERROR,
       );
     }
   }
@@ -323,6 +323,7 @@ export class ApplicationInstallService {
     const {
       universalIdentifier: postInstallLogicFunctionUniversalIdentifier,
       shouldRunOnVersionUpgrade,
+      shouldRunSynchronously,
     } = manifest.application.postInstallLogicFunction;
 
     if (isVersionUpgrade && !shouldRunOnVersionUpgrade) {
@@ -350,22 +351,44 @@ export class ApplicationInstallService {
       );
     }
 
+    const payload = { previousVersion, newVersion };
+
     this.logger.log(
       `Enqueuing post-install hook for app ${universalIdentifier} with payload:`,
-      JSON.stringify({ previousVersion, newVersion }),
+      JSON.stringify(payload),
     );
 
-    await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
-      LogicFunctionTriggerJob.name,
-      [
-        {
-          logicFunctionId: flatLogicFunction.id,
-          workspaceId,
-          payload: { previousVersion, newVersion },
-        },
-      ],
-      { retryLimit: 3 },
-    );
+    if (!shouldRunSynchronously) {
+      await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+        LogicFunctionTriggerJob.name,
+        [
+          {
+            logicFunctionId: flatLogicFunction.id,
+            workspaceId,
+            payload,
+          },
+        ],
+        { retryLimit: 3 },
+      );
+      return;
+    }
+
+    const result = await this.logicFunctionExecutorService.execute({
+      logicFunctionId: flatLogicFunction.id,
+      workspaceId,
+      payload,
+    });
+
+    if (!isDefined(result)) {
+      this.logger.log('Post-install hook executed successfully');
+    }
+
+    if (result.error) {
+      throw new ApplicationException(
+        result.error.errorMessage,
+        ApplicationExceptionCode.POST_INSTALL_ERROR,
+      );
+    }
   }
 
   private async writeFilesToStorage(

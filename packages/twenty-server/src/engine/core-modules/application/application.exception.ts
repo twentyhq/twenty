@@ -18,6 +18,8 @@ export enum ApplicationExceptionCode {
   PACKAGE_RESOLUTION_FAILED = 'PACKAGE_RESOLUTION_FAILED',
   TARBALL_EXTRACTION_FAILED = 'TARBALL_EXTRACTION_FAILED',
   UPGRADE_FAILED = 'UPGRADE_FAILED',
+  PRE_INSTALL_ERROR = 'PRE_INSTALL_ERROR',
+  POST_INSTALL_ERROR = 'POST_INSTALL_ERROR',
 }
 
 const getApplicationExceptionUserFriendlyMessage = (
@@ -50,6 +52,10 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`Failed to extract tarball.`;
     case ApplicationExceptionCode.UPGRADE_FAILED:
       return msg`Application upgrade failed.`;
+    case ApplicationExceptionCode.PRE_INSTALL_ERROR:
+      return msg`Application pre-install logic function failed.`;
+    case ApplicationExceptionCode.POST_INSTALL_ERROR:
+      return msg`Application post-install logic function failed.`;
     default:
       assertUnreachable(code);
   }

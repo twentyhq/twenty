@@ -662,6 +662,7 @@ export default definePostInstallLogicFunction({
   description: 'Runs after installation to set up the application.',
   timeoutSeconds: 300,
   shouldRunOnVersionUpgrade: false,
+  shouldRunSynchronously: false,
   handler,
 });
 ```
@@ -676,13 +677,15 @@ Key points:
 - Post-install functions use `definePostInstallLogicFunction()` — a specialized variant that omits trigger settings (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
 - The handler receives an `InstallPayload` with `{ previousVersion?: string; newVersion: string }` — `newVersion` is the version being installed, and `previousVersion` is the version that was previously installed (or `undefined` on a fresh install). Use these values to distinguish fresh installs from upgrades and to run version-specific migration logic.
 - **When the hook runs**: on fresh installs only, by default. Pass `shouldRunOnVersionUpgrade: true` if you also want it to run when the app is upgraded from a previous version. When omitted, the flag defaults to `false` and upgrades skip the hook.
-- **Execution model**: post-install is **enqueued on the message queue** (with `retryLimit: 3`) and runs asynchronously after the install returns. The install is considered successful as soon as the job is enqueued — a failing post-install will be retried by the worker, but it will not roll back the install itself.
-- If the hook throws or returns an error, make sure your handler is idempotent, especially when `shouldRunOnVersionUpgrade: true` or because the queue may retry it — it may run more than once over the lifetime of the app.
+- **Execution model — async by default, sync opt-in**: the `shouldRunSynchronously` flag controls *how* post-install is executed.
+  - `shouldRunSynchronously: false` *(default)* — the hook is **enqueued on the message queue** with `retryLimit: 3` and runs asynchronously in a worker. The install response returns as soon as the job is enqueued, so a slow or failing handler does not block the caller. The worker will retry up to three times. **Use this for long-running jobs** — seeding large datasets, calling slow third-party APIs, provisioning external resources, anything that might exceed a reasonable HTTP response window.
+  - `shouldRunSynchronously: true` — the hook is executed **inline during the install flow** (same executor as pre-install). The install request blocks until the handler finishes, and if it throws, the install caller receives a `POST_INSTALL_ERROR`. No automatic retries. **Use this for fast, must-complete-before-response work** — for example, emitting a validation error to the user, or quick setup that the client will rely on immediately after the install call returns. Keep in mind the metadata migration has already been applied by the time post-install runs, so a sync-mode failure does **not** roll back the schema changes — it only surfaces the error.
+- Make sure your handler is idempotent. In async mode the queue may retry up to three times; in either mode the hook may run again on upgrades when `shouldRunOnVersionUpgrade: true`.
 - The environment variables `APPLICATION_ID`, `APP_ACCESS_TOKEN`, and `API_URL` are available inside the handler (same as any other logic function), so you can call the Twenty API with an application access token scoped to your app.
 - Only one post-install function is allowed per application. The manifest build will error if more than one is detected.
-- The function's `universalIdentifier` and `shouldRunOnVersionUpgrade` are automatically attached to the application manifest under the `postInstallLogicFunction` field during the build — you do not need to reference either of them in `defineApplication()`.
+- The function's `universalIdentifier`, `shouldRunOnVersionUpgrade`, and `shouldRunSynchronously` are automatically attached to the application manifest under the `postInstallLogicFunction` field during the build — you do not need to reference them in `defineApplication()`.
 - The default timeout is set to 300 seconds (5 minutes) to allow for longer setup tasks like data seeding.
-- **Not executed in dev mode**: when an app is registered locally (via `yarn twenty dev`), the server skips the install flow entirely and syncs files directly through the CLI watcher — so post-install never runs in dev mode. Use `yarn twenty exec --postInstall` to trigger it manually against a running workspace.
+- **Not executed in dev mode**: when an app is registered locally (via `yarn twenty dev`), the server skips the install flow entirely and syncs files directly through the CLI watcher — so post-install never runs in dev mode, regardless of `shouldRunSynchronously`. Use `yarn twenty exec --postInstall` to trigger it manually against a running workspace.
 
 </Accordion>
 <Accordion title="definePreInstallLogicFunction" description="Define a pre-install logic function (one per app)">
@@ -735,6 +738,8 @@ Both hooks are part of the same install flow and receive the same `InstallPayloa
 │                  old schema visible    new schema visible   │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+Pre-install is always **synchronous** (it blocks the install and can abort it). Post-install is **asynchronous by default** — enqueued on a worker with automatic retries — but can opt into synchronous execution with `shouldRunSynchronously: true`. See the `definePostInstallLogicFunction` accordion above for when to use each mode.
 
 **Use `post-install` for anything that needs the new schema to exist.** This is the common case:
 
@@ -822,6 +827,8 @@ export default definePreInstallLogicFunction({
 | You want to… | Use |
 |---|---|
 | Seed default data, configure the workspace, register external resources | `post-install` |
+| Run long-running seeding or third-party calls that shouldn't block the install response | `post-install` (default — `shouldRunSynchronously: false`, with worker retries) |
+| Run fast setup that the caller will rely on immediately after the install call returns | `post-install` with `shouldRunSynchronously: true` |
 | Read or back up data that the upcoming migration would lose | `pre-install` |
 | Reject an upgrade that would corrupt existing data | `pre-install` (throw from the handler) |
 | Run reconciliation on every upgrade | `post-install` with `shouldRunOnVersionUpgrade: true` |

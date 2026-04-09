@@ -34,6 +34,8 @@ import {
   type RoleManifest,
   type SkillManifest,
   type ViewManifest,
+  type PostInstallLogicFunctionApplicationManifest,
+  type PreInstallLogicFunctionApplicationManifest,
 } from 'twenty-shared/application';
 import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
@@ -82,15 +84,10 @@ export const buildManifest = async (
   const views: ViewManifest[] = [];
   const navigationMenuItems: NavigationMenuItemManifest[] = [];
   const pageLayouts: PageLayoutManifest[] = [];
-  const postInstallLogicFunctions: {
-    universalIdentifier: string;
-    shouldRunOnVersionUpgrade: boolean;
-  }[] = [];
-  const preInstallLogicFunctions: {
-    universalIdentifier: string;
-    shouldRunOnVersionUpgrade: boolean;
-  }[] = [];
-
+  const postInstallLogicFunctions: PostInstallLogicFunctionApplicationManifest[] =
+    [];
+  const preInstallLogicFunctions: PreInstallLogicFunctionApplicationManifest[] =
+    [];
   const applicationFilePaths: string[] = [];
   const objectsFilePaths: string[] = [];
   const fieldsFilePaths: string[] = [];
@@ -248,6 +245,8 @@ export const buildManifest = async (
             universalIdentifier: extract.config.universalIdentifier,
             shouldRunOnVersionUpgrade:
               postInstallHookConfig.shouldRunOnVersionUpgrade ?? false,
+            shouldRunSynchronously:
+              postInstallHookConfig.shouldRunSynchronously ?? false,
           });
         }
 
