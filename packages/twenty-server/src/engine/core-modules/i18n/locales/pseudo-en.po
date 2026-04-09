@@ -2886,6 +2886,11 @@ msgstr ""
 msgid "Full path"
 msgstr ""
 
+#. js-lingui-id: yQDBsf
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Function code failed to compile."
+msgstr ""
+
 #. js-lingui-id: pouguB
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function code is unchanged."
