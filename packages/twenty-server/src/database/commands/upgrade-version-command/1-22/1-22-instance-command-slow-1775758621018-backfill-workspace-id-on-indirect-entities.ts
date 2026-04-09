@@ -51,6 +51,11 @@ const BACKFILL_DEFINITIONS: BackfillDefinition[] = [
     parentTable: 'application',
     foreignKey: 'applicationId',
   },
+  {
+    table: 'billingSubscriptionItem',
+    parentTable: 'billingSubscription',
+    foreignKey: 'billingSubscriptionId',
+  },
 ];
 
 @RegisteredInstanceCommand('1.22.0', 1775758621018, { type: 'slow' })
@@ -84,6 +89,9 @@ export class BackfillWorkspaceIdOnIndirectEntitiesSlowInstanceCommand
       'ALTER TABLE "core"."applicationVariable" ALTER COLUMN "workspaceId" SET NOT NULL',
     );
     await queryRunner.query(
+      'ALTER TABLE "core"."billingSubscriptionItem" ALTER COLUMN "workspaceId" SET NOT NULL',
+    );
+    await queryRunner.query(
       'ALTER TABLE "core"."indexFieldMetadata" ALTER COLUMN "workspaceId" SET NOT NULL',
     );
     await queryRunner.query(
@@ -108,6 +116,9 @@ export class BackfillWorkspaceIdOnIndirectEntitiesSlowInstanceCommand
       'CREATE INDEX "IDX_78ae6cfe5f49a76c4bf842ad58" ON "core"."applicationVariable" ("workspaceId") ',
     );
     await queryRunner.query(
+      'CREATE INDEX "IDX_b8c7f8335d9ab4556c685c3fc6" ON "core"."billingSubscriptionItem" ("workspaceId") ',
+    );
+    await queryRunner.query(
       'CREATE INDEX "IDX_d8cf7f15cf6466ac0e3b443b3d" ON "core"."indexFieldMetadata" ("workspaceId") ',
     );
     await queryRunner.query(
@@ -130,6 +141,9 @@ export class BackfillWorkspaceIdOnIndirectEntitiesSlowInstanceCommand
     );
     await queryRunner.query(
       'ALTER TABLE "core"."applicationVariable" ADD CONSTRAINT "FK_78ae6cfe5f49a76c4bf842ad58b" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION',
+    );
+    await queryRunner.query(
+      'ALTER TABLE "core"."billingSubscriptionItem" ADD CONSTRAINT "FK_b8c7f8335d9ab4556c685c3fc64" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION',
     );
     await queryRunner.query(
       'ALTER TABLE "core"."indexFieldMetadata" ADD CONSTRAINT "FK_d8cf7f15cf6466ac0e3b443b3d2" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION',
@@ -177,7 +191,13 @@ export class BackfillWorkspaceIdOnIndirectEntitiesSlowInstanceCommand
       'ALTER TABLE "core"."indexFieldMetadata" DROP CONSTRAINT "FK_d8cf7f15cf6466ac0e3b443b3d2"',
     );
     await queryRunner.query(
+      'ALTER TABLE "core"."billingSubscriptionItem" DROP CONSTRAINT "FK_b8c7f8335d9ab4556c685c3fc64"',
+    );
+    await queryRunner.query(
       'ALTER TABLE "core"."applicationVariable" DROP CONSTRAINT "FK_78ae6cfe5f49a76c4bf842ad58b"',
+    );
+    await queryRunner.query(
+      'DROP INDEX "core"."IDX_b8c7f8335d9ab4556c685c3fc6"',
     );
     await queryRunner.query(
       'DROP INDEX "core"."IDX_75db4f2e80922078e8171ae130"',
@@ -223,6 +243,9 @@ export class BackfillWorkspaceIdOnIndirectEntitiesSlowInstanceCommand
     );
     await queryRunner.query(
       'ALTER TABLE "core"."indexFieldMetadata" ALTER COLUMN "workspaceId" DROP NOT NULL',
+    );
+    await queryRunner.query(
+      'ALTER TABLE "core"."billingSubscriptionItem" ALTER COLUMN "workspaceId" DROP NOT NULL',
     );
     await queryRunner.query(
       'ALTER TABLE "core"."applicationVariable" ALTER COLUMN "workspaceId" DROP NOT NULL',
