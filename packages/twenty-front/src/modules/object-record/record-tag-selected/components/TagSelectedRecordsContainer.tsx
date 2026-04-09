@@ -1,19 +1,24 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
-import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
-import { useBulkCreateTagJunctionRecords } from '@/object-record/record-tag-selected/hooks/useBulkCreateTagJunctionRecords';
-import { useRefetchFindManyRecords } from '@/object-record/hooks/useRefetchFindManyRecords';
-import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
+import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
+import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
+import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
+import { useRefetchFindManyRecords } from '@/object-record/hooks/useRefetchFindManyRecords';
+import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
+import { useBulkCreateTagJunctionRecords } from '@/object-record/record-tag-selected/hooks/useBulkCreateTagJunctionRecords';
+import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
+import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
+import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
+import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
-import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
 import { styled } from '@linaria/react';
 import { msg, t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -58,9 +63,9 @@ export const TagSelectedRecordsContainer = ({
 }: TagSelectedRecordsContainerProps) => {
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const [searchText, setSearchText] = useState('');
+  const [isApplying, setIsApplying] = useState(false);
 
   const { closeSidePanelMenu } = useSidePanelMenu();
-  const { enqueueErrorSnackBar } = useSnackBar();
 
   const contextStoreNumberOfSelectedRecords = useAtomComponentStateValue(
     contextStoreNumberOfSelectedRecordsComponentState,
@@ -71,6 +76,38 @@ export const TagSelectedRecordsContainer = ({
     contextStoreTargetedRecordsRuleComponentState,
     contextStoreInstanceId,
   );
+
+  const contextStoreFilters = useAtomComponentStateValue(
+    contextStoreFiltersComponentState,
+    contextStoreInstanceId,
+  );
+
+  const contextStoreFilterGroups = useAtomComponentStateValue(
+    contextStoreFilterGroupsComponentState,
+    contextStoreInstanceId,
+  );
+
+  const contextStoreAnyFieldFilterValue = useAtomComponentStateValue(
+    contextStoreAnyFieldFilterValueComponentState,
+    contextStoreInstanceId,
+  );
+
+  const { filterValueDependencies } = useFilterValueDependencies();
+
+  const graphqlFilter = computeContextStoreFilters({
+    contextStoreTargetedRecordsRule,
+    contextStoreFilters,
+    contextStoreFilterGroups,
+    objectMetadataItem,
+    filterValueDependencies,
+    contextStoreAnyFieldFilterValue,
+  });
+
+  const { fetchAllRecords } = useLazyFetchAllRecords({
+    objectNameSingular: objectMetadataItem.nameSingular,
+    filter: graphqlFilter,
+    recordGqlFields: { id: true },
+  });
 
   const allowRequestsToTwentyIcons = useAtomStateValue(
     allowRequestsToTwentyIconsState,
@@ -101,22 +138,28 @@ export const TagSelectedRecordsContainer = ({
   };
 
   const handleApply = async () => {
-    if (contextStoreTargetedRecordsRule.mode === 'exclusion') {
-      enqueueErrorSnackBar({
-        message: t(msg`Please deselect "Select All" to use bulk tagging`),
-      });
-      return;
-    }
-
-    const selectedRecordIds = contextStoreTargetedRecordsRule.selectedRecordIds;
-
     if (!isDefined(tagObjectNameSingular) || selectedTagIds.length === 0) {
       return;
     }
 
-    await bulkCreateTagJunctionRecords({ selectedRecordIds, selectedTagIds });
-    await refetchFindManyRecords();
-    closeSidePanelMenu();
+    setIsApplying(true);
+
+    try {
+      let selectedRecordIds: string[];
+
+      if (contextStoreTargetedRecordsRule.mode === 'exclusion') {
+        const records = await fetchAllRecords();
+        selectedRecordIds = records.map((record) => record.id);
+      } else {
+        selectedRecordIds = contextStoreTargetedRecordsRule.selectedRecordIds;
+      }
+
+      await bulkCreateTagJunctionRecords({ selectedRecordIds, selectedTagIds });
+      await refetchFindManyRecords();
+      closeSidePanelMenu();
+    } finally {
+      setIsApplying(false);
+    }
   };
 
   const isApplyDisabled =
@@ -158,8 +201,9 @@ export const TagSelectedRecordsContainer = ({
               accent="blue"
               size="small"
               Icon={IconTag}
+              isLoading={isApplying}
               onClick={handleApply}
-              disabled={isApplyDisabled}
+              disabled={isApplyDisabled || isApplying}
             />
           </StyledFooterContainer>
         </StyledContainer>
