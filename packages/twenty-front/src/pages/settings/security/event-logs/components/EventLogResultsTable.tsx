@@ -22,8 +22,8 @@ import {
 import {
   type ColumnConfig,
   getColumnsForEventLogTable,
-} from '../utils/getColumnsForEventLogTable';
-import { EventLogJsonCell } from './EventLogJsonCell';
+} from '~/pages/settings/security/event-logs/utils/getColumnsForEventLogTable';
+import { EventLogJsonCell } from '~/pages/settings/security/event-logs/components/EventLogJsonCell';
 
 type EventLogResultsTableProps = {
   records: EventLogRecord[];
@@ -268,24 +268,21 @@ export const EventLogResultsTable = ({
                       textOverflow="ellipsis"
                       whiteSpace="nowrap"
                     >
-                      {((record.properties as Record<string, unknown>)
-                        ?.level as string) ?? '-'}
+                      {record.properties?.level ?? '-'}
                     </TableCell>
                     <TableCell
                       overflow="hidden"
                       textOverflow="ellipsis"
                       whiteSpace="nowrap"
                     >
-                      {((record.properties as Record<string, unknown>)
-                        ?.message as string) ?? '-'}
+                      {record.properties?.message ?? '-'}
                     </TableCell>
                     <TableCell
                       overflow="hidden"
                       textOverflow="ellipsis"
                       whiteSpace="nowrap"
                     >
-                      {((record.properties as Record<string, unknown>)
-                        ?.executionId as string) ?? '-'}
+                      {record.properties?.executionId ?? '-'}
                     </TableCell>
                   </>
                 ) : (
