@@ -325,7 +325,10 @@ describe('McpCoreController', () => {
         'Connection',
         'keep-alive',
       );
-      // The final response should be written as an SSE event
+      expect(mockRes.setHeader).toHaveBeenCalledWith(
+        'X-Content-Type-Options',
+        'nosniff',
+      );
       expect(mockRes.write).toHaveBeenCalledWith(
         `event: message\ndata: ${JSON.stringify(mockResponse)}\n\n`,
       );

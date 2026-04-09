@@ -81,6 +81,8 @@ export class McpCoreController {
       res.setHeader('Content-Type', 'text/event-stream');
       res.setHeader('Cache-Control', 'no-cache');
       res.setHeader('Connection', 'keep-alive');
+      // Prevent browsers from MIME-sniffing the SSE stream as HTML
+      res.setHeader('X-Content-Type-Options', 'nosniff');
 
       const sseWriter = (data: Record<string, unknown>) => {
         writeSseEvent(res, data);
