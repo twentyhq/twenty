@@ -44,7 +44,7 @@ export const computeStandardFavoriteFolderViewFields = (
           position: 0,
           isVisible: true,
           size: 150,
-          viewFieldGroupName: 'other',
+          viewFieldGroupName: 'system',
         },
       }),
     favoriteFolderRecordPageFieldsCreatedBy:
@@ -58,7 +58,7 @@ export const computeStandardFavoriteFolderViewFields = (
           position: 1,
           isVisible: true,
           size: 150,
-          viewFieldGroupName: 'other',
+          viewFieldGroupName: 'system',
         },
       }),
   };
