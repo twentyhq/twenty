@@ -55,14 +55,16 @@ export class McpCoreController {
     @Headers('accept') acceptHeader: string | undefined,
     @Res({ passthrough: true }) res: Response,
   ) {
+    const authContext = {
+      workspace,
+      userId: user?.id,
+      userWorkspaceId,
+      apiKey,
+    };
+
     // JSON-RPC notifications (no id) expect no response body regardless of Accept
     if (!isDefined(body.id)) {
-      await this.mcpProtocolService.handleMCPCoreQuery(body, {
-        workspace,
-        userId: user?.id,
-        userWorkspaceId,
-        apiKey,
-      });
+      await this.mcpProtocolService.handleMCPCoreQuery(body, authContext);
 
       res.status(HttpStatus.ACCEPTED);
 
@@ -70,7 +72,10 @@ export class McpCoreController {
     }
 
     const clientAcceptsSse =
-      isDefined(acceptHeader) && acceptHeader.includes('text/event-stream');
+      isDefined(acceptHeader) &&
+      acceptHeader
+        .split(',')
+        .some((type) => type.trim().startsWith('text/event-stream'));
 
     if (clientAcceptsSse) {
       res.setHeader('Content-Type', 'text/event-stream');
@@ -83,12 +88,7 @@ export class McpCoreController {
 
       const result = await this.mcpProtocolService.handleMCPCoreQuery(
         body,
-        {
-          workspace,
-          userId: user?.id,
-          userWorkspaceId,
-          apiKey,
-        },
+        authContext,
         sseWriter,
       );
 
@@ -102,12 +102,10 @@ export class McpCoreController {
       return;
     }
 
-    const result = await this.mcpProtocolService.handleMCPCoreQuery(body, {
-      workspace,
-      userId: user?.id,
-      userWorkspaceId,
-      apiKey,
-    });
+    const result = await this.mcpProtocolService.handleMCPCoreQuery(
+      body,
+      authContext,
+    );
 
     return result;
   }
