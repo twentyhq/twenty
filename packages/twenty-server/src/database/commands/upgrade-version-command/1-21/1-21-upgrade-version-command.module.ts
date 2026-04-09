@@ -16,6 +16,7 @@ import { MigrateMessageFolderParentIdToExternalIdCommand } from 'src/database/co
 import { MigrateMessagingInfrastructureToMetadataCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500012000-migrate-messaging-infrastructure-to-metadata.command';
 import { FixMessageThreadViewAndLabelIdentifierCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500014000-fix-message-thread-view-and-label-identifier.command';
 import { UpdateSearchCommandMenuItemLabelsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500015000-update-search-command-menu-item-labels.command';
+import { BackfillWorkspaceIdToIndirectEntitiesCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775744800000-backfill-workspace-id-to-indirect-entities.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -66,6 +67,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     MigrateMessagingInfrastructureToMetadataCommand,
     FixMessageThreadViewAndLabelIdentifierCommand,
     UpdateSearchCommandMenuItemLabelsCommand,
+    BackfillWorkspaceIdToIndirectEntitiesCommand,
   ],
 })
 export class V1_21_UpgradeVersionCommandModule {}
