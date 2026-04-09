@@ -1,10 +1,7 @@
 import type { FaqDataType } from '@/sections/Faq/types';
 
 export const FAQ_DATA: FaqDataType = {
-  illustration: {
-    src: '/illustrations/common/faq/faq.glb',
-    title: 'FAQ illustration',
-  },
+  illustration: 'faqBackground',
   eyebrow: {
     heading: {
       text: 'Any Questions?',

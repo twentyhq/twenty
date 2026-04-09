@@ -3,14 +3,19 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
 
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
+import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 describe('FileStorageDriverFactory', () => {
   let factory: FileStorageDriverFactory;
   let twentyConfigService: TwentyConfigService;
+  let configGroupHashService: ConfigGroupHashService;
 
   const mockTwentyConfigService = {
     get: jest.fn(),
+  };
+  const mockConfigGroupHashService = {
+    computeHash: jest.fn().mockReturnValue(''),
   };
 
   beforeEach(async () => {
@@ -21,11 +26,18 @@ describe('FileStorageDriverFactory', () => {
           provide: TwentyConfigService,
           useValue: mockTwentyConfigService,
         },
+        {
+          provide: ConfigGroupHashService,
+          useValue: mockConfigGroupHashService,
+        },
       ],
     }).compile();
 
     factory = module.get<FileStorageDriverFactory>(FileStorageDriverFactory);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
+    configGroupHashService = module.get<ConfigGroupHashService>(
+      ConfigGroupHashService,
+    );
 
     jest.clearAllMocks();
   });
@@ -57,7 +69,7 @@ describe('FileStorageDriverFactory', () => {
         .spyOn(twentyConfigService, 'get')
         .mockReturnValue(StorageDriverType.S_3);
       jest
-        .spyOn(factory as any, 'getConfigGroupHash')
+        .spyOn(configGroupHashService, 'computeHash')
         .mockReturnValue('s3-hash-123');
 
       const result = factory['buildConfigKey']();
@@ -259,7 +271,7 @@ describe('FileStorageDriverFactory', () => {
           }
         });
       jest
-        .spyOn(factory as any, 'getConfigGroupHash')
+        .spyOn(configGroupHashService, 'computeHash')
         .mockReturnValue('s3-hash-123');
 
       const driver2 = factory.getCurrentDriver();

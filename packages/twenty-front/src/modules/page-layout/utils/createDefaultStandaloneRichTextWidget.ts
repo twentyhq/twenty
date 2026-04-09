@@ -34,7 +34,6 @@ export const createDefaultStandaloneRichTextWidget = (
       columnSpan: gridPosition.columnSpan,
     },
     objectMetadataId: objectMetadataId ?? null,
-    isOverridden: false,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     deletedAt: null,

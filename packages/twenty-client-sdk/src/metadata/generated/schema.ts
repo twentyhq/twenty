@@ -416,7 +416,8 @@ export interface ViewField {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
-    isOverridden: Scalars['Boolean']
+    /** @deprecated isOverridden is deprecated */
+    isOverridden?: Scalars['Boolean']
     __typename: 'ViewField'
 }
 
@@ -493,6 +494,7 @@ export interface ViewFieldGroup {
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
     viewFields: ViewField[]
+    /** @deprecated isOverridden is deprecated */
     isOverridden: Scalars['Boolean']
     __typename: 'ViewFieldGroup'
 }
@@ -672,7 +674,8 @@ export interface PageLayoutWidget {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
-    isOverridden: Scalars['Boolean']
+    /** @deprecated isOverridden is deprecated */
+    isOverridden?: Scalars['Boolean']
     __typename: 'PageLayoutWidget'
 }
 
@@ -956,7 +959,8 @@ export interface PageLayoutTab {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
-    isOverridden: Scalars['Boolean']
+    /** @deprecated isOverridden is deprecated */
+    isOverridden?: Scalars['Boolean']
     __typename: 'PageLayoutTab'
 }
 
@@ -2919,6 +2923,7 @@ export interface Mutation {
     destroyPageLayout: Scalars['Boolean']
     updatePageLayoutWithTabsAndWidgets: PageLayout
     resetPageLayoutWidgetToDefault: PageLayoutWidget
+    resetPageLayoutTabToDefault: PageLayoutTab
     createPageLayoutWidget: PageLayoutWidget
     updatePageLayoutWidget: PageLayoutWidget
     destroyPageLayoutWidget: Scalars['Boolean']
@@ -3525,6 +3530,7 @@ export interface ViewFieldGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     deletedAt?: boolean | number
+    /** @deprecated isOverridden is deprecated */
     isOverridden?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -3599,6 +3605,7 @@ export interface ViewFieldGroupGenqlSelection{
     updatedAt?: boolean | number
     deletedAt?: boolean | number
     viewFields?: ViewFieldGenqlSelection
+    /** @deprecated isOverridden is deprecated */
     isOverridden?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -3770,6 +3777,7 @@ export interface PageLayoutWidgetGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     deletedAt?: boolean | number
+    /** @deprecated isOverridden is deprecated */
     isOverridden?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -4081,6 +4089,7 @@ export interface PageLayoutTabGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     deletedAt?: boolean | number
+    /** @deprecated isOverridden is deprecated */
     isOverridden?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -6187,6 +6196,7 @@ export interface MutationGenqlSelection{
     destroyPageLayout?: { __args: {id: Scalars['String']} }
     updatePageLayoutWithTabsAndWidgets?: (PageLayoutGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutWithTabsInput} })
     resetPageLayoutWidgetToDefault?: (PageLayoutWidgetGenqlSelection & { __args: {id: Scalars['String']} })
+    resetPageLayoutTabToDefault?: (PageLayoutTabGenqlSelection & { __args: {id: Scalars['String']} })
     createPageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {input: CreatePageLayoutWidgetInput} })
     updatePageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutWidgetInput} })
     destroyPageLayoutWidget?: { __args: {id: Scalars['String']} }

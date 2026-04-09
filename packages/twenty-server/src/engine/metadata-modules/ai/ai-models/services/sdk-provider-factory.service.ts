@@ -10,6 +10,7 @@ import { createMistral } from '@ai-sdk/mistral';
 import { createOpenAI, type OpenAIProvider } from '@ai-sdk/openai';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { createXai } from '@ai-sdk/xai';
+import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import { type LanguageModel } from 'ai';
 import { type AiSdkPackage } from 'twenty-shared/ai';
 
@@ -131,9 +132,27 @@ export class SdkProviderFactoryService {
   private buildBedrockProvider(
     config: AiProviderConfig,
   ): AiSdkProviderInstance {
+    const region = config.region ?? 'us-east-1';
+    const useRoleCredentials = config.authType === 'role';
+    const awsCredentialProvider = useRoleCredentials
+      ? fromNodeProviderChain({ clientConfig: { region } })
+      : undefined;
+
     const provider = createAmazonBedrock({
-      region: config.region ?? 'us-east-1',
-      ...(config.accessKeyId &&
+      region,
+      ...(awsCredentialProvider && {
+        credentialProvider: async () => {
+          const credentials = await awsCredentialProvider();
+
+          return {
+            accessKeyId: credentials.accessKeyId,
+            secretAccessKey: credentials.secretAccessKey,
+            sessionToken: credentials.sessionToken,
+          };
+        },
+      }),
+      ...(!useRoleCredentials &&
+        config.accessKeyId &&
         config.secretAccessKey && {
           accessKeyId: config.accessKeyId,
           secretAccessKey: config.secretAccessKey,

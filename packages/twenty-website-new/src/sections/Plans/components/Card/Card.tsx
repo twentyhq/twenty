@@ -2,11 +2,10 @@ import { styled } from '@linaria/react';
 
 import { Body, Heading, LinkButton } from '@/design-system/components';
 import { CheckIcon } from '@/icons/informative/Check';
+import { IllustrationMount } from '@/illustrations';
 import type { PlanCardType } from '@/sections/Plans/types';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
-
-import { PlanCardVisual } from './PlanCardVisual';
 
 const FIXED_ROWS = 4;
 
@@ -149,10 +148,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
           </PriceLine>
         </CardHeaderInfo>
         <CardIllustrationEmbed>
-          <PlanCardVisual
-            src={card.illustration.src}
-            title={card.illustration.title}
-          />
+          <IllustrationMount illustration={card.illustration} />
         </CardIllustrationEmbed>
       </CardHeader>
 

@@ -22,7 +22,7 @@ import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
-import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
 import {
@@ -55,6 +55,7 @@ export class MessagingMessagesImportService {
     private readonly messagingAccountAuthenticationService: MessagingAccountAuthenticationService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async processMessageBatchImport(
@@ -63,6 +64,10 @@ export class MessagingMessagesImportService {
     workspaceId: string,
   ) {
     let messageIdsToFetch: string[] = [];
+
+    const messagesGetBatchSize = this.twentyConfigService.get(
+      'MESSAGING_MESSAGES_GET_BATCH_SIZE',
+    );
 
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -112,7 +117,7 @@ export class MessagingMessagesImportService {
 
         messageIdsToFetch = await this.cacheStorage.setPop(
           `messages-to-import:${workspaceId}:${messageChannel.id}`,
-          MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE,
+          messagesGetBatchSize,
         );
 
         if (!messageIdsToFetch?.length) {
@@ -210,10 +215,7 @@ export class MessagingMessagesImportService {
           );
         }
 
-        if (
-          messageIdsToFetch.length <
-          MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE
-        ) {
+        if (messageIdsToFetch.length < messagesGetBatchSize) {
           await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
             [messageChannel.id],
             workspaceId,

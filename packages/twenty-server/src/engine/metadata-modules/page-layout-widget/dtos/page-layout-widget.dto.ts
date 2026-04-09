@@ -74,8 +74,11 @@ export class PageLayoutWidgetDTO {
   @Field(() => Date, { nullable: true })
   deletedAt?: Date;
 
-  @Field(() => Boolean, { nullable: false })
-  isOverridden: boolean;
+  @Field(() => Boolean, {
+    nullable: true,
+    deprecationReason: 'isOverridden is deprecated',
+  })
+  isOverridden?: boolean;
 
   @HideField()
   overrides?: PageLayoutWidgetOverrides | null;

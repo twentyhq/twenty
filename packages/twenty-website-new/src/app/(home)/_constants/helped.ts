@@ -24,11 +24,7 @@ export const HELPED_DATA: HelpedDataType = {
       body: {
         text: 'Realytics built lead scoring into their CRM and increased qualified outbound by 40%.',
       },
-      illustration: {
-        src: '/illustrations/home/helped/one.glb',
-        title: '',
-        color: '#DE8CF6',
-      },
+      illustration: 'target',
     },
     {
       icon: 'beagle',
@@ -36,11 +32,7 @@ export const HELPED_DATA: HelpedDataType = {
       body: {
         text: 'Beagle launched a custom onboarding pipeline and shortened their sales cycle by 30%.',
       },
-      illustration: {
-        src: '/illustrations/home/helped/two.glb',
-        title: '',
-        color: '#89FC9A',
-      },
+      illustration: 'spaceship',
     },
 
     {
@@ -49,11 +41,7 @@ export const HELPED_DATA: HelpedDataType = {
       body: {
         text: 'Evergreen unified sales and CS workflows, boosting expansion revenue by 25%.',
       },
-      illustration: {
-        src: '/illustrations/home/helped/three.glb',
-        title: '',
-        color: '#E4E58A',
-      },
+      illustration: 'money',
     },
   ],
 };

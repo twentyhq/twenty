@@ -1715,6 +1715,7 @@ msgstr "An error occurred while uploading the picture."
 #: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets.ts
 #: src/modules/page-layout/hooks/useResetPageLayoutWidgetToDefault.ts
+#: src/modules/page-layout/hooks/useResetPageLayoutTabToDefault.ts
 #: src/modules/object-metadata/hooks/useUpdateOneObjectMetadataItem.ts
 #: src/modules/object-metadata/hooks/useUpdateOneFieldMetadataItem.ts
 #: src/modules/object-metadata/hooks/useDeleteOneObjectMetadataItem.ts
@@ -11884,6 +11885,7 @@ msgstr "Resend email"
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
 msgid "Reset"
 msgstr "Reset"
 
@@ -11906,6 +11908,8 @@ msgstr "Reset to"
 #. js-lingui-id: L+rMC9
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 #: src/modules/command-menu-item/server-items/edit/components/SidePanelCommandMenuItemEditPage.tsx
 msgid "Reset to default"
@@ -14246,6 +14250,11 @@ msgstr "This view uses {usageLabel} on object \"{0}\" which is not accessible."
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "This week"
 msgstr "This week"
+
+#. js-lingui-id: DF2voz
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+msgid "This will cancel all modifications done on the tab and its widgets. Edit mode will be canceled and the page will refresh. This action cannot be undone."
+msgstr "This will cancel all modifications done on the tab and its widgets. Edit mode will be canceled and the page will refresh. This action cannot be undone."
 
 #. js-lingui-id: VbVocX
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
