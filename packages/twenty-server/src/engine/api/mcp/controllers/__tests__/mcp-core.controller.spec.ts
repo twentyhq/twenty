@@ -68,6 +68,24 @@ describe('McpCoreController', () => {
     expect(controller).toBeDefined();
   });
 
+  describe('unsupported methods', () => {
+    it('should return 405 payload for GET /mcp', () => {
+      expect(controller.handleUnsupportedGet()).toEqual({
+        error: 'Method Not Allowed',
+        message:
+          'This MCP endpoint supports JSON-RPC over POST only. SSE streaming is not supported on GET /mcp.',
+      });
+    });
+
+    it('should return 405 payload for DELETE /mcp', () => {
+      expect(controller.handleUnsupportedDelete()).toEqual({
+        error: 'Method Not Allowed',
+        message:
+          'This MCP endpoint does not support session termination over DELETE /mcp',
+      });
+    });
+  });
+
   describe('handleMcpCore', () => {
     const mockWorkspace = { id: 'workspace-1' } as WorkspaceEntity;
     const mockUser = { id: 'user-1' } as UserEntity;
