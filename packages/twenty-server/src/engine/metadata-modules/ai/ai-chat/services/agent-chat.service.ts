@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ExtendedUIMessage } from 'twenty-shared/ai';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
 
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
 import {
   AgentMessageEntity,
@@ -47,6 +48,8 @@ export class AgentChatService {
     private readonly messageRepository: Repository<AgentMessageEntity>,
     @InjectRepository(AgentMessagePartEntity)
     private readonly messagePartRepository: Repository<AgentMessagePartEntity>,
+    @InjectRepository(FileEntity)
+    private readonly fileRepository: Repository<FileEntity>,
     private readonly titleGenerationService: AgentTitleGenerationService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
   ) {}
@@ -202,6 +205,11 @@ export class AgentChatService {
 
     const savedMessage = await this.messageRepository.save(message);
 
+    const files =
+      fileIds && fileIds.length > 0
+        ? await this.fileRepository.find({ where: { id: In(fileIds) } })
+        : [];
+
     const parts = [
       this.messagePartRepository.create({
         messageId: savedMessage.id,
@@ -210,15 +218,18 @@ export class AgentChatService {
         textContent: text,
         workspaceId,
       }),
-      ...(fileIds ?? []).map((fileId, index) =>
-        this.messagePartRepository.create({
+      ...(fileIds ?? []).map((fileId, index) => {
+        const file = files?.find((f) => f.id === fileId);
+
+        return this.messagePartRepository.create({
           messageId: savedMessage.id,
           orderIndex: index + 1,
           type: 'file',
           fileId,
+          fileFilename: file?.path.split('/').pop() ?? null,
           workspaceId,
-        }),
-      ),
+        });
+      }),
     ];
 
     await this.messagePartRepository.save(parts);
