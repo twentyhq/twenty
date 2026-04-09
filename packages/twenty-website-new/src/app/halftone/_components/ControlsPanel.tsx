@@ -5,12 +5,10 @@ import type {
   HalftoneStudioSettings,
   HalftoneTabId,
 } from '@/app/halftone/_lib/types';
+import { AnimationsTab } from './controls/AnimationsTab';
 import { DesignTab } from './controls/DesignTab';
 import { ExportTab } from './controls/ExportTab';
-import { PrototypeTab } from './controls/PrototypeTab';
 import {
-  ControlsHeader,
-  ControlsTitle,
   PanelShell,
   TabButton,
   TabsBar,
@@ -18,57 +16,59 @@ import {
 
 type ControlsPanelProps = {
   activeTab: HalftoneTabId;
-  onAnimationModeSelect: (
-    value: HalftoneStudioSettings['animation']['mode'],
-  ) => void;
+  defaultExportName: string;
+  exportName: string;
   onAnimationSettingsChange: (
     value: Partial<HalftoneStudioSettings['animation']>,
   ) => void;
-  onBackgroundColorChange: (value: string) => void;
-  onBackgroundTransparencyChange: (value: boolean) => void;
   onDashColorChange: (value: string) => void;
   onExportHtml: () => void;
+  onExportNameChange: (value: string) => void;
   onExportReact: () => void;
   onHalftoneChange: (value: Partial<HalftoneStudioSettings['halftone']>) => void;
   onLightingChange: (value: Partial<HalftoneStudioSettings['lighting']>) => void;
   onMaterialChange: (value: Partial<HalftoneStudioSettings['material']>) => void;
-  onRotateToggle: () => void;
+  onPreviewDistanceChange: (value: number) => void;
   onShapeChange: (value: string) => void;
   onTabChange: (value: HalftoneTabId) => void;
   onUploadModel: () => void;
+  previewDistance: number;
   selectedShape: HalftoneGeometrySpec | undefined;
   settings: HalftoneStudioSettings;
   shapeOptions: Array<{ label: string; value: string }>;
 };
 
-const TABS: HalftoneTabId[] = ['design', 'prototype', 'export'];
+const TABS: HalftoneTabId[] = ['design', 'animations', 'export'];
+
+const TAB_LABELS: Record<HalftoneTabId, string> = {
+  design: 'Design',
+  animations: 'Animations',
+  export: 'Export',
+};
 
 export function ControlsPanel({
   activeTab,
-  onAnimationModeSelect,
+  defaultExportName,
+  exportName,
   onAnimationSettingsChange,
-  onBackgroundColorChange,
-  onBackgroundTransparencyChange,
   onDashColorChange,
   onExportHtml,
+  onExportNameChange,
   onExportReact,
   onHalftoneChange,
   onLightingChange,
   onMaterialChange,
-  onRotateToggle,
+  onPreviewDistanceChange,
   onShapeChange,
   onTabChange,
   onUploadModel,
+  previewDistance,
   selectedShape,
   settings,
   shapeOptions,
 }: ControlsPanelProps) {
   return (
     <PanelShell>
-      <ControlsHeader>
-        <ControlsTitle>Controls</ControlsTitle>
-      </ControlsHeader>
-
       <TabsBar>
         {TABS.map((tab) => (
           <TabButton
@@ -77,42 +77,39 @@ export function ControlsPanel({
             onClick={() => onTabChange(tab)}
             type="button"
           >
-            {tab === 'design'
-              ? 'Design'
-              : tab === 'prototype'
-                ? 'Prototype'
-                : 'Export'}
+            {TAB_LABELS[tab]}
           </TabButton>
         ))}
       </TabsBar>
 
       {activeTab === 'design' ? (
         <DesignTab
-          onBackgroundColorChange={onBackgroundColorChange}
-          onBackgroundTransparencyChange={onBackgroundTransparencyChange}
           onDashColorChange={onDashColorChange}
           onHalftoneChange={onHalftoneChange}
           onLightingChange={onLightingChange}
           onMaterialChange={onMaterialChange}
+          onPreviewDistanceChange={onPreviewDistanceChange}
           onShapeChange={onShapeChange}
           onUploadModel={onUploadModel}
+          previewDistance={previewDistance}
           settings={settings}
           shapeOptions={shapeOptions}
         />
       ) : null}
 
-      {activeTab === 'prototype' ? (
-        <PrototypeTab
-          onAnimationModeSelect={onAnimationModeSelect}
+      {activeTab === 'animations' ? (
+        <AnimationsTab
           onAnimationSettingsChange={onAnimationSettingsChange}
-          onRotateToggle={onRotateToggle}
           settings={settings}
         />
       ) : null}
 
       {activeTab === 'export' ? (
         <ExportTab
+          defaultExportName={defaultExportName}
+          exportName={exportName}
           onExportHtml={onExportHtml}
+          onExportNameChange={onExportNameChange}
           onExportReact={onExportReact}
           selectedShape={selectedShape}
           settings={settings}

@@ -12,41 +12,42 @@ import {
 import type { HalftoneStudioSettings } from '@/app/halftone/_lib/types';
 import {
   ColorInput,
-  ColorItem,
-  ColorItemLabel,
-  ColorPair,
+  ColorControlLabel,
+  ColorControlRow,
+  ColorSwatch,
   ControlGrid,
-  SecondaryActionButton,
   Section,
   SectionTitle,
-  SelectControl,
+  SectionToggleHeader,
+  SelectInput,
+  ShapeRow,
   SliderControl,
   TabContent,
-  ToggleControl,
+  UploadButton,
 } from './controls-ui';
 
 type DesignTabProps = {
-  onBackgroundColorChange: (value: string) => void;
-  onBackgroundTransparencyChange: (value: boolean) => void;
   onDashColorChange: (value: string) => void;
   onHalftoneChange: (value: Partial<HalftoneStudioSettings['halftone']>) => void;
   onLightingChange: (value: Partial<HalftoneStudioSettings['lighting']>) => void;
   onMaterialChange: (value: Partial<HalftoneStudioSettings['material']>) => void;
+  onPreviewDistanceChange: (value: number) => void;
   onShapeChange: (value: string) => void;
   onUploadModel: () => void;
+  previewDistance: number;
   settings: HalftoneStudioSettings;
   shapeOptions: Array<{ label: string; value: string }>;
 };
 
 export function DesignTab({
-  onBackgroundColorChange,
-  onBackgroundTransparencyChange,
   onDashColorChange,
   onHalftoneChange,
   onLightingChange,
   onMaterialChange,
+  onPreviewDistanceChange,
   onShapeChange,
   onUploadModel,
+  previewDistance,
   settings,
   shapeOptions,
 }: DesignTabProps) {
@@ -54,17 +55,43 @@ export function DesignTab({
     <TabContent>
       <Section $first>
         <SectionTitle>Model</SectionTitle>
-        <ControlGrid>
-          <SelectControl
+        <ShapeRow>
+          <span>Shape</span>
+          <SelectInput
             onChange={(event) => onShapeChange(event.target.value)}
-            options={shapeOptions}
             value={settings.shapeKey}
           >
-            Shape
-          </SelectControl>
-          <SecondaryActionButton onClick={onUploadModel} type="button">
-            ↑ Upload Model (.fbx / .glb)
-          </SecondaryActionButton>
+            {shapeOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </SelectInput>
+          <UploadButton
+            onClick={onUploadModel}
+            title="Upload model (.fbx / .glb)"
+            type="button"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 9l5 -5l5 5" /><path d="M12 4l0 12" /></svg>
+          </UploadButton>
+        </ShapeRow>
+      </Section>
+
+      <Section>
+        <SectionTitle>Visualization</SectionTitle>
+        <ControlGrid>
+          <SliderControl
+            max={8}
+            min={4}
+            onChange={(event) =>
+              onPreviewDistanceChange(Number(event.target.value))
+            }
+            step={0.1}
+            value={previewDistance}
+            valueLabel={formatDecimal(previewDistance, 1)}
+          >
+            Distance
+          </SliderControl>
         </ControlGrid>
       </Section>
 
@@ -164,149 +191,128 @@ export function DesignTab({
       </Section>
 
       <Section>
-        <SectionTitle>Halftone</SectionTitle>
-        <ControlGrid>
-          <ToggleControl
-            checked={settings.halftone.enabled}
-            label="Halftone effect"
-            onChange={(event) =>
-              onHalftoneChange({ enabled: event.target.checked })
-            }
-          />
-          {settings.halftone.enabled ? (
-            <ControlGrid>
-              <SliderControl
-                max={150}
-                min={30}
-                onChange={(event) =>
-                  onHalftoneChange({ numRows: Number(event.target.value) })
-                }
-                value={settings.halftone.numRows}
-                valueLabel={formatRows(settings.halftone.numRows)}
-              >
-                Rows
-              </SliderControl>
-              <SliderControl
-                max={3}
-                min={0.5}
-                onChange={(event) =>
-                  onHalftoneChange({ contrast: Number(event.target.value) })
-                }
-                step={0.1}
-                value={settings.halftone.contrast}
-                valueLabel={formatDecimal(settings.halftone.contrast, 1)}
-              >
-                Contrast
-              </SliderControl>
-              <SliderControl
-                max={2.5}
-                min={0.5}
-                onChange={(event) =>
-                  onHalftoneChange({ power: Number(event.target.value) })
-                }
-                step={0.1}
-                value={settings.halftone.power}
-                valueLabel={formatDecimal(settings.halftone.power, 1)}
-              >
-                Power
-              </SliderControl>
-              <SliderControl
-                max={3}
-                min={0}
-                onChange={(event) =>
-                  onHalftoneChange({ shading: Number(event.target.value) })
-                }
-                step={0.1}
-                value={settings.halftone.shading}
-                valueLabel={formatDecimal(settings.halftone.shading, 1)}
-              >
-                Shading
-              </SliderControl>
-              <SliderControl
-                max={0.4}
-                min={0}
-                onChange={(event) =>
-                  onHalftoneChange({ baseInk: Number(event.target.value) })
-                }
-                step={0.01}
-                value={settings.halftone.baseInk}
-                valueLabel={formatDecimal(settings.halftone.baseInk)}
-              >
-                Base Density
-              </SliderControl>
-              <SliderControl
-                max={0.48}
-                min={0.1}
-                onChange={(event) =>
-                  onHalftoneChange({ maxBar: Number(event.target.value) })
-                }
-                step={0.01}
-                value={settings.halftone.maxBar}
-                valueLabel={formatDecimal(settings.halftone.maxBar)}
-              >
-                Thickness
-              </SliderControl>
-              <SliderControl
-                max={3.5}
-                min={1}
-                onChange={(event) =>
-                  onHalftoneChange({ cellRatio: Number(event.target.value) })
-                }
-                step={0.1}
-                value={settings.halftone.cellRatio}
-                valueLabel={formatDecimal(settings.halftone.cellRatio, 1)}
-              >
-                Gap
-              </SliderControl>
-              <SliderControl
-                max={0.2}
-                min={0}
-                onChange={(event) =>
-                  onHalftoneChange({ cutoff: Number(event.target.value) })
-                }
-                step={0.01}
-                value={settings.halftone.cutoff}
-                valueLabel={formatDecimal(settings.halftone.cutoff)}
-              >
-                Cutoff
-              </SliderControl>
-            </ControlGrid>
-          ) : null}
-        </ControlGrid>
+        <SectionToggleHeader
+          checked={settings.halftone.enabled}
+          onChange={(event) =>
+            onHalftoneChange({ enabled: event.target.checked })
+          }
+        >
+          Halftone
+        </SectionToggleHeader>
+        {settings.halftone.enabled ? (
+          <ControlGrid>
+            <SliderControl
+              max={150}
+              min={30}
+              onChange={(event) =>
+                onHalftoneChange({ numRows: Number(event.target.value) })
+              }
+              value={settings.halftone.numRows}
+              valueLabel={formatRows(settings.halftone.numRows)}
+            >
+              Rows
+            </SliderControl>
+            <SliderControl
+              max={3}
+              min={0.5}
+              onChange={(event) =>
+                onHalftoneChange({ contrast: Number(event.target.value) })
+              }
+              step={0.1}
+              value={settings.halftone.contrast}
+              valueLabel={formatDecimal(settings.halftone.contrast, 1)}
+            >
+              Contrast
+            </SliderControl>
+            <SliderControl
+              max={2.5}
+              min={0.5}
+              onChange={(event) =>
+                onHalftoneChange({ power: Number(event.target.value) })
+              }
+              step={0.1}
+              value={settings.halftone.power}
+              valueLabel={formatDecimal(settings.halftone.power, 1)}
+            >
+              Power
+            </SliderControl>
+            <SliderControl
+              max={3}
+              min={0}
+              onChange={(event) =>
+                onHalftoneChange({ shading: Number(event.target.value) })
+              }
+              step={0.1}
+              value={settings.halftone.shading}
+              valueLabel={formatDecimal(settings.halftone.shading, 1)}
+            >
+              Shading
+            </SliderControl>
+            <SliderControl
+              max={0.4}
+              min={0}
+              onChange={(event) =>
+                onHalftoneChange({ baseInk: Number(event.target.value) })
+              }
+              step={0.01}
+              value={settings.halftone.baseInk}
+              valueLabel={formatDecimal(settings.halftone.baseInk)}
+            >
+              Base Density
+            </SliderControl>
+            <SliderControl
+              max={0.48}
+              min={0.1}
+              onChange={(event) =>
+                onHalftoneChange({ maxBar: Number(event.target.value) })
+              }
+              step={0.01}
+              value={settings.halftone.maxBar}
+              valueLabel={formatDecimal(settings.halftone.maxBar)}
+            >
+              Thickness
+            </SliderControl>
+            <SliderControl
+              max={3.5}
+              min={1}
+              onChange={(event) =>
+                onHalftoneChange({ cellRatio: Number(event.target.value) })
+              }
+              step={0.1}
+              value={settings.halftone.cellRatio}
+              valueLabel={formatDecimal(settings.halftone.cellRatio, 1)}
+            >
+              Gap
+            </SliderControl>
+            <SliderControl
+              max={0.2}
+              min={0}
+              onChange={(event) =>
+                onHalftoneChange({ cutoff: Number(event.target.value) })
+              }
+              step={0.01}
+              value={settings.halftone.cutoff}
+              valueLabel={formatDecimal(settings.halftone.cutoff)}
+            >
+              Cutoff
+            </SliderControl>
+          </ControlGrid>
+        ) : null}
       </Section>
 
       <Section>
         <SectionTitle>Colors</SectionTitle>
         <ControlGrid>
-          <ColorPair>
-            <ColorItem>
-              <ColorItemLabel>Dash color</ColorItemLabel>
+          <ColorControlRow>
+            <ColorControlLabel>Dash color</ColorControlLabel>
+            <ColorSwatch>
               <ColorInput
                 onChange={(event) => onDashColorChange(event.target.value)}
                 type="color"
                 value={settings.halftone.dashColor}
               />
-            </ColorItem>
-            {!settings.background.transparent ? (
-              <ColorItem>
-                <ColorItemLabel>Background</ColorItemLabel>
-                <ColorInput
-                  onChange={(event) =>
-                    onBackgroundColorChange(event.target.value)
-                  }
-                  type="color"
-                  value={settings.background.color}
-                />
-              </ColorItem>
-            ) : null}
-          </ColorPair>
-          <ToggleControl
-            checked={settings.background.transparent}
-            label="Transparent background"
-            onChange={(event) =>
-              onBackgroundTransparencyChange(event.target.checked)
-            }
-          />
+            </ColorSwatch>
+          </ColorControlRow>
         </ControlGrid>
       </Section>
     </TabContent>

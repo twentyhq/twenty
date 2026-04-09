@@ -9,12 +9,16 @@ import {
   halftoneFragmentShader,
   passThroughVertexShader,
 } from '@/app/halftone/_lib/rendering';
-import type { HalftoneStudioSettings } from '@/app/halftone/_lib/types';
+import type {
+  HalftoneExportPose,
+  HalftoneStudioSettings,
+} from '@/app/halftone/_lib/types';
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
 const CanvasMount = styled.div`
+  background: #000000;
   display: block;
   height: 100%;
   min-width: 0;
@@ -23,8 +27,10 @@ const CanvasMount = styled.div`
 
 type HalftoneCanvasProps = {
   geometry: THREE.BufferGeometry | null;
-  settings: HalftoneStudioSettings;
   onFirstInteraction: () => void;
+  onPoseChange: (pose: HalftoneExportPose) => void;
+  previewDistance: number;
+  settings: HalftoneStudioSettings;
 };
 
 type SceneResources = {
@@ -60,8 +66,11 @@ type InteractionState = {
   pointerY: number;
   rotateElapsed: number;
   rotationX: number;
+  rotationVelocityX: number;
   rotationY: number;
+  rotationVelocityY: number;
   rotationZ: number;
+  rotationVelocityZ: number;
   targetRotationX: number;
   targetRotationY: number;
   velocityX: number;
@@ -86,8 +95,11 @@ function createInteractionState(): InteractionState {
     pointerY: 0,
     rotateElapsed: 0,
     rotationX: 0,
+    rotationVelocityX: 0,
     rotationY: 0,
+    rotationVelocityY: 0,
     rotationZ: 0,
+    rotationVelocityZ: 0,
     targetRotationX: 0,
     targetRotationY: 0,
     velocityX: 0,
@@ -95,14 +107,21 @@ function createInteractionState(): InteractionState {
   };
 }
 
-function updateLighting(resources: SceneResources, settings: HalftoneStudioSettings) {
-  const lightAngle = (settings.lighting.angleDegrees * Math.PI) / 180;
+function setPrimaryLightPosition(
+  light: THREE.DirectionalLight,
+  angleDegrees: number,
+  height: number,
+) {
+  const lightAngle = (angleDegrees * Math.PI) / 180;
+  light.position.set(Math.cos(lightAngle) * 5, height, Math.sin(lightAngle) * 5);
+}
 
+function updateLighting(resources: SceneResources, settings: HalftoneStudioSettings) {
   resources.primaryLight.intensity = settings.lighting.intensity;
-  resources.primaryLight.position.set(
-    Math.cos(lightAngle) * 5,
+  setPrimaryLightPosition(
+    resources.primaryLight,
+    settings.lighting.angleDegrees,
     settings.lighting.height,
-    Math.sin(lightAngle) * 5,
   );
   resources.fillLight.intensity = settings.lighting.fillIntensity;
   resources.ambientLight.intensity = settings.lighting.ambientIntensity;
@@ -141,25 +160,48 @@ function syncResources(resources: SceneResources, settings: HalftoneStudioSettin
   updateHalftone(resources, settings);
 }
 
+function applySpringStep(
+  current: number,
+  target: number,
+  velocity: number,
+  strength: number,
+  damping: number,
+) {
+  const nextVelocity = (velocity + (target - current) * strength) * damping;
+  const nextValue = current + nextVelocity;
+
+  return {
+    value: nextValue,
+    velocity: nextVelocity,
+  };
+}
+
 function resetInteractionState(
   interactionState: InteractionState,
-  mode: HalftoneStudioSettings['animation']['mode'],
+  animation: HalftoneStudioSettings['animation'],
 ) {
   interactionState.dragging = false;
+  interactionState.mouseX = 0.5;
+  interactionState.mouseY = 0.5;
   interactionState.targetRotationX = 0;
   interactionState.targetRotationY = 0;
   interactionState.velocityX = 0;
   interactionState.velocityY = 0;
+  interactionState.rotationVelocityX = 0;
+  interactionState.rotationVelocityY = 0;
+  interactionState.rotationVelocityZ = 0;
 
-  if (mode === 'autoRotate') {
+  if (animation.autoRotateEnabled) {
     interactionState.autoElapsed = 0;
   }
 }
 
 export function HalftoneCanvas({
   geometry,
-  settings,
   onFirstInteraction,
+  onPoseChange,
+  previewDistance,
+  settings,
 }: HalftoneCanvasProps) {
   const mountReference = useRef<HTMLDivElement>(null);
   const resourcesReference = useRef<SceneResources | null>(null);
@@ -167,6 +209,24 @@ export function HalftoneCanvas({
   const interactionReference = useRef<InteractionState>(createInteractionState());
   const animationReference = useRef(settings.animation);
   const didInteractReference = useRef(false);
+  const poseChangeReference = useRef(onPoseChange);
+  const previewDistanceReference = useRef(previewDistance);
+
+  useEffect(() => {
+    poseChangeReference.current = onPoseChange;
+  }, [onPoseChange]);
+
+  useEffect(() => {
+    previewDistanceReference.current = previewDistance;
+
+    const resources = resourcesReference.current;
+
+    if (!resources) {
+      return;
+    }
+
+    resources.camera.position.z = previewDistance;
+  }, [previewDistance]);
 
   useEffect(() => {
     settingsReference.current = settings;
@@ -178,13 +238,20 @@ export function HalftoneCanvas({
       return;
     }
 
-    if (animationReference.current.mode !== settings.animation.mode) {
-      resetInteractionState(interactionReference.current, settings.animation.mode);
+    const prev = animationReference.current;
+    const next = settings.animation;
+
+    if (
+      prev.autoRotateEnabled !== next.autoRotateEnabled ||
+      prev.followHoverEnabled !== next.followHoverEnabled ||
+      prev.followDragEnabled !== next.followDragEnabled
+    ) {
+      resetInteractionState(interactionReference.current, next);
     }
 
     if (
-      !animationReference.current.rotateEnabled &&
-      settings.animation.rotateEnabled
+      (!prev.rotateEnabled && next.rotateEnabled) ||
+      prev.rotatePreset !== next.rotatePreset
     ) {
       interactionReference.current.rotateElapsed = 0;
     }
@@ -241,8 +308,13 @@ export function HalftoneCanvas({
     const scene3d = new THREE.Scene();
     scene3d.background = null;
 
-    const camera = new THREE.PerspectiveCamera(45, getWidth() / getHeight(), 0.1, 100);
-    camera.position.z = 4;
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      getWidth() / getHeight(),
+      0.1,
+      100,
+    );
+    camera.position.z = previewDistance;
 
     const primaryLight = new THREE.DirectionalLight(0xffffff, 1.5);
     scene3d.add(primaryLight);
@@ -381,8 +453,26 @@ export function HalftoneCanvas({
     const resizeObserver = new ResizeObserver(syncSize);
     resizeObserver.observe(container);
 
+    const updatePointerPosition = (event: PointerEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      const width = Math.max(rect.width, 1);
+      const height = Math.max(rect.height, 1);
+
+      interactionReference.current.mouseX = THREE.MathUtils.clamp(
+        (event.clientX - rect.left) / width,
+        0,
+        1,
+      );
+      interactionReference.current.mouseY = THREE.MathUtils.clamp(
+        (event.clientY - rect.top) / height,
+        0,
+        1,
+      );
+    };
+
     const handlePointerDown = (event: PointerEvent) => {
       const interaction = interactionReference.current;
+      updatePointerPosition(event);
       interaction.dragging = true;
       interaction.pointerX = event.clientX;
       interaction.pointerY = event.clientY;
@@ -397,15 +487,18 @@ export function HalftoneCanvas({
     };
 
     const handlePointerMove = (event: PointerEvent) => {
+      updatePointerPosition(event);
+    };
+
+    const handleWindowPointerMove = (event: PointerEvent) => {
       const interaction = interactionReference.current;
-      interaction.mouseX = event.clientX / window.innerWidth;
-      interaction.mouseY = event.clientY / window.innerHeight;
+      updatePointerPosition(event);
 
       const animation = settingsReference.current.animation;
 
       if (
         !interaction.dragging ||
-        (animation.mode !== 'followDrag' && animation.mode !== 'autoRotate')
+        (!animation.followDragEnabled && !animation.autoRotateEnabled)
       ) {
         return;
       }
@@ -420,13 +513,46 @@ export function HalftoneCanvas({
       interaction.pointerY = event.clientY;
     };
 
-    const handlePointerUp = () => {
-      interactionReference.current.dragging = false;
-      canvas.style.cursor = 'grab';
+    const handlePointerLeave = () => {
+      if (interactionReference.current.dragging) {
+        return;
+      }
+
+      interactionReference.current.mouseX = 0.5;
+      interactionReference.current.mouseY = 0.5;
     };
 
-    window.addEventListener('pointermove', handlePointerMove);
+    const handlePointerUp = () => {
+      const interaction = interactionReference.current;
+      const animation = settingsReference.current.animation;
+
+      interaction.dragging = false;
+      canvas.style.cursor = 'grab';
+
+      if (!animation.springReturnEnabled) {
+        return;
+      }
+
+      const springImpulse = Math.max(animation.springStrength * 10, 1.2);
+      interaction.rotationVelocityX += interaction.velocityX * springImpulse;
+      interaction.rotationVelocityY += interaction.velocityY * springImpulse;
+      interaction.rotationVelocityZ += interaction.velocityY * springImpulse * 0.12;
+      interaction.targetRotationX = 0;
+      interaction.targetRotationY = 0;
+      interaction.velocityX = 0;
+      interaction.velocityY = 0;
+    };
+
+    const handleWindowBlur = () => {
+      handlePointerUp();
+      handlePointerLeave();
+    };
+
+    canvas.addEventListener('pointermove', handlePointerMove);
+    canvas.addEventListener('pointerleave', handlePointerLeave);
     window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('pointermove', handleWindowPointerMove);
+    window.addEventListener('blur', handleWindowBlur);
     canvas.addEventListener('pointerdown', handlePointerDown);
 
     const clock = new THREE.Clock();
@@ -440,16 +566,21 @@ export function HalftoneCanvas({
 
       const interaction = interactionReference.current;
       const activeSettings = settingsReference.current;
-      const delta = 1 / 60;
       const elapsedTime = clock.getElapsedTime();
+      const delta = 1 / 60;
+      const baseDistance = previewDistanceReference.current;
 
       halftoneMaterial.uniforms.time.value = elapsedTime;
 
       let baseRotationX = 0;
       let baseRotationY = 0;
       let baseRotationZ = 0;
+      let meshOffsetY = 0;
+      let meshScale = 1;
+      let lightAngle = activeSettings.lighting.angleDegrees;
+      let lightHeight = activeSettings.lighting.height;
 
-      if (activeSettings.animation.mode === 'autoRotate') {
+      if (activeSettings.animation.autoRotateEnabled) {
         if (!interaction.dragging) {
           interaction.autoElapsed += delta;
           interaction.targetRotationX += interaction.velocityX;
@@ -464,38 +595,79 @@ export function HalftoneCanvas({
           activeSettings.animation.autoWobble;
       }
 
+      if (activeSettings.animation.floatEnabled) {
+        const floatPhase = elapsedTime * activeSettings.animation.floatSpeed;
+        const driftAmount =
+          (activeSettings.animation.driftAmount * Math.PI) / 180;
+
+        meshOffsetY +=
+          Math.sin(floatPhase) * activeSettings.animation.floatAmplitude;
+        baseRotationX += Math.sin(floatPhase * 0.72) * driftAmount * 0.45;
+        baseRotationZ += Math.cos(floatPhase * 0.93) * driftAmount * 0.3;
+      }
+
+      if (activeSettings.animation.breatheEnabled) {
+        meshScale *=
+          1 +
+          Math.sin(elapsedTime * activeSettings.animation.breatheSpeed) *
+            activeSettings.animation.breatheAmount;
+      }
+
       if (activeSettings.animation.rotateEnabled) {
         interaction.rotateElapsed += delta;
-        const rotateAngle = activeSettings.animation.rotatePingPong
+        const rotateProgress = activeSettings.animation.rotatePingPong
           ? Math.sin(
               interaction.rotateElapsed * activeSettings.animation.rotateSpeed,
             ) * Math.PI
           : interaction.rotateElapsed * activeSettings.animation.rotateSpeed;
 
-        if (
-          activeSettings.animation.rotateAxis === 'x' ||
-          activeSettings.animation.rotateAxis === 'xy'
-        ) {
-          baseRotationX += rotateAngle;
-        }
+        if (activeSettings.animation.rotatePreset === 'axis') {
+          if (
+            activeSettings.animation.rotateAxis === 'x' ||
+            activeSettings.animation.rotateAxis === 'xy'
+          ) {
+            baseRotationX += rotateProgress;
+          }
 
-        if (
-          activeSettings.animation.rotateAxis === 'y' ||
-          activeSettings.animation.rotateAxis === 'xy'
-        ) {
-          baseRotationY += rotateAngle;
-        }
+          if (
+            activeSettings.animation.rotateAxis === 'y' ||
+            activeSettings.animation.rotateAxis === 'xy'
+          ) {
+            baseRotationY += rotateProgress;
+          }
 
-        if (activeSettings.animation.rotateAxis === 'z') {
-          baseRotationZ = rotateAngle;
+          if (activeSettings.animation.rotateAxis === 'z') {
+            baseRotationZ += rotateProgress;
+          }
+        } else if (activeSettings.animation.rotatePreset === 'lissajous') {
+          baseRotationX += Math.sin(rotateProgress * 0.85) * 0.65;
+          baseRotationY += Math.sin(rotateProgress * 1.35 + 0.8) * 1.05;
+          baseRotationZ += Math.sin(rotateProgress * 0.55 + 1.6) * 0.32;
+        } else if (activeSettings.animation.rotatePreset === 'orbit') {
+          baseRotationX += Math.sin(rotateProgress * 0.75) * 0.42;
+          baseRotationY += Math.cos(rotateProgress) * 1.2;
+          baseRotationZ += Math.sin(rotateProgress * 1.25) * 0.24;
+        } else if (activeSettings.animation.rotatePreset === 'tumble') {
+          baseRotationX += rotateProgress * 0.55;
+          baseRotationY += Math.sin(rotateProgress * 0.8) * 0.9;
+          baseRotationZ += Math.cos(rotateProgress * 1.1) * 0.38;
         }
+      }
+
+      if (activeSettings.animation.lightSweepEnabled) {
+        const lightPhase = elapsedTime * activeSettings.animation.lightSweepSpeed;
+        lightAngle +=
+          Math.sin(lightPhase) * activeSettings.animation.lightSweepRange;
+        lightHeight +=
+          Math.cos(lightPhase * 0.85) *
+          activeSettings.animation.lightSweepHeightRange;
       }
 
       let targetX = baseRotationX;
       let targetY = baseRotationY;
       let easing = 0.12;
 
-      if (activeSettings.animation.mode === 'followHover') {
+      if (activeSettings.animation.followHoverEnabled) {
         const rangeRadians =
           (activeSettings.animation.hoverRange * Math.PI) / 180;
 
@@ -504,14 +676,14 @@ export function HalftoneCanvas({
           interaction.mouseX !== 0.5 ||
           interaction.mouseY !== 0.5
         ) {
-          interaction.targetRotationX = (interaction.mouseY - 0.5) * rangeRadians;
-          interaction.targetRotationY = (interaction.mouseX - 0.5) * rangeRadians;
+          targetX += (interaction.mouseY - 0.5) * rangeRadians;
+          targetY += (interaction.mouseX - 0.5) * rangeRadians;
         }
 
-        targetX = baseRotationX + interaction.targetRotationX;
-        targetY = baseRotationY + interaction.targetRotationY;
         easing = activeSettings.animation.hoverEase;
-      } else if (activeSettings.animation.mode === 'followDrag') {
+      }
+
+      if (activeSettings.animation.followDragEnabled) {
         if (!interaction.dragging && activeSettings.animation.dragMomentum) {
           interaction.targetRotationX += interaction.velocityX;
           interaction.targetRotationY += interaction.velocityY;
@@ -519,10 +691,12 @@ export function HalftoneCanvas({
           interaction.velocityY *= 1 - activeSettings.animation.dragFriction;
         }
 
-        targetX = baseRotationX + interaction.targetRotationX;
-        targetY = baseRotationY + interaction.targetRotationY;
+        targetX += interaction.targetRotationX;
+        targetY += interaction.targetRotationY;
         easing = activeSettings.animation.dragFriction;
-      } else if (activeSettings.animation.mode === 'autoRotate') {
+      }
+
+      if (activeSettings.animation.autoRotateEnabled && !activeSettings.animation.followHoverEnabled && !activeSettings.animation.followDragEnabled) {
         targetX = baseRotationX + interaction.targetRotationX;
         targetY = baseRotationY + interaction.targetRotationY;
 
@@ -534,17 +708,85 @@ export function HalftoneCanvas({
         easing = 0.08;
       }
 
-      interaction.rotationX += (targetX - interaction.rotationX) * easing;
-      interaction.rotationY += (targetY - interaction.rotationY) * easing;
-      interaction.rotationZ +=
-        (baseRotationZ - interaction.rotationZ) *
-        (activeSettings.animation.rotatePingPong ? 0.18 : 0.12);
+      if (activeSettings.animation.springReturnEnabled) {
+        const springX = applySpringStep(
+          interaction.rotationX,
+          targetX,
+          interaction.rotationVelocityX,
+          activeSettings.animation.springStrength,
+          activeSettings.animation.springDamping,
+        );
+        const springY = applySpringStep(
+          interaction.rotationY,
+          targetY,
+          interaction.rotationVelocityY,
+          activeSettings.animation.springStrength,
+          activeSettings.animation.springDamping,
+        );
+        const springZ = applySpringStep(
+          interaction.rotationZ,
+          baseRotationZ,
+          interaction.rotationVelocityZ,
+          activeSettings.animation.springStrength,
+          activeSettings.animation.springDamping,
+        );
+
+        interaction.rotationX = springX.value;
+        interaction.rotationY = springY.value;
+        interaction.rotationZ = springZ.value;
+        interaction.rotationVelocityX = springX.velocity;
+        interaction.rotationVelocityY = springY.velocity;
+        interaction.rotationVelocityZ = springZ.velocity;
+      } else {
+        interaction.rotationX += (targetX - interaction.rotationX) * easing;
+        interaction.rotationY += (targetY - interaction.rotationY) * easing;
+        interaction.rotationZ +=
+          (baseRotationZ - interaction.rotationZ) *
+          (activeSettings.animation.rotatePingPong ? 0.18 : 0.12);
+      }
 
       mesh.rotation.set(
         interaction.rotationX,
         interaction.rotationY,
         interaction.rotationZ,
       );
+      mesh.position.y = meshOffsetY;
+      mesh.scale.setScalar(meshScale);
+
+      if (activeSettings.animation.cameraParallaxEnabled) {
+        const cameraRange = activeSettings.animation.cameraParallaxAmount;
+        const cameraEase = activeSettings.animation.cameraParallaxEase;
+        const centeredX = (interaction.mouseX - 0.5) * 2;
+        const centeredY = (0.5 - interaction.mouseY) * 2;
+        const orbitYaw = centeredX * cameraRange;
+        const orbitPitch = centeredY * cameraRange * 0.7;
+        const horizontalRadius = Math.cos(orbitPitch) * baseDistance;
+        const targetCameraX = Math.sin(orbitYaw) * horizontalRadius;
+        const targetCameraY = Math.sin(orbitPitch) * baseDistance * 0.85;
+        const targetCameraZ = Math.cos(orbitYaw) * horizontalRadius;
+
+        camera.position.x += (targetCameraX - camera.position.x) * cameraEase;
+        camera.position.y += (targetCameraY - camera.position.y) * cameraEase;
+        camera.position.z += (targetCameraZ - camera.position.z) * cameraEase;
+      } else {
+        camera.position.x += (0 - camera.position.x) * 0.12;
+        camera.position.y += (0 - camera.position.y) * 0.12;
+        camera.position.z += (baseDistance - camera.position.z) * 0.12;
+      }
+
+      camera.lookAt(0, meshOffsetY * 0.2, 0);
+      setPrimaryLightPosition(primaryLight, lightAngle, lightHeight);
+
+      poseChangeReference.current({
+        autoElapsed: interaction.autoElapsed,
+        rotateElapsed: interaction.rotateElapsed,
+        rotationX: interaction.rotationX,
+        rotationY: interaction.rotationY,
+        rotationZ: interaction.rotationZ,
+        targetRotationX: interaction.targetRotationX,
+        targetRotationY: interaction.targetRotationY,
+        timeElapsed: elapsedTime,
+      });
 
       if (!activeSettings.halftone.enabled) {
         renderer.setRenderTarget(null);
@@ -582,8 +824,11 @@ export function HalftoneCanvas({
     return () => {
       cancelled = true;
       resizeObserver.disconnect();
-      window.removeEventListener('pointermove', handlePointerMove);
+      canvas.removeEventListener('pointermove', handlePointerMove);
+      canvas.removeEventListener('pointerleave', handlePointerLeave);
       window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointermove', handleWindowPointerMove);
+      window.removeEventListener('blur', handleWindowBlur);
       canvas.removeEventListener('pointerdown', handlePointerDown);
       window.cancelAnimationFrame(animationFrameId);
 

@@ -7,6 +7,7 @@ import type {
 } from '@/app/halftone/_lib/types';
 import {
   ExportButton,
+  ExportNameInput,
   ExportNote,
   ExportPreview,
   Section,
@@ -16,22 +17,27 @@ import {
 } from './controls-ui';
 
 type ExportTabProps = {
+  defaultExportName: string;
+  exportName: string;
   onExportHtml: () => void;
+  onExportNameChange: (value: string) => void;
   onExportReact: () => void;
   selectedShape: HalftoneGeometrySpec | undefined;
   settings: HalftoneStudioSettings;
 };
 
 export function ExportTab({
+  defaultExportName,
+  exportName,
   onExportHtml,
+  onExportNameChange,
   onExportReact,
   selectedShape,
   settings,
 }: ExportTabProps) {
-  const animationLabel = formatAnimationName(
-    settings.animation.mode,
-    settings.animation.rotateEnabled,
-  );
+  const animationLabel = formatAnimationName(settings.animation);
+
+  const componentName = exportName || defaultExportName;
 
   return (
     <TabContent>
@@ -42,9 +48,16 @@ export function ExportTab({
           animation settings baked in. Requires <code>three</code>.
         </SmallBody>
 
+        <ExportNameInput
+          onChange={(event) => onExportNameChange(event.target.value)}
+          placeholder={defaultExportName}
+          type="text"
+          value={exportName}
+        />
+
         <ExportPreview>
           <div>
-            <span style={{ color: '#9d90fa' }}>{'// HalftoneDashes.tsx'}</span>
+            <span style={{ color: '#9d90fa' }}>{`// ${componentName}.tsx`}</span>
           </div>
           <div>
             <span style={{ color: 'rgba(255, 255, 255, 0.35)' }}>
@@ -54,9 +67,9 @@ export function ExportTab({
           <br />
           <div>
             <span style={{ color: '#e0a856' }}>import</span>{' '}
-            <span style={{ color: '#8bc58b' }}>{'HalftoneDashes'}</span>{' '}
+            <span style={{ color: '#8bc58b' }}>{componentName}</span>{' '}
             <span style={{ color: '#e0a856' }}>from</span>{' '}
-            <span style={{ color: '#8bc58b' }}>{`'./HalftoneDashes'`}</span>
+            <span style={{ color: '#8bc58b' }}>{`'./${componentName}'`}</span>
           </div>
           <br />
           <div style={{ color: 'rgba(255, 255, 255, 0.35)' }}>

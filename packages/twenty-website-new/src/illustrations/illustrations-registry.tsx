@@ -17,18 +17,22 @@ import { Connect } from './ThreeCards/Connect';
 import { Diamond } from './ThreeCards/Diamond';
 import { Eye } from './ThreeCards/Eye';
 import { Flash } from './ThreeCards/Flash';
+import { Fuse } from './ThreeCards/Fuse';
 import { Grow } from './ThreeCards/Grow';
 import { HalftoneDashes } from './ThreeCards/HalftoneDashes';
 import { Lock } from './ThreeCards/Lock';
 import { Programming } from './ThreeCards/Programming';
 import { SingleScreen } from './ThreeCards/SingleScreen';
 import { Speed } from './ThreeCards/Speed';
+import { Sun } from './ThreeCards/Sun';
+import { Wheelx } from './ThreeCards/Wheelx';
 import { Logo as WhyTwentyStepperLogo } from './WhyTwentyStepper/Logo';
 
 export const THREE_CARDS_ILLUSTRATIONS = {
   diamond: Diamond,
   eye: Eye,
   flash: Flash,
+  fuse: Fuse,
   halftoneDashes: HalftoneDashes,
   lock: Lock,
   connect: Connect,
@@ -36,6 +40,8 @@ export const THREE_CARDS_ILLUSTRATIONS = {
   programming: Programming,
   singleScreen: SingleScreen,
   speed: Speed,
+  sun: Sun,
+  wheelx: Wheelx,
 } as const satisfies Record<string, ComponentType>;
 
 export type ThreeCardsIllustrationId = keyof typeof THREE_CARDS_ILLUSTRATIONS;

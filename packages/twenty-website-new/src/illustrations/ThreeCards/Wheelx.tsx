@@ -1,16 +1,85 @@
-import {
-  VIRTUAL_RENDER_HEIGHT,
-  blurFragmentShader,
-  halftoneFragmentShader,
-  passThroughVertexShader,
-} from './rendering';
-import type {
-  HalftoneExportPose,
-  HalftoneGeometrySpec,
-  HalftoneStudioSettings,
-} from './types';
+// @ts-nocheck
+'use client';
 
-const GEOMETRY_RUNTIME_SOURCE = String.raw`
+import { styled } from '@linaria/react';
+import { useEffect, useRef } from 'react';
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+
+const MODEL_URL = '/illustrations/home/three-cards/wheelx.fbx';
+
+
+const settings = {
+  "shapeKey": "userUpload_1775685081103",
+  "lighting": {
+    "intensity": 1.5,
+    "fillIntensity": 0.15,
+    "ambientIntensity": 0.08,
+    "angleDegrees": 45,
+    "height": 2
+  },
+  "material": {
+    "roughness": 0.42,
+    "metalness": 0.16
+  },
+  "halftone": {
+    "enabled": true,
+    "numRows": 45,
+    "contrast": 1.3,
+    "power": 1.1,
+    "shading": 1.6,
+    "baseInk": 0.16,
+    "maxBar": 0.24,
+    "cellRatio": 2.2,
+    "cutoff": 0.02,
+    "dashColor": "#4A38F5"
+  },
+  "background": {
+    "transparent": false,
+    "color": "#000000"
+  },
+  "animation": {
+    "autoRotateEnabled": true,
+    "followHoverEnabled": false,
+    "followDragEnabled": false,
+    "rotateEnabled": false,
+    "autoSpeed": 0.3,
+    "autoWobble": 0.3,
+    "hoverRange": 25,
+    "hoverEase": 0.08,
+    "hoverReturn": true,
+    "dragSens": 0.008,
+    "dragFriction": 0.08,
+    "dragMomentum": true,
+    "rotateAxis": "y",
+    "rotateSpeed": 1,
+    "rotatePingPong": false
+  }
+};
+const shape = {
+  "filename": "wheelx.fbx",
+  "key": "userUpload_1775685081103",
+  "kind": "imported",
+  "label": "wheelx.fbx",
+  "loader": "fbx"
+};
+const initialPose = {
+  "autoElapsed": 16.98333333333365,
+  "rotateElapsed": 0,
+  "rotationX": -0.06446908045975865,
+  "rotationY": 5.037500000000101,
+  "rotationZ": 0,
+  "targetRotationX": 0,
+  "targetRotationY": 0
+};
+const VIRTUAL_RENDER_HEIGHT = 768;
+const passThroughVertexShader = "\n  varying vec2 vUv;\n\n  void main() {\n    vUv = uv;\n    gl_Position = vec4(position, 1.0);\n  }\n";
+const blurFragmentShader = "\n  precision highp float;\n\n  uniform sampler2D tInput;\n  uniform vec2 dir;\n  uniform vec2 res;\n\n  varying vec2 vUv;\n\n  void main() {\n    vec4 sum = vec4(0.0);\n    vec2 px = dir / res;\n\n    float w[5];\n    w[0] = 0.227027;\n    w[1] = 0.1945946;\n    w[2] = 0.1216216;\n    w[3] = 0.054054;\n    w[4] = 0.016216;\n\n    sum += texture2D(tInput, vUv) * w[0];\n\n    for (int i = 1; i < 5; i++) {\n      float fi = float(i) * 3.0;\n      sum += texture2D(tInput, vUv + px * fi) * w[i];\n      sum += texture2D(tInput, vUv - px * fi) * w[i];\n    }\n\n    gl_FragColor = sum;\n  }\n";
+const halftoneFragmentShader = "\n  precision highp float;\n\n  uniform sampler2D tScene;\n  uniform sampler2D tGlow;\n  uniform vec2 resolution;\n  uniform float numRows;\n  uniform float glowStr;\n  uniform float contrast;\n  uniform float power;\n  uniform float shading;\n  uniform float baseInk;\n  uniform float maxBar;\n  uniform float cellRatio;\n  uniform float cutoff;\n  uniform vec3 dashColor;\n  uniform float time;\n\n  varying vec2 vUv;\n\n  void main() {\n    float rowH = resolution.y / numRows;\n    float row = floor(gl_FragCoord.y / rowH);\n    float rowFrac = gl_FragCoord.y / rowH - row;\n    float rowV = (row + 0.5) * rowH / resolution.y;\n    float dy = abs(rowFrac - 0.5);\n\n    float cellW = rowH * cellRatio;\n    float cellIdx = floor(gl_FragCoord.x / cellW);\n    float cellFrac = (gl_FragCoord.x - cellIdx * cellW) / cellW;\n    float cellU = (cellIdx + 0.5) * cellW / resolution.x;\n\n    vec2 sampleUv = vec2(\n      clamp(cellU, 0.0, 1.0),\n      clamp(rowV, 0.0, 1.0)\n    );\n\n    vec4 sceneSample = texture2D(tScene, sampleUv);\n    vec4 glowCell = texture2D(tGlow, sampleUv);\n\n    float mask = smoothstep(0.02, 0.08, sceneSample.a);\n    float lum = dot(sceneSample.rgb, vec3(0.299, 0.587, 0.114));\n    float avgLum = dot(glowCell.rgb, vec3(0.299, 0.587, 0.114));\n    float detail = lum - avgLum;\n\n    float litLum = lum + max(detail, 0.0) * shading\n      - max(-detail, 0.0) * shading * 0.55;\n    litLum = clamp((litLum - cutoff) / max(1.0 - cutoff, 0.001), 0.0, 1.0);\n    litLum = pow(litLum, contrast);\n\n    float ink = mix(baseInk, 1.0, 1.0 - litLum);\n    float fill = pow(ink, 1.05) * power;\n    fill = clamp(fill, 0.0, 1.0) * mask;\n\n    float dynamicBarHalf = mix(0.08, maxBar, smoothstep(0.03, 0.85, ink));\n    float dx2 = abs(cellFrac - 0.5);\n    float halfFill = fill * 0.5;\n    float bodyHalfW = max(halfFill - dynamicBarHalf * (rowH / cellW), 0.0);\n    float capR = dynamicBarHalf * rowH;\n\n    float inDash = 0.0;\n    if (dx2 <= bodyHalfW) {\n      float edgeDist = dynamicBarHalf - dy;\n      inDash = smoothstep(-0.03, 0.03, edgeDist);\n    } else {\n      float cdx = (dx2 - bodyHalfW) * cellW;\n      float cdy = dy * rowH;\n      float d = sqrt(cdx * cdx + cdy * cdy);\n      inDash = 1.0 - smoothstep(capR - 1.5, capR + 1.5, d);\n    }\n\n    inDash *= step(0.001, ink) * mask;\n    inDash *= 1.0 + 0.03 * sin(time * 0.8 + row * 0.1);\n\n    vec4 glow = texture2D(tGlow, vUv);\n    float glowLum = dot(glow.rgb, vec3(0.299, 0.587, 0.114));\n    float halo = glowLum * glowStr * 0.25 * (1.0 - inDash);\n    float sharp = smoothstep(0.3, 0.5, inDash + halo);\n    vec3 color = dashColor * sharp;\n\n    gl_FragColor = vec4(color, sharp);\n\n    #include <tonemapping_fragment>\n    #include <colorspace_fragment>\n  }\n";
+
+
 function makePolarShape(radiusFunction, segments = 320) {
   const shape = new THREE.Shape();
 
@@ -431,9 +500,9 @@ function createBuiltinGeometry(shapeKey) {
       return new THREE.TorusKnotGeometry(1, 0.35, 200, 32);
   }
 }
-`;
 
-const IMPORTED_RUNTIME_SOURCE = String.raw`
+
+
 const EMPTY_TEXTURE_DATA_URL =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO8B7Q8AAAAASUVORK5CYII=';
 
@@ -567,138 +636,7 @@ async function loadImportedGeometryFromUrl(loader, modelUrl, label) {
 
   return parseGlbGeometry(buffer, label);
 }
-`;
 
-type ExportedShapeDescriptor = {
-  filename: string | null;
-  key: string;
-  kind: HalftoneGeometrySpec['kind'];
-  label: string;
-  loader: HalftoneGeometrySpec['loader'] | null;
-};
-
-function createDefaultExportPose(): HalftoneExportPose {
-  return {
-    autoElapsed: 0,
-    rotateElapsed: 0,
-    rotationX: 0,
-    rotationY: 0,
-    rotationZ: 0,
-    targetRotationX: 0,
-    targetRotationY: 0,
-    timeElapsed: 0,
-  };
-}
-
-function normalizeExportPose(
-  pose: HalftoneExportPose | undefined,
-): HalftoneExportPose {
-  const fallback = createDefaultExportPose();
-
-  if (!pose) {
-    return fallback;
-  }
-
-  return {
-    autoElapsed: Number.isFinite(pose.autoElapsed) ? pose.autoElapsed : 0,
-    rotateElapsed: Number.isFinite(pose.rotateElapsed)
-      ? pose.rotateElapsed
-      : 0,
-    rotationX: Number.isFinite(pose.rotationX) ? pose.rotationX : 0,
-    rotationY: Number.isFinite(pose.rotationY) ? pose.rotationY : 0,
-    rotationZ: Number.isFinite(pose.rotationZ) ? pose.rotationZ : 0,
-    targetRotationX: Number.isFinite(pose.targetRotationX)
-      ? pose.targetRotationX
-      : 0,
-    targetRotationY: Number.isFinite(pose.targetRotationY)
-      ? pose.targetRotationY
-      : 0,
-    timeElapsed: Number.isFinite(pose.timeElapsed) ? pose.timeElapsed : 0,
-  };
-}
-
-function toPascalCase(value: string) {
-  const tokens = value
-    .replace(/\.[^.]+$/, '')
-    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-    .replace(/[^a-zA-Z0-9]+/g, ' ')
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean);
-
-  const joined = tokens
-    .map((token) => token.charAt(0).toUpperCase() + token.slice(1))
-    .join('');
-
-  if (!joined) {
-    return 'HalftoneDashes';
-  }
-
-  return /^[A-Za-z_]/.test(joined) ? joined : `Halftone${joined}`;
-}
-
-export function deriveExportComponentName(
-  shape: HalftoneGeometrySpec | undefined,
-  importedFile: File | undefined,
-) {
-  const source =
-    importedFile?.name ??
-    shape?.filename ??
-    shape?.label ??
-    shape?.key ??
-    'HalftoneDashes';
-
-  return toPascalCase(source);
-}
-
-function createShapeDescriptor(
-  shape: HalftoneGeometrySpec | undefined,
-  settings: HalftoneStudioSettings,
-  importedFile?: File,
-  modelFilenameOverride?: string,
-): ExportedShapeDescriptor {
-  if (!shape) {
-    return {
-      filename: null,
-      key: settings.shapeKey,
-      kind: 'builtin',
-      label: settings.shapeKey,
-      loader: null,
-    };
-  }
-
-  const effectiveImportedFilename =
-    modelFilenameOverride ?? importedFile?.name ?? shape.filename ?? null;
-
-  return {
-    filename: shape.kind === 'imported' ? effectiveImportedFilename : shape.filename ?? null,
-    key: shape.key,
-    kind: shape.kind,
-    label:
-      shape.kind === 'imported'
-        ? effectiveImportedFilename ?? shape.label
-        : shape.label,
-    loader: shape.loader ?? null,
-  };
-}
-
-function serializeRuntimeSource(
-  settings: HalftoneStudioSettings,
-  shape: ExportedShapeDescriptor,
-  initialPose: HalftoneExportPose,
-) {
-  return `
-const settings = ${JSON.stringify(settings, null, 2)};
-const shape = ${JSON.stringify(shape, null, 2)};
-const initialPose = ${JSON.stringify(initialPose, null, 2)};
-const VIRTUAL_RENDER_HEIGHT = ${VIRTUAL_RENDER_HEIGHT};
-const passThroughVertexShader = ${JSON.stringify(passThroughVertexShader)};
-const blurFragmentShader = ${JSON.stringify(blurFragmentShader)};
-const halftoneFragmentShader = ${JSON.stringify(halftoneFragmentShader)};
-
-${GEOMETRY_RUNTIME_SOURCE}
-
-${IMPORTED_RUNTIME_SOURCE}
 
 function createRenderTarget(width, height) {
   return new THREE.WebGLRenderTarget(width, height, {
@@ -718,11 +656,8 @@ function createInteractionState() {
     pointerY: 0,
     rotateElapsed: initialPose.rotateElapsed,
     rotationX: initialPose.rotationX,
-    rotationVelocityX: 0,
     rotationY: initialPose.rotationY,
-    rotationVelocityY: 0,
     rotationZ: initialPose.rotationZ,
-    rotationVelocityZ: 0,
     targetRotationX: initialPose.targetRotationX,
     targetRotationY: initialPose.targetRotationY,
     velocityX: 0,
@@ -730,32 +665,12 @@ function createInteractionState() {
   };
 }
 
-function setPrimaryLightPosition(light, angleDegrees, height) {
-  const lightAngle = (angleDegrees * Math.PI) / 180;
-  light.position.set(Math.cos(lightAngle) * 5, height, Math.sin(lightAngle) * 5);
-}
-
-function applySpringStep(current, target, velocity, strength, damping) {
-  const nextVelocity = (velocity + (target - current) * strength) * damping;
-  const nextValue = current + nextVelocity;
-
-  return {
-    value: nextValue,
-    velocity: nextVelocity,
-  };
-}
-
 function resetInteractionState(interactionState) {
   interactionState.dragging = false;
-  interactionState.mouseX = 0.5;
-  interactionState.mouseY = 0.5;
   interactionState.targetRotationX = 0;
   interactionState.targetRotationY = 0;
   interactionState.velocityX = 0;
   interactionState.velocityY = 0;
-  interactionState.rotationVelocityX = 0;
-  interactionState.rotationVelocityY = 0;
-  interactionState.rotationVelocityZ = 0;
   interactionState.autoElapsed = 0;
 }
 
@@ -766,11 +681,9 @@ async function createGeometry(modelUrl) {
 
   return createBuiltinGeometry(shape.key);
 }
-`;
-}
 
-function createMountScript() {
-  return `
+
+
 async function mountHalftoneCanvas(options) {
   const {
     container,
@@ -820,15 +733,15 @@ async function mountHalftoneCanvas(options) {
   const scene3d = new THREE.Scene();
   scene3d.background = null;
 
-  const baseCameraDistance = 4;
   const camera = new THREE.PerspectiveCamera(45, getWidth() / getHeight(), 0.1, 100);
-  camera.position.z = baseCameraDistance;
+  camera.position.z = 4;
 
   const primaryLight = new THREE.DirectionalLight(0xffffff, settings.lighting.intensity);
-  setPrimaryLightPosition(
-    primaryLight,
-    settings.lighting.angleDegrees,
+  const lightAngle = (settings.lighting.angleDegrees * Math.PI) / 180;
+  primaryLight.position.set(
+    Math.cos(lightAngle) * 5,
     settings.lighting.height,
+    Math.sin(lightAngle) * 5,
   );
   scene3d.add(primaryLight);
 
@@ -947,25 +860,7 @@ async function mountHalftoneCanvas(options) {
   const resizeObserver = new ResizeObserver(syncSize);
   resizeObserver.observe(container);
 
-  const updatePointerPosition = (event) => {
-    const rect = canvas.getBoundingClientRect();
-    const width = Math.max(rect.width, 1);
-    const height = Math.max(rect.height, 1);
-
-    interaction.mouseX = THREE.MathUtils.clamp(
-      (event.clientX - rect.left) / width,
-      0,
-      1,
-    );
-    interaction.mouseY = THREE.MathUtils.clamp(
-      (event.clientY - rect.top) / height,
-      0,
-      1,
-    );
-  };
-
   const handlePointerDown = (event) => {
-    updatePointerPosition(event);
     interaction.dragging = true;
     interaction.pointerX = event.clientX;
     interaction.pointerY = event.clientY;
@@ -975,11 +870,8 @@ async function mountHalftoneCanvas(options) {
   };
 
   const handlePointerMove = (event) => {
-    updatePointerPosition(event);
-  };
-
-  const handleWindowPointerMove = (event) => {
-    updatePointerPosition(event);
+    interaction.mouseX = event.clientX / window.innerWidth;
+    interaction.mouseY = event.clientY / window.innerHeight;
 
     if (
       !interaction.dragging ||
@@ -998,43 +890,13 @@ async function mountHalftoneCanvas(options) {
     interaction.pointerY = event.clientY;
   };
 
-  const handlePointerLeave = () => {
-    if (interaction.dragging) {
-      return;
-    }
-
-    interaction.mouseX = 0.5;
-    interaction.mouseY = 0.5;
-  };
-
   const handlePointerUp = () => {
     interaction.dragging = false;
     canvas.style.cursor = 'grab';
-
-    if (!settings.animation.springReturnEnabled) {
-      return;
-    }
-
-    const springImpulse = Math.max(settings.animation.springStrength * 10, 1.2);
-    interaction.rotationVelocityX += interaction.velocityX * springImpulse;
-    interaction.rotationVelocityY += interaction.velocityY * springImpulse;
-    interaction.rotationVelocityZ += interaction.velocityY * springImpulse * 0.12;
-    interaction.targetRotationX = 0;
-    interaction.targetRotationY = 0;
-    interaction.velocityX = 0;
-    interaction.velocityY = 0;
   };
 
-  const handleWindowBlur = () => {
-    handlePointerUp();
-    handlePointerLeave();
-  };
-
-  canvas.addEventListener('pointermove', handlePointerMove);
-  canvas.addEventListener('pointerleave', handlePointerLeave);
+  window.addEventListener('pointermove', handlePointerMove);
   window.addEventListener('pointerup', handlePointerUp);
-  window.addEventListener('pointermove', handleWindowPointerMove);
-  window.addEventListener('blur', handleWindowBlur);
   canvas.addEventListener('pointerdown', handlePointerDown);
 
   const clock = new THREE.Clock();
@@ -1044,16 +906,12 @@ async function mountHalftoneCanvas(options) {
     animationFrameId = window.requestAnimationFrame(renderFrame);
 
     const delta = 1 / 60;
-    const elapsedTime = initialPose.timeElapsed + clock.getElapsedTime();
+    const elapsedTime = clock.getElapsedTime();
     halftoneMaterial.uniforms.time.value = elapsedTime;
 
     let baseRotationX = 0;
     let baseRotationY = 0;
     let baseRotationZ = 0;
-    let meshOffsetY = 0;
-    let meshScale = 1;
-    let lightAngle = settings.lighting.angleDegrees;
-    let lightHeight = settings.lighting.height;
 
     if (autoRotateEnabled) {
       if (!interaction.dragging) {
@@ -1068,61 +926,23 @@ async function mountHalftoneCanvas(options) {
       baseRotationX += Math.sin(interaction.autoElapsed * 0.2) * settings.animation.autoWobble;
     }
 
-    if (settings.animation.floatEnabled) {
-      const floatPhase = elapsedTime * settings.animation.floatSpeed;
-      const driftAmount = (settings.animation.driftAmount * Math.PI) / 180;
-
-      meshOffsetY += Math.sin(floatPhase) * settings.animation.floatAmplitude;
-      baseRotationX += Math.sin(floatPhase * 0.72) * driftAmount * 0.45;
-      baseRotationZ += Math.cos(floatPhase * 0.93) * driftAmount * 0.3;
-    }
-
-    if (settings.animation.breatheEnabled) {
-      meshScale *=
-        1 +
-        Math.sin(elapsedTime * settings.animation.breatheSpeed) *
-          settings.animation.breatheAmount;
-    }
-
     if (rotateEnabled) {
       interaction.rotateElapsed += delta;
-      const rotateProgress = settings.animation.rotatePingPong
+      const rotateAngle = settings.animation.rotatePingPong
         ? Math.sin(interaction.rotateElapsed * settings.animation.rotateSpeed) * Math.PI
         : interaction.rotateElapsed * settings.animation.rotateSpeed;
 
-      if (settings.animation.rotatePreset === 'axis') {
-        if (settings.animation.rotateAxis === 'x' || settings.animation.rotateAxis === 'xy') {
-          baseRotationX += rotateProgress;
-        }
-
-        if (settings.animation.rotateAxis === 'y' || settings.animation.rotateAxis === 'xy') {
-          baseRotationY += rotateProgress;
-        }
-
-        if (settings.animation.rotateAxis === 'z') {
-          baseRotationZ += rotateProgress;
-        }
-      } else if (settings.animation.rotatePreset === 'lissajous') {
-        baseRotationX += Math.sin(rotateProgress * 0.85) * 0.65;
-        baseRotationY += Math.sin(rotateProgress * 1.35 + 0.8) * 1.05;
-        baseRotationZ += Math.sin(rotateProgress * 0.55 + 1.6) * 0.32;
-      } else if (settings.animation.rotatePreset === 'orbit') {
-        baseRotationX += Math.sin(rotateProgress * 0.75) * 0.42;
-        baseRotationY += Math.cos(rotateProgress) * 1.2;
-        baseRotationZ += Math.sin(rotateProgress * 1.25) * 0.24;
-      } else if (settings.animation.rotatePreset === 'tumble') {
-        baseRotationX += rotateProgress * 0.55;
-        baseRotationY += Math.sin(rotateProgress * 0.8) * 0.9;
-        baseRotationZ += Math.cos(rotateProgress * 1.1) * 0.38;
+      if (settings.animation.rotateAxis === 'x' || settings.animation.rotateAxis === 'xy') {
+        baseRotationX += rotateAngle;
       }
-    }
 
-    if (settings.animation.lightSweepEnabled) {
-      const lightPhase = elapsedTime * settings.animation.lightSweepSpeed;
-      lightAngle += Math.sin(lightPhase) * settings.animation.lightSweepRange;
-      lightHeight +=
-        Math.cos(lightPhase * 0.85) *
-        settings.animation.lightSweepHeightRange;
+      if (settings.animation.rotateAxis === 'y' || settings.animation.rotateAxis === 'xy') {
+        baseRotationY += rotateAngle;
+      }
+
+      if (settings.animation.rotateAxis === 'z') {
+        baseRotationZ = rotateAngle;
+      }
     }
 
     let targetX = baseRotationX;
@@ -1169,75 +989,17 @@ async function mountHalftoneCanvas(options) {
       easing = 0.08;
     }
 
-    if (settings.animation.springReturnEnabled) {
-      const springX = applySpringStep(
-        interaction.rotationX,
-        targetX,
-        interaction.rotationVelocityX,
-        settings.animation.springStrength,
-        settings.animation.springDamping,
-      );
-      const springY = applySpringStep(
-        interaction.rotationY,
-        targetY,
-        interaction.rotationVelocityY,
-        settings.animation.springStrength,
-        settings.animation.springDamping,
-      );
-      const springZ = applySpringStep(
-        interaction.rotationZ,
-        baseRotationZ,
-        interaction.rotationVelocityZ,
-        settings.animation.springStrength,
-        settings.animation.springDamping,
-      );
-
-      interaction.rotationX = springX.value;
-      interaction.rotationY = springY.value;
-      interaction.rotationZ = springZ.value;
-      interaction.rotationVelocityX = springX.velocity;
-      interaction.rotationVelocityY = springY.velocity;
-      interaction.rotationVelocityZ = springZ.velocity;
-    } else {
-      interaction.rotationX += (targetX - interaction.rotationX) * easing;
-      interaction.rotationY += (targetY - interaction.rotationY) * easing;
-      interaction.rotationZ +=
-        (baseRotationZ - interaction.rotationZ) *
-        (settings.animation.rotatePingPong ? 0.18 : 0.12);
-    }
+    interaction.rotationX += (targetX - interaction.rotationX) * easing;
+    interaction.rotationY += (targetY - interaction.rotationY) * easing;
+    interaction.rotationZ +=
+      (baseRotationZ - interaction.rotationZ) *
+      (settings.animation.rotatePingPong ? 0.18 : 0.12);
 
     mesh.rotation.set(
       interaction.rotationX,
       interaction.rotationY,
       interaction.rotationZ,
     );
-    mesh.position.y = meshOffsetY;
-    mesh.scale.setScalar(meshScale);
-
-    if (settings.animation.cameraParallaxEnabled) {
-      const cameraRange = settings.animation.cameraParallaxAmount;
-      const cameraEase = settings.animation.cameraParallaxEase;
-      const centeredX = (interaction.mouseX - 0.5) * 2;
-      const centeredY = (0.5 - interaction.mouseY) * 2;
-      const orbitYaw = centeredX * cameraRange;
-      const orbitPitch = centeredY * cameraRange * 0.7;
-      const horizontalRadius = Math.cos(orbitPitch) * baseCameraDistance;
-      const targetCameraX = Math.sin(orbitYaw) * horizontalRadius;
-      const targetCameraY =
-        Math.sin(orbitPitch) * baseCameraDistance * 0.85;
-      const targetCameraZ = Math.cos(orbitYaw) * horizontalRadius;
-
-      camera.position.x += (targetCameraX - camera.position.x) * cameraEase;
-      camera.position.y += (targetCameraY - camera.position.y) * cameraEase;
-      camera.position.z += (targetCameraZ - camera.position.z) * cameraEase;
-    } else {
-      camera.position.x += (0 - camera.position.x) * 0.12;
-      camera.position.y += (0 - camera.position.y) * 0.12;
-      camera.position.z += (baseCameraDistance - camera.position.z) * 0.12;
-    }
-
-    camera.lookAt(0, meshOffsetY * 0.2, 0);
-    setPrimaryLightPosition(primaryLight, lightAngle, lightHeight);
 
     if (!settings.halftone.enabled) {
       renderer.setRenderTarget(null);
@@ -1275,11 +1037,8 @@ async function mountHalftoneCanvas(options) {
   return () => {
     window.cancelAnimationFrame(animationFrameId);
     resizeObserver.disconnect();
-    canvas.removeEventListener('pointermove', handlePointerMove);
-    canvas.removeEventListener('pointerleave', handlePointerLeave);
+    window.removeEventListener('pointermove', handlePointerMove);
     window.removeEventListener('pointerup', handlePointerUp);
-    window.removeEventListener('pointermove', handleWindowPointerMove);
-    window.removeEventListener('blur', handleWindowBlur);
     canvas.removeEventListener('pointerdown', handlePointerDown);
     blurHorizontalMaterial.dispose();
     blurVerticalMaterial.dispose();
@@ -1297,57 +1056,15 @@ async function mountHalftoneCanvas(options) {
     }
   };
 }
+
+const StyledVisualMount = styled.div`
+  display: block;
+  height: 100%;
+  min-width: 0;
+  width: 100%;
 `;
-}
 
-export function getExportedModelFile(
-  shape: HalftoneGeometrySpec | undefined,
-  importedFile: File | undefined,
-) {
-  if (!shape || shape.kind !== 'imported' || !importedFile) {
-    return null;
-  }
-
-  return importedFile;
-}
-
-export function generateReactComponent(
-  settings: HalftoneStudioSettings,
-  selectedShape: HalftoneGeometrySpec | undefined,
-  componentName = 'HalftoneDashes',
-  modelFilenameOverride?: string,
-  initialPose?: HalftoneExportPose,
-  importedFile?: File,
-) {
-  const shape = createShapeDescriptor(
-    selectedShape,
-    settings,
-    importedFile,
-    modelFilenameOverride,
-  );
-  const pose = normalizeExportPose(initialPose);
-  const defaultModelUrl = modelFilenameOverride ?? shape.filename ?? 'model.glb';
-  const background = 'transparent';
-
-  return `import { useEffect, useRef, type CSSProperties } from 'react';
-import * as THREE from 'three';
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-
-${serializeRuntimeSource(settings, shape, pose)}
-
-${createMountScript()}
-
-type ${componentName}Props = {
-  modelUrl?: string;
-  style?: CSSProperties;
-};
-
-export default function ${componentName}({
-  modelUrl = ${JSON.stringify(`./${defaultModelUrl}`)},
-  style,
-}: ${componentName}Props) {
+export function Wheelx() {
   const mountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -1359,7 +1076,7 @@ export default function ${componentName}({
 
     const unmount = mountHalftoneCanvas({
       container,
-      modelUrl,
+      modelUrl: MODEL_URL,
       onError: (error) => {
         console.error(error);
       },
@@ -1368,135 +1085,7 @@ export default function ${componentName}({
     return () => {
       void Promise.resolve(unmount).then((dispose) => dispose?.());
     };
-  }, [modelUrl]);
+  }, []);
 
-  return (
-    <div
-      ref={mountReference}
-      style={{
-        background: ${JSON.stringify(background)},
-        height: '100%',
-        width: '100%',
-        ...style,
-      }}
-    />
-  );
-}
-`;
-}
-
-export function generateStandaloneHtml(
-  settings: HalftoneStudioSettings,
-  selectedShape: HalftoneGeometrySpec | undefined,
-  componentName = 'HalftoneDashes',
-  modelFilenameOverride?: string,
-  initialPose?: HalftoneExportPose,
-  importedFile?: File,
-) {
-  const shape = createShapeDescriptor(
-    selectedShape,
-    settings,
-    importedFile,
-    modelFilenameOverride,
-  );
-  const pose = normalizeExportPose(initialPose);
-  const defaultModelUrl = modelFilenameOverride ?? shape.filename ?? 'model.glb';
-  const background = 'transparent';
-
-  return `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${componentName}</title>
-    <link rel="icon" href="data:," />
-    <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-
-      html,
-      body {
-        height: 100%;
-      }
-
-      body {
-        background: ${background};
-        color: rgba(255, 255, 255, 0.72);
-        font-family: system-ui, sans-serif;
-        overflow: hidden;
-      }
-
-      #app {
-        height: 100%;
-        width: 100%;
-      }
-
-      #canvas-root {
-        height: 100%;
-        width: 100%;
-      }
-
-      .caption {
-        background: rgba(18, 18, 22, 0.72);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 12px;
-        bottom: 20px;
-        color: rgba(255, 255, 255, 0.8);
-        font-size: 12px;
-        left: 20px;
-        line-height: 1.5;
-        max-width: min(320px, calc(100vw - 40px));
-        padding: 12px 14px;
-        position: fixed;
-      }
-
-      .caption code {
-        color: #9d90fa;
-        font-family: ui-monospace, monospace;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="app">
-      <div id="canvas-root"></div>
-      <div class="caption">
-        Standalone export of the current halftone scene.
-        ${shape.kind === 'imported' ? `Place <code>${defaultModelUrl}</code> next to this HTML file to keep the current uploaded shape.` : ''}
-      </div>
-    </div>
-
-    <script type="importmap">
-      {
-        "imports": {
-          "three": "https://unpkg.com/three@0.183.2/build/three.module.js",
-          "three/addons/": "https://unpkg.com/three@0.183.2/examples/jsm/"
-        }
-      }
-    </script>
-    <script type="module">
-      import * as THREE from 'three';
-      import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-      import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
-      import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-
-      ${serializeRuntimeSource(settings, shape, pose)}
-
-      ${createMountScript()}
-
-      const container = document.getElementById('canvas-root');
-
-      mountHalftoneCanvas({
-        container,
-        modelUrl: ${JSON.stringify(`./${defaultModelUrl}`)},
-        onError: (error) => {
-          console.error(error);
-        },
-      });
-    </script>
-  </body>
-</html>`;
+  return <StyledVisualMount aria-hidden ref={mountReference} />;
 }

@@ -7,8 +7,8 @@ import {
   disposeGeometryCache,
   getGeometryForSpec,
 } from '@/app/halftone/_lib/geometry-registry';
-import { getBackgroundTone } from '@/app/halftone/_lib/formatters';
 import {
+  deriveExportComponentName,
   generateReactComponent,
   generateStandaloneHtml,
   getExportedModelFile,
@@ -17,7 +17,11 @@ import {
   createInitialHalftoneStudioState,
   halftoneStudioReducer,
 } from '@/app/halftone/_lib/state';
-import type { GeometryCacheEntry, HalftoneGeometrySpec } from '@/app/halftone/_lib/types';
+import type {
+  GeometryCacheEntry,
+  HalftoneExportPose,
+  HalftoneGeometrySpec,
+} from '@/app/halftone/_lib/types';
 import { Logo as LogoIcon } from '@/icons';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -127,21 +131,39 @@ function downloadText(filename: string, content: string) {
   downloadBlob(filename, new Blob([content], { type: 'text/plain' }));
 }
 
+function createInitialExportPose(): HalftoneExportPose {
+  return {
+    autoElapsed: 0,
+    rotateElapsed: 0,
+    rotationX: 0,
+    rotationY: 0,
+    rotationZ: 0,
+    targetRotationX: 0,
+    targetRotationY: 0,
+    timeElapsed: 0,
+  };
+}
+
 export function HalftoneStudio() {
   const [state, dispatch] = useReducer(
     halftoneStudioReducer,
     undefined,
     createInitialHalftoneStudioState,
   );
+  const [previewDistance, setPreviewDistance] = useState(4);
   const [activeGeometry, setActiveGeometry] = useState<THREE.BufferGeometry>(() =>
     createFallbackGeometry(),
   );
+  const [exportName, setExportName] = useState('');
   const fileInputReference = useRef<HTMLInputElement>(null);
   const pendingFilePickerReference = useRef<PendingFilePicker | null>(null);
   const geometryCacheReference = useRef<Map<string, GeometryCacheEntry>>(
     new Map([['torusKnot', activeGeometry]]),
   );
   const lastSuccessfulShapeReference = useRef(state.settings.shapeKey);
+  const exportPoseReference = useRef<HalftoneExportPose>(
+    createInitialExportPose(),
+  );
 
   const selectedShape = useMemo(
     () =>
@@ -155,6 +177,22 @@ export function HalftoneStudio() {
         value: shape.key,
       })),
     [state.geometrySpecs],
+  );
+  const selectedImportedFile = useMemo(
+    () =>
+      getExportedModelFile(
+        selectedShape,
+        selectedShape ? state.importedFiles[selectedShape.key] : undefined,
+      ),
+    [selectedShape, state.importedFiles],
+  );
+  const defaultExportName = useMemo(
+    () =>
+      deriveExportComponentName(
+        selectedShape,
+        selectedImportedFile ?? undefined,
+      ),
+    [selectedImportedFile, selectedShape],
   );
 
   const openFilePicker = useCallback((accept: string) => {
@@ -298,37 +336,79 @@ export function HalftoneStudio() {
     });
   }, [openFilePicker]);
 
-  const handleExportReact = useCallback(() => {
-    downloadText(
-      'HalftoneDashes.tsx',
-      generateReactComponent(state.settings, selectedShape),
-    );
+  const handlePoseChange = useCallback((pose: HalftoneExportPose) => {
+    exportPoseReference.current = pose;
+  }, []);
 
-    const importedFile = getExportedModelFile(
-      selectedShape,
-      selectedShape ? state.importedFiles[selectedShape.key] : undefined,
+  const handleExportReact = useCallback(() => {
+    const componentName = exportName || defaultExportName;
+    const kebabName = componentName
+      .replace(/([a-z])([A-Z])/g, '$1-$2')
+      .toLowerCase();
+    const importedFile = selectedImportedFile;
+
+    const modelFilename =
+      importedFile
+        ? `${kebabName}${importedFile.name.replace(/^[^.]*/, '')}`
+        : undefined;
+
+    downloadText(
+      `${componentName}.tsx`,
+      generateReactComponent(
+        state.settings,
+        selectedShape,
+        componentName,
+        modelFilename,
+        exportPoseReference.current,
+        importedFile ?? undefined,
+      ),
     );
 
     if (importedFile) {
-      downloadBlob(importedFile.name, importedFile);
+      downloadBlob(modelFilename ?? importedFile.name, importedFile);
     }
-  }, [selectedShape, state.importedFiles, state.settings]);
+  }, [
+    defaultExportName,
+    exportName,
+    selectedImportedFile,
+    selectedShape,
+    state.settings,
+  ]);
 
   const handleExportHtml = useCallback(() => {
-    downloadText(
-      'halftone-dashes.html',
-      generateStandaloneHtml(state.settings, selectedShape),
-    );
+    const componentName = exportName || defaultExportName;
+    const kebabName = componentName
+      .replace(/([a-z])([A-Z])/g, '$1-$2')
+      .toLowerCase();
+    const importedFile = selectedImportedFile;
 
-    const importedFile = getExportedModelFile(
-      selectedShape,
-      selectedShape ? state.importedFiles[selectedShape.key] : undefined,
+    const modelFilename =
+      importedFile
+        ? `${kebabName}${importedFile.name.replace(/^[^.]*/, '')}`
+        : undefined;
+
+    downloadText(
+      `${kebabName}.html`,
+      generateStandaloneHtml(
+        state.settings,
+        selectedShape,
+        componentName,
+        modelFilename,
+        exportPoseReference.current,
+        importedFile ?? undefined,
+      ),
     );
 
     if (importedFile) {
-      downloadBlob(importedFile.name, importedFile);
+      downloadBlob(modelFilename ?? importedFile.name, importedFile);
     }
-  }, [selectedShape, state.importedFiles, state.settings]);
+  }, [
+    defaultExportName,
+    exportName,
+    selectedImportedFile,
+    selectedShape,
+    state.settings,
+  ]);
 
   useEffect(() => {
     return () => {
@@ -395,10 +475,8 @@ export function HalftoneStudio() {
     };
   }, [selectedShape, state.importedFiles]);
 
-  const background = state.settings.background.transparent
-    ? 'transparent'
-    : state.settings.background.color;
-  const backgroundTone = getBackgroundTone(state.settings.background);
+  const background = '#000000';
+  const backgroundTone = 'dark';
   const handleFirstInteraction = useCallback(() => {
     dispatch({ type: 'hideHint' });
   }, []);
@@ -428,6 +506,8 @@ export function HalftoneStudio() {
         <HalftoneCanvas
           geometry={activeGeometry}
           onFirstInteraction={handleFirstInteraction}
+          onPoseChange={handlePoseChange}
+          previewDistance={previewDistance}
           settings={state.settings}
         />
       </CanvasLayer>
@@ -435,25 +515,10 @@ export function HalftoneStudio() {
       <ControlsPositioner>
         <ControlsPanel
           activeTab={state.activeTab}
-          onAnimationModeSelect={(value) =>
-            dispatch({
-              type: 'patchAnimation',
-              value: {
-                mode: state.settings.animation.mode === value ? 'none' : value,
-              },
-            })
-          }
+          defaultExportName={defaultExportName}
+          exportName={exportName}
           onAnimationSettingsChange={(value) =>
             dispatch({ type: 'patchAnimation', value })
-          }
-          onBackgroundColorChange={(value) =>
-            dispatch({ type: 'patchBackground', value: { color: value } })
-          }
-          onBackgroundTransparencyChange={(value) =>
-            dispatch({
-              type: 'patchBackground',
-              value: { transparent: value },
-            })
           }
           onDashColorChange={(value) =>
             dispatch({
@@ -462,6 +527,7 @@ export function HalftoneStudio() {
             })
           }
           onExportHtml={handleExportHtml}
+          onExportNameChange={setExportName}
           onExportReact={handleExportReact}
           onHalftoneChange={(value) =>
             dispatch({ type: 'patchHalftone', value })
@@ -472,14 +538,7 @@ export function HalftoneStudio() {
           onMaterialChange={(value) =>
             dispatch({ type: 'patchMaterial', value })
           }
-          onRotateToggle={() =>
-            dispatch({
-              type: 'patchAnimation',
-              value: {
-                rotateEnabled: !state.settings.animation.rotateEnabled,
-              },
-            })
-          }
+          onPreviewDistanceChange={setPreviewDistance}
           onShapeChange={(value) => {
             void handleShapeChange(value);
           }}
@@ -487,6 +546,7 @@ export function HalftoneStudio() {
           onUploadModel={() => {
             void handleUploadModel();
           }}
+          previewDistance={previewDistance}
           selectedShape={selectedShape}
           settings={state.settings}
           shapeOptions={shapeOptions}

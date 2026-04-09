@@ -2,7 +2,15 @@
 
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import type { ChangeEventHandler, ReactNode } from 'react';
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type ChangeEventHandler,
+  type ReactNode,
+} from 'react';
+import { createPortal } from 'react-dom';
 
 const TAB_LABEL_WIDTH = 72;
 
@@ -41,29 +49,36 @@ export const ControlsTitle = styled.div`
 `;
 
 export const TabsBar = styled.div`
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
   display: flex;
   flex-shrink: 0;
-  padding: 12px 20px 0;
+  gap: 2px;
+  margin: 16px 16px 0;
+  padding: 3px;
 `;
 
 export const TabButton = styled.button<{ $active: boolean }>`
-  background: none;
+  background: ${(props) =>
+    props.$active ? 'rgba(255, 255, 255, 0.1)' : 'transparent'};
   border: none;
-  border-bottom: 2px solid
-    ${(props) => (props.$active ? '#4A38F5' : 'transparent')};
+  border-radius: 8px;
   color: ${(props) =>
     props.$active ? 'rgba(255, 255, 255, 0.92)' : 'rgba(255, 255, 255, 0.38)'};
   cursor: pointer;
+  flex: 1;
   font-family: ${theme.font.family.sans};
   font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.04em;
-  padding: 8px 14px 10px;
-  transition: all 0.2s ease;
+  letter-spacing: 0.02em;
+  padding: 6px 0;
+  transition: all 0.15s ease;
 
   &:hover {
-    color: rgba(255, 255, 255, 0.6);
+    background: ${(props) =>
+      props.$active ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.05)'};
+    color: ${(props) =>
+      props.$active ? 'rgba(255, 255, 255, 0.92)' : 'rgba(255, 255, 255, 0.55)'};
   }
 `;
 
@@ -80,13 +95,24 @@ export const Section = styled.section<{ $first?: boolean }>`
   padding-top: ${(props) => (props.$first ? '0' : '14px')};
 `;
 
-export const SectionTitle = styled.div`
+export const SectionTitle = styled.div<{ $preserveCase?: boolean }>`
   color: rgba(255, 255, 255, 0.36);
   font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: ${(props) => (props.$preserveCase ? '0.02em' : '0.08em')};
   margin-bottom: 10px;
-  text-transform: uppercase;
+  text-transform: ${(props) => (props.$preserveCase ? 'none' : 'uppercase')};
+`;
+
+export const SectionHeader = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+
+  & > ${SectionTitle} {
+    margin-bottom: 0;
+  }
 `;
 
 export const ControlGrid = styled.div`
@@ -119,25 +145,53 @@ export const ControlValue = styled.span`
 
 export const SliderInput = styled.input`
   appearance: none;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 2px;
-  height: 2px;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.35) var(--fill, 50%),
+    rgba(255, 255, 255, 0.08) var(--fill, 50%)
+  );
+  border-radius: 999px;
+  cursor: pointer;
+  height: 6px;
   outline: none;
+  transition: transform 0.2s ease;
   width: 100%;
 
   &::-webkit-slider-thumb {
     appearance: none;
-    background: #fff;
-    border-radius: 50%;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-    cursor: pointer;
-    height: 12px;
-    width: 12px;
+    background: transparent;
+    border: none;
+    height: 6px;
+    width: 0;
+  }
+
+  &::-moz-range-thumb {
+    background: transparent;
+    border: none;
+    height: 0;
+    width: 0;
+  }
+
+  &::-moz-range-track {
+    background: transparent;
+    border-radius: 999px;
+    height: 6px;
+  }
+
+  &:active {
+    transform: scaleY(2);
   }
 `;
 
 export const SelectInput = styled.select`
-  background: rgba(255, 255, 255, 0.07);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: rgba(255, 255, 255, 0.07);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.52)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 12px 12px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   color: rgba(255, 255, 255, 0.85);
@@ -145,7 +199,7 @@ export const SelectInput = styled.select`
   font-family: ${theme.font.family.sans};
   font-size: 11px;
   outline: none;
-  padding: 7px 10px;
+  padding: 7px 34px 7px 10px;
   transition: border-color 0.15s ease;
   width: 100%;
 
@@ -166,12 +220,80 @@ export const ToggleText = styled.span`
   font-size: 11px;
 `;
 
+const LabelWithInfoRow = styled.span`
+  align-items: center;
+  display: inline-flex;
+  gap: 6px;
+  min-width: 0;
+`;
+
+const InfoTooltipRoot = styled.span`
+  display: inline-flex;
+  position: relative;
+`;
+
+const InfoTooltipButton = styled.button`
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.32);
+  cursor: help;
+  display: inline-flex;
+  height: 14px;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  transition: color 0.15s ease;
+  width: 14px;
+
+  &:hover,
+  &:focus-visible {
+    color: rgba(255, 255, 255, 0.7);
+    outline: none;
+  }
+
+  &:hover + span,
+  &:focus-visible + span {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+`;
+
+const InfoTooltipBubble = styled.span`
+  background: rgba(9, 9, 13, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 10px;
+  line-height: 1.45;
+  max-width: 220px;
+  padding: 8px 10px;
+  pointer-events: none;
+  position: fixed;
+  width: max-content;
+  z-index: 4;
+
+  &::before {
+    background: rgba(9, 9, 13, 0.96);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    content: '';
+    height: 8px;
+    left: 50%;
+    position: absolute;
+    top: -5px;
+    transform: translateX(-50%) rotate(45deg);
+    width: 8px;
+  }
+`;
+
 export const Toggle = styled.label`
   display: block;
   flex-shrink: 0;
   height: 18px;
   position: relative;
-  width: 34px;
+  width: 28px;
 `;
 
 export const ToggleInput = styled.input`
@@ -185,7 +307,7 @@ export const ToggleInput = styled.input`
   }
 
   &:checked + span::after {
-    transform: translateX(16px);
+    transform: translateX(10px);
   }
 `;
 
@@ -202,126 +324,112 @@ export const ToggleTrack = styled.span`
     border-radius: 50%;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
     content: '';
-    height: 12px;
-    left: 3px;
+    height: 14px;
+    left: 2px;
     position: absolute;
-    top: 3px;
+    top: 2px;
     transition: transform 0.2s ease;
-    width: 12px;
+    width: 14px;
   }
 `;
 
-export const ColorPair = styled.div`
+export const ColorControlRow = styled.div`
+  align-items: center;
   display: grid;
-  gap: 8px;
-  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  grid-template-columns: ${TAB_LABEL_WIDTH}px minmax(0, 1fr);
 `;
 
-export const ColorItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+export const ColorControlLabel = styled.span`
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 11px;
 `;
 
-export const ColorItemLabel = styled.span`
-  color: rgba(255, 255, 255, 0.45);
-  font-size: 10px;
+export const ColorSwatch = styled.div`
+  border-radius: 8px;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  height: 24px;
+  justify-self: end;
+  overflow: hidden;
+  position: relative;
+  transition: box-shadow 0.15s ease;
+  width: 44px;
+
+  &:hover {
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.2),
+      0 0 0 1px rgba(255, 255, 255, 0.2);
+  }
 `;
 
 export const ColorInput = styled.input`
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 6px;
+  border: none;
   cursor: pointer;
-  height: 28px;
+  height: 150%;
+  left: -10%;
   outline: none;
   padding: 0;
-  width: 100%;
-
-  &:hover {
-    border-color: rgba(255, 255, 255, 0.28);
-  }
+  position: absolute;
+  top: -25%;
+  width: 120%;
 `;
 
-export const SecondaryActionButton = styled.button`
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px dashed rgba(255, 255, 255, 0.25);
-  border-radius: 8px;
-  color: rgba(255, 255, 255, 0.7);
-  cursor: pointer;
-  font-family: ${theme.font.family.sans};
-  font-size: 11px;
-  padding: 8px 12px;
-  transition: all 0.2s ease;
-  width: 100%;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.14);
-    border-color: rgba(255, 255, 255, 0.4);
-  }
-`;
-
-export const AnimOption = styled.button<{ $selected: boolean }>`
+export const ShapeRow = styled.div`
   align-items: center;
-  background: ${(props) =>
-    props.$selected ? 'rgba(74, 56, 245, 0.12)' : 'rgba(255, 255, 255, 0.02)'};
-  border: 1px solid
-    ${(props) =>
-      props.$selected
-        ? 'rgba(74, 56, 245, 0.4)'
-        : 'rgba(255, 255, 255, 0.08)'};
-  border-radius: 10px;
-  cursor: pointer;
-  display: flex;
-  gap: 12px;
-  padding: 10px 12px;
-  text-align: left;
-  transition: all 0.2s ease;
-  width: 100%;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.14);
-  }
+  display: grid;
+  gap: 10px;
+  grid-template-columns: ${TAB_LABEL_WIDTH}px minmax(0, 1fr) auto;
 `;
 
-export const AnimOptionIcon = styled.div<{ $selected: boolean }>`
+export const UploadButton = styled.button`
   align-items: center;
-  background: ${(props) =>
-    props.$selected ? 'rgba(74, 56, 245, 0.25)' : 'rgba(255, 255, 255, 0.06)'};
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
   display: flex;
   flex-shrink: 0;
-  font-size: 16px;
+  font-size: 13px;
   height: 32px;
   justify-content: center;
+  transition: all 0.15s ease;
   width: 32px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.22);
+    color: rgba(255, 255, 255, 0.8);
+  }
 `;
 
-export const AnimOptionInfo = styled.div`
-  flex: 1;
-`;
-
-export const AnimOptionName = styled.div<{ $selected: boolean }>`
-  color: ${(props) =>
-    props.$selected ? '#9d90fa' : 'rgba(255, 255, 255, 0.85)'};
+export const ExportNameInput = styled.input`
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: ${theme.font.family.sans};
   font-size: 11px;
-  font-weight: 600;
-  margin-bottom: 2px;
-`;
+  margin-bottom: 14px;
+  outline: none;
+  padding: 7px 10px;
+  transition: border-color 0.15s ease;
+  width: 100%;
 
-export const AnimOptionDescription = styled.div`
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 10px;
-`;
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+  }
 
-export const AnimSubSettings = styled.div<{ $visible: boolean }>`
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
-  display: ${(props) => (props.$visible ? 'block' : 'none')};
-  margin-top: 10px;
-  padding: 12px;
+  &:focus {
+    border-color: #4A38F5;
+  }
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+  }
 `;
 
 export const ExportPreview = styled.div`
@@ -395,6 +503,8 @@ export function SliderControl({
   value,
   valueLabel,
 }: SliderControlProps) {
+  const fillPercent = ((value - min) / (max - min)) * 100;
+
   return (
     <SliderLabel>
       <span>{children}</span>
@@ -403,6 +513,7 @@ export function SliderControl({
         min={min}
         onChange={onChange}
         step={step}
+        style={{ '--fill': `${fillPercent}%` } as React.CSSProperties}
         type="range"
         value={value}
       />
@@ -457,5 +568,132 @@ export function ToggleControl({
         <ToggleTrack />
       </Toggle>
     </ToggleRow>
+  );
+}
+
+type LabelWithTooltipProps = {
+  description: string;
+  label: ReactNode;
+};
+
+export function LabelWithTooltip({
+  description,
+  label,
+}: LabelWithTooltipProps) {
+  const buttonReference = useRef<HTMLButtonElement>(null);
+  const tooltipId = useId();
+  const [isMounted, setIsMounted] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [tooltipPosition, setTooltipPosition] = useState({
+    left: 0,
+    top: 0,
+  });
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const updateTooltipPosition = () => {
+      const button = buttonReference.current;
+
+      if (!button) {
+        return;
+      }
+
+      const rect = button.getBoundingClientRect();
+      setTooltipPosition({
+        left: rect.left + rect.width / 2,
+        top: rect.bottom + 12,
+      });
+    };
+
+    updateTooltipPosition();
+
+    window.addEventListener('resize', updateTooltipPosition);
+    window.addEventListener('scroll', updateTooltipPosition, true);
+
+    return () => {
+      window.removeEventListener('resize', updateTooltipPosition);
+      window.removeEventListener('scroll', updateTooltipPosition, true);
+    };
+  }, [isOpen]);
+
+  return (
+    <LabelWithInfoRow>
+      <span>{label}</span>
+      <InfoTooltipRoot>
+        <InfoTooltipButton
+          aria-describedby={isOpen ? tooltipId : undefined}
+          aria-label={description}
+          onBlur={() => setIsOpen(false)}
+          onFocus={() => setIsOpen(true)}
+          onMouseEnter={() => setIsOpen(true)}
+          onMouseLeave={() => setIsOpen(false)}
+          ref={buttonReference}
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            fill="none"
+            height="14"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            width="14"
+          >
+            <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+            <path d="M12 9h.01" />
+            <path d="M11 12h1v4h1" />
+          </svg>
+        </InfoTooltipButton>
+        {isMounted && isOpen
+          ? createPortal(
+              <InfoTooltipBubble
+                id={tooltipId}
+                role="tooltip"
+                style={{
+                  left: tooltipPosition.left,
+                  top: tooltipPosition.top,
+                  transform: 'translateX(-50%)',
+                }}
+              >
+                {description}
+              </InfoTooltipBubble>,
+              document.body,
+            )
+          : null}
+      </InfoTooltipRoot>
+    </LabelWithInfoRow>
+  );
+}
+
+type SectionToggleHeaderProps = {
+  checked: boolean;
+  children: ReactNode;
+  onChange: ChangeEventHandler<HTMLInputElement>;
+  preserveCase?: boolean;
+};
+
+export function SectionToggleHeader({
+  checked,
+  children,
+  onChange,
+  preserveCase,
+}: SectionToggleHeaderProps) {
+  return (
+    <SectionHeader>
+      <SectionTitle $preserveCase={preserveCase}>{children}</SectionTitle>
+      <Toggle>
+        <ToggleInput checked={checked} onChange={onChange} type="checkbox" />
+        <ToggleTrack />
+      </Toggle>
+    </SectionHeader>
   );
 }

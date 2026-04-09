@@ -1,14 +1,13 @@
 import type * as THREE from 'three';
 
-export type HalftoneTabId = 'design' | 'prototype' | 'export';
-
-export type HalftoneAnimationMode =
-  | 'none'
-  | 'autoRotate'
-  | 'followHover'
-  | 'followDrag';
+export type HalftoneTabId = 'design' | 'animations' | 'export';
 
 export type HalftoneRotateAxis = 'x' | 'y' | 'z' | 'xy';
+export type HalftoneRotatePreset =
+  | 'axis'
+  | 'lissajous'
+  | 'orbit'
+  | 'tumble';
 
 export type HalftoneModelLoader = 'fbx' | 'glb';
 
@@ -44,10 +43,21 @@ export interface HalftoneBackgroundSettings {
 }
 
 export interface HalftoneAnimationSettings {
-  mode: HalftoneAnimationMode;
+  autoRotateEnabled: boolean;
+  breatheEnabled: boolean;
+  cameraParallaxEnabled: boolean;
+  followHoverEnabled: boolean;
+  followDragEnabled: boolean;
+  floatEnabled: boolean;
+  lightSweepEnabled: boolean;
   rotateEnabled: boolean;
   autoSpeed: number;
   autoWobble: number;
+  breatheAmount: number;
+  breatheSpeed: number;
+  cameraParallaxAmount: number;
+  cameraParallaxEase: number;
+  driftAmount: number;
   hoverRange: number;
   hoverEase: number;
   hoverReturn: boolean;
@@ -55,8 +65,28 @@ export interface HalftoneAnimationSettings {
   dragFriction: number;
   dragMomentum: boolean;
   rotateAxis: HalftoneRotateAxis;
+  rotatePreset: HalftoneRotatePreset;
   rotateSpeed: number;
   rotatePingPong: boolean;
+  floatAmplitude: number;
+  floatSpeed: number;
+  lightSweepHeightRange: number;
+  lightSweepRange: number;
+  lightSweepSpeed: number;
+  springDamping: number;
+  springReturnEnabled: boolean;
+  springStrength: number;
+}
+
+export interface HalftoneExportPose {
+  autoElapsed: number;
+  rotateElapsed: number;
+  rotationX: number;
+  rotationY: number;
+  rotationZ: number;
+  targetRotationX: number;
+  targetRotationY: number;
+  timeElapsed: number;
 }
 
 export interface HalftoneStudioSettings {

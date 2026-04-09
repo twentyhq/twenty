@@ -34,7 +34,7 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
         role: { text: 'Head of Engineering' },
         company: { text: 'Mid-Market Fintech' },
       },
-      illustration: 'flash',
+      illustration: 'sun',
     },
     {
       heading: { text: 'Control without drag', fontFamily: 'sans' },
@@ -46,7 +46,7 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
         role: { text: 'Head of Engineering' },
         company: { text: 'Mid-Market Fintech' },
       },
-      illustration: 'lock',
+      illustration: 'wheelx',
     },
   ],
 };

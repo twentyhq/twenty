@@ -22,22 +22,66 @@ export function formatDecimal(value: number, digits = 2) {
   return value.toFixed(digits);
 }
 
+export function formatPercent(value: number, digits = 0) {
+  return `${(value * 100).toFixed(digits)}%`;
+}
+
 export function formatRows(value: number) {
   return String(value);
 }
 
-export function formatAnimationName(
-  mode: 'none' | 'autoRotate' | 'followHover' | 'followDrag',
-  rotateEnabled: boolean,
-) {
+export function formatAnimationName(animation: {
+  autoRotateEnabled: boolean;
+  breatheEnabled: boolean;
+  cameraParallaxEnabled: boolean;
+  followHoverEnabled: boolean;
+  followDragEnabled: boolean;
+  floatEnabled: boolean;
+  lightSweepEnabled: boolean;
+  rotateEnabled: boolean;
+  rotatePreset: string;
+  springReturnEnabled: boolean;
+}) {
   const activeModes: string[] = [];
 
-  if (mode !== 'none') {
-    activeModes.push(mode);
+  if (animation.autoRotateEnabled) {
+    activeModes.push('autoRotate');
   }
 
-  if (rotateEnabled) {
-    activeModes.push('rotate');
+  if (animation.floatEnabled) {
+    activeModes.push('float');
+  }
+
+  if (animation.breatheEnabled) {
+    activeModes.push('breathe');
+  }
+
+  if (animation.followHoverEnabled) {
+    activeModes.push('followHover');
+  }
+
+  if (animation.followDragEnabled) {
+    activeModes.push('followDrag');
+  }
+
+  if (animation.rotateEnabled) {
+    activeModes.push(
+      animation.rotatePreset === 'axis'
+        ? 'rotate'
+        : `rotate(${animation.rotatePreset})`,
+    );
+  }
+
+  if (animation.lightSweepEnabled) {
+    activeModes.push('lightSweep');
+  }
+
+  if (animation.cameraParallaxEnabled) {
+    activeModes.push('cameraParallax');
+  }
+
+  if (animation.springReturnEnabled) {
+    activeModes.push('spring');
   }
 
   return activeModes.length > 0 ? activeModes.join(' + ') : 'still';
