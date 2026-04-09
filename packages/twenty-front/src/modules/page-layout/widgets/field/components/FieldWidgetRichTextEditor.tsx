@@ -7,7 +7,7 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { lazy, Suspense, useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { isDefined } from 'twenty-shared/utils';
+import { isUndefined } from '@sniptt/guards';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const RichTextFieldEditor = lazy(() =>
@@ -72,7 +72,7 @@ export const FieldWidgetRichTextEditor = ({
     fieldName,
   });
 
-  if (!isDefined(fieldValue)) {
+  if (isUndefined(fieldValue)) {
     return <LoadingSkeleton />;
   }
 
