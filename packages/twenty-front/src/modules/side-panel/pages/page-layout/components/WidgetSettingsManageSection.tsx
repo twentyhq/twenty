@@ -8,6 +8,7 @@ import { WidgetVisibilityDropdownContent } from '@/side-panel/pages/page-layout/
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
+import { getVisibilityLabel } from '@/side-panel/pages/page-layout/utils/getVisibilityLabel';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -22,28 +23,6 @@ import {
   IconSwitchHorizontal,
   IconTrash,
 } from 'twenty-ui/display';
-
-const EXPRESSION_DEVICE_MOBILE = 'device == "MOBILE"';
-const EXPRESSION_DEVICE_DESKTOP = 'device == "DESKTOP"';
-
-const getVisibilityLabel = (
-  expression: string | null | undefined,
-  labels: { anyDevice: string; mobile: string; desktop: string },
-): string => {
-  if (!isDefined(expression)) {
-    return labels.anyDevice;
-  }
-
-  if (expression === EXPRESSION_DEVICE_MOBILE) {
-    return labels.mobile;
-  }
-
-  if (expression === EXPRESSION_DEVICE_DESKTOP) {
-    return labels.desktop;
-  }
-
-  return labels.anyDevice;
-};
 
 const RESET_WIDGET_TO_DEFAULT_MODAL_ID = 'reset-widget-to-default-modal';
 

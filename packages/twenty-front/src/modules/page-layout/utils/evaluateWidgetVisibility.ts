@@ -18,18 +18,10 @@ export const evaluateWidgetVisibility = ({
   context,
 }: EvaluateWidgetVisibilityParams): boolean => {
   if (isDefined(conditionalAvailabilityExpression)) {
-    const res = evaluateConditionalAvailabilityExpression(
+    return evaluateConditionalAvailabilityExpression(
       conditionalAvailabilityExpression,
       context,
     );
-
-    console.log('Evaluating conditional availability expression:', {
-      conditionalAvailabilityExpression,
-      context,
-      willShow: res,
-    });
-
-    return res;
   }
 
   if (!isDefined(conditionalDisplay)) {

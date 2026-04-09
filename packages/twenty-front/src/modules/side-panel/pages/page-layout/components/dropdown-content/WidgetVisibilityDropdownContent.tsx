@@ -1,3 +1,5 @@
+import { EXPRESSION_DEVICE_DESKTOP } from '@/side-panel/pages/page-layout/constants/ExpressionDeviceDesktop';
+import { EXPRESSION_DEVICE_MOBILE } from '@/side-panel/pages/page-layout/constants/ExpressionDeviceMobile';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
@@ -15,9 +17,6 @@ import { MenuItemSelect } from 'twenty-ui/navigation';
 const VISIBILITY_ANY_DEVICE = 'any-device';
 const VISIBILITY_MOBILE = 'mobile';
 const VISIBILITY_DESKTOP = 'desktop';
-
-const EXPRESSION_DEVICE_MOBILE = 'device == "MOBILE"';
-const EXPRESSION_DEVICE_DESKTOP = 'device == "DESKTOP"';
 
 const VISIBILITY_OPTIONS = [
   { id: VISIBILITY_ANY_DEVICE },

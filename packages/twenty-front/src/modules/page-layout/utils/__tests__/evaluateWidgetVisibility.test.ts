@@ -134,4 +134,106 @@ describe('evaluateWidgetVisibility', () => {
       });
     }).toThrow();
   });
+
+  describe('conditionalAvailabilityExpression', () => {
+    it('should return true when expression matches MOBILE device', () => {
+      const result = evaluateWidgetVisibility({
+        conditionalAvailabilityExpression: 'device == "MOBILE"',
+        conditionalDisplay: undefined,
+        context: {
+          device: 'MOBILE',
+        },
+      });
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false when expression does not match MOBILE device', () => {
+      const result = evaluateWidgetVisibility({
+        conditionalAvailabilityExpression: 'device == "MOBILE"',
+        conditionalDisplay: undefined,
+        context: {
+          device: 'DESKTOP',
+        },
+      });
+
+      expect(result).toBe(false);
+    });
+
+    it('should return true when expression matches DESKTOP device', () => {
+      const result = evaluateWidgetVisibility({
+        conditionalAvailabilityExpression: 'device == "DESKTOP"',
+        conditionalDisplay: undefined,
+        context: {
+          device: 'DESKTOP',
+        },
+      });
+
+      expect(result).toBe(true);
+    });
+
+    it('should take priority over conditionalDisplay when both are set', () => {
+      const conditionalDisplay: RulesLogic = {
+        and: [
+          {
+            '===': [{ var: 'device' }, 'DESKTOP'],
+          },
+        ],
+      };
+
+      const result = evaluateWidgetVisibility({
+        conditionalAvailabilityExpression: 'device == "MOBILE"',
+        conditionalDisplay,
+        context: {
+          device: 'DESKTOP',
+        },
+      });
+
+      // Expression says MOBILE only, so DESKTOP should be hidden
+      // even though conditionalDisplay says DESKTOP is visible
+      expect(result).toBe(false);
+    });
+
+    it('should fall through to conditionalDisplay when expression is null', () => {
+      const conditionalDisplay: RulesLogic = {
+        and: [
+          {
+            '===': [{ var: 'device' }, 'MOBILE'],
+          },
+        ],
+      };
+
+      const result = evaluateWidgetVisibility({
+        conditionalAvailabilityExpression: null,
+        conditionalDisplay,
+        context: {
+          device: 'DESKTOP',
+        },
+      });
+
+      // Expression is null, so conditionalDisplay takes over
+      // conditionalDisplay says MOBILE only → DESKTOP hidden
+      expect(result).toBe(false);
+    });
+
+    it('should fall through to conditionalDisplay when expression is undefined', () => {
+      const conditionalDisplay: RulesLogic = {
+        and: [
+          {
+            '===': [{ var: 'device' }, 'DESKTOP'],
+          },
+        ],
+      };
+
+      const result = evaluateWidgetVisibility({
+        conditionalAvailabilityExpression: undefined,
+        conditionalDisplay,
+        context: {
+          device: 'DESKTOP',
+        },
+      });
+
+      expect(result).toBe(true);
+    });
+  });
 });

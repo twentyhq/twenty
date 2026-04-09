@@ -44,8 +44,6 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
     context,
   });
 
-  console.log({ visibleWidgets });
-
   return {
     ...tab,
     widgets:
