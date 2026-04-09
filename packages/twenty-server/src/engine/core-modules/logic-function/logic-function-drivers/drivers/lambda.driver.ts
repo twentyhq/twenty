@@ -32,6 +32,7 @@ import {
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { ASSET_PATH } from 'src/constants/assets-path';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -528,6 +529,19 @@ export class LambdaDriver implements LogicFunctionDriver {
       const parsedResult = result.Payload
         ? JSON.parse(result.Payload.transformToString())
         : {};
+
+      const userCompilationErrorRegex = /^Build failed with \d+ error/;
+
+      const isUserCompilationError =
+        isNonEmptyString(parsedResult?.errorMessage) &&
+        userCompilationErrorRegex.test(parsedResult.errorMessage);
+
+      if (isUserCompilationError) {
+        throw new LogicFunctionException(
+          `Function code compilation failed: ${parsedResult.errorMessage}`,
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_COMPILATION_FAILED,
+        );
+      }
 
       throw new LogicFunctionException(
         `Builder Lambda failed: ${JSON.stringify(parsedResult)}`,
