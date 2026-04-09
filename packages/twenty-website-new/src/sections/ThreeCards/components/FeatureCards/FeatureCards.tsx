@@ -7,19 +7,10 @@ import { styled } from '@linaria/react';
 import { useRef } from 'react';
 import { FeatureCard } from '../FeatureCard/FeatureCard';
 
-const SCROLL_HEIGHT_VH = 125;
-
-const ScrollStage = styled.div`
-  position: relative;
-  width: 100%;
-`;
-
-const StickyGrid = styled.div`
+const FeatureCardsGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   gap: ${theme.spacing(4)};
-  position: sticky;
-  top: 10vh;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     grid-auto-flow: column;
@@ -30,39 +21,31 @@ const StickyGrid = styled.div`
 
 const CardSlot = styled.div`
   will-change: transform, opacity;
-
-  @media (max-width: ${theme.breakpoints.md - 1}px) {
-    opacity: 1 !important;
-    transform: none !important;
-  }
 `;
 
 type FeatureCardsProps = { featureCards: ThreeCardsFeatureCardType[] };
 
 export function FeatureCards({ featureCards }: FeatureCardsProps) {
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const cardCount = featureCards.length;
 
   return (
-    <ScrollStage ref={sectionRef} style={{ height: `${SCROLL_HEIGHT_VH}vh` }}>
+    <FeatureCardsGrid ref={gridRef}>
       <ThreeCardsScrollLayoutEffect
-        cardCount={cardCount}
+        cardCount={featureCards.length}
         cardRefs={cardRefs}
-        sectionRef={sectionRef}
+        gridRef={gridRef}
       />
-      <StickyGrid>
-        {featureCards.map((featureCard, index) => (
-          <CardSlot
-            key={index}
-            ref={(element) => {
-              cardRefs.current[index] = element;
-            }}
-          >
-            <FeatureCard featureCard={featureCard} />
-          </CardSlot>
-        ))}
-      </StickyGrid>
-    </ScrollStage>
+      {featureCards.map((featureCard, index) => (
+        <CardSlot
+          key={index}
+          ref={(element) => {
+            cardRefs.current[index] = element;
+          }}
+        >
+          <FeatureCard featureCard={featureCard} />
+        </CardSlot>
+      ))}
+    </FeatureCardsGrid>
   );
 }

@@ -6,23 +6,26 @@ function clamp01(value: number) {
   return Math.min(1, Math.max(0, value));
 }
 
+function easeOutQuint(t: number) {
+  return 1 - Math.pow(1 - t, 5);
+}
+
 export type ThreeCardsScrollLayoutRefs = {
   cardRefs: RefObject<(HTMLDivElement | null)[]>;
-  sectionRef: RefObject<HTMLElement | null>;
+  gridRef: RefObject<HTMLDivElement | null>;
 };
+
+const STAGGER = 0.25;
 
 export function applyThreeCardsScrollLayout(
   refs: ThreeCardsScrollLayoutRefs,
   cardCount: number,
 ): void {
-  const section = refs.sectionRef.current;
-  if (!section) {
+  const grid = refs.gridRef.current;
+  if (!grid) {
     return;
   }
 
-  const reducedMotion = window.matchMedia(
-    '(prefers-reduced-motion: reduce)',
-  ).matches;
   const isDesktop = window.matchMedia(
     `(min-width: ${theme.breakpoints.md}px)`,
   ).matches;
@@ -39,13 +42,12 @@ export function applyThreeCardsScrollLayout(
     return;
   }
 
-  const scrollRange = Math.max(1, section.offsetHeight - window.innerHeight);
-  const progress = clamp01(-section.getBoundingClientRect().top / scrollRange);
+  const rect = grid.getBoundingClientRect();
+  const viewportHeight = window.innerHeight;
 
-  // Card 0 is always visible. Cards 1+ scroll up from below together,
-  // with card 2 offset behind card 1 by STAGGER.
-  const STAGGER = 0.25;
-  const TRAVEL_PX = window.innerHeight * 0.4;
+  const startEdge = viewportHeight;
+  const endEdge = viewportHeight * 0.2;
+  const progress = clamp01((startEdge - rect.top) / (startEdge - endEdge));
 
   for (let index = 0; index < cardCount; index++) {
     const node = refs.cardRefs.current[index];
@@ -53,19 +55,15 @@ export function applyThreeCardsScrollLayout(
       continue;
     }
 
-    if (reducedMotion || index === 0) {
-      node.style.opacity = '1';
-      node.style.transform = 'none';
-      continue;
-    }
-
-    const delay = (index - 1) * STAGGER;
+    const delay = index * STAGGER;
     const localProgress = clamp01((progress - delay) / (1 - delay));
+    const eased = easeOutQuint(localProgress);
 
-    const translateY = (1 - localProgress) * TRAVEL_PX;
-    const opacity = clamp01(localProgress / 0.25);
+    const translateY = (1 - eased) * 200;
+    const scale = 0.88 + eased * 0.12;
+    const opacity = clamp01(localProgress / 0.4);
 
     node.style.opacity = String(opacity);
-    node.style.transform = `translateY(${translateY}px)`;
+    node.style.transform = `translateY(${translateY}px) scale(${scale})`;
   }
 }

@@ -14,10 +14,10 @@ type ThreeCardsScrollLayoutEffectProps = ThreeCardsScrollLayoutRefs & {
 export function ThreeCardsScrollLayoutEffect({
   cardCount,
   cardRefs,
-  sectionRef,
+  gridRef,
 }: ThreeCardsScrollLayoutEffectProps) {
   useEffect(() => {
-    const refs: ThreeCardsScrollLayoutRefs = { cardRefs, sectionRef };
+    const refs: ThreeCardsScrollLayoutRefs = { cardRefs, gridRef };
 
     let rafId: number | null = null;
 
@@ -43,7 +43,7 @@ export function ThreeCardsScrollLayoutEffect({
         window.cancelAnimationFrame(rafId);
       }
     };
-  }, [cardCount, cardRefs, sectionRef]);
+  }, [cardCount, cardRefs, gridRef]);
 
   return null;
 }

@@ -7,19 +7,10 @@ import { styled } from '@linaria/react';
 import { useRef } from 'react';
 import { IllustrationCard } from '../IllustrationCard/IllustrationCard';
 
-const SCROLL_HEIGHT_VH = 125;
-
-const ScrollStage = styled.div`
-  position: relative;
-  width: 100%;
-`;
-
-const StickyGrid = styled.div`
+const IllustrationCardsGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   gap: ${theme.spacing(4)};
-  position: sticky;
-  top: 10vh;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     grid-auto-flow: column;
@@ -30,11 +21,6 @@ const StickyGrid = styled.div`
 
 const CardSlot = styled.div`
   will-change: transform, opacity;
-
-  @media (max-width: ${theme.breakpoints.md - 1}px) {
-    opacity: 1 !important;
-    transform: none !important;
-  }
 `;
 
 type IllustrationCardsProps = {
@@ -46,32 +32,29 @@ export function IllustrationCards({
   illustrationCards,
   variant = 'shaped',
 }: IllustrationCardsProps) {
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const cardCount = illustrationCards.length;
 
   return (
-    <ScrollStage ref={sectionRef} style={{ height: `${SCROLL_HEIGHT_VH}vh` }}>
+    <IllustrationCardsGrid ref={gridRef}>
       <ThreeCardsScrollLayoutEffect
-        cardCount={cardCount}
+        cardCount={illustrationCards.length}
         cardRefs={cardRefs}
-        sectionRef={sectionRef}
+        gridRef={gridRef}
       />
-      <StickyGrid>
-        {illustrationCards.map((illustrationCard, index) => (
-          <CardSlot
-            key={index}
-            ref={(element) => {
-              cardRefs.current[index] = element;
-            }}
-          >
-            <IllustrationCard
-              variant={variant}
-              illustrationCard={illustrationCard}
-            />
-          </CardSlot>
-        ))}
-      </StickyGrid>
-    </ScrollStage>
+      {illustrationCards.map((illustrationCard, index) => (
+        <CardSlot
+          key={index}
+          ref={(element) => {
+            cardRefs.current[index] = element;
+          }}
+        >
+          <IllustrationCard
+            variant={variant}
+            illustrationCard={illustrationCard}
+          />
+        </CardSlot>
+      ))}
+    </IllustrationCardsGrid>
   );
 }
