@@ -348,6 +348,7 @@ export class BillingSubscriptionService {
         {
           object: subscription,
         },
+        workspaceId,
       );
 
     const meterBillingSubscriptionItem = findOrThrow(

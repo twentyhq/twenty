@@ -1,4 +1,4 @@
-import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
+import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -208,7 +208,7 @@ export const SettingsApplicationRegistrationOAuthTab = ({
           title={t`OAuth Credentials`}
           description={t`Credentials and scopes for OAuth authorization flows`}
         />
-        <SettingsAdminTableCard
+        <SettingsTableCard
           rounded
           items={credentialItems}
           gridAutoColumns="3fr 8fr"

@@ -77,6 +77,7 @@ export class AgentChatStreamingService {
         role: AgentMessageRole.USER,
         parts: [{ type: 'text' as const, text }],
       },
+      workspaceId: workspace.id,
     });
 
     const previousMessages = await this.loadMessagesFromDB(
@@ -138,6 +139,7 @@ export class AgentChatStreamingService {
     const turnId = await this.agentChatService.promoteQueuedMessage(
       nextQueued.id,
       threadId,
+      workspaceId,
     );
 
     if (turnId === null) {

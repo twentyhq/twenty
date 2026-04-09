@@ -137,6 +137,7 @@ export class BillingWebhookSubscriptionService {
     await this.updateBillingSubscriptionItems(
       updatedBillingSubscription.id,
       event,
+      workspaceId,
     );
 
     const shouldSuspend = this.shouldSuspendWorkspace(data);
@@ -224,6 +225,7 @@ export class BillingWebhookSubscriptionService {
       | Stripe.CustomerSubscriptionUpdatedEvent
       | Stripe.CustomerSubscriptionCreatedEvent
       | Stripe.CustomerSubscriptionDeletedEvent,
+    workspaceId: string,
   ) {
     const deletedSubscriptionItemIds =
       getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent(event);
@@ -239,6 +241,7 @@ export class BillingWebhookSubscriptionService {
       transformStripeSubscriptionEventToDatabaseSubscriptionItem(
         subscriptionId,
         event.data,
+        workspaceId,
       ),
       {
         conflictPaths: ['stripeSubscriptionItemId'],
