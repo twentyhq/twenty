@@ -12,6 +12,7 @@ export class McpToolExecutorService {
     id: string | number,
     toolSet: ToolSet,
     params: Record<string, unknown>,
+    sseWriter?: (data: Record<string, unknown>) => void,
   ) {
     const toolName = params.name as keyof typeof toolSet;
     const tool = toolSet[toolName];
@@ -21,6 +22,19 @@ export class McpToolExecutorService {
         error: {
           code: JSON_RPC_ERROR_CODE.INVALID_PARAMS,
           message: `Unknown tool: ${String(params.name)}`,
+        },
+      });
+    }
+
+    // Emit a progress notification before execution when streaming
+    if (isDefined(sseWriter)) {
+      sseWriter({
+        jsonrpc: '2.0',
+        method: 'notifications/progress',
+        params: {
+          progressToken: `tool-call-${String(id)}`,
+          progress: 0,
+          total: 1,
         },
       });
     }

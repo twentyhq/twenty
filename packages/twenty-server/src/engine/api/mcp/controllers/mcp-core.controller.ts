@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Headers,
   HttpCode,
   HttpStatus,
   Post,
@@ -17,6 +18,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpAuthGuard } from 'src/engine/api/mcp/guards/mcp-auth.guard';
 import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
+import { writeSseEvent } from 'src/engine/api/mcp/utils/write-sse-event.util';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
@@ -50,21 +52,62 @@ export class McpCoreController {
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
+    @Headers('accept') acceptHeader: string | undefined,
     @Res({ passthrough: true }) res: Response,
   ) {
+    // JSON-RPC notifications (no id) expect no response body regardless of Accept
+    if (!isDefined(body.id)) {
+      await this.mcpProtocolService.handleMCPCoreQuery(body, {
+        workspace,
+        userId: user?.id,
+        userWorkspaceId,
+        apiKey,
+      });
+
+      res.status(HttpStatus.ACCEPTED);
+
+      return;
+    }
+
+    const clientAcceptsSse =
+      isDefined(acceptHeader) && acceptHeader.includes('text/event-stream');
+
+    if (clientAcceptsSse) {
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Connection', 'keep-alive');
+
+      const sseWriter = (data: Record<string, unknown>) => {
+        writeSseEvent(res, data);
+      };
+
+      const result = await this.mcpProtocolService.handleMCPCoreQuery(
+        body,
+        {
+          workspace,
+          userId: user?.id,
+          userWorkspaceId,
+          apiKey,
+        },
+        sseWriter,
+      );
+
+      // Write the final JSON-RPC response as an SSE event and close the stream
+      if (isDefined(result)) {
+        writeSseEvent(res, result);
+      }
+
+      res.end();
+
+      return;
+    }
+
     const result = await this.mcpProtocolService.handleMCPCoreQuery(body, {
       workspace,
       userId: user?.id,
       userWorkspaceId,
       apiKey,
     });
-
-    // JSON-RPC notifications (no id) expect no response body
-    if (!isDefined(result)) {
-      res.status(HttpStatus.ACCEPTED);
-
-      return;
-    }
 
     return result;
   }

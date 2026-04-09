@@ -142,5 +142,59 @@ describe('McpToolExecutorService', () => {
         },
       });
     });
+
+    it('should emit progress notification via sseWriter before execution', async () => {
+      const sseWriter = jest.fn();
+      const toolSet = {
+        my_tool: {
+          execute: jest.fn().mockResolvedValue({ data: 'ok' }),
+          description: 'My tool',
+          inputSchema: { type: 'object' },
+        },
+      } as any;
+
+      await service.handleToolCall(
+        'sse-1',
+        toolSet,
+        { name: 'my_tool', arguments: {} },
+        sseWriter,
+      );
+
+      expect(sseWriter).toHaveBeenCalledTimes(1);
+      expect(sseWriter).toHaveBeenCalledWith({
+        jsonrpc: '2.0',
+        method: 'notifications/progress',
+        params: {
+          progressToken: 'tool-call-sse-1',
+          progress: 0,
+          total: 1,
+        },
+      });
+    });
+
+    it('should not emit progress notification when sseWriter is undefined', async () => {
+      const toolSet = {
+        my_tool: {
+          execute: jest.fn().mockResolvedValue({ data: 'ok' }),
+          description: 'My tool',
+          inputSchema: { type: 'object' },
+        },
+      } as any;
+
+      const result = await service.handleToolCall('no-sse', toolSet, {
+        name: 'my_tool',
+        arguments: {},
+      });
+
+      // Should still return normal result without errors
+      expect(result).toEqual({
+        id: 'no-sse',
+        jsonrpc: '2.0',
+        result: {
+          content: [{ type: 'text', text: '{"data":"ok"}' }],
+          isError: false,
+        },
+      });
+    });
   });
 });
