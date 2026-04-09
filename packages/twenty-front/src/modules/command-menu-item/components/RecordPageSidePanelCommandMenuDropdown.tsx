@@ -1,10 +1,10 @@
-import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
-import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
+import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { getSidePanelCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getSidePanelCommandMenuDropdownIdFromCommandMenuId';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { sidePanelWidgetFooterActionsState } from '@/ui/layout/side-panel/states/sidePanelWidgetFooterActionsState';
+import { sidePanelWidgetFooterCommandMenuItemsState } from '@/ui/layout/side-panel/states/sidePanelWidgetFooterCommandMenuItemsState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useMemo } from 'react';
@@ -24,13 +24,14 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
 
   const { closeDropdown } = useCloseDropdown();
 
-  const sidePanelWidgetFooterActions = useAtomStateValue(
-    sidePanelWidgetFooterActionsState,
+  const sidePanelWidgetFooterCommandMenuItems = useAtomStateValue(
+    sidePanelWidgetFooterCommandMenuItemsState,
   );
 
-  const dropdownWidgetActions = sidePanelWidgetFooterActions.filter(
-    (widgetAction) => widgetAction.isPinned === false,
-  );
+  const dropdownWidgetCommandMenuItems =
+    sidePanelWidgetFooterCommandMenuItems.filter(
+      (commandMenuItem) => commandMenuItem.isPinned === false,
+    );
 
   const recordSelectionCommandMenuItems = useMemo(
     () =>
@@ -43,7 +44,9 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
   );
 
   const selectableItemIdArray = [
-    ...dropdownWidgetActions.map((widgetAction) => widgetAction.key),
+    ...dropdownWidgetCommandMenuItems.map(
+      (commandMenuItem) => commandMenuItem.id,
+    ),
     ...recordSelectionCommandMenuItems.map((item) => item.id),
   ];
 
@@ -53,18 +56,18 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
       selectableListId={commandMenuId}
       selectableItemIdArray={selectableItemIdArray}
     >
-      {dropdownWidgetActions.map((widgetAction) => (
+      {dropdownWidgetCommandMenuItems.map((commandMenuItem) => (
         <MenuItem
-          key={widgetAction.key}
-          text={widgetAction.label}
-          LeftIcon={widgetAction.Icon}
+          key={commandMenuItem.id}
+          text={commandMenuItem.label}
+          LeftIcon={commandMenuItem.Icon}
           onClick={() => {
             closeDropdown(dropdownId);
-            widgetAction.onClick();
+            commandMenuItem.onClick();
           }}
         />
       ))}
-      {dropdownWidgetActions.length > 0 &&
+      {dropdownWidgetCommandMenuItems.length > 0 &&
         recordSelectionCommandMenuItems.length > 0 && (
           <HorizontalSeparator noMargin />
         )}

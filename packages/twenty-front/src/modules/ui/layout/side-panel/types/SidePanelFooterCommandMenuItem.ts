@@ -1,7 +1,7 @@
 import { type IconComponent } from 'twenty-ui/display';
 
-export type SidePanelFooterAction = {
-  key: string;
+export type SidePanelFooterCommandMenuItem = {
+  id: string;
   label: string;
   Icon?: IconComponent;
   isPrimaryCTA?: boolean;

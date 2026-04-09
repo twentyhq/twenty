@@ -22,11 +22,8 @@ export const CommandMenuContextProvider = ({
 }: CommandMenuContextProviderProps) => {
   const commandMenuContextApiFromHook = useCommandMenuContextApi();
 
-  // SidePanelRecordPage shadows the outer ContextStore provider with a
-  // per-page instance ID, so useCommandMenuContextApi derives isInSidePanel
-  // as false. The explicit prop from the caller is the source of truth.
   const commandMenuContextApi = isInSidePanel
-    ? { ...commandMenuContextApiFromHook, isInSidePanel: true as const }
+    ? { ...commandMenuContextApiFromHook, isInSidePanel: true }
     : commandMenuContextApiFromHook;
 
   const currentObjectNameSingular =

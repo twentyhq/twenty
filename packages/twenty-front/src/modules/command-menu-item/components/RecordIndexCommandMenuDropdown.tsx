@@ -1,9 +1,9 @@
-import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
-import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
+import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -16,7 +16,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useMemo } from 'react';
+import { useContext } from 'react';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
@@ -35,14 +35,10 @@ export const RecordIndexCommandMenuDropdown = () => {
   const { t } = useLingui();
   const { commandMenuItems } = useContext(CommandMenuContext);
 
-  const recordIndexCommandMenuItems = useMemo(
-    () =>
-      commandMenuItems.filter(
-        (item) =>
-          item.availabilityType ===
-          CommandMenuItemAvailabilityType.RECORD_SELECTION,
-      ),
-    [commandMenuItems],
+  const recordIndexCommandMenuItems = commandMenuItems.filter(
+    (item) =>
+      item.availabilityType ===
+      CommandMenuItemAvailabilityType.RECORD_SELECTION,
   );
 
   const commandMenuId = useAvailableComponentInstanceIdOrThrow(
