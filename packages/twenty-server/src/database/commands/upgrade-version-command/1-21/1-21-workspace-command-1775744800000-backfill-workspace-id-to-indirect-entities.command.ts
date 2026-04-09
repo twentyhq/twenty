@@ -17,14 +17,47 @@ type BackfillDefinition = {
 };
 
 const BACKFILL_DEFINITIONS: BackfillDefinition[] = [
-  { table: 'agentChatThread', parentTable: 'userWorkspace', foreignKey: 'userWorkspaceId' },
-  { table: 'agentTurn', parentTable: 'agentChatThread', foreignKey: 'threadId' },
-  { table: 'agentMessage', parentTable: 'agentChatThread', foreignKey: 'threadId' },
-  { table: 'agentTurnEvaluation', parentTable: 'agentTurn', foreignKey: 'turnId' },
-  { table: 'agentMessagePart', parentTable: 'agentMessage', foreignKey: 'messageId' },
-  { table: 'indexFieldMetadata', parentTable: 'indexMetadata', foreignKey: 'indexMetadataId' },
-  { table: 'applicationVariable', parentTable: 'application', foreignKey: 'applicationId' },
-  { table: 'billingSubscriptionItem', parentTable: 'billingSubscription', foreignKey: 'billingSubscriptionId', billingOnly: true },
+  {
+    table: 'agentChatThread',
+    parentTable: 'userWorkspace',
+    foreignKey: 'userWorkspaceId',
+  },
+  {
+    table: 'agentTurn',
+    parentTable: 'agentChatThread',
+    foreignKey: 'threadId',
+  },
+  {
+    table: 'agentMessage',
+    parentTable: 'agentChatThread',
+    foreignKey: 'threadId',
+  },
+  {
+    table: 'agentTurnEvaluation',
+    parentTable: 'agentTurn',
+    foreignKey: 'turnId',
+  },
+  {
+    table: 'agentMessagePart',
+    parentTable: 'agentMessage',
+    foreignKey: 'messageId',
+  },
+  {
+    table: 'indexFieldMetadata',
+    parentTable: 'indexMetadata',
+    foreignKey: 'indexMetadataId',
+  },
+  {
+    table: 'applicationVariable',
+    parentTable: 'application',
+    foreignKey: 'applicationId',
+  },
+  {
+    table: 'billingSubscriptionItem',
+    parentTable: 'billingSubscription',
+    foreignKey: 'billingSubscriptionId',
+    billingOnly: true,
+  },
 ];
 
 @RegisteredWorkspaceCommand('1.21.0', 1775744800000)
@@ -48,7 +81,12 @@ export class BackfillWorkspaceIdToIndirectEntitiesCommand extends ActiveOrSuspen
   }: RunOnWorkspaceArgs): Promise<void> {
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
 
-    for (const { table, parentTable, foreignKey, billingOnly } of BACKFILL_DEFINITIONS) {
+    for (const {
+      table,
+      parentTable,
+      foreignKey,
+      billingOnly,
+    } of BACKFILL_DEFINITIONS) {
       if (billingOnly && !isBillingEnabled) continue;
 
       const result = await this.dataSource.query(
