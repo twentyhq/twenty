@@ -6,7 +6,10 @@ import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewA
 import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
 import { useCallback } from 'react';
 import { v4 } from 'uuid';
-import { WidgetConfigurationType, ViewType } from '~/generated-metadata/graphql';
+import {
+  WidgetConfigurationType,
+  ViewType,
+} from '~/generated-metadata/graphql';
 
 const DEFAULT_VIEW_FIELD_SIZE = 180;
 const INITIAL_VISIBLE_FIELDS_COUNT_IN_WIDGET = 6;
@@ -75,11 +78,7 @@ export const useCreateViewForRecordTableWidget = (pageLayoutId: string) => {
         );
       }
     },
-    [
-      performViewAPICreate,
-      performViewFieldAPICreate,
-      updatePageLayoutWidget,
-    ],
+    [performViewAPICreate, performViewFieldAPICreate, updatePageLayoutWidget],
   );
 
   return { createViewForRecordTableWidget };
