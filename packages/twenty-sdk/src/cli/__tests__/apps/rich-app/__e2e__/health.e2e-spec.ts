@@ -1,11 +1,17 @@
 import axios from 'axios';
-import { SERVER_URL } from '@/cli/__tests__/constants/server-url.constant';
+import { getServerUrl } from '@/cli/__tests__/constants/server-url.constant';
 
 describe('Twenty Server Health Check (E2E)', () => {
-  const HEALTH_ENDPOINT = `${SERVER_URL}/healthz`;
+  let healthEndpoint: string;
+
+  beforeAll(async () => {
+    const serverUrl = await getServerUrl();
+
+    healthEndpoint = `${serverUrl}/healthz`;
+  });
 
   it('should return 200 for health', async () => {
-    const response = await axios.get(HEALTH_ENDPOINT);
+    const response = await axios.get(healthEndpoint);
     expect(response.status).toBe(200);
     expect(response.data).toBeDefined();
   });

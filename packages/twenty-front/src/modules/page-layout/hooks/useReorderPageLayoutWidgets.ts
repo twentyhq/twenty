@@ -6,6 +6,7 @@ import { type DropResult } from '@hello-pangea/dnd';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 export const useReorderPageLayoutWidgets = (
   tabId: string,
@@ -35,10 +36,19 @@ export const useReorderPageLayoutWidgets = (
         const [removed] = newWidgets.splice(result.source.index, 1);
         newWidgets.splice(result.destination!.index, 0, removed);
 
+        const reindexedWidgets = newWidgets.map((widget, index) => ({
+          ...widget,
+          position: {
+            __typename: 'PageLayoutWidgetVerticalListPosition' as const,
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index,
+          },
+        }));
+
         return {
           ...prev,
           tabs: prev.tabs.map((t) =>
-            t.id === tabId ? { ...t, widgets: newWidgets } : t,
+            t.id === tabId ? { ...t, widgets: reindexedWidgets } : t,
           ),
         };
       });

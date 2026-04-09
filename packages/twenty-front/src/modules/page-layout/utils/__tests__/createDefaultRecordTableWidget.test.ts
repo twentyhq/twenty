@@ -50,8 +50,7 @@ describe('createDefaultRecordTableWidget', () => {
     });
   });
 
-  it('should set objectMetadataId to null and isOverridden to false', () => {
+  it('should set objectMetadataId to null', () => {
     expect(widget.objectMetadataId).toBeNull();
-    expect(widget.isOverridden).toBe(false);
   });
 });

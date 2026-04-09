@@ -60,6 +60,7 @@
     "twenty/inject-workspace-repository": "warn",
     "twenty/rest-api-methods-should-be-guarded": "error",
     "twenty/graphql-resolvers-should-be-guarded": "error",
+    "twenty/upgrade-command-filename": "error",
     "twenty/enforce-module-boundaries": ["error", {
       "depConstraints": [
         {

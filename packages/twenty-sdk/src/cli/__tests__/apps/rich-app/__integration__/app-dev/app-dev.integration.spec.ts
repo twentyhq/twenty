@@ -2,6 +2,7 @@ import { runAppDevInProcess } from '@/cli/__tests__/integration/utils/run-app-de
 import { RICH_APP_PATH } from '@/cli/__tests__/apps/fixture-paths';
 
 import { defineEntitiesTests } from './tests/entities.tests';
+import { defineFieldOptionIdsTests } from './tests/field-option-ids.tests';
 import { defineManifestTests } from './tests/manifest.tests';
 
 describe('rich-app dev', () => {
@@ -23,4 +24,5 @@ describe('rich-app dev', () => {
 
   defineManifestTests(RICH_APP_PATH);
   defineEntitiesTests(RICH_APP_PATH);
+  defineFieldOptionIdsTests(RICH_APP_PATH);
 });

@@ -76,7 +76,7 @@ export const usePageLayoutHeaderInfo = ({
       };
     }
 
-    case SidePanelPages.PageLayoutIframeSettings: {
+    case SidePanelPages.DashboardIframeSettings: {
       if (!isDefined(pageLayoutEditingWidgetId)) {
         return null;
       }
@@ -106,7 +106,7 @@ export const usePageLayoutHeaderInfo = ({
       };
     }
 
-    case SidePanelPages.PageLayoutGraphTypeSelect: {
+    case SidePanelPages.DashboardChartSettings: {
       if (!isDefined(pageLayoutEditingWidgetId)) {
         return null;
       }
@@ -145,7 +145,7 @@ export const usePageLayoutHeaderInfo = ({
       };
     }
 
-    case SidePanelPages.PageLayoutFieldsSettings: {
+    case SidePanelPages.RecordPageFieldsSettings: {
       if (!isDefined(pageLayoutEditingWidgetId)) {
         return null;
       }
@@ -175,7 +175,7 @@ export const usePageLayoutHeaderInfo = ({
       };
     }
 
-    case SidePanelPages.PageLayoutFieldSettings: {
+    case SidePanelPages.RecordPageFieldSettings: {
       if (!isDefined(pageLayoutEditingWidgetId)) {
         return null;
       }
@@ -205,7 +205,7 @@ export const usePageLayoutHeaderInfo = ({
       };
     }
 
-    case SidePanelPages.PageLayoutRecordTableSettings: {
+    case SidePanelPages.DashboardRecordTableSettings: {
       if (!isDefined(pageLayoutEditingWidgetId)) {
         return null;
       }
@@ -235,7 +235,19 @@ export const usePageLayoutHeaderInfo = ({
       };
     }
 
-    case SidePanelPages.PageLayoutWidgetTypeSelect: {
+    case SidePanelPages.PageLayoutDashboardWidgetTypeSelect: {
+      return {
+        headerIcon: IconPlus,
+        headerIconColor: iconColor,
+        headerType: '',
+        title: t`New widget`,
+        isReadonly: true,
+        tab: undefined,
+        widgetInEditMode: undefined,
+      };
+    }
+
+    case SidePanelPages.PageLayoutRecordPageWidgetTypeSelect: {
       return {
         headerIcon: IconPlus,
         headerIconColor: iconColor,

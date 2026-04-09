@@ -9,8 +9,10 @@ import { type WorkspaceIteratorContext } from 'src/database/commands/command-run
 import {
   type UpgradeCommandOptions,
   type VersionCommands,
-} from 'src/database/commands/command-runners/upgrade.command-runner';
-import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+} from 'src/database/commands/upgrade-version-command/upgrade.command';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
+import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   type CompareVersionMajorAndMinorReturnType,
@@ -32,6 +34,8 @@ export class WorkspaceUpgradeService {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly twentyConfigService: TwentyConfigService,
+    private readonly upgradeMigrationService: UpgradeMigrationService,
   ) {}
 
   async upgradeWorkspace({
@@ -60,13 +64,16 @@ export class WorkspaceUpgradeService {
         );
       }
       case 'equal': {
-        for (const workspaceCommand of workspaceCommands) {
-          await workspaceCommand.runOnWorkspace({
-            options: options as RunOnWorkspaceArgs['options'],
+        const executedByVersion =
+          this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
+
+        for (const workspaceCommandEntry of workspaceCommands) {
+          await this.runSingleWorkspaceCommandOrThrow({
+            workspaceCommandEntry,
             workspaceId,
-            dataSource: iteratorContext.dataSource,
-            index,
-            total,
+            executedByVersion,
+            options,
+            iteratorContext,
           });
         }
 
@@ -111,5 +118,64 @@ export class WorkspaceUpgradeService {
       currentWorkspaceVersion,
       fromWorkspaceVersion.version,
     );
+  }
+
+  private async runSingleWorkspaceCommandOrThrow({
+    workspaceCommandEntry,
+    workspaceId,
+    executedByVersion,
+    options,
+    iteratorContext,
+  }: {
+    workspaceCommandEntry: RegisteredWorkspaceCommand;
+    workspaceId: string;
+    executedByVersion: string;
+    options: UpgradeCommandOptions;
+    iteratorContext: WorkspaceIteratorContext;
+  }): Promise<void> {
+    const { name, command: workspaceCommand } = workspaceCommandEntry;
+
+    const isAlreadyCompleted =
+      await this.upgradeMigrationService.isLastAttemptCompleted({
+        name,
+        workspaceId,
+      });
+
+    if (isAlreadyCompleted) {
+      this.logger.log(
+        `Workspace command ${name} already completed for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
+
+    try {
+      await workspaceCommand.runOnWorkspace({
+        options,
+        workspaceId,
+        dataSource: iteratorContext.dataSource,
+        index: iteratorContext.index,
+        total: iteratorContext.total,
+      });
+
+      if (!options.dryRun) {
+        await this.upgradeMigrationService.markAsCompleted({
+          name,
+          workspaceId,
+          executedByVersion,
+        });
+      }
+    } catch (error) {
+      if (!options.dryRun) {
+        await this.upgradeMigrationService.markAsFailed({
+          name,
+          workspaceId,
+          executedByVersion,
+          error,
+        });
+      }
+
+      throw error;
+    }
   }
 }

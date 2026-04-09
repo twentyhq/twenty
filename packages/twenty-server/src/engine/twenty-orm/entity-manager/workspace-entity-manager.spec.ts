@@ -233,7 +233,6 @@ describe('WorkspaceEntityManager', () => {
         IS_UNIQUE_INDEXES_ENABLED: false,
         IS_JSON_FILTER_ENABLED: false,
         IS_AI_ENABLED: false,
-        IS_MARKETPLACE_ENABLED: false,
         IS_MARKETPLACE_SETTING_TAB_VISIBLE: false,
         IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED: false,
         IS_PUBLIC_DOMAIN_ENABLED: false,

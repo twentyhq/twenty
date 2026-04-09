@@ -1,46 +1,48 @@
-import { Injectable } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
-import {
-  DataSource,
-  MigrationInterface,
-  type QueryRunner,
-  Repository,
-} from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import {
-  UpgradeMigrationEntity,
-  type UpgradeMigrationStatus,
-} from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
+import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
+import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 
-export type RunSingleMigrationResult =
+type RunSingleMigrationResult =
   | { status: 'success' }
   | { status: 'already-executed' }
   | { status: 'failed'; error: unknown };
 
 @Injectable()
 export class InstanceUpgradeService {
+  private readonly logger = new Logger(InstanceUpgradeService.name);
+
   constructor(
-    @InjectRepository(UpgradeMigrationEntity)
-    private readonly upgradeMigrationRepository: Repository<UpgradeMigrationEntity>,
     @InjectDataSource()
     private readonly dataSource: DataSource,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly upgradeMigrationService: UpgradeMigrationService,
   ) {}
 
-  async runSingleMigration(
-    migration: MigrationInterface,
-  ): Promise<RunSingleMigrationResult> {
-    const migrationName = migration.constructor.name;
+  async runFastInstanceCommand({
+    command,
+    name,
+  }: {
+    command: FastInstanceCommand;
+    name: string;
+  }): Promise<RunSingleMigrationResult> {
     const executedByVersion =
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
-    const isAlreadyExecuted = await this.upgradeMigrationRepository.exists({
-      where: { name: migrationName, status: 'completed' },
-    });
+    const isAlreadyCompleted =
+      await this.upgradeMigrationService.isLastAttemptCompleted({
+        name,
+        workspaceId: null,
+      });
 
-    if (isAlreadyExecuted) {
+    if (isAlreadyCompleted) {
+      this.logger.log(`${name} already executed, skipping`);
+
       return { status: 'already-executed' };
     }
 
@@ -50,12 +52,13 @@ export class InstanceUpgradeService {
       await queryRunner.connect();
       await queryRunner.startTransaction();
 
-      await migration.up(queryRunner);
+      await command.up(queryRunner);
 
-      await this.markAsCompleted({
-        queryRunner,
-        name: migrationName,
+      await this.upgradeMigrationService.markAsCompleted({
+        name,
+        workspaceId: null,
         executedByVersion,
+        queryRunner,
       });
 
       await queryRunner.commitTransaction();
@@ -64,58 +67,72 @@ export class InstanceUpgradeService {
         await queryRunner.rollbackTransaction();
       }
 
-      await this.markFailed({
-        name: migrationName,
+      await this.upgradeMigrationService.markAsFailed({
+        name,
+        workspaceId: null,
         executedByVersion,
+        error,
       });
+
+      this.logger.error(
+        `${name} failed`,
+        error instanceof Error ? error.stack : String(error),
+      );
 
       return { status: 'failed', error };
     } finally {
       await queryRunner.release();
     }
 
+    this.logger.log(`${name} executed successfully`);
+
     return { status: 'success' };
   }
 
-  private async markAsCompleted({
-    queryRunner,
+  async runSlowInstanceCommand({
+    command,
     name,
-    executedByVersion,
+    skipDataMigration,
   }: {
-    queryRunner: QueryRunner;
+    command: SlowInstanceCommand;
     name: string;
-    executedByVersion: string;
-  }): Promise<void> {
-    const repository = queryRunner.manager.getRepository(
-      UpgradeMigrationEntity,
-    );
+    skipDataMigration?: boolean;
+  }): Promise<RunSingleMigrationResult> {
+    const isAlreadyCompleted =
+      await this.upgradeMigrationService.isLastAttemptCompleted({
+        name,
+        workspaceId: null,
+      });
 
-    const previousAttempts = await repository.count({ where: { name } });
+    if (isAlreadyCompleted) {
+      this.logger.log(`${name} already executed, skipping`);
 
-    await repository.save({
-      name,
-      status: 'completed' as UpgradeMigrationStatus,
-      attempt: previousAttempts + 1,
-      executedByVersion,
-    });
-  }
+      return { status: 'already-executed' };
+    }
 
-  private async markFailed({
-    name,
-    executedByVersion,
-  }: {
-    name: string;
-    executedByVersion: string;
-  }): Promise<void> {
-    const previousAttempts = await this.upgradeMigrationRepository.count({
-      where: { name },
-    });
+    if (!skipDataMigration) {
+      const executedByVersion =
+        this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
-    await this.upgradeMigrationRepository.save({
-      name,
-      status: 'failed' as UpgradeMigrationStatus,
-      attempt: previousAttempts + 1,
-      executedByVersion,
-    });
+      try {
+        await command.runDataMigration(this.dataSource);
+      } catch (error) {
+        await this.upgradeMigrationService.markAsFailed({
+          name,
+          workspaceId: null,
+          executedByVersion,
+          error,
+        });
+
+        this.logger.error(
+          `${name} data migration failed`,
+          error instanceof Error ? error.stack : String(error),
+        );
+
+        return { status: 'failed', error };
+      }
+    }
+
+    return this.runFastInstanceCommand({ command, name });
   }
 }

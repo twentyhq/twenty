@@ -21,7 +21,7 @@ export const copyBaseApplicationProject = async ({
   console.log(chalk.gray('Generating application project...'));
   await fs.copy(join(__dirname, './constants/template'), appDirectory);
 
-  await renameGitignore({ appDirectory });
+  await renameDotfiles({ appDirectory });
 
   await generateUniversalIdentifiers({
     appDisplayName,
@@ -32,11 +32,20 @@ export const copyBaseApplicationProject = async ({
   await updatePackageJson({ appName, appDirectory });
 };
 
-const renameGitignore = async ({ appDirectory }: { appDirectory: string }) => {
-  const gitignorePath = join(appDirectory, 'gitignore');
+// npm strips dotfiles/dotdirs (.gitignore, .github/) from published packages,
+// so we store them without the leading dot and rename after copying.
+const renameDotfiles = async ({ appDirectory }: { appDirectory: string }) => {
+  const renames = [
+    { from: 'gitignore', to: '.gitignore' },
+    { from: 'github', to: '.github' },
+  ];
 
-  if (await fs.pathExists(gitignorePath)) {
-    await fs.rename(gitignorePath, join(appDirectory, '.gitignore'));
+  for (const { from, to } of renames) {
+    const sourcePath = join(appDirectory, from);
+
+    if (await fs.pathExists(sourcePath)) {
+      await fs.rename(sourcePath, join(appDirectory, to));
+    }
   }
 };
 

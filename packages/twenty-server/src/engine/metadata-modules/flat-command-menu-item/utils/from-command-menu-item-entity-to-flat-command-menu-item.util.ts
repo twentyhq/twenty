@@ -67,6 +67,7 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = ({
     shortLabel: commandMenuItemEntity.shortLabel,
     position: commandMenuItemEntity.position,
     isPinned: commandMenuItemEntity.isPinned,
+    payload: commandMenuItemEntity.payload,
     hotKeys: commandMenuItemEntity.hotKeys,
     availabilityType: commandMenuItemEntity.availabilityType,
     availabilityObjectMetadataId:

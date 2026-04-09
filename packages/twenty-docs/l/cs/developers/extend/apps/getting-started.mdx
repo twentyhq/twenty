@@ -98,6 +98,21 @@ Vývojový režim je k dispozici pouze na instancích Twenty běžících v rež
   <img src="/images/docs/developers/extends/apps/dev.jpg" alt="Výstup terminálu ve vývojovém režimu" />
 </div>
 
+#### Jednorázová synchronizace pomocí `yarn twenty dev --once`
+
+Pokud nechcete, aby na pozadí běžel watcher (například v CI pipeline, git hooku nebo skriptovaném workflow), použijte příznak `--once`. Spouští stejnou pipeline jako `yarn twenty dev` — sestaví manifest, zabalí soubory, nahraje, synchronizuje, znovu vygeneruje typovaného klienta API — ale **ukončí se, jakmile se synchronizace dokončí**:
+
+```bash filename="Terminal"
+yarn twenty dev --once
+```
+
+| Příkaz                   | Chování                                                                                                              | Kdy použít                                                                              |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `yarn twenty dev`        | Sleduje vaše zdrojové soubory a při každé změně znovu spustí synchronizaci. Zůstává spuštěný, dokud jej nezastavíte. | Interaktivní lokální vývoj — chcete živý panel stavu a okamžitou zpětnovazebnou smyčku. |
+| `yarn twenty dev --once` | Provede jedno sestavení + synchronizaci, poté ukončí běh s kódem `0` při úspěchu nebo `1` při neúspěchu.             | Skripty, CI, pre-commit hooky, AI agenti a jakýkoli neinteraktivní pracovní postup.     |
+
+Oba režimy vyžadují server Twenty běžící v režimu vývoje a autentizovaný remote — platí stejné požadavky.
+
 ### Zobrazte svou aplikaci v Twenty
 
 Otevřete ve svém prohlížeči [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer). Přejděte do **Settings > Apps** a vyberte kartu **Developer**. Vaše aplikace by měla být uvedena v části **Your Apps**:

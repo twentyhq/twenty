@@ -429,7 +429,7 @@ msgid "{totalCount} selected"
 msgstr "{totalCount} valda"
 
 #. js-lingui-id: WwbakM
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
 msgid "{totalFieldsCount} fields"
 msgstr "{totalFieldsCount} fält"
 
@@ -456,11 +456,13 @@ msgstr "{workspaceMemberName} kommer att tas bort från följande roll:"
 msgid "••••••••"
 msgstr "••••••••"
 
-#. js-lingui-id: tD9raa
+#. js-lingui-id: SMgdEJ
 #. placeholder {0}: formatNumber(preview.estimatedTokenCount, { abbreviate: true, decimals: 1, })
+#. placeholder {0}: formatNumber( section.estimatedTokenCount, { abbreviate: true, decimals: 1, }, )
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
-msgid "~{0} tokens"
-msgstr "~{0} token"
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+msgid "~ {0} tokens"
+msgstr ""
 
 #. js-lingui-id: Cx0xl3
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -1146,6 +1148,16 @@ msgstr "Lägg till widget"
 msgid "Add Widget"
 msgstr "Lägg till widget"
 
+#. js-lingui-id: 8zCitC
+#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
+msgid "Add widget above"
+msgstr ""
+
+#. js-lingui-id: yy7F6M
+#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
+msgid "Add widget below"
+msgstr ""
+
 #. js-lingui-id: m2qDV8
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "Add your first {objectLabel}"
@@ -1708,6 +1720,7 @@ msgstr "Ett fel uppstod när bilden laddades upp."
 #: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets.ts
 #: src/modules/page-layout/hooks/useResetPageLayoutWidgetToDefault.ts
+#: src/modules/page-layout/hooks/useResetPageLayoutTabToDefault.ts
 #: src/modules/object-metadata/hooks/useUpdateOneObjectMetadataItem.ts
 #: src/modules/object-metadata/hooks/useUpdateOneFieldMetadataItem.ts
 #: src/modules/object-metadata/hooks/useDeleteOneObjectMetadataItem.ts
@@ -1953,8 +1966,6 @@ msgstr "Applikationen uppgraderades framgångsrikt."
 #. js-lingui-id: fL7WXr
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-#: src/pages/settings/applications/SettingsApplications.tsx
-#: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -2830,7 +2841,7 @@ msgid "Captcha (anti-bot check) is still loading, try again"
 msgstr "Captcha (anti-botkontroll) laddar fortfarande, försök igen"
 
 #. js-lingui-id: kryGs+
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent.tsx
 msgid "Card"
 msgstr ""
@@ -2909,7 +2920,7 @@ msgid "Change to Yearly?"
 msgstr "Byt till årligen?"
 
 #. js-lingui-id: nuBbBr
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetTypeSelect.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Chart"
 msgstr "Diagram"
@@ -4252,14 +4263,14 @@ msgstr "Instrumentpanelen duplicerades framgångsrikt"
 #: src/modules/side-panel/pages/workflow/trigger-type/components/SidePanelWorkflowSelectTriggerTypeContent.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Data"
 msgstr "Data"
 
 #. js-lingui-id: nxnCld
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
 msgid "Data and display"
 msgstr "Data och visning"
 
@@ -4773,8 +4784,8 @@ msgid "Delete webhook"
 msgstr "Ta bort webhook"
 
 #. js-lingui-id: tWD0z0
+#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsFooter.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
 msgid "Delete widget"
 msgstr "Radera widget"
 
@@ -4884,7 +4895,7 @@ msgid "Display"
 msgstr "Visa"
 
 #. js-lingui-id: Ldgs6e
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
 msgid "Display \"More fields\" button"
 msgstr "Visa knappen \"Fler fält\""
 
@@ -5224,8 +5235,8 @@ msgid "Edit field values"
 msgstr "Redigera fältvärden"
 
 #. js-lingui-id: oKQ7ls
+#: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
-#: src/modules/page-layout/hooks/useEditPageLayoutWidget.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
 msgid "Edit Fields"
 msgstr "Redigera fält"
@@ -5238,12 +5249,12 @@ msgid "Edit folder"
 msgstr "Redigera mapp"
 
 #. js-lingui-id: JTcEch
-#: src/modules/page-layout/hooks/useEditPageLayoutWidget.ts
+#: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
 msgid "Edit Graph"
 msgstr "Redigera diagram"
 
 #. js-lingui-id: WXPnsc
-#: src/modules/page-layout/hooks/useEditPageLayoutWidget.ts
+#: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
 msgid "Edit iFrame"
 msgstr "Redigera iFrame"
 
@@ -5272,7 +5283,7 @@ msgid "Edit Profile"
 msgstr ""
 
 #. js-lingui-id: 19vPbj
-#: src/modules/page-layout/hooks/useEditPageLayoutWidget.ts
+#: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
 msgid "Edit Record Table"
 msgstr "Redigera posttabell"
 
@@ -6629,8 +6640,9 @@ msgstr "fält"
 #. js-lingui-id: AXjA78
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getFieldLabelWithSubField.ts
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldSettings.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/page-layout/widgets/components/RecordPageAddWidgetSection.tsx
@@ -6659,7 +6671,7 @@ msgstr ""
 
 #. js-lingui-id: lcNTiF
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
-#: src/modules/page-layout/hooks/useEditPageLayoutWidget.ts
+#: src/modules/side-panel/hooks/useOpenWidgetSettingsInSidePanel.ts
 msgid "Field widget"
 msgstr ""
 
@@ -6679,7 +6691,8 @@ msgstr "fält"
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
@@ -6781,7 +6794,7 @@ msgstr "Filer"
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/views/components/ViewBarFilterButton.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
@@ -6988,7 +7001,8 @@ msgid "Front components"
 msgstr "Frontendkomponenter"
 
 #. js-lingui-id: xf0TNb
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetTypeSelect.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 msgid "Front Components"
 msgstr "Frontendkomponenter"
 
@@ -7002,11 +7016,6 @@ msgstr "Full tillgång"
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionLabelContainer.tsx
 msgid "Function name"
 msgstr "Funktionsnamn"
-
-#. js-lingui-id: xANKBj
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Functions"
-msgstr "Funktioner"
 
 #. js-lingui-id: tkr79G
 #: src/utils/title-utils.ts
@@ -7407,7 +7416,7 @@ msgid "https://example.com/callback"
 msgstr "https://example.com/callback"
 
 #. js-lingui-id: yhVtER
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutIframeSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardIframeSettings.tsx
 msgid "https://example.com/embed"
 msgstr "https://example.com/embed"
 
@@ -7510,7 +7519,7 @@ msgid "If you’ve lost this key, you can regenerate it, but be aware that any s
 msgstr "Om du har tappat bort denna nyckel kan du återskapa den, men var medveten om att alla skript som använder denna nyckel kommer att behöva uppdateras. Vänligen skriv in \\\"{confirmationValue}\\\" för att bekräfta."
 
 #. js-lingui-id: KDMdBi
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetTypeSelect.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 msgid "iFrame"
 msgstr "iFrame"
 
@@ -8351,8 +8360,8 @@ msgstr "Starta manuellt"
 #. js-lingui-id: rdU729
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Layout"
@@ -8663,6 +8672,11 @@ msgstr "Bevarandetid för loggar"
 msgid "Logged in as {impersonatedUser}"
 msgstr "Inloggad som {impersonatedUser}"
 
+#. js-lingui-id: wuCnq1
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Logic"
+msgstr ""
+
 #. js-lingui-id: sTlKkx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -8743,7 +8757,7 @@ msgid "Make HTTP requests to external APIs"
 msgstr ""
 
 #. js-lingui-id: wckWOP
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Manage"
 msgstr ""
 
@@ -9204,6 +9218,11 @@ msgstr "Mest installerade versionen"
 msgid "Move down"
 msgstr "Flytta ned"
 
+#. js-lingui-id: bAvovP
+#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
+msgid "Move Down"
+msgstr ""
+
 #. js-lingui-id: iSLA/r
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
@@ -9223,6 +9242,11 @@ msgstr "Flytta åt höger"
 msgid "Move to a folder"
 msgstr "Flytta till en mapp"
 
+#. js-lingui-id: TH+XKl
+#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
+msgid "Move to another tab"
+msgstr ""
+
 #. js-lingui-id: JCPOml
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
 msgid "Move to folder"
@@ -9232,6 +9256,11 @@ msgstr "Flytta till mapp"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions.tsx
 msgid "Move up"
 msgstr "Flytta upp"
+
+#. js-lingui-id: Bpglf1
+#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
+msgid "Move Up"
+msgstr ""
 
 #. js-lingui-id: asWVA5
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
@@ -9543,6 +9572,8 @@ msgid "New Webhook"
 msgstr "Ny webhook"
 
 #. js-lingui-id: vam7Jz
+#: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "New widget"
 msgstr ""
@@ -9658,6 +9689,11 @@ msgstr "Inga applikationer tillgängliga"
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
 msgid "No available fields to select"
 msgstr "Inga tillgängliga fält att välja"
+
+#. js-lingui-id: Yd55ZI
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/MoveToTabDropdownContent.tsx
+msgid "No available tabs"
+msgstr ""
 
 #. js-lingui-id: V/RzSE
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
@@ -10987,6 +11023,11 @@ msgstr ""
 msgid "Placeholder"
 msgstr "Platshållare"
 
+#. js-lingui-id: MFTZK8
+#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
+msgid "Placement"
+msgstr ""
+
 #. js-lingui-id: fQtTho
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Plain text paragraph"
@@ -11020,7 +11061,7 @@ msgstr "Var vänlig kontrollera din e-post för en verifieringslänk."
 
 #. js-lingui-id: jEw0Mr
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutIframeSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardIframeSettings.tsx
 msgid "Please enter a valid URL"
 msgstr "Vänligen ange en giltig URL"
 
@@ -11422,10 +11463,11 @@ msgstr ""
 msgid "Read your profile"
 msgstr "Läs din profil"
 
-#. js-lingui-id: tCXcL7
+#. js-lingui-id: 6pSHJ5
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
-msgid "Read-only — managed by Twenty"
-msgstr "Skrivskyddat — hanteras av Twenty"
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+msgid "Read-only"
+msgstr ""
 
 #. js-lingui-id: W+ApAD
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
@@ -11523,7 +11565,7 @@ msgid "Record Selection"
 msgstr "Välj post"
 
 #. js-lingui-id: J9Cfll
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetTypeSelect.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 msgid "Record Table"
 msgstr "Posttabell"
@@ -11802,6 +11844,11 @@ msgstr "Omorganisera fält"
 msgid "Reorder options"
 msgstr "Ändra ordning på alternativen"
 
+#. js-lingui-id: q8Id6J
+#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
+msgid "Replace widget"
+msgstr ""
+
 #. js-lingui-id: ImOQa9
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -11844,7 +11891,8 @@ msgstr "Skicka e-post på nytt"
 #. js-lingui-id: OfhWJH
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
 msgid "Reset"
 msgstr "Återställ"
 
@@ -11865,8 +11913,10 @@ msgid "Reset to"
 msgstr "Återställ till"
 
 #. js-lingui-id: L+rMC9
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
+#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 #: src/modules/command-menu-item/server-items/edit/components/SidePanelCommandMenuItemEditPage.tsx
 msgid "Reset to default"
@@ -11983,7 +12033,7 @@ msgid "Revoked for this object"
 msgstr "Upphävd för det här objektet"
 
 #. js-lingui-id: NP5Nbf
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetTypeSelect.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 #: src/modules/side-panel/hooks/useOpenRichTextInSidePanel.ts
 #: src/modules/page-layout/utils/getWidgetTitle.ts
 msgid "Rich Text"
@@ -12136,11 +12186,6 @@ msgstr "Funktionen körs"
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Running..."
 msgstr "Körs..."
-
-#. js-lingui-id: eo1n1s
-#: src/modules/settings/logic-functions/components/SettingsLogicFunctionsTable.tsx
-msgid "Runtime"
-msgstr "Körtidsmiljö"
 
 #. js-lingui-id: nji0/X
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -12356,7 +12401,7 @@ msgid "Search colors"
 msgstr "Sök färger"
 
 #. js-lingui-id: AR3FV/
-#: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditColorOption.tsx
+#: src/modules/ui/input/components/ThemeColorPickerMenu.tsx
 msgid "Search colors..."
 msgstr "Sök färger..."
 
@@ -13245,7 +13290,7 @@ msgstr "Tyvärr, något gick fel"
 
 #. js-lingui-id: f6Hub0
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -13280,7 +13325,7 @@ msgstr "Sorteringar"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Source"
@@ -13728,11 +13773,6 @@ msgstr ""
 #: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
 msgid "System Prompt"
 msgstr "Systemuppmaning"
-
-#. js-lingui-id: BXGTWI
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
-msgid "System Prompt ({totalTokenCount})"
-msgstr "Systemprompt ({totalTokenCount})"
 
 #. js-lingui-id: k+7QWO
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -14222,8 +14262,13 @@ msgstr ""
 msgid "This week"
 msgstr "Denna vecka"
 
+#. js-lingui-id: DF2voz
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+msgid "This will cancel all modifications done on the tab and its widgets. Edit mode will be canceled and the page will refresh. This action cannot be undone."
+msgstr ""
+
 #. js-lingui-id: VbVocX
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "This will cancel all modifications done on the widget. This action cannot be undone."
 msgstr ""
 
@@ -14498,6 +14543,7 @@ msgstr "Testperioden har löpt ut. Vänligen uppdatera dina faktureringsuppgifte
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
+#: src/modules/settings/logic-functions/components/SettingsLogicFunctionsTable.tsx
 msgid "Trigger"
 msgstr "Utlösare"
 
@@ -14883,7 +14929,7 @@ msgid "Untitled field"
 msgstr ""
 
 #. js-lingui-id: RBz20h
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetTypeSelect.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 msgid "Untitled iFrame"
 msgstr "Obetitlad iFrame"
 
@@ -14998,6 +15044,11 @@ msgstr "Uppgradera för att få åtkomst"
 msgid "Upgrade to Enterprise to access audit logs."
 msgstr ""
 
+#. js-lingui-id: D+7y/3
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "Upgrade to Enterprise to share private applications."
+msgstr ""
+
 #. js-lingui-id: +Gi3x1
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
@@ -15059,7 +15110,7 @@ msgid "URL"
 msgstr "URL"
 
 #. js-lingui-id: pphDjD
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutIframeSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardIframeSettings.tsx
 msgid "URL to Embed"
 msgstr "URL att bädda in"
 
@@ -15434,7 +15485,6 @@ msgstr "Visa loggar"
 
 #. js-lingui-id: 7PrSCy
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "View marketplace page"
 msgstr "Visa sidan på marknadsplatsen"
 
@@ -15447,6 +15497,11 @@ msgstr ""
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 msgid "View Previous AI Chats"
 msgstr "Visa tidigare AI-konversationer"
+
+#. js-lingui-id: NnJpTN
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "View private application page"
+msgstr ""
 
 #. js-lingui-id: hAAsm/
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
@@ -15749,7 +15804,8 @@ msgid "widget"
 msgstr ""
 
 #. js-lingui-id: fANaAS
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetTypeSelect.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 msgid "Widget type"
 msgstr "Widgettyp"
 
@@ -15836,7 +15892,6 @@ msgstr "Arbetsflöden"
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-#: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
