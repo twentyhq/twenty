@@ -140,19 +140,19 @@ export class DatabaseToolProvider implements ToolProvider {
           operation: 'find_one',
         });
 
-        const groupBySchema = includeSchemas
-          ? generateGroupByToolInputSchema(objectMetadata, restrictedFields)
-          : true;
+        const groupBySchema = generateGroupByToolInputSchema(
+          objectMetadata,
+          restrictedFields,
+        );
 
         if (groupBySchema) {
           descriptors.push({
             name: `group_by_${snakePlural}`,
             description: `Group ${objectMetadata.labelPlural} records by one or two fields and compute an aggregate (COUNT, SUM, AVG, MIN, MAX, etc.). Use for questions like "how many deals per stage?" or "total revenue by company". Returns groups with dimension values and aggregate results, ordered by the aggregate value.`,
             category: ToolCategory.DATABASE_CRUD,
-            ...(includeSchemas &&
-              groupBySchema !== true && {
-                inputSchema: z.toJSONSchema(groupBySchema),
-              }),
+            ...(includeSchemas && {
+              inputSchema: z.toJSONSchema(groupBySchema),
+            }),
             executionRef: {
               kind: 'database_crud',
               objectNameSingular: objectMetadata.nameSingular,
