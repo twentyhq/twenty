@@ -220,18 +220,16 @@ export class AgentChatService {
         textContent: text,
         workspaceId,
       }),
-      ...(fileIds ?? []).map((fileId, index) => {
-        const file = files?.find((f) => f.id === fileId);
-
-        return this.messagePartRepository.create({
+      ...files.map((file, index) =>
+        this.messagePartRepository.create({
           messageId: savedMessage.id,
           orderIndex: index + 1,
           type: 'file',
-          fileId,
-          fileFilename: file?.path.split('/').pop() ?? null,
+          fileId: file.id,
+          fileFilename: file.path.split('/').pop() ?? null,
           workspaceId,
-        });
-      }),
+        }),
+      ),
     ];
 
     await this.messagePartRepository.save(parts);
