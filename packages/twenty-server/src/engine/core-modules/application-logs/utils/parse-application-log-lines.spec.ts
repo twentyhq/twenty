@@ -53,7 +53,8 @@ describe('parseApplicationLogLines', () => {
   });
 
   it('should skip empty lines', () => {
-    const raw = '2024-01-01T00:00:00.000Z INFO first\n\n\n2024-01-01T00:00:01.000Z ERROR second\n';
+    const raw =
+      '2024-01-01T00:00:00.000Z INFO first\n\n\n2024-01-01T00:00:01.000Z ERROR second\n';
     const result = parseApplicationLogLines(raw);
 
     expect(result).toHaveLength(2);
@@ -80,8 +81,7 @@ describe('parseApplicationLogLines', () => {
   });
 
   it('should preserve message content including special characters', () => {
-    const raw =
-      '2024-01-01T00:00:00.000Z INFO {"key": "value", "count": 42}';
+    const raw = '2024-01-01T00:00:00.000Z INFO {"key": "value", "count": 42}';
     const result = parseApplicationLogLines(raw);
 
     expect(result[0].message).toBe('{"key": "value", "count": 42}');
