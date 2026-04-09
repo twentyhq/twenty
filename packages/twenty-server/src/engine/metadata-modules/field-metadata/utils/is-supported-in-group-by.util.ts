@@ -1,8 +1,4 @@
-import {
-  compositeTypeDefinitions,
-  type CompositeProperty,
-  FieldMetadataType,
-} from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isFieldMetadataDateKind } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -35,26 +31,4 @@ export const isFlatFieldMetadataSupportedInGroupBy = (
   }
 
   return !NON_GROUPABLE_FIELD_TYPES.has(fieldMetadata.type);
-};
-
-export const isCompositePropertySupportedInGroupBy = (
-  property: CompositeProperty,
-): boolean => {
-  return (
-    property.hidden !== true && property.type !== FieldMetadataType.RAW_JSON
-  );
-};
-
-export const getGroupableSubFieldsForCompositeType = (
-  type: FieldMetadataType,
-): string[] | null => {
-  const compositeTypeDefinition = compositeTypeDefinitions.get(type);
-
-  if (!compositeTypeDefinition) {
-    return null;
-  }
-
-  return compositeTypeDefinition.properties
-    .filter(isCompositePropertySupportedInGroupBy)
-    .map((property) => property.name);
 };

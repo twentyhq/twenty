@@ -1,11 +1,9 @@
 import { type CompositeProperty, FieldMetadataType } from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import {
-  getGroupableSubFieldsForCompositeType,
-  isCompositePropertySupportedInGroupBy,
-  isFlatFieldMetadataSupportedInGroupBy,
-} from 'src/engine/metadata-modules/field-metadata/utils/is-supported-in-group-by.util';
+import { getGroupableSubFieldsForCompositeType } from 'src/engine/metadata-modules/field-metadata/utils/get-groupable-sub-fields-for-composite-type.util';
+import { isCompositePropertySupportedInGroupBy } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-property-supported-in-group-by.util';
+import { isFlatFieldMetadataSupportedInGroupBy } from 'src/engine/metadata-modules/field-metadata/utils/is-supported-in-group-by.util';
 
 const buildFlatFieldMetadata = (
   type: FieldMetadataType,

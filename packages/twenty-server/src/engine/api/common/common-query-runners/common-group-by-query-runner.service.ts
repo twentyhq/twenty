@@ -93,12 +93,13 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       objectMetadataNameSingular,
     );
 
-    const groupByFields = this.groupByArgProcessor.parseGroupByFieldsOrThrow({
+    const groupByFields =
+      this.groupByArgProcessor.validateAndTransformGroupByFieldsOrThrow({
       groupBy: args.groupBy,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-    });
+      });
 
     const objectAlias = getObjectAlias(flatObjectMetadata);
 
@@ -399,7 +400,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       groupBy: args.groupBy,
     });
 
-    this.groupByArgProcessor.parseGroupByFieldsOrThrow({
+    this.groupByArgProcessor.validateAndTransformGroupByFieldsOrThrow({
       groupBy: normalizedGroupBy,
       flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
       flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,

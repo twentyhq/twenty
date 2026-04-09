@@ -11,7 +11,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
-import { parseAndValidateGroupByFieldsOrThrow } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/utils/parse-and-validate-group-by-fields-or-throw.util';
+import { validateAndTransformGroupByFieldsOrThrow } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/utils/validate-and-transform-group-by-fields-or-throw.util';
 import {
   type AggregationField,
   getAvailableAggregationsFromObjectFields,
@@ -53,7 +53,7 @@ export class GroupByArgProcessorService {
     return [groupBy];
   }
 
-  parseGroupByFieldsOrThrow({
+  validateAndTransformGroupByFieldsOrThrow({
     groupBy,
     flatObjectMetadata,
     flatObjectMetadataMaps,
@@ -68,7 +68,7 @@ export class GroupByArgProcessorService {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   }): GroupByField[] {
-    return parseAndValidateGroupByFieldsOrThrow({
+    return validateAndTransformGroupByFieldsOrThrow({
       groupBy,
       flatObjectMetadata,
       flatObjectMetadataMaps,
