@@ -16,6 +16,7 @@ import { MenuDrawer } from '../Drawer/Drawer';
 
 const StyledSection = styled.section`
   backdrop-filter: blur(10px);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
   min-width: 0;
   position: sticky;
   top: 0;
