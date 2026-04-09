@@ -3317,8 +3317,8 @@ __metadata:
     oxlint: "npm:^0.16.0"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
-    twenty-client-sdk: "npm:latest"
-    twenty-sdk: "npm:latest"
+    twenty-client-sdk: "npm:0.8.0-canary.8"
+    twenty-sdk: "npm:0.8.0-canary.8"
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:^3.1.1"
@@ -4059,21 +4059,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-client-sdk@npm:0.8.0, twenty-client-sdk@npm:latest":
-  version: 0.8.0
-  resolution: "twenty-client-sdk@npm:0.8.0"
+"twenty-client-sdk@npm:0.8.0-canary.8":
+  version: 0.8.0-canary.8
+  resolution: "twenty-client-sdk@npm:0.8.0-canary.8"
   dependencies:
     "@genql/cli": "npm:^3.0.3"
     "@genql/runtime": "npm:^2.10.0"
     esbuild: "npm:^0.25.0"
     graphql: "npm:^16.8.1"
-  checksum: 10c0/174a137994484769023236a66f4cdb498aa7a96c8ab4521e3386c6919743402d1888c898a2a7bb2d2483e1ee31b346b656d45ae0cffd3c9e456a642502a82b86
+  checksum: 10c0/acb5bf952a9729811235a3474ccb4db82630c53a2caed03176bfb4f442576ee2ef7e625886f63714e2534f7ec83b03d83e4c0b1170a0eb816c531acfc2c98010
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:latest":
-  version: 0.8.0
-  resolution: "twenty-sdk@npm:0.8.0"
+"twenty-sdk@npm:0.8.0-canary.8":
+  version: 0.8.0-canary.8
+  resolution: "twenty-sdk@npm:0.8.0-canary.8"
   dependencies:
     "@genql/cli": "npm:^3.0.3"
     "@genql/runtime": "npm:^2.10.0"
@@ -4093,7 +4093,7 @@ __metadata:
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     tinyglobby: "npm:^0.2.15"
-    twenty-client-sdk: "npm:0.8.0"
+    twenty-client-sdk: "npm:0.8.0-canary.8"
     typescript: "npm:^5.9.2"
     uuid: "npm:^13.0.0"
     vite: "npm:^7.0.0"
@@ -4101,7 +4101,7 @@ __metadata:
     zod: "npm:^4.1.11"
   bin:
     twenty: dist/cli.cjs
-  checksum: 10c0/f38786981769b7dde40b37ad214136eaec785b2122cffed0709102e05e34e2794b951834f22ea9737879e2aef169f458b0d5d5dbfeb3c6162038985674503af8
+  checksum: 10c0/a22cf071f41c19d769e68a995912a0bda0f087bd9a295534bf9e545544f6dfc84f284a477f9011fc135f2a44de9372b977a66de06454e760822119e76921ea69
   languageName: node
   linkType: hard
 

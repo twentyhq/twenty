@@ -12,6 +12,6 @@ export default definePreInstallLogicFunction({
   universalIdentifier: 'bf27f558-4ec6-481f-b76e-1dbcd05aef1f',
   name: 'pre-install',
   description: 'Runs before migrations to set up the application.',
-  timeoutSeconds: 300,
+  timeoutSeconds: 10,
   handler,
 });

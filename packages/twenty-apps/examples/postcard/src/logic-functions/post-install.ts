@@ -30,6 +30,6 @@ export default definePostInstallLogicFunction({
   universalIdentifier: '852c6321-1563-4396-b7c5-9d370f3d30a9',
   name: 'post-install',
   description: 'Runs after installation to set up the application.',
-  timeoutSeconds: 300,
+  timeoutSeconds: 30,
   handler,
 });
