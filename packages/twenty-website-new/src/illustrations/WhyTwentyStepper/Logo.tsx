@@ -235,7 +235,6 @@ export function Logo() {
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     const canvas = renderer.domElement;
-    canvas.style.cursor = 'crosshair';
     canvas.style.display = 'block';
     canvas.style.height = '100%';
     canvas.style.width = '100%';

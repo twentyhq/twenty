@@ -209,7 +209,6 @@ export function WhyTwenty() {
     canvas.style.display = 'block';
     canvas.style.height = '100%';
     canvas.style.width = '100%';
-    canvas.style.cursor = 'crosshair';
     container.appendChild(canvas);
 
     const clock = new THREE.Clock();

@@ -152,10 +152,63 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       },
       type: 'row',
     },
+    {
+      featureLabel: 'Custom fields',
+      tiers: {
+        organization: { kind: 'text', text: 'Unlimited' },
+        pro: { kind: 'text', text: 'Unlimited' },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: 'API access',
+      tiers: {
+        organization: { kind: 'yes', label: 'Yes' },
+        pro: { kind: 'yes', label: 'Yes' },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: 'Webhooks',
+      tiers: {
+        organization: { kind: 'yes', label: 'Yes' },
+        pro: { kind: 'yes', label: 'Yes' },
+      },
+      type: 'row',
+    },
+    {
+      title: 'Security',
+      type: 'category',
+    },
+    {
+      featureLabel: 'SSO / SAML',
+      tiers: {
+        organization: { kind: 'yes', label: 'Yes' },
+        pro: { kind: 'dash' },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: 'Audit logs',
+      tiers: {
+        organization: { kind: 'yes', label: 'Yes' },
+        pro: { kind: 'dash' },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: 'Role-based access control',
+      tiers: {
+        organization: { kind: 'yes', label: 'Yes' },
+        pro: { kind: 'dash' },
+      },
+      type: 'row',
+    },
   ],
+  initialVisibleRowCount: 13,
   seeMoreFeaturesCta: {
-    href: '/pricing',
-    label: 'See more features',
+    collapseLabel: 'Show less',
+    expandLabel: 'See more features',
   },
   tierColumns: [
     { id: 'pro', label: 'Pro' },

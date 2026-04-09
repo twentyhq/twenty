@@ -1,3 +1,4 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { WIDGET_SIZES } from '@/page-layout/constants/WidgetSizes';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
@@ -49,8 +50,10 @@ export const useCreatePageLayoutRecordTableWidget = (
 
   const store = useStore();
 
-  const createPageLayoutRecordTableWidget =
-    useCallback((): PageLayoutWidget => {
+  const createPageLayoutRecordTableWidget = useCallback(
+    (
+      objectMetadata?: Pick<EnrichedObjectMetadataItem, 'id' | 'labelPlural'>,
+    ): PageLayoutWidget => {
       const allTabLayouts = store.get(pageLayoutCurrentLayoutsState);
       const pageLayoutDraggedArea = store.get(pageLayoutDraggedAreaState);
 
@@ -70,17 +73,18 @@ export const useCreatePageLayoutRecordTableWidget = (
         minimumSize,
       );
 
-      const newWidget = createDefaultRecordTableWidget(
-        widgetId,
-        activeTabId,
-        'Record Table',
-        {
+      const newWidget = createDefaultRecordTableWidget({
+        id: widgetId,
+        pageLayoutTabId: activeTabId,
+        title: objectMetadata?.labelPlural ?? 'Record Table',
+        gridPosition: {
           row: position.y,
           column: position.x,
           rowSpan: position.h,
           columnSpan: position.w,
         },
-      );
+        objectMetadataId: objectMetadata?.id,
+      });
 
       const newLayout = {
         i: widgetId,
@@ -108,13 +112,15 @@ export const useCreatePageLayoutRecordTableWidget = (
       store.set(pageLayoutDraggedAreaState, null);
 
       return newWidget;
-    }, [
+    },
+    [
       activeTabId,
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
       pageLayoutDraggedAreaState,
       store,
-    ]);
+    ],
+  );
 
   return { createPageLayoutRecordTableWidget };
 };

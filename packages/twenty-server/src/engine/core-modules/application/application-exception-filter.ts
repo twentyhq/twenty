@@ -29,6 +29,8 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
         throw new ForbiddenError(exception);
       case ApplicationExceptionCode.INVALID_INPUT:
       case ApplicationExceptionCode.SOURCE_CHANNEL_MISMATCH:
+      case ApplicationExceptionCode.APP_ALREADY_INSTALLED:
+      case ApplicationExceptionCode.CANNOT_DOWNGRADE_APPLICATION:
         throw new UserInputError(exception);
       case ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED:
       case ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED:
