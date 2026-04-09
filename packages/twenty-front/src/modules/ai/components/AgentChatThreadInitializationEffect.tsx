@@ -68,25 +68,31 @@ export const AgentChatThreadInitializationEffect = () => {
           return;
         }
 
-        const threads = result.data.chatThreads.edges.map(
-          (edge) => edge.node,
-        );
+        const threads = result.data.chatThreads.edges.map((edge) => edge.node);
 
         replaceDraft('agentChatThreads', threads);
         applyChanges();
       });
-  }, [storeEntry.status, hasAiSettingsPermission, client, replaceDraft, applyChanges]);
+  }, [
+    storeEntry.status,
+    hasAiSettingsPermission,
+    client,
+    replaceDraft,
+    applyChanges,
+  ]);
 
   useEffect(() => {
-    setAgentChatThreadsLoading(storeEntry.status === 'empty');
-  }, [storeEntry.status, setAgentChatThreadsLoading]);
+    setAgentChatThreadsLoading(
+      storeEntry.status === 'empty' && hasAiSettingsPermission,
+    );
+  }, [storeEntry.status, hasAiSettingsPermission, setAgentChatThreadsLoading]);
 
   useEffect(() => {
     if (hasInitializedAgentChatThreads || isValidUuid(currentAIChatThread)) {
       return;
     }
 
-    if (storeEntry.status === 'empty') {
+    if (storeEntry.status === 'empty' && hasAiSettingsPermission) {
       return;
     }
 
@@ -137,6 +143,7 @@ export const AgentChatThreadInitializationEffect = () => {
   }, [
     agentChatThreads,
     currentAIChatThread,
+    hasAiSettingsPermission,
     hasInitializedAgentChatThreads,
     setHasInitializedAgentChatThreads,
     storeEntry.status,
