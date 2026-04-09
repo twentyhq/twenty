@@ -1,10 +1,12 @@
-import { type MigrationInterface, type QueryRunner } from 'typeorm';
+import { type QueryRunner } from 'typeorm';
 
-export class AddEmailThreadWidgetType1775200000000
-  implements MigrationInterface
+import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
+import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+
+@RegisteredInstanceCommand('1.21.0', 1775200000000)
+export class AddEmailThreadWidgetTypeFastInstanceCommand
+  implements FastInstanceCommand
 {
-  name = 'AddEmailThreadWidgetType1775200000000';
-
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TYPE "core"."pageLayoutWidget_type_enum" RENAME TO "pageLayoutWidget_type_enum_old"`,

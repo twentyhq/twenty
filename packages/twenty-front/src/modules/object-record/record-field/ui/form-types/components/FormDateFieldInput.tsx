@@ -18,8 +18,14 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
+import {
+  FloatingPortal,
+  autoUpdate,
+  flip,
+  offset,
+  useFloating,
+} from '@floating-ui/react';
 import { styled } from '@linaria/react';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useId, useRef, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { Key } from 'ts-key-enum';
@@ -27,10 +33,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Nullable } from 'twenty-ui/utilities';
 
-const StyledDateInputAbsoluteContainer = styled.div`
-  position: absolute;
-  top: ${themeCssVariables.spacing[1]};
-`;
+const FORM_DATE_FIELD_PICKER_CLICK_OUTSIDE_ID =
+  'form-date-field-picker-floating';
 
 const StyledDateInputTextContainer = styled.div<{ isReadonly?: boolean }>`
   align-items: center;
@@ -49,9 +53,10 @@ const StyledDateInputTextContainer = styled.div<{ isReadonly?: boolean }>`
   }
 `;
 
-const StyledDateInputContainer = styled.div`
-  position: relative;
-  z-index: 1;
+const StyledDatePickerInputWrapper = styled.div`
+  display: flex;
+  flex: 1;
+  min-width: 0;
 `;
 
 type DraftValue =
@@ -98,6 +103,16 @@ export const FormDateFieldInput = ({
 
   const datePickerWrapperRef = useRef<HTMLDivElement>(null);
 
+  const displayDatePicker =
+    draftValue.type === 'static' && draftValue.mode === 'edit';
+
+  const { refs, floatingStyles } = useFloating({
+    open: displayDatePicker,
+    placement: 'bottom-start',
+    middleware: [offset(4), flip()],
+    whileElementsMounted: autoUpdate,
+  });
+
   const persistDate = (newDate: Nullable<string>) => {
     if (!isDefined(newDate)) {
       onChange(null);
@@ -108,9 +123,6 @@ export const FormDateFieldInput = ({
 
   const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
   const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
-
-  const displayDatePicker =
-    draftValue.type === 'static' && draftValue.mode === 'edit';
 
   useListenClickOutside({
     refs: [datePickerWrapperRef],
@@ -124,6 +136,7 @@ export const FormDateFieldInput = ({
     },
     enabled: displayDatePicker,
     excludedClickOutsideIds: [
+      FORM_DATE_FIELD_PICKER_CLICK_OUTSIDE_ID,
       MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
       MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
     ],
@@ -235,9 +248,7 @@ export const FormDateFieldInput = ({
         : Temporal.PlainDate.from(defaultValue).toString();
 
   const plainDateValue =
-    draftValue.type === 'static' && isNonEmptyString(draftValue.value)
-      ? draftValue.value
-      : plainDateValueFromProps;
+    draftValue.type === 'static' ? draftValue.value : plainDateValueFromProps;
 
   const handleMaskedDatePointerDownCapture = () => {
     if (readonly) {
@@ -256,13 +267,13 @@ export const FormDateFieldInput = ({
       {label ? <InputLabel>{label}</InputLabel> : null}
 
       <FormFieldInputRowContainer>
-        <FormFieldInputInnerContainer
-          ref={datePickerWrapperRef}
-          formFieldInputInstanceId={instanceId}
-          hasRightElement={isDefined(VariablePicker) && !readonly}
-        >
-          {draftValue.type === 'static' ? (
-            <>
+        <StyledDatePickerInputWrapper ref={datePickerWrapperRef}>
+          <FormFieldInputInnerContainer
+            ref={refs.setReference}
+            formFieldInputInstanceId={instanceId}
+            hasRightElement={isDefined(VariablePicker) && !readonly}
+          >
+            {draftValue.type === 'static' ? (
               <StyledDateInputTextContainer
                 isReadonly={readonly === true}
                 onPointerDownCapture={handleMaskedDatePointerDownCapture}
@@ -273,32 +284,38 @@ export const FormDateFieldInput = ({
                   readonly={readonly}
                 />
               </StyledDateInputTextContainer>
-              {draftValue.mode === 'edit' && !readonly ? (
-                <StyledDateInputContainer>
-                  <StyledDateInputAbsoluteContainer>
-                    <OverlayContainer>
-                      <DatePicker
-                        instanceId={instanceId}
-                        plainDateString={plainDateValue}
-                        onChange={handlePickerChange}
-                        onClose={handlePickerMouseSelect}
-                        onEnter={handlePickerEnter}
-                        onEscape={handlePickerEscape}
-                        onClear={handlePickerClear}
-                        hideHeaderInput
-                      />
-                    </OverlayContainer>
-                  </StyledDateInputAbsoluteContainer>
-                </StyledDateInputContainer>
-              ) : null}
-            </>
-          ) : (
-            <VariableChipStandalone
-              rawVariableName={draftValue.value}
-              onRemove={readonly ? undefined : handleUnlinkVariable}
-            />
-          )}
-        </FormFieldInputInnerContainer>
+            ) : (
+              <VariableChipStandalone
+                rawVariableName={draftValue.value}
+                onRemove={readonly ? undefined : handleUnlinkVariable}
+              />
+            )}
+          </FormFieldInputInnerContainer>
+        </StyledDatePickerInputWrapper>
+        {draftValue.type === 'static' &&
+        draftValue.mode === 'edit' &&
+        !readonly ? (
+          <FloatingPortal>
+            <div
+              ref={refs.setFloating}
+              style={floatingStyles}
+              data-click-outside-id={FORM_DATE_FIELD_PICKER_CLICK_OUTSIDE_ID}
+            >
+              <OverlayContainer>
+                <DatePicker
+                  instanceId={instanceId}
+                  plainDateString={plainDateValue}
+                  onChange={handlePickerChange}
+                  onClose={handlePickerMouseSelect}
+                  onEnter={handlePickerEnter}
+                  onEscape={handlePickerEscape}
+                  onClear={handlePickerClear}
+                  hideHeaderInput
+                />
+              </OverlayContainer>
+            </div>
+          </FloatingPortal>
+        ) : null}
         {VariablePicker && !readonly ? (
           <VariablePicker
             instanceId={instanceId}

@@ -100,9 +100,13 @@ export const DatePickerInput = ({
   );
 
   useEffect(() => {
-    if (isDefined(date) && internalDate !== date) {
+    if (internalDate !== date) {
       setInternalDate(date);
-      setValue(parsePlainDateToDateInputString(date));
+      if (isDefined(date)) {
+        setValue(parsePlainDateToDateInputString(date));
+      } else {
+        setValue('');
+      }
     }
   }, [date, internalDate, parsePlainDateToDateInputString, setValue]);
 

@@ -76,6 +76,7 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
     conditionalDisplay: null,
     conditionalAvailabilityExpression: null,
     overrides: null,
+    universalOverrides: null,
     universalConfiguration:
       fromPageLayoutWidgetConfigurationToUniversalConfiguration({
         configuration: createPageLayoutWidgetInput.configuration,

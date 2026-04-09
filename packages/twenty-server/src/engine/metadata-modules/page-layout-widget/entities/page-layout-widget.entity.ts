@@ -4,6 +4,7 @@ import {
   PageLayoutWidgetConditionalDisplay,
   PageLayoutWidgetPosition,
   type GridPosition,
+  type SerializedRelation,
 } from 'twenty-shared/types';
 import {
   Column,
@@ -31,6 +32,7 @@ export type PageLayoutWidgetOverrides = {
   position?: PageLayoutWidgetPosition | null;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
   conditionalAvailabilityExpression?: string | null;
+  pageLayoutTabId?: SerializedRelation;
 };
 
 @Entity({ name: 'pageLayoutWidget', schema: 'core' })

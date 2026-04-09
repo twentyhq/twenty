@@ -780,6 +780,7 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
           conditionalDisplay: null,
           conditionalAvailabilityExpression: null,
           overrides: null,
+          universalOverrides: null,
         };
 
         widgetsToCreate.push(widget);
