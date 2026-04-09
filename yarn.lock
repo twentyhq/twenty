@@ -60068,14 +60068,14 @@ __metadata:
   linkType: hard
 
 "tsdav@npm:^2.1.5":
-  version: 2.1.5
-  resolution: "tsdav@npm:2.1.5"
+  version: 2.1.8
+  resolution: "tsdav@npm:2.1.8"
   dependencies:
     base-64: "npm:1.0.0"
     cross-fetch: "npm:4.1.0"
-    debug: "npm:4.4.1"
+    debug: "npm:4.4.3"
     xml-js: "npm:1.6.11"
-  checksum: 10c0/ff04bb9b61413c07d4532926f9d4a8b6788af77c6e3aa87813c797a06e59348398d2d9ecb15ef3e82e4ae013fe764c73511c3bbfaff5fb6c4484f5f15099499f
+  checksum: 10c0/bb0ff3021483ca2a1878c45aeb86cf27c0d03973dabd1dd547825e98de865b840d7a47662e277a251fabf9a39d521c13ea8a520807ce62fc3c8cd7a1a13710a2
   languageName: node
   linkType: hard
 
