@@ -1,7 +1,7 @@
 'use client';
 
 import { Body, Heading } from '@/design-system/components';
-import { HOME_STEPPER_LEFT_HOLD_LOCAL_PROGRESS_MAX } from '@/sections/HomeStepper/utils/home-stepper-lottie-frame-map';
+import { HOME_STEPPER_HOLD_FRACTIONS } from '@/sections/HomeStepper/utils/home-stepper-lottie-frame-map';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { CSSProperties } from 'react';
@@ -103,7 +103,8 @@ function computeDesktopStepStyle(
   localProgress: number,
   stepCount: number,
 ): { opacity: number; transform: string } {
-  const holdMax = HOME_STEPPER_LEFT_HOLD_LOCAL_PROGRESS_MAX;
+  const holdMax =
+    HOME_STEPPER_HOLD_FRACTIONS[activeStepIndex] ?? 1;
   const transitionRange = 1 - holdMax;
 
   if (index === activeStepIndex) {
