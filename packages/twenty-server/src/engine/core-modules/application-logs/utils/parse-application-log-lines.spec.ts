@@ -13,12 +13,14 @@ describe('parseApplicationLogLines', () => {
 
   it('should parse a structured INFO log line', () => {
     const raw = '2024-06-15T10:30:00.123Z INFO Hello world';
-    const result = parseApplicationLogLines(raw);
 
-    expect(result).toHaveLength(1);
-    expect(result[0].timestamp).toEqual(new Date('2024-06-15T10:30:00.123Z'));
-    expect(result[0].level).toBe('INFO');
-    expect(result[0].message).toBe('Hello world');
+    expect(parseApplicationLogLines(raw)).toEqual([
+      {
+        timestamp: new Date('2024-06-15T10:30:00.123Z'),
+        level: 'INFO',
+        message: 'Hello world',
+      },
+    ]);
   });
 
   it('should parse all supported log levels', () => {
@@ -29,13 +31,28 @@ describe('parseApplicationLogLines', () => {
       '2024-01-01T00:00:03.000Z DEBUG debug message',
     ].join('\n');
 
-    const result = parseApplicationLogLines(raw);
-
-    expect(result).toHaveLength(4);
-    expect(result[0].level).toBe('INFO');
-    expect(result[1].level).toBe('ERROR');
-    expect(result[2].level).toBe('WARN');
-    expect(result[3].level).toBe('DEBUG');
+    expect(parseApplicationLogLines(raw)).toEqual([
+      {
+        timestamp: new Date('2024-01-01T00:00:00.000Z'),
+        level: 'INFO',
+        message: 'info message',
+      },
+      {
+        timestamp: new Date('2024-01-01T00:00:01.000Z'),
+        level: 'ERROR',
+        message: 'error message',
+      },
+      {
+        timestamp: new Date('2024-01-01T00:00:02.000Z'),
+        level: 'WARN',
+        message: 'warn message',
+      },
+      {
+        timestamp: new Date('2024-01-01T00:00:03.000Z'),
+        level: 'DEBUG',
+        message: 'debug message',
+      },
+    ]);
   });
 
   it('should default unstructured lines to INFO with current timestamp', () => {
@@ -55,11 +72,19 @@ describe('parseApplicationLogLines', () => {
   it('should skip empty lines', () => {
     const raw =
       '2024-01-01T00:00:00.000Z INFO first\n\n\n2024-01-01T00:00:01.000Z ERROR second\n';
-    const result = parseApplicationLogLines(raw);
 
-    expect(result).toHaveLength(2);
-    expect(result[0].message).toBe('first');
-    expect(result[1].message).toBe('second');
+    expect(parseApplicationLogLines(raw)).toEqual([
+      {
+        timestamp: new Date('2024-01-01T00:00:00.000Z'),
+        level: 'INFO',
+        message: 'first',
+      },
+      {
+        timestamp: new Date('2024-01-01T00:00:01.000Z'),
+        level: 'ERROR',
+        message: 'second',
+      },
+    ]);
   });
 
   it('should handle a mix of structured and unstructured lines', () => {
@@ -72,18 +97,29 @@ describe('parseApplicationLogLines', () => {
     const result = parseApplicationLogLines(raw);
 
     expect(result).toHaveLength(3);
-    expect(result[0].level).toBe('INFO');
-    expect(result[0].message).toBe('structured line');
+    expect(result[0]).toEqual({
+      timestamp: new Date('2024-01-01T00:00:00.000Z'),
+      level: 'INFO',
+      message: 'structured line',
+    });
     expect(result[1].level).toBe('INFO');
     expect(result[1].message).toBe('plain unstructured line');
-    expect(result[2].level).toBe('ERROR');
-    expect(result[2].message).toBe('another structured');
+    expect(result[2]).toEqual({
+      timestamp: new Date('2024-01-01T00:00:01.000Z'),
+      level: 'ERROR',
+      message: 'another structured',
+    });
   });
 
   it('should preserve message content including special characters', () => {
     const raw = '2024-01-01T00:00:00.000Z INFO {"key": "value", "count": 42}';
-    const result = parseApplicationLogLines(raw);
 
-    expect(result[0].message).toBe('{"key": "value", "count": 42}');
+    expect(parseApplicationLogLines(raw)).toEqual([
+      {
+        timestamp: new Date('2024-01-01T00:00:00.000Z'),
+        level: 'INFO',
+        message: '{"key": "value", "count": 42}',
+      },
+    ]);
   });
 });

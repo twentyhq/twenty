@@ -40,7 +40,7 @@ export class ApplicationLogsModule extends ConfigurableModuleClass {
       // oxlint-disable-next-line @typescripttypescript/no-explicit-any
       useFactory: async (
         clickHouseService: ClickHouseService,
-        ...args: any[]
+        ...args: unknown[]
       ) => {
         const config = await options?.useFactory?.(...args);
 
