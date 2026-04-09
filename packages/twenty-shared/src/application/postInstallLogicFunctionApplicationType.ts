@@ -1,4 +1,4 @@
-import { PreInstallLogicFunctionApplicationManifest } from './preInstallLogicFunctionApplicationType';
+import { type PreInstallLogicFunctionApplicationManifest } from './preInstallLogicFunctionApplicationType';
 
 export type PostInstallLogicFunctionApplicationManifest =
   PreInstallLogicFunctionApplicationManifest & {

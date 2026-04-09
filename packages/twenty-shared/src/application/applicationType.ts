@@ -1,8 +1,8 @@
 import { type ApplicationVariables } from './applicationVariablesType';
 import { type ServerVariables } from './server-variables.type';
 import { type SyncableEntityOptions } from './syncableEntityOptionsType';
-import { PostInstallLogicFunctionApplicationManifest } from '@/application/postInstallLogicFunctionApplicationType';
-import { PreInstallLogicFunctionApplicationManifest } from '@/application/preInstallLogicFunctionApplicationType';
+import { type PostInstallLogicFunctionApplicationManifest } from '@/application/postInstallLogicFunctionApplicationType';
+import { type PreInstallLogicFunctionApplicationManifest } from '@/application/preInstallLogicFunctionApplicationType';
 
 export type ApplicationManifest = SyncableEntityOptions & {
   defaultRoleUniversalIdentifier: string;
