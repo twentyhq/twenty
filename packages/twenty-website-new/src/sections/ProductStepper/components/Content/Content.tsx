@@ -21,6 +21,10 @@ const ContentRoot = styled.div`
     align-self: stretch;
     gap: ${theme.spacing(20)};
     margin-left: calc(-1 * ${theme.spacing(4)});
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    align-items: center;
   }
 `;
 
@@ -33,8 +37,6 @@ const StepsColumn = styled.div`
   @media (min-width: ${theme.breakpoints.md}px) {
     height: max-content;
     max-width: 556px;
-    position: sticky;
-    top: ${theme.spacing(20)};
   }
 `;
 
