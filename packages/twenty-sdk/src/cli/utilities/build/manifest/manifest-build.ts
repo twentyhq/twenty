@@ -37,6 +37,9 @@ import {
 } from 'twenty-shared/application';
 import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
+import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
+import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
+import { type RoleConfig } from '@/sdk/roles/role-config';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -50,6 +53,7 @@ const loadSources = async (appPath: string): Promise<string[]> => {
 const loadAssets = async (appPath: string) => {
   return await glob([`${ASSETS_DIR}/**/*`], {
     cwd: appPath,
+    absolute: true,
     onlyFiles: true,
   });
 };
@@ -145,7 +149,7 @@ export const buildManifest = async (
 
         const objectManifest: ObjectManifest = {
           ...extract.config,
-          fields: objectFieldsWithDefaults,
+          fields: objectFieldsWithDefaults.map(addMissingFieldOptionIds),
           labelIdentifierFieldMetadataUniversalIdentifier,
         };
 
@@ -161,17 +165,19 @@ export const buildManifest = async (
           appPath,
           filePath,
         });
-        fields.push(extract.config);
+        const fieldConfig = addMissingFieldOptionIds(extract.config);
+        fields.push(fieldConfig);
         errors.push(...extract.errors);
         fieldsFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.Roles: {
-        const extract = await extractManifestFromFile<RoleManifest>({
+        const extract = await extractManifestFromFile<RoleConfig>({
           appPath,
           filePath,
         });
-        roles.push(extract.config);
+        const roleConfig = fromRoleConfigToRoleManifest(extract.config);
+        roles.push(roleConfig);
         errors.push(...extract.errors);
         rolesFilePaths.push(relativePath);
         break;
@@ -324,13 +330,14 @@ export const buildManifest = async (
   const assetFiles = await loadAssets(appPath);
 
   for (const assetFile of assetFiles) {
+    const relativePath = relative(appPath, assetFile);
     publicAssets.push({
-      filePath: assetFile,
+      filePath: relativePath,
       fileName: basename(assetFile),
       fileType: extname(assetFile).replace(/^\./, ''),
       checksum: null,
     });
-    publicAssetsFilePaths.push(relative(appPath, assetFile));
+    publicAssetsFilePaths.push(relativePath);
   }
 
   if (!application) {

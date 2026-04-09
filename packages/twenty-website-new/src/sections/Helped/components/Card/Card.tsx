@@ -1,10 +1,10 @@
 import { Body, Heading, LinkButton } from '@/design-system/components';
 import { CLIENT_ICONS } from '@/icons';
+import { IllustrationMount } from '@/illustrations';
 import { HelpedCardShape } from '@/sections/Helped/HelpedCardShape';
 import type { HeadingCardType } from '@/sections/Helped/types/HeadingCard';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import { HelpedCardVisual } from './HelpedCardVisual';
 
 const CardRoot = styled.article`
   display: grid;
@@ -93,11 +93,7 @@ export function Card({ card }: CardProps) {
       </LogoRow>
       <Rule aria-hidden="true" />
       <VisualShell>
-        <HelpedCardVisual
-          src={card.illustration.src}
-          stripeColor={card.illustration.color}
-          title={card.illustration.title || 'Case illustration'}
-        />
+        <IllustrationMount illustration={card.illustration} />
       </VisualShell>
       <Rule aria-hidden="true" />
       <CopyBlock>

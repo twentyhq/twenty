@@ -1,11 +1,13 @@
+import { Hourglass } from '@/illustrations/Testimonials/Hourglass';
+import { Partner as PartnerVisual } from '@/illustrations/Testimonials/Partner';
 import { Carousel } from './Carousel/Carousel';
-import { Embed } from './Embed/Embed';
 import { Root } from './Root/Root';
 import { Separator } from './Separator/Separator';
 
 export const Testimonials = {
   Carousel,
-  Embed,
+  HomeVisual: Hourglass,
+  PartnerVisual,
   Root,
   Separator,
 };

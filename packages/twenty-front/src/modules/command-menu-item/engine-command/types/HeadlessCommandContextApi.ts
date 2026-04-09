@@ -5,7 +5,10 @@ import {
   type Nullable,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
-import { type EngineComponentKey } from '~/generated-metadata/graphql';
+import {
+  type EngineComponentKey,
+  type CommandMenuItemPayload,
+} from '~/generated-metadata/graphql';
 
 export type HeadlessEngineCommandContextApi = {
   engineComponentKey: EngineComponentKey;
@@ -16,6 +19,7 @@ export type HeadlessEngineCommandContextApi = {
   targetedRecordsRule: ContextStoreTargetedRecordsRule;
   selectedRecords: ObjectRecord[];
   graphqlFilter: Nullable<RecordGqlOperationFilter>;
+  payload: Nullable<CommandMenuItemPayload>;
 };
 
 export type HeadlessFrontComponentCommandContextApi =

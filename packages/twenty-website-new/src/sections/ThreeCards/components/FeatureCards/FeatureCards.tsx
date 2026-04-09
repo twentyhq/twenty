@@ -1,6 +1,10 @@
+'use client';
+
+import { ThreeCardsScrollLayoutEffect } from '@/sections/ThreeCards/effect-components/ThreeCardsScrollLayoutEffect';
 import { ThreeCardsFeatureCardType } from '@/sections/ThreeCards/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
+import { useRef } from 'react';
 import { FeatureCard } from '../FeatureCard/FeatureCard';
 
 const FeatureCardsGrid = styled.div`
@@ -15,13 +19,32 @@ const FeatureCardsGrid = styled.div`
   }
 `;
 
+const CardSlot = styled.div`
+  will-change: transform, opacity;
+`;
+
 type FeatureCardsProps = { featureCards: ThreeCardsFeatureCardType[] };
 
 export function FeatureCards({ featureCards }: FeatureCardsProps) {
+  const gridRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+
   return (
-    <FeatureCardsGrid>
+    <FeatureCardsGrid ref={gridRef}>
+      <ThreeCardsScrollLayoutEffect
+        cardCount={featureCards.length}
+        cardRefs={cardRefs}
+        gridRef={gridRef}
+      />
       {featureCards.map((featureCard, index) => (
-        <FeatureCard key={index} featureCard={featureCard} />
+        <CardSlot
+          key={index}
+          ref={(element) => {
+            cardRefs.current[index] = element;
+          }}
+        >
+          <FeatureCard featureCard={featureCard} />
+        </CardSlot>
       ))}
     </FeatureCardsGrid>
   );

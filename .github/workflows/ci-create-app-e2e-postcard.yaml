@@ -25,12 +25,10 @@ jobs:
         packages/twenty-sdk/**
         packages/twenty-client-sdk/**
         packages/twenty-shared/**
-        packages/twenty-server/**
         !packages/create-twenty-app/package.json
         !packages/twenty-sdk/package.json
         !packages/twenty-client-sdk/package.json
         !packages/twenty-shared/package.json
-        !packages/twenty-server/package.json
   create-app-e2e-postcard:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
@@ -55,6 +53,8 @@ jobs:
           - 6379:6379
     env:
       PUBLISHABLE_PACKAGES: twenty-client-sdk twenty-sdk create-twenty-app
+      TWENTY_API_URL: http://localhost:3000
+      TWENTY_API_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ1c2VySWQiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtNDYzZi00MzViLTgyOGMtMTA3ZTAwN2EyNzExIiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWU3Yy00M2Q5LWE1ZGItNjg1YjUwNjlkODE2IiwidHlwZSI6IkFDQ0VTUyIsImF1dGhQcm92aWRlciI6InBhc3N3b3JkIiwiaWF0IjoxNzUxMjgxNzA0LCJleHAiOjIwNjY4NTc3MDR9.HMGqCsVlOAPVUBhKSGlD1X86VoHKt4LIUtET3CGIdik
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -137,30 +137,19 @@ jobs:
           cd /tmp/e2e-test-workspace/test-app
           npx --no-install twenty --version
 
-      - name: Setup server environment
-        run: npx nx reset:env:e2e-testing-server twenty-server
+      - name: Create test database
+        run: PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
 
-      - name: Build server
-        run: npx nx build twenty-server
+      - name: Setup database and start server
+        run: npx nx run twenty-server:database:reset && nohup npx nx start:ci twenty-server &
 
-      - name: Create and setup database
-        run: |
-          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
-          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
-          npx nx run twenty-server:database:reset
-
-      - name: Start server
-        run: |
-          npx nx start twenty-server &
-          echo "Waiting for server to be ready..."
-          timeout 60 bash -c 'until curl -s http://localhost:3000/health; do sleep 2; done'
+      - name: Wait for server to be ready
+        run: npx wait-on http://localhost:3000/healthz --timeout 120000 --interval 1000
 
       - name: Authenticate with twenty-server
-        env:
-          SEED_API_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ1c2VySWQiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtNDYzZi00MzViLTgyOGMtMTA3ZTAwN2EyNzExIiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWU3Yy00M2Q5LWE1ZGItNjg1YjUwNjlkODE2IiwidHlwZSI6IkFDQ0VTUyIsImF1dGhQcm92aWRlciI6InBhc3N3b3JkIiwiaWF0IjoxNzUxMjgxNzA0LCJleHAiOjIwNjY4NTc3MDR9.HMGqCsVlOAPVUBhKSGlD1X86VoHKt4LIUtET3CGIdik'
         run: |
           cd /tmp/e2e-test-workspace/test-app
-          npx --no-install twenty remote add --api-key $SEED_API_KEY --api-url http://localhost:3000
+          npx --no-install twenty remote add --api-key ${{ env.TWENTY_API_KEY }} --api-url ${{ env.TWENTY_API_URL }}
 
       - name: Deploy scaffolded app
         run: |
@@ -187,8 +176,6 @@ jobs:
           echo "$EXEC_OUTPUT" | grep -q 'Created company.*Hello World.*with id'
 
       - name: Run scaffolded app integration test
-        env:
-          TWENTY_API_URL: http://localhost:3000
         run: |
           cd /tmp/e2e-test-workspace/test-app
           yarn test

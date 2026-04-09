@@ -47,6 +47,7 @@ export type {
 export type {
   ObjectPermissionManifest,
   FieldPermissionManifest,
+  PermissionFlagManifest,
   RoleManifest,
 } from './roleManifestType';
 export type { ServerVariables } from './server-variables.type';

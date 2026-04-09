@@ -756,7 +756,7 @@ export default defineFrontComponent({
 });
 ```
 
-After syncing with `yarn twenty dev`, the quick action appears in the top-right corner of the page:
+After syncing with `yarn twenty dev` (or running a one-shot `yarn twenty dev --once`), the quick action appears in the top-right corner of the page:
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Quick action button in the top-right corner" />
@@ -1402,7 +1402,7 @@ export default defineFrontComponent({
 
 ### How bundling works
 
-The build step (`yarn twenty dev` or `yarn twenty build`) uses esbuild to produce a single self-contained file per logic function and per front component. All imported packages are inlined into the bundle.
+The build step uses esbuild to produce a single self-contained file per logic function and per front component. All imported packages are inlined into the bundle.
 
 **Logic functions** run in a Node.js environment. Node built-in modules (`fs`, `path`, `crypto`, `http`, etc.) are available and do not need to be installed.
 

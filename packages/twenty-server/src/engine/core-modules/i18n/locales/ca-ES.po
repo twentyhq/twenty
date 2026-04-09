@@ -104,6 +104,11 @@ msgstr "Ja existeix un component frontal amb aquest nom."
 msgid "A function with this name already exists."
 msgstr "Ja existeix una funció amb aquest nom."
 
+#. js-lingui-id: 6yZjO1
+#: src/engine/core-modules/application/application.exception.ts
+msgid "A higher version of this application is already installed. Downgrading is not allowed."
+msgstr ""
+
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "A name conflict occurred."
@@ -2836,6 +2841,7 @@ msgstr "Cal el component frontal per als elements del renderitzador del componen
 
 #. js-lingui-id: 0aXgXb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Front component must not be set for this item type"
 msgstr "El component frontal no s'ha d'establir per a aquest tipus d'element"
 
@@ -2870,6 +2876,7 @@ msgid "frontComponentId is required when engineComponentKey is FRONT_COMPONENT_R
 msgstr "frontComponentId és obligatori quan engineComponentKey és FRONT_COMPONENT_RENDERER"
 
 #. js-lingui-id: N6YN7J
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "frontComponentId must not be set for engine component key {engineComponentKey}"
 msgstr "frontComponentId no s'ha d'establir per a la clau del component del motor {engineComponentKey}"
@@ -5497,6 +5504,26 @@ msgstr "El testimoni de restabliment de la contrasenya ja s'ha generat. Espereu 
 msgid "Password too weak"
 msgstr "La contrasenya és massa dèbil"
 
+#. js-lingui-id: DpnDl6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Payload is required for navigation items"
+msgstr ""
+
+#. js-lingui-id: Enmszs
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "payload is required when engineComponentKey is NAVIGATION"
+msgstr ""
+
+#. js-lingui-id: QXVtcO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "payload must contain either a \"path\" or \"objectMetadataItemId\" property"
+msgstr ""
+
+#. js-lingui-id: Z+s6mX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Payload must contain either a path or an object metadata item identifier"
+msgstr ""
+
 #. js-lingui-id: l6qKfi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
 msgid "Pending action for folder sync"
@@ -7213,6 +7240,16 @@ msgstr "Aquest usuari ja forma part de l'espai de treball."
 msgid "This variable can only be set via environment."
 msgstr "Aquesta variable només es pot establir mitjançant l'entorn."
 
+#. js-lingui-id: Y5Fzhi
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "This version is not higher than the currently deployed version. Please bump the version in package.json before deploying again."
+msgstr ""
+
+#. js-lingui-id: ZXnasf
+#: src/engine/core-modules/application/application.exception.ts
+msgid "This version of the application is already installed in this workspace."
+msgstr ""
+
 #. js-lingui-id: Zl0BJl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgid "Thread External Id"
@@ -8279,6 +8316,7 @@ msgstr "La versió del flux de treball no s'ha d'establir per als elements del r
 
 #. js-lingui-id: f9Rp2t
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Workflow version must not be set for this item type"
 msgstr "La versió del flux de treball no s'ha d'establir per a aquest tipus d'element"
 
@@ -8323,6 +8361,7 @@ msgid "workflowVersionId is required when engineComponentKey is TRIGGER_WORKFLOW
 msgstr "workflowVersionId és obligatori quan engineComponentKey és TRIGGER_WORKFLOW_VERSION"
 
 #. js-lingui-id: +67q2u
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "workflowVersionId must not be set for engine component key {engineComponentKey}"
 msgstr "workflowVersionId no s'ha d'establir per a la clau del component del motor {engineComponentKey}"

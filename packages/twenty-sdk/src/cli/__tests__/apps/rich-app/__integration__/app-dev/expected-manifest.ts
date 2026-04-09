@@ -251,24 +251,31 @@ export const EXPECTED_MANIFEST: Manifest = {
       options: [
         {
           color: 'blue',
-          id: 'c1d2e3f4-0001-4000-8000-000000000001',
+          id: 'cd751c81-787d-4581-bc51-efe43f0050a7',
           label: 'Personal',
           position: 0,
           value: 'PERSONAL',
         },
         {
           color: 'green',
-          id: 'c1d2e3f4-0002-4000-8000-000000000002',
+          id: 'eec437ca-5beb-41a9-a826-c9a5eca2eef4',
           label: 'Business',
           position: 1,
           value: 'BUSINESS',
         },
         {
           color: 'orange',
-          id: 'c1d2e3f4-0003-4000-8000-000000000003',
+          id: 'a5baa37d-1047-4972-b6b8-7faae0e3eac1',
           label: 'Promotional',
           position: 2,
           value: 'PROMOTIONAL',
+        },
+        {
+          color: 'gray',
+          id: '877336e4-6591-599f-8cd1-4c7dfae623d7',
+          label: 'Other',
+          position: 3,
+          value: 'OTHER',
         },
       ],
       type: FieldType.SELECT,
@@ -1043,31 +1050,38 @@ export const EXPECTED_MANIFEST: Manifest = {
           options: [
             {
               color: 'gray',
-              id: 'a1b2c3d4-0001-4000-8000-000000000001',
+              id: '1b008e19-1e59-4a07-b187-65a20e547c4e',
               label: 'Draft',
               position: 0,
               value: 'DRAFT',
             },
             {
               color: 'orange',
-              id: 'a1b2c3d4-0002-4000-8000-000000000002',
+              id: '452b9d40-889c-4342-9697-98319394db04',
               label: 'Sent',
               position: 1,
               value: 'SENT',
             },
             {
               color: 'green',
-              id: 'a1b2c3d4-0003-4000-8000-000000000003',
+              id: 'c2ed0b8c-a3ed-4383-aef9-e0441267bcfe',
               label: 'Delivered',
               position: 2,
               value: 'DELIVERED',
             },
             {
               color: 'orange',
-              id: 'a1b2c3d4-0004-4000-8000-000000000004',
+              id: 'c57a5e08-7ef7-49b8-87e6-32d720d22802',
               label: 'Returned',
               position: 3,
               value: 'RETURNED',
+            },
+            {
+              color: 'red',
+              id: '5248e3c4-23f8-512d-9bea-5c2df85bf83c',
+              label: 'Lost',
+              position: 4,
+              value: 'LOST',
             },
           ],
           type: FieldType.SELECT,
@@ -1485,6 +1499,9 @@ export const EXPECTED_MANIFEST: Manifest = {
       description: 'A simple root-level role',
       label: 'Root role',
       universalIdentifier: 'c0c1c2c3-c4c5-4000-8000-000000000001',
+      fieldPermissions: [],
+      objectPermissions: [],
+      permissionFlags: [],
     },
     {
       canBeAssignedToAgents: false,
@@ -1498,6 +1515,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       description: 'Default role for function Twenty client',
       fieldPermissions: [
         {
+          universalIdentifier: 'dbc86ced-bd2c-5874-93f1-1f72c5111991',
           canReadFieldValue: false,
           canUpdateFieldValue: false,
           fieldUniversalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
@@ -1507,6 +1525,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       label: 'Default function role',
       objectPermissions: [
         {
+          universalIdentifier: '99c7c326-04ca-5c8b-ad11-da6c5b819813',
           canDestroyObjectRecords: false,
           canReadObjectRecords: true,
           canSoftDeleteObjectRecords: false,
@@ -1514,7 +1533,12 @@ export const EXPECTED_MANIFEST: Manifest = {
           objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
         },
       ],
-      permissionFlags: [PermissionFlagType.APPLICATIONS],
+      permissionFlags: [
+        {
+          universalIdentifier: '01d7865a-7700-5d49-b2aa-62623c2cbac7',
+          flag: PermissionFlagType.APPLICATIONS,
+        },
+      ],
       universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
     },
   ],

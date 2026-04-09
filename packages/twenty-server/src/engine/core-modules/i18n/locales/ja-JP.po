@@ -104,6 +104,11 @@ msgstr "この名前のフロントコンポーネントはすでに存在しま
 msgid "A function with this name already exists."
 msgstr "この名前の関数はすでに存在します。"
 
+#. js-lingui-id: 6yZjO1
+#: src/engine/core-modules/application/application.exception.ts
+msgid "A higher version of this application is already installed. Downgrading is not allowed."
+msgstr ""
+
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "A name conflict occurred."
@@ -2836,6 +2841,7 @@ msgstr "フロントコンポーネントレンダラーのアイテムにはフ
 
 #. js-lingui-id: 0aXgXb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Front component must not be set for this item type"
 msgstr "このアイテムタイプではフロントコンポーネントを設定しないでください"
 
@@ -2870,6 +2876,7 @@ msgid "frontComponentId is required when engineComponentKey is FRONT_COMPONENT_R
 msgstr "engineComponentKey が FRONT_COMPONENT_RENDERER の場合は frontComponentId が必須です"
 
 #. js-lingui-id: N6YN7J
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "frontComponentId must not be set for engine component key {engineComponentKey}"
 msgstr "エンジンコンポーネントキー {engineComponentKey} の場合は frontComponentId を設定しないでください"
@@ -5497,6 +5504,26 @@ msgstr "パスワードリセットトークンは既に生成されています
 msgid "Password too weak"
 msgstr "パスワードが弱すぎます"
 
+#. js-lingui-id: DpnDl6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Payload is required for navigation items"
+msgstr ""
+
+#. js-lingui-id: Enmszs
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "payload is required when engineComponentKey is NAVIGATION"
+msgstr ""
+
+#. js-lingui-id: QXVtcO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "payload must contain either a \"path\" or \"objectMetadataItemId\" property"
+msgstr ""
+
+#. js-lingui-id: Z+s6mX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Payload must contain either a path or an object metadata item identifier"
+msgstr ""
+
 #. js-lingui-id: l6qKfi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
 msgid "Pending action for folder sync"
@@ -7213,6 +7240,16 @@ msgstr "このユーザーはすでにワークスペースのメンバーです
 msgid "This variable can only be set via environment."
 msgstr "この変数は環境変数でのみ設定できます。"
 
+#. js-lingui-id: Y5Fzhi
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "This version is not higher than the currently deployed version. Please bump the version in package.json before deploying again."
+msgstr ""
+
+#. js-lingui-id: ZXnasf
+#: src/engine/core-modules/application/application.exception.ts
+msgid "This version of the application is already installed in this workspace."
+msgstr ""
+
 #. js-lingui-id: Zl0BJl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgid "Thread External Id"
@@ -8279,6 +8316,7 @@ msgstr "フロントコンポーネントレンダラーのアイテムではワ
 
 #. js-lingui-id: f9Rp2t
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Workflow version must not be set for this item type"
 msgstr "このアイテムタイプではワークフローのバージョンを設定しないでください"
 
@@ -8323,6 +8361,7 @@ msgid "workflowVersionId is required when engineComponentKey is TRIGGER_WORKFLOW
 msgstr "engineComponentKey が TRIGGER_WORKFLOW_VERSION の場合は workflowVersionId が必須です"
 
 #. js-lingui-id: +67q2u
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "workflowVersionId must not be set for engine component key {engineComponentKey}"
 msgstr "エンジンコンポーネントキー {engineComponentKey} の場合は workflowVersionId を設定しないでください"

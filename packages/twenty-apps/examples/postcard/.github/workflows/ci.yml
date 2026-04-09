@@ -6,8 +6,15 @@ on:
       - main
   pull_request: {}
 
+permissions:
+  contents: read
+
 env:
   TWENTY_VERSION: latest
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -16,12 +23,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Spawn Twenty instance
+      - name: Spawn Twenty test instance
         id: twenty
-        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
+        uses: twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main
         with:
           twenty-version: ${{ env.TWENTY_VERSION }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Enable Corepack
         run: corepack enable
@@ -30,7 +36,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
-          cache: 'yarn'
+          cache: yarn
 
       - name: Install dependencies
         run: yarn install --immutable
@@ -39,4 +45,4 @@ jobs:
         run: yarn test
         env:
           TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
-          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
+          TWENTY_API_KEY: ${{ steps.twenty.outputs.api-key }}

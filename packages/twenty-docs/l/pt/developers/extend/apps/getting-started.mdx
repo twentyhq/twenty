@@ -98,6 +98,21 @@ O modo de desenvolvimento só está disponível em instâncias do Twenty em modo
   <img src="/images/docs/developers/extends/apps/dev.jpg" alt="Saída do terminal no modo de desenvolvimento" />
 </div>
 
+#### Sincronização única com `yarn twenty dev --once`
+
+Se você não quiser um monitor em execução em segundo plano (por exemplo, em um pipeline de CI, um hook do git ou um fluxo de trabalho com script), passe a flag `--once`. Ele executa o mesmo pipeline que `yarn twenty dev` — gerar o manifesto, empacotar arquivos, fazer upload, sincronizar, regenerar o cliente de API tipado — mas **encerra assim que a sincronização for concluída**:
+
+```bash filename="Terminal"
+yarn twenty dev --once
+```
+
+| Comando                  | Comportamento                                                                                                                    | Quando usar                                                                                                       |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `yarn twenty dev`        | Monitora seus arquivos-fonte e ressincroniza a cada alteração. Continua em execução até você interrompê-lo.                      | Desenvolvimento local interativo — você quer o painel de status em tempo real e um ciclo de feedback instantâneo. |
+| `yarn twenty dev --once` | Executa uma única compilação + sincronização e, em seguida, encerra com o código `0` em caso de sucesso ou `1` em caso de falha. | Scripts, CI, hooks de pre-commit, agentes de IA e qualquer fluxo de trabalho não interativo.                      |
+
+Ambos os modos exigem um servidor Twenty em execução no modo de desenvolvimento e um remoto autenticado — aplicam-se os mesmos pré-requisitos.
+
 ### Veja seu aplicativo no Twenty
 
 Abra [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer) no seu navegador. Navegue até **Settings > Apps** e selecione a aba **Developer**. Você deverá ver seu aplicativo listado em **Your Apps**:

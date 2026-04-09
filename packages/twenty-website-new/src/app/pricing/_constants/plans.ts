@@ -4,16 +4,6 @@ const ORGANIZATION_HEADING = {
   text: 'Organization',
 };
 
-const PRO_ILLUSTRATION = {
-  src: '/illustrations/pricing/Price/pro.glb',
-  title: 'Pro plan illustration',
-};
-
-const ORGANIZATION_ILLUSTRATION = {
-  src: '/illustrations/pricing/Price/organization.glb',
-  title: 'Organization plan illustration',
-};
-
 const PRO_FEATURES_TITLE = { text: 'Key Features' };
 const ORGANIZATION_FEATURES_TITLE = { text: 'everything in pro +' };
 
@@ -87,7 +77,7 @@ export const PLANS_DATA = {
     },
     featuresTitle: ORGANIZATION_FEATURES_TITLE,
     heading: ORGANIZATION_HEADING,
-    illustration: ORGANIZATION_ILLUSTRATION,
+    illustration: 'planOrganization',
   },
   pro: {
     cells: {
@@ -126,6 +116,6 @@ export const PLANS_DATA = {
     },
     featuresTitle: PRO_FEATURES_TITLE,
     heading: PRO_HEADING,
-    illustration: PRO_ILLUSTRATION,
+    illustration: 'planPro',
   },
 } satisfies PlansDataType;

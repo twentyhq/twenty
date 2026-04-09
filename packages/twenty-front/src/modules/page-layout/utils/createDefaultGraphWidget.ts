@@ -84,7 +84,6 @@ export const createDefaultGraphWidget = ({
       columnSpan: gridPosition.columnSpan,
     },
     objectMetadataId: resolvedObjectMetadataId,
-    isOverridden: false,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     deletedAt: null,
