@@ -251,6 +251,14 @@ jobs:
             rm -f /tmp/current-server.pid
           fi
 
+      - name: Flush Redis between server runs
+        run: |
+          # Clear all Redis caches to prevent stale data from the current branch
+          # server contaminating the main branch server. Both servers share the
+          # same Redis instance, and CoreEntityCacheService/WorkspaceCacheService
+          # persist cached entities across process restarts.
+          redis-cli -h localhost -p 6379 FLUSHALL || echo "::warning::Failed to flush Redis"
+
       - name: Checkout main branch
         run: |
           git stash

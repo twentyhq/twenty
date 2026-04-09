@@ -3,60 +3,36 @@ import type { RefObject } from 'react';
 import type { HeadingCardType } from '@/sections/Helped/types/HeadingCard';
 import { theme } from '@/theme';
 
-export const CARD_WIDTH_DESKTOP = 443;
-const CARD_WIDTH_MOBILE_MAX = 360;
-const HORIZONTAL_PAD = 32;
-
-// Scroll progress 0..1 through the tall section
-const HEADLINE_FADE_START = 0.76;
-const HEADLINE_FADE_END = 0.92;
-const HEADLINE_LIFT_PX = 48;
-
-// Each card fades/slides in over the same window, shifted along the scroll
-const CARD_WINDOW = 0.2;
-const CARD_STAGGER = 0.12;
-const CARD_FIRST_START = 0.06;
-const ENTER_OFFSET_Y_RATIO = 0.34;
+const CARD_WIDTH_DESKTOP = 443;
+const CARD_WIDTH_MOBILE = 360;
+const PROGRESS_SCALE = 1.25;
+const FADE_FRACTION = 0.15;
 
 function clamp01(value: number) {
   return Math.min(1, Math.max(0, value));
 }
 
-function cardRestPosition(
+// Right, left, center for cards 0, 1, 2+
+function cardLeft(
   index: number,
   innerWidth: number,
-  innerHeight: number,
   cardWidth: number,
   isDesktop: boolean,
-): { left: number; top: number } {
-  if (isDesktop) {
-    if (index === 0) {
-      return {
-        left: innerWidth - cardWidth - innerWidth * 0.035,
-        top: innerHeight * 0.08,
-      };
-    }
-    if (index === 1) {
-      return {
-        left: innerWidth * 0.03,
-        top: innerHeight * 0.3,
-      };
-    }
-    return {
-      left: (innerWidth - cardWidth) / 2,
-      top: innerHeight * 0.52,
-    };
+): number {
+  if (!isDesktop) {
+    return (innerWidth - cardWidth) / 2;
   }
-
-  return {
-    left: (innerWidth - cardWidth) / 2,
-    top: innerHeight * 0.36 + index * 0.06 * innerHeight,
-  };
+  if (index === 0) {
+    return innerWidth - cardWidth - innerWidth * 0.035;
+  }
+  if (index === 1) {
+    return innerWidth * 0.03;
+  }
+  return (innerWidth - cardWidth) / 2;
 }
 
 export type HelpedSceneLayoutRefs = {
   cardRefs: RefObject<(HTMLDivElement | null)[]>;
-  headlineRef: RefObject<HTMLDivElement | null>;
   innerRef: RefObject<HTMLDivElement | null>;
   sectionRef: RefObject<HTMLElement | null>;
 };
@@ -65,9 +41,8 @@ export function applyHelpedSceneLayout(
   refs: HelpedSceneLayoutRefs,
   cards: readonly HeadingCardType[],
 ): void {
-  const { sectionRef, innerRef, headlineRef, cardRefs } = refs;
-  const section = sectionRef.current;
-  const inner = innerRef.current;
+  const section = refs.sectionRef.current;
+  const inner = refs.innerRef.current;
   if (!section || !inner) {
     return;
   }
@@ -79,61 +54,43 @@ export function applyHelpedSceneLayout(
     `(min-width: ${theme.breakpoints.md}px)`,
   ).matches;
 
-  const rect = section.getBoundingClientRect();
   const scrollRange = Math.max(1, section.offsetHeight - window.innerHeight);
-  const progress = clamp01(-rect.top / scrollRange);
+  const progress =
+    clamp01(-section.getBoundingClientRect().top / scrollRange) * PROGRESS_SCALE;
 
   const innerWidth = inner.offsetWidth;
   const innerHeight = inner.offsetHeight;
   const cardWidth = Math.min(
-    isDesktop ? CARD_WIDTH_DESKTOP : CARD_WIDTH_MOBILE_MAX,
-    innerWidth - HORIZONTAL_PAD * 2,
+    isDesktop ? CARD_WIDTH_DESKTOP : CARD_WIDTH_MOBILE,
+    innerWidth - 64,
   );
 
-  if (headlineRef.current) {
-    const headlineT = clamp01(
-      (progress - HEADLINE_FADE_START) /
-        (HEADLINE_FADE_END - HEADLINE_FADE_START),
-    );
-    headlineRef.current.style.opacity = String(1 - headlineT);
-    headlineRef.current.style.transform = `translate3d(0, ${-headlineT * HEADLINE_LIFT_PX}px, 0)`;
-  }
-
-  const enterOffsetY = innerHeight * ENTER_OFFSET_Y_RATIO;
-
   cards.forEach((_, index) => {
-    const node = cardRefs.current[index];
+    const node = refs.cardRefs.current[index];
     if (!node) {
       return;
     }
 
-    const { left: restLeft, top: restTop } = cardRestPosition(
-      index,
-      innerWidth,
-      innerHeight,
-      cardWidth,
-      isDesktop,
-    );
-
     node.style.width = `${cardWidth}px`;
     node.style.zIndex = String(10 + index);
+    node.style.left = `${cardLeft(index, innerWidth, cardWidth, isDesktop)}px`;
 
     if (reducedMotion) {
       node.style.opacity = '1';
-      node.style.transform = 'none';
-      node.style.left = `${restLeft}px`;
-      node.style.top = `${restTop}px`;
+      node.style.top = `${innerHeight * (0.15 + index * 0.25)}px`;
       return;
     }
 
-    const windowStart = CARD_FIRST_START + index * CARD_STAGGER;
-    const windowEnd = windowStart + CARD_WINDOW;
-    const cardT = clamp01(
-      (progress - windowStart) / (windowEnd - windowStart),
-    );
+    // Card 1: 0.05–0.55, Card 2: 0.35–0.85, Card 3: 0.65–1.15
+    const cardStart = 0.05 + index * 0.3;
+    const travel = clamp01((progress - cardStart) / 0.5);
 
-    node.style.left = `${restLeft}px`;
-    node.style.top = `${restTop + enterOffsetY * (1 - cardT)}px`;
-    node.style.opacity = String(cardT);
+    node.style.top = `${innerHeight * (1.1 - travel * 1.4)}px`;
+    node.style.opacity = String(
+      Math.min(
+        clamp01(travel / FADE_FRACTION),
+        clamp01((1 - travel) / FADE_FRACTION),
+      ),
+    );
   });
 }
