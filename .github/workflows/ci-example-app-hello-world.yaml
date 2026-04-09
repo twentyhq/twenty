@@ -62,11 +62,19 @@ jobs:
       - name: Build SDK packages
         run: npx nx build twenty-sdk
 
-      - name: Create test database
-        run: PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+      - name: Setup server environment
+        run: npx nx reset:env:e2e-testing-server twenty-server
 
-      - name: Setup database and start server
-        run: npx nx run twenty-server:database:reset && nohup npx nx start:ci twenty-server &
+      - name: Create databases
+        run: |
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+
+      - name: Setup database
+        run: npx nx run twenty-server:database:reset
+
+      - name: Start server
+        run: nohup npx nx start:ci twenty-server &
 
       - name: Wait for server to be ready
         run: npx wait-on http://localhost:3000/healthz --timeout 120000 --interval 1000

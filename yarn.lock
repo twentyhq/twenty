@@ -11200,6 +11200,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lottiefiles/dotlottie-react@npm:^0.18.10":
+  version: 0.18.10
+  resolution: "@lottiefiles/dotlottie-react@npm:0.18.10"
+  dependencies:
+    "@lottiefiles/dotlottie-web": "npm:0.70.0"
+  peerDependencies:
+    react: ^17 || ^18 || ^19
+  checksum: 10c0/5cd7350dbe44717bb920dd6534a9826a801128f396853c04371b05b0adb34a2a8b62b33f5c44f50597f5f32919f47ba22c24f9ee0276cc67b9feb7d6db7a15c9
+  languageName: node
+  linkType: hard
+
+"@lottiefiles/dotlottie-web@npm:0.70.0":
+  version: 0.70.0
+  resolution: "@lottiefiles/dotlottie-web@npm:0.70.0"
+  checksum: 10c0/814df634325393c376d05541f4c3e1e92b383c16f9673e443c671fbaef5414fa9da0d4bcfc1453d6ffe2390c82f79cf68e04785a66ba75a030d3d9d3cd799aa2
+  languageName: node
+  linkType: hard
+
 "@lukeed/csprng@npm:^1.0.0":
   version: 1.1.0
   resolution: "@lukeed/csprng@npm:1.1.0"
@@ -46887,25 +46905,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lottie-react@npm:^2.4.1":
-  version: 2.4.1
-  resolution: "lottie-react@npm:2.4.1"
-  dependencies:
-    lottie-web: "npm:^5.10.2"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/7f6a0a2cf2af25deabe7b4d4c9917e47d12016673613c59dcdd8ef52e10e914dd0c1f71d4a275d56aaba03fe9d85b333087f7c8d40a8f967ece4a0444c7a3cdf
-  languageName: node
-  linkType: hard
-
-"lottie-web@npm:^5.10.2":
-  version: 5.13.0
-  resolution: "lottie-web@npm:5.13.0"
-  checksum: 10c0/b463ad462169df3f7e04b7f3716274e269842554f1d72b8303ca7245628f2512982a59ae31698b3d57fbcda886228ae160fcb2aa518c6cecd8a95974db2458ee
-  languageName: node
-  linkType: hard
-
 "loupe@npm:^3.1.0":
   version: 3.2.0
   resolution: "loupe@npm:3.2.0"
@@ -60905,6 +60904,7 @@ __metadata:
     "@gsap/react": "npm:2.1.2"
     "@linaria/core": "npm:^7.0.0"
     "@linaria/react": "npm:^7.0.1"
+    "@lottiefiles/dotlottie-react": "npm:^0.18.10"
     "@react-three/drei": "npm:^10.7.7"
     "@react-three/fiber": "npm:^9.5.0"
     "@tabler/icons-react": "npm:^3.41.1"
@@ -60917,7 +60917,6 @@ __metadata:
     babel-plugin-react-compiler: "npm:1.0.0"
     gray-matter: "npm:^4.0.3"
     gsap: "npm:^3.14.2"
-    lottie-react: "npm:^2.4.1"
     next: "npm:16.1.7"
     next-with-linaria: "npm:^1.3.0"
     react: "npm:19.2.3"
