@@ -44,14 +44,11 @@ export class GroupByRecordsService {
     } = params;
 
     try {
-      const {
-        queryRunnerContext,
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      } = await this.commonApiContextBuilder.build({
-        authContext,
-        objectName,
-      });
+      const { queryRunnerContext, flatObjectMetadata, flatFieldMetadataMaps } =
+        await this.commonApiContextBuilder.build({
+          authContext,
+          objectName,
+        });
 
       const fields = getFlatFieldsFromFlatObjectMetadata(
         flatObjectMetadata,
