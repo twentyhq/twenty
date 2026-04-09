@@ -66,16 +66,16 @@ Der Freigabelink verwendet die Basis-URL des Servers (ohne Workspace-Subdomain),
 
 ### Versionsverwaltung
 
-Beim Aktualisieren einer bereits bereitgestellten Tarball-App verlangt der Server, dass die `version` in `package.json` **strikt höher** (gemäß der [semver](https://semver.org)-Reihenfolge) ist als die derzeit bereitgestellte Version. Re-deploying the same version, or pushing a lower one, is rejected before the tarball is stored — you'll see a `VERSION_ALREADY_EXISTS` error from the CLI.
+Beim Aktualisieren einer bereits bereitgestellten Tarball-App verlangt der Server, dass die `version` in `package.json` **strikt höher** (gemäß der [semver](https://semver.org)-Reihenfolge) ist als die derzeit bereitgestellte Version. Das erneute Bereitstellen derselben Version oder das Pushen einer niedrigeren Version wird abgelehnt, bevor das Tarball gespeichert wird — in der CLI wird ein `VERSION_ALREADY_EXISTS`-Fehler angezeigt.
 
 So veröffentlichen Sie ein Update:
 
-1. Bump the `version` field in your `package.json` (e.g. `1.2.3` → `1.2.4`, `1.3.0`, or `2.0.0`)
+1. Erhöhen Sie das Feld `version` in Ihrer `package.json` (z. B. `1.2.3` → `1.2.4`, `1.3.0` oder `2.0.0`).
 2. Führen Sie `yarn twenty deploy` aus (oder `yarn twenty deploy --remote production`)
 3. Arbeitsbereiche, die die App installiert haben, sehen in ihren Einstellungen, dass ein Upgrade verfügbar ist.
 
 <Note>
-Pre-release tags work as expected: bumping `1.0.0-rc.1` → `1.0.0-rc.2` is allowed, and a final release like `1.0.0` is correctly recognized as higher than `1.0.0-rc.5`. The version in `package.json` must itself be a valid semver string.
+Pre-Release-Tags funktionieren wie erwartet: Das Erhöhen von `1.0.0-rc.1` → `1.0.0-rc.2` ist zulässig, und eine finale Version wie `1.0.0` wird korrekt als höher als `1.0.0-rc.5` erkannt. Die Version in `package.json` muss selbst eine gültige semver-Zeichenfolge sein.
 </Note>
 
 {/* TODO: add screenshot of the Upgrade button */}
@@ -197,10 +197,10 @@ yarn twenty install
 ```
 
 <Note>
-The server enforces semver versioning on install, mirroring the rules on deploy:
+Der Server erzwingt bei der Installation semver-Versionierung und spiegelt damit die Regeln beim Bereitstellen wider:
 
-* Installing the same version that is already installed in your workspace is rejected with an `APP_ALREADY_INSTALLED` error.
-* Installing a lower version than the one currently installed is rejected with a `CANNOT_DOWNGRADE_APPLICATION` error.
+* Die Installation derselben Version, die in Ihrem Arbeitsbereich bereits installiert ist, wird mit einem `APP_ALREADY_INSTALLED`-Fehler abgelehnt.
+* Die Installation einer niedrigeren Version als die aktuell installierte wird mit einem `CANNOT_DOWNGRADE_APPLICATION`-Fehler abgelehnt.
 
-To install a newer version, deploy or publish it first, then re-run `yarn twenty install`.
+Um eine neuere Version zu installieren, stellen Sie sie zuerst bereit oder veröffentlichen Sie sie und führen Sie dann `yarn twenty install` erneut aus.
 </Note>

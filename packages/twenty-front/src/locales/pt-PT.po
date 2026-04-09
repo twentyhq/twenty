@@ -1958,6 +1958,11 @@ msgstr "Detalhes da aplicação"
 msgid "Application installed successfully."
 msgstr "Aplicação instalada com sucesso."
 
+#. js-lingui-id: LllWIc
+#: src/pages/settings/security/event-logs/components/EventLogTableSelector.tsx
+msgid "Application Logs"
+msgstr ""
+
 #. js-lingui-id: +tE2x9
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Application successfully uninstalled."
@@ -4884,7 +4889,7 @@ msgid "Detach"
 msgstr "Desassociar"
 
 #. js-lingui-id: URmyfc
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Details"
 msgstr "Detalhes"
@@ -6074,8 +6079,8 @@ msgid "Evaluations"
 msgstr ""
 
 #. js-lingui-id: 0pC/y6
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 #: src/modules/activities/calendar/components/CalendarEventDetails.tsx
 msgid "Event"
 msgstr "Evento"
@@ -6193,6 +6198,11 @@ msgstr "Excluir emails não profissionais"
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 msgstr "Excluir as seguintes pessoas e domínios da minha sincronização de e-mail. Conversas internas não serão importadas"
+
+#. js-lingui-id: B0clc7
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+msgid "Execution ID"
+msgstr ""
 
 #. js-lingui-id: YzI8cc
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
@@ -7028,6 +7038,11 @@ msgstr "Componentes de front-end"
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Full access"
 msgstr "Acesso total"
+
+#. js-lingui-id: YMZBxa
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+msgid "Function"
+msgstr ""
 
 #. js-lingui-id: AHOl4W
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionLabelContainer.tsx
@@ -8453,6 +8468,11 @@ msgstr ""
 msgid "Less than or equal"
 msgstr "Menor que ou igual"
 
+#. js-lingui-id: oCHfGC
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+msgid "Level"
+msgstr ""
+
 #. js-lingui-id: 3qg5Ro
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -8996,6 +9016,11 @@ msgstr "Mesclar registros"
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 msgid "Merging..."
 msgstr "A fundir..."
+
+#. js-lingui-id: xDAtGP
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+msgid "Message"
+msgstr ""
 
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -10347,7 +10372,7 @@ msgid "Object Events"
 msgstr "Eventos de objeto"
 
 #. js-lingui-id: 79D4Az
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 msgid "Object ID"
 msgstr "ID do objeto"
 
@@ -11301,8 +11326,8 @@ msgid "Prompt"
 msgstr ""
 
 #. js-lingui-id: l/UFPv
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 msgid "Properties"
 msgstr "Propriedades"
 
@@ -11552,7 +11577,7 @@ msgid "Record filter rule options"
 msgstr "Opções de regra de filtro de registo"
 
 #. js-lingui-id: xSAYIn
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 #: src/pages/settings/security/event-logs/components/EventLogFilters.tsx
 msgid "Record ID"
 msgstr "ID do registo"
@@ -11948,7 +11973,7 @@ msgid "Reset variable"
 msgstr "Redefinir variável"
 
 #. js-lingui-id: esl+Tv
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 msgid "Resource Type"
 msgstr "Tipo de Recurso"
 
@@ -14364,9 +14389,10 @@ msgid "Timeout"
 msgstr "Tempo limite"
 
 #. js-lingui-id: 8TMaZI
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Timestamp"
 msgstr "Registro de Tempo"
@@ -15210,9 +15236,9 @@ msgstr "Útil para tabelas de pivô/junção"
 #. js-lingui-id: 7PzzBU
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAIPrompts.tsx

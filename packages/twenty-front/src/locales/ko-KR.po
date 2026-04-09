@@ -1958,6 +1958,11 @@ msgstr "응용 프로그램 세부정보"
 msgid "Application installed successfully."
 msgstr "응용 프로그램이 성공적으로 설치되었습니다."
 
+#. js-lingui-id: LllWIc
+#: src/pages/settings/security/event-logs/components/EventLogTableSelector.tsx
+msgid "Application Logs"
+msgstr ""
+
 #. js-lingui-id: +tE2x9
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Application successfully uninstalled."
@@ -4884,7 +4889,7 @@ msgid "Detach"
 msgstr "연결 해제"
 
 #. js-lingui-id: URmyfc
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Details"
 msgstr "세부정보"
@@ -6074,8 +6079,8 @@ msgid "Evaluations"
 msgstr ""
 
 #. js-lingui-id: 0pC/y6
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 #: src/modules/activities/calendar/components/CalendarEventDetails.tsx
 msgid "Event"
 msgstr "이벤트"
@@ -6193,6 +6198,11 @@ msgstr "비업무용 이메일 제외"
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 msgstr "다음 사람들과 도메인을 이메일 동기화에서 제외합니다. 내부 대화는 가져오지 않습니다"
+
+#. js-lingui-id: B0clc7
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+msgid "Execution ID"
+msgstr ""
 
 #. js-lingui-id: YzI8cc
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
@@ -7028,6 +7038,11 @@ msgstr "프런트 컴포넌트"
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Full access"
 msgstr "전체 접근"
+
+#. js-lingui-id: YMZBxa
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+msgid "Function"
+msgstr ""
 
 #. js-lingui-id: AHOl4W
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionLabelContainer.tsx
@@ -8453,6 +8468,11 @@ msgstr ""
 msgid "Less than or equal"
 msgstr "이하"
 
+#. js-lingui-id: oCHfGC
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+msgid "Level"
+msgstr ""
+
 #. js-lingui-id: 3qg5Ro
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -8996,6 +9016,11 @@ msgstr "레코드 병합"
 #: src/modules/object-record/record-merge/components/MergeRecordsFooter.tsx
 msgid "Merging..."
 msgstr "병합 중..."
+
+#. js-lingui-id: xDAtGP
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+msgid "Message"
+msgstr ""
 
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -10347,7 +10372,7 @@ msgid "Object Events"
 msgstr "객체 이벤트"
 
 #. js-lingui-id: 79D4Az
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 msgid "Object ID"
 msgstr "객체 ID"
 
@@ -11301,8 +11326,8 @@ msgid "Prompt"
 msgstr ""
 
 #. js-lingui-id: l/UFPv
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 msgid "Properties"
 msgstr "속성"
 
@@ -11552,7 +11577,7 @@ msgid "Record filter rule options"
 msgstr "레코드 필터 규칙 옵션"
 
 #. js-lingui-id: xSAYIn
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 #: src/pages/settings/security/event-logs/components/EventLogFilters.tsx
 msgid "Record ID"
 msgstr "레코드 ID"
@@ -11948,7 +11973,7 @@ msgid "Reset variable"
 msgstr "변수 재설정"
 
 #. js-lingui-id: esl+Tv
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 msgid "Resource Type"
 msgstr "리소스 유형"
 
@@ -14364,9 +14389,10 @@ msgid "Timeout"
 msgstr "시간 제한"
 
 #. js-lingui-id: 8TMaZI
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Timestamp"
 msgstr "타임스탬프"
@@ -15210,9 +15236,9 @@ msgstr "피벗/정션 테이블에 유용합니다"
 #. js-lingui-id: 7PzzBU
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
-#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+#: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
