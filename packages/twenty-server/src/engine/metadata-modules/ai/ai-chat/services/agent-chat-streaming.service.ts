@@ -83,10 +83,7 @@ export class AgentChatStreamingService {
       );
     }
 
-    const fileParts = await this.buildFilePartsFromIds(
-      fileIds,
-      workspace.id,
-    );
+    const fileParts = await this.buildFilePartsFromIds(fileIds, workspace.id);
 
     const userMessageParts: ExtendedUIMessagePart[] = [
       { type: 'text' as const, text },
@@ -225,9 +222,7 @@ export class AgentChatStreamingService {
         id: message.id,
         role: message.role as 'user' | 'assistant' | 'system',
         parts: mapDBPartsToUIMessageParts(message.parts ?? []).map((part) => {
-          if (
-            isExtendedFileUIPart(part as Record<string, unknown>)
-          ) {
+          if (isExtendedFileUIPart(part as Record<string, unknown>)) {
             const filePart = part as ExtendedFileUIPart;
 
             return {
@@ -258,16 +253,14 @@ export class AgentChatStreamingService {
       where: { id: In(fileIds), workspaceId },
     });
 
-    return files.map((file): ExtendedFileUIPart => ({
-      type: 'file' as const,
-      mediaType: file.mimeType,
-      filename: file.path.split('/').pop() ?? file.path,
-      url: this.fileUrlService.signFileByIdUrl({
+    return files.map(
+      (file): ExtendedFileUIPart => ({
+        type: 'file' as const,
+        mediaType: file.mimeType,
+        filename: file.path.split('/').pop() ?? file.path,
+        url: '',
         fileId: file.id,
-        workspaceId,
-        fileFolder: FileFolder.AgentChat,
       }),
-      fileId: file.id,
-    }));
+    );
   }
 }

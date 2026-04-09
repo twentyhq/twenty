@@ -27,8 +27,7 @@ export const mapDBPartToUIMessagePart = (
     case 'file':
       return {
         type: 'file',
-        mediaType:
-          part.file?.mimeType ?? 'application/octet-stream',
+        mediaType: part.file?.mimeType ?? 'application/octet-stream',
         filename: part.fileFilename ?? '',
         url: '',
         fileId: part.fileId ?? '',

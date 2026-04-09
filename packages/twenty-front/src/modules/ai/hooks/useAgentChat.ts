@@ -114,13 +114,11 @@ export const useAgentChat = (
 
     store.set(messagesAtom, [...currentMessages, optimisticUserMessage]);
 
+    const fileIds = agentChatUploadedFiles.map((file) => file.fileId);
+
     setAgentChatUploadedFiles([]);
 
     try {
-      const fileIds = agentChatUploadedFiles
-        .map((file) => file.fileId)
-        .filter(Boolean);
-
       const { data } = await apolloClient.mutate<{
         sendChatMessage: {
           messageId: string;
