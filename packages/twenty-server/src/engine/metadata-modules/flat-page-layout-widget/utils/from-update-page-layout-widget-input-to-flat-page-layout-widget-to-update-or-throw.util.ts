@@ -108,6 +108,20 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
       overrides,
     } as FlatPageLayoutWidget;
 
+    if (updatedEditableProperties.pageLayoutTabId !== undefined) {
+      const { pageLayoutTabUniversalIdentifier } =
+        resolveEntityRelationUniversalIdentifiers({
+          metadataName: 'pageLayoutWidget',
+          foreignKeyValues: {
+            pageLayoutTabId: flatPageLayoutWidgetToUpdate.pageLayoutTabId,
+          },
+          flatEntityMaps: { flatPageLayoutTabMaps },
+        });
+
+      flatPageLayoutWidgetToUpdate.pageLayoutTabUniversalIdentifier =
+        pageLayoutTabUniversalIdentifier;
+    }
+
     if (updatedEditableProperties.objectMetadataId !== undefined) {
       const { objectMetadataUniversalIdentifier } =
         resolveEntityRelationUniversalIdentifiers({

@@ -15,6 +15,9 @@ export type FlatPageLayoutWithTabsAndWidgets = FlatPageLayout & {
   tabs: FlatPageLayoutTabWithWidgets[];
 };
 
+const getResolvedPageLayoutTabId = (widget: FlatPageLayoutWidget): string =>
+  resolveOverridableEntityProperty(widget, 'pageLayoutTabId');
+
 export const reconstructFlatPageLayoutWithTabsAndWidgets = ({
   layout,
   flatPageLayoutTabMaps,
@@ -36,8 +39,7 @@ export const reconstructFlatPageLayoutWithTabsAndWidgets = ({
       .filter(isDefined)
       .filter(
         (widget) =>
-          resolveOverridableEntityProperty(widget, 'pageLayoutTabId') ===
-            tab.id && widget.isActive,
+          getResolvedPageLayoutTabId(widget) === tab.id && widget.isActive,
       );
 
     return {

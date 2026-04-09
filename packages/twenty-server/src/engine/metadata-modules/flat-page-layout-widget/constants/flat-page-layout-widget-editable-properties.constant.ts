@@ -8,4 +8,5 @@ export const FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES = [
   'position',
   'configuration',
   'conditionalDisplay',
+  'pageLayoutTabId',
 ] as const satisfies MetadataEntityPropertyName<'pageLayoutWidget'>[];
