@@ -4,11 +4,8 @@ import { useState } from 'react';
 
 import { EventCard } from '@/activities/timeline-activities/rows/components/EventCard';
 import { EventCardToggleButton } from '@/activities/timeline-activities/rows/components/EventCardToggleButton';
-import {
-  type EventRowDynamicComponentProps,
-  StyledEventRowItemAction,
-  StyledEventRowItemColumn,
-} from '@/activities/timeline-activities/rows/components/EventRowBase';
+import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
+import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
 import { EventCardMessage } from '@/activities/timeline-activities/rows/message/components/EventCardMessage';
 import { isTimelineActivityWithLinkedRecord } from '@/activities/timeline-activities/types/TimelineActivity';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -42,13 +39,13 @@ export const EventRowMessage = ({
   return (
     <StyledEventRowMessageContainer>
       <StyledRowContainer>
-        <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
-        <StyledEventRowItemAction>
+        <EventRowItem>{authorFullName}</EventRowItem>
+        <EventRowItem variant="action">
           {t`linked an email with`}
-        </StyledEventRowItemAction>
-        <StyledEventRowItemColumn>
+        </EventRowItem>
+        <EventRowItem>
           {labelIdentifierValue}
-        </StyledEventRowItemColumn>
+        </EventRowItem>
         <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
       </StyledRowContainer>
       <EventCard isOpen={isOpen}>

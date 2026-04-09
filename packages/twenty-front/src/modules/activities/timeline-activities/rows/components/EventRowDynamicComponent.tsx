@@ -1,16 +1,9 @@
 import { EventRowActivity } from '@/activities/timeline-activities/rows/activity/components/EventRowActivity';
 import { EventRowCalendarEvent } from '@/activities/timeline-activities/rows/calendar/components/EventRowCalendarEvent';
-import {
-  type EventRowDynamicComponentProps,
-  StyledEventRowItemAction,
-  StyledEventRowItemColumn,
-} from '@/activities/timeline-activities/rows/components/EventRowBase';
+import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
 import { EventRowMainObject } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObject';
 import { EventRowMessage } from '@/activities/timeline-activities/rows/message/components/EventRowMessage';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-
-export type { EventRowDynamicComponentProps };
-export { StyledEventRowItemAction, StyledEventRowItemColumn };
 
 export const EventRowDynamicComponent = ({
   labelIdentifierValue,
