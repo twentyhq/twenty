@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import {
   CalendarChannelSyncStage,
@@ -52,18 +52,25 @@ export class CalendarRelaunchFailedCalendarChannelsCronJob {
       (workspace) => workspace.id,
     );
 
-    const failedCalendarChannels = await this.calendarChannelRepository.find({
-      where: {
-        syncStage: CalendarChannelSyncStage.FAILED,
-        syncStatus: CalendarChannelSyncStatus.FAILED_UNKNOWN,
-      },
-    });
+    if (activeWorkspaceIds.length === 0) {
+      return;
+    }
+
+    const failedCalendarChannels = await this.calendarChannelRepository
+      .find({
+        where: {
+          syncStage: CalendarChannelSyncStage.FAILED,
+          syncStatus: CalendarChannelSyncStatus.FAILED_UNKNOWN,
+          workspaceId: In(activeWorkspaceIds),
+        },
+      })
+      .catch((error) => {
+        this.exceptionHandlerService.captureExceptions([error]);
+
+        return [];
+      });
 
     for (const calendarChannel of failedCalendarChannels) {
-      if (!activeWorkspaceIds.includes(calendarChannel.workspaceId)) {
-        continue;
-      }
-
       try {
         await this.messageQueueService.add<CalendarRelaunchFailedCalendarChannelJobData>(
           CalendarRelaunchFailedCalendarChannelJob.name,

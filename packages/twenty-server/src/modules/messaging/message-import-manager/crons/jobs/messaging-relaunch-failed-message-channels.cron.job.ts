@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import {
   MessageChannelSyncStage,
@@ -52,18 +52,25 @@ export class MessagingRelaunchFailedMessageChannelsCronJob {
       (workspace) => workspace.id,
     );
 
-    const failedMessageChannels = await this.messageChannelRepository.find({
-      where: {
-        syncStage: MessageChannelSyncStage.FAILED,
-        syncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN,
-      },
-    });
+    if (activeWorkspaceIds.length === 0) {
+      return;
+    }
+
+    const failedMessageChannels = await this.messageChannelRepository
+      .find({
+        where: {
+          syncStage: MessageChannelSyncStage.FAILED,
+          syncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN,
+          workspaceId: In(activeWorkspaceIds),
+        },
+      })
+      .catch((error) => {
+        this.exceptionHandlerService.captureExceptions([error]);
+
+        return [];
+      });
 
     for (const messageChannel of failedMessageChannels) {
-      if (!activeWorkspaceIds.includes(messageChannel.workspaceId)) {
-        continue;
-      }
-
       try {
         await this.messageQueueService.add<MessagingRelaunchFailedMessageChannelJobData>(
           MessagingRelaunchFailedMessageChannelJob.name,
