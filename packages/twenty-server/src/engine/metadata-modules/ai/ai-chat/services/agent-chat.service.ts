@@ -60,6 +60,7 @@ export class AgentChatService {
   }) {
     const thread = this.threadRepository.create({
       userWorkspaceId,
+      workspaceId,
     });
 
     const savedThread = await this.threadRepository.save(thread);
@@ -105,6 +106,7 @@ export class AgentChatService {
     agentId,
     turnId,
     id,
+    workspaceId,
   }: {
     threadId: string;
     uiMessage: Omit<ExtendedUIMessage, 'id'>;
@@ -112,6 +114,7 @@ export class AgentChatService {
     agentId?: string;
     turnId?: string;
     id?: string;
+    workspaceId: string;
   }) {
     let actualTurnId = turnId;
 
@@ -119,6 +122,7 @@ export class AgentChatService {
       const turn = this.turnRepository.create({
         threadId,
         agentId: agentId ?? null,
+        workspaceId,
       });
 
       const savedTurn = await this.turnRepository.save(turn);
@@ -133,6 +137,7 @@ export class AgentChatService {
       role: uiMessage.role as AgentMessageRole,
       agentId: agentId ?? null,
       processedAt: new Date(),
+      workspaceId,
     });
 
     const savedMessage = await this.messageRepository.save(message);
@@ -141,6 +146,7 @@ export class AgentChatService {
       const dbParts = mapUIMessagePartsToDBParts(
         uiMessage.parts,
         savedMessage.id,
+        workspaceId,
       );
 
       await this.messagePartRepository.save(dbParts);
@@ -175,10 +181,12 @@ export class AgentChatService {
     threadId,
     text,
     id,
+    workspaceId,
   }: {
     threadId: string;
     text: string;
     id?: string;
+    workspaceId: string;
   }): Promise<AgentMessageEntity> {
     const message = this.messageRepository.create({
       ...(id ? { id } : {}),
@@ -187,6 +195,7 @@ export class AgentChatService {
       role: AgentMessageRole.USER,
       agentId: null,
       status: AgentMessageStatus.QUEUED,
+      workspaceId,
     });
 
     const savedMessage = await this.messageRepository.save(message);
@@ -196,6 +205,7 @@ export class AgentChatService {
       orderIndex: 0,
       type: 'text',
       textContent: text,
+      workspaceId,
     });
 
     await this.messagePartRepository.save(part);
@@ -234,10 +244,12 @@ export class AgentChatService {
   async promoteQueuedMessage(
     messageId: string,
     threadId: string,
+    workspaceId: string,
   ): Promise<string | null> {
     const turn = this.turnRepository.create({
       threadId,
       agentId: null,
+      workspaceId,
     });
 
     const savedTurn = await this.turnRepository.save(turn);

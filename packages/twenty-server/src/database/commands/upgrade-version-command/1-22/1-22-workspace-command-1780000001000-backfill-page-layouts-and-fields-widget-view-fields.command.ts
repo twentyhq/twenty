@@ -778,6 +778,7 @@ export class BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand extends ActiveO
           updatedAt: now,
           deletedAt: null,
           conditionalDisplay: null,
+          conditionalAvailabilityExpression: null,
           overrides: null,
           universalOverrides: null,
         };

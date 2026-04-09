@@ -171,6 +171,7 @@ export {
   IconEye,
   IconEyeOff,
   IconEyeShare,
+  IconEyeX,
   IconFile,
   IconFileCheck,
   IconFileExport,
