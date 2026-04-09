@@ -1636,8 +1636,6 @@ type ClientAIModelConfig {
   sdkPackage: String
   inputCostPerMillionTokensInCredits: Float!
   outputCostPerMillionTokensInCredits: Float!
-  inputCostPerMillionTokens: Float
-  outputCostPerMillionTokens: Float
   nativeCapabilities: NativeModelCapabilities
   isDeprecated: Boolean
   isRecommended: Boolean
@@ -3584,7 +3582,9 @@ type Mutation {
   userLookupAdminPanel(userIdentifier: String!): UserLookup!
   updateWorkspaceFeatureFlag(workspaceId: UUID!, featureFlag: String!, value: Boolean!): Boolean!
   setAdminAiModelEnabled(modelId: String!, enabled: Boolean!): Boolean!
+  setAdminAiModelsEnabled(modelIds: [String!]!, enabled: Boolean!): Boolean!
   setAdminAiModelRecommended(modelId: String!, recommended: Boolean!): Boolean!
+  setAdminAiModelsRecommended(modelIds: [String!]!, recommended: Boolean!): Boolean!
   setAdminDefaultAiModel(role: AiModelRole!, modelId: String!): Boolean!
   createDatabaseConfigVariable(key: String!, value: JSON!): Boolean!
   updateDatabaseConfigVariable(key: String!, value: JSON!): Boolean!

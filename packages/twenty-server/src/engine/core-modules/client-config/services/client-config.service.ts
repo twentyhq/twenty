@@ -99,8 +99,6 @@ export class ClientConfigService {
           nativeCapabilities: this.deriveNativeCapabilities(
             registeredModel.sdkPackage,
           ),
-          inputCostPerMillionTokens: modelConfig?.inputCostPerMillionTokens,
-          outputCostPerMillionTokens: modelConfig?.outputCostPerMillionTokens,
           inputCostPerMillionTokensInCredits: modelConfig
             ? convertDollarsToBillingCredits(
                 modelConfig.inputCostPerMillionTokens,
@@ -146,10 +144,6 @@ export class ClientConfigService {
             defaultPerformanceModel?.providerName,
           ),
           sdkPackage: defaultPerformanceModel?.sdkPackage ?? null,
-          inputCostPerMillionTokens:
-            defaultPerformanceModelConfig?.inputCostPerMillionTokens,
-          outputCostPerMillionTokens:
-            defaultPerformanceModelConfig?.outputCostPerMillionTokens,
           inputCostPerMillionTokensInCredits: 0,
           outputCostPerMillionTokensInCredits: 0,
           contextWindowTokens:
@@ -166,10 +160,6 @@ export class ClientConfigService {
           providerName: defaultSpeedModel?.providerName,
           providerLabel: getProviderLabel(defaultSpeedModel?.providerName),
           sdkPackage: defaultSpeedModel?.sdkPackage ?? null,
-          inputCostPerMillionTokens:
-            defaultSpeedModelConfig?.inputCostPerMillionTokens,
-          outputCostPerMillionTokens:
-            defaultSpeedModelConfig?.outputCostPerMillionTokens,
           inputCostPerMillionTokensInCredits: 0,
           outputCostPerMillionTokensInCredits: 0,
           contextWindowTokens: defaultSpeedModelConfig?.contextWindowTokens,

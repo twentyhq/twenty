@@ -62,12 +62,6 @@ export class ClientAIModelConfig {
   @Field(() => Number)
   outputCostPerMillionTokensInCredits: number;
 
-  @Field(() => Number, { nullable: true })
-  inputCostPerMillionTokens?: number;
-
-  @Field(() => Number, { nullable: true })
-  outputCostPerMillionTokens?: number;
-
   @Field(() => NativeModelCapabilities, { nullable: true })
   nativeCapabilities?: NativeModelCapabilities;
 

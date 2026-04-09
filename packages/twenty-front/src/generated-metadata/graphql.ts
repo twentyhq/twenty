@@ -869,7 +869,6 @@ export type ClientAiModelConfig = {
   __typename?: 'ClientAIModelConfig';
   contextWindowTokens?: Maybe<Scalars['Float']>;
   dataResidency?: Maybe<Scalars['String']>;
-  inputCostPerMillionTokens?: Maybe<Scalars['Float']>;
   inputCostPerMillionTokensInCredits: Scalars['Float'];
   isDeprecated?: Maybe<Scalars['Boolean']>;
   isRecommended?: Maybe<Scalars['Boolean']>;
@@ -879,7 +878,6 @@ export type ClientAiModelConfig = {
   modelFamilyLabel?: Maybe<Scalars['String']>;
   modelId: Scalars['String'];
   nativeCapabilities?: Maybe<NativeModelCapabilities>;
-  outputCostPerMillionTokens?: Maybe<Scalars['Float']>;
   outputCostPerMillionTokensInCredits: Scalars['Float'];
   providerLabel?: Maybe<Scalars['String']>;
   providerName?: Maybe<Scalars['String']>;
@@ -2654,6 +2652,8 @@ export type Mutation = {
   sendInvitations: SendInvitations;
   setAdminAiModelEnabled: Scalars['Boolean'];
   setAdminAiModelRecommended: Scalars['Boolean'];
+  setAdminAiModelsEnabled: Scalars['Boolean'];
+  setAdminAiModelsRecommended: Scalars['Boolean'];
   setAdminDefaultAiModel: Scalars['Boolean'];
   setEnterpriseKey: EnterpriseLicenseInfoDto;
   setMaintenanceMode: Scalars['Boolean'];
@@ -3397,6 +3397,18 @@ export type MutationSetAdminAiModelEnabledArgs = {
 
 export type MutationSetAdminAiModelRecommendedArgs = {
   modelId: Scalars['String'];
+  recommended: Scalars['Boolean'];
+};
+
+
+export type MutationSetAdminAiModelsEnabledArgs = {
+  enabled: Scalars['Boolean'];
+  modelIds: Array<Scalars['String']>;
+};
+
+
+export type MutationSetAdminAiModelsRecommendedArgs = {
+  modelIds: Array<Scalars['String']>;
   recommended: Scalars['Boolean'];
 };
 
@@ -7181,6 +7193,22 @@ export type SetAdminAiModelRecommendedMutationVariables = Exact<{
 
 export type SetAdminAiModelRecommendedMutation = { __typename?: 'Mutation', setAdminAiModelRecommended: boolean };
 
+export type SetAdminAiModelsEnabledMutationVariables = Exact<{
+  modelIds: Array<Scalars['String']> | Scalars['String'];
+  enabled: Scalars['Boolean'];
+}>;
+
+
+export type SetAdminAiModelsEnabledMutation = { __typename?: 'Mutation', setAdminAiModelsEnabled: boolean };
+
+export type SetAdminAiModelsRecommendedMutationVariables = Exact<{
+  modelIds: Array<Scalars['String']> | Scalars['String'];
+  recommended: Scalars['Boolean'];
+}>;
+
+
+export type SetAdminAiModelsRecommendedMutation = { __typename?: 'Mutation', setAdminAiModelsRecommended: boolean };
+
 export type SetAdminDefaultAiModelMutationVariables = Exact<{
   role: AiModelRole;
   modelId: Scalars['String'];
@@ -8435,6 +8463,8 @@ export const RemoveAiProviderDocument = {"kind":"Document","definitions":[{"kind
 export const RemoveModelFromProviderDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RemoveModelFromProvider"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"providerName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"modelName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"removeModelFromProvider"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"providerName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"providerName"}}},{"kind":"Argument","name":{"kind":"Name","value":"modelName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"modelName"}}}]}]}}]} as unknown as DocumentNode<RemoveModelFromProviderMutation, RemoveModelFromProviderMutationVariables>;
 export const SetAdminAiModelEnabledDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetAdminAiModelEnabled"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"enabled"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setAdminAiModelEnabled"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"modelId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}}},{"kind":"Argument","name":{"kind":"Name","value":"enabled"},"value":{"kind":"Variable","name":{"kind":"Name","value":"enabled"}}}]}]}}]} as unknown as DocumentNode<SetAdminAiModelEnabledMutation, SetAdminAiModelEnabledMutationVariables>;
 export const SetAdminAiModelRecommendedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetAdminAiModelRecommended"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"recommended"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setAdminAiModelRecommended"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"modelId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}}},{"kind":"Argument","name":{"kind":"Name","value":"recommended"},"value":{"kind":"Variable","name":{"kind":"Name","value":"recommended"}}}]}]}}]} as unknown as DocumentNode<SetAdminAiModelRecommendedMutation, SetAdminAiModelRecommendedMutationVariables>;
+export const SetAdminAiModelsEnabledDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetAdminAiModelsEnabled"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"modelIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"enabled"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setAdminAiModelsEnabled"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"modelIds"},"value":{"kind":"Variable","name":{"kind":"Name","value":"modelIds"}}},{"kind":"Argument","name":{"kind":"Name","value":"enabled"},"value":{"kind":"Variable","name":{"kind":"Name","value":"enabled"}}}]}]}}]} as unknown as DocumentNode<SetAdminAiModelsEnabledMutation, SetAdminAiModelsEnabledMutationVariables>;
+export const SetAdminAiModelsRecommendedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetAdminAiModelsRecommended"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"modelIds"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"recommended"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setAdminAiModelsRecommended"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"modelIds"},"value":{"kind":"Variable","name":{"kind":"Name","value":"modelIds"}}},{"kind":"Argument","name":{"kind":"Name","value":"recommended"},"value":{"kind":"Variable","name":{"kind":"Name","value":"recommended"}}}]}]}}]} as unknown as DocumentNode<SetAdminAiModelsRecommendedMutation, SetAdminAiModelsRecommendedMutationVariables>;
 export const SetAdminDefaultAiModelDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SetAdminDefaultAiModel"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"role"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AiModelRole"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"setAdminDefaultAiModel"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"role"},"value":{"kind":"Variable","name":{"kind":"Name","value":"role"}}},{"kind":"Argument","name":{"kind":"Name","value":"modelId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"modelId"}}}]}]}}]} as unknown as DocumentNode<SetAdminDefaultAiModelMutation, SetAdminDefaultAiModelMutationVariables>;
 export const GetAdminAiModelsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAdminAiModels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAdminAiModels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"defaultSmartModelId"}},{"kind":"Field","name":{"kind":"Name","value":"defaultFastModelId"}},{"kind":"Field","name":{"kind":"Name","value":"models"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"modelId"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"modelFamily"}},{"kind":"Field","name":{"kind":"Name","value":"sdkPackage"}},{"kind":"Field","name":{"kind":"Name","value":"isAvailable"}},{"kind":"Field","name":{"kind":"Name","value":"isAdminEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"isDeprecated"}},{"kind":"Field","name":{"kind":"Name","value":"isRecommended"}},{"kind":"Field","name":{"kind":"Name","value":"contextWindowTokens"}},{"kind":"Field","name":{"kind":"Name","value":"maxOutputTokens"}},{"kind":"Field","name":{"kind":"Name","value":"inputCostPerMillionTokens"}},{"kind":"Field","name":{"kind":"Name","value":"outputCostPerMillionTokens"}},{"kind":"Field","name":{"kind":"Name","value":"providerName"}},{"kind":"Field","name":{"kind":"Name","value":"providerLabel"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"dataResidency"}}]}}]}}]}}]} as unknown as DocumentNode<GetAdminAiModelsQuery, GetAdminAiModelsQueryVariables>;
 export const GetAdminAiUsageByWorkspaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAdminAiUsageByWorkspace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"periodStart"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"periodEnd"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAdminAiUsageByWorkspace"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"periodStart"},"value":{"kind":"Variable","name":{"kind":"Name","value":"periodStart"}}},{"kind":"Argument","name":{"kind":"Name","value":"periodEnd"},"value":{"kind":"Variable","name":{"kind":"Name","value":"periodEnd"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"creditsUsed"}}]}}]}}]} as unknown as DocumentNode<GetAdminAiUsageByWorkspaceQuery, GetAdminAiUsageByWorkspaceQueryVariables>;

@@ -14,6 +14,7 @@ import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModels
 import { SettingsAdminAiProviderListCard } from '@/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard';
 import { AI_PROVIDER_SOURCE } from '@/settings/admin-panel/ai/constants/AiProviderSource';
 import { SET_ADMIN_AI_MODEL_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelRecommended';
+import { SET_ADMIN_AI_MODELS_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelsRecommended';
 import { SET_ADMIN_DEFAULT_AI_MODEL } from '@/settings/admin-panel/ai/graphql/mutations/setAdminDefaultAiModel';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_ADMIN_AI_USAGE_BY_WORKSPACE } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiUsageByWorkspace';
@@ -75,6 +76,7 @@ export const SettingsAdminAI = () => {
   }>(GET_ADMIN_AI_MODELS);
 
   const [setModelRecommended] = useMutation(SET_ADMIN_AI_MODEL_RECOMMENDED);
+  const [setModelsRecommended] = useMutation(SET_ADMIN_AI_MODELS_RECOMMENDED);
   const [setDefaultModel] = useMutation(SET_ADMIN_DEFAULT_AI_MODEL);
 
   const { data: providersData, loading: isLoadingProviders } =
@@ -253,23 +255,21 @@ export const SettingsAdminAI = () => {
             isChecked={(model) => model.isRecommended === true}
             onToggle={handleRecommendedToggle}
             onToggleAll={async (shouldCheckAll) => {
-              const modelsToToggle = enabledModels.filter(
-                (model) => (model.isRecommended === true) !== shouldCheckAll,
-              );
+              const modelIds = enabledModels
+                .filter(
+                  (model) => (model.isRecommended === true) !== shouldCheckAll,
+                )
+                .map((model) => model.modelId);
 
-              if (modelsToToggle.length === 0) return;
+              if (modelIds.length === 0) return;
 
               try {
-                await Promise.all(
-                  modelsToToggle.map((model) =>
-                    setModelRecommended({
-                      variables: {
-                        modelId: model.modelId,
-                        recommended: shouldCheckAll,
-                      },
-                    }),
-                  ),
-                );
+                await setModelsRecommended({
+                  variables: {
+                    modelIds,
+                    recommended: shouldCheckAll,
+                  },
+                });
               } catch {
                 enqueueErrorSnackBar({
                   message: t`Failed to update model recommendations`,

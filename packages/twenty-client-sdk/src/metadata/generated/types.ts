@@ -3305,12 +3305,6 @@ export default {
             "outputCostPerMillionTokensInCredits": [
                 11
             ],
-            "inputCostPerMillionTokens": [
-                11
-            ],
-            "outputCostPerMillionTokens": [
-                11
-            ],
             "nativeCapabilities": [
                 165
             ],
@@ -8954,12 +8948,38 @@ export default {
                     ]
                 }
             ],
+            "setAdminAiModelsEnabled": [
+                6,
+                {
+                    "modelIds": [
+                        1,
+                        "[String!]!"
+                    ],
+                    "enabled": [
+                        6,
+                        "Boolean!"
+                    ]
+                }
+            ],
             "setAdminAiModelRecommended": [
                 6,
                 {
                     "modelId": [
                         1,
                         "String!"
+                    ],
+                    "recommended": [
+                        6,
+                        "Boolean!"
+                    ]
+                }
+            ],
+            "setAdminAiModelsRecommended": [
+                6,
+                {
+                    "modelIds": [
+                        1,
+                        "[String!]!"
                     ],
                     "recommended": [
                         6,

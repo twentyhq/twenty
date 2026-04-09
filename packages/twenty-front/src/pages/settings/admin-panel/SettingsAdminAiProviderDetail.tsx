@@ -28,6 +28,7 @@ import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
 import { REMOVE_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/removeAiProvider';
+import { SET_ADMIN_AI_MODELS_ENABLED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelsEnabled';
 import { REMOVE_MODEL_FROM_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/removeModelFromProvider';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
@@ -74,6 +75,7 @@ export const SettingsAdminAiProviderDetail = () => {
   }>(GET_ADMIN_AI_MODELS);
 
   const [setModelEnabled] = useMutation(SetAdminAiModelEnabledDocument);
+  const [setModelsEnabled] = useMutation(SET_ADMIN_AI_MODELS_ENABLED);
   const [removeAiProvider] = useMutation(REMOVE_AI_PROVIDER);
   const [removeModelFromProvider] = useMutation(REMOVE_MODEL_FROM_PROVIDER);
 
@@ -352,26 +354,24 @@ export const SettingsAdminAiProviderDetail = () => {
               onToggle={handleModelToggle}
               showProviderColumn={false}
               onToggleAll={async (shouldCheckAll) => {
-                const modelsToToggle = filteredModels.filter(
-                  (model) =>
-                    model.isAvailable &&
-                    model.isDeprecated !== true &&
-                    model.isAdminEnabled !== shouldCheckAll,
-                );
+                const modelIds = filteredModels
+                  .filter(
+                    (model) =>
+                      model.isAvailable &&
+                      model.isDeprecated !== true &&
+                      model.isAdminEnabled !== shouldCheckAll,
+                  )
+                  .map((model) => model.modelId);
 
-                if (modelsToToggle.length === 0) return;
+                if (modelIds.length === 0) return;
 
                 try {
-                  await Promise.all(
-                    modelsToToggle.map((model) =>
-                      setModelEnabled({
-                        variables: {
-                          modelId: model.modelId,
-                          enabled: shouldCheckAll,
-                        },
-                      }),
-                    ),
-                  );
+                  await setModelsEnabled({
+                    variables: {
+                      modelIds,
+                      enabled: shouldCheckAll,
+                    },
+                  });
                 } catch {
                   enqueueErrorSnackBar({
                     message: t`Failed to update model availability`,
