@@ -1,0 +1,97 @@
+import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
+import { DATE_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/object-record/object-filter-dropdown/constants/DatePickerDropdownContentWidth';
+import { useApplyObjectFilterDropdownOperand } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownOperand';
+import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
+import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
+import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
+import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
+import { useTimeZoneAbbreviationForNowInUserTimeZone } from '@/object-record/record-filter/hooks/useTimeZoneAbbreviationForNowInUserTimeZone';
+import { type RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
+import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
+import { DropdownMenuInnerSelect } from '@/ui/layout/dropdown/components/DropdownMenuInnerSelect';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { type SelectOption } from 'twenty-ui/input';
+
+const OBJECT_FILTER_DROPDOWN_INNER_SELECT_OPERAND_DROPDOWN_ID =
+  'object-filter-dropdown-inner-select-operand-dropdown';
+
+export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
+  const selectedOperandInDropdown = useAtomComponentStateValue(
+    selectedOperandInDropdownComponentState,
+  );
+
+  const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
+    fieldMetadataItemUsedInDropdownComponentSelector,
+  );
+
+  const subFieldNameUsedInDropdown = useAtomComponentStateValue(
+    subFieldNameUsedInDropdownComponentState,
+  );
+
+  const operandsForFilterType = isDefined(fieldMetadataItemUsedInDropdown)
+    ? getRecordFilterOperands({
+        filterType: getFilterTypeFromFieldType(
+          fieldMetadataItemUsedInDropdown.type,
+        ),
+        subFieldName: subFieldNameUsedInDropdown,
+      })
+    : [];
+
+  const { userTimeZoneAbbreviation } =
+    useTimeZoneAbbreviationForNowInUserTimeZone();
+
+  const { isSystemTimezone } = useUserTimezone();
+
+  const timeZoneAbbreviation = !isSystemTimezone
+    ? userTimeZoneAbbreviation
+    : null;
+
+  const options = operandsForFilterType.map((operand) => ({
+    label: getOperandLabel(operand, timeZoneAbbreviation),
+    value: operand,
+  })) as SelectOption[];
+
+  const selectedOption =
+    options.find((option) => option.value === selectedOperandInDropdown) ??
+    options[0];
+
+  const { applyObjectFilterDropdownOperand } =
+    useApplyObjectFilterDropdownOperand();
+
+  const handleOperandChange = (newOperandOption: SelectOption) => {
+    applyObjectFilterDropdownOperand(
+      newOperandOption.value as RecordFilterOperand,
+    );
+  };
+
+  if (
+    !isDefined(selectedOperandInDropdown) ||
+    !isDefined(fieldMetadataItemUsedInDropdown)
+  ) {
+    return null;
+  }
+
+  const filterType = getFilterTypeFromFieldType(
+    fieldMetadataItemUsedInDropdown.type,
+  );
+
+  const isDateFilter = DATE_FILTER_TYPES.includes(filterType);
+
+  const widthInPixels = isDateFilter
+    ? DATE_PICKER_DROPDOWN_CONTENT_WIDTH
+    : GenericDropdownContentWidth.ExtraLarge;
+
+  return (
+    <DropdownMenuInnerSelect
+      dropdownId={OBJECT_FILTER_DROPDOWN_INNER_SELECT_OPERAND_DROPDOWN_ID}
+      selectedOption={selectedOption}
+      onChange={handleOperandChange}
+      options={options}
+      widthInPixels={widthInPixels}
+    />
+  );
+};

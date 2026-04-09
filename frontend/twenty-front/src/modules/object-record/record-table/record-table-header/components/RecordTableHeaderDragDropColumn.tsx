@@ -1,0 +1,80 @@
+import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
+import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
+import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidthClassName';
+import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
+import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
+import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
+import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
+import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { styled } from '@linaria/react';
+import { cx } from '@linaria/core';
+import { useContext } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledDragDropHeaderCell = styled.div<{
+  shouldDisplayBorderBottom: boolean;
+  backgroundColor: string;
+}>`
+  background-color: ${({ backgroundColor }) => backgroundColor};
+  border-bottom: ${({ shouldDisplayBorderBottom }) =>
+    shouldDisplayBorderBottom
+      ? `1px solid ${themeCssVariables.background.primary}`
+      : 'none'};
+  cursor: pointer;
+  max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  max-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+  min-height: ${RECORD_TABLE_ROW_HEIGHT}px;
+
+  min-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+
+  width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+`;
+
+export const RecordTableHeaderDragDropColumn = () => {
+  const { theme } = useContext(ThemeContext);
+
+  const isRecordTableScrolledVertically = useAtomComponentStateValue(
+    isRecordTableScrolledVerticallyComponentState,
+  );
+
+  const isRecordTableRowFocusActive = useAtomComponentStateValue(
+    isRecordTableRowFocusActiveComponentState,
+  );
+
+  const isRecordTableRowActive = useAtomComponentFamilyStateValue(
+    isRecordTableRowActiveComponentFamilyState,
+    0,
+  );
+
+  const isRecordTableRowFocused = useAtomComponentFamilyStateValue(
+    isRecordTableRowFocusedComponentFamilyState,
+    0,
+  );
+
+  const isFirstRowActiveOrFocused =
+    isRecordTableRowActive ||
+    (isRecordTableRowFocused && isRecordTableRowFocusActive);
+
+  const hasRecordGroups = useAtomComponentSelectorValue(
+    hasRecordGroupsComponentSelector,
+  );
+
+  const shouldDisplayBorderBottom =
+    hasRecordGroups ||
+    !isFirstRowActiveOrFocused ||
+    isRecordTableScrolledVertically;
+
+  return (
+    <StyledDragDropHeaderCell
+      className={cx(
+        'header-cell',
+        RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME,
+      )}
+      backgroundColor={theme.background.primary}
+      shouldDisplayBorderBottom={shouldDisplayBorderBottom}
+    />
+  );
+};

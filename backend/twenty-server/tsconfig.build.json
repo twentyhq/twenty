@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "paths": {
+      "src/*": ["packages/twenty-server/src/*"]
+    },
+    "types": ["node"]
+  },
+  "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
+}

@@ -1,0 +1,247 @@
+export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
+      __typename
+      avatarFile {
+        fileId
+        label
+        extension
+        url
+      }
+      avatarUrl
+      city
+      companyId
+      createdAt
+      createdBy {
+        source
+        workspaceMemberId
+        name
+        context
+      }
+      deletedAt
+      emails {
+        primaryEmail
+        additionalEmails
+      }
+      id
+      intro
+      jobTitle
+      linkedinLink {
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
+      }
+      name {
+        firstName
+        lastName
+      }
+      performanceRating
+      phones {
+        primaryPhoneNumber
+        primaryPhoneCountryCode
+        primaryPhoneCallingCode
+        additionalPhones
+      }
+      position
+      updatedAt
+      updatedBy {
+        source
+        workspaceMemberId
+        name
+        context
+      }
+      whatsapp {
+        primaryPhoneNumber
+        primaryPhoneCountryCode
+        primaryPhoneCallingCode
+        additionalPhones
+      }
+      workPreference
+      xLink {
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
+      }
+`;
+
+export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
+      __typename
+      attachments {
+        edges {
+          node {
+            __typename
+            id
+            name
+          }
+        }
+      }
+      avatarFile {
+        fileId
+        label
+        extension
+        url
+      }
+      avatarUrl
+      calendarEventParticipants {
+        edges {
+          node {
+            __typename
+            handle
+            id
+          }
+        }
+      }
+      caredForPets {
+        edges {
+          node {
+            __typename
+            id
+            pet {
+              __typename
+              id
+              name
+            }
+          }
+        }
+      }
+      city
+      company {
+        __typename
+        domainName {
+          primaryLinkUrl
+          primaryLinkLabel
+          secondaryLinks
+        }
+        id
+        name
+      }
+      companyId
+      createdAt
+      createdBy {
+        source
+        workspaceMemberId
+        name
+        context
+      }
+      deletedAt
+      emails {
+        primaryEmail
+        additionalEmails
+      }
+      favorites {
+        edges {
+          node {
+            __typename
+            id
+          }
+        }
+      }
+      id
+      intro
+      jobTitle
+      linkedinLink {
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
+      }
+      messageParticipants {
+        edges {
+          node {
+            __typename
+            handle
+            id
+          }
+        }
+      }
+      name {
+        firstName
+        lastName
+      }
+      noteTargets {
+        edges {
+          node {
+            __typename
+            id
+            note {
+              __typename
+              id
+              title
+            }
+          }
+        }
+      }
+      performanceRating
+      phones {
+        primaryPhoneNumber
+        primaryPhoneCountryCode
+        primaryPhoneCallingCode
+        additionalPhones
+      }
+      pointOfContactForOpportunities {
+        edges {
+          node {
+            __typename
+            id
+            name
+          }
+        }
+      }
+      position
+      previousCompanies {
+        edges {
+          node {
+            __typename
+            company {
+              __typename
+              domainName {
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
+              }
+              id
+              name
+            }
+            id
+          }
+        }
+      }
+      taskTargets {
+        edges {
+          node {
+            __typename
+            id
+            task {
+              __typename
+              id
+              title
+            }
+          }
+        }
+      }
+      timelineActivities {
+        edges {
+          node {
+            __typename
+            id
+            name
+          }
+        }
+      }
+      updatedAt
+      updatedBy {
+        source
+        workspaceMemberId
+        name
+        context
+      }
+      whatsapp {
+        primaryPhoneNumber
+        primaryPhoneCountryCode
+        primaryPhoneCallingCode
+        additionalPhones
+      }
+      workPreference
+      xLink {
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
+      }
+`;

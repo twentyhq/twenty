@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Front component creation should fail when name is empty 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "frontComponent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FRONT_COMPONENT_INPUT",
+              "message": "Front component name is required",
+              "userFriendlyMessage": "Front component name is required",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "frontComponent",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 frontComponent",
+    "summary": {
+      "frontComponent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating front component",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Front component creation should fail when name is whitespace-only 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "frontComponent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FRONT_COMPONENT_INPUT",
+              "message": "Front component name is required",
+              "userFriendlyMessage": "Front component name is required",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "frontComponent",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 frontComponent",
+    "summary": {
+      "frontComponent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating front component",
+  "name": "GraphQLError",
+}
+`;

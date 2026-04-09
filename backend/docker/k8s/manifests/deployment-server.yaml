@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: twentycrm-server
+  name: twentycrm-server
+  namespace: twentycrm
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: twentycrm-server
+  template:
+    metadata:
+      labels:
+        app: twentycrm-server
+    spec:
+      volumes:
+        - name: twentycrm-server-data
+          persistentVolumeClaim:
+            claimName: twentycrm-server-pvc
+        - name: twentycrm-docker-data
+          persistentVolumeClaim:
+            claimName: twentycrm-docker-data-pvc
+      containers:
+        - name: twentycrm
+          image: twentycrm/twenty:latest
+          imagePullPolicy: Always
+          env:
+            - name: NODE_PORT
+              value: 3000
+            - name: SERVER_URL
+              value: "https://crm.example.com:443"
+            - name: "PG_DATABASE_URL"
+              value: "postgres://postgres:postgres@twentycrm-db.twentycrm.svc.cluster.local/default"
+            - name: "REDIS_URL"
+              value: "redis://twentycrm-redis.twentycrm.svc.cluster.local:6379"
+            - name: SIGN_IN_PREFILLED
+              value: "false"
+            - name: STORAGE_TYPE
+              value: "local"
+            - name: "ACCESS_TOKEN_EXPIRES_IN"
+              value: "7d"
+            - name: "LOGIN_TOKEN_EXPIRES_IN"
+              value: "1h"
+            - name: APP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: tokens
+                  key: accessToken
+          ports:
+            - containerPort: 3000
+              name: http-tcp
+              protocol: TCP
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "1024Mi"
+              cpu: "1000m"
+          stdin: true
+          tty: true
+          volumeMounts:
+            - mountPath: /app/docker-data
+              name: twentycrm-docker-data
+            - mountPath: /app/packages/twenty-server/.local-storage
+              name: twentycrm-server-data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always

@@ -1,0 +1,15 @@
+apiVersion: 1
+
+datasources:
+  - name: ClickHouse
+    type: grafana-clickhouse-datasource
+    uid: clickhouse_datasource
+    jsonData:
+      server: twenty_clickhouse
+      defaultDatabase: twenty_dev
+      port: 9000
+      protocol: native
+      tlsSkipVerify: true
+      username: default
+    secureJsonData:
+      password: devPassword

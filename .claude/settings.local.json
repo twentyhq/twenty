@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash([ -f \"/c/Users/Fabian Leal/documents/twenty/packages/twenty-server/src/modules/$module/$module.module.ts\" ])",
+      "Bash(netstat -ano)",
+      "Bash(sort -t: -k2 -n)",
+      "Bash(grep -n \"executeCommandLine\\\\|fileNames\\\\|rootNames\\\\|\\\\\\\\.project\\\\b\" \"/c/Users/Fabian Leal/documents/twenty/node_modules/vite-plugin-checker/dist/checkers/typescript/main.js\")",
+      "Bash(npx nx:*)",
+      "Bash(docker info:*)",
+      "Bash(bash packages/twenty-utils/setup-dev-env.sh)",
+      "Bash(Start-Process \"C:\\\\Program Files\\\\Docker\\\\Docker\\\\Docker Desktop.exe\")",
+      "Bash(powershell -Command \"Start-Process 'C:\\\\Program Files\\\\Docker\\\\Docker\\\\Docker Desktop.exe'\")",
+      "Bash(powershell.exe:*)",
+      "Bash(timeout 90 npx nest start --watch)",
+      "Bash(npx nest:*)",
+      "Bash(docker stop:*)",
+      "Bash(tasklist:*)",
+      "Bash(kill 22660)",
+      "Bash(echo \"Server PID: $!\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/healthz)",
+      "Bash(curl:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx swc:*)",
+      "Bash(echo \"Started PID: $!\")",
+      "Bash(git config:*)",
+      "Bash(echo \"Written: $?\")",
+      "Bash(docker compose:*)",
+      "Bash(chmod +x docker/backend/entrypoint.sh)",
+      "Bash(cp -r .docker-backup-20260409-1145/twenty-docker/twenty-app-dev/rootfs docker/backend/s6/)",
+      "Bash(sed -i 's|packages/twenty-docker/twenty/entrypoint.sh|docker/backend/entrypoint.sh|g' docker/backend/Dockerfile.prod)",
+      "Bash(sed -i 's|packages/twenty-docker/twenty-app-dev/rootfs/|docker/backend/s6/rootfs/|g' docker/backend/Dockerfile.prod)",
+      "Bash(sed -i 's|packages/twenty-docker/twenty/Dockerfile|docker/backend/Dockerfile.prod|g' docker/backend/Dockerfile.prod)",
+      "Bash(docker version:*)",
+      "Bash(docker builder:*)"
+    ]
+  }
+}

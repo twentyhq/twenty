@@ -1,0 +1,275 @@
+import { styled } from '@linaria/react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useCallback, useState } from 'react';
+import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { Key } from 'ts-key-enum';
+import { z } from 'zod';
+
+import { SubTitle } from '@/auth/components/SubTitle';
+import { Title } from '@/auth/components/Title';
+import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { WorkspaceMemberPictureUploader } from '@/settings/workspace-member/components/WorkspaceMemberPictureUploader';
+import { PageFocusId } from '@/types/PageFocusId';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { ModalContent } from 'twenty-ui/layout';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { i18n } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { H2Title } from 'twenty-ui/display';
+import { MainButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledContentContainer = styled.div`
+  width: 100%;
+`;
+
+const StyledSectionContainer = styled.div`
+  margin-top: ${themeCssVariables.spacing[8]};
+`;
+
+const StyledButtonContainer = styled.div`
+  margin-top: ${themeCssVariables.spacing[8]};
+  width: 200px;
+`;
+
+const StyledComboInputContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  > * + * {
+    margin-left: ${themeCssVariables.spacing[4]};
+  }
+`;
+
+const firstNameErrorMessage = msg`First name can not be empty`;
+const lastNameErrorMessage = msg`Last name can not be empty`;
+
+const validationSchema = z
+  .object({
+    firstName: z.string().min(1, {
+      error: i18n._(firstNameErrorMessage),
+    }),
+    lastName: z.string().min(1, {
+      error: i18n._(lastNameErrorMessage),
+    }),
+  })
+  .required();
+
+type Form = z.infer<typeof validationSchema>;
+
+export const CreateProfile = () => {
+  const { t } = useLingui();
+  const setNextOnboardingStatus = useSetNextOnboardingStatus();
+  const { enqueueErrorSnackBar } = useSnackBar();
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useAtomState(
+    currentWorkspaceMemberState,
+  );
+  const setCurrentUser = useSetAtomState(currentUserState);
+  const setCurrentWorkspaceMembers = useSetAtomState(
+    currentWorkspaceMembersState,
+  );
+  const { updateOneRecord } = useUpdateOneRecord();
+
+  // Form
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid, isSubmitting },
+    getValues,
+  } = useForm<Form>({
+    mode: 'onChange',
+    defaultValues: {
+      firstName: currentWorkspaceMember?.name?.firstName ?? '',
+      lastName: currentWorkspaceMember?.name?.lastName ?? '',
+    },
+    resolver: zodResolver(validationSchema),
+  });
+
+  const onSubmit: SubmitHandler<Form> = useCallback(
+    async (data) => {
+      try {
+        if (!currentWorkspaceMember?.id) {
+          throw new Error('User is not logged in');
+        }
+        if (!data.firstName || !data.lastName) {
+          throw new Error('First name or last name is missing');
+        }
+
+        await updateOneRecord({
+          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+          idToUpdate: currentWorkspaceMember?.id,
+          updateOneRecordInput: {
+            name: {
+              firstName: data.firstName,
+              lastName: data.lastName,
+            },
+            colorScheme: 'System',
+          },
+        });
+
+        setCurrentWorkspaceMember((current) => {
+          if (isDefined(current)) {
+            return {
+              ...current,
+              name: {
+                firstName: data.firstName,
+                lastName: data.lastName,
+              },
+
+              colorScheme: 'System',
+            };
+          }
+          return current;
+        });
+
+        setCurrentWorkspaceMembers((members) =>
+          members.map((member) =>
+            member.id === currentWorkspaceMember?.id
+              ? {
+                  ...member,
+                  name: {
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                  },
+                }
+              : member,
+          ),
+        );
+
+        setCurrentUser((current) => {
+          if (isDefined(current)) {
+            return {
+              ...current,
+              firstName: data.firstName,
+              lastName: data.lastName,
+            };
+          }
+          return current;
+        });
+
+        setNextOnboardingStatus();
+      } catch (error: any) {
+        enqueueErrorSnackBar({
+          apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
+        });
+      }
+    },
+    [
+      currentWorkspaceMember?.id,
+      setNextOnboardingStatus,
+      enqueueErrorSnackBar,
+      setCurrentWorkspaceMember,
+      setCurrentWorkspaceMembers,
+      setCurrentUser,
+      updateOneRecord,
+    ],
+  );
+
+  const [isEditingMode, setIsEditingMode] = useState(false);
+
+  const handleEnter = () => {
+    if (isEditingMode) {
+      onSubmit(getValues());
+    }
+  };
+
+  useHotkeysOnFocusedElement({
+    keys: Key.Enter,
+    callback: handleEnter,
+    focusId: PageFocusId.CreateProfile,
+    dependencies: [handleEnter],
+  });
+
+  return (
+    <ModalContent isVerticallyCentered isHorizontallyCentered>
+      <Title noMarginTop>
+        <Trans>Create profile</Trans>
+      </Title>
+      <SubTitle>
+        <Trans>How you'll be identified on the app.</Trans>
+      </SubTitle>
+      <StyledContentContainer>
+        <StyledSectionContainer>
+          <H2Title title={t`Picture`} />
+          {currentWorkspaceMember?.id && (
+            <WorkspaceMemberPictureUploader
+              workspaceMemberId={currentWorkspaceMember.id}
+            />
+          )}
+        </StyledSectionContainer>
+        <StyledSectionContainer>
+          <H2Title
+            title={t`Name`}
+            description={t`Your name as it will be displayed on the app`}
+          />
+          {/* TODO: When react-web-hook-form is added to edit page we should create a dedicated component with context */}
+          <StyledComboInputContainer>
+            <Controller
+              name="firstName"
+              control={control}
+              render={({
+                field: { onChange, onBlur, value },
+                fieldState: { error },
+              }) => (
+                <TextInput
+                  autoFocus
+                  label={t`First Name`}
+                  value={value}
+                  onFocus={() => setIsEditingMode(true)}
+                  onBlur={() => {
+                    onBlur();
+                    setIsEditingMode(false);
+                  }}
+                  onChange={onChange}
+                  placeholder={t`Tim`}
+                  error={error?.message}
+                  fullWidth
+                />
+              )}
+            />
+            <Controller
+              name="lastName"
+              control={control}
+              render={({
+                field: { onChange, onBlur, value },
+                fieldState: { error },
+              }) => (
+                <TextInput
+                  label={t`Last Name`}
+                  value={value}
+                  onFocus={() => setIsEditingMode(true)}
+                  onBlur={() => {
+                    onBlur();
+                    setIsEditingMode(false);
+                  }}
+                  onChange={onChange}
+                  placeholder={t`Cook`}
+                  error={error?.message}
+                  fullWidth
+                />
+              )}
+            />
+          </StyledComboInputContainer>
+        </StyledSectionContainer>
+      </StyledContentContainer>
+      <StyledButtonContainer>
+        <MainButton
+          title={t`Continue`}
+          onClick={handleSubmit(onSubmit)}
+          disabled={!isValid || isSubmitting}
+          fullWidth
+        />
+      </StyledButtonContainer>
+    </ModalContent>
+  );
+};

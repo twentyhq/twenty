@@ -1,0 +1,286 @@
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
+import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
+import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
+import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
+import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { type Manifest, type ObjectManifest } from 'twenty-shared/application';
+import {
+  type EachTestingContext,
+  eachTestingContextFilter,
+} from 'twenty-shared/testing';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { v4 as uuidv4 } from 'uuid';
+
+const TEST_APP_ID = uuidv4();
+const TEST_ROLE_ID = uuidv4();
+
+type TestContext = {
+  manifest: Manifest;
+};
+
+type SyncApplicationTestingContext = EachTestingContext<TestContext>[];
+
+const buildManifest = (overrides: Pick<Manifest, 'objects' | 'fields'>) =>
+  buildBaseManifest({
+    appId: TEST_APP_ID,
+    roleId: TEST_ROLE_ID,
+    overrides,
+  });
+
+const buildObjectWithLabelField = ({
+  nameSingular,
+  namePlural,
+  labelSingular,
+  labelPlural,
+  description,
+  additionalFields = [],
+}: {
+  nameSingular: string;
+  namePlural: string;
+  labelSingular: string;
+  labelPlural: string;
+  description: string;
+  additionalFields?: ObjectManifest['fields'];
+}): Pick<Manifest, 'objects' | 'fields'> => {
+  const objectId = uuidv4();
+  const labelFieldId = uuidv4();
+
+  return {
+    objects: [
+      {
+        universalIdentifier: objectId,
+        labelIdentifierFieldMetadataUniversalIdentifier: labelFieldId,
+        nameSingular,
+        namePlural,
+        labelSingular,
+        labelPlural,
+        description,
+        icon: 'IconTicket',
+        fields: [
+          {
+            universalIdentifier: labelFieldId,
+            type: FieldMetadataType.TEXT,
+            name: 'title',
+            label: 'Title',
+            description: 'Label identifier field',
+            icon: 'IconTextCaption',
+          },
+          ...additionalFields,
+        ],
+      },
+    ],
+    fields: [],
+  };
+};
+
+const failingSyncApplicationSystemFieldsTestCases: SyncApplicationTestingContext =
+  [
+    {
+      title:
+        'when object is created without any system fields (missing all 8 system fields)',
+      context: {
+        manifest: buildManifest(
+          buildObjectWithLabelField({
+            nameSingular: 'noSystemFieldsObject',
+            namePlural: 'noSystemFieldsObjects',
+            labelSingular: 'No System Fields Object',
+            labelPlural: 'No System Fields Objects',
+            description: 'Object with no system fields',
+          }),
+        ),
+      },
+    },
+    {
+      title: 'when object has id field with wrong type (TEXT instead of UUID)',
+      context: {
+        manifest: buildManifest(
+          buildObjectWithLabelField({
+            nameSingular: 'wrongIdTypeObject',
+            namePlural: 'wrongIdTypeObjects',
+            labelSingular: 'Wrong Id Type Object',
+            labelPlural: 'Wrong Id Type Objects',
+            description: 'Object with wrong id field type',
+            additionalFields: [
+              {
+                universalIdentifier: uuidv4(),
+                type: FieldMetadataType.TEXT,
+                name: 'id',
+                label: 'Id',
+                description: 'Id field with wrong type',
+                icon: 'IconKey',
+              },
+            ],
+          }),
+        ),
+      },
+    },
+    {
+      title: 'when object miss default fields',
+      context: {
+        manifest: buildManifest(
+          buildObjectWithLabelField({
+            nameSingular: 'wrongCreatedAtObject',
+            namePlural: 'wrongCreatedAtObjects',
+            labelSingular: 'Wrong CreatedAt Object',
+            labelPlural: 'Wrong CreatedAt Objects',
+            description: 'Object with wrong createdAt field type',
+          }),
+        ),
+      },
+    },
+    {
+      title:
+        'when object has position field with wrong type (TEXT instead of POSITION)',
+      context: {
+        manifest: buildManifest(
+          buildObjectWithLabelField({
+            nameSingular: 'wrongPositionObject',
+            namePlural: 'wrongPositionObjects',
+            labelSingular: 'Wrong Position Object',
+            labelPlural: 'Wrong Position Objects',
+            description: 'Object with wrong position field type',
+            additionalFields: [
+              {
+                universalIdentifier: uuidv4(),
+                type: FieldMetadataType.TEXT,
+                name: 'position',
+                label: 'Position',
+                description: 'Position field with wrong type',
+                icon: 'IconArrowsSort',
+              },
+            ],
+          }),
+        ),
+      },
+    },
+  ];
+
+describe('Sync application should fail due to object system fields integrity', () => {
+  beforeAll(async () => {
+    await setupApplicationForSync({
+      applicationUniversalIdentifier: TEST_APP_ID,
+      name: 'Test System Fields App',
+      description: 'App for testing system field validation',
+      sourcePath: 'test-system-fields',
+    });
+  }, 60000);
+
+  afterAll(async () => {
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."role" WHERE "universalIdentifier" = $1`,
+      [TEST_ROLE_ID],
+    );
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."file" WHERE "applicationId" IN (
+        SELECT id FROM core."application" WHERE "universalIdentifier" = $1
+      )`,
+      [TEST_APP_ID],
+    );
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."application"
+       WHERE "universalIdentifier" = $1`,
+      [TEST_APP_ID],
+    );
+
+    await globalThis.testDataSource.query(
+      `DELETE FROM core."applicationRegistration"
+       WHERE "universalIdentifier" = $1`,
+      [TEST_APP_ID],
+    );
+  });
+
+  it.each(
+    eachTestingContextFilter(failingSyncApplicationSystemFieldsTestCases),
+  )(
+    '$title',
+    async ({ context }) => {
+      const { errors } = await syncApplication({
+        manifest: context.manifest,
+        expectToFail: true,
+      });
+
+      expectOneNotInternalServerErrorSnapshot({ errors });
+    },
+    60000,
+  );
+
+  it('should fail when trying to delete a system field after a successful sync', async () => {
+    const testObject = buildDefaultObjectManifest({
+      nameSingular: 'deleteSystemFieldObject',
+      namePlural: 'deleteSystemFieldObjects',
+      labelSingular: 'Delete System Field Object',
+      labelPlural: 'Delete System Field Objects',
+      description: 'Object for testing system field deletion',
+    });
+
+    const validManifest = buildManifest({
+      objects: [testObject],
+      fields: [],
+    });
+
+    await syncApplication({
+      manifest: validManifest,
+      expectToFail: false,
+    });
+
+    const manifestWithDeletedIdField = buildManifest({
+      objects: [
+        {
+          ...testObject,
+          fields: testObject.fields.filter((field) => field.name !== 'id'),
+        },
+      ],
+      fields: [],
+    });
+
+    const { errors } = await syncApplication({
+      manifest: manifestWithDeletedIdField,
+      expectToFail: true,
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  }, 60000);
+
+  it('should fail when trying to update a system field after a successful sync', async () => {
+    const testObject = buildDefaultObjectManifest({
+      nameSingular: 'updateSystemFieldObject',
+      namePlural: 'updateSystemFieldObjects',
+      labelSingular: 'Update System Field Object',
+      labelPlural: 'Update System Field Objects',
+      description: 'Object for testing system field update',
+    });
+
+    const validManifest = buildManifest({
+      objects: [testObject],
+      fields: [],
+    });
+
+    await syncApplication({
+      manifest: validManifest,
+      expectToFail: false,
+    });
+
+    const manifestWithUpdatedIdField = buildManifest({
+      objects: [
+        {
+          ...testObject,
+          fields: testObject.fields.map((field) =>
+            field.name === 'id'
+              ? { ...field, label: 'Modified Id Label' }
+              : field,
+          ),
+        },
+      ],
+      fields: [],
+    });
+
+    const { errors } = await syncApplication({
+      manifest: manifestWithUpdatedIdField,
+      expectToFail: true,
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  }, 60000);
+});

@@ -1,0 +1,338 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Agent update should fail should fail when attempting to update a standard agent 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [
+        {
+          "errors": [
+            {
+              "code": "AGENT_IS_STANDARD",
+              "message": "Cannot update standard agent",
+              "userFriendlyMessage": "Cannot update standard agent",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "agent",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 agent",
+    "summary": {
+      "agent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating agent",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Agent update should fail should fail when updating a non-existent agent 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "AGENT_NOT_FOUND",
+    "userFriendlyMessage": "The agent you are looking for could not be found. It may have been deleted or you may not have access to it.",
+  },
+  "message": "Agent not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`Agent update should fail when settings null required properties 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_AGENT_INPUT",
+              "message": "Label cannot be empty",
+              "userFriendlyMessage": "Label cannot be empty",
+            },
+            {
+              "code": "INVALID_AGENT_INPUT",
+              "message": "Prompt cannot be empty",
+              "userFriendlyMessage": "Prompt cannot be empty",
+            },
+            {
+              "code": "INVALID_AGENT_INPUT",
+              "message": "Model ID cannot be empty",
+              "userFriendlyMessage": "Model ID cannot be empty",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "agent",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 agent",
+    "summary": {
+      "agent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating agent",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Agent update should fail when updating label to one that already exists 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [
+        {
+          "errors": [
+            {
+              "code": "AGENT_ALREADY_EXISTS",
+              "message": "Agent with name "existingAgentForDuplicateTest" already exists",
+              "userFriendlyMessage": "An agent with this name already exists",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "agent",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 agent",
+    "summary": {
+      "agent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating agent",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Agent update should fail when updating responseFormat type to json without schema 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_AGENT_INPUT",
+              "message": "Response format with type "json" must include a schema",
+              "userFriendlyMessage": "JSON response format requires a schema",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "agent",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 agent",
+    "summary": {
+      "agent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating agent",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Agent update should fail when updating responseFormat type to text with schema 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_AGENT_INPUT",
+              "message": "Response format with type "text" should not include a schema",
+              "userFriendlyMessage": "Text response format should not have a schema",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "agent",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 agent",
+    "summary": {
+      "agent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating agent",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Agent update should fail when updating responseFormat with invalid type 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_AGENT_INPUT",
+              "message": "Response format type must be either "text" or "json"",
+              "userFriendlyMessage": "Invalid response format type",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "agent",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 agent",
+    "summary": {
+      "agent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating agent",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Agent update should fail when updating with empty label 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_AGENT_INPUT",
+              "message": "Label cannot be empty",
+              "userFriendlyMessage": "Label cannot be empty",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "agent",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 agent",
+    "summary": {
+      "agent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating agent",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Agent update should fail when updating with empty modelId 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_AGENT_INPUT",
+              "message": "Model ID cannot be empty",
+              "userFriendlyMessage": "Model ID cannot be empty",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "agent",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 agent",
+    "summary": {
+      "agent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating agent",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Agent update should fail when updating with empty prompt 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_AGENT_INPUT",
+              "message": "Prompt cannot be empty",
+              "userFriendlyMessage": "Prompt cannot be empty",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "agent",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 agent",
+    "summary": {
+      "agent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating agent",
+  "name": "GraphQLError",
+}
+`;

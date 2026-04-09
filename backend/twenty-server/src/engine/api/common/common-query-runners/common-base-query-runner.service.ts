@@ -1,0 +1,423 @@
+import { Inject, Injectable } from '@nestjs/common';
+
+import { type PermissionFlagType } from 'twenty-shared/constants';
+
+import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
+
+import { DataArgProcessorService } from 'src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service';
+import { FilterArgProcessorService } from 'src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service';
+import { GroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/group-by-arg-processor.service';
+import { OrderByArgProcessorService } from 'src/engine/api/common/common-args-processors/order-by-arg-processor/order-by-arg-processor.service';
+import { OrderByWithGroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/order-by-with-group-by-arg-processor/order-by-with-group-by-arg-processor.service';
+import { QueryRunnerArgsFactory } from 'src/engine/api/common/common-args-processors/query-runner-args.factory';
+import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
+import {
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
+import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
+import {
+  CommonExtendedInput,
+  CommonInput,
+  CommonQueryArgs,
+  CommonQueryNames,
+} from 'src/engine/api/common/types/common-query-args.type';
+import { CommonQueryResult } from 'src/engine/api/common/types/common-query-result.type';
+import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS } from 'src/engine/api/graphql/graphql-query-runner/constants/objects-with-settings-permissions-requirements';
+import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
+import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+@Injectable()
+export abstract class CommonBaseQueryRunnerService<
+  Args extends CommonQueryArgs,
+  Output extends CommonQueryResult,
+> {
+  @Inject()
+  protected readonly workspaceQueryHookService: WorkspaceQueryHookService;
+  @Inject()
+  protected readonly queryRunnerArgsFactory: QueryRunnerArgsFactory;
+  @Inject()
+  protected readonly dataArgProcessor: DataArgProcessorService;
+  @Inject()
+  protected readonly filterArgProcessor: FilterArgProcessorService;
+  @Inject()
+  protected readonly groupByArgProcessor: GroupByArgProcessorService;
+  @Inject()
+  protected readonly orderByArgProcessor: OrderByArgProcessorService;
+  @Inject()
+  protected readonly orderByWithGroupByArgProcessor: OrderByWithGroupByArgProcessorService;
+  @Inject()
+  protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
+  @Inject()
+  protected readonly processNestedRelationsHelper: ProcessNestedRelationsHelper;
+  @Inject()
+  protected readonly permissionsService: PermissionsService;
+  @Inject()
+  protected readonly workspaceCacheService: WorkspaceCacheService;
+  @Inject()
+  protected readonly commonResultGettersService: CommonResultGettersService;
+  @Inject()
+  protected readonly throttlerService: ThrottlerService;
+  @Inject()
+  protected readonly twentyConfigService: TwentyConfigService;
+  @Inject()
+  protected readonly metricsService: MetricsService;
+  @Inject()
+  protected readonly featureFlagService: FeatureFlagService;
+
+  protected abstract readonly operationName: CommonQueryNames;
+
+  protected readonly isReadOnly: boolean = false;
+
+  public async execute(
+    args: CommonInput<Args>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<Output> {
+    const {
+      authContext,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = queryRunnerContext;
+
+    await this.throttleQueryExecution(authContext);
+
+    await this.validate(args, queryRunnerContext);
+
+    if (flatObjectMetadata.isSystem === true) {
+      await this.validateSettingsPermissionsOnObjectOrThrow(
+        authContext,
+        queryRunnerContext,
+      );
+    }
+
+    const commonQueryParser = new GraphqlQueryParser(
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    );
+
+    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
+      args.selectedFields,
+    );
+
+    this.validateQueryComplexity(
+      selectedFieldsResult,
+      args,
+      queryRunnerContext,
+    );
+
+    const processedArgs = {
+      ...(await this.processArgs(args, queryRunnerContext, this.operationName)),
+      selectedFieldsResult,
+    } as CommonExtendedInput<Args>;
+
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () =>
+        this.executeQueryAndEnrichResults(
+          processedArgs,
+          queryRunnerContext,
+          commonQueryParser,
+        ),
+      authContext,
+    );
+  }
+
+  protected abstract run(
+    args: CommonExtendedInput<Args>,
+    queryRunnerContext: CommonExtendedQueryRunnerContext,
+  ): Promise<Output>;
+
+  protected abstract validate(
+    args: CommonInput<Args>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<void>;
+
+  protected abstract computeArgs(
+    args: CommonInput<Args>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<CommonInput<Args>>;
+
+  protected abstract processQueryResult(
+    queryResult: Output,
+    flatObjectMetadata: FlatObjectMetadata,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    authContext: WorkspaceAuthContext,
+  ): Promise<Output>;
+
+  protected computeQueryComplexity(
+    selectedFieldsResult: CommonSelectedFieldsResult,
+    _args: CommonInput<Args>,
+    _queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): number {
+    const simpleFieldsComplexity = 1;
+    const selectedFieldsComplexity =
+      simpleFieldsComplexity + (selectedFieldsResult.relationFieldsCount ?? 0);
+
+    return selectedFieldsComplexity;
+  }
+
+  private async processArgs(
+    args: CommonInput<Args>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+    operationName: CommonQueryNames,
+  ): Promise<CommonInput<Args>> {
+    const { authContext, flatObjectMetadata } = queryRunnerContext;
+
+    const computedArgs = await this.computeArgs(args, queryRunnerContext);
+
+    const hookedArgs =
+      (await this.workspaceQueryHookService.executePreQueryHooks(
+        authContext,
+        flatObjectMetadata.nameSingular,
+        operationName,
+        computedArgs as WorkspacePreQueryHookPayload<CommonQueryNames>,
+      )) as CommonInput<Args>;
+
+    return hookedArgs;
+  }
+
+  private async executeQueryAndEnrichResults(
+    processedArgs: CommonExtendedInput<Args>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+    commonQueryParser: GraphqlQueryParser,
+  ): Promise<Output> {
+    const extendedQueryRunnerContext =
+      await this.prepareExtendedQueryRunnerContextWithGlobalDatasource(
+        queryRunnerContext,
+      );
+
+    const results = await this.run(processedArgs, {
+      ...extendedQueryRunnerContext,
+      commonQueryParser,
+    });
+
+    return this.enrichResultsWithGettersAndHooks({
+      results,
+      operationName: this.operationName,
+      authContext: extendedQueryRunnerContext.authContext,
+      flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
+      flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+    });
+  }
+
+  private async enrichResultsWithGettersAndHooks({
+    results,
+    operationName,
+    authContext,
+    flatObjectMetadata,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+  }: {
+    results: Output;
+    operationName: CommonQueryNames;
+    authContext: WorkspaceAuthContext;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  }): Promise<Output> {
+    const resultWithGetters = await this.processQueryResult(
+      results,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      authContext,
+    );
+
+    await this.workspaceQueryHookService.executePostQueryHooks(
+      authContext,
+      flatObjectMetadata.nameSingular,
+      operationName,
+      resultWithGetters as QueryResultFieldValue,
+    );
+
+    return resultWithGetters as Output;
+  }
+
+  private async validateSettingsPermissionsOnObjectOrThrow(
+    authContext: WorkspaceAuthContext,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ) {
+    const { flatObjectMetadata } = queryRunnerContext;
+
+    const workspace = authContext.workspace;
+
+    if (
+      Object.keys(OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS).includes(
+        flatObjectMetadata.nameSingular,
+      )
+    ) {
+      const permissionRequired: PermissionFlagType =
+        OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS[
+          flatObjectMetadata.nameSingular as keyof typeof OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS
+        ];
+
+      const userHasPermission =
+        await this.permissionsService.userHasWorkspaceSettingPermission({
+          userWorkspaceId: isUserAuthContext(authContext)
+            ? authContext.userWorkspaceId
+            : undefined,
+          setting: permissionRequired,
+          workspaceId: workspace.id,
+          apiKeyId: isApiKeyAuthContext(authContext)
+            ? authContext.apiKey.id
+            : undefined,
+        });
+
+      if (!userHasPermission) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+        );
+      }
+    }
+  }
+
+  private async prepareExtendedQueryRunnerContextWithGlobalDatasource(
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<Omit<CommonExtendedQueryRunnerContext, 'commonQueryParser'>> {
+    const context = getWorkspaceContext();
+
+    const rolePermissionConfig = resolveRolePermissionConfig({
+      authContext: context.authContext,
+      userWorkspaceRoleMap: context.userWorkspaceRoleMap,
+      apiKeyRoleMap: context.apiKeyRoleMap,
+    });
+
+    if (!rolePermissionConfig) {
+      throw new CommonQueryRunnerException(
+        'Invalid auth context',
+        CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
+    }
+
+    const globalWorkspaceDataSource = this.isReadOnly
+      ? await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceReplica()
+      : await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+
+    const repository = globalWorkspaceDataSource.getRepository(
+      queryRunnerContext.flatObjectMetadata.nameSingular,
+      rolePermissionConfig,
+    );
+
+    return {
+      ...queryRunnerContext,
+      authContext: context.authContext,
+      workspaceDataSource: globalWorkspaceDataSource,
+      rolePermissionConfig,
+      repository,
+    };
+  }
+
+  private async throttleQueryExecution(authContext: WorkspaceAuthContext) {
+    try {
+      if (!isApiKeyAuthContext(authContext)) return;
+
+      const workspaceId = authContext.workspace.id;
+
+      const shortConfig = {
+        key: `api:throttler:${workspaceId}-short-limit`,
+        maxTokens: this.twentyConfigService.get(
+          'API_RATE_LIMITING_SHORT_LIMIT',
+        ),
+        timeWindow: this.twentyConfigService.get(
+          'API_RATE_LIMITING_SHORT_TTL_IN_MS',
+        ),
+      };
+
+      const longConfig = {
+        key: `api:throttler:${workspaceId}-long-limit`,
+        maxTokens: this.twentyConfigService.get('API_RATE_LIMITING_LONG_LIMIT'),
+        timeWindow: this.twentyConfigService.get(
+          'API_RATE_LIMITING_LONG_TTL_IN_MS',
+        ),
+      };
+
+      await this.throttlerService.tokenBucketThrottleOrThrow(
+        shortConfig.key,
+        1,
+        shortConfig.maxTokens,
+        shortConfig.timeWindow,
+      );
+
+      await this.throttlerService.tokenBucketThrottleOrThrow(
+        longConfig.key,
+        1,
+        longConfig.maxTokens,
+        longConfig.timeWindow,
+      );
+    } catch (error) {
+      await this.metricsService.incrementCounter({
+        key: MetricsKeys.CommonApiQueryRateLimited,
+        shouldStoreInCache: false,
+      });
+
+      throw error;
+    }
+  }
+
+  private validateQueryComplexity(
+    selectedFieldsResult: CommonSelectedFieldsResult,
+    args: CommonInput<Args>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ) {
+    const maximumComplexity = this.twentyConfigService.get(
+      'COMMON_QUERY_COMPLEXITY_LIMIT',
+    );
+
+    if (selectedFieldsResult.hasAtLeastTwoNestedOneToManyRelations) {
+      throw new CommonQueryRunnerException(
+        `Query complexity is too high. One-to-Many relation cannot be nested in another One-to-Many relation.`,
+        CommonQueryRunnerExceptionCode.TOO_COMPLEX_QUERY,
+        {
+          userFriendlyMessage: STANDARD_ERROR_MESSAGE,
+        },
+      );
+    }
+
+    const queryComplexity = this.computeQueryComplexity(
+      selectedFieldsResult,
+      args,
+      queryRunnerContext,
+    );
+
+    if (queryComplexity > maximumComplexity) {
+      throw new CommonQueryRunnerException(
+        `Query complexity is too high. Please, reduce the amount of relation fields requested. Query complexity: ${queryComplexity}. Maximum complexity: ${maximumComplexity}.`,
+        CommonQueryRunnerExceptionCode.TOO_COMPLEX_QUERY,
+        {
+          userFriendlyMessage: STANDARD_ERROR_MESSAGE,
+        },
+      );
+    }
+  }
+}

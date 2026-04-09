@@ -1,0 +1,1 @@
+export const HEALTH_INDICATORS_TIMEOUT = 3000;

@@ -1,0 +1,105 @@
+import { t } from '@lingui/core/macro';
+import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
+
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { useMorphPersistManyToOne } from '@/object-record/record-field/ui/meta-types/input/hooks/useMorphPersistManyToOne';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
+import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionLoadingComponentState';
+import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
+import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
+import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { IconForbid } from 'twenty-ui/display';
+
+export const MorphRelationManyToOneFieldInput = () => {
+  const { fieldDefinition, recordId } = useContext(FieldContext);
+
+  const { onCancel } = useContext(FieldInputEventContext);
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldComponentInstanceContext,
+  );
+
+  const { persistMorphManyToOne } = useMorphPersistManyToOne({
+    objectMetadataNameSingular:
+      fieldDefinition.metadata.objectMetadataNameSingular ?? '',
+  });
+
+  const handleMorphItemSelected = async (
+    selectedMorphItem: RecordPickerPickableMorphItem | null | undefined,
+  ) => {
+    if (!isDefined(selectedMorphItem)) {
+      await persistMorphManyToOne({
+        recordId: recordId,
+        fieldDefinition,
+        valueToPersist: null,
+      });
+      onCancel?.();
+      return;
+    }
+
+    const targetObjectMetadataItem = objectMetadataItems.find(
+      (objectMetadataItem) =>
+        objectMetadataItem.id === selectedMorphItem.objectMetadataId,
+    );
+
+    if (!isDefined(targetObjectMetadataItem)) {
+      throw new Error('TargetObjectMetadataItem is required');
+    }
+
+    await persistMorphManyToOne({
+      recordId: recordId,
+      fieldDefinition,
+      valueToPersist: selectedMorphItem.recordId,
+      targetObjectMetadataNameSingular: targetObjectMetadataItem.nameSingular,
+    });
+    onCancel?.();
+  };
+
+  const recordFieldInputLayoutDirection = useAtomComponentStateValue(
+    recordFieldInputLayoutDirectionComponentState,
+  );
+
+  const recordFieldInputLayoutDirectionLoading = useAtomComponentStateValue(
+    recordFieldInputLayoutDirectionLoadingComponentState,
+  );
+
+  if (recordFieldInputLayoutDirectionLoading) {
+    return <></>;
+  }
+
+  if (!isFieldMorphRelationManyToOne(fieldDefinition)) {
+    return null;
+  }
+  const objectNameSingulars = fieldDefinition.metadata.morphRelations.map(
+    (morphRelation) => morphRelation.targetObjectMetadata.nameSingular,
+  );
+
+  const fieldLabel = fieldDefinition.label;
+
+  return (
+    <SingleRecordPicker
+      focusId={instanceId}
+      componentInstanceId={instanceId}
+      EmptyIcon={IconForbid}
+      emptyLabel={t`No ${fieldLabel}`}
+      onCancel={onCancel}
+      onMorphItemSelected={handleMorphItemSelected}
+      objectNameSingulars={objectNameSingulars}
+      recordPickerInstanceId={instanceId}
+      layoutDirection={
+        recordFieldInputLayoutDirection === 'downward'
+          ? 'search-bar-on-top'
+          : 'search-bar-on-bottom'
+      }
+      dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+    />
+  );
+};

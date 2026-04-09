@@ -1,0 +1,1 @@
+export const GRAPH_TOOLTIP_BOUNDARY_PADDING_PX = 8;

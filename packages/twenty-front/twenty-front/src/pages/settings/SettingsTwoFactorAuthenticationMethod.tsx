@@ -1,0 +1,189 @@
+import { styled } from '@linaria/react';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { FormProvider } from 'react-hook-form';
+import QRCode from 'react-qr-code';
+
+import { qrCodeState } from '@/auth/states/qrCode';
+import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { DeleteTwoFactorAuthentication } from '@/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod';
+import { TwoFactorAuthenticationSetupForSettingsEffect } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationSetupForSettingsEffect';
+import { TwoFactorAuthenticationVerificationForSettings } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationForSettings';
+import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
+import { useTwoFactorVerificationForSettings } from '@/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings';
+import { extractSecretFromOtpUri } from '@/settings/two-factor-authentication/utils/extractSecretFromOtpUri';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
+import { H2Title } from 'twenty-ui/display';
+import { Loader } from 'twenty-ui/feedback';
+import { Section } from 'twenty-ui/layout';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+
+const StyledQRCodeContainer = styled.div`
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
+  margin: ${themeCssVariables.spacing[4]} 0;
+`;
+
+const StyledQRCodeWrapper = styled.div`
+  align-items: center;
+  background-color: ${themeCssVariables.background.secondary};
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.md};
+  display: flex;
+  justify-content: center;
+  padding: ${themeCssVariables.spacing[4]};
+`;
+
+const StyledOTPContainer = styled.div`
+  width: fit-content;
+`;
+
+const StyledQRCodeSizer = styled.div`
+  height: 137px;
+  width: 137px;
+
+  & > svg {
+    height: 100%;
+    width: 100%;
+  }
+`;
+
+const StyledCopySetupKeyText = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  line-height: 1.5;
+  text-align: left;
+`;
+
+const StyledCopySetupKeyLink = styled.button`
+  background: none;
+  border: none;
+  color: ${themeCssVariables.font.color.tertiary};
+  cursor: pointer;
+  display: inline;
+  font-size: ${themeCssVariables.font.size.sm};
+  margin-left: 0;
+  padding: 0;
+  text-decoration: underline;
+
+  &:hover {
+    color: ${themeCssVariables.font.color.secondary};
+  }
+`;
+
+const StyledDivider = styled.div`
+  margin: ${themeCssVariables.spacing[6]} 0;
+  width: 100%;
+`;
+
+export const SettingsTwoFactorAuthenticationMethod = () => {
+  const { t } = useLingui();
+  const { copyToClipboard } = useCopyToClipboard();
+  const qrCode = useAtomStateValue(qrCodeState);
+
+  const { currentUserWorkspaceTwoFactorAuthenticationMethods } =
+    useCurrentUserWorkspaceTwoFactorAuthentication();
+
+  const has2FAMethod =
+    currentUserWorkspaceTwoFactorAuthenticationMethods['TOTP']?.status ===
+    'VERIFIED';
+
+  const verificationForm = useTwoFactorVerificationForSettings();
+
+  const shouldShowActionButtons = !has2FAMethod;
+
+  const handleCopySetupKey = async () => {
+    if (!qrCode) return;
+
+    const secret = extractSecretFromOtpUri(qrCode);
+    if (secret !== null) {
+      await copyToClipboard(secret, t`Setup key copied to clipboard`);
+    }
+  };
+
+  return (
+    // oxlint-disable-next-line react/jsx-props-no-spreading
+    <FormProvider {...verificationForm.formConfig}>
+      <SubMenuTopBarContainer
+        title={t`Two Factor Authentication`}
+        links={[
+          {
+            children: <Trans>User</Trans>,
+            href: getSettingsPath(SettingsPath.ProfilePage),
+          },
+          {
+            children: <Trans>Profile</Trans>,
+            href: getSettingsPath(SettingsPath.ProfilePage),
+          },
+          {
+            children: <Trans>Two-Factor Authentication</Trans>,
+          },
+        ]}
+        actionButton={
+          shouldShowActionButtons ? (
+            <SaveAndCancelButtons
+              isSaveDisabled={!verificationForm.canSave}
+              isCancelDisabled={verificationForm.isSubmitting}
+              isLoading={verificationForm.isLoading}
+              onCancel={verificationForm.handleCancel}
+              onSave={verificationForm.formConfig.handleSubmit(
+                verificationForm.handleSave,
+              )}
+            />
+          ) : undefined
+        }
+      >
+        <SettingsPageContainer>
+          {has2FAMethod ? (
+            <Section>
+              <DeleteTwoFactorAuthentication />
+            </Section>
+          ) : (
+            <Section>
+              <TwoFactorAuthenticationSetupForSettingsEffect />
+              <H2Title
+                title={t`Authenticator app`}
+                description={t`Authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator, etc. generate one-time passwords that are used as a second factor to verify your identity when prompted during sign-in.`}
+              />
+              <StyledQRCodeContainer>
+                {!qrCode ? (
+                  <Loader />
+                ) : (
+                  <>
+                    <StyledQRCodeWrapper>
+                      <StyledQRCodeSizer>
+                        <QRCode value={qrCode} />
+                      </StyledQRCodeSizer>
+                    </StyledQRCodeWrapper>
+                    <StyledCopySetupKeyText>
+                      <Trans>Can't scan? Copy the</Trans>{' '}
+                      <StyledCopySetupKeyLink onClick={handleCopySetupKey}>
+                        <Trans>setup key</Trans>
+                      </StyledCopySetupKeyLink>
+                    </StyledCopySetupKeyText>
+                  </>
+                )}
+              </StyledQRCodeContainer>
+
+              <StyledDivider />
+
+              <H2Title
+                title={t`Verify the code from the app`}
+                description={t`Copy paste the code below`}
+              />
+              <StyledOTPContainer>
+                <TwoFactorAuthenticationVerificationForSettings />
+              </StyledOTPContainer>
+            </Section>
+          )}
+        </SettingsPageContainer>
+      </SubMenuTopBarContainer>
+    </FormProvider>
+  );
+};

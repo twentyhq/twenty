@@ -1,0 +1,67 @@
+import { Module } from '@nestjs/common';
+
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
+
+import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
+import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
+import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
+import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
+import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
+import { UploadProfilePicturePermissionGuard } from 'src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard';
+import { UserWorkspaceEntityCacheProviderService } from 'src/engine/core-modules/user-workspace/services/user-workspace-entity-cache-provider.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { RoleValidationModule } from 'src/engine/metadata-modules/role-validation/role-validation.module';
+import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
+import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
+
+@Module({
+  imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [
+        NestjsQueryTypeOrmModule.forFeature([
+          UserEntity,
+          UserWorkspaceEntity,
+          WorkspaceEntity,
+          RoleTargetEntity,
+        ]),
+        RoleValidationModule,
+        NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
+        TypeORMModule,
+        DataSourceModule,
+        WorkspaceDataSourceModule,
+        ApprovedAccessDomainModule,
+        WorkspaceInvitationModule,
+        WorkspaceDomainsModule,
+        TwentyORMModule,
+        UserRoleModule,
+        FileModule,
+        TokenModule,
+        PermissionsModule,
+        OnboardingModule,
+        EnterpriseModule,
+        FeatureFlagModule,
+      ],
+      services: [UserWorkspaceService],
+    }),
+  ],
+  exports: [UserWorkspaceService],
+  providers: [
+    UserWorkspaceService,
+    UserWorkspaceEntityCacheProviderService,
+    UploadProfilePicturePermissionGuard,
+  ],
+})
+export class UserWorkspaceModule {}

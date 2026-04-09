@@ -1,0 +1,44 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { getConnectionTypename } from '@/object-record/cache/utils/getConnectionTypename';
+import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
+import { getRecordEdgeFromRecord } from '@/object-record/cache/utils/getRecordEdgeFromRecord';
+import { type RecordGqlConnectionEdgesRequired } from '@/object-record/graphql/types/RecordGqlConnectionEdgesRequired';
+import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+
+export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
+  objectMetadataItems,
+  objectMetadataItem,
+  records,
+  recordGqlFields,
+  withPageInfo = true,
+  computeReferences = false,
+  isRootLevel = true,
+}: {
+  objectMetadataItems: EnrichedObjectMetadataItem[];
+  objectMetadataItem: Pick<
+    EnrichedObjectMetadataItem,
+    'fields' | 'namePlural' | 'nameSingular'
+  >;
+  records: T[];
+  recordGqlFields?: RecordGqlOperationGqlRecordFields;
+  withPageInfo?: boolean;
+  isRootLevel?: boolean;
+  computeReferences?: boolean;
+}) => {
+  return {
+    __typename: getConnectionTypename(objectMetadataItem.nameSingular),
+    edges: records.map((record) => {
+      return getRecordEdgeFromRecord({
+        objectMetadataItems,
+        objectMetadataItem,
+        recordGqlFields,
+        record,
+        isRootLevel,
+        computeReferences,
+      });
+    }),
+    ...(withPageInfo && { pageInfo: getEmptyPageInfo() }),
+    ...(withPageInfo && { totalCount: records.length }),
+  } as RecordGqlConnectionEdgesRequired;
+};

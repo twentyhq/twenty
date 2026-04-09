@@ -1,0 +1,116 @@
+name: twenty-local
+
+services:
+  db:
+    image: postgres:16
+    container_name: twenty-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: default
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    container_name: twenty-redis
+    command: ["--maxmemory-policy", "noeviction"]
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  backend:
+    container_name: twenty-backend
+    build:
+      context: .
+      dockerfile: backend/docker/twenty-server-dev/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      NX_DAEMON: "false"
+      PG_DATABASE_URL: postgres://postgres:postgres@db:5432/default
+      REDIS_URL: redis://redis:6379
+      SERVER_URL: http://localhost:3000
+      DISABLE_DB_MIGRATIONS: "false"
+      DISABLE_CRON_JOBS_REGISTRATION: "false"
+    volumes:
+      - .:/app:delegated
+      - backend-node-modules:/app/node_modules
+      - backend-cache:/app/.cache
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:3000/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  worker:
+    container_name: twenty-worker
+    build:
+      context: .
+      dockerfile: backend/docker/twenty-server-dev/Dockerfile
+    command: ["yarn", "worker:prod"]
+    environment:
+      NODE_ENV: development
+      NX_DAEMON: "false"
+      PG_DATABASE_URL: postgres://postgres:postgres@db:5432/default
+      REDIS_URL: redis://redis:6379
+      SERVER_URL: http://backend:3000
+      DISABLE_DB_MIGRATIONS: "true"
+      DISABLE_CRON_JOBS_REGISTRATION: "true"
+    volumes:
+      - .:/app:delegated
+      - backend-node-modules:/app/node_modules
+      - backend-cache:/app/.cache
+    depends_on:
+      db:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    container_name: twenty-frontend
+    build:
+      context: .
+      dockerfile: frontend/docker/twenty-front-dev/Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+      NX_DAEMON: "false"
+      API_URL: http://localhost:3000
+    volumes:
+      - .:/app:delegated
+      - frontend-node-modules:/app/node_modules
+      - frontend-cache:/app/.cache
+    depends_on:
+      backend:
+        condition: service_started
+    restart: unless-stopped
+
+volumes:
+  db-data:
+  backend-node-modules:
+  backend-cache:
+  frontend-node-modules:
+  frontend-cache:

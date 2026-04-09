@@ -1,0 +1,161 @@
+import { Command } from '@/command-menu-item/display/components/Command';
+import { isBulkRecordsManualTrigger } from '@/command-menu-item/record/utils/isBulkRecordsManualTrigger';
+import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
+import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
+import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
+import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
+
+import { type WorkflowVersion } from '@/workflow/types/Workflow';
+import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
+import { t } from '@lingui/core/macro';
+import { useCallback } from 'react';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { capitalize, isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
+import { useStore } from 'jotai';
+
+export const useRunWorkflowRecordCommands = ({
+  objectMetadataItem,
+  skip,
+}: {
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  skip?: boolean;
+}) => {
+  const store = useStore();
+  const { getIcon } = useIcons();
+  const { enqueueWarningSnackBar } = useSnackBar();
+
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
+    contextStoreTargetedRecordsRuleComponentState,
+  );
+
+  const contextStoreIsPageInEditMode = useAtomComponentStateValue(
+    contextStoreIsPageInEditModeComponentState,
+  );
+
+  const selectedRecordIds =
+    contextStoreTargetedRecordsRule.mode === 'selection'
+      ? contextStoreTargetedRecordsRule.selectedRecordIds
+      : undefined;
+
+  const { records: activeWorkflowVersions } =
+    useActiveWorkflowVersionsWithManualTrigger({
+      objectMetadataItem,
+      skip,
+    });
+
+  const { runWorkflowVersion } = useRunWorkflowVersion();
+
+  const runWorkflowVersionOnSelectedRecords = useCallback(
+    async (
+      selectedRecordIds: string[],
+      activeWorkflowVersion: Pick<
+        WorkflowVersion,
+        'id' | 'workflowId' | 'trigger'
+      >,
+    ) => {
+      if (selectedRecordIds.length > QUERY_MAX_RECORDS) {
+        const selectedCountFormatted =
+          selectedRecordIds.length.toLocaleString();
+        const limitFormatted = QUERY_MAX_RECORDS.toLocaleString();
+
+        enqueueWarningSnackBar({
+          message: t`You selected ${selectedCountFormatted} records but manual triggers can run on at most ${limitFormatted} records at once. Only the first ${limitFormatted} records will be processed.`,
+          options: {
+            dedupeKey: 'workflow-manual-trigger-selection-limit',
+          },
+        });
+      }
+
+      const limitedSelectedRecordIds = selectedRecordIds.slice(
+        0,
+        QUERY_MAX_RECORDS,
+      );
+
+      if (
+        isDefined(activeWorkflowVersion?.trigger) &&
+        isBulkRecordsManualTrigger(activeWorkflowVersion.trigger)
+      ) {
+        const objectNamePlural = objectMetadataItem.namePlural;
+        const selectedRecords = limitedSelectedRecordIds
+          .map((recordId) =>
+            store.get(recordStoreFamilyState.atomFamily(recordId)),
+          )
+          .filter(isDefined);
+
+        await runWorkflowVersion({
+          workflowId: activeWorkflowVersion.workflowId,
+          workflowVersionId: activeWorkflowVersion.id,
+          payload: {
+            [objectNamePlural]: selectedRecords,
+          },
+        });
+      } else {
+        for (const selectedRecordId of limitedSelectedRecordIds) {
+          const selectedRecord = store.get(
+            recordStoreFamilyState.atomFamily(selectedRecordId),
+          );
+
+          if (!isDefined(selectedRecord)) {
+            continue;
+          }
+
+          await runWorkflowVersion({
+            workflowId: activeWorkflowVersion.workflowId,
+            workflowVersionId: activeWorkflowVersion.id,
+            payload: selectedRecord,
+          });
+        }
+      }
+    },
+    [runWorkflowVersion, objectMetadataItem, enqueueWarningSnackBar, store],
+  );
+
+  return activeWorkflowVersions
+    .filter((activeWorkflowVersion) =>
+      isDefined(activeWorkflowVersion.workflow),
+    )
+    .map((activeWorkflowVersion, index) => {
+      const name = capitalize(activeWorkflowVersion.workflow.name);
+
+      const Icon = getIcon(
+        activeWorkflowVersion.trigger?.settings.icon,
+        COMMAND_MENU_DEFAULT_ICON,
+      );
+
+      return {
+        type: CommandMenuItemType.WorkflowRun,
+        key: `workflow-run-${activeWorkflowVersion.id}`,
+        scope: CommandMenuItemScope.RecordSelection,
+        label: name,
+        shortLabel: name,
+        position: index,
+        Icon,
+        isPinned:
+          !contextStoreIsPageInEditMode &&
+          activeWorkflowVersion.trigger?.settings?.isPinned,
+        shouldBeRegistered: () => true,
+        component: (
+          <Command
+            onClick={async () => {
+              if (!isDefined(selectedRecordIds)) {
+                return;
+              }
+
+              await runWorkflowVersionOnSelectedRecords(
+                selectedRecordIds,
+                activeWorkflowVersion,
+              );
+            }}
+            closeSidePanelOnCommandMenuListExecution={false}
+          />
+        ),
+      };
+    });
+};

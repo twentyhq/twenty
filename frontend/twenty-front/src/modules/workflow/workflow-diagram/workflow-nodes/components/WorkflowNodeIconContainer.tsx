@@ -1,0 +1,15 @@
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from '@linaria/react';
+
+const StyledNodeIconContainer = styled.div`
+  align-items: center;
+  background: ${themeCssVariables.background.transparent.light};
+  border-radius: 4px;
+  box-sizing: border-box;
+  display: flex;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
+`;
+
+export { StyledNodeIconContainer as WorkflowNodeIconContainer };

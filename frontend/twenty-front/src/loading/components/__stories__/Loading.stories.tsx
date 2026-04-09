@@ -1,0 +1,44 @@
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { within } from 'storybook/test';
+
+import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
+import {
+  PageDecorator,
+  type PageDecoratorArgs,
+} from '~/testing/decorators/PageDecorator';
+import { LoadingDecorator } from '~/testing/decorators/LoadingDecorator';
+import { graphqlMocks } from '~/testing/graphqlMocks';
+
+const meta: Meta<PageDecoratorArgs> = {
+  title: 'App/Loading',
+  component: RecordIndexPage,
+  args: {
+    routePath: '/objects/:objectNamePlural',
+    routeParams: {
+      ':objectNamePlural': 'companies',
+    },
+  },
+  parameters: {
+    msw: graphqlMocks,
+    loadingSetDelay: 1000,
+  },
+  tags: ['no-tests'],
+};
+
+export default meta;
+
+export type Story = StoryObj<typeof RecordIndexPage>;
+
+export const Default: Story = {
+  // oxlint-disable-next-line @typescripttypescript/ban-ts-comment
+  // @ts-ignore
+  decorators: [LoadingDecorator, PageDecorator],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Search');
+    await canvas.findByText('Settings');
+    await canvas.findByText('Opened');
+    await canvas.findByText('Companies');
+  },
+};

@@ -1,0 +1,248 @@
+import { PageLayoutGridLayoutDragSelector } from '@/page-layout/components/PageLayoutGridLayoutDragSelector';
+import { PageLayoutGridOverlay } from '@/page-layout/components/PageLayoutGridOverlay';
+import { PageLayoutGridResizeHandle } from '@/page-layout/components/PageLayoutGridResizeHandle';
+import { ReactGridLayoutCardWrapper } from '@/page-layout/components/ReactGridLayoutCardWrapper';
+import { EMPTY_LAYOUT } from '@/page-layout/constants/EmptyLayout';
+import {
+  PAGE_LAYOUT_CONFIG,
+  type PageLayoutBreakpoint,
+} from '@/page-layout/constants/PageLayoutBreakpoints';
+import { PAGE_LAYOUT_GRID_ITEM_DRAGGING_Z_INDEX } from '@/page-layout/constants/PageLayoutGridItemDraggingZIndex';
+import { PAGE_LAYOUT_GRID_ITEM_Z_INDEX } from '@/page-layout/constants/PageLayoutGridItemZIndex';
+import { PAGE_LAYOUT_GRID_MARGIN } from '@/page-layout/constants/PageLayoutGridMargin';
+import { PAGE_LAYOUT_GRID_ROW_HEIGHT } from '@/page-layout/constants/PageLayoutGridRowHeight';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayoutHandleLayoutChange';
+import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/pageLayoutCurrentBreakpointComponentState';
+import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
+import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
+import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
+import { addPendingPlaceholderToLayouts } from '@/page-layout/utils/addPendingPlaceholderToLayouts';
+import { filterPendingPlaceholderFromLayouts } from '@/page-layout/utils/filterPendingPlaceholderFromLayouts';
+import { prepareGridLayoutItemsWithPlaceholders } from '@/page-layout/utils/prepareGridLayoutItemsWithPlaceholders';
+import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
+import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
+import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
+import { useMemo, useRef } from 'react';
+import {
+  type Layout,
+  type Layouts,
+  Responsive,
+  type ResponsiveProps,
+  WidthProvider,
+} from 'react-grid-layout';
+import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const disabledTransitionsClass = css`
+  .react-grid-layout {
+    transition: none !important;
+  }
+
+  .react-grid-item {
+    transition: none !important;
+  }
+
+  .react-grid-item.cssTransforms {
+    transition-property: none !important;
+  }
+`;
+
+const StyledGridContainer = styled.div`
+  box-sizing: border-box;
+  flex: 1;
+  min-height: 100%;
+  padding: ${themeCssVariables.spacing[2]};
+  position: relative;
+  user-select: none;
+  width: 100%;
+
+  .react-grid-placeholder {
+    background: ${themeCssVariables.color.blue7} !important;
+
+    border-radius: ${themeCssVariables.border.radius.md};
+  }
+
+  .react-grid-item:not(.react-draggable-dragging) {
+    user-select: auto;
+  }
+
+  .react-grid-item {
+    z-index: ${PAGE_LAYOUT_GRID_ITEM_Z_INDEX};
+  }
+
+  .react-grid-item.react-draggable-dragging {
+    z-index: ${PAGE_LAYOUT_GRID_ITEM_DRAGGING_Z_INDEX};
+  }
+
+  .react-grid-item:hover .widget-card-resize-handle {
+    display: block !important;
+  }
+`;
+
+type ExtendedResponsiveProps = ResponsiveProps & {
+  maxCols?: number;
+  preventCollision?: boolean;
+};
+
+const ResponsiveGridLayout = WidthProvider(
+  Responsive,
+) as React.ComponentType<ExtendedResponsiveProps>;
+
+type PageLayoutGridLayoutProps = {
+  tabId: string;
+};
+
+export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
+  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
+    PageLayoutComponentInstanceContext,
+  );
+
+  const tabListInstanceId = useAvailableComponentInstanceIdOrThrow(
+    TabListComponentInstanceContext,
+  );
+
+  const setPageLayoutCurrentBreakpoint = useSetAtomComponentState(
+    pageLayoutCurrentBreakpointComponentState,
+  );
+
+  const setPageLayoutDraggingWidgetId = useSetAtomComponentState(
+    pageLayoutDraggingWidgetIdComponentState,
+  );
+
+  const setPageLayoutResizingWidgetId = useSetAtomComponentState(
+    pageLayoutResizingWidgetIdComponentState,
+  );
+
+  const { handleLayoutChange } = usePageLayoutHandleLayoutChange({
+    pageLayoutId,
+    tabListInstanceId,
+  });
+
+  const gridContainerRef = useRef<HTMLDivElement>(null);
+
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+
+  const pageLayoutCurrentLayouts = useAtomComponentStateValue(
+    pageLayoutCurrentLayoutsComponentState,
+  );
+
+  const pageLayoutDraggedArea = useAtomComponentStateValue(
+    pageLayoutDraggedAreaComponentState,
+  );
+  const pageLayoutDraggingWidgetId = useAtomComponentStateValue(
+    pageLayoutDraggingWidgetIdComponentState,
+  );
+
+  const activeTab = usePageLayoutTabWithVisibleWidgetsOrThrow(tabId);
+
+  const activeTabWidgets = activeTab.widgets;
+
+  const isLayoutEmpty =
+    !isDefined(activeTabWidgets) || activeTabWidgets.length === 0;
+
+  const hasPendingPlaceholder = isDefined(pageLayoutDraggedArea);
+
+  const handleLayoutChangeWithoutPendingPlaceholder = (
+    currentLayout: Layout[],
+    allLayouts: Layouts,
+  ) => {
+    handleLayoutChange(
+      currentLayout,
+      filterPendingPlaceholderFromLayouts(allLayouts),
+    );
+  };
+
+  const baseLayouts = isLayoutEmpty
+    ? EMPTY_LAYOUT
+    : (pageLayoutCurrentLayouts[tabId] ?? EMPTY_LAYOUT);
+
+  const layouts = hasPendingPlaceholder
+    ? addPendingPlaceholderToLayouts(baseLayouts, pageLayoutDraggedArea)
+    : baseLayouts;
+
+  const gridLayoutItems = useMemo(
+    () =>
+      prepareGridLayoutItemsWithPlaceholders(
+        activeTabWidgets,
+        hasPendingPlaceholder,
+      ),
+    [activeTabWidgets, hasPendingPlaceholder],
+  );
+
+  const shouldDisableTransitions = !isDefined(pageLayoutDraggingWidgetId);
+
+  return (
+    <StyledGridContainer
+      ref={gridContainerRef}
+      className={
+        shouldDisableTransitions ? disabledTransitionsClass : undefined
+      }
+    >
+      {isPageLayoutInEditMode && (
+        <>
+          <PageLayoutGridOverlay />
+          <PageLayoutGridLayoutDragSelector
+            gridContainerRef={gridContainerRef}
+          />
+        </>
+      )}
+
+      <ResponsiveGridLayout
+        className="layout"
+        layouts={layouts}
+        breakpoints={PAGE_LAYOUT_CONFIG.breakpoints}
+        cols={PAGE_LAYOUT_CONFIG.columns}
+        rowHeight={PAGE_LAYOUT_GRID_ROW_HEIGHT}
+        maxCols={12}
+        containerPadding={[0, 0]}
+        margin={[PAGE_LAYOUT_GRID_MARGIN, PAGE_LAYOUT_GRID_MARGIN]}
+        isDraggable={isPageLayoutInEditMode && !isLayoutEmpty}
+        isResizable={isPageLayoutInEditMode && !isLayoutEmpty}
+        draggableHandle=".drag-handle"
+        compactType="vertical"
+        preventCollision={false}
+        resizeHandle={
+          isPageLayoutInEditMode && !isLayoutEmpty ? (
+            <PageLayoutGridResizeHandle />
+          ) : undefined
+        }
+        resizeHandles={['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw']}
+        onDragStart={(_layout, _oldItem, newItem) => {
+          setPageLayoutDraggingWidgetId(newItem.i);
+        }}
+        onDragStop={() => {
+          setPageLayoutDraggingWidgetId(null);
+        }}
+        onResizeStart={(_layout, _oldItem, newItem) => {
+          setPageLayoutResizingWidgetId(newItem.i);
+        }}
+        onResizeStop={() => {
+          setPageLayoutResizingWidgetId(null);
+        }}
+        onLayoutChange={handleLayoutChangeWithoutPendingPlaceholder}
+        onBreakpointChange={(newBreakpoint) =>
+          setPageLayoutCurrentBreakpoint(newBreakpoint as PageLayoutBreakpoint)
+        }
+      >
+        {gridLayoutItems.map((item) => (
+          <ReactGridLayoutCardWrapper key={item.id}>
+            {item.type === 'placeholder' ? (
+              <WidgetPlaceholder />
+            ) : (
+              <WidgetRenderer widget={item.widget} />
+            )}
+          </ReactGridLayoutCardWrapper>
+        ))}
+      </ResponsiveGridLayout>
+    </StyledGridContainer>
+  );
+};

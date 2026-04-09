@@ -1,0 +1,122 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Failing create field metadata tests suite should fail to create NUMERIC field type via API 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Field type NUMERIC is not supported for field creation. Use NUMBER instead.",
+                "userFriendlyMessage": "Field type NUMERIC is not supported. Use Number instead.",
+                "value": "NUMERIC",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "numericField",
+              "objectMetadataUniversalIdentifier": Any<String>,
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 fieldMetadata",
+      "summary": {
+        "fieldMetadata": 1,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Metadata validation failed",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing create field metadata tests suite should fail to create POSITION field type via API 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Field type POSITION must be named "position", got "positionField"",
+                "userFriendlyMessage": "Field type POSITION must be named "position"",
+                "value": "positionField",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Field type POSITION must be a system field",
+                "userFriendlyMessage": "Field type POSITION must be a system field",
+                "value": false,
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "name": "positionField",
+              "objectMetadataUniversalIdentifier": Any<String>,
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 fieldMetadata",
+      "summary": {
+        "fieldMetadata": 1,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Metadata validation failed",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing create field metadata tests suite should fail to create TS_VECTOR field type via API 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "TS Vector is not supported for field creation",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "type": "create",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 fieldMetadata",
+      "summary": {
+        "fieldMetadata": 1,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Metadata validation failed",
+    },
+    "message": "Multiple validation errors occurred while creating field",
+    "name": "GraphQLError",
+  },
+]
+`;

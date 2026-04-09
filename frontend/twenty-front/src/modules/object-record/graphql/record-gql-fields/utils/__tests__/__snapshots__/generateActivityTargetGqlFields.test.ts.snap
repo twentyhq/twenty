@@ -1,0 +1,243 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`generateActivityTargetGqlFields snapshot tests should match snapshot for Note with loadRelations="activity" 1`] = `
+{
+  "id": true,
+  "note": {
+    "id": true,
+    "title": true,
+  },
+}
+`;
+
+exports[`generateActivityTargetGqlFields snapshot tests should match snapshot for Note with loadRelations="both" 1`] = `
+{
+  "createdAt": true,
+  "createdBy": true,
+  "deletedAt": true,
+  "id": true,
+  "note": {
+    "id": true,
+    "title": true,
+  },
+  "noteId": true,
+  "position": true,
+  "searchVector": true,
+  "targetCompany": {
+    "id": true,
+    "name": true,
+  },
+  "targetCompanyId": true,
+  "targetEmploymentHistory": {
+    "id": true,
+    "name": true,
+  },
+  "targetEmploymentHistoryId": true,
+  "targetOpportunity": {
+    "id": true,
+    "name": true,
+  },
+  "targetOpportunityId": true,
+  "targetPerson": {
+    "id": true,
+    "name": true,
+  },
+  "targetPersonId": true,
+  "targetPet": {
+    "id": true,
+    "name": true,
+  },
+  "targetPetCareAgreement": {
+    "id": true,
+    "name": true,
+  },
+  "targetPetCareAgreementId": true,
+  "targetPetId": true,
+  "targetRocket": {
+    "id": true,
+    "name": true,
+  },
+  "targetRocketId": true,
+  "targetSurveyResult": {
+    "id": true,
+    "name": true,
+  },
+  "targetSurveyResultId": true,
+  "updatedAt": true,
+  "updatedBy": true,
+}
+`;
+
+exports[`generateActivityTargetGqlFields snapshot tests should match snapshot for Note with loadRelations="relations" 1`] = `
+{
+  "createdAt": true,
+  "createdBy": true,
+  "deletedAt": true,
+  "id": true,
+  "position": true,
+  "searchVector": true,
+  "targetCompany": {
+    "id": true,
+    "name": true,
+  },
+  "targetCompanyId": true,
+  "targetEmploymentHistory": {
+    "id": true,
+    "name": true,
+  },
+  "targetEmploymentHistoryId": true,
+  "targetOpportunity": {
+    "id": true,
+    "name": true,
+  },
+  "targetOpportunityId": true,
+  "targetPerson": {
+    "id": true,
+    "name": true,
+  },
+  "targetPersonId": true,
+  "targetPet": {
+    "id": true,
+    "name": true,
+  },
+  "targetPetCareAgreement": {
+    "id": true,
+    "name": true,
+  },
+  "targetPetCareAgreementId": true,
+  "targetPetId": true,
+  "targetRocket": {
+    "id": true,
+    "name": true,
+  },
+  "targetRocketId": true,
+  "targetSurveyResult": {
+    "id": true,
+    "name": true,
+  },
+  "targetSurveyResultId": true,
+  "updatedAt": true,
+  "updatedBy": true,
+}
+`;
+
+exports[`generateActivityTargetGqlFields snapshot tests should match snapshot for Task with loadRelations="activity" 1`] = `
+{
+  "id": true,
+  "task": {
+    "id": true,
+    "title": true,
+  },
+}
+`;
+
+exports[`generateActivityTargetGqlFields snapshot tests should match snapshot for Task with loadRelations="both" 1`] = `
+{
+  "createdAt": true,
+  "createdBy": true,
+  "deletedAt": true,
+  "id": true,
+  "position": true,
+  "searchVector": true,
+  "targetCompany": {
+    "id": true,
+    "name": true,
+  },
+  "targetCompanyId": true,
+  "targetEmploymentHistory": {
+    "id": true,
+    "name": true,
+  },
+  "targetEmploymentHistoryId": true,
+  "targetOpportunity": {
+    "id": true,
+    "name": true,
+  },
+  "targetOpportunityId": true,
+  "targetPerson": {
+    "id": true,
+    "name": true,
+  },
+  "targetPersonId": true,
+  "targetPet": {
+    "id": true,
+    "name": true,
+  },
+  "targetPetCareAgreement": {
+    "id": true,
+    "name": true,
+  },
+  "targetPetCareAgreementId": true,
+  "targetPetId": true,
+  "targetRocket": {
+    "id": true,
+    "name": true,
+  },
+  "targetRocketId": true,
+  "targetSurveyResult": {
+    "id": true,
+    "name": true,
+  },
+  "targetSurveyResultId": true,
+  "task": {
+    "id": true,
+    "title": true,
+  },
+  "taskId": true,
+  "updatedAt": true,
+  "updatedBy": true,
+}
+`;
+
+exports[`generateActivityTargetGqlFields snapshot tests should match snapshot for Task with loadRelations="relations" 1`] = `
+{
+  "createdAt": true,
+  "createdBy": true,
+  "deletedAt": true,
+  "id": true,
+  "position": true,
+  "searchVector": true,
+  "targetCompany": {
+    "id": true,
+    "name": true,
+  },
+  "targetCompanyId": true,
+  "targetEmploymentHistory": {
+    "id": true,
+    "name": true,
+  },
+  "targetEmploymentHistoryId": true,
+  "targetOpportunity": {
+    "id": true,
+    "name": true,
+  },
+  "targetOpportunityId": true,
+  "targetPerson": {
+    "id": true,
+    "name": true,
+  },
+  "targetPersonId": true,
+  "targetPet": {
+    "id": true,
+    "name": true,
+  },
+  "targetPetCareAgreement": {
+    "id": true,
+    "name": true,
+  },
+  "targetPetCareAgreementId": true,
+  "targetPetId": true,
+  "targetRocket": {
+    "id": true,
+    "name": true,
+  },
+  "targetRocketId": true,
+  "targetSurveyResult": {
+    "id": true,
+    "name": true,
+  },
+  "targetSurveyResultId": true,
+  "updatedAt": true,
+  "updatedBy": true,
+}
+`;

@@ -1,0 +1,189 @@
+name: twenty-local
+
+# Local development stack: frontend + backend + worker + db + redis
+# Each service runs in its own container for isolation.
+# node_modules live in named Docker volumes — never installed on the host.
+#
+# FIRST TIME SETUP:
+#   docker compose -f docker-compose.local.yml build
+#   docker compose -f docker-compose.local.yml up -d
+#   # Wait for backend to be healthy, then init the database:
+#   docker compose -f docker-compose.local.yml exec backend npx nx run twenty-server:database:init:prod
+#
+# DAILY USAGE:
+#   docker compose -f docker-compose.local.yml up -d       # start all
+#   docker compose -f docker-compose.local.yml down        # stop all (data persists)
+#   docker compose -f docker-compose.local.yml down -v     # stop + wipe all data
+#   docker compose -f docker-compose.local.yml logs -f     # tail all logs
+#
+# AFTER CHANGING package.json / yarn.lock:
+#   docker compose -f docker-compose.local.yml build frontend
+#   docker compose -f docker-compose.local.yml build backend
+#   docker compose -f docker-compose.local.yml up -d --force-recreate
+#
+# URLS:
+#   Frontend  → http://localhost:3001
+#   Backend   → http://localhost:3000
+#   DB        → localhost:5432  (user: postgres / pass: postgres / db: default)
+#   Redis     → localhost:6379
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # Frontend — Vite dev server with HMR
+  # ---------------------------------------------------------------------------
+  frontend:
+    build:
+      context: .
+      dockerfile: packages/twenty-docker/twenty-front-dev/Dockerfile
+    volumes:
+      - .:/app                              # mount full repo (source changes reflect immediately)
+      - front-node-modules:/app/node_modules # protect pre-installed deps from the host mount
+    ports:
+      - "3001:3001"
+    environment:
+      REACT_APP_SERVER_BASE_URL: http://localhost:3000
+      VITE_BUILD_SOURCEMAP: "false"
+      VITE_HOST: "0.0.0.0"    # bind to all interfaces so the container port is reachable
+    deploy:
+      resources:
+        limits:
+          memory: 1024m
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Backend — NestJS dev server (also serves GraphQL + REST)
+  # ---------------------------------------------------------------------------
+  backend:
+    build:
+      context: .
+      dockerfile: packages/twenty-docker/twenty-server-dev/Dockerfile
+    volumes:
+      - .:/app
+      - back-node-modules:/app/node_modules
+      - server-local-data:/app/packages/twenty-server/.local-storage
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      PG_DATABASE_URL: postgres://postgres:postgres@db:5432/default
+      REDIS_URL: redis://redis:6379
+      APP_SECRET: local_dev_secret_replace_me_with_random_string
+      SIGN_IN_PREFILLED: "true"
+      FRONTEND_URL: http://localhost:3001
+      SERVER_URL: http://localhost:3000
+      IS_BILLING_ENABLED: "false"
+      STORAGE_TYPE: local
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 90s
+    deploy:
+      resources:
+        limits:
+          memory: 1024m
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Worker — BullMQ background job processor (shares image with backend)
+  # ---------------------------------------------------------------------------
+  worker:
+    build:
+      context: .
+      dockerfile: packages/twenty-docker/twenty-server-dev/Dockerfile
+    command: ["npx", "nx", "run", "twenty-server:worker"]
+    volumes:
+      - .:/app
+      - back-node-modules:/app/node_modules
+      - server-local-data:/app/packages/twenty-server/.local-storage
+    environment:
+      NODE_ENV: development
+      PG_DATABASE_URL: postgres://postgres:postgres@db:5432/default
+      REDIS_URL: redis://redis:6379
+      APP_SECRET: local_dev_secret_replace_me_with_random_string
+      SERVER_URL: http://localhost:3000
+      IS_BILLING_ENABLED: "false"
+      STORAGE_TYPE: local
+      DISABLE_DB_MIGRATIONS: "true"
+      DISABLE_CRON_JOBS_REGISTRATION: "true"
+    depends_on:
+      backend:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Database — PostgreSQL 16 (Alpine, memory-tuned for local dev)
+  # ---------------------------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: default
+    # Low-memory config: limits connections and buffer sizes for local use
+    command: >
+      postgres
+      -c max_connections=50
+      -c shared_buffers=128MB
+      -c effective_cache_size=256MB
+      -c work_mem=4MB
+      -c maintenance_work_mem=32MB
+      -c wal_buffers=8MB
+      -c checkpoint_completion_target=0.9
+      -c log_min_duration_statement=2000
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d default"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Redis 7 (Alpine, no persistence — dev data is ephemeral by design)
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    # Disable RDB snapshots and AOF to save I/O and memory
+    command: >
+      redis-server
+      --maxmemory 128mb
+      --maxmemory-policy noeviction
+      --save ""
+      --appendonly no
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          memory: 160m
+    restart: unless-stopped
+
+volumes:
+  db-data:            # Postgres data (survives docker compose down)
+  server-local-data:  # NestJS file storage
+  front-node-modules: # Frontend node_modules (pre-installed inside image)
+  back-node-modules:  # Backend node_modules (pre-installed inside image)

@@ -1,0 +1,83 @@
+name: twenty
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: twenty-db
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-default}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: twenty-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/docker/twenty-server-dev/Dockerfile
+    container_name: twenty-backend
+    environment:
+      NODE_ENV: development
+      NX_DAEMON: "false"
+      PG_DATABASE_URL: "postgres://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@db:5432/${DB_NAME:-default}"
+      REDIS_URL: "redis://redis:6379"
+      SERVER_URL: "http://localhost:3000"
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app:delegated
+      - /app/node_modules
+      - /app/.cache
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/docker/twenty-front-dev/Dockerfile
+    container_name: twenty-frontend
+    environment:
+      NODE_ENV: development
+      NX_DAEMON: "false"
+      API_URL: "http://localhost:3000"
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/app:delegated
+      - /app/node_modules
+      - /app/.cache
+    depends_on:
+      backend:
+        condition: service_started
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  redis-data:
