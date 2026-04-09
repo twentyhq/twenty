@@ -62,6 +62,7 @@ export const SidePanelRecordPageFieldSettings = () => {
   const displayModeLabels: Record<string, string> = {
     [FieldDisplayMode.FIELD]: t`Field`,
     [FieldDisplayMode.CARD]: t`Card`,
+    [FieldDisplayMode.EDITOR]: t`Editor`,
   };
 
   const layoutLabel = isDefined(currentDisplayMode)
