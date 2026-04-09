@@ -31,6 +31,7 @@ import { Callout, IconPlus } from 'twenty-ui/display';
 import { Button, type SelectOption } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 
 const EMAIL_EDITOR_MIN_HEIGHT = 340;
 
@@ -131,18 +132,7 @@ export const WorkflowEditActionEmailBase = ({
     });
   }
 
-  const { records: accounts, loading } = useFindManyRecords<ConnectedAccount>({
-    objectNameSingular: 'connectedAccount',
-    filter,
-    recordGqlFields: {
-      id: true,
-      handle: true,
-      provider: true,
-      scopes: true,
-      userWorkspaceId: true,
-      connectionParameters: true,
-    },
-  });
+  const { accounts, loading } = useMyConnectedAccounts();
 
   const selectedAccount = accounts.find(
     (account) => account.id === formData.connectedAccountId,
