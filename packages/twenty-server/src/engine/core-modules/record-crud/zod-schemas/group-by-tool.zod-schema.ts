@@ -208,13 +208,13 @@ export const generateGroupByToolInputSchema = (
         .enum(Object.keys(AggregateOperations) as [string, ...string[]])
         .default(AggregateOperations.COUNT)
         .describe(
-          'Aggregate operation to apply per group. Default: COUNT. SUM/AVG/MIN/MAX require aggregateFieldName.',
+          'Aggregate operation to apply per group. Default: COUNT. Any operation other than COUNT requires aggregateFieldName.',
         ),
       aggregateFieldName: z
         .string()
         .optional()
         .describe(
-          'Field to aggregate (required for SUM, AVG, MIN, MAX, and field-specific ops). Not needed for COUNT.',
+          'Field to aggregate. Required for any operation other than COUNT.',
         ),
       limit: z
         .number()
