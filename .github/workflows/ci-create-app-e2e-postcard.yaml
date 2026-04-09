@@ -161,6 +161,24 @@ jobs:
           cd /tmp/e2e-test-workspace/test-app
           npx --no-install twenty install
 
+      - name: Verify post-install function was installed and executed
+        run: |
+          # Verify the post-install logic function is registered in metadata
+          LOGIC_FUNCTIONS_RESPONSE=$(curl -s -X POST "${{ env.TWENTY_API_URL }}/metadata" \
+            -H "Authorization: Bearer ${{ env.TWENTY_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"query":"query { findManyLogicFunctions { name } }"}')
+          echo "Logic functions response: $LOGIC_FUNCTIONS_RESPONSE"
+          echo "$LOGIC_FUNCTIONS_RESPONSE" | jq -e '.data.findManyLogicFunctions | map(select(.name == "post-install")) | length == 1' > /dev/null
+
+          # Verify the post-install function seeded 2 post card records during install
+          POST_CARDS_RESPONSE=$(curl -s -X POST "${{ env.TWENTY_API_URL }}/graphql" \
+            -H "Authorization: Bearer ${{ env.TWENTY_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"query":"query { postCards { edges { node { id name content } } } }"}')
+          echo "Post cards response: $POST_CARDS_RESPONSE"
+          echo "$POST_CARDS_RESPONSE" | jq -e '.data.postCards.edges | length == 2' > /dev/null
+
       - name: Execute postcard logic function
         run: |
           cd /tmp/e2e-test-workspace/test-app
