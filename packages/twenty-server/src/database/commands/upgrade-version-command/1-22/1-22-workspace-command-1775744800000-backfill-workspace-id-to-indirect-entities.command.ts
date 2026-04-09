@@ -65,9 +65,9 @@ const BACKFILL_DEFINITIONS: BackfillDefinition[] = [
   },
 ];
 
-@RegisteredWorkspaceCommand('1.21.0', 1775744800000)
+@RegisteredWorkspaceCommand('1.22.0', 1775744800000)
 @Command({
-  name: 'upgrade:1-21:backfill-workspace-id-to-indirect-entities',
+  name: 'upgrade:1-22:backfill-workspace-id-to-indirect-entities',
   description:
     'Backfill workspaceId on agent, index field, application variable, and billing subscription item tables',
 })
