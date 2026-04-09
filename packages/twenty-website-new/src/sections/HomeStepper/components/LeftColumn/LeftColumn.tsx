@@ -93,25 +93,19 @@ export type HomeStepperLeftColumnProps = {
   steps: HomeStepperStepType[];
 };
 
-function clampUnit(value: number): number {
-  return Math.max(0, Math.min(1, value));
-}
-
 function computeDesktopStepStyle(
   index: number,
   activeStepIndex: number,
   localProgress: number,
   stepCount: number,
 ): { opacity: number; transform: string } {
-  const holdMax =
-    HOME_STEPPER_HOLD_FRACTIONS[activeStepIndex] ?? 1;
-  const transitionRange = 1 - holdMax;
+  const holdMax = HOME_STEPPER_HOLD_FRACTIONS[activeStepIndex] ?? 1;
 
   if (index === activeStepIndex) {
     if (index === stepCount - 1 || localProgress <= holdMax) {
       return { opacity: 1, transform: 'translateY(0)' };
     }
-    const t = clampUnit((localProgress - holdMax) / transitionRange);
+    const t = Math.min(1, (localProgress - holdMax) / (1 - holdMax));
     return {
       opacity: 1 - t,
       transform: `translateY(${-40 * t}vh)`,
@@ -119,7 +113,7 @@ function computeDesktopStepStyle(
   }
 
   if (index === activeStepIndex + 1 && localProgress > holdMax) {
-    const t = clampUnit((localProgress - holdMax) / transitionRange);
+    const t = Math.min(1, (localProgress - holdMax) / (1 - holdMax));
     return {
       opacity: t,
       transform: `translateY(${40 * (1 - t)}vh)`,
