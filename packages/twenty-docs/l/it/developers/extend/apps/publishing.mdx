@@ -66,7 +66,7 @@ Il link di condivisione utilizza l'URL di base del server (senza alcun sottodomi
 
 ### Gestione delle versioni
 
-When updating an already deployed tarball app, the server requires the `version` in `package.json` to be **strictly higher** (per [semver](https://semver.org) ordering) than the currently deployed version. Re-deploying the same version, or pushing a lower one, is rejected before the tarball is stored — you'll see a `VERSION_ALREADY_EXISTS` error from the CLI.
+Quando si aggiorna un'app in formato tarball già distribuita, il server richiede che la `version` in `package.json` sia **strettamente superiore** (per l'ordinamento [semver](https://semver.org)) rispetto alla versione attualmente distribuita. Re-deploying the same version, or pushing a lower one, is rejected before the tarball is stored — you'll see a `VERSION_ALREADY_EXISTS` error from the CLI.
 
 Per rilasciare un aggiornamento:
 

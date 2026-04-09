@@ -66,7 +66,7 @@ Odkaz ke sdílení používá základní adresu URL serveru (bez jakékoli subdo
 
 ### Správa verzí
 
-When updating an already deployed tarball app, the server requires the `version` in `package.json` to be **strictly higher** (per [semver](https://semver.org) ordering) than the currently deployed version. Re-deploying the same version, or pushing a lower one, is rejected before the tarball is stored — you'll see a `VERSION_ALREADY_EXISTS` error from the CLI.
+Při aktualizaci již nasazené tarballové aplikace server vyžaduje, aby hodnota `version` v `package.json` byla **přísně vyšší** (podle řazení [semver](https://semver.org)) než aktuálně nasazená verze. Re-deploying the same version, or pushing a lower one, is rejected before the tarball is stored — you'll see a `VERSION_ALREADY_EXISTS` error from the CLI.
 
 Chcete-li vydat aktualizaci:
 
