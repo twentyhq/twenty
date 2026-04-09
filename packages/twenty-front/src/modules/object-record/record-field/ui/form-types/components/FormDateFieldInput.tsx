@@ -26,7 +26,6 @@ import {
   useFloating,
 } from '@floating-ui/react';
 import { styled } from '@linaria/react';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useId, useRef, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { Key } from 'ts-key-enum';
@@ -249,9 +248,7 @@ export const FormDateFieldInput = ({
         : Temporal.PlainDate.from(defaultValue).toString();
 
   const plainDateValue =
-    draftValue.type === 'static' && isNonEmptyString(draftValue.value)
-      ? draftValue.value
-      : plainDateValueFromProps;
+    draftValue.type === 'static' ? draftValue.value : plainDateValueFromProps;
 
   const handleMaskedDatePointerDownCapture = () => {
     if (readonly) {
