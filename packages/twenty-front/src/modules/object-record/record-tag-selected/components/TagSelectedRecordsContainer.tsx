@@ -2,6 +2,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { useBulkCreateTagJunctionRecords } from '@/object-record/record-tag-selected/hooks/useBulkCreateTagJunctionRecords';
+import { useRefetchFindManyRecords } from '@/object-record/hooks/useRefetchFindManyRecords';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -78,6 +79,10 @@ export const TagSelectedRecordsContainer = ({
   const { bulkCreateTagJunctionRecords, tagObjectNameSingular, isConfigValid } =
     useBulkCreateTagJunctionRecords({ objectMetadataItem });
 
+  const { refetchFindManyRecords } = useRefetchFindManyRecords({
+    objectMetadataNamePlural: objectMetadataItem.namePlural,
+  });
+
   const { loading, recordsToSelect, selectedRecords, filteredSelectedRecords } =
     useRecordsForSelect({
       objectNameSingular: tagObjectNameSingular ?? '__invalid__',
@@ -110,6 +115,7 @@ export const TagSelectedRecordsContainer = ({
     }
 
     await bulkCreateTagJunctionRecords({ selectedRecordIds, selectedTagIds });
+    await refetchFindManyRecords();
     closeSidePanelMenu();
   };
 
