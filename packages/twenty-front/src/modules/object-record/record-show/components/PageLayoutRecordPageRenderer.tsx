@@ -9,7 +9,7 @@ import { usePageLayoutIdForRecord } from '@/page-layout/hooks/usePageLayoutIdFor
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
-import { sidePanelWidgetFooterActionsState } from '@/ui/layout/side-panel/states/sidePanelWidgetFooterCommandMenuItemsState';
+import { sidePanelWidgetFooterCommandMenuItemsState } from '@/ui/layout/side-panel/states/sidePanelWidgetFooterCommandMenuItemsState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -58,15 +58,17 @@ export const PageLayoutRecordPageRenderer = ({
     targetObjectNameSingular: targetRecordIdentifier.targetObjectNameSingular,
   });
 
-  const sidePanelWidgetFooterActions = useAtomStateValue(
-    sidePanelWidgetFooterActionsState,
+  const sidePanelWidgetFooterCommandMenuItems = useAtomStateValue(
+    sidePanelWidgetFooterCommandMenuItemsState,
   );
 
-  const pinnedWidgetActions = sidePanelWidgetFooterActions.filter(
-    (action) => action.isPinned !== false,
-  );
+  const pinnedWidgetCommandMenuItems =
+    sidePanelWidgetFooterCommandMenuItems.filter(
+      (commandMenuItem) => commandMenuItem.isPinned !== false,
+    );
 
-  const hasPinnedWidgetActions = pinnedWidgetActions.length > 0;
+  const hasPinnedWidgetCommandMenuItems =
+    pinnedWidgetCommandMenuItems.length > 0;
 
   return (
     <>
@@ -115,18 +117,22 @@ export const PageLayoutRecordPageRenderer = ({
           <SidePanelFooter
             actions={[
               <RecordPageSidePanelCommandMenu key="options" />,
-              ...(hasPinnedWidgetActions
-                ? pinnedWidgetActions.map((action) => (
+              ...(hasPinnedWidgetCommandMenuItems
+                ? pinnedWidgetCommandMenuItems.map((commandMenuItem) => (
                     <Button
-                      key={action.key}
+                      key={commandMenuItem.id}
                       size="small"
-                      variant={action.isPrimaryCTA ? 'primary' : 'secondary'}
-                      accent={action.isPrimaryCTA ? 'blue' : 'default'}
-                      title={action.label}
-                      Icon={action.Icon}
-                      hotkeys={action.hotkeys}
-                      onClick={action.onClick}
-                      disabled={action.disabled}
+                      variant={
+                        commandMenuItem.isPrimaryCTA ? 'primary' : 'secondary'
+                      }
+                      accent={
+                        commandMenuItem.isPrimaryCTA ? 'blue' : 'default'
+                      }
+                      title={commandMenuItem.label}
+                      Icon={commandMenuItem.Icon}
+                      hotkeys={commandMenuItem.hotkeys}
+                      onClick={commandMenuItem.onClick}
+                      disabled={commandMenuItem.disabled}
                     />
                   ))
                 : [

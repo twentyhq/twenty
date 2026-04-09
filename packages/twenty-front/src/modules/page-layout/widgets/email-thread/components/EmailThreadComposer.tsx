@@ -5,7 +5,7 @@ import { EmailComposerFields } from '@/activities/emails/components/EmailCompose
 import { useEmailComposerState } from '@/activities/emails/hooks/useEmailComposerState';
 import { type ReplyContextReady } from '@/activities/emails/hooks/useReplyContext';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
-import { sidePanelWidgetFooterActionsState } from '@/ui/layout/side-panel/states/sidePanelWidgetFooterCommandMenuItemsState';
+import { sidePanelWidgetFooterCommandMenuItemsState } from '@/ui/layout/side-panel/states/sidePanelWidgetFooterCommandMenuItemsState';
 import { type SidePanelFooterCommandMenuItem } from '@/ui/layout/side-panel/types/SidePanelFooterCommandMenuItem';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -55,8 +55,8 @@ export const EmailThreadComposer = ({
     onSent: handleReplySent,
   });
 
-  const setSidePanelWidgetFooterActions = useSetAtomState(
-    sidePanelWidgetFooterActionsState,
+  const setSidePanelWidgetFooterCommandMenuItems = useSetAtomState(
+    sidePanelWidgetFooterCommandMenuItemsState,
   );
 
   const footerActions = useMemo((): SidePanelFooterCommandMenuItem[] => {
@@ -102,10 +102,10 @@ export const EmailThreadComposer = ({
       return;
     }
 
-    setSidePanelWidgetFooterActions(footerActions);
+    setSidePanelWidgetFooterCommandMenuItems(footerActions);
 
-    return () => setSidePanelWidgetFooterActions([]);
-  }, [isInSidePanel, footerActions, setSidePanelWidgetFooterActions]);
+    return () => setSidePanelWidgetFooterCommandMenuItems([]);
+  }, [isInSidePanel, footerActions, setSidePanelWidgetFooterCommandMenuItems]);
 
   const handleSendHotkey = useCallback(() => {
     if (isComposerOpen && composerState.canSend) {
