@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
   AggregateOperations,
   OrderByDirection,
@@ -43,11 +44,14 @@ export class GroupByRecordsService {
     } = params;
 
     try {
-      const { queryRunnerContext, flatObjectMetadata, flatFieldMetadataMaps } =
-        await this.commonApiContextBuilder.build({
-          authContext,
-          objectName,
-        });
+      const {
+        queryRunnerContext,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      } = await this.commonApiContextBuilder.build({
+        authContext,
+        objectName,
+      });
 
       const fields = getFlatFieldsFromFlatObjectMetadata(
         flatObjectMetadata,
@@ -107,13 +111,17 @@ export class GroupByRecordsService {
         },
       ];
 
+      const clampedLimit = limit
+        ? Math.min(limit, QUERY_MAX_RECORDS)
+        : QUERY_MAX_RECORDS;
+
       const { results } = await this.commonGroupByRunner.execute(
         {
           filter: filter ?? {},
           groupBy,
           orderBy: mappedOrderBy,
           selectedFields,
-          limit,
+          limit: clampedLimit,
         },
         queryRunnerContext,
       );
