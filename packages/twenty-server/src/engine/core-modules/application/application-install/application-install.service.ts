@@ -161,6 +161,7 @@ export class ApplicationInstallService {
       await this.runPreInstallHook({
         manifest: resolvedPackage.manifest,
         workspaceId: params.workspaceId,
+        applicationRegistrationId: appRegistration.id,
         previousVersion,
         newVersion,
         isVersionUpgrade,
@@ -214,6 +215,7 @@ export class ApplicationInstallService {
   private async runPreInstallHook(params: {
     manifest: Manifest;
     workspaceId: string;
+    applicationRegistrationId?: string;
     previousVersion?: string;
     newVersion: string;
     isVersionUpgrade: boolean;
@@ -222,6 +224,7 @@ export class ApplicationInstallService {
     const {
       manifest,
       workspaceId,
+      applicationRegistrationId,
       previousVersion,
       newVersion,
       isVersionUpgrade,
@@ -231,6 +234,12 @@ export class ApplicationInstallService {
     if (!isDefined(manifest.application.preInstallLogicFunction)) {
       return;
     }
+
+    await this.applicationSyncService.preInstallSynchronizeFromManifest({
+      workspaceId: params.workspaceId,
+      manifest,
+      applicationRegistrationId,
+    });
 
     const {
       universalIdentifier: preInstallLogicFunctionUniversalIdentifier,
@@ -255,12 +264,14 @@ export class ApplicationInstallService {
         preInstallLogicFunctionUniversalIdentifier
       ];
 
+    // preInstallSynchronizeFromManifest should have registered this function
+    // moments ago — a miss here means the pared-down sync did not persist the
+    // entry, which is a real failure and should abort the install.
     if (!isDefined(flatLogicFunction)) {
-      this.logger.log(
-        `Skipping pre-install hook for app ${universalIdentifier}: logic function "${preInstallLogicFunctionUniversalIdentifier}" not yet synced (fresh install).`,
+      throw new ApplicationException(
+        `Pre-install logic function "${preInstallLogicFunctionUniversalIdentifier}" not found for application "${universalIdentifier}" after pre-install sync. The pared-down sync did not register the function as expected.`,
+        ApplicationExceptionCode.ENTITY_NOT_FOUND,
       );
-
-      return;
     }
 
     const payload = { previousVersion, newVersion };

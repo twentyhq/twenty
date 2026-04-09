@@ -33,6 +33,127 @@ export class ApplicationManifestMigrationService {
     private readonly applicationService: ApplicationService,
   ) {}
 
+  async syncPreInstallLogicFunctionFromManifest({
+    manifest,
+    workspaceId,
+    ownerFlatApplication,
+  }: {
+    manifest: Manifest;
+    workspaceId: string;
+    ownerFlatApplication: FlatApplication;
+  }): Promise<void> {
+    const preInstallLogicFunction =
+      manifest.application.preInstallLogicFunction;
+
+    if (!isDefined(preInstallLogicFunction)) {
+      return;
+    }
+
+    const preInstallLogicFunctionManifest = manifest.logicFunctions.find(
+      (logicFunction) =>
+        logicFunction.universalIdentifier ===
+        preInstallLogicFunction.universalIdentifier,
+    );
+
+    if (!isDefined(preInstallLogicFunctionManifest)) {
+      throw new ApplicationException(
+        `Pre-install logic function "${preInstallLogicFunction.universalIdentifier}" is declared on the application manifest but not present in manifest.logicFunctions`,
+        ApplicationExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+
+    // Pared-down manifest: only the pre-install logic function, every other
+    // entity array intentionally empty. Combined with
+    // inferDeletionFromMissingEntities: false below, this produces a purely
+    // additive migration that registers the pre-install logic function without
+    // touching any previously-synced metadata (important on upgrades).
+    const preInstallOnlyManifest: Manifest = {
+      application: manifest.application,
+      objects: [],
+      fields: [],
+      logicFunctions: [preInstallLogicFunctionManifest],
+      frontComponents: [],
+      roles: [],
+      skills: [],
+      agents: [],
+      publicAssets: [],
+      views: [],
+      navigationMenuItems: [],
+      pageLayouts: [],
+    };
+
+    const now = new Date().toISOString();
+
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const cacheResult = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      [
+        ...Object.values(ALL_METADATA_NAME).map(getMetadataFlatEntityMapsKey),
+        'featureFlagsMap',
+      ],
+    );
+
+    const { featureFlagsMap, ...existingAllFlatEntityMaps } = cacheResult;
+
+    const fromAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
+      applicationIds: [ownerFlatApplication.id],
+      fromAllFlatEntityMaps: existingAllFlatEntityMaps,
+    });
+
+    const toAllUniversalFlatEntityMaps =
+      computeApplicationManifestAllUniversalFlatEntityMaps({
+        manifest: preInstallOnlyManifest,
+        ownerFlatApplication,
+        now,
+      });
+
+    const dependencyAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
+      applicationIds:
+        ownerFlatApplication.universalIdentifier ===
+        TWENTY_STANDARD_APPLICATION.universalIdentifier
+          ? [twentyStandardFlatApplication.id]
+          : [ownerFlatApplication.id, twentyStandardFlatApplication.id],
+      fromAllFlatEntityMaps: existingAllFlatEntityMaps,
+    });
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
+        {
+          // inferDeletionFromMissingEntities is intentionally omitted (undefined)
+          // so this pared-down sync is purely additive — existing metadata for
+          // objects/fields/other logic functions that are absent from
+          // preInstallOnlyManifest are left untouched on upgrades.
+          buildOptions: {
+            isSystemBuild: false,
+            applicationUniversalIdentifier:
+              ownerFlatApplication.universalIdentifier,
+          },
+          fromToAllFlatEntityMaps: buildFromToAllUniversalFlatEntityMaps({
+            fromAllFlatEntityMaps,
+            toAllUniversalFlatEntityMaps,
+          }),
+          workspaceId,
+          dependencyAllFlatEntityMaps,
+          additionalCacheDataMaps: { featureFlagsMap },
+        },
+      );
+
+    if (validateAndBuildResult.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        'Validation errors occurred while syncing pre-install logic function',
+      );
+    }
+
+    this.logger.log(
+      `Pre-install logic function synced for application ${ownerFlatApplication.universalIdentifier}`,
+    );
+  }
+
   async syncMetadataFromManifest({
     manifest,
     workspaceId,
