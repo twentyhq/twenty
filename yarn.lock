@@ -40462,11 +40462,11 @@ __metadata:
   linkType: hard
 
 "graphql-sse@npm:^2.5.4":
-  version: 2.5.4
-  resolution: "graphql-sse@npm:2.5.4"
+  version: 2.6.0
+  resolution: "graphql-sse@npm:2.6.0"
   peerDependencies:
     graphql: ">=0.11 <=16"
-  checksum: 10c0/b2635a4098b86492ecb04e7aab7efb715847ad11b785591cf90cf1f342ba78a03db0c6cf903975a7ad9e2c278dee55cd9e2e9d7edb560f334528bb8ee926ed95
+  checksum: 10c0/e05f0b5c8539d61e5ce34af8e0bb418c02bf922d6a7f9232a9abd53c77df5654684ca14f674ac771645c8fba9c37ce666c5d06f46eef54ea07e63653468065b0
   languageName: node
   linkType: hard
 
