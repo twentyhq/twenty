@@ -39,7 +39,10 @@ const findUniversalIdentifiers = (obj: object): string[] => {
       universalIdentifiers.push(val);
     }
 
-    if (key === 'postInstallLogicFunction') {
+    if (
+      key === 'postInstallLogicFunction' ||
+      key === 'preInstallLogicFunction'
+    ) {
       continue;
     }
 

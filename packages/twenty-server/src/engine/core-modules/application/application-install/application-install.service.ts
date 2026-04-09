@@ -33,6 +33,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 
 @Injectable()
 export class ApplicationInstallService {
@@ -45,6 +46,7 @@ export class ApplicationInstallService {
     private readonly applicationPackageFetcherService: ApplicationPackageFetcherService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly fileStorageService: FileStorageService,
+    private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly cacheLockService: CacheLockService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
@@ -121,10 +123,6 @@ export class ApplicationInstallService {
 
       const universalIdentifier = appRegistration.universalIdentifier;
 
-      // Capture the existing install BEFORE ensuring the app exists, so fresh
-      // installs report an empty previousVersion and upgrades report the
-      // installed version. Pass the lookup result into ensureApplicationExists
-      // so we don't re-query the repository on the hot path.
       const existingApplication =
         await this.applicationService.findByUniversalIdentifier({
           universalIdentifier,
@@ -134,6 +132,13 @@ export class ApplicationInstallService {
       const previousVersion = existingApplication?.version ?? undefined;
 
       const newVersion = resolvedPackage.packageJson.version;
+
+      if (!isDefined(newVersion)) {
+        throw new ApplicationException(
+          `Package ${universalIdentifier} has no version`,
+          ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+        );
+      }
 
       const isVersionUpgrade = isDefined(existingApplication);
 
@@ -153,6 +158,15 @@ export class ApplicationInstallService {
         params.workspaceId,
       );
 
+      await this.runPreInstallHook({
+        manifest: resolvedPackage.manifest,
+        workspaceId: params.workspaceId,
+        previousVersion,
+        newVersion,
+        isVersionUpgrade,
+        universalIdentifier,
+      });
+
       const { hasSchemaMetadataChanged } =
         await this.applicationSyncService.synchronizeFromManifest({
           workspaceId: params.workspaceId,
@@ -168,20 +182,14 @@ export class ApplicationInstallService {
         });
       }
 
-      if (!newVersion) {
-        this.logger.log(
-          `Skipping post-install hook for app ${universalIdentifier}: version upgrade and shouldRunOnVersionUpgrade is false`,
-        );
-      } else {
-        await this.runPostInstallHook({
-          manifest: resolvedPackage.manifest,
-          workspaceId: params.workspaceId,
-          previousVersion,
-          newVersion,
-          isVersionUpgrade,
-          universalIdentifier,
-        });
-      }
+      await this.runPostInstallHook({
+        manifest: resolvedPackage.manifest,
+        workspaceId: params.workspaceId,
+        previousVersion,
+        newVersion,
+        isVersionUpgrade,
+        universalIdentifier,
+      });
 
       this.logger.log(
         `Successfully installed app ${universalIdentifier} v${resolvedPackage.packageJson.version ?? 'unknown'}`,
@@ -201,6 +209,74 @@ export class ApplicationInstallService {
         );
       }
     }
+  }
+
+  private async runPreInstallHook(params: {
+    manifest: Manifest;
+    workspaceId: string;
+    previousVersion?: string;
+    newVersion: string;
+    isVersionUpgrade: boolean;
+    universalIdentifier: string;
+  }): Promise<void> {
+    const {
+      manifest,
+      workspaceId,
+      previousVersion,
+      newVersion,
+      isVersionUpgrade,
+      universalIdentifier,
+    } = params;
+
+    if (!isDefined(manifest.application.preInstallLogicFunction)) {
+      return;
+    }
+
+    const {
+      universalIdentifier: preInstallLogicFunctionUniversalIdentifier,
+      shouldRunOnVersionUpgrade,
+    } = manifest.application.preInstallLogicFunction;
+
+    if (isVersionUpgrade && !shouldRunOnVersionUpgrade) {
+      this.logger.log(
+        `Skipping pre-install hook for app ${universalIdentifier}: version upgrade and shouldRunOnVersionUpgrade is false`,
+      );
+
+      return;
+    }
+
+    const { flatLogicFunctionMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatLogicFunctionMaps',
+      ]);
+
+    const flatLogicFunction =
+      flatLogicFunctionMaps.byUniversalIdentifier[
+        preInstallLogicFunctionUniversalIdentifier
+      ];
+
+    if (!isDefined(flatLogicFunction)) {
+      this.logger.log(
+        `Skipping pre-install hook for app ${universalIdentifier}: logic function "${preInstallLogicFunctionUniversalIdentifier}" not yet synced (fresh install).`,
+      );
+
+      return;
+    }
+
+    const payload = { previousVersion, newVersion };
+
+    this.logger.log(
+      `Executing pre-install hook for app ${universalIdentifier} with payload:`,
+      JSON.stringify(payload),
+    );
+
+    await this.logicFunctionExecutorService.execute({
+      logicFunctionId: flatLogicFunction.id,
+      workspaceId,
+      payload,
+    });
+
+    this.logger.log('Pre-install hook executed successfully');
   }
 
   private async runPostInstallHook(params: {

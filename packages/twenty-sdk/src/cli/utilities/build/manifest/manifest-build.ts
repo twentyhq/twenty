@@ -39,6 +39,7 @@ import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
 import { type PostInstallLogicFunctionConfig } from '@/sdk/logic-functions/post-install-logic-function-config';
+import { type PreInstallLogicFunctionConfig } from '@/sdk/logic-functions/pre-install-logic-function-config';
 import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
 import { type RoleConfig } from '@/sdk/roles/role-config';
 
@@ -82,6 +83,10 @@ export const buildManifest = async (
   const navigationMenuItems: NavigationMenuItemManifest[] = [];
   const pageLayouts: PageLayoutManifest[] = [];
   const postInstallLogicFunctions: {
+    universalIdentifier: string;
+    shouldRunOnVersionUpgrade: boolean;
+  }[] = [];
+  const preInstallLogicFunctions: {
     universalIdentifier: string;
     shouldRunOnVersionUpgrade: boolean;
   }[] = [];
@@ -246,6 +251,19 @@ export const buildManifest = async (
           });
         }
 
+        if (
+          targetFunctionName === TargetFunction.DefinePreInstallLogicFunction
+        ) {
+          const preInstallHookConfig =
+            extract.config as PreInstallLogicFunctionConfig;
+
+          preInstallLogicFunctions.push({
+            universalIdentifier: extract.config.universalIdentifier,
+            shouldRunOnVersionUpgrade:
+              preInstallHookConfig.shouldRunOnVersionUpgrade ?? false,
+          });
+        }
+
         break;
       }
       case ManifestEntityKey.FrontComponents: {
@@ -352,10 +370,23 @@ export const buildManifest = async (
     );
   }
 
+  if (preInstallLogicFunctions.length > 1) {
+    errors.push(
+      'Only one pre install logic function is allowed per application',
+    );
+  }
+
   if (application && postInstallLogicFunctions.length >= 1) {
     application = {
       ...application,
       postInstallLogicFunction: postInstallLogicFunctions[0],
+    };
+  }
+
+  if (application && preInstallLogicFunctions.length >= 1) {
+    application = {
+      ...application,
+      preInstallLogicFunction: preInstallLogicFunctions[0],
     };
   }
 

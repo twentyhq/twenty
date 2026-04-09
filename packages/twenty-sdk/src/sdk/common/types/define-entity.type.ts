@@ -5,6 +5,7 @@ import { type ObjectConfig } from '@/sdk/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/page-layouts/page-layout-config';
 import { type ViewConfig } from '@/sdk/views/view-config';
 import { type PostInstallLogicFunctionConfig } from '@/sdk/logic-functions/post-install-logic-function-config';
+import { type PreInstallLogicFunctionConfig } from '@/sdk/logic-functions/pre-install-logic-function-config';
 import { type RoleConfig } from '@/sdk/roles/role-config';
 import {
   type AgentManifest,
@@ -26,6 +27,7 @@ export type DefinableEntity =
   | FrontComponentConfig
   | LogicFunctionConfig
   | PostInstallLogicFunctionConfig
+  | PreInstallLogicFunctionConfig
   | AgentManifest
   | RoleConfig
   | SkillManifest
