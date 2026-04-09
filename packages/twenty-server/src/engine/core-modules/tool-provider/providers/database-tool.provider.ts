@@ -19,7 +19,10 @@ import { generateUpdateRecordInputSchema } from 'src/engine/core-modules/record-
 import { DeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/delete-tool.zod-schema';
 import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
-import { generateGroupByToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/group-by-tool.zod-schema';
+import {
+  generateGroupByToolInputSchema,
+  hasGroupByToolInputSchema,
+} from 'src/engine/core-modules/record-crud/zod-schemas/group-by-tool.zod-schema';
 import { ToolCategory } from 'twenty-shared/ai';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
@@ -140,19 +143,22 @@ export class DatabaseToolProvider implements ToolProvider {
           operation: 'find_one',
         });
 
-        const groupBySchema = generateGroupByToolInputSchema(
-          objectMetadata,
-          restrictedFields,
-        );
+        const groupBySchema = includeSchemas
+          ? generateGroupByToolInputSchema(objectMetadata, restrictedFields)
+          : null;
+        const hasGroupBySchema =
+          groupBySchema !== null ||
+          hasGroupByToolInputSchema(objectMetadata, restrictedFields);
 
-        if (groupBySchema) {
+        if (hasGroupBySchema) {
           descriptors.push({
             name: `group_by_${snakePlural}`,
             description: `Group ${objectMetadata.labelPlural} records by one or two fields and compute an aggregate (COUNT, SUM, AVG, MIN, MAX, etc.). Use for questions like "how many deals per stage?" or "total revenue by company". Returns groups with dimension values and aggregate results, ordered by the aggregate value.`,
             category: ToolCategory.DATABASE_CRUD,
-            ...(includeSchemas && {
-              inputSchema: z.toJSONSchema(groupBySchema),
-            }),
+            ...(includeSchemas &&
+              groupBySchema && {
+                inputSchema: z.toJSONSchema(groupBySchema),
+              }),
             executionRef: {
               kind: 'database_crud',
               objectNameSingular: objectMetadata.nameSingular,

@@ -61,12 +61,22 @@ const getGroupableSubFields = (type: FieldMetadataType): string[] | null => {
     .map((property) => property.name);
 };
 
-export const generateGroupByToolInputSchema = (
+type GroupByFieldCandidate =
+  | { kind: 'relation'; fieldName: string; description: string }
+  | { kind: 'date'; fieldName: string; description: string }
+  | {
+      kind: 'composite';
+      fieldName: string;
+      subField: string;
+      description: string;
+    }
+  | { kind: 'scalar'; fieldName: string; description: string };
+
+const getGroupByFieldCandidates = (
   objectMetadata: ObjectMetadataForToolSchema,
   restrictedFields?: RestrictedFieldsPermissions,
-): z.ZodTypeAny | null => {
-  const groupByEntries: z.ZodTypeAny[] = [];
-  const fieldNameDescriptions: string[] = [];
+): GroupByFieldCandidate[] => {
+  const candidates: GroupByFieldCandidate[] = [];
 
   for (const field of objectMetadata.fields) {
     if (restrictedFields?.[field.id]?.canRead === false) {
@@ -83,14 +93,13 @@ export const generateGroupByToolInputSchema = (
 
     if (isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION)) {
       if (field.settings?.relationType === RelationType.MANY_TO_ONE) {
-        groupByEntries.push(
-          z
-            .object({
-              [`${field.name}Id`]: z.object({ id: z.literal(true) }).strict(),
-            })
-            .strict(),
-        );
-        fieldNameDescriptions.push(`${field.name}Id`);
+        const relationFieldName = `${field.name}Id`;
+
+        candidates.push({
+          kind: 'relation',
+          fieldName: relationFieldName,
+          description: relationFieldName,
+        });
       }
 
       continue;
@@ -101,10 +110,11 @@ export const generateGroupByToolInputSchema = (
     }
 
     if (isFieldMetadataDateKind(field.type)) {
-      groupByEntries.push(
-        z.object({ [field.name]: dateGroupBySchema }).strict(),
-      );
-      fieldNameDescriptions.push(`${field.name} (date)`);
+      candidates.push({
+        kind: 'date',
+        fieldName: field.name,
+        description: `${field.name} (date)`,
+      });
       continue;
     }
 
@@ -113,28 +123,88 @@ export const generateGroupByToolInputSchema = (
 
       if (subFields) {
         for (const subField of subFields) {
-          groupByEntries.push(
-            z
-              .object({
-                [field.name]: z
-                  .object({ [subField]: z.literal(true) })
-                  .strict(),
-              })
-              .strict(),
-          );
-          fieldNameDescriptions.push(`${field.name}.${subField}`);
+          candidates.push({
+            kind: 'composite',
+            fieldName: field.name,
+            subField,
+            description: `${field.name}.${subField}`,
+          });
         }
       }
 
       continue;
     }
 
-    groupByEntries.push(z.object({ [field.name]: z.literal(true) }).strict());
-    fieldNameDescriptions.push(field.name);
+    candidates.push({
+      kind: 'scalar',
+      fieldName: field.name,
+      description: field.name,
+    });
   }
 
-  if (groupByEntries.length === 0) {
+  return candidates;
+};
+
+export const hasGroupByToolInputSchema = (
+  objectMetadata: ObjectMetadataForToolSchema,
+  restrictedFields?: RestrictedFieldsPermissions,
+): boolean => {
+  return getGroupByFieldCandidates(objectMetadata, restrictedFields).length > 0;
+};
+
+export const generateGroupByToolInputSchema = (
+  objectMetadata: ObjectMetadataForToolSchema,
+  restrictedFields?: RestrictedFieldsPermissions,
+): z.ZodTypeAny | null => {
+  const candidates = getGroupByFieldCandidates(
+    objectMetadata,
+    restrictedFields,
+  );
+
+  if (candidates.length === 0) {
     return null;
+  }
+
+  const groupByEntries: z.ZodTypeAny[] = [];
+  const fieldNameDescriptions: string[] = [];
+
+  for (const candidate of candidates) {
+    fieldNameDescriptions.push(candidate.description);
+
+    if (candidate.kind === 'relation') {
+      groupByEntries.push(
+        z
+          .object({
+            [candidate.fieldName]: z.object({ id: z.literal(true) }).strict(),
+          })
+          .strict(),
+      );
+      continue;
+    }
+
+    if (candidate.kind === 'date') {
+      groupByEntries.push(
+        z.object({ [candidate.fieldName]: dateGroupBySchema }).strict(),
+      );
+      continue;
+    }
+
+    if (candidate.kind === 'composite') {
+      groupByEntries.push(
+        z
+          .object({
+            [candidate.fieldName]: z
+              .object({ [candidate.subField]: z.literal(true) })
+              .strict(),
+          })
+          .strict(),
+      );
+      continue;
+    }
+
+    groupByEntries.push(
+      z.object({ [candidate.fieldName]: z.literal(true) }).strict(),
+    );
   }
 
   const groupByEntrySchema =
