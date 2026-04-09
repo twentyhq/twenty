@@ -66,7 +66,7 @@ The share link uses the server's base URL (without any workspace subdomain) so i
 
 ### Version management
 
-The server enforces semver versioning on every deploy. Each new deploy must use a `version` in `package.json` that is **strictly higher** (per [semver](https://semver.org) ordering) than the version currently deployed for this app. Re-deploying the same version, or pushing a lower one, is rejected before the tarball is stored — you'll see a `VERSION_NOT_BUMPED` error from the CLI.
+When updating an already deployed tarball app, the server requires the `version` in `package.json` to be **strictly higher** (per [semver](https://semver.org) ordering) than the currently deployed version. Re-deploying the same version, or pushing a lower one, is rejected before the tarball is stored — you'll see a `VERSION_NOT_BUMPED` error from the CLI.
 
 To release an update:
 
