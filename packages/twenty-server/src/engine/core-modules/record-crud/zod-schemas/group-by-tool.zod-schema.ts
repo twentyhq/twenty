@@ -13,7 +13,10 @@ import { z } from 'zod';
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
 import { generateRecordFilterSchema } from 'src/engine/core-modules/record-crud/zod-schemas/record-filter.zod-schema';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { shouldExcludeFieldFromAgentToolSchema } from 'src/engine/metadata-modules/field-metadata/utils/should-exclude-field-from-agent-tool-schema.util';
+import {
+  isCompositePropertySupportedInGroupBy,
+  isFlatFieldMetadataSupportedInGroupBy,
+} from 'src/engine/metadata-modules/field-metadata/utils/is-supported-in-group-by.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 const dateGranularityValues = Object.values(
@@ -53,11 +56,7 @@ const getGroupableSubFields = (type: FieldMetadataType): string[] | null => {
   }
 
   return compositeTypeDefinition.properties
-    .filter(
-      (property) =>
-        property.hidden !== true &&
-        property.type !== FieldMetadataType.RAW_JSON,
-    )
+    .filter(isCompositePropertySupportedInGroupBy)
     .map((property) => property.name);
 };
 
@@ -70,11 +69,7 @@ export const hasGroupByToolInputSchema = (
       continue;
     }
 
-    const isGroupableDateField =
-      isFieldMetadataDateKind(field.type) &&
-      (field.name === 'createdAt' || field.name === 'updatedAt');
-
-    if (!isGroupableDateField && shouldExcludeFieldFromAgentToolSchema(field)) {
+    if (!isFlatFieldMetadataSupportedInGroupBy(field)) {
       continue;
     }
 
@@ -126,11 +121,7 @@ export const generateGroupByToolInputSchema = (
       continue;
     }
 
-    const isGroupableDateField =
-      isFieldMetadataDateKind(field.type) &&
-      (field.name === 'createdAt' || field.name === 'updatedAt');
-
-    if (!isGroupableDateField && shouldExcludeFieldFromAgentToolSchema(field)) {
+    if (!isFlatFieldMetadataSupportedInGroupBy(field)) {
       continue;
     }
 
