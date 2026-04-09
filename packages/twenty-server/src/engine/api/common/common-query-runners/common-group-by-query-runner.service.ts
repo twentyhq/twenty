@@ -41,7 +41,6 @@ import {
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
-import { parseGroupByArgs } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/parse-group-by-args.util';
 import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
 import { getGroupLimit } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/get-group-limit.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
@@ -94,12 +93,12 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       objectMetadataNameSingular,
     );
 
-    const groupByFields = parseGroupByArgs(
-      args,
+    const groupByFields = this.groupByArgProcessor.parseGroupByFieldsOrThrow({
+      groupBy: args.groupBy,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-    );
+    });
 
     const objectAlias = getObjectAlias(flatObjectMetadata);
 
@@ -393,9 +392,20 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   }
 
   async validate(
-    _args: CommonInput<GroupByQueryArgs>,
-    _queryRunnerContext: CommonBaseQueryRunnerContext,
-  ): Promise<void> {}
+    args: CommonInput<GroupByQueryArgs>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<void> {
+    const normalizedGroupBy = this.groupByArgProcessor.process({
+      groupBy: args.groupBy,
+    });
+
+    this.groupByArgProcessor.parseGroupByFieldsOrThrow({
+      groupBy: normalizedGroupBy,
+      flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
+      flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+    });
+  }
 
   async computeArgs(
     args: CommonInput<GroupByQueryArgs>,

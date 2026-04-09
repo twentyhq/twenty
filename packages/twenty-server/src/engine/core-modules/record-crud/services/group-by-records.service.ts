@@ -7,9 +7,9 @@ import {
   type OrderByWithGroupBy,
 } from 'twenty-shared/types';
 
+import { GroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/group-by-arg-processor.service';
 import { CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-group-by-query-runner.service';
-import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
-import { getAvailableAggregationsFromObjectFields } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
+import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import {
   RecordCrudException,
   RecordCrudExceptionCode,
@@ -17,7 +17,6 @@ import {
 import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { type GroupByRecordsParams } from 'src/engine/core-modules/record-crud/types/group-by-records-params.type';
 import { type GroupByRecordsResult } from 'src/engine/core-modules/record-crud/types/group-by-records-result.type';
-import { resolveAggregateFieldKey } from 'src/engine/core-modules/record-crud/utils/resolve-aggregate-field-key.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
 @Injectable()
@@ -27,6 +26,7 @@ export class GroupByRecordsService {
   constructor(
     private readonly commonGroupByRunner: CommonGroupByQueryRunnerService,
     private readonly commonApiContextBuilder: CommonApiContextBuilderService,
+    private readonly groupByArgProcessor: GroupByArgProcessorService,
   ) {}
 
   async execute(
@@ -44,52 +44,42 @@ export class GroupByRecordsService {
     } = params;
 
     try {
-      const { queryRunnerContext, flatObjectMetadata, flatFieldMetadataMaps } =
-        await this.commonApiContextBuilder.build({
-          authContext,
-          objectName,
-        });
-
-      const fields = getFlatFieldsFromFlatObjectMetadata(
+      const {
+        queryRunnerContext,
         flatObjectMetadata,
         flatFieldMetadataMaps,
-      );
+        objectsPermissions,
+      } = await this.commonApiContextBuilder.build({
+        authContext,
+        objectName,
+      });
 
       const availableAggregations =
-        getAvailableAggregationsFromObjectFields(fields);
+        this.groupByArgProcessor.getAvailableAggregations({
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+          restrictedFields:
+            objectsPermissions[flatObjectMetadata.id]?.restrictedFields,
+        });
+
       let aggregateFieldKey: string;
 
-      if (aggregateOperation === AggregateOperations.COUNT) {
-        if (aggregateFieldName) {
+      try {
+        aggregateFieldKey =
+          this.groupByArgProcessor.resolveToolAggregateFieldKeyOrThrow({
+            aggregateOperation,
+            aggregateFieldName,
+            availableAggregations,
+          });
+      } catch (error) {
+        if (error instanceof CommonQueryRunnerException) {
           throw new RecordCrudException(
-            'aggregateFieldName is not supported for COUNT operation',
+            error.message,
             RecordCrudExceptionCode.INVALID_REQUEST,
           );
         }
 
-        aggregateFieldKey = 'totalCount';
-      } else {
-        if (!aggregateFieldName) {
-          throw new RecordCrudException(
-            `aggregateFieldName is required for ${aggregateOperation} operation`,
-            RecordCrudExceptionCode.INVALID_REQUEST,
-          );
-        }
-
-        const resolvedKey = resolveAggregateFieldKey(
-          aggregateOperation,
-          aggregateFieldName,
-          availableAggregations,
-        );
-
-        if (!resolvedKey) {
-          throw new RecordCrudException(
-            `No aggregation available for ${aggregateOperation} on field "${aggregateFieldName}"`,
-            RecordCrudExceptionCode.INVALID_REQUEST,
-          );
-        }
-
-        aggregateFieldKey = resolvedKey;
+        throw error;
       }
 
       const selectedFields = {

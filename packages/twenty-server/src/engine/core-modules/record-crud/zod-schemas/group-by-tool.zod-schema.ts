@@ -9,7 +9,9 @@ import {
 import { isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { z } from 'zod';
 
+import { getAvailableAggregationsFromObjectFields } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
+import { resolveAggregateFieldKey } from 'src/engine/core-modules/record-crud/utils/resolve-aggregate-field-key.util';
 import { generateRecordFilterSchema } from 'src/engine/core-modules/record-crud/zod-schemas/record-filter.zod-schema';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import {
@@ -84,7 +86,9 @@ const buildGroupByEntriesAndDescriptions = (
     }
 
     if (isFieldMetadataDateKind(field.type)) {
-      groupByEntries.push(z.object({ [field.name]: dateGroupBySchema }).strict());
+      groupByEntries.push(
+        z.object({ [field.name]: dateGroupBySchema }).strict(),
+      );
       fieldNameDescriptions.push(`${field.name} (date)`);
       continue;
     }
@@ -97,7 +101,9 @@ const buildGroupByEntriesAndDescriptions = (
           groupByEntries.push(
             z
               .object({
-                [field.name]: z.object({ [subField]: z.literal(true) }).strict(),
+                [field.name]: z
+                  .object({ [subField]: z.literal(true) })
+                  .strict(),
               })
               .strict(),
           );
@@ -130,10 +136,7 @@ export const generateGroupByToolInputSchema = (
   restrictedFields?: RestrictedFieldsPermissions,
 ): z.ZodTypeAny | null => {
   const { groupByEntries, fieldNameDescriptions } =
-    buildGroupByEntriesAndDescriptions(
-      objectMetadata,
-      restrictedFields,
-    );
+    buildGroupByEntriesAndDescriptions(objectMetadata, restrictedFields);
 
   if (groupByEntries.length === 0) {
     return null;
@@ -149,6 +152,26 @@ export const generateGroupByToolInputSchema = (
   const { filterShape, filterSchema } = generateRecordFilterSchema(
     objectMetadata,
     restrictedFields,
+  );
+
+  const availableAggregations = getAvailableAggregationsFromObjectFields(
+    objectMetadata.fields.filter(
+      (field) => restrictedFields?.[field.id]?.canRead !== false,
+    ),
+  );
+  const availableAggregateFieldNames = Array.from(
+    new Set(
+      Object.values(availableAggregations)
+        .filter(
+          (aggregation) =>
+            aggregation.aggregateOperation !== AggregateOperations.COUNT,
+        )
+        .map((aggregation) =>
+          aggregation.subFieldForNumericOperation
+            ? `${aggregation.fromField}.${aggregation.subFieldForNumericOperation}`
+            : aggregation.fromField,
+        ),
+    ),
   );
 
   return z
@@ -170,7 +193,7 @@ export const generateGroupByToolInputSchema = (
         .string()
         .optional()
         .describe(
-          'Field to aggregate. Required for any operation other than COUNT.',
+          `Field to aggregate. Required for any operation other than COUNT. Available fields: ${availableAggregateFieldNames.join(', ')}.`,
         ),
       limit: z
         .number()
@@ -200,5 +223,45 @@ export const generateGroupByToolInputSchema = (
         .optional()
         .describe('NOT condition - matches if the filter does NOT match'),
     })
-    .strict();
+    .strict()
+    .superRefine((input, context) => {
+      const aggregateOperation =
+        input.aggregateOperation as keyof typeof AggregateOperations;
+
+      if (aggregateOperation === AggregateOperations.COUNT) {
+        if (input.aggregateFieldName) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'aggregateFieldName is not supported for COUNT operation.',
+            path: ['aggregateFieldName'],
+          });
+        }
+
+        return;
+      }
+
+      if (!input.aggregateFieldName) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `aggregateFieldName is required for ${aggregateOperation} operation.`,
+          path: ['aggregateFieldName'],
+        });
+
+        return;
+      }
+
+      const resolvedAggregateFieldKey = resolveAggregateFieldKey(
+        aggregateOperation,
+        input.aggregateFieldName,
+        availableAggregations,
+      );
+
+      if (!resolvedAggregateFieldKey) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `No aggregation available for ${aggregateOperation} on field "${input.aggregateFieldName}".`,
+          path: ['aggregateFieldName'],
+        });
+      }
+    });
 };
