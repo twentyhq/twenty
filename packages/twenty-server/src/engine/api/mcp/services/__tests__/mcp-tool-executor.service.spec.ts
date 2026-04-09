@@ -1,4 +1,8 @@
 import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
+import {
+  MCP_PROGRESS_NOTIFICATION_METHOD,
+  TOOL_CALL_PROGRESS_TOKEN_PREFIX,
+} from 'src/engine/api/mcp/constants/mcp-progress-notification.const';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
 
 describe('McpToolExecutorService', () => {
@@ -163,9 +167,9 @@ describe('McpToolExecutorService', () => {
       expect(sseWriter).toHaveBeenCalledTimes(1);
       expect(sseWriter).toHaveBeenCalledWith({
         jsonrpc: '2.0',
-        method: 'notifications/progress',
+        method: MCP_PROGRESS_NOTIFICATION_METHOD,
         params: {
-          progressToken: 'tool-call-sse-1',
+          progressToken: `${TOOL_CALL_PROGRESS_TOKEN_PREFIX}sse-1`,
           progress: 0,
           total: 1,
         },

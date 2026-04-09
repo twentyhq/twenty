@@ -92,7 +92,6 @@ export class McpCoreController {
         sseWriter,
       );
 
-      // Write the final JSON-RPC response as an SSE event and close the stream
       if (isDefined(result)) {
         writeSseEvent(res, result);
       }

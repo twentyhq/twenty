@@ -4,6 +4,10 @@ import { type ToolSet } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
+import {
+  MCP_PROGRESS_NOTIFICATION_METHOD,
+  TOOL_CALL_PROGRESS_TOKEN_PREFIX,
+} from 'src/engine/api/mcp/constants/mcp-progress-notification.const';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
 
 @Injectable()
@@ -26,13 +30,12 @@ export class McpToolExecutorService {
       });
     }
 
-    // Emit a progress notification before execution when streaming
     if (isDefined(sseWriter)) {
       sseWriter({
         jsonrpc: '2.0',
-        method: 'notifications/progress',
+        method: MCP_PROGRESS_NOTIFICATION_METHOD,
         params: {
-          progressToken: `tool-call-${String(id)}`,
+          progressToken: `${TOOL_CALL_PROGRESS_TOKEN_PREFIX}${String(id)}`,
           progress: 0,
           total: 1,
         },
