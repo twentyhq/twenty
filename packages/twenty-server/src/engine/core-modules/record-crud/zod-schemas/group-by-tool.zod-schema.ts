@@ -1,6 +1,5 @@
 import {
   AggregateOperations,
-  compositeTypeDefinitions,
   FirstDayOfTheWeek,
   FieldMetadataType,
   ObjectRecordGroupByDateGranularity,
@@ -14,7 +13,7 @@ import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record
 import { generateRecordFilterSchema } from 'src/engine/core-modules/record-crud/zod-schemas/record-filter.zod-schema';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import {
-  isCompositePropertySupportedInGroupBy,
+  getGroupableSubFieldsForCompositeType,
   isFlatFieldMetadataSupportedInGroupBy,
 } from 'src/engine/metadata-modules/field-metadata/utils/is-supported-in-group-by.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
@@ -48,71 +47,13 @@ const dateGroupBySchema = z
   .strict()
   .describe('Date field grouping configuration');
 
-const getGroupableSubFields = (type: FieldMetadataType): string[] | null => {
-  const compositeTypeDefinition = compositeTypeDefinitions.get(type);
-
-  if (!compositeTypeDefinition) {
-    return null;
-  }
-
-  return compositeTypeDefinition.properties
-    .filter(isCompositePropertySupportedInGroupBy)
-    .map((property) => property.name);
-};
-
-export const hasGroupByToolInputSchema = (
+const buildGroupByEntriesAndDescriptions = (
   objectMetadata: ObjectMetadataForToolSchema,
   restrictedFields?: RestrictedFieldsPermissions,
-): boolean => {
-  for (const field of objectMetadata.fields) {
-    if (restrictedFields?.[field.id]?.canRead === false) {
-      continue;
-    }
-
-    if (!isFlatFieldMetadataSupportedInGroupBy(field)) {
-      continue;
-    }
-
-    if (isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION)) {
-      if (field.settings?.relationType === RelationType.MANY_TO_ONE) {
-        return true;
-      }
-
-      continue;
-    }
-
-    if (isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION)) {
-      continue;
-    }
-
-    if (isFieldMetadataDateKind(field.type)) {
-      return true;
-    }
-
-    if (isCompositeFieldMetadataType(field.type)) {
-      const subFields = getGroupableSubFields(field.type);
-
-      if (subFields && subFields.length > 0) {
-        return true;
-      }
-
-      continue;
-    }
-
-    return true;
-  }
-
-  return false;
-};
-
-export const generateGroupByToolInputSchema = (
-  objectMetadata: ObjectMetadataForToolSchema,
-  restrictedFields?: RestrictedFieldsPermissions,
-): z.ZodTypeAny | null => {
-  if (!hasGroupByToolInputSchema(objectMetadata, restrictedFields)) {
-    return null;
-  }
-
+): {
+  groupByEntries: z.ZodTypeAny[];
+  fieldNameDescriptions: string[];
+} => {
   const groupByEntries: z.ZodTypeAny[] = [];
   const fieldNameDescriptions: string[] = [];
 
@@ -130,11 +71,7 @@ export const generateGroupByToolInputSchema = (
         const relationFieldName = `${field.name}Id`;
 
         groupByEntries.push(
-          z
-            .object({
-              [relationFieldName]: z.object({ id: z.literal(true) }).strict(),
-            })
-            .strict(),
+          z.object({ [relationFieldName]: z.literal(true) }).strict(),
         );
         fieldNameDescriptions.push(relationFieldName);
       }
@@ -147,24 +84,20 @@ export const generateGroupByToolInputSchema = (
     }
 
     if (isFieldMetadataDateKind(field.type)) {
-      groupByEntries.push(
-        z.object({ [field.name]: dateGroupBySchema }).strict(),
-      );
+      groupByEntries.push(z.object({ [field.name]: dateGroupBySchema }).strict());
       fieldNameDescriptions.push(`${field.name} (date)`);
       continue;
     }
 
     if (isCompositeFieldMetadataType(field.type)) {
-      const subFields = getGroupableSubFields(field.type);
+      const subFields = getGroupableSubFieldsForCompositeType(field.type);
 
       if (subFields) {
         for (const subField of subFields) {
           groupByEntries.push(
             z
               .object({
-                [field.name]: z
-                  .object({ [subField]: z.literal(true) })
-                  .strict(),
+                [field.name]: z.object({ [subField]: z.literal(true) }).strict(),
               })
               .strict(),
           );
@@ -178,6 +111,29 @@ export const generateGroupByToolInputSchema = (
     groupByEntries.push(z.object({ [field.name]: z.literal(true) }).strict());
     fieldNameDescriptions.push(field.name);
   }
+
+  return { groupByEntries, fieldNameDescriptions };
+};
+
+export const hasGroupByToolInputSchema = (
+  objectMetadata: ObjectMetadataForToolSchema,
+  restrictedFields?: RestrictedFieldsPermissions,
+): boolean => {
+  return (
+    buildGroupByEntriesAndDescriptions(objectMetadata, restrictedFields)
+      .groupByEntries.length > 0
+  );
+};
+
+export const generateGroupByToolInputSchema = (
+  objectMetadata: ObjectMetadataForToolSchema,
+  restrictedFields?: RestrictedFieldsPermissions,
+): z.ZodTypeAny | null => {
+  const { groupByEntries, fieldNameDescriptions } =
+    buildGroupByEntriesAndDescriptions(
+      objectMetadata,
+      restrictedFields,
+    );
 
   if (groupByEntries.length === 0) {
     return null;
@@ -202,7 +158,7 @@ export const generateGroupByToolInputSchema = (
         .min(1)
         .max(2)
         .describe(
-          `Fields to group by (max 2). Each entry must be an object with exactly one field key. Examples: {"status": true}, {"companyId": {"id": true}}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: ${fieldNameDescriptions.join(', ')}.`,
+          `Fields to group by (max 2). Each entry must be an object with exactly one field key. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: ${fieldNameDescriptions.join(', ')}.`,
         ),
       aggregateOperation: z
         .enum(Object.keys(AggregateOperations) as [string, ...string[]])

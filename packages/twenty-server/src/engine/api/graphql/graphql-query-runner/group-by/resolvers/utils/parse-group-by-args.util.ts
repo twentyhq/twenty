@@ -14,7 +14,11 @@ import { parseGroupByRelationField } from 'src/engine/api/graphql/graphql-query-
 import { validateSingleKeyForGroupByOrThrow } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/validate-single-key-for-group-by-or-throw.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { isFlatFieldMetadataSupportedInGroupBy } from 'src/engine/metadata-modules/field-metadata/utils/is-supported-in-group-by.util';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import {
+  getGroupableSubFieldsForCompositeType,
+  isFlatFieldMetadataSupportedInGroupBy,
+} from 'src/engine/metadata-modules/field-metadata/utils/is-supported-in-group-by.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
@@ -71,10 +75,19 @@ export const parseGroupByArgs = (
         fieldNames[fieldName] !== null &&
         !isGroupByDateFieldDefinition(fieldNames[fieldName]);
 
+      const isGroupByRelationJoinColumnField =
+        isMorphOrRelationFlatFieldMetadata(fieldMetadata) &&
+        fieldNames[fieldName] === true &&
+        isDefined(fieldIdByJoinColumnName[fieldName]);
+
       // Handle relation fields
-      if (isGroupByRelationField) {
+      if (isGroupByRelationField || isGroupByRelationJoinColumnField) {
+        const normalizedFieldNames = isGroupByRelationJoinColumnField
+          ? { ...fieldNames, [fieldName]: { id: true } }
+          : fieldNames;
+
         parseGroupByRelationField({
-          fieldNames,
+          fieldNames: normalizedFieldNames,
           fieldName,
           fieldMetadata,
           flatObjectMetadataMaps,
@@ -129,6 +142,12 @@ export const parseGroupByArgs = (
         });
         continue;
       } else if (typeof fieldNames[fieldName] === 'object') {
+        const supportedCompositeSubFields = isCompositeFieldMetadataType(
+          fieldMetadata.type,
+        )
+          ? getGroupableSubFieldsForCompositeType(fieldMetadata.type)
+          : null;
+
         validateSingleKeyForGroupByOrThrow({
           groupByKeys: Object.keys(fieldNames[fieldName]),
           errorMessage:
@@ -136,6 +155,17 @@ export const parseGroupByArgs = (
         });
 
         for (const subFieldName of Object.keys(fieldNames[fieldName])) {
+          if (
+            isCompositeFieldMetadataType(fieldMetadata.type) &&
+            !supportedCompositeSubFields?.includes(subFieldName)
+          ) {
+            throw new CommonQueryRunnerException(
+              `Composite subfield "${subFieldName}" is not supported in groupBy for "${fieldName}"`,
+              CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+              { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+            );
+          }
+
           if (
             (fieldNames[fieldName] as Record<string, boolean>)[subFieldName] ===
             true
