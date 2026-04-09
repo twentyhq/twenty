@@ -77,7 +77,7 @@ export function applyHelpedSceneLayout(
 
     if (reducedMotion) {
       node.style.opacity = '1';
-      node.style.top = `${innerHeight * 0.3}px`;
+      node.style.top = `${innerHeight * (0.15 + index * 0.25)}px`;
       return;
     }
 
