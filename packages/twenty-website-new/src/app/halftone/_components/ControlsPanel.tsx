@@ -26,6 +26,7 @@ type ControlsPanelProps = {
   onExportHtml: () => void;
   onExportNameChange: (value: string) => void;
   onExportReact: () => void;
+  onImportPreset: () => void;
   onHalftoneChange: (
     value: Partial<HalftoneStudioSettings['halftone']>,
   ) => void;
@@ -67,6 +68,7 @@ export function ControlsPanel({
   onExportHtml,
   onExportNameChange,
   onExportReact,
+  onImportPreset,
   onHalftoneChange,
   onLightingChange,
   onMaterialChange,
@@ -130,6 +132,7 @@ export function ControlsPanel({
           onExportHtml={onExportHtml}
           onExportNameChange={onExportNameChange}
           onExportReact={onExportReact}
+          onImportPreset={onImportPreset}
           selectedShape={selectedShape}
           settings={settings}
         />

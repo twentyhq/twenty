@@ -42,17 +42,7 @@ export const TabsBar = styled.div`
   flex-shrink: 0;
   gap: 6px;
   margin: 0;
-  padding: 14px 16px 10px;
-  position: relative;
-
-  &::after {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    bottom: 0;
-    content: '';
-    left: 20px;
-    position: absolute;
-    right: 20px;
-  }
+  padding: 12px 12px 0;
 `;
 
 export const TabButton = styled.button<{ $active: boolean }>`
@@ -93,7 +83,7 @@ export const TabButton = styled.button<{ $active: boolean }>`
 export const TabContent = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding: 18px 20px 20px;
+  padding: 16px;
 `;
 
 export const Section = styled.section<{ $first?: boolean }>`
@@ -152,37 +142,90 @@ export const ControlValue = styled.span`
   text-align: right;
 `;
 
+const EditableControlValueButton = styled.button`
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: text;
+  font-family: inherit;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  min-width: 34px;
+  padding: 0;
+  text-align: right;
+
+  &:focus-visible {
+    outline: 1px solid rgba(255, 255, 255, 0.25);
+    outline-offset: 2px;
+  }
+`;
+
+const EditableControlValueInput = styled.input`
+  appearance: textfield;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.62);
+  font-family: inherit;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  min-width: 34px;
+  outline: none;
+  padding: 0;
+  text-align: right;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+  }
+`;
+
 export const SliderInput = styled.input`
   appearance: none;
-  background: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0.35) var(--fill, 50%),
-    rgba(255, 255, 255, 0.08) var(--fill, 50%)
-  );
-  border-radius: 999px;
+  background: transparent;
   cursor: pointer;
-  height: 6px;
+  height: 16px;
   outline: none;
   transition: transform 0.2s ease;
   width: 100%;
+  -webkit-tap-highlight-color: transparent;
+
+  &::-webkit-slider-runnable-track {
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.35) var(--fill, 50%),
+      rgba(255, 255, 255, 0.08) var(--fill, 50%)
+    );
+    border-radius: 999px;
+    height: 6px;
+  }
 
   &::-webkit-slider-thumb {
     appearance: none;
     background: transparent;
     border: none;
+    border-radius: 999px;
+    height: 16px;
+    margin-top: -5px;
+    width: 16px;
+  }
+
+  &::-moz-range-progress {
+    background: rgba(255, 255, 255, 0.35);
+    border-radius: 999px;
     height: 6px;
-    width: 0;
   }
 
   &::-moz-range-thumb {
     background: transparent;
     border: none;
-    height: 0;
-    width: 0;
+    border-radius: 999px;
+    height: 16px;
+    width: 16px;
   }
 
   &::-moz-range-track {
-    background: transparent;
+    background: rgba(255, 255, 255, 0.08);
     border-radius: 999px;
     height: 6px;
   }
@@ -333,7 +376,7 @@ export const ToggleInput = styled.input`
   }
 
   &:checked + span::after {
-    transform: translateX(10px);
+    transform: translateX(12px);
   }
 `;
 
@@ -350,12 +393,12 @@ export const ToggleTrack = styled.span`
     border-radius: 50%;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
     content: '';
-    height: 14px;
+    height: 12px;
     left: 2px;
     position: absolute;
-    top: 2px;
+    top: 3px;
     transition: transform 0.2s ease;
-    width: 14px;
+    width: 12px;
   }
 `;
 
@@ -371,37 +414,148 @@ export const ColorControlLabel = styled.span`
   font-size: 11px;
 `;
 
-export const ColorSwatch = styled.div`
-  border-radius: 8px;
-  box-shadow:
-    inset 0 1px 2px rgba(0, 0, 0, 0.2),
-    0 0 0 1px rgba(255, 255, 255, 0.08);
-  cursor: pointer;
-  height: 24px;
+export const ColorPickerField = styled.div`
+  align-items: center;
+  cursor: text;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
   justify-self: end;
-  overflow: hidden;
+  min-height: 16px;
+  min-width: fit-content;
+  padding: 0;
   position: relative;
-  transition: box-shadow 0.15s ease;
-  width: 44px;
+  width: auto;
+`;
 
-  &:hover {
-    box-shadow:
-      inset 0 1px 2px rgba(0, 0, 0, 0.2),
-      0 0 0 1px rgba(255, 255, 255, 0.2);
+export const ColorSwatch = styled.span`
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+  height: 16px;
+  width: 16px;
+`;
+
+export const ColorHexInput = styled.input`
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: ${theme.font.family.mono};
+  font-size: 11px;
+  height: 16px;
+  letter-spacing: 0.02em;
+  line-height: 16px;
+  min-width: 7ch;
+  outline: none;
+  padding: 0;
+  text-align: right;
+  text-transform: uppercase;
+  width: 7ch;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.32);
   }
 `;
 
+export const ColorSwatchButton = styled.label`
+  align-items: center;
+  cursor: pointer;
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 16px;
+  justify-content: center;
+  position: relative;
+`;
+
 export const ColorInput = styled.input`
+  appearance: none;
   border: none;
   cursor: pointer;
-  height: 150%;
-  left: -10%;
+  height: 100%;
+  inset: 0;
   outline: none;
+  opacity: 0;
   padding: 0;
   position: absolute;
-  top: -25%;
-  width: 120%;
+  width: 100%;
 `;
+
+function normalizeHexColor(value: string): string | null {
+  const normalizedValue = value.trim().replace(/^#/, '');
+
+  if (!/^([0-9a-f]{3}|[0-9a-f]{6})$/i.test(normalizedValue)) {
+    return null;
+  }
+
+  return `#${normalizedValue.toUpperCase()}`;
+}
+
+type ColorFieldProps = {
+  ariaLabel: string;
+  onChange: (value: string) => void;
+  value: string;
+};
+
+export function ColorField({ ariaLabel, onChange, value }: ColorFieldProps) {
+  const normalizedValue = value.toUpperCase();
+  const [draftValue, setDraftValue] = useState(normalizedValue);
+
+  useEffect(() => {
+    setDraftValue(normalizedValue);
+  }, [normalizedValue]);
+
+  const commitDraftValue = () => {
+    const nextValue = normalizeHexColor(draftValue);
+
+    if (!nextValue) {
+      setDraftValue(normalizedValue);
+      return;
+    }
+
+    setDraftValue(nextValue);
+
+    if (nextValue !== normalizedValue) {
+      onChange(nextValue);
+    }
+  };
+
+  return (
+    <ColorPickerField>
+      <ColorHexInput
+        aria-label={`${ariaLabel} hex value`}
+        maxLength={7}
+        onBlur={commitDraftValue}
+        onChange={(event) => setDraftValue(event.target.value.toUpperCase())}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            event.currentTarget.blur();
+          }
+
+          if (event.key === 'Escape') {
+            event.preventDefault();
+            setDraftValue(normalizedValue);
+            event.currentTarget.blur();
+          }
+        }}
+        spellCheck={false}
+        type="text"
+        value={draftValue}
+      />
+      <ColorSwatchButton title={ariaLabel}>
+        <ColorSwatch style={{ backgroundColor: normalizedValue }} />
+        <ColorInput
+          aria-label={ariaLabel}
+          onChange={(event) => onChange(event.target.value)}
+          type="color"
+          value={value}
+        />
+      </ColorSwatchButton>
+    </ColorPickerField>
+  );
+}
 
 export const ShapeRow = styled.div`
   align-items: center;
@@ -526,6 +680,52 @@ type SliderControlProps = {
   valueLabel: string;
 };
 
+function getStepPrecision(step: number | undefined) {
+  if (!step || Number.isInteger(step)) {
+    return 0;
+  }
+
+  const stepString = step.toString().toLowerCase();
+
+  if (stepString.includes('e-')) {
+    const exponent = stepString.split('e-')[1];
+
+    return exponent ? Number.parseInt(exponent, 10) : 0;
+  }
+
+  return stepString.split('.')[1]?.length ?? 0;
+}
+
+function formatEditableValue(value: number, step: number | undefined) {
+  const precision = getStepPrecision(step);
+
+  if (precision === 0) {
+    return String(Math.round(value));
+  }
+
+  return String(Number(value.toFixed(precision)));
+}
+
+function clampAndSnapValue(
+  value: number,
+  min: number,
+  max: number,
+  step: number | undefined,
+) {
+  const clampedValue = Math.min(Math.max(value, min), max);
+
+  if (!step || step <= 0) {
+    return clampedValue;
+  }
+
+  const precision = getStepPrecision(step);
+  const snappedValue = Math.round((clampedValue - min) / step) * step + min;
+
+  return Number(
+    Math.min(Math.max(snappedValue, min), max).toFixed(precision),
+  );
+}
+
 export function SliderControl({
   children,
   max,
@@ -535,7 +735,38 @@ export function SliderControl({
   value,
   valueLabel,
 }: SliderControlProps) {
+  const [draftValue, setDraftValue] = useState<string | null>(null);
+  const valueInputReference = useRef<HTMLInputElement>(null);
   const fillPercent = ((value - min) / (max - min)) * 100;
+  const isEditing = draftValue !== null;
+
+  useEffect(() => {
+    if (!isEditing) {
+      return;
+    }
+
+    valueInputReference.current?.focus();
+    valueInputReference.current?.select();
+  }, [isEditing]);
+
+  const commitDraftValue = () => {
+    if (draftValue === null) {
+      return;
+    }
+
+    const nextValue = Number.parseFloat(draftValue);
+    setDraftValue(null);
+
+    if (!Number.isFinite(nextValue)) {
+      return;
+    }
+
+    const normalizedValue = clampAndSnapValue(nextValue, min, max, step);
+
+    onChange({
+      target: { value: String(normalizedValue) },
+    } as React.ChangeEvent<HTMLInputElement>);
+  };
 
   return (
     <SliderLabel>
@@ -549,7 +780,46 @@ export function SliderControl({
         type="range"
         value={value}
       />
-      <ControlValue>{valueLabel}</ControlValue>
+      {isEditing ? (
+        <EditableControlValueInput
+          inputMode="decimal"
+          max={max}
+          min={min}
+          onBlur={commitDraftValue}
+          onChange={(event) => setDraftValue(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              commitDraftValue();
+              return;
+            }
+
+            if (event.key === 'Escape') {
+              event.preventDefault();
+              setDraftValue(null);
+            }
+          }}
+          ref={valueInputReference}
+          step={step}
+          type="number"
+          value={draftValue}
+        />
+      ) : (
+        <EditableControlValueButton
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            setDraftValue(formatEditableValue(value, step));
+          }}
+          onMouseDown={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+          }}
+          type="button"
+        >
+          <ControlValue>{valueLabel}</ControlValue>
+        </EditableControlValueButton>
+      )}
     </SliderLabel>
   );
 }

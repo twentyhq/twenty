@@ -10,10 +10,9 @@ import type {
   HalftoneStudioSettings,
 } from '@/app/halftone/_lib/types';
 import {
-  ColorInput,
   ColorControlLabel,
   ColorControlRow,
-  ColorSwatch,
+  ColorField,
   ControlGrid,
   Section,
   SectionTitle,
@@ -409,25 +408,19 @@ export function DesignTab({
         <ControlGrid>
           <ColorControlRow>
             <ColorControlLabel>Dash color</ColorControlLabel>
-            <ColorSwatch>
-              <ColorInput
-                onChange={(event) => onDashColorChange(event.target.value)}
-                type="color"
-                value={settings.halftone.dashColor}
-              />
-            </ColorSwatch>
+            <ColorField
+              ariaLabel="Dash color"
+              onChange={onDashColorChange}
+              value={settings.halftone.dashColor}
+            />
           </ColorControlRow>
           <ColorControlRow>
             <ColorControlLabel>Background</ColorControlLabel>
-            <ColorSwatch>
-              <ColorInput
-                onChange={(event) =>
-                  onBackgroundChange({ color: event.target.value })
-                }
-                type="color"
-                value={settings.background.color}
-              />
-            </ColorSwatch>
+            <ColorField
+              ariaLabel="Background color"
+              onChange={(value) => onBackgroundChange({ color: value })}
+              value={settings.background.color}
+            />
           </ColorControlRow>
         </ControlGrid>
       </Section>

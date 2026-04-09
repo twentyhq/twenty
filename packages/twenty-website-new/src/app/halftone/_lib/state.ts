@@ -6,6 +6,23 @@ import type {
   HalftoneStudioState,
 } from './types';
 
+function upsertGeometrySpec(
+  geometrySpecs: HalftoneGeometrySpec[],
+  spec: HalftoneGeometrySpec,
+) {
+  const existingIndex = geometrySpecs.findIndex(
+    (geometrySpec) => geometrySpec.key === spec.key,
+  );
+
+  if (existingIndex === -1) {
+    return [...geometrySpecs, spec];
+  }
+
+  return geometrySpecs.map((geometrySpec, index) =>
+    index === existingIndex ? spec : geometrySpec,
+  );
+}
+
 export const DEFAULT_GEOMETRY_SPECS: HalftoneGeometrySpec[] = [
   { key: 'torusKnot', label: 'Torus Knot', kind: 'builtin' },
   { key: 'sphere', label: 'Sphere', kind: 'builtin' },
@@ -175,6 +192,11 @@ export function halftoneStudioReducer(
           shapeKey: action.value,
         },
       };
+    case 'replaceSettings':
+      return {
+        ...state,
+        settings: action.value,
+      };
     case 'patchLighting':
       return {
         ...state,
@@ -234,7 +256,7 @@ export function halftoneStudioReducer(
       return {
         ...state,
         geometrySpecs: action.spec.userProvided
-          ? [...state.geometrySpecs, action.spec]
+          ? upsertGeometrySpec(state.geometrySpecs, action.spec)
           : state.geometrySpecs,
         importedFiles: {
           ...state.importedFiles,

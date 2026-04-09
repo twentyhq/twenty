@@ -1,6 +1,6 @@
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import LolOverlay from './LolOverlay';
+import Monolith from './monolith';
 
 const DESKTOP_PATH =
   'M672 395.498V701a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4h664a4 4 0 0 1 4 4v65.155c0 2.363-.837 4.65-2.361 6.454l-23.603 27.936a10 10 0 0 0-2.362 6.453v242.614c0 2.245.756 4.424 2.145 6.188l24.036 30.51a10 10 0 0 1 2.145 6.188';
@@ -24,7 +24,13 @@ const StyledVisual = styled.div`
 const StyledMasked = styled.div`
   background-color: ${theme.colors.primary.background[100]};
   height: 100%;
+  isolation: isolate;
+  -webkit-mask-image: ${mobileMask};
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
   mask-image: ${mobileMask};
+  mask-position: center;
   mask-repeat: no-repeat;
   mask-size: 100% 100%;
   overflow: hidden;
@@ -32,6 +38,7 @@ const StyledMasked = styled.div`
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
+    -webkit-mask-image: ${desktopMask};
     mask-image: ${desktopMask};
   }
 `;
@@ -46,7 +53,7 @@ export function Visual() {
     <StyledVisual>
       <StyledMasked>
         <StyledHalftoneLayer>
-          <LolOverlay />
+          <Monolith />
         </StyledHalftoneLayer>
       </StyledMasked>
     </StyledVisual>

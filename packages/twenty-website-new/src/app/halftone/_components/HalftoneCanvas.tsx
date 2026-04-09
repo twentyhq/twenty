@@ -20,6 +20,7 @@ const REFERENCE_PREVIEW_DISTANCE = 4;
 const IMAGE_POINTER_FOLLOW = 0.38;
 const IMAGE_POINTER_VELOCITY_DAMPING = 0.82;
 const IMAGE_DRAG_OFFSET_LIMIT = 0.08;
+const MAX_PREVIEW_PIXEL_RATIO = 2;
 
 const CanvasMount = styled.div<{ $background: string }>`
   background: ${(props) => props.$background};
@@ -347,6 +348,7 @@ export function HalftoneCanvas({
 
   useEffect(() => {
     initialPoseReference.current = initialPose;
+    interactionReference.current = createInteractionState(initialPose);
   }, [initialPose]);
 
   useEffect(() => {
@@ -463,12 +465,18 @@ export function HalftoneCanvas({
         ),
         1,
       );
+    const getRenderScale = () =>
+      Math.min(window.devicePixelRatio || 1, MAX_PREVIEW_PIXEL_RATIO);
+    const getRenderHeight = () =>
+      Math.max(Math.round(getVirtualHeight() * getRenderScale()), 1);
+    const getRenderWidth = () =>
+      Math.max(Math.round(getVirtualWidth() * getRenderScale()), 1);
 
     const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.setPixelRatio(1);
     renderer.setClearColor(0x000000, 0);
-    renderer.setSize(getVirtualWidth(), getVirtualHeight(), false);
+    renderer.setSize(getRenderWidth(), getRenderHeight(), false);
 
     const canvas = renderer.domElement;
     canvas.style.cursor = getCanvasCursor(settingsReference.current, false);
@@ -517,16 +525,16 @@ export function HalftoneCanvas({
     scene3d.add(mesh);
 
     const sceneTarget = createRenderTarget(
-      getVirtualWidth(),
-      getVirtualHeight(),
+      getRenderWidth(),
+      getRenderHeight(),
     );
     const blurTargetA = createRenderTarget(
-      getVirtualWidth(),
-      getVirtualHeight(),
+      getRenderWidth(),
+      getRenderHeight(),
     );
     const blurTargetB = createRenderTarget(
-      getVirtualWidth(),
-      getVirtualHeight(),
+      getRenderWidth(),
+      getRenderHeight(),
     );
     const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
     const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
@@ -536,7 +544,7 @@ export function HalftoneCanvas({
         tInput: { value: null },
         dir: { value: new THREE.Vector2(1, 0) },
         res: {
-          value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
+          value: new THREE.Vector2(getRenderWidth(), getRenderHeight()),
         },
       },
       vertexShader: passThroughVertexShader,
@@ -548,7 +556,7 @@ export function HalftoneCanvas({
         tInput: { value: null },
         dir: { value: new THREE.Vector2(0, 1) },
         res: {
-          value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
+          value: new THREE.Vector2(getRenderWidth(), getRenderHeight()),
         },
       },
       vertexShader: passThroughVertexShader,
@@ -561,7 +569,7 @@ export function HalftoneCanvas({
         tScene: { value: sceneTarget.texture },
         tGlow: { value: blurTargetB.texture },
         resolution: {
-          value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
+          value: new THREE.Vector2(getRenderWidth(), getRenderHeight()),
         },
         numRows: { value: settings.halftone.numRows },
         glowStr: { value: 0 },
@@ -610,7 +618,7 @@ export function HalftoneCanvas({
         tImage: { value: null },
         imageSize: { value: new THREE.Vector2(1, 1) },
         viewportSize: {
-          value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
+          value: new THREE.Vector2(getRenderWidth(), getRenderHeight()),
         },
         zoom: { value: getImagePreviewZoom(previewDistance) },
       },
@@ -843,28 +851,19 @@ export function HalftoneCanvas({
 
       const width = getWidth();
       const height = getHeight();
-      const virtualWidth = getVirtualWidth();
-      const virtualHeight = getVirtualHeight();
+      const renderWidth = getRenderWidth();
+      const renderHeight = getRenderHeight();
 
-      renderer.setSize(virtualWidth, virtualHeight, false);
+      renderer.setSize(renderWidth, renderHeight, false);
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
-      sceneTarget.setSize(virtualWidth, virtualHeight);
-      blurTargetA.setSize(virtualWidth, virtualHeight);
-      blurTargetB.setSize(virtualWidth, virtualHeight);
-      blurHorizontalMaterial.uniforms.res.value.set(
-        virtualWidth,
-        virtualHeight,
-      );
-      blurVerticalMaterial.uniforms.res.value.set(virtualWidth, virtualHeight);
-      halftoneMaterial.uniforms.resolution.value.set(
-        virtualWidth,
-        virtualHeight,
-      );
-      imageMaterial.uniforms.viewportSize.value.set(
-        virtualWidth,
-        virtualHeight,
-      );
+      sceneTarget.setSize(renderWidth, renderHeight);
+      blurTargetA.setSize(renderWidth, renderHeight);
+      blurTargetB.setSize(renderWidth, renderHeight);
+      blurHorizontalMaterial.uniforms.res.value.set(renderWidth, renderHeight);
+      blurVerticalMaterial.uniforms.res.value.set(renderWidth, renderHeight);
+      halftoneMaterial.uniforms.resolution.value.set(renderWidth, renderHeight);
+      imageMaterial.uniforms.viewportSize.value.set(renderWidth, renderHeight);
     };
 
     const resizeObserver = new ResizeObserver(syncSize);
@@ -1185,12 +1184,12 @@ export function HalftoneCanvas({
           1 - interaction.smoothedMouseY,
         );
         halftoneMaterial.uniforms.interactionVelocity.value.set(
-          interaction.pointerVelocityX * getVirtualWidth(),
-          -interaction.pointerVelocityY * getVirtualHeight(),
+          interaction.pointerVelocityX * getRenderWidth(),
+          -interaction.pointerVelocityY * getRenderHeight(),
         );
         halftoneMaterial.uniforms.dragOffset.value.set(
-          interaction.dragOffsetX * getVirtualWidth(),
-          -interaction.dragOffsetY * getVirtualHeight(),
+          interaction.dragOffsetX * getRenderWidth(),
+          -interaction.dragOffsetY * getRenderHeight(),
         );
         halftoneMaterial.uniforms.hoverLightStrength.value =
           pointerActive && activeSettings.animation.hoverLightEnabled
@@ -1208,8 +1207,8 @@ export function HalftoneCanvas({
 
         imageMaterial.uniforms.zoom.value = getImagePreviewZoom(baseDistance);
         imageMaterial.uniforms.viewportSize.value.set(
-          getVirtualWidth(),
-          getVirtualHeight(),
+          getRenderWidth(),
+          getRenderHeight(),
         );
 
         poseChangeReference.current({

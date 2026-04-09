@@ -22,7 +22,7 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
         role: { text: 'Head of Engineering' },
         company: { text: 'Mid-Market Fintech' },
       },
-      illustration: 'halftoneDashes',
+      illustration: 'diamond',
     },
     {
       heading: { text: 'AI for rapid iterations', fontFamily: 'sans' },

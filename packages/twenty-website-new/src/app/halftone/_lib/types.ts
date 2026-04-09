@@ -143,6 +143,7 @@ export type HalftoneStudioAction =
   | { type: 'setTab'; value: HalftoneTabId }
   | { type: 'setSourceMode'; value: HalftoneSourceMode }
   | { type: 'setShapeKey'; value: string }
+  | { type: 'replaceSettings'; value: HalftoneStudioSettings }
   | { type: 'patchLighting'; value: Partial<HalftoneLightingSettings> }
   | { type: 'patchMaterial'; value: Partial<HalftoneMaterialSettings> }
   | { type: 'patchHalftone'; value: Partial<HalftoneEffectSettings> }

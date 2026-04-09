@@ -578,6 +578,15 @@ type ExportedShapeDescriptor = {
   loader: HalftoneGeometrySpec['loader'] | null;
 };
 
+export type ParsedExportedPreset = {
+  componentName: string | null;
+  imageAssetReference: string | null;
+  initialPose: HalftoneExportPose;
+  modelAssetReference: string | null;
+  settings: HalftoneStudioSettings;
+  shape: ExportedShapeDescriptor;
+};
+
 function createDefaultExportPose(): HalftoneExportPose {
   return {
     autoElapsed: 0,
@@ -634,6 +643,85 @@ function toPascalCase(value: string) {
   }
 
   return /^[A-Za-z_]/.test(joined) ? joined : `Halftone${joined}`;
+}
+
+function extractSerializedJson<T>(
+  content: string,
+  name: string,
+  nextName: string,
+) {
+  const pattern = new RegExp(
+    String.raw`const\s+${name}\s*=\s*([\s\S]*?)\s*;\s*\r?\nconst\s+${nextName}\s*=`,
+  );
+  const match = content.match(pattern);
+
+  if (!match) {
+    throw new Error(`Could not find ${name} in the exported preset.`);
+  }
+
+  try {
+    return JSON.parse(match[1]) as T;
+  } catch (error) {
+    throw new Error(
+      error instanceof Error
+        ? `Could not parse ${name}: ${error.message}`
+        : `Could not parse ${name}.`,
+    );
+  }
+}
+
+function extractFirstMatch(content: string, patterns: RegExp[]) {
+  for (const pattern of patterns) {
+    const match = content.match(pattern);
+
+    if (match && match.length > 1) {
+      return match[match.length - 1] ?? null;
+    }
+  }
+
+  return null;
+}
+
+export function parseExportedPreset(content: string): ParsedExportedPreset {
+  const settings = extractSerializedJson<HalftoneStudioSettings>(
+    content,
+    'settings',
+    'shape',
+  );
+  const shape = extractSerializedJson<ExportedShapeDescriptor>(
+    content,
+    'shape',
+    'initialPose',
+  );
+  const initialPose = normalizeExportPose(
+    extractSerializedJson<HalftoneExportPose>(
+      content,
+      'initialPose',
+      'VIRTUAL_RENDER_HEIGHT',
+    ),
+  );
+  const componentName =
+    extractFirstMatch(content, [
+      /export\s+default\s+function\s+([A-Za-z0-9_]+)/,
+      /<title>([^<]+)<\/title>/i,
+    ]) ?? null;
+  const modelAssetReference = extractFirstMatch(content, [
+    /modelUrl\s*=\s*(['"`])([\s\S]*?)\1/,
+    /modelUrl\s*:\s*(['"`])([\s\S]*?)\1/,
+  ]);
+  const imageAssetReference = extractFirstMatch(content, [
+    /imageUrl\s*=\s*(['"`])([\s\S]*?)\1/,
+    /imageUrl\s*:\s*(['"`])([\s\S]*?)\1/,
+  ]);
+
+  return {
+    componentName,
+    imageAssetReference,
+    initialPose,
+    modelAssetReference,
+    settings,
+    shape,
+  };
 }
 
 export function deriveExportComponentName(

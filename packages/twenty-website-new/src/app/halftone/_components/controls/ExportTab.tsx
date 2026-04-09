@@ -32,6 +32,7 @@ type ExportTabProps = {
   onExportHtml: () => void;
   onExportNameChange: (value: string) => void;
   onExportReact: () => void;
+  onImportPreset: () => void;
   selectedShape: HalftoneGeometrySpec | undefined;
   settings: HalftoneStudioSettings;
 };
@@ -43,6 +44,7 @@ export function ExportTab({
   onExportHtml,
   onExportNameChange,
   onExportReact,
+  onImportPreset,
   selectedShape,
   settings,
 }: ExportTabProps) {
@@ -149,6 +151,19 @@ export function ExportTab({
               ? 'The standalone HTML export includes the current lighting, material, halftone, and animation settings, and embeds the uploaded model directly in the HTML file.'
               : 'The standalone HTML export includes the current lighting, material, halftone, and animation settings.'}
         </ExportNote>
+      </Section>
+
+      <Section>
+        <SectionTitle>Import Preset</SectionTitle>
+        <SmallBody>
+          Loads a previously exported <code>.tsx</code> or <code>.html</code>{' '}
+          halftone preset. If that preset depends on a separate image or model
+          file, select that asset in the picker too.
+        </SmallBody>
+
+        <ExportButton onClick={onImportPreset} type="button">
+          Import Exported Preset
+        </ExportButton>
       </Section>
     </TabContent>
   );

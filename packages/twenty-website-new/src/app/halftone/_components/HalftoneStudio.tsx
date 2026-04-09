@@ -15,6 +15,7 @@ import {
   generateReactComponent,
   generateStandaloneHtml,
   getExportedModelFile,
+  parseExportedPreset,
 } from '@/app/halftone/_lib/exporters';
 import {
   createInitialHalftoneStudioState,
@@ -24,6 +25,7 @@ import type {
   GeometryCacheEntry,
   HalftoneExportPose,
   HalftoneGeometrySpec,
+  HalftoneModelLoader,
   HalftoneSourceMode,
 } from '@/app/halftone/_lib/types';
 import { Logo as LogoIcon } from '@/icons';
@@ -127,9 +129,14 @@ const HiddenFileInput = styled.input`
 
 const DEFAULT_IMAGE_ASSET_PATH = '/images/shared/halftone/twenty-logo.svg';
 const DEFAULT_IMAGE_FILENAME = 'twenty-logo.svg';
+const EXPORTED_PRESET_PREVIEW_DISTANCE = 4;
 
 type PendingFilePicker = {
   resolve: (file: File | null) => void;
+};
+
+type PendingPresetPicker = {
+  resolve: (files: File[]) => void;
 };
 
 function isLightColor(hex: string) {
@@ -170,13 +177,75 @@ function createInitialExportPose(): HalftoneExportPose {
   };
 }
 
+function normalizePresetAssetReference(reference: string | null) {
+  if (!reference) {
+    return null;
+  }
+
+  const trimmed = reference.trim();
+
+  if (trimmed.startsWith('./data:')) {
+    return trimmed.slice(2);
+  }
+
+  if (trimmed.startsWith('data:')) {
+    return trimmed;
+  }
+
+  const withoutRelativePrefix = trimmed.replace(/^\.?\//, '');
+  const pathSegments = withoutRelativePrefix.split('/').filter(Boolean);
+
+  return pathSegments[pathSegments.length - 1] ?? withoutRelativePrefix;
+}
+
+function findMatchingPresetAsset(files: File[], reference: string | null) {
+  const normalizedReference = normalizePresetAssetReference(reference);
+
+  if (!normalizedReference || normalizedReference.startsWith('data:')) {
+    return null;
+  }
+
+  const targetName = normalizedReference.toLowerCase();
+
+  return (
+    files.find((file) => file.name.toLowerCase() === targetName) ?? null
+  );
+}
+
+function inferPresetModelLoader(
+  reference: string | null,
+  fallbackLoader: HalftoneModelLoader | null,
+) {
+  if (fallbackLoader) {
+    return fallbackLoader;
+  }
+
+  const normalizedReference = normalizePresetAssetReference(reference) ?? '';
+
+  return normalizedReference.toLowerCase().endsWith('.fbx') ? 'fbx' : 'glb';
+}
+
+async function fileFromDataUrl(dataUrl: string, filename: string) {
+  const response = await fetch(dataUrl);
+
+  if (!response.ok) {
+    throw new Error(`Could not load embedded asset ${filename}.`);
+  }
+
+  const blob = await response.blob();
+
+  return new File([blob], filename, {
+    type: blob.type || 'application/octet-stream',
+  });
+}
+
 export function HalftoneStudio() {
   const [state, dispatch] = useReducer(
     halftoneStudioReducer,
     undefined,
     createInitialHalftoneStudioState,
   );
-  const [previewDistance, setPreviewDistance] = useState(4);
+  const [previewDistance, setPreviewDistance] = useState(7);
   const [activeGeometry, setActiveGeometry] = useState<THREE.BufferGeometry>(
     () => createFallbackGeometry(),
   );
@@ -185,11 +254,15 @@ export function HalftoneStudio() {
   const [imageElement, setImageElement] = useState<HTMLImageElement | null>(
     null,
   );
+  const [canvasInitialPose, setCanvasInitialPose] =
+    useState<HalftoneExportPose>();
   const defaultImageFileReference = useRef<File | null>(null);
   const defaultImageFilePromiseReference = useRef<Promise<File> | null>(null);
   const snapshotReference = useRef<HalftoneSnapshotFn | null>(null);
   const fileInputReference = useRef<HTMLInputElement>(null);
+  const presetFileInputReference = useRef<HTMLInputElement>(null);
   const pendingFilePickerReference = useRef<PendingFilePicker | null>(null);
+  const pendingPresetPickerReference = useRef<PendingPresetPicker | null>(null);
   const geometryCacheReference = useRef<Map<string, GeometryCacheEntry>>(
     new Map([['torusKnot', activeGeometry]]),
   );
@@ -265,6 +338,41 @@ export function HalftoneStudio() {
     });
   }, []);
 
+  const openPresetPicker = useCallback((accept: string) => {
+    return new Promise<File[]>((resolve) => {
+      const input = presetFileInputReference.current;
+
+      if (!input) {
+        resolve([]);
+        return;
+      }
+
+      pendingPresetPickerReference.current = { resolve };
+      input.accept = accept;
+
+      const handleWindowFocus = () => {
+        window.setTimeout(() => {
+          const pendingPicker = pendingPresetPickerReference.current;
+          const currentInput = presetFileInputReference.current;
+
+          if (!pendingPicker) {
+            return;
+          }
+
+          if (currentInput?.files?.length) {
+            return;
+          }
+
+          pendingPresetPickerReference.current = null;
+          pendingPicker.resolve([]);
+        }, 300);
+      };
+
+      window.addEventListener('focus', handleWindowFocus, { once: true });
+      input.click();
+    });
+  }, []);
+
   const handleFileInputChange = useCallback(() => {
     const input = fileInputReference.current;
     const pendingPicker = pendingFilePickerReference.current;
@@ -280,6 +388,27 @@ export function HalftoneStudio() {
 
     pendingFilePickerReference.current = null;
     pendingPicker.resolve(file);
+
+    if (input) {
+      input.value = '';
+    }
+  }, []);
+
+  const handlePresetFileInputChange = useCallback(() => {
+    const input = presetFileInputReference.current;
+    const pendingPicker = pendingPresetPickerReference.current;
+    const files = input?.files ? Array.from(input.files) : [];
+
+    if (!pendingPicker) {
+      if (input) {
+        input.value = '';
+      }
+
+      return;
+    }
+
+    pendingPresetPickerReference.current = null;
+    pendingPicker.resolve(files);
 
     if (input) {
       input.value = '';
@@ -431,6 +560,128 @@ export function HalftoneStudio() {
     },
     [imageFile, loadDefaultImageFile],
   );
+
+  const handleImportPreset = useCallback(async () => {
+    const selectedFiles = await openPresetPicker(
+      '.tsx,.html,.fbx,.glb,.png,.jpg,.jpeg,.webp,.gif',
+    );
+    const presetFile =
+      selectedFiles.find((file) => /\.(tsx|html)$/i.test(file.name)) ?? null;
+
+    if (!presetFile) {
+      return;
+    }
+
+    try {
+      const preset = parseExportedPreset(await presetFile.text());
+      const relatedFiles = selectedFiles.filter((file) => file !== presetFile);
+      const nextSettings = { ...preset.settings };
+      let nextShapeKey = preset.settings.shapeKey;
+      const statusMessages: string[] = [];
+
+      if (preset.settings.sourceMode === 'image') {
+        const matchedImageFile = findMatchingPresetAsset(
+          relatedFiles,
+          preset.imageAssetReference,
+        );
+        const nextImageFile =
+          matchedImageFile ??
+          (preset.imageAssetReference
+            ? await loadDefaultImageFile()
+            : (imageFile ?? (await loadDefaultImageFile())));
+
+        setImageFile(nextImageFile);
+
+        if (!matchedImageFile && preset.imageAssetReference) {
+          const missingImageName =
+            normalizePresetAssetReference(preset.imageAssetReference) ??
+            'the exported image';
+          statusMessages.push(
+            `${missingImageName} was not selected, so the default image is being used until you upload it.`,
+          );
+        }
+      } else if (preset.shape.kind === 'imported') {
+        const embeddedModelReference = normalizePresetAssetReference(
+          preset.modelAssetReference,
+        );
+        const matchedModelFile =
+          embeddedModelReference?.startsWith('data:')
+            ? await fileFromDataUrl(
+                embeddedModelReference,
+                preset.shape.filename ?? `${preset.shape.label}.glb`,
+              )
+            : findMatchingPresetAsset(relatedFiles, preset.modelAssetReference);
+
+        if (matchedModelFile) {
+          const loader = inferPresetModelLoader(
+            matchedModelFile.name,
+            preset.shape.loader ?? null,
+          );
+          const importedShapeSpec: HalftoneGeometrySpec = {
+            key: preset.shape.key,
+            label: matchedModelFile.name,
+            kind: 'imported',
+            loader,
+            filename: matchedModelFile.name,
+            description: `${loader.toUpperCase()} model`,
+            extensions: [`.${loader}`],
+            userProvided: true,
+          };
+
+          dispatch({
+            type: 'registerImportedFile',
+            spec: importedShapeSpec,
+            file: matchedModelFile,
+            activate: false,
+          });
+          nextShapeKey = importedShapeSpec.key;
+        } else {
+          nextShapeKey = 'torusKnot';
+
+          if (preset.shape.filename || preset.modelAssetReference) {
+            const missingModelName =
+              normalizePresetAssetReference(
+                preset.modelAssetReference ?? preset.shape.filename,
+              ) ?? preset.shape.label;
+            statusMessages.push(
+              `${missingModelName} was not selected, so Torus Knot is being shown until you upload the preset's model.`,
+            );
+          }
+        }
+      }
+
+      exportPoseReference.current = preset.initialPose;
+      setCanvasInitialPose(preset.initialPose);
+      setPreviewDistance(EXPORTED_PRESET_PREVIEW_DISTANCE);
+      setExportName(
+        preset.componentName ??
+          presetFile.name.replace(/\.(tsx|html)$/i, ''),
+      );
+      dispatch({
+        type: 'replaceSettings',
+        value: {
+          ...nextSettings,
+          shapeKey: nextShapeKey,
+        },
+      });
+      dispatch({
+        type: 'setStatus',
+        message:
+          statusMessages.length > 0
+            ? `Imported ${presetFile.name}. ${statusMessages.join(' ')}`
+            : `Imported ${presetFile.name}.`,
+      });
+    } catch (error) {
+      dispatch({
+        type: 'setStatus',
+        message:
+          error instanceof Error
+            ? error.message
+            : 'Could not import that preset.',
+        isError: true,
+      });
+    }
+  }, [imageFile, loadDefaultImageFile, openPresetPicker]);
 
   const handlePoseChange = useCallback((pose: HalftoneExportPose) => {
     exportPoseReference.current = pose;
@@ -660,6 +911,7 @@ export function HalftoneStudio() {
       <CanvasLayer>
         <HalftoneCanvas
           geometry={activeGeometry}
+          initialPose={canvasInitialPose}
           imageElement={imageElement}
           onFirstInteraction={handleFirstInteraction}
           onPoseChange={handlePoseChange}
@@ -692,6 +944,9 @@ export function HalftoneStudio() {
           }}
           onExportNameChange={setExportName}
           onExportReact={handleExportReact}
+          onImportPreset={() => {
+            void handleImportPreset();
+          }}
           onBackgroundChange={(value) =>
             dispatch({ type: 'patchBackground', value })
           }
@@ -727,6 +982,13 @@ export function HalftoneStudio() {
         accept=".fbx,.glb,.png,.jpg,.jpeg,.webp,.gif"
         onChange={handleFileInputChange}
         ref={fileInputReference}
+        type="file"
+      />
+      <HiddenFileInput
+        accept=".tsx,.html,.fbx,.glb,.png,.jpg,.jpeg,.webp,.gif"
+        multiple
+        onChange={handlePresetFileInputChange}
+        ref={presetFileInputReference}
         type="file"
       />
     </StudioShell>
