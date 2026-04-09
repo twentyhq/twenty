@@ -10126,6 +10126,9 @@ export default {
             ]
         },
         "UpdatePageLayoutWidgetInput": {
+            "pageLayoutTabId": [
+                3
+            ],
             "title": [
                 1
             ],

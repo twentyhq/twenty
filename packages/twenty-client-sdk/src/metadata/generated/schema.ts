@@ -6482,7 +6482,7 @@ export interface GridPositionInput {row: Scalars['Float'],column: Scalars['Float
 
 export interface CreatePageLayoutWidgetInput {pageLayoutTabId: Scalars['UUID'],title: Scalars['String'],type: WidgetType,objectMetadataId?: (Scalars['UUID'] | null),gridPosition: GridPositionInput,position?: (Scalars['JSON'] | null),configuration: Scalars['JSON']}
 
-export interface UpdatePageLayoutWidgetInput {title?: (Scalars['String'] | null),type?: (WidgetType | null),objectMetadataId?: (Scalars['UUID'] | null),gridPosition?: (GridPositionInput | null),position?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),conditionalDisplay?: (Scalars['JSON'] | null)}
+export interface UpdatePageLayoutWidgetInput {pageLayoutTabId?: (Scalars['UUID'] | null),title?: (Scalars['String'] | null),type?: (WidgetType | null),objectMetadataId?: (Scalars['UUID'] | null),gridPosition?: (GridPositionInput | null),position?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),conditionalDisplay?: (Scalars['JSON'] | null)}
 
 export interface CreateLogicFunctionFromSourceInput {id?: (Scalars['UUID'] | null),universalIdentifier?: (Scalars['UUID'] | null),name: Scalars['String'],description?: (Scalars['String'] | null),timeoutSeconds?: (Scalars['Float'] | null),toolInputSchema?: (Scalars['JSON'] | null),isTool?: (Scalars['Boolean'] | null),source?: (Scalars['JSON'] | null),cronTriggerSettings?: (Scalars['JSON'] | null),databaseEventTriggerSettings?: (Scalars['JSON'] | null),httpRouteTriggerSettings?: (Scalars['JSON'] | null)}
 

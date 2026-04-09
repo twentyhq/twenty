@@ -3996,6 +3996,7 @@ input CreatePageLayoutWidgetInput {
 }
 
 input UpdatePageLayoutWidgetInput {
+  pageLayoutTabId: UUID
   title: String
   type: WidgetType
   objectMetadataId: UUID
