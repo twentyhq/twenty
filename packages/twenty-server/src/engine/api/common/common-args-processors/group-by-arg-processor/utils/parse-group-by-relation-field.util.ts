@@ -7,22 +7,22 @@ import {
 } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/types/field-group-by-definition.type';
 import { isGroupByDateFieldDefinition } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/utils/is-group-by-date-field-definition.util';
 import { validateSingleKeyForGroupByOrThrow } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/utils/validate-single-key-for-group-by-or-throw.util';
-import { type GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { type GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import {
   getGroupableSubFieldsForCompositeType,
-  isFlatFieldMetadataSupportedInGroupBy,
 } from 'src/engine/metadata-modules/field-metadata/utils/is-supported-in-group-by.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { isRelationNestedFieldSupportedInGroupBy } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/utils/is-relation-nested-field-supported-in-group-by.util';
 
 const getNestedFieldMetadataDetails = ({
   fieldNames,
@@ -91,11 +91,11 @@ const getNestedFieldMetadataDetails = ({
     );
   }
 
-  const isRelationTargetIdField = nestedFieldName === 'id';
-
   if (
-    !isRelationTargetIdField &&
-    !isFlatFieldMetadataSupportedInGroupBy(nestedFieldMetadata)
+    !isRelationNestedFieldSupportedInGroupBy({
+      nestedFieldName,
+      nestedFieldMetadata,
+    })
   ) {
     throw new CommonQueryRunnerException(
       `Nested field "${nestedFieldName}" is not supported in groupBy`,
