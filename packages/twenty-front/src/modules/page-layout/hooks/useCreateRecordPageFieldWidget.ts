@@ -8,7 +8,7 @@ import { createDefaultFieldWidget } from '@/page-layout/utils/createDefaultField
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
@@ -21,9 +21,20 @@ export const useCreateRecordPageFieldWidget = () => {
     objectNameSingular: targetObjectNameSingular,
   });
 
-  const { boxedRelationFieldMetadataItems } = useFieldListFieldMetadataItems({
+  const {
+    boxedRelationFieldMetadataItems,
+    junctionRelationFieldMetadataItems,
+  } = useFieldListFieldMetadataItems({
     objectNameSingular: targetObjectNameSingular,
   });
+
+  const allSelectableRelationFields = useMemo(
+    () => [
+      ...boxedRelationFieldMetadataItems,
+      ...junctionRelationFieldMetadataItems,
+    ],
+    [boxedRelationFieldMetadataItems, junctionRelationFieldMetadataItems],
+  );
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
@@ -52,12 +63,11 @@ export const useCreateRecordPageFieldWidget = () => {
         }),
     );
 
-    const unusedRelationField = boxedRelationFieldMetadataItems.find(
+    const unusedRelationField = allSelectableRelationFields.find(
       (field) => !usedFieldMetadataIds.has(field.id),
     );
 
-    const selectedField =
-      unusedRelationField ?? boxedRelationFieldMetadataItems[0];
+    const selectedField = unusedRelationField ?? allSelectableRelationFields[0];
 
     const fieldMetadataId = selectedField?.id ?? '';
     const title = selectedField?.label ?? '';
@@ -79,7 +89,7 @@ export const useCreateRecordPageFieldWidget = () => {
       tabs: addWidgetToTab(prev.tabs, tabId, newWidget),
     }));
   }, [
-    boxedRelationFieldMetadataItems,
+    allSelectableRelationFields,
     currentPageLayout.tabs,
     objectMetadataItem.id,
     pageLayoutDraftState,

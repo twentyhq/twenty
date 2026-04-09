@@ -15,7 +15,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { type FieldConfiguration } from '~/generated-metadata/graphql';
@@ -35,9 +35,20 @@ export const FieldWidgetFieldDropdownContent = () => {
 
   const currentFieldMetadataId = fieldConfiguration?.fieldMetadataId;
 
-  const { boxedRelationFieldMetadataItems } = useFieldListFieldMetadataItems({
+  const {
+    boxedRelationFieldMetadataItems,
+    junctionRelationFieldMetadataItems,
+  } = useFieldListFieldMetadataItems({
     objectNameSingular,
   });
+
+  const allSelectableRelationFields = useMemo(
+    () => [
+      ...boxedRelationFieldMetadataItems,
+      ...junctionRelationFieldMetadataItems,
+    ],
+    [boxedRelationFieldMetadataItems, junctionRelationFieldMetadataItems],
+  );
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -58,7 +69,7 @@ export const FieldWidgetFieldDropdownContent = () => {
   const { getIcon } = useIcons();
 
   const availableFields = filterBySearchQuery({
-    items: boxedRelationFieldMetadataItems,
+    items: allSelectableRelationFields,
     searchQuery,
     getSearchableValues: (item) => [item.label],
   });
@@ -73,7 +84,7 @@ export const FieldWidgetFieldDropdownContent = () => {
       },
     });
 
-    const selectedField = boxedRelationFieldMetadataItems.find(
+    const selectedField = allSelectableRelationFields.find(
       (field) => field.id === fieldMetadataId,
     );
 
