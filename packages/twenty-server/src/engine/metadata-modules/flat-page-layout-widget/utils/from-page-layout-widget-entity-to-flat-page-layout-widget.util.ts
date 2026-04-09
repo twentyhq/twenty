@@ -7,6 +7,7 @@ import {
 import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
+import { fromPageLayoutWidgetOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-overrides-to-universal-overrides.util';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 
 type FromPageLayoutWidgetEntityToFlatPageLayoutWidgetArgs =
@@ -81,6 +82,18 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
       viewUniversalIdentifierById,
     });
 
+  const pageLayoutTabUniversalIdentifierById = Object.fromEntries(
+    pageLayoutTabIdToUniversalIdentifierMap.entries(),
+  );
+
+  const universalOverrides = isDefined(pageLayoutWidgetEntity.overrides)
+    ? fromPageLayoutWidgetOverridesToUniversalOverrides({
+        overrides: pageLayoutWidgetEntity.overrides,
+        pageLayoutTabUniversalIdentifierById,
+        shouldThrowOnMissingIdentifier: false,
+      })
+    : null;
+
   return {
     ...pageLayoutWidgetEntityWithoutRelations,
     createdAt: pageLayoutWidgetEntity.createdAt.toISOString(),
@@ -93,5 +106,6 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
     pageLayoutTabUniversalIdentifier,
     objectMetadataUniversalIdentifier,
     universalConfiguration: configurationWithUniversalIdentifiers,
+    universalOverrides,
   };
 };

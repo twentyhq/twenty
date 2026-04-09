@@ -20,27 +20,15 @@ export const computeStandardWorkflowVersionViewFieldGroups = (
           isVisible: true,
         },
       }),
-    workflowVersionRecordPageFieldsAdditional:
+    workflowVersionRecordPageFieldsSystem:
       createStandardViewFieldGroupFlatMetadata({
         ...args,
         objectName: 'workflowVersion',
         context: {
           viewName: 'workflowVersionRecordPageFields',
-          viewFieldGroupName: 'additional',
-          name: 'Additional',
+          viewFieldGroupName: 'system',
+          name: 'System',
           position: 1,
-          isVisible: true,
-        },
-      }),
-    workflowVersionRecordPageFieldsOther:
-      createStandardViewFieldGroupFlatMetadata({
-        ...args,
-        objectName: 'workflowVersion',
-        context: {
-          viewName: 'workflowVersionRecordPageFields',
-          viewFieldGroupName: 'other',
-          name: 'Other',
-          position: 2,
           isVisible: true,
         },
       }),

@@ -144,7 +144,7 @@ export const computeStandardMessageChannelMessageAssociationViewFields = (
           position: 0,
           isVisible: true,
           size: 150,
-          viewFieldGroupName: 'other',
+          viewFieldGroupName: 'system',
         },
       }),
     messageChannelMessageAssociationRecordPageFieldsCreatedBy:
@@ -158,7 +158,7 @@ export const computeStandardMessageChannelMessageAssociationViewFields = (
           position: 1,
           isVisible: true,
           size: 150,
-          viewFieldGroupName: 'other',
+          viewFieldGroupName: 'system',
         },
       }),
   };
