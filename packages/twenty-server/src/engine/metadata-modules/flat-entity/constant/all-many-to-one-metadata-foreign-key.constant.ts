@@ -64,6 +64,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     view: {
       foreignKey: 'viewId',
     },
+    pageLayout: {
+      foreignKey: 'pageLayoutId',
+    },
   },
   fieldMetadata: {
     object: {

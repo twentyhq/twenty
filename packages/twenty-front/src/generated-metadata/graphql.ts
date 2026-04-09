@@ -1199,6 +1199,7 @@ export type CreateNavigationMenuItemInput = {
   id?: InputMaybe<Scalars['UUID']>;
   link?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
+  pageLayoutId?: InputMaybe<Scalars['UUID']>;
   position?: InputMaybe<Scalars['Float']>;
   targetObjectMetadataId?: InputMaybe<Scalars['UUID']>;
   targetRecordId?: InputMaybe<Scalars['UUID']>;
@@ -3848,6 +3849,7 @@ export type NavigationMenuItem = {
   id: Scalars['UUID'];
   link?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
+  pageLayoutId?: Maybe<Scalars['UUID']>;
   position: Scalars['Float'];
   targetObjectMetadataId?: Maybe<Scalars['UUID']>;
   targetRecordId?: Maybe<Scalars['UUID']>;
@@ -3862,6 +3864,7 @@ export enum NavigationMenuItemType {
   FOLDER = 'FOLDER',
   LINK = 'LINK',
   OBJECT = 'OBJECT',
+  PAGE_LAYOUT = 'PAGE_LAYOUT',
   RECORD = 'RECORD',
   VIEW = 'VIEW'
 }
@@ -4105,7 +4108,8 @@ export enum PageLayoutTabLayoutMode {
 export enum PageLayoutType {
   DASHBOARD = 'DASHBOARD',
   RECORD_INDEX = 'RECORD_INDEX',
-  RECORD_PAGE = 'RECORD_PAGE'
+  RECORD_PAGE = 'RECORD_PAGE',
+  STANDALONE_PAGE = 'STANDALONE_PAGE'
 }
 
 export type PageLayoutWidget = {
@@ -5445,6 +5449,7 @@ export type UpdateNavigationMenuItemInput = {
   icon?: InputMaybe<Scalars['String']>;
   link?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
+  pageLayoutId?: InputMaybe<Scalars['UUID']>;
   position?: InputMaybe<Scalars['Float']>;
 };
 
@@ -6935,9 +6940,9 @@ export type FindMarketplaceAppDetailQueryVariables = Exact<{
 
 export type FindMarketplaceAppDetailQuery = { __typename?: 'Query', findMarketplaceAppDetail: { __typename?: 'MarketplaceAppDetail', id: string, universalIdentifier: string, name: string, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, isListed: boolean, isFeatured: boolean, manifest?: any | null } };
 
-export type NavigationMenuItemFieldsFragment = { __typename?: 'NavigationMenuItem', id: string, type: NavigationMenuItemType, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, icon?: string | null, color?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string };
+export type NavigationMenuItemFieldsFragment = { __typename?: 'NavigationMenuItem', id: string, type: NavigationMenuItemType, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, icon?: string | null, color?: string | null, pageLayoutId?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string };
 
-export type NavigationMenuItemQueryFieldsFragment = { __typename?: 'NavigationMenuItem', id: string, type: NavigationMenuItemType, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, icon?: string | null, color?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string, targetRecordIdentifier?: { __typename?: 'RecordIdentifier', id: string, labelIdentifier: string, imageIdentifier?: string | null } | null };
+export type NavigationMenuItemQueryFieldsFragment = { __typename?: 'NavigationMenuItem', id: string, type: NavigationMenuItemType, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, icon?: string | null, color?: string | null, pageLayoutId?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string, targetRecordIdentifier?: { __typename?: 'RecordIdentifier', id: string, labelIdentifier: string, imageIdentifier?: string | null } | null };
 
 export type CreateManyNavigationMenuItemsMutationVariables = Exact<{
   inputs: Array<CreateNavigationMenuItemInput> | CreateNavigationMenuItemInput;

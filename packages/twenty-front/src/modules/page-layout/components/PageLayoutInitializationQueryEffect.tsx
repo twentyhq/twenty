@@ -55,8 +55,6 @@ export const PageLayoutInitializationQueryEffect = ({
 
   const initializePageLayout = useCallback(
     (layout: PageLayout) => {
-      const isRecordPageLayout = layout.type === PageLayoutType.RECORD_PAGE;
-
       const currentPersisted = store.get(
         pageLayoutPersistedComponentCallbackState,
       );
@@ -78,7 +76,9 @@ export const PageLayoutInitializationQueryEffect = ({
       const tabLayouts = convertPageLayoutToTabLayouts(layout);
       store.set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
 
-      if (!isRecordPageLayout) {
+      const isDashboardLayout = layout.type === PageLayoutType.DASHBOARD;
+
+      if (isDashboardLayout) {
         const shouldEnterDashboardEditMode = isPageLayoutEmpty(layout);
         setIsPageLayoutInEditMode(shouldEnterDashboardEditMode);
       }

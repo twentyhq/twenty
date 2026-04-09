@@ -112,6 +112,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'viewUniversalIdentifier',
     },
+    pageLayout: {
+      metadataName: 'pageLayout',
+      foreignKey: 'pageLayoutId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'pageLayoutUniversalIdentifier',
+    },
   },
   fieldMetadata: {
     object: {

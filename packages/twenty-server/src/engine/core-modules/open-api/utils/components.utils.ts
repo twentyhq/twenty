@@ -1100,7 +1100,7 @@ export const computeMetadataSchemaComponents = (
               name: { type: 'string' },
               type: {
                 type: 'string',
-                enum: ['RECORD_INDEX', 'RECORD_PAGE', 'DASHBOARD'],
+                enum: ['RECORD_INDEX', 'RECORD_PAGE', 'DASHBOARD', 'STANDALONE_PAGE'],
                 default: 'RECORD_PAGE',
               },
               objectMetadataId: { type: 'string', format: 'uuid' },
@@ -1121,7 +1121,7 @@ export const computeMetadataSchemaComponents = (
               name: { type: 'string' },
               type: {
                 type: 'string',
-                enum: ['RECORD_INDEX', 'RECORD_PAGE', 'DASHBOARD'],
+                enum: ['RECORD_INDEX', 'RECORD_PAGE', 'DASHBOARD', 'STANDALONE_PAGE'],
               },
               objectMetadataId: { type: 'string', format: 'uuid' },
             },
@@ -1134,7 +1134,7 @@ export const computeMetadataSchemaComponents = (
               name: { type: 'string' },
               type: {
                 type: 'string',
-                enum: ['RECORD_INDEX', 'RECORD_PAGE', 'DASHBOARD'],
+                enum: ['RECORD_INDEX', 'RECORD_PAGE', 'DASHBOARD', 'STANDALONE_PAGE'],
               },
               objectMetadataId: { type: 'string', format: 'uuid' },
               tabs: {
