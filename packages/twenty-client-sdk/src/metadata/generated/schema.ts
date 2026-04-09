@@ -671,6 +671,7 @@ export interface PageLayoutWidget {
     position?: PageLayoutWidgetPosition
     configuration: WidgetConfiguration
     conditionalDisplay?: Scalars['JSON']
+    conditionalAvailabilityExpression?: Scalars['String']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
@@ -3811,6 +3812,7 @@ export interface PageLayoutWidgetGenqlSelection{
     position?: PageLayoutWidgetPositionGenqlSelection
     configuration?: WidgetConfigurationGenqlSelection
     conditionalDisplay?: boolean | number
+    conditionalAvailabilityExpression?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     deletedAt?: boolean | number
@@ -6553,13 +6555,13 @@ export interface UpdatePageLayoutWithTabsInput {name: Scalars['String'],type: Pa
 
 export interface UpdatePageLayoutTabWithWidgetsInput {id: Scalars['UUID'],title: Scalars['String'],position: Scalars['Float'],icon?: (Scalars['String'] | null),layoutMode?: (PageLayoutTabLayoutMode | null),widgets: UpdatePageLayoutWidgetWithIdInput[]}
 
-export interface UpdatePageLayoutWidgetWithIdInput {id: Scalars['UUID'],pageLayoutTabId: Scalars['UUID'],title: Scalars['String'],type: WidgetType,objectMetadataId?: (Scalars['UUID'] | null),gridPosition: GridPositionInput,position?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),conditionalDisplay?: (Scalars['JSON'] | null)}
+export interface UpdatePageLayoutWidgetWithIdInput {id: Scalars['UUID'],pageLayoutTabId: Scalars['UUID'],title: Scalars['String'],type: WidgetType,objectMetadataId?: (Scalars['UUID'] | null),gridPosition: GridPositionInput,position?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),conditionalDisplay?: (Scalars['JSON'] | null),conditionalAvailabilityExpression?: (Scalars['String'] | null)}
 
 export interface GridPositionInput {row: Scalars['Float'],column: Scalars['Float'],rowSpan: Scalars['Float'],columnSpan: Scalars['Float']}
 
 export interface CreatePageLayoutWidgetInput {pageLayoutTabId: Scalars['UUID'],title: Scalars['String'],type: WidgetType,objectMetadataId?: (Scalars['UUID'] | null),gridPosition: GridPositionInput,position?: (Scalars['JSON'] | null),configuration: Scalars['JSON']}
 
-export interface UpdatePageLayoutWidgetInput {pageLayoutTabId?: (Scalars['UUID'] | null),title?: (Scalars['String'] | null),type?: (WidgetType | null),objectMetadataId?: (Scalars['UUID'] | null),gridPosition?: (GridPositionInput | null),position?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),conditionalDisplay?: (Scalars['JSON'] | null)}
+export interface UpdatePageLayoutWidgetInput {pageLayoutTabId?: (Scalars['UUID'] | null),title?: (Scalars['String'] | null),type?: (WidgetType | null),objectMetadataId?: (Scalars['UUID'] | null),gridPosition?: (GridPositionInput | null),position?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),conditionalDisplay?: (Scalars['JSON'] | null),conditionalAvailabilityExpression?: (Scalars['String'] | null)}
 
 export interface CreateLogicFunctionFromSourceInput {id?: (Scalars['UUID'] | null),universalIdentifier?: (Scalars['UUID'] | null),name: Scalars['String'],description?: (Scalars['String'] | null),timeoutSeconds?: (Scalars['Float'] | null),toolInputSchema?: (Scalars['JSON'] | null),isTool?: (Scalars['Boolean'] | null),source?: (Scalars['JSON'] | null),cronTriggerSettings?: (Scalars['JSON'] | null),databaseEventTriggerSettings?: (Scalars['JSON'] | null),httpRouteTriggerSettings?: (Scalars['JSON'] | null)}
 
