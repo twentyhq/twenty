@@ -2836,6 +2836,7 @@ msgstr "Frontkomponent word vereis vir frontkomponent-renderer-items"
 
 #. js-lingui-id: 0aXgXb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Front component must not be set for this item type"
 msgstr "Frontkomponent mag nie vir hierdie itemtipe ingestel word nie"
 
@@ -2870,6 +2871,7 @@ msgid "frontComponentId is required when engineComponentKey is FRONT_COMPONENT_R
 msgstr "frontComponentId word vereis wanneer engineComponentKey FRONT_COMPONENT_RENDERER is"
 
 #. js-lingui-id: N6YN7J
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "frontComponentId must not be set for engine component key {engineComponentKey}"
 msgstr "frontComponentId mag nie vir enjinkomponent-sleutel {engineComponentKey} ingestel word nie"
@@ -5496,6 +5498,26 @@ msgstr "Wagwoordterugstel-token is reeds gegenereer. Wag asseblief {timeToWait} 
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Password too weak"
 msgstr "Wagwoord te swak"
+
+#. js-lingui-id: DpnDl6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Payload is required for navigation items"
+msgstr ""
+
+#. js-lingui-id: Enmszs
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "payload is required when engineComponentKey is NAVIGATION"
+msgstr ""
+
+#. js-lingui-id: QXVtcO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "payload must contain either a \"path\" or \"objectMetadataItemId\" property"
+msgstr ""
+
+#. js-lingui-id: Z+s6mX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Payload must contain either a path or an object metadata item identifier"
+msgstr ""
 
 #. js-lingui-id: l6qKfi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
@@ -8279,6 +8301,7 @@ msgstr "Werkvloei-weergawe mag nie vir frontkomponent-renderer-items ingestel wo
 
 #. js-lingui-id: f9Rp2t
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Workflow version must not be set for this item type"
 msgstr "Werkvloei-weergawe mag nie vir hierdie itemtipe ingestel word nie"
 
@@ -8323,6 +8346,7 @@ msgid "workflowVersionId is required when engineComponentKey is TRIGGER_WORKFLOW
 msgstr "workflowVersionId word vereis wanneer engineComponentKey TRIGGER_WORKFLOW_VERSION is"
 
 #. js-lingui-id: +67q2u
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "workflowVersionId must not be set for engine component key {engineComponentKey}"
 msgstr "workflowVersionId mag nie vir enjinkomponent-sleutel {engineComponentKey} ingestel word nie"

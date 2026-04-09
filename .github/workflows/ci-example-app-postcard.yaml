@@ -30,8 +30,28 @@ jobs:
   example-app-postcard:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
-    timeout-minutes: 15
+    timeout-minutes: 30
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+    env:
+      TWENTY_API_URL: http://localhost:3000
+      TWENTY_API_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ1c2VySWQiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtNDYzZi00MzViLTgyOGMtMTA3ZTAwN2EyNzExIiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWU3Yy00M2Q5LWE1ZGItNjg1YjUwNjlkODE2IiwidHlwZSI6IkFDQ0VTUyIsImF1dGhQcm92aWRlciI6InBhc3N3b3JkIiwiaWF0IjoxNzUxMjgxNzA0LCJleHAiOjIwNjY4NTc3MDR9.HMGqCsVlOAPVUBhKSGlD1X86VoHKt4LIUtET3CGIdik
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,15 +62,17 @@ jobs:
       - name: Build SDK packages
         run: npx nx build twenty-sdk
 
-      - name: Spawn Twenty test instance
-        id: twenty
-        uses: ./.github/actions/spawn-twenty-app-dev-test
+      - name: Create test database
+        run: PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+
+      - name: Setup database and start server
+        run: npx nx run twenty-server:database:reset && nohup npx nx start:ci twenty-server &
+
+      - name: Wait for server to be ready
+        run: npx wait-on http://localhost:3000/healthz --timeout 120000 --interval 1000
 
       - name: Run integration tests
         working-directory: packages/twenty-apps/examples/postcard
-        env:
-          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
-          TWENTY_API_KEY: ${{ steps.twenty.outputs.api-key }}
         run: npx vitest run
 
   ci-example-app-postcard-status-check:

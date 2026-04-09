@@ -66,7 +66,6 @@ import { type WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/works
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
@@ -305,11 +304,6 @@ export class DirectExecutionService {
         document,
         operationName: req.body?.operationName as string | undefined,
         variableValues: (req.body?.variables as Record<string, unknown>) ?? {},
-      });
-
-      await this.metricsService.incrementCounter({
-        key: MetricsKeys.GraphqlIntrospectionDirectExecution,
-        shouldStoreInCache: false,
       });
 
       return {

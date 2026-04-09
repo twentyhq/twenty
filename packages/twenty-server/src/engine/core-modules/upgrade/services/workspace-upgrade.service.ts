@@ -11,6 +11,7 @@ import {
   type VersionCommands,
 } from 'src/database/commands/upgrade-version-command/upgrade.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
@@ -66,9 +67,9 @@ export class WorkspaceUpgradeService {
         const executedByVersion =
           this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
-        for (const workspaceCommand of workspaceCommands) {
+        for (const workspaceCommandEntry of workspaceCommands) {
           await this.runSingleWorkspaceCommandOrThrow({
-            workspaceCommand,
+            workspaceCommandEntry,
             workspaceId,
             executedByVersion,
             options,
@@ -120,29 +121,29 @@ export class WorkspaceUpgradeService {
   }
 
   private async runSingleWorkspaceCommandOrThrow({
-    workspaceCommand,
+    workspaceCommandEntry,
     workspaceId,
     executedByVersion,
     options,
     iteratorContext,
   }: {
-    workspaceCommand: VersionCommands[number];
+    workspaceCommandEntry: RegisteredWorkspaceCommand;
     workspaceId: string;
     executedByVersion: string;
     options: UpgradeCommandOptions;
     iteratorContext: WorkspaceIteratorContext;
   }): Promise<void> {
-    const commandName = workspaceCommand.constructor.name;
+    const { name, command: workspaceCommand } = workspaceCommandEntry;
 
     const isAlreadyCompleted =
       await this.upgradeMigrationService.isLastAttemptCompleted({
-        name: commandName,
+        name,
         workspaceId,
       });
 
     if (isAlreadyCompleted) {
       this.logger.log(
-        `Workspace command ${commandName} already completed for workspace ${workspaceId}, skipping`,
+        `Workspace command ${name} already completed for workspace ${workspaceId}, skipping`,
       );
 
       return;
@@ -159,7 +160,7 @@ export class WorkspaceUpgradeService {
 
       if (!options.dryRun) {
         await this.upgradeMigrationService.markAsCompleted({
-          name: commandName,
+          name,
           workspaceId,
           executedByVersion,
         });
@@ -167,9 +168,10 @@ export class WorkspaceUpgradeService {
     } catch (error) {
       if (!options.dryRun) {
         await this.upgradeMigrationService.markAsFailed({
-          name: commandName,
+          name,
           workspaceId,
           executedByVersion,
+          error,
         });
       }
 

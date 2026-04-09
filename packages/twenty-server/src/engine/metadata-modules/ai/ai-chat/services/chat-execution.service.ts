@@ -142,8 +142,15 @@ export class ChatExecutionService {
       `Built tool catalog with ${toolCatalog.length} tools, ${skillCatalog.length} skills available`,
     );
 
+    const useNativeSearch = this.webSearchService.shouldUseNativeSearch();
+
+    const toolNamesToPreload = [
+      ...COMMON_PRELOAD_TOOLS,
+      ...(useNativeSearch ? [] : ['web_search']),
+    ];
+
     const preloadedTools = await this.toolRegistry.getToolsByName(
-      COMMON_PRELOAD_TOOLS,
+      toolNamesToPreload,
       toolContext,
     );
 
@@ -162,8 +169,6 @@ export class ChatExecutionService {
     const modelConfig = this.aiModelRegistryService.getEffectiveModelConfig(
       registeredModel.modelId,
     );
-
-    const useNativeSearch = this.webSearchService.shouldUseNativeSearch();
 
     const { tools: nativeSearchTools, callableToolNames: searchToolNames } =
       useNativeSearch

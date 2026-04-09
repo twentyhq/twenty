@@ -6,6 +6,5 @@ export type ViewFieldGroup = {
   position: number;
   isVisible: boolean;
   viewId: string;
-  isOverridden: boolean;
   viewFields: ViewField[];
 };

@@ -246,6 +246,16 @@ export class ConfigVariables {
   MESSAGING_PROVIDER_MICROSOFT_ENABLED = false;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Number of messages fetched per batch during message import, adjust incase of rate limiting caused by Gmail, Outlook or IMAP',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  MESSAGING_MESSAGES_GET_BATCH_SIZE = 400;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MICROSOFT_AUTH,
     description: 'Enable or disable the Microsoft Calendar integration',
     type: ConfigVariableType.BOOLEAN,

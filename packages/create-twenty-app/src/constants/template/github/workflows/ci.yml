@@ -25,7 +25,7 @@ jobs:
 
       - name: Spawn Twenty test instance
         id: twenty
-        uses: twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@feature/sdk-config-file-source-of-truth
+        uses: twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main
         with:
           twenty-version: ${{ env.TWENTY_VERSION }}
 

@@ -1,12 +1,12 @@
 import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 
-import { type MigrationInterface } from 'typeorm';
-
 import { type ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { type WorkspaceCommandRunner } from 'src/database/commands/command-runners/workspace.command-runner';
-import { getRegisteredWorkspaceCommandMetadata } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { getRegisteredInstanceCommandMetadata } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
+import { getRegisteredWorkspaceCommandMetadata } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import {
   UPGRADE_COMMAND_SUPPORTED_VERSIONS,
   type UpgradeCommandVersion,
@@ -17,38 +17,52 @@ type WorkspaceCommand =
   | WorkspaceCommandRunner
   | ActiveOrSuspendedWorkspaceCommandRunner;
 
-type RegisteredInstanceCommand = {
+export type RegisteredFastInstanceCommand = {
   name: string;
-  command: MigrationInterface;
+  command: FastInstanceCommand;
   timestamp: number;
 };
 
-type RegisteredWorkspaceCommand = {
+export type RegisteredSlowInstanceCommand = {
+  name: string;
+  command: SlowInstanceCommand;
+  timestamp: number;
+};
+
+export type RegisteredWorkspaceCommand = {
   name: string;
   command: WorkspaceCommand;
   timestamp: number;
 };
 
-type VersionBucket = {
-  instanceCommands: RegisteredInstanceCommand[];
+export type VersionBundle = {
+  fastInstanceCommands: RegisteredFastInstanceCommand[];
+  slowInstanceCommands: RegisteredSlowInstanceCommand[];
   workspaceCommands: RegisteredWorkspaceCommand[];
 };
+
+const buildEmptyVersionBundle = (): VersionBundle => ({
+  fastInstanceCommands: [],
+  slowInstanceCommands: [],
+  workspaceCommands: [],
+});
 
 @Injectable()
 export class UpgradeCommandRegistryService implements OnModuleInit {
   private readonly logger = new Logger(UpgradeCommandRegistryService.name);
 
-  private readonly bucketsByVersion = new Map<
+  private readonly bundlesByVersion = new Map<
     UpgradeCommandVersion,
-    VersionBucket
+    VersionBundle
   >();
 
   constructor(private readonly discoveryService: DiscoveryService) {}
 
   onModuleInit(): void {
     for (const version of UPGRADE_COMMAND_SUPPORTED_VERSIONS) {
-      this.bucketsByVersion.set(version, {
-        instanceCommands: [],
+      this.bundlesByVersion.set(version, {
+        fastInstanceCommands: [],
+        slowInstanceCommands: [],
         workspaceCommands: [],
       });
     }
@@ -66,20 +80,31 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
         getRegisteredInstanceCommandMetadata(metatype);
 
       if (isDefined(instanceCommandMetadata)) {
-        const bucket = this.bucketsByVersion.get(
+        const bundle = this.bundlesByVersion.get(
           instanceCommandMetadata.version,
         );
 
-        if (isDefined(bucket)) {
-          bucket.instanceCommands.push({
+        if (isDefined(bundle)) {
+          const entry = {
             name: this.computeCommandName(
               instanceCommandMetadata.version,
-              (instance as MigrationInterface).constructor.name,
+              (instance as FastInstanceCommand).constructor.name,
               instanceCommandMetadata.timestamp,
             ),
-            command: instance as MigrationInterface,
             timestamp: instanceCommandMetadata.timestamp,
-          });
+          };
+
+          if (instanceCommandMetadata.type === 'slow') {
+            bundle.slowInstanceCommands.push({
+              ...entry,
+              command: instance as SlowInstanceCommand,
+            });
+          } else {
+            bundle.fastInstanceCommands.push({
+              ...entry,
+              command: instance as FastInstanceCommand,
+            });
+          }
         }
 
         continue;
@@ -89,12 +114,12 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
         getRegisteredWorkspaceCommandMetadata(metatype);
 
       if (isDefined(workspaceCommandMetadata)) {
-        const bucket = this.bucketsByVersion.get(
+        const bundle = this.bundlesByVersion.get(
           workspaceCommandMetadata.version,
         );
 
-        if (isDefined(bucket)) {
-          bucket.workspaceCommands.push({
+        if (isDefined(bundle)) {
+          bundle.workspaceCommands.push({
             name: this.computeCommandName(
               workspaceCommandMetadata.version,
               (instance as WorkspaceCommand).constructor.name,
@@ -107,65 +132,48 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
       }
     }
 
-    for (const [, bucket] of this.bucketsByVersion) {
-      bucket.instanceCommands.sort(
+    for (const [, bundle] of this.bundlesByVersion) {
+      bundle.fastInstanceCommands.sort(
         (entryA, entryB) => entryA.timestamp - entryB.timestamp,
       );
-      bucket.workspaceCommands.sort(
+      bundle.slowInstanceCommands.sort(
+        (entryA, entryB) => entryA.timestamp - entryB.timestamp,
+      );
+      bundle.workspaceCommands.sort(
         (entryA, entryB) => entryA.timestamp - entryB.timestamp,
       );
     }
 
     this.validateNoDuplicates();
 
-    for (const [version, bucket] of this.bucketsByVersion) {
+    for (const [version, bundle] of this.bundlesByVersion) {
       const totalCount =
-        bucket.instanceCommands.length + bucket.workspaceCommands.length;
+        bundle.fastInstanceCommands.length +
+        bundle.slowInstanceCommands.length +
+        bundle.workspaceCommands.length;
 
       if (totalCount > 0) {
         this.logger.log(
-          `Registered ${bucket.instanceCommands.length} instance command(s) and ${bucket.workspaceCommands.length} workspace command(s) for ${version}`,
+          `Registered ${bundle.fastInstanceCommands.length} fast instance, ${bundle.slowInstanceCommands.length} slow instance, and ${bundle.workspaceCommands.length} workspace command(s) for ${version}`,
         );
       }
     }
   }
 
-  getInstanceCommandsForVersion(
-    version: UpgradeCommandVersion,
-  ): MigrationInterface[] {
-    return (
-      this.bucketsByVersion
-        .get(version)
-        ?.instanceCommands.map((entry) => entry.command) ?? []
+  getBundleForVersion(version: UpgradeCommandVersion): VersionBundle {
+    return this.bundlesByVersion.get(version) ?? buildEmptyVersionBundle();
+  }
+
+  getAllFastInstanceCommands(): RegisteredFastInstanceCommand[] {
+    return UPGRADE_COMMAND_SUPPORTED_VERSIONS.flatMap(
+      (version) => this.getBundleForVersion(version).fastInstanceCommands,
     );
   }
 
-  getWorkspaceCommandsForVersion(
-    version: UpgradeCommandVersion,
-  ): WorkspaceCommand[] {
-    return (
-      this.bucketsByVersion
-        .get(version)
-        ?.workspaceCommands.map((entry) => entry.command) ?? []
+  getAllSlowInstanceCommands(): RegisteredSlowInstanceCommand[] {
+    return UPGRADE_COMMAND_SUPPORTED_VERSIONS.flatMap(
+      (version) => this.getBundleForVersion(version).slowInstanceCommands,
     );
-  }
-
-  getAllInstanceCommands(): {
-    version: UpgradeCommandVersion;
-    migration: MigrationInterface;
-  }[] {
-    const result: {
-      version: UpgradeCommandVersion;
-      migration: MigrationInterface;
-    }[] = [];
-
-    for (const version of UPGRADE_COMMAND_SUPPORTED_VERSIONS) {
-      for (const command of this.getInstanceCommandsForVersion(version)) {
-        result.push({ version, migration: command });
-      }
-    }
-
-    return result;
   }
 
   private computeCommandName(
@@ -177,23 +185,29 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
   }
 
   private validateNoDuplicates(): void {
-    for (const [version, bucket] of this.bucketsByVersion) {
+    for (const [version, bundle] of this.bundlesByVersion) {
       this.validateNoTimestampDuplicatesWithinKind(
         version,
-        'instance',
-        bucket.instanceCommands,
+        'fast-instance',
+        bundle.fastInstanceCommands,
+      );
+      this.validateNoTimestampDuplicatesWithinKind(
+        version,
+        'slow-instance',
+        bundle.slowInstanceCommands,
       );
       this.validateNoTimestampDuplicatesWithinKind(
         version,
         'workspace',
-        bucket.workspaceCommands,
+        bundle.workspaceCommands,
       );
 
       const seenNames = new Set<string>();
 
       const allNames = [
-        ...bucket.instanceCommands.map((entry) => entry.name),
-        ...bucket.workspaceCommands.map((entry) => entry.name),
+        ...bundle.fastInstanceCommands.map((entry) => entry.name),
+        ...bundle.slowInstanceCommands.map((entry) => entry.name),
+        ...bundle.workspaceCommands.map((entry) => entry.name),
       ];
 
       for (const name of allNames) {
@@ -210,8 +224,11 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
 
   private validateNoTimestampDuplicatesWithinKind(
     version: UpgradeCommandVersion,
-    kind: 'instance' | 'workspace',
-    entries: RegisteredInstanceCommand[] | RegisteredWorkspaceCommand[],
+    kind: 'fast-instance' | 'slow-instance' | 'workspace',
+    entries:
+      | RegisteredFastInstanceCommand[]
+      | RegisteredSlowInstanceCommand[]
+      | RegisteredWorkspaceCommand[],
   ): void {
     const seenTimestamps = new Set<number>();
 

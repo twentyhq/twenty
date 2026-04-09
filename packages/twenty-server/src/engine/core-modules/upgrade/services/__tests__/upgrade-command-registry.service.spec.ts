@@ -3,14 +3,17 @@ import 'reflect-metadata';
 import { Test } from '@nestjs/testing';
 import { DiscoveryService } from '@nestjs/core';
 
-import { type MigrationInterface } from 'typeorm';
+import { type DataSource } from 'typeorm';
+
+import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
 @RegisteredInstanceCommand('1.21.0', 1770000000000)
-class MigrationA1770000000000 implements MigrationInterface {
+class MigrationA1770000000000 implements FastInstanceCommand {
   name = 'MigrationA1770000000000';
 
   async up(): Promise<void> {}
@@ -18,7 +21,7 @@ class MigrationA1770000000000 implements MigrationInterface {
 }
 
 @RegisteredInstanceCommand('1.21.0', 1771000000000)
-class MigrationB1771000000000 implements MigrationInterface {
+class MigrationB1771000000000 implements FastInstanceCommand {
   name = 'MigrationB1771000000000';
 
   async up(): Promise<void> {}
@@ -26,7 +29,7 @@ class MigrationB1771000000000 implements MigrationInterface {
 }
 
 @RegisteredInstanceCommand('1.21.0', 1772000000000)
-class MigrationC1772000000000 implements MigrationInterface {
+class MigrationC1772000000000 implements FastInstanceCommand {
   name = 'MigrationC1772000000000';
 
   async up(): Promise<void> {}
@@ -34,14 +37,14 @@ class MigrationC1772000000000 implements MigrationInterface {
 }
 
 @RegisteredInstanceCommand('1.20.0', 1769000000000)
-class MigrationD1769000000000 implements MigrationInterface {
+class MigrationD1769000000000 implements FastInstanceCommand {
   name = 'MigrationD1769000000000';
 
   async up(): Promise<void> {}
   async down(): Promise<void> {}
 }
 
-class UndecoratedMigration1768000000000 implements MigrationInterface {
+class UndecoratedMigration1768000000000 implements FastInstanceCommand {
   name = 'UndecoratedMigration1768000000000';
 
   async up(): Promise<void> {}
@@ -94,14 +97,16 @@ describe('UpgradeCommandRegistryService', () => {
       new MigrationC1772000000000(),
     ]);
 
-    const v120 = service.getInstanceCommandsForVersion('1.20.0');
-    const v121 = service.getInstanceCommandsForVersion('1.21.0');
+    const v120 = service.getBundleForVersion('1.20.0');
+    const v121 = service.getBundleForVersion('1.21.0');
 
-    expect(v120.map((migration) => migration.constructor.name)).toStrictEqual([
-      'MigrationD1769000000000',
-    ]);
+    expect(
+      v120.fastInstanceCommands.map((entry) => entry.command.constructor.name),
+    ).toStrictEqual(['MigrationD1769000000000']);
 
-    expect(v121.map((migration) => migration.constructor.name)).toStrictEqual([
+    expect(
+      v121.fastInstanceCommands.map((entry) => entry.command.constructor.name),
+    ).toStrictEqual([
       'MigrationA1770000000000',
       'MigrationB1771000000000',
       'MigrationC1772000000000',
@@ -116,8 +121,8 @@ describe('UpgradeCommandRegistryService', () => {
     ]);
 
     const names = service
-      .getInstanceCommandsForVersion('1.21.0')
-      .map((migration) => migration.constructor.name);
+      .getBundleForVersion('1.21.0')
+      .fastInstanceCommands.map((entry) => entry.command.constructor.name);
 
     expect(names).toStrictEqual([
       'MigrationA1770000000000',
@@ -132,26 +137,32 @@ describe('UpgradeCommandRegistryService', () => {
       new MigrationA1770000000000(),
     ]);
 
-    const v121 = service.getInstanceCommandsForVersion('1.21.0');
+    const v121 = service.getBundleForVersion('1.21.0');
 
-    expect(v121).toHaveLength(1);
-    expect(v121[0].constructor.name).toBe('MigrationA1770000000000');
+    expect(v121.fastInstanceCommands).toHaveLength(1);
+    expect(v121.fastInstanceCommands[0].command.constructor.name).toBe(
+      'MigrationA1770000000000',
+    );
   });
 
   it('should return empty array for version with no commands', async () => {
     const service = await buildRegistryService([]);
 
-    expect(service.getInstanceCommandsForVersion('1.20.0')).toStrictEqual([]);
-    expect(service.getInstanceCommandsForVersion('1.21.0')).toStrictEqual([]);
-    expect(service.getWorkspaceCommandsForVersion('1.20.0')).toStrictEqual([]);
-    expect(service.getWorkspaceCommandsForVersion('1.21.0')).toStrictEqual([]);
+    const v120 = service.getBundleForVersion('1.20.0');
+    const v121 = service.getBundleForVersion('1.21.0');
+
+    expect(v120.fastInstanceCommands).toStrictEqual([]);
+    expect(v121.fastInstanceCommands).toStrictEqual([]);
+    expect(v120.workspaceCommands).toStrictEqual([]);
+    expect(v121.workspaceCommands).toStrictEqual([]);
   });
 
   it('should return empty array for unsupported version', async () => {
     const service = await buildRegistryService([]);
 
     expect(
-      service.getInstanceCommandsForVersion('99.0.0' as unknown as '1.21.0'),
+      service.getBundleForVersion('99.0.0' as unknown as '1.21.0')
+        .fastInstanceCommands,
     ).toStrictEqual([]);
   });
 
@@ -161,12 +172,11 @@ describe('UpgradeCommandRegistryService', () => {
       new WorkspaceCommandA(),
     ]);
 
-    const commands = service.getWorkspaceCommandsForVersion('1.21.0');
+    const { workspaceCommands } = service.getBundleForVersion('1.21.0');
 
-    expect(commands.map((command) => command.constructor.name)).toStrictEqual([
-      'WorkspaceCommandA',
-      'WorkspaceCommandB',
-    ]);
+    expect(
+      workspaceCommands.map((entry) => entry.command.constructor.name),
+    ).toStrictEqual(['WorkspaceCommandA', 'WorkspaceCommandB']);
   });
 
   it('should discover both instance and workspace commands for the same version', async () => {
@@ -177,11 +187,10 @@ describe('UpgradeCommandRegistryService', () => {
       new WorkspaceCommandB(),
     ]);
 
-    const instanceCommands = service.getInstanceCommandsForVersion('1.21.0');
-    const workspaceCommands = service.getWorkspaceCommandsForVersion('1.21.0');
+    const bucket = service.getBundleForVersion('1.21.0');
 
-    expect(instanceCommands).toHaveLength(2);
-    expect(workspaceCommands).toHaveLength(2);
+    expect(bucket.fastInstanceCommands).toHaveLength(2);
+    expect(bucket.workspaceCommands).toHaveLength(2);
   });
 
   it('should allow same timestamp across different kinds', async () => {
@@ -195,13 +204,15 @@ describe('UpgradeCommandRegistryService', () => {
       new WorkspaceCommandSameTimestamp(),
     ]);
 
-    expect(service.getInstanceCommandsForVersion('1.21.0')).toHaveLength(1);
-    expect(service.getWorkspaceCommandsForVersion('1.21.0')).toHaveLength(1);
+    const bucket = service.getBundleForVersion('1.21.0');
+
+    expect(bucket.fastInstanceCommands).toHaveLength(1);
+    expect(bucket.workspaceCommands).toHaveLength(1);
   });
 
   it('should throw on duplicate timestamps within the same kind', async () => {
     @RegisteredInstanceCommand('1.21.0', 1770000000000)
-    class DuplicateInstanceTimestamp implements MigrationInterface {
+    class DuplicateInstanceTimestamp implements FastInstanceCommand {
       name = 'DuplicateInstanceTimestamp';
 
       async up(): Promise<void> {}
@@ -213,7 +224,9 @@ describe('UpgradeCommandRegistryService', () => {
         new MigrationA1770000000000(),
         new DuplicateInstanceTimestamp(),
       ]),
-    ).rejects.toThrow('Duplicate instance command timestamp 1770000000000');
+    ).rejects.toThrow(
+      'Duplicate fast-instance command timestamp 1770000000000',
+    );
   });
 
   it('should throw on duplicate computed names across kinds', async () => {
@@ -244,32 +257,20 @@ describe('UpgradeCommandRegistryService', () => {
       new MigrationB1771000000000(),
     ]);
 
-    const allCommands = service.getAllInstanceCommands();
+    const allCommands = service.getAllFastInstanceCommands();
 
-    expect(allCommands).toStrictEqual([
-      {
-        version: '1.20.0',
-        migration: expect.objectContaining({ name: 'MigrationD1769000000000' }),
-      },
-      {
-        version: '1.21.0',
-        migration: expect.objectContaining({ name: 'MigrationA1770000000000' }),
-      },
-      {
-        version: '1.21.0',
-        migration: expect.objectContaining({ name: 'MigrationB1771000000000' }),
-      },
-      {
-        version: '1.21.0',
-        migration: expect.objectContaining({ name: 'MigrationC1772000000000' }),
-      },
+    expect(allCommands.map((entry) => entry.name)).toStrictEqual([
+      '1.20.0_MigrationD1769000000000_1769000000000',
+      '1.21.0_MigrationA1770000000000_1770000000000',
+      '1.21.0_MigrationB1771000000000_1771000000000',
+      '1.21.0_MigrationC1772000000000_1772000000000',
     ]);
   });
 
-  it('should return empty array from getAllInstanceCommands when no commands registered', async () => {
+  it('should return empty array from getAllFastInstanceCommands when no commands registered', async () => {
     const service = await buildRegistryService([]);
 
-    expect(service.getAllInstanceCommands()).toStrictEqual([]);
+    expect(service.getAllFastInstanceCommands()).toStrictEqual([]);
   });
 
   it('should allow same class name with different timestamps across kinds', async () => {
@@ -287,7 +288,146 @@ describe('UpgradeCommandRegistryService', () => {
       new MigrationA1770000000000_WS(),
     ]);
 
-    expect(service.getInstanceCommandsForVersion('1.21.0')).toHaveLength(1);
-    expect(service.getWorkspaceCommandsForVersion('1.21.0')).toHaveLength(1);
+    const bucket = service.getBundleForVersion('1.21.0');
+
+    expect(bucket.fastInstanceCommands).toHaveLength(1);
+    expect(bucket.workspaceCommands).toHaveLength(1);
+  });
+
+  it('should discover slow instance commands and sort by timestamp', async () => {
+    @RegisteredInstanceCommand('1.21.0', 1780000000000, { type: 'slow' })
+    class SlowMigrationB1780000000000 implements SlowInstanceCommand {
+      name = 'SlowMigrationB1780000000000';
+
+      async runDataMigration(_dataSource: DataSource): Promise<void> {}
+      async up(): Promise<void> {}
+      async down(): Promise<void> {}
+    }
+
+    @RegisteredInstanceCommand('1.21.0', 1779000000000, { type: 'slow' })
+    class SlowMigrationA1779000000000 implements SlowInstanceCommand {
+      name = 'SlowMigrationA1779000000000';
+
+      async runDataMigration(_dataSource: DataSource): Promise<void> {}
+      async up(): Promise<void> {}
+      async down(): Promise<void> {}
+    }
+
+    const service = await buildRegistryService([
+      new SlowMigrationB1780000000000(),
+      new SlowMigrationA1779000000000(),
+    ]);
+
+    const { slowInstanceCommands } = service.getBundleForVersion('1.21.0');
+
+    expect(
+      slowInstanceCommands.map((entry) => entry.command.constructor.name),
+    ).toStrictEqual([
+      'SlowMigrationA1779000000000',
+      'SlowMigrationB1780000000000',
+    ]);
+  });
+
+  it('should separate fast and slow instance commands in the same version', async () => {
+    @RegisteredInstanceCommand('1.21.0', 1780000000000, { type: 'slow' })
+    class SlowMigration1780000000000 implements SlowInstanceCommand {
+      name = 'SlowMigration1780000000000';
+
+      async runDataMigration(_dataSource: DataSource): Promise<void> {}
+      async up(): Promise<void> {}
+      async down(): Promise<void> {}
+    }
+
+    const service = await buildRegistryService([
+      new MigrationA1770000000000(),
+      new SlowMigration1780000000000(),
+    ]);
+
+    const bucket = service.getBundleForVersion('1.21.0');
+
+    expect(bucket.fastInstanceCommands).toHaveLength(1);
+    expect(bucket.slowInstanceCommands).toHaveLength(1);
+  });
+
+  it('should throw on duplicate timestamps within slow instance commands', async () => {
+    @RegisteredInstanceCommand('1.21.0', 1780000000000, { type: 'slow' })
+    class SlowMigrationA1780000000000 implements SlowInstanceCommand {
+      name = 'SlowMigrationA1780000000000';
+
+      async runDataMigration(_dataSource: DataSource): Promise<void> {}
+      async up(): Promise<void> {}
+      async down(): Promise<void> {}
+    }
+
+    @RegisteredInstanceCommand('1.21.0', 1780000000000, { type: 'slow' })
+    class SlowMigrationB1780000000000 implements SlowInstanceCommand {
+      name = 'SlowMigrationB1780000000000';
+
+      async runDataMigration(_dataSource: DataSource): Promise<void> {}
+      async up(): Promise<void> {}
+      async down(): Promise<void> {}
+    }
+
+    await expect(
+      buildRegistryService([
+        new SlowMigrationA1780000000000(),
+        new SlowMigrationB1780000000000(),
+      ]),
+    ).rejects.toThrow(
+      'Duplicate slow-instance command timestamp 1780000000000',
+    );
+  });
+
+  it('should allow same timestamp across fast and slow instance commands', async () => {
+    @RegisteredInstanceCommand('1.21.0', 1770000000000, { type: 'slow' })
+    class SlowMigrationSameTimestamp implements SlowInstanceCommand {
+      name = 'SlowMigrationSameTimestamp';
+
+      async runDataMigration(_dataSource: DataSource): Promise<void> {}
+      async up(): Promise<void> {}
+      async down(): Promise<void> {}
+    }
+
+    const service = await buildRegistryService([
+      new MigrationA1770000000000(),
+      new SlowMigrationSameTimestamp(),
+    ]);
+
+    const bucket = service.getBundleForVersion('1.21.0');
+
+    expect(bucket.fastInstanceCommands).toHaveLength(1);
+    expect(bucket.slowInstanceCommands).toHaveLength(1);
+  });
+
+  it('should return all slow instance commands across versions', async () => {
+    @RegisteredInstanceCommand('1.21.0', 1780000000000, { type: 'slow' })
+    class SlowMigration1780000000000 implements SlowInstanceCommand {
+      name = 'SlowMigration1780000000000';
+
+      async runDataMigration(_dataSource: DataSource): Promise<void> {}
+      async up(): Promise<void> {}
+      async down(): Promise<void> {}
+    }
+
+    @RegisteredInstanceCommand('1.20.0', 1768000000000, { type: 'slow' })
+    class SlowMigration1768000000000 implements SlowInstanceCommand {
+      name = 'SlowMigration1768000000000';
+
+      async runDataMigration(_dataSource: DataSource): Promise<void> {}
+      async up(): Promise<void> {}
+      async down(): Promise<void> {}
+    }
+
+    const service = await buildRegistryService([
+      new SlowMigration1780000000000(),
+      new SlowMigration1768000000000(),
+    ]);
+
+    const allSlowCommands = service.getAllSlowInstanceCommands();
+
+    expect(allSlowCommands.map((entry) => entry.name)).toStrictEqual([
+      '1.20.0_SlowMigration1768000000000_1768000000000',
+      '1.21.0_SlowMigration1780000000000_1780000000000',
+    ]);
   });
 });

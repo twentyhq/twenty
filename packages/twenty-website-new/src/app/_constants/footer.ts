@@ -1,10 +1,7 @@
 import type { FooterDataType } from '@/sections/Footer/types';
 
 export const FOOTER_DATA: FooterDataType = {
-  illustration: {
-    src: '/illustrations/common/footer/footer.glb',
-    title: 'Footer background',
-  },
+  illustration: 'footerBackground',
   bottom: {
     copyright: '© 2026 – Twenty',
   },

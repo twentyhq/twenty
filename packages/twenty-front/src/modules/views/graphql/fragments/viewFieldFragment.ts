@@ -10,7 +10,6 @@ export const VIEW_FIELD_FRAGMENT = gql`
     size
     aggregateOperation
     viewFieldGroupId
-    isOverridden
     createdAt
     updatedAt
     deletedAt

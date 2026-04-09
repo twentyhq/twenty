@@ -6,6 +6,7 @@ import { OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metada
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
+import { sanitizeOverridableEntityEventBatch } from 'src/engine/subscriptions/metadata-event/utils/sanitize-overridable-entity-event-batch.util';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { enrichFieldMetadataEventWithRelations } from 'src/engine/subscriptions/metadata-event/utils/enrich-field-metadata-event-with-relations.util';
 
@@ -54,7 +55,7 @@ export class MetadataEventPublisher {
           metadataEventBatch as MetadataEventBatch<'objectMetadata'>,
         );
       default:
-        return metadataEventBatch;
+        return sanitizeOverridableEntityEventBatch(metadataEventBatch);
     }
   }
 

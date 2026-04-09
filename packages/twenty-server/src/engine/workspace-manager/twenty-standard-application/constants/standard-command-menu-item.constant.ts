@@ -605,7 +605,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   searchRecords: {
     universalIdentifier: 'fa24e25e-68f8-4548-82ff-c7b5168b7c7d',
-    label: 'Search ${capitalize(objectMetadataItem.labelPlural)}',
+    label: 'Search',
     icon: 'IconSearch',
     isPinned: false,
     position: 40,
@@ -619,7 +619,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   searchRecordsFallback: {
     universalIdentifier: 'c659890c-7266-46c9-bfe1-75cefff8b6d0',
-    label: 'Search ${capitalize(objectMetadataItem.labelPlural)}',
+    label: 'Search',
     icon: 'IconSearch',
     isPinned: false,
     position: 41,

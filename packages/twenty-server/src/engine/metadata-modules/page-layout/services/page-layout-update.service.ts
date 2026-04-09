@@ -36,6 +36,7 @@ import {
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import { fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-with-tabs-and-widgets-to-page-layout-dto.util';
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
+import { resolveFlatEntityOverridableProperties } from 'src/engine/metadata-modules/utils/resolve-flat-entity-overridable-properties.util';
 import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/utils/sanitize-overridable-entity-input.util';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -281,6 +282,10 @@ export class PageLayoutUpdateService {
       .filter(isDefined)
       .filter((tab) => tab.pageLayoutId === existingPageLayout.id);
 
+    const resolvedExistingTabs = existingTabs.map(
+      resolveFlatEntityOverridableProperties,
+    );
+
     const {
       toCreate: entitiesToCreate,
       toUpdate: entitiesToUpdate,
@@ -290,7 +295,7 @@ export class PageLayoutUpdateService {
       FlatPageLayoutTab,
       UpdatePageLayoutTabWithWidgetsInput
     >({
-      existingObjects: existingTabs,
+      existingObjects: resolvedExistingTabs,
       receivedObjects: tabs,
       propertiesToCompare: FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES,
       isEntityIncluded: (entity) => entity.isActive,
@@ -333,11 +338,33 @@ export class PageLayoutUpdateService {
           flatEntityMaps: flatPageLayoutTabMaps,
         });
 
-        return {
-          ...existingTab,
+        const shouldOverride = isCallerOverridingEntity({
+          callerApplicationUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
+          entityApplicationUniversalIdentifier:
+            existingTab.applicationUniversalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier,
+        });
+
+        const editableProperties = {
           title: tabInput.title,
           position: tabInput.position,
+          ...(tabInput.icon !== undefined && { icon: tabInput.icon }),
           layoutMode: tabInput.layoutMode ?? existingTab.layoutMode,
+        };
+
+        const { overrides, updatedEditableProperties } =
+          sanitizeOverridableEntityInput({
+            metadataName: 'pageLayoutTab',
+            existingFlatEntity: existingTab,
+            updatedEditableProperties: editableProperties,
+            shouldOverride,
+          });
+
+        return {
+          ...existingTab,
+          ...updatedEditableProperties,
+          overrides,
           updatedAt: now.toISOString(),
         };
       },
@@ -350,11 +377,33 @@ export class PageLayoutUpdateService {
           flatEntityMaps: flatPageLayoutTabMaps,
         });
 
-        return {
-          ...existingTab,
+        const shouldOverride = isCallerOverridingEntity({
+          callerApplicationUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
+          entityApplicationUniversalIdentifier:
+            existingTab.applicationUniversalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier,
+        });
+
+        const editableProperties = {
           title: tabInput.title,
           position: tabInput.position,
+          ...(tabInput.icon !== undefined && { icon: tabInput.icon }),
           layoutMode: tabInput.layoutMode ?? existingTab.layoutMode,
+        };
+
+        const { overrides, updatedEditableProperties } =
+          sanitizeOverridableEntityInput({
+            metadataName: 'pageLayoutTab',
+            existingFlatEntity: existingTab,
+            updatedEditableProperties: editableProperties,
+            shouldOverride,
+          });
+
+        return {
+          ...existingTab,
+          ...updatedEditableProperties,
+          overrides,
           isActive: true,
           updatedAt: now.toISOString(),
         };
@@ -509,6 +558,10 @@ export class PageLayoutUpdateService {
           widget.pageLayoutTabId === tabId || receivedWidgetIds.has(widget.id),
       );
 
+    const resolvedExistingWidgets = existingWidgets.map(
+      resolveFlatEntityOverridableProperties,
+    );
+
     const {
       toCreate: entitiesToCreate,
       toUpdate: entitiesToUpdate,
@@ -518,7 +571,7 @@ export class PageLayoutUpdateService {
       FlatPageLayoutWidget,
       UpdatePageLayoutWidgetWithIdInput
     >({
-      existingObjects: existingWidgets,
+      existingObjects: resolvedExistingWidgets,
       receivedObjects: widgets,
       propertiesToCompare: [
         ...FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES,

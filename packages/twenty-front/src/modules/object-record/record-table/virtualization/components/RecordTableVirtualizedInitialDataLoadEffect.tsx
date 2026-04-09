@@ -14,7 +14,7 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import isEmpty from 'lodash.isempty';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 // TODO: see if we can merge the initial and load more processes, to have only one load at scroll index effect
 export const RecordTableVirtualizedInitialDataLoadEffect = () => {
@@ -24,6 +24,8 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
 
   const [lastRecordTableQueryIdentifier, setLastRecordTableQueryIdentifier] =
     useAtomComponentState(lastRecordTableQueryIdentifierComponentState);
+
+  const [isInitializedOnMount, setIsInitializedOnMount] = useState(false);
 
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
@@ -105,6 +107,9 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
             shouldScrollToStart: isEmpty(lastFields),
           });
         }
+      } else if (!isInitializedOnMount) {
+        setIsInitializedOnMount(true);
+        await triggerInitialRecordTableDataLoad();
       }
     })();
   }, [
@@ -122,6 +127,8 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
     lastContextStoreVirtualizedVisibleRecordFields,
     setLastContextStoreVirtualizedVisibleRecordFields,
     visibleRecordFields,
+    isInitializedOnMount,
+    setIsInitializedOnMount,
   ]);
 
   return <></>;

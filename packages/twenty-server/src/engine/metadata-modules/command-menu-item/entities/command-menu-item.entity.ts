@@ -11,6 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { type CommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item-payload.union';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
@@ -80,7 +81,7 @@ export class CommandMenuItemEntity
   availabilityType: CommandMenuItemAvailabilityType;
 
   @Column({ type: 'jsonb', nullable: true })
-  payload: Record<string, unknown> | null;
+  payload: CommandMenuItemPayload | null;
 
   @Column({ type: 'text', array: true, nullable: true })
   hotKeys: string[] | null;

@@ -1,9 +1,11 @@
+'use client';
+
 import { Body, Heading, IconButton } from '@/design-system/components';
 import { ArrowRightIcon } from '@/icons';
+import { THREE_CARDS_ILLUSTRATIONS } from '@/illustrations';
 import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import { IllustrationCardVisual } from './IllustrationCardVisual';
 import { ThreeCardsCardShape } from './CardShape';
 
 const IllustrationCardContainer = styled.div`
@@ -70,6 +72,9 @@ export function IllustrationCard({
   illustrationCard,
   variant = 'shaped',
 }: IllustrationCardProps) {
+  const ThreeCardsIllustration =
+    THREE_CARDS_ILLUSTRATIONS[illustrationCard.illustration];
+
   return (
     <IllustrationCardContainer>
       {variant === 'shaped' && (
@@ -86,10 +91,7 @@ export function IllustrationCard({
       />
       <CardRule />
       <CardEmbed>
-        <IllustrationCardVisual
-          src={illustrationCard.illustration.src}
-          title={illustrationCard.illustration.title}
-        />
+        <ThreeCardsIllustration />
       </CardEmbed>
       <CardRule />
       <CardBodyCell>

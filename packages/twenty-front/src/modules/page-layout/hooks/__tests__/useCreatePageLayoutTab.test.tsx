@@ -311,7 +311,6 @@ describe('useCreatePageLayoutTab', () => {
             position: 0,
             pageLayoutId: 'test-layout',
             widgets: [],
-            isOverridden: false,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             deletedAt: null,
