@@ -12,7 +12,7 @@ export enum ApplicationRegistrationExceptionCode {
   INVALID_INPUT = 'INVALID_INPUT',
   SOURCE_CHANNEL_MISMATCH = 'SOURCE_CHANNEL_MISMATCH',
   VARIABLE_NOT_FOUND = 'VARIABLE_NOT_FOUND',
-  VERSION_NOT_BUMPED = 'VERSION_NOT_BUMPED',
+  VERSION_ALREADY_EXISTS = 'VERSION_ALREADY_EXISTS',
 }
 
 const getExceptionUserFriendlyMessage = (
@@ -33,7 +33,7 @@ const getExceptionUserFriendlyMessage = (
       return msg`The app source channel does not match the expected type.`;
     case ApplicationRegistrationExceptionCode.VARIABLE_NOT_FOUND:
       return msg`Application registration variable not found.`;
-    case ApplicationRegistrationExceptionCode.VERSION_NOT_BUMPED:
+    case ApplicationRegistrationExceptionCode.VERSION_ALREADY_EXISTS:
       return msg`This version is not higher than the currently deployed version. Please bump the version in package.json before deploying again.`;
     default:
       assertUnreachable(code);

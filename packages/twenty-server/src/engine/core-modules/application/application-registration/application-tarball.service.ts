@@ -127,7 +127,7 @@ export class ApplicationTarballService {
           ) {
             throw new ApplicationRegistrationException(
               `Cannot deploy ${universalIdentifier}@${incomingVersion}: version must be higher than the currently deployed version ${currentVersion}. Please bump the version in package.json.`,
-              ApplicationRegistrationExceptionCode.VERSION_NOT_BUMPED,
+              ApplicationRegistrationExceptionCode.VERSION_ALREADY_EXISTS,
             );
           }
         }
