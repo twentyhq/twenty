@@ -5,6 +5,7 @@ import { evaluateWidgetVisibility } from '@/page-layout/utils/evaluateWidgetVisi
 describe('evaluateWidgetVisibility', () => {
   it('should return true (visible) when no conditionalDisplay is provided', () => {
     const result = evaluateWidgetVisibility({
+      conditionalAvailabilityExpression: undefined,
       conditionalDisplay: undefined,
       context: {
         device: 'DESKTOP',
@@ -24,6 +25,7 @@ describe('evaluateWidgetVisibility', () => {
     };
 
     const result = evaluateWidgetVisibility({
+      conditionalAvailabilityExpression: undefined,
       conditionalDisplay,
       context: {
         device: 'MOBILE',
@@ -43,6 +45,7 @@ describe('evaluateWidgetVisibility', () => {
     };
 
     const result = evaluateWidgetVisibility({
+      conditionalAvailabilityExpression: undefined,
       conditionalDisplay,
       context: {
         device: 'DESKTOP',
@@ -62,6 +65,7 @@ describe('evaluateWidgetVisibility', () => {
     };
 
     const result = evaluateWidgetVisibility({
+      conditionalAvailabilityExpression: undefined,
       conditionalDisplay,
       context: {
         device: 'DESKTOP',
@@ -81,6 +85,7 @@ describe('evaluateWidgetVisibility', () => {
     };
 
     const result = evaluateWidgetVisibility({
+      conditionalAvailabilityExpression: undefined,
       conditionalDisplay,
       context: {
         device: 'MOBILE',
@@ -103,6 +108,7 @@ describe('evaluateWidgetVisibility', () => {
     };
 
     const resultMobile = evaluateWidgetVisibility({
+      conditionalAvailabilityExpression: undefined,
       conditionalDisplay,
       context: {
         device: 'MOBILE',
@@ -110,6 +116,7 @@ describe('evaluateWidgetVisibility', () => {
     });
 
     const resultDesktop = evaluateWidgetVisibility({
+      conditionalAvailabilityExpression: undefined,
       conditionalDisplay,
       context: {
         device: 'DESKTOP',
@@ -127,6 +134,7 @@ describe('evaluateWidgetVisibility', () => {
 
     expect(() => {
       evaluateWidgetVisibility({
+        conditionalAvailabilityExpression: undefined,
         conditionalDisplay: invalidConditionalDisplay,
         context: {
           device: 'DESKTOP',
