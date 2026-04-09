@@ -21,30 +21,13 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 
 const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.workflow.universalIdentifier,
   STANDARD_OBJECTS.workflowRun.universalIdentifier,
   STANDARD_OBJECTS.workflowVersion.universalIdentifier,
 ] as const;
-
-const groupByRoleId = <T extends { roleId: string }>(
-  entities: T[],
-): Map<string, T[]> => {
-  const map = new Map<string, T[]>();
-
-  for (const entity of entities) {
-    const group = map.get(entity.roleId);
-
-    if (isDefined(group)) {
-      group.push(entity);
-    } else {
-      map.set(entity.roleId, [entity]);
-    }
-  }
-
-  return map;
-};
 
 @Injectable()
 @WorkspaceCache('rolesPermissions')
@@ -101,15 +84,31 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       this.getWorkspaceObjectMetadataCollection(workspaceId),
     ]);
 
-    const objectPermissionsByRoleId = groupByRoleId(objectPermissions);
-    const permissionFlagsByRoleId = groupByRoleId(permissionFlags);
-    const fieldPermissionsByRoleId = groupByRoleId(fieldPermissions);
-    const rowLevelPermissionPredicatesByRoleId = groupByRoleId(
-      rowLevelPermissionPredicates,
-    );
-    const rowLevelPermissionPredicateGroupsByRoleId = groupByRoleId(
-      rowLevelPermissionPredicateGroups,
-    );
+    const objectPermissionsByRoleId =
+      regroupEntitiesByRelatedEntityId<'objectPermission'>({
+        entities: objectPermissions,
+        foreignKey: 'roleId',
+      });
+    const permissionFlagsByRoleId =
+      regroupEntitiesByRelatedEntityId<'permissionFlag'>({
+        entities: permissionFlags,
+        foreignKey: 'roleId',
+      });
+    const fieldPermissionsByRoleId =
+      regroupEntitiesByRelatedEntityId<'fieldPermission'>({
+        entities: fieldPermissions,
+        foreignKey: 'roleId',
+      });
+    const rowLevelPermissionPredicatesByRoleId =
+      regroupEntitiesByRelatedEntityId<'rowLevelPermissionPredicate'>({
+        entities: rowLevelPermissionPredicates,
+        foreignKey: 'roleId',
+      });
+    const rowLevelPermissionPredicateGroupsByRoleId =
+      regroupEntitiesByRelatedEntityId<'rowLevelPermissionPredicateGroup'>({
+        entities: rowLevelPermissionPredicateGroups,
+        foreignKey: 'roleId',
+      });
 
     const permissionsByRoleId: ObjectsPermissionsByRoleId = {};
 
