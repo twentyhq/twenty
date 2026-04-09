@@ -94,7 +94,11 @@ describe('isFlatFieldMetadataSupportedInGroupBy', () => {
   it('returns false for other system fields', () => {
     expect(
       isFlatFieldMetadataSupportedInGroupBy(
-        buildFlatFieldMetadata(FieldMetadataType.TEXT, 'customSystemField', true),
+        buildFlatFieldMetadata(
+          FieldMetadataType.TEXT,
+          'customSystemField',
+          true,
+        ),
       ),
     ).toBe(false);
   });

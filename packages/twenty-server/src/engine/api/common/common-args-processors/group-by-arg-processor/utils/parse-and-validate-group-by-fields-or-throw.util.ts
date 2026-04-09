@@ -164,9 +164,8 @@ export const parseAndValidateGroupByFieldsOrThrow = ({
           );
         }
 
-        const supportedCompositeSubFields = getGroupableSubFieldsForCompositeType(
-          fieldMetadata.type,
-        );
+        const supportedCompositeSubFields =
+          getGroupableSubFieldsForCompositeType(fieldMetadata.type);
 
         validateSingleKeyForGroupByOrThrow({
           groupByKeys: Object.keys(fieldNames[fieldName]),
