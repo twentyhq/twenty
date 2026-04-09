@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const parseMicrosoftCalendarError = (
   error: GraphError,
 ): CalendarEventImportDriverException => {
-  const { statusCode, message, code } = error;
+  const { statusCode, message } = error;
 
   switch (statusCode) {
     case 400:
@@ -32,13 +32,13 @@ export const parseMicrosoftCalendarError = (
         )
       ) {
         return new CalendarEventImportDriverException(
-          `Disabled, deleted, inactive or no licence Microsoft account - code:${code}`,
+          message,
           CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
         );
       }
 
       return new CalendarEventImportDriverException(
-        `Not found - code:${code}`,
+        message,
         CalendarEventImportDriverExceptionCode.NOT_FOUND,
       );
 
