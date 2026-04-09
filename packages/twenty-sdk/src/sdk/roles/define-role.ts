@@ -1,6 +1,6 @@
 import { createValidationResult } from '@/sdk/common/utils/create-validation-result';
 import { type DefineEntity } from '@/sdk/common/types/define-entity.type';
-import { RoleConfig } from '@/sdk/roles/role-config';
+import { type RoleConfig } from '@/sdk/roles/role-config';
 
 export const defineRole: DefineEntity<RoleConfig> = (config) => {
   const errors = [];

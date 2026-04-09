@@ -3,7 +3,7 @@ import type {
   ObjectPermissionManifest,
   RoleManifest,
 } from 'twenty-shared/application';
-import { PermissionFlagType } from 'twenty-shared/constants';
+import { type PermissionFlagType } from 'twenty-shared/constants';
 
 export type RoleConfig = Omit<
   RoleManifest,

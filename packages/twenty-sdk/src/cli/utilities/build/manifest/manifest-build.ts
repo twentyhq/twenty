@@ -39,7 +39,7 @@ import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
 import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
-import { RoleConfig } from '@/sdk/roles/role-config';
+import { type RoleConfig } from '@/sdk/roles/role-config';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
