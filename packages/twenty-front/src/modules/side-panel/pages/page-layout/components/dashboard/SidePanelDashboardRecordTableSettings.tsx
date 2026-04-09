@@ -21,6 +21,7 @@ import {
   IconBox,
   IconFilter,
   IconListDetails,
+  IconTable,
 } from 'twenty-ui/display';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
@@ -95,7 +96,20 @@ export const SidePanelDashboardRecordTableSettings = () => {
             commandGroups={[]}
             selectableItemIds={selectableItemIds}
           >
-            <SidePanelGroup heading={t`Data`}>
+            <SidePanelGroup heading={t`Settings`}>
+              <SelectableListItem itemId="object-view-layout">
+                <CommandMenuItemDropdown
+                  Icon={IconTable}
+                  label={t`Layout`}
+                  id="object-view-layout"
+                  dropdownId="object-view-layout"
+                  dropdownComponents={<></>}
+                  dropdownPlacement="bottom-end"
+                  description={t`Table`}
+                  disabled={true}
+                  contextualTextPosition="right"
+                />
+              </SelectableListItem>
               <SelectableListItem itemId="record-table-source">
                 <CommandMenuItemDropdown
                   Icon={IconBox}
