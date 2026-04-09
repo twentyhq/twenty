@@ -41,6 +41,7 @@ import { TidyUpWorkflowSingleRecordCommand } from '@/command-menu-item/engine-co
 import { HeadlessFrontComponentRendererEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessFrontComponentRendererEngineCommand';
 import { TriggerWorkflowVersionEngineCommand } from '@/command-menu-item/engine-command/record/components/TriggerWorkflowVersionEngineCommand';
 import { ComposeEmailCommand } from '@/command-menu-item/engine-command/global/components/ComposeEmailCommand';
+import { TagSelectedRecordsCommand } from '@/command-menu-item/engine-command/record/multiple-records/components/TagSelectedRecordsCommand';
 import { ReplyToEmailThreadCommand } from '@/command-menu-item/engine-command/record/single-record/message-thread/components/ReplyToEmailThreadCommand';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { msg } from '@lingui/core/macro';
@@ -244,6 +245,7 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   ),
   [EngineComponentKey.REPLY_TO_EMAIL_THREAD]: <ReplyToEmailThreadCommand />,
   [EngineComponentKey.COMPOSE_EMAIL]: <ComposeEmailCommand />,
+  [EngineComponentKey.TAG_SELECTED_RECORDS]: <TagSelectedRecordsCommand />,
 
   // Deprecated keys kept for backward compatibility until migration runs
   [EngineComponentKey.DELETE_SINGLE_RECORD]: <DeleteRecordsCommand />,

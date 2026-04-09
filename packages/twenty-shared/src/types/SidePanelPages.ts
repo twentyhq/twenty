@@ -27,4 +27,5 @@ export enum SidePanelPages {
   NavigationMenuAddItem = 'navigation-menu-add-item',
   CommandMenuEdit = 'command-menu-edit',
   ComposeEmail = 'compose-email',
+  TagSelectedRecords = 'tag-selected-records',
 }

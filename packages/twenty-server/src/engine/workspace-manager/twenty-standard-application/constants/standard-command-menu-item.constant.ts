@@ -816,4 +816,36 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.COMPOSE_EMAIL,
     hotKeys: null,
   },
+  tagSelectedPerson: {
+    universalIdentifier: '07ecccc1-48b0-46d6-a5df-d529d60653ee',
+    label: 'Tag ${capitalize(objectMetadataItem.labelPlural)}',
+    icon: 'IconTag',
+    isPinned: false,
+    position: 72,
+    shortLabel: 'Tag',
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords >= 1 and not hasAnySoftDeleteFilterOnView and objectPermissions.canUpdateObjectRecords',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.person.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.TAG_SELECTED_RECORDS,
+    hotKeys: null,
+  },
+  tagSelectedCompany: {
+    universalIdentifier: 'a46c423b-ff1e-4132-89b9-4f07f22e3b2b',
+    label: 'Tag ${capitalize(objectMetadataItem.labelPlural)}',
+    icon: 'IconTag',
+    isPinned: false,
+    position: 73,
+    shortLabel: 'Tag',
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords >= 1 and not hasAnySoftDeleteFilterOnView and objectPermissions.canUpdateObjectRecords',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.company.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.TAG_SELECTED_RECORDS,
+    hotKeys: null,
+  },
 } as const;

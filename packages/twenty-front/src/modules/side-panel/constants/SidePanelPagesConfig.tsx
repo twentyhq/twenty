@@ -17,6 +17,7 @@ import { SidePanelPageLayoutWidgetTypeSelect } from '@/side-panel/pages/page-lay
 import { SidePanelMergeRecordPage } from '@/side-panel/pages/record-page/components/SidePanelMergeRecordPage';
 import { SidePanelRecordPage } from '@/side-panel/pages/record-page/components/SidePanelRecordPage';
 import { SidePanelUpdateMultipleRecords } from '@/side-panel/pages/record-page/components/SidePanelUpdateMultipleRecords';
+import { SidePanelTagSelectedRecords } from '@/side-panel/pages/record-page/components/SidePanelTagSelectedRecords';
 import { SidePanelEditRichTextPage } from '@/side-panel/pages/rich-text-page/components/SidePanelEditRichTextPage';
 import { SidePanelSearchRecordsPage } from '@/side-panel/pages/search/components/SidePanelSearchRecordsPage';
 import { SidePanelWorkflowCreateStep } from '@/side-panel/pages/workflow/step/create/components/SidePanelWorkflowCreateStep';
@@ -83,5 +84,6 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<SidePanelPages, React.ReactNode>(
     [SidePanelPages.NavigationMenuAddItem, <SidePanelNewSidebarItemPage />],
     [SidePanelPages.CommandMenuEdit, <SidePanelCommandMenuItemEditPage />],
     [SidePanelPages.ComposeEmail, <SidePanelComposeEmailPage />],
+    [SidePanelPages.TagSelectedRecords, <SidePanelTagSelectedRecords />],
   ],
 );

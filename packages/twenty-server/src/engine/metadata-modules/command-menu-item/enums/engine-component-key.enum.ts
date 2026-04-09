@@ -57,6 +57,7 @@ export enum EngineComponentKey {
   FRONT_COMPONENT_RENDERER = 'FRONT_COMPONENT_RENDERER',
   REPLY_TO_EMAIL_THREAD = 'REPLY_TO_EMAIL_THREAD',
   COMPOSE_EMAIL = 'COMPOSE_EMAIL',
+  TAG_SELECTED_RECORDS = 'TAG_SELECTED_RECORDS',
 
   // Deprecated keys kept for backward compatibility until migration runs
   DELETE_SINGLE_RECORD = 'DELETE_SINGLE_RECORD',

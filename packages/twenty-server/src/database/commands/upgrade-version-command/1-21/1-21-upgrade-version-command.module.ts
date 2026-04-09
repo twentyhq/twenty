@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { AddComposeEmailCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-add-compose-email-command-menu-item.command';
+import { AddTagSelectedCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-add-tag-selected-command-menu-item.command';
 import { AddGlobalKeyValuePairUniqueIndexCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-add-global-key-value-pair-unique-index.command';
 import { BackfillDatasourceToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-backfill-datasource-to-workspace.command';
 import { BackfillMessageThreadSubjectCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-backfill-message-thread-subject.command';
@@ -40,6 +41,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   ],
   providers: [
     AddComposeEmailCommandMenuItemCommand,
+    AddTagSelectedCommandMenuItemCommand,
     AddGlobalKeyValuePairUniqueIndexCommand,
     BackfillDatasourceToWorkspaceCommand,
     BackfillMessageThreadSubjectCommand,
@@ -53,6 +55,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   ],
   exports: [
     AddComposeEmailCommandMenuItemCommand,
+    AddTagSelectedCommandMenuItemCommand,
     AddGlobalKeyValuePairUniqueIndexCommand,
     BackfillDatasourceToWorkspaceCommand,
     BackfillMessageThreadSubjectCommand,
