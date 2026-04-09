@@ -1,10 +1,10 @@
-import { type ParsedLogLine } from 'src/engine/core-modules/application-logs/utils/parsed-log-line.type';
+import { type ParsedLogLine } from 'src/engine/core-modules/application-logs/types/parsed-log-line.type';
 
 // Matches: 2024-01-01T00:00:00.000Z INFO some message
 const LOG_LINE_REGEX =
   /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z)\s+(INFO|ERROR|WARN|DEBUG)\s+(.*)$/;
 
-export const parseLogLines = (rawLogs: string): ParsedLogLine[] => {
+export const parseApplicationLogLines = (rawLogs: string): ParsedLogLine[] => {
   if (!rawLogs) {
     return [];
   }

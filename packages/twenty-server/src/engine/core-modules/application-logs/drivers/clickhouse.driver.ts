@@ -3,7 +3,7 @@ import { Logger } from '@nestjs/common';
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import { type ApplicationLogEntry } from 'src/engine/core-modules/application-logs/interfaces/application-log-entry.interface';
-import { type ApplicationLogDriverInterface } from 'src/engine/core-modules/application-logs/interfaces';
+import { type ApplicationLogDriverInterface } from 'src/engine/core-modules/application-logs/interfaces/application-log-driver.interface';
 
 export class ClickHouseApplicationLogDriver
   implements ApplicationLogDriverInterface

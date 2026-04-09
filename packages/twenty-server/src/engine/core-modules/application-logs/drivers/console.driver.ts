@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 
-import { type ApplicationLogDriverInterface } from 'src/engine/core-modules/application-logs/interfaces';
+import { type ApplicationLogDriverInterface } from 'src/engine/core-modules/application-logs/interfaces/application-log-driver.interface';
 import { type ApplicationLogEntry } from 'src/engine/core-modules/application-logs/interfaces/application-log-entry.interface';
 
 export class ConsoleApplicationLogDriver

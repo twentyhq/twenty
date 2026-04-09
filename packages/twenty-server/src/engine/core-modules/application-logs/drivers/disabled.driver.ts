@@ -1,4 +1,4 @@
-import { type ApplicationLogDriverInterface } from 'src/engine/core-modules/application-logs/interfaces';
+import { type ApplicationLogDriverInterface } from 'src/engine/core-modules/application-logs/interfaces/application-log-driver.interface';
 
 export class DisabledApplicationLogDriver
   implements ApplicationLogDriverInterface

@@ -17,7 +17,7 @@ import { type AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
-import { ApplicationLogDriverType } from 'src/engine/core-modules/application-logs/interfaces';
+import { ApplicationLogDriverType } from 'src/engine/core-modules/application-logs/interfaces/application-log-driver-type.enum';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
 import { WebSearchDriverType } from 'src/engine/core-modules/web-search/web-search.interface';

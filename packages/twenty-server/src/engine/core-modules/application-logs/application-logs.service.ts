@@ -1,10 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { APPLICATION_LOG_DRIVER } from 'src/engine/core-modules/application-logs/application-logs.constants';
-import {
-  type ApplicationLogDriverInterface,
-  type ApplicationLogEntry,
-} from 'src/engine/core-modules/application-logs/interfaces';
+import { type ApplicationLogDriverInterface } from 'src/engine/core-modules/application-logs/interfaces/application-log-driver.interface';
+import { type ApplicationLogEntry } from 'src/engine/core-modules/application-logs/interfaces/application-log-entry.interface';
 
 @Injectable()
 export class ApplicationLogsService {

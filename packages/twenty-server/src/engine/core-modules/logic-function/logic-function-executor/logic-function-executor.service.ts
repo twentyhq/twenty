@@ -17,7 +17,7 @@ import {
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import type { FlatApplicationVariable } from 'src/engine/core-modules/application/application-variable/types/flat-application-variable.type';
 import { ApplicationLogsService } from 'src/engine/core-modules/application-logs/application-logs.service';
-import { parseLogLines } from 'src/engine/core-modules/application-logs/utils/parse-log-lines';
+import { parseApplicationLogLines } from 'src/engine/core-modules/application-logs/utils/parse-application-log-lines';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/logic-function/logic-function-executed';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
@@ -218,7 +218,7 @@ export class LogicFunctionExecutorService {
   }) {
     const executionId = v4();
 
-    const parsedLines = parseLogLines(result.logs);
+    const parsedLines = parseApplicationLogLines(result.logs);
     const logEntries = parsedLines.map((line) => ({
       ...line,
       workspaceId,
@@ -228,7 +228,7 @@ export class LogicFunctionExecutorService {
       executionId,
     }));
 
-    this.applicationLogsService.writeLogs(logEntries).catch(() => {});
+    this.applicationLogsService.writeLogs(logEntries);
 
     await this.subscriptionService.publish({
       channel: SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,
