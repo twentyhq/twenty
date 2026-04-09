@@ -289,7 +289,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       pageLayoutTabId: tabId,
       title,
       fieldMetadataId,
-      fieldDisplayMode: selectedField
+      fieldDisplayMode: isDefined(selectedField)
         ? getFieldWidgetDefaultDisplayMode(selectedField.type)
         : undefined,
       objectMetadataId: objectMetadataItem.id,

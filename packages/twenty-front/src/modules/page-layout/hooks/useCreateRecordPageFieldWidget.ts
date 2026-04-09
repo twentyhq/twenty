@@ -1,4 +1,5 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { isDefined } from 'twenty-shared/utils';
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -70,7 +71,7 @@ export const useCreateRecordPageFieldWidget = () => {
       pageLayoutTabId: tabId,
       title,
       fieldMetadataId,
-      fieldDisplayMode: selectedField
+      fieldDisplayMode: isDefined(selectedField)
         ? getFieldWidgetDefaultDisplayMode(selectedField.type)
         : undefined,
       objectMetadataId: objectMetadataItem.id,

@@ -1,4 +1,5 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { isDefined } from 'twenty-shared/utils';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
 import {
@@ -77,19 +78,18 @@ export const FieldWidgetFieldDropdownContent = () => {
     const currentDisplayMode = fieldConfiguration?.fieldDisplayMode;
 
     const needsDisplayModeSwitch =
-      selectedField &&
-      currentDisplayMode &&
+      isDefined(selectedField) &&
+      isDefined(currentDisplayMode) &&
       !isDisplayModeValidForFieldType(selectedField.type, currentDisplayMode);
 
     updateCurrentWidgetConfig({
       configToUpdate: {
         fieldMetadataId,
-        ...(needsDisplayModeSwitch &&
-          selectedField && {
-            fieldDisplayMode: getFieldWidgetDefaultDisplayMode(
-              selectedField.type,
-            ),
-          }),
+        ...(needsDisplayModeSwitch && {
+          fieldDisplayMode: getFieldWidgetDefaultDisplayMode(
+            selectedField.type,
+          ),
+        }),
       },
     });
 

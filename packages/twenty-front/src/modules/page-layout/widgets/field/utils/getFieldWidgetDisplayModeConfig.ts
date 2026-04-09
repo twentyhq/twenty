@@ -9,8 +9,7 @@ export const getFieldWidgetConfig = (fieldType: FieldMetadataType) =>
 export const getFieldWidgetDefaultDisplayMode = (
   fieldType: FieldMetadataType,
 ) =>
-  getFieldWidgetConfig(fieldType)?.defaultDisplayMode ??
-  FieldDisplayMode.FIELD;
+  getFieldWidgetConfig(fieldType)?.defaultDisplayMode ?? FieldDisplayMode.FIELD;
 
 export const getFieldWidgetAvailableDisplayModes = (
   fieldType: FieldMetadataType,
