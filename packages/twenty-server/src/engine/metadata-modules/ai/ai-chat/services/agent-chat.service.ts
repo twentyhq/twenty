@@ -207,7 +207,9 @@ export class AgentChatService {
 
     const files =
       fileIds && fileIds.length > 0
-        ? await this.fileRepository.find({ where: { id: In(fileIds) } })
+        ? await this.fileRepository.find({
+            where: { id: In(fileIds), workspaceId },
+          })
         : [];
 
     const parts = [
