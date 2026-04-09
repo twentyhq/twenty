@@ -1,12 +1,5 @@
-import { type PermissionFlagType } from 'twenty-shared/constants';
-import { v5 as uuidv5 } from 'uuid';
-
 import { type UniversalFlatPermissionFlag } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-permission-flag.type';
-
-// Stable namespace used to derive a deterministic universalIdentifier from
-// the (role, flag) natural key of a PermissionFlagEntity.
-const PERMISSION_FLAG_UNIVERSAL_IDENTIFIER_NAMESPACE =
-  'df8dfb15-949a-4176-ad79-85c0c7bc9a66';
+import { PermissionFlagManifest } from 'twenty-shared/application';
 
 export const fromPermissionFlagToUniversalFlatPermissionFlag = ({
   permissionFlag,
@@ -14,19 +7,16 @@ export const fromPermissionFlagToUniversalFlatPermissionFlag = ({
   applicationUniversalIdentifier,
   now,
 }: {
-  permissionFlag: PermissionFlagType;
+  permissionFlag: PermissionFlagManifest;
   roleUniversalIdentifier: string;
   applicationUniversalIdentifier: string;
   now: string;
 }): UniversalFlatPermissionFlag => {
   return {
-    universalIdentifier: uuidv5(
-      `${roleUniversalIdentifier}:${permissionFlag}`,
-      PERMISSION_FLAG_UNIVERSAL_IDENTIFIER_NAMESPACE,
-    ),
+    universalIdentifier: permissionFlag.universalIdentifier,
     applicationUniversalIdentifier,
     roleUniversalIdentifier,
-    flag: permissionFlag,
+    flag: permissionFlag.flag,
     createdAt: now,
     updatedAt: now,
   };
