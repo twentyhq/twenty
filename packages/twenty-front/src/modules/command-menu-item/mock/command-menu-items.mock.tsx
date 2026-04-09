@@ -8,12 +8,13 @@ import {
 } from 'twenty-ui/display';
 
 import { Command } from '@/command-menu-item/display/components/Command';
-import { CommandLink } from '@/command-menu-item/display/components/CommandLink';
+import { CommandMenuItemDisplay } from '@/command-menu-item/display/components/CommandMenuItemDisplay';
 import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
+import { getAppPath } from 'twenty-shared/utils';
 
 export const createMockCommandMenuItems = ({
   deleteMock = () => {},
@@ -67,9 +68,10 @@ export const createMockCommandMenuItems = ({
     Icon: IconUser,
     isPinned: false,
     component: (
-      <CommandLink
-        to={AppPath.RecordIndexPage}
-        params={{ objectNamePlural: CoreObjectNamePlural.Person }}
+      <CommandMenuItemDisplay
+        to={getAppPath(AppPath.RecordIndexPage, {
+          objectNamePlural: CoreObjectNamePlural.Person,
+        })}
       />
     ),
     hotKeys: ['G', 'P'],

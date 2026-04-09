@@ -1,5 +1,6 @@
 import { Command } from '@/command-menu-item/display/components/Command';
-import { CommandLink } from '@/command-menu-item/display/components/CommandLink';
+import { CommandMenuItemDisplay } from '@/command-menu-item/display/components/CommandMenuItemDisplay';
+import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
 import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
 import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
@@ -13,7 +14,7 @@ import { CoreObjectNameSingular, AppPath } from 'twenty-shared/types';
 import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, getAppPath } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { useDebounce } from 'use-debounce';
 import { useQuery } from '@apollo/client/react';
@@ -56,6 +57,7 @@ export const useSidePanelSearchRecords = () => {
   });
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+  const { closeCommandMenu } = useCloseCommandMenu();
 
   const searchCommandMenuItems = useMemo(() => {
     return (searchData?.search.edges.map((edge) => edge.node) ?? []).map(
@@ -115,18 +117,18 @@ export const useSidePanelSearchRecords = () => {
         return {
           ...baseCommandMenuItem,
           component: (
-            <CommandLink
-              to={AppPath.RecordShowPage}
-              params={{
+            <CommandMenuItemDisplay
+              onClick={closeCommandMenu}
+              to={getAppPath(AppPath.RecordShowPage, {
                 objectNameSingular: searchRecord.objectNameSingular,
                 objectRecordId: searchRecord.recordId,
-              }}
+              })}
             />
           ),
         };
       },
     );
-  }, [searchData, openRecordInSidePanel, readableObjectMetadataItems]);
+  }, [searchData, openRecordInSidePanel, readableObjectMetadataItems, closeCommandMenu]);
 
   return {
     loading,
