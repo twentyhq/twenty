@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { EventCard } from '@/activities/timeline-activities/rows/components/EventCard';
 import { EventCardToggleButton } from '@/activities/timeline-activities/rows/components/EventCardToggleButton';
-import { StyledEventRowItemColumn } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
+import { StyledEventRowItemColumn } from '@/activities/timeline-activities/rows/components/EventRowBase';
 import { EventFieldDiffContainer } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffContainer';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';

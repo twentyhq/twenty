@@ -8,7 +8,7 @@ import {
   type EventRowDynamicComponentProps,
   StyledEventRowItemAction,
   StyledEventRowItemColumn,
-} from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
+} from '@/activities/timeline-activities/rows/components/EventRowBase';
 import { EventCardMessage } from '@/activities/timeline-activities/rows/message/components/EventCardMessage';
 import { isTimelineActivityWithLinkedRecord } from '@/activities/timeline-activities/types/TimelineActivity';
 import { themeCssVariables } from 'twenty-ui/theme-constants';

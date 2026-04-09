@@ -5,7 +5,7 @@ import {
   type EventRowDynamicComponentProps,
   StyledEventRowItemAction,
   StyledEventRowItemColumn,
-} from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
+} from '@/activities/timeline-activities/rows/components/EventRowBase';
 import { isTimelineActivityWithLinkedRecord } from '@/activities/timeline-activities/types/TimelineActivity';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { type CoreObjectNameSingular } from 'twenty-shared/types';

@@ -2,7 +2,7 @@ import {
   type EventRowDynamicComponentProps,
   StyledEventRowItemAction,
   StyledEventRowItemColumn,
-} from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
+} from '@/activities/timeline-activities/rows/components/EventRowBase';
 import { EventRowMainObjectUpdated } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
