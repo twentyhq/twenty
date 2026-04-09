@@ -117,6 +117,10 @@ export const useAgentChat = (
     setAgentChatUploadedFiles([]);
 
     try {
+      const fileIds = agentChatUploadedFiles
+        .map((file) => file.fileId)
+        .filter(Boolean);
+
       const { data } = await apolloClient.mutate<{
         sendChatMessage: {
           messageId: string;
@@ -131,6 +135,7 @@ export const useAgentChat = (
           messageId,
           browsingContext: browsingContext ?? null,
           modelId: modelIdForRequest ?? undefined,
+          fileIds: fileIds.length > 0 ? fileIds : undefined,
         },
       });
 

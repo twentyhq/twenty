@@ -127,6 +127,8 @@ export class AgentChatResolver {
     browsingContext: BrowsingContextType | null,
     @Args('modelId', { type: () => String, nullable: true })
     modelId: string | undefined,
+    @Args('fileIds', { type: () => [UUIDScalarType], nullable: true })
+    fileIds: string[] | null,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
@@ -193,6 +195,7 @@ export class AgentChatResolver {
       workspace,
       text,
       messageId,
+      fileIds: fileIds ?? undefined,
     });
 
     return {
