@@ -4,6 +4,8 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
+import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
@@ -23,8 +25,8 @@ import {
   TooltipPosition,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
-import { RelationType } from '~/generated-metadata/graphql';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { RelationType } from '~/generated-metadata/graphql';
 
 const StyledLinkContainer = styled.div`
   display: flex;
@@ -83,6 +85,18 @@ export const WidgetActionFieldSeeAll = () => {
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
+  const isJunction = hasJunctionConfig(relationMetadata?.settings);
+
+  const junctionConfig =
+    isDefined(relationMetadata) && isJunction
+      ? getJunctionConfig({
+          settings: relationMetadata.settings,
+          relationObjectMetadataId: relationMetadata.relationObjectMetadataId,
+          sourceObjectMetadataId: objectMetadataItem.id,
+          objectMetadataItems,
+        })
+      : null;
+
   const relationObjectMetadataItem = objectMetadataItems.find(
     (item) =>
       item.nameSingular ===
@@ -93,42 +107,56 @@ export const WidgetActionFieldSeeAll = () => {
     ({ id }) => id === relationMetadata?.relationFieldMetadataId,
   );
 
+  const junctionTargetFieldId =
+    isDefined(junctionConfig) && !junctionConfig.isMorphRelation
+      ? junctionConfig.targetFields[0]?.relation?.targetObjectMetadata.id
+      : undefined;
+
+  const targetObjectMetadataItem = isJunction
+    ? objectMetadataItems.find((item) => item.id === junctionTargetFieldId)
+    : relationObjectMetadataItem;
+
   const indexViewId = useAtomFamilySelectorValue(
     indexViewIdFromObjectMetadataItemFamilySelector,
-    { objectMetadataItemId: relationObjectMetadataItem?.id ?? '' },
+    { objectMetadataItemId: targetObjectMetadataItem?.id ?? '' },
   );
 
   if (
     !isDefined(relationMetadata) ||
     relationMetadata.relationType !== RelationType.ONE_TO_MANY ||
-    !isDefined(relationFieldMetadataItem) ||
-    !isDefined(relationObjectMetadataItem)
+    !isDefined(targetObjectMetadataItem)
   ) {
     return null;
   }
 
-  const filterQueryParams = {
-    filter: {
-      [relationFieldMetadataItem.name]: {
-        [ViewFilterOperand.IS]: {
-          selectedRecordIds: [targetRecord.id],
+  if (!isJunction && !isDefined(relationFieldMetadataItem)) {
+    return null;
+  }
+
+  const filterQueryParams = isJunction
+    ? { viewId: indexViewId }
+    : {
+        filter: {
+          [relationFieldMetadataItem!.name]: {
+            [ViewFilterOperand.IS]: {
+              selectedRecordIds: [targetRecord.id],
+            },
+          },
         },
-      },
-    },
-    viewId: indexViewId,
-  };
+        viewId: indexViewId,
+      };
 
   const filterLinkHref = getAppPath(
     AppPath.RecordIndexPage,
     {
-      objectNamePlural: relationObjectMetadataItem.namePlural,
+      objectNamePlural: targetObjectMetadataItem.namePlural,
     },
     filterQueryParams,
   );
 
   const tooltipId = `widget-see-all-${widget.id}`;
   const relationLabelPlural =
-    relationObjectMetadataItem.labelPlural.toLowerCase();
+    targetObjectMetadataItem.labelPlural.toLowerCase();
   const tooltipContent = t`See all ${relationLabelPlural} linked to this record`;
 
   return (
