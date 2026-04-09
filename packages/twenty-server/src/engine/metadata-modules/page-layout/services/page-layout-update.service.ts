@@ -568,10 +568,13 @@ export class PageLayoutUpdateService {
           }),
           configuration: updatedConfiguration,
           conditionalDisplay:
-            widgetInput.conditionalDisplay ?? existingWidget.conditionalDisplay,
+            widgetInput.conditionalDisplay !== undefined
+              ? widgetInput.conditionalDisplay
+              : existingWidget.conditionalDisplay,
           conditionalAvailabilityExpression:
-            widgetInput.conditionalAvailabilityExpression ??
-            existingWidget.conditionalAvailabilityExpression,
+            widgetInput.conditionalAvailabilityExpression !== undefined
+              ? widgetInput.conditionalAvailabilityExpression
+              : existingWidget.conditionalAvailabilityExpression,
           updatedAt: now.toISOString(),
           ...(isDefined(updatedConfiguration) && {
             universalConfiguration:
@@ -609,10 +612,13 @@ export class PageLayoutUpdateService {
           }),
           configuration: restoredConfiguration,
           conditionalDisplay:
-            widgetInput.conditionalDisplay ?? existingWidget.conditionalDisplay,
+            widgetInput.conditionalDisplay !== undefined
+              ? widgetInput.conditionalDisplay
+              : existingWidget.conditionalDisplay,
           conditionalAvailabilityExpression:
-            widgetInput.conditionalAvailabilityExpression ??
-            existingWidget.conditionalAvailabilityExpression,
+            widgetInput.conditionalAvailabilityExpression !== undefined
+              ? widgetInput.conditionalAvailabilityExpression
+              : existingWidget.conditionalAvailabilityExpression,
           isActive: true,
           updatedAt: now.toISOString(),
           ...(isDefined(restoredConfiguration) && {
