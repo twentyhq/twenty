@@ -14,8 +14,7 @@ import { useLingui } from '@lingui/react/macro';
 
 export const SidePanelSearchRecordsPage = () => {
   const { t } = useLingui();
-  const { searchResultItems, loading, noResults } =
-    useSidePanelSearchRecords();
+  const { searchResultItems, loading, noResults } = useSidePanelSearchRecords();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { closeCommandMenu } = useCloseCommandMenu();
   const navigate = useNavigate();

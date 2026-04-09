@@ -77,7 +77,11 @@ export const PinnedCommandMenuItemButtonsEditMode = () => {
         )
         .filter((item) => allowedAvailabilityTypes.has(item.availabilityType))
         .filter((item) => item.isPinned),
-    [commandMenuItemsDraft, currentObjectMetadataItemId, allowedAvailabilityTypes],
+    [
+      commandMenuItemsDraft,
+      currentObjectMetadataItemId,
+      allowedAvailabilityTypes,
+    ],
   );
 
   const {
@@ -106,10 +110,7 @@ export const PinnedCommandMenuItemButtonsEditMode = () => {
             <StyledItemsContainer>
               {pinnedInlineCommandMenuItems.map((item) => {
                 const { iconKey, label, shortLabel } =
-                  interpolateCommandMenuItemFields(
-                    item,
-                    commandMenuContextApi,
-                  );
+                  interpolateCommandMenuItemFields(item, commandMenuContextApi);
 
                 const Icon = getIcon(iconKey, COMMAND_MENU_DEFAULT_ICON);
 

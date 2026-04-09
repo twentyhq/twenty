@@ -76,8 +76,7 @@ export const useSidePanelSearchRecords = () => {
             (item) => item.nameSingular === searchRecord.objectNameSingular,
           )?.labelSingular ?? searchRecord.objectNameSingular,
         avatarType:
-          searchRecord.objectNameSingular ===
-          CoreObjectNameSingular.Company
+          searchRecord.objectNameSingular === CoreObjectNameSingular.Company
             ? ('squared' as const)
             : ('rounded' as const),
       }),

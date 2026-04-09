@@ -82,10 +82,7 @@ export const SidePanelRootPage = () => {
   }
 
   return (
-    <SidePanelList
-      selectableItemIds={selectableItemIds}
-      noResults={noResults}
-    >
+    <SidePanelList selectableItemIds={selectableItemIds} noResults={noResults}>
       {isDefined(previousContextStoreCurrentObjectMetadataItemId) && (
         <SidePanelGroup heading={t`Context`}>
           <SidePanelResetContextToSelectionButton />

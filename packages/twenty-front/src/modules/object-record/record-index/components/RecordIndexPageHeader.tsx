@@ -77,9 +77,7 @@ export const RecordIndexPageHeader = () => {
       {isDefined(contextStoreCurrentViewId) && (
         <>
           <RecordIndexCommandMenu />
-          {!isLayoutCustomizationModeEnabled && (
-            <SidePanelToggleButton />
-          )}
+          {!isLayoutCustomizationModeEnabled && <SidePanelToggleButton />}
         </>
       )}
     </PageHeader>

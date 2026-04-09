@@ -40,14 +40,12 @@ export const usePinnedCommandMenuItemsInlineLayout = ({
   );
 
   const pinnedInlineCommandMenuItems = useMemo(
-    () =>
-      pinnedCommandMenuItems.slice(0, visiblePinnedCommandMenuItemCount),
+    () => pinnedCommandMenuItems.slice(0, visiblePinnedCommandMenuItemCount),
     [pinnedCommandMenuItems, visiblePinnedCommandMenuItemCount],
   );
 
   const pinnedOverflowCommandMenuItems = useMemo(
-    () =>
-      pinnedCommandMenuItems.slice(visiblePinnedCommandMenuItemCount),
+    () => pinnedCommandMenuItems.slice(visiblePinnedCommandMenuItemCount),
     [pinnedCommandMenuItems, visiblePinnedCommandMenuItemCount],
   );
 
