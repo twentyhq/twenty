@@ -18,9 +18,9 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconArrowsSort,
-  IconDatabase,
-  IconEye,
+  IconBox,
   IconFilter,
+  IconListDetails,
 } from 'twenty-ui/display';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
@@ -54,11 +54,15 @@ export const SidePanelDashboardRecordTableSettings = () => {
       ? (configuration.viewId as string)
       : null;
 
-  const { sourceDescription, fieldsDescription, filterDescription, sortDescription } =
-    useRecordTableSettingsDescriptions({
-      objectMetadataId: widgetInEditMode?.objectMetadataId,
-      viewId,
-    });
+  const {
+    sourceDescription,
+    fieldsDescription,
+    filterDescription,
+    sortDescription,
+  } = useRecordTableSettingsDescriptions({
+    objectMetadataId: widgetInEditMode?.objectMetadataId,
+    viewId,
+  });
 
   if (!isDefined(widgetInEditMode)) {
     return null;
@@ -94,7 +98,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
             <SidePanelGroup heading={t`Data`}>
               <SelectableListItem itemId="record-table-source">
                 <CommandMenuItemDropdown
-                  Icon={IconDatabase}
+                  Icon={IconBox}
                   label={t`Source`}
                   id="record-table-source"
                   dropdownId="record-table-source"
@@ -113,7 +117,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                 <>
                   <SelectableListItem itemId="record-table-fields">
                     <CommandMenuItemDropdown
-                      Icon={IconEye}
+                      Icon={IconListDetails}
                       label={t`Fields`}
                       id="record-table-fields"
                       dropdownId="record-table-fields"
