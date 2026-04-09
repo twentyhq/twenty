@@ -125,6 +125,7 @@ export const useRecordsForSelect = ({
         ...record,
         isSelected: false,
       })) as SelectableItem[],
+    selectedRecordsData,
     loading:
       recordsToSelectLoading ||
       filteredSelectedRecordsLoading ||

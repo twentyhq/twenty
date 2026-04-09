@@ -5,10 +5,12 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
-import { useRefetchFindManyRecords } from '@/object-record/hooks/useRefetchFindManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useBulkCreateTagJunctionRecords } from '@/object-record/record-tag-selected/hooks/useBulkCreateTagJunctionRecords';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
@@ -21,8 +23,10 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { msg, t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { useStore } from 'jotai';
+import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 import { IconTag } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -113,21 +117,37 @@ export const TagSelectedRecordsContainer = ({
     allowRequestsToTwentyIconsState,
   );
 
-  const { bulkCreateTagJunctionRecords, tagObjectNameSingular, isConfigValid } =
-    useBulkCreateTagJunctionRecords({ objectMetadataItem });
+  const {
+    bulkCreateTagJunctionRecords,
+    tagObjectNameSingular,
+    isConfigValid,
+    junctionFieldName,
+    junctionObjectNameSingular,
+    sourceJoinColumnName,
+    targetJoinColumnName,
+    targetFieldName,
+  } = useBulkCreateTagJunctionRecords({ objectMetadataItem });
 
-  const { refetchFindManyRecords } = useRefetchFindManyRecords({
-    objectMetadataNamePlural: objectMetadataItem.namePlural,
+  const {
+    loading,
+    recordsToSelect,
+    selectedRecords,
+    filteredSelectedRecords,
+    selectedRecordsData,
+  } = useRecordsForSelect({
+    objectNameSingular: tagObjectNameSingular ?? '__invalid__',
+    searchFilterText: searchText,
+    selectedIds: selectedTagIds,
+    limit: 20,
+    allowRequestsToTwentyIcons,
   });
 
-  const { loading, recordsToSelect, selectedRecords, filteredSelectedRecords } =
-    useRecordsForSelect({
-      objectNameSingular: tagObjectNameSingular ?? '__invalid__',
-      searchFilterText: searchText,
-      selectedIds: selectedTagIds,
-      limit: 20,
-      allowRequestsToTwentyIcons,
-    });
+  const tagRecordMap = useMemo(
+    () => new Map(selectedRecordsData.map((r) => [r.id, r])),
+    [selectedRecordsData],
+  );
+
+  const store = useStore();
 
   const handleChange = (item: SelectableItem, newSelectedValue: boolean) => {
     setSelectedTagIds((prev) =>
@@ -155,7 +175,63 @@ export const TagSelectedRecordsContainer = ({
       }
 
       await bulkCreateTagJunctionRecords({ selectedRecordIds, selectedTagIds });
-      await refetchFindManyRecords();
+
+      // Directly update recordStoreFamilyState for each affected record so
+      // the list view reflects the new tags immediately (same pattern as the
+      // sidebar chip picker which updates the store in-place).
+      if (
+        isDefined(junctionFieldName) &&
+        isDefined(junctionObjectNameSingular) &&
+        isDefined(sourceJoinColumnName) &&
+        isDefined(targetJoinColumnName) &&
+        isDefined(targetFieldName)
+      ) {
+        const now = new Date().toISOString();
+
+        for (const recordId of selectedRecordIds) {
+          store.set(
+            recordStoreFamilyState.atomFamily(recordId),
+            (currentRecord: ObjectRecord | null | undefined) => {
+              if (!isDefined(currentRecord)) return currentRecord;
+
+              const currentJunctionRecords = (
+                currentRecord[junctionFieldName] as ObjectRecord[]
+              ) ?? [];
+              const existingTagIds = new Set(
+                currentJunctionRecords.map(
+                  (jr) => jr[targetJoinColumnName] as string,
+                ),
+              );
+
+              const newJunctionRecords = selectedTagIds
+                .filter(
+                  (tagId) =>
+                    !existingTagIds.has(tagId) && tagRecordMap.has(tagId),
+                )
+                .map((tagId) => ({
+                  id: v4(),
+                  createdAt: now,
+                  updatedAt: now,
+                  __typename: getObjectTypename(junctionObjectNameSingular),
+                  [sourceJoinColumnName]: recordId,
+                  [targetJoinColumnName]: tagId,
+                  [targetFieldName]: tagRecordMap.get(tagId),
+                }));
+
+              if (newJunctionRecords.length === 0) return currentRecord;
+
+              return {
+                ...currentRecord,
+                [junctionFieldName]: [
+                  ...currentJunctionRecords,
+                  ...newJunctionRecords,
+                ],
+              } as ObjectRecord;
+            },
+          );
+        }
+      }
+
       closeSidePanelMenu();
     } finally {
       setIsApplying(false);

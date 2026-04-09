@@ -105,5 +105,10 @@ export const useBulkCreateTagJunctionRecords = ({
     bulkCreateTagJunctionRecords,
     tagObjectNameSingular,
     isConfigValid,
+    junctionFieldName: junctionField?.name,
+    junctionObjectNameSingular,
+    sourceJoinColumnName,
+    targetJoinColumnName,
+    targetFieldName: targetField?.name,
   };
 };
