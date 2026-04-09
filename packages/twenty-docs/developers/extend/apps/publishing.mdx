@@ -197,5 +197,10 @@ yarn twenty install
 ```
 
 <Note>
-Install is idempotent: if the version of the app currently registered on the server is already installed in your workspace, the command exits successfully as a no-op — file writes, manifest sync, and SDK regeneration are all skipped. To install a newer version, deploy or publish it first, then re-run `yarn twenty install`.
+The server enforces semver versioning on install, mirroring the rules on deploy:
+
+- Installing the same version that is already installed in your workspace is rejected with an `APP_ALREADY_INSTALLED` error.
+- Installing a lower version than the one currently installed is rejected with a `CANNOT_DOWNGRADE_APPLICATION` error.
+
+To install a newer version, deploy or publish it first, then re-run `yarn twenty install`.
 </Note>
