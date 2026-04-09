@@ -9,7 +9,6 @@ import { useContext } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
-import { type MenuItemAccent } from 'twenty-ui/navigation';
 
 export type CommandMenuItemDisplayProps = {
   key: string;
@@ -18,7 +17,6 @@ export type CommandMenuItemDisplayProps = {
   description?: MessageDescriptor | string;
   Icon: IconComponent;
   isPrimaryCTA?: boolean;
-  accent?: MenuItemAccent;
   hotKeys?: Nullable<string[]>;
 };
 
@@ -35,12 +33,12 @@ export const CommandMenuItemDisplay = ({
   progress?: number;
   showDisabledLoader?: boolean;
 }) => {
-  const action = useContext(CommandConfigContext);
+  const commandMenuItem = useContext(CommandConfigContext);
   const { displayType } = useContext(CommandMenuContext);
   const isBlockedByGlobalLayoutCustomization =
-    useIsCommandBlockedByGlobalLayoutCustomization(action);
+    useIsCommandBlockedByGlobalLayoutCustomization(commandMenuItem);
 
-  if (!action) {
+  if (!commandMenuItem) {
     return null;
   }
 
@@ -53,7 +51,7 @@ export const CommandMenuItemDisplay = ({
   if (displayType === 'button') {
     return (
       <CommandMenuItemButton
-        action={action}
+        commandMenuItem={commandMenuItem}
         onClick={onClickWhenEnabled}
         to={toWhenEnabled}
         disabled={isDisabled}
@@ -64,7 +62,7 @@ export const CommandMenuItemDisplay = ({
   if (displayType === 'listItem') {
     return (
       <CommandListItem
-        action={action}
+        commandMenuItem={commandMenuItem}
         onClick={onClickWhenEnabled}
         to={toWhenEnabled}
         disabled={isDisabled}
@@ -77,7 +75,7 @@ export const CommandMenuItemDisplay = ({
   if (displayType === 'dropdownItem') {
     return (
       <CommandDropdownItem
-        action={action}
+        commandMenuItem={commandMenuItem}
         onClick={onClickWhenEnabled}
         to={toWhenEnabled}
         disabled={isDisabled}

@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { CommandMenuItemViewType, AppPath } from 'twenty-shared/types';
+import { AppPath } from 'twenty-shared/types';
 import {
   IconFileExport,
   IconHeart,
@@ -33,11 +33,6 @@ export const createMockCommandMenuItems = ({
     position: 2,
     isPinned: true,
     Icon: IconHeart,
-    shouldBeRegistered: () => true,
-    availableOn: [
-      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      CommandMenuItemViewType.SHOW_PAGE,
-    ],
     component: <Command onClick={addToFavoritesMock} />,
   },
   {
@@ -48,10 +43,7 @@ export const createMockCommandMenuItems = ({
     shortLabel: msg`Export`,
     position: 4,
     Icon: IconFileExport,
-    accent: 'default',
     isPinned: false,
-    shouldBeRegistered: () => true,
-    availableOn: [CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION],
     component: <Command onClick={exportMock} />,
   },
   {
@@ -62,13 +54,7 @@ export const createMockCommandMenuItems = ({
     shortLabel: msg`Delete`,
     position: 7,
     Icon: IconTrash,
-    accent: 'default',
     isPinned: true,
-    shouldBeRegistered: () => true,
-    availableOn: [
-      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      CommandMenuItemViewType.SHOW_PAGE,
-    ],
     component: <Command onClick={deleteMock} />,
   },
   {
@@ -80,13 +66,6 @@ export const createMockCommandMenuItems = ({
     position: 19,
     Icon: IconUser,
     isPinned: false,
-    availableOn: [
-      CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION,
-      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION,
-      CommandMenuItemViewType.SHOW_PAGE,
-    ],
-    shouldBeRegistered: () => true,
     component: (
       <CommandLink
         to={AppPath.RecordIndexPage}

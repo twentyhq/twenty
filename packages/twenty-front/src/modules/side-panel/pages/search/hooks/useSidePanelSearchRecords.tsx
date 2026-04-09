@@ -57,10 +57,10 @@ export const useSidePanelSearchRecords = () => {
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
-  const actionItems = useMemo(() => {
+  const searchCommandMenuItems = useMemo(() => {
     return (searchData?.search.edges.map((edge) => edge.node) ?? []).map(
       (searchRecord, index) => {
-        const baseAction = {
+        const baseCommandMenuItem = {
           type: CommandMenuItemType.Navigation,
           scope: CommandMenuItemScope.Global,
           key: searchRecord.recordId,
@@ -79,7 +79,6 @@ export const useSidePanelSearchRecords = () => {
               placeholder={searchRecord.label}
             />
           ),
-          shouldBeRegistered: () => true,
           description:
             readableObjectMetadataItems.find(
               (item) => item.nameSingular === searchRecord.objectNameSingular,
@@ -92,7 +91,7 @@ export const useSidePanelSearchRecords = () => {
           )
         ) {
           return {
-            ...baseAction,
+            ...baseCommandMenuItem,
             component: (
               <Command
                 onClick={() => {
@@ -114,7 +113,7 @@ export const useSidePanelSearchRecords = () => {
         }
 
         return {
-          ...baseAction,
+          ...baseCommandMenuItem,
           component: (
             <CommandLink
               to={AppPath.RecordShowPage}
@@ -131,11 +130,11 @@ export const useSidePanelSearchRecords = () => {
 
   return {
     loading,
-    noResults: !actionItems?.length,
+    noResults: !searchCommandMenuItems?.length,
     commandGroups: [
       {
         heading: t`Results`,
-        items: actionItems,
+        items: searchCommandMenuItems,
       },
     ],
     hasMore: false,

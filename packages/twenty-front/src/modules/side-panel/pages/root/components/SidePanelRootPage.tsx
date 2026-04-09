@@ -7,7 +7,7 @@ import { type SidePanelCommandMenuItemGroupConfig } from '@/side-panel/types/Sid
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SidePanelResetContextToSelectionButton } from '@/side-panel/pages/root/components/SidePanelResetContextToSelectionButton';
-import { useSidePanelMatchingActions } from '@/side-panel/pages/root/hooks/useSidePanelMatchingActions';
+import { useSidePanelMatchingCommandMenuItems } from '@/side-panel/pages/root/hooks/useSidePanelMatchingCommandMenuItems';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
@@ -21,17 +21,17 @@ export const SidePanelRootPage = () => {
 
   const {
     noResults,
-    matchingStandardActionRecordSelectionActions,
-    matchingStandardActionObjectActions,
-    matchingWorkflowRunRecordSelectionActions,
-    matchingFrontComponentRecordSelectionActions,
-    matchingStandardActionGlobalActions,
-    matchingWorkflowRunGlobalActions,
-    matchingFrontComponentGlobalActions,
-    matchingNavigateActions,
-    fallbackActions,
-    matchingCreateRelatedRecordActions,
-  } = useSidePanelMatchingActions({
+    matchingRecordSelectionCommandMenuItems,
+    matchingObjectCommandMenuItems,
+    matchingWorkflowRunRecordSelectionCommandMenuItems,
+    matchingFrontComponentRecordSelectionCommandMenuItems,
+    matchingGlobalCommandMenuItems,
+    matchingWorkflowRunGlobalCommandMenuItems,
+    matchingFrontComponentGlobalCommandMenuItems,
+    matchingNavigationCommandMenuItems,
+    fallbackCommandMenuItems,
+    matchingCreateRelatedRecordCommandMenuItems,
+  } = useSidePanelMatchingCommandMenuItems({
     sidePanelSearch,
   });
 
@@ -52,28 +52,28 @@ export const SidePanelRootPage = () => {
   const commandGroups: SidePanelCommandMenuItemGroupConfig[] = [
     {
       heading: t`Record Selection`,
-      items: matchingStandardActionRecordSelectionActions
-        .concat(matchingWorkflowRunRecordSelectionActions)
-        .concat(matchingFrontComponentRecordSelectionActions),
+      items: matchingRecordSelectionCommandMenuItems
+        .concat(matchingWorkflowRunRecordSelectionCommandMenuItems)
+        .concat(matchingFrontComponentRecordSelectionCommandMenuItems),
     },
     {
       heading: t`Create Related Record`,
-      items: matchingCreateRelatedRecordActions,
+      items: matchingCreateRelatedRecordCommandMenuItems,
     },
     {
       heading: currentObjectMetadataItem?.labelPlural ?? t`Object`,
-      items: matchingStandardActionObjectActions,
+      items: matchingObjectCommandMenuItems,
     },
     {
       heading: t`Global`,
-      items: matchingStandardActionGlobalActions
-        .concat(matchingWorkflowRunGlobalActions)
-        .concat(matchingFrontComponentGlobalActions)
-        .concat(matchingNavigateActions),
+      items: matchingGlobalCommandMenuItems
+        .concat(matchingWorkflowRunGlobalCommandMenuItems)
+        .concat(matchingFrontComponentGlobalCommandMenuItems)
+        .concat(matchingNavigationCommandMenuItems),
     },
     {
       heading: t`Search ''${sidePanelSearch}'' with...`,
-      items: fallbackActions,
+      items: fallbackCommandMenuItems,
     },
   ];
 

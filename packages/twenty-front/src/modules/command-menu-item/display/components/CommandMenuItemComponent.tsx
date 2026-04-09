@@ -2,13 +2,13 @@ import { CommandConfigContext } from '@/command-menu-item/contexts/CommandConfig
 import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
 
 export const CommandMenuItemComponent = ({
-  action,
+  commandMenuItem,
 }: {
-  action: CommandMenuItemConfig;
+  commandMenuItem: CommandMenuItemConfig;
 }) => {
   return (
-    <CommandConfigContext.Provider value={action}>
-      {action.component}
+    <CommandConfigContext.Provider value={commandMenuItem}>
+      {commandMenuItem.component}
     </CommandConfigContext.Provider>
   );
 };

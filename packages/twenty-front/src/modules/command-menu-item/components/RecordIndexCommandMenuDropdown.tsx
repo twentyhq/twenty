@@ -36,10 +36,10 @@ export const RecordIndexCommandMenuDropdown = () => {
   const { t } = useLingui();
   const { commandMenuItems } = useContext(CommandMenuContext);
 
-  const recordIndexActions = commandMenuItems.filter(
-    (action) =>
-      action.type === CommandMenuItemType.Standard &&
-      action.scope === CommandMenuItemScope.RecordSelection,
+  const recordIndexCommandMenuItems = commandMenuItems.filter(
+    (commandMenuItem) =>
+      commandMenuItem.type === CommandMenuItemType.Standard &&
+      commandMenuItem.scope === CommandMenuItemScope.RecordSelection,
   );
 
   const commandMenuId = useAvailableComponentInstanceIdOrThrow(
@@ -57,7 +57,9 @@ export const RecordIndexCommandMenuDropdown = () => {
   const { openSidePanelMenu } = useSidePanelMenu();
 
   const selectedItemIdArray = [
-    ...recordIndexActions.map((action) => action.key),
+    ...recordIndexCommandMenuItems.map(
+      (commandMenuItem) => commandMenuItem.key,
+    ),
     'more-actions',
   ];
 
@@ -87,8 +89,11 @@ export const RecordIndexCommandMenuDropdown = () => {
                 selectableItemIdArray={selectedItemIdArray}
                 selectableListInstanceId={dropdownId}
               >
-                {recordIndexActions.map((action) => (
-                  <CommandMenuItemComponent action={action} key={action.key} />
+                {recordIndexCommandMenuItems.map((commandMenuItem) => (
+                  <CommandMenuItemComponent
+                    commandMenuItem={commandMenuItem}
+                    key={commandMenuItem.key}
+                  />
                 ))}
                 <SelectableListItem
                   itemId="more-actions"

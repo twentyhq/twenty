@@ -29,16 +29,19 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
   );
 
   const dropdownWidgetActions = sidePanelWidgetFooterActions.filter(
-    (action) => action.isPinned === false,
+    (widgetAction) => widgetAction.isPinned === false,
   );
 
-  const recordSelectionActions = commandMenuItems.filter(
-    (action) => action.scope === CommandMenuItemScope.RecordSelection,
+  const recordSelectionCommandMenuItems = commandMenuItems.filter(
+    (commandMenuItem) =>
+      commandMenuItem.scope === CommandMenuItemScope.RecordSelection,
   );
 
   const selectableItemIdArray = [
-    ...dropdownWidgetActions.map((action) => action.key),
-    ...recordSelectionActions.map((action) => action.key),
+    ...dropdownWidgetActions.map((widgetAction) => widgetAction.key),
+    ...recordSelectionCommandMenuItems.map(
+      (commandMenuItem) => commandMenuItem.key,
+    ),
   ];
 
   return (
@@ -47,21 +50,26 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
       selectableListId={commandMenuId}
       selectableItemIdArray={selectableItemIdArray}
     >
-      {dropdownWidgetActions.map((action) => (
+      {dropdownWidgetActions.map((widgetAction) => (
         <MenuItem
-          key={action.key}
-          text={action.label}
-          LeftIcon={action.Icon}
+          key={widgetAction.key}
+          text={widgetAction.label}
+          LeftIcon={widgetAction.Icon}
           onClick={() => {
             closeDropdown(dropdownId);
-            action.onClick();
+            widgetAction.onClick();
           }}
         />
       ))}
       {dropdownWidgetActions.length > 0 &&
-        recordSelectionActions.length > 0 && <HorizontalSeparator noMargin />}
-      {recordSelectionActions.map((action) => (
-        <CommandMenuItemComponent action={action} key={action.key} />
+        recordSelectionCommandMenuItems.length > 0 && (
+          <HorizontalSeparator noMargin />
+        )}
+      {recordSelectionCommandMenuItems.map((commandMenuItem) => (
+        <CommandMenuItemComponent
+          commandMenuItem={commandMenuItem}
+          key={commandMenuItem.key}
+        />
       ))}
     </OptionsDropdownMenu>
   );

@@ -8,14 +8,14 @@ import { Loader } from 'twenty-ui/feedback';
 import { CommandListItemLoader } from './CommandListItemLoader';
 
 export const CommandListItem = ({
-  action,
+  commandMenuItem,
   onClick,
   to,
   disabled = false,
   progress,
   showDisabledLoader = false,
 }: {
-  action: CommandMenuItemDisplayProps;
+  commandMenuItem: CommandMenuItemDisplayProps;
   onClick?: () => void;
   to?: string;
   disabled?: boolean;
@@ -44,15 +44,15 @@ export const CommandListItem = ({
     ) : undefined;
 
   return (
-    <SelectableListItem itemId={action.key} onEnter={handleClick}>
+    <SelectableListItem itemId={commandMenuItem.key} onEnter={handleClick}>
       <CommandMenuItem
-        id={action.key}
-        Icon={action.Icon}
-        label={getCommandMenuItemLabel(action.label)}
-        description={getCommandMenuItemLabel(action.description)}
+        id={commandMenuItem.key}
+        Icon={commandMenuItem.Icon}
+        label={getCommandMenuItemLabel(commandMenuItem.label)}
+        description={getCommandMenuItemLabel(commandMenuItem.description)}
         to={to}
         onClick={disabled ? undefined : onClick}
-        hotKeys={action.hotKeys}
+        hotKeys={commandMenuItem.hotKeys}
         disabled={disabled}
         RightComponent={loaderComponent}
       />

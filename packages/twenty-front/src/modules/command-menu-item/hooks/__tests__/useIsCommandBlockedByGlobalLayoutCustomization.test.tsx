@@ -6,7 +6,6 @@ import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemTy
 import { renderHook } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
-import { CommandMenuItemViewType } from 'twenty-shared/types';
 import { Icon123 } from 'twenty-ui/display';
 
 const getWrapper =
@@ -24,8 +23,6 @@ const buildCommandMenuItemConfig = (
   label: 'Test Command',
   position: 1,
   Icon: Icon123,
-  availableOn: [CommandMenuItemViewType.GLOBAL],
-  shouldBeRegistered: () => true,
   component: null,
   isAllowedDuringGlobalLayoutCustomization,
 });

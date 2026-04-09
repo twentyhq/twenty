@@ -10,12 +10,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui/navigation';
 
 export const CommandDropdownItem = ({
-  action,
+  commandMenuItem,
   onClick,
   to,
   disabled = false,
 }: {
-  action: CommandMenuItemDisplayProps;
+  commandMenuItem: CommandMenuItemDisplayProps;
   onClick?: () => void;
   to?: string;
   disabled?: boolean;
@@ -39,18 +39,18 @@ export const CommandDropdownItem = ({
 
   const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
-    action.key,
+    commandMenuItem.key,
     selectableListInstanceId,
   );
 
   return (
-    <SelectableListItem itemId={action.key} onEnter={handleClick}>
+    <SelectableListItem itemId={commandMenuItem.key} onEnter={handleClick}>
       <MenuItem
         focused={isSelectedItemId}
-        key={action.key}
-        LeftIcon={action.Icon}
+        key={commandMenuItem.key}
+        LeftIcon={commandMenuItem.Icon}
         onClick={handleClick}
-        text={getCommandMenuItemLabel(action.label)}
+        text={getCommandMenuItemLabel(commandMenuItem.label)}
         disabled={disabled}
       />
     </SelectableListItem>

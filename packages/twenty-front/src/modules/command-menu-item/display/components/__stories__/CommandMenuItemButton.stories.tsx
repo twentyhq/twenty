@@ -20,22 +20,23 @@ type Story = StoryObj<typeof CommandMenuItemButton>;
 const deleteMock = fn();
 const addToFavoritesMock = fn();
 
-const mockActions = createMockCommandMenuItems({
+const mockCommandMenuItems = createMockCommandMenuItems({
   deleteMock,
   addToFavoritesMock,
 });
 
-const addToFavoritesCommandMenuItem = mockActions.find(
-  (action) => action.key === EngineComponentKey.ADD_TO_FAVORITES,
+const addToFavoritesCommandMenuItem = mockCommandMenuItems.find(
+  (commandMenuItem) =>
+    commandMenuItem.key === EngineComponentKey.ADD_TO_FAVORITES,
 );
 
-const goToPeopleCommandMenuItem = mockActions.find(
-  (action) => action.key === EngineComponentKey.GO_TO_PEOPLE,
+const goToPeopleCommandMenuItem = mockCommandMenuItems.find(
+  (commandMenuItem) => commandMenuItem.key === EngineComponentKey.GO_TO_PEOPLE,
 );
 
 export const Default: Story = {
   args: {
-    action: addToFavoritesCommandMenuItem,
+    commandMenuItem: addToFavoritesCommandMenuItem,
     onClick: addToFavoritesMock,
   },
   play: async ({ canvasElement }) => {
@@ -51,7 +52,7 @@ export const Default: Story = {
 
 export const WithLink: Story = {
   args: {
-    action: goToPeopleCommandMenuItem,
+    commandMenuItem: goToPeopleCommandMenuItem,
     to: '/objects/people',
   },
   play: async ({ canvasElement }) => {

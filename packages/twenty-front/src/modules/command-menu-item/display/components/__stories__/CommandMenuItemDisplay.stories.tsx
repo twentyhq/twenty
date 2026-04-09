@@ -15,13 +15,14 @@ type Story = StoryObj<typeof CommandMenuItemDisplay>;
 const deleteMock = fn();
 const addToFavoritesMock = fn();
 
-const mockActions = createMockCommandMenuItems({
+const mockCommandMenuItems = createMockCommandMenuItems({
   deleteMock,
   addToFavoritesMock,
 });
 
-const addToFavoritesCommandMenuItem = mockActions.find(
-  (action) => action.key === EngineComponentKey.ADD_TO_FAVORITES,
+const addToFavoritesCommandMenuItem = mockCommandMenuItems.find(
+  (commandMenuItem) =>
+    commandMenuItem.key === EngineComponentKey.ADD_TO_FAVORITES,
 );
 
 if (!addToFavoritesCommandMenuItem) {

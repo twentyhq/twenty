@@ -9,14 +9,15 @@ import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMen
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 
-const mockActions = createMockCommandMenuItems({});
+const mockCommandMenuItems = createMockCommandMenuItems({});
 
-const addToFavoritesCommandMenuItem = mockActions.find(
-  (action) => action.key === EngineComponentKey.ADD_TO_FAVORITES,
+const addToFavoritesCommandMenuItem = mockCommandMenuItems.find(
+  (commandMenuItem) =>
+    commandMenuItem.key === EngineComponentKey.ADD_TO_FAVORITES,
 );
 
 if (!addToFavoritesCommandMenuItem) {
-  throw new Error('Add to favorites action not found');
+  throw new Error('Add to favorites command menu item not found');
 }
 
 const meta: Meta<typeof CommandMenuItemComponent> = {
@@ -42,7 +43,7 @@ const meta: Meta<typeof CommandMenuItemComponent> = {
     ),
   ],
   args: {
-    action: addToFavoritesCommandMenuItem,
+    commandMenuItem: addToFavoritesCommandMenuItem,
   },
   parameters: {
     container: {

@@ -83,7 +83,10 @@ export const SidePanelList = ({
               items?.length ? (
                 <SidePanelGroup heading={heading} key={heading}>
                   {items.map((item) => (
-                    <CommandMenuItemComponent action={item} key={item.key} />
+                    <CommandMenuItemComponent
+                      commandMenuItem={item}
+                      key={item.key}
+                    />
                   ))}
                 </SidePanelGroup>
               ) : null,
