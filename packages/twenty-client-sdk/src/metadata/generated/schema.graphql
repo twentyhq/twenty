@@ -896,6 +896,7 @@ type PageLayoutWidget {
   position: PageLayoutWidgetPosition
   configuration: WidgetConfiguration!
   conditionalDisplay: JSON
+  conditionalAvailabilityExpression: String
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
@@ -4012,6 +4013,7 @@ input UpdatePageLayoutWidgetWithIdInput {
   position: JSON
   configuration: JSON
   conditionalDisplay: JSON
+  conditionalAvailabilityExpression: String
 }
 
 input GridPositionInput {
@@ -4040,6 +4042,7 @@ input UpdatePageLayoutWidgetInput {
   position: JSON
   configuration: JSON
   conditionalDisplay: JSON
+  conditionalAvailabilityExpression: String
 }
 
 input CreateLogicFunctionFromSourceInput {

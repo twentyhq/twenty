@@ -2,6 +2,8 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
+  CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP,
+  CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE,
   CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
   CONDITIONAL_DISPLAY_DEVICE_MOBILE,
   TAB_PROPS,
@@ -28,6 +30,8 @@ const TASK_PAGE_TABS = {
         gridPosition: WIDGET_PROPS.taskRichText.gridPosition,
         position: { layoutMode: TAB_PROPS.home.layoutMode, index: 1 },
         conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_MOBILE,
+        conditionalAvailabilityExpression:
+          CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE,
       },
     },
   },
@@ -39,6 +43,8 @@ const TASK_PAGE_TABS = {
         universalIdentifier: '20202020-ac05-4005-8005-ba5ca11a5521',
         ...WIDGET_PROPS.taskRichText,
         conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
+        conditionalAvailabilityExpression:
+          CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP,
       },
     },
   },
