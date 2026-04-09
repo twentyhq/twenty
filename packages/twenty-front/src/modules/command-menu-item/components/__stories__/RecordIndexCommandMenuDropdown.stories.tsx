@@ -13,6 +13,7 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { RouterDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const meta: Meta<typeof RecordIndexCommandMenuDropdown> = {
   title: 'Modules/CommandMenu/RecordIndexCommandMenuDropdown',
@@ -52,6 +53,7 @@ const meta: Meta<typeof RecordIndexCommandMenuDropdown> = {
       );
     },
     ContextStoreDecorator,
+    SnackBarDecorator,
     RouterDecorator,
   ],
 };
