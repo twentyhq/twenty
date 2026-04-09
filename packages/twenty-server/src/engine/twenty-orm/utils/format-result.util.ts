@@ -114,7 +114,7 @@ export function formatResult<T>(
       }
 
       // @ts-expect-error legacy noImplicitAny
-      newData[key] = formatResultInternal(
+      newData[key] = formatResult(
         value,
         targetObjectMetadata,
         flatObjectMetadataMaps,
