@@ -1,8 +1,9 @@
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/constants/PinnedCommandMenuItemsGap';
 import { commandMenuPinnedInlineLayoutState } from '@/command-menu-item/display/states/commandMenuPinnedInlineLayoutState';
 import { getVisibleCommandMenuItemCountForContainerWidth } from '@/command-menu-item/display/utils/getVisibleCommandMenuItemCountForContainerWidth';
-import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
+import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -11,19 +12,20 @@ import { SIDE_PANEL_RESET_CONTEXT_TO_SELECTION } from '@/side-panel/constants/Si
 import { SidePanelResetContextToSelectionButton } from '@/side-panel/pages/root/components/SidePanelResetContextToSelectionButton';
 import { useFilterCommandMenuItemsWithSidePanelSearch } from '@/side-panel/pages/root/hooks/useFilterCommandMenuItemsWithSidePanelSearch';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
-import { type SidePanelCommandMenuItemGroupConfig } from '@/side-panel/types/SidePanelCommandMenuItemGroupConfig';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { isNumber } from '@sniptt/guards';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 export const SidePanelCommandMenuItemDisplayPage = () => {
   const { t } = useLingui();
 
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
-  const { commandMenuItems } = useContext(CommandMenuContext);
+  const { commandMenuItems, commandMenuContextApi } =
+    useContext(CommandMenuContext);
   const commandMenuPinnedInlineLayout = useAtomStateValue(
     commandMenuPinnedInlineLayoutState,
   );
@@ -31,34 +33,32 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const { filterCommandMenuItemsWithSidePanelSearch } =
     useFilterCommandMenuItemsWithSidePanelSearch({
       sidePanelSearch,
+      commandMenuContextApi,
     });
 
-  const pinnedCommandMenuItems = commandMenuItems
-    .filter((commandMenuItem) => commandMenuItem.isPinned === true)
-    .sort(
-      (firstPinnedCommandMenuItem, secondPinnedCommandMenuItem) =>
-        firstPinnedCommandMenuItem.position -
-        secondPinnedCommandMenuItem.position,
-    );
+  const { pinned: pinnedCommandMenuItems, other: nonPinnedCommandMenuItems } =
+    useMemo(() => groupCommandMenuItems(commandMenuItems), [commandMenuItems]);
 
-  const unpinnedCommandMenuItems = commandMenuItems
-    .filter(
-      (commandMenuItem) =>
-        commandMenuItem.isPinned !== true &&
-        commandMenuItem.type !== CommandMenuItemType.Fallback,
-    )
-    .sort(
-      (firstUnpinnedCommandMenuItem, secondUnpinnedCommandMenuItem) =>
-        firstUnpinnedCommandMenuItem.position -
-        secondUnpinnedCommandMenuItem.position,
-    );
+  const unpinnedCommandMenuItems = useMemo(
+    () =>
+      nonPinnedCommandMenuItems.filter(
+        (item) =>
+          item.availabilityType !== CommandMenuItemAvailabilityType.FALLBACK,
+      ),
+    [nonPinnedCommandMenuItems],
+  );
 
-  const fallbackCommandMenuItems = commandMenuItems.filter(
-    (commandMenuItem) => commandMenuItem.type === CommandMenuItemType.Fallback,
+  const fallbackCommandMenuItems = useMemo(
+    () =>
+      nonPinnedCommandMenuItems.filter(
+        (item) =>
+          item.availabilityType === CommandMenuItemAvailabilityType.FALLBACK,
+      ),
+    [nonPinnedCommandMenuItems],
   );
 
   const pinnedCommandMenuItemKeysInDisplayOrder = pinnedCommandMenuItems.map(
-    (pinnedCommandMenuItem) => pinnedCommandMenuItem.key,
+    (item) => item.id,
   );
 
   const visiblePinnedCommandMenuItemCount =
@@ -74,11 +74,9 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const hasKnownPinnedInlineLayout =
     commandMenuPinnedInlineLayout.containerWidth > 0 &&
-    pinnedCommandMenuItemKeysInDisplayOrder.every((commandMenuItemKey) =>
+    pinnedCommandMenuItemKeysInDisplayOrder.every((itemKey) =>
       isNumber(
-        commandMenuPinnedInlineLayout.commandMenuItemWidthsByKey[
-          commandMenuItemKey
-        ],
+        commandMenuPinnedInlineLayout.commandMenuItemWidthsByKey[itemKey],
       ),
     );
 
@@ -95,23 +93,11 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const noResults = !matchingPinnedItems.length && !matchingOtherItems.length;
 
-  const commandGroups: SidePanelCommandMenuItemGroupConfig[] = [
-    {
-      heading: t`Pinned`,
-      items: matchingPinnedItems,
-    },
-    {
-      heading: t`Other`,
-      items: matchingOtherItems,
-    },
-    {
-      heading: t`Fallback`,
-      items: noResults ? fallbackCommandMenuItems : [],
-    },
-  ];
-
-  const selectableItems = commandGroups.flatMap((group) => group.items ?? []);
-  const selectableItemIds = selectableItems.map((item) => item.key);
+  const selectableItemIds = [
+    ...matchingPinnedItems,
+    ...matchingOtherItems,
+    ...(noResults ? fallbackCommandMenuItems : []),
+  ].map((item) => item.id);
 
   // oxlint-disable-next-line twenty/matching-state-variable
   const previousContextStoreCurrentObjectMetadataItemId =
@@ -125,14 +111,31 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   }
 
   return (
-    <SidePanelList
-      commandGroups={commandGroups}
-      selectableItemIds={selectableItemIds}
-      noResults={noResults}
-    >
+    <SidePanelList selectableItemIds={selectableItemIds} noResults={noResults}>
       {isDefined(previousContextStoreCurrentObjectMetadataItemId) && (
         <SidePanelGroup heading={t`Context`}>
           <SidePanelResetContextToSelectionButton />
+        </SidePanelGroup>
+      )}
+      {matchingPinnedItems.length > 0 && (
+        <SidePanelGroup heading={t`Pinned`}>
+          {matchingPinnedItems.map((item) => (
+            <CommandMenuItemRenderer item={item} key={item.id} />
+          ))}
+        </SidePanelGroup>
+      )}
+      {matchingOtherItems.length > 0 && (
+        <SidePanelGroup heading={t`Other`}>
+          {matchingOtherItems.map((item) => (
+            <CommandMenuItemRenderer item={item} key={item.id} />
+          ))}
+        </SidePanelGroup>
+      )}
+      {noResults && fallbackCommandMenuItems.length > 0 && (
+        <SidePanelGroup heading={t`Fallback`}>
+          {fallbackCommandMenuItems.map((item) => (
+            <CommandMenuItemRenderer item={item} key={item.id} />
+          ))}
         </SidePanelGroup>
       )}
     </SidePanelList>

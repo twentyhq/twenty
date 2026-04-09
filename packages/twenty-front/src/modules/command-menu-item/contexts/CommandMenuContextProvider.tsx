@@ -8,7 +8,7 @@ import { CommandMenuContextProviderContent } from './CommandMenuContextProviderC
 import { CommandMenuContextProviderWithWorkflowEnrichment } from './CommandMenuContextProviderWithWorkflowEnrichment';
 
 type CommandMenuContextProviderProps = {
-  isInSidePanel: CommandMenuContextType['isInSidePanel'];
+  isInSidePanel: boolean;
   displayType: CommandMenuContextType['displayType'];
   containerType: CommandMenuContextType['containerType'];
   children: React.ReactNode;
@@ -44,7 +44,6 @@ export const CommandMenuContextProvider = ({
   if (selectedWorkflowRecordIds.length > 0) {
     return (
       <CommandMenuContextProviderWithWorkflowEnrichment
-        isInSidePanel={isInSidePanel}
         displayType={displayType}
         containerType={containerType}
         commandMenuContextApi={commandMenuContextApi}
@@ -57,7 +56,6 @@ export const CommandMenuContextProvider = ({
 
   return (
     <CommandMenuContextProviderContent
-      isInSidePanel={isInSidePanel}
       displayType={displayType}
       containerType={containerType}
       commandMenuContextApi={commandMenuContextApi}

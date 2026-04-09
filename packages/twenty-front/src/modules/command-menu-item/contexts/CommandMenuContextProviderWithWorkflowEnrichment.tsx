@@ -7,23 +7,20 @@ import { useWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/useWo
 import { CommandMenuContextProviderContent } from './CommandMenuContextProviderContent';
 
 type CommandMenuContextProviderWithWorkflowEnrichmentProps = {
-  isInSidePanel: CommandMenuContextType['isInSidePanel'];
   displayType: CommandMenuContextType['displayType'];
   containerType: CommandMenuContextType['containerType'];
   children: React.ReactNode;
+  commandMenuContextApi: CommandMenuContextApi;
+  selectedWorkflowRecordIds: string[];
 };
 
 export const CommandMenuContextProviderWithWorkflowEnrichment = ({
-  isInSidePanel,
   displayType,
   containerType,
   children,
   commandMenuContextApi,
   selectedWorkflowRecordIds,
-}: CommandMenuContextProviderWithWorkflowEnrichmentProps & {
-  commandMenuContextApi: CommandMenuContextApi;
-  selectedWorkflowRecordIds: string[];
-}) => {
+}: CommandMenuContextProviderWithWorkflowEnrichmentProps) => {
   const workflowsWithCurrentVersions = useWorkflowsWithCurrentVersions(
     selectedWorkflowRecordIds,
   );
@@ -54,7 +51,6 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
 
   return (
     <CommandMenuContextProviderContent
-      isInSidePanel={isInSidePanel}
       displayType={displayType}
       containerType={containerType}
       commandMenuContextApi={enrichedCommandMenuContextApi}

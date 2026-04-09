@@ -1,4 +1,4 @@
-import { CommandMenuItemComponent } from '@/command-menu-item/display/components/CommandMenuItemComponent';
+import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { PinnedCommandMenuItemsInlineMeasurements } from '@/command-menu-item/display/components/PinnedCommandMenuItemsInlineMeasurements';
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/constants/PinnedCommandMenuItemsGap';
@@ -40,10 +40,7 @@ export const PinnedCommandMenuItemButtons = () => {
   const { commandMenuItems } = useContext(CommandMenuContext);
 
   const pinnedCommandMenuItems = useMemo(
-    () =>
-      commandMenuItems.filter(
-        (commandMenuItem) => commandMenuItem.isPinned === true,
-      ),
+    () => commandMenuItems.filter((item) => item.isPinned === true),
     [commandMenuItems],
   );
 
@@ -71,25 +68,21 @@ export const PinnedCommandMenuItemButtons = () => {
         <NodeDimension onDimensionChange={onContainerDimensionChange}>
           <StyledContainer>
             <StyledItemsContainer>
-              {pinnedInlineCommandMenuItems.map(
-                (pinnedInlineCommandMenuItem) => (
-                  <StyledCommandMenuItemContainer
-                    key={pinnedInlineCommandMenuItem.key}
-                    layout
-                    initial={{ width: 0, opacity: 0 }}
-                    animate={{ width: 'unset', opacity: 1 }}
-                    exit={{ width: 0, opacity: 0 }}
-                    transition={{
-                      duration: theme.animation.duration.instant,
-                      ease: 'easeInOut',
-                    }}
-                  >
-                    <CommandMenuItemComponent
-                      commandMenuItem={pinnedInlineCommandMenuItem}
-                    />
-                  </StyledCommandMenuItemContainer>
-                ),
-              )}
+              {pinnedInlineCommandMenuItems.map((item) => (
+                <StyledCommandMenuItemContainer
+                  key={item.id}
+                  layout
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: 'unset', opacity: 1 }}
+                  exit={{ width: 0, opacity: 0 }}
+                  transition={{
+                    duration: theme.animation.duration.instant,
+                    ease: 'easeInOut',
+                  }}
+                >
+                  <CommandMenuItemRenderer item={item} />
+                </StyledCommandMenuItemContainer>
+              ))}
             </StyledItemsContainer>
           </StyledContainer>
         </NodeDimension>

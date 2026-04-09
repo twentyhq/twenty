@@ -2,20 +2,17 @@ import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMe
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { PinnedCommandMenuItemsInlineMeasurements } from '@/command-menu-item/display/components/PinnedCommandMenuItemsInlineMeasurements';
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/constants/PinnedCommandMenuItemsGap';
+import { interpolateCommandMenuItemFields } from '@/command-menu-item/display/hooks/useInterpolatedCommandMenuItemFields';
 import { usePinnedCommandMenuItemsInlineLayout } from '@/command-menu-item/display/hooks/usePinnedCommandMenuItemsInlineLayout';
+import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { mainContextStoreHasSelectedRecordsSelector } from '@/context-store/states/selectors/mainContextStoreHasSelectedRecordsSelector';
 import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
-import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
-import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
-import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useContext, useMemo } from 'react';
-import { interpolateCommandMenuItemTemplate } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
@@ -72,50 +69,15 @@ export const PinnedCommandMenuItemButtonsEditMode = () => {
     [mainContextStoreHasSelectedRecords],
   );
 
-  const interpolateLabel = (rawLabel: string | null | undefined) =>
-    interpolateCommandMenuItemTemplate({
-      label: rawLabel,
-      context: commandMenuContextApi,
-    });
-
-  const pinnedCommandMenuItems: CommandMenuItemConfig[] = useMemo(
+  const pinnedCommandMenuItems = useMemo(
     () =>
       commandMenuItemsDraft
         .filter(
           doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
         )
         .filter((item) => allowedAvailabilityTypes.has(item.availabilityType))
-        .filter((item) => item.isPinned)
-        .map((item) => {
-          const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
-          const label = interpolateLabel(item.label) ?? item.label;
-          const shortLabel = interpolateLabel(item.shortLabel);
-          const key = `edit-preview-${item.id}`;
-
-          return {
-            type: CommandMenuItemType.Standard,
-            scope: CommandMenuItemScope.Global,
-            key,
-            label,
-            shortLabel,
-            position: item.position,
-            Icon,
-            isPinned: true,
-            component: (
-              <CommandMenuButton
-                command={{ key, label, shortLabel, Icon }}
-                disabled
-              />
-            ),
-          };
-        }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      currentObjectMetadataItemId,
-      allowedAvailabilityTypes,
-      commandMenuContextApi,
-      getIcon,
-    ],
+        .filter((item) => item.isPinned),
+    [commandMenuItemsDraft, currentObjectMetadataItemId, allowedAvailabilityTypes],
   );
 
   const {
@@ -142,10 +104,18 @@ export const PinnedCommandMenuItemButtonsEditMode = () => {
         <NodeDimension onDimensionChange={onContainerDimensionChange}>
           <StyledContainer>
             <StyledItemsContainer>
-              {pinnedInlineCommandMenuItems.map(
-                (pinnedInlineCommandMenuItem) => (
+              {pinnedInlineCommandMenuItems.map((item) => {
+                const { iconKey, label, shortLabel } =
+                  interpolateCommandMenuItemFields(
+                    item,
+                    commandMenuContextApi,
+                  );
+
+                const Icon = getIcon(iconKey, COMMAND_MENU_DEFAULT_ICON);
+
+                return (
                   <StyledCommandMenuItemContainer
-                    key={pinnedInlineCommandMenuItem.key}
+                    key={item.id}
                     layout
                     initial={{ width: 0, opacity: 0 }}
                     animate={{ width: 'unset', opacity: 1 }}
@@ -155,10 +125,18 @@ export const PinnedCommandMenuItemButtonsEditMode = () => {
                       ease: 'easeInOut',
                     }}
                   >
-                    {pinnedInlineCommandMenuItem.component}
+                    <CommandMenuButton
+                      command={{
+                        key: item.id,
+                        label,
+                        shortLabel,
+                        Icon,
+                      }}
+                      disabled
+                    />
                   </StyledCommandMenuItemContainer>
-                ),
-              )}
+                );
+              })}
             </StyledItemsContainer>
           </StyledContainer>
         </NodeDimension>

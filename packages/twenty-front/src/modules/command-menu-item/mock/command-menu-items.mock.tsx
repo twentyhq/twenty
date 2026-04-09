@@ -1,79 +1,80 @@
-import { msg } from '@lingui/core/macro';
-import { AppPath } from 'twenty-shared/types';
 import {
-  IconFileExport,
-  IconHeart,
-  IconTrash,
-  IconUser,
-} from 'twenty-ui/display';
+  CommandMenuItemAvailabilityType,
+  EngineComponentKey,
+  type CommandMenuItemFieldsFragment,
+} from '~/generated-metadata/graphql';
 
-import { Command } from '@/command-menu-item/display/components/Command';
-import { CommandMenuItemDisplay } from '@/command-menu-item/display/components/CommandMenuItemDisplay';
-import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
-import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
-import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
-import { EngineComponentKey } from '~/generated-metadata/graphql';
-import { getAppPath } from 'twenty-shared/utils';
-
-export const createMockCommandMenuItems = ({
-  deleteMock = () => {},
-  addToFavoritesMock = () => {},
-  exportMock = () => {},
-}: {
-  deleteMock?: () => void;
-  addToFavoritesMock?: () => void;
-  exportMock?: () => void;
-}): CommandMenuItemConfig[] => [
+export const createMockCommandMenuItems = (): CommandMenuItemFieldsFragment[] => [
   {
-    type: CommandMenuItemType.Standard,
-    scope: CommandMenuItemScope.RecordSelection,
-    key: EngineComponentKey.ADD_TO_FAVORITES,
-    label: msg`Add to favorites`,
-    shortLabel: msg`Add to favorites`,
+    __typename: 'CommandMenuItem',
+    id: 'mock-add-to-favorites',
+    workflowVersionId: null,
+    frontComponentId: null,
+    frontComponent: null,
+    engineComponentKey: EngineComponentKey.ADD_TO_FAVORITES,
+    label: 'Add to favorites',
+    icon: 'IconHeart',
+    shortLabel: 'Add to favorites',
     position: 2,
     isPinned: true,
-    Icon: IconHeart,
-    component: <Command onClick={addToFavoritesMock} />,
+    hotKeys: null,
+    conditionalAvailabilityExpression: null,
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    availabilityObjectMetadataId: null,
+    payload: null,
   },
   {
-    type: CommandMenuItemType.Standard,
-    scope: CommandMenuItemScope.RecordSelection,
-    key: EngineComponentKey.EXPORT_FROM_RECORD_INDEX,
-    label: msg`Export`,
-    shortLabel: msg`Export`,
+    __typename: 'CommandMenuItem',
+    id: 'mock-export',
+    workflowVersionId: null,
+    frontComponentId: null,
+    frontComponent: null,
+    engineComponentKey: EngineComponentKey.EXPORT_FROM_RECORD_INDEX,
+    label: 'Export',
+    icon: 'IconFileExport',
+    shortLabel: 'Export',
     position: 4,
-    Icon: IconFileExport,
     isPinned: false,
-    component: <Command onClick={exportMock} />,
+    hotKeys: null,
+    conditionalAvailabilityExpression: null,
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    availabilityObjectMetadataId: null,
+    payload: null,
   },
   {
-    type: CommandMenuItemType.Standard,
-    scope: CommandMenuItemScope.RecordSelection,
-    key: EngineComponentKey.DELETE_SINGLE_RECORD,
-    label: msg`Delete`,
-    shortLabel: msg`Delete`,
+    __typename: 'CommandMenuItem',
+    id: 'mock-delete',
+    workflowVersionId: null,
+    frontComponentId: null,
+    frontComponent: null,
+    engineComponentKey: EngineComponentKey.DELETE_SINGLE_RECORD,
+    label: 'Delete',
+    icon: 'IconTrash',
+    shortLabel: 'Delete',
     position: 7,
-    Icon: IconTrash,
     isPinned: true,
-    component: <Command onClick={deleteMock} />,
+    hotKeys: null,
+    conditionalAvailabilityExpression: null,
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    availabilityObjectMetadataId: null,
+    payload: null,
   },
   {
-    type: CommandMenuItemType.Navigation,
-    scope: CommandMenuItemScope.Global,
-    key: EngineComponentKey.GO_TO_PEOPLE,
-    label: msg`Go to People`,
-    shortLabel: msg`People`,
+    __typename: 'CommandMenuItem',
+    id: 'mock-go-to-people',
+    workflowVersionId: null,
+    frontComponentId: null,
+    frontComponent: null,
+    engineComponentKey: EngineComponentKey.GO_TO_PEOPLE,
+    label: 'Go to People',
+    icon: 'IconUser',
+    shortLabel: 'People',
     position: 19,
-    Icon: IconUser,
     isPinned: false,
-    component: (
-      <CommandMenuItemDisplay
-        to={getAppPath(AppPath.RecordIndexPage, {
-          objectNamePlural: CoreObjectNamePlural.Person,
-        })}
-      />
-    ),
     hotKeys: ['G', 'P'],
+    conditionalAvailabilityExpression: null,
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    availabilityObjectMetadataId: null,
+    payload: null,
   },
 ];

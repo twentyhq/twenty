@@ -80,7 +80,7 @@ export const SidePanelRecordPageFieldSettings = () => {
   return (
     <StyledContainer>
       <StyledSidePanelContainer>
-        <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
+        <SidePanelList selectableItemIds={selectableItemIds}>
           <SidePanelGroup heading={t`Data and display`}>
             <SelectableListItem itemId="field">
               <CommandMenuItemDropdown

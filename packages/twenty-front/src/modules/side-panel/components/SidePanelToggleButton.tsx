@@ -19,7 +19,7 @@ const StyledTooltipWrapper = styled.div`
   font-size: ${themeCssVariables.font.size.md};
 `;
 
-export const CommandMenuItemMoreActionsButton = () => {
+export const SidePanelToggleButton = () => {
   const { toggleSidePanelMenu } = useSidePanelMenu();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
 

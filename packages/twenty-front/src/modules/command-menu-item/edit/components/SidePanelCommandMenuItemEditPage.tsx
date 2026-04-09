@@ -1,6 +1,7 @@
 import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMenuContextApi';
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
+import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
 import { CommandMenuItemEditRecordSelectionDropdown } from '@/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown';
 import { CommandMenuItemOptionsDropdown } from '@/command-menu-item/edit/components/CommandMenuItemOptionsDropdown';
 import { useReorderCommandMenuItemsInDraft } from '@/command-menu-item/edit/hooks/useReorderCommandMenuItemsInDraft';
@@ -40,17 +41,6 @@ import {
   type CommandMenuItemFieldsFragment,
 } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
-
-const partitionByPinned = (items: CommandMenuItemFieldsFragment[]) => {
-  const pinned = items
-    .filter((item) => item.isPinned)
-    .sort((a, b) => a.position - b.position);
-  const other = items
-    .filter((item) => !item.isPinned)
-    .sort((a, b) => a.position - b.position);
-
-  return { pinned, other };
-};
 
 const StyledContainer = styled.div`
   display: flex;
@@ -124,9 +114,8 @@ export const SidePanelCommandMenuItemEditPage = () => {
       context: commandMenuContextApi,
     }) ?? item.label;
 
-  const { pinned: allPinnedItems, other: allOtherItems } = partitionByPinned(
-    filteredCommandMenuItems,
-  );
+  const { pinned: allPinnedItems, other: allOtherItems } =
+    groupCommandMenuItems(filteredCommandMenuItems);
 
   const normalizedSearch =
     sidePanelSearch.length > 0
@@ -247,7 +236,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
         />
       </StyledViewbar>
       <StyledContent>
-        <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
+        <SidePanelList selectableItemIds={selectableItemIds}>
           <SidePanelGroup heading={t`Pinned`}>
             <DraggableList
               onDragEnd={handlePinnedDragEnd}

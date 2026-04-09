@@ -1,11 +1,12 @@
-import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
-import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
+import { type CommandMenuContextApi } from 'twenty-shared/types';
+import { interpolateCommandMenuItemTemplate } from 'twenty-shared/utils';
+import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const checkInShortcuts = (
-  commandMenuItem: CommandMenuItemConfig,
+  commandMenuItem: CommandMenuItemFieldsFragment,
   search: string,
 ) => {
   const concatenatedString = commandMenuItem.hotKeys?.join('') ?? '';
@@ -14,34 +15,46 @@ const checkInShortcuts = (
 };
 
 const checkInLabels = (
-  commandMenuItem: CommandMenuItemConfig,
+  commandMenuItem: CommandMenuItemFieldsFragment,
   search: string,
+  commandMenuContextApi: CommandMenuContextApi,
 ) => {
-  const commandMenuItemLabel = getCommandMenuItemLabel(commandMenuItem.label);
-  if (isNonEmptyString(commandMenuItemLabel)) {
+  const label =
+    interpolateCommandMenuItemTemplate({
+      label: commandMenuItem.label,
+      context: commandMenuContextApi,
+    }) ?? commandMenuItem.label;
+
+  if (isNonEmptyString(label)) {
     const searchNormalized = normalizeSearchText(search);
-    return normalizeSearchText(commandMenuItemLabel).includes(searchNormalized);
+    return normalizeSearchText(label).includes(searchNormalized);
   }
   return false;
 };
 
 type UseFilterCommandMenuItemsWithSidePanelSearchProps = {
   sidePanelSearch: string;
+  commandMenuContextApi: CommandMenuContextApi;
 };
 
 export const useFilterCommandMenuItemsWithSidePanelSearch = ({
   sidePanelSearch,
+  commandMenuContextApi,
 }: UseFilterCommandMenuItemsWithSidePanelSearchProps) => {
   const filterCommandMenuItemsWithSidePanelSearch = useCallback(
-    (commandMenuItems: CommandMenuItemConfig[]) => {
+    (commandMenuItems: CommandMenuItemFieldsFragment[]) => {
       return commandMenuItems.filter((commandMenuItem) =>
         sidePanelSearch.length > 0
           ? checkInShortcuts(commandMenuItem, sidePanelSearch) ||
-            checkInLabels(commandMenuItem, sidePanelSearch)
+            checkInLabels(
+              commandMenuItem,
+              sidePanelSearch,
+              commandMenuContextApi,
+            )
           : true,
       );
     },
-    [sidePanelSearch],
+    [sidePanelSearch, commandMenuContextApi],
   );
 
   return {

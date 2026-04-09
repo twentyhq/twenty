@@ -1,5 +1,4 @@
-import { CommandMenuItemComponent } from '@/command-menu-item/display/components/CommandMenuItemComponent';
-import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
+import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { getSidePanelCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getSidePanelCommandMenuDropdownIdFromCommandMenuId';
@@ -8,9 +7,10 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { sidePanelWidgetFooterActionsState } from '@/ui/layout/side-panel/states/sidePanelWidgetFooterActionsState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { HorizontalSeparator } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 export const RecordPageSidePanelCommandMenuDropdown = () => {
   const { commandMenuItems } = useContext(CommandMenuContext);
@@ -32,16 +32,19 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
     (widgetAction) => widgetAction.isPinned === false,
   );
 
-  const recordSelectionCommandMenuItems = commandMenuItems.filter(
-    (commandMenuItem) =>
-      commandMenuItem.scope === CommandMenuItemScope.RecordSelection,
+  const recordSelectionCommandMenuItems = useMemo(
+    () =>
+      commandMenuItems.filter(
+        (item) =>
+          item.availabilityType ===
+          CommandMenuItemAvailabilityType.RECORD_SELECTION,
+      ),
+    [commandMenuItems],
   );
 
   const selectableItemIdArray = [
     ...dropdownWidgetActions.map((widgetAction) => widgetAction.key),
-    ...recordSelectionCommandMenuItems.map(
-      (commandMenuItem) => commandMenuItem.key,
-    ),
+    ...recordSelectionCommandMenuItems.map((item) => item.id),
   ];
 
   return (
@@ -65,11 +68,8 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
         recordSelectionCommandMenuItems.length > 0 && (
           <HorizontalSeparator noMargin />
         )}
-      {recordSelectionCommandMenuItems.map((commandMenuItem) => (
-        <CommandMenuItemComponent
-          commandMenuItem={commandMenuItem}
-          key={commandMenuItem.key}
-        />
+      {recordSelectionCommandMenuItems.map((item) => (
+        <CommandMenuItemRenderer item={item} key={item.id} />
       ))}
     </OptionsDropdownMenu>
   );

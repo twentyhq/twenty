@@ -1,9 +1,9 @@
-import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/constants/PinnedCommandMenuItemsGap';
 import { commandMenuPinnedInlineLayoutState } from '@/command-menu-item/display/states/commandMenuPinnedInlineLayoutState';
 import { getVisibleCommandMenuItemCountForContainerWidth } from '@/command-menu-item/display/utils/getVisibleCommandMenuItemCountForContainerWidth';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useCallback, useMemo } from 'react';
+import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 type ElementDimensions = {
   width: number;
@@ -11,7 +11,7 @@ type ElementDimensions = {
 };
 
 type UsePinnedCommandMenuItemsInlineLayoutParams = {
-  pinnedCommandMenuItems: CommandMenuItemConfig[];
+  pinnedCommandMenuItems: CommandMenuItemFieldsFragment[];
 };
 
 export const usePinnedCommandMenuItemsInlineLayout = ({
@@ -20,22 +20,9 @@ export const usePinnedCommandMenuItemsInlineLayout = ({
   const [commandMenuPinnedInlineLayout, setCommandMenuPinnedInlineLayout] =
     useAtomState(commandMenuPinnedInlineLayoutState);
 
-  const pinnedCommandMenuItemsSortedByPosition = useMemo(
-    () =>
-      [...pinnedCommandMenuItems].sort(
-        (firstPinnedCommandMenuItem, secondPinnedCommandMenuItem) =>
-          firstPinnedCommandMenuItem.position -
-          secondPinnedCommandMenuItem.position,
-      ),
-    [pinnedCommandMenuItems],
-  );
-
   const pinnedCommandMenuItemKeysInDisplayOrder = useMemo(
-    () =>
-      pinnedCommandMenuItemsSortedByPosition.map(
-        (pinnedCommandMenuItem) => pinnedCommandMenuItem.key,
-      ),
-    [pinnedCommandMenuItemsSortedByPosition],
+    () => pinnedCommandMenuItems.map((item) => item.id),
+    [pinnedCommandMenuItems],
   );
 
   const visiblePinnedCommandMenuItemCount = useMemo(
@@ -54,19 +41,14 @@ export const usePinnedCommandMenuItemsInlineLayout = ({
 
   const pinnedInlineCommandMenuItems = useMemo(
     () =>
-      pinnedCommandMenuItemsSortedByPosition.slice(
-        0,
-        visiblePinnedCommandMenuItemCount,
-      ),
-    [pinnedCommandMenuItemsSortedByPosition, visiblePinnedCommandMenuItemCount],
+      pinnedCommandMenuItems.slice(0, visiblePinnedCommandMenuItemCount),
+    [pinnedCommandMenuItems, visiblePinnedCommandMenuItemCount],
   );
 
   const pinnedOverflowCommandMenuItems = useMemo(
     () =>
-      pinnedCommandMenuItemsSortedByPosition.slice(
-        visiblePinnedCommandMenuItemCount,
-      ),
-    [pinnedCommandMenuItemsSortedByPosition, visiblePinnedCommandMenuItemCount],
+      pinnedCommandMenuItems.slice(visiblePinnedCommandMenuItemCount),
+    [pinnedCommandMenuItems, visiblePinnedCommandMenuItemCount],
   );
 
   const onContainerDimensionChange = useCallback(

@@ -80,10 +80,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
         value={{ instanceId: widgetInEditMode.id }}
       >
         <StyledSettingsContainer>
-          <SidePanelList
-            commandGroups={[]}
-            selectableItemIds={selectableItemIds}
-          >
+          <SidePanelList selectableItemIds={selectableItemIds}>
             <SidePanelGroup heading={t`Data`}>
               <SelectableListItem itemId="record-table-source">
                 <CommandMenuItemDropdown

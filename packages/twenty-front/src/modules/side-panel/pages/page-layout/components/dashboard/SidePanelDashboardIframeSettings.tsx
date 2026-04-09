@@ -87,7 +87,7 @@ export const SidePanelDashboardIframeSettings = () => {
   return (
     <StyledContainer>
       <StyledSidePanelContainer>
-        <SidePanelList commandGroups={[]} selectableItemIds={[]}>
+        <SidePanelList selectableItemIds={[]}>
           <SidePanelGroup heading={t`URL to Embed`}>
             <SidePanelGroupFormContainer>
               <FormTextFieldInput
