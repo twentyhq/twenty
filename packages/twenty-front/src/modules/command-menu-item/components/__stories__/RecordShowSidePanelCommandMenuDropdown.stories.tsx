@@ -40,7 +40,10 @@ const meta: Meta<typeof RecordPageSidePanelCommandMenuDropdown> = {
                   displayType: 'dropdownItem',
                   containerType: 'command-menu-show-page-dropdown',
                   commandMenuItems: createMockCommandMenuItems(),
-                  commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
+                  commandMenuContextApi: {
+                    ...EMPTY_COMMAND_MENU_CONTEXT_API,
+                    isInSidePanel: true,
+                  },
                 }}
               >
                 <Story />

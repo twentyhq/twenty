@@ -125,9 +125,7 @@ export const PageLayoutRecordPageRenderer = ({
                       variant={
                         commandMenuItem.isPrimaryCTA ? 'primary' : 'secondary'
                       }
-                      accent={
-                        commandMenuItem.isPrimaryCTA ? 'blue' : 'default'
-                      }
+                      accent={commandMenuItem.isPrimaryCTA ? 'blue' : 'default'}
                       title={commandMenuItem.label}
                       Icon={commandMenuItem.Icon}
                       hotkeys={commandMenuItem.hotkeys}
