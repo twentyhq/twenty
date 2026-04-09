@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
-import { BackfillWorkspaceIdToIndirectEntitiesCommand } from 'src/database/commands/upgrade-version-command/1-22/1-22-workspace-command-1775744800000-backfill-workspace-id-to-indirect-entities.command';
 import { BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand } from 'src/database/commands/upgrade-version-command/1-22/1-22-workspace-command-1780000001000-backfill-page-layouts-and-fields-widget-view-fields.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -16,9 +15,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceIteratorModule,
     WorkspaceMigrationModule,
   ],
-  providers: [
-    BackfillWorkspaceIdToIndirectEntitiesCommand,
-    BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
-  ],
+  providers: [BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand],
 })
 export class V1_22_UpgradeVersionCommandModule {}
