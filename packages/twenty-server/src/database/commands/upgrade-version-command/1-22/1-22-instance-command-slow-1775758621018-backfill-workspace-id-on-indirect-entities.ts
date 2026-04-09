@@ -69,12 +69,6 @@ export class BackfillWorkspaceIdOnIndirectEntitiesSlowInstanceCommand
             AND t."workspaceId" IS NULL`,
       );
     }
-
-    for (const { table } of BACKFILL_DEFINITIONS) {
-      await dataSource.query(
-        `DELETE FROM "core"."${table}" WHERE "workspaceId" IS NULL`,
-      );
-    }
   }
 
   public async up(queryRunner: QueryRunner): Promise<void> {
