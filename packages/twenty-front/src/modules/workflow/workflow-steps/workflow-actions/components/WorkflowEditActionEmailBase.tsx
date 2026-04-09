@@ -1,12 +1,12 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { getMissingDraftEmailScopes } from '@/accounts/utils/hasMissingDraftEmailScopes';
 import { WorkflowSendEmailAttachments } from '@/advanced-text-editor/components/WorkflowSendEmailAttachments';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
 import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
+import { GET_CONNECTED_ACCOUNT_BY_ID } from '@/settings/accounts/graphql/queries/getConnectedAccountById';
+import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { Select } from '@/ui/input/components/Select';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -15,7 +15,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowEmailAction } from '@/workflow/types/WorkflowEmailAction';
@@ -23,6 +22,7 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { useEmailForm } from '@/workflow/workflow-steps/workflow-actions/hooks/useEmailForm';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
@@ -52,7 +52,6 @@ export const WorkflowEditActionEmailBase = ({
   action,
   actionOptions,
 }: WorkflowEditActionEmailBaseProps) => {
-  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { triggerApisOAuth } = useTriggerApisOAuth();
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
@@ -110,43 +109,40 @@ export const WorkflowEditActionEmailBase = ({
     handleFieldChange('connectedAccountId', connectedAccountId);
   };
 
-  const filter: { or: object[] } = {
-    or: [
-      {
-        userWorkspaceId: {
-          eq: currentWorkspaceMember?.id,
-        },
-      },
-    ],
-  };
+  const { accounts: myAccounts, loading: myAccountsLoading } =
+    useMyConnectedAccounts();
 
-  if (
-    isDefined(action.settings.input.connectedAccountId) &&
-    action.settings.input.connectedAccountId !== ''
-  ) {
-    filter.or.push({
-      id: {
-        eq: action.settings.input.connectedAccountId,
-      },
-    });
-  }
+  const configuredAccountId = formData.connectedAccountId;
+  const isConfiguredAccountMine = myAccounts.some(
+    (account) => account.id === configuredAccountId,
+  );
 
-  const { records: accounts, loading } = useFindManyRecords<ConnectedAccount>({
-    objectNameSingular: 'connectedAccount',
-    filter,
-    recordGqlFields: {
-      id: true,
-      handle: true,
-      provider: true,
-      scopes: true,
-      userWorkspaceId: true,
-      connectionParameters: true,
-    },
+  const { data: otherAccountData, loading: otherAccountLoading } = useQuery<{
+    connectedAccountById: Pick<
+      ConnectedAccount,
+      | 'id'
+      | 'handle'
+      | 'provider'
+      | 'scopes'
+      | 'userWorkspaceId'
+      | 'connectionParameters'
+    > | null;
+  }>(GET_CONNECTED_ACCOUNT_BY_ID, {
+    variables: { id: configuredAccountId },
+    skip:
+      !isDefined(configuredAccountId) ||
+      configuredAccountId === '' ||
+      isConfiguredAccountMine,
   });
 
-  const selectedAccount = accounts.find(
-    (account) => account.id === formData.connectedAccountId,
-  );
+  const loading = myAccountsLoading || otherAccountLoading;
+
+  const otherAccount = otherAccountData?.connectedAccountById ?? null;
+
+  const selectedAccount =
+    myAccounts.find((account) => account.id === configuredAccountId) ??
+    otherAccount ??
+    undefined;
 
   const missingDraftScopes =
     action.type === 'DRAFT_EMAIL' && isDefined(selectedAccount)
@@ -169,7 +165,7 @@ export const WorkflowEditActionEmailBase = ({
   };
   const connectedAccountOptions: SelectOption<string | null>[] = [];
 
-  accounts.forEach((account) => {
+  myAccounts.forEach((account) => {
     if (
       account.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
       !isDefined(account.connectionParameters?.SMTP)
@@ -177,16 +173,24 @@ export const WorkflowEditActionEmailBase = ({
       return;
     }
 
-    const selectOption = {
+    connectedAccountOptions.push({
       label: account.handle,
       value: account.id,
-    };
-    if (account.userWorkspaceId === currentWorkspaceMember?.id) {
-      connectedAccountOptions.push(selectOption);
-    } else {
-      emptyOption = selectOption;
-    }
+    });
   });
+
+  if (
+    isDefined(otherAccount) &&
+    !(
+      otherAccount.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
+      !isDefined(otherAccount.connectionParameters?.SMTP)
+    )
+  ) {
+    emptyOption = {
+      label: otherAccount.handle,
+      value: otherAccount.id,
+    };
+  }
 
   const navigate = useNavigateSettings();
 

@@ -116,6 +116,7 @@ export class PageLayoutResetService {
     const widgetToUpdate: FlatPageLayoutWidget = {
       ...widget,
       overrides: null,
+      universalOverrides: null,
       updatedAt: now,
     };
 
@@ -547,15 +548,10 @@ export class PageLayoutResetService {
         now,
       });
 
-    const viewFieldsToReset = fieldsToReset.map((field) => ({
-      ...field,
-      universalOverrides: null,
-    }));
-
     return {
       viewFieldGroupsToUpdate: groupsToReset,
       viewFieldGroupsToDelete: groupsToDelete,
-      viewFieldsToUpdate: viewFieldsToReset,
+      viewFieldsToUpdate: fieldsToReset,
       viewFieldsToDelete: fieldsToDelete,
     };
   }

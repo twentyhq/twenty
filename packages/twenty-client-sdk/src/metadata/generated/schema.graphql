@@ -1634,12 +1634,15 @@ type ClientAIModelConfig {
   modelFamily: ModelFamily
   modelFamilyLabel: String
   sdkPackage: String
-  inputCostPerMillionTokensInCredits: Float!
-  outputCostPerMillionTokensInCredits: Float!
+  inputCostPerMillionTokens: Float
+  outputCostPerMillionTokens: Float
   nativeCapabilities: NativeModelCapabilities
   isDeprecated: Boolean
   isRecommended: Boolean
   providerName: String
+  providerLabel: String
+  contextWindowTokens: Float
+  maxOutputTokens: Float
   dataResidency: String
 }
 
@@ -2790,6 +2793,34 @@ type ConnectedAccountDTO {
   updatedAt: DateTime!
 }
 
+type PublicConnectionParametersOutput {
+  host: String!
+  port: Float!
+  username: String
+  secure: Boolean
+}
+
+type PublicImapSmtpCaldavConnectionParameters {
+  IMAP: PublicConnectionParametersOutput
+  SMTP: PublicConnectionParametersOutput
+  CALDAV: PublicConnectionParametersOutput
+}
+
+type ConnectedAccountPublicDTO {
+  id: UUID!
+  handle: String!
+  provider: String!
+  lastCredentialsRefreshedAt: DateTime
+  authFailedAt: DateTime
+  handleAliases: [String!]
+  scopes: [String!]
+  lastSignedInAt: DateTime
+  userWorkspaceId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  connectionParameters: PublicImapSmtpCaldavConnectionParameters
+}
+
 type SendEmailOutput {
   success: Boolean!
   error: String
@@ -3208,6 +3239,7 @@ type Query {
   myMessageFolders(messageChannelId: UUID): [MessageFolder!]!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
   myConnectedAccounts: [ConnectedAccountDTO!]!
+  connectedAccountById(id: UUID!): ConnectedAccountPublicDTO
   connectedAccounts: [ConnectedAccountDTO!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   webhooks: [Webhook!]!
@@ -3352,6 +3384,7 @@ enum EventLogTable {
   PAGEVIEW
   OBJECT_EVENT
   USAGE_EVENT
+  APPLICATION_LOG
 }
 
 input EventLogFiltersInput {
@@ -3579,7 +3612,9 @@ type Mutation {
   userLookupAdminPanel(userIdentifier: String!): UserLookup!
   updateWorkspaceFeatureFlag(workspaceId: UUID!, featureFlag: String!, value: Boolean!): Boolean!
   setAdminAiModelEnabled(modelId: String!, enabled: Boolean!): Boolean!
+  setAdminAiModelsEnabled(modelIds: [String!]!, enabled: Boolean!): Boolean!
   setAdminAiModelRecommended(modelId: String!, recommended: Boolean!): Boolean!
+  setAdminAiModelsRecommended(modelIds: [String!]!, recommended: Boolean!): Boolean!
   setAdminDefaultAiModel(role: AiModelRole!, modelId: String!): Boolean!
   createDatabaseConfigVariable(key: String!, value: JSON!): Boolean!
   updateDatabaseConfigVariable(key: String!, value: JSON!): Boolean!
@@ -3996,6 +4031,7 @@ input CreatePageLayoutWidgetInput {
 }
 
 input UpdatePageLayoutWidgetInput {
+  pageLayoutTabId: UUID
   title: String
   type: WidgetType
   objectMetadataId: UUID

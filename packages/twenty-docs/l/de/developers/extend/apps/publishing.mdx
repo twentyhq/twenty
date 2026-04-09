@@ -66,7 +66,7 @@ Der Freigabelink verwendet die Basis-URL des Servers (ohne Workspace-Subdomain),
 
 ### Versionsverwaltung
 
-When updating an already deployed tarball app, the server requires the `version` in `package.json` to be **strictly higher** (per [semver](https://semver.org) ordering) than the currently deployed version. Re-deploying the same version, or pushing a lower one, is rejected before the tarball is stored — you'll see a `VERSION_ALREADY_EXISTS` error from the CLI.
+Beim Aktualisieren einer bereits bereitgestellten Tarball-App verlangt der Server, dass die `version` in `package.json` **strikt höher** (gemäß der [semver](https://semver.org)-Reihenfolge) ist als die derzeit bereitgestellte Version. Re-deploying the same version, or pushing a lower one, is rejected before the tarball is stored — you'll see a `VERSION_ALREADY_EXISTS` error from the CLI.
 
 So veröffentlichen Sie ein Update:
 

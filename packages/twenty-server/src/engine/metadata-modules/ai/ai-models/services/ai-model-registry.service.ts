@@ -361,6 +361,22 @@ export class AiModelRegistryService {
     await this.preferencesService.setModelRecommended(modelId, recommended);
   }
 
+  async setModelsAdminEnabled(
+    modelIds: string[],
+    enabled: boolean,
+  ): Promise<void> {
+    modelIds.forEach((id) => this.validateModelInRegistry(id));
+    await this.preferencesService.setModelsAdminEnabled(modelIds, enabled);
+  }
+
+  async setModelsRecommended(
+    modelIds: string[],
+    recommended: boolean,
+  ): Promise<void> {
+    modelIds.forEach((id) => this.validateModelInRegistry(id));
+    await this.preferencesService.setModelsRecommended(modelIds, recommended);
+  }
+
   async setDefaultModel(role: AiModelRole, modelId: string): Promise<void> {
     this.validateModelInRegistry(modelId);
     await this.preferencesService.setDefaultModel(role, modelId);

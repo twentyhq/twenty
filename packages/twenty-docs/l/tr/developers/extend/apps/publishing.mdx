@@ -66,7 +66,7 @@ Paylaşım bağlantısı, sunucunun temel URL’sini (herhangi bir çalışma al
 
 ### Sürüm yönetimi
 
-When updating an already deployed tarball app, the server requires the `version` in `package.json` to be **strictly higher** (per [semver](https://semver.org) ordering) than the currently deployed version. Re-deploying the same version, or pushing a lower one, is rejected before the tarball is stored — you'll see a `VERSION_ALREADY_EXISTS` error from the CLI.
+Halihazırda dağıtılmış bir tarball uygulamasını güncellerken, sunucu `package.json` içindeki `version` değerinin, şu anda dağıtılmış sürümden ([semver](https://semver.org) sıralamasına göre) **kesinlikle daha yüksek** olmasını gerektirir. Re-deploying the same version, or pushing a lower one, is rejected before the tarball is stored — you'll see a `VERSION_ALREADY_EXISTS` error from the CLI.
 
 Bir güncelleme yayımlamak için:
 

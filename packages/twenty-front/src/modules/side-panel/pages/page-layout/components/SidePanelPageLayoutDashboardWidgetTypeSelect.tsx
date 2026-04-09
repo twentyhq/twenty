@@ -1,5 +1,6 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { FIND_MANY_FRONT_COMPONENTS } from '@/front-components/graphql/queries/findManyFrontComponents';
+import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { useCreatePageLayoutFrontComponentWidget } from '@/page-layout/hooks/useCreatePageLayoutFrontComponentWidget';
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
 import { useCreatePageLayoutIframeWidget } from '@/page-layout/hooks/useCreatePageLayoutIframeWidget';
@@ -10,6 +11,7 @@ import { useRemovePageLayoutWidgetAndPreservePosition } from '@/page-layout/hook
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
+import { useCreateViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useCreateViewForRecordTableWidget';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -23,7 +25,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { SidePanelPages } from 'twenty-shared/types';
+import { CoreObjectNameSingular, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconAlignBoxLeftTop,
@@ -85,6 +87,19 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
 
   const { removePageLayoutWidgetAndPreservePosition } =
     useRemovePageLayoutWidgetAndPreservePosition(pageLayoutId);
+
+  const { createViewForRecordTableWidget } =
+    useCreateViewForRecordTableWidget(pageLayoutId);
+  const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
+
+  const firstAvailableObjectMetadataItem =
+    readableObjectMetadataItems.find(
+      (objectMetadataItem) =>
+        objectMetadataItem.nameSingular === CoreObjectNameSingular.Company,
+    ) ||
+    [...readableObjectMetadataItems].sort((first, second) =>
+      first.labelPlural.localeCompare(second.labelPlural),
+    )[0];
 
   const isRecordTableWidgetEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_TABLE_WIDGET_ENABLED,
@@ -179,7 +194,7 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
     closeSidePanelMenu();
   };
 
-  const handleNavigateToRecordTableSettings = () => {
+  const handleNavigateToRecordTableSettings = async () => {
     if (
       isExistingWidgetMissingOrDifferentType(
         existingWidget?.type,
@@ -190,9 +205,16 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
         removePageLayoutWidgetAndPreservePosition(pageLayoutEditingWidgetId);
       }
 
-      const newRecordTableWidget = createPageLayoutRecordTableWidget();
+      const newRecordTableWidget = createPageLayoutRecordTableWidget(
+        firstAvailableObjectMetadataItem,
+      );
 
       setPageLayoutEditingWidgetId(newRecordTableWidget.id);
+
+      await createViewForRecordTableWidget(
+        newRecordTableWidget.id,
+        firstAvailableObjectMetadataItem,
+      );
     }
 
     navigatePageLayoutSidePanel({
@@ -251,7 +273,7 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
           >
             <CommandMenuItem
               Icon={IconTable}
-              label={t`Record Table`}
+              label={t`View`}
               id="record-table"
               onClick={handleNavigateToRecordTableSettings}
             />

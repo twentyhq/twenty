@@ -1345,12 +1345,15 @@ export interface ClientAIModelConfig {
     modelFamily?: ModelFamily
     modelFamilyLabel?: Scalars['String']
     sdkPackage?: Scalars['String']
-    inputCostPerMillionTokensInCredits: Scalars['Float']
-    outputCostPerMillionTokensInCredits: Scalars['Float']
+    inputCostPerMillionTokens?: Scalars['Float']
+    outputCostPerMillionTokens?: Scalars['Float']
     nativeCapabilities?: NativeModelCapabilities
     isDeprecated?: Scalars['Boolean']
     isRecommended?: Scalars['Boolean']
     providerName?: Scalars['String']
+    providerLabel?: Scalars['String']
+    contextWindowTokens?: Scalars['Float']
+    maxOutputTokens?: Scalars['Float']
     dataResidency?: Scalars['String']
     __typename: 'ClientAIModelConfig'
 }
@@ -2449,6 +2452,37 @@ export interface ConnectedAccountDTO {
     __typename: 'ConnectedAccountDTO'
 }
 
+export interface PublicConnectionParametersOutput {
+    host: Scalars['String']
+    port: Scalars['Float']
+    username?: Scalars['String']
+    secure?: Scalars['Boolean']
+    __typename: 'PublicConnectionParametersOutput'
+}
+
+export interface PublicImapSmtpCaldavConnectionParameters {
+    IMAP?: PublicConnectionParametersOutput
+    SMTP?: PublicConnectionParametersOutput
+    CALDAV?: PublicConnectionParametersOutput
+    __typename: 'PublicImapSmtpCaldavConnectionParameters'
+}
+
+export interface ConnectedAccountPublicDTO {
+    id: Scalars['UUID']
+    handle: Scalars['String']
+    provider: Scalars['String']
+    lastCredentialsRefreshedAt?: Scalars['DateTime']
+    authFailedAt?: Scalars['DateTime']
+    handleAliases?: Scalars['String'][]
+    scopes?: Scalars['String'][]
+    lastSignedInAt?: Scalars['DateTime']
+    userWorkspaceId: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    connectionParameters?: PublicImapSmtpCaldavConnectionParameters
+    __typename: 'ConnectedAccountPublicDTO'
+}
+
 export interface SendEmailOutput {
     success: Scalars['Boolean']
     error?: Scalars['String']
@@ -2775,6 +2809,7 @@ export interface Query {
     myMessageFolders: MessageFolder[]
     myMessageChannels: MessageChannel[]
     myConnectedAccounts: ConnectedAccountDTO[]
+    connectedAccountById?: ConnectedAccountPublicDTO
     connectedAccounts: ConnectedAccountDTO[]
     myCalendarChannels: CalendarChannel[]
     webhooks: Webhook[]
@@ -2845,7 +2880,7 @@ export type SortDirection = 'ASC' | 'DESC'
 /** Sort Nulls Options */
 export type SortNulls = 'NULLS_FIRST' | 'NULLS_LAST'
 
-export type EventLogTable = 'WORKSPACE_EVENT' | 'PAGEVIEW' | 'OBJECT_EVENT' | 'USAGE_EVENT'
+export type EventLogTable = 'WORKSPACE_EVENT' | 'PAGEVIEW' | 'OBJECT_EVENT' | 'USAGE_EVENT' | 'APPLICATION_LOG'
 
 export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH'
 
@@ -3031,7 +3066,9 @@ export interface Mutation {
     userLookupAdminPanel: UserLookup
     updateWorkspaceFeatureFlag: Scalars['Boolean']
     setAdminAiModelEnabled: Scalars['Boolean']
+    setAdminAiModelsEnabled: Scalars['Boolean']
     setAdminAiModelRecommended: Scalars['Boolean']
+    setAdminAiModelsRecommended: Scalars['Boolean']
     setAdminDefaultAiModel: Scalars['Boolean']
     createDatabaseConfigVariable: Scalars['Boolean']
     updateDatabaseConfigVariable: Scalars['Boolean']
@@ -4482,12 +4519,15 @@ export interface ClientAIModelConfigGenqlSelection{
     modelFamily?: boolean | number
     modelFamilyLabel?: boolean | number
     sdkPackage?: boolean | number
-    inputCostPerMillionTokensInCredits?: boolean | number
-    outputCostPerMillionTokensInCredits?: boolean | number
+    inputCostPerMillionTokens?: boolean | number
+    outputCostPerMillionTokens?: boolean | number
     nativeCapabilities?: NativeModelCapabilitiesGenqlSelection
     isDeprecated?: boolean | number
     isRecommended?: boolean | number
     providerName?: boolean | number
+    providerLabel?: boolean | number
+    contextWindowTokens?: boolean | number
+    maxOutputTokens?: boolean | number
     dataResidency?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5681,6 +5721,40 @@ export interface ConnectedAccountDTOGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface PublicConnectionParametersOutputGenqlSelection{
+    host?: boolean | number
+    port?: boolean | number
+    username?: boolean | number
+    secure?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface PublicImapSmtpCaldavConnectionParametersGenqlSelection{
+    IMAP?: PublicConnectionParametersOutputGenqlSelection
+    SMTP?: PublicConnectionParametersOutputGenqlSelection
+    CALDAV?: PublicConnectionParametersOutputGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ConnectedAccountPublicDTOGenqlSelection{
+    id?: boolean | number
+    handle?: boolean | number
+    provider?: boolean | number
+    lastCredentialsRefreshedAt?: boolean | number
+    authFailedAt?: boolean | number
+    handleAliases?: boolean | number
+    scopes?: boolean | number
+    lastSignedInAt?: boolean | number
+    userWorkspaceId?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    connectionParameters?: PublicImapSmtpCaldavConnectionParametersGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface SendEmailOutputGenqlSelection{
     success?: boolean | number
     error?: boolean | number
@@ -6023,6 +6097,7 @@ export interface QueryGenqlSelection{
     myMessageFolders?: (MessageFolderGenqlSelection & { __args?: {messageChannelId?: (Scalars['UUID'] | null)} })
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     myConnectedAccounts?: ConnectedAccountDTOGenqlSelection
+    connectedAccountById?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     connectedAccounts?: ConnectedAccountDTOGenqlSelection
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     webhooks?: WebhookGenqlSelection
@@ -6304,7 +6379,9 @@ export interface MutationGenqlSelection{
     userLookupAdminPanel?: (UserLookupGenqlSelection & { __args: {userIdentifier: Scalars['String']} })
     updateWorkspaceFeatureFlag?: { __args: {workspaceId: Scalars['UUID'], featureFlag: Scalars['String'], value: Scalars['Boolean']} }
     setAdminAiModelEnabled?: { __args: {modelId: Scalars['String'], enabled: Scalars['Boolean']} }
+    setAdminAiModelsEnabled?: { __args: {modelIds: Scalars['String'][], enabled: Scalars['Boolean']} }
     setAdminAiModelRecommended?: { __args: {modelId: Scalars['String'], recommended: Scalars['Boolean']} }
+    setAdminAiModelsRecommended?: { __args: {modelIds: Scalars['String'][], recommended: Scalars['Boolean']} }
     setAdminDefaultAiModel?: { __args: {role: AiModelRole, modelId: Scalars['String']} }
     createDatabaseConfigVariable?: { __args: {key: Scalars['String'], value: Scalars['JSON']} }
     updateDatabaseConfigVariable?: { __args: {key: Scalars['String'], value: Scalars['JSON']} }
@@ -6482,7 +6559,7 @@ export interface GridPositionInput {row: Scalars['Float'],column: Scalars['Float
 
 export interface CreatePageLayoutWidgetInput {pageLayoutTabId: Scalars['UUID'],title: Scalars['String'],type: WidgetType,objectMetadataId?: (Scalars['UUID'] | null),gridPosition: GridPositionInput,position?: (Scalars['JSON'] | null),configuration: Scalars['JSON']}
 
-export interface UpdatePageLayoutWidgetInput {title?: (Scalars['String'] | null),type?: (WidgetType | null),objectMetadataId?: (Scalars['UUID'] | null),gridPosition?: (GridPositionInput | null),position?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),conditionalDisplay?: (Scalars['JSON'] | null)}
+export interface UpdatePageLayoutWidgetInput {pageLayoutTabId?: (Scalars['UUID'] | null),title?: (Scalars['String'] | null),type?: (WidgetType | null),objectMetadataId?: (Scalars['UUID'] | null),gridPosition?: (GridPositionInput | null),position?: (Scalars['JSON'] | null),configuration?: (Scalars['JSON'] | null),conditionalDisplay?: (Scalars['JSON'] | null)}
 
 export interface CreateLogicFunctionFromSourceInput {id?: (Scalars['UUID'] | null),universalIdentifier?: (Scalars['UUID'] | null),name: Scalars['String'],description?: (Scalars['String'] | null),timeoutSeconds?: (Scalars['Float'] | null),toolInputSchema?: (Scalars['JSON'] | null),isTool?: (Scalars['Boolean'] | null),source?: (Scalars['JSON'] | null),cronTriggerSettings?: (Scalars['JSON'] | null),databaseEventTriggerSettings?: (Scalars['JSON'] | null),httpRouteTriggerSettings?: (Scalars['JSON'] | null)}
 
@@ -8589,6 +8666,30 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const PublicConnectionParametersOutput_possibleTypes: string[] = ['PublicConnectionParametersOutput']
+    export const isPublicConnectionParametersOutput = (obj?: { __typename?: any } | null): obj is PublicConnectionParametersOutput => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPublicConnectionParametersOutput"')
+      return PublicConnectionParametersOutput_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PublicImapSmtpCaldavConnectionParameters_possibleTypes: string[] = ['PublicImapSmtpCaldavConnectionParameters']
+    export const isPublicImapSmtpCaldavConnectionParameters = (obj?: { __typename?: any } | null): obj is PublicImapSmtpCaldavConnectionParameters => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPublicImapSmtpCaldavConnectionParameters"')
+      return PublicImapSmtpCaldavConnectionParameters_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ConnectedAccountPublicDTO_possibleTypes: string[] = ['ConnectedAccountPublicDTO']
+    export const isConnectedAccountPublicDTO = (obj?: { __typename?: any } | null): obj is ConnectedAccountPublicDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isConnectedAccountPublicDTO"')
+      return ConnectedAccountPublicDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const SendEmailOutput_possibleTypes: string[] = ['SendEmailOutput']
     export const isSendEmailOutput = (obj?: { __typename?: any } | null): obj is SendEmailOutput => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isSendEmailOutput"')
@@ -9518,7 +9619,8 @@ export const enumEventLogTable = {
    WORKSPACE_EVENT: 'WORKSPACE_EVENT' as const,
    PAGEVIEW: 'PAGEVIEW' as const,
    OBJECT_EVENT: 'OBJECT_EVENT' as const,
-   USAGE_EVENT: 'USAGE_EVENT' as const
+   USAGE_EVENT: 'USAGE_EVENT' as const,
+   APPLICATION_LOG: 'APPLICATION_LOG' as const
 }
 
 export const enumUsageOperationType = {
