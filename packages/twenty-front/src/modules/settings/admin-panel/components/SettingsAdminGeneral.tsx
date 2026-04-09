@@ -16,7 +16,7 @@ import { UserLookupAdminPanelDocument } from '~/generated-metadata/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
+import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
 import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -183,7 +183,7 @@ export const SettingsAdminGeneral = () => {
         <>
           <Section>
             <H2Title title={t`User Info`} description={t`About this user`} />
-            <SettingsAdminTableCard
+            <SettingsTableCard
               items={userInfoItems}
               rounded
               gridAutoColumns="1fr 4fr"

@@ -1,7 +1,7 @@
 import {
+  type GridPosition,
   type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetPosition,
-  type GridPosition,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -110,5 +110,6 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     deletedAt: null,
     conditionalDisplay: conditionalDisplay ?? null,
     overrides: null,
+    universalOverrides: null,
   };
 };

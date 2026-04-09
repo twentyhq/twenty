@@ -99,7 +99,7 @@ export type RecordTableConfiguration = {
 export type FieldConfiguration = {
   configurationType: 'FIELD';
   fieldMetadataId: string;
-  fieldDisplayMode: 'CARD' | 'FIELD' | 'VIEW';
+  fieldDisplayMode: 'CARD' | 'EDITOR' | 'FIELD' | 'VIEW';
 };
 
 export type FieldsConfiguration = {

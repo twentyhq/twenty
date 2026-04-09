@@ -133,11 +133,19 @@ jobs:
           cd /tmp/e2e-test-workspace/test-app
           npx --no-install twenty --version
 
-      - name: Create test database
-        run: PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+      - name: Setup server environment
+        run: npx nx reset:env:e2e-testing-server twenty-server
 
-      - name: Setup database and start server
-        run: npx nx run twenty-server:database:reset && nohup npx nx start:ci twenty-server &
+      - name: Create databases
+        run: |
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+
+      - name: Setup database
+        run: npx nx run twenty-server:database:reset
+
+      - name: Start server
+        run: nohup npx nx start:ci twenty-server &
 
       - name: Wait for server to be ready
         run: npx wait-on http://localhost:3000/healthz --timeout 120000 --interval 1000
@@ -147,17 +155,7 @@ jobs:
           cd /tmp/e2e-test-workspace/test-app
           npx --no-install twenty remote add --api-key ${{ env.TWENTY_API_KEY }} --api-url ${{ env.TWENTY_API_URL }}
 
-      - name: Deploy scaffolded app
-        run: |
-          cd /tmp/e2e-test-workspace/test-app
-          npx --no-install twenty deploy
-
-      - name: Install scaffolded app
-        run: |
-          cd /tmp/e2e-test-workspace/test-app
-          npx --no-install twenty install
-
-      - name: Run scaffolded app integration test
+      - name: Run scaffolded app integration test (deploys, installs, and verifies the app)
         run: |
           cd /tmp/e2e-test-workspace/test-app
           yarn test

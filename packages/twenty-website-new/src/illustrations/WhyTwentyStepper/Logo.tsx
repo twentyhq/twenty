@@ -4,6 +4,7 @@ import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { useLayoutEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 const GLB_URL = '/illustrations/why-twenty/stepper/logo.glb';
@@ -264,7 +265,14 @@ export function Logo() {
 
     syncResolutionUniforms();
 
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath(
+      'https://www.gstatic.com/draco/versioned/decoders/1.5.6/',
+    );
+
     const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
+
     loader.load(GLB_URL, (gltf) => {
       if (cancelled) {
         disposeObjectSubtree(gltf.scene);
@@ -353,6 +361,7 @@ export function Logo() {
       window.cancelAnimationFrame(animationFrameId);
       disposeObjectSubtree(scene);
       renderer.dispose();
+      dracoLoader.dispose();
       if (canvas.parentNode === container) {
         container.removeChild(canvas);
       }
