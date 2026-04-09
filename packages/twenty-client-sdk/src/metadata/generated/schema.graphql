@@ -3553,7 +3553,7 @@ type Mutation {
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   deleteWebhook(id: UUID!): Webhook!
   createChatThread: AgentChatThread!
-  sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String): SendChatMessageResult!
+  sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileIds: [UUID!]): SendChatMessageResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
   createSkill(input: CreateSkillInput!): Skill!
