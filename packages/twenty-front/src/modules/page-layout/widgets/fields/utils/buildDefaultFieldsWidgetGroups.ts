@@ -3,7 +3,6 @@ import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/Field
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isFieldMetadataEligibleForFieldsWidget } from 'twenty-shared/utils';
 
-// Mirrors the backend's computeFieldsWidgetViewFieldsAndGroupsToCreate
 export const buildDefaultFieldsWidgetGroups = ({
   fields,
   objectNameSingular,
