@@ -1,29 +1,22 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-  type RegisteredFastInstanceCommand,
-  type RegisteredSlowInstanceCommand,
-  type RegisteredWorkspaceCommand,
+  type WorkspaceIteratorService,
+  type WorkspaceIteratorReport,
+} from 'src/database/commands/command-runners/workspace-iterator.service';
+import { type UpgradeCommandOptions } from 'src/database/commands/upgrade-version-command/upgrade.command';
+import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
+import {
+  type InstanceSegment,
   type TapeSegment,
   type WorkspaceSegment,
 } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
+import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
 
-type RunFastInstanceStep = (
-  step: RegisteredFastInstanceCommand,
-) => Promise<void>;
-
-type RunSlowInstanceStep = (
-  step: RegisteredSlowInstanceCommand,
-) => Promise<void>;
-
-type RunWorkspaceSegment = (
-  steps: RegisteredWorkspaceCommand[],
-) => Promise<WorkspaceSegmentReport>;
-
-export type WorkspaceSegmentReport = {
-  successes: number;
-  failures: number;
+export type UpgradeRunnerReport = {
+  totalSuccesses: number;
+  totalFailures: number;
 };
 
 @Injectable()
@@ -32,23 +25,25 @@ export class UpgradeRunnerService {
 
   constructor(
     private readonly upgradeMigrationService: UpgradeMigrationService,
+    private readonly instanceUpgradeService: InstanceUpgradeService,
+    private readonly workspaceUpgradeService: WorkspaceUpgradeService,
   ) {}
 
   async run({
     tape,
     activeWorkspaceIds,
-    runFastInstanceStep,
-    runSlowInstanceStep,
-    runWorkspaceSegment,
+    options,
+    workspaceIteratorService,
   }: {
     tape: TapeSegment[];
     activeWorkspaceIds: string[];
-    runFastInstanceStep: RunFastInstanceStep;
-    runSlowInstanceStep: RunSlowInstanceStep;
-    runWorkspaceSegment: RunWorkspaceSegment;
-  }): Promise<{ totalSuccesses: number; totalFailures: number }> {
+    options: UpgradeCommandOptions;
+    workspaceIteratorService: WorkspaceIteratorService;
+  }): Promise<UpgradeRunnerReport> {
     const instanceCompletedNames =
       await this.upgradeMigrationService.getCompletedCommandNames(null);
+
+    const hasWorkspaces = activeWorkspaceIds.length > 0;
 
     let totalSuccesses = 0;
     let totalFailures = 0;
@@ -56,71 +51,42 @@ export class UpgradeRunnerService {
 
     for (const segment of tape) {
       if (segment.kind === 'instance') {
-        const pendingFastSteps = segment.fastInstanceSteps.filter(
-          (step) => !instanceCompletedNames.has(step.name),
-        );
-
-        const pendingSlowSteps = segment.slowInstanceSteps.filter(
-          (step) => !instanceCompletedNames.has(step.name),
-        );
-
-        if (
-          pendingFastSteps.length === 0 &&
-          pendingSlowSteps.length === 0
-        ) {
-          continue;
+        if (hasWorkspaces && previousWorkspaceSegment) {
+          await this.enforceWorkspaceSyncBarrier(
+            previousWorkspaceSegment,
+            activeWorkspaceIds,
+          );
         }
 
-        if (
-          activeWorkspaceIds.length > 0 &&
-          previousWorkspaceSegment
-        ) {
-          const lastWorkspaceCommand =
-            previousWorkspaceSegment.steps[
-              previousWorkspaceSegment.steps.length - 1
-            ];
-
-          const allWorkspacesReady =
-            await this.upgradeMigrationService.areAllWorkspacesAtCommand({
-              commandName: lastWorkspaceCommand.name,
-              workspaceIds: activeWorkspaceIds,
-            });
-
-          if (!allWorkspacesReady) {
-            throw new Error(
-              `Cannot run instance segment: not all workspaces have completed ` +
-                `${lastWorkspaceCommand.name} [${lastWorkspaceCommand.version}]`,
-            );
-          }
-        }
-
-        for (const step of pendingFastSteps) {
-          await runFastInstanceStep(step);
-        }
-
-        for (const step of pendingSlowSteps) {
-          await runSlowInstanceStep(step);
-        }
+        await this.runInstanceSegment({
+          segment,
+          instanceCompletedNames,
+          hasWorkspaces,
+        });
       }
 
       if (segment.kind === 'workspace') {
         previousWorkspaceSegment = segment;
 
-        if (activeWorkspaceIds.length === 0) {
+        if (!hasWorkspaces) {
           this.logger.log(
             'No active workspaces, skipping workspace segment',
           );
           continue;
         }
 
-        const report = await runWorkspaceSegment(segment.steps);
+        const report = await this.runWorkspaceSegment({
+          segment,
+          options,
+          workspaceIteratorService,
+        });
 
-        totalSuccesses += report.successes;
-        totalFailures += report.failures;
+        totalSuccesses += report.success.length;
+        totalFailures += report.fail.length;
 
-        if (report.failures > 0) {
+        if (report.fail.length > 0) {
           this.logger.error(
-            `Workspace segment ended with ${report.failures} failure(s). ` +
+            `Workspace segment ended with ${report.fail.length} failure(s). ` +
               'Aborting — cannot proceed to next instance segment.',
           );
 
@@ -130,5 +96,102 @@ export class UpgradeRunnerService {
     }
 
     return { totalSuccesses, totalFailures };
+  }
+
+  private async runInstanceSegment({
+    segment,
+    instanceCompletedNames,
+    hasWorkspaces,
+  }: {
+    segment: InstanceSegment;
+    instanceCompletedNames: Set<string>;
+    hasWorkspaces: boolean;
+  }): Promise<void> {
+    const pendingFastSteps = segment.fastInstanceSteps.filter(
+      (step) => !instanceCompletedNames.has(step.name),
+    );
+
+    const pendingSlowSteps = segment.slowInstanceSteps.filter(
+      (step) => !instanceCompletedNames.has(step.name),
+    );
+
+    if (pendingFastSteps.length === 0 && pendingSlowSteps.length === 0) {
+      return;
+    }
+
+    for (const step of pendingFastSteps) {
+      const result =
+        await this.instanceUpgradeService.runFastInstanceCommand({
+          command: step.command,
+          name: step.name,
+        });
+
+      if (result.status === 'failed') {
+        throw result.error;
+      }
+    }
+
+    for (const step of pendingSlowSteps) {
+      const result =
+        await this.instanceUpgradeService.runSlowInstanceCommand({
+          command: step.command,
+          name: step.name,
+          skipDataMigration: !hasWorkspaces,
+        });
+
+      if (result.status === 'failed') {
+        throw result.error;
+      }
+    }
+  }
+
+  private async runWorkspaceSegment({
+    segment,
+    options,
+    workspaceIteratorService,
+  }: {
+    segment: WorkspaceSegment;
+    options: UpgradeCommandOptions;
+    workspaceIteratorService: WorkspaceIteratorService;
+  }): Promise<WorkspaceIteratorReport> {
+    return workspaceIteratorService.iterate({
+      workspaceIds:
+        options.workspaceId && options.workspaceId.size > 0
+          ? Array.from(options.workspaceId)
+          : undefined,
+      startFromWorkspaceId: options.startFromWorkspaceId,
+      workspaceCountLimit: options.workspaceCountLimit,
+      dryRun: options.dryRun,
+      callback: async (context) => {
+        await this.workspaceUpgradeService.runWorkspaceCommands({
+          iteratorContext: context,
+          options,
+          workspaceCommands: segment.steps,
+        });
+      },
+    });
+  }
+
+  private async enforceWorkspaceSyncBarrier(
+    previousWorkspaceSegment: WorkspaceSegment,
+    activeWorkspaceIds: string[],
+  ): Promise<void> {
+    const lastWorkspaceCommand =
+      previousWorkspaceSegment.steps[
+        previousWorkspaceSegment.steps.length - 1
+      ];
+
+    const allWorkspacesReady =
+      await this.upgradeMigrationService.areAllWorkspacesAtCommand({
+        commandName: lastWorkspaceCommand.name,
+        workspaceIds: activeWorkspaceIds,
+      });
+
+    if (!allWorkspacesReady) {
+      throw new Error(
+        `Cannot run instance segment: not all workspaces have completed ` +
+          `${lastWorkspaceCommand.name} [${lastWorkspaceCommand.version}]`,
+      );
+    }
   }
 }

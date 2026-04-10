@@ -6,18 +6,8 @@ import { DataSource } from 'typeorm';
 
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { CommandLogger } from 'src/database/commands/logger';
-import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
-import {
-  UpgradeCommandRegistryService,
-  type RegisteredFastInstanceCommand,
-  type RegisteredSlowInstanceCommand,
-  type RegisteredWorkspaceCommand,
-} from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
-import {
-  UpgradeRunnerService,
-  type WorkspaceSegmentReport,
-} from 'src/engine/core-modules/upgrade/services/upgrade-runner.service';
-import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
+import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
+import { UpgradeRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-runner.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 export type UpgradeCommandOptions = {
@@ -38,9 +28,7 @@ export class UpgradeCommand extends CommandRunner {
   constructor(
     protected readonly upgradeCommandRegistryService: UpgradeCommandRegistryService,
     protected readonly upgradeRunnerService: UpgradeRunnerService,
-    protected readonly instanceUpgradeService: InstanceUpgradeService,
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
-    protected readonly workspaceUpgradeService: WorkspaceUpgradeService,
     protected readonly workspaceVersionService: WorkspaceVersionService,
     @InjectDataSource()
     protected readonly dataSource: DataSource,
@@ -152,18 +140,16 @@ export class UpgradeCommand extends CommandRunner {
       const hasWorkspaces =
         await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
 
+      const activeWorkspaceIds = hasWorkspaces
+        ? await this.getActiveWorkspaceIds(options)
+        : [];
+
       const { totalSuccesses, totalFailures } =
         await this.upgradeRunnerService.run({
           tape,
-          activeWorkspaceIds: hasWorkspaces
-            ? await this.getActiveWorkspaceIds(options)
-            : [],
-          runFastInstanceStep: (step) =>
-            this.runFastInstanceStep(step),
-          runSlowInstanceStep: (step) =>
-            this.runSlowInstanceStep(step, hasWorkspaces),
-          runWorkspaceSegment: (steps) =>
-            this.runWorkspaceSegment(steps, options),
+          activeWorkspaceIds,
+          options,
+          workspaceIteratorService: this.workspaceIteratorService,
         });
 
       if (hasWorkspaces) {
@@ -183,66 +169,6 @@ export class UpgradeCommand extends CommandRunner {
       this.logger.error(chalk.red(`Upgrade failed: ${error.message}`));
       throw error;
     }
-  }
-
-  private async runFastInstanceStep(
-    step: RegisteredFastInstanceCommand,
-  ): Promise<void> {
-    const result = await this.instanceUpgradeService.runFastInstanceCommand({
-      command: step.command,
-      name: step.name,
-    });
-
-    if (result.status === 'failed') {
-      throw result.error;
-    }
-  }
-
-  private async runSlowInstanceStep(
-    step: RegisteredSlowInstanceCommand,
-    hasWorkspaces: boolean,
-  ): Promise<void> {
-    const result = await this.instanceUpgradeService.runSlowInstanceCommand({
-      command: step.command,
-      name: step.name,
-      skipDataMigration: !hasWorkspaces,
-    });
-
-    if (result.status === 'failed') {
-      throw result.error;
-    }
-  }
-
-  private async runWorkspaceSegment(
-    steps: RegisteredWorkspaceCommand[],
-    options: UpgradeCommandOptions,
-  ): Promise<WorkspaceSegmentReport> {
-    const workspaceCommandEntries = steps.map((step) => ({
-      name: step.name,
-      command: step.command,
-    }));
-
-    const report = await this.workspaceIteratorService.iterate({
-      workspaceIds:
-        options.workspaceId && options.workspaceId.size > 0
-          ? Array.from(options.workspaceId)
-          : undefined,
-      startFromWorkspaceId: options.startFromWorkspaceId,
-      workspaceCountLimit: options.workspaceCountLimit,
-      dryRun: options.dryRun,
-      callback: async (context) => {
-        await this.workspaceUpgradeService.runWorkspaceCommands({
-          iteratorContext: context,
-          options,
-          workspaceCommands: workspaceCommandEntries,
-        });
-      },
-    });
-
-    return {
-      successes: report.success.length,
-      failures: report.fail.length,
-    };
   }
 
   private async getActiveWorkspaceIds(

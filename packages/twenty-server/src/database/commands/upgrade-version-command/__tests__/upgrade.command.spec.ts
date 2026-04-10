@@ -82,18 +82,14 @@ const buildUpgradeCommandModule = async ({
         useFactory: (
           upgradeCommandRegistryService: UpgradeCommandRegistryService,
           upgradeRunnerService: UpgradeRunnerService,
-          instanceUpgradeService: InstanceUpgradeService,
           workspaceIteratorService: WorkspaceIteratorService,
-          workspaceUpgradeService: WorkspaceUpgradeService,
           workspaceVersionService: WorkspaceVersionService,
           dataSource: DataSource,
         ) => {
           return new commandRunner(
             upgradeCommandRegistryService,
             upgradeRunnerService,
-            instanceUpgradeService,
             workspaceIteratorService,
-            workspaceUpgradeService,
             workspaceVersionService,
             dataSource,
           );
@@ -101,9 +97,7 @@ const buildUpgradeCommandModule = async ({
         inject: [
           UpgradeCommandRegistryService,
           UpgradeRunnerService,
-          InstanceUpgradeService,
           WorkspaceIteratorService,
-          WorkspaceUpgradeService,
           WorkspaceVersionService,
           getDataSourceToken(),
         ],
@@ -127,9 +121,21 @@ const buildUpgradeCommandModule = async ({
       },
       {
         provide: UpgradeRunnerService,
-        useFactory: (upgradeMigrationService: UpgradeMigrationService) =>
-          new UpgradeRunnerService(upgradeMigrationService),
-        inject: [UpgradeMigrationService],
+        useFactory: (
+          upgradeMigrationService: UpgradeMigrationService,
+          instanceUpgradeService: InstanceUpgradeService,
+          workspaceUpgradeService: WorkspaceUpgradeService,
+        ) =>
+          new UpgradeRunnerService(
+            upgradeMigrationService,
+            instanceUpgradeService,
+            workspaceUpgradeService,
+          ),
+        inject: [
+          UpgradeMigrationService,
+          InstanceUpgradeService,
+          WorkspaceUpgradeService,
+        ],
       },
       {
         provide: InstanceUpgradeService,
