@@ -1,4 +1,5 @@
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
@@ -78,7 +79,7 @@ const meta: Meta<typeof UpdateMultipleRecordsContainer> = {
             commandMenuItems: [],
             containerType: 'index-page-dropdown',
             displayType: 'dropdownItem',
-            isInSidePanel: true,
+            commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
           }}
         >
           <Story />
