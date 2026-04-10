@@ -321,6 +321,8 @@ const computeRecordPageWidgets = ({
               universalConfiguration,
               objectMetadataId,
               conditionalDisplay: widget.conditionalDisplay ?? null,
+              conditionalAvailabilityExpression:
+                widget.conditionalAvailabilityExpression ?? null,
             },
           }),
         );

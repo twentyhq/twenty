@@ -186,6 +186,7 @@ describe('ApplicationVariableEntityService', () => {
           description: 'A secret key',
           isSecret: true,
           applicationId: mockApplicationId,
+          workspaceId: mockWorkspaceId,
         },
       ]);
     });
@@ -216,6 +217,7 @@ describe('ApplicationVariableEntityService', () => {
           description: 'Public URL',
           isSecret: false,
           applicationId: mockApplicationId,
+          workspaceId: mockWorkspaceId,
         },
       ]);
     });

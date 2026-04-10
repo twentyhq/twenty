@@ -114,6 +114,8 @@ export const useAgentChat = (
 
     store.set(messagesAtom, [...currentMessages, optimisticUserMessage]);
 
+    const fileIds = agentChatUploadedFiles.map((file) => file.fileId);
+
     setAgentChatUploadedFiles([]);
 
     try {
@@ -131,6 +133,7 @@ export const useAgentChat = (
           messageId,
           browsingContext: browsingContext ?? null,
           modelId: modelIdForRequest ?? undefined,
+          fileIds: fileIds.length > 0 ? fileIds : undefined,
         },
       });
 

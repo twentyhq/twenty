@@ -47,7 +47,7 @@ npx nx run twenty-server:database:reset
 #### For objects in Core/Metadata schemas (TypeORM)
 
 ```bash
-npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+npx nx run twenty-server:database:migrate:generate
 ```
 
 ## Tech Stack

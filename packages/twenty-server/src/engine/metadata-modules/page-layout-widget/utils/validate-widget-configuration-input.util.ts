@@ -2,6 +2,7 @@ import { isNotEmptyObject, type ValidationError } from 'class-validator';
 
 import { AggregateChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/aggregate-chart-configuration.dto';
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
+import { FieldConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/field-configuration.dto';
 import { FrontComponentConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/front-component-configuration.dto';
 import { GaugeChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/gauge-chart-configuration.dto';
 import { IframeConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/iframe-configuration.dto';
@@ -133,10 +134,11 @@ export const validateWidgetConfigurationInput = ({
         PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
       );
     case WidgetConfigurationType.FIELD:
-      throw new PageLayoutWidgetException(
-        'Field configuration is not supported yet',
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      errors = validateWidgetConfigurationByDto(
+        FieldConfigurationDTO,
+        configuration,
       );
+      break;
     case WidgetConfigurationType.FIELDS:
       throw new PageLayoutWidgetException(
         'Fields configuration is not supported yet',

@@ -9,7 +9,7 @@ import { useLingui } from '@lingui/react/macro';
 import {
   type FieldMetadataMultiItemSettings,
   FieldMetadataSettingsOnClickAction,
-  type FieldMetadataType,
+  FieldMetadataType,
 } from 'twenty-shared/types';
 import { IconClick } from 'twenty-ui/display';
 
@@ -35,7 +35,21 @@ export const SettingsDataModelFieldOnClickActionForm = ({
     existingFieldMetadataId,
   );
 
+  const isEmailField = fieldType === FieldMetadataType.EMAILS;
+
+  const defaultClickAction = isEmailField
+    ? FieldMetadataSettingsOnClickAction.OPEN_IN_APP
+    : FieldMetadataSettingsOnClickAction.OPEN_LINK;
+
   const options = [
+    ...(isEmailField
+      ? [
+          {
+            label: t`Open in app`,
+            value: FieldMetadataSettingsOnClickAction.OPEN_IN_APP,
+          },
+        ]
+      : []),
     {
       label: t`Open as link`,
       value: FieldMetadataSettingsOnClickAction.OPEN_LINK,
@@ -58,17 +72,13 @@ export const SettingsDataModelFieldOnClickActionForm = ({
       control={control}
       defaultValue={{
         ...existingSettings,
-        clickAction:
-          existingSettings.clickAction ??
-          FieldMetadataSettingsOnClickAction.OPEN_LINK,
+        clickAction: existingSettings.clickAction ?? defaultClickAction,
       }}
       render={({ field: { value, onChange } }) => {
         const currentSettings =
           (value as FieldMetadataMultiItemSettings | undefined) ?? {};
 
-        const clickAction =
-          currentSettings.clickAction ??
-          FieldMetadataSettingsOnClickAction.OPEN_LINK;
+        const clickAction = currentSettings.clickAction ?? defaultClickAction;
 
         return (
           <SettingsOptionCardContentSelect

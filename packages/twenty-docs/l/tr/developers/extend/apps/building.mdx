@@ -645,48 +645,14 @@ export default defineLogicFunction({
 </Note>
 
 </Accordion>
-<Accordion title="definePreInstallLogicFunction" description="Bir kurulum öncesi mantık işlevi tanımlayın (uygulama başına bir adet)">
-
-Kurulum öncesi işlev, uygulamanız bir çalışma alanına yüklenmeden önce otomatik olarak çalışan bir mantık işlevidir. Bu, doğrulama görevleri, önkoşul kontrolleri veya ana kurulum başlamadan önce çalışma alanı durumunun hazırlanması için yararlıdır.
-
-```ts src/logic-functions/pre-install.ts
-import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
-
-const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
-  console.log('Pre install logic function executed successfully!', payload.previousVersion);
-};
-
-export default definePreInstallLogicFunction({
-  universalIdentifier: 'e0604b9e-e946-456b-886d-3f27d9a6b324',
-  name: 'pre-install',
-  description: 'Runs before installation to prepare the application.',
-  timeoutSeconds: 300,
-  handler,
-});
-```
-
-Ayrıca kurulum öncesi işlevi istediğiniz zaman CLI kullanarak manuel olarak çalıştırabilirsiniz:
-
-```bash filename="Terminal"
-yarn twenty exec --preInstall
-```
-
-Önemli noktalar:
-* Kurulum öncesi işlevler `definePreInstallLogicFunction()` kullanır — tetikleyici ayarlarını atlayan (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`) özel bir varyanttır.
-* İşleyici, `{ previousVersion: string }` içeren bir `InstallLogicFunctionPayload` alır — daha önce yüklü olan uygulamanın sürümü (veya yeni kurulumlar için boş bir dize).
-* Uygulama başına yalnızca bir kurulum öncesi işlevine izin verilir. Birden fazla tespit edilirse manifest oluşturma hataya düşer.
-* İşlevin `universalIdentifier` değeri, oluşturma sırasında uygulama manifestinde otomatik olarak `preInstallLogicFunctionUniversalIdentifier` olarak ayarlanır — `defineApplication()` içinde buna atıfta bulunmanıza gerek yoktur.
-* Varsayılan zaman aşımı, daha uzun hazırlık görevlerine izin vermek için 300 saniye (5 dakika) olarak ayarlanmıştır.
-
-</Accordion>
 <Accordion title="definePostInstallLogicFunction" description="Bir kurulum sonrası mantık işlevi tanımlayın (uygulama başına bir adet)">
 
-Kurulum sonrası işlev, uygulamanız bir çalışma alanına yüklendikten sonra otomatik olarak çalışan bir mantık işlevidir. Bu, varsayılan verileri tohumlama, ilk kayıtları oluşturma veya çalışma alanı ayarlarını yapılandırma gibi tek seferlik kurulum görevleri için yararlıdır.
+Kurulum sonrası işlev, uygulamanız bir çalışma alanına yüklendikten sonra otomatik olarak çalışan bir mantık işlevidir. Sunucu, uygulamanın meta verileri senkronize edildikten ve SDK istemcisi oluşturulduktan **sonra** bunu yürütür; böylece çalışma alanı tamamen kullanıma hazırdır ve yeni şema kullanıma alınmıştır. Tipik kullanım örnekleri arasında varsayılan verilerin tohumlanması, başlangıç kayıtlarının oluşturulması, çalışma alanı ayarlarının yapılandırılması veya üçüncü taraf hizmetlerde kaynak sağlanması yer alır.
 
 ```ts src/logic-functions/post-install.ts
-import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
 
-const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+const handler = async (payload: InstallPayload): Promise<void> => {
   console.log('Post install logic function executed successfully!', payload.previousVersion);
 };
 
@@ -695,6 +661,8 @@ export default definePostInstallLogicFunction({
   name: 'post-install',
   description: 'Runs after installation to set up the application.',
   timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  shouldRunSynchronously: false,
   handler,
 });
 ```
@@ -707,10 +675,168 @@ yarn twenty exec --postInstall
 
 Önemli noktalar:
 * Kurulum sonrası işlevler `definePostInstallLogicFunction()` kullanır — tetikleyici ayarlarını atlayan (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`) özel bir varyanttır.
-* İşleyici, `{ previousVersion: string }` içeren bir `InstallLogicFunctionPayload` alır — daha önce yüklü olan uygulamanın sürümü (veya yeni kurulumlar için boş bir dize).
+* İşleyici, `{ previousVersion?: string; newVersion: string }` içeren bir `InstallPayload` alır — `newVersion`, yüklenen sürümdür; `previousVersion` ise daha önce yüklü olan sürümdür (veya ilk kurulumda `undefined`). Bu değerleri ilk kurulumları yükseltmelerden ayırt etmek ve sürüme özgü geçiş (migration) mantığını çalıştırmak için kullanın.
+* **Kanca ne zaman çalışır**: varsayılan olarak yalnızca ilk kurulumlarda. Uygulama önceki bir sürümden yükseltildiğinde de çalışmasını istiyorsanız `shouldRunOnVersionUpgrade: true` geçin. Belirtilmediğinde, bayrak varsayılan olarak `false` olur ve yükseltmeler kancayı atlar.
+* **Yürütme modeli — varsayılan olarak eşzamansız, isteğe bağlı senkron**: `shouldRunSynchronously` bayrağı kurulum sonrası işlemin *nasıl* yürütüldüğünü kontrol eder.
+  * `shouldRunSynchronously: false` *(varsayılan)* — kanca, `retryLimit: 3` ile **mesaj kuyruğuna alınır** ve bir worker içinde eşzamansız çalışır. İş kuyruğa alınır alınmaz kurulum yanıtı döner; dolayısıyla yavaşlayan veya hata veren bir işleyici çağıranı engellemez. Worker en fazla üç kez yeniden deneyecektir. **Bunu uzun süre çalışan işler için kullanın** — büyük veri kümelerini tohumlama, yavaş üçüncü taraf API'lerini çağırma, harici kaynakları sağlama; makul bir HTTP yanıt süresini aşabilecek her şey.
+  * `shouldRunSynchronously: true` — kanca **kurulum akışı sırasında satır içi** olarak yürütülür (kurulum öncesi ile aynı yürütücü). İşleyici bitene kadar kurulum isteği engellenir; hata fırlatırsa, kurulum çağıranı bir `POST_INSTALL_ERROR` alır. Otomatik yeniden deneme yok. **Bunu, yanıt dönmeden mutlaka tamamlanması gereken hızlı işler için kullanın** — örneğin, kullanıcıya bir doğrulama hatası iletmek veya kurulum çağrısı döner dönmez istemcinin ihtiyaç duyacağı hızlı bir kurulum yapmak. Kurulum sonrası çalıştığında, üstveri (metadata) geçişinin zaten uygulanmış olduğunu unutmayın; bu nedenle, senkron moddaki bir hata şema değişikliklerini **geri almaz** — yalnızca hatayı görünür kılar.
+* İşleyicinizin idempotent olduğundan emin olun. Eşzamansız modda kuyruk en fazla üç kez yeniden deneyebilir; her iki modda da `shouldRunOnVersionUpgrade: true` iken yükseltmelerde kanca tekrar çalışabilir.
+* Ortam değişkenleri `APPLICATION_ID`, `APP_ACCESS_TOKEN` ve `API_URL` işleyici içinde kullanılabilir (diğer mantık işlevlerinde olduğu gibi), böylece uygulamanıza özel kapsamda bir uygulama erişim belirteciyle Twenty API'sini çağırabilirsiniz.
 * Uygulama başına yalnızca bir kurulum sonrası işlevine izin verilir. Birden fazla tespit edilirse manifest oluşturma hataya düşer.
-* İşlevin `universalIdentifier` değeri, oluşturma sırasında uygulama manifestinde otomatik olarak `postInstallLogicFunctionUniversalIdentifier` olarak ayarlanır — `defineApplication()` içinde buna atıfta bulunmanıza gerek yoktur.
+* İşlevin `universalIdentifier`, `shouldRunOnVersionUpgrade` ve `shouldRunSynchronously` değerleri, derleme sırasında uygulama manifestine `postInstallLogicFunction` alanı altında otomatik olarak eklenir — bunlara `defineApplication()` içinde atıfta bulunmanıza gerek yoktur.
 * Varsayılan zaman aşımı, veri tohumlama gibi daha uzun kurulum görevlerine izin vermek için 300 saniye (5 dakika) olarak ayarlanmıştır.
+* **Geliştirme modunda çalıştırılmaz**: bir uygulama yerel olarak kaydedildiğinde (`yarn twenty dev` aracılığıyla), sunucu kurulum akışını tamamen atlar ve dosyaları doğrudan CLI watcher üzerinden eşitler — bu nedenle, `shouldRunSynchronously` ne olursa olsun, kurulum sonrası geliştirme modunda hiç çalışmaz. Çalışan bir çalışma alanında bunu elle tetiklemek için `yarn twenty exec --postInstall` kullanın.
+
+</Accordion>
+<Accordion title="definePreInstallLogicFunction" description="Bir kurulum öncesi mantık işlevi tanımlayın (uygulama başına bir adet)">
+
+Kurulum öncesi işlev, kurulum sırasında otomatik olarak çalışan ve **çalışma alanı üstveri (metadata) geçişi uygulanmadan önce** yürütülen bir mantık işlevidir. Kurulum sonrası ile (`InstallPayload`) aynı yük (payload) biçimini paylaşır, ancak kurulum akışında daha erken konumlandığından yaklaşan geçişin bağlı olduğu durumu hazırlayabilir — tipik kullanımlar arasında verileri yedeklemek, yeni şemayla uyumluluğu doğrulamak veya yeniden yapılandırılacak ya da kaldırılacak kayıtları arşivlemek yer alır.
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
+
+const handler = async (payload: InstallPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+Ayrıca kurulum öncesi işlevi istediğiniz zaman CLI kullanarak manuel olarak çalıştırabilirsiniz:
+
+```bash filename="Terminal"
+yarn twenty exec --preInstall
+```
+
+Önemli noktalar:
+* Kurulum öncesi işlevler `definePreInstallLogicFunction()` kullanır — kurulum sonrasıyla aynı özel yapılandırma, sadece yaşam döngüsünde farklı bir yuvaya eklenir.
+* Hem kurulum öncesi hem de kurulum sonrası işleyiciler aynı `InstallPayload` türünü alır: `{ previousVersion?: string; newVersion: string }`. Bunu bir kez içe aktarın ve her iki kanca için yeniden kullanın.
+* **Kanca ne zaman çalışır**: çalışma alanı üstveri (metadata) geçişinden hemen önce konumlandırılır (`synchronizeFromManifest`). Çalıştırmadan önce, sunucu yalnızca ekleyici bir "indirgenmiş eşitleme" yürütür; bu, çalışma alanı üstverisinde **yeni** sürümün kurulum öncesi işlevini kaydeder — başka hiçbir şeye dokunulmaz — ve ardından bunu yürütür. Bu eşitleme yalnızca ekleyici olduğundan, işleyiciniz çalıştığında önceki sürümün nesneleri, alanları ve verileri hâlâ sağlamdır: geçiş öncesi durumu güvenle okuyabilir ve yedekleyebilirsiniz.
+* **Yürütme modeli**: kurulum öncesi **senkron** olarak yürütülür ve **kurulumu bloklar**. İşleyici bir hata fırlatırsa, herhangi bir şema değişikliği uygulanmadan önce kurulum iptal edilir — çalışma alanı, tutarlı bir durumda önceki sürümde kalır. Bu kasıtlıdır: kurulum öncesi, riskli bir yükseltmeyi reddetmek için son şansınızdır.
+* Kurulum sonrası ile aynı şekilde, uygulama başına yalnızca bir kurulum öncesi işlevine izin verilir. Derleme sırasında uygulama manifestine `preInstallLogicFunction` altında otomatik olarak eklenir.
+* **Geliştirme modunda çalıştırılmaz**: kurulum sonrasında olduğu gibi — yerel olarak kaydedilen uygulamalarda kurulum akışı tamamen atlanır, bu nedenle `yarn twenty dev` altında kurulum öncesi hiç çalışmaz. Bunu elle tetiklemek için `yarn twenty exec --preInstall` kullanın.
+
+</Accordion>
+<Accordion title="Kurulum öncesi vs kurulum sonrası: hangisini ne zaman kullanmalı" description="Doğru kurulum kancasını seçme">
+
+Her iki kanca da aynı kurulum akışının parçasıdır ve aynı `InstallPayload`'ı alır. Fark, çalışma alanı üstveri (metadata) geçişine göre **ne zaman** çalıştıklarıdır ve bu, güvenle erişebilecekleri verileri değiştirir.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ install flow                                                │
+│                                                             │
+│   upload package → [pre-install] → metadata migration →     │
+│   generate SDK → [post-install]                             │
+│                                                             │
+│                  old schema visible    new schema visible   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+Kurulum öncesi her zaman **senkron**dur (kurulumu bloke eder ve iptal edebilir). Kurulum sonrası **varsayılan olarak asenkron**dur — otomatik yeniden denemelerle bir worker üzerinde kuyruğa alınır — ancak `shouldRunSynchronously: true` ile senkron yürütmeye geçebilir. Her modun ne zaman kullanılacağı için yukarıdaki `definePostInstallLogicFunction` akordeonuna bakın.
+
+**Yeni şemanın mevcut olmasını gerektiren her şey için `post-install` kullanın.** Bu yaygın durumdur:
+
+* Yeni eklenen nesne ve alanlara karşı varsayılan verileri tohumlama (ilk kayıtları, varsayılan görünümleri, demo içeriği oluşturma).
+* Uygulamanın kimlik bilgileri artık mevcut olduğuna göre, üçüncü taraf hizmetlerle webhook'ları kaydetmek.
+* Eşitlenmiş üstveriye (metadata) bağlı kurulumu tamamlamak için kendi API'nizi çağırmak.
+* Her yükseltmede durumu uzlaştırması gereken idempotent "bu mevcut olsun" mantığı — `shouldRunOnVersionUpgrade: true` ile birleştirin.
+
+Örnek — kurulumdan sonra varsayılan bir `PostCard` kaydı tohumlama:
+
+```ts src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
+import { createClient } from './generated/client';
+
+const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
+  if (previousVersion) return; // fresh installs only
+
+  const client = createClient();
+  await client.postCard.create({
+    data: { title: 'Welcome to Postcard', content: 'Your first card!' },
+  });
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'f7a2b9c1-3d4e-5678-abcd-ef9876543210',
+  name: 'post-install',
+  description: 'Seeds a welcome post card after install.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  handler,
+});
+```
+
+**Bir geçiş mevcut verileri aksi takdirde silecek veya bozacaksa `pre-install` kullanın.** Kurulum öncesi *önceki* şemaya karşı çalıştığı ve hatalandığında yükseltmeyi geri aldığı için, riskli olan her şey için doğru yerdir:
+
+* **Kaldırılmak veya yeniden yapılandırılmak üzere olan verileri yedekleme** — örn. v2'de bir alanı kaldırıyorsunuz ve geçiş çalışmadan önce değerlerini başka bir alana kopyalamanız veya depolamaya aktarmanız gerekiyor.
+* **Yeni bir kısıtın geçersiz kılacağı kayıtları arşivleme** — örn. bir alan `NOT NULL` oluyor ve önce null değerli satırları silmeniz veya düzeltmeniz gerekiyor.
+* **Uyumluluğu doğrulama ve mevcut veriler temiz bir şekilde geçirilemiyorsa yükseltmeyi reddetme** — işleyiciden hata fırlatın ve kurulum, herhangi bir değişiklik uygulanmadan iptal edilir. Bu, uyumsuzluğu geçişin ortasında keşfetmekten daha güvenlidir.
+* İlişkilendirmeyi kaybettirecek bir şema değişikliğinden önce **verileri yeniden adlandırma veya yeniden anahtarlama**.
+
+Örnek — yıkıcı bir geçişten önce kayıtları arşivleme:
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
+import { createClient } from './generated/client';
+
+const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
+  // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
+  if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
+    return;
+  }
+
+  const client = createClient();
+  const legacyRecords = await client.postCard.findMany({
+    where: { notes: { isNotNull: true } },
+  });
+
+  if (legacyRecords.length === 0) return;
+
+  // Copy legacy `notes` into the new `description` field before the migration
+  // drops the `notes` column. If this fails, the upgrade is aborted and the
+  // workspace stays on v1 with all data intact.
+  await Promise.all(
+    legacyRecords.map((record) =>
+      client.postCard.update({
+        where: { id: record.id },
+        data: { description: record.notes },
+      }),
+    ),
+  );
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Backs up legacy notes into description before the v2 migration.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+**Kural olarak:**
+
+| Şunu yapmak istiyorsunuz…                                                                              | Kullan                                                                                      |
+| ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| Varsayılan verileri tohumlamak, çalışma alanını yapılandırmak, harici kaynakları kaydetmek             | `post-install`                                                                              |
+| Kurulum yanıtını engellememesi gereken uzun süreli tohumlama veya üçüncü taraf çağrılarını çalıştırmak | `post-install` (varsayılan — `shouldRunSynchronously: false`, worker yeniden denemeleriyle) |
+| Kurulum çağrısı döner dönmez çağıranın güveneceği hızlı kurulumu çalıştırmak                           | `post-install` ile `shouldRunSynchronously: true`                                           |
+| Yaklaşan geçişin kaybedeceği verileri okumak veya yedeklemek                                           | `pre-install`                                                                               |
+| Mevcut verileri bozacak bir yükseltmeyi reddetmek                                                      | `pre-install` (işleyiciden hata fırlatmak)                                                  |
+| Her yükseltmede uzlaştırma çalıştırmak                                                                 | `post-install` ile `shouldRunOnVersionUpgrade: true`                                        |
+| Yalnızca ilk kurulumda tek seferlik kurulum yapmak                                                     | `post-install` ile `shouldRunOnVersionUpgrade: false` (varsayılan)                          |
+
+<Note>
+Emin değilseniz, varsayılan olarak **kurulum sonrası**nı tercih edin. Yalnızca geçişin kendisi yıkıcıysa ve önceki durum yok olmadan önce onu yakalamanız gerekiyorsa kurulum öncesine başvurun.
+</Note>
 
 </Accordion>
 <Accordion title="defineFrontComponent" description="Özel kullanıcı arayüzü için ön uç bileşenlerini tanımlayın">
@@ -1817,8 +1943,7 @@ yarn twenty exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 # Pass a JSON payload
 yarn twenty exec -n create-new-post-card -p '{"name": "Hello"}'
 
-# Execute pre-install or post-install functions
-yarn twenty exec --preInstall
+# Execute the post-install function
 yarn twenty exec --postInstall
 ```
 

@@ -1,7 +1,6 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { FIND_MANY_FRONT_COMPONENTS } from '@/front-components/graphql/queries/findManyFrontComponents';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
 import { useInsertCreatedWidgetAtContext } from '@/page-layout/hooks/useInsertCreatedWidgetAtContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -14,6 +13,8 @@ import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPosition';
 import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
+import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
+import { getFieldWidgetDefaultDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
 import { useCreateViewForFieldsWidget } from '@/page-layout/widgets/fields/hooks/useCreateViewForFieldsWidget';
 import { useDeleteViewForFieldsWidget } from '@/page-layout/widgets/fields/hooks/useDeleteViewForFieldsWidget';
 import { useDeleteViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useDeleteViewForRecordTableWidget';
@@ -102,9 +103,9 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     objectNameSingular: targetObjectNameSingular,
   });
 
-  const { boxedRelationFieldMetadataItems } = useFieldListFieldMetadataItems({
-    objectNameSingular: targetObjectNameSingular,
-  });
+  const allFieldWidgetFields = useFieldWidgetEligibleFields(
+    targetObjectNameSingular,
+  );
 
   const editingWidgetTab = isDefined(pageLayoutEditingWidgetId)
     ? pageLayoutDraft.tabs.find((tab) =>
@@ -274,12 +275,11 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
         }),
     );
 
-    const unusedRelationField = boxedRelationFieldMetadataItems.find(
+    const unusedField = allFieldWidgetFields.find(
       (field) => !usedFieldMetadataIds.has(field.id),
     );
 
-    const selectedField =
-      unusedRelationField ?? boxedRelationFieldMetadataItems[0];
+    const selectedField = unusedField ?? allFieldWidgetFields[0];
 
     const fieldMetadataId = selectedField?.id ?? '';
     const title = selectedField?.label ?? '';
@@ -289,6 +289,9 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       pageLayoutTabId: tabId,
       title,
       fieldMetadataId,
+      fieldDisplayMode: isDefined(selectedField)
+        ? getFieldWidgetDefaultDisplayMode(selectedField.type)
+        : undefined,
       objectMetadataId: objectMetadataItem.id,
       positionIndex,
     });
@@ -307,7 +310,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       resetNavigationStack: true,
     });
   }, [
-    boxedRelationFieldMetadataItems,
+    allFieldWidgetFields,
     getExistingWidgetPositionIndex,
     insertCreatedWidgetAtContext,
     navigatePageLayoutSidePanel,

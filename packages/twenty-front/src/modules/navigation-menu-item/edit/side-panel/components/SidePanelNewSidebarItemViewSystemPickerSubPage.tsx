@@ -2,6 +2,7 @@ import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/u
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { SidePanelNewSidebarItemViewSystemSubView } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewSystemSubView';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/navigation-menu-item/edit/side-panel/utils/getAvailableObjectMetadataForNewSidebarItem';
+import { isViewDisplayableInNavigationMenu } from '@/navigation-menu-item/edit/side-panel/utils/isViewDisplayableInNavigationMenu';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -10,7 +11,6 @@ import { selectedObjectMetadataIdForViewFlowState } from '@/side-panel/states/se
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useState } from 'react';
-import { ViewKey, ViewType } from 'twenty-shared/types';
 
 export const SidePanelNewSidebarItemViewSystemPickerSubPage = () => {
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
@@ -23,17 +23,15 @@ export const SidePanelNewSidebarItemViewSystemPickerSubPage = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
-  const { views, objectMetadataIdsWithIndexView } =
+  const { views, objectMetadataIdsWithIndexView, viewIdsInWorkspace } =
     useNavigationMenuObjectMetadataFromDraft(currentDraft);
 
   const objectMetadataIdsWithDisplayableViews = new Set(
     views
       .filter(
         (view) =>
-          view.key !== ViewKey.INDEX &&
-          (view.type === ViewType.TABLE ||
-            view.type === ViewType.KANBAN ||
-            view.type === ViewType.CALENDAR),
+          isViewDisplayableInNavigationMenu(view) &&
+          !viewIdsInWorkspace.has(view.id),
       )
       .map((view) => view.objectMetadataId),
   );

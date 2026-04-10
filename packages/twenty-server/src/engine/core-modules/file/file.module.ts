@@ -17,6 +17,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { FileController } from './controllers/file.controller';
 import { FileEntity } from './entities/file.entity';
 import { FileCorePictureModule } from './file-core-picture/file-core-picture.module';
+import { FileEmailAttachmentModule } from './file-email-attachment/file-email-attachment.module';
 import { FileUrlModule } from './file-url/file-url.module';
 import { FileWorkflowModule } from './file-workflow/file-workflow.module';
 import { FilesFieldModule } from './files-field/files-field.module';
@@ -34,6 +35,7 @@ import { FileService } from './services/file.service';
     FileCorePictureModule,
     FileWorkflowModule,
     FileAIChatModule,
+    FileEmailAttachmentModule,
     SecureHttpClientModule,
   ],
   providers: [
@@ -52,6 +54,7 @@ import { FileService } from './services/file.service';
     FileCorePictureModule,
     FileWorkflowModule,
     FileAIChatModule,
+    FileEmailAttachmentModule,
   ],
   controllers: [FileController],
 })

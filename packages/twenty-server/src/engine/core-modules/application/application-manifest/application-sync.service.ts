@@ -71,6 +71,42 @@ export class ApplicationSyncService {
     return syncResult;
   }
 
+  // Registers the application + only the pre-install logic function in
+  // workspace metadata so the pre-install hook can resolve and execute it
+  // before the main synchronizeFromManifest runs the full migrations.
+  // No-op when the manifest does not declare a pre-install logic function.
+  public async preInstallSynchronizeFromManifest({
+    workspaceId,
+    manifest,
+    applicationRegistrationId,
+  }: {
+    workspaceId: string;
+    manifest: Manifest;
+    applicationRegistrationId?: string;
+  }): Promise<void> {
+    if (!isDefined(manifest.application.preInstallLogicFunction)) {
+      return;
+    }
+
+    const application = await this.syncApplication({
+      workspaceId,
+      manifest,
+      applicationRegistrationId,
+    });
+
+    const ownerFlatApplication: FlatApplication = application;
+
+    await this.applicationManifestMigrationService.syncPreInstallLogicFunctionFromManifest(
+      {
+        manifest,
+        workspaceId,
+        ownerFlatApplication,
+      },
+    );
+
+    this.logger.log('Pre-install sync from manifest completed');
+  }
+
   private async syncApplication({
     workspaceId,
     manifest,

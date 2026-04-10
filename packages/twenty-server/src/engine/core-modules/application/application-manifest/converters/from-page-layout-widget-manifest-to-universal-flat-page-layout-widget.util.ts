@@ -36,6 +36,7 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
     createdAt: now,
     updatedAt: now,
     deletedAt: null,
+    conditionalAvailabilityExpression: null,
     universalOverrides: null,
   };
 };
