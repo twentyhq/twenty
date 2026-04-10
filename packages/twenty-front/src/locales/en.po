@@ -1387,6 +1387,7 @@ msgstr "AI request prep"
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 msgid "AI Usage"
 msgstr "AI Usage"
 
@@ -1404,6 +1405,11 @@ msgstr "AI usage analytics is available with an Enterprise key."
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 msgid "AI usage analytics requires ClickHouse. Contact your administrator."
 msgstr "AI usage analytics requires ClickHouse. Contact your administrator."
+
+#. js-lingui-id: KgAAyO
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+msgid "AI usage analytics will appear here once you start using AI features."
+msgstr "AI usage analytics will appear here once you start using AI features."
 
 #. js-lingui-id: SknniY
 #: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
@@ -4009,6 +4015,7 @@ msgid "Credit Usage"
 msgstr "Credit Usage"
 
 #. js-lingui-id: 6/q4+J
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Credit usage breakdown for your workspace."
 msgstr "Credit usage breakdown for your workspace."
@@ -10137,6 +10144,12 @@ msgstr "No triggers configured for this function."
 msgid "No usage data"
 msgstr "No usage data"
 
+#. js-lingui-id: TayaS7
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "No usage data yet"
+msgstr "No usage data yet"
+
 #. js-lingui-id: wJwIUq
 #: src/modules/object-record/record-field/ui/form-types/components/FormSelectFieldInput.tsx
 msgid "No value"
@@ -14541,6 +14554,7 @@ msgstr "Total time"
 #. js-lingui-id: BxecEJ
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 msgid "Track AI consumption across your workspace."
 msgstr "Track AI consumption across your workspace."
 
@@ -15177,6 +15191,7 @@ msgstr "Usage across all workspaces on this server"
 
 #. js-lingui-id: 21hsGI
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Usage Analytics"
 msgstr "Usage Analytics"
 
@@ -15184,6 +15199,11 @@ msgstr "Usage Analytics"
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Usage analytics requires ClickHouse. Contact your administrator."
 msgstr "Usage analytics requires ClickHouse. Contact your administrator."
+
+#. js-lingui-id: XglEba
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Usage analytics will appear here once you start using credits."
+msgstr "Usage analytics will appear here once you start using credits."
 
 #. js-lingui-id: 7vRxpC
 #: src/pages/settings/SettingsUsageUserDetail.tsx
