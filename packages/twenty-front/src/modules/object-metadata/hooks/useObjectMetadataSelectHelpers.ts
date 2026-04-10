@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { type IconComponent, useIcons } from 'twenty-ui/display';
 import { type ThemeColor } from 'twenty-ui/theme';
 
@@ -13,15 +12,12 @@ type ObjectMetadataItemForSelectIcon = Pick<
 export const useObjectMetadataSelectHelpers = () => {
   const { getIcon } = useIcons();
 
-  const getSelectIconPropsFromObjectMetadataItem = useCallback(
-    (
-      objectMetadataItem: ObjectMetadataItemForSelectIcon,
-    ): { Icon: IconComponent; iconThemeColor: ThemeColor } => ({
-      Icon: getIcon(objectMetadataItem.icon),
-      iconThemeColor: getObjectColorWithFallback(objectMetadataItem),
-    }),
-    [getIcon],
-  );
+  const getSelectIconPropsFromObjectMetadataItem = (
+    objectMetadataItem: ObjectMetadataItemForSelectIcon,
+  ): { Icon: IconComponent; iconThemeColor: ThemeColor } => ({
+    Icon: getIcon(objectMetadataItem.icon),
+    iconThemeColor: getObjectColorWithFallback(objectMetadataItem),
+  });
 
   return { getSelectIconPropsFromObjectMetadataItem };
 };
