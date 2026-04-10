@@ -1,4 +1,5 @@
 import type {
+  HalftoneEffectSettings,
   HalftoneGeometrySpec,
   HalftoneSourceMode,
   HalftoneStudioAction,
@@ -58,21 +59,45 @@ export const DEFAULT_GEOMETRY_SPECS: HalftoneGeometrySpec[] = [
   },
 ];
 
-export const DEFAULT_IMAGE_HALFTONE_SETTINGS: Partial<HalftoneStudioSettings> =
-  {
-    halftone: {
-      enabled: true,
-      numRows: 80,
-      contrast: 1.5,
-      power: 1.2,
-      shading: 0.8,
-      baseInk: 0.08,
-      maxBar: 0.32,
-      cellRatio: 2.0,
-      cutoff: 0.02,
-      dashColor: '#4A38F5',
-    },
-  };
+export const DEFAULT_SHAPE_HALFTONE_SETTINGS: HalftoneEffectSettings = {
+  enabled: true,
+  numRows: 45,
+  contrast: 1.3,
+  power: 1.1,
+  shading: 1.6,
+  baseInk: 0.12,
+  maxBar: 0.24,
+  rowMerge: 0.06,
+  cellRatio: 2.2,
+  cutoff: 0.02,
+  highlightOpen: 0.05,
+  shadowGrouping: 0.18,
+  shadowCrush: 0.14,
+  dashColor: '#4A38F5',
+};
+
+export const DEFAULT_IMAGE_HALFTONE_SETTINGS: HalftoneEffectSettings = {
+  enabled: true,
+  numRows: 80,
+  contrast: 1.5,
+  power: 1.2,
+  shading: 0.8,
+  baseInk: 0.06,
+  maxBar: 0.32,
+  rowMerge: 0.18,
+  cellRatio: 2.0,
+  cutoff: 0.02,
+  highlightOpen: 0.14,
+  shadowGrouping: 0.38,
+  shadowCrush: 0.24,
+  dashColor: '#4A38F5',
+};
+
+export function getDefaultHalftoneSettings(sourceMode: HalftoneSourceMode) {
+  return sourceMode === 'image'
+    ? DEFAULT_IMAGE_HALFTONE_SETTINGS
+    : DEFAULT_SHAPE_HALFTONE_SETTINGS;
+}
 
 export const DEFAULT_HALFTONE_SETTINGS: HalftoneStudioSettings = {
   sourceMode: 'shape' as HalftoneSourceMode,
@@ -88,18 +113,7 @@ export const DEFAULT_HALFTONE_SETTINGS: HalftoneStudioSettings = {
     roughness: 0.42,
     metalness: 0.16,
   },
-  halftone: {
-    enabled: true,
-    numRows: 45,
-    contrast: 1.3,
-    power: 1.1,
-    shading: 1.6,
-    baseInk: 0.16,
-    maxBar: 0.24,
-    cellRatio: 2.2,
-    cutoff: 0.02,
-    dashColor: '#4A38F5',
-  },
+  halftone: DEFAULT_SHAPE_HALFTONE_SETTINGS,
   background: {
     transparent: true,
     color: '#ffffff',
@@ -154,12 +168,45 @@ export const DEFAULT_HALFTONE_SETTINGS: HalftoneStudioSettings = {
   },
 };
 
+export function normalizeHalftoneStudioSettings(
+  settings?: Partial<HalftoneStudioSettings>,
+): HalftoneStudioSettings {
+  const sourceMode =
+    settings?.sourceMode ?? DEFAULT_HALFTONE_SETTINGS.sourceMode;
+
+  return {
+    ...DEFAULT_HALFTONE_SETTINGS,
+    ...settings,
+    sourceMode,
+    lighting: {
+      ...DEFAULT_HALFTONE_SETTINGS.lighting,
+      ...settings?.lighting,
+    },
+    material: {
+      ...DEFAULT_HALFTONE_SETTINGS.material,
+      ...settings?.material,
+    },
+    halftone: {
+      ...getDefaultHalftoneSettings(sourceMode),
+      ...settings?.halftone,
+    },
+    background: {
+      ...DEFAULT_HALFTONE_SETTINGS.background,
+      ...settings?.background,
+    },
+    animation: {
+      ...DEFAULT_HALFTONE_SETTINGS.animation,
+      ...settings?.animation,
+    },
+  };
+}
+
 export function createInitialHalftoneStudioState(): HalftoneStudioState {
   return {
     activeTab: 'design',
     geometrySpecs: [...DEFAULT_GEOMETRY_SPECS],
     importedFiles: {},
-    settings: DEFAULT_HALFTONE_SETTINGS,
+    settings: normalizeHalftoneStudioSettings(DEFAULT_HALFTONE_SETTINGS),
     showHint: true,
     statusMessage: '',
     statusIsError: false,
@@ -195,7 +242,7 @@ export function halftoneStudioReducer(
     case 'replaceSettings':
       return {
         ...state,
-        settings: action.value,
+        settings: normalizeHalftoneStudioSettings(action.value),
       };
     case 'patchLighting':
       return {

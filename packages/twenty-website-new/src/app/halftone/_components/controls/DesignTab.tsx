@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  formatAngle,
-  formatDecimal,
-} from '@/app/halftone/_lib/formatters';
+import { formatAngle, formatDecimal } from '@/app/halftone/_lib/formatters';
 import type {
   HalftoneBackgroundSettings,
   HalftoneSourceMode,
@@ -364,6 +361,32 @@ export function DesignTab({
               Base Density
             </SliderControl>
             <SliderControl
+              max={0.4}
+              min={0}
+              onChange={(event) =>
+                onHalftoneChange({ highlightOpen: Number(event.target.value) })
+              }
+              step={0.01}
+              value={settings.halftone.highlightOpen}
+              valueLabel={formatDecimal(settings.halftone.highlightOpen)}
+            >
+              Highlight Open
+            </SliderControl>
+            <SliderControl
+              max={1}
+              min={0}
+              onChange={(event) =>
+                onHalftoneChange({
+                  shadowGrouping: Number(event.target.value),
+                })
+              }
+              step={0.01}
+              value={settings.halftone.shadowGrouping}
+              valueLabel={formatDecimal(settings.halftone.shadowGrouping)}
+            >
+              Shadow Group
+            </SliderControl>
+            <SliderControl
               max={0.48}
               min={0.1}
               onChange={(event) =>
@@ -376,28 +399,16 @@ export function DesignTab({
               Thickness
             </SliderControl>
             <SliderControl
-              max={3.5}
-              min={1}
-              onChange={(event) =>
-                onHalftoneChange({ cellRatio: Number(event.target.value) })
-              }
-              step={0.1}
-              value={settings.halftone.cellRatio}
-              valueLabel={formatDecimal(settings.halftone.cellRatio, 1)}
-            >
-              Gap
-            </SliderControl>
-            <SliderControl
-              max={0.2}
+              max={0.35}
               min={0}
               onChange={(event) =>
-                onHalftoneChange({ cutoff: Number(event.target.value) })
+                onHalftoneChange({ rowMerge: Number(event.target.value) })
               }
               step={0.01}
-              value={settings.halftone.cutoff}
-              valueLabel={formatDecimal(settings.halftone.cutoff)}
+              value={settings.halftone.rowMerge}
+              valueLabel={formatDecimal(settings.halftone.rowMerge)}
             >
-              Cutoff
+              Row Merge
             </SliderControl>
           </ControlGrid>
         ) : null}

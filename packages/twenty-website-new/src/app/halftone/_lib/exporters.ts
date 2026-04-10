@@ -878,7 +878,10 @@ function createInteractionState() {
   };
 }
 
-${isImageMode ? '' : `
+${
+  isImageMode
+    ? ''
+    : `
 function setPrimaryLightPosition(light, angleDegrees, height) {
   const lightAngle = (angleDegrees * Math.PI) / 180;
   light.position.set(Math.cos(lightAngle) * 5, height, Math.sin(lightAngle) * 5);
@@ -915,7 +918,8 @@ async function createGeometry(modelUrl) {
 
   return createBuiltinGeometry(shape.key);
 }
-`}
+`
+}
 `;
 }
 
@@ -1051,8 +1055,12 @@ async function mountHalftoneCanvas(options) {
       shading: { value: settings.halftone.shading },
       baseInk: { value: settings.halftone.baseInk },
       maxBar: { value: settings.halftone.maxBar },
+      rowMerge: { value: settings.halftone.rowMerge },
       cellRatio: { value: settings.halftone.cellRatio },
       cutoff: { value: settings.halftone.cutoff },
+      highlightOpen: { value: settings.halftone.highlightOpen },
+      shadowGrouping: { value: settings.halftone.shadowGrouping },
+      shadowCrush: { value: settings.halftone.shadowCrush },
       dashColor: { value: new THREE.Color(settings.halftone.dashColor) },
       time: { value: 0 },
       waveAmount: { value: 0 },
@@ -1579,8 +1587,12 @@ async function mountHalftoneCanvas(options) {
       shading: { value: settings.halftone.shading },
       baseInk: { value: settings.halftone.baseInk },
       maxBar: { value: settings.halftone.maxBar },
+      rowMerge: { value: settings.halftone.rowMerge },
       cellRatio: { value: settings.halftone.cellRatio },
       cutoff: { value: settings.halftone.cutoff },
+      highlightOpen: { value: settings.halftone.highlightOpen },
+      shadowGrouping: { value: settings.halftone.shadowGrouping },
+      shadowCrush: { value: settings.halftone.shadowCrush },
       dashColor: { value: new THREE.Color(settings.halftone.dashColor) },
       time: { value: 0 },
       waveAmount: { value: 0 },
@@ -2108,11 +2120,13 @@ export async function generateStandaloneHtml(
   const captionText = isImageMode
     ? `Place <code>${defaultImageUrl}</code> next to this HTML file.`
     : `Standalone export of the current halftone scene.
-        ${shape.kind === 'imported'
-          ? embeddedImportedModelUrl
-            ? 'The uploaded model is embedded directly in this HTML file.'
-            : `Place <code>${defaultModelUrl}</code> next to this HTML file to keep the current uploaded shape.`
-          : ''}`;
+        ${
+          shape.kind === 'imported'
+            ? embeddedImportedModelUrl
+              ? 'The uploaded model is embedded directly in this HTML file.'
+              : `Place <code>${defaultModelUrl}</code> next to this HTML file to keep the current uploaded shape.`
+            : ''
+        }`;
 
   return `<!DOCTYPE html>
 <html lang="en">

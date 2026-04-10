@@ -199,7 +199,10 @@ function getCanvasCursor(
     return 'crosshair';
   }
 
-  if (settings.animation.followDragEnabled || settings.animation.autoRotateEnabled) {
+  if (
+    settings.animation.followDragEnabled ||
+    settings.animation.autoRotateEnabled
+  ) {
     return isDragging ? 'grabbing' : 'grab';
   }
 
@@ -257,16 +260,24 @@ function updateHalftone(
   resources.halftoneMaterial.uniforms.shading.value = settings.halftone.shading;
   resources.halftoneMaterial.uniforms.baseInk.value = settings.halftone.baseInk;
   resources.halftoneMaterial.uniforms.maxBar.value = settings.halftone.maxBar;
+  resources.halftoneMaterial.uniforms.rowMerge.value =
+    settings.halftone.rowMerge;
   resources.halftoneMaterial.uniforms.cellRatio.value =
     settings.halftone.cellRatio;
   resources.halftoneMaterial.uniforms.cutoff.value = settings.halftone.cutoff;
+  resources.halftoneMaterial.uniforms.highlightOpen.value =
+    settings.halftone.highlightOpen;
+  resources.halftoneMaterial.uniforms.shadowGrouping.value =
+    settings.halftone.shadowGrouping;
+  resources.halftoneMaterial.uniforms.shadowCrush.value =
+    settings.halftone.shadowCrush;
   (resources.halftoneMaterial.uniforms.dashColor.value as THREE.Color).set(
     settings.halftone.dashColor,
   );
-  resources.halftoneMaterial.uniforms.waveAmount.value = settings.animation
-    .waveEnabled && settings.sourceMode !== 'image'
-    ? settings.animation.waveAmount
-    : 0;
+  resources.halftoneMaterial.uniforms.waveAmount.value =
+    settings.animation.waveEnabled && settings.sourceMode !== 'image'
+      ? settings.animation.waveAmount
+      : 0;
   resources.halftoneMaterial.uniforms.waveSpeed.value =
     settings.animation.waveSpeed;
 }
@@ -524,18 +535,9 @@ export function HalftoneCanvas({
     const mesh = new THREE.Mesh(geometry, material);
     scene3d.add(mesh);
 
-    const sceneTarget = createRenderTarget(
-      getRenderWidth(),
-      getRenderHeight(),
-    );
-    const blurTargetA = createRenderTarget(
-      getRenderWidth(),
-      getRenderHeight(),
-    );
-    const blurTargetB = createRenderTarget(
-      getRenderWidth(),
-      getRenderHeight(),
-    );
+    const sceneTarget = createRenderTarget(getRenderWidth(), getRenderHeight());
+    const blurTargetA = createRenderTarget(getRenderWidth(), getRenderHeight());
+    const blurTargetB = createRenderTarget(getRenderWidth(), getRenderHeight());
     const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
     const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
@@ -578,8 +580,12 @@ export function HalftoneCanvas({
         shading: { value: settings.halftone.shading },
         baseInk: { value: settings.halftone.baseInk },
         maxBar: { value: settings.halftone.maxBar },
+        rowMerge: { value: settings.halftone.rowMerge },
         cellRatio: { value: settings.halftone.cellRatio },
         cutoff: { value: settings.halftone.cutoff },
+        highlightOpen: { value: settings.halftone.highlightOpen },
+        shadowGrouping: { value: settings.halftone.shadowGrouping },
+        shadowCrush: { value: settings.halftone.shadowCrush },
         dashColor: { value: new THREE.Color(settings.halftone.dashColor) },
         time: { value: 0 },
         waveAmount: { value: 0 },
@@ -766,18 +772,16 @@ export function HalftoneCanvas({
       blurHorizontalMaterial.uniforms.res.value.set(prevSize.x, prevSize.y);
       blurVerticalMaterial.uniforms.res.value.set(prevSize.x, prevSize.y);
       halftoneMaterial.uniforms.resolution.value.set(prevSize.x, prevSize.y);
-      halftoneMaterial.uniforms.distanceScale.value =
-        isImage
-          ? 1
-          : previewDistanceReference.current / REFERENCE_PREVIEW_DISTANCE;
+      halftoneMaterial.uniforms.distanceScale.value = isImage
+        ? 1
+        : previewDistanceReference.current / REFERENCE_PREVIEW_DISTANCE;
       if (isImage) {
         imageMaterial.uniforms.viewportSize.value.set(prevSize.x, prevSize.y);
         imageMaterial.uniforms.zoom.value = getImagePreviewZoom(
           previewDistanceReference.current,
         );
       } else {
-        camera.aspect =
-          getWidth() / Math.max(getHeight(), 1);
+        camera.aspect = getWidth() / Math.max(getHeight(), 1);
         camera.updateProjectionMatrix();
       }
 
@@ -800,16 +804,21 @@ export function HalftoneCanvas({
         );
       }
 
-      const cropBounds =
-        getAlphaCropBounds(flippedBuffer, snapshotWidth, snapshotHeight) ?? {
-          minX: 0,
-          minY: 0,
-          maxX: snapshotWidth - 1,
-          maxY: snapshotHeight - 1,
-        };
+      const cropBounds = getAlphaCropBounds(
+        flippedBuffer,
+        snapshotWidth,
+        snapshotHeight,
+      ) ?? {
+        minX: 0,
+        minY: 0,
+        maxX: snapshotWidth - 1,
+        maxY: snapshotHeight - 1,
+      };
       const croppedWidth = cropBounds.maxX - cropBounds.minX + 1;
       const croppedHeight = cropBounds.maxY - cropBounds.minY + 1;
-      const croppedBuffer = new Uint8ClampedArray(croppedWidth * croppedHeight * 4);
+      const croppedBuffer = new Uint8ClampedArray(
+        croppedWidth * croppedHeight * 4,
+      );
 
       for (let y = 0; y < croppedHeight; y++) {
         const sourceStart =
@@ -823,7 +832,11 @@ export function HalftoneCanvas({
         );
       }
 
-      const imageData = new ImageData(croppedBuffer, croppedWidth, croppedHeight);
+      const imageData = new ImageData(
+        croppedBuffer,
+        croppedWidth,
+        croppedHeight,
+      );
       const offscreen = document.createElement('canvas');
       offscreen.width = croppedWidth;
       offscreen.height = croppedHeight;
@@ -956,7 +969,10 @@ export function HalftoneCanvas({
         }
       }
 
-      canvas.style.cursor = getCanvasCursor(activeSettings, interaction.dragging);
+      canvas.style.cursor = getCanvasCursor(
+        activeSettings,
+        interaction.dragging,
+      );
 
       if (!didInteractReference.current) {
         didInteractReference.current = true;
@@ -1008,8 +1024,10 @@ export function HalftoneCanvas({
         return;
       }
 
-      const deltaX = (event.clientX - interaction.pointerX) * animation.dragSens;
-      const deltaY = (event.clientY - interaction.pointerY) * animation.dragSens;
+      const deltaX =
+        (event.clientX - interaction.pointerX) * animation.dragSens;
+      const deltaY =
+        (event.clientY - interaction.pointerY) * animation.dragSens;
       interaction.velocityX = deltaY;
       interaction.velocityY = deltaX;
       interaction.targetRotationY += deltaX;
@@ -1127,14 +1145,15 @@ export function HalftoneCanvas({
       const hasImageTexture = resources.imageTexture !== null;
 
       halftoneMaterial.uniforms.time.value = elapsedTime;
-      halftoneMaterial.uniforms.waveAmount.value = activeSettings.animation
-        .waveEnabled && !isImageMode
-        ? activeSettings.animation.waveAmount
-        : 0;
+      halftoneMaterial.uniforms.waveAmount.value =
+        activeSettings.animation.waveEnabled && !isImageMode
+          ? activeSettings.animation.waveAmount
+          : 0;
       halftoneMaterial.uniforms.waveSpeed.value =
         activeSettings.animation.waveSpeed;
-      halftoneMaterial.uniforms.distanceScale.value =
-        isImageMode ? 1 : baseDistance / REFERENCE_PREVIEW_DISTANCE;
+      halftoneMaterial.uniforms.distanceScale.value = isImageMode
+        ? 1
+        : baseDistance / REFERENCE_PREVIEW_DISTANCE;
 
       // Image mode selected but no image loaded yet — show empty canvas
       if (isImageMode && !hasImageTexture) {
@@ -1146,7 +1165,9 @@ export function HalftoneCanvas({
       halftoneMaterial.uniforms.cropToBounds.value = isImageMode ? 1 : 0;
 
       if (isImageMode) {
-        const pointerFollow = interaction.dragging ? 0.46 : IMAGE_POINTER_FOLLOW;
+        const pointerFollow = interaction.dragging
+          ? 0.46
+          : IMAGE_POINTER_FOLLOW;
         const pointerActive = interaction.pointerInside || interaction.dragging;
 
         interaction.smoothedMouseX +=

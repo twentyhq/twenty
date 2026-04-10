@@ -90,8 +90,12 @@ export const halftoneFragmentShader = /* glsl */ `
   uniform float shading;
   uniform float baseInk;
   uniform float maxBar;
+  uniform float rowMerge;
   uniform float cellRatio;
   uniform float cutoff;
+  uniform float highlightOpen;
+  uniform float shadowGrouping;
+  uniform float shadowCrush;
   uniform vec3 dashColor;
   uniform float time;
   uniform float waveAmount;
@@ -203,25 +207,52 @@ export const halftoneFragmentShader = /* glsl */ `
     litLum = clamp((litLum - cutoff) / max(1.0 - cutoff, 0.001), 0.0, 1.0);
     litLum = pow(litLum, max(contrast - lightFocus, 0.25));
 
-    float ink = mix(baseInk, 1.0, 1.0 - litLum);
+    float darkness = 1.0 - litLum;
+    float groupedLum = clamp((avgLum - cutoff) / max(1.0 - cutoff, 0.001), 0.0, 1.0);
+    groupedLum = pow(groupedLum, max(contrast * 0.9, 0.25));
+    float groupedDarkness = 1.0 - groupedLum;
+    darkness = mix(darkness, max(darkness, groupedDarkness), shadowGrouping);
+    darkness = clamp(
+      (darkness - highlightOpen) / max(1.0 - highlightOpen, 0.001),
+      0.0,
+      1.0
+    );
+
+    float shadowMask = smoothstep(0.42, 0.96, darkness);
+    darkness = mix(
+      darkness,
+      mix(darkness, 1.0, shadowMask),
+      shadowCrush
+    );
+
+    float inkBase = baseInk * smoothstep(0.03, 0.24, darkness);
+    float ink = mix(inkBase, 1.0, darkness);
     float fill = pow(ink, 1.05) * power;
     fill = clamp(fill, 0.0, 1.0) * mask;
 
     float dynamicBarHalf = mix(0.08, maxBar, smoothstep(0.03, 0.85, ink));
+    float dynamicBarHalfY = min(
+      dynamicBarHalf + rowMerge * smoothstep(0.42, 0.98, ink),
+      0.78
+    );
     float dx2 = abs(cellFrac - 0.5);
     float halfFill = fill * 0.5;
     float bodyHalfW = max(halfFill - dynamicBarHalf * (rowH / cellW), 0.0);
-    float capR = dynamicBarHalf * rowH;
+    float capRX = dynamicBarHalf * rowH;
+    float capRY = dynamicBarHalfY * rowH;
 
     float inDash = 0.0;
     if (dx2 <= bodyHalfW) {
-      float edgeDist = dynamicBarHalf - dy;
+      float edgeDist = dynamicBarHalfY - dy;
       inDash = smoothstep(-0.03, 0.03, edgeDist);
     } else {
       float cdx = (dx2 - bodyHalfW) * cellW;
       float cdy = dy * rowH;
-      float d = sqrt(cdx * cdx + cdy * cdy);
-      inDash = 1.0 - smoothstep(capR - 1.5, capR + 1.5, d);
+      float ellipseDist = sqrt(
+        (cdx * cdx) / max(capRX * capRX, 0.0001) +
+        (cdy * cdy) / max(capRY * capRY, 0.0001)
+      );
+      inDash = 1.0 - smoothstep(1.0 - 0.08, 1.0 + 0.08, ellipseDist);
     }
 
     inDash *= step(0.001, ink) * mask;

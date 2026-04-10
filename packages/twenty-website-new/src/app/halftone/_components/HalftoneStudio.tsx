@@ -18,8 +18,11 @@ import {
   parseExportedPreset,
 } from '@/app/halftone/_lib/exporters';
 import {
+  DEFAULT_IMAGE_HALFTONE_SETTINGS,
+  DEFAULT_SHAPE_HALFTONE_SETTINGS,
   createInitialHalftoneStudioState,
   halftoneStudioReducer,
+  normalizeHalftoneStudioSettings,
 } from '@/app/halftone/_lib/state';
 import type {
   GeometryCacheEntry,
@@ -207,9 +210,7 @@ function findMatchingPresetAsset(files: File[], reference: string | null) {
 
   const targetName = normalizedReference.toLowerCase();
 
-  return (
-    files.find((file) => file.name.toLowerCase() === targetName) ?? null
-  );
+  return files.find((file) => file.name.toLowerCase() === targetName) ?? null;
 }
 
 function inferPresetModelLoader(
@@ -270,6 +271,10 @@ export function HalftoneStudio() {
   const exportPoseReference = useRef<HalftoneExportPose>(
     createInitialExportPose(),
   );
+  const halftoneBySourceModeReference = useRef({
+    shape: { ...DEFAULT_SHAPE_HALFTONE_SETTINGS },
+    image: { ...DEFAULT_IMAGE_HALFTONE_SETTINGS },
+  });
 
   const selectedShape = useMemo(
     () =>
@@ -302,6 +307,12 @@ export function HalftoneStudio() {
       ),
     [selectedImportedFile, selectedShape],
   );
+
+  useEffect(() => {
+    halftoneBySourceModeReference.current[state.settings.sourceMode] = {
+      ...state.settings.halftone,
+    };
+  }, [state.settings.halftone, state.settings.sourceMode]);
 
   const openFilePicker = useCallback((accept: string) => {
     return new Promise<File | null>((resolve) => {
@@ -510,8 +521,15 @@ export function HalftoneStudio() {
     }
 
     setImageFile(file);
+    halftoneBySourceModeReference.current[state.settings.sourceMode] = {
+      ...state.settings.halftone,
+    };
     dispatch({ type: 'setSourceMode', value: 'image' });
-  }, [openFilePicker]);
+    dispatch({
+      type: 'patchHalftone',
+      value: { ...halftoneBySourceModeReference.current.image },
+    });
+  }, [openFilePicker, state.settings.halftone, state.settings.sourceMode]);
 
   const loadDefaultImageFile = useCallback(async () => {
     if (defaultImageFileReference.current) {
@@ -544,7 +562,16 @@ export function HalftoneStudio() {
 
   const handleSourceModeChange = useCallback(
     (mode: HalftoneSourceMode) => {
-      dispatch({ type: 'setSourceMode', value: mode });
+      if (mode !== state.settings.sourceMode) {
+        halftoneBySourceModeReference.current[state.settings.sourceMode] = {
+          ...state.settings.halftone,
+        };
+        dispatch({ type: 'setSourceMode', value: mode });
+        dispatch({
+          type: 'patchHalftone',
+          value: { ...halftoneBySourceModeReference.current[mode] },
+        });
+      }
 
       if (mode !== 'image' || imageFile) {
         return;
@@ -558,7 +585,12 @@ export function HalftoneStudio() {
           console.error(error);
         });
     },
-    [imageFile, loadDefaultImageFile],
+    [
+      imageFile,
+      loadDefaultImageFile,
+      state.settings.halftone,
+      state.settings.sourceMode,
+    ],
   );
 
   const handleImportPreset = useCallback(async () => {
@@ -575,11 +607,11 @@ export function HalftoneStudio() {
     try {
       const preset = parseExportedPreset(await presetFile.text());
       const relatedFiles = selectedFiles.filter((file) => file !== presetFile);
-      const nextSettings = { ...preset.settings };
-      let nextShapeKey = preset.settings.shapeKey;
+      const nextSettings = normalizeHalftoneStudioSettings(preset.settings);
+      let nextShapeKey = nextSettings.shapeKey;
       const statusMessages: string[] = [];
 
-      if (preset.settings.sourceMode === 'image') {
+      if (nextSettings.sourceMode === 'image') {
         const matchedImageFile = findMatchingPresetAsset(
           relatedFiles,
           preset.imageAssetReference,
@@ -604,13 +636,12 @@ export function HalftoneStudio() {
         const embeddedModelReference = normalizePresetAssetReference(
           preset.modelAssetReference,
         );
-        const matchedModelFile =
-          embeddedModelReference?.startsWith('data:')
-            ? await fileFromDataUrl(
-                embeddedModelReference,
-                preset.shape.filename ?? `${preset.shape.label}.glb`,
-              )
-            : findMatchingPresetAsset(relatedFiles, preset.modelAssetReference);
+        const matchedModelFile = embeddedModelReference?.startsWith('data:')
+          ? await fileFromDataUrl(
+              embeddedModelReference,
+              preset.shape.filename ?? `${preset.shape.label}.glb`,
+            )
+          : findMatchingPresetAsset(relatedFiles, preset.modelAssetReference);
 
         if (matchedModelFile) {
           const loader = inferPresetModelLoader(
@@ -654,8 +685,7 @@ export function HalftoneStudio() {
       setCanvasInitialPose(preset.initialPose);
       setPreviewDistance(EXPORTED_PRESET_PREVIEW_DISTANCE);
       setExportName(
-        preset.componentName ??
-          presetFile.name.replace(/\.(tsx|html)$/i, ''),
+        preset.componentName ?? presetFile.name.replace(/\.(tsx|html)$/i, ''),
       );
       dispatch({
         type: 'replaceSettings',

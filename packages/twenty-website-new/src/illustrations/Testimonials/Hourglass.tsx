@@ -36,8 +36,12 @@ const HOURGLASS_SETTINGS: HalftoneStudioSettings = {
     shading: 3,
     baseInk: 0.19,
     maxBar: 0.35,
+    rowMerge: 0.08,
     cellRatio: 2.2,
     cutoff: 0.02,
+    highlightOpen: 0.04,
+    shadowGrouping: 0.18,
+    shadowCrush: 0.14,
     dashColor: '#4A38F5',
   },
   background: {

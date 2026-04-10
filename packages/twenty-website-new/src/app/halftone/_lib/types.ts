@@ -38,8 +38,12 @@ export interface HalftoneEffectSettings {
   shading: number;
   baseInk: number;
   maxBar: number;
+  rowMerge: number;
   cellRatio: number;
   cutoff: number;
+  highlightOpen: number;
+  shadowGrouping: number;
+  shadowCrush: number;
   dashColor: string;
 }
 
