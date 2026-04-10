@@ -5,6 +5,7 @@ import {
   type FieldsWidgetGroup,
   type FieldsWidgetGroupField,
 } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
+import { buildDefaultFieldsWidgetGroups } from '@/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups';
 import { useViewById } from '@/views/hooks/useViewById';
 import { useMemo } from 'react';
 import {
@@ -199,18 +200,17 @@ export const useFieldsWidgetEditorGroupsData = ({
       }
     }
 
-    const allEligibleFields = buildMissingFields({
-      existingFieldMetadataIds: new Set<string>(),
-      startGlobalIndex: 0,
-      startPosition: 0,
-    });
-
     return {
-      groups: [],
-      ungroupedFields: allEligibleFields,
-      editorMode: 'ungrouped',
+      groups: buildDefaultFieldsWidgetGroups({
+        fields: objectMetadataItem.fields,
+        objectNameSingular,
+        labelIdentifierFieldMetadataItemId:
+          labelIdentifierFieldMetadataItem?.id,
+      }),
+      ungroupedFields: [],
+      editorMode: 'grouped' as const,
     };
-  }, [objectMetadataItem, view, labelIdentifierFieldMetadataItem]);
+  }, [objectMetadataItem, objectNameSingular, view, labelIdentifierFieldMetadataItem]);
 
   return {
     ...result,

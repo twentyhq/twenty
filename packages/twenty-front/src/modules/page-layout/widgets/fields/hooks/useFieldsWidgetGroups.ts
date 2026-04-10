@@ -1,10 +1,12 @@
+import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useFieldsWidgetFieldMetadataItems } from '@/page-layout/widgets/fields/hooks/useFieldsWidgetFieldMetadataItems';
 import { type FieldsWidgetDisplayMode } from '@/page-layout/widgets/fields/types/FieldsWidgetDisplayMode';
 import {
   type FieldsWidgetGroup,
   type FieldsWidgetGroupField,
 } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
+import { buildDefaultFieldsWidgetGroups } from '@/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups';
+import { filterDraftGroupsForDisplay } from '@/page-layout/widgets/fields/utils/filterDraftGroupsForDisplay';
 import { useViewById } from '@/views/hooks/useViewById';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
@@ -24,9 +26,8 @@ export const useFieldsWidgetGroups = ({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
-
-  const { inlineFieldMetadataItems, legacyActivityTargetFieldMetadataItems } =
-    useFieldsWidgetFieldMetadataItems({
+  const { labelIdentifierFieldMetadataItem } =
+    useLabelIdentifierFieldMetadataItem({
       objectNameSingular,
     });
 
@@ -85,7 +86,7 @@ export const useFieldsWidgetGroups = ({
     if (isDefined(view) && view.viewFields.length > 0) {
       let globalIndex = 0;
 
-      const fields: FieldsWidgetGroupField[] = [...view.viewFields]
+      const resolvedFields = [...view.viewFields]
         .sort((a, b) => a.position - b.position)
         .filter((viewField) => viewField.isVisible)
         .map((viewField) => {
@@ -106,95 +107,54 @@ export const useFieldsWidgetGroups = ({
         })
         .filter(isDefined);
 
-      if (fields.length > 0) {
-        return [
-          {
-            id: `${view.id}-group-general`,
-            name: t`General`,
-            position: 0,
-            isVisible: true,
-            fields,
-          },
-        ];
+      const standardFields = resolvedFields.filter(
+        (field) => !field.fieldMetadataItem.isCustom,
+      );
+      const customFields = resolvedFields.filter(
+        (field) => field.fieldMetadataItem.isCustom,
+      );
+
+      const groups: FieldsWidgetGroup[] = [];
+
+      if (standardFields.length > 0) {
+        groups.push({
+          id: `${view.id}-group-general`,
+          name: 'General',
+          position: 0,
+          isVisible: true,
+          fields: standardFields,
+        });
+      }
+
+      if (customFields.length > 0) {
+        groups.push({
+          id: `${view.id}-group-other`,
+          name: 'Other',
+          position: 1,
+          isVisible: true,
+          fields: customFields,
+        });
+      }
+
+      if (groups.length > 0) {
+        return groups;
       }
     }
 
-    const fieldsToDisplay = [
-      ...inlineFieldMetadataItems,
-      ...legacyActivityTargetFieldMetadataItems,
-    ];
-
-    if (fieldsToDisplay.length === 0) {
-      return [];
-    }
-
-    const generalFields: Array<{
-      fieldMetadataItem: (typeof fieldsToDisplay)[0];
-      position: number;
-    }> = [];
-    const otherFields: Array<{
-      fieldMetadataItem: (typeof fieldsToDisplay)[0];
-      position: number;
-    }> = [];
-
-    let generalPosition = 0;
-    let otherPosition = 0;
-
-    fieldsToDisplay.forEach((field) => {
-      if (field.isCustom === true) {
-        otherFields.push({
-          fieldMetadataItem: field,
-          position: otherPosition++,
-        });
-      } else {
-        generalFields.push({
-          fieldMetadataItem: field,
-          position: generalPosition++,
-        });
-      }
-    });
-
-    const groups: FieldsWidgetGroup[] = [];
-    let globalIndex = 0;
-
-    if (generalFields.length > 0) {
-      groups.push({
-        id: `${objectNameSingular}-group-general`,
-        name: t`General`,
-        position: 0,
-        isVisible: true,
-        fields: generalFields.map((field) => ({
-          fieldMetadataItem: field.fieldMetadataItem,
-          position: field.position,
-          isVisible: true,
-          globalIndex: globalIndex++,
-        })),
-      });
-    }
-
-    if (otherFields.length > 0) {
-      groups.push({
-        id: `${objectNameSingular}-group-other`,
-        name: t`Other`,
-        position: 1,
-        isVisible: true,
-        fields: otherFields.map((field) => ({
-          fieldMetadataItem: field.fieldMetadataItem,
-          position: field.position,
-          isVisible: true,
-          globalIndex: globalIndex++,
-        })),
-      });
-    }
-
-    return groups;
+    return filterDraftGroupsForDisplay(
+      buildDefaultFieldsWidgetGroups({
+        fields: objectMetadataItem.fields,
+        objectNameSingular,
+        labelIdentifierFieldMetadataItemId:
+          labelIdentifierFieldMetadataItem?.id,
+      }),
+    );
   }, [
     objectMetadataItem,
     objectNameSingular,
+    labelIdentifierFieldMetadataItem,
     t,
     view,
-    inlineFieldMetadataItems,
-    legacyActivityTargetFieldMetadataItems,
   ]);
 
   const displayMode: FieldsWidgetDisplayMode =
