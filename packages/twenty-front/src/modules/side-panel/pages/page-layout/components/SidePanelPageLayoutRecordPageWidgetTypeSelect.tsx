@@ -1,7 +1,6 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { FIND_MANY_FRONT_COMPONENTS } from '@/front-components/graphql/queries/findManyFrontComponents';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
 import { useInsertCreatedWidgetAtContext } from '@/page-layout/hooks/useInsertCreatedWidgetAtContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -14,6 +13,8 @@ import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPosition';
 import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
+import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
+import { getFieldWidgetDefaultDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
 import { useCreateViewForFieldsWidget } from '@/page-layout/widgets/fields/hooks/useCreateViewForFieldsWidget';
 import { useDeleteViewForFieldsWidget } from '@/page-layout/widgets/fields/hooks/useDeleteViewForFieldsWidget';
 import { useDeleteViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useDeleteViewForRecordTableWidget';
@@ -31,7 +32,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconApps, IconList } from 'twenty-ui/display';
@@ -102,19 +103,8 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     objectNameSingular: targetObjectNameSingular,
   });
 
-  const {
-    boxedRelationFieldMetadataItems,
-    junctionRelationFieldMetadataItems,
-  } = useFieldListFieldMetadataItems({
-    objectNameSingular: targetObjectNameSingular,
-  });
-
-  const allSelectableRelationFields = useMemo(
-    () => [
-      ...boxedRelationFieldMetadataItems,
-      ...junctionRelationFieldMetadataItems,
-    ],
-    [boxedRelationFieldMetadataItems, junctionRelationFieldMetadataItems],
+  const allFieldWidgetFields = useFieldWidgetEligibleFields(
+    targetObjectNameSingular,
   );
 
   const editingWidgetTab = isDefined(pageLayoutEditingWidgetId)
@@ -285,11 +275,11 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
         }),
     );
 
-    const unusedRelationField = allSelectableRelationFields.find(
+    const unusedField = allFieldWidgetFields.find(
       (field) => !usedFieldMetadataIds.has(field.id),
     );
 
-    const selectedField = unusedRelationField ?? allSelectableRelationFields[0];
+    const selectedField = unusedField ?? allFieldWidgetFields[0];
 
     const fieldMetadataId = selectedField?.id ?? '';
     const title = selectedField?.label ?? '';
@@ -299,6 +289,9 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       pageLayoutTabId: tabId,
       title,
       fieldMetadataId,
+      fieldDisplayMode: isDefined(selectedField)
+        ? getFieldWidgetDefaultDisplayMode(selectedField.type)
+        : undefined,
       objectMetadataId: objectMetadataItem.id,
       positionIndex,
     });
@@ -317,8 +310,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       resetNavigationStack: true,
     });
   }, [
-    boxedRelationFieldMetadataItems,
-    junctionRelationFieldMetadataItems,
+    allFieldWidgetFields,
     getExistingWidgetPositionIndex,
     insertCreatedWidgetAtContext,
     navigatePageLayoutSidePanel,

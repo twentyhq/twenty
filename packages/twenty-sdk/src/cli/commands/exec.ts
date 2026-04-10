@@ -7,15 +7,15 @@ import { isDefined } from 'twenty-shared/utils';
 export class LogicFunctionExecuteCommand {
   async execute({
     appPath = CURRENT_EXECUTION_DIRECTORY,
-    preInstall = false,
     postInstall = false,
+    preInstall = false,
     functionUniversalIdentifier,
     functionName,
     payload = '{}',
   }: {
     appPath?: string;
-    preInstall?: boolean;
     postInstall?: boolean;
+    preInstall?: boolean;
     functionUniversalIdentifier?: string;
     functionName?: string;
     payload?: string;
@@ -30,19 +30,19 @@ export class LogicFunctionExecuteCommand {
       process.exit(1);
     }
 
-    const identifier = preInstall
-      ? 'pre install'
-      : postInstall
-        ? 'post install'
+    const identifier = postInstall
+      ? 'post install'
+      : preInstall
+        ? 'pre install'
         : (functionUniversalIdentifier ?? functionName);
 
     console.log(chalk.blue(`🚀 Executing function "${identifier}"...`));
     console.log(chalk.gray(`   Payload: ${JSON.stringify(parsedPayload)}\n`));
 
-    const executeOptions = preInstall
-      ? { appPath, preInstall: true as const, payload: parsedPayload }
-      : postInstall
-        ? { appPath, postInstall: true as const, payload: parsedPayload }
+    const executeOptions = postInstall
+      ? { appPath, postInstall: true as const, payload: parsedPayload }
+      : preInstall
+        ? { appPath, preInstall: true as const, payload: parsedPayload }
         : functionUniversalIdentifier
           ? { appPath, functionUniversalIdentifier, payload: parsedPayload }
           : { appPath, functionName: functionName!, payload: parsedPayload };

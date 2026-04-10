@@ -3,6 +3,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
+import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
 import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
@@ -10,6 +11,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { FieldWidgetDisplay } from '@/page-layout/widgets/field/components/FieldWidgetDisplay';
 import { FieldWidgetJunctionRelationCard } from '@/page-layout/widgets/field/components/FieldWidgetJunctionRelationCard';
 import { FieldWidgetJunctionRelationField } from '@/page-layout/widgets/field/components/FieldWidgetJunctionRelationField';
+import { FieldWidgetRichTextEditor } from '@/page-layout/widgets/field/components/FieldWidgetRichTextEditor';
 import { FieldWidgetMorphRelationCard } from '@/page-layout/widgets/field/components/FieldWidgetMorphRelationCard';
 import { FieldWidgetMorphRelationField } from '@/page-layout/widgets/field/components/FieldWidgetMorphRelationField';
 import { FieldWidgetRelationCard } from '@/page-layout/widgets/field/components/FieldWidgetRelationCard';
@@ -160,6 +162,19 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
         fieldDefinition={fieldDefinition}
         relationValue={record}
         isInSidePanel={isInSidePanel}
+      />
+    );
+  }
+
+  if (
+    isFieldRichText(fieldDefinition) &&
+    fieldDisplayMode === FieldDisplayMode.EDITOR
+  ) {
+    return (
+      <FieldWidgetRichTextEditor
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+        recordId={targetRecord.id}
       />
     );
   }

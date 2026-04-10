@@ -7,7 +7,6 @@ import { AddComposeEmailCommandMenuItemCommand } from 'src/database/commands/upg
 import { AddGlobalKeyValuePairUniqueIndexCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500002000-add-global-key-value-pair-unique-index.command';
 import { BackfillDatasourceToWorkspaceCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500003000-backfill-datasource-to-workspace.command';
 import { BackfillMessageThreadSubjectCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500004000-backfill-message-thread-subject.command';
-import { BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500005000-backfill-page-layouts-and-fields-widget-view-fields.command';
 import { DeduplicateEngineCommandsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500006000-deduplicate-engine-commands.command';
 import { FixSelectAllCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500007000-fix-select-all-command-menu-items.command';
 import { MigrateAiAgentTextToJsonResponseFormatCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-workspace-command-1775500008000-migrate-ai-agent-text-to-json-response-format.command';
@@ -24,7 +23,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
-import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
@@ -43,7 +41,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
       MessageFolderEntity,
       UserWorkspaceEntity,
     ]),
-    DataSourceModule,
     FieldMetadataModule,
     WorkspaceCacheModule,
     ApplicationModule,
@@ -57,7 +54,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AddGlobalKeyValuePairUniqueIndexCommand,
     BackfillDatasourceToWorkspaceCommand,
     BackfillMessageThreadSubjectCommand,
-    BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
     DeduplicateEngineCommandsCommand,
     FixSelectAllCommandMenuItemsCommand,
     MigrateAiAgentTextToJsonResponseFormatCommand,

@@ -7,7 +7,7 @@ import type {
 } from '@/sections/Salesforce/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 
 const formatPriceAmount = (amount: number) =>
   `$${new Intl.NumberFormat('en-US').format(amount)}`;
@@ -54,10 +54,6 @@ const calculatePriceAmounts = (
 };
 
 const PANEL_BACKGROUND = '#c9c9c9';
-const CARD_STICKY_TOP_OFFSET_PX = 64;
-const CARD_STICKY_BOTTOM_OFFSET_PX = 340;
-
-type StickyHeaderMode = 'absolute' | 'fixed';
 
 const Panel = styled.div`
   background-color: ${PANEL_BACKGROUND};
@@ -69,17 +65,7 @@ const Panel = styled.div`
   width: 100%;
 `;
 
-const StickyHeaderSpacer = styled.div<{ $height: number }>`
-  height: ${({ $height }) => $height}px;
-  width: 100%;
-`;
-
-const StickyHeader = styled.div<{
-  $absoluteTop: number;
-  $left: number;
-  $mode: StickyHeaderMode;
-  $width: number;
-}>`
+const PricingHeader = styled.div`
   background-color: ${PANEL_BACKGROUND};
   box-shadow:
     inset 1px 0 0 0 #dfdfdf,
@@ -88,11 +74,8 @@ const StickyHeader = styled.div<{
     inset -2px 0 0 0 #808080,
     inset 0 1px 0 0 #dfdfdf,
     inset 0 2px 0 0 #ffffff;
-  left: ${({ $left, $mode }) => ($mode === 'fixed' ? `${$left}px` : '0')};
-  position: ${({ $mode }) => ($mode === 'fixed' ? 'fixed' : 'absolute')};
-  top: ${({ $absoluteTop, $mode }) =>
-    $mode === 'fixed' ? `${CARD_STICKY_TOP_OFFSET_PX}px` : `${$absoluteTop}px`};
-  width: ${({ $mode, $width }) => ($mode === 'fixed' ? `${$width}px` : '100%')};
+  position: relative;
+  width: 100%;
   z-index: 20;
 `;
 
@@ -437,139 +420,20 @@ export type PricingWindowProps = {
   pricing: SalesforcePricingPanelType;
 };
 
-type StickyHeaderState = {
-  absoluteTop: number;
-  height: number;
-  left: number;
-  mode: StickyHeaderMode;
-  width: number;
-};
-
 export function PricingWindow({
   checkedIds,
   onAddonToggle,
   onClose,
   pricing,
 }: PricingWindowProps) {
-  const panelRef = useRef<HTMLDivElement | null>(null);
-  const stickyHeaderRef = useRef<HTMLDivElement | null>(null);
   const addonAnchorRefs = useRef<Record<string, HTMLLabelElement | null>>({});
-  const [stickyHeaderState, setStickyHeaderState] = useState<StickyHeaderState>(
-    {
-      absoluteTop: 0,
-      height: 0,
-      left: 0,
-      mode: 'absolute',
-      width: 0,
-    },
-  );
   const { fixedPriceAmount, perSeatPriceAmount, totalPriceAmount } =
     calculatePriceAmounts(pricing, checkedIds);
 
-  useEffect(() => {
-    let frameId = 0;
-
-    const updateStickyHeaderState = () => {
-      frameId = 0;
-
-      const panel = panelRef.current;
-      const stickyHeader = stickyHeaderRef.current;
-
-      if (!panel || !stickyHeader) {
-        return;
-      }
-
-      const panelRect = panel.getBoundingClientRect();
-      const stickyHeight = stickyHeader.offsetHeight;
-      const panelHeight = panel.offsetHeight;
-      const panelTop = window.scrollY + panelRect.top;
-      const maxAbsoluteTop = Math.max(
-        0,
-        panelHeight - stickyHeight - CARD_STICKY_BOTTOM_OFFSET_PX,
-      );
-      const fixedEndScrollY =
-        panelTop +
-        panelHeight -
-        stickyHeight -
-        CARD_STICKY_TOP_OFFSET_PX -
-        CARD_STICKY_BOTTOM_OFFSET_PX;
-      const nextState: StickyHeaderState =
-        window.scrollY >= panelTop - CARD_STICKY_TOP_OFFSET_PX &&
-        window.scrollY < fixedEndScrollY
-          ? {
-              absoluteTop: 0,
-              height: stickyHeight,
-              left: panelRect.left,
-              mode: 'fixed',
-              width: panelRect.width,
-            }
-          : {
-              absoluteTop:
-                window.scrollY >= fixedEndScrollY ? maxAbsoluteTop : 0,
-              height: stickyHeight,
-              left: 0,
-              mode: 'absolute',
-              width: panelRect.width,
-            };
-
-      setStickyHeaderState((previous) =>
-        previous.absoluteTop === nextState.absoluteTop &&
-        previous.height === nextState.height &&
-        previous.left === nextState.left &&
-        previous.mode === nextState.mode &&
-        previous.width === nextState.width
-          ? previous
-          : nextState,
-      );
-    };
-
-    const requestStickyHeaderUpdate = () => {
-      if (frameId !== 0) {
-        return;
-      }
-
-      frameId = window.requestAnimationFrame(updateStickyHeaderState);
-    };
-
-    requestStickyHeaderUpdate();
-
-    window.addEventListener('resize', requestStickyHeaderUpdate);
-    window.addEventListener('scroll', requestStickyHeaderUpdate, {
-      passive: true,
-    });
-
-    const resizeObserver = new ResizeObserver(requestStickyHeaderUpdate);
-
-    if (panelRef.current) {
-      resizeObserver.observe(panelRef.current);
-    }
-
-    if (stickyHeaderRef.current) {
-      resizeObserver.observe(stickyHeaderRef.current);
-    }
-
-    return () => {
-      if (frameId !== 0) {
-        window.cancelAnimationFrame(frameId);
-      }
-
-      resizeObserver.disconnect();
-      window.removeEventListener('resize', requestStickyHeaderUpdate);
-      window.removeEventListener('scroll', requestStickyHeaderUpdate);
-    };
-  }, [fixedPriceAmount]);
-
   return (
-    <Panel ref={panelRef}>
+    <Panel>
       <WindowChrome aria-hidden="true" />
-      <StickyHeaderSpacer $height={stickyHeaderState.height} />
-      <StickyHeader
-        $absoluteTop={stickyHeaderState.absoluteTop}
-        $left={stickyHeaderState.left}
-        $mode={stickyHeaderState.mode}
-        $width={stickyHeaderState.width}
-        ref={stickyHeaderRef}
-      >
+      <PricingHeader>
         <TitleBar>
           <TitleBarText>{pricing.windowTitle}</TitleBarText>
           <TitleBarActions>
@@ -621,7 +485,7 @@ export function PricingWindow({
             <Separator aria-hidden="true" />
           </SummaryInner>
         </SummaryPad>
-      </StickyHeader>
+      </PricingHeader>
       <ContentPad>
         <Inner>
           <SectionLabel>{pricing.featureSectionHeading}</SectionLabel>

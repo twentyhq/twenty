@@ -227,7 +227,7 @@ export const usePageLayoutHeaderInfo = ({
       return {
         headerIcon: IconTable,
         headerIconColor: iconColor,
-        headerType: t`Record Table`,
+        headerType: t`View`,
         title,
         isReadonly: false,
         tab: undefined,

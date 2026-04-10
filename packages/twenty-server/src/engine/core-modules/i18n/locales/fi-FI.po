@@ -552,6 +552,16 @@ msgstr "Sovellusta ei ole asennettu tähän työtilaan. Asenna se ensin."
 msgid "Application not found."
 msgstr "Sovellusta ei löytynyt."
 
+#. js-lingui-id: kuNcoR
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application post-install logic function failed."
+msgstr ""
+
+#. js-lingui-id: UTxpa1
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application pre-install logic function failed."
+msgstr ""
+
 #. js-lingui-id: DE/icK
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Application registration not found."
@@ -2890,6 +2900,11 @@ msgstr "frontComponentId:tä ei saa määrittää, kun engineComponentKey on TRI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgid "Full path"
 msgstr "Täysi polku"
+
+#. js-lingui-id: yQDBsf
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Function code failed to compile."
+msgstr ""
 
 #. js-lingui-id: pouguB
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts

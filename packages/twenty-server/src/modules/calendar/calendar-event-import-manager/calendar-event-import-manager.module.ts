@@ -6,7 +6,6 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -50,7 +49,6 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
     TypeOrmModule.forFeature([
       FeatureFlagEntity,
       WorkspaceEntity,
-      DataSourceEntity,
       CalendarChannelEntity,
       ConnectedAccountEntity,
       UserWorkspaceEntity,

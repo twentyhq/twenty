@@ -6,6 +6,16 @@ export const FIND_MANY_FRONT_COMPONENTS = gql`
       id
       name
       applicationId
+      builtComponentChecksum
+      builtComponentPath
+      componentName
+      createdAt
+      description
+      isHeadless
+      sourceComponentPath
+      universalIdentifier
+      updatedAt
+      usesSdkClient
     }
   }
 `;

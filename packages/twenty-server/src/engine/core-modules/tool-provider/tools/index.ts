@@ -18,6 +18,7 @@ export {
   LOAD_SKILL_TOOL_NAME,
   createLoadSkillTool,
   loadSkillInputSchema,
+  type ListAvailableSkillNamesFunction,
   type LoadSkillFunction,
   type LoadSkillInput,
   type LoadSkillResult,

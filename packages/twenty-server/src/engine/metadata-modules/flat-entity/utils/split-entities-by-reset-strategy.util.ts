@@ -36,6 +36,7 @@ export const splitEntitiesByResetStrategy = <
         ...entity,
         isActive: true as const,
         overrides: null,
+        ...('universalOverrides' in entity ? { universalOverrides: null } : {}),
         updatedAt: now,
       });
     }

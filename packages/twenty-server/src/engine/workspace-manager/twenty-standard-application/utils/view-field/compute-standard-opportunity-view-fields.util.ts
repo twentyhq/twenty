@@ -161,6 +161,7 @@ export const computeStandardOpportunityViewFields = (
     }),
 
     // opportunityRecordPageFields view fields
+    // Deal group
     opportunityRecordPageFieldsAmount: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'opportunity',
@@ -171,20 +172,7 @@ export const computeStandardOpportunityViewFields = (
         position: 0,
         isVisible: true,
         size: 150,
-        viewFieldGroupName: 'general',
-      },
-    }),
-    opportunityRecordPageFieldsCloseDate: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'opportunity',
-      context: {
-        viewName: 'opportunityRecordPageFields',
-        viewFieldName: 'closeDate',
-        fieldName: 'closeDate',
-        position: 1,
-        isVisible: true,
-        size: 150,
-        viewFieldGroupName: 'general',
+        viewFieldGroupName: 'deal',
       },
     }),
     opportunityRecordPageFieldsStage: createStandardViewFieldFlatMetadata({
@@ -194,12 +182,98 @@ export const computeStandardOpportunityViewFields = (
         viewName: 'opportunityRecordPageFields',
         viewFieldName: 'stage',
         fieldName: 'stage',
+        position: 1,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'deal',
+      },
+    }),
+    opportunityRecordPageFieldsCloseDate: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'opportunity',
+      context: {
+        viewName: 'opportunityRecordPageFields',
+        viewFieldName: 'closeDate',
+        fieldName: 'closeDate',
         position: 2,
         isVisible: true,
         size: 150,
-        viewFieldGroupName: 'general',
+        viewFieldGroupName: 'deal',
       },
     }),
+    opportunityRecordPageFieldsFavorites: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'opportunity',
+      context: {
+        viewName: 'opportunityRecordPageFields',
+        viewFieldName: 'favorites',
+        fieldName: 'favorites',
+        position: 3,
+        isVisible: false,
+        size: 150,
+        viewFieldGroupName: 'deal',
+      },
+    }),
+    opportunityRecordPageFieldsTaskTargets: createStandardViewFieldFlatMetadata(
+      {
+        ...args,
+        objectName: 'opportunity',
+        context: {
+          viewName: 'opportunityRecordPageFields',
+          viewFieldName: 'taskTargets',
+          fieldName: 'taskTargets',
+          position: 4,
+          isVisible: false,
+          size: 150,
+          viewFieldGroupName: 'deal',
+        },
+      },
+    ),
+    opportunityRecordPageFieldsNoteTargets: createStandardViewFieldFlatMetadata(
+      {
+        ...args,
+        objectName: 'opportunity',
+        context: {
+          viewName: 'opportunityRecordPageFields',
+          viewFieldName: 'noteTargets',
+          fieldName: 'noteTargets',
+          position: 5,
+          isVisible: false,
+          size: 150,
+          viewFieldGroupName: 'deal',
+        },
+      },
+    ),
+    opportunityRecordPageFieldsAttachments: createStandardViewFieldFlatMetadata(
+      {
+        ...args,
+        objectName: 'opportunity',
+        context: {
+          viewName: 'opportunityRecordPageFields',
+          viewFieldName: 'attachments',
+          fieldName: 'attachments',
+          position: 6,
+          isVisible: false,
+          size: 150,
+          viewFieldGroupName: 'deal',
+        },
+      },
+    ),
+    opportunityRecordPageFieldsTimelineActivities:
+      createStandardViewFieldFlatMetadata({
+        ...args,
+        objectName: 'opportunity',
+        context: {
+          viewName: 'opportunityRecordPageFields',
+          viewFieldName: 'timelineActivities',
+          fieldName: 'timelineActivities',
+          position: 7,
+          isVisible: false,
+          size: 150,
+          viewFieldGroupName: 'deal',
+        },
+      }),
+    // Relations group
     opportunityRecordPageFieldsCompany: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'opportunity',
@@ -207,10 +281,10 @@ export const computeStandardOpportunityViewFields = (
         viewName: 'opportunityRecordPageFields',
         viewFieldName: 'company',
         fieldName: 'company',
-        position: 3,
+        position: 0,
         isVisible: true,
         size: 150,
-        viewFieldGroupName: 'general',
+        viewFieldGroupName: 'relations',
       },
     }),
     opportunityRecordPageFieldsPointOfContact:
@@ -221,10 +295,10 @@ export const computeStandardOpportunityViewFields = (
           viewName: 'opportunityRecordPageFields',
           viewFieldName: 'pointOfContact',
           fieldName: 'pointOfContact',
-          position: 0,
+          position: 1,
           isVisible: true,
           size: 150,
-          viewFieldGroupName: 'additional',
+          viewFieldGroupName: 'relations',
         },
       }),
     opportunityRecordPageFieldsOwner: createStandardViewFieldFlatMetadata({
@@ -234,12 +308,13 @@ export const computeStandardOpportunityViewFields = (
         viewName: 'opportunityRecordPageFields',
         viewFieldName: 'owner',
         fieldName: 'owner',
-        position: 1,
+        position: 2,
         isVisible: true,
         size: 150,
-        viewFieldGroupName: 'additional',
+        viewFieldGroupName: 'relations',
       },
     }),
+    // System group
     opportunityRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'opportunity',
@@ -250,7 +325,7 @@ export const computeStandardOpportunityViewFields = (
         position: 0,
         isVisible: true,
         size: 150,
-        viewFieldGroupName: 'other',
+        viewFieldGroupName: 'system',
       },
     }),
     opportunityRecordPageFieldsCreatedBy: createStandardViewFieldFlatMetadata({
@@ -263,7 +338,7 @@ export const computeStandardOpportunityViewFields = (
         position: 1,
         isVisible: true,
         size: 150,
-        viewFieldGroupName: 'other',
+        viewFieldGroupName: 'system',
       },
     }),
     opportunityRecordPageFieldsUpdatedAt: createStandardViewFieldFlatMetadata({
@@ -276,7 +351,7 @@ export const computeStandardOpportunityViewFields = (
         position: 2,
         isVisible: false,
         size: 150,
-        viewFieldGroupName: 'other',
+        viewFieldGroupName: 'system',
       },
     }),
     opportunityRecordPageFieldsUpdatedBy: createStandardViewFieldFlatMetadata({
@@ -289,80 +364,8 @@ export const computeStandardOpportunityViewFields = (
         position: 3,
         isVisible: false,
         size: 150,
-        viewFieldGroupName: 'other',
+        viewFieldGroupName: 'system',
       },
     }),
-    opportunityRecordPageFieldsFavorites: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'opportunity',
-      context: {
-        viewName: 'opportunityRecordPageFields',
-        viewFieldName: 'favorites',
-        fieldName: 'favorites',
-        position: 5,
-        isVisible: false,
-        size: 150,
-        viewFieldGroupName: 'general',
-      },
-    }),
-    opportunityRecordPageFieldsTaskTargets: createStandardViewFieldFlatMetadata(
-      {
-        ...args,
-        objectName: 'opportunity',
-        context: {
-          viewName: 'opportunityRecordPageFields',
-          viewFieldName: 'taskTargets',
-          fieldName: 'taskTargets',
-          position: 6,
-          isVisible: false,
-          size: 150,
-          viewFieldGroupName: 'general',
-        },
-      },
-    ),
-    opportunityRecordPageFieldsNoteTargets: createStandardViewFieldFlatMetadata(
-      {
-        ...args,
-        objectName: 'opportunity',
-        context: {
-          viewName: 'opportunityRecordPageFields',
-          viewFieldName: 'noteTargets',
-          fieldName: 'noteTargets',
-          position: 7,
-          isVisible: false,
-          size: 150,
-          viewFieldGroupName: 'general',
-        },
-      },
-    ),
-    opportunityRecordPageFieldsAttachments: createStandardViewFieldFlatMetadata(
-      {
-        ...args,
-        objectName: 'opportunity',
-        context: {
-          viewName: 'opportunityRecordPageFields',
-          viewFieldName: 'attachments',
-          fieldName: 'attachments',
-          position: 8,
-          isVisible: false,
-          size: 150,
-          viewFieldGroupName: 'general',
-        },
-      },
-    ),
-    opportunityRecordPageFieldsTimelineActivities:
-      createStandardViewFieldFlatMetadata({
-        ...args,
-        objectName: 'opportunity',
-        context: {
-          viewName: 'opportunityRecordPageFields',
-          viewFieldName: 'timelineActivities',
-          fieldName: 'timelineActivities',
-          position: 9,
-          isVisible: false,
-          size: 150,
-          viewFieldGroupName: 'general',
-        },
-      }),
   };
 };

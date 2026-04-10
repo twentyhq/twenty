@@ -1,6 +1,11 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
-import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
+import { isDefined } from 'twenty-shared/utils';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
+import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
+import {
+  getFieldWidgetDefaultDisplayMode,
+  isDisplayModeValidForFieldType,
+} from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
@@ -15,7 +20,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { type FieldConfiguration } from '~/generated-metadata/graphql';
@@ -35,20 +40,8 @@ export const FieldWidgetFieldDropdownContent = () => {
 
   const currentFieldMetadataId = fieldConfiguration?.fieldMetadataId;
 
-  const {
-    boxedRelationFieldMetadataItems,
-    junctionRelationFieldMetadataItems,
-  } = useFieldListFieldMetadataItems({
-    objectNameSingular,
-  });
-
-  const allSelectableRelationFields = useMemo(
-    () => [
-      ...boxedRelationFieldMetadataItems,
-      ...junctionRelationFieldMetadataItems,
-    ],
-    [boxedRelationFieldMetadataItems, junctionRelationFieldMetadataItems],
-  );
+  const allFieldWidgetFieldMetadataItems =
+    useFieldWidgetEligibleFields(objectNameSingular);
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -69,7 +62,7 @@ export const FieldWidgetFieldDropdownContent = () => {
   const { getIcon } = useIcons();
 
   const availableFields = filterBySearchQuery({
-    items: allSelectableRelationFields,
+    items: allFieldWidgetFieldMetadataItems,
     searchQuery,
     getSearchableValues: (item) => [item.label],
   });
@@ -78,15 +71,27 @@ export const FieldWidgetFieldDropdownContent = () => {
     useFieldMetadataItemById(currentFieldMetadataId ?? '');
 
   const handleSelectField = (fieldMetadataId: string) => {
+    const selectedField = allFieldWidgetFieldMetadataItems.find(
+      (field) => field.id === fieldMetadataId,
+    );
+
+    const currentDisplayMode = fieldConfiguration?.fieldDisplayMode;
+
+    const needsDisplayModeSwitch =
+      isDefined(selectedField) &&
+      isDefined(currentDisplayMode) &&
+      !isDisplayModeValidForFieldType(selectedField.type, currentDisplayMode);
+
     updateCurrentWidgetConfig({
       configToUpdate: {
         fieldMetadataId,
+        ...(needsDisplayModeSwitch && {
+          fieldDisplayMode: getFieldWidgetDefaultDisplayMode(
+            selectedField.type,
+          ),
+        }),
       },
     });
-
-    const selectedField = allSelectableRelationFields.find(
-      (field) => field.id === fieldMetadataId,
-    );
 
     if (widgetInEditMode && selectedField) {
       updatePageLayoutWidget(widgetInEditMode.id, {

@@ -83,7 +83,10 @@ describe('McpProtocolService', () => {
         },
         {
           provide: SkillService,
-          useValue: { findFlatSkillsByNames: jest.fn().mockResolvedValue([]) },
+          useValue: {
+            findFlatSkillsByNames: jest.fn().mockResolvedValue([]),
+            findAllFlatSkills: jest.fn().mockResolvedValue([]),
+          },
         },
       ],
     }).compile();
@@ -258,6 +261,7 @@ describe('McpProtocolService', () => {
           ),
         ),
         mockRequest.params,
+        undefined,
       );
     });
 

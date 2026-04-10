@@ -1,14 +1,16 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
+import { isDefined } from 'twenty-shared/utils';
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultFieldWidget } from '@/page-layout/utils/createDefaultFieldWidget';
+import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
+import { getFieldWidgetDefaultDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
@@ -21,19 +23,8 @@ export const useCreateRecordPageFieldWidget = () => {
     objectNameSingular: targetObjectNameSingular,
   });
 
-  const {
-    boxedRelationFieldMetadataItems,
-    junctionRelationFieldMetadataItems,
-  } = useFieldListFieldMetadataItems({
-    objectNameSingular: targetObjectNameSingular,
-  });
-
-  const allSelectableRelationFields = useMemo(
-    () => [
-      ...boxedRelationFieldMetadataItems,
-      ...junctionRelationFieldMetadataItems,
-    ],
-    [boxedRelationFieldMetadataItems, junctionRelationFieldMetadataItems],
+  const allFieldWidgetFields = useFieldWidgetEligibleFields(
+    targetObjectNameSingular,
   );
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
@@ -63,11 +54,11 @@ export const useCreateRecordPageFieldWidget = () => {
         }),
     );
 
-    const unusedRelationField = allSelectableRelationFields.find(
+    const unusedField = allFieldWidgetFields.find(
       (field) => !usedFieldMetadataIds.has(field.id),
     );
 
-    const selectedField = unusedRelationField ?? allSelectableRelationFields[0];
+    const selectedField = unusedField ?? allFieldWidgetFields[0];
 
     const fieldMetadataId = selectedField?.id ?? '';
     const title = selectedField?.label ?? '';
@@ -80,6 +71,9 @@ export const useCreateRecordPageFieldWidget = () => {
       pageLayoutTabId: tabId,
       title,
       fieldMetadataId,
+      fieldDisplayMode: isDefined(selectedField)
+        ? getFieldWidgetDefaultDisplayMode(selectedField.type)
+        : undefined,
       objectMetadataId: objectMetadataItem.id,
       positionIndex,
     });
@@ -89,7 +83,7 @@ export const useCreateRecordPageFieldWidget = () => {
       tabs: addWidgetToTab(prev.tabs, tabId, newWidget),
     }));
   }, [
-    allSelectableRelationFields,
+    allFieldWidgetFields,
     currentPageLayout.tabs,
     objectMetadataItem.id,
     pageLayoutDraftState,
