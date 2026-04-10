@@ -128,7 +128,7 @@ const innerAppDevOnce = async (
 
   let registrationId = config.appRegistrationId;
   let appRegistrationClientId = config.appRegistrationClientId;
-  let appRegistrationClientSecret = config.appRegistrationClientSecret;
+  let clientSecret: string | undefined;
 
   if (!registrationId) {
     const registrationResult =
@@ -149,6 +149,28 @@ const innerAppDevOnce = async (
     if (registrationResult.data) {
       registrationId = registrationResult.data.id;
       appRegistrationClientId = registrationResult.data.oAuthClientId;
+
+      const rotateResult =
+        await apiService.rotateApplicationRegistrationClientSecret(
+          registrationResult.data.id,
+        );
+
+      if (!rotateResult.success) {
+        return {
+          success: false,
+          error: {
+            code: APP_ERROR_CODES.SYNC_FAILED,
+            message: `Failed to rotate app registration secret: ${serializeError(rotateResult.error)}`,
+          },
+        };
+      }
+
+      clientSecret = rotateResult.data.clientSecret;
+
+      await configService.setConfig({
+        appRegistrationId: registrationId,
+        appRegistrationClientId,
+      });
     }
   }
 
@@ -171,12 +193,11 @@ const innerAppDevOnce = async (
     registrationId = createResult.data.applicationRegistration.id;
     appRegistrationClientId =
       createResult.data.applicationRegistration.oAuthClientId;
-    appRegistrationClientSecret = createResult.data.clientSecret;
+    clientSecret = createResult.data.clientSecret;
 
     await configService.setConfig({
       appRegistrationId: registrationId,
       appRegistrationClientId,
-      appRegistrationClientSecret,
     });
   }
 
@@ -267,7 +288,7 @@ const innerAppDevOnce = async (
     const authToken = await getAppAccessToken({
       configService,
       appRegistrationClientId,
-      appRegistrationClientSecret,
+      appRegistrationClientSecret: clientSecret,
     });
 
     const clientService = new ClientService();

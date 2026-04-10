@@ -8,14 +8,13 @@ type ClientCredentialsResponse = {
 };
 
 /**
- * Obtains an APPLICATION_ACCESS token for the app's installed instance.
+ * Returns an APPLICATION_ACCESS token for the app's installed instance.
  *
- * The CoreApiClient must be generated with a token that carries the app's
- * applicationId so the server returns the app-scoped schema (only the objects
- * and fields the app owns or is allowed to see).
+ * 1. If a valid token is already stored in config → returns it immediately.
+ * 2. If clientId + clientSecret are provided (fresh registration or rotation)
+ *    → performs a client_credentials grant, persists the resulting token in
+ *    config, and returns it.  The secret is never persisted — only the token.
  *
- * We use the OAuth client_credentials grant with the app registration's
- * clientId and clientSecret (persisted in config on first registration).
  * The server resolves the workspace from the single Application row linked
  * to the ApplicationRegistration (there is always exactly one in dev mode).
  */
@@ -28,14 +27,18 @@ export const getAppAccessToken = async ({
   appRegistrationClientId?: string;
   appRegistrationClientSecret?: string;
 }): Promise<string> => {
+  const config = await configService.getConfig();
+
+  if (config.appAccessToken) {
+    return config.appAccessToken;
+  }
+
   if (!appRegistrationClientId || !appRegistrationClientSecret) {
     throw new Error(
-      'App registration credentials not found. ' +
+      'No app access token in config and no registration credentials provided. ' +
         'Delete ~/.twenty/config.json and re-run to trigger a fresh registration.',
     );
   }
-
-  const config = await configService.getConfig();
 
   const response = await fetch(`${config.apiUrl}/oauth/token`, {
     method: 'POST',
@@ -54,6 +57,8 @@ export const getAppAccessToken = async ({
   }
 
   const data = (await response.json()) as ClientCredentialsResponse;
+
+  await configService.setConfig({ appAccessToken: data.access_token });
 
   return data.access_token;
 };

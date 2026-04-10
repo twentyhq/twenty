@@ -52,6 +52,16 @@ export class ApiService {
     return this.applicationApi.createApplicationRegistration(...args);
   }
 
+  rotateApplicationRegistrationClientSecret(
+    ...args: Parameters<
+      ApplicationApi['rotateApplicationRegistrationClientSecret']
+    >
+  ) {
+    return this.applicationApi.rotateApplicationRegistrationClientSecret(
+      ...args,
+    );
+  }
+
   createDevelopmentApplication(
     ...args: Parameters<ApplicationApi['createDevelopmentApplication']>
   ) {

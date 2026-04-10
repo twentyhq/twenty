@@ -170,7 +170,7 @@ export const registerRemoteCommands = (program: Command): void => {
       for (const remoteName of remotes) {
         const config = await configService.getConfigForRemote(remoteName);
 
-        const authMethod = config.accessToken
+        const authMethod = config.twentyCLIAccessToken
           ? 'oauth'
           : config.apiKey
             ? 'api-key'
@@ -230,7 +230,7 @@ export const registerRemoteCommands = (program: Command): void => {
       const activeRemote = ConfigService.getActiveRemote();
       const config = await configService.getConfig();
 
-      const authMethod = config.accessToken
+      const authMethod = config.twentyCLIAccessToken
         ? 'oauth'
         : config.apiKey
           ? 'api-key'

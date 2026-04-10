@@ -33,15 +33,8 @@ export class GenerateApiClientOrchestratorStep {
     this.notify();
 
     try {
-      // Use the app registration's stored credentials to obtain an
-      // APPLICATION_ACCESS token — the generated CoreApiClient will then
-      // reflect the app-scoped schema (only this app's objects/fields).
-      const config = await this.configService.getConfig();
-
       const authToken = await getAppAccessToken({
         configService: this.configService,
-        appRegistrationClientId: config.appRegistrationClientId,
-        appRegistrationClientSecret: config.appRegistrationClientSecret,
       });
 
       await this.clientService.generateCoreClient({
