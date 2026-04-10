@@ -117,30 +117,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "isRemote": false
     },
     {
-      "id": "f2ae50d3-41c6-4bb1-882a-8cd6eeb5b439",
-      "nameSingular": "favorite",
-      "namePlural": "favorites",
-      "labelSingular": "Favorite",
-      "labelPlural": "Favorites",
-      "icon": "IconHeart",
-      "isCustom": false,
-      "isActive": true,
-      "isSystem": true,
-      "isRemote": false
-    },
-    {
-      "id": "d510c827-83bf-4d18-86b0-90183327a0ce",
-      "nameSingular": "favoriteFolder",
-      "namePlural": "favoriteFolders",
-      "labelSingular": "Favorite Folder",
-      "labelPlural": "Favorite Folders",
-      "icon": "IconFolder",
-      "isCustom": false,
-      "isActive": true,
-      "isSystem": true,
-      "isRemote": false
-    },
-    {
       "id": "9921d994-3888-43e4-b933-82eb199f9154",
       "nameSingular": "messageChannelMessageAssociation",
       "namePlural": "messageChannelMessageAssociations",
