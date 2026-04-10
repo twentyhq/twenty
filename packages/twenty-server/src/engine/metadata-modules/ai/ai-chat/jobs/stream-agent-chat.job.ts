@@ -9,7 +9,6 @@ import type {
 } from 'twenty-shared/ai';
 import { Repository } from 'typeorm';
 
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -47,7 +46,6 @@ export class StreamAgentChatJob {
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly cancelSubscriberService: AgentChatCancelSubscriberService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
-    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -84,7 +82,6 @@ export class StreamAgentChatJob {
       this.logger.error(
         `Stream ${data.streamId} failed: ${error instanceof Error ? error.message : String(error)}`,
       );
-      this.exceptionHandlerService.captureExceptions([error]);
       await this.eventPublisherService
         .publish({
           threadId: data.threadId,
@@ -99,6 +96,7 @@ export class StreamAgentChatJob {
           },
         })
         .catch(() => {});
+      throw error;
     } finally {
       await this.cancelSubscriberService.unsubscribe(cancelChannel);
       await this.threadRepository
@@ -193,6 +191,7 @@ export class StreamAgentChatJob {
       };
       let lastStepConversationSize = 0;
       let totalCacheCreationTokens = 0;
+      let streamError: unknown;
 
       // onFinish fires before the uiStream is fully drained. We use this
       // promise to coordinate: the IIFE waits for DB persist to complete
@@ -250,15 +249,9 @@ export class StreamAgentChatJob {
           writer.merge(
             stream.toUIMessageStream({
               onError: (error) => {
-                const message =
-                  error instanceof Error ? error.message : String(error);
+                streamError = error;
 
-                this.logger.error(
-                  `Stream ${data.streamId} onError: ${message}`,
-                );
-                this.exceptionHandlerService.captureExceptions([error]);
-
-                return message;
+                return error instanceof Error ? error.message : String(error);
               },
               sendStart: false,
               messageMetadata: ({ part }) => {
@@ -324,7 +317,11 @@ export class StreamAgentChatJob {
             event: { type: 'message-persisted', messageId: data.threadId },
           });
 
-          resolve();
+          if (streamError) {
+            reject(streamError);
+          } else {
+            resolve();
+          }
         } catch (error) {
           reject(error);
         }

@@ -480,22 +480,8 @@ export class ChatExecutionService {
           callableToolNames: ['web_search'],
         };
       }
-      case AI_SDK_BEDROCK: {
-        const bedrockProvider =
-          this.sdkProviderFactory.getRawBedrockProvider(providerName);
-
-        if (!bedrockProvider) {
-          return empty;
-        }
-
-        return {
-          tools: {
-            web_search:
-              bedrockProvider.tools.webSearch_20250305() as ToolSet[string],
-          },
-          callableToolNames: ['web_search'],
-        };
-      }
+      case AI_SDK_BEDROCK:
+        return empty;
       case AI_SDK_OPENAI: {
         const provider =
           this.sdkProviderFactory.getRawOpenAIProvider(providerName);
