@@ -57,8 +57,8 @@ export class DevSeederService {
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 
-    const lastUpgradeStep =
-      this.upgradeCommandRegistryService.getLastUpgradeStep();
+    const lastWorkspaceCommand =
+      this.upgradeCommandRegistryService.getLastWorkspaceCommand();
 
     await seedCoreSchema({
       dataSource: this.coreDataSource,
@@ -66,7 +66,7 @@ export class DevSeederService {
       applicationService: this.applicationService,
       seedBilling: isBillingEnabled,
       appVersion,
-      lastUpgradeStepName: lastUpgradeStep?.name,
+      lastUpgradeStepName: lastWorkspaceCommand.name,
     });
 
     await this.applicationRegistrationService.createCliRegistrationIfNotExists();

@@ -378,17 +378,14 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
   private async initializeWorkspaceUpgradeState(
     workspaceId: string,
   ): Promise<void> {
-    const lastStep = this.upgradeCommandRegistryService.getLastUpgradeStep();
-
-    if (!lastStep) {
-      return;
-    }
+    const lastWorkspaceCommand =
+      this.upgradeCommandRegistryService.getLastWorkspaceCommand();
 
     const executedByVersion =
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
     await this.upgradeMigrationService.markAsInitial({
-      name: lastStep.name,
+      name: lastWorkspaceCommand.name,
       workspaceId,
       executedByVersion,
     });

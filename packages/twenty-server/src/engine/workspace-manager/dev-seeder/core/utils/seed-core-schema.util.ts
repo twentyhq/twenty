@@ -23,7 +23,7 @@ type SeedCoreSchemaArgs = {
   workspaceId: SeededWorkspacesIds;
   appVersion: string | undefined;
   applicationService: ApplicationService;
-  lastUpgradeStepName?: string;
+  lastUpgradeStepName: string;
   seedBilling?: boolean;
   seedFeatureFlags?: boolean;
 };
@@ -95,14 +95,12 @@ export const seedCoreSchema = async ({
 
     await seedMetadataEntities({ queryRunner, schemaName, workspaceId });
 
-    if (lastUpgradeStepName) {
-      await queryRunner.query(
-        `INSERT INTO "core"."upgradeMigration" ("name", "status", "attempt", "executedByVersion", "isInitial", "workspaceId")
-         VALUES ($1, 'completed', 1, $2, true, $3)
-         ON CONFLICT DO NOTHING`,
-        [lastUpgradeStepName, appVersion ?? 'unknown', workspaceId],
-      );
-    }
+    await queryRunner.query(
+      `INSERT INTO "core"."upgradeMigration" ("name", "status", "attempt", "executedByVersion", "isInitial", "workspaceId")
+       VALUES ($1, 'completed', 1, $2, true, $3)
+       ON CONFLICT DO NOTHING`,
+      [lastUpgradeStepName, appVersion ?? 'unknown', workspaceId],
+    );
 
     await queryRunner.commitTransaction();
   } catch (error) {

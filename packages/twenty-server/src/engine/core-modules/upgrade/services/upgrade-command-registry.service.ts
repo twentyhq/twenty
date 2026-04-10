@@ -3,14 +3,14 @@ import { DiscoveryService } from '@nestjs/core';
 
 import { type ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { type WorkspaceCommandRunner } from 'src/database/commands/command-runners/workspace.command-runner';
-import { getRegisteredInstanceCommandMetadata } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
-import { getRegisteredWorkspaceCommandMetadata } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
-import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import {
   UPGRADE_COMMAND_SUPPORTED_VERSIONS,
   type UpgradeCommandVersion,
 } from 'src/engine/constants/upgrade-command-supported-versions.constant';
+import { getRegisteredInstanceCommandMetadata } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
+import { getRegisteredWorkspaceCommandMetadata } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import { isDefined } from 'twenty-shared/utils';
 
 type WorkspaceCommand =
@@ -163,6 +163,7 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
     }
 
     this.validateNoDuplicates();
+    this.validateAtLeastOneVersionBundleHasWorkspaceCommands();
 
     for (const [version, bundle] of this.bundlesByVersion) {
       const totalCount =
@@ -208,12 +209,8 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
         const lastSegment = segments[segments.length - 1];
 
         if (lastSegment?.kind === 'instance') {
-          lastSegment.fastInstanceSteps.push(
-            ...bundle.fastInstanceCommands,
-          );
-          lastSegment.slowInstanceSteps.push(
-            ...bundle.slowInstanceCommands,
-          );
+          lastSegment.fastInstanceSteps.push(...bundle.fastInstanceCommands);
+          lastSegment.slowInstanceSteps.push(...bundle.slowInstanceCommands);
         } else {
           segments.push({
             kind: 'instance',
@@ -240,25 +237,20 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
     return segments;
   }
 
-  getLastUpgradeStep(): { name: string } | undefined {
+  getLastWorkspaceCommand(): RegisteredWorkspaceCommand {
     const segments = this.getUpgradeTape();
-    const lastSegment = segments[segments.length - 1];
 
-    if (!lastSegment) {
-      return undefined;
+    for (let index = segments.length - 1; index >= 0; index--) {
+      const segment = segments[index];
+
+      if (segment.kind === 'workspace') {
+        return segment.steps[segment.steps.length - 1];
+      }
     }
 
-    if (lastSegment.kind === 'workspace') {
-      return lastSegment.steps[lastSegment.steps.length - 1];
-    }
-
-    const { slowInstanceSteps, fastInstanceSteps } = lastSegment;
-
-    if (slowInstanceSteps.length > 0) {
-      return slowInstanceSteps[slowInstanceSteps.length - 1];
-    }
-
-    return fastInstanceSteps[fastInstanceSteps.length - 1];
+    throw new Error(
+      'No workspace commands found in upgrade tape — this should have been caught at startup',
+    );
   }
 
   private computeCommandName(
@@ -304,6 +296,19 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
 
         seenNames.add(name);
       }
+    }
+  }
+
+  private validateAtLeastOneVersionBundleHasWorkspaceCommands(): void {
+    const hasWorkspaceCommands = UPGRADE_COMMAND_SUPPORTED_VERSIONS.some(
+      (version) =>
+        this.getBundleForVersion(version).workspaceCommands.length > 0,
+    );
+
+    if (!hasWorkspaceCommands) {
+      throw new Error(
+        'Upgrade tape must contain at least one workspace command',
+      );
     }
   }
 
