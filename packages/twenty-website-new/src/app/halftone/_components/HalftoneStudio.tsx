@@ -24,13 +24,6 @@ import {
   halftoneStudioReducer,
   normalizeHalftoneStudioSettings,
 } from '@/app/halftone/_lib/state';
-import type {
-  GeometryCacheEntry,
-  HalftoneExportPose,
-  HalftoneGeometrySpec,
-  HalftoneModelLoader,
-  HalftoneSourceMode,
-} from '@/app/halftone/_lib/types';
 import { Logo as LogoIcon } from '@/icons';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -44,6 +37,129 @@ import {
   useState,
 } from 'react';
 import type * as THREE from 'three';
+
+type HalftoneSourceMode = 'shape' | 'image';
+type HalftoneRotateAxis = 'x' | 'y' | 'z' | 'xy' | '-x' | '-y' | '-z' | '-xy';
+type HalftoneRotatePreset = 'axis' | 'lissajous' | 'orbit' | 'tumble';
+type HalftoneModelLoader = 'fbx' | 'glb';
+
+interface HalftoneLightingSettings {
+  intensity: number;
+  fillIntensity: number;
+  ambientIntensity: number;
+  angleDegrees: number;
+  height: number;
+}
+
+interface HalftoneMaterialSettings {
+  roughness: number;
+  metalness: number;
+}
+
+interface HalftoneEffectSettings {
+  enabled: boolean;
+  numRows: number;
+  contrast: number;
+  power: number;
+  shading: number;
+  baseInk: number;
+  maxBar: number;
+  rowMerge: number;
+  cellRatio: number;
+  cutoff: number;
+  highlightOpen: number;
+  shadowGrouping: number;
+  shadowCrush: number;
+  dashColor: string;
+}
+
+interface HalftoneBackgroundSettings {
+  transparent: boolean;
+  color: string;
+}
+
+interface HalftoneAnimationSettings {
+  autoRotateEnabled: boolean;
+  breatheEnabled: boolean;
+  cameraParallaxEnabled: boolean;
+  followHoverEnabled: boolean;
+  followDragEnabled: boolean;
+  floatEnabled: boolean;
+  hoverLightEnabled: boolean;
+  dragFlowEnabled: boolean;
+  lightSweepEnabled: boolean;
+  rotateEnabled: boolean;
+  autoSpeed: number;
+  autoWobble: number;
+  breatheAmount: number;
+  breatheSpeed: number;
+  cameraParallaxAmount: number;
+  cameraParallaxEase: number;
+  driftAmount: number;
+  hoverRange: number;
+  hoverEase: number;
+  hoverReturn: boolean;
+  dragSens: number;
+  dragFriction: number;
+  dragMomentum: boolean;
+  rotateAxis: HalftoneRotateAxis;
+  rotatePreset: HalftoneRotatePreset;
+  rotateSpeed: number;
+  rotatePingPong: boolean;
+  floatAmplitude: number;
+  floatSpeed: number;
+  lightSweepHeightRange: number;
+  lightSweepRange: number;
+  lightSweepSpeed: number;
+  springDamping: number;
+  springReturnEnabled: boolean;
+  springStrength: number;
+  hoverLightIntensity: number;
+  hoverLightRadius: number;
+  dragFlowDecay: number;
+  dragFlowRadius: number;
+  dragFlowStrength: number;
+  hoverWarpStrength: number;
+  hoverWarpRadius: number;
+  dragWarpStrength: number;
+  waveEnabled: boolean;
+  waveSpeed: number;
+  waveAmount: number;
+}
+
+interface HalftoneExportPose {
+  autoElapsed: number;
+  rotateElapsed: number;
+  rotationX: number;
+  rotationY: number;
+  rotationZ: number;
+  targetRotationX: number;
+  targetRotationY: number;
+  timeElapsed: number;
+}
+
+interface HalftoneStudioSettings {
+  sourceMode: HalftoneSourceMode;
+  shapeKey: string;
+  lighting: HalftoneLightingSettings;
+  material: HalftoneMaterialSettings;
+  halftone: HalftoneEffectSettings;
+  background: HalftoneBackgroundSettings;
+  animation: HalftoneAnimationSettings;
+}
+
+interface HalftoneGeometrySpec {
+  key: string;
+  label: string;
+  kind: 'builtin' | 'imported';
+  loader?: HalftoneModelLoader;
+  filename?: string;
+  description?: string;
+  extensions?: readonly string[];
+  userProvided?: boolean;
+}
+
+type GeometryCacheEntry = THREE.BufferGeometry | Promise<THREE.BufferGeometry>;
 
 const StudioShell = styled.div<{ $background: string }>`
   background: ${(props) => props.$background};

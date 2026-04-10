@@ -1,11 +1,144 @@
-import type {
-  HalftoneEffectSettings,
-  HalftoneGeometrySpec,
-  HalftoneSourceMode,
-  HalftoneStudioAction,
-  HalftoneStudioSettings,
-  HalftoneStudioState,
-} from './types';
+type HalftoneTabId = 'design' | 'animations' | 'export';
+type HalftoneSourceMode = 'shape' | 'image';
+type HalftoneRotateAxis = 'x' | 'y' | 'z' | 'xy' | '-x' | '-y' | '-z' | '-xy';
+type HalftoneRotatePreset = 'axis' | 'lissajous' | 'orbit' | 'tumble';
+type HalftoneModelLoader = 'fbx' | 'glb';
+
+interface HalftoneLightingSettings {
+  intensity: number;
+  fillIntensity: number;
+  ambientIntensity: number;
+  angleDegrees: number;
+  height: number;
+}
+
+interface HalftoneMaterialSettings {
+  roughness: number;
+  metalness: number;
+}
+
+interface HalftoneEffectSettings {
+  enabled: boolean;
+  numRows: number;
+  contrast: number;
+  power: number;
+  shading: number;
+  baseInk: number;
+  maxBar: number;
+  rowMerge: number;
+  cellRatio: number;
+  cutoff: number;
+  highlightOpen: number;
+  shadowGrouping: number;
+  shadowCrush: number;
+  dashColor: string;
+}
+
+interface HalftoneBackgroundSettings {
+  transparent: boolean;
+  color: string;
+}
+
+interface HalftoneAnimationSettings {
+  autoRotateEnabled: boolean;
+  breatheEnabled: boolean;
+  cameraParallaxEnabled: boolean;
+  followHoverEnabled: boolean;
+  followDragEnabled: boolean;
+  floatEnabled: boolean;
+  hoverLightEnabled: boolean;
+  dragFlowEnabled: boolean;
+  lightSweepEnabled: boolean;
+  rotateEnabled: boolean;
+  autoSpeed: number;
+  autoWobble: number;
+  breatheAmount: number;
+  breatheSpeed: number;
+  cameraParallaxAmount: number;
+  cameraParallaxEase: number;
+  driftAmount: number;
+  hoverRange: number;
+  hoverEase: number;
+  hoverReturn: boolean;
+  dragSens: number;
+  dragFriction: number;
+  dragMomentum: boolean;
+  rotateAxis: HalftoneRotateAxis;
+  rotatePreset: HalftoneRotatePreset;
+  rotateSpeed: number;
+  rotatePingPong: boolean;
+  floatAmplitude: number;
+  floatSpeed: number;
+  lightSweepHeightRange: number;
+  lightSweepRange: number;
+  lightSweepSpeed: number;
+  springDamping: number;
+  springReturnEnabled: boolean;
+  springStrength: number;
+  hoverLightIntensity: number;
+  hoverLightRadius: number;
+  dragFlowDecay: number;
+  dragFlowRadius: number;
+  dragFlowStrength: number;
+  hoverWarpStrength: number;
+  hoverWarpRadius: number;
+  dragWarpStrength: number;
+  waveEnabled: boolean;
+  waveSpeed: number;
+  waveAmount: number;
+}
+
+interface HalftoneStudioSettings {
+  sourceMode: HalftoneSourceMode;
+  shapeKey: string;
+  lighting: HalftoneLightingSettings;
+  material: HalftoneMaterialSettings;
+  halftone: HalftoneEffectSettings;
+  background: HalftoneBackgroundSettings;
+  animation: HalftoneAnimationSettings;
+}
+
+interface HalftoneGeometrySpec {
+  key: string;
+  label: string;
+  kind: 'builtin' | 'imported';
+  loader?: HalftoneModelLoader;
+  filename?: string;
+  description?: string;
+  extensions?: readonly string[];
+  userProvided?: boolean;
+}
+
+interface HalftoneStudioState {
+  activeTab: HalftoneTabId;
+  geometrySpecs: HalftoneGeometrySpec[];
+  importedFiles: Record<string, File>;
+  settings: HalftoneStudioSettings;
+  showHint: boolean;
+  statusMessage: string;
+  statusIsError: boolean;
+}
+
+type HalftoneStudioAction =
+  | { type: 'setTab'; value: HalftoneTabId }
+  | { type: 'setSourceMode'; value: HalftoneSourceMode }
+  | { type: 'setShapeKey'; value: string }
+  | { type: 'replaceSettings'; value: HalftoneStudioSettings }
+  | { type: 'patchLighting'; value: Partial<HalftoneLightingSettings> }
+  | { type: 'patchMaterial'; value: Partial<HalftoneMaterialSettings> }
+  | { type: 'patchHalftone'; value: Partial<HalftoneEffectSettings> }
+  | { type: 'patchBackground'; value: Partial<HalftoneBackgroundSettings> }
+  | { type: 'patchAnimation'; value: Partial<HalftoneAnimationSettings> }
+  | {
+      type: 'registerImportedFile';
+      spec: HalftoneGeometrySpec;
+      file: File;
+      activate: boolean;
+    }
+  | { type: 'setImportedFile'; key: string; file: File }
+  | { type: 'setStatus'; message: string; isError?: boolean }
+  | { type: 'clearStatus' }
+  | { type: 'hideHint' };
 
 function upsertGeometrySpec(
   geometrySpecs: HalftoneGeometrySpec[],

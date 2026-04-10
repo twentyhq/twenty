@@ -4,7 +4,11 @@ import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+
+const DRACO_DECODER_PATH =
+  'https://www.gstatic.com/draco/versioned/decoders/1.5.6/';
 
 const GLB_URL = '/illustrations/home/three-cards/flash.glb';
 const VIRTUAL_RENDER_HEIGHT = 768;
@@ -365,8 +369,14 @@ function extractMergedGeometry(root: THREE.Object3D) {
 }
 
 function parseGlbGeometry(buffer: ArrayBuffer): Promise<THREE.BufferGeometry> {
-  return new Promise((resolve, reject) => {
-    new GLTFLoader(createLoadingManager()).parse(
+  const dracoLoader = new DRACOLoader();
+  dracoLoader.setDecoderPath(DRACO_DECODER_PATH);
+
+  const gltfLoader = new GLTFLoader(createLoadingManager());
+  gltfLoader.setDRACOLoader(dracoLoader);
+
+  return new Promise<THREE.BufferGeometry>((resolve, reject) => {
+    gltfLoader.parse(
       buffer,
       '',
       (gltf) => {
@@ -378,6 +388,8 @@ function parseGlbGeometry(buffer: ArrayBuffer): Promise<THREE.BufferGeometry> {
       },
       reject,
     );
+  }).finally(() => {
+    dracoLoader.dispose();
   });
 }
 

@@ -6,7 +6,11 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+
+const DRACO_DECODER_PATH =
+  'https://www.gstatic.com/draco/versioned/decoders/1.5.6/';
 
 const MODEL_URL = '/illustrations/home/three-cards/wheelx.fbx';
 
@@ -600,8 +604,14 @@ function parseFbxGeometry(buffer, label) {
 }
 
 function parseGlbGeometry(buffer, label) {
+  const dracoLoader = new DRACOLoader();
+  dracoLoader.setDecoderPath(DRACO_DECODER_PATH);
+
+  const gltfLoader = new GLTFLoader(createLoadingManager());
+  gltfLoader.setDRACOLoader(dracoLoader);
+
   return new Promise((resolve, reject) => {
-    new GLTFLoader(createLoadingManager()).parse(
+    gltfLoader.parse(
       buffer,
       '',
       (gltf) => {
@@ -618,6 +628,8 @@ function parseGlbGeometry(buffer, label) {
       },
       reject,
     );
+  }).finally(() => {
+    dracoLoader.dispose();
   });
 }
 
