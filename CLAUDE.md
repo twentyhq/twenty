@@ -163,7 +163,7 @@ packages/
 - **Redis** for caching and sessions
 - **ClickHouse** for analytics (when enabled)
 - When changing entity files, generate an **instance command** (`database:migrate:generate --name <name> --type <fast|slow>`)
-- **Fast** instance commands handle DDL changes; **slow** ones add a `runDataMigration` step for data backfills
+- **Fast** instance commands handle schema changes; **slow** ones add a `runDataMigration` step for data backfills
 - **Workspace commands** iterate over all active/suspended workspaces for per-workspace upgrades
 - Commands use `@RegisteredInstanceCommand` and `@RegisteredWorkspaceCommand` decorators for automatic discovery
 - Include both `up` and `down` logic in instance commands

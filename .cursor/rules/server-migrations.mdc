@@ -10,7 +10,7 @@ alwaysApply: false
 ## Upgrade Commands (twenty-server)
 
 The upgrade system uses two types of commands instead of raw TypeORM migrations:
-- **Instance commands** — DDL and data migrations that run once at the instance level.
+- **Instance commands** — schema and data migrations that run once at the instance level.
 - **Workspace commands** — commands that iterate over all active/suspended workspaces.
 
 See `packages/twenty-server/docs/UPGRADE_COMMANDS.md` for full documentation.
@@ -23,7 +23,7 @@ See `packages/twenty-server/docs/UPGRADE_COMMANDS.md` for full documentation.
     npx nx run twenty-server:database:migrate:generate --name <name> --type <fast|slow>
     ```
 
-- **Fast commands** (`--type fast`, default) are for schema-only DDL changes that must run immediately. They implement `FastInstanceCommand` with `up`/`down` methods and use the `@RegisteredInstanceCommand` decorator.
+- **Fast commands** (`--type fast`, default) are for schema-only changes that must run immediately. They implement `FastInstanceCommand` with `up`/`down` methods and use the `@RegisteredInstanceCommand` decorator.
 
 - **Slow commands** (`--type slow`) add a `runDataMigration` method for potentially long-running data backfills that execute before `up`. They only run when `--include-slow` is passed. Use the decorator with `{ type: 'slow' }`.
 

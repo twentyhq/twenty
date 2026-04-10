@@ -2,7 +2,7 @@
 
 The upgrade process relies on two types of commands:
 
-- **Instance commands** — DDL and data migrations that run once at the instance level (replacing raw TypeORM migrations).
+- **Instance commands** — schema and data migrations that run once at the instance level (replacing raw TypeORM migrations).
 - **Workspace commands** — commands that iterate over all active or suspended workspaces to apply per-workspace changes.
 
 Both are registered via decorators and automatically discovered by the upgrade pipeline.
@@ -44,7 +44,7 @@ export class AddWorkspaceIdToTotoFastInstanceCommand
 
 ### Slow instance commands
 
-Slow commands are used when a potentially long-running data migration must happen before the DDL change. They only run when the `--include-slow` flag is passed.
+Slow commands are used when a potentially long-running data migration must happen before the schema change. They only run when the `--include-slow` flag is passed.
 
 A slow command implements `SlowInstanceCommand`, which extends `FastInstanceCommand` with an additional `runDataMigration` method that executes before `up`:
 
