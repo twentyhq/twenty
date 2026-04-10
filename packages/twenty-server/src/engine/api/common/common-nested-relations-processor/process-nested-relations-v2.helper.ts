@@ -377,16 +377,21 @@ export class ProcessNestedRelationsV2Helper {
     const queryBuilderOptions = referenceQueryBuilder.getFindOptions();
     const columnWithoutQuotes = column.replace(/["']/g, '');
 
-    const result = await referenceQueryBuilder
+    const select = queryBuilderOptions.select as Record<string, unknown> | undefined;
+    const hasNameFields = select !== undefined && 'nameLastName' in select;
+
+    let qb = referenceQueryBuilder
       .setFindOptions({
         ...queryBuilderOptions,
         select: { ...queryBuilderOptions.select, [columnWithoutQuotes]: true },
       })
-      .where(`${column} IN (:...ids)`, {
-        ids,
-      })
-      .take(limit)
-      .getMany();
+      .where(`${column} IN (:...ids)`, { ids });
+
+    if (hasNameFields) {
+      qb = qb.orderBy('"nameLastName"', 'ASC').addOrderBy('"nameFirstName"', 'ASC');
+    }
+
+    const result = await qb.take(limit).getMany();
 
     return { relationResults: result, relationAggregatedFieldsResult };
   }
