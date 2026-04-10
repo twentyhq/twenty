@@ -83,8 +83,6 @@ npx nx run twenty-server:test:integration:with-db-reset # Run integration tests
 
 # Upgrade commands (instance + workspace)
 npx nx run twenty-server:database:migrate:generate --name <name> --type <fast|slow>
-npx nx run twenty-server:command -- run-instance-commands
-npx nx run twenty-server:command -- run-instance-commands --include-slow
 ```
 
 ## Usage Guidelines
