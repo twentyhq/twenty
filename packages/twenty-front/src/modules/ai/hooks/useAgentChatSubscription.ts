@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { readUIMessageStream, type UIMessageChunk } from 'ai';
 import { print, type ExecutionResult } from 'graphql';
@@ -18,8 +18,6 @@ import { agentChatFirstLiveSeqState } from '@/ai/states/agentChatFirstLiveSeqSta
 import { agentChatHandleEventCallbackState } from '@/ai/states/agentChatHandleEventCallbackState';
 import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
-import { agentChatStreamWriterState } from '@/ai/states/agentChatStreamWriterState';
-import { agentChatSubscriptionDisposeState } from '@/ai/states/agentChatSubscriptionDisposeState';
 import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
@@ -98,47 +96,38 @@ export const useAgentChatSubscription = (threadId: string | null) => {
   const store = useStore();
   const sseClient = useAtomStateValue(sseClientState);
 
-  const cleanup = useCallback(() => {
-    const writer = store.get(agentChatStreamWriterState.atom);
-
-    if (isDefined(writer)) {
-      writer.close().catch(() => {});
-      store.set(agentChatStreamWriterState.atom, null);
-    }
-
-    const dispose = store.get(agentChatSubscriptionDisposeState.atom);
-
-    if (isDefined(dispose)) {
-      dispose();
-      store.set(agentChatSubscriptionDisposeState.atom, null);
-    }
-
-    if (store.get(agentChatIsStreamingState.atom)) {
-      store.set(agentChatIsStreamingState.atom, false);
-    }
-  }, [store]);
-
   useEffect(() => {
-    if (!isDefined(threadId)) {
-      cleanup();
-
-      return;
-    }
-
-    if (!isDefined(sseClient)) {
+    if (!isDefined(threadId) || !isDefined(sseClient)) {
       return;
     }
 
     let bridge: TransformStream<UIMessageChunk> | null = null;
     let throttleTimer: ReturnType<typeof setTimeout> | null = null;
     let latestMessage: ExtendedUIMessage | null = null;
+    let writer: WritableStreamDefaultWriter<UIMessageChunk> | null = null;
+    let disposed = false;
 
     store.set(agentChatFirstLiveSeqState.atom, null);
+
+    const closeWriter = () => {
+      if (isDefined(writer)) {
+        writer.close().catch(() => {});
+        writer = null;
+      }
+    };
+
+    const cleanupStream = () => {
+      closeWriter();
+
+      if (store.get(agentChatIsStreamingState.atom)) {
+        store.set(agentChatIsStreamingState.atom, false);
+      }
+    };
 
     const flushToAtom = () => {
       const messageToFlush = latestMessage;
 
-      if (!isDefined(messageToFlush) || !isDefined(threadId)) {
+      if (!isDefined(messageToFlush)) {
         return;
       }
 
@@ -261,10 +250,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
             store.set(agentChatIsStreamingState.atom, true);
 
             bridge = new TransformStream<UIMessageChunk>();
-            store.set(
-              agentChatStreamWriterState.atom,
-              bridge.writable.getWriter(),
-            );
+            writer = bridge.writable.getWriter();
 
             const adaptedReadable = bridge.readable.pipeThrough(
               createMidStreamAdapter(),
@@ -275,8 +261,6 @@ export const useAgentChatSubscription = (threadId: string | null) => {
             });
           }
 
-          const writer = store.get(agentChatStreamWriterState.atom);
-
           if (isDefined(writer)) {
             writer.write(event.chunk as UIMessageChunk).catch(() => {});
           }
@@ -284,13 +268,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         }
 
         case 'message-persisted': {
-          const writer = store.get(agentChatStreamWriterState.atom);
-
-          if (isDefined(writer)) {
-            writer.close().catch(() => {});
-            store.set(agentChatStreamWriterState.atom, null);
-          }
-
+          closeWriter();
           dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
           break;
         }
@@ -308,13 +286,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           streamError.code = event.code;
           store.set(agentChatErrorState.atom, streamError);
 
-          const writer = store.get(agentChatStreamWriterState.atom);
-
-          if (isDefined(writer)) {
-            writer.close().catch(() => {});
-            store.set(agentChatStreamWriterState.atom, null);
-          }
-
+          closeWriter();
           store.set(agentChatIsStreamingState.atom, false);
           break;
         }
@@ -322,8 +294,6 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     };
 
     store.set(agentChatHandleEventCallbackState.atom, () => handleEvent);
-
-    let disposed = false;
 
     const dispose = sseClient.subscribe<AgentChatEventPayload>(
       {
@@ -343,13 +313,11 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         },
         complete: () => {
           if (!disposed) {
-            cleanup();
+            cleanupStream();
           }
         },
       },
     );
-
-    store.set(agentChatSubscriptionDisposeState.atom, () => dispose);
 
     return () => {
       disposed = true;
@@ -357,7 +325,8 @@ export const useAgentChatSubscription = (threadId: string | null) => {
       if (isDefined(throttleTimer)) {
         clearTimeout(throttleTimer);
       }
-      cleanup();
+      cleanupStream();
+      dispose();
     };
-  }, [threadId, sseClient, store, cleanup]);
+  }, [threadId, sseClient, store]);
 };
