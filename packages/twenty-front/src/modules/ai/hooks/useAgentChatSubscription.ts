@@ -323,6 +323,8 @@ export const useAgentChatSubscription = (threadId: string | null) => {
 
     store.set(agentChatHandleEventCallbackState.atom, () => handleEvent);
 
+    let disposed = false;
+
     const dispose = sseClient.subscribe<AgentChatEventPayload>(
       {
         query: print(ON_AGENT_CHAT_EVENT),
@@ -340,7 +342,9 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           // graphql-sse handles reconnection automatically
         },
         complete: () => {
-          cleanup();
+          if (!disposed) {
+            cleanup();
+          }
         },
       },
     );
@@ -348,6 +352,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     store.set(agentChatSubscriptionDisposeState.atom, () => dispose);
 
     return () => {
+      disposed = true;
       store.set(agentChatHandleEventCallbackState.atom, null);
       if (isDefined(throttleTimer)) {
         clearTimeout(throttleTimer);
