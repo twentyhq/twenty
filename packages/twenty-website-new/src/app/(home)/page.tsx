@@ -94,6 +94,13 @@ export default async function HomePage() {
             type="anchor"
             variant="contained"
           />
+          <LinkButton
+            color="secondary"
+            href="https://app.twenty.com/welcome"
+            label="Talk to us"
+            type="anchor"
+            variant="outlined"
+          />
         </Hero.Cta>
         <Hero.HomeVisual visual={HERO_DATA.visual} />
       </Hero.Root>
@@ -157,6 +164,13 @@ export default async function HomePage() {
             segments={THREE_CARDS_FEATURE_DATA.heading}
             size="lg"
             weight="light"
+          />
+          <LinkButton
+            color="secondary"
+            href="/product"
+            label="Visit product page"
+            type="link"
+            variant="contained"
           />
         </ThreeCards.Intro>
         <ThreeCards.FeatureCards
