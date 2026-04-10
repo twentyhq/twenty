@@ -44,25 +44,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       name: 'targetMyNote',
       label: 'MyNote',
       description: 'MyNote My note',
-      icon: 'IconHeart',
-      isNullable: true,
-      universalSettings: {
-        relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        joinColumnName: 'targetMyNoteId',
-      },
-      universalIdentifier: '698f12fe-3feb-55e3-b6cc-73375f1a8ae6',
-      objectUniversalIdentifier: '20202020-ab56-4e05-92a3-e2414a499860',
-      relationTargetFieldMetadataUniversalIdentifier:
-        'ed80c73b-25ff-5a3c-99c7-e27fa2f2611e',
-      relationTargetObjectMetadataUniversalIdentifier:
-        'e1e2e3e4-e5e6-4000-8000-000000000030',
-      type: FieldType.RELATION,
-    },
-    {
-      name: 'targetMyNote',
-      label: 'MyNote',
-      description: 'MyNote My note',
       icon: 'IconFileImport',
       isNullable: true,
       universalSettings: {
