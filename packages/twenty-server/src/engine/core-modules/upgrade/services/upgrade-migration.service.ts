@@ -96,21 +96,14 @@ export class UpgradeMigrationService {
     executedByVersion,
   }: {
     name: string;
-    workspaceId: string | null;
+    workspaceId: string;
     executedByVersion: string;
   }): Promise<void> {
-    const previousAttempts = await this.upgradeMigrationRepository.count({
-      where: {
-        name,
-        workspaceId: workspaceId === null ? IsNull() : workspaceId,
-      },
-    });
-
     await this.upgradeMigrationRepository.save({
       name,
       status: 'completed',
       isInitial: true,
-      attempt: previousAttempts + 1,
+      attempt: 1,
       executedByVersion,
       workspaceId,
     });
