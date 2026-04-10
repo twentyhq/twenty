@@ -69,6 +69,30 @@ export const NavigationMenuItemIcon = ({
     );
   }
 
+  if (navigationMenuItem.type === NavigationMenuItemType.PAGE_LAYOUT) {
+    const pageLayoutIcon = isDefined(navigationMenuItem.icon)
+      ? getIcon(navigationMenuItem.icon)
+      : undefined;
+    const pageLayoutColor = getNavigationMenuItemColor(navigationMenuItem);
+    const pageLayoutIconStyle =
+      getNavigationMenuItemIconStyleFromColor(pageLayoutColor);
+
+    return (
+      <StyledNavigationMenuItemIconContainer
+        $backgroundColor={pageLayoutIconStyle.backgroundColor}
+        $borderColor={pageLayoutIconStyle.borderColor}
+      >
+        <Avatar
+          size="sm"
+          type="icon"
+          Icon={pageLayoutIcon}
+          iconColor={pageLayoutIconStyle.iconColor}
+          placeholder={navigationMenuItem.name ?? ''}
+        />
+      </StyledNavigationMenuItemIconContainer>
+    );
+  }
+
   if (navigationMenuItem.type === NavigationMenuItemType.LINK) {
     const computedLink = getNavigationMenuItemComputedLink(
       navigationMenuItem,

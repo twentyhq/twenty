@@ -522,7 +522,6 @@ export const getPageLayoutWidgetDataSeeds = (
       overrides: null,
     } satisfies SeederFlatPageLayoutWidget,
 
-    // Documentation Standalone Page - Full-page iframe
     {
       id: generateSeedId(
         workspaceId,
@@ -532,7 +531,7 @@ export const getPageLayoutWidgetDataSeeds = (
         workspaceId,
         PAGE_LAYOUT_TAB_SEEDS.DOCUMENTATION,
       ),
-      title: 'Twenty Documentation',
+      title: 'Twenty Star History',
       type: WidgetType.IFRAME,
       gridPosition: { row: 0, column: 0, rowSpan: 12, columnSpan: 12 },
       position: {
@@ -544,7 +543,7 @@ export const getPageLayoutWidgetDataSeeds = (
       },
       configuration: {
         configurationType: WidgetConfigurationType.IFRAME,
-        url: 'https://docs.twenty.com/user-guide/introduction',
+        url: 'https://www.star-history.com/twentyhq/twenty#history',
       },
       objectMetadataId: null,
       overrides: null,

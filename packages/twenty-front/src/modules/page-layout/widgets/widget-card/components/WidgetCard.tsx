@@ -23,7 +23,7 @@ const computeBorderColor = (
   if (props.isEditable && (props.isEditing || props.isDragging)) {
     return themeCssVariables.color.blue;
   }
-  if (props.variant === 'dashboard') {
+  if (props.variant === 'dashboard' || props.variant === 'standalone') {
     return themeCssVariables.border.color.light;
   }
   return 'transparent';
@@ -37,6 +37,7 @@ const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
     }
     if (
       props.variant === 'dashboard' ||
+      props.variant === 'standalone' ||
       (props.variant === 'side-column' && props.isEditable)
     ) {
       return themeCssVariables.background.secondary;
@@ -49,6 +50,7 @@ const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
 
   border: ${(props) =>
     props.variant === 'dashboard' ||
+    props.variant === 'standalone' ||
     props.variant === 'record-page' ||
     props.isEditable
       ? `1px solid ${computeBorderColor(props)}`
@@ -66,7 +68,10 @@ const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
     return `1px solid ${computeBorderColor(props)}`;
   }};
   border-radius: ${({ variant, isEditable }) =>
-    variant === 'dashboard' || variant === 'record-page' || isEditable
+    variant === 'dashboard' ||
+    variant === 'standalone' ||
+    variant === 'record-page' ||
+    isEditable
       ? themeCssVariables.border.radius.md
       : '0'};
 
@@ -90,8 +95,13 @@ const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
   height: 100%;
 
   padding: ${({ variant, isEditable, headerLess }) => {
-    if (variant === 'dashboard' && headerLess === true) return '0';
-    if (variant === 'dashboard') return themeCssVariables.spacing[2];
+    if (
+      (variant === 'dashboard' || variant === 'standalone') &&
+      headerLess === true
+    )
+      return '0';
+    if (variant === 'dashboard' || variant === 'standalone')
+      return themeCssVariables.spacing[2];
     if (variant === 'side-column' && !isEditable)
       return themeCssVariables.spacing[3];
     if (variant === 'record-page' || isEditable)

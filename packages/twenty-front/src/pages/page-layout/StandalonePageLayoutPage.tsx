@@ -1,5 +1,7 @@
 import { useParams } from 'react-router-dom';
 
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -15,15 +17,19 @@ export const StandalonePageLayoutPage = () => {
 
   return (
     <PageContainer>
-      <LayoutRenderingProvider
-        value={{
-          targetRecordIdentifier: undefined,
-          layoutType: PageLayoutType.STANDALONE_PAGE,
-          isInSidePanel: false,
-        }}
+      <ContextStoreComponentInstanceContext.Provider
+        value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
       >
-        <PageLayoutRenderer pageLayoutId={pageLayoutId} />
-      </LayoutRenderingProvider>
+        <LayoutRenderingProvider
+          value={{
+            targetRecordIdentifier: undefined,
+            layoutType: PageLayoutType.STANDALONE_PAGE,
+            isInSidePanel: false,
+          }}
+        >
+          <PageLayoutRenderer pageLayoutId={pageLayoutId} />
+        </LayoutRenderingProvider>
+      </ContextStoreComponentInstanceContext.Provider>
     </PageContainer>
   );
 };

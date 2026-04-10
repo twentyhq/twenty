@@ -28,6 +28,12 @@ export const getNavigationMenuItemColor = (
     return DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK;
   }
 
+  if (navigationMenuItem.type === NavigationMenuItemType.PAGE_LAYOUT) {
+    return isNonEmptyString(navigationMenuItem.color)
+      ? (navigationMenuItem.color as ThemeColor)
+      : DEFAULT_NAV_ITEM_ICON_COLOR;
+  }
+
   if (
     navigationMenuItem.type === NavigationMenuItemType.OBJECT ||
     navigationMenuItem.type === NavigationMenuItemType.VIEW

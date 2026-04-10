@@ -16,6 +16,7 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     flatNavigationMenuItemMaps,
     flatObjectMetadataMaps,
     flatViewMaps,
+    flatPageLayoutMaps,
   }: {
     createNavigationMenuItemInput: CreateNavigationMenuItemInput;
     workspaceId: string;

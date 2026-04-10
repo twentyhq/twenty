@@ -22,6 +22,7 @@ export const seedNavigationMenuItems = async (
         'type',
         'name',
         'icon',
+        'color',
         'pageLayoutId',
         'position',
         'workspaceId',

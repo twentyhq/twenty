@@ -10,6 +10,7 @@ type NavigationMenuItemSeed = {
   type: NavigationMenuItemType;
   name: string;
   icon: string;
+  color: string;
   pageLayoutId: string;
   position: number;
   workspaceId: string;
@@ -27,13 +28,14 @@ export const getNavigationMenuItemDataSeeds = (
       NAVIGATION_MENU_ITEM_SEEDS.DOCUMENTATION_PAGE,
     ),
     type: NavigationMenuItemType.PAGE_LAYOUT,
-    name: 'Documentation',
-    icon: 'IconBook',
+    name: 'Star History',
+    icon: 'IconStar',
+    color: 'yellow',
     pageLayoutId: generateSeedId(
       workspaceId,
       PAGE_LAYOUT_SEEDS.DOCUMENTATION_STANDALONE_PAGE,
     ),
-    position: 7,
+    position: 9999,
     workspaceId,
     universalIdentifier: v4(),
     applicationId,

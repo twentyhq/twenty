@@ -86,7 +86,8 @@ export const WorkspaceSectionContainer = ({
     const itemType = item.type;
     if (
       itemType === NavigationMenuItemType.FOLDER ||
-      itemType === NavigationMenuItemType.LINK
+      itemType === NavigationMenuItemType.LINK ||
+      itemType === NavigationMenuItemType.PAGE_LAYOUT
     ) {
       return true;
     }
