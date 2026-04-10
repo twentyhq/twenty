@@ -42,7 +42,10 @@ export function useDirectExecution(
         operationName,
       );
 
-      if (!operationDefinition || isSubscriptionOperation(document, operationName)) {
+      if (
+        !operationDefinition ||
+        isSubscriptionOperation(document, operationName)
+      ) {
         return;
       }
 
@@ -72,9 +75,7 @@ export function useDirectExecution(
 
       if (Sentry.isInitialized()) {
         const transactionName =
-          operationName ||
-          operationDefinition.name?.value ||
-          'Anonymous Operation';
+          operationName || operationDefinition.name?.value || '';
 
         Sentry.setTags({
           operationName: transactionName,
