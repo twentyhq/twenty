@@ -222,7 +222,7 @@ export const computeStandardCalendarEventParticipantViewFields = (
           position: 0,
           isVisible: true,
           size: 150,
-          viewFieldGroupName: 'other',
+          viewFieldGroupName: 'system',
         },
       }),
     calendarEventParticipantRecordPageFieldsCreatedBy:
@@ -236,7 +236,7 @@ export const computeStandardCalendarEventParticipantViewFields = (
           position: 1,
           isVisible: true,
           size: 150,
-          viewFieldGroupName: 'other',
+          viewFieldGroupName: 'system',
         },
       }),
   };

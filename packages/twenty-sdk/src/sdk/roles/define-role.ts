@@ -1,8 +1,8 @@
 import { createValidationResult } from '@/sdk/common/utils/create-validation-result';
-import { type RoleManifest } from 'twenty-shared/application';
 import { type DefineEntity } from '@/sdk/common/types/define-entity.type';
+import { type RoleConfig } from '@/sdk/roles/role-config';
 
-export const defineRole: DefineEntity<RoleManifest> = (config) => {
+export const defineRole: DefineEntity<RoleConfig> = (config) => {
   const errors = [];
 
   if (!config.universalIdentifier) {

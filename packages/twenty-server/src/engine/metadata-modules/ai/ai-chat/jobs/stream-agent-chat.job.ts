@@ -144,6 +144,7 @@ export class StreamAgentChatJob {
                 part.type === 'text' || part.type === 'file',
             ),
           },
+          workspaceId: data.workspaceId,
         });
 
     userMessagePromise.catch(() => {});
@@ -271,6 +272,7 @@ export class StreamAgentChatJob {
                   await this.handleStreamFinish({
                     responseMessage,
                     threadId: data.threadId,
+                    workspaceId: data.workspaceId,
                     streamUsage,
                     lastStepConversationSize,
                     modelConfig,
@@ -410,6 +412,7 @@ export class StreamAgentChatJob {
   private async handleStreamFinish({
     responseMessage,
     threadId,
+    workspaceId,
     streamUsage,
     lastStepConversationSize,
     modelConfig,
@@ -417,6 +420,7 @@ export class StreamAgentChatJob {
   }: {
     responseMessage: Omit<ExtendedUIMessage, 'id'>;
     threadId: string;
+    workspaceId: string;
     streamUsage: {
       inputTokens: number;
       outputTokens: number;
@@ -437,6 +441,7 @@ export class StreamAgentChatJob {
       threadId,
       uiMessage: responseMessage,
       turnId: userMessage.turnId ?? undefined,
+      workspaceId,
     });
 
     await this.threadRepository.update(threadId, {

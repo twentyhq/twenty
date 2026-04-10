@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { styled } from '@linaria/react';
+import { useState } from 'react';
 
 import {
   AUTO_SELECT_FAST_MODEL_ID,
@@ -9,6 +9,9 @@ import {
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
+import { getDataResidencyDisplay } from '@/settings/ai/utils/getDataResidencyDisplay';
+import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -16,18 +19,19 @@ import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { H2Title, IconBolt, IconTwentyStar } from 'twenty-ui/display';
+import { H2Title, IconBolt, IconBrain, IconStar } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMutation } from '@apollo/client/react';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
-import { getDataResidencyDisplay } from '@/settings/admin-panel/ai/utils/getDataResidencyDisplay';
-import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
 
-const StyledSearchContainer = styled.div`
-  padding-bottom: ${themeCssVariables.spacing[2]};
+const StyledCustomModelsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[4]};
+  padding-top: ${themeCssVariables.spacing[4]};
 `;
 
 export const SettingsAIModelsTab = () => {
@@ -39,12 +43,10 @@ export const SettingsAIModelsTab = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const aiModels = useAtomStateValue(aiModelsState);
 
-  const {
-    allModelsWithAvailability,
-    enabledModels,
-    useRecommendedModels,
-    realModels,
-  } = useWorkspaceAiModelAvailability();
+  const { enabledModels, useRecommendedModels, realModels } =
+    useWorkspaceAiModelAvailability();
+
+  const enabledModelIdSet = new Set(currentWorkspace?.enabledAiModelIds ?? []);
 
   const currentSmartModel = currentWorkspace?.smartModel;
   const currentFastModel = currentWorkspace?.fastModel;
@@ -207,7 +209,7 @@ export const SettingsAIModelsTab = () => {
   };
 
   const filteredModels = searchQuery.trim()
-    ? allModelsWithAvailability.filter((model) => {
+    ? realModels.filter((model) => {
         const query = searchQuery.toLowerCase();
 
         return (
@@ -216,19 +218,19 @@ export const SettingsAIModelsTab = () => {
           (model.sdkPackage?.toLowerCase().includes(query) ?? false)
         );
       })
-    : allModelsWithAvailability;
+    : realModels;
 
   return (
     <>
       <Section>
         <H2Title
-          title={t`Models`}
-          description={t`Configure default AI models and availability`}
+          title={t`Default`}
+          description={t`Configure your default AI model`}
         />
 
         <Card rounded>
           <SettingsOptionCardContentSelect
-            Icon={IconBolt}
+            Icon={IconBrain}
             title={t`Smart Model`}
             description={t`Used for chats, agents, and complex reasoning`}
           >
@@ -257,8 +259,17 @@ export const SettingsAIModelsTab = () => {
               dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
             />
           </SettingsOptionCardContentSelect>
+        </Card>
+      </Section>
+
+      <Section>
+        <H2Title
+          title={t`Available`}
+          description={t`Models available in the chat model picker`}
+        />
+        <Card rounded>
           <SettingsOptionCardContentToggle
-            Icon={IconTwentyStar}
+            Icon={IconStar}
             title={t`Use best models only`}
             description={t`Restrict available models to a curated list`}
             checked={useRecommendedModels}
@@ -266,50 +277,52 @@ export const SettingsAIModelsTab = () => {
             divider={!useRecommendedModels}
           />
         </Card>
-      </Section>
 
-      {!useRecommendedModels && (
-        <Section>
-          <H2Title
-            title={t`Available`}
-            description={t`Models available in the chat model picker`}
-          />
-
-          <StyledSearchContainer>
+        {!useRecommendedModels && (
+          <StyledCustomModelsContainer>
             <SearchInput
               placeholder={t`Search a model...`}
               value={searchQuery}
               onChange={setSearchQuery}
             />
-          </StyledSearchContainer>
 
-          <Card rounded>
-            {filteredModels.map((model, index) => {
-              const familyLabel = model.modelFamilyLabel ?? '';
-              const residency = model.dataResidency
-                ? getDataResidencyDisplay(model.dataResidency)
-                : undefined;
-              const description = residency
-                ? `${familyLabel} · ${residency}`
-                : familyLabel;
+            <SettingsAiModelsTable
+              models={filteredModels}
+              isChecked={(model) => enabledModelIdSet.has(model.modelId)}
+              onToggle={handleModelToggle}
+              onToggleAll={async (shouldCheckAll) => {
+                const previousIds = currentWorkspace?.enabledAiModelIds ?? [];
+                const visibleModelIds = new Set(
+                  filteredModels.map((m) => m.modelId),
+                );
 
-              return (
-                <SettingsOptionCardContentToggle
-                  key={model.modelId}
-                  Icon={getModelIcon(model.modelFamily, model.providerName)}
-                  title={model.label}
-                  description={description}
-                  checked={model.isEnabled}
-                  onChange={() =>
-                    handleModelToggle(model.modelId, model.isEnabled)
-                  }
-                  divider={index < filteredModels.length - 1}
-                />
-              );
-            })}
-          </Card>
-        </Section>
-      )}
+                const newEnabledIds = shouldCheckAll
+                  ? [...new Set([...previousIds, ...visibleModelIds])]
+                  : previousIds.filter((id) => !visibleModelIds.has(id));
+
+                try {
+                  setCurrentWorkspace({
+                    ...currentWorkspace!,
+                    enabledAiModelIds: newEnabledIds,
+                  });
+                  await updateWorkspace({
+                    variables: { input: { enabledAiModelIds: newEnabledIds } },
+                  });
+                } catch {
+                  setCurrentWorkspace({
+                    ...currentWorkspace!,
+                    enabledAiModelIds: previousIds,
+                  });
+                  enqueueErrorSnackBar({
+                    message: t`Failed to update model availability`,
+                  });
+                }
+              }}
+              anchorPrefix="workspace-model-row"
+            />
+          </StyledCustomModelsContainer>
+        )}
+      </Section>
     </>
   );
 };

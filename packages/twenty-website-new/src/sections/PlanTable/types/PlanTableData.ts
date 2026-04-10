@@ -69,10 +69,11 @@ export type PlanTableBodyRowDataType =
 
 export type PlanTableDataType = {
   featureColumnLabel: string;
+  initialVisibleRowCount: number;
   rows: PlanTableBodyRowDataType[];
   seeMoreFeaturesCta: {
-    href: string;
-    label: string;
+    collapseLabel: string;
+    expandLabel: string;
   };
   tierColumns: PlanTableTierColumnType[];
 };

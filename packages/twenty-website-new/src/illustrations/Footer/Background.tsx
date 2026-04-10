@@ -640,6 +640,7 @@ export function FooterBackground() {
       blurTargetB.dispose();
       environmentTexture.dispose();
       renderer.dispose();
+      dracoLoader.dispose();
 
       if (canvas.parentNode === container) {
         container.removeChild(canvas);
