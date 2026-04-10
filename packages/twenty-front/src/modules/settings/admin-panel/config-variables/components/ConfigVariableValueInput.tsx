@@ -43,7 +43,7 @@ export const ConfigVariableValueInput = ({
           placeholder={
             disabled
               ? t`Undefined`
-              : variable.isSensitive && !disabled
+              : variable.isSensitive
                 ? t`Enter a new secret value`
                 : t`Enter a value to store in database`
           }
