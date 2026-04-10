@@ -34,6 +34,8 @@ export const useViewFieldAggregateOperation = () => {
   // oxlint-disable-next-line twenty/no-state-useref
   const latestRequestIdRef = useRef(0);
   // oxlint-disable-next-line twenty/no-state-useref
+  const lastConfirmedRequestIdRef = useRef(0);
+  // oxlint-disable-next-line twenty/no-state-useref
   const lastConfirmedOperationRef = useRef(viewFieldAggregateOperation);
 
   const updateViewFieldAggregateOperation = async (
@@ -65,14 +67,21 @@ export const useViewFieldAggregateOperation = () => {
       },
     ]);
 
-    if (requestId !== latestRequestIdRef.current) {
-      return;
-    }
+    if (result.status !== 'failed') {
+      if (requestId >= lastConfirmedRequestIdRef.current) {
+        lastConfirmedRequestIdRef.current = requestId;
+        lastConfirmedOperationRef.current = aggregateOperation;
+      }
 
-    if (result.status === 'failed') {
-      setViewFieldAggregateOperation(lastConfirmedOperationRef.current ?? null);
+      if (requestId !== latestRequestIdRef.current) {
+        return;
+      }
     } else {
-      lastConfirmedOperationRef.current = aggregateOperation;
+      if (requestId !== latestRequestIdRef.current) {
+        return;
+      }
+
+      setViewFieldAggregateOperation(lastConfirmedOperationRef.current ?? null);
     }
   };
 

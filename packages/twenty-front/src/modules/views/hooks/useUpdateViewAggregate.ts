@@ -39,6 +39,8 @@ export const useUpdateViewAggregate = () => {
   // oxlint-disable-next-line twenty/no-state-useref
   const latestRequestIdRef = useRef(0);
   // oxlint-disable-next-line twenty/no-state-useref
+  const lastConfirmedRequestIdRef = useRef(0);
+  // oxlint-disable-next-line twenty/no-state-useref
   const lastConfirmedStateRef = useRef({
     operation: recordIndexGroupAggregateOperation,
     fieldMetadataItem: recordIndexGroupAggregateFieldMetadataItem,
@@ -88,11 +90,19 @@ export const useUpdateViewAggregate = () => {
         },
       });
 
-      if (requestId !== latestRequestIdRef.current) {
-        return;
-      }
-
       if (updatedViewResult.status === 'successful') {
+        if (requestId >= lastConfirmedRequestIdRef.current) {
+          lastConfirmedRequestIdRef.current = requestId;
+          lastConfirmedStateRef.current = {
+            operation: kanbanAggregateOperation,
+            fieldMetadataItem: newFieldMetadataItem,
+          };
+        }
+
+        if (requestId !== latestRequestIdRef.current) {
+          return;
+        }
+
         const updatedView = updatedViewResult.response.data
           ?.updateView as GqlView;
 
@@ -100,13 +110,12 @@ export const useUpdateViewAggregate = () => {
           return;
         }
 
-        lastConfirmedStateRef.current = {
-          operation: kanbanAggregateOperation,
-          fieldMetadataItem: newFieldMetadataItem,
-        };
-
         loadRecordIndexStates(updatedView, objectMetadataItem);
       } else {
+        if (requestId !== latestRequestIdRef.current) {
+          return;
+        }
+
         setRecordIndexGroupAggregateOperation(
           lastConfirmedStateRef.current.operation ?? null,
         );
