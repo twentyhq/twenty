@@ -61,6 +61,28 @@ export class UpgradeSequenceReaderService {
     return index;
   }
 
+  getWorkspaceSliceBounds(
+    sequence: UpgradeStep[],
+    indexInSlice: number,
+  ): { startIndex: number; endIndex: number } {
+    let startIndex = indexInSlice;
+
+    while (startIndex > 0 && sequence[startIndex - 1].kind === 'workspace') {
+      startIndex--;
+    }
+
+    let endIndex = indexInSlice;
+
+    while (
+      endIndex < sequence.length - 1 &&
+      sequence[endIndex + 1].kind === 'workspace'
+    ) {
+      endIndex++;
+    }
+
+    return { startIndex, endIndex };
+  }
+
   collectContiguousWorkspaceSteps(
     sequence: UpgradeStep[],
     fromIndex: number,

@@ -139,8 +139,14 @@ export class UpgradeSequenceRunnerService {
   private async validateWorkspaceCursorsAlignment(
     sequence: UpgradeStep[],
     activeWorkspaceIds: string[],
-    expectedCursorIndex: number,
+    globalCursorIndex: number,
   ): Promise<void> {
+    const { startIndex, endIndex } =
+      this.upgradeSequenceReaderService.getWorkspaceSliceBounds(
+        sequence,
+        globalCursorIndex,
+      );
+
     const workspaceCursors =
       await this.upgradeMigrationService.getWorkspaceCursorsOrThrow(
         activeWorkspaceIds,
@@ -153,16 +159,11 @@ export class UpgradeSequenceRunnerService {
           cursorName,
         );
 
-      if (sequence[location].kind !== 'workspace') {
+      if (location < startIndex || location > endIndex) {
         throw new Error(
-          `Workspace ${workspaceId} cursor "${cursorName}" points to an instance command`,
-        );
-      }
-
-      if (location > expectedCursorIndex) {
-        throw new Error(
-          `Workspace ${workspaceId} cursor "${cursorName}" is ahead of the ` +
-            'global cursor — workspaces are not aligned',
+          `Workspace ${workspaceId} cursor "${cursorName}" is outside the ` +
+            `current workspace slice [${startIndex}..${endIndex}] — ` +
+            'workspaces are not aligned',
         );
       }
     }
