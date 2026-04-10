@@ -31,105 +31,116 @@ export const useSaveRecordFiltersToViewFilters = () => {
 
   const store = useStore();
 
-  const saveRecordFiltersToViewFilters = useCallback(async () => {
-    const views = store.get(viewsSelector.atom);
+  const saveRecordFiltersToViewFilters = useCallback(
+    async ({
+      destroyedViewFilterGroupIds = [],
+    }: {
+      destroyedViewFilterGroupIds?: string[];
+    } = {}) => {
+      const views = store.get(viewsSelector.atom);
 
-    const currentView = views.find(
-      (view) => view.id === contextStoreCurrentViewId,
-    );
+      const currentView = views.find(
+        (view) => view.id === contextStoreCurrentViewId,
+      );
 
-    if (!isDefined(currentView)) {
-      return;
-    }
+      if (!isDefined(currentView)) {
+        return;
+      }
 
-    if (!canPersistChanges || !isDefined(currentView)) {
-      return;
-    }
+      if (!canPersistChanges || !isDefined(currentView)) {
+        return;
+      }
 
-    const currentViewFilters = currentView?.viewFilters ?? [];
+      const currentViewFilters = currentView?.viewFilters ?? [];
 
-    const currentRecordFilters = store.get(currentRecordFiltersCallbackState);
+      const currentRecordFilters = store.get(currentRecordFiltersCallbackState);
 
-    const newViewFilters = currentRecordFilters.map(
-      mapRecordFilterToViewFilter,
-    );
+      const newViewFilters = currentRecordFilters.map(
+        mapRecordFilterToViewFilter,
+      );
 
-    const viewFiltersToCreate = getViewFiltersToCreate(
-      currentViewFilters,
-      newViewFilters,
-    );
+      const viewFiltersToCreate = getViewFiltersToCreate(
+        currentViewFilters,
+        newViewFilters,
+      );
 
-    const viewFiltersToDelete = getViewFiltersToDelete(
-      currentViewFilters,
-      newViewFilters,
-    );
+      const viewFiltersToDelete = getViewFiltersToDelete(
+        currentViewFilters,
+        newViewFilters,
+      ).filter(
+        (viewFilter) =>
+          !isDefined(viewFilter.viewFilterGroupId) ||
+          !destroyedViewFilterGroupIds.includes(viewFilter.viewFilterGroupId),
+      );
 
-    const viewFiltersToUpdate = getViewFiltersToUpdate(
-      currentViewFilters,
-      newViewFilters,
-    );
+      const viewFiltersToUpdate = getViewFiltersToUpdate(
+        currentViewFilters,
+        newViewFilters,
+      );
 
-    const createViewFilterInputs = viewFiltersToCreate.map((viewFilter) => ({
-      input: {
-        id: viewFilter.id,
-        fieldMetadataId: viewFilter.fieldMetadataId,
-        viewId: currentView.id,
-        value: viewFilter.value,
-        operand: viewFilter.operand,
-        viewFilterGroupId: viewFilter.viewFilterGroupId,
-        positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
-        subFieldName: viewFilter.subFieldName ?? null,
-      },
-    }));
-
-    const updateViewFilterInputs = viewFiltersToUpdate.map((viewFilter) => ({
-      input: {
-        id: viewFilter.id,
-        update: {
+      const createViewFilterInputs = viewFiltersToCreate.map((viewFilter) => ({
+        input: {
+          id: viewFilter.id,
+          fieldMetadataId: viewFilter.fieldMetadataId,
+          viewId: currentView.id,
           value: viewFilter.value,
           operand: viewFilter.operand,
-          positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
           viewFilterGroupId: viewFilter.viewFilterGroupId,
+          positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
           subFieldName: viewFilter.subFieldName ?? null,
         },
-      },
-    }));
+      }));
 
-    const destroyViewFilterInputs = viewFiltersToDelete.map((viewFilter) => ({
-      input: {
-        id: viewFilter.id,
-      },
-    }));
+      const updateViewFilterInputs = viewFiltersToUpdate.map((viewFilter) => ({
+        input: {
+          id: viewFilter.id,
+          update: {
+            value: viewFilter.value,
+            operand: viewFilter.operand,
+            positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
+            viewFilterGroupId: viewFilter.viewFilterGroupId,
+            subFieldName: viewFilter.subFieldName ?? null,
+          },
+        },
+      }));
 
-    const createResult = await performViewFilterAPICreate(
-      createViewFilterInputs,
-    );
-    if (createResult.status === 'failed') {
-      return;
-    }
+      const destroyViewFilterInputs = viewFiltersToDelete.map((viewFilter) => ({
+        input: {
+          id: viewFilter.id,
+        },
+      }));
 
-    const updateResult = await performViewFilterAPIUpdate(
-      updateViewFilterInputs,
-    );
-    if (updateResult.status === 'failed') {
-      return;
-    }
+      const createResult = await performViewFilterAPICreate(
+        createViewFilterInputs,
+      );
+      if (createResult.status === 'failed') {
+        return;
+      }
 
-    const deleteResult = await performViewFilterAPIDestroy(
-      destroyViewFilterInputs,
-    );
-    if (deleteResult.status === 'failed') {
-      return;
-    }
-  }, [
-    store,
-    canPersistChanges,
-    currentRecordFiltersCallbackState,
-    performViewFilterAPICreate,
-    performViewFilterAPIUpdate,
-    performViewFilterAPIDestroy,
-    contextStoreCurrentViewId,
-  ]);
+      const updateResult = await performViewFilterAPIUpdate(
+        updateViewFilterInputs,
+      );
+      if (updateResult.status === 'failed') {
+        return;
+      }
+
+      const deleteResult = await performViewFilterAPIDestroy(
+        destroyViewFilterInputs,
+      );
+      if (deleteResult.status === 'failed') {
+        return;
+      }
+    },
+    [
+      store,
+      canPersistChanges,
+      currentRecordFiltersCallbackState,
+      performViewFilterAPICreate,
+      performViewFilterAPIUpdate,
+      performViewFilterAPIDestroy,
+      contextStoreCurrentViewId,
+    ],
+  );
 
   return {
     saveRecordFiltersToViewFilters,

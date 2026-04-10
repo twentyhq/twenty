@@ -1,3 +1,5 @@
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { type FlatViewFilter } from '@/metadata-store/types/FlatViewFilter';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { usePerformViewFilterGroupAPIPersist } from '@/views/hooks/internal/usePerformViewFilterGroupAPIPersist';
@@ -16,7 +18,7 @@ export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
   const {
     performViewFilterGroupAPICreate,
     performViewFilterGroupAPIUpdate,
-    performViewFilterGroupAPIDelete,
+    performViewFilterGroupAPIDestroy,
   } = usePerformViewFilterGroupAPIPersist();
 
   const { currentView } = useGetCurrentViewOnly();
@@ -28,7 +30,7 @@ export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
 
   const saveRecordFilterGroupsToViewFilterGroups = useCallback(async () => {
     if (!canPersistChanges || !isDefined(currentView)) {
-      return;
+      return { viewFilterGroupIdsToDestroy: [] };
     }
 
     const currentViewFilterGroups = currentView?.viewFilterGroups ?? [];
@@ -60,7 +62,7 @@ export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
       newViewFilterGroups,
     );
 
-    const viewFilterGroupIdsToDelete = viewFilterGroupsToDelete.map(
+    const viewFilterGroupIdsToDestroy = viewFilterGroupsToDelete.map(
       (viewFilterGroup) => viewFilterGroup.id,
     );
 
@@ -69,7 +71,23 @@ export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
       currentView,
     );
     await performViewFilterGroupAPIUpdate(viewFilterGroupsToUpdate);
-    await performViewFilterGroupAPIDelete(viewFilterGroupIdsToDelete);
+    await performViewFilterGroupAPIDestroy(viewFilterGroupIdsToDestroy);
+
+    // Mirror the DB cascade: remove cascade-deleted viewFilters from the store
+    if (viewFilterGroupIdsToDestroy.length > 0) {
+      const destroyedIdsSet = new Set(viewFilterGroupIdsToDestroy);
+
+      store.set(metadataStoreState.atomFamily('viewFilters'), (prev) => ({
+        ...prev,
+        current: (prev.current as FlatViewFilter[]).filter(
+          (viewFilter) =>
+            !isDefined(viewFilter.viewFilterGroupId) ||
+            !destroyedIdsSet.has(viewFilter.viewFilterGroupId),
+        ),
+      }));
+    }
+
+    return { viewFilterGroupIdsToDestroy };
   }, [
     canPersistChanges,
     currentView,
@@ -77,7 +95,7 @@ export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
     currentRecordFilterGroupsCallbackState,
     performViewFilterGroupAPICreate,
     performViewFilterGroupAPIUpdate,
-    performViewFilterGroupAPIDelete,
+    performViewFilterGroupAPIDestroy,
   ]);
 
   return {

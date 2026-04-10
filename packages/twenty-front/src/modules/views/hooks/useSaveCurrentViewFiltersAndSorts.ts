@@ -16,8 +16,14 @@ export const useSaveCurrentViewFiltersAndSorts = () => {
 
   const saveCurrentViewFilterAndSorts = async () => {
     await saveRecordSortsToViewSorts();
-    await saveRecordFilterGroupsToViewFilterGroups();
-    await saveRecordFiltersToViewFilters();
+
+    const { viewFilterGroupIdsToDestroy } =
+      await saveRecordFilterGroupsToViewFilterGroups();
+
+    await saveRecordFiltersToViewFilters({
+      destroyedViewFilterGroupIds: viewFilterGroupIdsToDestroy,
+    });
+
     await saveAnyFieldFilterToView();
   };
 
