@@ -8,7 +8,6 @@ import {
 import { buildDefaultFieldsWidgetGroups } from '@/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups';
 import { filterDraftGroupsForDisplay } from '@/page-layout/widgets/fields/utils/filterDraftGroupsForDisplay';
 import { useViewById } from '@/views/hooks/useViewById';
-import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -21,7 +20,6 @@ export const useFieldsWidgetGroups = ({
   viewId,
   objectNameSingular,
 }: UseFieldsWidgetGroupsParams) => {
-  const { t } = useLingui();
   const { view } = useViewById(viewId);
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -119,7 +117,7 @@ export const useFieldsWidgetGroups = ({
       if (standardFields.length > 0) {
         groups.push({
           id: `${view.id}-group-general`,
-          name: t`General`,
+          name: 'General',
           position: 0,
           isVisible: true,
           fields: standardFields,
@@ -129,7 +127,7 @@ export const useFieldsWidgetGroups = ({
       if (customFields.length > 0) {
         groups.push({
           id: `${view.id}-group-other`,
-          name: t`Other`,
+          name: 'Other',
           position: 1,
           isVisible: true,
           fields: customFields,
@@ -148,20 +146,11 @@ export const useFieldsWidgetGroups = ({
         labelIdentifierFieldMetadataItemId:
           labelIdentifierFieldMetadataItem?.id,
       }),
-    ).map((group) => ({
-      ...group,
-      name:
-        group.name === 'General'
-          ? t`General`
-          : group.name === 'Other'
-            ? t`Other`
-            : group.name,
-    }));
+    );
   }, [
     objectMetadataItem,
     objectNameSingular,
     labelIdentifierFieldMetadataItem,
-    t,
     view,
   ]);
 
