@@ -17,7 +17,6 @@ import {
   type ListLayerVersionsCommandInput,
   LogType,
   PublishLayerVersionCommand,
-  ResourceConflictException,
   ResourceNotFoundException,
   UpdateFunctionConfigurationCommand,
   waitUntilFunctionActiveV2,
@@ -26,7 +25,6 @@ import {
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -124,7 +122,6 @@ export interface LambdaDriverOptions extends LambdaClientConfig {
 }
 
 export class LambdaDriver implements LogicFunctionDriver {
-  private readonly logger = new Logger(LambdaDriver.name);
   private lambdaClient: Lambda | undefined;
   private assumeRoleCredentials:
     | { accessKeyId: string; secretAccessKey: string; sessionToken: string }
@@ -912,24 +909,14 @@ export class LambdaDriver implements LogicFunctionDriver {
   }) {
     const lambdaClient = await this.getLambdaClient();
 
-    try {
-      await lambdaClient.send(
-        new UpdateFunctionConfigurationCommand({
-          FunctionName: flatLogicFunction.id,
-          Layers: [depsLayerArn, sdkLayerArn],
-          Runtime: flatLogicFunction.runtime,
-          Timeout: 900,
-        }),
-      );
-    } catch (error) {
-      if (!(error instanceof ResourceConflictException)) {
-        throw error;
-      }
-
-      this.logger.warn(
-        `Concurrent update conflict on function '${flatLogicFunction.id}', deferring to existing update`,
-      );
-    }
+    await lambdaClient.send(
+      new UpdateFunctionConfigurationCommand({
+        FunctionName: flatLogicFunction.id,
+        Layers: [depsLayerArn, sdkLayerArn],
+        Runtime: flatLogicFunction.runtime,
+        Timeout: 900,
+      }),
+    );
   }
 
   private async buildLambdaExecutor({
@@ -1070,17 +1057,7 @@ export class LambdaDriver implements LogicFunctionDriver {
 
       const lambdaClient = await this.getLambdaClient();
 
-      try {
-        await lambdaClient.send(new CreateFunctionCommand(params));
-      } catch (error) {
-        if (!(error instanceof ResourceConflictException)) {
-          throw error;
-        }
-
-        this.logger.warn(
-          `Concurrent create conflict on function '${flatLogicFunction.id}', deferring to existing function`,
-        );
-      }
+      await lambdaClient.send(new CreateFunctionCommand(params));
     } finally {
       await temporaryDirManager.clean();
     }
