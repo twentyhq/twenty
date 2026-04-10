@@ -19,6 +19,32 @@ describe('MCP Controller (integration)', () => {
       .send(JSON.stringify(body));
   };
 
+  it('should return 405 with JSON-RPC error for GET /mcp', async () => {
+    await request(baseUrl)
+      .get(endpoint)
+      .expect(405)
+      .expect((res) => {
+        expect(res.headers.allow).toBe('POST');
+        expect(res.body.jsonrpc).toBe('2.0');
+        expect(res.body.error).toBeDefined();
+        expect(res.body.error.code).toBe(-32600);
+        expect(res.body.id).toBeNull();
+      });
+  });
+
+  it('should return 405 with JSON-RPC error for DELETE /mcp', async () => {
+    await request(baseUrl)
+      .delete(endpoint)
+      .expect(405)
+      .expect((res) => {
+        expect(res.headers.allow).toBe('POST');
+        expect(res.body.jsonrpc).toBe('2.0');
+        expect(res.body.error).toBeDefined();
+        expect(res.body.error.code).toBe(-32600);
+        expect(res.body.id).toBeNull();
+      });
+  });
+
   it('should respond to ping with a JSON-RPC result envelope', async () => {
     await postMcp({ jsonrpc: '2.0', method: 'ping', id: '1' })
       .expect(200)

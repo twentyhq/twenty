@@ -34,10 +34,14 @@ import {
   type RoleManifest,
   type SkillManifest,
   type ViewManifest,
+  type PostInstallLogicFunctionApplicationManifest,
+  type PreInstallLogicFunctionApplicationManifest,
 } from 'twenty-shared/application';
 import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
+import { type PostInstallLogicFunctionConfig } from '@/sdk/logic-functions/post-install-logic-function-config';
+import { type PreInstallLogicFunctionConfig } from '@/sdk/logic-functions/pre-install-logic-function-config';
 import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
 import { type RoleConfig } from '@/sdk/roles/role-config';
 
@@ -80,9 +84,10 @@ export const buildManifest = async (
   const views: ViewManifest[] = [];
   const navigationMenuItems: NavigationMenuItemManifest[] = [];
   const pageLayouts: PageLayoutManifest[] = [];
-  const preInstallLogicFunctionUniversalIdentifiers: string[] = [];
-  const postInstallLogicFunctionUniversalIdentifiers: string[] = [];
-
+  const postInstallLogicFunctions: PostInstallLogicFunctionApplicationManifest[] =
+    [];
+  const preInstallLogicFunctions: PreInstallLogicFunctionApplicationManifest[] =
+    [];
   const applicationFilePaths: string[] = [];
   const objectsFilePaths: string[] = [];
   const fieldsFilePaths: string[] = [];
@@ -231,19 +236,31 @@ export const buildManifest = async (
         logicFunctionsFilePaths.push(relativePath);
 
         if (
-          targetFunctionName === TargetFunction.DefinePreInstallLogicFunction
+          targetFunctionName === TargetFunction.DefinePostInstallLogicFunction
         ) {
-          preInstallLogicFunctionUniversalIdentifiers.push(
-            extract.config.universalIdentifier,
-          );
+          const postInstallHookConfig =
+            extract.config as PostInstallLogicFunctionConfig;
+
+          postInstallLogicFunctions.push({
+            universalIdentifier: extract.config.universalIdentifier,
+            shouldRunOnVersionUpgrade:
+              postInstallHookConfig.shouldRunOnVersionUpgrade ?? false,
+            shouldRunSynchronously:
+              postInstallHookConfig.shouldRunSynchronously ?? false,
+          });
         }
 
         if (
-          targetFunctionName === TargetFunction.DefinePostInstallLogicFunction
+          targetFunctionName === TargetFunction.DefinePreInstallLogicFunction
         ) {
-          postInstallLogicFunctionUniversalIdentifiers.push(
-            extract.config.universalIdentifier,
-          );
+          const preInstallHookConfig =
+            extract.config as PreInstallLogicFunctionConfig;
+
+          preInstallLogicFunctions.push({
+            universalIdentifier: extract.config.universalIdentifier,
+            shouldRunOnVersionUpgrade:
+              preInstallHookConfig.shouldRunOnVersionUpgrade ?? false,
+          });
         }
 
         break;
@@ -346,31 +363,29 @@ export const buildManifest = async (
     );
   }
 
-  if (preInstallLogicFunctionUniversalIdentifiers.length > 1) {
-    errors.push(
-      'Only one pre install logic function is allowed per application',
-    );
-  }
-
-  if (postInstallLogicFunctionUniversalIdentifiers.length > 1) {
+  if (postInstallLogicFunctions.length > 1) {
     errors.push(
       'Only one post install logic function is allowed per application',
     );
   }
 
-  if (application && preInstallLogicFunctionUniversalIdentifiers.length >= 1) {
+  if (preInstallLogicFunctions.length > 1) {
+    errors.push(
+      'Only one pre install logic function is allowed per application',
+    );
+  }
+
+  if (application && postInstallLogicFunctions.length >= 1) {
     application = {
       ...application,
-      preInstallLogicFunctionUniversalIdentifier:
-        preInstallLogicFunctionUniversalIdentifiers[0],
+      postInstallLogicFunction: postInstallLogicFunctions[0],
     };
   }
 
-  if (application && postInstallLogicFunctionUniversalIdentifiers.length >= 1) {
+  if (application && preInstallLogicFunctions.length >= 1) {
     application = {
       ...application,
-      postInstallLogicFunctionUniversalIdentifier:
-        postInstallLogicFunctionUniversalIdentifiers[0],
+      preInstallLogicFunction: preInstallLogicFunctions[0],
     };
   }
 

@@ -3,9 +3,23 @@
 import { IllustrationMount } from '@/illustrations';
 import { SyncScrollProgressFromContainerEffect } from '@/sections/WhyTwentyStepper/effect-components/SyncScrollProgressFromContainerEffect';
 import type { WhyTwentyStepperDataType } from '@/sections/WhyTwentyStepper/types';
+import { theme } from '@/theme';
+import { styled } from '@linaria/react';
 import { useRef, useState } from 'react';
 import { Content } from '../Content/Content';
 import { Root } from '../Root/Root';
+
+const IllustrationColumn = styled.div`
+  min-width: 0;
+  width: 100%;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    align-self: start;
+    max-width: 672px;
+    position: sticky;
+    top: calc(4.5rem + (100vh - 4.5rem) * 0.5 - 368px);
+  }
+`;
 
 type FlowProps = WhyTwentyStepperDataType;
 
@@ -32,7 +46,9 @@ export function Flow({ body, heading, illustration }: FlowProps) {
         heading={heading}
         localProgress={localProgress}
       />
-      <IllustrationMount illustration={illustration} />
+      <IllustrationColumn>
+        <IllustrationMount illustration={illustration} />
+      </IllustrationColumn>
     </Root>
   );
 }

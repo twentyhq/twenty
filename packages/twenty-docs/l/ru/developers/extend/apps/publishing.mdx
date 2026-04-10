@@ -66,16 +66,16 @@ yarn twenty deploy
 
 ### Управление версиями
 
-When updating an already deployed tarball app, the server requires the `version` in `package.json` to be **strictly higher** (per [semver](https://semver.org) ordering) than the currently deployed version. Re-deploying the same version, or pushing a lower one, is rejected before the tarball is stored — you'll see a `VERSION_ALREADY_EXISTS` error from the CLI.
+When updating an already deployed tarball app, the server requires the `version` in `package.json` to be **strictly higher** (per [semver](https://semver.org) ordering) than the currently deployed version. Повторное развёртывание той же версии или публикация более низкой версии отклоняются до сохранения tarball — в CLI вы увидите ошибку `VERSION_ALREADY_EXISTS`.
 
 Чтобы выпустить обновление:
 
-1. Bump the `version` field in your `package.json` (e.g. `1.2.3` → `1.2.4`, `1.3.0`, or `2.0.0`)
+1. Увеличьте значение поля `version` в вашем `package.json` (например: `1.2.3` → `1.2.4`, `1.3.0` или `2.0.0`).
 2. Выполните `yarn twenty deploy` (или `yarn twenty deploy --remote production`)
 3. Рабочие пространства, в которых установлено приложение, увидят доступное обновление в своих настройках
 
 <Note>
-Pre-release tags work as expected: bumping `1.0.0-rc.1` → `1.0.0-rc.2` is allowed, and a final release like `1.0.0` is correctly recognized as higher than `1.0.0-rc.5`. The version in `package.json` must itself be a valid semver string.
+Пререлизные теги работают как ожидается: повышение версии `1.0.0-rc.1` → `1.0.0-rc.2` допускается, а финальный релиз вроде `1.0.0` корректно распознаётся как более высокий, чем `1.0.0-rc.5`. Версия в `package.json` должна сама по себе быть корректной строкой semver.
 </Note>
 
 {/* TODO: add screenshot of the Upgrade button */}
@@ -197,10 +197,10 @@ yarn twenty install
 ```
 
 <Note>
-The server enforces semver versioning on install, mirroring the rules on deploy:
+Сервер при установке применяет версионирование semver, аналогичное правилам при развёртывании:
 
-* Installing the same version that is already installed in your workspace is rejected with an `APP_ALREADY_INSTALLED` error.
-* Installing a lower version than the one currently installed is rejected with a `CANNOT_DOWNGRADE_APPLICATION` error.
+* Установка той же версии, которая уже установлена в вашем рабочем пространстве, отклоняется с ошибкой `APP_ALREADY_INSTALLED`.
+* Установка версии ниже текущей отклоняется с ошибкой `CANNOT_DOWNGRADE_APPLICATION`.
 
-To install a newer version, deploy or publish it first, then re-run `yarn twenty install`.
+Чтобы установить более новую версию, сначала разверните или опубликуйте её, затем снова выполните `yarn twenty install`.
 </Note>

@@ -1,4 +1,5 @@
 export const WIDGET_SETTINGS_SELECTABLE_ITEM_IDS = {
+  VISIBILITY_RESTRICTION: 'visibility-restriction',
   MOVE_DOWN: 'widget-move-down',
   MOVE_UP: 'widget-move-up',
   MOVE_TO_TAB: 'widget-move-to-tab',

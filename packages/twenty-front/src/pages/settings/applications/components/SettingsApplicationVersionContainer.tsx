@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
+import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { SettingsAdminVersionDisplay } from '@/settings/admin-panel/components/SettingsAdminVersionDisplay';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { t } from '@lingui/core/macro';
@@ -90,7 +90,7 @@ export const SettingsApplicationVersionContainer = ({
 
   return (
     <StyledContainer>
-      <SettingsAdminTableCard
+      <SettingsTableCard
         rounded
         items={versionItems}
         gridAutoColumns="3fr 8fr"

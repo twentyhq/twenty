@@ -1,4 +1,4 @@
-import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
+import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -164,7 +164,7 @@ export const SettingsApplicationRegistrationDistributionTab = ({
             title={t`Install Stats`}
             description={t`Usage across all workspaces on this server`}
           />
-          <SettingsAdminTableCard
+          <SettingsTableCard
             rounded
             items={statsItems}
             gridAutoColumns="3fr 8fr"

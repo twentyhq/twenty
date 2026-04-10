@@ -230,11 +230,36 @@ export class AdminPanelResolver {
 
   @UseGuards(AdminPanelGuard)
   @Mutation(() => Boolean)
+  async setAdminAiModelsEnabled(
+    @Args('modelIds', { type: () => [String] }) modelIds: string[],
+    @Args('enabled', { type: () => Boolean }) enabled: boolean,
+  ): Promise<boolean> {
+    await this.aiModelRegistryService.setModelsAdminEnabled(modelIds, enabled);
+
+    return true;
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Boolean)
   async setAdminAiModelRecommended(
     @Args('modelId', { type: () => String }) modelId: string,
     @Args('recommended', { type: () => Boolean }) recommended: boolean,
   ): Promise<boolean> {
     await this.aiModelRegistryService.setModelRecommended(modelId, recommended);
+
+    return true;
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async setAdminAiModelsRecommended(
+    @Args('modelIds', { type: () => [String] }) modelIds: string[],
+    @Args('recommended', { type: () => Boolean }) recommended: boolean,
+  ): Promise<boolean> {
+    await this.aiModelRegistryService.setModelsRecommended(
+      modelIds,
+      recommended,
+    );
 
     return true;
   }

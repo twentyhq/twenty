@@ -33,6 +33,8 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
       case ApplicationExceptionCode.CANNOT_DOWNGRADE_APPLICATION:
         throw new UserInputError(exception);
       case ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED:
+      case ApplicationExceptionCode.POST_INSTALL_ERROR:
+      case ApplicationExceptionCode.PRE_INSTALL_ERROR:
       case ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED:
       case ApplicationExceptionCode.UPGRADE_FAILED:
         throw new InternalServerError(exception);
