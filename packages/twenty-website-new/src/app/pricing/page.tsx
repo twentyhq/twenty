@@ -67,7 +67,7 @@ export default async function PricingPage() {
             <LinkButton
               color="secondary"
               href="https://app.twenty.com/welcome"
-              label="Read our case studies"
+              label="Contact us"
               type="anchor"
               variant="contained"
             />
