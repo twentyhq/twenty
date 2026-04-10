@@ -934,7 +934,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       applicationUniversalIdentifier,
     };
 
-    if (await this.canSkipBuild(buildArgs)) {
+    if (await this.canSkipLambdaExecutorBuild(buildArgs)) {
       return;
     }
 
@@ -944,7 +944,7 @@ export class LambdaDriver implements LogicFunctionDriver {
 
     await this.cacheLockService.withLock(
       async () => {
-        if (await this.canSkipBuild(buildArgs)) {
+        if (await this.canSkipLambdaExecutorBuild(buildArgs)) {
           return;
         }
 
@@ -959,7 +959,7 @@ export class LambdaDriver implements LogicFunctionDriver {
     );
   }
 
-  private async canSkipBuild({
+  private async canSkipLambdaExecutorBuild({
     flatLogicFunction,
     flatApplication,
     applicationUniversalIdentifier,
