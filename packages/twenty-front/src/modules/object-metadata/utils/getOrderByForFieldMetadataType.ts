@@ -22,8 +22,8 @@ export const getOrderByForFieldMetadataType = (
       return [
         {
           [field.name]: {
-            firstName: direction ?? 'AscNullsLast',
             lastName: direction ?? 'AscNullsLast',
+            firstName: direction ?? 'AscNullsLast',
           },
         },
       ];
