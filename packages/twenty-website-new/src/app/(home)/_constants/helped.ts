@@ -25,6 +25,7 @@ export const HELPED_DATA: HelpedDataType = {
         text: 'Realytics built lead scoring into their CRM and increased qualified outbound by 40%.',
       },
       illustration: 'target',
+      href: '/case-studies/realytics',
     },
     {
       icon: 'beagle',
@@ -33,8 +34,8 @@ export const HELPED_DATA: HelpedDataType = {
         text: 'Beagle launched a custom onboarding pipeline and shortened their sales cycle by 30%.',
       },
       illustration: 'spaceship',
+      href: '/case-studies/beagle',
     },
-
     {
       icon: 'evergreen',
       heading: { text: 'Unify workflow', fontFamily: 'sans' },
@@ -42,6 +43,7 @@ export const HELPED_DATA: HelpedDataType = {
         text: 'Evergreen unified sales and CS workflows, boosting expansion revenue by 25%.',
       },
       illustration: 'money',
+      href: '/case-studies/evergreen',
     },
   ],
 };

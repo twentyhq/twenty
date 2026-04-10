@@ -107,9 +107,9 @@ export function Card({ card }: CardProps) {
       <CtaRow>
         <LinkButton
           color="primary"
-          href="https://twenty.com"
+          href={card.href ?? '/case-studies'}
           label="Read the case"
-          type="anchor"
+          type={card.href ? 'link' : 'anchor'}
           variant="outlined"
         />
       </CtaRow>

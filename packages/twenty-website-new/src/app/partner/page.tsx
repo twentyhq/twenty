@@ -81,9 +81,9 @@ export default async function PartnerPage() {
           <EngagementBand.Actions>
             <LinkButton
               color="primary"
-              href="https://app.twenty.com/welcome"
+              href="/case-studies"
               label="Read our case studies"
-              type="anchor"
+              type="link"
               variant="contained"
             />
           </EngagementBand.Actions>
