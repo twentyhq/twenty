@@ -1,9 +1,8 @@
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
 import { agentChatInputIsEmptySelector } from '@/ai/states/agentChatInputIsEmptySelector';
 import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
-import { agentChatIsStreamingComponentState } from '@/ai/states/agentChatIsStreamingComponentState';
+import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconArrowUp, IconPlayerStop } from 'twenty-ui/display';
 import { RoundedIconButton } from 'twenty-ui/input';
@@ -19,9 +18,7 @@ export const SendMessageButton = ({ onSend }: SendMessageButtonProps) => {
 
   const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingState);
 
-  const agentChatIsStreaming = useAtomComponentStateValue(
-    agentChatIsStreamingComponentState,
-  );
+  const agentChatIsStreaming = useAtomStateValue(agentChatIsStreamingState);
 
   const handleStopClick = () => {
     dispatchBrowserEvent(AGENT_CHAT_STOP_EVENT_NAME);

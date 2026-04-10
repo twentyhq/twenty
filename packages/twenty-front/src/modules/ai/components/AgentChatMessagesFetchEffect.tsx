@@ -4,8 +4,8 @@ import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
-import { agentChatFirstLiveSeqComponentState } from '@/ai/states/agentChatFirstLiveSeqComponentState';
-import { agentChatHandleEventCallbackComponentState } from '@/ai/states/agentChatHandleEventCallbackComponentState';
+import { agentChatFirstLiveSeqState } from '@/ai/states/agentChatFirstLiveSeqState';
+import { agentChatHandleEventCallbackState } from '@/ai/states/agentChatHandleEventCallbackState';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatFetchedMessagesComponentFamilyState } from '@/ai/states/agentChatFetchedMessagesComponentFamilyState';
 import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
@@ -15,7 +15,6 @@ import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSk
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import { useQueryWithCallbacks } from '@/apollo/hooks/useQueryWithCallbacks';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -27,13 +26,6 @@ import {
 export const AgentChatMessagesFetchEffect = () => {
   const store = useStore();
   const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
-
-  const handleEventCallbackAtom = useAtomComponentStateCallbackState(
-    agentChatHandleEventCallbackComponentState,
-  );
-  const firstLiveSeqAtom = useAtomComponentStateCallbackState(
-    agentChatFirstLiveSeqComponentState,
-  );
 
   const isNewThread = useMemo(
     () =>
@@ -83,13 +75,13 @@ export const AgentChatMessagesFetchEffect = () => {
         return;
       }
 
-      const handleEvent = store.get(handleEventCallbackAtom);
+      const handleEvent = store.get(agentChatHandleEventCallbackState.atom);
 
       if (!isDefined(handleEvent)) {
         return;
       }
 
-      const firstLiveSeq = store.get(firstLiveSeqAtom);
+      const firstLiveSeq = store.get(agentChatFirstLiveSeqState.atom);
 
       for (let index = 0; index < catchup.chunks.length; index++) {
         const chunkSeq = index + 1;
@@ -105,13 +97,7 @@ export const AgentChatMessagesFetchEffect = () => {
         } as AgentChatSubscriptionEvent);
       }
     },
-    [
-      setAgentChatFetchedMessages,
-      setAgentChatQueuedMessages,
-      store,
-      handleEventCallbackAtom,
-      firstLiveSeqAtom,
-    ],
+    [setAgentChatFetchedMessages, setAgentChatQueuedMessages, store],
   );
 
   const handleLoadingChange = useCallback(

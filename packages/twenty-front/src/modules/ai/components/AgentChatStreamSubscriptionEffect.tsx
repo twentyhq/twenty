@@ -11,14 +11,13 @@ import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThr
 import { agentChatFetchedMessagesComponentFamilyState } from '@/ai/states/agentChatFetchedMessagesComponentFamilyState';
 import { agentChatIsInitialScrollPendingOnThreadChangeState } from '@/ai/states/agentChatIsInitialScrollPendingOnThreadChangeState';
 import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
-import { agentChatIsStreamingComponentState } from '@/ai/states/agentChatIsStreamingComponentState';
+import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
 import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -58,9 +57,7 @@ export const AgentChatStreamSubscriptionEffect = () => {
     { threadId: currentAIChatThread },
   );
 
-  const agentChatIsStreaming = useAtomComponentStateValue(
-    agentChatIsStreamingComponentState,
-  );
+  const agentChatIsStreaming = useAtomStateValue(agentChatIsStreamingState);
 
   const agentChatDisplayedThread = useAtomStateValue(
     agentChatDisplayedThreadState,
