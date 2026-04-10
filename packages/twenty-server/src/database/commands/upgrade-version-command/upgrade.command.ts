@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
 
-import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { CommandLogger } from 'src/database/commands/logger';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
@@ -25,7 +24,6 @@ export class UpgradeCommand extends CommandRunner {
   constructor(
     protected readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
     protected readonly upgradeSequenceRunnerService: UpgradeSequenceRunnerService,
-    protected readonly workspaceIteratorService: WorkspaceIteratorService,
     protected readonly workspaceVersionService: WorkspaceVersionService,
   ) {
     super();
@@ -164,12 +162,9 @@ export class UpgradeCommand extends CommandRunner {
       return Array.from(options.workspaceId);
     }
 
-    const report = await this.workspaceIteratorService.iterate({
+    return this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds({
       startFromWorkspaceId: options.startFromWorkspaceId,
       workspaceCountLimit: options.workspaceCountLimit,
-      callback: async () => {},
     });
-
-    return report.success.map((entry) => entry.workspaceId);
   }
 }

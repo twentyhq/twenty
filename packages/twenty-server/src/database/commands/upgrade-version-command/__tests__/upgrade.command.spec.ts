@@ -93,20 +93,17 @@ const buildUpgradeCommandModule = async ({
         useFactory: (
           upgradeSequenceReaderService: UpgradeSequenceReaderService,
           upgradeSequenceRunnerService: UpgradeSequenceRunnerService,
-          workspaceIteratorService: WorkspaceIteratorService,
           workspaceVersionService: WorkspaceVersionService,
         ) => {
           return new commandRunner(
             upgradeSequenceReaderService,
             upgradeSequenceRunnerService,
-            workspaceIteratorService,
             workspaceVersionService,
           );
         },
         inject: [
           UpgradeSequenceReaderService,
           UpgradeSequenceRunnerService,
-          WorkspaceIteratorService,
           WorkspaceVersionService,
         ],
       },
@@ -116,6 +113,9 @@ const buildUpgradeCommandModule = async ({
           hasActiveOrSuspendedWorkspaces: jest
             .fn()
             .mockResolvedValue(hasWorkspaces),
+          getActiveOrSuspendedWorkspaceIds: jest
+            .fn()
+            .mockResolvedValue(hasWorkspaces ? ['workspace-1'] : []),
         },
       },
       {
