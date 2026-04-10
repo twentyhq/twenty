@@ -5,6 +5,7 @@ import { requiredQueryListenersState } from '@/sse-db-event/states/requiredQuery
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
+import { isGracefullyHandledEventStreamError } from '@/sse-db-event/utils/isGracefullyHandledEventStreamError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -87,17 +88,12 @@ export const SSEQuerySubscribeEffect = () => {
       }
     } catch (error) {
       if (CombinedGraphQLErrors.is(error)) {
-        const subCode = error.errors[0]?.extensions?.subCode;
-        const code = error.errors[0]?.extensions?.code;
+        const subCode = error.errors[0]?.extensions?.subCode as
+          | string
+          | undefined;
+        const code = error.errors[0]?.extensions?.code as string | undefined;
 
-        const isRecoverable =
-          subCode === 'EVENT_STREAM_DOES_NOT_EXIST' ||
-          subCode === 'EVENT_STREAM_ALREADY_EXISTS' ||
-          subCode === 'NOT_AUTHORIZED' ||
-          code === 'UNAUTHENTICATED' ||
-          code === 'FORBIDDEN';
-
-        if (isRecoverable) {
+        if (isGracefullyHandledEventStreamError({ subCode, code })) {
           store.set(activeQueryListenersState.atom, []);
           store.set(shouldDestroyEventStreamState.atom, true);
           return;
