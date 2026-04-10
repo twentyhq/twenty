@@ -120,8 +120,12 @@ export const AgentChatMessagesFetchEffect = () => {
   );
 
   const handleRefetchMessages = useCallback(() => {
+    if (isNewThread) {
+      return;
+    }
+
     refetchAgentChatMessages();
-  }, [refetchAgentChatMessages]);
+  }, [refetchAgentChatMessages, isNewThread]);
 
   useListenToBrowserEvent({
     eventName: AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME,
