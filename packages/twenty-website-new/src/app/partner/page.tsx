@@ -6,6 +6,11 @@ import {
   TESTIMONIALS_DATA,
   THREE_CARDS_ILLUSTRATION_DATA,
 } from '@/app/partner/_constants';
+import {
+  PartnerApplicationModalRoot,
+  PartnerHeroCtas,
+  PartnerSignoffCtas,
+} from '@/app/partner/components/PartnerApplication';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
@@ -32,7 +37,7 @@ export default async function PartnerPage() {
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
-    <>
+    <PartnerApplicationModalRoot>
       <Menu.Root
         backgroundColor={theme.colors.primary.background[100]}
         scheme="primary"
@@ -49,20 +54,7 @@ export default async function PartnerPage() {
         <Hero.Heading page={Pages.Partner} segments={HERO_DATA.heading} />
         <Hero.Body page={Pages.Partner} body={HERO_DATA.body} />
         <Hero.Cta>
-          <LinkButton
-            color="secondary"
-            href="https://app.twenty.com/welcome"
-            label="Become a partner"
-            type="anchor"
-            variant="outlined"
-          />
-          <LinkButton
-            color="secondary"
-            href="https://app.twenty.com/welcome"
-            label="Find a partner"
-            type="anchor"
-            variant="contained"
-          />
+          <PartnerHeroCtas />
         </Hero.Cta>
         <Hero.PartnerVisual />
       </Hero.Root>
@@ -136,20 +128,7 @@ export default async function PartnerPage() {
         <Signoff.Heading segments={SIGNOFF_DATA.heading} />
         <Signoff.Body body={SIGNOFF_DATA.body} />
         <Signoff.Cta>
-          <LinkButton
-            color="secondary"
-            href="https://app.twenty.com/welcome"
-            label="Become a partner"
-            type="anchor"
-            variant="outlined"
-          />
-          <LinkButton
-            color="secondary"
-            href="https://twenty.com/contact"
-            label="Talk to us"
-            type="anchor"
-            variant="contained"
-          />
+          <PartnerSignoffCtas />
         </Signoff.Cta>
       </Signoff.Root>
 
@@ -176,6 +155,6 @@ export default async function PartnerPage() {
         </Faq.Intro>
         <Faq.Items questions={FAQ_DATA.questions} />
       </Faq.Root>
-    </>
+    </PartnerApplicationModalRoot>
   );
 }

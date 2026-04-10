@@ -13,7 +13,7 @@ const StyledContainer = styled.div`
 `;
 
 const partnerHeroImageClassName = css`
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
 `;
 
