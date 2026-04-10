@@ -1,17 +1,23 @@
 import { useCallback } from 'react';
 
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useIsDashboardPageLayout } from '@/side-panel/pages/page-layout/hooks/useIsDashboardPageLayout';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { t } from '@lingui/core/macro';
 import { SidePanelPages } from 'twenty-shared/types';
-import { WidgetType } from '~/generated-metadata/graphql';
+import {
+  PageLayoutTabLayoutMode,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 
 export const useOpenWidgetSettingsInSidePanel = (
   pageLayoutIdFromProps?: string,
@@ -31,6 +37,16 @@ export const useOpenWidgetSettingsInSidePanel = (
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const setSidePanelPage = useSetAtomState(sidePanelPageState);
+
+  const pageLayoutDraft = useAtomComponentStateValue(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
+
+  const setPageLayoutTabSettingsOpenTabId = useSetAtomComponentState(
+    pageLayoutTabSettingsOpenTabIdComponentState,
+    pageLayoutId,
+  );
 
   const openWidgetSettingsInSidePanel = useCallback(
     ({
@@ -112,12 +128,27 @@ export const useOpenWidgetSettingsInSidePanel = (
         return;
       }
 
+      const containingTab = pageLayoutDraft.tabs.find((tab) =>
+        tab.widgets.some((w) => w.id === widgetId),
+      );
+
+      if (containingTab?.layoutMode === PageLayoutTabLayoutMode.CANVAS) {
+        setPageLayoutTabSettingsOpenTabId(containingTab.id);
+        navigatePageLayoutSidePanel({
+          sidePanelPage: SidePanelPages.PageLayoutTabSettings,
+          resetNavigationStack: true,
+        });
+        return;
+      }
+
       setSidePanelPage(SidePanelPages.CommandMenuDisplay);
       closeSidePanelMenu();
     },
     [
       isDashboardPageLayout,
+      pageLayoutDraft,
       setPageLayoutEditingWidgetId,
+      setPageLayoutTabSettingsOpenTabId,
       navigatePageLayoutSidePanel,
       closeSidePanelMenu,
       setSidePanelPage,

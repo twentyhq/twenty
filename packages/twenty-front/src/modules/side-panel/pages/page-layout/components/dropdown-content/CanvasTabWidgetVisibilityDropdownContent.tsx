@@ -1,8 +1,6 @@
+import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { VISIBILITY_OPTIONS } from '@/side-panel/pages/page-layout/constants/visibilityOptions';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
-import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useVisibilityLabels } from '@/side-panel/pages/page-layout/hooks/useVisibilityLabels';
-import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { expressionToOptionId } from '@/side-panel/pages/page-layout/utils/expressionToOptionId';
 import { optionIdToExpression } from '@/side-panel/pages/page-layout/utils/optionIdToExpression';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -15,14 +13,18 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
-export const WidgetVisibilityDropdownContent = () => {
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+type CanvasTabWidgetVisibilityDropdownContentProps = {
+  widgetId: string;
+  currentExpression: string | null | undefined;
+  pageLayoutId: string;
+};
 
-  const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
-
-  const currentOptionId = expressionToOptionId(
-    widgetInEditMode?.conditionalAvailabilityExpression,
-  );
+export const CanvasTabWidgetVisibilityDropdownContent = ({
+  widgetId,
+  currentExpression,
+  pageLayoutId,
+}: CanvasTabWidgetVisibilityDropdownContentProps) => {
+  const currentOptionId = expressionToOptionId(currentExpression);
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -33,13 +35,12 @@ export const WidgetVisibilityDropdownContent = () => {
     dropdownId,
   );
 
-  const { updateCurrentWidgetConfig } =
-    useUpdateCurrentWidgetConfig(pageLayoutId);
+  const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
 
   const { closeDropdown } = useCloseDropdown();
 
   const handleSelectVisibility = (optionId: string) => {
-    updateCurrentWidgetConfig({
+    updatePageLayoutWidget(widgetId, {
       conditionalAvailabilityExpression: optionIdToExpression(optionId),
     });
     closeDropdown();
@@ -58,17 +59,13 @@ export const WidgetVisibilityDropdownContent = () => {
           <SelectableListItem
             key={option.id}
             itemId={option.id}
-            onEnter={() => {
-              handleSelectVisibility(option.id);
-            }}
+            onEnter={() => handleSelectVisibility(option.id)}
           >
             <MenuItemSelect
-              text={visibilityLabels[option.id]}
+              text={visibilityLabels[option.id] ?? option.id}
               selected={currentOptionId === option.id}
               focused={selectedItemId === option.id}
-              onClick={() => {
-                handleSelectVisibility(option.id);
-              }}
+              onClick={() => handleSelectVisibility(option.id)}
             />
           </SelectableListItem>
         ))}
