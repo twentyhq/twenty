@@ -515,11 +515,13 @@ export class UserResolver {
     );
 
     if (isDefined(input.update.locale)) {
-      await this.userWorkspaceService.syncUserWorkspaceLocaleForWorkspaceMember({
-        locale: input.update.locale as UserWorkspaceEntity['locale'],
-        workspaceId: workspace.id,
-        workspaceMemberId: input.workspaceMemberId,
-      });
+      await this.userWorkspaceService.syncUserWorkspaceLocaleForWorkspaceMember(
+        {
+          locale: input.update.locale as UserWorkspaceEntity['locale'],
+          workspaceId: workspace.id,
+          workspaceMemberId: input.workspaceMemberId,
+        },
+      );
     }
 
     return true;

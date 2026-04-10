@@ -19,7 +19,8 @@ const WORKFLOW_OBJECT_METADATA_ID = '33333333-3333-4333-8333-333333333333';
 const PERSON_OBJECT_METADATA_ID = '44444444-4444-4444-8444-444444444444';
 
 const createBaseRole = (
-  overrides: Partial<RoleEntity> & Pick<RoleEntity, 'permissionFlags' | 'objectPermissions'>,
+  overrides: Partial<RoleEntity> &
+    Pick<RoleEntity, 'permissionFlags' | 'objectPermissions'>,
 ): RoleEntity =>
   ({
     id: ROLE_ID,
@@ -112,9 +113,7 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
 
       expect(workspaceMemberPermissions.canReadObjectRecords).toBe(false);
       expect(workspaceMemberPermissions.canUpdateObjectRecords).toBe(false);
-      expect(workspaceMemberPermissions.canSoftDeleteObjectRecords).toBe(
-        false,
-      );
+      expect(workspaceMemberPermissions.canSoftDeleteObjectRecords).toBe(false);
       expect(workspaceMemberPermissions.canDestroyObjectRecords).toBe(false);
     });
 
@@ -134,9 +133,7 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
 
       expect(workspaceMemberPermissions.canReadObjectRecords).toBe(true);
       expect(workspaceMemberPermissions.canUpdateObjectRecords).toBe(true);
-      expect(workspaceMemberPermissions.canSoftDeleteObjectRecords).toBe(
-        true,
-      );
+      expect(workspaceMemberPermissions.canSoftDeleteObjectRecords).toBe(true);
       expect(workspaceMemberPermissions.canDestroyObjectRecords).toBe(true);
     });
 
