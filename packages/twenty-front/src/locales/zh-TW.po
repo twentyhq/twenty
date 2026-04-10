@@ -2252,6 +2252,7 @@ msgstr "附加檔案"
 
 #. js-lingui-id: w/Sphq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
 msgid "Attachments"
 msgstr "附件"
 
@@ -5535,7 +5536,7 @@ msgid "Empty Array"
 msgstr "空陣列"
 
 #. js-lingui-id: 8X+jbk
-#: src/modules/activities/emails/components/EmailsCard.tsx
+#: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Empty Inbox"
 msgstr "清空收件箱"
 
@@ -6596,6 +6597,7 @@ msgstr "應用程式升級失敗。"
 #. js-lingui-id: jU/HbX
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
+#: src/modules/activities/emails/hooks/useUploadEmailAttachment.ts
 msgid "Failed to upload \"{fileNameForError}\""
 msgstr "上傳「{fileNameForError}」失敗"
 
@@ -6795,12 +6797,14 @@ msgstr "第五"
 
 #. js-lingui-id: sWmIx3
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
+#: src/modules/activities/emails/hooks/useUploadEmailAttachment.ts
 msgid "File \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "檔案 \"{fileName}\" 超過 {maxUploadSize}"
 
 #. js-lingui-id: 0bK1RI
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
+#: src/modules/activities/emails/hooks/useUploadEmailAttachment.ts
 msgid "File \"{fileName}\" uploaded successfully"
 msgstr "檔案「{fileName}」上傳成功"
 
@@ -9871,7 +9875,7 @@ msgid "No description available for this application"
 msgstr ""
 
 #. js-lingui-id: mINrlz
-#: src/modules/activities/emails/components/EmailsCard.tsx
+#: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "No email exchange has occurred with this record yet."
 msgstr "尚未與此記錄發生電郵交流。"
 
@@ -10608,6 +10612,11 @@ msgstr "打開Gmail"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "打開"
+
+#. js-lingui-id: noLjKT
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
+msgid "Open in app"
+msgstr ""
 
 #. js-lingui-id: DP5C7w
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -12875,6 +12884,7 @@ msgstr "向您的團隊發送邀請電子郵件"
 
 #. js-lingui-id: i/TzEU
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
+#: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Send Email"
 msgstr "發送電子郵件"
 
@@ -14487,6 +14497,13 @@ msgstr "番茄色"
 msgid "Tomorrow"
 msgstr "明天"
 
+#. js-lingui-id: x+3/CM
+#. placeholder {0}: composerState.recipientCount
+#. placeholder {1}: composerState.maxRecipients
+#: src/modules/activities/emails/components/EmailComposer.tsx
+msgid "Too many recipients ({0}/{1})."
+msgstr ""
+
 #. js-lingui-id: WrMXsY
 #: src/modules/spreadsheet-import/steps/components/UploadStep/UploadStep.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
@@ -15121,6 +15138,7 @@ msgstr "上傳 .xlsx、.xls 或 .csv 文件"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 #: src/modules/advanced-text-editor/components/WorkflowSendEmailAttachments.tsx
+#: src/modules/activities/emails/components/EmailAttachmentsField.tsx
 msgid "Upload file"
 msgstr "上傳文件"
 

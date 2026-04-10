@@ -2247,6 +2247,7 @@ msgstr "Attach files"
 
 #. js-lingui-id: w/Sphq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
 msgid "Attachments"
 msgstr "Attachments"
 
@@ -5530,7 +5531,7 @@ msgid "Empty Array"
 msgstr "Empty Array"
 
 #. js-lingui-id: 8X+jbk
-#: src/modules/activities/emails/components/EmailsCard.tsx
+#: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Empty Inbox"
 msgstr "Empty Inbox"
 
@@ -6591,6 +6592,7 @@ msgstr "Failed to upgrade the application."
 #. js-lingui-id: jU/HbX
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
+#: src/modules/activities/emails/hooks/useUploadEmailAttachment.ts
 msgid "Failed to upload \"{fileNameForError}\""
 msgstr "Failed to upload \"{fileNameForError}\""
 
@@ -6790,12 +6792,14 @@ msgstr "Fifth"
 
 #. js-lingui-id: sWmIx3
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
+#: src/modules/activities/emails/hooks/useUploadEmailAttachment.ts
 msgid "File \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "File \"{fileName}\" exceeds {maxUploadSize}"
 
 #. js-lingui-id: 0bK1RI
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
+#: src/modules/activities/emails/hooks/useUploadEmailAttachment.ts
 msgid "File \"{fileName}\" uploaded successfully"
 msgstr "File \"{fileName}\" uploaded successfully"
 
@@ -9866,7 +9870,7 @@ msgid "No description available for this application"
 msgstr "No description available for this application"
 
 #. js-lingui-id: mINrlz
-#: src/modules/activities/emails/components/EmailsCard.tsx
+#: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "No email exchange has occurred with this record yet."
 msgstr "No email exchange has occurred with this record yet."
 
@@ -10603,6 +10607,11 @@ msgstr "Open Gmail"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Open in"
 msgstr "Open in"
+
+#. js-lingui-id: noLjKT
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
+msgid "Open in app"
+msgstr "Open in app"
 
 #. js-lingui-id: DP5C7w
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
@@ -12870,6 +12879,7 @@ msgstr "Send an invite email to your team"
 
 #. js-lingui-id: i/TzEU
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
+#: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Send Email"
 msgstr "Send Email"
 
@@ -14484,6 +14494,13 @@ msgstr "Tomato"
 msgid "Tomorrow"
 msgstr "Tomorrow"
 
+#. js-lingui-id: x+3/CM
+#. placeholder {0}: composerState.recipientCount
+#. placeholder {1}: composerState.maxRecipients
+#: src/modules/activities/emails/components/EmailComposer.tsx
+msgid "Too many recipients ({0}/{1})."
+msgstr "Too many recipients ({0}/{1})."
+
 #. js-lingui-id: WrMXsY
 #: src/modules/spreadsheet-import/steps/components/UploadStep/UploadStep.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
@@ -15118,6 +15135,7 @@ msgstr "Upload .xlsx, .xls or .csv file"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 #: src/modules/advanced-text-editor/components/WorkflowSendEmailAttachments.tsx
+#: src/modules/activities/emails/components/EmailAttachmentsField.tsx
 msgid "Upload file"
 msgstr "Upload file"
 
