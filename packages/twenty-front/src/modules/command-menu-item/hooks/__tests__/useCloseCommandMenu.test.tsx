@@ -3,6 +3,7 @@ import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMe
 import { type CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
+import { CommandMenuContextApiPageType } from 'twenty-shared/types';
 
 const TEST_COMMAND_MENU_ID = 'test-cmd-menu-1';
 
@@ -40,9 +41,33 @@ const getWrapper =
     <CommandMenuContext.Provider
       value={{
         containerType,
-        isInSidePanel,
         displayType: 'button',
         commandMenuItems: [],
+        commandMenuContextApi: {
+          pageType: CommandMenuContextApiPageType.INDEX_PAGE,
+          isInSidePanel,
+          isPageInEditMode: false,
+          favoriteRecordIds: [],
+          isSelectAll: false,
+          hasAnySoftDeleteFilterOnView: false,
+          numberOfSelectedRecords: 0,
+          objectPermissions: {
+            canReadObjectRecords: false,
+            canUpdateObjectRecords: false,
+            canSoftDeleteObjectRecords: false,
+            canDestroyObjectRecords: false,
+            restrictedFields: {},
+            objectMetadataId: '',
+            rowLevelPermissionPredicates: [],
+            rowLevelPermissionPredicateGroups: [],
+          },
+          selectedRecords: [],
+          featureFlags: {},
+          targetObjectReadPermissions: {},
+          targetObjectWritePermissions: {},
+          objectMetadataItem: {},
+          objectMetadataLabel: '',
+        },
       }}
     >
       {children}

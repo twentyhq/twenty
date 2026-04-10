@@ -42,7 +42,6 @@ export const SidePanelEditFolderPickerSubPage = () => {
       onSearchChange={setSearchValue}
     >
       <SidePanelList
-        commandGroups={[]}
         selectableItemIds={selectableItemIds}
         noResults={isEmpty}
         noResultsText={noResultsText}

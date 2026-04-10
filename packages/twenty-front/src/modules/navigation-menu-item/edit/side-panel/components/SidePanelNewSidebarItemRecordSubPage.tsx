@@ -101,7 +101,6 @@ export const SidePanelNewSidebarItemRecordSubPage = () => {
       <SidePanelAddToNavigationDroppable>
         {({ innerRef, droppableProps, placeholder }) => (
           <SidePanelList
-            commandGroups={[]}
             selectableItemIds={selectableItemIds}
             loading={recordSearchLoading}
             noResults={isEmpty}

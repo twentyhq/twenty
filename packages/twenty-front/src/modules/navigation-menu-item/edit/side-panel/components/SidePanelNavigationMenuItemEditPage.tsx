@@ -162,7 +162,6 @@ export const SidePanelNavigationMenuItemEditPage = () => {
     case NavigationMenuItemType.FOLDER:
       return (
         <SidePanelList
-          commandGroups={[]}
           selectableItemIds={[
             ADD_ITEM_TO_FOLDER_ACTION_ID,
             ...getOrganizeActionsSelectableItemIds(false),
@@ -203,7 +202,6 @@ export const SidePanelNavigationMenuItemEditPage = () => {
     default:
       return (
         <SidePanelList
-          commandGroups={[]}
           selectableItemIds={getOrganizeActionsSelectableItemIds(
             canMoveToOtherFolder,
           )}

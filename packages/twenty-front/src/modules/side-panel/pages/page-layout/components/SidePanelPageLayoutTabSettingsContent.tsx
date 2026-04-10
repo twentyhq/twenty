@@ -130,7 +130,7 @@ export const SidePanelPageLayoutTabSettingsContent = ({
 
   return (
     <>
-      <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
+      <SidePanelList selectableItemIds={selectableItemIds}>
         <SidePanelGroup heading={t`Settings`}>
           {canMoveLeft && (
             <SelectableListItem
