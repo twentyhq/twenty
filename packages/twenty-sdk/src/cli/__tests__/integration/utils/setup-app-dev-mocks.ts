@@ -58,7 +58,7 @@ vi.mock('@/cli/utilities/file/file-uploader', () => ({
 }));
 
 vi.mock('@/cli/utilities/auth/resolve-app-access-token', () => ({
-  ensureValidAppAccessToken: vi
+  ensureValidAppAccessTokenOrRefresh: vi
     .fn()
     .mockResolvedValue('mock-app-access-token'),
 }));

@@ -17,7 +17,7 @@ const isTokenExpired = (token: string): boolean => {
 /**
  * Returns a valid appAccessToken from config, refreshing it first if expired.
  */
-export const ensureValidAppAccessToken = async (
+export const ensureValidAppAccessTokenOrRefresh = async (
   configService: ConfigService,
 ): Promise<string | undefined> => {
   const config = await configService.getConfig();

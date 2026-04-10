@@ -1,5 +1,5 @@
 import { type ApiService } from '@/cli/utilities/api/api-service';
-import { ensureValidAppAccessToken } from '@/cli/utilities/auth/resolve-app-access-token';
+import { ensureValidAppAccessTokenOrRefresh } from '@/cli/utilities/auth/resolve-app-access-token';
 import { type ConfigService } from '@/cli/utilities/config/config-service';
 import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import { type Manifest } from 'twenty-shared/application';
@@ -28,7 +28,7 @@ export class RegisterAppOrchestratorStep {
   }
 
   async execute(input: { manifest: Manifest }): Promise<void> {
-    const existingToken = await ensureValidAppAccessToken(this.configService);
+    const existingToken = await ensureValidAppAccessTokenOrRefresh(this.configService);
 
     if (existingToken) {
       this.state.applyStepEvents([

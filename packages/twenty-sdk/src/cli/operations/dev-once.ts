@@ -7,7 +7,7 @@ import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
 import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
-import { ensureValidAppAccessToken } from '@/cli/utilities/auth/resolve-app-access-token';
+import { ensureValidAppAccessTokenOrRefresh } from '@/cli/utilities/auth/resolve-app-access-token';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { formatSyncErrorEvents } from '@/cli/utilities/dev/orchestrator/steps/format-sync-error-events';
@@ -122,7 +122,7 @@ const innerAppDevOnce = async (
   const configService = new ConfigService();
   const config = await configService.getConfig();
 
-  const appAccessToken = await ensureValidAppAccessToken(configService);
+  const appAccessToken = await ensureValidAppAccessTokenOrRefresh(configService);
 
   if (!appAccessToken) {
     const createResult = await apiService.createApplicationRegistration({
@@ -235,7 +235,7 @@ const innerAppDevOnce = async (
   onProgress?.('Generating API client...');
 
   try {
-    const authToken = await ensureValidAppAccessToken(configService);
+    const authToken = await ensureValidAppAccessTokenOrRefresh(configService);
     const clientService = new ClientService();
 
     await clientService.generateCoreClient({
