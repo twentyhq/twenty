@@ -109,6 +109,35 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     );
   }
 
+  async syncUserWorkspaceLocaleForWorkspaceMember({
+    locale,
+    workspaceId,
+    workspaceMemberId,
+  }: {
+    locale: UserWorkspaceEntity['locale'] | undefined;
+    workspaceId: string;
+    workspaceMemberId: string;
+  }): Promise<void> {
+    if (!isDefined(locale)) {
+      return;
+    }
+
+    const workspaceMember = await this.getWorkspaceMemberOrThrow({
+      workspaceMemberId,
+      workspaceId,
+    });
+
+    const targetUserWorkspace = await this.getUserWorkspaceForUserOrThrow({
+      userId: workspaceMember.userId,
+      workspaceId,
+    });
+
+    await this.syncUserWorkspaceLocale({
+      locale,
+      userWorkspaceId: targetUserWorkspace.id,
+    });
+  }
+
   async create(
     {
       userId,

@@ -29,15 +29,14 @@ export class WorkspaceMemberUpdateOnePreQueryHook
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     // TODO: remove this code once we have migrated locale update to userWorkspace update
-    if (
-      isUserAuthContext(authContext) &&
-      isDefined(payload.data.locale)
-    ) {
-      await this.userWorkspaceService.syncUserWorkspaceLocale({
-        locale: payload.data.locale,
-        userWorkspaceId: authContext.userWorkspaceId,
-        throwIfUserWorkspaceMissing: true,
-      });
+    if (isUserAuthContext(authContext) && isDefined(payload.data.locale)) {
+      await this.userWorkspaceService.syncUserWorkspaceLocaleForWorkspaceMember(
+        {
+          locale: payload.data.locale,
+          workspaceId: workspace.id,
+          workspaceMemberId: payload.id,
+        },
+      );
     }
 
     await this.workspaceMemberPreQueryHookService.completeOnboardingProfileStepIfNameProvided(

@@ -170,7 +170,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
             canSoftDelete = hasWorkspaceMembersPermissions;
             canDestroy = hasWorkspaceMembersPermissions;
           } else {
-            const objectRecordPermissionsOverride = role.objectPermissions.find(
+            const objectRecordPermissionsOverride = roleObjectPermissions.find(
               (objectPermission) =>
                 objectPermission.objectMetadataId === objectMetadataId,
             );

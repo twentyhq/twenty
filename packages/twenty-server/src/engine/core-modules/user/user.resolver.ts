@@ -514,12 +514,13 @@ export class UserResolver {
       workspaceMemberRepository.save(workspaceMemberUpdatePayload),
     );
 
-    await this.userWorkspaceService.syncUserWorkspaceLocale({
-      locale: isDefined(input.update.locale)
-        ? (input.update.locale as UserWorkspaceEntity['locale'])
-        : undefined,
-      userWorkspaceId,
-    });
+    if (isDefined(input.update.locale)) {
+      await this.userWorkspaceService.syncUserWorkspaceLocaleForWorkspaceMember({
+        locale: input.update.locale as UserWorkspaceEntity['locale'],
+        workspaceId: workspace.id,
+        workspaceMemberId: input.workspaceMemberId,
+      });
+    }
 
     return true;
   }
