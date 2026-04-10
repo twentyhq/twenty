@@ -94,12 +94,18 @@ export class UpgradeMigrationService {
     name,
     workspaceId,
     executedByVersion,
+    queryRunner,
   }: {
     name: string;
     workspaceId: string;
     executedByVersion: string;
+    queryRunner?: QueryRunner;
   }): Promise<void> {
-    await this.upgradeMigrationRepository.save({
+    const repository = queryRunner
+      ? queryRunner.manager.getRepository(UpgradeMigrationEntity)
+      : this.upgradeMigrationRepository;
+
+    await repository.save({
       name,
       status: 'completed',
       isInitial: true,
