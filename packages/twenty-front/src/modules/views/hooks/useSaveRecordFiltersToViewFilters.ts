@@ -18,7 +18,7 @@ export const useSaveRecordFiltersToViewFilters = () => {
   const {
     performViewFilterAPICreate,
     performViewFilterAPIUpdate,
-    performViewFilterAPIDelete,
+    performViewFilterAPIDestroy,
   } = usePerformViewFilterAPIPersist();
 
   const contextStoreCurrentViewId = useAtomComponentStateValue(
@@ -95,7 +95,7 @@ export const useSaveRecordFiltersToViewFilters = () => {
       },
     }));
 
-    const deleteViewFilterInputs = viewFiltersToDelete.map((viewFilter) => ({
+    const destroyViewFilterInputs = viewFiltersToDelete.map((viewFilter) => ({
       input: {
         id: viewFilter.id,
       },
@@ -115,8 +115,8 @@ export const useSaveRecordFiltersToViewFilters = () => {
       return;
     }
 
-    const deleteResult = await performViewFilterAPIDelete(
-      deleteViewFilterInputs,
+    const deleteResult = await performViewFilterAPIDestroy(
+      destroyViewFilterInputs,
     );
     if (deleteResult.status === 'failed') {
       return;
@@ -127,7 +127,7 @@ export const useSaveRecordFiltersToViewFilters = () => {
     currentRecordFiltersCallbackState,
     performViewFilterAPICreate,
     performViewFilterAPIUpdate,
-    performViewFilterAPIDelete,
+    performViewFilterAPIDestroy,
     contextStoreCurrentViewId,
   ]);
 
