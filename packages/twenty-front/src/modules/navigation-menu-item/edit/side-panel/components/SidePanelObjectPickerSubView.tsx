@@ -89,7 +89,6 @@ export const SidePanelObjectPickerSubView = ({
         <SidePanelAddToNavigationDroppable>
           {({ innerRef, droppableProps, placeholder }) => (
             <SidePanelList
-              commandGroups={[]}
               selectableItemIds={selectableItemIds}
               noResults={isEmpty}
               noResultsText={noResultsText}
@@ -104,7 +103,6 @@ export const SidePanelObjectPickerSubView = ({
         </SidePanelAddToNavigationDroppable>
       ) : (
         <SidePanelList
-          commandGroups={[]}
           selectableItemIds={selectableItemIds}
           noResults={isEmpty}
           noResultsText={noResultsText}

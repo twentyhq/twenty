@@ -38,7 +38,10 @@ export class ViewFieldGroupDTO {
   @Field(() => [ViewFieldDTO])
   viewFields?: ViewFieldDTO[];
 
-  @Field(() => Boolean, { nullable: false })
+  @Field(() => Boolean, {
+    nullable: false,
+    deprecationReason: 'isOverridden is deprecated',
+  })
   isOverridden: boolean;
 
   @HideField()

@@ -1,19 +1,9 @@
-import { type LogicFunctionConfig } from '@/sdk/logic-functions/logic-function-config';
-import { type InstallLogicFunctionHandler } from '@/sdk/logic-functions/install-logic-function-payload-type';
 import { createValidationResult } from '@/sdk/common/utils/create-validation-result';
 import type { DefineEntity } from '@/sdk/common/types/define-entity.type';
+import { type PostInstallLogicFunctionConfig } from '@/sdk/logic-functions/post-install-logic-function-config';
 
 export const definePostInstallLogicFunction: DefineEntity<
-  Omit<
-    LogicFunctionConfig,
-    | 'cronTriggerSettings'
-    | 'databaseEventTriggerSettings'
-    | 'httpRouteTriggerSettings'
-    | 'isTool'
-    | 'handler'
-  > & {
-    handler: InstallLogicFunctionHandler;
-  }
+  PostInstallLogicFunctionConfig
 > = (config) => {
   const errors = [];
 

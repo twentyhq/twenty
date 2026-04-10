@@ -1,3 +1,5 @@
+import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { getFieldWidgetAvailableDisplayModes } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
@@ -10,23 +12,25 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { IconLayoutKanban, IconListDetails } from 'twenty-ui/display';
+import { useMemo } from 'react';
+import {
+  type IconComponent,
+  IconFileText,
+  IconLayoutKanban,
+  IconListDetails,
+} from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import {
   FieldDisplayMode,
   type FieldConfiguration,
 } from '~/generated-metadata/graphql';
 
-const LAYOUT_OPTIONS = [
-  {
-    id: FieldDisplayMode.FIELD,
-    Icon: IconListDetails,
-  },
-  {
-    id: FieldDisplayMode.CARD,
-    Icon: IconLayoutKanban,
-  },
-] as const;
+const DISPLAY_MODE_ICONS: Record<FieldDisplayMode, IconComponent> = {
+  [FieldDisplayMode.FIELD]: IconListDetails,
+  [FieldDisplayMode.CARD]: IconLayoutKanban,
+  [FieldDisplayMode.EDITOR]: IconFileText,
+  [FieldDisplayMode.VIEW]: IconListDetails,
+};
 
 export const FieldWidgetLayoutDropdownContent = () => {
   const { t } = useLingui();
@@ -40,6 +44,19 @@ export const FieldWidgetLayoutDropdownContent = () => {
     | undefined;
 
   const currentDisplayMode = fieldConfiguration?.fieldDisplayMode;
+  const currentFieldMetadataId = fieldConfiguration?.fieldMetadataId;
+
+  const { fieldMetadataItem } = useFieldMetadataItemById(
+    currentFieldMetadataId ?? '',
+  );
+
+  const layoutOptions = useMemo(
+    () =>
+      fieldMetadataItem
+        ? getFieldWidgetAvailableDisplayModes(fieldMetadataItem.type)
+        : [FieldDisplayMode.FIELD],
+    [fieldMetadataItem],
+  );
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -64,9 +81,10 @@ export const FieldWidgetLayoutDropdownContent = () => {
     closeDropdown();
   };
 
-  const layoutLabels: Record<(typeof LAYOUT_OPTIONS)[number]['id'], string> = {
+  const layoutLabels: Record<string, string> = {
     [FieldDisplayMode.FIELD]: t`Field`,
     [FieldDisplayMode.CARD]: t`Card`,
+    [FieldDisplayMode.EDITOR]: t`Editor`,
   };
 
   return (
@@ -74,23 +92,23 @@ export const FieldWidgetLayoutDropdownContent = () => {
       <SelectableList
         selectableListInstanceId={dropdownId}
         focusId={dropdownId}
-        selectableItemIdArray={LAYOUT_OPTIONS.map((option) => option.id)}
+        selectableItemIdArray={layoutOptions}
       >
-        {LAYOUT_OPTIONS.map((option) => (
+        {layoutOptions.map((displayMode) => (
           <SelectableListItem
-            key={option.id}
-            itemId={option.id}
+            key={displayMode}
+            itemId={displayMode}
             onEnter={() => {
-              handleSelectLayout(option.id);
+              handleSelectLayout(displayMode);
             }}
           >
             <MenuItemSelect
-              text={layoutLabels[option.id]}
-              selected={currentDisplayMode === option.id}
-              focused={selectedItemId === option.id}
-              LeftIcon={option.Icon}
+              text={layoutLabels[displayMode]}
+              selected={currentDisplayMode === displayMode}
+              focused={selectedItemId === displayMode}
+              LeftIcon={DISPLAY_MODE_ICONS[displayMode]}
               onClick={() => {
-                handleSelectLayout(option.id);
+                handleSelectLayout(displayMode);
               }}
             />
           </SelectableListItem>

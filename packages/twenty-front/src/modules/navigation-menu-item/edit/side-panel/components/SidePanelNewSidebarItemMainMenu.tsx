@@ -60,7 +60,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
   return (
     <SidePanelAddToNavigationDroppable>
       {({ innerRef, droppableProps, placeholder }) => (
-        <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
+        <SidePanelList selectableItemIds={selectableItemIds}>
           {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <div ref={innerRef} {...droppableProps}>
             <SidePanelGroup heading={t`Data`}>

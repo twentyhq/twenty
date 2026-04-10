@@ -66,11 +66,17 @@ Odkaz ke sdílení používá základní adresu URL serveru (bez jakékoli subdo
 
 ### Správa verzí
 
+Při aktualizaci již nasazené tarballové aplikace server vyžaduje, aby hodnota `version` v `package.json` byla **přísně vyšší** (podle řazení [semver](https://semver.org)) než aktuálně nasazená verze. Opětovné nasazení stejné verze nebo odeslání nižší verze je odmítnuto ještě před uložením tarballu — v CLI uvidíte chybu `VERSION_ALREADY_EXISTS`.
+
 Chcete-li vydat aktualizaci:
 
-1. Zvyšte hodnotu pole `version` v souboru `package.json`
+1. Zvyšte hodnotu pole `version` v souboru `package.json` (např. `1.2.3` → `1.2.4`, `1.3.0` nebo `2.0.0`)
 2. Spusťte `yarn twenty deploy` (nebo `yarn twenty deploy --remote production`)
 3. Pracovní prostory, které mají aplikaci nainstalovanou, uvidí dostupnou aktualizaci ve svém nastavení
+
+<Note>
+Předběžné tagy fungují podle očekávání: zvýšení z `1.0.0-rc.1` → `1.0.0-rc.2` je povoleno a finální vydání jako `1.0.0` je správně rozpoznáno jako vyšší než `1.0.0-rc.5`. Verze v `package.json` musí být platným řetězcem semver.
+</Note>
 
 {/* TODO: add screenshot of the Upgrade button */}
 
@@ -189,3 +195,12 @@ Aplikace můžete nainstalovat také z příkazového řádku:
 ```bash filename="Terminal"
 yarn twenty install
 ```
+
+<Note>
+Server při instalaci vynucuje verzování semver a zrcadlí pravidla pro nasazení:
+
+* Instalace stejné verze, která je již nainstalována ve vašem pracovním prostoru, je odmítnuta s chybou `APP_ALREADY_INSTALLED`.
+* Instalace nižší verze, než je aktuálně nainstalovaná, je odmítnuta s chybou `CANNOT_DOWNGRADE_APPLICATION`.
+
+K instalaci novější verze ji nejprve nasaďte nebo publikujte, poté znovu spusťte `yarn twenty install`.
+</Note>

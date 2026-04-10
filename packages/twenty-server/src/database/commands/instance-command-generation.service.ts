@@ -5,11 +5,13 @@ import { pascalCase } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
+import { type InstanceCommandType } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 
-type GenerateMigrationArgs = {
+type GenerateInstanceCommandArgs = {
   migrationName: string;
   version: UpgradeCommandVersion;
   timestamp: number;
+  type?: InstanceCommandType;
 };
 
 export type GeneratedMigrationResult = {
@@ -25,11 +27,12 @@ export class InstanceCommandGenerationService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async generate({
+  async generateInstanceCommand({
     migrationName,
     version,
     timestamp,
-  }: GenerateMigrationArgs): Promise<GeneratedMigrationResult | null> {
+    type = 'fast',
+  }: GenerateInstanceCommandArgs): Promise<GeneratedMigrationResult | null> {
     const sqlInMemory = await this.dataSource.driver
       .createSchemaBuilder()
       .log();
@@ -38,7 +41,7 @@ export class InstanceCommandGenerationService {
       return null;
     }
 
-    const className = this.buildClassName(migrationName);
+    const className = this.buildClassName({ name: migrationName, type });
 
     const upStatements = sqlInMemory.upQueries.map(
       ({ query, parameters }) =>
@@ -52,22 +55,37 @@ export class InstanceCommandGenerationService {
           `    await queryRunner.query('${this.escapeForSingleQuotedString(query)}'${this.formatQueryParams(parameters)});`,
       );
 
-    const fileTemplate = this.buildMigrationFileContent({
-      className,
-      version,
-      timestamp,
-      upStatements,
-      downStatements,
-    });
+    const fileTemplate =
+      type === 'slow'
+        ? this.buildSlowMigrationFileContent({
+            className,
+            version,
+            timestamp,
+            upStatements,
+            downStatements,
+          })
+        : this.buildFastMigrationFileContent({
+            className,
+            version,
+            timestamp,
+            upStatements,
+            downStatements,
+          });
 
     const versionSlug = version.split('.').slice(0, 2).join('-');
-    const fileName = `${versionSlug}-instance-command-fast-${timestamp}-${migrationName}.ts`;
+    const fileName = `${versionSlug}-instance-command-${type}-${timestamp}-${migrationName}.ts`;
 
     return { fileName, fileTemplate, className };
   }
 
-  private buildClassName(name: string): string {
-    return `${pascalCase(name)}Command`;
+  private buildClassName({
+    name,
+    type,
+  }: {
+    name: string;
+    type: InstanceCommandType;
+  }): string {
+    return `${pascalCase(name)}${pascalCase(type)}InstanceCommand`;
   }
 
   private formatQueryParams(parameters: unknown[] | undefined): string {
@@ -82,7 +100,7 @@ export class InstanceCommandGenerationService {
     return query.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
   }
 
-  private buildMigrationFileContent({
+  private buildFastMigrationFileContent({
     className,
     version,
     timestamp,
@@ -95,12 +113,48 @@ export class InstanceCommandGenerationService {
     upStatements: string[];
     downStatements: string[];
   }): string {
-    return `import { MigrationInterface, QueryRunner } from 'typeorm';
+    return `import { QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
+import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('${version}', ${timestamp})
-export class ${className} implements MigrationInterface {
+export class ${className} implements FastInstanceCommand {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+${upStatements.join('\n')}
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+${downStatements.join('\n')}
+  }
+}
+`;
+  }
+
+  private buildSlowMigrationFileContent({
+    className,
+    version,
+    timestamp,
+    upStatements,
+    downStatements,
+  }: {
+    className: string;
+    version: string;
+    timestamp: number;
+    upStatements: string[];
+    downStatements: string[];
+  }): string {
+    return `import { DataSource, QueryRunner } from 'typeorm';
+
+import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
+import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
+
+@RegisteredInstanceCommand('${version}', ${timestamp}, { type: 'slow' })
+export class ${className} implements SlowInstanceCommand {
+  async runDataMigration(dataSource: DataSource): Promise<void> {
+    // TODO: implement data backfill before the DDL migration
+  }
+
   public async up(queryRunner: QueryRunner): Promise<void> {
 ${upStatements.join('\n')}
   }

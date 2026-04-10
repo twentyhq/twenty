@@ -104,6 +104,11 @@ msgstr "Frontendová komponenta s tímto názvem již existuje."
 msgid "A function with this name already exists."
 msgstr "Funkce s tímto názvem již existuje."
 
+#. js-lingui-id: 6yZjO1
+#: src/engine/core-modules/application/application.exception.ts
+msgid "A higher version of this application is already installed. Downgrading is not allowed."
+msgstr ""
+
 #. js-lingui-id: Nh/ZZe
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "A name conflict occurred."
@@ -546,6 +551,16 @@ msgstr "Aplikace není v tomto pracovním prostoru nainstalována. Nejprve ji na
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Application not found."
 msgstr "Aplikace nenalezena."
+
+#. js-lingui-id: kuNcoR
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application post-install logic function failed."
+msgstr ""
+
+#. js-lingui-id: UTxpa1
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Application pre-install logic function failed."
+msgstr ""
 
 #. js-lingui-id: DE/icK
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -2836,6 +2851,7 @@ msgstr "Frontendová komponenta je vyžadována pro položky vykreslovače front
 
 #. js-lingui-id: 0aXgXb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Front component must not be set for this item type"
 msgstr "Frontendová komponenta nesmí být nastavena pro tento typ položky"
 
@@ -2871,6 +2887,7 @@ msgstr "frontComponentId je vyžadován, pokud je engineComponentKey FRONT_COMPO
 
 #. js-lingui-id: N6YN7J
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "frontComponentId must not be set for engine component key {engineComponentKey}"
 msgstr "frontComponentId nesmí být nastaven pro klíč komponenty enginu {engineComponentKey}"
 
@@ -2883,6 +2900,11 @@ msgstr "frontComponentId nesmí být nastaven, pokud je engineComponentKey TRIGG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgid "Full path"
 msgstr "Celá cesta"
+
+#. js-lingui-id: yQDBsf
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Function code failed to compile."
+msgstr ""
 
 #. js-lingui-id: pouguB
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -5497,6 +5519,26 @@ msgstr "Token pro obnovení hesla již byl vygenerován. Počkejte prosím {time
 msgid "Password too weak"
 msgstr "Heslo je příliš slabé"
 
+#. js-lingui-id: DpnDl6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Payload is required for navigation items"
+msgstr ""
+
+#. js-lingui-id: Enmszs
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "payload is required when engineComponentKey is NAVIGATION"
+msgstr ""
+
+#. js-lingui-id: QXVtcO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "payload must contain either a \"path\" or \"objectMetadataItemId\" property"
+msgstr ""
+
+#. js-lingui-id: Z+s6mX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Payload must contain either a path or an object metadata item identifier"
+msgstr ""
+
 #. js-lingui-id: l6qKfi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
 msgid "Pending action for folder sync"
@@ -7213,6 +7255,16 @@ msgstr "Tento uživatel je již členem pracovního prostoru."
 msgid "This variable can only be set via environment."
 msgstr "Tuto proměnnou lze nastavit pouze pomocí proměnných prostředí."
 
+#. js-lingui-id: Y5Fzhi
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "This version is not higher than the currently deployed version. Please bump the version in package.json before deploying again."
+msgstr ""
+
+#. js-lingui-id: ZXnasf
+#: src/engine/core-modules/application/application.exception.ts
+msgid "This version of the application is already installed in this workspace."
+msgstr ""
+
 #. js-lingui-id: Zl0BJl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgid "Thread External Id"
@@ -7343,6 +7395,11 @@ msgstr ""
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Too many admin candidates found."
 msgstr "Nalezeno příliš mnoho kandidátů na administrátora."
+
+#. js-lingui-id: qSInGy
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "Too many recipients."
+msgstr ""
 
 #. js-lingui-id: MYdvBz
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
@@ -8279,6 +8336,7 @@ msgstr "Verze pracovního postupu nesmí být nastavena pro položky vykreslova�
 
 #. js-lingui-id: f9Rp2t
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Workflow version must not be set for this item type"
 msgstr "Verze pracovního postupu nesmí být nastavena pro tento typ položky"
 
@@ -8323,6 +8381,7 @@ msgid "workflowVersionId is required when engineComponentKey is TRIGGER_WORKFLOW
 msgstr "workflowVersionId je vyžadován, pokud je engineComponentKey TRIGGER_WORKFLOW_VERSION"
 
 #. js-lingui-id: +67q2u
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "workflowVersionId must not be set for engine component key {engineComponentKey}"
 msgstr "workflowVersionId nesmí být nastaven pro klíč komponenty enginu {engineComponentKey}"

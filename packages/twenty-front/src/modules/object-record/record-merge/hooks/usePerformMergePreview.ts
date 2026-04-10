@@ -1,12 +1,14 @@
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
 import { useMergeRecordsSelectedRecords } from '@/object-record/record-merge/hooks/useMergeRecordsSelectedRecords';
-import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useEffect, useState } from 'react';
 import { isMergeInProgressState } from '@/object-record/record-merge/states/mergeInProgressState';
 import { mergeSettingsState } from '@/object-record/record-merge/states/mergeSettingsState';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { type ErrorLike } from '@apollo/client';
+import { useEffect, useState } from 'react';
 
 type UseMergePreviewProps = {
   objectNameSingular: string;
@@ -30,6 +32,7 @@ export const usePerformMergePreview = ({
   const { selectedRecords } = useMergeRecordsSelectedRecords();
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   useEffect(() => {
     const fetchPreview = async () => {
@@ -60,8 +63,11 @@ export const usePerformMergePreview = ({
 
         setMergePreviewRecord(transformPreviewRecord);
         upsertRecordsInStore({ partialRecords: [transformPreviewRecord] });
-      } catch {
+      } catch (error) {
         setMergePreviewRecord(null);
+        enqueueErrorSnackBar({
+          apolloError: error as ErrorLike,
+        });
       } finally {
         setIsGeneratingPreview(false);
         setIsInitialized(true);
@@ -79,6 +85,7 @@ export const usePerformMergePreview = ({
     mergeManyRecords,
     upsertRecordsInStore,
     isInitialized,
+    enqueueErrorSnackBar,
   ]);
 
   return {

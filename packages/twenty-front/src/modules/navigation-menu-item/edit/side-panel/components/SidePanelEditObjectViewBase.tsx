@@ -72,7 +72,7 @@ export const SidePanelEditObjectViewBase = ({
     : effectiveColor;
 
   return (
-    <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
+    <SidePanelList selectableItemIds={selectableItemIds}>
       {showColorOption &&
         isDefined(selectedItem) &&
         objectMetadataItem?.isSystem !== true && (

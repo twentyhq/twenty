@@ -1,5 +1,5 @@
-import { useSaveCommandMenuItemsDraft } from '@/command-menu-item/server-items/edit/hooks/useSaveCommandMenuItemsDraft';
-import { useCommandMenuItemsDraftState } from '@/command-menu-item/server-items/common/hooks/useCommandMenuItemsDraftState';
+import { useSaveCommandMenuItemsDraft } from '@/command-menu-item/edit/hooks/useSaveCommandMenuItemsDraft';
+import { useCommandMenuItemsDraftState } from '@/command-menu-item/hooks/useCommandMenuItemsDraftState';
 import { useExitLayoutCustomizationMode } from '@/layout-customization/hooks/useExitLayoutCustomizationMode';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';

@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IsNull, type QueryRunner, Repository } from 'typeorm';
 
 import { UpgradeMigrationEntity } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
+import { formatUpgradeErrorForStorage } from 'src/engine/core-modules/upgrade/utils/format-upgrade-error-for-storage.util';
 
 @Injectable()
 export class UpgradeMigrationService {
@@ -65,10 +66,12 @@ export class UpgradeMigrationService {
     name,
     workspaceId,
     executedByVersion,
+    error,
   }: {
     name: string;
     workspaceId: string | null;
     executedByVersion: string;
+    error: unknown;
   }): Promise<void> {
     const previousAttempts = await this.upgradeMigrationRepository.count({
       where: {
@@ -83,6 +86,7 @@ export class UpgradeMigrationService {
       attempt: previousAttempts + 1,
       executedByVersion,
       workspaceId,
+      errorMessage: formatUpgradeErrorForStorage(error),
     });
   }
 }

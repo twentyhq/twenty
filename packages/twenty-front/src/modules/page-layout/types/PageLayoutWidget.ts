@@ -12,4 +12,5 @@ export type PageLayoutWidget = Omit<
 > & {
   objectMetadataId?: Nullable<string>;
   configuration: WidgetConfiguration | FieldsConfiguration | FieldConfiguration;
+  conditionalAvailabilityExpression?: Nullable<string>;
 };

@@ -98,6 +98,21 @@ Modul de dezvoltare este disponibil doar pe instanțele Twenty care rulează în
   <img src="/images/docs/developers/extends/apps/dev.jpg" alt="Ieșirea terminalului în modul de dezvoltare" />
 </div>
 
+#### One-shot sync with `yarn twenty dev --once`
+
+If you do not want a watcher running in the background (for example in a CI pipeline, a git hook, or a scripted workflow), pass the `--once` flag. It runs the same pipeline as `yarn twenty dev` — build manifest, bundle files, upload, sync, regenerate the typed API client — but **exits as soon as the sync completes**:
+
+```bash filename="Terminal"
+yarn twenty dev --once
+```
+
+| Comandă                  | Comportament                                                                             | When to use                                                                               |
+| ------------------------ | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `yarn twenty dev`        | Watches your source files and re-syncs on every change. Keeps running until you stop it. | Interactive local development — you want the live status panel and instant feedback loop. |
+| `yarn twenty dev --once` | Performs a single build + sync, then exits with code `0` on success or `1` on failure.   | Scripts, CI, pre-commit hooks, AI agents, and any non-interactive workflow.               |
+
+Both modes require a Twenty server running in development mode and an authenticated remote — the same prerequisites apply.
+
 ### Vedeți aplicația în Twenty
 
 Deschideți [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer) în browser. Navigați la **Settings > Apps** și selectați fila **Developer**. Ar trebui să vedeți aplicația listată la **Your Apps**:
