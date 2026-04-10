@@ -11,10 +11,10 @@ import {
 
 import { DataSourceEntity } from './data-source.entity';
 
-// @deprecated - This service is being deprecated. During the transition,
-// writes go to both the dataSource table and workspace table (dual-write).
-// Reads should progressively migrate to use workspace.databaseSchema
-// or the deterministic getWorkspaceSchemaName(workspaceId) utility.
+// @deprecated - This service is deprecated. The datasource migration is complete.
+// Use workspace.databaseSchema or getWorkspaceSchemaName(workspaceId) for reads.
+// createDataSourceMetadata is only kept because ObjectMetadataEntity still has
+// a FK (dataSourceId) pointing to DataSourceEntity. Remove once the FK is dropped.
 @Injectable()
 export class DataSourceService {
   constructor(

@@ -14,5 +14,7 @@ export enum FeatureFlagKey {
   IS_RICH_TEXT_V1_MIGRATED = 'IS_RICH_TEXT_V1_MIGRATED',
   IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED = 'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED',
   IS_RECORD_TABLE_WIDGET_ENABLED = 'IS_RECORD_TABLE_WIDGET_ENABLED',
+  // @deprecated - Migration is complete. Kept for backward compatibility
+  // until all workspaces have the flag and the flag can be removed entirely.
   IS_DATASOURCE_MIGRATED = 'IS_DATASOURCE_MIGRATED',
 }

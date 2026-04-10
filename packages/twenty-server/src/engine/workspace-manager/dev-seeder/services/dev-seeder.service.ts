@@ -8,6 +8,8 @@ import { ApplicationRegistrationService } from 'src/engine/core-modules/applicat
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+// @deprecated - DataSourceService is kept for backward compatibility
+// (ObjectMetadataEntity still has a FK to DataSourceEntity)
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
@@ -74,6 +76,9 @@ export class DevSeederService {
       ['flatApplicationMaps', 'featureFlagsMap'],
     );
 
+    // @deprecated - DataSourceEntity row is still needed because
+    // ObjectMetadataEntity has a FK (dataSourceId) pointing to it.
+    // Remove once the FK is dropped.
     const dataSourceMetadata =
       await this.dataSourceService.createDataSourceMetadata(
         workspaceId,
@@ -165,7 +170,7 @@ export class DevSeederService {
     );
 
     await this.devSeederDataService.seed({
-      schemaName: dataSourceMetadata.schema,
+      schemaName,
       workspaceId,
       featureFlags: featureFlagsMap,
       light,

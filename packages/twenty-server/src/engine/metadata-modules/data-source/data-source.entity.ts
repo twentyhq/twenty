@@ -14,9 +14,7 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
 
 export type DataSourceType = DataSourceOptions['type'];
 
-// @deprecated - This entity is being deprecated in favor of storing
-// databaseSchema directly on WorkspaceEntity.
-// During the transition, writes go to both tables (dual-write).
+// @deprecated - This entity is deprecated in favor of workspace.databaseSchema.
 @Entity('dataSource')
 @Index('IDX_DATA_SOURCE_WORKSPACE_ID_CREATED_AT', ['workspaceId', 'createdAt'])
 export class DataSourceEntity extends WorkspaceRelatedEntity {
