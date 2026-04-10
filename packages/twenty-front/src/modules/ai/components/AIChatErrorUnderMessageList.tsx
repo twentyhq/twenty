@@ -1,11 +1,12 @@
 import { AIChatErrorRenderer } from '@/ai/components/AIChatErrorRenderer';
 import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
-import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
+import { agentChatIsStreamingComponentState } from '@/ai/states/agentChatIsStreamingComponentState';
 import { agentChatMessageComponentFamilySelector } from '@/ai/states/agentChatMessageComponentFamilySelector';
 import { agentChatMessageIdsComponentSelector } from '@/ai/states/agentChatMessageIdsComponentSelector';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -16,7 +17,9 @@ const StyledErrorWrapper = styled.div`
 
 export const AIChatErrorUnderMessageList = () => {
   const agentChatError = useAtomStateValue(agentChatErrorState);
-  const agentChatIsStreaming = useAtomStateValue(agentChatIsStreamingState);
+  const agentChatIsStreaming = useAtomComponentStateValue(
+    agentChatIsStreamingComponentState,
+  );
 
   const agentChatMessageIds = useAtomComponentSelectorValue(
     agentChatMessageIdsComponentSelector,

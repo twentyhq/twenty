@@ -14,9 +14,9 @@ import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { ON_AGENT_CHAT_EVENT } from '@/ai/graphql/subscriptions/OnAgentChatEvent';
 import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
-import { agentChatFirstLiveSeqState } from '@/ai/states/agentChatFirstLiveSeqState';
-import { agentChatHandleEventCallbackState } from '@/ai/states/agentChatHandleEventCallbackState';
-import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
+import { agentChatFirstLiveSeqComponentState } from '@/ai/states/agentChatFirstLiveSeqComponentState';
+import { agentChatHandleEventCallbackComponentState } from '@/ai/states/agentChatHandleEventCallbackComponentState';
+import { agentChatIsStreamingComponentState } from '@/ai/states/agentChatIsStreamingComponentState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
@@ -101,13 +101,22 @@ export const useAgentChatSubscription = (threadId: string | null) => {
       return;
     }
 
+    const instanceKey = { instanceId: AGENT_CHAT_INSTANCE_ID };
+
+    const isStreamingAtom =
+      agentChatIsStreamingComponentState.atomFamily(instanceKey);
+    const handleEventCallbackAtom =
+      agentChatHandleEventCallbackComponentState.atomFamily(instanceKey);
+    const firstLiveSeqAtom =
+      agentChatFirstLiveSeqComponentState.atomFamily(instanceKey);
+
     let bridge: TransformStream<UIMessageChunk> | null = null;
     let throttleTimer: ReturnType<typeof setTimeout> | null = null;
     let latestMessage: ExtendedUIMessage | null = null;
     let writer: WritableStreamDefaultWriter<UIMessageChunk> | null = null;
     let disposed = false;
 
-    store.set(agentChatFirstLiveSeqState.atom, null);
+    store.set(firstLiveSeqAtom, null);
 
     const closeWriter = () => {
       if (isDefined(writer)) {
@@ -119,8 +128,8 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     const cleanupStream = () => {
       closeWriter();
 
-      if (store.get(agentChatIsStreamingState.atom)) {
-        store.set(agentChatIsStreamingState.atom, false);
+      if (store.get(isStreamingAtom)) {
+        store.set(isStreamingAtom, false);
       }
     };
 
@@ -233,7 +242,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
       }
       flushToAtom();
 
-      store.set(agentChatIsStreamingState.atom, false);
+      store.set(isStreamingAtom, false);
     };
 
     const handleEvent = (event: AgentChatSubscriptionEvent) => {
@@ -241,13 +250,13 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         case 'stream-chunk': {
           if (
             isDefined(event.seq) &&
-            store.get(agentChatFirstLiveSeqState.atom) === null
+            store.get(firstLiveSeqAtom) === null
           ) {
-            store.set(agentChatFirstLiveSeqState.atom, event.seq);
+            store.set(firstLiveSeqAtom, event.seq);
           }
 
-          if (!store.get(agentChatIsStreamingState.atom)) {
-            store.set(agentChatIsStreamingState.atom, true);
+          if (!store.get(isStreamingAtom)) {
+            store.set(isStreamingAtom, true);
 
             bridge = new TransformStream<UIMessageChunk>();
             writer = bridge.writable.getWriter();
@@ -257,7 +266,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
             );
 
             startReadLoop(adaptedReadable).catch(() => {
-              store.set(agentChatIsStreamingState.atom, false);
+              store.set(isStreamingAtom, false);
             });
           }
 
@@ -287,13 +296,13 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           store.set(agentChatErrorState.atom, streamError);
 
           closeWriter();
-          store.set(agentChatIsStreamingState.atom, false);
+          store.set(isStreamingAtom, false);
           break;
         }
       }
     };
 
-    store.set(agentChatHandleEventCallbackState.atom, () => handleEvent);
+    store.set(handleEventCallbackAtom, () => handleEvent);
 
     const dispose = sseClient.subscribe<AgentChatEventPayload>(
       {
@@ -321,7 +330,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
 
     return () => {
       disposed = true;
-      store.set(agentChatHandleEventCallbackState.atom, null);
+      store.set(handleEventCallbackAtom, null);
       if (isDefined(throttleTimer)) {
         clearTimeout(throttleTimer);
       }
