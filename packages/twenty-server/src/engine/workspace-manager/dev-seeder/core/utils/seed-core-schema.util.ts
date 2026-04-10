@@ -17,13 +17,13 @@ import { seedServerId } from 'src/engine/workspace-manager/dev-seeder/core/utils
 import { seedUserWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { createWorkspace } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
-import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
 
 type SeedCoreSchemaArgs = {
   dataSource: DataSource;
   workspaceId: SeededWorkspacesIds;
   appVersion: string | undefined;
   applicationService: ApplicationService;
+  lastUpgradeStepName?: string;
   seedBilling?: boolean;
   seedFeatureFlags?: boolean;
 };
@@ -33,13 +33,13 @@ export const seedCoreSchema = async ({
   dataSource,
   workspaceId,
   applicationService,
+  lastUpgradeStepName,
   seedBilling = true,
   seedFeatureFlags: shouldSeedFeatureFlags = true,
 }: SeedCoreSchemaArgs) => {
   const schemaName = 'core';
 
   const createWorkspaceStaticInput = SEEDER_CREATE_WORKSPACE_INPUT[workspaceId];
-  const version = extractVersionMajorMinorPatch(appVersion);
   const queryRunner = dataSource.createQueryRunner();
 
   await queryRunner.connect();
@@ -53,7 +53,6 @@ export const seedCoreSchema = async ({
       schemaName,
       createWorkspaceInput: {
         ...createWorkspaceStaticInput,
-        version,
         workspaceCustomApplicationId,
       },
     });
@@ -95,6 +94,15 @@ export const seedCoreSchema = async ({
     }
 
     await seedMetadataEntities({ queryRunner, schemaName, workspaceId });
+
+    if (lastUpgradeStepName) {
+      await queryRunner.query(
+        `INSERT INTO "core"."upgradeMigration" ("name", "status", "attempt", "executedByVersion", "isInitial", "workspaceId")
+         VALUES ($1, 'completed', 1, $2, true, $3)
+         ON CONFLICT DO NOTHING`,
+        [lastUpgradeStepName, appVersion ?? 'unknown', workspaceId],
+      );
+    }
 
     await queryRunner.commitTransaction();
   } catch (error) {

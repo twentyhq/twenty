@@ -28,7 +28,6 @@ export const fromWorkspaceEntityToFlat = (
   isCustomDomainEnabled: entity.isCustomDomainEnabled,
   editableProfileFields: entity.editableProfileFields,
   defaultRoleId: entity.defaultRoleId,
-  version: entity.version,
   fastModel: entity.fastModel,
   smartModel: entity.smartModel,
   aiAdditionalInstructions: entity.aiAdditionalInstructions,

@@ -5,13 +5,11 @@ import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { DataSource } from 'typeorm';
 
-import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
 import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
 import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 type RunInstanceCommandsOptions = {
-  force?: boolean;
   includeSlow?: boolean;
 };
 
@@ -26,21 +24,11 @@ export class RunInstanceCommandsCommand extends CommandRunner {
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
-    private readonly coreEngineVersionService: CoreEngineVersionService,
     private readonly workspaceVersionService: WorkspaceVersionService,
     private readonly upgradeCommandRegistryService: UpgradeCommandRegistryService,
     private readonly instanceUpgradeService: InstanceUpgradeService,
   ) {
     super();
-  }
-
-  @Option({
-    flags: '-f, --force',
-    description: 'Skip workspace version safety check',
-    required: false,
-  })
-  parseForce(): boolean {
-    return true;
   }
 
   @Option({
@@ -57,7 +45,6 @@ export class RunInstanceCommandsCommand extends CommandRunner {
     options: RunInstanceCommandsOptions,
   ): Promise<void> {
     try {
-      await this.checkWorkspaceVersionSafety(options);
       await this.runLegacyPendingTypeOrmMigrations();
 
       for (const {
@@ -118,41 +105,6 @@ export class RunInstanceCommandsCommand extends CommandRunner {
     } else {
       this.logger.log(
         `Executed ${migrations.length} legacy migration(s): ${migrations.map((migration) => migration.name).join(', ')}`,
-      );
-    }
-  }
-
-  private async checkWorkspaceVersionSafety(
-    options: RunInstanceCommandsOptions,
-  ): Promise<void> {
-    if (options.force) {
-      this.logger.warn(
-        chalk.yellow('Skipping workspace version check (--force flag used)'),
-      );
-
-      return;
-    }
-
-    const previousVersion = this.coreEngineVersionService.getPreviousVersion();
-
-    const workspacesBelow =
-      await this.workspaceVersionService.getWorkspacesBelowVersion(
-        previousVersion.version,
-      );
-
-    if (workspacesBelow.length > 0) {
-      for (const workspace of workspacesBelow) {
-        this.logger.error(
-          chalk.red(
-            `Workspace ${workspace.id} (${workspace.displayName}) is at version ${workspace.version ?? 'undefined'}, which is below the minimum required version.`,
-          ),
-        );
-      }
-
-      throw new Error(
-        'Unable to run instance commands. Some workspace(s) are below the minimum required version.\n' +
-          'Please ensure all workspaces are on at least the previous minor version before running migrations.\n' +
-          'Use --force to bypass this check (not recommended).',
       );
     }
   }

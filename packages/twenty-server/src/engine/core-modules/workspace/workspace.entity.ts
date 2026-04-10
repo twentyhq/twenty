@@ -294,10 +294,6 @@ export class WorkspaceEntity {
   @Field(() => RoleDTO, { nullable: true })
   defaultRole: RoleDTO | null;
 
-  @Field(() => String, { nullable: true })
-  @Column({ type: 'varchar', nullable: true })
-  version: string | null;
-
   @Field(() => String, { nullable: false })
   @Column({
     type: 'varchar',

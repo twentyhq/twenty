@@ -1,30 +1,22 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { SemVer } from 'semver';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { type WorkspaceIteratorContext } from 'src/database/commands/command-runners/workspace-iterator.service';
-import {
-  type UpgradeCommandOptions,
-  type VersionCommands,
-} from 'src/database/commands/upgrade-version-command/upgrade.command';
+import { type UpgradeCommandOptions } from 'src/database/commands/upgrade-version-command/upgrade.command';
+import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
+import { type RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import {
-  type CompareVersionMajorAndMinorReturnType,
-  compareVersionMajorAndMinor,
-} from 'src/utils/version/compare-version-minor-and-major';
 
-export type UpgradeWorkspaceArgs = {
+type WorkspaceCommandEntry = Pick<
+  RegisteredWorkspaceCommand,
+  'name' | 'command'
+>;
+
+export type RunWorkspaceCommandsArgs = {
   iteratorContext: WorkspaceIteratorContext;
   options: UpgradeCommandOptions;
-  fromWorkspaceVersion: SemVer;
-  currentAppVersion: SemVer;
-  workspaceCommands: VersionCommands;
+  version: UpgradeCommandVersion;
+  workspaceCommands: WorkspaceCommandEntry[];
 };
 
 @Injectable()
@@ -32,91 +24,47 @@ export class WorkspaceUpgradeService {
   private readonly logger = new Logger(WorkspaceUpgradeService.name);
 
   constructor(
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly upgradeMigrationService: UpgradeMigrationService,
   ) {}
 
-  async upgradeWorkspace({
+  async runWorkspaceCommands({
     iteratorContext,
     options,
-    fromWorkspaceVersion,
-    currentAppVersion,
+    version,
     workspaceCommands,
-  }: UpgradeWorkspaceArgs): Promise<void> {
+  }: RunWorkspaceCommandsArgs): Promise<void> {
     const { workspaceId, index, total } = iteratorContext;
 
     this.logger.log(
-      `${options.dryRun ? '(dry run) ' : ''}Upgrading workspace ${workspaceId} from=${fromWorkspaceVersion} to=${currentAppVersion} ${index + 1}/${total}`,
+      `${options.dryRun ? '(dry run) ' : ''}Upgrading workspace ${workspaceId} [${version}] ${index + 1}/${total}`,
     );
 
-    const versionCompareResult =
-      await this.compareWorkspaceVersionToFromVersion(
-        workspaceId,
-        fromWorkspaceVersion,
-      );
+    const executedByVersion =
+      this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
-    switch (versionCompareResult) {
-      case 'lower': {
-        throw new Error(
-          `WORKSPACE_VERSION_MISMATCH Upgrade for workspace ${workspaceId} failed as its version is beneath fromWorkspaceVersion=${fromWorkspaceVersion.version}`,
-        );
-      }
-      case 'equal': {
-        const executedByVersion =
-          this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
+    const completedNames =
+      await this.upgradeMigrationService.getCompletedCommandNames(workspaceId);
 
-        for (const workspaceCommandEntry of workspaceCommands) {
-          await this.runSingleWorkspaceCommandOrThrow({
-            workspaceCommandEntry,
-            workspaceId,
-            executedByVersion,
-            options,
-            iteratorContext,
-          });
-        }
-
-        if (!options.dryRun) {
-          await this.workspaceRepository.update(
-            { id: workspaceId },
-            { version: currentAppVersion.version },
-          );
-        }
-
-        this.logger.log(`Upgrade for workspace ${workspaceId} completed.`);
-
-        return;
-      }
-      case 'higher': {
+    for (const workspaceCommandEntry of workspaceCommands) {
+      if (completedNames.has(workspaceCommandEntry.name)) {
         this.logger.log(
-          `Upgrade for workspace ${workspaceId} ignored as is already at a higher version.`,
+          `Workspace command ${workspaceCommandEntry.name} already completed for workspace ${workspaceId}, skipping`,
         );
-
-        return;
+        continue;
       }
-      default: {
-        assertUnreachable(versionCompareResult);
-      }
-    }
-  }
 
-  private async compareWorkspaceVersionToFromVersion(
-    workspaceId: string,
-    fromWorkspaceVersion: SemVer,
-  ): Promise<CompareVersionMajorAndMinorReturnType> {
-    const workspace = await this.workspaceRepository.findOneByOrFail({
-      id: workspaceId,
-    });
-    const currentWorkspaceVersion = workspace.version;
-
-    if (!isDefined(currentWorkspaceVersion)) {
-      throw new Error(`WORKSPACE_VERSION_NOT_DEFINED workspace=${workspaceId}`);
+      await this.runSingleWorkspaceCommandOrThrow({
+        workspaceCommandEntry,
+        workspaceId,
+        executedByVersion,
+        options,
+        iteratorContext,
+      });
     }
 
-    return compareVersionMajorAndMinor(
-      currentWorkspaceVersion,
-      fromWorkspaceVersion.version,
+    this.logger.log(
+      `Upgrade for workspace ${workspaceId} [${version}] completed.`,
     );
   }
 
@@ -127,27 +75,13 @@ export class WorkspaceUpgradeService {
     options,
     iteratorContext,
   }: {
-    workspaceCommandEntry: RegisteredWorkspaceCommand;
+    workspaceCommandEntry: WorkspaceCommandEntry;
     workspaceId: string;
     executedByVersion: string;
     options: UpgradeCommandOptions;
     iteratorContext: WorkspaceIteratorContext;
   }): Promise<void> {
     const { name, command: workspaceCommand } = workspaceCommandEntry;
-
-    const isAlreadyCompleted =
-      await this.upgradeMigrationService.isLastAttemptCompleted({
-        name,
-        workspaceId,
-      });
-
-    if (isAlreadyCompleted) {
-      this.logger.log(
-        `Workspace command ${name} already completed for workspace ${workspaceId}, skipping`,
-      );
-
-      return;
-    }
 
     try {
       await workspaceCommand.runOnWorkspace({

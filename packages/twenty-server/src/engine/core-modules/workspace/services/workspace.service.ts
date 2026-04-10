@@ -38,6 +38,8 @@ import {
   WorkspaceExceptionCode,
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
+import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
+import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { isModelAllowedByWorkspace } from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
@@ -64,7 +66,7 @@ import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
-import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
+
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
@@ -126,6 +128,8 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly upgradeMigrationService: UpgradeMigrationService,
+    private readonly upgradeCommandRegistryService: UpgradeCommandRegistryService,
   ) {
     super(workspaceRepository);
   }
@@ -354,13 +358,12 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       schemaName: getWorkspaceSchemaName(workspace.id),
     });
 
-    const appVersion = this.twentyConfigService.get('APP_VERSION');
-
     await this.workspaceRepository.update(workspace.id, {
       displayName: data.displayName,
       activationStatus: WorkspaceActivationStatus.ACTIVE,
-      version: extractVersionMajorMinorPatch(appVersion),
     });
+
+    await this.initializeWorkspaceUpgradeState(workspace.id);
 
     await this.coreEntityCacheService.invalidate(
       'workspaceEntity',
@@ -369,6 +372,25 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
 
     return await this.workspaceRepository.findOneBy({
       id: workspace.id,
+    });
+  }
+
+  private async initializeWorkspaceUpgradeState(
+    workspaceId: string,
+  ): Promise<void> {
+    const lastStep = this.upgradeCommandRegistryService.getLastUpgradeStep();
+
+    if (!lastStep) {
+      return;
+    }
+
+    const executedByVersion =
+      this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
+
+    await this.upgradeMigrationService.markAsInitial({
+      name: lastStep.name,
+      workspaceId,
+      executedByVersion,
     });
   }
 

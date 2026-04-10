@@ -41,6 +41,33 @@ export type VersionBundle = {
   workspaceCommands: RegisteredWorkspaceCommand[];
 };
 
+export type UpgradeStepKind = 'fast-instance' | 'slow-instance' | 'workspace';
+
+export type UpgradeStep =
+  | {
+      kind: 'fast-instance';
+      name: string;
+      command: FastInstanceCommand;
+      version: UpgradeCommandVersion;
+    }
+  | {
+      kind: 'slow-instance';
+      name: string;
+      command: SlowInstanceCommand;
+      version: UpgradeCommandVersion;
+    }
+  | {
+      kind: 'workspace';
+      name: string;
+      command: WorkspaceCommand;
+      version: UpgradeCommandVersion;
+    };
+
+export type VersionBlock = {
+  version: UpgradeCommandVersion;
+  steps: UpgradeStep[];
+};
+
 const buildEmptyVersionBundle = (): VersionBundle => ({
   fastInstanceCommands: [],
   slowInstanceCommands: [],
@@ -174,6 +201,51 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
     return UPGRADE_COMMAND_SUPPORTED_VERSIONS.flatMap(
       (version) => this.getBundleForVersion(version).slowInstanceCommands,
     );
+  }
+
+  getOrderedVersionBlocks(): VersionBlock[] {
+    return UPGRADE_COMMAND_SUPPORTED_VERSIONS.map((version) => {
+      const bundle = this.getBundleForVersion(version);
+
+      const steps: UpgradeStep[] = [
+        ...bundle.fastInstanceCommands.map(
+          (entry): UpgradeStep => ({
+            kind: 'fast-instance',
+            name: entry.name,
+            command: entry.command,
+            version,
+          }),
+        ),
+        ...bundle.slowInstanceCommands.map(
+          (entry): UpgradeStep => ({
+            kind: 'slow-instance',
+            name: entry.name,
+            command: entry.command,
+            version,
+          }),
+        ),
+        ...bundle.workspaceCommands.map(
+          (entry): UpgradeStep => ({
+            kind: 'workspace',
+            name: entry.name,
+            command: entry.command,
+            version,
+          }),
+        ),
+      ];
+
+      return { version, steps };
+    });
+  }
+
+  getOrderedUpgradeSteps(): UpgradeStep[] {
+    return this.getOrderedVersionBlocks().flatMap((block) => block.steps);
+  }
+
+  getLastUpgradeStep(): UpgradeStep | undefined {
+    const allSteps = this.getOrderedUpgradeSteps();
+
+    return allSteps[allSteps.length - 1];
   }
 
   private computeCommandName(
