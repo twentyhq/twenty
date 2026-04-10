@@ -119,7 +119,7 @@ export const useFieldsWidgetGroups = ({
       if (standardFields.length > 0) {
         groups.push({
           id: `${view.id}-group-general`,
-          name: 'General',
+          name: t`General`,
           position: 0,
           isVisible: true,
           fields: standardFields,
@@ -129,7 +129,7 @@ export const useFieldsWidgetGroups = ({
       if (customFields.length > 0) {
         groups.push({
           id: `${view.id}-group-other`,
-          name: 'Other',
+          name: t`Other`,
           position: 1,
           isVisible: true,
           fields: customFields,
@@ -148,7 +148,15 @@ export const useFieldsWidgetGroups = ({
         labelIdentifierFieldMetadataItemId:
           labelIdentifierFieldMetadataItem?.id,
       }),
-    );
+    ).map((group) => ({
+      ...group,
+      name:
+        group.name === 'General'
+          ? t`General`
+          : group.name === 'Other'
+            ? t`Other`
+            : group.name,
+    }));
   }, [
     objectMetadataItem,
     objectNameSingular,

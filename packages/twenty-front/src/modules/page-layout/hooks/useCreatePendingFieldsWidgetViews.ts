@@ -81,9 +81,7 @@ export const useCreatePendingFieldsWidgetViews = () => {
         );
 
         if (result.status === 'failed') {
-          throw new Error(
-            `Failed to create view for FIELDS widget ${widget.id}`,
-          );
+          continue;
         }
       }
     },
