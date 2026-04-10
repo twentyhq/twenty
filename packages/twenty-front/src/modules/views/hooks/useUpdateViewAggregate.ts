@@ -21,36 +21,28 @@ export const useUpdateViewAggregate = () => {
   const { performViewAPIUpdate } = usePerformViewAPIUpdate();
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
 
-  const setAggregateOperation = useSetAtomComponentState(
+  const setRecordIndexGroupAggregateOperation = useSetAtomComponentState(
     recordIndexGroupAggregateOperationComponentState,
   );
-  const setAggregateFieldMetadataItem = useSetAtomComponentState(
+  const setRecordIndexGroupAggregateFieldMetadataItem =
+    useSetAtomComponentState(
+      recordIndexGroupAggregateFieldMetadataItemComponentState,
+    );
+
+  const recordIndexGroupAggregateOperation = useAtomComponentStateValue(
+    recordIndexGroupAggregateOperationComponentState,
+  );
+  const recordIndexGroupAggregateFieldMetadataItem = useAtomComponentStateValue(
     recordIndexGroupAggregateFieldMetadataItemComponentState,
   );
 
-  const aggregateOperation = useAtomComponentStateValue(
-    recordIndexGroupAggregateOperationComponentState,
-  );
-  const aggregateFieldMetadataItem = useAtomComponentStateValue(
-    recordIndexGroupAggregateFieldMetadataItemComponentState,
-  );
-
+  // oxlint-disable-next-line twenty/no-state-useref
   const latestRequestIdRef = useRef(0);
+  // oxlint-disable-next-line twenty/no-state-useref
   const lastConfirmedStateRef = useRef({
-    operation: aggregateOperation,
-    fieldMetadataItem: aggregateFieldMetadataItem,
+    operation: recordIndexGroupAggregateOperation,
+    fieldMetadataItem: recordIndexGroupAggregateFieldMetadataItem,
   });
-
-  // Keep an always-current ref so the useCallback can snapshot the latest
-  // atom values without needing them in the dependency array.
-  const currentStateRef = useRef({
-    operation: aggregateOperation,
-    fieldMetadataItem: aggregateFieldMetadataItem,
-  });
-  currentStateRef.current = {
-    operation: aggregateOperation,
-    fieldMetadataItem: aggregateFieldMetadataItem,
-  };
 
   const updateViewAggregate = useCallback(
     async ({
@@ -85,9 +77,8 @@ export const useUpdateViewAggregate = () => {
           (field) => field.id === kanbanAggregateOperationFieldMetadataId,
         ) ?? null;
 
-      lastConfirmedStateRef.current = currentStateRef.current;
-      setAggregateOperation(kanbanAggregateOperation);
-      setAggregateFieldMetadataItem(newFieldMetadataItem);
+      setRecordIndexGroupAggregateOperation(kanbanAggregateOperation);
+      setRecordIndexGroupAggregateFieldMetadataItem(newFieldMetadataItem);
 
       const updatedViewResult = await performViewAPIUpdate({
         id: contextStoreCurrentViewId,
@@ -109,10 +100,17 @@ export const useUpdateViewAggregate = () => {
           return;
         }
 
+        lastConfirmedStateRef.current = {
+          operation: kanbanAggregateOperation,
+          fieldMetadataItem: newFieldMetadataItem,
+        };
+
         loadRecordIndexStates(updatedView, objectMetadataItem);
       } else {
-        setAggregateOperation(lastConfirmedStateRef.current.operation ?? null);
-        setAggregateFieldMetadataItem(
+        setRecordIndexGroupAggregateOperation(
+          lastConfirmedStateRef.current.operation ?? null,
+        );
+        setRecordIndexGroupAggregateFieldMetadataItem(
           lastConfirmedStateRef.current.fieldMetadataItem ?? null,
         );
       }
@@ -122,8 +120,8 @@ export const useUpdateViewAggregate = () => {
       contextStoreCurrentViewId,
       performViewAPIUpdate,
       loadRecordIndexStates,
-      setAggregateOperation,
-      setAggregateFieldMetadataItem,
+      setRecordIndexGroupAggregateOperation,
+      setRecordIndexGroupAggregateFieldMetadataItem,
     ],
   );
 

@@ -31,7 +31,9 @@ export const useViewFieldAggregateOperation = () => {
     { viewFieldId: currentViewField?.id ?? '' },
   );
 
+  // oxlint-disable-next-line twenty/no-state-useref
   const latestRequestIdRef = useRef(0);
+  // oxlint-disable-next-line twenty/no-state-useref
   const lastConfirmedOperationRef = useRef(viewFieldAggregateOperation);
 
   const updateViewFieldAggregateOperation = async (
@@ -43,7 +45,6 @@ export const useViewFieldAggregateOperation = () => {
 
     const requestId = ++latestRequestIdRef.current;
 
-    lastConfirmedOperationRef.current = viewFieldAggregateOperation;
     setViewFieldAggregateOperation(aggregateOperation);
 
     const result = await performViewFieldAPIUpdate([
@@ -70,6 +71,8 @@ export const useViewFieldAggregateOperation = () => {
 
     if (result.status === 'failed') {
       setViewFieldAggregateOperation(lastConfirmedOperationRef.current ?? null);
+    } else {
+      lastConfirmedOperationRef.current = aggregateOperation;
     }
   };
 
