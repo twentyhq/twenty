@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node';
 import { type Request } from 'express';
 import { DocumentNode, parse } from 'graphql';
 import { type Plugin } from 'graphql-yoga';
@@ -36,10 +37,12 @@ export function useDirectExecution(
         return;
       }
 
-      if (
-        !findOperationDefinition(document, operationName) ||
-        isSubscriptionOperation(document, operationName)
-      ) {
+      const operationDefinition = findOperationDefinition(
+        document,
+        operationName,
+      );
+
+      if (!operationDefinition || isSubscriptionOperation(document, operationName)) {
         return;
       }
 
@@ -65,6 +68,19 @@ export function useDirectExecution(
 
       if (hasCoreFields) {
         return;
+      }
+
+      if (Sentry.isInitialized()) {
+        const transactionName =
+          operationName ||
+          operationDefinition.name?.value ||
+          'Anonymous Operation';
+
+        Sentry.setTags({
+          operationName: transactionName,
+          operation: operationDefinition.operation,
+        });
+        Sentry.getCurrentScope().setTransactionName(transactionName);
       }
 
       const result = await config.directExecutionService.execute(
