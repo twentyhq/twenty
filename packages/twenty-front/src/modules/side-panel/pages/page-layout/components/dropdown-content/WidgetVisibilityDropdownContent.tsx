@@ -1,4 +1,4 @@
-import { VISIBILITY_OPTIONS } from '@/side-panel/pages/page-layout/constants/visibilityOptions';
+import { VISIBILITY_OPTIONS } from '@/side-panel/pages/page-layout/constants/VisibilityOptions';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useVisibilityLabels } from '@/side-panel/pages/page-layout/hooks/useVisibilityLabels';

@@ -1,5 +1,5 @@
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
-import { VISIBILITY_OPTIONS } from '@/side-panel/pages/page-layout/constants/visibilityOptions';
+import { VISIBILITY_OPTIONS } from '@/side-panel/pages/page-layout/constants/VisibilityOptions';
 import { useVisibilityLabels } from '@/side-panel/pages/page-layout/hooks/useVisibilityLabels';
 import { expressionToOptionId } from '@/side-panel/pages/page-layout/utils/expressionToOptionId';
 import { optionIdToExpression } from '@/side-panel/pages/page-layout/utils/optionIdToExpression';

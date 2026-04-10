@@ -51,13 +51,13 @@ export const WidgetSettingsManageSection = ({
 
   const { openModal } = useModal();
 
-  if (!isDefined(pageLayoutEditingWidgetId)) {
-    return null;
-  }
-
   const visibilityLabel = useTranslatedVisibilityLabel(
     widgetInEditMode?.conditionalAvailabilityExpression,
   );
+
+  if (!isDefined(pageLayoutEditingWidgetId)) {
+    return null;
+  }
 
   const handleResetToDefault = () => {
     openModal(RESET_WIDGET_TO_DEFAULT_MODAL_ID);
