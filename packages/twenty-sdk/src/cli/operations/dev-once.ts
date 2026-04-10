@@ -235,12 +235,12 @@ const innerAppDevOnce = async (
   onProgress?.('Generating API client...');
 
   try {
-    const authToken = await ensureValidAppAccessTokenOrRefresh(configService);
+    const appAccessToken = await ensureValidAppAccessTokenOrRefresh(configService);
     const clientService = new ClientService();
 
     await clientService.generateCoreClient({
       appPath,
-      authToken,
+      appAccessToken,
     });
   } catch (error) {
     return {

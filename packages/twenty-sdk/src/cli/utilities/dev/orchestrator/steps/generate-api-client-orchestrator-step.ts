@@ -33,11 +33,11 @@ export class GenerateApiClientOrchestratorStep {
     this.notify();
 
     try {
-      const authToken = await ensureValidAppAccessTokenOrRefresh(this.configService);
+      const appAccessToken = await ensureValidAppAccessTokenOrRefresh(this.configService);
 
       await this.clientService.generateCoreClient({
         appPath: input.appPath,
-        authToken,
+        appAccessToken,
       });
 
       step.status = 'done';
