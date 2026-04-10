@@ -1,15 +1,8 @@
-import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
-import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
-import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
-import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { SidePanelPages } from 'twenty-shared/types';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -20,42 +13,15 @@ import {
 } from 'twenty-ui/layout';
 
 export const StandaloneWidgetPlaceholder = () => {
-  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
-    PageLayoutComponentInstanceContext,
-  );
-
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
-  const isLayoutCustomizationModeEnabled = useAtomStateValue(
-    isLayoutCustomizationModeEnabledState,
-  );
-
-  const { setIsPageLayoutInEditMode } =
-    useSetIsPageLayoutInEditMode(pageLayoutId);
-
-  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
-
-  const handleClick = () => {
-    if (isLayoutCustomizationModeEnabled) {
-      return;
-    }
-
-    if (!isPageLayoutInEditMode) {
-      setIsPageLayoutInEditMode(true);
-    }
-    navigatePageLayoutSidePanel({
-      sidePanelPage: SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
-      resetNavigationStack: true,
-    });
-  };
 
   return (
     <WidgetCard
       variant="standalone"
-      isEditable={true}
+      isEditable={false}
       isEditing={false}
       isDragging={false}
       isResizing={false}
-      onClick={handleClick}
       className="widget"
     >
       <WidgetCardHeader
@@ -73,10 +39,10 @@ export const StandaloneWidgetPlaceholder = () => {
         <AnimatedPlaceholder type="noWidgets" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            <Trans>Add widget</Trans>
+            <Trans>Nothing to see</Trans>
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            <Trans>Click to add your first widget</Trans>
+            <Trans>This page has no content</Trans>
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
       </AnimatedPlaceholderEmptyContainer>

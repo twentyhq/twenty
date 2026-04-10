@@ -7,6 +7,7 @@ import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutType } from '~/generated-metadata/graphql';
+import { StandalonePageHeader } from '~/pages/page-layout/StandalonePageHeader';
 
 export const StandalonePageLayoutPage = () => {
   const { pageLayoutId } = useParams<{ pageLayoutId: string }>();
@@ -17,6 +18,7 @@ export const StandalonePageLayoutPage = () => {
 
   return (
     <PageContainer>
+      <StandalonePageHeader pageLayoutId={pageLayoutId} />
       <ContextStoreComponentInstanceContext.Provider
         value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
       >

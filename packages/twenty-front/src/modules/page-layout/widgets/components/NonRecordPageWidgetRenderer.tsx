@@ -26,9 +26,7 @@ export const NonRecordPageWidgetRenderer = ({
       actions={[]}
       isReorderEnabled={true}
       isDeletingWidgetEnabled={true}
-      onClick={
-        state.isPageLayoutInEditMode ? state.handleClick : undefined
-      }
+      onClick={state.isPageLayoutInEditMode ? state.handleClick : undefined}
       onRemove={state.handleRemove}
       onMouseEnter={state.handleMouseEnter}
       onMouseLeave={state.handleMouseLeave}

@@ -77,9 +77,7 @@ export const RecordPageWidgetRenderer = ({
   );
 
   if (shouldWrapWithEditingWrapper) {
-    return (
-      <StyledEditingWidgetWrapper>{shell}</StyledEditingWidgetWrapper>
-    );
+    return <StyledEditingWidgetWrapper>{shell}</StyledEditingWidgetWrapper>;
   }
 
   return shell;
