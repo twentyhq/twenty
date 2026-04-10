@@ -1,0 +1,171 @@
+name: CI Create App E2E minimal
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  changed-files-check:
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        packages/create-twenty-app/**
+        packages/twenty-sdk/**
+        packages/twenty-client-sdk/**
+        packages/twenty-shared/**
+        !packages/create-twenty-app/package.json
+        !packages/twenty-sdk/package.json
+        !packages/twenty-client-sdk/package.json
+        !packages/twenty-shared/package.json
+  create-app-e2e-minimal:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    timeout-minutes: 30
+    runs-on: ubuntu-latest-4-cores
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+    env:
+      PUBLISHABLE_PACKAGES: twenty-client-sdk twenty-sdk create-twenty-app
+      TWENTY_API_URL: http://localhost:3000
+      TWENTY_API_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ1c2VySWQiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtNDYzZi00MzViLTgyOGMtMTA3ZTAwN2EyNzExIiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWU3Yy00M2Q5LWE1ZGItNjg1YjUwNjlkODE2IiwidHlwZSI6IkFDQ0VTUyIsImF1dGhQcm92aWRlciI6InBhc3N3b3JkIiwiaWF0IjoxNzUxMjgxNzA0LCJleHAiOjIwNjY4NTc3MDR9.HMGqCsVlOAPVUBhKSGlD1X86VoHKt4LIUtET3CGIdik
+    steps:
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 10
+
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+
+      - name: Set CI version and prepare packages for publish
+        run: |
+          CI_VERSION="0.0.0-ci.$(date +%s)"
+          echo "CI_VERSION=$CI_VERSION" >> $GITHUB_ENV
+          npx nx run-many -t set-local-version -p $PUBLISHABLE_PACKAGES --releaseVersion=$CI_VERSION
+
+      - name: Build packages
+        run: |
+          for pkg in $PUBLISHABLE_PACKAGES; do
+            npx nx build $pkg
+          done
+
+      - name: Install and start Verdaccio
+        run: |
+          npx verdaccio --config .github/verdaccio-config.yaml &
+
+          for i in $(seq 1 30); do
+            if curl -s http://localhost:4873 > /dev/null 2>&1; then
+              echo "Verdaccio is ready"
+              break
+            fi
+            echo "Waiting for Verdaccio... ($i/30)"
+            sleep 1
+          done
+
+      - name: Publish packages to local registry
+        run: |
+          yarn config set npmRegistryServer http://localhost:4873
+          yarn config set unsafeHttpWhitelist --json '["localhost"]'
+          yarn config set npmAuthToken ci-auth-token
+
+          for pkg in $PUBLISHABLE_PACKAGES; do
+            cd packages/$pkg
+            yarn npm publish --tag ci
+            cd ../..
+          done
+
+      - name: Scaffold app using published create-twenty-app
+        run: |
+          npm install -g create-twenty-app@$CI_VERSION --registry http://localhost:4873
+          create-twenty-app --version
+          mkdir -p /tmp/e2e-test-workspace
+          cd /tmp/e2e-test-workspace
+          create-twenty-app test-app --display-name "Test scaffolded app" --description "E2E test scaffolded app" --skip-local-instance
+
+      - name: Install scaffolded app dependencies
+        run: |
+          cd /tmp/e2e-test-workspace/test-app
+          echo 'npmRegistryServer: "http://localhost:4873"' >> .yarnrc.yml
+          echo 'unsafeHttpWhitelist: ["localhost"]' >> .yarnrc.yml
+          YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install --no-immutable
+
+      - name: Verify installed app versions
+        run: |
+          cd /tmp/e2e-test-workspace/test-app
+          echo "--- Checking package.json references correct SDK version ---"
+          node -e "
+            const pkg = require('./package.json');
+            const sdkVersion = pkg.dependencies['twenty-sdk'];
+            if (!sdkVersion.startsWith('0.0.0-ci.')) {
+              console.error('Expected twenty-sdk version to start with 0.0.0-ci., got:', sdkVersion);
+              process.exit(1);
+            }
+            console.log('SDK version in scaffolded app:', sdkVersion);
+          "
+
+      - name: Verify SDK CLI is available
+        run: |
+          cd /tmp/e2e-test-workspace/test-app
+          npx --no-install twenty --version
+
+      - name: Setup server environment
+        run: npx nx reset:env:e2e-testing-server twenty-server
+
+      - name: Create databases
+        run: |
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+
+      - name: Setup database
+        run: npx nx run twenty-server:database:reset
+
+      - name: Start server
+        run: nohup npx nx start:ci twenty-server &
+
+      - name: Wait for server to be ready
+        run: npx wait-on http://localhost:3000/healthz --timeout 120000 --interval 1000
+
+      - name: Authenticate with twenty-server
+        run: |
+          cd /tmp/e2e-test-workspace/test-app
+          npx --no-install twenty remote add --api-key ${{ env.TWENTY_API_KEY }} --api-url ${{ env.TWENTY_API_URL }}
+
+      - name: Run scaffolded app integration test (deploys, installs, and verifies the app)
+        run: |
+          cd /tmp/e2e-test-workspace/test-app
+          yarn test
+
+  ci-create-app-e2e-minimal-status-check:
+    if: always() && !cancelled()
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs: [changed-files-check, create-app-e2e-minimal]
+    steps:
+      - name: Fail job if any needs failed
+        if: contains(needs.*.result, 'failure')
+        run: exit 1

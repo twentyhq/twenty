@@ -81,7 +81,7 @@ import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
 export default defineApplication({
-  universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',
   icon: 'IconWorld',
@@ -644,48 +644,14 @@ export default defineLogicFunction({
 </Note>
 
 </Accordion>
-<Accordion title="definePreInstallLogicFunction" description="تعريف دالة منطقية لما قبل التثبيت (واحدة لكل تطبيق)">
-
-دالة ما قبل التثبيت هي دالة منطقية تعمل تلقائيًا قبل تثبيت تطبيقك على مساحة عمل. يفيد ذلك في مهام التحقق، وفحص المتطلبات المسبقة، أو تجهيز حالة مساحة العمل قبل متابعة التثبيت الرئيسي.
-
-```ts src/logic-functions/pre-install.ts
-import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
-
-const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
-  console.log('Pre install logic function executed successfully!', payload.previousVersion);
-};
-
-export default definePreInstallLogicFunction({
-  universalIdentifier: 'e0604b9e-e946-456b-886d-3f27d9a6b324',
-  name: 'pre-install',
-  description: 'Runs before installation to prepare the application.',
-  timeoutSeconds: 300,
-  handler,
-});
-```
-
-يمكنك أيضًا تنفيذ دالة ما قبل التثبيت يدويًا في أي وقت باستخدام CLI:
-
-```bash filename="Terminal"
-yarn twenty exec --preInstall
-```
-
-النقاط الرئيسية:
-* تستخدم دوال ما قبل التثبيت `definePreInstallLogicFunction()` — وهو إصدار متخصص يستبعد إعدادات المُشغِّل (`cronTriggerSettings` و`databaseEventTriggerSettings` و`httpRouteTriggerSettings` و`isTool`).
-* يتلقى المُعالج `InstallLogicFunctionPayload` يحوي `{ previousVersion: string }` — إصدار التطبيق الذي كان مُثبّتًا سابقًا (أو سلسلة فارغة للتثبيتات الجديدة).
-* يُسمح بدالة ما قبل التثبيت واحدة فقط لكل تطبيق. سيُنتج إنشاء ملف البيان خطأً إذا تم اكتشاف أكثر من واحدة.
-* يتم تعيين `universalIdentifier` للدالة تلقائيًا كـ `preInstallLogicFunctionUniversalIdentifier` في بيان التطبيق أثناء الإنشاء — لست بحاجة إلى الإشارة إليه في `defineApplication()`.
-* تم ضبط المهلة الافتراضية على 300 ثانية (5 دقائق) للسماح بمهام التحضير الأطول.
-
-</Accordion>
 <Accordion title="definePostInstallLogicFunction" description="تعريف دالة منطقية لما بعد التثبيت (واحدة لكل تطبيق)">
 
-دالة ما بعد التثبيت هي دالة منطقية تعمل تلقائيًا بعد تثبيت تطبيقك على مساحة عمل. هذا مفيد لمهام الإعداد لمرة واحدة مثل تهيئة البيانات الافتراضية، وإنشاء السجلات الأولية، أو تكوين إعدادات مساحة العمل.
+دالة ما بعد التثبيت هي دالة منطقية تعمل تلقائيًا بعد تثبيت تطبيقك على مساحة عمل. ينفّذه الخادم **بعد** مزامنة البيانات الوصفية للتطبيق وإنشاء عميل SDK، بحيث تكون مساحة العمل جاهزة تمامًا للاستخدام ويكون المخطط الجديد مطبَّقًا. تشمل حالات الاستخدام النموذجية تهيئة البيانات الافتراضية، وإنشاء السجلات الأولية، وتكوين إعدادات مساحة العمل، أو توفير الموارد على خدمات جهات خارجية.
 
 ```ts src/logic-functions/post-install.ts
-import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
 
-const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+const handler = async (payload: InstallPayload): Promise<void> => {
   console.log('Post install logic function executed successfully!', payload.previousVersion);
 };
 
@@ -694,6 +660,8 @@ export default definePostInstallLogicFunction({
   name: 'post-install',
   description: 'Runs after installation to set up the application.',
   timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  shouldRunSynchronously: false,
   handler,
 });
 ```
@@ -706,15 +674,180 @@ yarn twenty exec --postInstall
 
 النقاط الرئيسية:
 * تستخدم دوال ما بعد التثبيت `definePostInstallLogicFunction()` — وهو إصدار متخصص يستبعد إعدادات المُشغِّل (`cronTriggerSettings` و`databaseEventTriggerSettings` و`httpRouteTriggerSettings` و`isTool`).
-* يتلقى المُعالج `InstallLogicFunctionPayload` يحوي `{ previousVersion: string }` — إصدار التطبيق الذي كان مُثبّتًا سابقًا (أو سلسلة فارغة للتثبيتات الجديدة).
+* يتلقى المعالج `InstallPayload` يحتوي على `{ previousVersion?: string; newVersion: string }` — حيث إن `newVersion` هو الإصدار الجاري تثبيته، و`previousVersion` هو الإصدار الذي كان مُثبّتًا سابقًا (أو `undefined` عند التثبيت الأولي). استخدم هذه القيم للتمييز بين عمليات التثبيت الجديدة والترقيات ولتشغيل منطق الترحيل الخاص بالإصدار.
+* **موعد تشغيل الخطاف**: في عمليات التثبيت الجديدة فقط، افتراضيًا. مرّر `shouldRunOnVersionUpgrade: true` إذا كنت تريد تشغيله أيضًا عند ترقية التطبيق من إصدار سابق. عند إغفاله، تكون القيمة الافتراضية للعلم `false`، وتتجاوز الترقيات هذا الخطاف.
+* **نموذج التنفيذ — غير متزامن افتراضيًا، والتزامني اختياري**: يتحكّم العلم `shouldRunSynchronously` في كيفية تنفيذ ما بعد التثبيت.
+  * `shouldRunSynchronously: false` *(الإعداد الافتراضي)* — يتم **إدراج الخطاف في قائمة الرسائل** مع `retryLimit: 3` ويعمل بشكل غير متزامن داخل عامل عمل. يعود ردّ التثبيت بمجرد وضع المهمة في الطابور، لذا فإن معالجًا بطيئًا أو متعطلًا لا يحجب المستدعي. سيُجرِّب العامل إعادة المحاولة حتى ثلاث مرات. **استخدم هذا للمهام طويلة التشغيل** — بَذر مجموعات بيانات كبيرة، استدعاء واجهات برمجة تطبيقات خارجية بطيئة، تهيئة موارد خارجية، أو أي شيء قد يتجاوز نافذة استجابة HTTP المعقولة.
+  * `shouldRunSynchronously: true` — يُنفّذ الخطاف **ضمن تدفّق التثبيت مباشرةً** (نفس المنفِّذ كما قبل التثبيت). يَحجُب طلب التثبيت حتى ينتهي المعالج، وإذا رمى استثناءً، سيتلقى مستدعي التثبيت `POST_INSTALL_ERROR`. لا توجد محاولات إعادة تلقائية. **استخدم هذا للمهام السريعة التي يجب إكمالها قبل الاستجابة** — مثل إظهار خطأ تحقق للمستخدم، أو إعداد سريع سيعتمد عليه العميل مباشرةً بعد عودة نداء التثبيت. ضع في اعتبارك أن ترحيل البيانات الوصفية يكون قد طُبِّق بالفعل عند تشغيل ما بعد التثبيت، لذلك فإن فشل الوضع المتزامن **لا** يعيد التغييرات على المخطط إلى الوراء — بل يكتفي بإبراز الخطأ.
+* تأكّد من أن معالجك قابل للتنفيذ المتكرر دون آثار جانبية. في الوضع غير المتزامن قد تُعيد قائمة الانتظار المحاولة حتى ثلاث مرات؛ وفي أي من الوضعين قد يعمل الخطاف مجددًا أثناء الترقيات عند ضبط `shouldRunOnVersionUpgrade: true`.
+* متغيرات البيئة `APPLICATION_ID` و`APP_ACCESS_TOKEN` و`API_URL` متاحة داخل المعالج (كما في أي دالة منطق أخرى)، لذا يمكنك استدعاء واجهة Twenty API باستخدام رمز وصول للتطبيق مقيّد بنطاق تطبيقك.
 * يُسمح بدالة ما بعد التثبيت واحدة فقط لكل تطبيق. سيُنتج إنشاء ملف البيان خطأً إذا تم اكتشاف أكثر من واحدة.
-* يتم تعيين `universalIdentifier` للدالة تلقائيًا كـ `postInstallLogicFunctionUniversalIdentifier` في بيان التطبيق أثناء الإنشاء — لست بحاجة إلى الإشارة إليه في `defineApplication()`.
+* تُرفَق خصائص الدالة `universalIdentifier` و`shouldRunOnVersionUpgrade` و`shouldRunSynchronously` تلقائيًا ببيان التطبيق ضمن الحقل `postInstallLogicFunction` أثناء عملية البناء — ولا تحتاج إلى الإشارة إليها في `defineApplication()`.
 * تم تعيين مهلة افتراضية إلى 300 ثانية (5 دقائق) للسماح بمهام الإعداد الأطول مثل تهيئة البيانات.
+* **لا يُنفَّذ في وضع التطوير**: عند تسجيل تطبيق محليًا (عبر `yarn twenty dev`)، يتجاوز الخادم تدفّق التثبيت بالكامل ويُزامن الملفات مباشرةً عبر مراقِب CLI — لذا لن يعمل ما بعد التثبيت في وضع التطوير مطلقًا، بغضّ النظر عن `shouldRunSynchronously`. استخدم `yarn twenty exec --postInstall` لتشغيله يدويًا على مساحة عمل قيد التشغيل.
+
+</Accordion>
+<Accordion title="definePreInstallLogicFunction" description="تعريف دالة منطقية لما قبل التثبيت (واحدة لكل تطبيق)">
+
+دالة ما قبل التثبيت هي دالة منطقية تعمل تلقائيًا أثناء التثبيت، **قبل تطبيق ترحيل البيانات الوصفية لمساحة العمل**. تتشارك نفس بنية الحمولة مع ما بعد التثبيت (`InstallPayload`)، لكنها موضوعة أبكر في تدفّق التثبيت كي تجهّز حالة يعتمد عليها الترحيل القادم — ومن الاستخدامات الشائعة: نسخ البيانات احتياطيًا، التحقق من التوافق مع المخطط الجديد، أو أرشفة السجلات التي ستُعاد هيكلتها أو ستُحذف.
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
+
+const handler = async (payload: InstallPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+يمكنك أيضًا تنفيذ دالة ما قبل التثبيت يدويًا في أي وقت باستخدام CLI:
+
+```bash filename="Terminal"
+yarn twenty exec --preInstall
+```
+
+النقاط الرئيسية:
+* تستخدم دوال ما قبل التثبيت `definePreInstallLogicFunction()` — نفس الإعدادات المتخصصة كما في ما بعد التثبيت، لكنها مرتبطة بموضع مختلف ضمن دورة الحياة.
+* يتلقّى كلٌّ من معالجي ما قبل التثبيت وما بعد التثبيت النوع نفسه `InstallPayload`: `{ previousVersion?: string; newVersion: string }`. استورده مرة واحدة وأعد استخدامه لكلا الخطافين.
+* **موعد تشغيل الخطاف**: موضوع مباشرةً قبل ترحيل البيانات الوصفية لمساحة العمل (`synchronizeFromManifest`). قبل التنفيذ، يُشغِّل الخادم مزامنة "pared-down sync" ذات طابع إضافي فقط تقوم بتسجيل دالة ما قبل التثبيت للإصدار **الجديد** في البيانات الوصفية لمساحة العمل — دون لمس أي شيء آخر — ثم يُنفّذها. لأن هذه المزامنة «إضافية فقط»، تبقى كائنات وحقول وبيانات الإصدار السابق سليمة عند تشغيل معالجك: يمكنك قراءة حالة ما قبل الترحيل ونسخها احتياطيًا بأمان.
+* **نموذج التنفيذ**: يُنفَّذ ما قبل التثبيت **بشكل متزامن** و**يحجب عملية التثبيت**. إذا رمى المعالج استثناءً، تُلغى عملية التثبيت قبل تطبيق أي تغييرات على المخطط — وتبقى مساحة العمل على الإصدار السابق بحالة متّسقة. هذا مقصود: ما قبل التثبيت هو فرصتك الأخيرة لرفض ترقية تنطوي على مخاطر.
+* كما هو الحال مع ما بعد التثبيت، يُسمح بدالة ما قبل التثبيت واحدة فقط لكل تطبيق. تُربَط تلقائيًا ببيان التطبيق تحت `preInstallLogicFunction` أثناء عملية البناء.
+* **لا يُنفَّذ في وضع التطوير**: كما في ما بعد التثبيت — يتم تجاوز تدفّق التثبيت بالكامل للتطبيقات المسجّلة محليًا، لذا لن يعمل ما قبل التثبيت مطلقًا عند `yarn twenty dev`. استخدم `yarn twenty exec --preInstall` لتشغيله يدويًا.
+
+</Accordion>
+<Accordion title="ما قبل التثبيت مقابل ما بعد التثبيت: متى تستخدم أيّهما" description="اختيار خطاف التثبيت المناسب">
+
+كلا الخطافين جزء من تدفّق التثبيت نفسه ويتلقّيان نفس `InstallPayload`. الاختلاف يكمن في **موعد** تشغيلهما نسبةً إلى ترحيل البيانات الوصفية لمساحة العمل، وهذا يغيّر البيانات التي يمكنهما التعامل معها بأمان.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ install flow                                                │
+│                                                             │
+│   upload package → [pre-install] → metadata migration →     │
+│   generate SDK → [post-install]                             │
+│                                                             │
+│                  old schema visible    new schema visible   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+ما قبل التثبيت دائمًا **متزامن** (يحجب التثبيت ويمكنه إحباطه). ما بعد التثبيت **غير متزامن افتراضيًا** — يُدرج على عامل مع محاولات إعادة تلقائية — لكن يمكن التبديل إلى تنفيذ متزامن عبر `shouldRunSynchronously: true`. راجع الأكورديون `definePostInstallLogicFunction` أعلاه لمعرفة متى تستخدم كل وضع.
+
+**استخدم `post-install` لأي شيء يتطلّب وجود المخطط الجديد.** وهذا هو السيناريو الشائع:
+
+* بَذر بيانات افتراضية (إنشاء سجلات أولية وعروض افتراضية ومحتوى تجريبي) للكائنات والحقول المضافة حديثًا.
+* تسجيل خطافات الويب مع خدمات أطراف ثالثة بعد أن حصل التطبيق على بيانات الاعتماد الخاصة به.
+* استدعاء واجهة برمجة التطبيقات الخاصة بك لإكمال إعداد يعتمد على البيانات الوصفية المتزامنة.
+* منطق idempotent لتحقيق "تأكّد من وجود هذا" والذي ينبغي مواءمة الحالة في كل ترقية — بالاقتران مع `shouldRunOnVersionUpgrade: true`.
+
+مثال — بَذر سجل `PostCard` افتراضي بعد التثبيت:
+
+```ts src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
+import { createClient } from './generated/client';
+
+const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
+  if (previousVersion) return; // fresh installs only
+
+  const client = createClient();
+  await client.postCard.create({
+    data: { title: 'Welcome to Postcard', content: 'Your first card!' },
+  });
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'f7a2b9c1-3d4e-5678-abcd-ef9876543210',
+  name: 'post-install',
+  description: 'Seeds a welcome post card after install.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  handler,
+});
+```
+
+**استخدم `pre-install` عندما قد يُتلف الترحيل أو يدمّر البيانات الحالية.** لأن ما قبل التثبيت يعمل مقابل المخطط *السابق* وفشله يُرجِع الترقية إلى الوراء، فهو المكان المناسب لأي شيء محفوف بالمخاطر:
+
+* **نسخ البيانات احتياطيًا قبل حذفها أو إعادة هيكلتها** — مثل إزالة حقل في v2 وتحتاج إلى نسخ قيمه إلى حقل آخر أو تصديرها إلى التخزين قبل تشغيل الترحيل.
+* **أرشفة السجلات التي سيبطلها قيد جديد** — مثل أن يصبح حقل ما `NOT NULL` وتحتاج أولًا إلى حذف الصفوف ذات القيم الفارغة أو إصلاحها.
+* **التحقق من التوافق ورفض الترقية إذا تعذّر ترحيل البيانات الحالية بسلاسة** — ارمِ من داخل المعالج وسيُلغى التثبيت دون تطبيق أي تغييرات. هذا أكثر أمانًا من اكتشاف عدم التوافق في منتصف الترحيل.
+* **إعادة تسمية البيانات أو إعادة تعيين مفاتيحها** قبل تغيير في المخطط قد يؤدي إلى فقدان الارتباط.
+
+مثال — أرشف السجلات قبل ترحيل هدّام:
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
+import { createClient } from './generated/client';
+
+const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
+  // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
+  if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
+    return;
+  }
+
+  const client = createClient();
+  const legacyRecords = await client.postCard.findMany({
+    where: { notes: { isNotNull: true } },
+  });
+
+  if (legacyRecords.length === 0) return;
+
+  // Copy legacy `notes` into the new `description` field before the migration
+  // drops the `notes` column. If this fails, the upgrade is aborted and the
+  // workspace stays on v1 with all data intact.
+  await Promise.all(
+    legacyRecords.map((record) =>
+      client.postCard.update({
+        where: { id: record.id },
+        data: { description: record.notes },
+      }),
+    ),
+  );
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Backs up legacy notes into description before the v2 migration.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+**قاعدة عامة:**
+
+| ترغب في…                                                                       | استخدام                                                                                          |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| بذر بيانات افتراضية، تهيئة مساحة العمل، تسجيل موارد خارجية                     | `post-install`                                                                                   |
+| تشغيل بذر طويل الأمد أو استدعاءات أطراف ثالثة لا ينبغي أن تحجب استجابة التثبيت | `post-install` (الإعداد الافتراضي — `shouldRunSynchronously: false`، مع محاولات إعادة من العامل) |
+| تشغيل إعداد سريع سيعتمد عليه المستدعي مباشرةً بعد عودة نداء التثبيت            | `post-install` مع `shouldRunSynchronously: true`                                                 |
+| قراءة البيانات أو نسخها احتياطيًا والتي قد يفقدها الترحيل القادم               | `pre-install`                                                                                    |
+| رفض ترقية قد تُفسد البيانات الحالية                                            | `pre-install` (ارمِ من المعالج)                                                                  |
+| تنفيذ مواءمة في كل ترقية                                                       | `post-install` مع `shouldRunOnVersionUpgrade: true`                                              |
+| تنفيذ إعداد لمرة واحدة في التثبيت الأول فقط                                    | `post-install` مع `shouldRunOnVersionUpgrade: false` (الإعداد الافتراضي)                         |
+
+<Note>
+إذا ساورك الشك، فاجعل الافتراضي هو **post-install**. الجأ إلى ما قبل التثبيت فقط عندما يكون الترحيل نفسه هدّامًا وتحتاج إلى التقاط الحالة السابقة قبل أن تزول.
+</Note>
 
 </Accordion>
 <Accordion title="defineFrontComponent" description="عرِّف مكوّنات أمامية لواجهة مستخدم مخصّصة">
 
 المكوّنات الأمامية هي مكوّنات React تُعرَض مباشرة داخل واجهة مستخدم Twenty. تعمل ضمن **Web Worker** معزول باستخدام Remote DOM — تكون شيفرتك في صندوق عزل لكنها تُعرَض أصيلًا داخل الصفحة، وليس ضمن iframe.
+
+#### أين يمكن استخدام مكوّنات الواجهة الأمامية
+
+يمكن عرض مكوّنات الواجهة الأمامية في موقعين داخل Twenty:
+
+* **اللوحة الجانبية** — المكوّنات غير عديمة الرأس تفتح في اللوحة الجانبية اليمنى. هذا هو السلوك الافتراضي عندما يتم تشغيل مكوّن واجهة أمامية من قائمة الأوامر.
+* **الويدجت (لوحات المعلومات وصفحات السجلات)** — يمكن تضمين مكوّنات الواجهة الأمامية كويدجت داخل تخطيطات الصفحات. عند تكوين لوحة معلومات أو تخطيط صفحة سجل، يمكن للمستخدمين إضافة ويدجت لمكوّن واجهة أمامية.
 
 #### مثال أساسي
 
@@ -748,7 +881,7 @@ export default defineFrontComponent({
 });
 ```
 
-بعد المزامنة باستخدام `yarn twenty dev`، يظهر الإجراء السريع في الزاوية العلوية اليمنى من الصفحة:
+بعد المزامنة باستخدام `yarn twenty dev` (أو تشغيل الأمر لمرة واحدة `yarn twenty dev --once`)، يظهر الإجراء السريع في الزاوية العلوية اليمنى من الصفحة:
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/quick-action.png" alt="زر إجراء سريع في الزاوية العلوية اليمنى" />
@@ -773,9 +906,13 @@ export default defineFrontComponent({
 
 إضافةً إلى الأوامر، يمكنك تضمين مكوّن أمامي مباشرةً في صفحة سجل عبر إضافته كودجت في **تخطيط صفحة**. راجع قسم [definePageLayout](#definepagelayout) للتفاصيل.
 
-#### مكوّنات عديمة الواجهة (`isHeadless: true`)
+#### عديم الرأس مقابل غير عديم الرأس
 
-المكوّنات عديمة الواجهة لا تُظهر واجهة مرئية لكنها ما تزال تُشغِّل منطق React. يكون هذا مفيدًا لـ **مكوّنات التأثير** — وهي مكوّنات تُجري تأثيرات جانبية عند التثبيت، مثل مزامنة البيانات، بدء مؤقّت، الاستماع إلى الأحداث، أو إطلاق إشعار.
+تأتي مكوّنات الواجهة الأمامية بوضعَي عرض يتحكّم بهما الخيار `isHeadless`:
+
+**غير عديم الرأس (افتراضي)** — يعرض المكوّن واجهة مستخدم مرئية. عند تشغيله من قائمة الأوامر يفتح في اللوحة الجانبية. هذا هو السلوك الافتراضي عندما تكون `isHeadless` تساوي `false` أو يتم تجاهلها.
+
+**عديم الرأس (`isHeadless: true`)** — يتم تركيب المكوّن بشكل غير مرئي في الخلفية. لا يفتح اللوحة الجانبية. تم تصميم المكوّنات عديمة الرأس لإجراءات تنفّذ منطقًا ثم تُزيل تركيبها ذاتيًا — على سبيل المثال، تشغيل مهمة غير متزامنة، أو الانتقال إلى صفحة، أو إظهار نافذة تأكيد منبثقة. تتوافق بشكل طبيعي مع مكوّنات Command في SDK الموصوفة أدناه.
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent, useRecordId, enqueueSnackbar } from 'twenty-sdk';
@@ -801,6 +938,89 @@ export default defineFrontComponent({
 ```
 
 نظرًا لأن المكوّن يُرجع `null`، فإن Twenty يتخطّى عرض حاوية له — ولن تظهر مساحة فارغة في التخطيط. لا يزال لدى المكوّن إمكانية الوصول إلى جميع الخطافات وواجهة برمجة الاتصال مع المضيف.
+
+#### مكوّنات Command في SDK
+
+توفر حزمة `twenty-sdk` أربعة مكوّنات مساعدة من نوع Command مصممة للمكوّنات عديمة الرأس في الواجهة الأمامية. كل مكوّن ينفّذ إجراءً عند التركيب، ويتعامل مع الأخطاء بعرض إشعار Snackbar، ويزيل تركيب مكوّن الواجهة الأمامية تلقائيًا عند الانتهاء.
+
+استوردها من `twenty-sdk/command`:
+
+* **`Command`** — يشغّل رد نداء غير متزامن عبر الخاصية `execute`.
+* **`CommandLink`** — ينتقل إلى مسار في التطبيق. الخصائص: `to`، `params`، `queryParams`، `options`.
+* **`CommandModal`** — يفتح نافذة تأكيد منبثقة. إذا أكّد المستخدم، ينفّذ رد النداء `execute`. الخصائص: `title`، `subtitle`، `execute`، `confirmButtonText`، `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — يفتح صفحة محدّدة في اللوحة الجانبية. الخصائص: `page`، `pageTitle`، `pageIcon`.
+
+فيما يلي مثال كامل لمكوّن واجهة أمامية عديم الرأس يستخدم `Command` لتشغيل إجراء من قائمة الأوامر:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+    label: 'Run my action',
+    icon: 'IconPlayerPlay',
+  },
+});
+```
+
+ومثال يستخدم `CommandModal` لطلب التأكيد قبل التنفيذ:
+
+```tsx src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+    label: 'Delete draft',
+    icon: 'IconTrash',
+  },
+});
+```
 
 #### الوصول إلى سياق وقت التشغيل
 
@@ -857,6 +1077,50 @@ export default defineFrontComponent({
 | `enqueueSnackbar(params)`                       | عرض إشعار توست                 |
 | `unmountFrontComponent()`                       | إلغاء تركيب المكوّن            |
 | `updateProgress(progress)`                      | تحديث مؤشّر التقدّم            |
+
+فيما يلي مثال يستخدم واجهة برمجة تطبيقات المضيف لعرض Snackbar وإغلاق اللوحة الجانبية بعد اكتمال الإجراء:
+
+```tsx src/front-components/archive-record.tsx
+import { defineFrontComponent, useRecordId } from 'twenty-sdk';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
 
 #### خيارات الأوامر
 
@@ -1263,7 +1527,7 @@ export default defineFrontComponent({
 
 ### كيف يعمل التجميع
 
-تستخدم خطوة البناء (`yarn twenty dev` أو `yarn twenty build`) أداة esbuild لإنتاج ملف واحد مستقل لكل دالة منطقية وكل مكوّن أمامي. تُضمَّن جميع الحزم المستوردة داخل الحزمة.
+تستخدم خطوة البناء أداة esbuild لإنتاج ملف واحد مستقل لكل دالة منطقية ولكل مكوّن أمامي. تُضمَّن جميع الحزم المستوردة داخل الحزمة.
 
 **الدوال المنطقية** تعمل في بيئة Node.js. الوحدات المدمجة في Node (`fs` و`path` و`crypto` و`http` وغيرها) متاحة ولا تحتاج إلى تثبيت.
 
@@ -1678,8 +1942,7 @@ yarn twenty exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 # Pass a JSON payload
 yarn twenty exec -n create-new-post-card -p '{"name": "Hello"}'
 
-# Execute pre-install or post-install functions
-yarn twenty exec --preInstall
+# Execute the post-install function
 yarn twenty exec --postInstall
 ```
 
@@ -1712,3 +1975,86 @@ yarn twenty uninstall
 # Skip the confirmation prompt
 yarn twenty uninstall --yes
 ```
+
+## إدارة الريموتات
+
+**الريموت** هو خادم Twenty يتصل به تطبيقك. أثناء الإعداد، تُنشئ أداة إنشاء الهيكل واحدًا لك تلقائيًا. يمكنك إضافة ريموتات أخرى أو التبديل بينها في أي وقت.
+
+```bash filename="Terminal"
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote add
+
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote add --local
+
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+
+# List all configured remotes
+yarn twenty remote list
+
+# Switch the active remote
+yarn twenty remote switch <name>
+```
+
+تُخزَّن بيانات اعتمادك في `~/.twenty/config.json`.
+
+## التكامل المستمر (CI) باستخدام GitHub Actions
+
+تولّد أداة إنشاء الهيكل سير عمل GitHub Actions جاهزًا للاستخدام في `.github/workflows/ci.yml`. يشغّل اختبارات التكامل لديك تلقائيًا عند كل دفع إلى `main` وعلى طلبات السحب.
+
+سير العمل:
+
+1. يجلب الشيفرة الخاصة بك
+2. يشغّل خادم Twenty مؤقتًا باستخدام الإجراء `twentyhq/twenty/.github/actions/spawn-twenty-docker-image`
+3. يثبّت التبعيات باستخدام `yarn install --immutable`
+4. يشغّل `yarn test` مع حقن `TWENTY_API_URL` و`TWENTY_API_KEY` من مخرجات الإجراء
+
+```yaml .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+
+env:
+  TWENTY_VERSION: latest
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Spawn Twenty instance
+        id: twenty
+        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
+        with:
+          twenty-version: ${{ env.TWENTY_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run integration tests
+        run: yarn test
+        env:
+          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
+          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
+```
+
+لا تحتاج إلى تهيئة أي أسرار — إذ يبدأ إجراء `spawn-twenty-docker-image` خادم Twenty عابرًا مباشرة في المشغّل ويُخرِج تفاصيل الاتصال. يتم توفير السر `GITHUB_TOKEN` تلقائيًا من قِبل GitHub.
+
+لتثبيت إصدار محدّد من Twenty بدلًا من `latest`، غيّر متغير البيئة `TWENTY_VERSION` في أعلى سير العمل.

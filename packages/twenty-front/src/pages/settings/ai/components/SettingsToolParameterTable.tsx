@@ -1,3 +1,4 @@
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ComponentType, useContext } from 'react';
@@ -89,7 +90,9 @@ export const SettingsToolParameterTable = ({
   const entries = Object.entries(schemaProperties);
 
   if (entries.length === 0 && !functionLink) {
-    return <div>{t`No parameters`}</div>;
+    return (
+      <SettingsEmptyPlaceholder>{t`No parameters`}</SettingsEmptyPlaceholder>
+    );
   }
 
   return (

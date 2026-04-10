@@ -5,20 +5,20 @@ import { SidePanelNewSidebarItemPage } from '@/navigation-menu-item/edit/side-pa
 import { SidePanelAIChatThreadsPage } from '@/side-panel/pages/ai-chat-threads/components/SidePanelAIChatThreadsPage';
 import { SidePanelAskAIPage } from '@/side-panel/pages/ask-ai/components/SidePanelAskAIPage';
 import { SidePanelCalendarEventPage } from '@/side-panel/pages/calendar-event/components/SidePanelCalendarEventPage';
+import { SidePanelComposeEmailPage } from '@/side-panel/pages/compose-email/components/SidePanelComposeEmailPage';
 import { SidePanelFrontComponentPage } from '@/side-panel/pages/front-component/components/SidePanelFrontComponentPage';
-import { SidePanelMessageThreadPage } from '@/side-panel/pages/message-thread/components/SidePanelMessageThreadPage';
-import { SidePanelPageLayoutChartSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutChartSettings';
-import { SidePanelPageLayoutFieldSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldSettings';
-import { SidePanelPageLayoutFieldsSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutFieldsSettings';
-import { SidePanelPageLayoutIframeSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutIframeSettings';
-import { SidePanelPageLayoutRecordTableSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordTableSettings';
+import { SidePanelDashboardChartSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardChartSettings';
+import { SidePanelDashboardIframeSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardIframeSettings';
+import { SidePanelDashboardRecordTableSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings';
+import { SidePanelRecordPageFieldSettings } from '@/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings';
+import { SidePanelRecordPageFieldsSettings } from '@/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings';
+import { SidePanelPageLayoutDashboardWidgetTypeSelect } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect';
+import { SidePanelPageLayoutRecordPageWidgetTypeSelect } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect';
 import { SidePanelPageLayoutTabSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings';
-import { SidePanelPageLayoutWidgetTypeSelect } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetTypeSelect';
 import { SidePanelMergeRecordPage } from '@/side-panel/pages/record-page/components/SidePanelMergeRecordPage';
 import { SidePanelRecordPage } from '@/side-panel/pages/record-page/components/SidePanelRecordPage';
 import { SidePanelUpdateMultipleRecords } from '@/side-panel/pages/record-page/components/SidePanelUpdateMultipleRecords';
 import { SidePanelEditRichTextPage } from '@/side-panel/pages/rich-text-page/components/SidePanelEditRichTextPage';
-import { SidePanelRootPage } from '@/side-panel/pages/root/components/SidePanelRootPage';
 import { SidePanelSearchRecordsPage } from '@/side-panel/pages/search/components/SidePanelSearchRecordsPage';
 import { SidePanelWorkflowCreateStep } from '@/side-panel/pages/workflow/step/create/components/SidePanelWorkflowCreateStep';
 import { SidePanelWorkflowEditStep } from '@/side-panel/pages/workflow/step/edit/components/SidePanelWorkflowEditStep';
@@ -37,7 +37,6 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<SidePanelPages, React.ReactNode>(
     [SidePanelPages.ViewRecord, <SidePanelRecordPage />],
     [SidePanelPages.MergeRecords, <SidePanelMergeRecordPage />],
     [SidePanelPages.UpdateRecords, <SidePanelUpdateMultipleRecords />],
-    [SidePanelPages.ViewEmailThread, <SidePanelMessageThreadPage />],
     [SidePanelPages.ViewCalendarEvent, <SidePanelCalendarEventPage />],
     [SidePanelPages.EditRichText, <SidePanelEditRichTextPage />],
     [
@@ -53,36 +52,41 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<SidePanelPages, React.ReactNode>(
     [SidePanelPages.AskAI, <SidePanelAskAIPage />],
     [SidePanelPages.ViewPreviousAIChats, <SidePanelAIChatThreadsPage />],
     [
-      SidePanelPages.PageLayoutWidgetTypeSelect,
-      <SidePanelPageLayoutWidgetTypeSelect />,
+      SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
+      <SidePanelPageLayoutDashboardWidgetTypeSelect />,
     ],
     [
-      SidePanelPages.PageLayoutGraphTypeSelect,
-      <SidePanelPageLayoutChartSettings />,
+      SidePanelPages.DashboardChartSettings,
+      <SidePanelDashboardChartSettings />,
     ],
     [
-      SidePanelPages.PageLayoutIframeSettings,
-      <SidePanelPageLayoutIframeSettings />,
+      SidePanelPages.DashboardIframeSettings,
+      <SidePanelDashboardIframeSettings />,
     ],
     [SidePanelPages.PageLayoutTabSettings, <SidePanelPageLayoutTabSettings />],
     [
-      SidePanelPages.PageLayoutFieldsSettings,
-      <SidePanelPageLayoutFieldsSettings />,
+      SidePanelPages.DashboardRecordTableSettings,
+      <SidePanelDashboardRecordTableSettings />,
     ],
     [
-      SidePanelPages.PageLayoutFieldSettings,
-      <SidePanelPageLayoutFieldSettings />,
+      SidePanelPages.RecordPageFieldsSettings,
+      <SidePanelRecordPageFieldsSettings />,
     ],
     [
-      SidePanelPages.PageLayoutRecordTableSettings,
-      <SidePanelPageLayoutRecordTableSettings />,
+      SidePanelPages.RecordPageFieldSettings,
+      <SidePanelRecordPageFieldSettings />,
     ],
     [SidePanelPages.ViewFrontComponent, <SidePanelFrontComponentPage />],
+    [
+      SidePanelPages.PageLayoutRecordPageWidgetTypeSelect,
+      <SidePanelPageLayoutRecordPageWidgetTypeSelect />,
+    ],
     [
       SidePanelPages.NavigationMenuItemEdit,
       <SidePanelNavigationMenuItemEditPage />,
     ],
     [SidePanelPages.NavigationMenuAddItem, <SidePanelNewSidebarItemPage />],
     [SidePanelPages.CommandMenuEdit, <SidePanelCommandMenuItemEditPage />],
+    [SidePanelPages.ComposeEmail, <SidePanelComposeEmailPage />],
   ],
 );

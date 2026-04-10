@@ -4,6 +4,10 @@ import { type ToolSet } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
+import {
+  MCP_PROGRESS_NOTIFICATION_METHOD,
+  TOOL_CALL_PROGRESS_TOKEN_PREFIX,
+} from 'src/engine/api/mcp/constants/mcp-progress-notification.const';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
 
 @Injectable()
@@ -12,6 +16,7 @@ export class McpToolExecutorService {
     id: string | number,
     toolSet: ToolSet,
     params: Record<string, unknown>,
+    sseWriter?: (data: Record<string, unknown>) => void,
   ) {
     const toolName = params.name as keyof typeof toolSet;
     const tool = toolSet[toolName];
@@ -21,6 +26,18 @@ export class McpToolExecutorService {
         error: {
           code: JSON_RPC_ERROR_CODE.INVALID_PARAMS,
           message: `Unknown tool: ${String(params.name)}`,
+        },
+      });
+    }
+
+    if (isDefined(sseWriter)) {
+      sseWriter({
+        jsonrpc: '2.0',
+        method: MCP_PROGRESS_NOTIFICATION_METHOD,
+        params: {
+          progressToken: `${TOOL_CALL_PROGRESS_TOKEN_PREFIX}${String(id)}`,
+          progress: 0,
+          total: 1,
         },
       });
     }

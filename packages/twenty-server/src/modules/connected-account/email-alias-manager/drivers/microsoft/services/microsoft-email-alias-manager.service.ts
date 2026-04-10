@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 @Injectable()
 export class MicrosoftEmailAliasManagerService {
@@ -11,9 +11,7 @@ export class MicrosoftEmailAliasManagerService {
     private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
   ) {}
 
-  public async getHandleAliases(
-    connectedAccount: ConnectedAccountWorkspaceEntity,
-  ) {
+  public async getHandleAliases(connectedAccount: ConnectedAccountEntity) {
     const microsoftClient =
       await this.oAuth2ClientManagerService.getMicrosoftOAuth2Client(
         connectedAccount,

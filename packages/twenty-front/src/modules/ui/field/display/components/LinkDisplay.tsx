@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { LinkType, RoundedLink, SocialLink } from 'twenty-ui/navigation';
 import { checkUrlType } from '~/utils/checkUrlType';
+import { getSafeUrl } from 'twenty-shared/utils';
 
 type LinkDisplayProps = {
   value: { url: string; label?: string | null };
@@ -13,11 +14,7 @@ export const LinkDisplay = ({ value }: LinkDisplayProps) => {
     return <></>;
   }
 
-  const absoluteUrl = url
-    ? url.startsWith('http')
-      ? url
-      : 'https://' + url
-    : '';
+  const absoluteUrl = getSafeUrl(url) ?? '';
 
   const displayedValue = isNonEmptyString(value.label)
     ? value.label

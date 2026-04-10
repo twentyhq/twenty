@@ -1,7 +1,6 @@
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
-import { useEditPageLayoutWidget } from '@/page-layout/hooks/useEditPageLayoutWidget';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -20,6 +19,7 @@ import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardV
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
+import { useOpenWidgetSettingsInSidePanel } from '@/side-panel/hooks/useOpenWidgetSettingsInSidePanel';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -54,7 +54,7 @@ type WidgetRendererProps = {
 export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   const { theme } = useContext(ThemeContext);
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
-  const { handleEditWidget } = useEditPageLayoutWidget();
+  const { openWidgetSettingsInSidePanel } = useOpenWidgetSettingsInSidePanel();
 
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
@@ -111,14 +111,17 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   // TODO: when we have more widgets without headers, we should use a more generic approach to hide the header
   // each widget type could have metadata (e.g., hasHeader: boolean or headerMode: 'always' | 'editOnly' | 'never')
-  const isRichTextWidget = widget.type === WidgetType.STANDALONE_RICH_TEXT;
-  const hideRichTextHeader = isRichTextWidget && !isPageLayoutInEditMode;
+  const isHeaderHiddenInViewMode =
+    widget.type === WidgetType.STANDALONE_RICH_TEXT ||
+    widget.type === WidgetType.EMAIL_THREAD;
+  const hideHeaderInViewMode =
+    isHeaderHiddenInViewMode && !isPageLayoutInEditMode;
 
   const showHeader =
-    layoutMode !== PageLayoutTabLayoutMode.CANVAS && !hideRichTextHeader;
+    layoutMode !== PageLayoutTabLayoutMode.CANVAS && !hideHeaderInViewMode;
 
   const handleClick = () => {
-    handleEditWidget({
+    openWidgetSettingsInSidePanel({
       widgetId: widget.id,
       widgetType: widget.type,
     });

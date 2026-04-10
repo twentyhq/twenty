@@ -52,7 +52,11 @@ yarn twenty deploy
 
 ### Compartilhando um aplicativo implantado
 
-Aplicativos em tarball não são listados no marketplace público, então outros espaços de trabalho no mesmo servidor não os descobrirão ao navegar. Para compartilhar um aplicativo implantado:
+<Warning>
+Compartilhar aplicativos privados (tarball) entre espaços de trabalho é um recurso do plano **Enterprise**. A guia **Distribution** exibirá um aviso de atualização em vez dos controles de compartilhamento até que seu espaço de trabalho tenha uma chave Enterprise válida. Vá para [Configurações > Painel de Administração > Enterprise](/settings/admin-panel#enterprise) para ativá-lo.
+</Warning>
+
+Aplicativos em tarball não são listados no marketplace público, então outros espaços de trabalho no mesmo servidor não os descobrirão ao navegar. Assim que o seu espaço de trabalho estiver no plano Enterprise, você pode compartilhar um app implantado desta forma:
 
 1. Vá para **Configurações > Aplicações > Registros** e abra seu aplicativo
 2. Na guia **Distribuição**, clique em **Copiar link de compartilhamento**
@@ -60,17 +64,19 @@ Aplicativos em tarball não são listados no marketplace público, então outros
 
 O link de compartilhamento usa a URL base do servidor (sem qualquer subdomínio de espaço de trabalho), para funcionar em qualquer espaço de trabalho no servidor.
 
-<Warning>
-Compartilhar apps privados é um recurso do plano Enterprise. Vá para [Configurações > Painel de Administração > Enterprise](/settings/admin-panel#enterprise) para ativá-lo.
-</Warning>
-
 ### Gerenciamento de versões
+
+Ao atualizar um aplicativo empacotado como tarball já implantado, o servidor exige que o `version` no `package.json` seja **estritamente maior** (de acordo com a ordenação do [semver](https://semver.org)) do que a versão atualmente implantada. Reimplantar a mesma versão, ou enviar uma inferior, é rejeitado antes que o tarball seja armazenado — você verá um erro `VERSION_ALREADY_EXISTS` na CLI.
 
 Para lançar uma atualização:
 
-1. Atualize o campo `version` no seu `package.json`
+1. Atualize o campo `version` no seu `package.json` (por exemplo, `1.2.3` → `1.2.4`, `1.3.0` ou `2.0.0`)
 2. Execute `yarn twenty deploy` (ou `yarn twenty deploy --remote production`)
 3. Os espaços de trabalho que têm o aplicativo instalado verão a atualização disponível em suas configurações
+
+<Note>
+Tags de pré-lançamento funcionam como esperado: incrementar `1.0.0-rc.1` → `1.0.0-rc.2` é permitido, e uma versão final como `1.0.0` é corretamente reconhecida como superior a `1.0.0-rc.5`. A versão em `package.json` deve ser, ela própria, uma string semver válida.
+</Note>
 
 {/* TODO: add screenshot of the Upgrade button */}
 
@@ -189,3 +195,12 @@ Você também pode instalar apps pela linha de comando:
 ```bash filename="Terminal"
 yarn twenty install
 ```
+
+<Note>
+O servidor impõe o versionamento semver na instalação, espelhando as regras da implantação:
+
+* Instalar a mesma versão que já está instalada no seu espaço de trabalho é rejeitado com um erro `APP_ALREADY_INSTALLED`.
+* Instalar uma versão inferior à atualmente instalada é rejeitado com um erro `CANNOT_DOWNGRADE_APPLICATION`.
+
+Para instalar uma versão mais recente, implante ou publique-a primeiro e, em seguida, execute novamente `yarn twenty install`.
+</Note>

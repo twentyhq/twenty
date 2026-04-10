@@ -1,5 +1,9 @@
-import { isNull } from '@sniptt/guards';
-import { ObjectRecord, RelationType } from 'twenty-shared/types';
+import { isNonEmptyString, isNull } from '@sniptt/guards';
+import {
+  FieldMetadataType,
+  ObjectRecord,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
@@ -181,6 +185,16 @@ const backfillNullValuesAndComputeTypeNameForObjectRecord = (
       continue;
     }
 
+    if (
+      isDefined(fieldMetadata) &&
+      fieldMetadata.type === FieldMetadataType.NUMBER &&
+      isNonEmptyString(value) &&
+      isFinite(Number(value))
+    ) {
+      formatted[key] = Number(value);
+      continue;
+    }
+
     formatted[key] = value;
   }
 
@@ -275,9 +289,13 @@ const backfillNullValuesAndComputeTypeNameForConnection = (
       continue;
     }
 
-    //aggregate fields
-    formatted[key] =
+    const rawAggregateValue =
       (connection as unknown as Record<string, unknown>)[key] ?? null;
+
+    formatted[key] =
+      isNonEmptyString(rawAggregateValue) && isFinite(Number(rawAggregateValue))
+        ? Number(rawAggregateValue)
+        : rawAggregateValue;
   }
 
   return formatted;

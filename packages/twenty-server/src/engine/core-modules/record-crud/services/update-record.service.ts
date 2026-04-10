@@ -89,14 +89,15 @@ export class UpdateRecordService {
       // This prevents validation errors for partial composite field inputs
       const cleanedRecord = removeUndefinedFromRecord(filteredObjectRecord);
 
-      const updatedRecord = await this.commonUpdateOneRunner.execute(
-        {
-          id: objectRecordId,
-          data: cleanedRecord,
-          selectedFields,
-        },
-        queryRunnerContext,
-      );
+      const { results: updatedRecord } =
+        await this.commonUpdateOneRunner.execute(
+          {
+            id: objectRecordId,
+            data: cleanedRecord,
+            selectedFields,
+          },
+          queryRunnerContext,
+        );
 
       this.logger.log(`Record updated successfully in ${objectName}`);
 

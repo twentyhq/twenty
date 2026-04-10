@@ -3,6 +3,9 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ActorMetadata } from 'twenty-shared/types';
 
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -25,6 +28,8 @@ import { WORKFLOW_VERSION_STATUS_UPDATED } from 'src/modules/workflow/workflow-s
 import { type WorkflowVersionStatusUpdate } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
 import { AutomatedTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.workspace-service';
 import { type DatabaseEventTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
+import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
+import { type CachedCronTrigger } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/types/cached-cron-trigger.type';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
@@ -49,6 +54,8 @@ export class WorkflowTriggerWorkspaceService {
     private readonly automatedTriggerWorkspaceService: AutomatedTriggerWorkspaceService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly commandMenuItemService: CommandMenuItemService,
+    @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
+    private readonly cacheStorageService: CacheStorageService,
   ) {}
 
   async runWorkflowVersion({
@@ -496,6 +503,18 @@ export class WorkflowTriggerWorkspaceService {
           entityManager: transactionContext?.entityManager,
         });
 
+        const cachedTrigger: CachedCronTrigger = {
+          workspaceId,
+          workflowId: workflowVersion.workflowId,
+          pattern,
+        };
+
+        await this.cacheStorageService.hashSetIfExists({
+          key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
+          field: workflowVersion.workflowId,
+          value: JSON.stringify(cachedTrigger),
+        });
+
         return;
       }
       default:
@@ -514,11 +533,23 @@ export class WorkflowTriggerWorkspaceService {
 
     switch (workflowVersion.trigger.type) {
       case WorkflowTriggerType.DATABASE_EVENT:
+        await this.automatedTriggerWorkspaceService.deleteAutomatedTrigger({
+          workflowId: workflowVersion.workflowId,
+          workspaceId,
+          entityManager: transactionContext?.entityManager,
+        });
+
+        return;
       case WorkflowTriggerType.CRON:
         await this.automatedTriggerWorkspaceService.deleteAutomatedTrigger({
           workflowId: workflowVersion.workflowId,
           workspaceId,
           entityManager: transactionContext?.entityManager,
+        });
+
+        await this.cacheStorageService.hashDelete({
+          key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
+          field: workflowVersion.workflowId,
         });
 
         return;

@@ -1,5 +1,5 @@
 import { Container } from '@/design-system/components';
-import type { IllustrationType } from '@/design-system/components/Illustration/types/Illustration';
+import { IllustrationMount, type IllustrationId } from '@/illustrations';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
@@ -7,9 +7,18 @@ import type { ReactNode } from 'react';
 const StyledSection = styled.section`
   background-color: ${theme.colors.secondary.background[100]};
   color: ${theme.colors.secondary.text[100]};
+  isolation: isolate;
   overflow: hidden;
   position: relative;
   width: 100%;
+`;
+
+const IllustrationLayer = styled.div`
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
 `;
 
 const StyledContainer = styled(Container)`
@@ -31,12 +40,15 @@ const StyledContainer = styled(Container)`
 
 type RootProps = {
   children: ReactNode;
-  illustration: IllustrationType;
+  illustration: IllustrationId;
 };
 
 export function Root({ children, illustration }: RootProps) {
   return (
     <StyledSection>
+      <IllustrationLayer aria-hidden>
+        <IllustrationMount illustration={illustration} />
+      </IllustrationLayer>
       <StyledContainer>{children}</StyledContainer>
     </StyledSection>
   );

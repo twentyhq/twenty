@@ -1,17 +1,19 @@
+import { Product as ProductVisual } from '@/illustrations/Hero/Product';
+import { PartnerVisual } from '@/sections/Hero/components/PartnerVisual/PartnerVisual';
+import { WhyTwentyVisual } from '@/sections/Hero/components/WhyTwentyVisual/WhyTwentyVisual';
 import { Body } from './Body/Body';
 import { Cta } from './Cta/Cta';
 import { Heading } from './Heading/Heading';
 import { HomeVisual } from './HomeVisual/HomeVisual';
-import { Illustration } from './Illustration/Illustration';
 import { Root } from './Root/Root';
-import { WhyTwentyVisual } from './WhyTwentyVisual/WhyTwentyVisual';
 
 export const Hero = {
   Root,
   Heading,
   Body,
   Cta,
-  Illustration,
   HomeVisual,
+  ProductVisual,
+  PartnerVisual,
   WhyTwentyVisual,
 };

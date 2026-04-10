@@ -37,8 +37,10 @@ import {
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { ASSET_PATH } from 'src/constants/assets-path';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { COMMON_LAYER_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/common-layer-dependencies-dirname';
 import { callWithTimeout } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/call-with-timeout';
 import { copyBuilder } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-builder';
@@ -64,7 +66,7 @@ const YARN_INSTALL_LAMBDA_MEMORY_MB = 1024;
 const COMMON_LAYER_NAME_PREFIX = 'twenty-common-layer';
 const BUILDER_LAMBDA_TIMEOUT_SECONDS = 60;
 const BUILDER_LAMBDA_MEMORY_MB = 512;
-
+const LAMBDA_EPHEMERAL_STORAGE_MB = 2048;
 const YARN_INSTALL_HANDLER_PATH = resolve(
   __dirname,
   join(
@@ -113,6 +115,7 @@ export type BuilderLambdaResult = {
 export interface LambdaDriverOptions extends LambdaClientConfig {
   logicFunctionResourceService: LogicFunctionResourceService;
   sdkClientArchiveService: SdkClientArchiveService;
+  cacheLockService: CacheLockService;
   region: string;
   lambdaRole: string;
   subhostingRole?: string;
@@ -130,12 +133,14 @@ export class LambdaDriver implements LogicFunctionDriver {
   private readonly options: LambdaDriverOptions;
   private readonly logicFunctionResourceService: LogicFunctionResourceService;
   private readonly sdkClientArchiveService: SdkClientArchiveService;
+  private readonly cacheLockService: CacheLockService;
 
   constructor(options: LambdaDriverOptions) {
     this.options = options;
     this.lambdaClient = undefined;
     this.logicFunctionResourceService = options.logicFunctionResourceService;
     this.sdkClientArchiveService = options.sdkClientArchiveService;
+    this.cacheLockService = options.cacheLockService;
   }
 
   private areAssumeRoleCredentialsExpired(): boolean {
@@ -406,6 +411,7 @@ export class LambdaDriver implements LogicFunctionDriver {
         Runtime: LogicFunctionRuntime.NODE22,
         Timeout: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
         MemorySize: YARN_INSTALL_LAMBDA_MEMORY_MB,
+        EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
       };
 
       await lambdaClient.send(new CreateFunctionCommand(params));
@@ -495,6 +501,7 @@ export class LambdaDriver implements LogicFunctionDriver {
         Runtime: LogicFunctionRuntime.NODE22,
         Timeout: BUILDER_LAMBDA_TIMEOUT_SECONDS,
         MemorySize: BUILDER_LAMBDA_MEMORY_MB,
+        EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
       };
 
       await lambdaClient.send(new CreateFunctionCommand(params));
@@ -538,6 +545,19 @@ export class LambdaDriver implements LogicFunctionDriver {
       const parsedResult = result.Payload
         ? JSON.parse(result.Payload.transformToString())
         : {};
+
+      const userCompilationErrorRegex = /^Build failed with \d+ error/;
+
+      const isUserCompilationError =
+        isNonEmptyString(parsedResult?.errorMessage) &&
+        userCompilationErrorRegex.test(parsedResult.errorMessage);
+
+      if (isUserCompilationError) {
+        throw new LogicFunctionException(
+          `Function code compilation failed: ${parsedResult.errorMessage}`,
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_COMPILATION_FAILED,
+        );
+      }
 
       throw new LogicFunctionException(
         `Builder Lambda failed: ${JSON.stringify(parsedResult)}`,
@@ -921,9 +941,49 @@ export class LambdaDriver implements LogicFunctionDriver {
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }) {
+    const buildArgs = {
+      flatLogicFunction,
+      flatApplication,
+      applicationUniversalIdentifier,
+    };
+
+    if (await this.canSkipBuild(buildArgs)) {
+      return;
+    }
+
+    const buildLockTtlMs = 120_000;
+    const buildLockRetryMs = 500;
+    const buildLockMaxRetries = 240;
+
+    await this.cacheLockService.withLock(
+      async () => {
+        if (await this.canSkipBuild(buildArgs)) {
+          return;
+        }
+
+        await this.ensureLambdaExecutor(buildArgs);
+      },
+      `lambda-build:${flatLogicFunction.id}`,
+      {
+        ttl: buildLockTtlMs,
+        ms: buildLockRetryMs,
+        maxRetries: buildLockMaxRetries,
+      },
+    );
+  }
+
+  private async canSkipBuild({
+    flatLogicFunction,
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: {
+    flatLogicFunction: FlatLogicFunction;
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }): Promise<boolean> {
     const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
 
-    if (
+    return (
       isDefined(lambdaExecutor) &&
       !flatApplication.isSdkLayerStale &&
       this.hasExpectedLayers({
@@ -931,9 +991,19 @@ export class LambdaDriver implements LogicFunctionDriver {
         flatApplication,
         applicationUniversalIdentifier,
       })
-    ) {
-      return;
-    }
+    );
+  }
+
+  private async ensureLambdaExecutor({
+    flatLogicFunction,
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: {
+    flatLogicFunction: FlatLogicFunction;
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }) {
+    const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
 
     const depsLayerArn = await this.getLayerArn({
       flatApplication,
@@ -995,6 +1065,7 @@ export class LambdaDriver implements LogicFunctionDriver {
         Role: this.options.lambdaRole,
         Runtime: flatLogicFunction.runtime,
         Timeout: 900,
+        EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
       };
 
       const lambdaClient = await this.getLambdaClient();

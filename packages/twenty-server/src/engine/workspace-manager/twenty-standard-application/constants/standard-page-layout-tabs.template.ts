@@ -17,6 +17,12 @@ export const CONDITIONAL_DISPLAY_DEVICE_DESKTOP = {
   and: [{ '===': [{ var: 'device' }, 'DESKTOP'] }],
 } as const satisfies PageLayoutWidgetConditionalDisplay;
 
+export const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE =
+  'device == "MOBILE"';
+
+export const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP =
+  'device == "DESKTOP"';
+
 export const GRID_POSITIONS = {
   FULL_WIDTH: {
     row: 0,
@@ -222,5 +228,11 @@ export const WIDGET_PROPS = {
     type: WidgetType.WORKFLOW_RUN,
     gridPosition: GRID_POSITIONS.FULL_WIDTH,
     position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
+  },
+  emailThread: {
+    title: 'Thread',
+    type: WidgetType.EMAIL_THREAD,
+    gridPosition: GRID_POSITIONS.FULL_WIDTH,
+    position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
   },
 } as const;

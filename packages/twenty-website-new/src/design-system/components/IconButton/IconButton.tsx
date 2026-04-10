@@ -35,6 +35,16 @@ const StyledButton = styled.button<{ size: number; borderColor: string }>`
     outline: 1px solid ${theme.colors.highlight[100]};
     outline-offset: 1px;
   }
+
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  
+  &:hover {
+    transform: scale(1.08); /* Apple-like slight growth */
+  }
+
+  &:active {
+    transform: scale(0.96); /* Apple-like click shrink */
+  }
 `;
 
 export function IconButton({

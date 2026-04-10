@@ -52,7 +52,11 @@ yarn twenty deploy
 
 ### Dağıtılmış bir uygulamayı paylaşma
 
-Tarball uygulamaları genel pazar yerinde listelenmez; bu nedenle aynı sunucudaki diğer çalışma alanları gezinerek onları keşfedemez. Dağıtılmış bir uygulamayı paylaşmak için:
+<Warning>
+Özel (tarball) uygulamaları çalışma alanları arasında paylaşma bir **Kurumsal** özelliktir. **Dağıtım** sekmesi, çalışma alanınız geçerli bir Kurumsal anahtara sahip olana kadar paylaşım kontrolleri yerine bir yükseltme istemi gösterecektir. Etkinleştirmek için [Ayarlar > Yönetim Paneli > Kurumsal](/settings/admin-panel#enterprise) bölümüne gidin.
+</Warning>
+
+Tarball uygulamaları genel pazar yerinde listelenmez; bu nedenle aynı sunucudaki diğer çalışma alanları gezinerek onları keşfedemez. Çalışma alanınız Kurumsal planda olduğunda, yayınlanmış bir uygulamayı şu şekilde paylaşabilirsiniz:
 
 1. **Ayarlar > Uygulamalar > Kayıtlar** bölümüne gidin ve uygulamanızı açın
 2. **Dağıtım** sekmesinde, **Paylaşım bağlantısını kopyala**’ya tıklayın
@@ -60,17 +64,19 @@ Tarball uygulamaları genel pazar yerinde listelenmez; bu nedenle aynı sunucuda
 
 Paylaşım bağlantısı, sunucunun temel URL’sini (herhangi bir çalışma alanı alt alan adı olmadan) kullanır; böylece sunucudaki herhangi bir çalışma alanı için çalışır.
 
-<Warning>
-Özel uygulamaları paylaşma bir Kurumsal özelliktir. [Ayarlar > Yönetim Paneli > Kurumsal](/settings/admin-panel#enterprise) bölümüne giderek etkinleştirin.
-</Warning>
-
 ### Sürüm yönetimi
+
+Halihazırda dağıtılmış bir tarball uygulamasını güncellerken, sunucu `package.json` içindeki `version` değerinin, şu anda dağıtılmış sürümden ([semver](https://semver.org) sıralamasına göre) **kesinlikle daha yüksek** olmasını gerektirir. Aynı sürümü yeniden dağıtmak veya daha düşük bir sürümü göndermek, tarball depolanmadan önce reddedilir — CLI'de `VERSION_ALREADY_EXISTS` hatasını görürsünüz.
 
 Bir güncelleme yayımlamak için:
 
-1. `package.json` içindeki `version` alanını artırın
+1. `package.json` içindeki `version` alanını artırın (ör. `1.2.3` → `1.2.4`, `1.3.0` veya `2.0.0`)
 2. `yarn twenty deploy` (veya `yarn twenty deploy --remote production`) komutunu çalıştırın
 3. Uygulamayı kurmuş olan çalışma alanları, ayarlarında mevcut güncellemeyi görecektir
+
+<Note>
+Ön sürüm etiketleri beklendiği gibi çalışır: `1.0.0-rc.1` → `1.0.0-rc.2` sürümünü artırmak mümkündür ve `1.0.0` gibi nihai bir sürüm, `1.0.0-rc.5` sürümünden daha yüksek olarak doğru şekilde tanınır. `package.json` içindeki sürümün kendisi geçerli bir semver dizesi olmalıdır.
+</Note>
 
 {/* TODO: add screenshot of the Upgrade button */}
 
@@ -189,3 +195,12 @@ Uygulamaları komut satırından da yükleyebilirsiniz:
 ```bash filename="Terminal"
 yarn twenty install
 ```
+
+<Note>
+Sunucu, kurulum sırasında semver sürümlemesini zorunlu kılar ve dağıtımdaki kuralları yansıtır:
+
+* Çalışma alanınızda zaten yüklü olanla aynı sürümün kurulumu, `APP_ALREADY_INSTALLED` hatasıyla reddedilir.
+* Halihazırda yüklü olandan daha düşük bir sürümü kurmak, `CANNOT_DOWNGRADE_APPLICATION` hatasıyla reddedilir.
+
+Daha yeni bir sürümü kurmak için önce onu dağıtın veya yayımlayın, ardından `yarn twenty install` komutunu yeniden çalıştırın.
+</Note>

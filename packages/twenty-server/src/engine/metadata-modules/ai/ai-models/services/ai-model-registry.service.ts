@@ -3,6 +3,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { type LanguageModel } from 'ai';
 import { type AiSdkPackage } from 'twenty-shared/ai';
 
+import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
+import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
 
 import {
@@ -50,13 +52,29 @@ export class AiModelRegistryService {
     string,
     { providerName: string; modelDef: AiProviderModelConfig }
   > = new Map();
+  private currentConfigHash: string | null = null;
 
   constructor(
     private readonly providerConfigService: ProviderConfigService,
     private readonly sdkProviderFactory: SdkProviderFactoryService,
     private readonly preferencesService: AiModelPreferencesService,
-  ) {
+    private readonly configGroupHashService: ConfigGroupHashService,
+  ) {}
+
+  // The registry is rebuilt lazily whenever the LLM-group config hash changes,
+  // so any mutation to an LLM-tagged config variable is picked up automatically
+  // on the next read — no explicit refresh from callers needed.
+  private ensureFresh(): void {
+    const configHash = this.configGroupHashService.computeHash(
+      ConfigVariablesGroup.LLM,
+    );
+
+    if (configHash === this.currentConfigHash) {
+      return;
+    }
+
     this.buildModelRegistry();
+    this.currentConfigHash = configHash;
   }
 
   private buildModelRegistry(): void {
@@ -146,14 +164,20 @@ export class AiModelRegistryService {
   }
 
   getModel(modelId: string): RegisteredAIModel | undefined {
+    this.ensureFresh();
+
     return this.modelRegistry.get(modelId);
   }
 
   getAvailableModels(): RegisteredAIModel[] {
+    this.ensureFresh();
+
     return Array.from(this.modelRegistry.values());
   }
 
   getModelConfig(modelId: string): AIModelConfig | undefined {
+    this.ensureFresh();
+
     return this.modelConfigCache.get(modelId);
   }
 
@@ -205,6 +229,8 @@ export class AiModelRegistryService {
   }
 
   getEffectiveModelConfig(modelId: string): AIModelConfig {
+    this.ensureFresh();
+
     if (isAutoSelectModelId(modelId)) {
       const defaultModel =
         modelId === AUTO_SELECT_FAST_MODEL_ID
@@ -304,6 +330,7 @@ export class AiModelRegistryService {
     providerName?: string;
     name?: string;
   }> {
+    this.ensureFresh();
     const recommended = this.getRecommendedModelIds();
 
     return Array.from(this.modelConfigCache.values()).map((modelConfig) => {
@@ -334,12 +361,30 @@ export class AiModelRegistryService {
     await this.preferencesService.setModelRecommended(modelId, recommended);
   }
 
+  async setModelsAdminEnabled(
+    modelIds: string[],
+    enabled: boolean,
+  ): Promise<void> {
+    modelIds.forEach((id) => this.validateModelInRegistry(id));
+    await this.preferencesService.setModelsAdminEnabled(modelIds, enabled);
+  }
+
+  async setModelsRecommended(
+    modelIds: string[],
+    recommended: boolean,
+  ): Promise<void> {
+    modelIds.forEach((id) => this.validateModelInRegistry(id));
+    await this.preferencesService.setModelsRecommended(modelIds, recommended);
+  }
+
   async setDefaultModel(role: AiModelRole, modelId: string): Promise<void> {
     this.validateModelInRegistry(modelId);
     await this.preferencesService.setDefaultModel(role, modelId);
   }
 
   private validateModelInRegistry(modelId: string): void {
+    this.ensureFresh();
+
     if (!this.providerModelDefCache.has(modelId)) {
       throw new AgentException(
         `Cannot update model "${modelId}": not found in registry`,
@@ -354,10 +399,6 @@ export class AiModelRegistryService {
 
   getCatalogProviderNames(): Set<string> {
     return this.providerConfigService.getCatalogProviderNames();
-  }
-
-  refreshRegistry(): void {
-    this.buildModelRegistry();
   }
 
   resolveModelForAgent(agent: { modelId: string } | null): RegisteredAIModel {

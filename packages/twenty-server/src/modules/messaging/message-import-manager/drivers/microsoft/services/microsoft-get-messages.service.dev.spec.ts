@@ -47,7 +47,7 @@ xdescribe('Microsoft dev tests : get messages service', () => {
     id: 'connected-account-id',
     provider: ConnectedAccountProvider.MICROSOFT,
     handle: 'John.Walker@outlook.fr',
-    handleAliases: '',
+    handleAliases: [] as string[],
     accessToken: accessToken,
     refreshToken: refreshToken,
   };

@@ -15,6 +15,7 @@ export type StandardPageLayoutWidgetConfig = {
   gridPosition?: GridPosition;
   position?: PageLayoutWidgetPosition;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
+  conditionalAvailabilityExpression?: string | null;
   fieldUniversalIdentifier?: string;
 };
 
@@ -43,6 +44,7 @@ export type StandardRecordPageWidgetConfig = {
   gridPosition: GridPosition;
   position?: PageLayoutWidgetPosition;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
+  conditionalAvailabilityExpression?: string | null;
   fieldUniversalIdentifier?: string;
 };
 

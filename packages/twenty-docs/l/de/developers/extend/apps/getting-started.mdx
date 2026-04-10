@@ -7,7 +7,9 @@ description: Erstellen Sie in wenigen Minuten Ihre erste Twenty-App.
 Apps befinden sich derzeit in der Alpha-Phase. Die Funktion ist funktionsfähig, entwickelt sich jedoch noch weiter.
 </Warning>
 
-Apps ermöglichen es Ihnen, Twenty mit benutzerdefinierten Objekten, Feldern, Logikfunktionen, KI-Fähigkeiten und UI-Komponenten zu erweitern — alles als Code verwaltet.
+## Was sind Apps?
+
+Apps ermöglichen es Ihnen, Twenty mit benutzerdefinierten Objekten, Feldern, Logikfunktionen, Frontend-Komponenten, KI-Fähigkeiten und mehr zu erweitern — alles als Code verwaltet. Anstatt alles über die UI zu konfigurieren, definieren Sie Ihr Datenmodell und Ihre Logik in TypeScript und stellen es in einem oder mehreren Workspaces bereit.
 
 ## Voraussetzungen
 
@@ -17,7 +19,9 @@ Bevor Sie beginnen, stellen Sie sicher, dass Folgendes auf Ihrem Rechner install
 * **Yarn 4** — Wird mit Node.js über Corepack mitgeliefert. Aktivieren Sie es, indem Sie `corepack enable` ausführen
 * **Docker** — [Hier herunterladen](https://www.docker.com/products/docker-desktop/). Erforderlich, um eine lokale Twenty-Instanz auszuführen. Nicht erforderlich, wenn bereits ein Twenty-Server läuft.
 
-## Schritt 1: App-Gerüst erstellen
+## Erstellen Sie Ihre erste App
+
+### App-Gerüst erstellen
 
 Öffnen Sie ein Terminal und führen Sie Folgendes aus:
 
@@ -29,18 +33,7 @@ Sie werden aufgefordert, einen Namen und eine Beschreibung für Ihre App einzuge
 
 Dadurch wird ein neuer Ordner namens `my-twenty-app` mit allem erstellt, was Sie benötigen.
 
-<Note>
-Das Scaffolding-Tool unterstützt diese Flags:
-
-* `--minimal` — erstellt nur die wesentlichen Dateien, keine Beispiele (Standard)
-* `--exhaustive` — erstellt alle Beispiel-Entitäten
-* `--name <name>` — legt den App-Namen fest (überspringt die Abfrage)
-* `--display-name <displayName>` — legt den Anzeigenamen fest (überspringt die Abfrage)
-* `--description <description>` — legt die Beschreibung fest (überspringt die Abfrage)
-* `--skip-local-instance` — überspringt die Eingabeaufforderung zur Einrichtung des lokalen Servers
-</Note>
-
-## Schritt 2: Lokale Twenty-Instanz einrichten
+### Lokale Twenty-Instanz einrichten
 
 Das Scaffolding-Tool fragt:
 
@@ -53,7 +46,7 @@ Das Scaffolding-Tool fragt:
   <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Soll die lokale Instanz gestartet werden?" />
 </div>
 
-## Schritt 3: Bei Ihrem Arbeitsbereich anmelden
+### Melden Sie sich bei Ihrem Arbeitsbereich an
 
 Anschließend öffnet sich ein Browserfenster mit der Twenty-Anmeldeseite. Melden Sie sich mit dem vorab eingerichteten Demo-Konto an:
 
@@ -64,7 +57,7 @@ Anschließend öffnet sich ein Browserfenster mit der Twenty-Anmeldeseite. Melde
   <img src="/images/docs/developers/extends/apps/login.png" alt="Twenty-Anmeldebildschirm" />
 </div>
 
-## Schritt 4: Die App autorisieren
+### Autorisieren Sie die App
 
 Nach der Anmeldung sehen Sie einen Autorisierungsbildschirm. Dadurch kann Ihre App mit Ihrem Arbeitsbereich interagieren.
 
@@ -80,7 +73,7 @@ Nach der Autorisierung bestätigt Ihr Terminal, dass alles eingerichtet ist.
   <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="App-Gerüst erfolgreich erstellt" />
 </div>
 
-## Schritt 5: Mit der Entwicklung beginnen
+### Beginnen Sie mit der Entwicklung
 
 Wechseln Sie in Ihren neuen App-Ordner und starten Sie den Entwicklungsserver:
 
@@ -105,7 +98,22 @@ Der Dev-Modus ist nur auf Twenty-Instanzen verfügbar, die im Entwicklungsmodus 
   <img src="/images/docs/developers/extends/apps/dev.jpg" alt="Terminalausgabe im Dev-Modus" />
 </div>
 
-## Schritt 6: Ihre App in Twenty ansehen
+#### Einmalige Synchronisierung mit `yarn twenty dev --once`
+
+Wenn Sie keinen Watcher im Hintergrund ausführen lassen möchten (zum Beispiel in einer CI-Pipeline, einem Git-Hook oder einem skriptgesteuerten Workflow), geben Sie das Flag `--once` an. Es führt dieselbe Pipeline aus wie `yarn twenty dev` — Build-Manifest erstellen, Dateien bündeln, hochladen, synchronisieren, den typisierten API-Client neu generieren — beendet sich jedoch, **sobald die Synchronisierung abgeschlossen ist**:
+
+```bash filename="Terminal"
+yarn twenty dev --once
+```
+
+| Befehl                   | Verhalten                                                                                                               | Wann verwenden                                                                                           |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `yarn twenty dev`        | Überwacht Ihre Quelldateien und synchronisiert bei jeder Änderung erneut. Läuft weiter, bis Sie es stoppen.             | Interaktive lokale Entwicklung — Sie möchten das Live-Status-Panel und eine sofortige Feedback-Schleife. |
+| `yarn twenty dev --once` | Führt einen einzelnen Build + Sync aus und beendet sich anschließend mit Code `0` bei Erfolg oder `1` bei einem Fehler. | Skripte, CI, Pre-Commit-Hooks, KI-Agenten und jeder nicht-interaktive Workflow.                          |
+
+Beide Modi erfordern einen Twenty-Server, der im Entwicklungsmodus läuft, und ein authentifiziertes Remote — es gelten dieselben Voraussetzungen.
+
+### Sehen Sie sich Ihre App in Twenty an
 
 Öffnen Sie [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer) in Ihrem Browser. Navigieren Sie zu **Settings > Apps** und wählen Sie die Registerkarte **Developer**. Unter **Your Apps** sollte Ihre App aufgeführt sein:
 
@@ -133,13 +141,28 @@ Wechseln Sie zur Registerkarte **Content**, um alles zu sehen, was Ihre App bere
 
 Alles erledigt! Bearbeiten Sie eine beliebige Datei in `src/`, und die Änderungen werden automatisch übernommen.
 
-Wechseln Sie zu [Apps erstellen](/l/de/developers/extend/apps/building) für eine ausführliche Anleitung zum Erstellen von Objekten, Logikfunktionen, Frontend-Komponenten, Skills und mehr.
+---
+
+## Was Sie erstellen können
+
+Apps bestehen aus **Entitäten** — jede ist als TypeScript-Datei mit einem einzigen `export default` definiert:
+
+| Entität                    | Was sie macht                                                                                                        |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| **Objekte & Felder**       | Definieren Sie benutzerdefinierte Datenmodelle (wie Post Card, Invoice) mit typisierten Feldern                      |
+| **Logikfunktionen**        | Serverseitige TypeScript-Funktionen, die durch HTTP-Routen, Cron-Zeitpläne oder Datenbankereignisse ausgelöst werden |
+| **Frontend-Komponenten**   | React-Komponenten, die in der UI von Twenty gerendert werden (Seitenleiste, Widgets, Befehlsmenü)                    |
+| **Fähigkeiten & Agenten**  | KI-Funktionen — wiederverwendbare Anweisungen und autonome Assistenten                                               |
+| **Ansichten & Navigation** | Vorkonfigurierte Listenansichten und Seitenleisteneinträge für Ihre Objekte                                          |
+| **Seitenlayouts**          | Benutzerdefinierte Datensatz-Detailseiten mit Tabs und Widgets                                                       |
+
+Wechseln Sie zu [Apps erstellen](/l/de/developers/extend/apps/building) für eine ausführliche Anleitung zu jedem Entitätstyp.
 
 ---
 
 ## Projektstruktur
 
-Das Scaffolding-Tool erzeugt die folgende Verzeichnisstruktur (gezeigt im Modus `--exhaustive`, der Beispiele für jeden Entitätstyp enthält):
+Der Scaffolder erzeugt die folgende Verzeichnisstruktur:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -148,160 +171,50 @@ my-twenty-app/
   .gitignore
   .nvmrc
   .yarnrc.yml
-  .yarn/
-    install-state.gz
   .oxlintrc.json
   tsconfig.json
-  tsconfig.spec.json                  # TypeScript config for tests
-  vitest.config.ts                    # Vitest test runner configuration
+  tsconfig.spec.json                          # TypeScript config for tests
+  vitest.config.ts                            # Vitest test runner configuration
   LLMS.md
   README.md
   .github/
     └── workflows/
-        └── ci.yml                      # GitHub Actions CI workflow
-  public/                             # Public assets (images, fonts, etc.)
+        └── ci.yml                            # GitHub Actions CI workflow
+  public/                                     # Public assets (images, fonts, etc.)
   src/
-  ├── application-config.ts             # Required — main application configuration
-  ├── __tests__/
-  │   ├── setup-test.ts                   # Test setup (server health check, config)
-  │   └── app-install.integration-test.ts # Example integration test
-  ├── roles/
-  │   └── default-role.ts                 # Default role for logic functions
-  ├── objects/
-  │   └── example-object.ts               # Example custom object definition
-  ├── fields/
-  │   └── example-field.ts                # Example standalone field definition
-  ├── logic-functions/
-  │   ├── hello-world.ts                  # Example logic function
-  │   ├── create-hello-world-company.ts   # Example logic function using CoreApiClient
-  │   ├── pre-install.ts                  # Runs before installation
-  │   └── post-install.ts                 # Runs after installation
-  ├── front-components/
-  │   └── hello-world.tsx                 # Example front component
-  ├── page-layouts/
-  │   └── example-record-page-layout.ts   # Example page layout with front component
-  ├── views/
-  │   └── example-view.ts                 # Example saved view definition
-  ├── navigation-menu-items/
-  │   └── example-navigation-menu-item.ts # Example sidebar navigation link
-  ├── skills/
-  │   └── example-skill.ts                # Example AI agent skill definition
-  └── agents/
-      └── example-agent.ts                # Example AI agent definition
+  ├── application-config.ts                   # Required — main application configuration
+  ├── default-role.ts                         # Default role for logic functions
+  ├── constants/
+  │   └── universal-identifiers.ts            # Auto-generated UUIDs and app metadata
+  └── __tests__/
+      ├── setup-test.ts                       # Test setup (server health check, config)
+      └── app-install.integration-test.ts     # Integration test
 ```
 
-Standardmäßig (`--minimal`) werden nur die Kerndateien erstellt: `application-config.ts`, `roles/default-role.ts`, `logic-functions/pre-install.ts` und `logic-functions/post-install.ts`. Verwenden Sie `--exhaustive`, um alle oben gezeigten Beispieldateien einzuschließen.
+### Mit einem Beispiel beginnen
+
+Um mit einem umfassenderen Beispiel mit benutzerdefinierten Objekten, Feldern, Logikfunktionen, Frontend-Komponenten und mehr zu starten, verwenden Sie die Option `--example`:
+
+```bash filename="Terminal"
+npx create-twenty-app@latest my-twenty-app --example postcard
+```
+
+Die Beispiele stammen aus dem Verzeichnis [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples) auf GitHub. Sie können auch einzelne Entitäten in einem bestehenden Projekt mit `yarn twenty add` erzeugen (siehe [Apps erstellen](/l/de/developers/extend/apps/building#scaffolding-entities-with-yarn-twenty-add)).
 
 ### Wichtige Dateien
 
-| Datei / Ordner               | Zweck                                                                                                                                                              |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `package.json`               | Deklariert den App-Namen, die Version und Abhängigkeiten. Enthält ein `twenty`-Skript, sodass Sie `yarn twenty help` ausführen können, um alle Befehle anzuzeigen. |
-| `src/application-config.ts`  | **Erforderlich.** Die Hauptkonfigurationsdatei für Ihre App.                                                                                                       |
-| `src/roles/`                 | Definiert Rollen, die steuern, worauf Ihre Logikfunktionen zugreifen können.                                                                                       |
-| `src/logic-functions/`       | Serverseitige Funktionen, die durch Routen, Cron-Zeitpläne oder Datenbankereignisse ausgelöst werden.                                                              |
-| `src/front-components/`      | React-Komponenten, die innerhalb der Twenty-UI gerendert werden.                                                                                                   |
-| `src/objects/`               | Benutzerdefinierte Objektdefinitionen zur Erweiterung Ihres Datenmodells.                                                                                          |
-| `src/fields/`                | Benutzerdefinierte Felder, die vorhandenen Objekten hinzugefügt werden.                                                                                            |
-| `src/views/`                 | Konfigurationen gespeicherter Ansichten.                                                                                                                           |
-| `src/navigation-menu-items/` | Benutzerdefinierte Links in der Seitenleisten-Navigation.                                                                                                          |
-| `src/skills/`                | Skills, die die KI-Agenten von Twenty erweitern.                                                                                                                   |
-| `src/agents/`                | KI-Agenten mit benutzerdefinierten Prompts.                                                                                                                        |
-| `src/page-layouts/`          | Benutzerdefinierte Seitenlayouts für Datensatzansichten.                                                                                                           |
-| `src/__tests__/`             | Integrationstests (Setup + Beispieltest).                                                                                                                          |
-| `public/`                    | Statische Assets (Bilder, Schriftarten), die mit Ihrer App ausgeliefert werden.                                                                                    |
+| Datei / Ordner                           | Zweck                                                                                                                                                              |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `package.json`                           | Deklariert den App-Namen, die Version und Abhängigkeiten. Enthält ein `twenty`-Skript, sodass Sie `yarn twenty help` ausführen können, um alle Befehle anzuzeigen. |
+| `src/application-config.ts`              | **Erforderlich.** Die Hauptkonfigurationsdatei für Ihre App.                                                                                                       |
+| `src/default-role.ts`                    | Standardrolle, die steuert, worauf Ihre Logikfunktionen zugreifen können.                                                                                          |
+| `src/constants/universal-identifiers.ts` | Automatisch erzeugte UUIDs und App-Metadaten (Anzeigename, Beschreibung).                                                                                          |
+| `src/__tests__/`                         | Integrationstests (Setup + Beispieltest).                                                                                                                          |
+| `public/`                                | Statische Assets (Bilder, Schriftarten), die mit Ihrer App ausgeliefert werden.                                                                                    |
 
-## Remotes verwalten
+## Lokaler Entwicklungsserver
 
-Ein **Remote** ist ein Twenty-Server, mit dem sich Ihre App verbindet. Während der Einrichtung erstellt das Scaffolding-Tool automatisch eines für Sie. Sie können jederzeit weitere Remotes hinzufügen oder zwischen ihnen wechseln.
-
-```bash filename="Terminal"
-# Add a new remote (opens a browser for OAuth login)
-yarn twenty remote add
-
-# Connect to a local Twenty server (auto-detects port 2020 or 3000)
-yarn twenty remote add --local
-
-# Add a remote non-interactively (useful for CI)
-yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
-
-# List all configured remotes
-yarn twenty remote list
-
-# Switch the active remote
-yarn twenty remote switch <name>
-```
-
-Ihre Anmeldedaten werden in `~/.twenty/config.json` gespeichert.
-
-## Lokaler Entwicklungsserver (`yarn twenty server`)
-
-Die CLI kann einen lokalen, in Docker laufenden Twenty-Server verwalten. Dies ist derselbe Server, der automatisch gestartet wird, wenn Sie mit `create-twenty-app` eine App aufsetzen, aber Sie können ihn auch manuell verwalten.
-
-### Server starten
-
-```bash filename="Terminal"
-yarn twenty server start
-```
-
-Dadurch wird das Docker-Image `twentycrm/twenty-app-dev:latest` heruntergeladen (falls nicht bereits vorhanden), ein Container namens `twenty-app-dev` erstellt und auf Port **2020** gestartet. Die CLI wartet, bis der Server seinen Health-Check bestanden hat, bevor sie zurückkehrt.
-
-Es werden zwei Docker-Volumes erstellt, um Daten zwischen Neustarts beizubehalten:
-
-* `twenty-app-dev-data` — PostgreSQL-Datenbank
-* `twenty-app-dev-storage` — Dateispeicher
-
-Wenn Port 2020 bereits verwendet wird, können Sie auf einem anderen Port starten:
-
-```bash filename="Terminal"
-yarn twenty server start --port 3030
-```
-
-Die CLI konfiguriert automatisch die internen Werte `NODE_PORT` und `SERVER_URL` des Containers passend zum gewählten Port, sodass Logikfunktionen, OAuth und alle anderen internen Netzwerkfunktionen korrekt arbeiten.
-
-Nach dem Start wird der Server automatisch als `local`-Remote in Ihrer CLI-Konfiguration registriert.
-
-### Serverstatus prüfen
-
-```bash filename="Terminal"
-yarn twenty server status
-```
-
-Zeigt an, ob der Server läuft, seine URL und die Standard-Anmeldedaten (`tim@apple.dev` / `tim@apple.dev`).
-
-### Serverprotokolle anzeigen
-
-```bash filename="Terminal"
-yarn twenty server logs
-```
-
-Streamt die Containerprotokolle. Verwenden Sie `--lines`, um zu steuern, wie viele der letzten Zeilen angezeigt werden:
-
-```bash filename="Terminal"
-yarn twenty server logs --lines 100
-```
-
-### Server stoppen
-
-```bash filename="Terminal"
-yarn twenty server stop
-```
-
-Stoppt den Container. Ihre Daten bleiben in den Docker-Volumes erhalten — der nächste `start` macht dort weiter, wo Sie aufgehört haben.
-
-### Server zurücksetzen
-
-```bash filename="Terminal"
-yarn twenty server reset
-```
-
-Entfernt den Container **und** löscht beide Docker-Volumes, wobei alle Daten gelöscht werden. Der nächste `start` erstellt eine frische Instanz.
-
-<Note>
-  Der Server erfordert, dass **Docker** läuft. Wenn der Fehler "Docker not running" angezeigt wird, stellen Sie sicher, dass Docker Desktop (oder der Docker-Daemon) gestartet ist.
-</Note>
-
-### Befehlsreferenz
+Der Scaffolder hat bereits einen lokalen Twenty-Server für Sie gestartet. Um ihn später zu verwalten, verwenden Sie `yarn twenty server`:
 
 | Befehl                                 | Beschreibung                                                |
 | -------------------------------------- | ----------------------------------------------------------- |
@@ -313,65 +226,11 @@ Entfernt den Container **und** löscht beide Docker-Volumes, wobei alle Daten ge
 | `yarn twenty server logs --lines 100`  | Die letzten 100 Protokollzeilen anzeigen                    |
 | `yarn twenty server reset`             | Alle Daten löschen und neu starten                          |
 
-## CI mit GitHub Actions
+Daten bleiben über Neustarts hinweg in zwei Docker-Volumes bestehen (`twenty-app-dev-data` für PostgreSQL, `twenty-app-dev-storage` für Dateien). Verwenden Sie `reset`, um alles zu löschen und neu zu beginnen.
 
-Das Scaffolding-Tool erzeugt einen einsatzbereiten GitHub-Actions-Workflow in `.github/workflows/ci.yml`. Er führt Ihre Integrationstests automatisch bei jedem Push auf `main` und bei Pull Requests aus.
-
-Der Workflow:
-
-1. Checkt Ihren Code aus
-2. Startet einen temporären Twenty-Server mit der Aktion `twentyhq/twenty/.github/actions/spawn-twenty-docker-image`
-3. Installiert Abhängigkeiten mit `yarn install --immutable`
-4. Führt `yarn test` aus, wobei `TWENTY_API_URL` und `TWENTY_API_KEY` aus den Aktionsausgaben injiziert werden.
-
-```yaml .github/workflows/ci.yml
-name: CI
-
-on:
-  push:
-    branches:
-      - main
-  pull_request: {}
-
-env:
-  TWENTY_VERSION: latest
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Spawn Twenty instance
-        id: twenty
-        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
-        with:
-          twenty-version: ${{ env.TWENTY_VERSION }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: Run integration tests
-        run: yarn test
-        env:
-          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
-          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
-```
-
-Sie müssen keine Secrets konfigurieren — die Aktion `spawn-twenty-docker-image` startet einen flüchtigen Twenty-Server direkt im Runner und gibt die Verbindungsdetails aus. Das Secret `GITHUB_TOKEN` wird automatisch von GitHub bereitgestellt.
-
-Um eine bestimmte Twenty-Version statt `latest` festzulegen, ändern Sie die Umgebungsvariable `TWENTY_VERSION` oben im Workflow.
+<Note>
+  Der Server erfordert, dass **Docker** läuft. Wenn der Fehler "Docker not running" angezeigt wird, stellen Sie sicher, dass Docker Desktop (oder der Docker-Daemon) gestartet ist.
+</Note>
 
 ## Manuelle Einrichtung (ohne Scaffolder)
 

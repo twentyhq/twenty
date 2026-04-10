@@ -17,7 +17,7 @@ import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
-import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/code-execution-stream-emitter.type';
 
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -39,6 +39,7 @@ import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
@@ -58,6 +59,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+import { WebSearchService } from 'src/engine/core-modules/web-search/web-search.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
 export type ChatExecutionOptions = {
@@ -93,6 +95,7 @@ export class ChatExecutionService {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly sdkProviderFactory: SdkProviderFactoryService,
     private readonly messagePruningService: MessagePruningService,
+    private readonly webSearchService: WebSearchService,
   ) {}
 
   async streamChat({
@@ -139,8 +142,15 @@ export class ChatExecutionService {
       `Built tool catalog with ${toolCatalog.length} tools, ${skillCatalog.length} skills available`,
     );
 
+    const useNativeSearch = this.webSearchService.shouldUseNativeSearch();
+
+    const toolNamesToPreload = [
+      ...COMMON_PRELOAD_TOOLS,
+      ...(useNativeSearch ? [] : ['web_search']),
+    ];
+
     const preloadedTools = await this.toolRegistry.getToolsByName(
-      COMMON_PRELOAD_TOOLS,
+      toolNamesToPreload,
       toolContext,
     );
 
@@ -161,7 +171,9 @@ export class ChatExecutionService {
     );
 
     const { tools: nativeSearchTools, callableToolNames: searchToolNames } =
-      this.getNativeWebSearchTools(registeredModel);
+      useNativeSearch
+        ? this.getNativeWebSearchTools(registeredModel)
+        : { tools: {}, callableToolNames: [] };
 
     // Direct tools: native provider tools + preloaded tools.
     // These are callable directly AND as fallback through execute_tool.
@@ -188,8 +200,16 @@ export class ChatExecutionService {
         toolContext,
         directTools,
       ),
-      [LOAD_SKILL_TOOL_NAME]: createLoadSkillTool((skillNames) =>
-        this.skillService.findFlatSkillsByNames(skillNames, workspace.id),
+      [LOAD_SKILL_TOOL_NAME]: createLoadSkillTool(
+        (skillNames) =>
+          this.skillService.findFlatSkillsByNames(skillNames, workspace.id),
+        async () => {
+          const allSkills = await this.skillService.findAllFlatSkills(
+            workspace.id,
+          );
+
+          return allSkills.map((skill) => skill.name);
+        },
       ),
     };
 
@@ -309,6 +329,17 @@ export class ChatExecutionService {
         null,
         userWorkspaceId,
       );
+
+      if (useNativeSearch) {
+        const nativeWebSearchCallCount =
+          countNativeWebSearchCallsFromSteps(steps);
+
+        this.aiBillingService.billNativeWebSearchUsage(
+          nativeWebSearchCallCount,
+          workspace.id,
+          userWorkspaceId,
+        );
+      }
     };
 
     const stream = streamText({
@@ -449,21 +480,8 @@ export class ChatExecutionService {
           callableToolNames: ['web_search'],
         };
       }
-      case AI_SDK_BEDROCK: {
-        const provider =
-          this.sdkProviderFactory.getRawBedrockProvider(providerName);
-
-        if (!provider) {
-          return empty;
-        }
-
-        return {
-          tools: {
-            web_search: provider.tools.webSearch_20250305() as ToolSet[string],
-          },
-          callableToolNames: ['web_search'],
-        };
-      }
+      case AI_SDK_BEDROCK:
+        return empty;
       case AI_SDK_OPENAI: {
         const provider =
           this.sdkProviderFactory.getRawOpenAIProvider(providerName);

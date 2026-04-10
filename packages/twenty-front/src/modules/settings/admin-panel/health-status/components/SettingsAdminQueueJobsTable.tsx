@@ -1,3 +1,4 @@
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsAdminDeleteJobsConfirmationModal } from '@/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal';
 import { SettingsAdminJobDetailsExpandable } from '@/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable';
 import { SettingsAdminJobStateBadge } from '@/settings/admin-panel/health-status/components/SettingsAdminJobStateBadge';
@@ -47,12 +48,6 @@ const StyledControlsContainer = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: space-between;
-`;
-
-const StyledEmptyState = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  padding: ${themeCssVariables.spacing[8]};
-  text-align: center;
 `;
 
 const StyledPaginationContainer = styled.div`
@@ -261,9 +256,9 @@ export const SettingsAdminQueueJobsTable = ({
       </StyledControlsContainer>
 
       {loading && jobs.length === 0 ? (
-        <StyledEmptyState>{t`Loading jobs...`}</StyledEmptyState>
+        <SettingsEmptyPlaceholder>{t`Loading jobs...`}</SettingsEmptyPlaceholder>
       ) : jobs.length === 0 ? (
-        <StyledEmptyState>{t`No jobs found`}</StyledEmptyState>
+        <SettingsEmptyPlaceholder>{t`No jobs found`}</SettingsEmptyPlaceholder>
       ) : (
         <>
           <Table>

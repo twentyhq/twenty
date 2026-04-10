@@ -37,6 +37,7 @@ export const CommandMenuItemOptionsDropdown = ({
 
   const normalizedServerShortLabel = serverShortLabel ?? null;
   const normalizedShortLabel = shortLabel ?? null;
+  const hasNoShortLabel = normalizedServerShortLabel === null;
   const isLabelHidden =
     normalizedShortLabel === null && isDefined(normalizedServerShortLabel);
   const hasShortLabelOverride =
@@ -66,9 +67,10 @@ export const CommandMenuItemOptionsDropdown = ({
             <MenuItemToggle
               LeftIcon={IconTag}
               text={t`Hide label`}
-              toggled={isLabelHidden}
+              toggled={isLabelHidden || hasNoShortLabel}
               onToggleChange={handleToggleHideLabel}
               toggleSize="small"
+              disabled={hasNoShortLabel}
             />
             <MenuItem
               LeftIcon={IconRefresh}

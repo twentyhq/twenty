@@ -6,8 +6,7 @@ import { useMaintenanceModeBannerDismissal } from '@/information-banner/hooks/us
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { getSafeUrl, isDefined } from 'twenty-shared/utils';
 import { IconExternalLink } from 'twenty-ui/display';
 
 const formatMaintenanceDateTime = (
@@ -49,9 +48,7 @@ export const InformationBannerMaintenance = () => {
   );
 
   const message = t`Scheduled maintenance: ${startFormatted} — ${endFormatted}`;
-  const maintenanceLink = isNonEmptyString(maintenanceMode.link?.trim())
-    ? maintenanceMode.link.trim()
-    : undefined;
+  const maintenanceLink = getSafeUrl(maintenanceMode.link?.trim());
 
   return (
     <InformationBanner

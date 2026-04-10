@@ -8,8 +8,8 @@ import {
   MessageFolderDriver,
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { shouldCreateFolderByDefault } from 'src/modules/messaging/message-folder-manager/utils/should-create-folder-by-default.util';
 import { shouldSyncFolderByDefault } from 'src/modules/messaging/message-folder-manager/utils/should-sync-folder-by-default.util';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
@@ -27,13 +27,10 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
 
   public async getAllMessageFolders(
     connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
+      ConnectedAccountEntity,
       'id' | 'provider' | 'connectionParameters' | 'handle'
     >,
-    messageChannel: Pick<
-      MessageChannelWorkspaceEntity,
-      'messageFolderImportPolicy'
-    >,
+    messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,
   ): Promise<DiscoveredMessageFolder[]> {
     try {
       const client = await this.imapClientProvider.getClient(connectedAccount);
@@ -62,21 +59,23 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
   private async filterAndMapFolders(
     client: ImapFlow,
     mailboxList: ListResponse[],
-    messageChannel: Pick<
-      MessageChannelWorkspaceEntity,
-      'messageFolderImportPolicy'
-    >,
+    messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,
   ): Promise<DiscoveredMessageFolder[]> {
     const folders: DiscoveredMessageFolder[] = [];
     const pathToExternalIdMap = new Map<string, string>();
     const sentFolder =
       await this.imapFindSentFolderService.findSentFolder(client);
 
-    if (isDefined(sentFolder)) {
-      const sentMailbox = mailboxList.find((m) => m.path === sentFolder.path);
-      const uidValidity = sentMailbox
-        ? await this.getUidValidity(client, sentMailbox)
-        : null;
+    const sentMailbox = isDefined(sentFolder)
+      ? mailboxList.find((mailbox) => mailbox.path === sentFolder.path)
+      : undefined;
+
+    if (
+      isDefined(sentFolder) &&
+      isDefined(sentMailbox) &&
+      this.isMailboxSelectable(sentMailbox)
+    ) {
+      const uidValidity = await this.getUidValidity(client, sentMailbox);
 
       const externalId = uidValidity
         ? `${sentFolder.path}:${uidValidity.toString()}`
@@ -94,6 +93,13 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
     }
 
     for (const mailbox of mailboxList) {
+      if (!this.isValidMailbox(mailbox, folders)) {
+        if (!pathToExternalIdMap.has(mailbox.path)) {
+          pathToExternalIdMap.set(mailbox.path, mailbox.path);
+        }
+        continue;
+      }
+
       const uidValidity = await this.getUidValidity(client, mailbox);
       const externalId = uidValidity
         ? `${mailbox.path}:${uidValidity}`
@@ -101,25 +107,23 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
 
       pathToExternalIdMap.set(mailbox.path, externalId);
 
-      if (this.isValidMailbox(mailbox, folders)) {
-        const standardFolder = getStandardFolderByRegex(mailbox.name);
+      const standardFolder = getStandardFolderByRegex(mailbox.name);
 
-        if (!shouldCreateFolderByDefault(standardFolder)) {
-          continue;
-        }
-
-        const isSynced = shouldSyncFolderByDefault(
-          messageChannel.messageFolderImportPolicy,
-        );
-
-        folders.push({
-          externalId,
-          name: mailbox.name,
-          isSynced,
-          isSentFolder: false,
-          parentFolderId: mailbox.parentPath || null,
-        });
+      if (!shouldCreateFolderByDefault(standardFolder)) {
+        continue;
       }
+
+      const isSynced = shouldSyncFolderByDefault(
+        messageChannel.messageFolderImportPolicy,
+      );
+
+      folders.push({
+        externalId,
+        name: mailbox.name,
+        isSynced,
+        isSentFolder: false,
+        parentFolderId: mailbox.parentPath || null,
+      });
     }
 
     for (const folder of folders) {
@@ -133,11 +137,15 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
     return folders;
   }
 
+  private isMailboxSelectable(mailbox: ListResponse): boolean {
+    return !mailbox.flags?.has('\\Noselect');
+  }
+
   private isValidMailbox(
     mailbox: ListResponse,
     existingFolders: DiscoveredMessageFolder[],
   ): boolean {
-    if (mailbox.flags?.has('\\Noselect')) {
+    if (!this.isMailboxSelectable(mailbox)) {
       return false;
     }
 

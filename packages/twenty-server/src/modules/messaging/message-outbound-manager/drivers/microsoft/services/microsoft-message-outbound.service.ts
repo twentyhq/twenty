@@ -3,9 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { type MessageOutboundDriver } from 'src/modules/messaging/message-outbound-manager/interfaces/message-outbound-driver.interface';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { toMicrosoftRecipients } from 'src/modules/messaging/message-import-manager/utils/to-microsoft-recipients.util';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
+import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
 import { type Client as MicrosoftGraphClient } from '@microsoft/microsoft-graph-client';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,24 +18,31 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
 
   async sendMessage(
     sendMessageInput: SendMessageInput,
-    connectedAccount: ConnectedAccountWorkspaceEntity,
-  ): Promise<void> {
+    connectedAccount: ConnectedAccountEntity,
+  ): Promise<SendMessageResult> {
     const microsoftClient =
       await this.oAuth2ClientManagerService.getMicrosoftOAuth2Client(
         connectedAccount,
       );
 
-    const messageId = await this.createDraftMessage(
-      microsoftClient,
-      sendMessageInput,
-    );
+    const {
+      id: messageId,
+      internetMessageId,
+      conversationId,
+    } = await this.createDraftMessage(microsoftClient, sendMessageInput);
 
     await microsoftClient.api(`/me/messages/${messageId}/send`).post({});
+
+    return {
+      headerMessageId: internetMessageId ?? '',
+      messageExternalId: messageId,
+      threadExternalId: conversationId ?? undefined,
+    };
   }
 
   async createDraft(
     sendMessageInput: SendMessageInput,
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: ConnectedAccountEntity,
   ): Promise<void> {
     const microsoftClient =
       await this.oAuth2ClientManagerService.getMicrosoftOAuth2Client(
@@ -47,7 +55,11 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
   private async createDraftMessage(
     microsoftClient: MicrosoftGraphClient,
     sendMessageInput: SendMessageInput,
-  ): Promise<string> {
+  ): Promise<{
+    id: string;
+    internetMessageId?: string;
+    conversationId?: string;
+  }> {
     const parentMessageGraphId = sendMessageInput.inReplyTo
       ? await this.findMessageByInternetMessageId(
           microsoftClient,
@@ -62,14 +74,25 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
         .api(`/me/messages/${parentMessageGraphId}/createReply`)
         .post({});
 
-      await microsoftClient.api(`/me/messages/${reply.id}`).patch(message);
+      const patched = await microsoftClient
+        .api(`/me/messages/${reply.id}`)
+        .patch(message);
 
-      return reply.id;
+      return {
+        id: reply.id,
+        internetMessageId:
+          patched?.internetMessageId ?? reply.internetMessageId,
+        conversationId: patched?.conversationId ?? reply.conversationId,
+      };
     }
 
     const response = await microsoftClient.api('/me/messages').post(message);
 
-    return response.id;
+    return {
+      id: response.id,
+      internetMessageId: response.internetMessageId,
+      conversationId: response.conversationId,
+    };
   }
 
   private async findMessageByInternetMessageId(

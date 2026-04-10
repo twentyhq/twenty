@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ConnectedAccountProvider } from 'twenty-shared/types';
+import { EntityManager, Repository } from 'typeorm';
 
-import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export type CreateConnectedAccountInput = {
   workspaceId: string;
@@ -16,14 +19,15 @@ export type CreateConnectedAccountInput = {
   refreshToken: string;
   accountOwnerId: string;
   scopes: string[];
-  manager: WorkspaceEntityManager;
+  transactionManager: EntityManager;
 };
 
 @Injectable()
 export class CreateConnectedAccountService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
   async createConnectedAccount(
@@ -38,25 +42,51 @@ export class CreateConnectedAccountService {
       refreshToken,
       accountOwnerId,
       scopes,
-      manager,
     } = input;
 
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      await this.connectedAccountDataAccessService.save(
-        workspaceId,
-        {
+      const workspaceMemberRepo =
+        await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          workspaceId,
+          'workspaceMember',
+        );
+
+      const member = await workspaceMemberRepo.findOne({
+        where: { id: accountOwnerId },
+      });
+
+      if (!member) {
+        throw new Error(
+          `Workspace member not found for accountOwnerId ${accountOwnerId}`,
+        );
+      }
+
+      const userWorkspace = await this.userWorkspaceRepository.findOne({
+        where: { userId: member.userId, workspaceId },
+      });
+
+      if (!userWorkspace) {
+        throw new Error(
+          `User workspace not found for user ${member.userId} in workspace ${workspaceId}`,
+        );
+      }
+
+      const userWorkspaceId = userWorkspace.id;
+
+      await input.transactionManager
+        .getRepository(ConnectedAccountEntity)
+        .save({
           id: connectedAccountId,
           handle,
           provider,
           accessToken,
           refreshToken,
-          accountOwnerId,
+          userWorkspaceId,
           scopes,
-        },
-        manager,
-      );
+          workspaceId,
+        } as ConnectedAccountEntity);
     }, authContext);
   }
 }

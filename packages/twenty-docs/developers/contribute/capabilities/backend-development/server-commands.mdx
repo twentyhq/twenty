@@ -47,25 +47,8 @@ npx nx run twenty-server:database:reset
 #### For objects in Core/Metadata schemas (TypeORM)
 
 ```bash
-npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+npx nx run twenty-server:database:migrate:generate
 ```
-
-#### For Workspace objects
-
-There are no migrations files, migration are generated automatically for each workspace,
-stored in the database, and applied with this command
-
-```bash
-npx nx run twenty-server:command workspace:sync-metadata -f
-```
-
-<Warning>
-
-This will drop the database and re-run the migrations and seed.
-
-Make sure to back up any data you want to keep before running this command.
-
-</Warning>
 
 ## Tech Stack
 

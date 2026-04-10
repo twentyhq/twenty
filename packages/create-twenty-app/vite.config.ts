@@ -62,8 +62,8 @@ export default defineConfig(() => {
       dts({ entryRoot: './src', tsconfigPath: tsConfigPath }),
       copyAssetPlugin([
         {
-          src: 'src/constants/base-application',
-          dest: 'dist/constants/base-application',
+          src: 'src/constants/template',
+          dest: 'dist/constants/template',
         },
       ]),
     ],

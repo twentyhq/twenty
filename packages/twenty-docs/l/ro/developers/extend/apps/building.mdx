@@ -81,7 +81,7 @@ import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
 export default defineApplication({
-  universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',
   icon: 'IconWorld',
@@ -717,6 +717,13 @@ Puncte cheie:
 
 Componentele front-end sunt componente React care se afișează direct în interfața Twenty. Rulează într-un **Web Worker** izolat folosind Remote DOM — codul este izolat (sandboxed), dar se redă nativ în pagină, nu într-un iframe.
 
+#### Unde pot fi utilizate componentele frontale
+
+Componentele frontale pot fi afișate în două locații în cadrul Twenty:
+
+* **Panou lateral** — Componentele frontale care nu sunt headless se deschid în panoul lateral din dreapta. Acesta este comportamentul implicit atunci când o componentă frontală este declanșată din meniul de comenzi.
+* **Widgeturi (tablouri de bord și pagini de înregistrare)** — Componentele frontale pot fi încorporate ca widgeturi în machetele de pagină. La configurarea unui tablou de bord sau a machetei unei pagini de înregistrare, utilizatorii pot adăuga un widget de componentă frontală.
+
 #### Exemplu de bază
 
 Cel mai rapid mod de a vedea o componentă front-end în acțiune este să o înregistrați ca o **comandă**. Adăugarea unui câmp `command` cu `isPinned: true` o face să apară ca un buton de acțiune rapidă în colțul din dreapta sus al paginii — nu este nevoie de layout de pagină:
@@ -749,7 +756,7 @@ export default defineFrontComponent({
 });
 ```
 
-După sincronizarea cu `yarn twenty dev`, acțiunea rapidă apare în colțul din dreapta sus al paginii:
+După sincronizarea cu `yarn twenty dev` (sau prin rularea o singură dată a comenzii `yarn twenty dev --once`), acțiunea rapidă apare în colțul din dreapta sus al paginii:
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Buton de acțiune rapidă în colțul din dreapta sus" />
@@ -774,9 +781,13 @@ Faceți clic pe el pentru a afișa componenta inline.
 
 Dincolo de comenzi, puteți încorpora o componentă front-end direct într-o pagină de înregistrare adăugând-o ca widget într-un **layout de pagină**. Consultați secțiunea [definePageLayout](#definepagelayout) pentru detalii.
 
-#### Componente headless (`isHeadless: true`)
+#### Headless vs non-headless
 
-Componentele headless nu redau nicio interfață vizibilă, dar rulează în continuare logica React. Acest lucru este util pentru **componente de efect** — componente care execută efecte secundare la montare, cum ar fi sincronizarea datelor, pornirea unui cronometru, ascultarea evenimentelor sau declanșarea unei notificări.
+Componentele frontale au două moduri de randare controlate de opțiunea `isHeadless`:
+
+**Non-headless (implicit)** — Componenta afișează o interfață vizibilă. Când este declanșat din meniul de comenzi, se deschide în panoul lateral. Acesta este comportamentul implicit când `isHeadless` este `false` sau omis.
+
+**Headless (`isHeadless: true`)** — Componenta se montează invizibil în fundal. Nu deschide panoul lateral. Componentele headless sunt concepute pentru acțiuni care execută logică și apoi se demontează — de exemplu, rularea unei sarcini asincrone, navigarea la o pagină sau afișarea unui modal de confirmare. Se potrivesc în mod natural cu componentele Command din SDK descrise mai jos.
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent, useRecordId, enqueueSnackbar } from 'twenty-sdk';
@@ -802,6 +813,89 @@ export default defineFrontComponent({
 ```
 
 Deoarece componenta returnează `null`, Twenty omite redarea unui container pentru ea — nu apare spațiu gol în layout. Componenta are în continuare acces la toate hook-urile și la API-ul de comunicare cu gazda.
+
+#### Componentele Command din SDK
+
+Pachetul `twenty-sdk` oferă patru componente ajutătoare Command, concepute pentru componente front-end headless. Fiecare componentă execută o acțiune la montare, gestionează erorile afișând o notificare snackbar și demontează automat componenta de interfață la final.
+
+Importă-le din `twenty-sdk/command`:
+
+* **`Command`** — Rulează un callback asincron prin prop-ul `execute`.
+* **`CommandLink`** — Navighează către o rută a aplicației. Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — Deschide un modal de confirmare. Dacă utilizatorul confirmă, execută callback-ul `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — Deschide o anumită pagină din panoul lateral. Props: `page`, `pageTitle`, `pageIcon`.
+
+Iată un exemplu complet de componentă front-end headless care folosește `Command` pentru a rula o acțiune din meniul de comenzi:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+    label: 'Run my action',
+    icon: 'IconPlayerPlay',
+  },
+});
+```
+
+Și un exemplu care folosește `CommandModal` pentru a cere confirmarea înainte de execuție:
+
+```tsx src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+    label: 'Delete draft',
+    icon: 'IconTrash',
+  },
+});
+```
 
 #### Accesarea contextului de rulare
 
@@ -858,6 +952,50 @@ Componentele front-end pot declanșa navigare, ferestre modale și notificări f
 | `enqueueSnackbar(params)`                       | Afișați o notificare tip toast      |
 | `unmountFrontComponent()`                       | Demontați componenta                |
 | `updateProgress(progress)`                      | Actualizați un indicator de progres |
+
+Iată un exemplu care folosește API-ul gazdă pentru a afișa un snackbar și a închide panoul lateral după finalizarea unei acțiuni:
+
+```tsx src/front-components/archive-record.tsx
+import { defineFrontComponent, useRecordId } from 'twenty-sdk';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
 
 #### Opțiuni pentru comandă
 
@@ -1264,7 +1402,7 @@ export default defineFrontComponent({
 
 ### Cum funcționează împachetarea
 
-Pasul de build (`yarn twenty dev` sau `yarn twenty build`) folosește esbuild pentru a produce un singur fișier autonom per funcție logică și per componentă frontend. Toate pachetele importate sunt integrate în bundle.
+Pasul de build folosește esbuild pentru a produce un singur fișier autonom pentru fiecare funcție logică și pentru fiecare componentă frontend. Toate pachetele importate sunt integrate în bundle.
 
 **Funcțiile logice** rulează într-un mediu Node.js. Modulele built-in Node (`fs`, `path`, `crypto`, `http` etc.) sunt disponibile și nu trebuie instalate.
 
@@ -1713,3 +1851,86 @@ yarn twenty uninstall
 # Skip the confirmation prompt
 yarn twenty uninstall --yes
 ```
+
+## Gestionarea remote-urilor
+
+Un „remote” este un server Twenty la care se conectează aplicația. În timpul configurării, generatorul de schelet creează automat unul pentru dvs. Puteți adăuga mai multe remote-uri sau comuta între ele oricând.
+
+```bash filename="Terminal"
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote add
+
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote add --local
+
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+
+# List all configured remotes
+yarn twenty remote list
+
+# Switch the active remote
+yarn twenty remote switch <name>
+```
+
+Acreditările dvs. sunt stocate în `~/.twenty/config.json`.
+
+## CI cu GitHub Actions
+
+Scaffolderul generează un workflow GitHub Actions gata de utilizare în `.github/workflows/ci.yml`. Rulează automat testele de integrare la fiecare push pe `main` și la pull request-uri.
+
+Workflow-ul:
+
+1. Preia codul
+2. Pornește un server Twenty temporar folosind acțiunea `twentyhq/twenty/.github/actions/spawn-twenty-docker-image`
+3. Instalează dependențele cu `yarn install --immutable`
+4. Rulează `yarn test` cu `TWENTY_API_URL` și `TWENTY_API_KEY` injectate din rezultatele acțiunii
+
+```yaml .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+
+env:
+  TWENTY_VERSION: latest
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Spawn Twenty instance
+        id: twenty
+        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
+        with:
+          twenty-version: ${{ env.TWENTY_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run integration tests
+        run: yarn test
+        env:
+          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
+          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
+```
+
+Nu trebuie să configurați niciun secret — acțiunea `spawn-twenty-docker-image` pornește un server Twenty efemer direct în runner și oferă detaliile de conectare. Secretul `GITHUB_TOKEN` este furnizat automat de GitHub.
+
+Pentru a fixa o versiune Twenty specifică în loc de `latest`, modificați variabila de mediu `TWENTY_VERSION` din partea de sus a workflow-ului.

@@ -81,7 +81,7 @@ import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
 export default defineApplication({
-  universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',
   icon: 'IconWorld',
@@ -644,48 +644,14 @@ export default defineLogicFunction({
 </Note>
 
 </Accordion>
-<Accordion title="definePreInstallLogicFunction" description="Eine Pre-Installations-Logikfunktion definieren (eine pro App)">
-
-Eine Pre-Installationsfunktion ist eine Logikfunktion, die automatisch ausgeführt wird, bevor Ihre App in einem Arbeitsbereich installiert wird. Dies ist nützlich für Validierungsaufgaben, Überprüfungen von Voraussetzungen oder die Vorbereitung des Status des Arbeitsbereichs, bevor die Hauptinstallation fortgesetzt wird.
-
-```ts src/logic-functions/pre-install.ts
-import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
-
-const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
-  console.log('Pre install logic function executed successfully!', payload.previousVersion);
-};
-
-export default definePreInstallLogicFunction({
-  universalIdentifier: 'e0604b9e-e946-456b-886d-3f27d9a6b324',
-  name: 'pre-install',
-  description: 'Runs before installation to prepare the application.',
-  timeoutSeconds: 300,
-  handler,
-});
-```
-
-Sie können die Pre-Installationsfunktion auch jederzeit manuell über die CLI ausführen:
-
-```bash filename="Terminal"
-yarn twenty exec --preInstall
-```
-
-Hauptpunkte:
-* Pre-Installationsfunktionen verwenden `definePreInstallLogicFunction()` — eine spezialisierte Variante, die Trigger-Einstellungen (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`) weglässt.
-* Der Handler erhält ein `InstallLogicFunctionPayload` mit `{ previousVersion: string }` — die Version der App, die zuvor installiert war (oder eine leere Zeichenkette bei Neuinstallationen).
-* Pro Anwendung ist nur eine Pre-Installationsfunktion zulässig. Der Manifest-Build schlägt fehl, wenn mehr als eine erkannt wird.
-* Der `universalIdentifier` der Funktion wird während des Builds im Anwendungsmanifest automatisch als `preInstallLogicFunctionUniversalIdentifier` gesetzt — Sie müssen ihn nicht in `defineApplication()` referenzieren.
-* Das standardmäßige Timeout ist auf 300 Sekunden (5 Minuten) festgelegt, um längere Vorbereitungsvorgänge zu ermöglichen.
-
-</Accordion>
 <Accordion title="definePostInstallLogicFunction" description="Eine Post-Installations-Logikfunktion definieren (eine pro App)">
 
-Eine Post-Installationsfunktion ist eine Logikfunktion, die automatisch ausgeführt wird, nachdem Ihre App in einem Arbeitsbereich installiert wurde. Dies ist nützlich für einmalige Einrichtungsvorgänge wie das Befüllen mit Standarddaten, das Erstellen erster Datensätze oder das Konfigurieren von Arbeitsbereichseinstellungen.
+Eine Post-Installationsfunktion ist eine Logikfunktion, die automatisch ausgeführt wird, nachdem Ihre App in einem Arbeitsbereich installiert wurde. Der Server führt sie **nach** der Synchronisierung der Metadaten der App und der Generierung des SDK-Clients aus, sodass der Arbeitsbereich vollständig einsatzbereit ist und das neue Schema bereitsteht. Typische Anwendungsfälle umfassen das Befüllen von Standarddaten, das Erstellen anfänglicher Datensätze, das Konfigurieren von Arbeitsbereichseinstellungen oder das Bereitstellen von Ressourcen bei Diensten von Drittanbietern.
 
 ```ts src/logic-functions/post-install.ts
-import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
 
-const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
+const handler = async (payload: InstallPayload): Promise<void> => {
   console.log('Post install logic function executed successfully!', payload.previousVersion);
 };
 
@@ -694,6 +660,8 @@ export default definePostInstallLogicFunction({
   name: 'post-install',
   description: 'Runs after installation to set up the application.',
   timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  shouldRunSynchronously: false,
   handler,
 });
 ```
@@ -706,15 +674,180 @@ yarn twenty exec --postInstall
 
 Hauptpunkte:
 * Post-Installationsfunktionen verwenden `definePostInstallLogicFunction()` — eine spezialisierte Variante, die Trigger-Einstellungen (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`) weglässt.
-* Der Handler erhält ein `InstallLogicFunctionPayload` mit `{ previousVersion: string }` — die Version der App, die zuvor installiert war (oder eine leere Zeichenkette bei Neuinstallationen).
+* Der Handler erhält ein `InstallPayload` mit `{ previousVersion?: string; newVersion: string }` — `newVersion` ist die zu installierende Version, und `previousVersion` ist die zuvor installierte Version (oder `undefined` bei einer Neuinstallation). Verwenden Sie diese Werte, um Neuinstallationen von Upgrades zu unterscheiden und versionsspezifische Migrationslogik auszuführen.
+* **Wann der Hook ausgeführt wird**: standardmäßig nur bei Neuinstallationen. Übergeben Sie `shouldRunOnVersionUpgrade: true`, wenn er auch beim Upgrade der App von einer vorherigen Version ausgeführt werden soll. Wenn weggelassen, ist das Flag standardmäßig `false` und Upgrades überspringen den Hook.
+* **Ausführungsmodell — standardmäßig asynchron, synchron optional**: Das Flag `shouldRunSynchronously` steuert, *wie* Post-Install ausgeführt wird.
+  * `shouldRunSynchronously: false` *(Standard)* — der Hook wird **in die Nachrichtenwarteschlange eingereiht** mit `retryLimit: 3` und läuft asynchron in einem Worker. Die Installationsantwort kommt zurück, sobald der Job eingereiht ist, sodass ein langsamer oder fehlschlagender Handler den Aufrufer nicht blockiert. Der Worker versucht es bis zu dreimal erneut. **Verwenden Sie dies für lang laufende Jobs** — das Befüllen großer Datensätze, Aufrufe langsamer Drittanbieter-APIs, Bereitstellung externer Ressourcen, alles, was ein vernünftiges HTTP-Antwortfenster überschreiten könnte.
+  * `shouldRunSynchronously: true` — der Hook wird **inline während des Installationsablaufs** ausgeführt (gleicher Executor wie bei Pre-Install). Die Installationsanforderung blockiert, bis der Handler fertig ist, und wenn er einen Fehler wirft, erhält der Installationsaufrufer einen `POST_INSTALL_ERROR`. Keine automatischen Wiederholungen. **Verwenden Sie dies für schnelle Aufgaben, die vor der Antwort abgeschlossen sein müssen** — z. B. um dem Benutzer einen Validierungsfehler auszugeben oder für eine schnelle Einrichtung, auf die der Client unmittelbar nach der Rückkehr des Installationsaufrufs angewiesen ist. Beachten Sie, dass die Metadatenmigration bereits angewendet wurde, wenn Post-Install läuft, sodass ein Fehler im Synchronmodus die Schemaänderungen **nicht** rückgängig macht — er zeigt lediglich den Fehler an.
+* Stellen Sie sicher, dass Ihr Handler idempotent ist. Im asynchronen Modus kann die Warteschlange bis zu dreimal erneut versuchen; in beiden Modi kann der Hook bei Upgrades erneut laufen, wenn `shouldRunOnVersionUpgrade: true`.
+* Die Umgebungsvariablen `APPLICATION_ID`, `APP_ACCESS_TOKEN` und `API_URL` sind im Handler verfügbar (wie bei jeder anderen Logikfunktion), sodass Sie die Twenty API mit einem auf Ihre App beschränkten Anwendungszugriffstoken aufrufen können.
 * Pro Anwendung ist nur eine Post-Installationsfunktion zulässig. Der Manifest-Build schlägt fehl, wenn mehr als eine erkannt wird.
-* Der `universalIdentifier` der Funktion wird während des Builds im Anwendungsmanifest automatisch als `postInstallLogicFunctionUniversalIdentifier` gesetzt — Sie müssen ihn nicht in `defineApplication()` referenzieren.
+* Die `universalIdentifier`, `shouldRunOnVersionUpgrade` und `shouldRunSynchronously` der Funktion werden während des Builds automatisch dem Anwendungsmanifest unter dem Feld `postInstallLogicFunction` hinzugefügt — Sie müssen sie in `defineApplication()` nicht referenzieren.
 * Das standardmäßige Timeout ist auf 300 Sekunden (5 Minuten) festgelegt, um längere Einrichtungsvorgänge wie Daten-Seeding zu ermöglichen.
+* **Nicht im Dev-Modus ausgeführt**: Wenn eine App lokal registriert ist (über `yarn twenty dev`), überspringt der Server den Installationsablauf vollständig und synchronisiert Dateien direkt über den CLI-Watcher — daher läuft Post-Install im Dev-Modus nie, unabhängig von `shouldRunSynchronously`. Verwenden Sie `yarn twenty exec --postInstall`, um es manuell gegen einen laufenden Workspace auszulösen.
+
+</Accordion>
+<Accordion title="definePreInstallLogicFunction" description="Eine Pre-Installations-Logikfunktion definieren (eine pro App)">
+
+Eine Pre-Install-Funktion ist eine Logikfunktion, die automatisch während der Installation ausgeführt wird, **bevor die Metadatenmigration des Workspaces angewendet wird**. Sie hat die gleiche Payload-Struktur wie Post-Install (`InstallPayload`), ist aber früher im Installationsablauf positioniert, sodass sie Zustände vorbereiten kann, von denen die bevorstehende Migration abhängt — typische Anwendungsfälle sind das Sichern von Daten, die Validierung der Kompatibilität mit dem neuen Schema oder das Archivieren von Datensätzen, die umstrukturiert oder entfernt werden sollen.
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
+
+const handler = async (payload: InstallPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+Sie können die Pre-Installationsfunktion auch jederzeit manuell über die CLI ausführen:
+
+```bash filename="Terminal"
+yarn twenty exec --preInstall
+```
+
+Hauptpunkte:
+* Pre-Install-Funktionen verwenden `definePreInstallLogicFunction()` — dieselbe spezialisierte Konfiguration wie bei Post-Install, nur an einen anderen Lifecycle-Slot gebunden.
+* Sowohl Pre- als auch Post-Install-Handler erhalten denselben `InstallPayload`-Typ: `{ previousVersion?: string; newVersion: string }`. Importieren Sie ihn einmal und verwenden Sie ihn für beide Hooks wieder.
+* **Wann der Hook ausgeführt wird**: positioniert direkt vor der Metadatenmigration des Workspaces (`synchronizeFromManifest`). Vor der Ausführung führt der Server einen rein additiven "pared-down sync" durch, der die Pre-Install-Funktion der **neuen** Version in den Workspace-Metadaten registriert — sonst wird nichts angefasst — und führt sie dann aus. Da dieser Sync nur additiv ist, sind die Objekte, Felder und Daten der vorherigen Version noch intakt, wenn Ihr Handler läuft: Sie können den Zustand vor der Migration gefahrlos lesen und sichern.
+* **Ausführungsmodell**: Pre-Install wird **synchron** ausgeführt und **blockiert die Installation**. Wenn der Handler einen Fehler wirft, wird die Installation abgebrochen, bevor Schemaänderungen angewendet werden — der Workspace verbleibt in der vorherigen Version in einem konsistenten Zustand. Das ist beabsichtigt: Pre-Install ist Ihre letzte Chance, ein riskantes Upgrade abzulehnen.
+* Wie bei Post-Install ist pro Anwendung nur eine Pre-Installationsfunktion zulässig. Sie wird während des Builds automatisch dem Anwendungsmanifest unter `preInstallLogicFunction` hinzugefügt.
+* **Nicht im Dev-Modus ausgeführt**: wie bei Post-Install — der Installationsablauf wird für lokal registrierte Apps vollständig übersprungen, daher läuft Pre-Install unter `yarn twenty dev` nie. Verwenden Sie `yarn twenty exec --preInstall`, um es manuell auszulösen.
+
+</Accordion>
+<Accordion title="Pre-Install vs. Post-Install: wann was verwenden" description="Den richtigen Installations-Hook wählen">
+
+Beide Hooks sind Teil desselben Installationsablaufs und erhalten dasselbe `InstallPayload`. Der Unterschied besteht darin, **wann** sie relativ zur Metadatenmigration des Workspaces ausgeführt werden, und das ändert, auf welche Daten sie gefahrlos zugreifen können.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ install flow                                                │
+│                                                             │
+│   upload package → [pre-install] → metadata migration →     │
+│   generate SDK → [post-install]                             │
+│                                                             │
+│                  old schema visible    new schema visible   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+Pre-Install ist immer **synchron** (blockiert die Installation und kann sie abbrechen). Post-Install ist **standardmäßig asynchron** — in einen Worker eingereiht mit automatischen Wiederholungen — kann aber per `shouldRunSynchronously: true` in die synchrone Ausführung wechseln. Siehe das Akkordeon zu `definePostInstallLogicFunction` oben, wann welcher Modus zu verwenden ist.
+
+**Verwenden Sie `post-install` für alles, wofür das neue Schema existieren muss.** Dies ist der Regelfall:
+
+* Standarddaten befüllen (Anlegen anfänglicher Datensätze, Standardansichten, Demo-Inhalte) für neu hinzugefügte Objekte und Felder.
+* Registrieren von Webhooks bei Drittanbieter-Diensten, jetzt, da die App ihre Anmeldedaten hat.
+* Aufrufen Ihrer eigenen API, um eine Einrichtung abzuschließen, die von den synchronisierten Metadaten abhängt.
+* Idempotente "Stelle sicher, dass dies existiert"-Logik, die bei jedem Upgrade den Zustand abgleichen soll — kombinieren Sie dies mit `shouldRunOnVersionUpgrade: true`.
+
+Beispiel — nach der Installation einen Standard-`PostCard`-Datensatz anlegen:
+
+```ts src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
+import { createClient } from './generated/client';
+
+const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
+  if (previousVersion) return; // fresh installs only
+
+  const client = createClient();
+  await client.postCard.create({
+    data: { title: 'Welcome to Postcard', content: 'Your first card!' },
+  });
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'f7a2b9c1-3d4e-5678-abcd-ef9876543210',
+  name: 'post-install',
+  description: 'Seeds a welcome post card after install.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  handler,
+});
+```
+
+**Verwenden Sie `pre-install`, wenn eine Migration ansonsten vorhandene Daten löschen oder beschädigen würde.** Da Pre-Install gegen das vorherige Schema läuft und ein Fehlschlag das Upgrade zurückrollt, ist es der richtige Ort für alles Riskante:
+
+* **Sichern von Daten, die gleich gelöscht oder umstrukturiert werden** — z. B. Sie entfernen in v2 ein Feld und müssen dessen Werte vor der Migration in ein anderes Feld kopieren oder in einen Speicher exportieren.
+* **Archivieren von Datensätzen, die eine neue Einschränkung ungültig machen würde** — z. B. ein Feld wird `NOT NULL` und Sie müssen zuerst Zeilen mit Null-Werten löschen oder korrigieren.
+* **Kompatibilität validieren und das Upgrade ablehnen, wenn die aktuellen Daten nicht sauber migriert werden können** — werfen Sie im Handler einen Fehler, und die Installation wird ohne Änderungen abgebrochen. Das ist sicherer, als die Inkompatibilität mitten in der Migration zu entdecken.
+* **Daten umbenennen oder Schlüssel neu zuweisen** vor einer Schemaänderung, bei der sonst die Zuordnung verloren ginge.
+
+Beispiel — Datensätze vor einer destruktiven Migration archivieren:
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
+import { createClient } from './generated/client';
+
+const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
+  // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
+  if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
+    return;
+  }
+
+  const client = createClient();
+  const legacyRecords = await client.postCard.findMany({
+    where: { notes: { isNotNull: true } },
+  });
+
+  if (legacyRecords.length === 0) return;
+
+  // Copy legacy `notes` into the new `description` field before the migration
+  // drops the `notes` column. If this fails, the upgrade is aborted and the
+  // workspace stays on v1 with all data intact.
+  await Promise.all(
+    legacyRecords.map((record) =>
+      client.postCard.update({
+        where: { id: record.id },
+        data: { description: record.notes },
+      }),
+    ),
+  );
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Backs up legacy notes into description before the v2 migration.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+**Faustregel:**
+
+| Sie möchten …                                                                                                                   | Verwenden                                                                              |
+| ------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Standarddaten befüllen, den Workspace konfigurieren, externe Ressourcen registrieren                                            | `post-install`                                                                         |
+| Lang laufendes Seeding oder Drittanbieteraufrufe ausführen, die die Installationsantwort nicht blockieren sollten               | `post-install` (Standard — `shouldRunSynchronously: false`, mit Worker-Wiederholungen) |
+| Schnelle Einrichtung ausführen, auf die sich der Aufrufer unmittelbar nach der Rückkehr des Installationsaufrufs verlassen wird | `post-install` mit `shouldRunSynchronously: true`                                      |
+| Daten lesen oder sichern, die bei der bevorstehenden Migration verloren gingen                                                  | `pre-install`                                                                          |
+| Ein Upgrade ablehnen, das vorhandene Daten beschädigen würde                                                                    | `pre-install` (`throw` im Handler)                                                     |
+| Bei jedem Upgrade einen Abgleich ausführen                                                                                      | `post-install` mit `shouldRunOnVersionUpgrade: true`                                   |
+| Einmalige Einrichtung nur bei der ersten Installation durchführen                                                               | `post-install` mit `shouldRunOnVersionUpgrade: false` (Standard)                       |
+
+<Note>
+Im Zweifel auf **Post-Install** setzen. Greifen Sie nur zu Pre-Install, wenn die Migration selbst destruktiv ist und Sie den vorherigen Zustand abfangen müssen, bevor er verloren geht.
+</Note>
 
 </Accordion>
 <Accordion title="defineFrontComponent" description="Frontend-Komponenten für benutzerdefinierte UI definieren">
 
 Frontend-Komponenten sind React-Komponenten, die direkt innerhalb der Twenty-UI gerendert werden. Sie laufen in einem **isolierten Web Worker** unter Verwendung von Remote DOM — Ihr Code wird in einer Sandbox ausgeführt, rendert jedoch nativ auf der Seite, nicht in einem iframe.
+
+#### Wo Front-Komponenten verwendet werden können
+
+Front-Komponenten können an zwei Stellen innerhalb von Twenty gerendert werden:
+
+* **Seitenpanel** — Nicht-Headless-Front-Komponenten werden im rechten Seitenpanel geöffnet. Dies ist das Standardverhalten, wenn eine Front-Komponente über das Befehlsmenü ausgelöst wird.
+* **Widgets (Dashboards und Datensatzseiten)** — Front-Komponenten können als Widgets in Seitenlayouts eingebettet werden. Beim Konfigurieren eines Dashboards oder eines Datensatzseiten-Layouts können Benutzer ein Front-Komponenten-Widget hinzufügen.
 
 #### Einfaches Beispiel
 
@@ -748,7 +881,7 @@ export default defineFrontComponent({
 });
 ```
 
-Nach dem Synchronisieren mit `yarn twenty dev` erscheint die Schnellaktion oben rechts auf der Seite:
+Nach dem Synchronisieren mit `yarn twenty dev` (oder durch einmaliges Ausführen von `yarn twenty dev --once`) erscheint die Schnellaktion oben rechts auf der Seite:
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Schnellaktionsschaltfläche oben rechts" />
@@ -773,9 +906,13 @@ Klicken Sie darauf, um die Komponente inline zu rendern.
 
 Über Befehle hinaus können Sie eine Frontend-Komponente direkt in eine Datensatzseite einbetten, indem Sie sie als Widget in einem **Seitenlayout** hinzufügen. Details finden Sie im Abschnitt [definePageLayout](#definepagelayout).
 
-#### Headless-Komponenten (`isHeadless: true`)
+#### Headless vs. Nicht-Headless
 
-Headless-Komponenten rendern keine sichtbare UI, führen aber dennoch React-Logik aus. Dies ist nützlich für **Effekt-Komponenten** — Komponenten, die beim Mounten Seiteneffekte ausführen, wie z. B. das Synchronisieren von Daten, Starten eines Timers, Lauschen auf Ereignisse oder Auslösen einer Benachrichtigung.
+Front-Komponenten gibt es in zwei Rendering-Modi, die durch die Option `isHeadless` gesteuert werden:
+
+**Nicht-Headless (Standard)** — Die Komponente rendert eine sichtbare UI. Wird sie über das Befehlsmenü ausgelöst, öffnet sie sich im Seitenpanel. Dies ist das Standardverhalten, wenn `isHeadless` `false` ist oder weggelassen wird.
+
+**Headless (`isHeadless: true`)** — Die Komponente wird unsichtbar im Hintergrund gemountet. Sie öffnet das Seitenpanel nicht. Headless-Komponenten sind für Aktionen konzipiert, die Logik ausführen und sich anschließend selbst unmounten — zum Beispiel das Ausführen einer asynchronen Aufgabe, das Navigieren zu einer Seite oder das Anzeigen eines Bestätigungsdialogs. Sie lassen sich gut mit den unten beschriebenen SDK-Command-Komponenten kombinieren.
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent, useRecordId, enqueueSnackbar } from 'twenty-sdk';
@@ -801,6 +938,89 @@ export default defineFrontComponent({
 ```
 
 Da die Komponente `null` zurückgibt, überspringt Twenty das Rendern eines Containers dafür — im Layout entsteht kein Leerraum. Die Komponente hat dennoch Zugriff auf alle Hooks und die Host-Kommunikations-API.
+
+#### SDK-Command-Komponenten
+
+Das Paket `twenty-sdk` stellt vier Command-Hilfskomponenten bereit, die für Headless-Front-Komponenten ausgelegt sind. Jede Komponente führt beim Mounten eine Aktion aus, behandelt Fehler durch Anzeige einer Snackbar-Benachrichtigung und unmountet die Front-Komponente nach Abschluss automatisch.
+
+Importieren Sie sie aus `twenty-sdk/command`:
+
+* **`Command`** — Führt einen asynchronen Callback über das Prop `execute` aus.
+* **`CommandLink`** — Navigiert zu einem App-Pfad. Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — Öffnet einen Bestätigungsdialog. Bestätigt der Benutzer, wird der Callback `execute` ausgeführt. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — Öffnet eine bestimmte Seite im Seitenpanel. Props: `page`, `pageTitle`, `pageIcon`.
+
+Hier ist ein vollständiges Beispiel einer Headless-Front-Komponente, die `Command` verwendet, um eine Aktion aus dem Befehlsmenü auszuführen:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+    label: 'Run my action',
+    icon: 'IconPlayerPlay',
+  },
+});
+```
+
+Und ein Beispiel, das `CommandModal` verwendet, um vor der Ausführung um Bestätigung zu bitten:
+
+```tsx src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+    label: 'Delete draft',
+    icon: 'IconTrash',
+  },
+});
+```
 
 #### Zugriff auf den Laufzeitkontext
 
@@ -857,6 +1077,50 @@ Frontend-Komponenten können Navigation, Modals und Benachrichtigungen mittels F
 | `enqueueSnackbar(params)`                       | Eine Toast-Benachrichtigung anzeigen      |
 | `unmountFrontComponent()`                       | Die Komponente entfernen                  |
 | `updateProgress(progress)`                      | Einen Fortschrittsindikator aktualisieren |
+
+Hier ist ein Beispiel, das die Host-API verwendet, um nach Abschluss einer Aktion eine Snackbar anzuzeigen und das Seitenpanel zu schließen:
+
+```tsx src/front-components/archive-record.tsx
+import { defineFrontComponent, useRecordId } from 'twenty-sdk';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
 
 #### Befehlsoptionen
 
@@ -1263,7 +1527,7 @@ export default defineFrontComponent({
 
 ### Wie das Bundling funktioniert
 
-Der Build-Schritt (`yarn twenty dev` oder `yarn twenty build`) verwendet esbuild, um pro Logikfunktion und pro Frontend-Komponente eine einzelne, in sich geschlossene Datei zu erzeugen. Alle importierten Pakete werden in das Bundle eingebettet.
+Der Build-Schritt verwendet esbuild, um pro Logikfunktion und pro Frontend-Komponente eine einzelne, in sich geschlossene Datei zu erzeugen. Alle importierten Pakete werden in das Bundle eingebettet.
 
 **Logikfunktionen** laufen in einer Node.js-Umgebung. Eingebaute Node.js-Module (`fs`, `path`, `crypto`, `http` usw.) stehen zur Verfügung und müssen nicht installiert werden.
 
@@ -1678,8 +1942,7 @@ yarn twenty exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 # Pass a JSON payload
 yarn twenty exec -n create-new-post-card -p '{"name": "Hello"}'
 
-# Execute pre-install or post-install functions
-yarn twenty exec --preInstall
+# Execute the post-install function
 yarn twenty exec --postInstall
 ```
 
@@ -1712,3 +1975,86 @@ yarn twenty uninstall
 # Skip the confirmation prompt
 yarn twenty uninstall --yes
 ```
+
+## Remotes verwalten
+
+Ein **Remote** ist ein Twenty-Server, mit dem sich Ihre App verbindet. Während der Einrichtung erstellt das Scaffolding-Tool automatisch eines für Sie. Sie können jederzeit weitere Remotes hinzufügen oder zwischen ihnen wechseln.
+
+```bash filename="Terminal"
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote add
+
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote add --local
+
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+
+# List all configured remotes
+yarn twenty remote list
+
+# Switch the active remote
+yarn twenty remote switch <name>
+```
+
+Ihre Anmeldedaten werden in `~/.twenty/config.json` gespeichert.
+
+## CI mit GitHub Actions
+
+Das Scaffolding-Tool erzeugt einen einsatzbereiten GitHub-Actions-Workflow in `.github/workflows/ci.yml`. Er führt Ihre Integrationstests automatisch bei jedem Push auf `main` und bei Pull Requests aus.
+
+Der Workflow:
+
+1. Checkt Ihren Code aus
+2. Startet einen temporären Twenty-Server mit der Aktion `twentyhq/twenty/.github/actions/spawn-twenty-docker-image`
+3. Installiert Abhängigkeiten mit `yarn install --immutable`
+4. Führt `yarn test` aus, wobei `TWENTY_API_URL` und `TWENTY_API_KEY` aus den Aktionsausgaben injiziert werden.
+
+```yaml .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+
+env:
+  TWENTY_VERSION: latest
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Spawn Twenty instance
+        id: twenty
+        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
+        with:
+          twenty-version: ${{ env.TWENTY_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run integration tests
+        run: yarn test
+        env:
+          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
+          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
+```
+
+Sie müssen keine Secrets konfigurieren — die Aktion `spawn-twenty-docker-image` startet einen flüchtigen Twenty-Server direkt im Runner und gibt die Verbindungsdetails aus. Das Secret `GITHUB_TOKEN` wird automatisch von GitHub bereitgestellt.
+
+Um eine bestimmte Twenty-Version statt `latest` festzulegen, ändern Sie die Umgebungsvariable `TWENTY_VERSION` oben im Workflow.

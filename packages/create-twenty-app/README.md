@@ -24,24 +24,27 @@ yarn twenty dev
 
 The scaffolder will:
 
-1. Create a new project with TypeScript, linting, and a preconfigured `twenty` CLI
+1. Create a new project with TypeScript, linting, tests, and a preconfigured `twenty` CLI
 2. Optionally start a local Twenty server (Docker)
 3. Open the browser for OAuth authentication
-4. Scaffold example entities and an integration test
 
-## Scaffolding modes
+## Options
 
-| Flag           | Behavior                                                                                                       |
-| -------------- | -------------------------------------------------------------------------------------------------------------- |
-| `--minimal`    | **(default)** Creates only core files (`application-config.ts`, `default-role.ts`, pre/post-install functions) |
-| `--exhaustive` | Creates all example entities                                                                                   |
+| Flag                           | Description                             |
+| ------------------------------ | --------------------------------------- |
+| `--example <name>`             | Initialize from an example              |
+| `--name <name>`                | Set the app name (skips the prompt)     |
+| `--display-name <displayName>` | Set the display name (skips the prompt) |
+| `--description <description>`  | Set the description (skips the prompt)  |
+| `--skip-local-instance`        | Skip the local server setup prompt      |
 
-Other flags:
+By default (no flags), a minimal app is generated with core files and an integration test. Use `--example` to start from a richer example:
 
-- `--name <name>` — set the app name (skips the prompt)
-- `--display-name <displayName>` — set the display name (skips the prompt)
-- `--description <description>` — set the description (skips the prompt)
-- `--skip-local-instance` — skip the local server setup prompt
+```bash
+npx create-twenty-app@latest my-twenty-app --example hello-world
+```
+
+Examples are sourced from [twentyhq/twenty/packages/twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples).
 
 ## Documentation
 

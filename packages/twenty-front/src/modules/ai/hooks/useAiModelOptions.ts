@@ -5,7 +5,7 @@ import { type SelectOption } from 'twenty-ui/input';
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
+import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type UseAiModelOptionsVariant = 'all' | 'pinned-default';

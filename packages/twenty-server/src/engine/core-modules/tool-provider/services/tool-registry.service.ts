@@ -2,33 +2,23 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { type ToolExecutionOptions, type ToolSet, jsonSchema } from 'ai';
 
-import {
-  type NativeToolProvider,
-  type ToolProvider,
-  type ToolProviderContext,
-  type ToolRetrievalOptions,
-} from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+import { type NativeToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/native-tool-provider.interface';
+import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolRetrievalOptions } from 'src/engine/core-modules/tool-provider/interfaces/tool-retrieval-options.type';
 
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { ToolCategory } from 'twenty-shared/ai';
-import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-serialization/compact-tool-output.util';
 import { NativeModelToolProvider } from 'src/engine/core-modules/tool-provider/providers/native-model-tool.provider';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
-import { type ExecuteToolResult } from 'src/engine/core-modules/tool-provider/tools/execute-tool.tool';
 import { type LearnToolsAspect } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
-import {
-  type ToolDescriptor,
-  type ToolIndexEntry,
-} from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
-import {
-  generateErrorSuggestion,
-  wrapWithErrorHandler,
-} from 'src/engine/core-modules/tool-provider/utils/tool-error.util';
+import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
+import { wrapWithErrorHandler } from 'src/engine/core-modules/tool-provider/utils/tool-error.util';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { wrapJsonSchemaForExecution } from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-
-export { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 
 @Injectable()
 export class ToolRegistryService {
@@ -125,7 +115,7 @@ export class ToolRegistryService {
 
       const executeFn = async (
         args: Record<string, unknown>,
-      ): Promise<unknown> =>
+      ): Promise<ToolOutput> =>
         this.toolExecutorService.dispatch(descriptor, args, context);
 
       toolSet[descriptor.name] = {
@@ -220,7 +210,7 @@ export class ToolRegistryService {
     args: Record<string, unknown>,
     context: ToolContext,
     _options: ToolExecutionOptions,
-  ): Promise<ExecuteToolResult> {
+  ): Promise<ToolOutput> {
     try {
       const fullContext = this.buildContextFromToolContext(context);
 
@@ -229,25 +219,13 @@ export class ToolRegistryService {
 
       if (!entry) {
         return {
-          toolName,
-          error: {
-            message: `Tool "${toolName}" not found. Check the tool catalog for correct names.`,
-            suggestion:
-              'Use learn_tools to discover available tools and their correct names.',
-          },
+          success: false,
+          message: `Tool "${toolName}" not found`,
+          error: `Tool "${toolName}" not found. Use learn_tools to discover available tools.`,
         };
       }
 
-      const result = await this.toolExecutorService.dispatch(
-        entry,
-        args,
-        fullContext,
-      );
-
-      return {
-        toolName,
-        result: compactToolOutput(result),
-      };
+      return await this.toolExecutorService.dispatch(entry, args, fullContext);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -255,11 +233,9 @@ export class ToolRegistryService {
       this.logger.error(`Error executing tool "${toolName}": ${errorMessage}`);
 
       return {
-        toolName,
-        error: {
-          message: errorMessage,
-          suggestion: generateErrorSuggestion(toolName, errorMessage),
-        },
+        success: false,
+        message: `Failed to execute ${toolName}`,
+        error: errorMessage,
       };
     }
   }

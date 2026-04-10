@@ -6,16 +6,16 @@ import differenceWith from 'lodash.differencewith';
 import { FieldActorSource } from 'twenty-shared/types';
 import { Any } from 'typeorm';
 
+import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { type FetchedCalendarEventParticipant } from 'src/modules/calendar/common/types/fetched-calendar-event';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
   CreateCompanyAndContactJob,
   type CreateCompanyAndContactJobData,
@@ -52,8 +52,8 @@ export class CalendarEventParticipantService {
     participantsToCreate: FetchedCalendarEventParticipantWithCalendarEventId[];
     participantsToUpdate: FetchedCalendarEventParticipantWithCalendarEventId[];
     transactionManager?: WorkspaceEntityManager;
-    calendarChannel: CalendarChannelWorkspaceEntity;
-    connectedAccount: ConnectedAccountWorkspaceEntity;
+    calendarChannel: CalendarChannelEntity;
+    connectedAccount: ConnectedAccountEntity;
     workspaceId: string;
   }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);

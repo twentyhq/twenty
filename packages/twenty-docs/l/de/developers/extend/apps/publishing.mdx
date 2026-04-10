@@ -52,7 +52,11 @@ yarn twenty deploy
 
 ### Eine bereitgestellte App freigeben
 
-Tarball-Apps werden nicht im öffentlichen Marktplatz gelistet, daher entdecken andere Arbeitsbereiche auf demselben Server sie nicht durch Stöbern. So geben Sie eine bereitgestellte App frei:
+<Warning>
+Das Teilen privater (Tarball-)Apps über Arbeitsbereiche hinweg ist eine **Enterprise**-Funktion. Die Registerkarte **Distribution** zeigt anstelle der Freigabeoptionen eine Aufforderung zum Upgrade an, bis Ihr Arbeitsbereich über einen gültigen Enterprise-Schlüssel verfügt. Gehen Sie zu [Einstellungen > Admin-Panel > Enterprise](/settings/admin-panel#enterprise), um es zu aktivieren.
+</Warning>
+
+Tarball-Apps werden nicht im öffentlichen Marktplatz gelistet, daher entdecken andere Arbeitsbereiche auf demselben Server sie nicht durch Stöbern. Sobald sich Ihr Arbeitsbereich im Enterprise-Plan befindet, können Sie eine bereitgestellte App wie folgt freigeben:
 
 1. Gehen Sie zu **Einstellungen > Anwendungen > Registrierungen** und öffnen Sie Ihre App
 2. Klicken Sie im Tab **Distribution** auf **Freigabelink kopieren**
@@ -60,17 +64,19 @@ Tarball-Apps werden nicht im öffentlichen Marktplatz gelistet, daher entdecken 
 
 Der Freigabelink verwendet die Basis-URL des Servers (ohne Workspace-Subdomain), sodass er für jeden Arbeitsbereich auf dem Server funktioniert.
 
-<Warning>
-Das Teilen privater Apps ist eine Enterprise-Funktion. Gehen Sie zu [Einstellungen > Admin-Panel > Enterprise](/settings/admin-panel#enterprise), um es zu aktivieren.
-</Warning>
-
 ### Versionsverwaltung
+
+Beim Aktualisieren einer bereits bereitgestellten Tarball-App verlangt der Server, dass die `version` in `package.json` **strikt höher** (gemäß der [semver](https://semver.org)-Reihenfolge) ist als die derzeit bereitgestellte Version. Das erneute Bereitstellen derselben Version oder das Pushen einer niedrigeren Version wird abgelehnt, bevor das Tarball gespeichert wird — in der CLI wird ein `VERSION_ALREADY_EXISTS`-Fehler angezeigt.
 
 So veröffentlichen Sie ein Update:
 
-1. Erhöhen Sie das Feld `version` in Ihrer `package.json`
+1. Erhöhen Sie das Feld `version` in Ihrer `package.json` (z. B. `1.2.3` → `1.2.4`, `1.3.0` oder `2.0.0`).
 2. Führen Sie `yarn twenty deploy` aus (oder `yarn twenty deploy --remote production`)
 3. Arbeitsbereiche, die die App installiert haben, sehen in ihren Einstellungen, dass ein Upgrade verfügbar ist.
+
+<Note>
+Pre-Release-Tags funktionieren wie erwartet: Das Erhöhen von `1.0.0-rc.1` → `1.0.0-rc.2` ist zulässig, und eine finale Version wie `1.0.0` wird korrekt als höher als `1.0.0-rc.5` erkannt. Die Version in `package.json` muss selbst eine gültige semver-Zeichenfolge sein.
+</Note>
 
 {/* TODO: add screenshot of the Upgrade button */}
 
@@ -189,3 +195,12 @@ Sie können Apps auch über die Befehlszeile installieren:
 ```bash filename="Terminal"
 yarn twenty install
 ```
+
+<Note>
+Der Server erzwingt bei der Installation semver-Versionierung und spiegelt damit die Regeln beim Bereitstellen wider:
+
+* Die Installation derselben Version, die in Ihrem Arbeitsbereich bereits installiert ist, wird mit einem `APP_ALREADY_INSTALLED`-Fehler abgelehnt.
+* Die Installation einer niedrigeren Version als die aktuell installierte wird mit einem `CANNOT_DOWNGRADE_APPLICATION`-Fehler abgelehnt.
+
+Um eine neuere Version zu installieren, stellen Sie sie zuerst bereit oder veröffentlichen Sie sie und führen Sie dann `yarn twenty install` erneut aus.
+</Note>

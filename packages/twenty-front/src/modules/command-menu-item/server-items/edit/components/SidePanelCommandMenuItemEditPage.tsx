@@ -22,7 +22,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { CommandMenuContextApiPageType } from 'twenty-shared/types';
 import {
-  interpolateCommandMenuItemLabel,
+  interpolateCommandMenuItemTemplate,
   isDefined,
 } from 'twenty-shared/utils';
 import {
@@ -119,7 +119,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
   );
 
   const getDisplayLabel = (item: CommandMenuItemFieldsFragment) =>
-    interpolateCommandMenuItemLabel({
+    interpolateCommandMenuItemTemplate({
       label: item.label,
       context: commandMenuContextApi,
     }) ?? item.label;

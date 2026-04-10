@@ -1,5 +1,7 @@
-import { type CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import { type MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  CalendarChannelVisibility,
+  MessageChannelVisibility,
+} from 'twenty-shared/types';
 
 export type APIsOAuthState = {
   transientToken?: string;

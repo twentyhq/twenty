@@ -6,7 +6,6 @@ import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
-  type ApplicationDataTableFieldItem,
   type ApplicationDataTableRow,
   SettingsApplicationDataTable,
 } from '~/pages/settings/applications/components/SettingsApplicationDataTable';
@@ -34,14 +33,6 @@ export const SettingsAvailableApplicationDetailContentTab = ({
         labelPlural: appObject.labelPlural,
         icon: appObject.icon ?? undefined,
         fieldsCount: appObject.fields.length,
-        fields: appObject.fields.map(
-          (field): ApplicationDataTableFieldItem => ({
-            key: field.name,
-            label: field.label,
-            icon: field.icon ?? undefined,
-            type: field.type,
-          }),
-        ),
         tagItem: { applicationId },
       })),
     [objects, applicationId],
@@ -56,27 +47,20 @@ export const SettingsAvailableApplicationDetailContentTab = ({
       string,
       {
         objectUniversalIdentifier: string;
-        fieldItems: ApplicationDataTableFieldItem[];
+        count: number;
       }
     >();
 
     for (const field of fields) {
       const objectUid = field.objectUniversalIdentifier;
-
       const existing = groupMap.get(objectUid);
-      const fieldItem: ApplicationDataTableFieldItem = {
-        key: field.name,
-        label: field.label,
-        icon: field.icon ?? undefined,
-        type: field.type,
-      };
 
       if (isDefined(existing)) {
-        existing.fieldItems.push(fieldItem);
+        existing.count++;
       } else {
         groupMap.set(objectUid, {
           objectUniversalIdentifier: objectUid,
-          fieldItems: [fieldItem],
+          count: 1,
         });
       }
     }
@@ -91,8 +75,7 @@ export const SettingsAvailableApplicationDetailContentTab = ({
           key: appObject.nameSingular,
           labelPlural: appObject.labelPlural,
           icon: appObject.icon ?? undefined,
-          fieldsCount: group.fieldItems.length,
-          fields: group.fieldItems,
+          fieldsCount: group.count,
           tagItem: { applicationId },
         };
       }
@@ -117,8 +100,7 @@ export const SettingsAvailableApplicationDetailContentTab = ({
         key: objectMetadataItem.nameSingular,
         labelPlural: objectMetadataItem.labelPlural,
         icon: objectMetadataItem.icon ?? undefined,
-        fieldsCount: group.fieldItems.length,
-        fields: group.fieldItems,
+        fieldsCount: group.count,
         link: getSettingsPath(SettingsPath.ObjectDetail, {
           objectNamePlural: objectMetadataItem.namePlural,
         }),
