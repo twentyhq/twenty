@@ -122,7 +122,7 @@ const buildUpgradeCommandModule = async ({
         provide: UpgradeMigrationService,
         useValue: {
           getLastCompletedCommandNameOrThrow: jest.fn().mockResolvedValue(null),
-          getWorkspaceCursorsOrThrow: jest.fn().mockResolvedValue(new Map()),
+          getWorkspaceCursors: jest.fn().mockResolvedValue(new Map()),
           areAllWorkspacesAtCommand: jest.fn().mockResolvedValue(true),
         },
       },
@@ -187,6 +187,7 @@ const buildUpgradeCommandModule = async ({
                   workspaceId,
                   index,
                   total: workspaceIds.length,
+                  dataSource: {} as any,
                 });
                 report.success.push({ workspaceId });
               } catch (error) {

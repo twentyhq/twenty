@@ -236,7 +236,7 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
 
     if (!hasWorkspaceCommands) {
       throw new Error(
-        'Upgrade tape must contain at least one workspace command',
+        'Upgrade sequence must contain at least one workspace command',
       );
     }
   }

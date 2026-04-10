@@ -13,6 +13,7 @@ import {
   UpgradeSequenceReaderService,
 } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 export type UpgradeSequenceRunnerReport = {
   totalSuccesses: number;
@@ -44,7 +45,8 @@ export class UpgradeSequenceRunnerService {
       return { totalSuccesses: 0, totalFailures: 0 };
     }
 
-    const hasWorkspaces = activeWorkspaceIds.length > 0;
+    const hasNoWorkspaces = activeWorkspaceIds.length === 0;
+
     const startIndex = await this.resolveStartIndex(
       sequence,
       activeWorkspaceIds,
@@ -59,22 +61,16 @@ export class UpgradeSequenceRunnerService {
       const previousStep = index > 0 ? sequence[index - 1] : undefined;
 
       if (step.kind === 'fast-instance' || step.kind === 'slow-instance') {
-        if (hasWorkspaces && previousStep?.kind === 'workspace') {
+        if (previousStep?.kind === 'workspace') {
           await this.enforceWorkspaceSyncBarrier(
             previousStep.name,
             activeWorkspaceIds,
           );
         }
 
-        await this.runInstanceStep(step, hasWorkspaces);
-        index++;
-        continue;
-      }
-
-      if (!hasWorkspaces) {
-        this.logger.log(
-          `No active workspaces, skipping workspace step ${step.name}`,
-        );
+        await this.runInstanceStep(step, {
+          skipDataMigration: hasNoWorkspaces,
+        });
         index++;
         continue;
       }
@@ -116,26 +112,40 @@ export class UpgradeSequenceRunnerService {
     const lastCompletedName =
       await this.upgradeMigrationService.getLastCompletedCommandNameOrThrow();
 
-    const cursorIndex =
+    const lastCompletedCommandIndex =
       this.upgradeSequenceReaderService.locateCommandInSequenceOrThrow(
         sequence,
         lastCompletedName,
       );
 
-    const cursorStep = sequence[cursorIndex];
+    const cursorStep = sequence[lastCompletedCommandIndex];
 
-    if (cursorStep.kind === 'workspace' && activeWorkspaceIds.length > 0) {
-      await this.validateWorkspaceCursorsAlignment(
-        sequence,
-        activeWorkspaceIds,
-        cursorIndex,
-      );
+    switch (cursorStep.kind) {
+      case 'fast-instance':
+      case 'slow-instance': {
+        return lastCompletedCommandIndex + 1;
+      }
+      case 'workspace': {
+        await this.validateWorkspaceCursorsAreInSameWorkspaceCommandsSlice(
+          sequence,
+          activeWorkspaceIds,
+          lastCompletedCommandIndex,
+        );
+
+        const { startIndex } =
+          this.upgradeSequenceReaderService.getWorkspaceSliceBounds(
+            sequence,
+            lastCompletedCommandIndex,
+          );
+
+        return startIndex;
+      }
+      default:
+        assertUnreachable(cursorStep);
     }
-
-    return cursorIndex;
   }
 
-  private async validateWorkspaceCursorsAlignment(
+  private async validateWorkspaceCursorsAreInSameWorkspaceCommandsSlice(
     sequence: UpgradeStep[],
     activeWorkspaceIds: string[],
     globalCursorIndex: number,
@@ -170,7 +180,7 @@ export class UpgradeSequenceRunnerService {
 
   private async runInstanceStep(
     step: UpgradeStep,
-    hasWorkspaces: boolean,
+    { skipDataMigration }: { skipDataMigration: boolean },
   ): Promise<void> {
     if (step.kind === 'fast-instance') {
       const result = await this.instanceUpgradeService.runFastInstanceCommand({
@@ -189,7 +199,7 @@ export class UpgradeSequenceRunnerService {
       const result = await this.instanceUpgradeService.runSlowInstanceCommand({
         command: step.command,
         name: step.name,
-        skipDataMigration: !hasWorkspaces,
+        skipDataMigration,
       });
 
       if (result.status === 'failed') {
