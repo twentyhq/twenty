@@ -15,22 +15,6 @@ export const TOO_MANY_RELATION_QUERY_GQL_FIELDS = `
         }
       }
     }
-    favorites {
-      edges {
-        node {
-          id
-          company {
-            id
-          }
-          person {
-            id
-            company {
-              id
-            }
-          }
-        }
-      }
-    }
     noteTargets {
       edges {
         node {

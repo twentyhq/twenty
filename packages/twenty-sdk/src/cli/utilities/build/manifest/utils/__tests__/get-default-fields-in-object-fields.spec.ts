@@ -176,7 +176,7 @@ describe('getDefaultFieldsInObjectFields', () => {
   it('should return reverse relation fields for each default relation', () => {
     const { fields } = getDefaultFieldsInObjectFields(baseObjectConfig);
 
-    expect(fields).toHaveLength(5);
+    expect(fields).toHaveLength(4);
 
     const fieldNames = fields.map((f) => f.name);
 

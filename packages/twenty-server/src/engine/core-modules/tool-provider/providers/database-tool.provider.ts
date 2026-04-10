@@ -76,9 +76,7 @@ export class DatabaseToolProvider implements ToolProvider {
       .filter((obj) => obj.isActive);
 
     for (const flatObject of allFlatObjects) {
-      if (
-        isWorkflowRelatedObject(flatObject)
-      ) {
+      if (isWorkflowRelatedObject(flatObject)) {
         continue;
       }
 
