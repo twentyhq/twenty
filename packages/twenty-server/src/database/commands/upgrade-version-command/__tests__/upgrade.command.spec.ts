@@ -18,8 +18,8 @@ import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade
 import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
 import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
-import { UpgradeTapeReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-tape-reader.service';
-import { UpgradeTapeRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-tape-runner.service';
+import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
+import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
 import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
@@ -72,17 +72,17 @@ const buildUpgradeCommandModule = async ({
         },
       };
 
-  const tapeReaderProvider = migrations
+  const sequenceReaderProvider = migrations
     ? {
-        provide: UpgradeTapeReaderService,
+        provide: UpgradeSequenceReaderService,
         useFactory: (registry: UpgradeCommandRegistryService) =>
-          new UpgradeTapeReaderService(registry),
+          new UpgradeSequenceReaderService(registry),
         inject: [UpgradeCommandRegistryService],
       }
     : {
-        provide: UpgradeTapeReaderService,
+        provide: UpgradeSequenceReaderService,
         useValue: {
-          getUpgradeTape: jest.fn().mockReturnValue([]),
+          getUpgradeSequence: jest.fn().mockReturnValue([]),
         },
       };
 
@@ -91,21 +91,21 @@ const buildUpgradeCommandModule = async ({
       {
         provide: commandRunner,
         useFactory: (
-          upgradeTapeManagerService: UpgradeTapeReaderService,
-          upgradeRunnerService: UpgradeTapeRunnerService,
+          upgradeSequenceReaderService: UpgradeSequenceReaderService,
+          upgradeSequenceRunnerService: UpgradeSequenceRunnerService,
           workspaceIteratorService: WorkspaceIteratorService,
           workspaceVersionService: WorkspaceVersionService,
         ) => {
           return new commandRunner(
-            upgradeTapeManagerService,
-            upgradeRunnerService,
+            upgradeSequenceReaderService,
+            upgradeSequenceRunnerService,
             workspaceIteratorService,
             workspaceVersionService,
           );
         },
         inject: [
-          UpgradeTapeReaderService,
-          UpgradeTapeRunnerService,
+          UpgradeSequenceReaderService,
+          UpgradeSequenceRunnerService,
           WorkspaceIteratorService,
           WorkspaceVersionService,
         ],
@@ -131,24 +131,24 @@ const buildUpgradeCommandModule = async ({
         },
       },
       {
-        provide: UpgradeTapeRunnerService,
+        provide: UpgradeSequenceRunnerService,
         useFactory: (
           upgradeMigrationService: UpgradeMigrationService,
           instanceUpgradeService: InstanceUpgradeService,
           workspaceUpgradeService: WorkspaceUpgradeService,
-          upgradeTapeReaderService: UpgradeTapeReaderService,
+          upgradeSequenceReaderService: UpgradeSequenceReaderService,
         ) =>
-          new UpgradeTapeRunnerService(
+          new UpgradeSequenceRunnerService(
             upgradeMigrationService,
             instanceUpgradeService,
             workspaceUpgradeService,
-            upgradeTapeReaderService,
+            upgradeSequenceReaderService,
           ),
         inject: [
           UpgradeMigrationService,
           InstanceUpgradeService,
           WorkspaceUpgradeService,
-          UpgradeTapeReaderService,
+          UpgradeSequenceReaderService,
         ],
       },
       {
@@ -169,7 +169,7 @@ const buildUpgradeCommandModule = async ({
         },
       },
       registryProvider,
-      tapeReaderProvider,
+      sequenceReaderProvider,
       {
         provide: WorkspaceIteratorService,
         useValue: {

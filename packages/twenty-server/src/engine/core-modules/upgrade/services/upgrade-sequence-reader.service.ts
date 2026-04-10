@@ -46,11 +46,19 @@ export class UpgradeSequenceReaderService {
     return sequence;
   }
 
-  locateCommandInSequence(
+  locateCommandInSequenceOrThrow(
     sequence: UpgradeStep[],
     commandName: string,
   ): number {
-    return sequence.findIndex((step) => step.name === commandName);
+    const index = sequence.findIndex((step) => step.name === commandName);
+
+    if (index === -1) {
+      throw new Error(
+        `Command "${commandName}" not found in upgrade sequence`,
+      );
+    }
+
+    return index;
   }
 
   collectContiguousWorkspaceSteps(

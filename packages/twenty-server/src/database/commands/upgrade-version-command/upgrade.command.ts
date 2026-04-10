@@ -3,8 +3,8 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { CommandLogger } from 'src/database/commands/logger';
-import { UpgradeTapeReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-tape-reader.service';
-import { UpgradeTapeRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-tape-runner.service';
+import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
+import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 export type UpgradeCommandOptions = {
@@ -23,8 +23,8 @@ export class UpgradeCommand extends CommandRunner {
   protected logger: CommandLogger;
 
   constructor(
-    protected readonly upgradeTapeReaderService: UpgradeTapeReaderService,
-    protected readonly upgradeTapeRunnerService: UpgradeTapeRunnerService,
+    protected readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
+    protected readonly upgradeSequenceRunnerService: UpgradeSequenceRunnerService,
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     protected readonly workspaceVersionService: WorkspaceVersionService,
   ) {
@@ -109,14 +109,14 @@ export class UpgradeCommand extends CommandRunner {
     }
 
     try {
-      const tape = this.upgradeTapeReaderService.getUpgradeTape();
+      const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
 
       this.logger.log(
         chalk.blue(
           [
-            'Initialized upgrade tape:',
-            `- ${tape.length} step(s)`,
-            ...tape.map(
+            'Initialized upgrade sequence:',
+            `- ${sequence.length} step(s)`,
+            ...sequence.map(
               (step, index) =>
                 `  [${index}] ${step.kind} — ${step.name} (${step.version})`,
             ),
@@ -132,8 +132,8 @@ export class UpgradeCommand extends CommandRunner {
         : [];
 
       const { totalSuccesses, totalFailures } =
-        await this.upgradeTapeRunnerService.run({
-          tape,
+        await this.upgradeSequenceRunnerService.run({
+          sequence,
           activeWorkspaceIds,
           options,
           workspaceIteratorService: this.workspaceIteratorService,

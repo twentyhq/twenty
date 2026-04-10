@@ -118,17 +118,10 @@ export class UpgradeSequenceRunnerService {
       await this.upgradeMigrationService.getLastCompletedCommandNameOrThrow();
 
     const cursorIndex =
-      this.upgradeSequenceReaderService.locateCommandInSequence(
+      this.upgradeSequenceReaderService.locateCommandInSequenceOrThrow(
         sequence,
         lastCompletedName,
       );
-
-    if (cursorIndex === -1) {
-      throw new Error(
-        `Cursor "${lastCompletedName}" not found in upgrade sequence — ` +
-          'the supported version sequence may have been broken',
-      );
-    }
 
     const cursorStep = sequence[cursorIndex];
 
@@ -155,16 +148,10 @@ export class UpgradeSequenceRunnerService {
 
     for (const [workspaceId, cursorName] of workspaceCursors) {
       const location =
-        this.upgradeSequenceReaderService.locateCommandInSequence(
+        this.upgradeSequenceReaderService.locateCommandInSequenceOrThrow(
           sequence,
           cursorName,
         );
-
-      if (location === -1) {
-        throw new Error(
-          `Workspace ${workspaceId} cursor "${cursorName}" not found in upgrade sequence`,
-        );
-      }
 
       if (sequence[location].kind !== 'workspace') {
         throw new Error(
