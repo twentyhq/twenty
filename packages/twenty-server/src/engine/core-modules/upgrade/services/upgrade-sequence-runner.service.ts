@@ -85,7 +85,7 @@ export class UpgradeSequenceRunnerService {
           index,
         );
 
-      const report = await this.runWorkspaceCommandsSlice({
+      const report = await this.resumeWorkspaceCommandsFromCursors({
         workspaceCommands: workspaceCommandsSlice,
         activeWorkspaceIds,
         options,
@@ -198,7 +198,7 @@ export class UpgradeSequenceRunnerService {
     }
   }
 
-  private async runWorkspaceCommandsSlice({
+  private async resumeWorkspaceCommandsFromCursors({
     workspaceCommands,
     activeWorkspaceIds,
     options,
