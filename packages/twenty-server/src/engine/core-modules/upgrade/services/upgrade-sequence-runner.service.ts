@@ -8,53 +8,56 @@ import { type UpgradeCommandOptions } from 'src/database/commands/upgrade-versio
 import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import {
-  type TapeStep,
-  type WorkspaceTapeStep,
-  UpgradeTapeReaderService,
-} from 'src/engine/core-modules/upgrade/services/upgrade-tape-reader.service';
+  type UpgradeStep,
+  type WorkspaceUpgradeStep,
+  UpgradeSequenceReaderService,
+} from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
 
-export type UpgradeTapeRunnerReport = {
+export type UpgradeSequenceRunnerReport = {
   totalSuccesses: number;
   totalFailures: number;
 };
 
 @Injectable()
-export class UpgradeTapeRunnerService {
-  private readonly logger = new Logger(UpgradeTapeRunnerService.name);
+export class UpgradeSequenceRunnerService {
+  private readonly logger = new Logger(UpgradeSequenceRunnerService.name);
 
   constructor(
     private readonly upgradeMigrationService: UpgradeMigrationService,
     private readonly instanceUpgradeService: InstanceUpgradeService,
     private readonly workspaceUpgradeService: WorkspaceUpgradeService,
-    private readonly upgradeTapeReaderService: UpgradeTapeReaderService,
+    private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
   ) {}
 
   async run({
-    tape,
+    sequence,
     activeWorkspaceIds,
     options,
     workspaceIteratorService,
   }: {
-    tape: TapeStep[];
+    sequence: UpgradeStep[];
     activeWorkspaceIds: string[];
     options: UpgradeCommandOptions;
     workspaceIteratorService: WorkspaceIteratorService;
-  }): Promise<UpgradeTapeRunnerReport> {
-    if (tape.length === 0) {
+  }): Promise<UpgradeSequenceRunnerReport> {
+    if (sequence.length === 0) {
       return { totalSuccesses: 0, totalFailures: 0 };
     }
 
     const hasWorkspaces = activeWorkspaceIds.length > 0;
-    const startIndex = await this.resolveStartIndex(tape, activeWorkspaceIds);
+    const startIndex = await this.resolveStartIndex(
+      sequence,
+      activeWorkspaceIds,
+    );
 
     let totalSuccesses = 0;
     let totalFailures = 0;
     let index = startIndex;
 
-    while (index < tape.length) {
-      const step = tape[index];
-      const previousStep = index > 0 ? tape[index - 1] : undefined;
+    while (index < sequence.length) {
+      const step = sequence[index];
+      const previousStep = index > 0 ? sequence[index - 1] : undefined;
 
       if (step.kind === 'fast-instance' || step.kind === 'slow-instance') {
         if (hasWorkspaces && previousStep?.kind === 'workspace') {
@@ -78,8 +81,8 @@ export class UpgradeTapeRunnerService {
       }
 
       const workspaceCommandsSlice =
-        this.upgradeTapeReaderService.collectContiguousWorkspaceCommands(
-          tape,
+        this.upgradeSequenceReaderService.collectContiguousWorkspaceSteps(
+          sequence,
           index,
         );
 
@@ -108,29 +111,30 @@ export class UpgradeTapeRunnerService {
   }
 
   private async resolveStartIndex(
-    tape: TapeStep[],
+    sequence: UpgradeStep[],
     activeWorkspaceIds: string[],
   ): Promise<number> {
     const lastCompletedName =
       await this.upgradeMigrationService.getLastCompletedCommandNameOrThrow();
 
-    const cursorIndex = this.upgradeTapeReaderService.locateCommandInTape(
-      tape,
-      lastCompletedName,
-    );
+    const cursorIndex =
+      this.upgradeSequenceReaderService.locateCommandInSequence(
+        sequence,
+        lastCompletedName,
+      );
 
     if (cursorIndex === -1) {
       throw new Error(
-        `Cursor "${lastCompletedName}" not found in upgrade tape — ` +
+        `Cursor "${lastCompletedName}" not found in upgrade sequence — ` +
           'the supported version sequence may have been broken',
       );
     }
 
-    const cursorStep = tape[cursorIndex];
+    const cursorStep = sequence[cursorIndex];
 
     if (cursorStep.kind === 'workspace' && activeWorkspaceIds.length > 0) {
       await this.validateWorkspaceCursorsAlignment(
-        tape,
+        sequence,
         activeWorkspaceIds,
         cursorIndex,
       );
@@ -140,7 +144,7 @@ export class UpgradeTapeRunnerService {
   }
 
   private async validateWorkspaceCursorsAlignment(
-    tape: TapeStep[],
+    sequence: UpgradeStep[],
     activeWorkspaceIds: string[],
     expectedCursorIndex: number,
   ): Promise<void> {
@@ -150,18 +154,19 @@ export class UpgradeTapeRunnerService {
       );
 
     for (const [workspaceId, cursorName] of workspaceCursors) {
-      const location = this.upgradeTapeReaderService.locateCommandInTape(
-        tape,
-        cursorName,
-      );
+      const location =
+        this.upgradeSequenceReaderService.locateCommandInSequence(
+          sequence,
+          cursorName,
+        );
 
       if (location === -1) {
         throw new Error(
-          `Workspace ${workspaceId} cursor "${cursorName}" not found in upgrade tape`,
+          `Workspace ${workspaceId} cursor "${cursorName}" not found in upgrade sequence`,
         );
       }
 
-      if (tape[location].kind !== 'workspace') {
+      if (sequence[location].kind !== 'workspace') {
         throw new Error(
           `Workspace ${workspaceId} cursor "${cursorName}" points to an instance command`,
         );
@@ -177,7 +182,7 @@ export class UpgradeTapeRunnerService {
   }
 
   private async runInstanceStep(
-    step: TapeStep,
+    step: UpgradeStep,
     hasWorkspaces: boolean,
   ): Promise<void> {
     if (step.kind === 'fast-instance') {
@@ -211,7 +216,7 @@ export class UpgradeTapeRunnerService {
     options,
     workspaceIteratorService,
   }: {
-    workspaceCommands: WorkspaceTapeStep[];
+    workspaceCommands: WorkspaceUpgradeStep[];
     options: UpgradeCommandOptions;
     workspaceIteratorService: WorkspaceIteratorService;
   }): Promise<WorkspaceIteratorReport> {

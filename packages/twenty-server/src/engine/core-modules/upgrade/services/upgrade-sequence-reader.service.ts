@@ -8,56 +8,59 @@ import {
   UpgradeCommandRegistryService,
 } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 
-export type WorkspaceTapeStep = {
+export type WorkspaceUpgradeStep = {
   kind: 'workspace';
 } & RegisteredWorkspaceCommand;
 
-export type TapeStep =
+export type UpgradeStep =
   | ({ kind: 'fast-instance' } & RegisteredFastInstanceCommand)
   | ({ kind: 'slow-instance' } & RegisteredSlowInstanceCommand)
-  | WorkspaceTapeStep;
+  | WorkspaceUpgradeStep;
 
 @Injectable()
-export class UpgradeTapeReaderService {
+export class UpgradeSequenceReaderService {
   constructor(
     private readonly upgradeCommandRegistryService: UpgradeCommandRegistryService,
   ) {}
 
-  getUpgradeTape(): TapeStep[] {
-    const tape: TapeStep[] = [];
+  getUpgradeSequence(): UpgradeStep[] {
+    const sequence: UpgradeStep[] = [];
 
     for (const version of UPGRADE_COMMAND_SUPPORTED_VERSIONS) {
       const bundle =
         this.upgradeCommandRegistryService.getBundleForVersion(version);
 
       for (const command of bundle.fastInstanceCommands) {
-        tape.push({ kind: 'fast-instance', ...command });
+        sequence.push({ kind: 'fast-instance', ...command });
       }
 
       for (const command of bundle.slowInstanceCommands) {
-        tape.push({ kind: 'slow-instance', ...command });
+        sequence.push({ kind: 'slow-instance', ...command });
       }
 
       for (const command of bundle.workspaceCommands) {
-        tape.push({ kind: 'workspace', ...command });
+        sequence.push({ kind: 'workspace', ...command });
       }
     }
 
-    return tape;
+    return sequence;
   }
 
-  locateCommandInTape(tape: TapeStep[], commandName: string): number {
-    return tape.findIndex((step) => step.name === commandName);
+  locateCommandInSequence(
+    sequence: UpgradeStep[],
+    commandName: string,
+  ): number {
+    return sequence.findIndex((step) => step.name === commandName);
   }
 
-  collectContiguousWorkspaceCommands(
-    tape: TapeStep[],
+  collectContiguousWorkspaceSteps(
+    sequence: UpgradeStep[],
     fromIndex: number,
-  ): WorkspaceTapeStep[] {
-    const slice: WorkspaceTapeStep[] = [];
+  ): WorkspaceUpgradeStep[] {
+    const slice: WorkspaceUpgradeStep[] = [];
 
-    for (let index = fromIndex; index < tape.length; index++) {
-      const step = tape[index];
+    for (let index = fromIndex; index < sequence.length; index++) {
+      const step = sequence[index];
 
       if (step.kind !== 'workspace') {
         break;
@@ -70,10 +73,10 @@ export class UpgradeTapeReaderService {
   }
 
   getLastWorkspaceCommand(): RegisteredWorkspaceCommand {
-    const tape = this.getUpgradeTape();
+    const sequence = this.getUpgradeSequence();
 
-    for (let index = tape.length - 1; index >= 0; index--) {
-      const step = tape[index];
+    for (let index = sequence.length - 1; index >= 0; index--) {
+      const step = sequence[index];
 
       if (step.kind === 'workspace') {
         return step;
@@ -81,7 +84,7 @@ export class UpgradeTapeReaderService {
     }
 
     throw new Error(
-      'No workspace commands found in upgrade tape — this should have been caught at startup',
+      'No workspace commands found in upgrade sequence — this should have been caught at startup',
     );
   }
 }

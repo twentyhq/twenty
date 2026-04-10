@@ -39,7 +39,7 @@ import {
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
-import { UpgradeTapeReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-tape-reader.service';
+import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { isModelAllowedByWorkspace } from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
@@ -128,7 +128,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     private readonly coreDataSource: DataSource,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly upgradeMigrationService: UpgradeMigrationService,
-    private readonly upgradeTapeReaderService: UpgradeTapeReaderService,
+    private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
   ) {
     super(workspaceRepository);
   }
@@ -378,7 +378,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     workspaceId: string,
   ): Promise<void> {
     const lastWorkspaceCommand =
-      this.upgradeTapeReaderService.getLastWorkspaceCommand();
+      this.upgradeSequenceReaderService.getLastWorkspaceCommand();
 
     const executedByVersion =
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
