@@ -1,4 +1,3 @@
-import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
@@ -21,6 +20,7 @@ import {
   Label,
   OverflowingTextWithTooltip,
   type TablerIconsProps,
+  TintedIconTile,
   TooltipDelay,
   TooltipPosition,
 } from 'twenty-ui/display';
@@ -355,7 +355,7 @@ export const NavigationDrawerItem = ({
           {Icon &&
             (isNonEmptyString(iconColor) ? (
               <StyledIcon>
-                <NavigationMenuItemStyleIcon Icon={Icon} color={iconColor} />
+                <TintedIconTile Icon={Icon} color={iconColor} />
               </StyledIcon>
             ) : (
               <StyledIcon>

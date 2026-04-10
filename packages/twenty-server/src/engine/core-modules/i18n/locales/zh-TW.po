@@ -79,16 +79,6 @@ msgstr "發生 DNS 管理器錯誤。"
 msgid "A duplicate entry was detected."
 msgstr "偵測到重複項目。"
 
-#. js-lingui-id: LYv67o
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgid "A favorite"
-msgstr ""
-
-#. js-lingui-id: q0/TIy
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgid "A favorite folder"
-msgstr ""
-
 #. js-lingui-id: othZF2
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "A field with this name already exists."
@@ -1333,7 +1323,6 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 msgid "Company"
 msgstr ""
 
@@ -1577,8 +1566,6 @@ msgstr "找不到已更新欄位的元數據"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-message-folder-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -1637,10 +1624,6 @@ msgstr "已建立欄位元數據，但未找到父對象元數據"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-message-folder-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-message-folder-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
@@ -1705,7 +1688,6 @@ msgstr ""
 
 #. js-lingui-id: 7p5kLi
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 msgid "Dashboard"
 msgstr ""
 
@@ -1779,8 +1761,6 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-message-folder-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -1867,8 +1847,6 @@ msgstr "默認值必須是唯一的"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-message-folder-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -2309,153 +2287,6 @@ msgstr "新增或更新記錄失敗。"
 msgid "Failed Unknown"
 msgstr ""
 
-#. js-lingui-id: 6Ki4Pv
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgid "Favorite"
-msgstr ""
-
-#. js-lingui-id: aKUOPp
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-msgid "Favorite company"
-msgstr ""
-
-#. js-lingui-id: Aj026i
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-msgid "Favorite dashboard"
-msgstr ""
-
-#. js-lingui-id: TDlZ/o
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-msgid "Favorite Folder"
-msgstr ""
-
-#. js-lingui-id: WDVfUH
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
-msgid "Favorite folder position"
-msgstr ""
-
-#. js-lingui-id: SStz54
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgid "Favorite Folders"
-msgstr ""
-
-#. js-lingui-id: dz/fFp
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-msgid "Favorite note"
-msgstr ""
-
-#. js-lingui-id: RRr9Bp
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-msgid "Favorite opportunity"
-msgstr ""
-
-#. js-lingui-id: RM6B6V
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-msgid "Favorite person"
-msgstr ""
-
-#. js-lingui-id: oVA9vM
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-msgid "Favorite position"
-msgstr ""
-
-#. js-lingui-id: OaQVQH
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-msgid "Favorite task"
-msgstr ""
-
-#. js-lingui-id: l+lx2f
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-msgid "Favorite workflow"
-msgstr ""
-
-#. js-lingui-id: BPBnux
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-msgid "Favorite workflow run"
-msgstr ""
-
-#. js-lingui-id: 5X6Vlz
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-msgid "Favorite workflow version"
-msgstr ""
-
-#. js-lingui-id: FDpezg
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-msgid "Favorite workspace member"
-msgstr ""
-
-#. js-lingui-id: X9kySA
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
-msgid "Favorites"
-msgstr ""
-
-#. js-lingui-id: 0CzeFL
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
-msgid "Favorites in this folder"
-msgstr ""
-
-#. js-lingui-id: zQponA
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
-msgid "Favorites linked to the company"
-msgstr ""
-
-#. js-lingui-id: VaKLrB
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
-msgid "Favorites linked to the contact"
-msgstr ""
-
-#. js-lingui-id: 5zuBdE
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
-msgid "Favorites linked to the dashboard"
-msgstr ""
-
-#. js-lingui-id: GOfcBt
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-standard-flat-field-metadata.util.ts
-msgid "Favorites linked to the note"
-msgstr ""
-
-#. js-lingui-id: 9zd8hg
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
-msgid "Favorites linked to the opportunity"
-msgstr ""
-
-#. js-lingui-id: L5ccWD
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
-msgid "Favorites linked to the task"
-msgstr ""
-
-#. js-lingui-id: ee0tmj
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgid "Favorites linked to the workflow"
-msgstr ""
-
-#. js-lingui-id: zar5jz
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgid "Favorites linked to the workflow run"
-msgstr ""
-
-#. js-lingui-id: 499/sw
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgid "Favorites linked to the workflow version"
-msgstr ""
-
-#. js-lingui-id: rgmtb4
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
-msgid "Favorites linked to the workspace member"
-msgstr ""
-
 #. js-lingui-id: Ai7knL
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Feature configuration not found."
@@ -2683,8 +2514,6 @@ msgstr "欄位型別驗證錯誤。"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-message-folder-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -3057,10 +2886,6 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-message-folder-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-message-folder-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
@@ -4202,8 +4027,6 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-message-folder-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -4236,8 +4059,6 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-message-folder-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -4722,7 +4543,6 @@ msgstr "預期只有一個訂閱，但找到多個。"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgid "Name"
@@ -4773,11 +4593,6 @@ msgstr "名稱太短"
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Name must be in camelCase format."
 msgstr "名稱必須為 camelCase 格式。"
-
-#. js-lingui-id: EEVPOx
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
-msgid "Name of the favorite folder"
-msgstr ""
 
 #. js-lingui-id: csMjko
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -4959,7 +4774,6 @@ msgstr ""
 #. js-lingui-id: KiJn9B
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Note"
 msgstr "備註"
@@ -5252,7 +5066,6 @@ msgstr ""
 
 #. js-lingui-id: SV/iis
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 msgid "Opportunity"
 msgstr ""
 
@@ -5618,7 +5431,6 @@ msgstr "找不到權限。"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgid "Person"
@@ -5711,8 +5523,6 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-message-folder-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -6225,8 +6035,6 @@ msgstr "找不到 SDK 用戶端封存檔。可能尚未為此應用程式產生 
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-message-folder-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -6616,7 +6424,6 @@ msgstr "RECORD 類型需要 targetRecordId 和 targetObjectMetadataId"
 #. js-lingui-id: Q3P/4s
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 msgid "Task"
 msgstr ""
 
@@ -6823,8 +6630,6 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-message-folder-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -6886,11 +6691,6 @@ msgstr "您嘗試設置權限的字段找不到。它可能已被刪除。"
 #: src/engine/core-modules/file/utils/extract-file-info.utils.ts
 msgid "The file extension doesn't match the file content. Please check that your file is not corrupted and has the correct extension."
 msgstr "檔案副檔名與檔案內容不相符。請確認您的檔案未損毀，且具有正確的副檔名。"
-
-#. js-lingui-id: W3raza
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-msgid "The folder this favorite belongs to"
-msgstr ""
 
 #. js-lingui-id: EJUSll
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -7000,8 +6800,6 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-message-folder-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -7549,8 +7347,6 @@ msgstr "更新欄位限制僅適用於可更新的物件。"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-message-folder-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-folder-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-dashboard-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-connected-account-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -8028,12 +7824,6 @@ msgstr "找不到要更新的視圖"
 msgid "View with same universal identifier already exists"
 msgstr "具有相同通用識別碼的視圖已存在"
 
-#. js-lingui-id: aeqysn
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-msgid "ViewId"
-msgstr ""
-
 #. js-lingui-id: 14WoDD
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -8177,9 +7967,6 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 msgid "Workflow"
 msgstr ""
 
@@ -8431,7 +8218,6 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-favorite-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgid "Workspace Member"

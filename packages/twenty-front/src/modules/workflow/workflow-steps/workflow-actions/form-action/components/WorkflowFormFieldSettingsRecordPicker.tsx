@@ -1,4 +1,5 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -6,10 +7,9 @@ import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
-import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import camelCase from 'lodash.camelcase';
-import { useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -28,16 +28,16 @@ export const WorkflowFormFieldSettingsRecordPicker = ({
   field,
   onChange,
 }: WorkflowFormFieldSettingsRecordPickerProps) => {
-  const { getIcon } = useIcons();
-
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
 
   const availableMetadata: Array<SelectOption<string>> =
     activeNonSystemObjectMetadataItems.map((item) => ({
-      Icon: getIcon(item.icon),
       label: item.labelPlural,
       value: item.nameSingular,
+      ...getSelectIconPropsFromObjectMetadataItem(item),
     }));
 
   return (

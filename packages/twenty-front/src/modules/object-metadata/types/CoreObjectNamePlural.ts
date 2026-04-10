@@ -11,7 +11,6 @@ export enum CoreObjectNamePlural {
   ConnectedAccount = 'connectedAccounts',
   Dashboard = 'dashboards',
   TimelineActivity = 'timelineActivities',
-  Favorite = 'favorites',
   Message = 'messages',
   MessageChannel = 'messageChannels',
   MessageParticipant = 'messageParticipants',

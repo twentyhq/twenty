@@ -349,19 +349,6 @@ export const computeStandardTaskViewFields = (
         },
       },
     ),
-    taskRecordPageFieldsFavorites: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'task',
-      context: {
-        viewName: 'taskRecordPageFields',
-        viewFieldName: 'favorites',
-        fieldName: 'favorites',
-        position: 7,
-        isVisible: false,
-        size: 150,
-        viewFieldGroupName: 'general',
-      },
-    }),
     // System group
     taskRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata({
       ...args,

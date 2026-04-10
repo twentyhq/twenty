@@ -4,6 +4,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
+import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
@@ -23,8 +24,8 @@ import {
   TooltipPosition,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
-import { RelationType } from '~/generated-metadata/graphql';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { RelationType } from '~/generated-metadata/graphql';
 
 const StyledLinkContainer = styled.div`
   display: flex;
@@ -83,6 +84,8 @@ export const WidgetActionFieldSeeAll = () => {
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
+  const isJunction = hasJunctionConfig(relationMetadata?.settings);
+
   const relationObjectMetadataItem = objectMetadataItems.find(
     (item) =>
       item.nameSingular ===
@@ -93,17 +96,23 @@ export const WidgetActionFieldSeeAll = () => {
     ({ id }) => id === relationMetadata?.relationFieldMetadataId,
   );
 
+  const targetObjectMetadataItem = relationObjectMetadataItem;
+
   const indexViewId = useAtomFamilySelectorValue(
     indexViewIdFromObjectMetadataItemFamilySelector,
-    { objectMetadataItemId: relationObjectMetadataItem?.id ?? '' },
+    { objectMetadataItemId: targetObjectMetadataItem?.id ?? '' },
   );
 
   if (
     !isDefined(relationMetadata) ||
     relationMetadata.relationType !== RelationType.ONE_TO_MANY ||
-    !isDefined(relationFieldMetadataItem) ||
-    !isDefined(relationObjectMetadataItem)
+    !isDefined(targetObjectMetadataItem) ||
+    isJunction
   ) {
+    return null;
+  }
+
+  if (!isDefined(relationFieldMetadataItem)) {
     return null;
   }
 
@@ -121,14 +130,14 @@ export const WidgetActionFieldSeeAll = () => {
   const filterLinkHref = getAppPath(
     AppPath.RecordIndexPage,
     {
-      objectNamePlural: relationObjectMetadataItem.namePlural,
+      objectNamePlural: targetObjectMetadataItem.namePlural,
     },
     filterQueryParams,
   );
 
   const tooltipId = `widget-see-all-${widget.id}`;
   const relationLabelPlural =
-    relationObjectMetadataItem.labelPlural.toLowerCase();
+    targetObjectMetadataItem.labelPlural.toLowerCase();
   const tooltipContent = t`See all ${relationLabelPlural} linked to this record`;
 
   return (
