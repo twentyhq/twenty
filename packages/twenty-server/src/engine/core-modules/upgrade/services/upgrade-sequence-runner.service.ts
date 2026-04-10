@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import {
   type WorkspaceIteratorReport,
-  type WorkspaceIteratorService,
+  WorkspaceIteratorService,
 } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type UpgradeCommandOptions } from 'src/database/commands/upgrade-version-command/upgrade.command';
 import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
@@ -28,18 +28,17 @@ export class UpgradeSequenceRunnerService {
     private readonly instanceUpgradeService: InstanceUpgradeService,
     private readonly workspaceUpgradeService: WorkspaceUpgradeService,
     private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
+    private readonly workspaceIteratorService: WorkspaceIteratorService,
   ) {}
 
   async run({
     sequence,
     activeWorkspaceIds,
     options,
-    workspaceIteratorService,
   }: {
     sequence: UpgradeStep[];
     activeWorkspaceIds: string[];
     options: UpgradeCommandOptions;
-    workspaceIteratorService: WorkspaceIteratorService;
   }): Promise<UpgradeSequenceRunnerReport> {
     if (sequence.length === 0) {
       return { totalSuccesses: 0, totalFailures: 0 };
@@ -89,7 +88,6 @@ export class UpgradeSequenceRunnerService {
       const report = await this.runWorkspaceCommandsSlice({
         workspaceCommands: workspaceCommandsSlice,
         options,
-        workspaceIteratorService,
       });
 
       totalSuccesses += report.success.length;
@@ -202,13 +200,11 @@ export class UpgradeSequenceRunnerService {
   private async runWorkspaceCommandsSlice({
     workspaceCommands,
     options,
-    workspaceIteratorService,
   }: {
     workspaceCommands: WorkspaceUpgradeStep[];
     options: UpgradeCommandOptions;
-    workspaceIteratorService: WorkspaceIteratorService;
   }): Promise<WorkspaceIteratorReport> {
-    return workspaceIteratorService.iterate({
+    return this.workspaceIteratorService.iterate({
       workspaceIds:
         options.workspaceId && options.workspaceId.size > 0
           ? Array.from(options.workspaceId)

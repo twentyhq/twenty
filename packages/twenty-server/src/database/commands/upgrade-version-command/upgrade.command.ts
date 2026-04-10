@@ -136,7 +136,6 @@ export class UpgradeCommand extends CommandRunner {
           sequence,
           activeWorkspaceIds,
           options,
-          workspaceIteratorService: this.workspaceIteratorService,
         });
 
       if (hasWorkspaces) {

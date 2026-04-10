@@ -137,18 +137,21 @@ const buildUpgradeCommandModule = async ({
           instanceUpgradeService: InstanceUpgradeService,
           workspaceUpgradeService: WorkspaceUpgradeService,
           upgradeSequenceReaderService: UpgradeSequenceReaderService,
+          workspaceIteratorService: WorkspaceIteratorService,
         ) =>
           new UpgradeSequenceRunnerService(
             upgradeMigrationService,
             instanceUpgradeService,
             workspaceUpgradeService,
             upgradeSequenceReaderService,
+            workspaceIteratorService,
           ),
         inject: [
           UpgradeMigrationService,
           InstanceUpgradeService,
           WorkspaceUpgradeService,
           UpgradeSequenceReaderService,
+          WorkspaceIteratorService,
         ],
       },
       {
