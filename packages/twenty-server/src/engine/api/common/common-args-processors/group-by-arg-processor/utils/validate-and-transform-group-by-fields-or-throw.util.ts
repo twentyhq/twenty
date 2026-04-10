@@ -145,9 +145,7 @@ const validateAndTransformSingleGroupByFieldOrThrow = ({
   }
 
   const fieldGroupByDefinition = fieldNames[fieldName];
-  const isObjectFieldGroupByDefinition = isPlainObject(
-    fieldGroupByDefinition,
-  );
+  const isObjectFieldGroupByDefinition = isPlainObject(fieldGroupByDefinition);
   const isGroupByRelationField =
     isMorphOrRelationFlatFieldMetadata(fieldMetadata) &&
     isObjectFieldGroupByDefinition &&

@@ -95,10 +95,10 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
     const groupByFields =
       this.groupByArgProcessor.validateAndTransformGroupByFieldsOrThrow({
-      groupBy: args.groupBy,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
+        groupBy: args.groupBy,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
       });
 
     const objectAlias = getObjectAlias(flatObjectMetadata);

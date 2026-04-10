@@ -20,5 +20,8 @@ export const isGroupByDateFieldDefinition = (
 
   const granularity = fieldGroupByDefinition.granularity;
 
-  return typeof granularity === 'string' && GROUP_BY_DATE_GRANULARITIES.has(granularity);
+  return (
+    typeof granularity === 'string' &&
+    GROUP_BY_DATE_GRANULARITIES.has(granularity)
+  );
 };

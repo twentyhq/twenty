@@ -114,9 +114,7 @@ export class GroupByRecordsService {
       );
 
       const dimensionLabels = groupBy.map((entry) =>
-        this.getDimensionLabelFromGroupByEntry(
-          entry as Record<string, unknown>,
-        ),
+        this.getDimensionLabelFromGroupByEntry(entry),
       );
 
       this.logger.log(
@@ -157,7 +155,7 @@ export class GroupByRecordsService {
   }
 
   private getDimensionLabelFromGroupByEntry(
-    entry: Record<string, unknown>,
+    entry: GroupByRecordsParams['groupBy'][number],
   ): string {
     const fieldEntries = Object.entries(entry);
 
