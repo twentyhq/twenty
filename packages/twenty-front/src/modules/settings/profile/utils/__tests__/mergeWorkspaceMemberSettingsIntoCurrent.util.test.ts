@@ -1,5 +1,5 @@
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
-import { mergeWorkspaceMemberSettingsIntoCurrent } from '@/settings/profile/utils/merge-workspace-member-settings-into-current.util';
+import { mergeWorkspaceMemberSettingsIntoCurrent } from '@/settings/profile/utils/mergeWorkspaceMemberSettingsIntoCurrent.util';
 
 const createBaseWorkspaceMember = (): CurrentWorkspaceMember => ({
   id: 'workspace-member-id',
