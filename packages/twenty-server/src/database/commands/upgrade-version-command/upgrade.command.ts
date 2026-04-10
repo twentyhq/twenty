@@ -1,8 +1,5 @@
-import { InjectDataSource } from '@nestjs/typeorm';
-
 import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
-import { DataSource } from 'typeorm';
 
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { CommandLogger } from 'src/database/commands/logger';
@@ -30,8 +27,6 @@ export class UpgradeCommand extends CommandRunner {
     protected readonly upgradeRunnerService: UpgradeRunnerService,
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     protected readonly workspaceVersionService: WorkspaceVersionService,
-    @InjectDataSource()
-    protected readonly dataSource: DataSource,
   ) {
     super();
     this.logger = new CommandLogger({
@@ -135,8 +130,6 @@ export class UpgradeCommand extends CommandRunner {
         ),
       );
 
-      await this.runLegacyPendingTypeOrmMigrations();
-
       const hasWorkspaces =
         await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
 
@@ -187,19 +180,4 @@ export class UpgradeCommand extends CommandRunner {
     return report.success.map((entry) => entry.workspaceId);
   }
 
-  private async runLegacyPendingTypeOrmMigrations(): Promise<void> {
-    this.logger.log('Running legacy TypeORM migrations...');
-
-    const migrations = await this.dataSource.runMigrations({
-      transaction: 'each',
-    });
-
-    if (migrations.length === 0) {
-      this.logger.log('No pending legacy migrations');
-    } else {
-      this.logger.log(
-        `Executed ${migrations.length} legacy migration(s): ${migrations.map((migration) => migration.name).join(', ')}`,
-      );
-    }
-  }
 }

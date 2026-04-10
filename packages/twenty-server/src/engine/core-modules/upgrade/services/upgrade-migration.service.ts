@@ -140,22 +140,6 @@ export class UpgradeMigrationService {
     return new Set(completedMigrations.map((migration) => migration.name));
   }
 
-  async areAllCommandsCompleted({
-    names,
-    workspaceId,
-  }: {
-    names: string[];
-    workspaceId: string | null;
-  }): Promise<boolean> {
-    if (names.length === 0) {
-      return true;
-    }
-
-    const completedNames = await this.getCompletedCommandNames(workspaceId);
-
-    return names.every((name) => completedNames.has(name));
-  }
-
   async areAllWorkspacesAtCommand({
     commandName,
     workspaceIds,

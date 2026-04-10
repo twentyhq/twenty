@@ -8,8 +8,6 @@ import { type DataSource, type QueryRunner } from 'typeorm';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
-import { getDataSourceToken } from '@nestjs/typeorm';
-
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import {
@@ -72,26 +70,18 @@ const buildUpgradeCommandModule = async ({
   const module: TestingModule = await Test.createTestingModule({
     providers: [
       {
-        provide: getDataSourceToken(),
-        useValue: {
-          runMigrations: jest.fn().mockResolvedValue([]),
-        },
-      },
-      {
         provide: commandRunner,
         useFactory: (
           upgradeCommandRegistryService: UpgradeCommandRegistryService,
           upgradeRunnerService: UpgradeRunnerService,
           workspaceIteratorService: WorkspaceIteratorService,
           workspaceVersionService: WorkspaceVersionService,
-          dataSource: DataSource,
         ) => {
           return new commandRunner(
             upgradeCommandRegistryService,
             upgradeRunnerService,
             workspaceIteratorService,
             workspaceVersionService,
-            dataSource,
           );
         },
         inject: [
@@ -99,7 +89,6 @@ const buildUpgradeCommandModule = async ({
           UpgradeRunnerService,
           WorkspaceIteratorService,
           WorkspaceVersionService,
-          getDataSourceToken(),
         ],
       },
       {
