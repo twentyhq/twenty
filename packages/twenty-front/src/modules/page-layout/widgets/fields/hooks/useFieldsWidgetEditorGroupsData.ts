@@ -210,7 +210,12 @@ export const useFieldsWidgetEditorGroupsData = ({
       ungroupedFields: [],
       editorMode: 'grouped' as const,
     };
-  }, [objectMetadataItem, objectNameSingular, view, labelIdentifierFieldMetadataItem]);
+  }, [
+    objectMetadataItem,
+    objectNameSingular,
+    view,
+    labelIdentifierFieldMetadataItem,
+  ]);
 
   return {
     ...result,
