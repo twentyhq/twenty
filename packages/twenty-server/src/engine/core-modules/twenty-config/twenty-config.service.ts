@@ -250,24 +250,46 @@ export class TwentyConfigService {
     value: any,
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   ): any {
-    if (!isString(value) || !(key in CONFIG_VARIABLES_MASKING_CONFIG)) {
-      return value;
+    if (key in CONFIG_VARIABLES_MASKING_CONFIG) {
+      if (!isString(value)) {
+        return value;
+      }
+
+      const varMaskingConfig =
+        CONFIG_VARIABLES_MASKING_CONFIG[
+          key as keyof typeof CONFIG_VARIABLES_MASKING_CONFIG
+        ];
+      const options =
+        varMaskingConfig.strategy ===
+        ConfigVariablesMaskingStrategies.LAST_N_CHARS
+          ? { chars: varMaskingConfig.chars }
+          : undefined;
+
+      return configVariableMaskSensitiveData(value, varMaskingConfig.strategy, {
+        ...options,
+        variableName: key as string,
+      });
     }
 
-    const varMaskingConfig =
-      CONFIG_VARIABLES_MASKING_CONFIG[
-        key as keyof typeof CONFIG_VARIABLES_MASKING_CONFIG
-      ];
-    const options =
-      varMaskingConfig.strategy ===
-      ConfigVariablesMaskingStrategies.LAST_N_CHARS
-        ? { chars: varMaskingConfig.chars }
-        : undefined;
+    const metadata = this.getMetadata(key);
 
-    return configVariableMaskSensitiveData(value, varMaskingConfig.strategy, {
-      ...options,
-      variableName: key as string,
-    });
+    if (metadata?.isSensitive) {
+      if (!value && value !== false && value !== 0) {
+        return value;
+      }
+
+      if (isString(value)) {
+        return configVariableMaskSensitiveData(
+          value,
+          ConfigVariablesMaskingStrategies.LAST_N_CHARS,
+          { chars: 4, variableName: key as string },
+        );
+      }
+
+      return '********';
+    }
+
+    return value;
   }
 
   validateConfigVariableExists(key: string): boolean {

@@ -9,7 +9,10 @@ type FormValues = {
   value: ConfigVariableValue;
 };
 
-export const useConfigVariableForm = (variable?: ConfigVariable) => {
+export const useConfigVariableForm = (
+  variable?: ConfigVariable,
+  isEditing?: boolean,
+) => {
   const validationSchema = z.object({
     value: z.union([
       z.string(),
@@ -32,7 +35,8 @@ export const useConfigVariableForm = (variable?: ConfigVariable) => {
   });
 
   const currentValue = watch('value');
-  const hasValueChanged = currentValue !== variable?.value;
+  const isSensitiveEditing = variable?.isSensitive && isEditing;
+  const hasValueChanged = isSensitiveEditing || currentValue !== variable?.value;
   const isValueValid = !!(
     variable &&
     !variable.isEnvOnly &&

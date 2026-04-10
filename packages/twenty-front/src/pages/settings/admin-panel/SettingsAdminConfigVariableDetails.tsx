@@ -82,7 +82,7 @@ export const SettingsAdminConfigVariableDetails = () => {
     watch,
     hasValueChanged,
     isValueValid,
-  } = useConfigVariableForm(variable);
+  } = useConfigVariableForm(variable, isEditing);
 
   if (loading === true || isDefined(variable) === false) {
     return <SettingsSkeletonLoader />;
@@ -97,6 +97,9 @@ export const SettingsAdminConfigVariableDetails = () => {
   };
 
   const handleEditClick = () => {
+    if (variable.isSensitive) {
+      setValue('value', '');
+    }
     setIsEditing(true);
   };
 
@@ -160,6 +163,7 @@ export const SettingsAdminConfigVariableDetails = () => {
                   value={watch('value')}
                   onChange={(value) => setValue('value', value)}
                   disabled={isEnvOnly || !isEditing}
+                  isEditing={isEditing}
                 />
 
                 {!isEditing ? (
