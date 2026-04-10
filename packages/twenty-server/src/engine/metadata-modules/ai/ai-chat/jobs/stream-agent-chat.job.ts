@@ -311,15 +311,14 @@ export class StreamAgentChatJob {
 
           await streamFinishedPromise;
 
-          await this.eventPublisherService.publish({
-            threadId: data.threadId,
-            workspaceId: data.workspaceId,
-            event: { type: 'message-persisted', messageId: data.threadId },
-          });
-
           if (streamError) {
             reject(streamError);
           } else {
+            await this.eventPublisherService.publish({
+              threadId: data.threadId,
+              workspaceId: data.workspaceId,
+              event: { type: 'message-persisted', messageId: data.threadId },
+            });
             resolve();
           }
         } catch (error) {
