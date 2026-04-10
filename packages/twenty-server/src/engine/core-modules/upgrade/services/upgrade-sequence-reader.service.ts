@@ -53,9 +53,7 @@ export class UpgradeSequenceReaderService {
     const index = sequence.findIndex((step) => step.name === commandName);
 
     if (index === -1) {
-      throw new Error(
-        `Command "${commandName}" not found in upgrade sequence`,
-      );
+      throw new Error(`Command "${commandName}" not found in upgrade sequence`);
     }
 
     return index;
