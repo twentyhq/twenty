@@ -81,64 +81,6 @@ export const useFieldsWidgetGroups = ({
         .filter((group) => group.fields.length > 0);
     }
 
-    if (isDefined(view) && view.viewFields.length > 0) {
-      let globalIndex = 0;
-
-      const resolvedFields = [...view.viewFields]
-        .sort((a, b) => a.position - b.position)
-        .filter((viewField) => viewField.isVisible)
-        .map((viewField) => {
-          const fieldMetadataItem = objectMetadataItem.fields.find(
-            (f) => f.id === viewField.fieldMetadataId,
-          );
-
-          if (!isDefined(fieldMetadataItem)) {
-            return null;
-          }
-
-          return {
-            fieldMetadataItem,
-            position: viewField.position,
-            isVisible: viewField.isVisible,
-            globalIndex: globalIndex++,
-          };
-        })
-        .filter(isDefined);
-
-      const standardFields = resolvedFields.filter(
-        (field) => !field.fieldMetadataItem.isCustom,
-      );
-      const customFields = resolvedFields.filter(
-        (field) => field.fieldMetadataItem.isCustom,
-      );
-
-      const groups: FieldsWidgetGroup[] = [];
-
-      if (standardFields.length > 0) {
-        groups.push({
-          id: `${view.id}-group-general`,
-          name: 'General',
-          position: 0,
-          isVisible: true,
-          fields: standardFields,
-        });
-      }
-
-      if (customFields.length > 0) {
-        groups.push({
-          id: `${view.id}-group-other`,
-          name: 'Other',
-          position: 1,
-          isVisible: true,
-          fields: customFields,
-        });
-      }
-
-      if (groups.length > 0) {
-        return groups;
-      }
-    }
-
     return filterDraftGroupsForDisplay(
       buildDefaultFieldsWidgetGroups({
         fields: objectMetadataItem.fields,
@@ -154,18 +96,12 @@ export const useFieldsWidgetGroups = ({
     view,
   ]);
 
-  const displayMode: FieldsWidgetDisplayMode =
-    isDefined(view) &&
-    !isNonEmptyArray(view.viewFieldGroups) &&
-    view.viewFields.length > 0
-      ? 'inline'
-      : 'grouped';
+  const displayMode: FieldsWidgetDisplayMode = 'grouped';
 
   return {
     groups,
     displayMode,
     isFromView:
-      isDefined(view) &&
-      (isNonEmptyArray(view.viewFieldGroups) || view.viewFields.length > 0),
+      isDefined(view) && isNonEmptyArray(view.viewFieldGroups),
   };
 };
