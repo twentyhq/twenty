@@ -6,9 +6,12 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type Repository } from 'typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
-import { type PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
+import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
+import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
+import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
+import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/role/services/workspace-roles-permissions-cache.service';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000000';
@@ -50,6 +53,12 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
   let objectMetadataRepository: jest.Mocked<
     Pick<Repository<ObjectMetadataEntity>, 'find'>
   >;
+  let objectPermissionRepository: jest.Mocked<
+    Pick<Repository<ObjectPermissionEntity>, 'find'>
+  >;
+  let permissionFlagRepository: jest.Mocked<
+    Pick<Repository<PermissionFlagEntity>, 'find'>
+  >;
 
   const workspaceObjectMetadataFixture: ObjectMetadataEntity[] = [
     {
@@ -81,6 +90,23 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
       find: jest.fn().mockResolvedValue(workspaceObjectMetadataFixture),
     };
 
+    objectPermissionRepository = {
+      find: jest.fn().mockResolvedValue([]),
+    };
+
+    permissionFlagRepository = {
+      find: jest.fn().mockResolvedValue([]),
+    };
+    const fieldPermissionRepository = {
+      find: jest.fn().mockResolvedValue([]),
+    };
+    const rowLevelPermissionPredicateRepository = {
+      find: jest.fn().mockResolvedValue([]),
+    };
+    const rowLevelPermissionPredicateGroupRepository = {
+      find: jest.fn().mockResolvedValue([]),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WorkspaceRolesPermissionsCacheService,
@@ -91,6 +117,26 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
         {
           provide: getRepositoryToken(RoleEntity),
           useValue: roleRepository,
+        },
+        {
+          provide: getRepositoryToken(ObjectPermissionEntity),
+          useValue: objectPermissionRepository,
+        },
+        {
+          provide: getRepositoryToken(PermissionFlagEntity),
+          useValue: permissionFlagRepository,
+        },
+        {
+          provide: getRepositoryToken(FieldPermissionEntity),
+          useValue: fieldPermissionRepository,
+        },
+        {
+          provide: getRepositoryToken(RowLevelPermissionPredicateEntity),
+          useValue: rowLevelPermissionPredicateRepository,
+        },
+        {
+          provide: getRepositoryToken(RowLevelPermissionPredicateGroupEntity),
+          useValue: rowLevelPermissionPredicateGroupRepository,
         },
       ],
     }).compile();
@@ -118,11 +164,16 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
     });
 
     it('should grant all record permissions when role has WORKSPACE_MEMBERS permission flag', async () => {
+      permissionFlagRepository.find.mockResolvedValue([
+        {
+          roleId: ROLE_ID,
+          flag: PermissionFlagType.WORKSPACE_MEMBERS,
+        } as PermissionFlagEntity,
+      ]);
+
       roleRepository.find.mockResolvedValue([
         createBaseRole({
-          permissionFlags: [
-            { flag: PermissionFlagType.WORKSPACE_MEMBERS },
-          ] as PermissionFlagEntity[],
+          permissionFlags: [],
           objectPermissions: [],
         }),
       ]);
@@ -174,11 +225,16 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
     });
 
     it('should grant all record permissions when role has WORKFLOWS permission flag', async () => {
+      permissionFlagRepository.find.mockResolvedValue([
+        {
+          roleId: ROLE_ID,
+          flag: PermissionFlagType.WORKFLOWS,
+        } as PermissionFlagEntity,
+      ]);
+
       roleRepository.find.mockResolvedValue([
         createBaseRole({
-          permissionFlags: [
-            { flag: PermissionFlagType.WORKFLOWS },
-          ] as PermissionFlagEntity[],
+          permissionFlags: [],
           objectPermissions: [],
         }),
       ]);
@@ -195,18 +251,21 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
 
   describe('regular object (person)', () => {
     it('should apply object permission overrides when object is not system', async () => {
+      objectPermissionRepository.find.mockResolvedValue([
+        {
+          roleId: ROLE_ID,
+          objectMetadataId: PERSON_OBJECT_METADATA_ID,
+          canReadObjectRecords: true,
+          canUpdateObjectRecords: false,
+          canSoftDeleteObjectRecords: false,
+          canDestroyObjectRecords: false,
+        } as ObjectPermissionEntity,
+      ]);
+
       roleRepository.find.mockResolvedValue([
         createBaseRole({
           permissionFlags: [],
-          objectPermissions: [
-            {
-              objectMetadataId: PERSON_OBJECT_METADATA_ID,
-              canReadObjectRecords: true,
-              canUpdateObjectRecords: false,
-              canSoftDeleteObjectRecords: false,
-              canDestroyObjectRecords: false,
-            },
-          ] as ObjectPermissionEntity[],
+          objectPermissions: [],
         }),
       ]);
 
