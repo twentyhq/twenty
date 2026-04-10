@@ -117,64 +117,12 @@ const innerAppDevOnce = async (
 
   await writeManifestToOutput(appPath, manifest);
 
-  // Register the app (or find existing registration) and persist the
-  // registration credentials.  These are later used to obtain an
-  // APPLICATION_ACCESS token (via client_credentials) for CoreApiClient
-  // generation — so the generated client reflects the app-scoped schema.
   onProgress?.('Registering application...');
 
   const configService = new ConfigService();
   const config = await configService.getConfig();
 
-  let registrationId = config.appRegistrationId;
-  let appRegistrationClientId = config.appRegistrationClientId;
-  let clientSecret: string | undefined;
-
-  if (!registrationId) {
-    const registrationResult =
-      await apiService.findApplicationRegistrationByUniversalIdentifier(
-        manifest.application.universalIdentifier,
-      );
-
-    if (!registrationResult.success) {
-      return {
-        success: false,
-        error: {
-          code: APP_ERROR_CODES.SYNC_FAILED,
-          message: `Failed to check app registration: ${serializeError(registrationResult.error)}`,
-        },
-      };
-    }
-
-    if (registrationResult.data) {
-      registrationId = registrationResult.data.id;
-      appRegistrationClientId = registrationResult.data.oAuthClientId;
-
-      const rotateResult =
-        await apiService.rotateApplicationRegistrationClientSecret(
-          registrationResult.data.id,
-        );
-
-      if (!rotateResult.success) {
-        return {
-          success: false,
-          error: {
-            code: APP_ERROR_CODES.SYNC_FAILED,
-            message: `Failed to rotate app registration secret: ${serializeError(rotateResult.error)}`,
-          },
-        };
-      }
-
-      clientSecret = rotateResult.data.clientSecret;
-
-      await configService.setConfig({
-        appRegistrationId: registrationId,
-        appRegistrationClientId,
-      });
-    }
-  }
-
-  if (!registrationId) {
+  if (!config.appAccessToken) {
     const createResult = await apiService.createApplicationRegistration({
       name: manifest.application.displayName,
       universalIdentifier: manifest.application.universalIdentifier,
@@ -190,14 +138,36 @@ const innerAppDevOnce = async (
       };
     }
 
-    registrationId = createResult.data.applicationRegistration.id;
-    appRegistrationClientId =
-      createResult.data.applicationRegistration.oAuthClientId;
-    clientSecret = createResult.data.clientSecret;
+    const { applicationRegistration, clientSecret } = createResult.data;
+
+    const tokenResponse = await fetch(`${config.apiUrl}/oauth/token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        grant_type: 'client_credentials',
+        client_id: applicationRegistration.oAuthClientId,
+        client_secret: clientSecret,
+      }),
+    });
+
+    if (!tokenResponse.ok) {
+      return {
+        success: false,
+        error: {
+          code: APP_ERROR_CODES.SYNC_FAILED,
+          message: `Failed to obtain app access token: ${tokenResponse.status} ${tokenResponse.statusText}`,
+        },
+      };
+    }
+
+    const { access_token: appAccessToken } = (await tokenResponse.json()) as {
+      access_token: string;
+    };
 
     await configService.setConfig({
-      appRegistrationId: registrationId,
-      appRegistrationClientId,
+      appRegistrationId: applicationRegistration.id,
+      appRegistrationClientId: applicationRegistration.oAuthClientId,
+      appAccessToken,
     });
   }
 
@@ -285,11 +255,7 @@ const innerAppDevOnce = async (
   onProgress?.('Generating API client...');
 
   try {
-    const authToken = await getAppAccessToken({
-      configService,
-      appRegistrationClientId,
-      appRegistrationClientSecret: clientSecret,
-    });
+    const authToken = await getAppAccessToken({ configService });
 
     const clientService = new ClientService();
 

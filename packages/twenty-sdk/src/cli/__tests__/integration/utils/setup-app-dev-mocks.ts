@@ -23,10 +23,6 @@ const mockApiService = {
       clientSecret: 'mock-client-secret',
     },
   }),
-  rotateApplicationRegistrationClientSecret: vi.fn().mockResolvedValue({
-    success: true,
-    data: { clientSecret: 'mock-rotated-client-secret' },
-  }),
   createDevelopmentApplication: vi.fn().mockResolvedValue({
     success: true,
     data: { id: 'mock-app-id', universalIdentifier: 'mock-uid' },
@@ -47,8 +43,6 @@ vi.mock('@/cli/utilities/api/api-service', () => ({
       mockApiService.findApplicationRegistrationByUniversalIdentifier;
     createApplicationRegistration =
       mockApiService.createApplicationRegistration;
-    rotateApplicationRegistrationClientSecret =
-      mockApiService.rotateApplicationRegistrationClientSecret;
     createDevelopmentApplication = mockApiService.createDevelopmentApplication;
     syncApplication = mockApiService.syncApplication;
     uploadFile = mockApiService.uploadFile;
@@ -62,10 +56,18 @@ vi.mock('@/cli/utilities/file/file-uploader', () => ({
   },
 }));
 
+// Registration flow calls fetch() directly for the client_credentials exchange.
+vi.stubGlobal(
+  'fetch',
+  vi.fn().mockResolvedValue({
+    ok: true,
+    json: () =>
+      Promise.resolve({ access_token: 'mock-app-access-token' }),
+  }),
+);
+
 vi.mock('@/cli/utilities/auth/get-app-access-token', () => ({
-  getAppAccessToken: vi
-    .fn()
-    .mockResolvedValue('mock-app-access-token'),
+  getAppAccessToken: vi.fn().mockResolvedValue('mock-app-access-token'),
 }));
 
 vi.mock('@/cli/utilities/client/client-service', () => ({
