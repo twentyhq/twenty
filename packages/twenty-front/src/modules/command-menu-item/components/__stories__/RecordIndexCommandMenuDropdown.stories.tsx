@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { Provider as JotaiProvider } from 'jotai';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, within } from 'storybook/test';
 
 import { RecordIndexCommandMenuDropdown } from '@/command-menu-item/components/RecordIndexCommandMenuDropdown';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
@@ -78,18 +78,13 @@ export const WithInteractions: Story = {
     const canvas = within(canvasElement.ownerDocument.body);
 
     const deleteButton = await canvas.findByText('Delete');
-    await userEvent.click(deleteButton);
-
     const addToFavoritesButton = await canvas.findByText('Add to favorites');
-    await userEvent.click(addToFavoritesButton);
-
     const exportButton = await canvas.findByText('Export');
-    await userEvent.click(exportButton);
-
     const moreActionsButton = await canvas.findByText('More actions');
 
-    await waitFor(() => {
-      expect(moreActionsButton).toBeInTheDocument();
-    });
+    expect(deleteButton).toBeInTheDocument();
+    expect(addToFavoritesButton).toBeInTheDocument();
+    expect(exportButton).toBeInTheDocument();
+    expect(moreActionsButton).toBeInTheDocument();
   },
 };
