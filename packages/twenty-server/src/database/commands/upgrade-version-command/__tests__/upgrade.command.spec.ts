@@ -72,7 +72,7 @@ const buildUpgradeCommandModule = async ({
         },
       };
 
-  const tapeManagerProvider = migrations
+  const tapeReaderProvider = migrations
     ? {
         provide: UpgradeTapeReaderService,
         useFactory: (registry: UpgradeCommandRegistryService) =>
@@ -121,9 +121,12 @@ const buildUpgradeCommandModule = async ({
       {
         provide: UpgradeMigrationService,
         useValue: {
-          getCompletedCommandNames: jest
+          getLastCompletedCommandName: jest
             .fn()
-            .mockResolvedValue(new Set<string>()),
+            .mockResolvedValue(null),
+          getWorkspaceCursors: jest
+            .fn()
+            .mockResolvedValue(new Map()),
           areAllWorkspacesAtCommand: jest.fn().mockResolvedValue(true),
         },
       },
@@ -133,16 +136,19 @@ const buildUpgradeCommandModule = async ({
           upgradeMigrationService: UpgradeMigrationService,
           instanceUpgradeService: InstanceUpgradeService,
           workspaceUpgradeService: WorkspaceUpgradeService,
+          upgradeTapeReaderService: UpgradeTapeReaderService,
         ) =>
           new UpgradeTapeRunnerService(
             upgradeMigrationService,
             instanceUpgradeService,
             workspaceUpgradeService,
+            upgradeTapeReaderService,
           ),
         inject: [
           UpgradeMigrationService,
           InstanceUpgradeService,
           WorkspaceUpgradeService,
+          UpgradeTapeReaderService,
         ],
       },
       {
@@ -163,7 +169,7 @@ const buildUpgradeCommandModule = async ({
         },
       },
       registryProvider,
-      tapeManagerProvider,
+      tapeReaderProvider,
       {
         provide: WorkspaceIteratorService,
         useValue: {
@@ -488,7 +494,7 @@ describe('UpgradeCommandRunner', () => {
     );
   });
 
-  it('should skip already completed instance commands', async () => {
+  it('should skip already completed instance commands via service guard', async () => {
     @RegisteredInstanceCommand(CURRENT_VERSION, 1770000000000)
     class AlreadyDone1770000000000 implements FastInstanceCommand {
       async up(_queryRunner: QueryRunner) {}
@@ -508,24 +514,29 @@ describe('UpgradeCommandRunner', () => {
       migrations: [alreadyDone, notDone],
     });
 
-    const upgradeMigrationService = module.get(UpgradeMigrationService);
+    const instanceUpgradeService = module.get(InstanceUpgradeService);
 
     (
-      upgradeMigrationService.getCompletedCommandNames as jest.Mock
-    ).mockResolvedValue(
-      new Set([
-        `${CURRENT_VERSION}_AlreadyDone1770000000000_1770000000000`,
-      ]),
-    );
+      instanceUpgradeService.runFastInstanceCommand as jest.Mock
+    ).mockImplementation(async ({ name }: { name: string }) => {
+      if (
+        name ===
+        `${CURRENT_VERSION}_AlreadyDone1770000000000_1770000000000`
+      ) {
+        return { status: 'already-executed' };
+      }
 
-    const instanceUpgradeService = module.get(InstanceUpgradeService);
+      return { status: 'success' };
+    });
 
     await upgradeCommandRunner.run([], {});
 
     expect(instanceUpgradeService.runFastInstanceCommand).toHaveBeenCalledTimes(
-      1,
+      2,
     );
-    expect(instanceUpgradeService.runFastInstanceCommand).toHaveBeenCalledWith({
+    expect(
+      instanceUpgradeService.runFastInstanceCommand,
+    ).toHaveBeenNthCalledWith(2, {
       command: notDone,
       name: `${CURRENT_VERSION}_NotDone1771000000000_1771000000000`,
     });

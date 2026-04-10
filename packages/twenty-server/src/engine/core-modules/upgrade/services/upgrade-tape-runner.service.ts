@@ -1,17 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-  type WorkspaceIteratorService,
   type WorkspaceIteratorReport,
+  type WorkspaceIteratorService,
 } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type UpgradeCommandOptions } from 'src/database/commands/upgrade-version-command/upgrade.command';
 import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
+import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import {
   type InstanceSegment,
   type TapeSegment,
   type WorkspaceSegment,
+  UpgradeTapeReaderService,
 } from 'src/engine/core-modules/upgrade/services/upgrade-tape-reader.service';
-import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
 
 export type UpgradeTapeRunnerReport = {
@@ -27,6 +28,7 @@ export class UpgradeTapeRunnerService {
     private readonly upgradeMigrationService: UpgradeMigrationService,
     private readonly instanceUpgradeService: InstanceUpgradeService,
     private readonly workspaceUpgradeService: WorkspaceUpgradeService,
+    private readonly upgradeTapeReaderService: UpgradeTapeReaderService,
   ) {}
 
   async run({
@@ -40,16 +42,28 @@ export class UpgradeTapeRunnerService {
     options: UpgradeCommandOptions;
     workspaceIteratorService: WorkspaceIteratorService;
   }): Promise<UpgradeTapeRunnerReport> {
-    const instanceCompletedNames =
-      await this.upgradeMigrationService.getCompletedCommandNames(null);
+    if (tape.length === 0) {
+      return { totalSuccesses: 0, totalFailures: 0 };
+    }
 
     const hasWorkspaces = activeWorkspaceIds.length > 0;
+
+    const startSegmentIndex = await this.resolveStartSegmentIndex(
+      tape,
+      activeWorkspaceIds,
+    );
 
     let totalSuccesses = 0;
     let totalFailures = 0;
     let previousWorkspaceSegment: WorkspaceSegment | undefined;
 
-    for (const segment of tape) {
+    for (
+      let segmentIndex = startSegmentIndex;
+      segmentIndex < tape.length;
+      segmentIndex++
+    ) {
+      const segment = tape[segmentIndex];
+
       if (segment.kind === 'instance') {
         if (hasWorkspaces && previousWorkspaceSegment) {
           await this.enforceWorkspaceSyncBarrier(
@@ -60,7 +74,6 @@ export class UpgradeTapeRunnerService {
 
         await this.runInstanceSegment({
           segment,
-          instanceCompletedNames,
           hasWorkspaces,
         });
       }
@@ -69,9 +82,7 @@ export class UpgradeTapeRunnerService {
         previousWorkspaceSegment = segment;
 
         if (!hasWorkspaces) {
-          this.logger.log(
-            'No active workspaces, skipping workspace segment',
-          );
+          this.logger.log('No active workspaces, skipping workspace segment');
           continue;
         }
 
@@ -98,46 +109,103 @@ export class UpgradeTapeRunnerService {
     return { totalSuccesses, totalFailures };
   }
 
+  private async resolveStartSegmentIndex(
+    tape: TapeSegment[],
+    activeWorkspaceIds: string[],
+  ): Promise<number> {
+    const lastCompletedName =
+      await this.upgradeMigrationService.getLastCompletedCommandNameOrThrow();
+
+    const cursor = this.upgradeTapeReaderService.locateCommandInTape(
+      tape,
+      lastCompletedName,
+    );
+
+    if (!cursor) {
+      throw new Error(
+        `Cursor "${lastCompletedName}" not found in upgrade tape — ` +
+          'the supported version sequence may have been broken',
+      );
+    }
+
+    if (cursor.kind === 'instance') {
+      return cursor.segmentIndex;
+    }
+
+    // Cursor is a workspace command — validate all workspaces are
+    // within the same segment before resuming from it.
+    if (activeWorkspaceIds.length > 0) {
+      await this.validateWorkspaceCursorsAlignment(
+        tape,
+        activeWorkspaceIds,
+        cursor.segmentIndex,
+      );
+    }
+
+    return cursor.segmentIndex;
+  }
+
+  private async validateWorkspaceCursorsAlignment(
+    tape: TapeSegment[],
+    activeWorkspaceIds: string[],
+    expectedSegmentIndex: number,
+  ): Promise<void> {
+    const workspaceCursors =
+      await this.upgradeMigrationService.getWorkspaceCursorsOrThrow(
+        activeWorkspaceIds,
+      );
+
+    for (const [workspaceId, cursorName] of workspaceCursors) {
+      const location = this.upgradeTapeReaderService.locateCommandInTape(
+        tape,
+        cursorName,
+      );
+
+      if (!location) {
+        throw new Error(
+          `Workspace ${workspaceId} cursor "${cursorName}" not found in upgrade tape`,
+        );
+      }
+
+      if (location.kind !== 'workspace') {
+        throw new Error(
+          `Workspace ${workspaceId} cursor "${cursorName}" points to an instance command`,
+        );
+      }
+
+      if (location.segmentIndex !== expectedSegmentIndex) {
+        throw new Error(
+          `Workspace ${workspaceId} cursor is in segment ${location.segmentIndex} ` +
+            `but expected segment ${expectedSegmentIndex} — workspaces are not aligned`,
+        );
+      }
+    }
+  }
+
   private async runInstanceSegment({
     segment,
-    instanceCompletedNames,
     hasWorkspaces,
   }: {
     segment: InstanceSegment;
-    instanceCompletedNames: Set<string>;
     hasWorkspaces: boolean;
   }): Promise<void> {
-    const pendingFastSteps = segment.fastInstanceSteps.filter(
-      (step) => !instanceCompletedNames.has(step.name),
-    );
-
-    const pendingSlowSteps = segment.slowInstanceSteps.filter(
-      (step) => !instanceCompletedNames.has(step.name),
-    );
-
-    if (pendingFastSteps.length === 0 && pendingSlowSteps.length === 0) {
-      return;
-    }
-
-    for (const step of pendingFastSteps) {
-      const result =
-        await this.instanceUpgradeService.runFastInstanceCommand({
-          command: step.command,
-          name: step.name,
-        });
+    for (const step of segment.fastInstanceSteps) {
+      const result = await this.instanceUpgradeService.runFastInstanceCommand({
+        command: step.command,
+        name: step.name,
+      });
 
       if (result.status === 'failed') {
         throw result.error;
       }
     }
 
-    for (const step of pendingSlowSteps) {
-      const result =
-        await this.instanceUpgradeService.runSlowInstanceCommand({
-          command: step.command,
-          name: step.name,
-          skipDataMigration: !hasWorkspaces,
-        });
+    for (const step of segment.slowInstanceSteps) {
+      const result = await this.instanceUpgradeService.runSlowInstanceCommand({
+        command: step.command,
+        name: step.name,
+        skipDataMigration: !hasWorkspaces,
+      });
 
       if (result.status === 'failed') {
         throw result.error;
@@ -177,9 +245,7 @@ export class UpgradeTapeRunnerService {
     activeWorkspaceIds: string[],
   ): Promise<void> {
     const lastWorkspaceCommand =
-      previousWorkspaceSegment.steps[
-        previousWorkspaceSegment.steps.length - 1
-      ];
+      previousWorkspaceSegment.steps[previousWorkspaceSegment.steps.length - 1];
 
     const allWorkspacesReady =
       await this.upgradeMigrationService.areAllWorkspacesAtCommand({

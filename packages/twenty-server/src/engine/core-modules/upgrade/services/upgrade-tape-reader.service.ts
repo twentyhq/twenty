@@ -21,6 +21,19 @@ export type WorkspaceSegment = {
 
 export type TapeSegment = InstanceSegment | WorkspaceSegment;
 
+export type TapeCursorLocation =
+  | {
+      kind: 'instance';
+      segmentIndex: number;
+      stepIndex: number;
+      stepKind: 'fast' | 'slow';
+    }
+  | {
+      kind: 'workspace';
+      segmentIndex: number;
+      stepIndex: number;
+    };
+
 @Injectable()
 export class UpgradeTapeReaderService {
   constructor(
@@ -72,6 +85,59 @@ export class UpgradeTapeReaderService {
     }
 
     return segments;
+  }
+
+  locateCommandInTape(
+    tape: TapeSegment[],
+    commandName: string,
+  ): TapeCursorLocation | null {
+    for (
+      let segmentIndex = 0;
+      segmentIndex < tape.length;
+      segmentIndex++
+    ) {
+      const segment = tape[segmentIndex];
+
+      if (segment.kind === 'instance') {
+        const fastIndex = segment.fastInstanceSteps.findIndex(
+          (step) => step.name === commandName,
+        );
+
+        if (fastIndex !== -1) {
+          return {
+            kind: 'instance',
+            segmentIndex,
+            stepIndex: fastIndex,
+            stepKind: 'fast',
+          };
+        }
+
+        const slowIndex = segment.slowInstanceSteps.findIndex(
+          (step) => step.name === commandName,
+        );
+
+        if (slowIndex !== -1) {
+          return {
+            kind: 'instance',
+            segmentIndex,
+            stepIndex: slowIndex,
+            stepKind: 'slow',
+          };
+        }
+      }
+
+      if (segment.kind === 'workspace') {
+        const stepIndex = segment.steps.findIndex(
+          (step) => step.name === commandName,
+        );
+
+        if (stepIndex !== -1) {
+          return { kind: 'workspace', segmentIndex, stepIndex };
+        }
+      }
+    }
+
+    return null;
   }
 
   getLastWorkspaceCommand(): RegisteredWorkspaceCommand {

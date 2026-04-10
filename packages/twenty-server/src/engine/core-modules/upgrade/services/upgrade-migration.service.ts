@@ -116,28 +116,80 @@ export class UpgradeMigrationService {
     });
   }
 
-  async getCompletedCommandNames(
-    workspaceId: string | null,
-  ): Promise<Set<string>> {
-    const completedMigrations = await this.upgradeMigrationRepository
+  // Returns the name of the most recently completed command (by createdAt)
+  // across all scopes (instance and workspace).
+  async getLastCompletedCommandNameOrThrow(): Promise<string> {
+    const migration = await this.upgradeMigrationRepository
       .createQueryBuilder('migration')
       .select('migration.name')
+      .where({ status: 'completed' })
+      .andWhere(
+        `migration.attempt = (
+          SELECT MAX(sub.attempt)
+          FROM core."upgradeMigration" sub
+          WHERE sub.name = migration.name
+          AND (
+            (sub."workspaceId" IS NULL AND migration."workspaceId" IS NULL)
+            OR sub."workspaceId" = migration."workspaceId"
+          )
+        )`,
+      )
+      .orderBy('migration.createdAt', 'DESC')
+      .getOne();
+
+    if (!migration) {
+      throw new Error(
+        'No completed upgrade migration found — the database may not have been initialized',
+      );
+    }
+
+    return migration.name;
+  }
+
+  async getWorkspaceCursorsOrThrow(
+    workspaceIds: string[],
+  ): Promise<Map<string, string>> {
+    if (workspaceIds.length === 0) {
+      return new Map();
+    }
+
+    const results = await this.upgradeMigrationRepository
+      .createQueryBuilder('migration')
+      .select('migration.workspaceId', 'workspaceId')
+      .addSelect('migration.name', 'name')
       .where({
-        workspaceId: workspaceId === null ? IsNull() : workspaceId,
+        workspaceId: In(workspaceIds),
+        status: 'completed',
       })
       .andWhere(
         `migration.attempt = (
           SELECT MAX(sub.attempt)
           FROM core."upgradeMigration" sub
           WHERE sub.name = migration.name
-          AND sub."workspaceId" ${workspaceId === null ? 'IS NULL' : `= :workspaceId`}
+          AND sub."workspaceId" = migration."workspaceId"
         )`,
-        workspaceId === null ? {} : { workspaceId },
       )
-      .andWhere('migration.status = :status', { status: 'completed' })
-      .getMany();
+      .orderBy('migration.createdAt', 'DESC')
+      .distinctOn(['migration.workspaceId'])
+      .getRawMany<{ workspaceId: string; name: string }>();
 
-    return new Set(completedMigrations.map((migration) => migration.name));
+    const cursors = new Map<string, string>();
+
+    for (const row of results) {
+      cursors.set(row.workspaceId, row.name);
+    }
+
+    const missingWorkspaceIds = workspaceIds.filter(
+      (workspaceId) => !cursors.has(workspaceId),
+    );
+
+    if (missingWorkspaceIds.length > 0) {
+      throw new Error(
+        `No completed upgrade migration found for workspace(s): ${missingWorkspaceIds.join(', ')}`,
+      );
+    }
+
+    return cursors;
   }
 
   async areAllWorkspacesAtCommand({
