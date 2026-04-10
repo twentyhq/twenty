@@ -946,6 +946,7 @@ export class LambdaDriver implements LogicFunctionDriver {
 
     await this.cacheLockService.withLock(
       async () => {
+        // Need to check again inside the lock in case lock was not acquired immediately.
         const { canSkip, lambdaExecutor } =
           await this.checkLambdaExecutorBuildStatus(buildArgs);
 
