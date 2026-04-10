@@ -3,9 +3,10 @@ import { viewFieldAggregateOperationState } from '@/object-record/record-table/r
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { useContext } from 'react';
+import { useContext, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useViewFieldAggregateOperation = () => {
@@ -19,13 +20,33 @@ export const useViewFieldAggregateOperation = () => {
   );
 
   const { performViewFieldAPIUpdate } = usePerformViewFieldAPIPersist();
+
+  const viewFieldAggregateOperation = useAtomFamilyStateValue(
+    viewFieldAggregateOperationState,
+    { viewFieldId: currentViewField?.id ?? '' },
+  );
+
+  const setViewFieldAggregateOperation = useSetAtomFamilyState(
+    viewFieldAggregateOperationState,
+    { viewFieldId: currentViewField?.id ?? '' },
+  );
+
+  const latestRequestIdRef = useRef(0);
+  const lastConfirmedOperationRef = useRef(viewFieldAggregateOperation);
+
   const updateViewFieldAggregateOperation = async (
     aggregateOperation: ExtendedAggregateOperations | null,
   ) => {
     if (!currentViewField) {
       throw new Error('ViewField not found');
     }
-    await performViewFieldAPIUpdate([
+
+    const requestId = ++latestRequestIdRef.current;
+
+    lastConfirmedOperationRef.current = viewFieldAggregateOperation;
+    setViewFieldAggregateOperation(aggregateOperation);
+
+    const result = await performViewFieldAPIUpdate([
       {
         input: {
           id: currentViewField.id,
@@ -42,12 +63,15 @@ export const useViewFieldAggregateOperation = () => {
         },
       },
     ]);
-  };
 
-  const viewFieldAggregateOperation = useAtomFamilyStateValue(
-    viewFieldAggregateOperationState,
-    { viewFieldId: currentViewField?.id ?? '' },
-  );
+    if (requestId !== latestRequestIdRef.current) {
+      return;
+    }
+
+    if (result.status === 'failed') {
+      setViewFieldAggregateOperation(lastConfirmedOperationRef.current ?? null);
+    }
+  };
 
   return {
     updateViewFieldAggregateOperation,
