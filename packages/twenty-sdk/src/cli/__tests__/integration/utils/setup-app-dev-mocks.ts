@@ -23,6 +23,10 @@ const mockApiService = {
       clientSecret: 'mock-client-secret',
     },
   }),
+  rotateApplicationRegistrationClientSecret: vi.fn().mockResolvedValue({
+    success: true,
+    data: { clientSecret: 'mock-rotated-client-secret' },
+  }),
   createDevelopmentApplication: vi.fn().mockResolvedValue({
     success: true,
     data: { id: 'mock-app-id', universalIdentifier: 'mock-uid' },
@@ -43,6 +47,8 @@ vi.mock('@/cli/utilities/api/api-service', () => ({
       mockApiService.findApplicationRegistrationByUniversalIdentifier;
     createApplicationRegistration =
       mockApiService.createApplicationRegistration;
+    rotateApplicationRegistrationClientSecret =
+      mockApiService.rotateApplicationRegistrationClientSecret;
     createDevelopmentApplication = mockApiService.createDevelopmentApplication;
     syncApplication = mockApiService.syncApplication;
     uploadFile = mockApiService.uploadFile;
@@ -54,6 +60,12 @@ vi.mock('@/cli/utilities/file/file-uploader', () => ({
   FileUploader: class {
     uploadFile = vi.fn().mockResolvedValue({ success: true, data: true });
   },
+}));
+
+vi.mock('@/cli/utilities/auth/get-app-access-token', () => ({
+  getAppAccessToken: vi
+    .fn()
+    .mockResolvedValue('mock-app-access-token'),
 }));
 
 vi.mock('@/cli/utilities/client/client-service', () => ({

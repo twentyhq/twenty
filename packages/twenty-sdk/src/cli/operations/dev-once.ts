@@ -7,6 +7,7 @@ import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
 import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
+import { getAppAccessToken } from '@/cli/utilities/auth/get-app-access-token';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { formatSyncErrorEvents } from '@/cli/utilities/dev/orchestrator/steps/format-sync-error-events';
@@ -116,44 +117,66 @@ const innerAppDevOnce = async (
 
   await writeManifestToOutput(appPath, manifest);
 
+  // Register the app (or find existing registration) and persist the
+  // registration credentials.  These are later used to obtain an
+  // APPLICATION_ACCESS token (via client_credentials) for CoreApiClient
+  // generation — so the generated client reflects the app-scoped schema.
   onProgress?.('Registering application...');
 
   const configService = new ConfigService();
-  const registrationResult =
-    await apiService.findApplicationRegistrationByUniversalIdentifier(
-      manifest.application.universalIdentifier,
-    );
+  const config = await configService.getConfig();
 
-  if (!registrationResult.success) {
-    return {
-      success: false,
-      error: {
-        code: APP_ERROR_CODES.SYNC_FAILED,
-        message: `Failed to check app registration: ${serializeError(registrationResult.error)}`,
-      },
-    };
-  }
+  let registrationId = config.appRegistrationId;
+  let appRegistrationClientId = config.appRegistrationClientId;
+  let appRegistrationClientSecret = config.appRegistrationClientSecret;
 
-  if (!registrationResult.data) {
-    const createRegistrationResult =
-      await apiService.createApplicationRegistration({
-        name: manifest.application.displayName,
-        universalIdentifier: manifest.application.universalIdentifier,
-      });
+  if (!registrationId) {
+    const registrationResult =
+      await apiService.findApplicationRegistrationByUniversalIdentifier(
+        manifest.application.universalIdentifier,
+      );
 
-    if (!createRegistrationResult.success) {
+    if (!registrationResult.success) {
       return {
         success: false,
         error: {
           code: APP_ERROR_CODES.SYNC_FAILED,
-          message: `Failed to create app registration: ${serializeError(createRegistrationResult.error)}`,
+          message: `Failed to check app registration: ${serializeError(registrationResult.error)}`,
         },
       };
     }
 
+    if (registrationResult.data) {
+      registrationId = registrationResult.data.id;
+      appRegistrationClientId = registrationResult.data.oAuthClientId;
+    }
+  }
+
+  if (!registrationId) {
+    const createResult = await apiService.createApplicationRegistration({
+      name: manifest.application.displayName,
+      universalIdentifier: manifest.application.universalIdentifier,
+    });
+
+    if (!createResult.success) {
+      return {
+        success: false,
+        error: {
+          code: APP_ERROR_CODES.SYNC_FAILED,
+          message: `Failed to create app registration: ${serializeError(createResult.error)}`,
+        },
+      };
+    }
+
+    registrationId = createResult.data.applicationRegistration.id;
+    appRegistrationClientId =
+      createResult.data.applicationRegistration.oAuthClientId;
+    appRegistrationClientSecret = createResult.data.clientSecret;
+
     await configService.setConfig({
-      oauthClientId:
-        createRegistrationResult.data.applicationRegistration.oAuthClientId,
+      appRegistrationId: registrationId,
+      appRegistrationClientId,
+      appRegistrationClientSecret,
     });
   }
 
@@ -236,15 +259,22 @@ const innerAppDevOnce = async (
     };
   }
 
+  // Generate the CoreApiClient using an APPLICATION_ACCESS token so the
+  // server returns the app-scoped schema (objects defined by this app).
   onProgress?.('Generating API client...');
 
   try {
-    const config = await configService.getConfig();
+    const authToken = await getAppAccessToken({
+      configService,
+      appRegistrationClientId,
+      appRegistrationClientSecret,
+    });
+
     const clientService = new ClientService();
 
     await clientService.generateCoreClient({
       appPath,
-      authToken: config.accessToken,
+      authToken,
     });
   } catch (error) {
     return {

@@ -1,3 +1,4 @@
+import { getAppAccessToken } from '@/cli/utilities/auth/get-app-access-token';
 import { type ClientService } from '@/cli/utilities/client/client-service';
 import { type ConfigService } from '@/cli/utilities/config/config-service';
 import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
@@ -32,11 +33,20 @@ export class GenerateApiClientOrchestratorStep {
     this.notify();
 
     try {
+      // Use the app registration's stored credentials to obtain an
+      // APPLICATION_ACCESS token — the generated CoreApiClient will then
+      // reflect the app-scoped schema (only this app's objects/fields).
       const config = await this.configService.getConfig();
+
+      const authToken = await getAppAccessToken({
+        configService: this.configService,
+        appRegistrationClientId: config.appRegistrationClientId,
+        appRegistrationClientSecret: config.appRegistrationClientSecret,
+      });
 
       await this.clientService.generateCoreClient({
         appPath: input.appPath,
-        authToken: config.accessToken,
+        authToken,
       });
 
       step.status = 'done';

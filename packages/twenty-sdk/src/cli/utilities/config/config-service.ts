@@ -8,9 +8,14 @@ import { getConfigPath } from '@/cli/utilities/config/get-config-path';
 export type RemoteConfig = {
   apiUrl: string;
   apiKey?: string;
+  // CLI OAuth app credentials (from `yarn twenty remote add`)
   accessToken?: string;
   refreshToken?: string;
   oauthClientId?: string;
+  // App registration credentials (from `createApplicationRegistration`)
+  appRegistrationId?: string;
+  appRegistrationClientId?: string;
+  appRegistrationClientSecret?: string;
 };
 
 type PersistedConfig = {
@@ -83,6 +88,8 @@ export class ConfigService {
       refreshToken:
         str(source.refreshToken) ?? str(source.applicationRefreshToken),
       oauthClientId: str(source.oauthClientId),
+      appRegistrationClientId: str(source.appRegistrationClientId),
+      appRegistrationClientSecret: str(source.appRegistrationClientSecret),
     });
 
     const profiles =
@@ -142,11 +149,14 @@ export class ConfigService {
       }
 
       return {
-        apiUrl: remoteConfig.apiUrl ?? defaultConfig.apiUrl,
+        apiUrl: remoteConfig.apiUrl || defaultConfig.apiUrl,
         apiKey: remoteConfig.apiKey,
         accessToken: remoteConfig.accessToken,
         refreshToken: remoteConfig.refreshToken,
         oauthClientId: remoteConfig.oauthClientId,
+        appRegistrationId: remoteConfig.appRegistrationId,
+        appRegistrationClientId: remoteConfig.appRegistrationClientId,
+        appRegistrationClientSecret: remoteConfig.appRegistrationClientSecret,
       };
     } catch {
       return defaultConfig;
@@ -163,7 +173,7 @@ export class ConfigService {
       raw.remotes = {};
     }
 
-    const currentRemote = raw.remotes[remote] || { apiUrl: '' };
+    const currentRemote = raw.remotes[remote] ?? this.getDefaultConfig();
 
     raw.remotes[remote] = { ...currentRemote, ...config };
 
