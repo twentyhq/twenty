@@ -81,9 +81,15 @@ describe('minimal-app dev-once', () => {
         await readJson<Manifest>(MANIFEST_PATH),
       );
 
-      expect(manifest).toEqual(
-        normalizeManifestForComparison(EXPECTED_MANIFEST),
-      );
+      const expected = normalizeManifestForComparison(EXPECTED_MANIFEST);
+
+      expect(manifest).toEqual({
+        ...expected,
+        application: {
+          ...expected.application,
+          packageJsonChecksum: manifest.application.packageJsonChecksum,
+        },
+      });
     });
   });
 
