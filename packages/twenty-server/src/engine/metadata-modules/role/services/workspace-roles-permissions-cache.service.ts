@@ -150,6 +150,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
           const hasWorkflowsPermissions =
             this.hasSettingsGatedObjectPermissions(
               role,
+              rolePermissionFlags,
               PermissionFlagType.WORKFLOWS,
             );
 
@@ -162,6 +163,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
             const hasWorkspaceMembersPermissions =
               this.hasSettingsGatedObjectPermissions(
                 role,
+                rolePermissionFlags,
                 PermissionFlagType.WORKSPACE_MEMBERS,
               );
 
@@ -267,11 +269,12 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
 
   private hasSettingsGatedObjectPermissions(
     role: RoleEntity,
+    permissionFlags: PermissionFlagEntity[],
     permissionFlagType: PermissionFlagType,
   ): boolean {
     const hasPermissionFromRole = role.canUpdateAllSettings;
     const hasPermissionFromSettingPermissions = isDefined(
-      role.permissionFlags.find(
+      permissionFlags.find(
         (permissionFlag) => permissionFlag.flag === permissionFlagType,
       ),
     );
