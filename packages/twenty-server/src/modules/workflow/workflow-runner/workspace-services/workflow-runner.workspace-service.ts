@@ -83,6 +83,7 @@ export class WorkflowRunnerWorkspaceService {
     const isHardThrottled = await this.checkHardThrottleLimit(workspaceId);
 
     if (isHardThrottled) {
+      this.logger.log(`Workflow throttled for workspace ${workspaceId}`);
       return this.createFailedWorkflowRun({
         workspaceId,
         workflowVersionId,
