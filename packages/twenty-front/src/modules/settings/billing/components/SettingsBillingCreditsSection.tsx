@@ -7,7 +7,6 @@ import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBillingFlags';
 import { useCurrentMetered } from '@/settings/billing/hooks/useCurrentMetered';
 import { useGetWorkflowNodeExecutionUsage } from '@/settings/billing/hooks/useGetWorkflowNodeExecutionUsage';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -20,10 +19,7 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import {
-  FeatureFlagKey,
-  SubscriptionStatus,
-} from '~/generated-metadata/graphql';
+import { SubscriptionStatus } from '~/generated-metadata/graphql';
 
 const StyledCreditUsageFooterActions = styled.div`
   margin-top: ${themeCssVariables.spacing[4]};
@@ -43,10 +39,6 @@ export const SettingsBillingCreditsSection = ({
   const { isMonthlyPlan } = useCurrentBillingFlags();
 
   const { getCurrentMeteredPricesByInterval } = useCurrentMetered();
-
-  const isUsageAnalyticsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_USAGE_ANALYTICS_ENABLED,
-  );
 
   const { getIntervalLabel } = useBillingWording();
 
@@ -143,17 +135,15 @@ export const SettingsBillingCreditsSection = ({
           )}
         </SubscriptionInfoContainer>
 
-        {isUsageAnalyticsEnabled && (
-          <StyledCreditUsageFooterActions>
-            <UndecoratedLink to={getSettingsPath(SettingsPath.Usage)}>
-              <Button
-                Icon={IconChartBar}
-                title={t`View usage`}
-                variant="secondary"
-              />
-            </UndecoratedLink>
-          </StyledCreditUsageFooterActions>
-        )}
+        <StyledCreditUsageFooterActions>
+          <UndecoratedLink to={getSettingsPath(SettingsPath.Usage)}>
+            <Button
+              Icon={IconChartBar}
+              title={t`View usage`}
+              variant="secondary"
+            />
+          </UndecoratedLink>
+        </StyledCreditUsageFooterActions>
       </Section>
       <Section>
         <MeteredPriceSelector
