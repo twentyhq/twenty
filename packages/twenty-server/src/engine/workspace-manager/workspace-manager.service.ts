@@ -14,9 +14,6 @@ import {
 } from 'src/engine/core-modules/sdk-client/jobs/generate-sdk-client.job';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-// @deprecated - DataSourceService is kept for backward compatibility
-// (ObjectMetadataEntity still has a FK to DataSourceEntity)
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -30,7 +27,6 @@ export class WorkspaceManagerService {
 
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly dataSourceService: DataSourceService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly roleService: RoleService,
@@ -67,13 +63,9 @@ export class WorkspaceManagerService {
 
     const dataSourceMetadataCreationStart = performance.now();
 
-    // @deprecated - DataSourceEntity row is still needed because
-    // ObjectMetadataEntity has a FK (dataSourceId) pointing to it.
-    // Remove once the FK is dropped.
-    await this.dataSourceService.createDataSourceMetadata(
-      workspaceId,
-      schemaName,
-    );
+    await this.workspaceRepository.update(workspaceId, {
+      databaseSchema: schemaName,
+    });
 
     await this.applicationService.createTwentyStandardApplication({
       workspaceId,
