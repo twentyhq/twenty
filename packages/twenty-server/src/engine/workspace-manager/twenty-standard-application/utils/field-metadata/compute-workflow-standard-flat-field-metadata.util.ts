@@ -340,28 +340,6 @@ export const buildWorkflowStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  favorites: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'favorites',
-      label: i18nLabel(msg`Favorites`),
-      description: i18nLabel(msg`Favorites linked to the workflow`),
-      icon: 'IconHeart',
-      isNullable: false,
-      targetObjectName: 'favorite',
-      targetFieldName: 'workflow',
-      settings: {
-        relationType: RelationType.ONE_TO_MANY,
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   timelineActivities: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

@@ -2,7 +2,6 @@ import { type STANDARD_OBJECTS } from '@/metadata/constants/standard-object.cons
 
 export const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
   'timelineActivity',
-  'favorite',
   'attachment',
   'noteTarget',
   'taskTarget',

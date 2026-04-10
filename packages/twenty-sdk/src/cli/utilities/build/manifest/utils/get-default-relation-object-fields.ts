@@ -43,15 +43,6 @@ const DEFAULT_RELATION_CONFIGS = [
   },
   {
     ...DEFAULT_DEFAULT_RELATION,
-    fieldName: 'favorites',
-    label: 'Favorites',
-    icon: 'IconBuildingSkyscraper',
-    targetIcon: 'IconHeart',
-    targetFieldType: FieldMetadataType.RELATION,
-    standardObjectKey: 'favorite',
-  },
-  {
-    ...DEFAULT_DEFAULT_RELATION,
     fieldName: 'attachments',
     label: 'Attachments',
     icon: 'IconBuildingSkyscraper',

@@ -190,19 +190,6 @@ export const computeStandardWorkflowRunViewFields = (
         viewFieldGroupName: 'system',
       },
     }),
-    workflowRunRecordPageFieldsFavorites: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'workflowRun',
-      context: {
-        viewName: 'workflowRunRecordPageFields',
-        viewFieldName: 'favorites',
-        fieldName: 'favorites',
-        position: 7,
-        isVisible: false,
-        size: 150,
-        viewFieldGroupName: 'general',
-      },
-    }),
     workflowRunRecordPageFieldsTimelineActivities:
       createStandardViewFieldFlatMetadata({
         ...args,
