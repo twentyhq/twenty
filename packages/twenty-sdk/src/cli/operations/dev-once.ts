@@ -7,6 +7,7 @@ import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
 import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
+import { resolveAppAccessToken } from '@/cli/utilities/auth/resolve-app-access-token';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { formatSyncErrorEvents } from '@/cli/utilities/dev/orchestrator/steps/format-sync-error-events';
@@ -121,7 +122,9 @@ const innerAppDevOnce = async (
   const configService = new ConfigService();
   const config = await configService.getConfig();
 
-  if (!config.appAccessToken) {
+  const appAccessToken = await resolveAppAccessToken(configService);
+
+  if (!appAccessToken) {
     const createResult = await apiService.createApplicationRegistration({
       name: manifest.application.displayName,
       universalIdentifier: manifest.application.universalIdentifier,
@@ -137,36 +140,14 @@ const innerAppDevOnce = async (
       };
     }
 
-    const { applicationRegistration, clientSecret } = createResult.data;
-
-    const tokenResponse = await fetch(`${config.apiUrl}/oauth/token`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        grant_type: 'client_credentials',
-        client_id: applicationRegistration.oAuthClientId,
-        client_secret: clientSecret,
-      }),
-    });
-
-    if (!tokenResponse.ok) {
-      return {
-        success: false,
-        error: {
-          code: APP_ERROR_CODES.SYNC_FAILED,
-          message: `Failed to obtain app access token: ${tokenResponse.status} ${tokenResponse.statusText}`,
-        },
-      };
-    }
-
-    const { access_token: appAccessToken } = (await tokenResponse.json()) as {
-      access_token: string;
-    };
+    const { applicationRegistration, accessToken, refreshToken } =
+      createResult.data;
 
     await configService.setConfig({
       appRegistrationId: applicationRegistration.id,
       appRegistrationClientId: applicationRegistration.oAuthClientId,
-      appAccessToken,
+      appAccessToken: accessToken,
+      appRefreshToken: refreshToken,
     });
   }
 
@@ -254,12 +235,12 @@ const innerAppDevOnce = async (
   onProgress?.('Generating API client...');
 
   try {
-    const updatedConfig = await configService.getConfig();
+    const authToken = await resolveAppAccessToken(configService);
     const clientService = new ClientService();
 
     await clientService.generateCoreClient({
       appPath,
-      authToken: updatedConfig.appAccessToken,
+      authToken,
     });
   } catch (error) {
     return {

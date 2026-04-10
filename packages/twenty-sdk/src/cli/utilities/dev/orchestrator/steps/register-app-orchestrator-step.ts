@@ -1,4 +1,5 @@
 import { type ApiService } from '@/cli/utilities/api/api-service';
+import { resolveAppAccessToken } from '@/cli/utilities/auth/resolve-app-access-token';
 import { type ConfigService } from '@/cli/utilities/config/config-service';
 import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import { type Manifest } from 'twenty-shared/application';
@@ -27,9 +28,9 @@ export class RegisterAppOrchestratorStep {
   }
 
   async execute(input: { manifest: Manifest }): Promise<void> {
-    const config = await this.configService.getConfig();
+    const existingToken = await resolveAppAccessToken(this.configService);
 
-    if (config.appAccessToken) {
+    if (existingToken) {
       this.state.applyStepEvents([
         { message: 'App registration found in config', status: 'info' },
       ]);
@@ -52,39 +53,14 @@ export class RegisterAppOrchestratorStep {
       return;
     }
 
-    const { applicationRegistration, clientSecret } = createResult.data;
-
-    // Exchange the transient secret for an APPLICATION_ACCESS token and
-    // persist the token (not the secret) in config.
-    const tokenResponse = await fetch(`${config.apiUrl}/oauth/token`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        grant_type: 'client_credentials',
-        client_id: applicationRegistration.oAuthClientId,
-        client_secret: clientSecret,
-      }),
-    });
-
-    if (!tokenResponse.ok) {
-      this.state.applyStepEvents([
-        {
-          message: `Failed to obtain app access token: ${tokenResponse.status}`,
-          status: 'warning',
-        },
-      ]);
-      this.notify();
-
-      return;
-    }
-
-    const { access_token: appAccessToken } =
-      (await tokenResponse.json()) as { access_token: string };
+    const { applicationRegistration, accessToken, refreshToken } =
+      createResult.data;
 
     await this.configService.setConfig({
       appRegistrationId: applicationRegistration.id,
       appRegistrationClientId: applicationRegistration.oAuthClientId,
-      appAccessToken,
+      appAccessToken: accessToken,
+      appRefreshToken: refreshToken,
     });
 
     this.state.applyStepEvents([
