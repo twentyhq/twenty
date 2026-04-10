@@ -79,11 +79,10 @@ export const NavigationMenuItemIcon = ({
       ? getIcon(navigationMenuItem.icon)
       : undefined;
     const pageLayoutColor = getNavigationMenuItemColor(navigationMenuItem);
-    const pageLayoutIconStyle =
-      getNavigationMenuItemIconStyleFromColor(pageLayoutColor);
+    const pageLayoutIconStyle = getIconTileColorShades(pageLayoutColor);
 
     return (
-      <StyledNavigationMenuItemIconContainer
+      <StyledTintedIconTileContainer
         $backgroundColor={pageLayoutIconStyle.backgroundColor}
         $borderColor={pageLayoutIconStyle.borderColor}
       >
@@ -94,7 +93,7 @@ export const NavigationMenuItemIcon = ({
           iconColor={pageLayoutIconStyle.iconColor}
           placeholder={navigationMenuItem.name ?? ''}
         />
-      </StyledNavigationMenuItemIconContainer>
+      </StyledTintedIconTileContainer>
     );
   }
 
