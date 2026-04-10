@@ -87,6 +87,7 @@ export class UpgradeSequenceRunnerService {
 
       const report = await this.runWorkspaceCommandsSlice({
         workspaceCommands: workspaceCommandsSlice,
+        activeWorkspaceIds,
         options,
       });
 
@@ -199,11 +200,18 @@ export class UpgradeSequenceRunnerService {
 
   private async runWorkspaceCommandsSlice({
     workspaceCommands,
+    activeWorkspaceIds,
     options,
   }: {
     workspaceCommands: WorkspaceUpgradeStep[];
+    activeWorkspaceIds: string[];
     options: UpgradeCommandOptions;
   }): Promise<WorkspaceIteratorReport> {
+    const workspaceCursors =
+      await this.upgradeMigrationService.getWorkspaceCursorsOrThrow(
+        activeWorkspaceIds,
+      );
+
     return this.workspaceIteratorService.iterate({
       workspaceIds:
         options.workspaceId && options.workspaceId.size > 0
@@ -213,13 +221,37 @@ export class UpgradeSequenceRunnerService {
       workspaceCountLimit: options.workspaceCountLimit,
       dryRun: options.dryRun,
       callback: async (context) => {
+        const pendingCommands = this.getPendingWorkspaceCommands(
+          workspaceCommands,
+          workspaceCursors.get(context.workspaceId),
+        );
+
         await this.workspaceUpgradeService.runWorkspaceCommands({
           iteratorContext: context,
           options,
-          workspaceCommands,
+          workspaceCommands: pendingCommands,
         });
       },
     });
+  }
+
+  private getPendingWorkspaceCommands(
+    workspaceCommands: WorkspaceUpgradeStep[],
+    lastCompletedName: string | undefined,
+  ): WorkspaceUpgradeStep[] {
+    if (!lastCompletedName) {
+      return workspaceCommands;
+    }
+
+    const cursorIndex = workspaceCommands.findIndex(
+      (command) => command.name === lastCompletedName,
+    );
+
+    if (cursorIndex === -1) {
+      return workspaceCommands;
+    }
+
+    return workspaceCommands.slice(cursorIndex + 1);
   }
 
   private async enforceWorkspaceSyncBarrier(

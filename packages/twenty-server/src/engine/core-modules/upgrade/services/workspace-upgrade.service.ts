@@ -40,20 +40,7 @@ export class WorkspaceUpgradeService {
     const executedByVersion =
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
-    const cursors =
-      await this.upgradeMigrationService.getWorkspaceCursorsOrThrow([
-        workspaceId,
-      ]);
-
-    const lastCompletedName = cursors.get(workspaceId) as string;
-
-    const pendingCommands = this.getPendingWorkspaceCommands(
-      workspaceCommands,
-      lastCompletedName,
-      workspaceId,
-    );
-
-    for (const workspaceCommandEntry of pendingCommands) {
+    for (const workspaceCommandEntry of workspaceCommands) {
       await this.runSingleWorkspaceCommandOrThrow({
         workspaceCommandEntry,
         workspaceId,
@@ -64,25 +51,6 @@ export class WorkspaceUpgradeService {
     }
 
     this.logger.log(`Upgrade for workspace ${workspaceId} completed.`);
-  }
-
-  private getPendingWorkspaceCommands(
-    workspaceCommands: WorkspaceCommandEntry[],
-    lastCompletedName: string,
-    workspaceId: string,
-  ): WorkspaceCommandEntry[] {
-    const cursorIndex = workspaceCommands.findIndex(
-      (command) => command.name === lastCompletedName,
-    );
-
-    if (cursorIndex === -1) {
-      throw new Error(
-        `Workspace ${workspaceId} cursor "${lastCompletedName}" not found ` +
-          'in the current workspace segment',
-      );
-    }
-
-    return workspaceCommands.slice(cursorIndex + 1);
   }
 
   private async runSingleWorkspaceCommandOrThrow({
