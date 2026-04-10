@@ -7,7 +7,6 @@ import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
 import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
-import { getAppAccessToken } from '@/cli/utilities/auth/get-app-access-token';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { formatSyncErrorEvents } from '@/cli/utilities/dev/orchestrator/steps/format-sync-error-events';
@@ -255,13 +254,12 @@ const innerAppDevOnce = async (
   onProgress?.('Generating API client...');
 
   try {
-    const authToken = await getAppAccessToken({ configService });
-
+    const updatedConfig = await configService.getConfig();
     const clientService = new ClientService();
 
     await clientService.generateCoreClient({
       appPath,
-      authToken,
+      authToken: updatedConfig.appAccessToken,
     });
   } catch (error) {
     return {

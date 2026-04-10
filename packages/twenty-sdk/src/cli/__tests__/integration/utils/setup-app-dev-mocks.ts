@@ -66,10 +66,6 @@ vi.stubGlobal(
   }),
 );
 
-vi.mock('@/cli/utilities/auth/get-app-access-token', () => ({
-  getAppAccessToken: vi.fn().mockResolvedValue('mock-app-access-token'),
-}));
-
 vi.mock('@/cli/utilities/client/client-service', () => ({
   ClientService: class {
     generateCoreClient = vi.fn().mockResolvedValue(undefined);
