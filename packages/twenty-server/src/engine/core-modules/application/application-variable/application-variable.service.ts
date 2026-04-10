@@ -136,6 +136,7 @@ export class ApplicationVariableEntityService {
           description: description ?? '',
           isSecret: isSecretValue,
           applicationId,
+          workspaceId,
         });
       }
     }

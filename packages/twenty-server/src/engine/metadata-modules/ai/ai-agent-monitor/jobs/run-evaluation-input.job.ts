@@ -44,6 +44,7 @@ export class RunEvaluationInputJob {
         role: 'user',
         parts: [{ type: 'text', text: data.input }],
       },
+      workspaceId: data.workspaceId,
     });
 
     const agent = await this.agentRepository.findOne({
@@ -72,6 +73,7 @@ export class RunEvaluationInputJob {
           },
         ],
       },
+      workspaceId: data.workspaceId,
     });
 
     await this.messageQueueService.add<{

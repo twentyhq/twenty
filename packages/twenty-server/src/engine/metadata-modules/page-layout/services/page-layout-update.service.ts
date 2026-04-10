@@ -598,7 +598,9 @@ export class PageLayoutUpdateService {
           applicationId: workspaceCustomApplicationId,
           applicationUniversalIdentifier:
             workspaceCustomApplicationUniversalIdentifier,
-          conditionalDisplay: null,
+          conditionalDisplay: widgetInput.conditionalDisplay ?? null,
+          conditionalAvailabilityExpression:
+            widgetInput.conditionalAvailabilityExpression ?? null,
           overrides: null,
           universalOverrides: null,
           isActive: true,
@@ -735,6 +737,11 @@ export class PageLayoutUpdateService {
     if (widgetInput.conditionalDisplay !== undefined) {
       editableProperties.conditionalDisplay =
         widgetInput.conditionalDisplay ?? null;
+    }
+
+    if (widgetInput.conditionalAvailabilityExpression !== undefined) {
+      editableProperties.conditionalAvailabilityExpression =
+        widgetInput.conditionalAvailabilityExpression ?? null;
     }
 
     const { overrides, updatedEditableProperties } =

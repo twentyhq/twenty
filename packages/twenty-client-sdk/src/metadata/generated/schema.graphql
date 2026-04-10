@@ -896,6 +896,7 @@ type PageLayoutWidget {
   position: PageLayoutWidgetPosition
   configuration: WidgetConfiguration!
   conditionalDisplay: JSON
+  conditionalAvailabilityExpression: String
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
@@ -1169,6 +1170,7 @@ type FieldConfiguration {
 """Display mode for field configuration widgets"""
 enum FieldDisplayMode {
   CARD
+  EDITOR
   FIELD
   VIEW
 }
@@ -3384,6 +3386,7 @@ enum EventLogTable {
   PAGEVIEW
   OBJECT_EVENT
   USAGE_EVENT
+  APPLICATION_LOG
 }
 
 input EventLogFiltersInput {
@@ -3438,6 +3441,7 @@ type Mutation {
   updateNavigationMenuItem(input: UpdateOneNavigationMenuItemInput!): NavigationMenuItem!
   deleteManyNavigationMenuItems(ids: [UUID!]!): [NavigationMenuItem!]!
   deleteNavigationMenuItem(id: UUID!): NavigationMenuItem!
+  uploadEmailAttachmentFile(file: Upload!): FileWithSignedUrl!
   uploadAIChatFile(file: Upload!): FileWithSignedUrl!
   uploadWorkflowFile(file: Upload!): FileWithSignedUrl!
   uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl!
@@ -3551,7 +3555,7 @@ type Mutation {
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   deleteWebhook(id: UUID!): Webhook!
   createChatThread: AgentChatThread!
-  sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String): SendChatMessageResult!
+  sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileIds: [UUID!]): SendChatMessageResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
   createSkill(input: CreateSkillInput!): Skill!
@@ -4010,6 +4014,7 @@ input UpdatePageLayoutWidgetWithIdInput {
   position: JSON
   configuration: JSON
   conditionalDisplay: JSON
+  conditionalAvailabilityExpression: String
 }
 
 input GridPositionInput {
@@ -4038,6 +4043,7 @@ input UpdatePageLayoutWidgetInput {
   position: JSON
   configuration: JSON
   conditionalDisplay: JSON
+  conditionalAvailabilityExpression: String
 }
 
 input CreateLogicFunctionFromSourceInput {
@@ -4587,6 +4593,12 @@ input SendEmailInput {
   subject: String!
   body: String!
   inReplyTo: String
+  files: [SendEmailAttachmentInput!]
+}
+
+input SendEmailAttachmentInput {
+  id: String!
+  name: String!
 }
 
 input EmailAccountConnectionParameters {
@@ -4653,6 +4665,7 @@ enum FileFolder {
   FilesField
   Dependencies
   Workflow
+  EmailAttachment
   AppTarball
   GeneratedSdkClient
 }

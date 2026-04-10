@@ -5,12 +5,10 @@ import { splitPageLayoutWithRelated } from '@/metadata-store/utils/splitPageLayo
 import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelated';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useApolloClient } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  FeatureFlagKey,
   FindAllViewsDocument,
   FindManyCommandMenuItemsDocument,
   FindAllRecordPageLayoutsDocument,
@@ -18,7 +16,6 @@ import {
   FindManyFrontComponentsDocument,
   FindManyLogicFunctionsDocument,
   FindManyNavigationMenuItemsDocument,
-  GetChatThreadsDocument,
   type ObjectMetadataItemsQuery,
   ViewType,
 } from '~/generated-metadata/graphql';
@@ -56,7 +53,6 @@ const hasOverlap = (
 export const useLoadStaleMetadataEntities = () => {
   const client = useApolloClient();
   const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
-  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
   const loadStaleMetadataEntities = useCallback(
     async (staleEntityKeys: MetadataEntityKey[]) => {
@@ -226,32 +222,10 @@ export const useLoadStaleMetadataEntities = () => {
         );
       }
 
-      if (staleEntityKeys.includes('agentChatThreads') && isAiEnabled) {
-        fetchPromises.push(
-          client
-            .query({
-              query: GetChatThreadsDocument,
-              variables: { paging: { first: 500 } },
-              fetchPolicy: 'network-only',
-            })
-            .then((result) => {
-              if (!isDefined(result.data?.chatThreads?.edges)) {
-                return;
-              }
-
-              const threads = result.data.chatThreads.edges.map(
-                (edge) => edge.node,
-              );
-
-              replaceDraft('agentChatThreads', threads);
-            }),
-        );
-      }
-
       await Promise.all(fetchPromises);
       applyChanges();
     },
-    [client, replaceDraft, applyChanges, isAiEnabled],
+    [client, replaceDraft, applyChanges],
   );
 
   return { loadStaleMetadataEntities };

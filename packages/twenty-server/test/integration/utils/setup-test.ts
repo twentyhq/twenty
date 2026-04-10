@@ -3,7 +3,6 @@ import 'tsconfig-paths/register';
 
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 
 import { createApp } from './create-app';
 
@@ -20,6 +19,5 @@ export default async (_: unknown, projectConfig: JestConfigWithTsJest) => {
 
   global.app = app;
   global.testDataSource = rawDataSource;
-  global.dataSourceService = app.get(DataSourceService);
   global.dataSeedWorkspaceCommand = app.get(DataSeedWorkspaceCommand);
 };
