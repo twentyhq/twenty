@@ -2,6 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type FieldsWidgetGroup } from '@/page-layout/widgets/fields/types/FieldsWidgetGroup';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isFieldMetadataEligibleForFieldsWidget } from 'twenty-shared/utils';
+import { v4 as uuidv4 } from 'uuid';
 
 export const buildDefaultFieldsWidgetGroups = ({
   fields,
@@ -32,7 +33,7 @@ export const buildDefaultFieldsWidgetGroups = ({
 
   if (standardFields.length > 0) {
     groups.push({
-      id: `${objectNameSingular}-group-general`,
+      id: uuidv4(),
       name: 'General',
       position: 0,
       isVisible: true,
@@ -47,7 +48,7 @@ export const buildDefaultFieldsWidgetGroups = ({
 
   if (customFields.length > 0) {
     groups.push({
-      id: `${objectNameSingular}-group-other`,
+      id: uuidv4(),
       name: 'Other',
       position: 1,
       isVisible: true,
