@@ -115,17 +115,11 @@ export class UpgradeCommand extends CommandRunner {
         chalk.blue(
           [
             'Initialized upgrade tape:',
-            `- ${tape.length} segment(s)`,
-            ...tape.map((segment, index) => {
-              if (segment.kind === 'instance') {
-                const fast = segment.fastInstanceSteps.length;
-                const slow = segment.slowInstanceSteps.length;
-
-                return `  [${index}] instance (${fast} fast, ${slow} slow)`;
-              }
-
-              return `  [${index}] workspace (${segment.steps.length} steps)`;
-            }),
+            `- ${tape.length} step(s)`,
+            ...tape.map(
+              (step, index) =>
+                `  [${index}] ${step.kind} — ${step.name} (${step.version})`,
+            ),
           ].join('\n   '),
         ),
       );
@@ -179,5 +173,4 @@ export class UpgradeCommand extends CommandRunner {
 
     return report.success.map((entry) => entry.workspaceId);
   }
-
 }

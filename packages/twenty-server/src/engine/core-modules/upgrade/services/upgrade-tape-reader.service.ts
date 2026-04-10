@@ -8,31 +8,14 @@ import {
   UpgradeCommandRegistryService,
 } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 
-export type InstanceSegment = {
-  kind: 'instance';
-  fastInstanceSteps: RegisteredFastInstanceCommand[];
-  slowInstanceSteps: RegisteredSlowInstanceCommand[];
-};
-
-export type WorkspaceSegment = {
+export type WorkspaceTapeStep = {
   kind: 'workspace';
-  steps: RegisteredWorkspaceCommand[];
-};
+} & RegisteredWorkspaceCommand;
 
-export type TapeSegment = InstanceSegment | WorkspaceSegment;
-
-export type TapeCursorLocation =
-  | {
-      kind: 'instance';
-      segmentIndex: number;
-      stepIndex: number;
-      stepKind: 'fast' | 'slow';
-    }
-  | {
-      kind: 'workspace';
-      segmentIndex: number;
-      stepIndex: number;
-    };
+export type TapeStep =
+  | ({ kind: 'fast-instance' } & RegisteredFastInstanceCommand)
+  | ({ kind: 'slow-instance' } & RegisteredSlowInstanceCommand)
+  | WorkspaceTapeStep;
 
 @Injectable()
 export class UpgradeTapeReaderService {
@@ -40,114 +23,60 @@ export class UpgradeTapeReaderService {
     private readonly upgradeCommandRegistryService: UpgradeCommandRegistryService,
   ) {}
 
-  getUpgradeTape(): TapeSegment[] {
-    const segments: TapeSegment[] = [];
+  getUpgradeTape(): TapeStep[] {
+    const tape: TapeStep[] = [];
 
     for (const version of UPGRADE_COMMAND_SUPPORTED_VERSIONS) {
       const bundle =
         this.upgradeCommandRegistryService.getBundleForVersion(version);
 
-      const hasInstanceSteps =
-        bundle.fastInstanceCommands.length > 0 ||
-        bundle.slowInstanceCommands.length > 0;
-
-      if (hasInstanceSteps) {
-        const lastSegment = segments[segments.length - 1];
-
-        if (lastSegment?.kind === 'instance') {
-          lastSegment.fastInstanceSteps.push(
-            ...bundle.fastInstanceCommands,
-          );
-          lastSegment.slowInstanceSteps.push(
-            ...bundle.slowInstanceCommands,
-          );
-        } else {
-          segments.push({
-            kind: 'instance',
-            fastInstanceSteps: [...bundle.fastInstanceCommands],
-            slowInstanceSteps: [...bundle.slowInstanceCommands],
-          });
-        }
+      for (const command of bundle.fastInstanceCommands) {
+        tape.push({ kind: 'fast-instance', ...command });
       }
 
-      if (bundle.workspaceCommands.length > 0) {
-        const lastSegment = segments[segments.length - 1];
+      for (const command of bundle.slowInstanceCommands) {
+        tape.push({ kind: 'slow-instance', ...command });
+      }
 
-        if (lastSegment?.kind === 'workspace') {
-          lastSegment.steps.push(...bundle.workspaceCommands);
-        } else {
-          segments.push({
-            kind: 'workspace',
-            steps: [...bundle.workspaceCommands],
-          });
-        }
+      for (const command of bundle.workspaceCommands) {
+        tape.push({ kind: 'workspace', ...command });
       }
     }
 
-    return segments;
+    return tape;
   }
 
-  locateCommandInTape(
-    tape: TapeSegment[],
-    commandName: string,
-  ): TapeCursorLocation | null {
-    for (
-      let segmentIndex = 0;
-      segmentIndex < tape.length;
-      segmentIndex++
-    ) {
-      const segment = tape[segmentIndex];
+  locateCommandInTape(tape: TapeStep[], commandName: string): number {
+    return tape.findIndex((step) => step.name === commandName);
+  }
 
-      if (segment.kind === 'instance') {
-        const fastIndex = segment.fastInstanceSteps.findIndex(
-          (step) => step.name === commandName,
-        );
+  collectContiguousWorkspaceCommands(
+    tape: TapeStep[],
+    fromIndex: number,
+  ): WorkspaceTapeStep[] {
+    const slice: WorkspaceTapeStep[] = [];
 
-        if (fastIndex !== -1) {
-          return {
-            kind: 'instance',
-            segmentIndex,
-            stepIndex: fastIndex,
-            stepKind: 'fast',
-          };
-        }
+    for (let index = fromIndex; index < tape.length; index++) {
+      const step = tape[index];
 
-        const slowIndex = segment.slowInstanceSteps.findIndex(
-          (step) => step.name === commandName,
-        );
-
-        if (slowIndex !== -1) {
-          return {
-            kind: 'instance',
-            segmentIndex,
-            stepIndex: slowIndex,
-            stepKind: 'slow',
-          };
-        }
+      if (step.kind !== 'workspace') {
+        break;
       }
 
-      if (segment.kind === 'workspace') {
-        const stepIndex = segment.steps.findIndex(
-          (step) => step.name === commandName,
-        );
-
-        if (stepIndex !== -1) {
-          return { kind: 'workspace', segmentIndex, stepIndex };
-        }
-      }
+      slice.push(step);
     }
 
-    return null;
+    return slice;
   }
 
   getLastWorkspaceCommand(): RegisteredWorkspaceCommand {
-    const segments = this.getUpgradeTape();
+    const tape = this.getUpgradeTape();
 
-    for (let index = segments.length - 1; index >= 0; index--) {
-      const segment = segments[index];
+    for (let index = tape.length - 1; index >= 0; index--) {
+      const step = tape[index];
 
-      if (segment.kind === 'workspace') {
-        return segment.steps[segment.steps.length - 1];
+      if (step.kind === 'workspace') {
+        return step;
       }
     }
 

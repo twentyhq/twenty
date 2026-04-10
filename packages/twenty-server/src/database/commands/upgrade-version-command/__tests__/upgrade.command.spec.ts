@@ -121,10 +121,10 @@ const buildUpgradeCommandModule = async ({
       {
         provide: UpgradeMigrationService,
         useValue: {
-          getLastCompletedCommandName: jest
+          getLastCompletedCommandNameOrThrow: jest
             .fn()
             .mockResolvedValue(null),
-          getWorkspaceCursors: jest
+          getWorkspaceCursorsOrThrow: jest
             .fn()
             .mockResolvedValue(new Map()),
           areAllWorkspacesAtCommand: jest.fn().mockResolvedValue(true),
@@ -520,8 +520,7 @@ describe('UpgradeCommandRunner', () => {
       instanceUpgradeService.runFastInstanceCommand as jest.Mock
     ).mockImplementation(async ({ name }: { name: string }) => {
       if (
-        name ===
-        `${CURRENT_VERSION}_AlreadyDone1770000000000_1770000000000`
+        name === `${CURRENT_VERSION}_AlreadyDone1770000000000_1770000000000`
       ) {
         return { status: 'already-executed' };
       }
