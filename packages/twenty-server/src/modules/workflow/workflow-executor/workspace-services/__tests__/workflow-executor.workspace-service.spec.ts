@@ -385,9 +385,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
       });
 
       expect(workflowActionFactory.get).not.toHaveBeenCalled();
-      expect(
-        workspaceEventEmitter.emitCustomBatchEvent,
-      ).not.toHaveBeenCalled();
+      expect(workspaceEventEmitter.emitCustomBatchEvent).not.toHaveBeenCalled();
 
       (shouldExecuteStep as jest.Mock).mockReturnValue(true);
       (shouldSkipStepExecution as jest.Mock).mockReturnValue(false);
@@ -404,9 +402,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
       });
 
       expect(workflowActionFactory.get).not.toHaveBeenCalled();
-      expect(
-        workspaceEventEmitter.emitCustomBatchEvent,
-      ).not.toHaveBeenCalled();
+      expect(workspaceEventEmitter.emitCustomBatchEvent).not.toHaveBeenCalled();
 
       (shouldExecuteStep as jest.Mock).mockReturnValue(true);
       (shouldFailSafely as jest.Mock).mockReturnValue(false);
