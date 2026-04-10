@@ -27,9 +27,7 @@ type NameFieldsProps = {
 export const NameFields = ({ autoSave = true }: NameFieldsProps) => {
   const { t } = useLingui();
   const currentUser = useAtomStateValue(currentUserState);
-  const currentWorkspaceMember = useAtomStateValue(
-    currentWorkspaceMemberState,
-  );
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { canEdit: canEditFirstName } = useCanEditProfileField('firstName');
   const { canEdit: canEditLastName } = useCanEditProfileField('lastName');
 

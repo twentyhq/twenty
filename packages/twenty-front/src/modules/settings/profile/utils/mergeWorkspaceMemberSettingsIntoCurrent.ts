@@ -86,7 +86,8 @@ export const mergeWorkspaceMemberSettingsIntoCurrent = (
   if ('numberFormat' in payload && payload.numberFormat !== undefined) {
     next = {
       ...next,
-      numberFormat: payload.numberFormat as CurrentWorkspaceMember['numberFormat'],
+      numberFormat:
+        payload.numberFormat as CurrentWorkspaceMember['numberFormat'],
     };
   }
 
