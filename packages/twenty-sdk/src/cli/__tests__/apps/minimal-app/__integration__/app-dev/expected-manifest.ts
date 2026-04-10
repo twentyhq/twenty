@@ -251,22 +251,6 @@ export const EXPECTED_MANIFEST: Manifest = {
             '20202020-6736-4337-b5c4-8b39fae325a5',
         },
         {
-          name: 'favorites',
-          label: 'Favorites',
-          description: 'My notes tied to the MyNote',
-          icon: 'IconBuildingSkyscraper',
-          isNullable: true,
-          type: FieldType.RELATION,
-          universalSettings: {
-            relationType: RelationType.ONE_TO_MANY,
-          },
-          universalIdentifier: 'ed80c73b-25ff-5a3c-99c7-e27fa2f2611e',
-          relationTargetFieldMetadataUniversalIdentifier:
-            '698f12fe-3feb-55e3-b6cc-73375f1a8ae6',
-          relationTargetObjectMetadataUniversalIdentifier:
-            '20202020-ab56-4e05-92a3-e2414a499860',
-        },
-        {
           name: 'attachments',
           label: 'Attachments',
           description: 'My notes tied to the MyNote',

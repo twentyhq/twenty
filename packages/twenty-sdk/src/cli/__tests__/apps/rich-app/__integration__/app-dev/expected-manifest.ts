@@ -749,22 +749,6 @@ export const EXPECTED_MANIFEST: Manifest = {
           description: 'Root notes tied to the RootNote',
           icon: 'IconBuildingSkyscraper',
           isNullable: true,
-          label: 'Favorites',
-          name: 'favorites',
-          relationTargetFieldMetadataUniversalIdentifier:
-            '13fb0eae-50b4-5e28-afbc-5b5a9c422ead',
-          relationTargetObjectMetadataUniversalIdentifier:
-            '20202020-ab56-4e05-92a3-e2414a499860',
-          type: FieldType.RELATION,
-          universalIdentifier: 'bbc0dc11-9daa-5e3f-b939-e6f0a12bb277',
-          universalSettings: {
-            relationType: RelationType.ONE_TO_MANY,
-          },
-        },
-        {
-          description: 'Root notes tied to the RootNote',
-          icon: 'IconBuildingSkyscraper',
-          isNullable: true,
           label: 'Attachments',
           name: 'attachments',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -939,22 +923,6 @@ export const EXPECTED_MANIFEST: Manifest = {
             '20202020-6736-4337-b5c4-8b39fae325a5',
           type: FieldType.RELATION,
           universalIdentifier: '02f5efba-4f94-5cc3-9e17-ca7b1fe5f71b',
-          universalSettings: {
-            relationType: RelationType.ONE_TO_MANY,
-          },
-        },
-        {
-          description: 'Post Card Recipients tied to the PostCardRecipient',
-          icon: 'IconBuildingSkyscraper',
-          isNullable: true,
-          label: 'Favorites',
-          name: 'favorites',
-          relationTargetFieldMetadataUniversalIdentifier:
-            'f3247843-dd1f-5b15-8873-c0062a021180',
-          relationTargetObjectMetadataUniversalIdentifier:
-            '20202020-ab56-4e05-92a3-e2414a499860',
-          type: FieldType.RELATION,
-          universalIdentifier: 'a284914f-650c-54ad-84ef-d6229d3fa453',
           universalSettings: {
             relationType: RelationType.ONE_TO_MANY,
           },
@@ -1212,22 +1180,6 @@ export const EXPECTED_MANIFEST: Manifest = {
           description: 'Post cards tied to the PostCard',
           icon: 'IconBuildingSkyscraper',
           isNullable: true,
-          label: 'Favorites',
-          name: 'favorites',
-          relationTargetFieldMetadataUniversalIdentifier:
-            '9a5d4ae3-6f45-593f-923d-bcd16ede4345',
-          relationTargetObjectMetadataUniversalIdentifier:
-            '20202020-ab56-4e05-92a3-e2414a499860',
-          type: FieldType.RELATION,
-          universalIdentifier: '94f43ec4-d2d1-5a50-b414-78da27d24258',
-          universalSettings: {
-            relationType: RelationType.ONE_TO_MANY,
-          },
-        },
-        {
-          description: 'Post cards tied to the PostCard',
-          icon: 'IconBuildingSkyscraper',
-          isNullable: true,
           label: 'Attachments',
           name: 'attachments',
           relationTargetFieldMetadataUniversalIdentifier:
@@ -1407,22 +1359,6 @@ export const EXPECTED_MANIFEST: Manifest = {
             '20202020-6736-4337-b5c4-8b39fae325a5',
           type: FieldType.RELATION,
           universalIdentifier: '51d6d2d7-2fa8-5f77-b6cf-a96dbb801fa5',
-          universalSettings: {
-            relationType: RelationType.ONE_TO_MANY,
-          },
-        },
-        {
-          description: 'Recipients tied to the Recipient',
-          icon: 'IconBuildingSkyscraper',
-          isNullable: true,
-          label: 'Favorites',
-          name: 'favorites',
-          relationTargetFieldMetadataUniversalIdentifier:
-            'f4e6fd66-83bb-5f2d-b1ec-a3db2e0ca32d',
-          relationTargetObjectMetadataUniversalIdentifier:
-            '20202020-ab56-4e05-92a3-e2414a499860',
-          type: FieldType.RELATION,
-          universalIdentifier: 'd16a6387-273b-563c-a6cc-2cb4524b9b7b',
           universalSettings: {
             relationType: RelationType.ONE_TO_MANY,
           },
