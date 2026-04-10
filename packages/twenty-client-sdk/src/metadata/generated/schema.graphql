@@ -3597,6 +3597,7 @@ type Mutation {
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser(otp: String!): VerifyTwoFactorAuthenticationMethod!
   deleteUser: User!
   deleteUserFromWorkspace(workspaceMemberIdToDelete: String!): UserWorkspace!
+  updateWorkspaceMemberSettings(input: UpdateWorkspaceMemberSettingsInput!): Boolean!
   updateUserEmail(newEmail: String!, verifyEmailRedirectPath: String): Boolean!
   resendEmailVerificationToken(email: String!, origin: String!): ResendEmailVerificationToken!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
@@ -4528,6 +4529,11 @@ input UpdateApplicationRegistrationVariableInput {
 input UpdateApplicationRegistrationVariablePayload {
   value: String
   description: String
+}
+
+input UpdateWorkspaceMemberSettingsInput {
+  workspaceMemberId: UUID!
+  update: JSON!
 }
 
 input ActivateWorkspaceInput {
