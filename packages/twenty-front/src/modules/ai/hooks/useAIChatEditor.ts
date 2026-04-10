@@ -49,7 +49,7 @@ export const useAIChatEditor = () => {
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const draftKey = currentAIChatThread;
+  const draftKey = currentAIChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
   const initialDraft = agentChatDraftsByThreadId[draftKey] ?? '';
   const initialContent = textToTiptapContent(initialDraft);
 

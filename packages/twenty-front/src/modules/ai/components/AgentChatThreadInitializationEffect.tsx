@@ -88,7 +88,10 @@ export const AgentChatThreadInitializationEffect = () => {
   }, [storeEntry.status, hasAiSettingsPermission, setAgentChatThreadsLoading]);
 
   useEffect(() => {
-    if (hasInitializedAgentChatThreads || isValidUuid(currentAIChatThread)) {
+    if (
+      hasInitializedAgentChatThreads ||
+      (currentAIChatThread !== null && isValidUuid(currentAIChatThread))
+    ) {
       return;
     }
 

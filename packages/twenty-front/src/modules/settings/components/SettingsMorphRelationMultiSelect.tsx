@@ -8,6 +8,7 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { MultiSelectControl } from '@/ui/input/components/MultiSelectControl';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -21,7 +22,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { IconBox, useIcons, type IconComponent } from 'twenty-ui/display';
+import { IconBox, type IconComponent } from 'twenty-ui/display';
 import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -101,12 +102,13 @@ export const SettingsMorphRelationMultiSelect = ({
 
   const [searchInputValue, setSearchInputValue] = useState('');
 
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
   const [localSelectedObjectMetadataIds, setLocalSelectedObjectMetadataIds] =
     useState<string[]>(selectedObjectMetadataIds);
 
-  const { getIcon } = useIcons();
   const options = activeObjectMetadataItems
     .filter(isObjectMetadataAvailableForRelation)
     .sort((item1, item2) =>
@@ -114,8 +116,8 @@ export const SettingsMorphRelationMultiSelect = ({
     )
     .map((objectMetadataItem) => ({
       label: objectMetadataItem.labelSingular,
-      Icon: getIcon(objectMetadataItem.icon),
       objectMetadataId: objectMetadataItem.id,
+      ...getSelectIconPropsFromObjectMetadataItem(objectMetadataItem),
     }));
 
   const selectedOptions = options.filter((option) =>
@@ -256,6 +258,7 @@ export const SettingsMorphRelationMultiSelect = ({
                         <MenuItemMultiSelect
                           className=""
                           LeftIcon={option.Icon ?? undefined}
+                          iconThemeColor={option.iconThemeColor}
                           text={option.label}
                           selected={selectedObjectMetadataIds.some(
                             (selectedObjectMetadataId) =>

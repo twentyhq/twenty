@@ -1,4 +1,7 @@
-import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
+import {
+  type ExtendedFileUIPart,
+  type ExtendedUIMessagePart,
+} from 'twenty-shared/ai';
 
 import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
 
@@ -24,12 +27,11 @@ export const mapDBPartToUIMessagePart = (
     case 'file':
       return {
         type: 'file',
-        mediaType: part.fileFilename?.endsWith('.png')
-          ? 'image/png'
-          : 'application/octet-stream',
+        mediaType: part.file?.mimeType ?? 'application/octet-stream',
         filename: part.fileFilename ?? '',
         url: '',
-      };
+        fileId: part.fileId ?? '',
+      } as ExtendedFileUIPart;
     case 'source-url':
       return {
         type: 'source-url',

@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -34,7 +34,6 @@ export class DevSeederService {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly dataSourceService: DataSourceService,
     private readonly twentyStandardApplicationService: TwentyStandardApplicationService,
     private readonly devSeederMetadataService: DevSeederMetadataService,
     private readonly devSeederPermissionsService: DevSeederPermissionsService,
@@ -45,6 +44,8 @@ export class DevSeederService {
     private readonly sdkClientGenerationService: SdkClientGenerationService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   public async seedDev(
@@ -75,11 +76,9 @@ export class DevSeederService {
       ['flatApplicationMaps', 'featureFlagsMap'],
     );
 
-    const dataSourceMetadata =
-      await this.dataSourceService.createDataSourceMetadata(
-        workspaceId,
-        schemaName,
-      );
+    await this.workspaceRepository.update(workspaceId, {
+      databaseSchema: schemaName,
+    });
 
     const { workspaceCustomFlatApplication, twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -102,7 +101,6 @@ export class DevSeederService {
     });
 
     await this.devSeederMetadataService.seed({
-      dataSourceMetadata,
       workspaceId,
       light,
     });
@@ -176,7 +174,7 @@ export class DevSeederService {
     );
 
     await this.devSeederDataService.seed({
-      schemaName: dataSourceMetadata.schema,
+      schemaName,
       workspaceId,
       featureFlags: featureFlagsMap,
       light,

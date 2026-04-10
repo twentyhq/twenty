@@ -5,8 +5,11 @@ export const RULE_NAME = 'upgrade-command-filename';
 const WORKSPACE_COMMAND_REGEX =
   /^\d+-\d+-workspace-command-\d{13,}-[a-z0-9]+(?:-[a-z0-9]+)*\.command\.ts$/;
 
-const INSTANCE_COMMAND_REGEX =
+const INSTANCE_COMMAND_FAST_REGEX =
   /^\d+-\d+-instance-command-fast-\d{13,}-[a-z0-9]+(?:-[a-z0-9]+)*\.ts$/;
+
+const INSTANCE_COMMAND_SLOW_REGEX =
+  /^\d+-\d+-instance-command-slow-\d{13,}-[a-z0-9]+(?:-[a-z0-9]+)*\.ts$/;
 
 const SKIPPED_FILE_REGEX =
   /\.(module|spec|test|snap)\.ts$|__tests__|__mocks__|__snapshots__/;
@@ -37,10 +40,12 @@ export const rule = defineRule({
     messages: {
       invalidWorkspaceCommandFilename:
         "Workspace command filename '{{ name }}' must match pattern: {major}-{minor}-workspace-command-{timestamp}-{description}.command.ts (e.g. '1-21-workspace-command-1775500001000-add-feature.command.ts')",
-      invalidInstanceCommandFilename:
+      invalidInstanceCommandFastFilename:
         "Instance command filename '{{ name }}' must match pattern: {major}-{minor}-instance-command-fast-{timestamp}-{description}.ts (e.g. '1-21-instance-command-fast-1775500001000-add-column.ts')",
+      invalidInstanceCommandSlowFilename:
+        "Instance command filename '{{ name }}' must match pattern: {major}-{minor}-instance-command-slow-{timestamp}-{description}.ts (e.g. '1-22-instance-command-slow-1775500001000-backfill-data.ts')",
       invalidUpgradeCommandFilename:
-        "Upgrade command filename '{{ name }}' does not match any recognized pattern. Expected workspace-command or instance-command-fast format.",
+        "Upgrade command filename '{{ name }}' does not match any recognized pattern. Expected workspace-command, instance-command-fast, or instance-command-slow format.",
     },
   },
   create: (context) => {
@@ -78,10 +83,22 @@ export const rule = defineRule({
         }
 
         if (basename.includes('instance-command-fast-')) {
-          if (!INSTANCE_COMMAND_REGEX.test(basename)) {
+          if (!INSTANCE_COMMAND_FAST_REGEX.test(basename)) {
             context.report({
               node,
-              messageId: 'invalidInstanceCommandFilename',
+              messageId: 'invalidInstanceCommandFastFilename',
+              data: { name: basename },
+            });
+          }
+
+          return;
+        }
+
+        if (basename.includes('instance-command-slow-')) {
+          if (!INSTANCE_COMMAND_SLOW_REGEX.test(basename)) {
+            context.report({
+              node,
+              messageId: 'invalidInstanceCommandSlowFilename',
               data: { name: basename },
             });
           }

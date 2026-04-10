@@ -38,13 +38,14 @@ export const useAIChatThreadClick = (
 
   const handleThreadClick = (thread: AgentChatThread) => {
     setThreadIdCreatedFromDraft(null);
-    const previousDraftKey = currentAIChatThread;
     const isSameThread = thread.id === currentAIChatThread;
 
-    setAgentChatDraftsByThreadId((prev) => ({
-      ...prev,
-      [previousDraftKey]: store.get(agentChatInputState.atom),
-    }));
+    if (currentAIChatThread !== null) {
+      setAgentChatDraftsByThreadId((prev) => ({
+        ...prev,
+        [currentAIChatThread]: store.get(agentChatInputState.atom),
+      }));
+    }
     setCurrentAIChatThread(thread.id);
 
     if (!isSameThread) {

@@ -19,7 +19,6 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
@@ -76,12 +75,6 @@ describe('UserWorkspaceService', () => {
           provide: RoleValidationService,
           useValue: {
             validateRoleAssignableToUsersOrThrow: jest.fn(),
-          },
-        },
-        {
-          provide: DataSourceService,
-          useValue: {
-            getLastDataSourceMetadataFromWorkspaceIdOrFail: jest.fn(),
           },
         },
         {

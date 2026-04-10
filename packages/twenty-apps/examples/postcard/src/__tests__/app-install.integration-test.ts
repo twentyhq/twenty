@@ -44,7 +44,9 @@ describe('App installation', () => {
 
     if (!uninstallResult.success) {
       console.warn(
-        `App uninstall failed: ${uninstallResult.error?.message ?? 'Unknown error'}`,
+        `App uninstall failed: ${
+          uninstallResult.error?.message ?? 'Unknown error'
+        }`,
       );
     }
   });

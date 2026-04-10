@@ -21,7 +21,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { AiAgentMonitorModule } from 'src/engine/metadata-modules/ai/ai-agent-monitor/ai-agent-monitor.module';
 import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
-import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -36,7 +35,6 @@ import { WorkspaceCleanerModule } from 'src/engine/workspace-manager/workspace-c
 import { CalendarEventParticipantManagerModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant-manager.module';
 import { CalendarModule } from 'src/modules/calendar/calendar.module';
 import { AutoCompaniesAndContactsCreationJobModule } from 'src/modules/contact-creation-manager/jobs/auto-companies-and-contacts-creation-job.module';
-import { FavoriteModule } from 'src/modules/favorite/favorite.module';
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
 import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
@@ -45,7 +43,6 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([WorkspaceEntity, BillingSubscriptionEntity]),
-    DataSourceModule,
     ObjectMetadataModule,
     TypeORMModule,
     UserModule,
@@ -64,7 +61,6 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     TimelineJobModule,
     WebhookJobModule,
     WorkflowModule,
-    FavoriteModule,
     NavigationMenuItemModule,
     SdkClientModule,
     WorkspaceCleanerModule,

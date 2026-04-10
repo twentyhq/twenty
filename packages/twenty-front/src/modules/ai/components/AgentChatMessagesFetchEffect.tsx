@@ -4,7 +4,6 @@ import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
-import { AGENT_CHAT_UNKNOWN_THREAD_ID } from '@/ai/constants/AgentChatUnknownThreadId';
 import { agentChatFirstLiveSeqState } from '@/ai/states/agentChatFirstLiveSeqState';
 import { agentChatHandleEventCallbackState } from '@/ai/states/agentChatHandleEventCallbackState';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
@@ -30,8 +29,8 @@ export const AgentChatMessagesFetchEffect = () => {
 
   const isNewThread = useMemo(
     () =>
-      currentAIChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY ||
-      currentAIChatThread === AGENT_CHAT_UNKNOWN_THREAD_ID,
+      currentAIChatThread === null ||
+      currentAIChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
     [currentAIChatThread],
   );
 
@@ -111,7 +110,7 @@ export const AgentChatMessagesFetchEffect = () => {
   const { refetch: refetchAgentChatMessages } = useQueryWithCallbacks(
     GetChatMessagesDocument,
     {
-      variables: { threadId: currentAIChatThread },
+      variables: { threadId: currentAIChatThread ?? '' },
       skip: !isDefined(currentAIChatThread) || isNewThread,
       onFirstLoad: handleFirstLoad,
       onDataLoaded: handleDataLoaded,
@@ -120,8 +119,12 @@ export const AgentChatMessagesFetchEffect = () => {
   );
 
   const handleRefetchMessages = useCallback(() => {
+    if (isNewThread) {
+      return;
+    }
+
     refetchAgentChatMessages();
-  }, [refetchAgentChatMessages]);
+  }, [refetchAgentChatMessages, isNewThread]);
 
   useListenToBrowserEvent({
     eventName: AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME,
