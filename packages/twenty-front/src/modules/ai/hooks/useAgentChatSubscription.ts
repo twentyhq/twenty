@@ -248,10 +248,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     const handleEvent = (event: AgentChatSubscriptionEvent) => {
       switch (event.type) {
         case 'stream-chunk': {
-          if (
-            isDefined(event.seq) &&
-            store.get(firstLiveSeqAtom) === null
-          ) {
+          if (isDefined(event.seq) && store.get(firstLiveSeqAtom) === null) {
             store.set(firstLiveSeqAtom, event.seq);
           }
 
