@@ -101,7 +101,6 @@ export const useFieldsWidgetGroups = ({
   return {
     groups,
     displayMode,
-    isFromView:
-      isDefined(view) && isNonEmptyArray(view.viewFieldGroups),
+    isFromView: isDefined(view) && isNonEmptyArray(view.viewFieldGroups),
   };
 };
