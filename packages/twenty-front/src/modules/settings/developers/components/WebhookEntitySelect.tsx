@@ -201,7 +201,7 @@ export const WebhookEntitySelect = ({
                     >
                       <MenuItemSelect
                         LeftIcon={option.Icon}
-                        iconThemeColor={option.iconThemeColor}
+                        leftIconColor={option.iconThemeColor}
                         text={option.label}
                         selected={value === option.value}
                         focused={selectedItemId === option.value}

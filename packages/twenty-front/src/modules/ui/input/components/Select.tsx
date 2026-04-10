@@ -226,7 +226,7 @@ export const Select = <Value extends SelectValue>({
                 <DropdownMenuItemsContainer scrollable={false}>
                   <MenuItemSelect
                     LeftIcon={pinnedOption.Icon}
-                    iconThemeColor={pinnedOption.iconThemeColor}
+                    leftIconColor={pinnedOption.iconThemeColor}
                     text={pinnedOption.label}
                     contextualText={pinnedOption.contextualText}
                     selected={
@@ -263,7 +263,7 @@ export const Select = <Value extends SelectValue>({
                       >
                         <MenuItemSelect
                           LeftIcon={option.Icon}
-                          iconThemeColor={option.iconThemeColor}
+                          leftIconColor={option.iconThemeColor}
                           text={option.label}
                           contextualText={option.contextualText}
                           selected={

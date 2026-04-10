@@ -239,7 +239,7 @@ export const WorkflowDropdownStepOutputItems = ({
             text={objectLabel || ''}
             hasSubMenu={false}
             LeftIcon={subStepObjectIconProps?.Icon}
-            iconThemeColor={subStepObjectIconProps?.iconThemeColor}
+            leftIconColor={subStepObjectIconProps?.iconThemeColor}
             contextualText={t`Pick a ${objectLabel} record`}
           />
         )}

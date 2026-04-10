@@ -61,7 +61,7 @@ export const StyledMenuItemSelect = styled.div<{
 
 type MenuItemSelectProps = {
   LeftIcon?: IconComponent | null | undefined;
-  iconThemeColor?: ThemeColor | null;
+  leftIconColor?: ThemeColor | null;
   withIconContainer?: boolean;
   selected: boolean;
   needIconCheck?: boolean;
@@ -77,7 +77,7 @@ type MenuItemSelectProps = {
 
 export const MenuItemSelect = ({
   LeftIcon,
-  iconThemeColor,
+  leftIconColor,
   withIconContainer = false,
   text,
   selected,
@@ -104,7 +104,7 @@ export const MenuItemSelect = ({
     >
       <MenuItemLeftContent
         LeftIcon={LeftIcon}
-        iconThemeColor={iconThemeColor}
+        iconThemeColor={leftIconColor}
         text={text}
         contextualText={
           contextualTextPosition === 'left' ? contextualText : null
