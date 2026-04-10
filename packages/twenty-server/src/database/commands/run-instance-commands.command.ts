@@ -13,6 +13,7 @@ type RunInstanceCommandsOptions = {
   includeSlow?: boolean;
 };
 
+// TODO should be replaced by a specific call to the upgrade
 @Command({
   name: 'run-instance-commands',
   description:
