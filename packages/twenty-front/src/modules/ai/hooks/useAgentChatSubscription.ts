@@ -233,7 +233,9 @@ export const useAgentChatSubscription = (threadId: string | null) => {
       }
       flushToAtom();
 
-      store.set(agentChatIsStreamingState.atom, false);
+      if (!disposed) {
+        store.set(agentChatIsStreamingState.atom, false);
+      }
     };
 
     const handleEvent = (event: AgentChatSubscriptionEvent) => {
@@ -257,7 +259,9 @@ export const useAgentChatSubscription = (threadId: string | null) => {
             );
 
             startReadLoop(adaptedReadable).catch(() => {
-              store.set(agentChatIsStreamingState.atom, false);
+              if (!disposed) {
+                store.set(agentChatIsStreamingState.atom, false);
+              }
             });
           }
 
