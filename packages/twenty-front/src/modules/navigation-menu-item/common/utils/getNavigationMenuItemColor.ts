@@ -2,11 +2,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
-import { DEFAULT_NAV_ITEM_ICON_COLOR } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultIconColor.constant';
-import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { type ThemeColor } from 'twenty-ui/theme';
+import { DEFAULT_THEME_COLOR_FALLBACK, type ThemeColor } from 'twenty-ui/theme';
 
 export const getNavigationMenuItemColor = (
   navigationMenuItem: {
@@ -35,8 +34,8 @@ export const getNavigationMenuItemColor = (
     if (objectMetadataItem) {
       return getObjectColorWithFallback(objectMetadataItem);
     }
-    return DEFAULT_NAV_ITEM_ICON_COLOR;
+    return DEFAULT_THEME_COLOR_FALLBACK;
   }
 
-  return DEFAULT_NAV_ITEM_ICON_COLOR;
+  return DEFAULT_THEME_COLOR_FALLBACK;
 };

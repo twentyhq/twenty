@@ -98,6 +98,21 @@ La modalità di sviluppo è disponibile solo sulle istanze di Twenty in esecuzio
   <img src="/images/docs/developers/extends/apps/dev.jpg" alt="Output del terminale in modalità sviluppo" />
 </div>
 
+#### Sincronizzazione una tantum con `yarn twenty dev --once`
+
+Se non vuoi un watcher in esecuzione in background (ad esempio in una pipeline CI, un hook di Git o un flusso di lavoro scriptato), passa il flag `--once`. Esegue la stessa pipeline di `yarn twenty dev` — genera il manifest, effettua il bundling dei file, carica, sincronizza, rigenera il client API tipizzato — ma **termina non appena la sincronizzazione è completata**:
+
+```bash filename="Terminal"
+yarn twenty dev --once
+```
+
+| Comando                  | Comportamento                                                                                                           | Quando usarlo                                                                                            |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `yarn twenty dev`        | Monitora i file sorgente e risincronizza a ogni modifica. Rimane in esecuzione finché non lo interrompi.                | Sviluppo locale interattivo — vuoi il pannello di stato in tempo reale e un ciclo di feedback immediato. |
+| `yarn twenty dev --once` | Esegue una singola build + sincronizzazione, quindi termina con codice `0` in caso di successo o `1` in caso di errore. | Script, CI, hook pre-commit, agenti IA e qualsiasi flusso di lavoro non interattivo.                     |
+
+Entrambe le modalità richiedono un server Twenty in esecuzione in modalità di sviluppo e un remote autenticato — si applicano gli stessi prerequisiti.
+
 ### Visualizza la tua app in Twenty
 
 Apri [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer) nel browser. Vai su **Settings > Apps** e seleziona la scheda **Developer**. Dovresti vedere la tua app elencata in **Your Apps**:

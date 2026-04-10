@@ -20,6 +20,7 @@
     "@ai-sdk/google": "^3.0.30",
     "@ai-sdk/mistral": "^3.0.20",
     "@ai-sdk/openai": "^3.0.30",
+    "@ai-sdk/openai-compatible": "^2.0.40",
     "@ai-sdk/provider-utils": "^4.0.15",
     "@ai-sdk/xai": "^3.0.57",
     "@aws-sdk/client-lambda": "3.1001.0",

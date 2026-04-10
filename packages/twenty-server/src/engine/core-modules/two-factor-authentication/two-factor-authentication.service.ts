@@ -140,6 +140,7 @@ export class TwoFactorAuthenticationService {
 
     await this.twoFactorAuthenticationMethodRepository.save({
       id: existing2FAMethod?.id,
+      workspaceId,
       userWorkspace: userWorkspace,
       secret: encryptedSecret,
       status: context.status,

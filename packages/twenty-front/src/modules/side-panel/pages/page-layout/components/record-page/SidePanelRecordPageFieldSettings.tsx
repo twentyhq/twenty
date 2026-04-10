@@ -62,6 +62,7 @@ export const SidePanelRecordPageFieldSettings = () => {
   const displayModeLabels: Record<string, string> = {
     [FieldDisplayMode.FIELD]: t`Field`,
     [FieldDisplayMode.CARD]: t`Card`,
+    [FieldDisplayMode.EDITOR]: t`Editor`,
   };
 
   const layoutLabel = isDefined(currentDisplayMode)
@@ -71,6 +72,7 @@ export const SidePanelRecordPageFieldSettings = () => {
   const selectableItemIds = [
     'field',
     'layout',
+    WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT,
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.REPLACE_WIDGET,
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.DELETE_WIDGET,
@@ -80,7 +82,7 @@ export const SidePanelRecordPageFieldSettings = () => {
   return (
     <StyledContainer>
       <StyledSidePanelContainer>
-        <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
+        <SidePanelList selectableItemIds={selectableItemIds}>
           <SidePanelGroup heading={t`Data and display`}>
             <SelectableListItem itemId="field">
               <CommandMenuItemDropdown

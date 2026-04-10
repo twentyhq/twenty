@@ -36,10 +36,6 @@ export const mockedNoteRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-0001-4e7c-8001-123456789abc",
     "noteTargets": {
       "__typename": "NoteTargetConnection",
@@ -119,10 +115,6 @@ export const mockedNoteRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-0002-4e7c-8001-123456789abc",
     "noteTargets": {
       "__typename": "NoteTargetConnection",
@@ -202,10 +194,6 @@ export const mockedNoteRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-0003-4e7c-8001-123456789abc",
     "noteTargets": {
       "__typename": "NoteTargetConnection",
@@ -285,10 +273,6 @@ export const mockedNoteRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-0004-4e7c-8001-123456789abc",
     "noteTargets": {
       "__typename": "NoteTargetConnection",
@@ -368,10 +352,6 @@ export const mockedNoteRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-0005-4e7c-8001-123456789abc",
     "noteTargets": {
       "__typename": "NoteTargetConnection",
@@ -451,10 +431,6 @@ export const mockedNoteRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-0006-4e7c-8001-123456789abc",
     "noteTargets": {
       "__typename": "NoteTargetConnection",
@@ -534,10 +510,6 @@ export const mockedNoteRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-0007-4e7c-8001-123456789abc",
     "noteTargets": {
       "__typename": "NoteTargetConnection",
@@ -617,10 +589,6 @@ export const mockedNoteRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-0008-4e7c-8001-123456789abc",
     "noteTargets": {
       "__typename": "NoteTargetConnection",
@@ -700,10 +668,6 @@ export const mockedNoteRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-0009-4e7c-8001-123456789abc",
     "noteTargets": {
       "__typename": "NoteTargetConnection",
@@ -783,10 +747,6 @@ export const mockedNoteRecords: ObjectRecord[] =
       "context": null
     },
     "deletedAt": null,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-000a-4e7c-8001-123456789abc",
     "noteTargets": {
       "__typename": "NoteTargetConnection",

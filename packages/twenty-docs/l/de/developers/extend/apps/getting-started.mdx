@@ -98,6 +98,21 @@ Der Dev-Modus ist nur auf Twenty-Instanzen verfügbar, die im Entwicklungsmodus 
   <img src="/images/docs/developers/extends/apps/dev.jpg" alt="Terminalausgabe im Dev-Modus" />
 </div>
 
+#### Einmalige Synchronisierung mit `yarn twenty dev --once`
+
+Wenn Sie keinen Watcher im Hintergrund ausführen lassen möchten (zum Beispiel in einer CI-Pipeline, einem Git-Hook oder einem skriptgesteuerten Workflow), geben Sie das Flag `--once` an. Es führt dieselbe Pipeline aus wie `yarn twenty dev` — Build-Manifest erstellen, Dateien bündeln, hochladen, synchronisieren, den typisierten API-Client neu generieren — beendet sich jedoch, **sobald die Synchronisierung abgeschlossen ist**:
+
+```bash filename="Terminal"
+yarn twenty dev --once
+```
+
+| Befehl                   | Verhalten                                                                                                               | Wann verwenden                                                                                           |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `yarn twenty dev`        | Überwacht Ihre Quelldateien und synchronisiert bei jeder Änderung erneut. Läuft weiter, bis Sie es stoppen.             | Interaktive lokale Entwicklung — Sie möchten das Live-Status-Panel und eine sofortige Feedback-Schleife. |
+| `yarn twenty dev --once` | Führt einen einzelnen Build + Sync aus und beendet sich anschließend mit Code `0` bei Erfolg oder `1` bei einem Fehler. | Skripte, CI, Pre-Commit-Hooks, KI-Agenten und jeder nicht-interaktive Workflow.                          |
+
+Beide Modi erfordern einen Twenty-Server, der im Entwicklungsmodus läuft, und ein authentifiziertes Remote — es gelten dieselben Voraussetzungen.
+
 ### Sehen Sie sich Ihre App in Twenty an
 
 Öffnen Sie [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer) in Ihrem Browser. Navigieren Sie zu **Settings > Apps** und wählen Sie die Registerkarte **Developer**. Unter **Your Apps** sollte Ihre App aufgeführt sein:

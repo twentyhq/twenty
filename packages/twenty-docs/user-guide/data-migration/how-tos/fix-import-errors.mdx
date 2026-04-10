@@ -127,12 +127,12 @@ The data doesn't match the expected format for that field type.
 
 #### Date
 **Problem:** Unrecognized date format
-**Solution:** Use consistent format throughout file
+**Solution:** Use `YYYY-MM-DD` format consistently throughout file
 
 ```
-✓ 2024-03-15        (YYYY-MM-DD - recommended)
-✓ 03/15/2024        (MM/DD/YYYY)
-✓ 15/03/2024        (DD/MM/YYYY)
+✓ 2024-03-15        (YYYY-MM-DD)
+❌ 03/15/2024        (MM/DD/YYYY)
+❌ 15/03/2024        (DD/MM/YYYY)
 ```
 
 #### Phone

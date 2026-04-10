@@ -170,10 +170,13 @@ export const PageLayoutTabList = ({
 
   const selectTab = useCallback(
     (tabId: string) => {
+      if (!isInSidePanel) {
+        navigate(`#${tabId}`);
+      }
       setActiveTabId(tabId);
       onChangeTab?.(tabId);
     },
-    [setActiveTabId, onChangeTab],
+    [isInSidePanel, navigate, setActiveTabId, onChangeTab],
   );
 
   const selectTabFromDropdown = useCallback(

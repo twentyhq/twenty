@@ -32,18 +32,14 @@ type WorkspaceExportParams = {
   tableFilter?: string[];
 };
 
-type RowFilter = {
-  filterColumn: string;
-  filterValue: string;
-};
-
 type WriteRowsOptions = {
   schemaName: string;
   tableName: string;
   displayName: string;
   queryRunner: QueryRunner;
   stream: WriteStream;
-  rowFilter?: RowFilter;
+  whereClause?: string;
+  queryParameters?: unknown[];
   jsonColumns?: Set<string>;
   excludedColumns?: Set<string>;
 };
@@ -157,7 +153,8 @@ export class WorkspaceExportService {
         displayName: workspaceEntityMetadata.tableName,
         queryRunner,
         stream,
-        rowFilter: { filterColumn: 'id', filterValue: workspaceId },
+        whereClause: '"id" = $1',
+        queryParameters: [workspaceId],
         jsonColumns: this.buildJsonColumnSet(workspaceEntityMetadata),
       });
     }
@@ -174,15 +171,31 @@ export class WorkspaceExportService {
           displayName: entityMetadata.tableName,
           queryRunner,
           stream,
-          rowFilter: {
-            filterColumn: 'workspaceId',
-            filterValue: workspaceId,
-          },
+          whereClause: '"workspaceId" = $1',
+          queryParameters: [workspaceId],
           jsonColumns: this.buildJsonColumnSet(entityMetadata),
         });
       } catch (error) {
         this.logger.warn(`${entityMetadata.tableName}: skipped`, error);
       }
+    }
+
+    const userEntityMetadata = this.dataSource.entityMetadatas.find(
+      (entityMetadata) => entityMetadata.tableName === 'user',
+    );
+
+    if (userEntityMetadata) {
+      await this.writeRows({
+        schemaName: userEntityMetadata.schema || 'core',
+        tableName: userEntityMetadata.tableName,
+        displayName: userEntityMetadata.tableName,
+        queryRunner,
+        stream,
+        whereClause:
+          '"id" IN (SELECT "userId" FROM "core"."userWorkspace" WHERE "workspaceId" = $1)',
+        queryParameters: [workspaceId],
+        jsonColumns: this.buildJsonColumnSet(userEntityMetadata),
+      });
     }
   }
 
@@ -200,17 +213,15 @@ export class WorkspaceExportService {
     displayName,
     queryRunner,
     stream,
-    rowFilter,
+    whereClause,
+    queryParameters = [],
     jsonColumns,
     excludedColumns,
   }: WriteRowsOptions): Promise<void> {
-    const whereClause = rowFilter
-      ? ` WHERE "${rowFilter.filterColumn}" = $1`
-      : '';
-    const queryParameters = rowFilter ? [rowFilter.filterValue] : [];
+    const whereFragment = whereClause ? ` WHERE ${whereClause}` : '';
 
     const [{ count: totalCount }] = await queryRunner.query(
-      `SELECT COUNT(*)::int as count FROM "${schemaName}"."${tableName}"${whereClause}`,
+      `SELECT COUNT(*)::int as count FROM "${schemaName}"."${tableName}"${whereFragment}`,
       queryParameters,
     );
 
@@ -222,7 +233,7 @@ export class WorkspaceExportService {
 
     for (let offset = 0; offset < totalCount; offset += BATCH_SIZE) {
       const rows: Record<string, unknown>[] = await queryRunner.query(
-        `SELECT * FROM "${schemaName}"."${tableName}"${whereClause} ORDER BY "id" LIMIT ${BATCH_SIZE} OFFSET ${offset}`,
+        `SELECT * FROM "${schemaName}"."${tableName}"${whereFragment} ORDER BY "id" LIMIT ${BATCH_SIZE} OFFSET ${offset}`,
         queryParameters,
       );
 

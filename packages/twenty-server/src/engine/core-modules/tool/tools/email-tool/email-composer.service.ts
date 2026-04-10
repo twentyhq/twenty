@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { render, toPlainText } from '@react-email/render';
 import DOMPurify from 'dompurify';
 import { reactMarkupFromJSON } from 'twenty-emails';
-import { FileFolder } from 'twenty-shared/types';
+import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
+import { type EmailAttachment, FileFolder } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { WorkflowAttachment } from 'twenty-shared/workflow';
 import { In, type Repository } from 'typeorm';
 import { z } from 'zod';
 
@@ -17,7 +17,7 @@ import {
   EmailToolExceptionCode,
 } from 'src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception';
 import { EmailComposerResult } from 'src/engine/core-modules/tool/tools/email-tool/types/email-composer-result.type';
-import { EmailToolInput } from 'src/engine/core-modules/tool/tools/email-tool/types/email-tool-input.type';
+import { type ComposeEmailParams } from 'src/engine/core-modules/tool/tools/email-tool/types/compose-email-params.type';
 import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-comma-separated-emails.util';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -104,7 +104,7 @@ export class EmailComposerService {
     );
   }
 
-  private normalizeRecipients(parameters: EmailToolInput): {
+  private normalizeRecipients(parameters: ComposeEmailParams): {
     to: string[];
     cc: string[];
     bcc: string[];
@@ -157,9 +157,26 @@ export class EmailComposerService {
     return invalidEmails;
   }
 
+  private assertRecipientCountWithinLimit(recipients: {
+    to: string[];
+    cc: string[];
+    bcc: string[];
+  }): void {
+    const total =
+      recipients.to.length + recipients.cc.length + recipients.bcc.length;
+
+    if (total > MAX_EMAIL_RECIPIENTS) {
+      throw new EmailToolException(
+        `Too many recipients: ${total}. Maximum allowed is ${MAX_EMAIL_RECIPIENTS}.`,
+        EmailToolExceptionCode.TOO_MANY_RECIPIENTS,
+      );
+    }
+  }
+
   private async getAttachments(
-    files: Array<WorkflowAttachment>,
+    files: Array<EmailAttachment>,
     workspaceId: string,
+    fileFolder: FileFolder,
   ): Promise<MessageAttachment[]> {
     if (files.length === 0) {
       return [];
@@ -168,7 +185,7 @@ export class EmailComposerService {
     const fileIds = files.map((file) => file.id);
 
     const fileEntities = await this.fileRepository.find({
-      where: { id: In(fileIds) },
+      where: { id: In(fileIds), workspaceId },
     });
 
     const fileEntityMap = new Map(
@@ -193,10 +210,12 @@ export class EmailComposerService {
     const attachments: MessageAttachment[] = [];
 
     for (const fileMetadata of files) {
+      const fileEntity = fileEntityMap.get(fileMetadata.id);
+
       const { stream } = await this.fileService.getFileStreamById({
         fileId: fileMetadata.id,
         workspaceId,
-        fileFolder: FileFolder.Workflow,
+        fileFolder,
       });
 
       const buffer = await streamToBuffer(stream);
@@ -204,7 +223,7 @@ export class EmailComposerService {
       attachments.push({
         filename: fileMetadata.name,
         content: buffer,
-        contentType: fileMetadata.type,
+        contentType: fileEntity?.mimeType ?? 'application/octet-stream',
       });
     }
 
@@ -256,8 +275,9 @@ export class EmailComposerService {
   }
 
   async composeEmail(
-    parameters: EmailToolInput,
+    parameters: ComposeEmailParams,
     context: ToolExecutionContext,
+    options: { attachmentsFileFolder: FileFolder },
   ): Promise<EmailComposerResult> {
     const { workspaceId } = context;
     const { subject, body, files, inReplyTo } = parameters;
@@ -267,6 +287,7 @@ export class EmailComposerService {
 
     try {
       recipients = this.normalizeRecipients(parameters);
+      this.assertRecipientCountWithinLimit(recipients);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Invalid recipients';
@@ -334,7 +355,11 @@ export class EmailComposerService {
       refreshToken,
     };
 
-    const attachments = await this.getAttachments(files || [], workspaceId);
+    const attachments = await this.getAttachments(
+      files || [],
+      workspaceId,
+      options.attachmentsFileFolder,
+    );
 
     const parsedBody = parseEmailBody(body);
     const reactMarkup = reactMarkupFromJSON(parsedBody);

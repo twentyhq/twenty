@@ -1,18 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { DataSource, MigrationInterface } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 
-export type RunSingleMigrationResult =
+type RunSingleMigrationResult =
   | { status: 'success' }
   | { status: 'already-executed' }
   | { status: 'failed'; error: unknown };
 
 @Injectable()
 export class InstanceUpgradeService {
+  private readonly logger = new Logger(InstanceUpgradeService.name);
+
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
@@ -20,20 +24,25 @@ export class InstanceUpgradeService {
     private readonly upgradeMigrationService: UpgradeMigrationService,
   ) {}
 
-  async runSingleMigration(
-    migration: MigrationInterface,
-  ): Promise<RunSingleMigrationResult> {
-    const migrationName = migration.constructor.name;
+  async runFastInstanceCommand({
+    command,
+    name,
+  }: {
+    command: FastInstanceCommand;
+    name: string;
+  }): Promise<RunSingleMigrationResult> {
     const executedByVersion =
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
     const isAlreadyCompleted =
       await this.upgradeMigrationService.isLastAttemptCompleted({
-        name: migrationName,
+        name,
         workspaceId: null,
       });
 
     if (isAlreadyCompleted) {
+      this.logger.log(`${name} already executed, skipping`);
+
       return { status: 'already-executed' };
     }
 
@@ -43,10 +52,10 @@ export class InstanceUpgradeService {
       await queryRunner.connect();
       await queryRunner.startTransaction();
 
-      await migration.up(queryRunner);
+      await command.up(queryRunner);
 
       await this.upgradeMigrationService.markAsCompleted({
-        name: migrationName,
+        name,
         workspaceId: null,
         executedByVersion,
         queryRunner,
@@ -59,16 +68,71 @@ export class InstanceUpgradeService {
       }
 
       await this.upgradeMigrationService.markAsFailed({
-        name: migrationName,
+        name,
         workspaceId: null,
         executedByVersion,
+        error,
       });
+
+      this.logger.error(
+        `${name} failed`,
+        error instanceof Error ? error.stack : String(error),
+      );
 
       return { status: 'failed', error };
     } finally {
       await queryRunner.release();
     }
 
+    this.logger.log(`${name} executed successfully`);
+
     return { status: 'success' };
+  }
+
+  async runSlowInstanceCommand({
+    command,
+    name,
+    skipDataMigration,
+  }: {
+    command: SlowInstanceCommand;
+    name: string;
+    skipDataMigration?: boolean;
+  }): Promise<RunSingleMigrationResult> {
+    const isAlreadyCompleted =
+      await this.upgradeMigrationService.isLastAttemptCompleted({
+        name,
+        workspaceId: null,
+      });
+
+    if (isAlreadyCompleted) {
+      this.logger.log(`${name} already executed, skipping`);
+
+      return { status: 'already-executed' };
+    }
+
+    if (!skipDataMigration) {
+      const executedByVersion =
+        this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
+
+      try {
+        await command.runDataMigration(this.dataSource);
+      } catch (error) {
+        await this.upgradeMigrationService.markAsFailed({
+          name,
+          workspaceId: null,
+          executedByVersion,
+          error,
+        });
+
+        this.logger.error(
+          `${name} data migration failed`,
+          error instanceof Error ? error.stack : String(error),
+        );
+
+        return { status: 'failed', error };
+      }
+    }
+
+    return this.runFastInstanceCommand({ command, name });
   }
 }

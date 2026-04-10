@@ -5,6 +5,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -16,6 +17,7 @@ import {
 import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionItemMetadata } from 'src/engine/core-modules/billing/types/billing-subscription-item-metadata.type';
+import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 @Entity({ name: 'billingSubscriptionItem', schema: 'core' })
 @Unique(
   'IDX_BILLING_SUBSCRIPTION_ITEM_BILLING_SUBSCRIPTION_ID_STRIPE_PRODUCT_ID_UNIQUE',
@@ -24,6 +26,14 @@ import { BillingSubscriptionItemMetadata } from 'src/engine/core-modules/billing
 export class BillingSubscriptionItemEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ nullable: false, type: 'uuid' })
+  @Index()
+  workspaceId: string;
+
+  @ManyToOne('WorkspaceEntity', { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'workspaceId' })
+  workspace: Relation<WorkspaceEntity>;
 
   @Column({ nullable: true, type: 'timestamptz' })
   deletedAt?: Date;

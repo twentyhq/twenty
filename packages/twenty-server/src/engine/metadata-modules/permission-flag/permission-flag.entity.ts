@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -16,6 +17,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 
 @Entity('permissionFlag')
 @Unique('IDX_PERMISSION_FLAG_FLAG_ROLE_ID_UNIQUE', ['flag', 'roleId'])
+@Index('IDX_PERMISSION_FLAG_ROLE_ID', ['roleId'])
 export class PermissionFlagEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

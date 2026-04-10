@@ -185,23 +185,6 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "favorites",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
             "name": "attachments",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -254,23 +237,6 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
           ],
           "flatEntityMinimalInformation": {
             "name": "targetListinga",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "name": "listinga",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -503,12 +469,12 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
         },
       ],
     },
-    "message": "Validation failed for 19 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
+    "message": "Validation failed for 17 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
     "summary": {
-      "fieldMetadata": 19,
+      "fieldMetadata": 17,
       "index": 1,
       "objectMetadata": 1,
-      "totalErrors": 27,
+      "totalErrors": 25,
       "view": 1,
       "viewField": 5,
     },
@@ -704,23 +670,6 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "favorites",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
             "name": "attachments",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -773,23 +722,6 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
           ],
           "flatEntityMinimalInformation": {
             "name": "targetListinga",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "name": "listinga",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -1022,12 +954,12 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
         },
       ],
     },
-    "message": "Validation failed for 19 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
+    "message": "Validation failed for 17 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
     "summary": {
-      "fieldMetadata": 19,
+      "fieldMetadata": 17,
       "index": 1,
       "objectMetadata": 1,
-      "totalErrors": 27,
+      "totalErrors": 25,
       "view": 1,
       "viewField": 5,
     },
@@ -1234,23 +1166,6 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "favorites",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
             "name": "attachments",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -1303,23 +1218,6 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
           ],
           "flatEntityMinimalInformation": {
             "name": "targetListinga",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "name": "listinga",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -1552,12 +1450,12 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
         },
       ],
     },
-    "message": "Validation failed for 19 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
+    "message": "Validation failed for 17 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
     "summary": {
-      "fieldMetadata": 19,
+      "fieldMetadata": 17,
       "index": 1,
       "objectMetadata": 1,
-      "totalErrors": 27,
+      "totalErrors": 25,
       "view": 1,
       "viewField": 5,
     },
@@ -1753,23 +1651,6 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "favorites",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
             "name": "attachments",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -1822,23 +1703,6 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
           ],
           "flatEntityMinimalInformation": {
             "name": "targetListinga",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "name": "listinga",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -2071,12 +1935,12 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
         },
       ],
     },
-    "message": "Validation failed for 19 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
+    "message": "Validation failed for 17 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
     "summary": {
-      "fieldMetadata": 19,
+      "fieldMetadata": 17,
       "index": 1,
       "objectMetadata": 1,
-      "totalErrors": 27,
+      "totalErrors": 25,
       "view": 1,
       "viewField": 5,
     },
@@ -2283,23 +2147,6 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "favorites",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
             "name": "attachments",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -2358,29 +2205,6 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
           ],
           "flatEntityMinimalInformation": {
             "name": "targetAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is too long",
-              "userFriendlyMessage": "Name is too long",
-              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -2631,12 +2455,12 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
         },
       ],
     },
-    "message": "Validation failed for 19 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
+    "message": "Validation failed for 17 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
     "summary": {
-      "fieldMetadata": 19,
+      "fieldMetadata": 17,
       "index": 1,
       "objectMetadata": 1,
-      "totalErrors": 27,
+      "totalErrors": 25,
       "view": 1,
       "viewField": 5,
     },
@@ -2832,23 +2656,6 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "favorites",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
             "name": "attachments",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -2901,23 +2708,6 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
           ],
           "flatEntityMinimalInformation": {
             "name": "targetListinga",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "name": "listinga",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -3150,12 +2940,12 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
         },
       ],
     },
-    "message": "Validation failed for 19 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
+    "message": "Validation failed for 17 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
     "summary": {
-      "fieldMetadata": 19,
+      "fieldMetadata": 17,
       "index": 1,
       "objectMetadata": 1,
-      "totalErrors": 27,
+      "totalErrors": 25,
       "view": 1,
       "viewField": 5,
     },
@@ -3351,23 +3141,6 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "favorites",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
             "name": "attachments",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -3420,23 +3193,6 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
           ],
           "flatEntityMinimalInformation": {
             "name": "targetListinga",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "name": "listinga",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -3669,12 +3425,12 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
         },
       ],
     },
-    "message": "Validation failed for 19 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
+    "message": "Validation failed for 17 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
     "summary": {
-      "fieldMetadata": 19,
+      "fieldMetadata": 17,
       "index": 1,
       "objectMetadata": 1,
-      "totalErrors": 27,
+      "totalErrors": 25,
       "view": 1,
       "viewField": 5,
     },
@@ -3881,23 +3637,6 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "favorites",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
             "name": "attachments",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -3950,23 +3689,6 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
           ],
           "flatEntityMinimalInformation": {
             "name": "targetListinga",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "name": "listinga",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -4199,12 +3921,12 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
         },
       ],
     },
-    "message": "Validation failed for 19 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
+    "message": "Validation failed for 17 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
     "summary": {
-      "fieldMetadata": 19,
+      "fieldMetadata": 17,
       "index": 1,
       "objectMetadata": 1,
-      "totalErrors": 27,
+      "totalErrors": 25,
       "view": 1,
       "viewField": 5,
     },
@@ -4400,23 +4122,6 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "favorites",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
             "name": "attachments",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -4475,29 +4180,6 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           ],
           "flatEntityMinimalInformation": {
             "name": "targetA a",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "a a",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "name": "a a",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -4748,12 +4430,12 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
         },
       ],
     },
-    "message": "Validation failed for 19 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
+    "message": "Validation failed for 17 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
     "summary": {
-      "fieldMetadata": 19,
+      "fieldMetadata": 17,
       "index": 1,
       "objectMetadata": 1,
-      "totalErrors": 27,
+      "totalErrors": 25,
       "view": 1,
       "viewField": 5,
     },
@@ -4949,23 +4631,6 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "favorites",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
             "name": "attachments",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -5018,35 +4683,6 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           ],
           "flatEntityMinimalInformation": {
             "name": "target",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is too short",
-              "userFriendlyMessage": "Name is too short",
-              "value": "",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "name": "",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -5285,12 +4921,12 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
         },
       ],
     },
-    "message": "Validation failed for 19 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
+    "message": "Validation failed for 17 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
     "summary": {
-      "fieldMetadata": 19,
+      "fieldMetadata": 17,
       "index": 1,
       "objectMetadata": 1,
-      "totalErrors": 27,
+      "totalErrors": 25,
       "view": 1,
       "viewField": 5,
     },
@@ -5486,23 +5122,6 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "favorites",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
             "name": "attachments",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -5561,29 +5180,6 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
           ],
           "flatEntityMinimalInformation": {
             "name": "targetΜ",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "μ",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "name": "μ",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -5834,12 +5430,12 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
         },
       ],
     },
-    "message": "Validation failed for 19 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
+    "message": "Validation failed for 17 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
     "summary": {
-      "fieldMetadata": 19,
+      "fieldMetadata": 17,
       "index": 1,
       "objectMetadata": 1,
-      "totalErrors": 27,
+      "totalErrors": 25,
       "view": 1,
       "viewField": 5,
     },
@@ -6035,23 +5631,6 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "favorites",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
             "name": "attachments",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -6104,29 +5683,6 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           ],
           "flatEntityMinimalInformation": {
             "name": "targetUser",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
-              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
-              "value": "user",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "name": "user",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -6359,12 +5915,12 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
         },
       ],
     },
-    "message": "Validation failed for 19 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
+    "message": "Validation failed for 17 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
     "summary": {
-      "fieldMetadata": 19,
+      "fieldMetadata": 17,
       "index": 1,
       "objectMetadata": 1,
-      "totalErrors": 27,
+      "totalErrors": 25,
       "view": 1,
       "viewField": 5,
     },
@@ -6571,23 +6127,6 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "favorites",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
             "name": "attachments",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -6646,29 +6185,6 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
           ],
           "flatEntityMinimalInformation": {
             "name": "targetNot_Camel_Case",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "Not_Camel_Case",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "name": "Not_Camel_Case",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -6919,12 +6435,12 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
         },
       ],
     },
-    "message": "Validation failed for 19 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
+    "message": "Validation failed for 17 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
     "summary": {
-      "fieldMetadata": 19,
+      "fieldMetadata": 17,
       "index": 1,
       "objectMetadata": 1,
-      "totalErrors": 27,
+      "totalErrors": 25,
       "view": 1,
       "viewField": 5,
     },
@@ -7120,23 +6636,6 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "favorites",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
             "name": "attachments",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -7189,23 +6688,6 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
           ],
           "flatEntityMinimalInformation": {
             "name": "targetFooBar",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "name": "fooBar",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -7438,12 +6920,12 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
         },
       ],
     },
-    "message": "Validation failed for 19 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
+    "message": "Validation failed for 17 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
     "summary": {
-      "fieldMetadata": 19,
+      "fieldMetadata": 17,
       "index": 1,
       "objectMetadata": 1,
-      "totalErrors": 27,
+      "totalErrors": 25,
       "view": 1,
       "viewField": 5,
     },
@@ -7639,23 +7121,6 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
             },
           ],
           "flatEntityMinimalInformation": {
-            "name": "favorites",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Field to create related object not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
             "name": "attachments",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
@@ -7708,23 +7173,6 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
           ],
           "flatEntityMinimalInformation": {
             "name": "targetFooBar",
-            "objectMetadataUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "name": "fooBar",
             "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -7957,12 +7405,12 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
         },
       ],
     },
-    "message": "Validation failed for 19 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
+    "message": "Validation failed for 17 fieldMetadatas, 1 objectMetadata, 1 view, 5 viewFields, 1 index",
     "summary": {
-      "fieldMetadata": 19,
+      "fieldMetadata": 17,
       "index": 1,
       "objectMetadata": 1,
-      "totalErrors": 27,
+      "totalErrors": 25,
       "view": 1,
       "viewField": 5,
     },

@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromCreateViewFieldGroupInputToFlatViewFieldGroupToCreate } from 'src/engine/metadata-modules/flat-view-field-group/utils/from-create-view-field-group-input-to-flat-view-field-group-to-create.util';
@@ -17,7 +16,6 @@ import { DeleteViewFieldGroupInput } from 'src/engine/metadata-modules/view-fiel
 import { DestroyViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/destroy-view-field-group.input';
 import { UpdateViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/update-view-field-group.input';
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
-import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import {
   ViewFieldGroupException,
   ViewFieldGroupExceptionCode,
@@ -31,8 +29,6 @@ export class ViewFieldGroupService {
   constructor(
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    @InjectRepository(ViewFieldGroupEntity)
-    private readonly viewFieldGroupRepository: Repository<ViewFieldGroupEntity>,
     private readonly applicationService: ApplicationService,
   ) {}
 
@@ -342,30 +338,51 @@ export class ViewFieldGroupService {
   async findByViewId(
     workspaceId: string,
     viewId: string,
-  ): Promise<ViewFieldGroupEntity[]> {
-    return this.viewFieldGroupRepository.find({
-      where: {
-        workspaceId,
-        viewId,
-        isActive: true,
-        deletedAt: IsNull(),
-      },
-      order: { position: 'ASC' },
-    });
+  ): Promise<ViewFieldGroupDTO[]> {
+    const { flatViewFieldGroupMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFieldGroupMaps'],
+        },
+      );
+
+    return Object.values(flatViewFieldGroupMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter(
+        (group) =>
+          group.viewId === viewId &&
+          group.isActive &&
+          !isDefined(group.deletedAt),
+      )
+      .map(fromFlatViewFieldGroupToViewFieldGroupDto)
+      .sort((a, b) => a.position - b.position);
   }
 
   async findById(
     id: string,
     workspaceId: string,
-  ): Promise<ViewFieldGroupEntity | null> {
-    const viewFieldGroup = await this.viewFieldGroupRepository.findOne({
-      where: {
-        id,
-        workspaceId,
-        deletedAt: IsNull(),
-      },
+  ): Promise<ViewFieldGroupDTO | null> {
+    const { flatViewFieldGroupMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFieldGroupMaps'],
+        },
+      );
+
+    const flatViewFieldGroup = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatViewFieldGroupMaps,
     });
 
-    return viewFieldGroup || null;
+    if (
+      !isDefined(flatViewFieldGroup) ||
+      isDefined(flatViewFieldGroup.deletedAt)
+    ) {
+      return null;
+    }
+
+    return fromFlatViewFieldGroupToViewFieldGroupDto(flatViewFieldGroup);
   }
 }

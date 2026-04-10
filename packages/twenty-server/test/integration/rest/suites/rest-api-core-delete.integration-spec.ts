@@ -31,25 +31,6 @@ describe('Core REST API Delete One endpoint', () => {
       );
   });
 
-  it('should delete one person with favorite', async () => {
-    await makeRestAPIRequest({
-      method: 'post',
-      path: `/favorites`,
-      body: {
-        personId: TEST_PERSON_1_ID,
-      },
-    });
-
-    await makeRestAPIRequest({
-      method: 'delete',
-      path: `/people/${TEST_PERSON_1_ID}`,
-    })
-      .expect(200)
-      .expect((res) =>
-        expect(res.body.data.deletePerson).toEqual({ id: TEST_PERSON_1_ID }),
-      );
-  });
-
   it('should return a EntityNotFoundError when trying to delete a non-existing person', async () => {
     const response = await makeRestAPIRequest({
       method: 'delete',

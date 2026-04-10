@@ -61,6 +61,7 @@ export type { ConfirmationModalCaller } from './ConfirmationModalCaller';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export { CoreObjectNameSingular } from './CoreObjectNameSingular';
 export { CrudOperationType } from './CrudOperationType';
+export type { EmailAttachment } from './EmailAttachment';
 export type {
   SnackBarVariant,
   EnqueueSnackbarParams,

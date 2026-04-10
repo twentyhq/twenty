@@ -6,7 +6,6 @@ import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/ed
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
-import { parseThemeColor } from '@/navigation-menu-item/common/utils/parseThemeColor';
 import { useSelectedNavigationMenuItemEditItemLabel } from '@/navigation-menu-item/edit/hooks/useSelectedNavigationMenuItemEditItemLabel';
 import { useUpdateLinkInDraft } from '@/navigation-menu-item/edit/link/hooks/useUpdateLinkInDraft';
 import { SidePanelEditColorOption } from '@/navigation-menu-item/edit/side-panel/components/SidePanelEditColorOption';
@@ -28,6 +27,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { parseThemeColor } from 'twenty-ui/utilities';
 
 const ADD_ITEM_TO_FOLDER_ACTION_ID = 'add-item-to-folder';
 
@@ -162,7 +162,6 @@ export const SidePanelNavigationMenuItemEditPage = () => {
     case NavigationMenuItemType.FOLDER:
       return (
         <SidePanelList
-          commandGroups={[]}
           selectableItemIds={[
             ADD_ITEM_TO_FOLDER_ACTION_ID,
             ...getOrganizeActionsSelectableItemIds(false),
@@ -203,7 +202,6 @@ export const SidePanelNavigationMenuItemEditPage = () => {
     default:
       return (
         <SidePanelList
-          commandGroups={[]}
           selectableItemIds={getOrganizeActionsSelectableItemIds(
             canMoveToOtherFolder,
           )}

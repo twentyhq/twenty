@@ -1,5 +1,10 @@
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import {
+  type KeyboardEvent,
+  type MouseEvent,
+  type PointerEvent,
+  type ReactNode,
+} from 'react';
 
 import { VISUAL_TOKENS } from './homeVisualTokens';
 
@@ -18,6 +23,7 @@ export type ChipProps = {
   leftComponent?: ReactNode | null;
   className?: string;
   maxWidth?: number;
+  onClick?: () => void;
   variant?: ChipVariant;
 };
 
@@ -126,15 +132,51 @@ export const Chip = ({
   leftComponent = null,
   className,
   maxWidth,
+  onClick,
   variant = ChipVariant.Regular,
 }: ChipProps) => {
+  const isInteractive = clickable || onClick !== undefined;
+
+  const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    if (!isInteractive) {
+      return;
+    }
+
+    event.stopPropagation();
+  };
+
+  const handleClick = (event: MouseEvent<HTMLDivElement>) => {
+    if (!isInteractive) {
+      return;
+    }
+
+    event.stopPropagation();
+    onClick?.();
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!onClick) {
+      return;
+    }
+
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onClick();
+    }
+  };
+
   return (
     <StyledContainer
-      clickable={clickable}
+      clickable={isInteractive}
       isBold={isBold}
       variant={variant}
       className={className}
       maxWidth={maxWidth}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      onPointerDown={handlePointerDown}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
     >
       {leftComponent}
       <StyledLabel>{label}</StyledLabel>

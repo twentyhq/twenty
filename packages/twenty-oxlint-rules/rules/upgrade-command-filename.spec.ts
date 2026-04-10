@@ -38,6 +38,12 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: DUMMY_CODE,
+      filename: filename(
+        '1-22/1-22-instance-command-slow-1775758621018-backfill-workspace-id.ts',
+      ),
+    },
+    {
+      code: DUMMY_CODE,
       filename: filename('1-21/1-21-upgrade-version-command.module.ts'),
     },
     {
@@ -75,7 +81,7 @@ ruleTester.run(RULE_NAME, rule, {
       filename: filename(
         '1-21/1-21-instance-command-fast-add-column.ts',
       ),
-      errors: [{ messageId: 'invalidInstanceCommandFilename' }],
+      errors: [{ messageId: 'invalidInstanceCommandFastFilename' }],
     },
     {
       code: DUMMY_CODE,

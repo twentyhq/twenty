@@ -20,14 +20,14 @@ export const computeStandardConnectedAccountViewFieldGroups = (
           isVisible: true,
         },
       }),
-    connectedAccountRecordPageFieldsOther:
+    connectedAccountRecordPageFieldsSystem:
       createStandardViewFieldGroupFlatMetadata({
         ...args,
         objectName: 'connectedAccount',
         context: {
           viewName: 'connectedAccountRecordPageFields',
-          viewFieldGroupName: 'other',
-          name: 'Other',
+          viewFieldGroupName: 'system',
+          name: 'System',
           position: 1,
           isVisible: true,
         },

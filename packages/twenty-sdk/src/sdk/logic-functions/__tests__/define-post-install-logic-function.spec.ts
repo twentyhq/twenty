@@ -1,7 +1,7 @@
 import { definePostInstallLogicFunction } from '@/sdk/logic-functions/define-post-install-logic-function';
-import { type InstallLogicFunctionPayload } from '@/sdk/logic-functions/install-logic-function-payload-type';
+import { type InstallPayload } from '@/sdk/logic-functions/install-payload-type';
 
-const mockHandler = async (payload: InstallLogicFunctionPayload) => ({
+const mockHandler = async (payload: InstallPayload) => ({
   success: true,
   previousVersion: payload.previousVersion,
 });
@@ -24,12 +24,14 @@ describe('definePostInstallLogicFunction', () => {
       ...validRouteConfig,
       description: 'Send a postcard to a contact',
       timeoutSeconds: 30,
+      shouldRunOnVersionUpgrade: true,
     };
 
     const result = definePostInstallLogicFunction(config as any);
 
     expect(result.config.description).toBe('Send a postcard to a contact');
     expect(result.config.timeoutSeconds).toBe(30);
+    expect(result.config.shouldRunOnVersionUpgrade).toBe(true);
   });
 
   it('should return error when universalIdentifier is missing', () => {

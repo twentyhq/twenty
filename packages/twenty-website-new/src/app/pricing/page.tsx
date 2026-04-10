@@ -32,7 +32,7 @@ export default async function PricingPage() {
   return (
     <>
       <Menu.Root
-        backgroundColor={theme.colors.secondary.background[5]}
+        backgroundColor="#F3F3F3"
         scheme="primary"
         navItems={MENU_DATA.navItems}
         socialLinks={menuSocialLinks}

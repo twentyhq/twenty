@@ -4,9 +4,12 @@ import { Injectable } from '@nestjs/common';
 
 import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 
+export type InstanceCommandType = 'fast' | 'slow';
+
 export type RegisteredInstanceCommandMetadata = {
   version: UpgradeCommandVersion;
   timestamp: number;
+  type: InstanceCommandType;
 };
 
 const REGISTERED_INSTANCE_COMMAND_KEY = 'REGISTERED_INSTANCE_COMMAND';
@@ -15,12 +18,16 @@ const REGISTERED_INSTANCE_COMMAND_KEY = 'REGISTERED_INSTANCE_COMMAND';
 // remove the @RegisteredInstanceCommand decorator from its associated
 // command files.
 export const RegisteredInstanceCommand =
-  (version: UpgradeCommandVersion, timestamp: number): ClassDecorator =>
+  (
+    version: UpgradeCommandVersion,
+    timestamp: number,
+    options?: { type: 'slow' },
+  ): ClassDecorator =>
   (target) => {
     Injectable()(target);
     Reflect.defineMetadata(
       REGISTERED_INSTANCE_COMMAND_KEY,
-      { version, timestamp },
+      { version, timestamp, type: options?.type ?? 'fast' },
       target,
     );
   };

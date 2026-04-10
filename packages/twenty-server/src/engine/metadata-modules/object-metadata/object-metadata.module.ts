@@ -13,7 +13,6 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
@@ -50,7 +49,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
         ]),
         TypeOrmModule.forFeature([FeatureFlagEntity, ViewEntity]),
         ApplicationModule,
-        DataSourceModule,
         WorkspaceMetadataVersionModule,
         IndexMetadataModule,
         PermissionsModule,

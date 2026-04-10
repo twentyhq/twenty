@@ -86,6 +86,7 @@ export const SidePanelRecordPageFieldsSettings = () => {
     'new-field-default-visibility',
     'display-more-fields-button',
     'action-button',
+    WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT,
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.REPLACE_WIDGET,
     WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.DELETE_WIDGET,
@@ -95,7 +96,7 @@ export const SidePanelRecordPageFieldsSettings = () => {
   return (
     <StyledContainer>
       <StyledSidePanelContainer>
-        <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
+        <SidePanelList selectableItemIds={selectableItemIds}>
           <SidePanelGroup heading={t`Data and display`}>
             <SelectableListItem
               itemId="layout"

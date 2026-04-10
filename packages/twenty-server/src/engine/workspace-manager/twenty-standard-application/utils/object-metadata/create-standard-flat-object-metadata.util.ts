@@ -270,62 +270,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
-  favorite: ({
-    now,
-    workspaceId,
-    standardObjectMetadataRelatedEntityIds,
-    twentyStandardApplicationId,
-    dependencyFlatEntityMaps,
-  }: Omit<CreateStandardObjectArgs<'favorite'>, 'context' | 'objectName'>) =>
-    createStandardObjectFlatMetadata({
-      objectName: 'favorite',
-      dependencyFlatEntityMaps,
-      context: {
-        universalIdentifier: STANDARD_OBJECTS.favorite.universalIdentifier,
-        nameSingular: 'favorite',
-        namePlural: 'favorites',
-        labelSingular: i18nLabel(msg`Favorite`),
-        labelPlural: i18nLabel(msg`Favorites`),
-        description: i18nLabel(msg`A favorite`),
-        icon: 'IconHeart',
-        isSystem: true,
-        labelIdentifierFieldMetadataName: 'id',
-      },
-      workspaceId,
-      standardObjectMetadataRelatedEntityIds,
-      twentyStandardApplicationId,
-      now,
-    }),
-  favoriteFolder: ({
-    now,
-    workspaceId,
-    standardObjectMetadataRelatedEntityIds,
-    twentyStandardApplicationId,
-    dependencyFlatEntityMaps,
-  }: Omit<
-    CreateStandardObjectArgs<'favoriteFolder'>,
-    'context' | 'objectName'
-  >) =>
-    createStandardObjectFlatMetadata({
-      objectName: 'favoriteFolder',
-      dependencyFlatEntityMaps,
-      context: {
-        universalIdentifier:
-          STANDARD_OBJECTS.favoriteFolder.universalIdentifier,
-        nameSingular: 'favoriteFolder',
-        namePlural: 'favoriteFolders',
-        labelSingular: i18nLabel(msg`Favorite Folder`),
-        labelPlural: i18nLabel(msg`Favorite Folders`),
-        description: i18nLabel(msg`A favorite folder`),
-        icon: 'IconFolder',
-        isSystem: true,
-        labelIdentifierFieldMetadataName: 'id',
-      },
-      workspaceId,
-      standardObjectMetadataRelatedEntityIds,
-      twentyStandardApplicationId,
-      now,
-    }),
   messageChannelMessageAssociation: ({
     now,
     workspaceId,

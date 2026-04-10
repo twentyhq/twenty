@@ -921,10 +921,17 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: 'pageLayoutTabUniversalIdentifier',
+      isOverridable: true,
     },
     conditionalDisplay: {
       toCompare: true,
       toStringify: true,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
+    conditionalAvailabilityExpression: {
+      toCompare: true,
+      toStringify: false,
       universalProperty: undefined,
       isOverridable: true,
     },
@@ -937,7 +944,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     overrides: {
       toCompare: true,
       toStringify: true,
-      universalProperty: undefined,
+      universalProperty: 'universalOverrides',
     },
   },
   pageLayoutTab: {

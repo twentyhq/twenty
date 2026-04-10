@@ -1,9 +1,10 @@
-import { Body, Heading, IconButton } from '@/design-system/components';
-import { ArrowRightIcon } from '@/icons';
+'use client';
+
+import { Body, Heading } from '@/design-system/components';
+import { THREE_CARDS_ILLUSTRATIONS } from '@/illustrations';
 import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import { IllustrationCardVisual } from './IllustrationCardVisual';
 import { ThreeCardsCardShape } from './CardShape';
 
 const IllustrationCardContainer = styled.div`
@@ -38,10 +39,9 @@ const CardEmbed = styled.div`
 `;
 
 const CardFooter = styled.footer`
-  display: grid;
-  grid-template-columns: auto auto auto 1fr;
-  align-items: start;
-  column-gap: ${theme.spacing(2)};
+  display: flex;
+  align-items: center;
+  gap: ${theme.spacing(2)};
 `;
 
 const AttributionPipe = styled.span`
@@ -49,10 +49,6 @@ const AttributionPipe = styled.span`
   width: 0;
   height: 21px;
   border-left: 1px solid ${theme.colors.primary.border[20]};
-`;
-
-const FooterTrailingAction = styled.div`
-  justify-self: end;
 `;
 
 const CardBodyCell = styled.div`
@@ -70,6 +66,9 @@ export function IllustrationCard({
   illustrationCard,
   variant = 'shaped',
 }: IllustrationCardProps) {
+  const ThreeCardsIllustration =
+    THREE_CARDS_ILLUSTRATIONS[illustrationCard.illustration];
+
   return (
     <IllustrationCardContainer>
       {variant === 'shaped' && (
@@ -86,10 +85,7 @@ export function IllustrationCard({
       />
       <CardRule />
       <CardEmbed>
-        <IllustrationCardVisual
-          src={illustrationCard.illustration.src}
-          title={illustrationCard.illustration.title}
-        />
+        <ThreeCardsIllustration />
       </CardEmbed>
       <CardRule />
       <CardBodyCell>
@@ -109,17 +105,6 @@ export function IllustrationCard({
             size="xs"
             weight="regular"
           />
-          <FooterTrailingAction>
-            <IconButton
-              icon={ArrowRightIcon}
-              ariaLabel="Learn more"
-              borderColor={theme.colors.primary.border[20]}
-              iconFillColor="transparent"
-              iconSize={24}
-              iconStrokeColor={theme.colors.primary.text[80]}
-              size={48}
-            />
-          </FooterTrailingAction>
         </CardFooter>
       )}
     </IllustrationCardContainer>
