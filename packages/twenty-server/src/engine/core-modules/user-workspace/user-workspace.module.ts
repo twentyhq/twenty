@@ -4,6 +4,7 @@ import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
@@ -53,6 +54,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
         OnboardingModule,
         EnterpriseModule,
         FeatureFlagModule,
+        CoreEntityCacheModule,
       ],
       services: [UserWorkspaceService],
     }),

@@ -1,15 +1,17 @@
+import gql from 'graphql-tag';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
 import { makeGraphqlAPIRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const WORKSPACE_MEMBER_GQL_FIELDS = `
@@ -121,7 +123,7 @@ describe('workspace members permissions', () => {
     });
   });
 
-  it('should allow update when user is updating themself (member role)', async () => {
+  it('should deny updateOne on /graphql when member updates themself', async () => {
     const graphqlOperation = updateOneOperationFactory({
       objectMetadataSingularName: 'workspaceMember',
       gqlFields: WORKSPACE_MEMBER_GQL_FIELDS,
@@ -129,32 +131,6 @@ describe('workspace members permissions', () => {
       data: {
         name: {
           firstName: 'Jony',
-        },
-      },
-    });
-
-    const response =
-      await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
-
-    expect(response.body.errors).not.toBeDefined();
-    expect(response.body.data).toStrictEqual({
-      updateWorkspaceMember: {
-        id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-        name: {
-          firstName: 'Jony',
-        },
-      },
-    });
-    expect(response.body.errors).toBeUndefined();
-  });
-  it('should throw when user does not have permission (member role)', async () => {
-    const graphqlOperation = updateOneOperationFactory({
-      objectMetadataSingularName: 'workspaceMember',
-      gqlFields: WORKSPACE_MEMBER_GQL_FIELDS,
-      recordId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-      data: {
-        name: {
-          firstName: 'Not Tim',
         },
       },
     });
@@ -170,7 +146,7 @@ describe('workspace members permissions', () => {
     expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
   });
 
-  it('should allow update on custom field for another workspace member (member role)', async () => {
+  it('should deny update on custom field for another workspace member on /graphql (member role)', async () => {
     const customFieldValue = 'Ile-de-france';
     const graphqlOperation = updateOneOperationFactory({
       objectMetadataSingularName: 'workspaceMember',
@@ -187,38 +163,12 @@ describe('workspace members permissions', () => {
     const response =
       await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data).toStrictEqual({
-      updateWorkspaceMember: {
-        id: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-        [customFieldName]: customFieldValue,
-      },
-    });
-  });
-
-  it('should allow update on custom relation join column for another workspace member (member role)', async () => {
-    const graphqlOperation = updateOneOperationFactory({
-      objectMetadataSingularName: 'workspaceMember',
-      gqlFields: `
-        id
-        ${customRelationJoinColumnName}
-      `,
-      recordId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-      data: {
-        [customRelationJoinColumnName]: COMPANY_DATA_SEED_IDS.ID_1,
-      },
-    });
-
-    const response =
-      await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
-
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data).toStrictEqual({
-      updateWorkspaceMember: {
-        id: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-        [customRelationJoinColumnName]: COMPANY_DATA_SEED_IDS.ID_1,
-      },
-    });
+    expect(response.body.data).toStrictEqual({ updateWorkspaceMember: null });
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].message).toBe(
+      PermissionsExceptionMessage.PERMISSION_DENIED,
+    );
+    expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
   });
 
   it('should throw when member updates a standard field for another workspace member', async () => {
@@ -259,6 +209,176 @@ describe('workspace members permissions', () => {
       PermissionsExceptionMessage.PERMISSION_DENIED,
     );
     expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+  });
+
+  it('should allow self update through dedicated metadata mutation', async () => {
+    const operation = {
+      query: gql`
+        mutation UpdateWorkspaceMemberSettings(
+          $input: UpdateWorkspaceMemberSettingsInput!
+        ) {
+          updateWorkspaceMemberSettings(input: $input)
+        }
+      `,
+      variables: {
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          update: {
+            timeZone: 'Europe/Paris',
+          },
+        },
+      },
+    };
+
+    const response = await makeMetadataAPIRequestWithMemberRole(operation);
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.updateWorkspaceMemberSettings).toBe(true);
+  });
+
+  it('should deny updating another workspace member through dedicated metadata mutation (member role - no workspace member settings permission)', async () => {
+    const operation = {
+      query: gql`
+        mutation UpdateWorkspaceMemberSettings(
+          $input: UpdateWorkspaceMemberSettingsInput!
+        ) {
+          updateWorkspaceMemberSettings(input: $input)
+        }
+      `,
+      variables: {
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+          update: {
+            timeZone: 'Europe/Paris',
+          },
+        },
+      },
+    };
+
+    const response = await makeMetadataAPIRequestWithMemberRole(operation);
+
+    expect(response.body.data).toBeNull();
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].message).toBe(
+      PermissionsExceptionMessage.PERMISSION_DENIED,
+    );
+    expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+  });
+
+  it('should allow updating another workspace member through dedicated metadata mutation for admin (has workspace member settings permission)', async () => {
+    const operation = {
+      query: gql`
+        mutation UpdateWorkspaceMemberSettings(
+          $input: UpdateWorkspaceMemberSettingsInput!
+        ) {
+          updateWorkspaceMemberSettings(input: $input)
+        }
+      `,
+      variables: {
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+          update: {
+            timeZone: 'Europe/London',
+          },
+        },
+      },
+    };
+
+    const response = await makeMetadataAPIRequest(operation);
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.updateWorkspaceMemberSettings).toBe(true);
+  });
+
+  it('should reject custom field updates through dedicated metadata mutation', async () => {
+    const operation = {
+      query: gql`
+        mutation UpdateWorkspaceMemberSettings(
+          $input: UpdateWorkspaceMemberSettingsInput!
+        ) {
+          updateWorkspaceMemberSettings(input: $input)
+        }
+      `,
+      variables: {
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          update: {
+            [customFieldName]: 'custom-value',
+          },
+        },
+      },
+    };
+
+    const response = await makeMetadataAPIRequestWithMemberRole(operation);
+
+    expect(response.body.data).toBeNull();
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].message).toBe(
+      `Cannot update custom workspaceMember field via this endpoint: ${customFieldName}`,
+    );
+    expect(response.body.errors[0].extensions.code).toBe(
+      ErrorCode.BAD_USER_INPUT,
+    );
+  });
+
+  it('should reject custom relation join column updates through dedicated metadata mutation', async () => {
+    const operation = {
+      query: gql`
+        mutation UpdateWorkspaceMemberSettings(
+          $input: UpdateWorkspaceMemberSettingsInput!
+        ) {
+          updateWorkspaceMemberSettings(input: $input)
+        }
+      `,
+      variables: {
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          update: {
+            [customRelationJoinColumnName]: null,
+          },
+        },
+      },
+    };
+
+    const response = await makeMetadataAPIRequestWithMemberRole(operation);
+
+    expect(response.body.data).toBeNull();
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].message).toBe(
+      `Cannot update custom workspaceMember field via this endpoint: ${customRelationJoinColumnName}`,
+    );
+    expect(response.body.errors[0].extensions.code).toBe(
+      ErrorCode.BAD_USER_INPUT,
+    );
+  });
+
+  it('should reject empty update payload through dedicated metadata mutation', async () => {
+    const operation = {
+      query: gql`
+        mutation UpdateWorkspaceMemberSettings(
+          $input: UpdateWorkspaceMemberSettingsInput!
+        ) {
+          updateWorkspaceMemberSettings(input: $input)
+        }
+      `,
+      variables: {
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          update: {},
+        },
+      },
+    };
+
+    const response = await makeMetadataAPIRequestWithMemberRole(operation);
+
+    expect(response.body.data).toBeNull();
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].message).toBe(
+      'Update payload cannot be empty',
+    );
+    expect(response.body.errors[0].extensions.code).toBe(
+      ErrorCode.BAD_USER_INPUT,
+    );
   });
 
   it('should throw when calling deleteOne ', async () => {

@@ -7,6 +7,7 @@ import { FileFolder } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
 
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
 import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -62,8 +63,50 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly fileCorePictureService: FileCorePictureService,
     private readonly fileUrlService: FileUrlService,
     private readonly onboardingService: OnboardingService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {
     super(userWorkspaceRepository);
+  }
+
+  async syncUserWorkspaceLocale({
+    locale,
+    userWorkspaceId,
+    throwIfUserWorkspaceMissing = false,
+  }: {
+    locale: UserWorkspaceEntity['locale'] | undefined;
+    userWorkspaceId: string | undefined;
+    throwIfUserWorkspaceMissing?: boolean;
+  }): Promise<void> {
+    if (!isDefined(locale) || !isDefined(userWorkspaceId)) {
+      return;
+    }
+
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: {
+        id: userWorkspaceId,
+      },
+    });
+
+    if (!isDefined(userWorkspace)) {
+      if (throwIfUserWorkspaceMissing) {
+        throw new AuthException(
+          'User workspace not found',
+          AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+        );
+      }
+
+      return;
+    }
+
+    await this.userWorkspaceRepository.save({
+      ...userWorkspace,
+      locale,
+    });
+
+    await this.coreEntityCacheService.invalidate(
+      'userWorkspaceEntity',
+      userWorkspaceId,
+    );
   }
 
   async create(
