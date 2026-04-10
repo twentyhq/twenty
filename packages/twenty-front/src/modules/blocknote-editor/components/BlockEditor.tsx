@@ -25,6 +25,7 @@ interface BlockEditorProps {
 
 // oxlint-disable-next-line twenty/no-hardcoded-colors
 const StyledEditor = styled.div`
+  container-type: inline-size;
   width: 100%;
 
   & .editor {
@@ -129,6 +130,10 @@ const StyledEditor = styled.div`
     font-family: monospace;
     font-size: 0.9rem;
     padding: 2px 4px;
+  }
+
+  & .bn-mantine .bn-panel {
+    width: 100cqi;
   }
 `;
 
