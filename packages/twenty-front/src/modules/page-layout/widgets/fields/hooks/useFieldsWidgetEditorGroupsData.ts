@@ -199,7 +199,17 @@ export const useFieldsWidgetEditorGroupsData = ({
       }
     }
 
-    return { groups: [], ungroupedFields: [], editorMode: 'ungrouped' };
+    const allEligibleFields = buildMissingFields({
+      existingFieldMetadataIds: new Set<string>(),
+      startGlobalIndex: 0,
+      startPosition: 0,
+    });
+
+    return {
+      groups: [],
+      ungroupedFields: allEligibleFields,
+      editorMode: 'ungrouped',
+    };
   }, [objectMetadataItem, view, labelIdentifierFieldMetadataItem]);
 
   return {
