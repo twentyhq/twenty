@@ -253,7 +253,7 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
   ];
 
   return (
-    <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
+    <SidePanelList selectableItemIds={selectableItemIds}>
       <SidePanelGroup heading={t`Widget type`}>
         <SelectableListItem
           itemId="chart"

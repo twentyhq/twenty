@@ -126,14 +126,6 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
         primaryEmail
         additionalEmails
       }
-      favorites {
-        edges {
-          node {
-            __typename
-            id
-          }
-        }
-      }
       id
       intro
       jobTitle

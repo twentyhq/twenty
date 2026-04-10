@@ -1,18 +1,23 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar, IconLink, IconWorld, useIcons } from 'twenty-ui/display';
+import {
+  Avatar,
+  IconLink,
+  IconWorld,
+  StyledTintedIconTileContainer,
+  getIconTileColorShades,
+  useIcons,
+} from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/display/link/components/LinkIconWithLinkOverlay';
-import { StyledNavigationMenuItemIconContainer } from '@/navigation-menu-item/display/components/NavigationMenuItemIconContainer';
-import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
-import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
-import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemIconStyleFromColor';
-import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
-import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/common/utils/recordIdentifierToObjectRecordIdentifier';
+import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/display/link/components/LinkIconWithLinkOverlay';
+import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
+import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
+import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
+import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -98,7 +103,7 @@ export const NavigationMenuItemIcon = ({
   );
   const useStyledIcon = !isRecord;
   const iconStyle = useStyledIcon
-    ? getNavigationMenuItemIconStyleFromColor(effectiveColor)
+    ? getIconTileColorShades(effectiveColor)
     : null;
 
   const iconColorToUse = iconStyle
@@ -140,11 +145,11 @@ export const NavigationMenuItemIcon = ({
   }
 
   return (
-    <StyledNavigationMenuItemIconContainer
+    <StyledTintedIconTileContainer
       $backgroundColor={iconStyle.backgroundColor}
       $borderColor={iconStyle.borderColor}
     >
       {avatar}
-    </StyledNavigationMenuItemIconContainer>
+    </StyledTintedIconTileContainer>
   );
 };

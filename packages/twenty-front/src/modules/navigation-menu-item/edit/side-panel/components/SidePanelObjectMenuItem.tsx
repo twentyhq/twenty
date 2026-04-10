@@ -1,9 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
-
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataFromDraft';
@@ -30,7 +28,6 @@ export const SidePanelObjectMenuItem = ({
   disableDrag = false,
 }: SidePanelObjectMenuItemProps) => {
   const { t } = useLingui();
-  const { getIcon } = useIcons();
   const { currentDraft } = useDraftNavigationMenuItems();
   const { objectMetadataIdsInWorkspace } =
     useNavigationMenuObjectMetadataFromDraft(currentDraft);
@@ -41,7 +38,6 @@ export const SidePanelObjectMenuItem = ({
     indexViewIdFromObjectMetadataItemFamilySelector,
     { objectMetadataItemId: objectMetadataItem.id },
   );
-  const Icon = getIcon(objectMetadataItem.icon);
   const iconColor = getObjectColorWithFallback(objectMetadataItem);
   const isDisabled = isAlreadyInNavbar || !isDefined(defaultViewId);
 
@@ -53,7 +49,7 @@ export const SidePanelObjectMenuItem = ({
   };
 
   const styledIcon = () => (
-    <NavigationMenuItemStyleIcon Icon={Icon} color={iconColor} />
+    <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
   );
 
   return (
