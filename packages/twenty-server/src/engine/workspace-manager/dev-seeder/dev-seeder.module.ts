@@ -9,7 +9,6 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -37,7 +36,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceDataSourceModule,
     WorkspaceCacheStorageModule,
     TypeORMModule,
-    DataSourceModule,
     RoleModule,
     RoleTargetModule,
     UserRoleModule,
