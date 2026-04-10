@@ -934,7 +934,9 @@ export class LambdaDriver implements LogicFunctionDriver {
       applicationUniversalIdentifier,
     };
 
-    if (await this.canSkipLambdaExecutorBuild(buildArgs)) {
+    const { canSkip } = await this.checkLambdaExecutorBuildStatus(buildArgs);
+
+    if (canSkip) {
       return;
     }
 
@@ -944,11 +946,14 @@ export class LambdaDriver implements LogicFunctionDriver {
 
     await this.cacheLockService.withLock(
       async () => {
-        if (await this.canSkipLambdaExecutorBuild(buildArgs)) {
+        const { canSkip, lambdaExecutor } =
+          await this.checkLambdaExecutorBuildStatus(buildArgs);
+
+        if (canSkip) {
           return;
         }
 
-        await this.ensureLambdaExecutor(buildArgs);
+        await this.ensureLambdaExecutor({ ...buildArgs, lambdaExecutor });
       },
       `lambda-build:${flatLogicFunction.id}`,
       {
@@ -959,7 +964,7 @@ export class LambdaDriver implements LogicFunctionDriver {
     );
   }
 
-  private async canSkipLambdaExecutorBuild({
+  private async checkLambdaExecutorBuildStatus({
     flatLogicFunction,
     flatApplication,
     applicationUniversalIdentifier,
@@ -967,31 +972,35 @@ export class LambdaDriver implements LogicFunctionDriver {
     flatLogicFunction: FlatLogicFunction;
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
-  }): Promise<boolean> {
+  }): Promise<{
+    canSkip: boolean;
+    lambdaExecutor: GetFunctionCommandOutput | undefined;
+  }> {
     const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
 
-    return (
+    const canSkip =
       isDefined(lambdaExecutor) &&
       !flatApplication.isSdkLayerStale &&
       this.hasExpectedLayers({
         lambdaExecutor,
         flatApplication,
         applicationUniversalIdentifier,
-      })
-    );
+      });
+
+    return { canSkip, lambdaExecutor };
   }
 
   private async ensureLambdaExecutor({
     flatLogicFunction,
     flatApplication,
     applicationUniversalIdentifier,
+    lambdaExecutor,
   }: {
     flatLogicFunction: FlatLogicFunction;
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
+    lambdaExecutor: GetFunctionCommandOutput | undefined;
   }) {
-    const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
-
     const depsLayerArn = await this.getLayerArn({
       flatApplication,
       applicationUniversalIdentifier,
