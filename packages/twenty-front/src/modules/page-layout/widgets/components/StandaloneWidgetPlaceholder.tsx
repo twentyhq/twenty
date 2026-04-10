@@ -1,8 +1,6 @@
-import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
-import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
-import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
-import { t } from '@lingui/core/macro';
+import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -12,26 +10,20 @@ import {
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
 
-export const StandaloneWidgetPlaceholder = () => {
-  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+const StyledPlaceholderContainer = styled.div`
+  background: ${themeCssVariables.background.secondary};
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: ${themeCssVariables.spacing[2]};
+  position: relative;
+  width: 100%;
+`;
 
+export const StandaloneWidgetPlaceholder = () => {
   return (
-    <WidgetCard
-      variant="standalone"
-      isEditable={false}
-      isEditing={false}
-      isDragging={false}
-      isResizing={false}
-      className="widget"
-    >
-      <WidgetCardHeader
-        variant="standalone"
-        widgetId="widget-placeholder"
-        isInEditMode={isPageLayoutInEditMode}
-        isResizing={false}
-        title={t`Add Widget`}
-        isEmpty
-      />
+    <StyledPlaceholderContainer className="widget">
       <AnimatedPlaceholderEmptyContainer
         // oxlint-disable-next-line react/jsx-props-no-spreading
         {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
@@ -46,6 +38,6 @@ export const StandaloneWidgetPlaceholder = () => {
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
       </AnimatedPlaceholderEmptyContainer>
-    </WidgetCard>
+    </StyledPlaceholderContainer>
   );
 };
