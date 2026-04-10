@@ -221,10 +221,10 @@ export class GraphqlQueryFilterFieldParser {
 
       if (!Array.isArray(recordIds) || recordIds.length === 0) return;
 
-      sql = `EXISTS (SELECT 1 FROM "${schemaName}"."${junctionTableName}" "${alias}" WHERE "${alias}"."${sourceColumnName}" = "${objectNameSingular}"."id" AND "${alias}"."${targetColumnName}" IN (:...${paramSuffix}))`;
+      sql = `EXISTS (SELECT 1 FROM "${schemaName}"."${junctionTableName}" "${alias}" WHERE "${alias}"."${sourceColumnName}" = "${objectNameSingular}"."id" AND "${alias}"."${targetColumnName}" IN (:...${paramSuffix}) AND "${alias}"."deletedAt" IS NULL)`;
       params = { [paramSuffix]: recordIds };
     } else {
-      sql = `NOT EXISTS (SELECT 1 FROM "${schemaName}"."${junctionTableName}" "${alias}" WHERE "${alias}"."${sourceColumnName}" = "${objectNameSingular}"."id")`;
+      sql = `NOT EXISTS (SELECT 1 FROM "${schemaName}"."${junctionTableName}" "${alias}" WHERE "${alias}"."${sourceColumnName}" = "${objectNameSingular}"."id" AND "${alias}"."deletedAt" IS NULL)`;
     }
 
     if (isFirst) {
