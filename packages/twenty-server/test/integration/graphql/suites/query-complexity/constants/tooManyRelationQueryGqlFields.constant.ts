@@ -75,4 +75,17 @@ export const TOO_MANY_RELATION_QUERY_GQL_FIELDS = `
         }
       }
     }
+    attachments {
+      edges {
+        node {
+          id
+          person {
+            id
+            company {
+              id
+            }
+          }
+        }
+      }
+    }
 `;

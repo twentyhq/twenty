@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`generateDepthRecordGqlFieldsFromRecord should generate depth one record gql fields from empty record 1`] = `
 {
@@ -13,7 +13,6 @@ exports[`generateDepthRecordGqlFieldsFromRecord should generate depth one record
   "deletedAt": false,
   "domainName": false,
   "employees": false,
-  "favorites": false,
   "id": false,
   "idealCustomerProfile": false,
   "introVideo": false,
@@ -49,7 +48,6 @@ exports[`generateDepthRecordGqlFieldsFromRecord should generate depth one record
   "deletedAt": false,
   "domainName": true,
   "employees": false,
-  "favorites": false,
   "id": true,
   "idealCustomerProfile": false,
   "introVideo": false,

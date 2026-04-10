@@ -142,5 +142,19 @@ export const TOO_MANY_ROOT_RESOLVERS_QUERY_GQL_FIELDS = gql`
         }
       }
     }
+    workflows {
+      edges {
+        node {
+          id
+        }
+      }
+    }
+    dashboards {
+      edges {
+        node {
+          id
+        }
+      }
+    }
   }
 `;
