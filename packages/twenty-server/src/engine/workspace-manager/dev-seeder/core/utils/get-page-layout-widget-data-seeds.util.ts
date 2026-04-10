@@ -521,6 +521,34 @@ export const getPageLayoutWidgetDataSeeds = (
       objectMetadataId: null,
       overrides: null,
     } satisfies SeederFlatPageLayoutWidget,
+
+    // Documentation Standalone Page - Full-page iframe
+    {
+      id: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_WIDGET_SEEDS.DOCUMENTATION_IFRAME,
+      ),
+      pageLayoutTabId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_TAB_SEEDS.DOCUMENTATION,
+      ),
+      title: 'Twenty Documentation',
+      type: WidgetType.IFRAME,
+      gridPosition: { row: 0, column: 0, rowSpan: 12, columnSpan: 12 },
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 0,
+        column: 0,
+        rowSpan: 12,
+        columnSpan: 12,
+      },
+      configuration: {
+        configurationType: WidgetConfigurationType.IFRAME,
+        url: 'https://docs.twenty.com/user-guide/introduction',
+      },
+      objectMetadataId: null,
+      overrides: null,
+    } satisfies SeederFlatPageLayoutWidget,
   ].filter(isDefined);
 
   const v2Widgets = getPageLayoutWidgetDataSeedsV2(

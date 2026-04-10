@@ -45,4 +45,16 @@ export const getPageLayoutDataSeeds = (
     universalIdentifier: v4(),
     applicationId,
   },
+  {
+    id: generateSeedId(
+      workspaceId,
+      PAGE_LAYOUT_SEEDS.DOCUMENTATION_STANDALONE_PAGE,
+    ),
+    name: 'Documentation',
+    type: PageLayoutType.STANDALONE_PAGE,
+    objectMetadataId: null,
+    workspaceId,
+    universalIdentifier: v4(),
+    applicationId,
+  },
 ];

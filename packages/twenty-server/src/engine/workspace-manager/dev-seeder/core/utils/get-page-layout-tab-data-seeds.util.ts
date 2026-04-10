@@ -95,4 +95,17 @@ export const getPageLayoutTabDataSeeds = ({
     applicationId,
     overrides: null,
   },
+  {
+    id: generateSeedId(workspaceId, PAGE_LAYOUT_TAB_SEEDS.DOCUMENTATION),
+    title: 'Documentation',
+    position: 0,
+    pageLayoutId: generateSeedId(
+      workspaceId,
+      PAGE_LAYOUT_SEEDS.DOCUMENTATION_STANDALONE_PAGE,
+    ),
+    workspaceId,
+    universalIdentifier: v4(),
+    applicationId,
+    overrides: null,
+  },
 ];
