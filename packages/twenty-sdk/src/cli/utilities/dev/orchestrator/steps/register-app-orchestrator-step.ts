@@ -68,6 +68,14 @@ export class RegisterAppOrchestratorStep {
         message: `App registration created: ${input.manifest.application.displayName}`,
         status: 'success',
       },
+      {
+        message: `Client ID: ${applicationRegistration.oAuthClientId}`,
+        status: 'info',
+      },
+      {
+        message: 'Credentials saved to config.',
+        status: 'info',
+      },
     ]);
     this.notify();
   }
