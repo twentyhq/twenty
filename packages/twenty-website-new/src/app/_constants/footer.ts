@@ -50,16 +50,15 @@ export const FOOTER_DATA: FooterDataType = {
       ctas: [
         {
           color: 'secondary',
-          href: 'https://app.twenty.com/welcome',
+          kind: 'contactModal',
           label: 'Talk to us',
-          type: 'anchor',
           variant: 'contained',
         },
         {
           color: 'secondary',
           href: 'https://app.twenty.com/welcome',
+          kind: 'link',
           label: 'Get started',
-          type: 'anchor',
           variant: 'outlined',
         },
       ],

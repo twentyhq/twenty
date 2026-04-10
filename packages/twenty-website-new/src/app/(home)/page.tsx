@@ -7,6 +7,7 @@ import {
   THREE_CARDS_FEATURE_DATA,
   THREE_CARDS_ILLUSTRATION_DATA,
 } from '@/app/(home)/_constants';
+import { TalkToUsButton } from '@/app/components/ContactCalModal';
 import { FAQ_DATA, MENU_DATA, TRUSTED_BY_DATA } from '@/app/_constants';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
@@ -94,11 +95,9 @@ export default async function HomePage() {
             type="anchor"
             variant="contained"
           />
-          <LinkButton
+          <TalkToUsButton
             color="secondary"
-            href="https://app.twenty.com/welcome"
             label="Talk to us"
-            type="anchor"
             variant="outlined"
           />
         </Hero.Cta>
@@ -207,11 +206,9 @@ export default async function HomePage() {
               type="anchor"
               variant="contained"
             />
-            <LinkButton
+            <TalkToUsButton
               color="primary"
-              href="https://twenty.com/contact"
               label="Talk to us"
-              type="anchor"
               variant="outlined"
             />
           </Faq.Cta>

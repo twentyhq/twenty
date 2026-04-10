@@ -1,4 +1,5 @@
 import { FAQ_DATA, MENU_DATA } from '@/app/_constants';
+import { TalkToUsButton } from '@/app/components/ContactCalModal';
 import { ALL_CASE_STUDIES } from '@/app/case-studies/_constants';
 import { Eyebrow, LinkButton } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
@@ -82,11 +83,9 @@ export default async function CaseStudyPage({ params }: PageProps) {
               type="anchor"
               variant="contained"
             />
-            <LinkButton
+            <TalkToUsButton
               color="primary"
-              href="https://twenty.com/contact"
               label="Talk to us"
-              type="anchor"
               variant="outlined"
             />
           </Faq.Cta>
