@@ -1,21 +1,20 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { type CompositeFieldGroupByDefinition } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/types/composite-field-group-by-definition.type';
+import { isGroupByDateFieldDefinition } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/utils/is-group-by-date-field-definition.util';
+import { isRelationNestedFieldSupportedInGroupBy } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/utils/is-relation-nested-field-supported-in-group-by.util';
+import { validateSingleKeyForGroupByOrThrow } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/utils/validate-single-key-for-group-by-or-throw.util';
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { type CompositeFieldGroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/composite-field-group-by-definition.type';
-import { type DateFieldGroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/date-field-group-by-definition.type';
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { type GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
-import { isGroupByDateFieldDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field-definition.util';
-import { validateSingleKeyForGroupByOrThrow } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/validate-single-key-for-group-by-or-throw.util';
-import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { getGroupableSubFieldsForCompositeType } from 'src/engine/metadata-modules/field-metadata/utils/get-groupable-sub-fields-for-composite-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -33,21 +32,36 @@ const getNestedFieldMetadataDetails = ({
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }) => {
-  const nestedFieldGroupByDefinitions = fieldNames[fieldName] as
-    | Record<string, boolean>
-    | Record<string, CompositeFieldGroupByDefinition>
-    | Record<string, DateFieldGroupByDefinition>;
+  const nestedFieldGroupByDefinitions = fieldNames[fieldName];
 
-  if (!isDefined(fieldMetadata.relationTargetObjectMetadataId)) {
-    throw new UserInputError(
-      `Relation target object metadata id not found for field ${fieldMetadata.name}`,
+  if (!isPlainObject(nestedFieldGroupByDefinitions)) {
+    throw new CommonQueryRunnerException(
+      `Invalid groupBy definition for relation field "${fieldName}"`,
+      CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
   }
 
-  const targetObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+  if (!isDefined(fieldMetadata.relationTargetObjectMetadataId)) {
+    throw new CommonQueryRunnerException(
+      `Relation target object metadata id not found for field ${fieldMetadata.name}`,
+      CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+    );
+  }
+
+  const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: fieldMetadata.relationTargetObjectMetadataId,
     flatEntityMaps: flatObjectMetadataMaps,
   });
+
+  if (!isDefined(targetObjectMetadata)) {
+    throw new CommonQueryRunnerException(
+      `Target object metadata not found for relation field ${fieldMetadata.name}`,
+      CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+    );
+  }
 
   const nestedFieldNames = Object.keys(nestedFieldGroupByDefinitions);
 
@@ -70,16 +84,31 @@ const getNestedFieldMetadataDetails = ({
   });
 
   if (!isDefined(nestedFieldMetadata) || !isDefined(nestedFieldMetadataId)) {
-    throw new GraphqlQueryRunnerException(
+    throw new CommonQueryRunnerException(
       `Nested field "${nestedFieldName}" not found in target object "${targetObjectMetadata.nameSingular}"`,
-      GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND,
+      CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+    );
+  }
+
+  if (
+    !isRelationNestedFieldSupportedInGroupBy({
+      nestedFieldName,
+      nestedFieldMetadata,
+    })
+  ) {
+    throw new CommonQueryRunnerException(
+      `Nested field "${nestedFieldName}" is not supported in groupBy`,
+      CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
   }
 
   if (nestedFieldMetadata.type === FieldMetadataType.RELATION) {
-    throw new UserInputError(
+    throw new CommonQueryRunnerException(
       `Cannot group by a relation field of the relation field: "${nestedFieldName}" is a relation field of "${targetObjectMetadata.nameSingular}"`,
+      CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
   }
 
@@ -93,57 +122,59 @@ const getNestedFieldMetadataDetails = ({
   };
 };
 
-const handleNestedCompositeField = ({
+const validateAndTransformNestedCompositeFieldOrThrow = ({
   nestedFieldGroupByDefinition,
   nestedFieldName,
   fieldMetadata,
   nestedFieldMetadata,
   groupByFields,
 }: {
-  nestedFieldGroupByDefinition: CompositeFieldGroupByDefinition;
+  nestedFieldGroupByDefinition: unknown;
   nestedFieldName: string;
   fieldMetadata: FlatFieldMetadata;
   nestedFieldMetadata: FlatFieldMetadata;
   groupByFields: GroupByField[];
 }) => {
-  if (
-    typeof nestedFieldGroupByDefinition === 'object' &&
-    nestedFieldGroupByDefinition !== null
-  ) {
-    const compositeSubFields = Object.keys(
-      nestedFieldGroupByDefinition as Record<string, unknown>,
+  if (!isPlainObject(nestedFieldGroupByDefinition)) {
+    throw new CommonQueryRunnerException(
+      `Composite field "${nestedFieldName}" requires a subfield to be specified`,
+      CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
-
-    validateSingleKeyForGroupByOrThrow({
-      groupByKeys: compositeSubFields,
-      errorMessage:
-        'You cannot provide multiple composite subfields in one GroupByInput, split them into multiple GroupByInput',
-    });
-
-    const nestedSubFieldName = compositeSubFields[0];
-
-    if (
-      (nestedFieldGroupByDefinition as Record<string, boolean>)[
-        nestedSubFieldName
-      ] === true
-    ) {
-      groupByFields.push({
-        fieldMetadata,
-        nestedFieldMetadata,
-        nestedSubFieldName,
-      });
-
-      return;
-    }
   }
-  throw new GraphqlQueryRunnerException(
-    `Composite field "${nestedFieldName}" requires a subfield to be specified`,
-    GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-    { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+
+  const compositeSubFields = Object.keys(nestedFieldGroupByDefinition);
+
+  validateSingleKeyForGroupByOrThrow({
+    groupByKeys: compositeSubFields,
+    errorMessage:
+      'You cannot provide multiple composite subfields in one GroupByInput, split them into multiple GroupByInput',
+  });
+
+  const nestedSubFieldName = compositeSubFields[0];
+  const supportedCompositeSubFields = getGroupableSubFieldsForCompositeType(
+    nestedFieldMetadata.type,
   );
+
+  if (
+    !supportedCompositeSubFields?.includes(nestedSubFieldName) ||
+    nestedFieldGroupByDefinition[nestedSubFieldName] !== true
+  ) {
+    throw new CommonQueryRunnerException(
+      `Composite subfield "${nestedSubFieldName}" is not supported in groupBy for "${nestedFieldName}"`,
+      CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+    );
+  }
+
+  groupByFields.push({
+    fieldMetadata,
+    nestedFieldMetadata,
+    nestedSubFieldName,
+  });
 };
 
-export const parseGroupByRelationField = ({
+export const validateAndTransformRelationGroupByFieldOrThrow = ({
   fieldNames,
   fieldName,
   fieldMetadata,
@@ -167,7 +198,6 @@ export const parseGroupByRelationField = ({
       flatFieldMetadataMaps,
     });
 
-  // Handle date fields in nested relations
   if (
     (nestedFieldMetadata.type === FieldMetadataType.DATE ||
       nestedFieldMetadata.type === FieldMetadataType.DATE_TIME) &&
@@ -186,19 +216,18 @@ export const parseGroupByRelationField = ({
     return;
   }
 
-  // Handle composite fields in nested relations
   if (isCompositeFieldMetadataType(nestedFieldMetadata.type)) {
-    handleNestedCompositeField({
-      nestedFieldGroupByDefinition:
-        nestedFieldGroupByDefinition as CompositeFieldGroupByDefinition,
+    validateAndTransformNestedCompositeFieldOrThrow({
+      nestedFieldGroupByDefinition,
       nestedFieldName,
       fieldMetadata,
       nestedFieldMetadata,
       groupByFields,
     });
+
+    return;
   }
 
-  // Handle regular nested fields
   if (nestedFieldGroupByDefinition === true) {
     groupByFields.push({
       fieldMetadata,
@@ -207,4 +236,10 @@ export const parseGroupByRelationField = ({
 
     return;
   }
+
+  throw new CommonQueryRunnerException(
+    `Invalid groupBy definition for nested field "${fieldName}.${nestedFieldName}"`,
+    CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+    { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+  );
 };
