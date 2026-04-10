@@ -8,7 +8,7 @@ import { ApplicationRegistrationService } from 'src/engine/core-modules/applicat
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
+import { UpgradeTapeReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-tape-reader.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
@@ -42,7 +42,7 @@ export class DevSeederService {
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
-    private readonly upgradeCommandRegistryService: UpgradeCommandRegistryService,
+    private readonly upgradeTapeReaderService: UpgradeTapeReaderService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     @InjectRepository(WorkspaceEntity)
@@ -58,7 +58,7 @@ export class DevSeederService {
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 
     const lastWorkspaceCommand =
-      this.upgradeCommandRegistryService.getLastWorkspaceCommand();
+      this.upgradeTapeReaderService.getLastWorkspaceCommand();
 
     await seedCoreSchema({
       dataSource: this.coreDataSource,

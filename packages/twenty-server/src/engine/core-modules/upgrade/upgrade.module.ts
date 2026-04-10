@@ -5,7 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
 import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
-import { UpgradeRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-runner.service';
+import { UpgradeTapeReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-tape-reader.service';
+import { UpgradeTapeRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-tape-runner.service';
 import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
 import { UpgradeMigrationEntity } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -20,14 +21,16 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
     InstanceUpgradeService,
     WorkspaceUpgradeService,
     UpgradeCommandRegistryService,
-    UpgradeRunnerService,
+    UpgradeTapeReaderService,
+    UpgradeTapeRunnerService,
   ],
   exports: [
     UpgradeMigrationService,
     InstanceUpgradeService,
     WorkspaceUpgradeService,
     UpgradeCommandRegistryService,
-    UpgradeRunnerService,
+    UpgradeTapeReaderService,
+    UpgradeTapeRunnerService,
   ],
 })
 export class UpgradeModule {}

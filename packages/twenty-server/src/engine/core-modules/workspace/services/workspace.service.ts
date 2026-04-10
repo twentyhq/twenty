@@ -38,8 +38,8 @@ import {
   WorkspaceExceptionCode,
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
-import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
+import { UpgradeTapeReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-tape-reader.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { isModelAllowedByWorkspace } from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
@@ -129,7 +129,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     private readonly coreDataSource: DataSource,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly upgradeMigrationService: UpgradeMigrationService,
-    private readonly upgradeCommandRegistryService: UpgradeCommandRegistryService,
+    private readonly upgradeTapeReaderService: UpgradeTapeReaderService,
   ) {
     super(workspaceRepository);
   }
@@ -379,7 +379,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     workspaceId: string,
   ): Promise<void> {
     const lastWorkspaceCommand =
-      this.upgradeCommandRegistryService.getLastWorkspaceCommand();
+      this.upgradeTapeReaderService.getLastWorkspaceCommand();
 
     const executedByVersion =
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';

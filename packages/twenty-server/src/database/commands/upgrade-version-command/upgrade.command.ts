@@ -3,8 +3,8 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { CommandLogger } from 'src/database/commands/logger';
-import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
-import { UpgradeRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-runner.service';
+import { UpgradeTapeReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-tape-reader.service';
+import { UpgradeTapeRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-tape-runner.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 export type UpgradeCommandOptions = {
@@ -23,8 +23,8 @@ export class UpgradeCommand extends CommandRunner {
   protected logger: CommandLogger;
 
   constructor(
-    protected readonly upgradeCommandRegistryService: UpgradeCommandRegistryService,
-    protected readonly upgradeRunnerService: UpgradeRunnerService,
+    protected readonly upgradeTapeReaderService: UpgradeTapeReaderService,
+    protected readonly upgradeTapeRunnerService: UpgradeTapeRunnerService,
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     protected readonly workspaceVersionService: WorkspaceVersionService,
   ) {
@@ -109,7 +109,7 @@ export class UpgradeCommand extends CommandRunner {
     }
 
     try {
-      const tape = this.upgradeCommandRegistryService.getUpgradeTape();
+      const tape = this.upgradeTapeReaderService.getUpgradeTape();
 
       this.logger.log(
         chalk.blue(
@@ -138,7 +138,7 @@ export class UpgradeCommand extends CommandRunner {
         : [];
 
       const { totalSuccesses, totalFailures } =
-        await this.upgradeRunnerService.run({
+        await this.upgradeTapeRunnerService.run({
           tape,
           activeWorkspaceIds,
           options,

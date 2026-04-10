@@ -10,18 +10,18 @@ import {
   type InstanceSegment,
   type TapeSegment,
   type WorkspaceSegment,
-} from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
+} from 'src/engine/core-modules/upgrade/services/upgrade-tape-reader.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
 
-export type UpgradeRunnerReport = {
+export type UpgradeTapeRunnerReport = {
   totalSuccesses: number;
   totalFailures: number;
 };
 
 @Injectable()
-export class UpgradeRunnerService {
-  private readonly logger = new Logger(UpgradeRunnerService.name);
+export class UpgradeTapeRunnerService {
+  private readonly logger = new Logger(UpgradeTapeRunnerService.name);
 
   constructor(
     private readonly upgradeMigrationService: UpgradeMigrationService,
@@ -39,7 +39,7 @@ export class UpgradeRunnerService {
     activeWorkspaceIds: string[];
     options: UpgradeCommandOptions;
     workspaceIteratorService: WorkspaceIteratorService;
-  }): Promise<UpgradeRunnerReport> {
+  }): Promise<UpgradeTapeRunnerReport> {
     const instanceCompletedNames =
       await this.upgradeMigrationService.getCompletedCommandNames(null);
 
