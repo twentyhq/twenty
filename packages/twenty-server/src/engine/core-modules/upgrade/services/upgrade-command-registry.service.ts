@@ -20,53 +20,42 @@ type WorkspaceCommand =
 export type RegisteredFastInstanceCommand = {
   name: string;
   command: FastInstanceCommand;
+  version: UpgradeCommandVersion;
   timestamp: number;
 };
 
 export type RegisteredSlowInstanceCommand = {
   name: string;
   command: SlowInstanceCommand;
+  version: UpgradeCommandVersion;
   timestamp: number;
 };
 
 export type RegisteredWorkspaceCommand = {
   name: string;
   command: WorkspaceCommand;
+  version: UpgradeCommandVersion;
   timestamp: number;
 };
 
-export type VersionBundle = {
+type VersionBundle = {
   fastInstanceCommands: RegisteredFastInstanceCommand[];
   slowInstanceCommands: RegisteredSlowInstanceCommand[];
   workspaceCommands: RegisteredWorkspaceCommand[];
 };
 
-export type UpgradeStepKind = 'fast-instance' | 'slow-instance' | 'workspace';
-
-export type UpgradeStep =
-  | {
-      kind: 'fast-instance';
-      name: string;
-      command: FastInstanceCommand;
-      version: UpgradeCommandVersion;
-    }
-  | {
-      kind: 'slow-instance';
-      name: string;
-      command: SlowInstanceCommand;
-      version: UpgradeCommandVersion;
-    }
-  | {
-      kind: 'workspace';
-      name: string;
-      command: WorkspaceCommand;
-      version: UpgradeCommandVersion;
-    };
-
-export type VersionBlock = {
-  version: UpgradeCommandVersion;
-  steps: UpgradeStep[];
+export type InstanceSegment = {
+  kind: 'instance';
+  fastInstanceSteps: RegisteredFastInstanceCommand[];
+  slowInstanceSteps: RegisteredSlowInstanceCommand[];
 };
+
+export type WorkspaceSegment = {
+  kind: 'workspace';
+  steps: RegisteredWorkspaceCommand[];
+};
+
+export type TapeSegment = InstanceSegment | WorkspaceSegment;
 
 const buildEmptyVersionBundle = (): VersionBundle => ({
   fastInstanceCommands: [],
@@ -118,6 +107,7 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
               (instance as FastInstanceCommand).constructor.name,
               instanceCommandMetadata.timestamp,
             ),
+            version: instanceCommandMetadata.version,
             timestamp: instanceCommandMetadata.timestamp,
           };
 
@@ -153,6 +143,7 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
               workspaceCommandMetadata.timestamp,
             ),
             command: instance as WorkspaceCommand,
+            version: workspaceCommandMetadata.version,
             timestamp: workspaceCommandMetadata.timestamp,
           });
         }
@@ -203,49 +194,71 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
     );
   }
 
-  getOrderedVersionBlocks(): VersionBlock[] {
-    return UPGRADE_COMMAND_SUPPORTED_VERSIONS.map((version) => {
+  getUpgradeTape(): TapeSegment[] {
+    const segments: TapeSegment[] = [];
+
+    for (const version of UPGRADE_COMMAND_SUPPORTED_VERSIONS) {
       const bundle = this.getBundleForVersion(version);
 
-      const steps: UpgradeStep[] = [
-        ...bundle.fastInstanceCommands.map(
-          (entry): UpgradeStep => ({
-            kind: 'fast-instance',
-            name: entry.name,
-            command: entry.command,
-            version,
-          }),
-        ),
-        ...bundle.slowInstanceCommands.map(
-          (entry): UpgradeStep => ({
-            kind: 'slow-instance',
-            name: entry.name,
-            command: entry.command,
-            version,
-          }),
-        ),
-        ...bundle.workspaceCommands.map(
-          (entry): UpgradeStep => ({
+      const hasInstanceSteps =
+        bundle.fastInstanceCommands.length > 0 ||
+        bundle.slowInstanceCommands.length > 0;
+
+      if (hasInstanceSteps) {
+        const lastSegment = segments[segments.length - 1];
+
+        if (lastSegment?.kind === 'instance') {
+          lastSegment.fastInstanceSteps.push(
+            ...bundle.fastInstanceCommands,
+          );
+          lastSegment.slowInstanceSteps.push(
+            ...bundle.slowInstanceCommands,
+          );
+        } else {
+          segments.push({
+            kind: 'instance',
+            fastInstanceSteps: [...bundle.fastInstanceCommands],
+            slowInstanceSteps: [...bundle.slowInstanceCommands],
+          });
+        }
+      }
+
+      if (bundle.workspaceCommands.length > 0) {
+        const lastSegment = segments[segments.length - 1];
+
+        if (lastSegment?.kind === 'workspace') {
+          lastSegment.steps.push(...bundle.workspaceCommands);
+        } else {
+          segments.push({
             kind: 'workspace',
-            name: entry.name,
-            command: entry.command,
-            version,
-          }),
-        ),
-      ];
+            steps: [...bundle.workspaceCommands],
+          });
+        }
+      }
+    }
 
-      return { version, steps };
-    });
+    return segments;
   }
 
-  getOrderedUpgradeSteps(): UpgradeStep[] {
-    return this.getOrderedVersionBlocks().flatMap((block) => block.steps);
-  }
+  getLastUpgradeStep(): { name: string } | undefined {
+    const segments = this.getUpgradeTape();
+    const lastSegment = segments[segments.length - 1];
 
-  getLastUpgradeStep(): UpgradeStep | undefined {
-    const allSteps = this.getOrderedUpgradeSteps();
+    if (!lastSegment) {
+      return undefined;
+    }
 
-    return allSteps[allSteps.length - 1];
+    if (lastSegment.kind === 'workspace') {
+      return lastSegment.steps[lastSegment.steps.length - 1];
+    }
+
+    const { slowInstanceSteps, fastInstanceSteps } = lastSegment;
+
+    if (slowInstanceSteps.length > 0) {
+      return slowInstanceSteps[slowInstanceSteps.length - 1];
+    }
+
+    return fastInstanceSteps[fastInstanceSteps.length - 1];
   }
 
   private computeCommandName(

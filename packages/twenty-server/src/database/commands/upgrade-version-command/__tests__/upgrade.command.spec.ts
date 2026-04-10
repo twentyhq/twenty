@@ -20,6 +20,7 @@ import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade
 import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
 import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
+import { UpgradeRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-runner.service';
 import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
@@ -64,7 +65,7 @@ const buildUpgradeCommandModule = async ({
     : {
         provide: UpgradeCommandRegistryService,
         useValue: {
-          getOrderedVersionBlocks: jest.fn().mockReturnValue([]),
+          getUpgradeTape: jest.fn().mockReturnValue([]),
         },
       };
 
@@ -80,7 +81,7 @@ const buildUpgradeCommandModule = async ({
         provide: commandRunner,
         useFactory: (
           upgradeCommandRegistryService: UpgradeCommandRegistryService,
-          upgradeMigrationService: UpgradeMigrationService,
+          upgradeRunnerService: UpgradeRunnerService,
           instanceUpgradeService: InstanceUpgradeService,
           workspaceIteratorService: WorkspaceIteratorService,
           workspaceUpgradeService: WorkspaceUpgradeService,
@@ -89,7 +90,7 @@ const buildUpgradeCommandModule = async ({
         ) => {
           return new commandRunner(
             upgradeCommandRegistryService,
-            upgradeMigrationService,
+            upgradeRunnerService,
             instanceUpgradeService,
             workspaceIteratorService,
             workspaceUpgradeService,
@@ -99,7 +100,7 @@ const buildUpgradeCommandModule = async ({
         },
         inject: [
           UpgradeCommandRegistryService,
-          UpgradeMigrationService,
+          UpgradeRunnerService,
           InstanceUpgradeService,
           WorkspaceIteratorService,
           WorkspaceUpgradeService,
@@ -121,7 +122,14 @@ const buildUpgradeCommandModule = async ({
           getCompletedCommandNames: jest
             .fn()
             .mockResolvedValue(new Set<string>()),
+          areAllWorkspacesAtCommand: jest.fn().mockResolvedValue(true),
         },
+      },
+      {
+        provide: UpgradeRunnerService,
+        useFactory: (upgradeMigrationService: UpgradeMigrationService) =>
+          new UpgradeRunnerService(upgradeMigrationService),
+        inject: [UpgradeMigrationService],
       },
       {
         provide: InstanceUpgradeService,

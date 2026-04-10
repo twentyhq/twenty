@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type WorkspaceIteratorContext } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type UpgradeCommandOptions } from 'src/database/commands/upgrade-version-command/upgrade.command';
-import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
@@ -15,7 +14,6 @@ type WorkspaceCommandEntry = Pick<
 export type RunWorkspaceCommandsArgs = {
   iteratorContext: WorkspaceIteratorContext;
   options: UpgradeCommandOptions;
-  version: UpgradeCommandVersion;
   workspaceCommands: WorkspaceCommandEntry[];
 };
 
@@ -31,13 +29,12 @@ export class WorkspaceUpgradeService {
   async runWorkspaceCommands({
     iteratorContext,
     options,
-    version,
     workspaceCommands,
   }: RunWorkspaceCommandsArgs): Promise<void> {
     const { workspaceId, index, total } = iteratorContext;
 
     this.logger.log(
-      `${options.dryRun ? '(dry run) ' : ''}Upgrading workspace ${workspaceId} [${version}] ${index + 1}/${total}`,
+      `${options.dryRun ? '(dry run) ' : ''}Upgrading workspace ${workspaceId} ${index + 1}/${total}`,
     );
 
     const executedByVersion =
@@ -63,9 +60,7 @@ export class WorkspaceUpgradeService {
       });
     }
 
-    this.logger.log(
-      `Upgrade for workspace ${workspaceId} [${version}] completed.`,
-    );
+    this.logger.log(`Upgrade for workspace ${workspaceId} completed.`);
   }
 
   private async runSingleWorkspaceCommandOrThrow({
