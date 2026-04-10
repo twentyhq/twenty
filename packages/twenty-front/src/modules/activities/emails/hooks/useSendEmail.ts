@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/client/react';
 import { useCallback } from 'react';
+import { type EmailAttachment } from 'twenty-shared/types';
 
 import { SEND_EMAIL } from '@/activities/emails/graphql/mutations/sendEmail';
 import { getTimelineThreadsFromCompanyId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromCompanyId';
@@ -21,6 +22,7 @@ type SendEmailParams = {
   subject: string;
   body: string;
   inReplyTo?: string;
+  files?: EmailAttachment[];
 };
 
 export const useSendEmail = () => {
@@ -46,6 +48,7 @@ export const useSendEmail = () => {
               subject: params.subject,
               body: params.body,
               inReplyTo: params.inReplyTo,
+              files: params.files,
             },
           },
         });

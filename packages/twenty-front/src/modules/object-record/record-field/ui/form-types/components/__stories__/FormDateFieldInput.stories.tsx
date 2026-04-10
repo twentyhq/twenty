@@ -44,7 +44,9 @@ export const Disabled: Story = {
     const canvas = within(canvasElement);
 
     const input = await waitFor(() => {
-      const inputElement = canvasElement.querySelector('input');
+      const inputElement = canvasElement.querySelector<HTMLInputElement>(
+        'input:not([type="file"])',
+      );
       expect(inputElement).not.toBeNull();
       return inputElement!;
     });

@@ -395,7 +395,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
   ];
 
   return (
-    <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
+    <SidePanelList selectableItemIds={selectableItemIds}>
       <SidePanelGroup heading={t`Widget type`}>
         <SelectableListItem itemId="fields" onEnter={handleCreateFieldsWidget}>
           <CommandMenuItem

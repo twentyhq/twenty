@@ -71,10 +71,10 @@ npx nx build twenty-server
 # Database management
 npx nx database:reset twenty-server         # Reset database
 npx nx run twenty-server:database:init:prod # Initialize database
-npx nx run twenty-server:database:migrate:prod # Run migrations
+npx nx run twenty-server:database:migrate:prod # Run instance commands (fast only)
 
-# Generate migration
-npx nx run twenty-server:database:migrate:generate
+# Generate an instance command (fast or slow)
+npx nx run twenty-server:database:migrate:generate --name <name> --type <fast|slow>
 ```
 
 ### Database Inspection (Postgres MCP)
@@ -158,14 +158,17 @@ packages/
 - **Redis** for caching and session management
 - **BullMQ** for background job processing
 
-### Database & Migrations
+### Database & Upgrade Commands
 - **PostgreSQL** as primary database
 - **Redis** for caching and sessions
 - **ClickHouse** for analytics (when enabled)
-- Always generate migrations when changing entity files
-- Migration names must be kebab-case (e.g. `add-agent-turn-evaluation`)
-- Include both `up` and `down` logic in migrations
-- Never delete or rewrite committed migrations
+- When changing entity files, generate an **instance command** (`database:migrate:generate --name <name> --type <fast|slow>`)
+- **Fast** instance commands handle schema changes; **slow** ones add a `runDataMigration` step for data backfills
+- **Workspace commands** iterate over all active/suspended workspaces for per-workspace upgrades
+- Commands use `@RegisteredInstanceCommand` and `@RegisteredWorkspaceCommand` decorators for automatic discovery
+- Include both `up` and `down` logic in instance commands
+- Never delete or rewrite committed instance command `up`/`down` logic
+- See `packages/twenty-server/docs/UPGRADE_COMMANDS.md` for full documentation
 
 ### Utility Helpers
 Use existing helpers from `twenty-shared` instead of manual type guards:
@@ -178,7 +181,7 @@ IMPORTANT: Use Context7 for code generation, setup or configuration steps, or li
 ### Before Making Changes
 1. Always run linting (`lint:diff-with-main`) and type checking after code changes
 2. Test changes with relevant test suites (prefer single-file test runs)
-3. Ensure database migrations are generated for entity changes
+3. Ensure instance commands are generated for entity changes (`database:migrate:generate`)
 4. Check that GraphQL schema changes are backward compatible
 5. Run `graphql:generate` after any GraphQL schema changes
 

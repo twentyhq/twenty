@@ -1129,12 +1129,6 @@ msgstr "Add to blocklist"
 msgid "Add to Favorite"
 msgstr "Add to Favorite"
 
-#. js-lingui-id: pBsoKL
-#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
-#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
-msgid "Add to favorites"
-msgstr "Add to favorites"
-
 #. js-lingui-id: q9e2Bs
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "Add view"
@@ -2247,6 +2241,7 @@ msgstr "Attach files"
 
 #. js-lingui-id: w/Sphq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+#: src/modules/activities/emails/components/EmailComposerFields.tsx
 msgid "Attachments"
 msgstr "Attachments"
 
@@ -3148,7 +3143,7 @@ msgstr "Close banner"
 
 #. js-lingui-id: saip/v
 #: src/modules/ui/layout/page-header/components/PageHeaderToggleSidePanelButton.tsx
-#: src/modules/command-menu-item/server-items/display/components/CommandMenuItemMoreActionsButton.tsx
+#: src/modules/side-panel/components/SidePanelToggleButton.tsx
 msgid "Close side panel"
 msgstr "Close side panel"
 
@@ -3425,7 +3420,6 @@ msgstr "Configured"
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/command-menu-item/display/components/CommandModal.tsx
 msgid "Confirm"
 msgstr "Confirm"
 
@@ -3530,7 +3524,7 @@ msgstr "Content"
 #. js-lingui-id: M73whl
 #: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
-#: src/modules/command-menu-item/server-items/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Context"
 msgstr "Context"
@@ -3913,11 +3907,6 @@ msgstr "Create profile"
 #: src/utils/title-utils.ts
 msgid "Create Profile"
 msgstr "Create Profile"
-
-#. js-lingui-id: GPuEIc
-#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
-msgid "Create Related Record"
-msgstr "Create Related Record"
 
 #. js-lingui-id: RoyYUE
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
@@ -4632,8 +4621,6 @@ msgstr "delete"
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
-#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
-#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
 #: src/modules/blocknote-editor/components/CustomSideMenu.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 msgid "Delete"
@@ -5241,8 +5228,8 @@ msgstr "Edit Account"
 
 #. js-lingui-id: t1EOLt
 #: src/modules/layout-customization/hooks/useEnterLayoutCustomizationMode.ts
-#: src/modules/command-menu-item/server-items/edit/components/CommandMenuItemEditButton.tsx
-#: src/modules/command-menu-item/server-items/edit/components/CommandMenuItemEditButton.tsx
+#: src/modules/command-menu-item/edit/components/CommandMenuItemEditButton.tsx
+#: src/modules/command-menu-item/edit/components/CommandMenuItemEditButton.tsx
 msgid "Edit actions"
 msgstr "Edit actions"
 
@@ -5530,7 +5517,7 @@ msgid "Empty Array"
 msgstr "Empty Array"
 
 #. js-lingui-id: 8X+jbk
-#: src/modules/activities/emails/components/EmailsCard.tsx
+#: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Empty Inbox"
 msgstr "Empty Inbox"
 
@@ -6320,8 +6307,6 @@ msgstr "Expires in {dateDiff}"
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
-#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
-#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
 msgid "Export"
 msgstr "Export"
 
@@ -6591,6 +6576,7 @@ msgstr "Failed to upgrade the application."
 #. js-lingui-id: jU/HbX
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
+#: src/modules/activities/emails/hooks/useUploadEmailAttachment.ts
 msgid "Failed to upload \"{fileNameForError}\""
 msgstr "Failed to upload \"{fileNameForError}\""
 
@@ -6615,7 +6601,7 @@ msgid "Failure Rate"
 msgstr "Failure Rate"
 
 #. js-lingui-id: 8wngZM
-#: src/modules/command-menu-item/server-items/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Fallback"
 msgstr "Fallback"
 
@@ -6790,12 +6776,14 @@ msgstr "Fifth"
 
 #. js-lingui-id: sWmIx3
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
+#: src/modules/activities/emails/hooks/useUploadEmailAttachment.ts
 msgid "File \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "File \"{fileName}\" exceeds {maxUploadSize}"
 
 #. js-lingui-id: 0bK1RI
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
+#: src/modules/activities/emails/hooks/useUploadEmailAttachment.ts
 msgid "File \"{fileName}\" uploaded successfully"
 msgstr "File \"{fileName}\" uploaded successfully"
 
@@ -7150,11 +7138,6 @@ msgstr "Go to billing portal"
 msgid "Go to Draft"
 msgstr "Go to Draft"
 
-#. js-lingui-id: MrE/Qb
-#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
-msgid "Go to People"
-msgstr "Go to People"
-
 #. js-lingui-id: mT57+Q
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
@@ -7380,7 +7363,7 @@ msgid "Hide hidden groups"
 msgstr "Hide hidden groups"
 
 #. js-lingui-id: 2ouyMV
-#: src/modules/command-menu-item/server-items/edit/components/CommandMenuItemOptionsDropdown.tsx
+#: src/modules/command-menu-item/edit/components/CommandMenuItemOptionsDropdown.tsx
 msgid "Hide label"
 msgstr "Hide label"
 
@@ -9230,7 +9213,7 @@ msgstr "months"
 #. js-lingui-id: 2FYpfJ
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
-#: src/modules/command-menu-item/server-items/display/components/CommandMenuItemMoreActionsButton.tsx
+#: src/modules/side-panel/components/SidePanelToggleButton.tsx
 msgid "More"
 msgstr "More"
 
@@ -9866,7 +9849,7 @@ msgid "No description available for this application"
 msgstr "No description available for this application"
 
 #. js-lingui-id: mINrlz
-#: src/modules/activities/emails/components/EmailsCard.tsx
+#: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "No email exchange has occurred with this record yet."
 msgstr "No email exchange has occurred with this record yet."
 
@@ -10069,8 +10052,8 @@ msgid "No record is required to trigger this workflow"
 msgstr "No record is required to trigger this workflow"
 
 #. js-lingui-id: aqUuQE
-#: src/modules/command-menu-item/server-items/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
-#: src/modules/command-menu-item/server-items/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
+#: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
+#: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "No record selected"
 msgstr "No record selected"
 
@@ -10363,7 +10346,6 @@ msgstr "object"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord.tsx
-#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
 #: src/modules/side-panel/components/SidePanelObjectViewRecordInfo.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
@@ -10604,6 +10586,11 @@ msgstr "Open Gmail"
 msgid "Open in"
 msgstr "Open in"
 
+#. js-lingui-id: noLjKT
+#: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
+msgid "Open in app"
+msgstr "Open in app"
+
 #. js-lingui-id: DP5C7w
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Open in Roles"
@@ -10616,7 +10603,7 @@ msgstr "Open Outlook"
 
 #. js-lingui-id: bY2Xkv
 #: src/modules/ui/layout/page-header/components/PageHeaderToggleSidePanelButton.tsx
-#: src/modules/command-menu-item/server-items/display/components/CommandMenuItemMoreActionsButton.tsx
+#: src/modules/side-panel/components/SidePanelToggleButton.tsx
 msgid "Open side panel"
 msgstr "Open side panel"
 
@@ -10709,8 +10696,8 @@ msgstr "Organize"
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
-#: src/modules/command-menu-item/server-items/edit/components/SidePanelCommandMenuItemEditPage.tsx
-#: src/modules/command-menu-item/server-items/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+#: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Other"
 msgstr "Other"
 
@@ -10926,11 +10913,6 @@ msgstr "PDF"
 msgid "Pending"
 msgstr "Pending"
 
-#. js-lingui-id: 1wdjme
-#: src/modules/command-menu-item/mock/command-menu-items.mock.tsx
-msgid "People"
-msgstr "People"
-
 #. js-lingui-id: PxBA+g
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 msgid "People I’ve sent emails to and received emails from."
@@ -11068,8 +11050,8 @@ msgid "Pink"
 msgstr "Pink"
 
 #. js-lingui-id: kNiQp6
-#: src/modules/command-menu-item/server-items/edit/components/SidePanelCommandMenuItemEditPage.tsx
-#: src/modules/command-menu-item/server-items/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+#: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Pinned"
 msgstr "Pinned"
 
@@ -11642,8 +11624,8 @@ msgid "Records"
 msgstr "Records"
 
 #. js-lingui-id: J+Qyf2
-#: src/modules/command-menu-item/server-items/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
-#: src/modules/command-menu-item/server-items/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
+#: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
+#: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Records selected"
 msgstr "Records selected"
 
@@ -11953,7 +11935,7 @@ msgid "Reset 2FA"
 msgstr "Reset 2FA"
 
 #. js-lingui-id: YdI8A2
-#: src/modules/command-menu-item/server-items/edit/components/CommandMenuItemOptionsDropdown.tsx
+#: src/modules/command-menu-item/edit/components/CommandMenuItemOptionsDropdown.tsx
 msgid "Reset label to default"
 msgstr "Reset label to default"
 
@@ -11968,7 +11950,7 @@ msgstr "Reset to"
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
-#: src/modules/command-menu-item/server-items/edit/components/SidePanelCommandMenuItemEditPage.tsx
+#: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 msgid "Reset to default"
 msgstr "Reset to default"
 
@@ -12045,7 +12027,7 @@ msgid "Result"
 msgstr "Result"
 
 #. js-lingui-id: kx0s+n
-#: src/modules/side-panel/pages/search/hooks/useSidePanelSearchRecords.tsx
+#: src/modules/side-panel/pages/search/components/SidePanelSearchRecordsPage.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordSubPage.tsx
 msgid "Results"
 msgstr "Results"
@@ -12870,6 +12852,7 @@ msgstr "Send an invite email to your team"
 
 #. js-lingui-id: i/TzEU
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
+#: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "Send Email"
 msgstr "Send Email"
 
@@ -14484,6 +14467,13 @@ msgstr "Tomato"
 msgid "Tomorrow"
 msgstr "Tomorrow"
 
+#. js-lingui-id: x+3/CM
+#. placeholder {0}: composerState.recipientCount
+#. placeholder {1}: composerState.maxRecipients
+#: src/modules/activities/emails/components/EmailComposer.tsx
+msgid "Too many recipients ({0}/{1})."
+msgstr "Too many recipients ({0}/{1})."
+
 #. js-lingui-id: WrMXsY
 #: src/modules/spreadsheet-import/steps/components/UploadStep/UploadStep.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
@@ -15118,6 +15108,7 @@ msgstr "Upload .xlsx, .xls or .csv file"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 #: src/modules/advanced-text-editor/components/WorkflowSendEmailAttachments.tsx
+#: src/modules/activities/emails/components/EmailAttachmentsField.tsx
 msgid "Upload file"
 msgstr "Upload file"
 

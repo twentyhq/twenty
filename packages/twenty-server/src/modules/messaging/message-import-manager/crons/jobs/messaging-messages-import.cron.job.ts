@@ -14,10 +14,6 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
-  DataSourceException,
-  DataSourceExceptionCode,
-} from 'src/engine/metadata-modules/data-source/data-source.exception';
-import {
   MessagingMessagesImportJob,
   type MessagingMessagesImportJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
@@ -81,9 +77,8 @@ export class MessagingMessagesImportCronJob {
                 id: activeWorkspace.id,
               },
             });
-            throw new DataSourceException(
+            throw new Error(
               'Workspace schema not found while the workspace is still active',
-              DataSourceExceptionCode.DATA_SOURCE_NOT_FOUND,
             );
           }
         } else {

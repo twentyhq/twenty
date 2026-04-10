@@ -138,7 +138,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
 
   return (
     <StyledSidePanelContainer>
-      <SidePanelList commandGroups={[]} selectableItemIds={visibleItemIds}>
+      <SidePanelList selectableItemIds={visibleItemIds}>
         <ChartTypeSelectionSection
           currentGraphType={currentGraphType}
           setCurrentGraphType={handleGraphTypeChange}

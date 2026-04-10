@@ -2894,6 +2894,7 @@ export interface Mutation {
     updateNavigationMenuItem: NavigationMenuItem
     deleteManyNavigationMenuItems: NavigationMenuItem[]
     deleteNavigationMenuItem: NavigationMenuItem
+    uploadEmailAttachmentFile: FileWithSignedUrl
     uploadAIChatFile: FileWithSignedUrl
     uploadWorkflowFile: FileWithSignedUrl
     uploadWorkspaceLogo: FileWithSignedUrl
@@ -3112,7 +3113,7 @@ export type AiModelRole = 'FAST' | 'SMART'
 
 export type WorkspaceMigrationActionType = 'delete' | 'create' | 'update'
 
-export type FileFolder = 'ProfilePicture' | 'WorkspaceLogo' | 'Attachment' | 'PersonPicture' | 'CorePicture' | 'File' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'AppTarball' | 'GeneratedSdkClient'
+export type FileFolder = 'ProfilePicture' | 'WorkspaceLogo' | 'Attachment' | 'PersonPicture' | 'CorePicture' | 'File' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'AppTarball' | 'GeneratedSdkClient'
 
 export interface Subscription {
     onEventSubscription?: EventSubscription
@@ -6208,6 +6209,7 @@ export interface MutationGenqlSelection{
     updateNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {input: UpdateOneNavigationMenuItemInput} })
     deleteManyNavigationMenuItems?: (NavigationMenuItemGenqlSelection & { __args: {ids: Scalars['UUID'][]} })
     deleteNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
+    uploadEmailAttachmentFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
     uploadAIChatFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
     uploadWorkflowFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
     uploadWorkspaceLogo?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
@@ -6727,7 +6729,9 @@ export interface DeleteSsoInput {identityProviderId: Scalars['UUID']}
 
 export interface EditSsoInput {id: Scalars['UUID'],status: SSOIdentityProviderStatus}
 
-export interface SendEmailInput {connectedAccountId: Scalars['String'],to: Scalars['String'],cc?: (Scalars['String'] | null),bcc?: (Scalars['String'] | null),subject: Scalars['String'],body: Scalars['String'],inReplyTo?: (Scalars['String'] | null)}
+export interface SendEmailInput {connectedAccountId: Scalars['String'],to: Scalars['String'],cc?: (Scalars['String'] | null),bcc?: (Scalars['String'] | null),subject: Scalars['String'],body: Scalars['String'],inReplyTo?: (Scalars['String'] | null),files?: (SendEmailAttachmentInput[] | null)}
+
+export interface SendEmailAttachmentInput {id: Scalars['String'],name: Scalars['String']}
 
 export interface EmailAccountConnectionParameters {IMAP?: (ConnectionParameters | null),SMTP?: (ConnectionParameters | null),CALDAV?: (ConnectionParameters | null)}
 
@@ -9665,6 +9669,7 @@ export const enumFileFolder = {
    FilesField: 'FilesField' as const,
    Dependencies: 'Dependencies' as const,
    Workflow: 'Workflow' as const,
+   EmailAttachment: 'EmailAttachment' as const,
    AppTarball: 'AppTarball' as const,
    GeneratedSdkClient: 'GeneratedSdkClient' as const
 }

@@ -7391,6 +7391,11 @@ msgstr "To do"
 msgid "Too many admin candidates found."
 msgstr "Too many admin candidates found."
 
+#. js-lingui-id: qSInGy
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "Too many recipients."
+msgstr "Too many recipients."
+
 #. js-lingui-id: MYdvBz
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
 msgid "Too many records affected."

@@ -1,5 +1,5 @@
-import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/server-items/display/components/SidePanelCommandMenuItemDisplayPage';
-import { SidePanelCommandMenuItemEditPage } from '@/command-menu-item/server-items/edit/components/SidePanelCommandMenuItemEditPage';
+import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
+import { SidePanelCommandMenuItemEditPage } from '@/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage';
 import { SidePanelNavigationMenuItemEditPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage';
 import { SidePanelNewSidebarItemPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemPage';
 import { SidePanelAIChatThreadsPage } from '@/side-panel/pages/ai-chat-threads/components/SidePanelAIChatThreadsPage';

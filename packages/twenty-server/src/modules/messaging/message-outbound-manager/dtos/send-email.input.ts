@@ -1,6 +1,15 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
+export class SendEmailAttachmentInput {
+  @Field(() => String)
+  id: string;
+
+  @Field(() => String)
+  name: string;
+}
+
+@InputType()
 export class SendEmailInput {
   @Field(() => String)
   connectedAccountId: string;
@@ -22,4 +31,7 @@ export class SendEmailInput {
 
   @Field(() => String, { nullable: true })
   inReplyTo?: string;
+
+  @Field(() => [SendEmailAttachmentInput], { nullable: true })
+  files?: SendEmailAttachmentInput[];
 }

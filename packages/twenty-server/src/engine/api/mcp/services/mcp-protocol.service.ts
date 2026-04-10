@@ -178,6 +178,7 @@ export class McpProtocolService {
       userWorkspaceId?: string;
       apiKey: FlatApiKey | undefined;
     },
+    sseWriter?: (data: Record<string, unknown>) => void,
   ): Promise<Record<string, unknown> | null> {
     try {
       // JSON-RPC notifications have no id and expect no response
@@ -244,6 +245,7 @@ export class McpProtocolService {
           id,
           toolSet,
           params,
+          sseWriter,
         );
       }
 

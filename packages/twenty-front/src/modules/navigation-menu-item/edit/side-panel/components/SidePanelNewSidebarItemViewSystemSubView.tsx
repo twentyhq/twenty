@@ -47,7 +47,6 @@ export const SidePanelNewSidebarItemViewSystemSubView = ({
       onSearchChange={onSearchChange}
     >
       <SidePanelList
-        commandGroups={[]}
         selectableItemIds={selectableItemIds}
         noResults={isEmpty}
         noResultsText={noResultsText}

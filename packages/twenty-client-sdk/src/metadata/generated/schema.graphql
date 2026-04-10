@@ -3441,6 +3441,7 @@ type Mutation {
   updateNavigationMenuItem(input: UpdateOneNavigationMenuItemInput!): NavigationMenuItem!
   deleteManyNavigationMenuItems(ids: [UUID!]!): [NavigationMenuItem!]!
   deleteNavigationMenuItem(id: UUID!): NavigationMenuItem!
+  uploadEmailAttachmentFile(file: Upload!): FileWithSignedUrl!
   uploadAIChatFile(file: Upload!): FileWithSignedUrl!
   uploadWorkflowFile(file: Upload!): FileWithSignedUrl!
   uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl!
@@ -4592,6 +4593,12 @@ input SendEmailInput {
   subject: String!
   body: String!
   inReplyTo: String
+  files: [SendEmailAttachmentInput!]
+}
+
+input SendEmailAttachmentInput {
+  id: String!
+  name: String!
 }
 
 input EmailAccountConnectionParameters {
@@ -4658,6 +4665,7 @@ enum FileFolder {
   FilesField
   Dependencies
   Workflow
+  EmailAttachment
   AppTarball
   GeneratedSdkClient
 }
