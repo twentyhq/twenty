@@ -29,6 +29,11 @@ const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: true,
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
+    // Suppress NestJS bootstrap noise ([InstanceLoader], [RouterExplorer], etc.).
+    // These fire before app.useLogger() below and can't be filtered by context.
+    // Revert this if you need to debug a module that fails to initialise at startup
+    // (you'll lose the "which module threw" detail while logger: false is set).
+    logger: false,
     rawBody: true,
     snapshot: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
     ...(process.env.SSL_KEY_PATH && process.env.SSL_CERT_PATH
