@@ -8,7 +8,7 @@ import {
 import {
   mergeWorkspaceMemberSettingsIntoCurrent,
   type WorkspaceMemberSettingsUpdateInput,
-} from '@/settings/profile/utils/mergeWorkspaceMemberSettingsIntoCurrent.util';
+} from '@/settings/profile/utils/mergeWorkspaceMemberSettingsIntoCurrent';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const UPDATE_WORKSPACE_MEMBER_SETTINGS_MUTATION = gql`
