@@ -163,7 +163,6 @@ export const SettingsAdminConfigVariableDetails = () => {
                   value={watch('value')}
                   onChange={(value) => setValue('value', value)}
                   disabled={isEnvOnly || !isEditing}
-                  isEditing={isEditing}
                 />
 
                 {!isEditing ? (

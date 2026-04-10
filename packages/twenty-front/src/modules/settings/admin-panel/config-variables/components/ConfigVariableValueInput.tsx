@@ -13,7 +13,6 @@ type ConfigVariableValueInputProps = {
   value: ConfigVariableValue;
   onChange: (value: ConfigVariableValue) => void;
   disabled?: boolean;
-  isEditing?: boolean;
 };
 
 const StyledValueContainer = styled.div`
@@ -25,7 +24,6 @@ export const ConfigVariableValueInput = ({
   value,
   onChange,
   disabled,
-  isEditing,
 }: ConfigVariableValueInputProps) => {
   const { t } = useLingui();
   const isConfigVariablesInDbEnabled = useAtomStateValue(
@@ -45,7 +43,7 @@ export const ConfigVariableValueInput = ({
           placeholder={
             disabled
               ? t`Undefined`
-              : variable.isSensitive && isEditing
+              : variable.isSensitive && !disabled
                 ? t`Enter a new secret value`
                 : t`Enter a value to store in database`
           }

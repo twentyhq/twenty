@@ -121,7 +121,7 @@ export class TwentyConfigService {
       let value = this.get(typedKey) ?? '';
       const source = this.determineConfigSource(typedKey, value, envMetadata);
 
-      value = this.maskSensitiveValue(typedKey, value);
+      value = this.maskSensitiveValue(typedKey, value, envMetadata);
 
       result[key] = {
         value,
@@ -147,7 +147,7 @@ export class TwentyConfigService {
     let value = this.get(key) ?? '';
     const source = this.determineConfigSource(key, value, metadata);
 
-    value = this.maskSensitiveValue(key, value);
+    value = this.maskSensitiveValue(key, value, metadata);
 
     return {
       value,
@@ -248,6 +248,7 @@ export class TwentyConfigService {
     key: T,
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     value: any,
+    metadata: ConfigVariablesMetadataOptions,
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   ): any {
     if (key in CONFIG_VARIABLES_MASKING_CONFIG) {
@@ -270,8 +271,6 @@ export class TwentyConfigService {
         variableName: key as string,
       });
     }
-
-    const metadata = this.getMetadata(key);
 
     if (metadata?.isSensitive) {
       if (!value && value !== false && value !== 0) {
