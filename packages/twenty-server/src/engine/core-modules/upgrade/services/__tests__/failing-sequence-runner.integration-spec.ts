@@ -343,7 +343,10 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
     const report = await context.runner.run({
       sequence,
       activeWorkspaceIds: [WS_1, WS_2],
-      options: DEFAULT_OPTIONS,
+      options: {
+        ...DEFAULT_OPTIONS,
+        workspaceId: new Set([WS_1, WS_2]),
+      },
     });
 
     expect(report.totalSuccesses).toBe(1);
