@@ -1,5 +1,5 @@
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export const fromWorkspaceEntityToFlat = (
   entity: WorkspaceEntity,
@@ -39,4 +39,5 @@ export const fromWorkspaceEntityToFlat = (
   updatedAt: entity.updatedAt.toISOString(),
   deletedAt: entity.deletedAt?.toISOString(),
   suspendedAt: entity.suspendedAt?.toISOString() ?? null,
+  version: entity.version ?? null,
 });

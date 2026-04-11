@@ -2,12 +2,15 @@ import 'reflect-metadata';
 
 import { Injectable } from '@nestjs/common';
 
-import { type UpgradeCommandVersion } from 'src/engine/core-modules/upgrade/constants/upgrade-command-supported-versions.constant';
+import {
+  AllTwentyVersion,
+  CrossUpgradeSupportedTwentyVersions,
+} from 'src/engine/core-modules/upgrade/constants/upgrade-command-supported-versions.constant';
 
 export type InstanceCommandType = 'fast' | 'slow';
 
 export type RegisteredInstanceCommandMetadata = {
-  version: UpgradeCommandVersion;
+  version: CrossUpgradeSupportedTwentyVersions;
   timestamp: number;
   type: InstanceCommandType;
 };
@@ -19,7 +22,7 @@ const REGISTERED_INSTANCE_COMMAND_KEY = 'REGISTERED_INSTANCE_COMMAND';
 // command files.
 export const RegisteredInstanceCommand =
   (
-    version: UpgradeCommandVersion,
+    version: AllTwentyVersion,
     timestamp: number,
     options?: { type: 'slow' },
   ): ClassDecorator =>

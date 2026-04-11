@@ -4,8 +4,8 @@ import { DiscoveryService } from '@nestjs/core';
 import { type ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { type WorkspaceCommandRunner } from 'src/database/commands/command-runners/workspace.command-runner';
 import {
-  UPGRADE_CROSS_VERSION_SUPPORTED_TWENTY_VERSIONS,
-  type UpgradeCommandVersion,
+  CROSS_UPGRADE_SUPPORTED_TWENTY_VERSIONS,
+  type CrossUpgradeSupportedTwentyVersions,
 } from 'src/engine/core-modules/upgrade/constants/upgrade-command-supported-versions.constant';
 import { getRegisteredInstanceCommandMetadata } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { getRegisteredWorkspaceCommandMetadata } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -20,21 +20,21 @@ type WorkspaceCommand =
 export type RegisteredFastInstanceCommand = {
   name: string;
   command: FastInstanceCommand;
-  version: UpgradeCommandVersion;
+  version: CrossUpgradeSupportedTwentyVersions;
   timestamp: number;
 };
 
 export type RegisteredSlowInstanceCommand = {
   name: string;
   command: SlowInstanceCommand;
-  version: UpgradeCommandVersion;
+  version: CrossUpgradeSupportedTwentyVersions;
   timestamp: number;
 };
 
 export type RegisteredWorkspaceCommand = {
   name: string;
   command: WorkspaceCommand;
-  version: UpgradeCommandVersion;
+  version: CrossUpgradeSupportedTwentyVersions;
   timestamp: number;
 };
 
@@ -55,14 +55,14 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
   private readonly logger = new Logger(UpgradeCommandRegistryService.name);
 
   private readonly bundlesByVersion = new Map<
-    UpgradeCommandVersion,
+    CrossUpgradeSupportedTwentyVersions,
     VersionBundle
   >();
 
   constructor(private readonly discoveryService: DiscoveryService) {}
 
   onModuleInit(): void {
-    for (const version of UPGRADE_CROSS_VERSION_SUPPORTED_TWENTY_VERSIONS) {
+    for (const version of CROSS_UPGRADE_SUPPORTED_TWENTY_VERSIONS) {
       this.bundlesByVersion.set(version, {
         fastInstanceCommands: [],
         slowInstanceCommands: [],
@@ -166,12 +166,14 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
     }
   }
 
-  getBundleForVersion(version: UpgradeCommandVersion): VersionBundle {
+  getBundleForVersion(
+    version: CrossUpgradeSupportedTwentyVersions,
+  ): VersionBundle {
     return this.bundlesByVersion.get(version) ?? buildEmptyVersionBundle();
   }
 
   getLastWorkspaceCommandForVersion(
-    version: UpgradeCommandVersion,
+    version: CrossUpgradeSupportedTwentyVersions,
   ): RegisteredWorkspaceCommand | undefined {
     const bundle = this.getBundleForVersion(version);
 
@@ -179,19 +181,19 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
   }
 
   getAllFastInstanceCommands(): RegisteredFastInstanceCommand[] {
-    return UPGRADE_CROSS_VERSION_SUPPORTED_TWENTY_VERSIONS.flatMap(
+    return CROSS_UPGRADE_SUPPORTED_TWENTY_VERSIONS.flatMap(
       (version) => this.getBundleForVersion(version).fastInstanceCommands,
     );
   }
 
   getAllSlowInstanceCommands(): RegisteredSlowInstanceCommand[] {
-    return UPGRADE_CROSS_VERSION_SUPPORTED_TWENTY_VERSIONS.flatMap(
+    return CROSS_UPGRADE_SUPPORTED_TWENTY_VERSIONS.flatMap(
       (version) => this.getBundleForVersion(version).slowInstanceCommands,
     );
   }
 
   private computeCommandName(
-    version: UpgradeCommandVersion,
+    version: CrossUpgradeSupportedTwentyVersions,
     className: string,
     timestamp: number,
   ): string {
@@ -237,11 +239,10 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
   }
 
   private validateAtLeastOneVersionBundleHasWorkspaceCommands(): void {
-    const hasWorkspaceCommands =
-      UPGRADE_CROSS_VERSION_SUPPORTED_TWENTY_VERSIONS.some(
-        (version) =>
-          this.getBundleForVersion(version).workspaceCommands.length > 0,
-      );
+    const hasWorkspaceCommands = CROSS_UPGRADE_SUPPORTED_TWENTY_VERSIONS.some(
+      (version) =>
+        this.getBundleForVersion(version).workspaceCommands.length > 0,
+    );
 
     if (!hasWorkspaceCommands) {
       throw new Error(
@@ -251,7 +252,7 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
   }
 
   private validateNoTimestampDuplicatesWithinKind(
-    version: UpgradeCommandVersion,
+    version: CrossUpgradeSupportedTwentyVersions,
     kind: 'fast-instance' | 'slow-instance' | 'workspace',
     entries:
       | RegisteredFastInstanceCommand[]

@@ -10,7 +10,7 @@ import {
   TWENTY_CURRENT_VERSION,
   TWENTY_NEXT_VERSIONS,
   TWENTY_PREVIOUS_VERSIONS,
-  type UpgradeCommandVersion,
+  type CrossUpgradeSupportedTwentyVersions,
 } from 'src/engine/core-modules/upgrade/constants/upgrade-command-supported-versions.constant';
 import { type InstanceCommandType } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 
@@ -22,7 +22,7 @@ const UPGRADE_VERSION_COMMAND_DIR = path.resolve(
 type GenerateInstanceCommandOptions = {
   name: string;
   type: InstanceCommandType;
-  version?: UpgradeCommandVersion;
+  version?: CrossUpgradeSupportedTwentyVersions;
 };
 
 @Command({
@@ -66,7 +66,7 @@ export class GenerateInstanceCommandCommand extends CommandRunner {
     flags: '--version <version>',
     description: 'Target version (e.g. 1.23.0). Defaults to CURRENT_VERSION.',
   })
-  parseVersion(value: string): UpgradeCommandVersion {
+  parseVersion(value: string): CrossUpgradeSupportedTwentyVersions {
     const allVersions = [...TWENTY_PREVIOUS_VERSIONS, ...TWENTY_NEXT_VERSIONS];
 
     if (!allVersions.includes(value as (typeof allVersions)[number])) {
@@ -75,7 +75,7 @@ export class GenerateInstanceCommandCommand extends CommandRunner {
       );
     }
 
-    return value as UpgradeCommandVersion;
+    return value as CrossUpgradeSupportedTwentyVersions;
   }
 
   async run(
