@@ -7,7 +7,10 @@ import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
 import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
-import { ensureValidAppAccessTokenOrRefresh } from '@/cli/utilities/auth/resolve-app-access-token';
+import {
+  ensureValidAppAccessTokenOrRefresh,
+  exchangeCredentialsForTokens,
+} from '@/cli/utilities/auth/resolve-app-access-token';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { formatSyncErrorEvents } from '@/cli/utilities/dev/orchestrator/steps/format-sync-error-events';
@@ -140,14 +143,16 @@ const innerAppDevOnce = async (
       };
     }
 
-    const { applicationRegistration, accessToken, refreshToken } =
-      createResult.data;
+    const { applicationRegistration, clientSecret } = createResult.data;
 
     await configService.setConfig({
       appRegistrationId: applicationRegistration.id,
       appRegistrationClientId: applicationRegistration.oAuthClientId,
-      appAccessToken: accessToken,
-      appRefreshToken: refreshToken,
+    });
+
+    await exchangeCredentialsForTokens(configService, {
+      clientId: applicationRegistration.oAuthClientId,
+      clientSecret,
     });
   }
 

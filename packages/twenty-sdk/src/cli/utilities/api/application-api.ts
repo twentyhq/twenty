@@ -109,8 +109,7 @@ export class ApplicationApi {
         universalIdentifier: string;
         oAuthClientId: string;
       };
-      accessToken: string;
-      refreshToken: string;
+      clientSecret: string;
     }>
   > {
     try {
@@ -122,8 +121,7 @@ export class ApplicationApi {
               universalIdentifier
               oAuthClientId
             }
-            accessToken
-            refreshToken
+            clientSecret
           }
         }
       `;
