@@ -32,7 +32,7 @@ export const makeSlowInstance = (name: string) =>
 export const makeWorkspace = (name: string) =>
   makeStep('workspace', name) as WorkspaceUpgradeStep;
 
-export const createTestModule = async () => {
+export const createUpgradeSequenceRunnerTestModule = async () => {
   const module: TestingModule = await Test.createTestingModule({
     providers: [
       {

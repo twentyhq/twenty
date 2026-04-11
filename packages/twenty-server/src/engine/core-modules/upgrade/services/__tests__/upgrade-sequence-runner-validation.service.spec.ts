@@ -1,11 +1,13 @@
 import {
-  createTestModule,
+  createUpgradeSequenceRunnerTestModule,
   makeFastInstance,
   makeSlowInstance,
   makeWorkspace,
 } from 'src/engine/core-modules/upgrade/services/__tests__/utils/upgrade-sequence-runner-test.util';
 
-type TestModule = Awaited<ReturnType<typeof createTestModule>>;
+type TestModule = Awaited<
+  ReturnType<typeof createUpgradeSequenceRunnerTestModule>
+>;
 
 describe('UpgradeSequenceRunnerService — validation', () => {
   let runner: TestModule['runner'];
@@ -16,7 +18,7 @@ describe('UpgradeSequenceRunnerService — validation', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
 
-    const testModule = await createTestModule();
+    const testModule = await createUpgradeSequenceRunnerTestModule();
 
     runner = testModule.runner;
     upgradeMigrationService = testModule.upgradeMigrationService;
