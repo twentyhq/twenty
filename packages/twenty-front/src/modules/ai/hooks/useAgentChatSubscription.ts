@@ -268,6 +268,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
 
           if (!store.get(isStreamingAtom)) {
             store.set(isStreamingAtom, true);
+            store.set(errorAtom, null);
 
             bridge = new TransformStream<UIMessageChunk>();
             writer = bridge.writable.getWriter();
