@@ -65,7 +65,7 @@ export class RunInstanceCommandsCommand extends CommandRunner {
       for (const {
         command,
         name,
-      } of this.upgradeCommandRegistryService.getAllFastInstanceCommands()) {
+      } of this.upgradeCommandRegistryService.getCrossUpgradeSupportedFastInstanceCommands()) {
         const result = await this.instanceUpgradeService.runFastInstanceCommand(
           {
             command,
@@ -85,7 +85,7 @@ export class RunInstanceCommandsCommand extends CommandRunner {
         for (const {
           command,
           name,
-        } of this.upgradeCommandRegistryService.getAllSlowInstanceCommands()) {
+        } of this.upgradeCommandRegistryService.getCrossUpgradeSupportedSlowInstanceCommands()) {
           const result =
             await this.instanceUpgradeService.runSlowInstanceCommand({
               command,

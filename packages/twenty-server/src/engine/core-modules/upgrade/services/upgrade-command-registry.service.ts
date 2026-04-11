@@ -188,13 +188,13 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
     return bundle.workspaceCommands[bundle.workspaceCommands.length - 1];
   }
 
-  getAllFastInstanceCommands(): RegisteredFastInstanceCommand[] {
+  getCrossUpgradeSupportedFastInstanceCommands(): RegisteredFastInstanceCommand[] {
     return TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS.flatMap(
       (version) => this.getBundleForVersion(version).fastInstanceCommands,
     );
   }
 
-  getAllSlowInstanceCommands(): RegisteredSlowInstanceCommand[] {
+  getCrossUpgradeSupportedSlowInstanceCommands(): RegisteredSlowInstanceCommand[] {
     return TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS.flatMap(
       (version) => this.getBundleForVersion(version).slowInstanceCommands,
     );

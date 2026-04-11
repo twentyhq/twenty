@@ -257,7 +257,7 @@ describe('UpgradeCommandRegistryService', () => {
       new MigrationB1771000000000(),
     ]);
 
-    const allCommands = service.getAllFastInstanceCommands();
+    const allCommands = service.getCrossUpgradeSupportedFastInstanceCommands();
 
     expect(allCommands.map((entry) => entry.name)).toStrictEqual([
       '1.20.0_MigrationD1769000000000_1769000000000',
@@ -267,10 +267,10 @@ describe('UpgradeCommandRegistryService', () => {
     ]);
   });
 
-  it('should return empty array from getAllFastInstanceCommands when no commands registered', async () => {
+  it('should return empty array from getCrossUpgradeSupportedFastInstanceCommands when no commands registered', async () => {
     const service = await buildRegistryService([]);
 
-    expect(service.getAllFastInstanceCommands()).toStrictEqual([]);
+    expect(service.getCrossUpgradeSupportedFastInstanceCommands()).toStrictEqual([]);
   });
 
   it('should allow same class name with different timestamps across kinds', async () => {
@@ -423,7 +423,7 @@ describe('UpgradeCommandRegistryService', () => {
       new SlowMigration1768000000000(),
     ]);
 
-    const allSlowCommands = service.getAllSlowInstanceCommands();
+    const allSlowCommands = service.getCrossUpgradeSupportedSlowInstanceCommands();
 
     expect(allSlowCommands.map((entry) => entry.name)).toStrictEqual([
       '1.20.0_SlowMigration1768000000000_1768000000000',
