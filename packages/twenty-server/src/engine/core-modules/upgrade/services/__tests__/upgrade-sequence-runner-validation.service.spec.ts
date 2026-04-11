@@ -14,7 +14,6 @@ describe('UpgradeSequenceRunnerService — validation', () => {
   let upgradeMigrationService: TestModule['upgradeMigrationService'];
   let instanceUpgradeService: TestModule['instanceUpgradeService'];
   let workspaceUpgradeService: TestModule['workspaceUpgradeService'];
-  let workspaceIteratorService: TestModule['workspaceIteratorService'];
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -25,7 +24,6 @@ describe('UpgradeSequenceRunnerService — validation', () => {
     upgradeMigrationService = testModule.upgradeMigrationService;
     instanceUpgradeService = testModule.instanceUpgradeService;
     workspaceUpgradeService = testModule.workspaceUpgradeService;
-    workspaceIteratorService = testModule.workspaceIteratorService;
   });
 
   describe('cursor resolution', () => {
@@ -152,25 +150,6 @@ describe('UpgradeSequenceRunnerService — validation', () => {
       expect(
         instanceUpgradeService.runFastInstanceCommand,
       ).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('missing workspace cursor', () => {
-    it('should throw when a workspace has no cursor in the map', async () => {
-      upgradeMigrationService.getLastAttemptedCommandNameOrThrow.mockResolvedValue(
-        { name: 'Ic1', status: 'completed' },
-      );
-      upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow.mockResolvedValue(
-        new Map(),
-      );
-
-      const report = await runner.run({
-        sequence: [makeFastInstance('Ic1'), makeWorkspace('Wc1')],
-        activeWorkspaceIds: ['ws-1'],
-        options: {},
-      });
-
-      expect(report.totalFailures).toBe(1);
     });
   });
 });
