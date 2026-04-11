@@ -3,23 +3,22 @@ import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { UpgradeMigrationModule } from 'src/engine/core-modules/upgrade-migration/upgrade-migration.module';
 import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
 import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
-import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
 import { WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
-import { UpgradeMigrationEntity } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Module({
   imports: [
     DiscoveryModule,
     WorkspaceIteratorModule,
-    TypeOrmModule.forFeature([UpgradeMigrationEntity, WorkspaceEntity]),
+    UpgradeMigrationModule,
+    TypeOrmModule.forFeature([WorkspaceEntity]),
   ],
   providers: [
-    UpgradeMigrationService,
     InstanceCommandRunnerService,
     WorkspaceCommandRunnerService,
     UpgradeCommandRegistryService,
@@ -27,7 +26,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
     UpgradeSequenceRunnerService,
   ],
   exports: [
-    UpgradeMigrationService,
+    UpgradeMigrationModule,
     InstanceCommandRunnerService,
     WorkspaceCommandRunnerService,
     UpgradeCommandRegistryService,

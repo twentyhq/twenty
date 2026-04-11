@@ -5,8 +5,8 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { DataSource } from 'typeorm';
 
 import { CommandLogger } from 'src/database/commands/logger';
+import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade-migration/services/upgrade-migration.service';
 import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
-import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
 import { RemovedSinceVersion } from 'src/engine/core-modules/upgrade/types/removed-since-version.type';
