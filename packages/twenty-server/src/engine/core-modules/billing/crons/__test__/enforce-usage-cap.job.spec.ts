@@ -128,6 +128,7 @@ describe('EnforceUsageCapJob', () => {
       buildSubscription({ hasReachedCurrentPeriodCap: false }),
     ]);
     billingUsageCapService.evaluateCap.mockResolvedValue({
+      skipped: false,
       hasReachedCap: true,
       usage: 2_000_000,
       allowance: 1_000_000,
@@ -149,6 +150,7 @@ describe('EnforceUsageCapJob', () => {
       }),
     ]);
     billingUsageCapService.evaluateCap.mockResolvedValue({
+      skipped: false,
       hasReachedCap: true,
       usage: 2_000_000,
       allowance: 1_000_000,
@@ -173,6 +175,7 @@ describe('EnforceUsageCapJob', () => {
       }),
     ]);
     billingUsageCapService.evaluateCap.mockResolvedValue({
+      skipped: false,
       hasReachedCap: false,
       usage: 500_000,
       allowance: 1_000_000,
@@ -194,6 +197,7 @@ describe('EnforceUsageCapJob', () => {
       buildSubscription({ hasReachedCurrentPeriodCap: true }),
     ]);
     billingUsageCapService.evaluateCap.mockResolvedValue({
+      skipped: false,
       hasReachedCap: true,
       usage: 2_000_000,
       allowance: 1_000_000,
@@ -212,7 +216,6 @@ describe('EnforceUsageCapJob', () => {
       buildSubscription(),
     ]);
     billingUsageCapService.evaluateCap.mockResolvedValue({
-      hasReachedCap: false,
       skipped: true,
       reason: 'no-metered-item',
     });
@@ -231,6 +234,7 @@ describe('EnforceUsageCapJob', () => {
     billingUsageCapService.evaluateCap
       .mockRejectedValueOnce(new Error('clickhouse exploded'))
       .mockResolvedValueOnce({
+        skipped: false,
         hasReachedCap: true,
         usage: 2_000_000,
         allowance: 1_000_000,

@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
@@ -11,21 +11,14 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 export type BillingCapEvaluation =
   | {
-      hasReachedCap: true;
+      skipped: false;
+      hasReachedCap: boolean;
       usage: number;
       allowance: number;
       tierCap: number;
       creditBalance: number;
     }
   | {
-      hasReachedCap: false;
-      usage: number;
-      allowance: number;
-      tierCap: number;
-      creditBalance: number;
-    }
-  | {
-      hasReachedCap: false;
       skipped: true;
       reason: 'no-metered-item' | 'clickhouse-disabled';
     };
@@ -36,8 +29,6 @@ type UsageSumRow = {
 
 @Injectable()
 export class BillingUsageCapService {
-  private readonly logger = new Logger(BillingUsageCapService.name);
-
   constructor(
     private readonly clickHouseService: ClickHouseService,
     private readonly meteredCreditService: MeteredCreditService,
@@ -85,47 +76,47 @@ export class BillingUsageCapService {
   }
 
   // Evaluates whether a subscription has reached its metered-credit cap using
-  // live pricing read from the database. Because pricing is re-read on every
-  // evaluation, tier changes propagate to enforcement within one poll cycle —
-  // there is no cached Stripe alert threshold to get out of sync.
+  // live pricing read from the already-loaded subscription. Because pricing is
+  // re-read on every evaluation, tier changes propagate to enforcement within
+  // one poll cycle — there is no cached Stripe alert threshold to get out of sync.
+  //
+  // The caller must load the subscription with
+  // ['billingSubscriptionItems', 'billingSubscriptionItems.billingProduct',
+  //  'billingSubscriptionItems.billingProduct.billingPrices']
+  // so pricing can be extracted without a second DB round-trip.
   async evaluateCap(
     subscription: BillingSubscriptionEntity,
   ): Promise<BillingCapEvaluation> {
     if (!this.isClickHouseEnabled()) {
-      return {
-        hasReachedCap: false,
-        skipped: true,
-        reason: 'clickhouse-disabled',
-      };
+      return { skipped: true, reason: 'clickhouse-disabled' };
     }
 
     const meteredPricingInfo =
-      await this.meteredCreditService.getMeteredPricingInfo(subscription.id);
+      this.meteredCreditService.extractMeteredPricingInfoFromSubscription(
+        subscription,
+      );
 
     if (!meteredPricingInfo) {
-      return {
-        hasReachedCap: false,
-        skipped: true,
-        reason: 'no-metered-item',
-      };
+      return { skipped: true, reason: 'no-metered-item' };
     }
 
-    const creditBalance = await this.meteredCreditService.getCreditBalance(
-      subscription.stripeCustomerId,
-      meteredPricingInfo.unitPriceCents,
-    );
-
-    const usage = await this.getCurrentPeriodCreditsUsed(
-      subscription.workspaceId,
-      subscription.currentPeriodStart,
-      subscription.currentPeriodEnd,
-    );
+    const [creditBalance, usage] = await Promise.all([
+      this.meteredCreditService.getCreditBalance(
+        subscription.stripeCustomerId,
+        meteredPricingInfo.unitPriceCents,
+      ),
+      this.getCurrentPeriodCreditsUsed(
+        subscription.workspaceId,
+        subscription.currentPeriodStart,
+        subscription.currentPeriodEnd,
+      ),
+    ]);
 
     const allowance = meteredPricingInfo.tierCap + creditBalance;
-    const hasReachedCap = usage >= allowance;
 
     return {
-      hasReachedCap,
+      skipped: false,
+      hasReachedCap: usage >= allowance,
       usage,
       allowance,
       tierCap: meteredPricingInfo.tierCap,

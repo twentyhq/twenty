@@ -42,7 +42,7 @@ describe('BillingUsageCapService', () => {
         {
           provide: MeteredCreditService,
           useValue: {
-            getMeteredPricingInfo: jest.fn(),
+            extractMeteredPricingInfoFromSubscription: jest.fn(),
             getCreditBalance: jest.fn(),
           },
         },
@@ -167,20 +167,22 @@ describe('BillingUsageCapService', () => {
       const result = await service.evaluateCap(buildSubscription());
 
       expect(result).toEqual<BillingCapEvaluation>({
-        hasReachedCap: false,
         skipped: true,
         reason: 'clickhouse-disabled',
       });
-      expect(meteredCreditService.getMeteredPricingInfo).not.toHaveBeenCalled();
+      expect(
+        meteredCreditService.extractMeteredPricingInfoFromSubscription,
+      ).not.toHaveBeenCalled();
     });
 
     it('returns skipped when subscription has no metered item', async () => {
-      meteredCreditService.getMeteredPricingInfo.mockResolvedValue(null);
+      meteredCreditService.extractMeteredPricingInfoFromSubscription.mockReturnValue(
+        null,
+      );
 
       const result = await service.evaluateCap(buildSubscription());
 
       expect(result).toEqual<BillingCapEvaluation>({
-        hasReachedCap: false,
         skipped: true,
         reason: 'no-metered-item',
       });
@@ -188,16 +190,16 @@ describe('BillingUsageCapService', () => {
     });
 
     it('reports hasReachedCap=false when usage is below tierCap + creditBalance', async () => {
-      meteredCreditService.getMeteredPricingInfo.mockResolvedValue({
-        tierCap: 1_000_000,
-        unitPriceCents: 10,
-      });
+      meteredCreditService.extractMeteredPricingInfoFromSubscription.mockReturnValue(
+        { tierCap: 1_000_000, unitPriceCents: 10 },
+      );
       meteredCreditService.getCreditBalance.mockResolvedValue(250_000);
       clickHouseService.select.mockResolvedValue([{ total: 800_000 }]);
 
       const result = await service.evaluateCap(buildSubscription());
 
-      expect(result).toEqual({
+      expect(result).toEqual<BillingCapEvaluation>({
+        skipped: false,
         hasReachedCap: false,
         usage: 800_000,
         allowance: 1_250_000,
@@ -207,16 +209,16 @@ describe('BillingUsageCapService', () => {
     });
 
     it('reports hasReachedCap=true when usage meets tierCap + creditBalance', async () => {
-      meteredCreditService.getMeteredPricingInfo.mockResolvedValue({
-        tierCap: 1_000_000,
-        unitPriceCents: 10,
-      });
+      meteredCreditService.extractMeteredPricingInfoFromSubscription.mockReturnValue(
+        { tierCap: 1_000_000, unitPriceCents: 10 },
+      );
       meteredCreditService.getCreditBalance.mockResolvedValue(0);
       clickHouseService.select.mockResolvedValue([{ total: 1_000_000 }]);
 
       const result = await service.evaluateCap(buildSubscription());
 
       expect(result).toMatchObject({
+        skipped: false,
         hasReachedCap: true,
         usage: 1_000_000,
         allowance: 1_000_000,
@@ -224,16 +226,16 @@ describe('BillingUsageCapService', () => {
     });
 
     it('reports hasReachedCap=true when usage exceeds tierCap + creditBalance', async () => {
-      meteredCreditService.getMeteredPricingInfo.mockResolvedValue({
-        tierCap: 1_000_000,
-        unitPriceCents: 10,
-      });
+      meteredCreditService.extractMeteredPricingInfoFromSubscription.mockReturnValue(
+        { tierCap: 1_000_000, unitPriceCents: 10 },
+      );
       meteredCreditService.getCreditBalance.mockResolvedValue(100_000);
       clickHouseService.select.mockResolvedValue([{ total: 5_000_000 }]);
 
       const result = await service.evaluateCap(buildSubscription());
 
       expect(result).toMatchObject({
+        skipped: false,
         hasReachedCap: true,
         usage: 5_000_000,
         allowance: 1_100_000,
@@ -241,17 +243,25 @@ describe('BillingUsageCapService', () => {
     });
 
     it('re-reads pricing on each call so that tier changes apply immediately', async () => {
-      meteredCreditService.getMeteredPricingInfo
-        .mockResolvedValueOnce({ tierCap: 2_000_000, unitPriceCents: 10 })
-        .mockResolvedValueOnce({ tierCap: 500_000, unitPriceCents: 10 });
+      meteredCreditService.extractMeteredPricingInfoFromSubscription
+        .mockReturnValueOnce({ tierCap: 2_000_000, unitPriceCents: 10 })
+        .mockReturnValueOnce({ tierCap: 500_000, unitPriceCents: 10 });
       meteredCreditService.getCreditBalance.mockResolvedValue(0);
       clickHouseService.select.mockResolvedValue([{ total: 1_000_000 }]);
 
       const first = await service.evaluateCap(buildSubscription());
       const second = await service.evaluateCap(buildSubscription());
 
-      expect(first).toMatchObject({ hasReachedCap: false, allowance: 2_000_000 });
-      expect(second).toMatchObject({ hasReachedCap: true, allowance: 500_000 });
+      expect(first).toMatchObject({
+        skipped: false,
+        hasReachedCap: false,
+        allowance: 2_000_000,
+      });
+      expect(second).toMatchObject({
+        skipped: false,
+        hasReachedCap: true,
+        allowance: 500_000,
+      });
     });
   });
 });

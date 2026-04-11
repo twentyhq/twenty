@@ -5,12 +5,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, Repository } from 'typeorm';
 
-import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
-import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { enforceUsageCapCronPattern } from 'src/engine/core-modules/billing/crons/enforce-usage-cap.cron.pattern';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingUsageCapService } from 'src/engine/core-modules/billing/services/billing-usage-cap.service';
-import { enforceUsageCapCronPattern } from 'src/engine/core-modules/billing/crons/enforce-usage-cap.cron.pattern';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -60,6 +60,7 @@ export class EnforceUsageCapJob {
       relations: [
         'billingSubscriptionItems',
         'billingSubscriptionItems.billingProduct',
+        'billingSubscriptionItems.billingProduct.billingPrices',
       ],
     });
 
@@ -72,7 +73,7 @@ export class EnforceUsageCapJob {
         const evaluation =
           await this.billingUsageCapService.evaluateCap(subscription);
 
-        if ('skipped' in evaluation && evaluation.skipped) {
+        if (evaluation.skipped) {
           continue;
         }
 
