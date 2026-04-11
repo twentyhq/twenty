@@ -8,5 +8,16 @@ export const UPGRADE_COMMAND_SUPPORTED_VERSIONS = [
   '1.22.0',
 ] as const;
 
+// Unreleased versions. Commands can be declared for them today but
+// won't run until promoted into UPGRADE_COMMAND_SUPPORTED_VERSIONS.
+// The last entry is used as the default target for generate:instance-command.
+export const UPGRADE_COMMAND_NEXT_VERSIONS = ['1.23.0'] as const;
+
 export type UpgradeCommandVersion =
-  (typeof UPGRADE_COMMAND_SUPPORTED_VERSIONS)[number];
+  | (typeof UPGRADE_COMMAND_SUPPORTED_VERSIONS)[number]
+  | (typeof UPGRADE_COMMAND_NEXT_VERSIONS)[number];
+
+export const CURRENT_VERSION =
+  UPGRADE_COMMAND_SUPPORTED_VERSIONS[
+    UPGRADE_COMMAND_SUPPORTED_VERSIONS.length - 1
+  ];

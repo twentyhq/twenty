@@ -6,7 +6,12 @@ import { Logger } from '@nestjs/common';
 import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { InstanceCommandGenerationService } from 'src/database/commands/instance-command-generation.service';
-import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
+import {
+  CURRENT_VERSION,
+  UPGRADE_COMMAND_NEXT_VERSIONS,
+  UPGRADE_COMMAND_SUPPORTED_VERSIONS,
+  type UpgradeCommandVersion,
+} from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { type InstanceCommandType } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 
 const UPGRADE_VERSION_COMMAND_DIR = path.resolve(
@@ -17,6 +22,7 @@ const UPGRADE_VERSION_COMMAND_DIR = path.resolve(
 type GenerateInstanceCommandOptions = {
   name: string;
   type: InstanceCommandType;
+  version?: UpgradeCommandVersion;
 };
 
 @Command({
@@ -56,17 +62,32 @@ export class GenerateInstanceCommandCommand extends CommandRunner {
     return value;
   }
 
+  @Option({
+    flags: '--version <version>',
+    description:
+      'Target version (e.g. 1.23.0). Defaults to CURRENT_VERSION.',
+  })
+  parseVersion(value: string): UpgradeCommandVersion {
+    const allVersions = [
+      ...UPGRADE_COMMAND_SUPPORTED_VERSIONS,
+      ...UPGRADE_COMMAND_NEXT_VERSIONS,
+    ];
+
+    if (!allVersions.includes(value as UpgradeCommandVersion)) {
+      throw new Error(
+        `Invalid version "${value}". Must be one of: ${allVersions.join(', ')}`,
+      );
+    }
+
+    return value as UpgradeCommandVersion;
+  }
+
   async run(
     _passedParams: string[],
     options: GenerateInstanceCommandOptions,
   ): Promise<void> {
     const migrationName = options.name;
-
-    const version = UPGRADE_COMMAND_SUPPORTED_VERSIONS.slice(-1)[0];
-
-    if (!version) {
-      throw new Error('No supported versions found');
-    }
+    const version = options.version ?? CURRENT_VERSION;
 
     const commandType = options.type;
 
