@@ -46,49 +46,68 @@ export class UpgradeSequenceReaderService {
     return sequence;
   }
 
-  locateCommandInSequenceOrThrow(
-    sequence: UpgradeStep[],
-    commandName: string,
-  ): number {
-    const index = sequence.findIndex((step) => step.name === commandName);
+  locateStepInSequenceOrThrow({
+    sequence,
+    stepName,
+  }: {
+    sequence: UpgradeStep[];
+    stepName: string;
+  }): number {
+    const cursor = sequence.findIndex((step) => step.name === stepName);
 
-    if (index === -1) {
-      throw new Error(`Command "${commandName}" not found in upgrade sequence`);
+    if (cursor === -1) {
+      throw new Error(`Step "${stepName}" not found in upgrade sequence`);
     }
 
-    return index;
+    return cursor;
   }
 
-  getWorkspaceSliceBounds(
-    sequence: UpgradeStep[],
-    indexInSlice: number,
-  ): { startIndex: number; endIndex: number } {
-    let startIndex = indexInSlice;
+  getWorkspaceCommandsSliceBounds({
+    sequence,
+    workspaceCommand,
+  }: {
+    sequence: UpgradeStep[];
+    workspaceCommand: WorkspaceUpgradeStep;
+  }): { startCursor: number; endCursor: number } {
+    const workspaceCommandCursor = this.locateStepInSequenceOrThrow({
+      sequence,
+      stepName: workspaceCommand.name,
+    });
 
-    while (startIndex > 0 && sequence[startIndex - 1].kind === 'workspace') {
-      startIndex--;
+    let startCursor = workspaceCommandCursor;
+
+    while (startCursor > 0 && sequence[startCursor - 1].kind === 'workspace') {
+      startCursor--;
     }
 
-    let endIndex = indexInSlice;
+    let endCursor = workspaceCommandCursor;
 
     while (
-      endIndex < sequence.length - 1 &&
-      sequence[endIndex + 1].kind === 'workspace'
+      endCursor < sequence.length - 1 &&
+      sequence[endCursor + 1].kind === 'workspace'
     ) {
-      endIndex++;
+      endCursor++;
     }
 
-    return { startIndex, endIndex };
+    return { startCursor, endCursor };
   }
 
-  collectContiguousWorkspaceSteps(
-    sequence: UpgradeStep[],
-    fromIndex: number,
-  ): WorkspaceUpgradeStep[] {
+  collectContiguousWorkspaceSteps({
+    sequence,
+    fromWorkspaceCommand,
+  }: {
+    sequence: UpgradeStep[];
+    fromWorkspaceCommand: WorkspaceUpgradeStep;
+  }): WorkspaceUpgradeStep[] {
+    const fromCursor = this.locateStepInSequenceOrThrow({
+      sequence,
+      stepName: fromWorkspaceCommand.name,
+    });
+
     const slice: WorkspaceUpgradeStep[] = [];
 
-    for (let index = fromIndex; index < sequence.length; index++) {
-      const step = sequence[index];
+    for (let cursor = fromCursor; cursor < sequence.length; cursor++) {
+      const step = sequence[cursor];
 
       if (step.kind !== 'workspace') {
         break;
