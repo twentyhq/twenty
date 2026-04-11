@@ -12,6 +12,7 @@ import {
   makeWorkspace,
   resetSeedSequenceCounter,
   seedMigration,
+  setMockActiveWorkspaceIds,
   testGetLatestMigrationForCommand,
   WS_1,
   WS_2,
@@ -73,6 +74,7 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
   beforeEach(async () => {
     await context.dataSource.query('DELETE FROM core."upgradeMigration"');
     resetSeedSequenceCounter();
+    setMockActiveWorkspaceIds([]);
     jest.restoreAllMocks();
   });
 
@@ -82,7 +84,6 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
     await expect(
       context.runner.run({
         sequence,
-        activeWorkspaceIds: [],
         options: DEFAULT_OPTIONS,
       }),
     ).rejects.toThrow(
@@ -101,7 +102,6 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
     await expect(
       context.runner.run({
         sequence,
-        activeWorkspaceIds: [],
         options: DEFAULT_OPTIONS,
       }),
     ).rejects.toThrow('Step "RemovedCommand" not found in upgrade sequence');
@@ -115,6 +115,8 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
       makeWorkspace('Wc3'),
       makeWorkspace('Wc4'),
     ];
+
+    setMockActiveWorkspaceIds([WS_1, WS_2]);
 
     await seedMigration(context.dataSource, {
       name: 'Wc1',
@@ -149,7 +151,6 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
     await expect(
       context.runner.run({
         sequence,
-        activeWorkspaceIds: [WS_1, WS_2],
         options: DEFAULT_OPTIONS,
       }),
     ).rejects.toThrow('workspaces are not aligned');
@@ -157,6 +158,8 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
 
   it('should throw when an active workspace has no migration history', async () => {
     const sequence = [makeFastInstance('Ic1'), makeWorkspace('Wc1')];
+
+    setMockActiveWorkspaceIds([WS_1, WS_2]);
 
     await seedMigration(context.dataSource, {
       name: 'Wc1',
@@ -167,7 +170,6 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
     await expect(
       context.runner.run({
         sequence,
-        activeWorkspaceIds: [WS_1, WS_2],
         options: DEFAULT_OPTIONS,
       }),
     ).rejects.toThrow('No upgrade migration found for workspace(s)');
@@ -175,6 +177,8 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
 
   it('should throw when workspace sync barrier is not met', async () => {
     const sequence = [makeWorkspace('Wc1'), makeFastInstance('Ic1')];
+
+    setMockActiveWorkspaceIds([WS_1, WS_2]);
 
     await seedMigration(context.dataSource, {
       name: 'Wc1',
@@ -190,7 +194,6 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
     await expect(
       context.runner.run({
         sequence,
-        activeWorkspaceIds: [WS_1, WS_2],
         options: DEFAULT_OPTIONS,
       }),
     ).rejects.toThrow(
@@ -213,7 +216,6 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
     await expect(
       context.runner.run({
         sequence,
-        activeWorkspaceIds: [],
         options: DEFAULT_OPTIONS,
       }),
     ).rejects.toThrow('fast command exploded');
@@ -243,6 +245,8 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
       } as unknown as UpgradeStep,
     ];
 
+    setMockActiveWorkspaceIds([WS_1]);
+
     await seedMigration(context.dataSource, {
       name: 'Ic1',
       status: 'completed',
@@ -251,7 +255,6 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
     await expect(
       context.runner.run({
         sequence,
-        activeWorkspaceIds: [WS_1],
         options: DEFAULT_OPTIONS,
       }),
     ).rejects.toThrow('slow data migration exploded');
@@ -272,6 +275,8 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
       makeFastInstance('Ic1'),
     ];
 
+    setMockActiveWorkspaceIds([WS_1]);
+
     await seedMigration(context.dataSource, {
       name: 'Wc1',
       status: 'failed',
@@ -280,7 +285,6 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
 
     const report = await context.runner.run({
       sequence,
-      activeWorkspaceIds: [WS_1],
       options: DEFAULT_OPTIONS,
     });
 
@@ -315,6 +319,8 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
       makeWorkspace('Wc3'),
     ];
 
+    setMockActiveWorkspaceIds([WS_1, WS_2]);
+
     await seedMigration(context.dataSource, {
       name: 'Wc0',
       status: 'completed',
@@ -342,10 +348,9 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
 
     const report = await context.runner.run({
       sequence,
-      activeWorkspaceIds: [WS_1, WS_2],
       options: {
         ...DEFAULT_OPTIONS,
-        workspaceId: new Set([WS_1, WS_2]),
+        workspaceIds: [WS_1, WS_2],
       },
     });
 

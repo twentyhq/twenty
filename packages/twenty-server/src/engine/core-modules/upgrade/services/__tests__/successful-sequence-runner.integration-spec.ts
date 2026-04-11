@@ -267,7 +267,7 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
       sequence,
       options: {
         ...DEFAULT_OPTIONS,
-        workspaceId: new Set([WS_1, WS_2]),
+        workspaceIds: [WS_1, WS_2],
       },
     });
 

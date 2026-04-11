@@ -4,12 +4,12 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { pascalCase } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
-import { type TwentyCrossUpgradeSupportedVersion } from 'src/engine/core-modules/upgrade/constants/twenty-cross-upgrade-supported-version.constant';
+import { type TwentyAllVersion } from 'src/engine/core-modules/upgrade/constants/twenty-all-versions.constant';
 import { type InstanceCommandType } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 
 type GenerateInstanceCommandArgs = {
   migrationName: string;
-  version: TwentyCrossUpgradeSupportedVersion;
+  version: TwentyAllVersion;
   timestamp: number;
   type?: InstanceCommandType;
 };

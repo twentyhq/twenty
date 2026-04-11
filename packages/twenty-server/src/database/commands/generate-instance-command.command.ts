@@ -6,10 +6,11 @@ import { Logger } from '@nestjs/common';
 import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { InstanceCommandGenerationService } from 'src/database/commands/instance-command-generation.service';
-import { type TwentyCrossUpgradeSupportedVersion } from 'src/engine/core-modules/upgrade/constants/twenty-cross-upgrade-supported-version.constant';
+import {
+  TWENTY_ALL_VERSIONS,
+  type TwentyAllVersion,
+} from 'src/engine/core-modules/upgrade/constants/twenty-all-versions.constant';
 import { TWENTY_CURRENT_VERSION } from 'src/engine/core-modules/upgrade/constants/twenty-current-version.constant';
-import { TWENTY_NEXT_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-next-versions.constant';
-import { TWENTY_PREVIOUS_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant';
 import { type InstanceCommandType } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 
 const UPGRADE_VERSION_COMMAND_DIR = path.resolve(
@@ -20,7 +21,7 @@ const UPGRADE_VERSION_COMMAND_DIR = path.resolve(
 type GenerateInstanceCommandOptions = {
   name: string;
   type: InstanceCommandType;
-  version?: TwentyCrossUpgradeSupportedVersion;
+  version?: TwentyAllVersion;
 };
 
 @Command({
@@ -64,16 +65,16 @@ export class GenerateInstanceCommandCommand extends CommandRunner {
     flags: '--version <version>',
     description: 'Target version (e.g. 1.23.0). Defaults to CURRENT_VERSION.',
   })
-  parseVersion(value: string): TwentyCrossUpgradeSupportedVersion {
-    const allVersions = [...TWENTY_PREVIOUS_VERSIONS, ...TWENTY_NEXT_VERSIONS];
-
-    if (!allVersions.includes(value as (typeof allVersions)[number])) {
+  parseVersion(value: string): TwentyAllVersion {
+    if (
+      !TWENTY_ALL_VERSIONS.includes(value as (typeof TWENTY_ALL_VERSIONS)[number])
+    ) {
       throw new Error(
-        `Invalid version "${value}". Must be one of: ${allVersions.join(', ')}`,
+        `Invalid version "${value}". Must be one of: ${TWENTY_ALL_VERSIONS.join(', ')}`,
       );
     }
 
-    return value as TwentyCrossUpgradeSupportedVersion;
+    return value as TwentyAllVersion;
   }
 
   async run(

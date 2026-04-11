@@ -5,8 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, type QueryRunner, Repository } from 'typeorm';
 
 import {
-  type UpgradeMigrationStatus,
   UpgradeMigrationEntity,
+  type UpgradeMigrationStatus,
 } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { formatUpgradeErrorForStorage } from 'src/engine/core-modules/upgrade/utils/format-upgrade-error-for-storage.util';
 
@@ -123,7 +123,7 @@ export class UpgradeMigrationService {
   // Workspace-scoped records from inactive/deleted workspaces are
   // excluded so they cannot incorrectly influence the global cursor.
   async getLastAttemptedCommandNameOrThrow(
-    activeWorkspaceIds: string[],
+    allActiveOrSuspendedWorkspaceIds: string[],
   ): Promise<{
     name: string;
     status: UpgradeMigrationStatus;
@@ -143,10 +143,10 @@ export class UpgradeMigrationService {
         )`,
       );
 
-    if (activeWorkspaceIds.length > 0) {
+    if (allActiveOrSuspendedWorkspaceIds.length > 0) {
       queryBuilder.andWhere(
         '(migration."workspaceId" IS NULL OR migration."workspaceId" IN (:...activeWorkspaceIds))',
-        { activeWorkspaceIds },
+        { allActiveOrSuspendedWorkspaceIds },
       );
     } else {
       queryBuilder.andWhere('migration."workspaceId" IS NULL');

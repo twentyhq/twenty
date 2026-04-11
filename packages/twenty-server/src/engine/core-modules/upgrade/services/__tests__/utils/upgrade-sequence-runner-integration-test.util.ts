@@ -72,7 +72,7 @@ export const setMockActiveWorkspaceIds = (ids: string[]) => {
 };
 
 export const DEFAULT_OPTIONS = {
-  workspaceId: undefined,
+  workspaceIds: undefined,
   startFromWorkspaceId: undefined,
   workspaceCountLimit: undefined,
   dryRun: false,
