@@ -18,6 +18,7 @@ import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { StaleRegistrationCleanupModule } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/stale-registration-cleanup.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { EnterpriseKeyValidationCronCommand } from 'src/engine/core-modules/enterprise/cron/command/enterprise-key-validation.cron.command';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { EventLogCleanupModule } from 'src/engine/core-modules/event-logs/cleanup/event-log-cleanup.module';
@@ -74,6 +75,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     MarketplaceModule,
     ApplicationUpgradeModule,
     StaleRegistrationCleanupModule,
+    BillingModule,
     CoreEngineVersionModule,
     WorkspaceVersionModule,
     UpgradeModule,

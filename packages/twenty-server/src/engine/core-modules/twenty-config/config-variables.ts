@@ -815,6 +815,20 @@ export class ConfigVariables {
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
   BILLING_STRIPE_WEBHOOK_SECRET: string;
 
+  // When true, workflow-credit cap enforcement is driven by a ClickHouse-backed
+  // poller instead of Stripe billing alerts. The poller re-evaluates the tier cap
+  // against live pricing on every run, so price/tier changes propagate without
+  // needing to recreate Stripe alert objects. When false, Stripe alerts remain
+  // the source of truth and the poller runs in shadow mode (log-only).
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
+      'Use the ClickHouse-backed poller (instead of Stripe billing alerts) as the source of truth for metered-credit cap enforcement',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  BILLING_USAGE_CAP_CLICKHOUSE_ENABLED = false;
+
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Url for the frontend application',
