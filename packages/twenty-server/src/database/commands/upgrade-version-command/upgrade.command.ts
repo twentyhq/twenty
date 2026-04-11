@@ -11,9 +11,18 @@ import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/se
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
 import { RemovedSinceVersion } from 'src/engine/core-modules/upgrade/types/removed-since-version.type';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
+import { isDefined } from 'twenty-shared/utils';
 
-export type UpgradeCommandOptions = {
-  workspaceId?: Set<string>;
+type RawUpgradeCommandOptions = {
+  workspaceIds?: Set<string>;
+  startFromWorkspaceId?: string;
+  workspaceCountLimit?: number;
+  dryRun?: boolean;
+  verbose?: boolean;
+};
+
+export type ParsedUpgradeCommandOptions = {
+  workspaceIds?: string[];
   startFromWorkspaceId?: string;
   workspaceCountLimit?: number;
   dryRun?: boolean;
@@ -107,7 +116,7 @@ export class UpgradeCommand extends CommandRunner {
 
   override async run(
     _passedParams: string[],
-    options: UpgradeCommandOptions,
+    options: RawUpgradeCommandOptions,
   ): Promise<void> {
     if (options.verbose) {
       this.logger = new CommandLogger({
@@ -138,7 +147,12 @@ export class UpgradeCommand extends CommandRunner {
       const { totalSuccesses, totalFailures } =
         await this.upgradeSequenceRunnerService.run({
           sequence,
-          options,
+          options: {
+            ...options,
+            workspaceIds: isDefined(options.workspaceIds)
+              ? Array.from(options.workspaceIds)
+              : undefined,
+          },
         });
 
       this.logger.log(

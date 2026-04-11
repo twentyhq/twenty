@@ -4,7 +4,7 @@ import {
   type WorkspaceIteratorReport,
   WorkspaceIteratorService,
 } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { type UpgradeCommandOptions } from 'src/database/commands/upgrade-version-command/upgrade.command';
+import { type ParsedUpgradeCommandOptions } from 'src/database/commands/upgrade-version-command/upgrade.command';
 import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import {
@@ -15,7 +15,7 @@ import {
 } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 export type UpgradeSequenceRunnerReport = {
   totalSuccesses: number;
@@ -40,7 +40,7 @@ export class UpgradeSequenceRunnerService {
     options,
   }: {
     sequence: UpgradeStep[];
-    options: UpgradeCommandOptions;
+    options: ParsedUpgradeCommandOptions;
   }): Promise<UpgradeSequenceRunnerReport> {
     if (sequence.length === 0) {
       return { totalSuccesses: 0, totalFailures: 0 };
@@ -232,7 +232,7 @@ export class UpgradeSequenceRunnerService {
   }: {
     contiguousWorkspaceSteps: WorkspaceUpgradeStep[];
     allActiveOrSuspendedWorkspaceIds: string[];
-    options: UpgradeCommandOptions;
+    options: ParsedUpgradeCommandOptions;
   }): Promise<WorkspaceIteratorReport> {
     const workspaceCursors =
       await this.upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow(
@@ -241,8 +241,8 @@ export class UpgradeSequenceRunnerService {
 
     return this.workspaceIteratorService.iterate({
       workspaceIds:
-        options.workspaceId && options.workspaceId.size > 0
-          ? Array.from(options.workspaceId)
+        isDefined(options.workspaceIds) && options.workspaceIds.length > 0
+          ? options.workspaceIds
           : allActiveOrSuspendedWorkspaceIds,
       startFromWorkspaceId: options.startFromWorkspaceId,
       workspaceCountLimit: options.workspaceCountLimit,
@@ -287,7 +287,7 @@ export class UpgradeSequenceRunnerService {
     if (!allWorkspacesReady) {
       throw new Error(
         'Cannot run instance step: not all workspaces have completed ' +
-          `"${previousWorkspaceStep}"`,
+          `"${previousWorkspaceStep.name}"`,
       );
     }
   }
