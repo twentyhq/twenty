@@ -1,5 +1,8 @@
+import { InjectDataSource } from '@nestjs/typeorm';
+
 import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
+import { DataSource } from 'typeorm';
 
 import { CommandLogger } from 'src/database/commands/logger';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
@@ -25,6 +28,8 @@ export class UpgradeCommand extends CommandRunner {
     protected readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
     protected readonly upgradeSequenceRunnerService: UpgradeSequenceRunnerService,
     protected readonly workspaceVersionService: WorkspaceVersionService,
+    @InjectDataSource()
+    protected readonly dataSource: DataSource,
   ) {
     super();
     this.logger = new CommandLogger({
@@ -107,6 +112,8 @@ export class UpgradeCommand extends CommandRunner {
     }
 
     try {
+      await this.runBootstrapMigrations();
+
       const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
 
       this.logger.log(
@@ -152,6 +159,48 @@ export class UpgradeCommand extends CommandRunner {
     } catch (error) {
       this.logger.error(chalk.red(`Upgrade failed: ${error.message}`));
       throw error;
+    }
+  }
+
+  // Schema changes required by the upgrade engine itself (e.g. new columns
+  // on upgradeMigration) must be applied before the sequence runs.
+  // Only the specific bootstrap migration is executed here.
+  // To remove starting from 1.23
+  private async runBootstrapMigrations(): Promise<void> {
+    const BOOTSTRAP_MIGRATION = 'AddIsInitialToUpgradeMigration1775909335324';
+
+    const alreadyExecuted = await this.dataSource.query(
+      `SELECT 1 FROM "core"."_typeorm_migrations" WHERE "name" = $1`,
+      [BOOTSTRAP_MIGRATION],
+    );
+
+    if (alreadyExecuted.length > 0) {
+      return;
+    }
+
+    const migration = this.dataSource.migrations.find(
+      (migration) => migration.name === BOOTSTRAP_MIGRATION,
+    );
+
+    if (!migration) {
+      throw new Error(
+        `Bootstrap migration "${BOOTSTRAP_MIGRATION}" not found in registered migrations`,
+      );
+    }
+
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+
+    try {
+      await migration.up(queryRunner);
+
+      await queryRunner.query(
+        `INSERT INTO "core"."_typeorm_migrations" ("timestamp", "name") VALUES ($1, $2)`,
+        [1775909335324, BOOTSTRAP_MIGRATION],
+      );
+    } finally {
+      await queryRunner.release();
     }
   }
 

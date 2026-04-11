@@ -94,18 +94,33 @@ const buildUpgradeCommandModule = async ({
           upgradeSequenceReaderService: UpgradeSequenceReaderService,
           upgradeSequenceRunnerService: UpgradeSequenceRunnerService,
           workspaceVersionService: WorkspaceVersionService,
+          dataSource: DataSource,
         ) => {
           return new commandRunner(
             upgradeSequenceReaderService,
             upgradeSequenceRunnerService,
             workspaceVersionService,
+            dataSource,
           );
         },
         inject: [
           UpgradeSequenceReaderService,
           UpgradeSequenceRunnerService,
           WorkspaceVersionService,
+          'DATA_SOURCE',
         ],
+      },
+      {
+        provide: 'DATA_SOURCE',
+        useValue: {
+          query: jest.fn().mockResolvedValue([{ '1': 1 }]),
+          migrations: [],
+          createQueryRunner: jest.fn().mockReturnValue({
+            connect: jest.fn(),
+            release: jest.fn(),
+            query: jest.fn(),
+          }),
+        },
       },
       {
         provide: WorkspaceVersionService,
