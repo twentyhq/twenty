@@ -128,6 +128,11 @@ export class UpgradeSequenceReaderService {
     return slice;
   }
 
+  // Returns workspace commands that still need to run, based on the
+  // workspace's cursor position. If the cursor points to a command from
+  // a previous slice (not found in the current one), the entire slice
+  // is pending — this happens when a workspace enters a new slice for
+  // the first time after a sync barrier.
   getPendingWorkspaceCommands({
     workspaceCommands,
     workspaceCursor,
@@ -140,9 +145,7 @@ export class UpgradeSequenceReaderService {
     );
 
     if (cursorIndex === -1) {
-      throw new Error(
-        `Workspace cursor "${workspaceCursor.name}" not found in current workspace commands slice`,
-      );
+      return workspaceCommands;
     }
 
     return workspaceCursor.status === 'completed'

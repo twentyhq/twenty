@@ -204,16 +204,11 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
   });
 
   it('should run data migration for slow instance commands when workspaces exist', async () => {
-    const sequence = [makeSlowInstance('Ic1'), makeWorkspace('Wc1')];
+    const sequence = [makeFastInstance('Ic0'), makeSlowInstance('Ic1')];
 
     await seedMigration(context.dataSource, {
-      name: 'Ic1',
-      status: 'failed',
-    });
-    await seedMigration(context.dataSource, {
-      name: 'Wc1',
+      name: 'Ic0',
       status: 'completed',
-      workspaceId: WS_1,
     });
 
     const instanceCommandRunnerService = context.module.get(
@@ -295,11 +290,17 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
 
   it('should execute the full sequence from the initial cursor on a fresh run', async () => {
     const sequence = [
+      makeWorkspace('Wc0'),
       makeFastInstance('Ic1'),
       makeFastInstance('Ic2'),
       makeWorkspace('Wc1'),
     ];
 
+    await seedMigration(context.dataSource, {
+      name: 'Wc0',
+      status: 'completed',
+      workspaceId: WS_1,
+    });
     await seedMigration(context.dataSource, {
       name: 'Ic1',
       status: 'completed',
