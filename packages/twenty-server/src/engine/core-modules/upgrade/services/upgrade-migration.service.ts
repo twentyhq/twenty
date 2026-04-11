@@ -4,7 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, type QueryRunner, Repository } from 'typeorm';
 
-import { UpgradeMigrationEntity } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
+import {
+  type UpgradeMigrationStatus,
+  UpgradeMigrationEntity,
+} from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { formatUpgradeErrorForStorage } from 'src/engine/core-modules/upgrade/utils/format-upgrade-error-for-storage.util';
 
 @Injectable()
@@ -115,13 +118,15 @@ export class UpgradeMigrationService {
     });
   }
 
-  // Returns the name of the most recently completed command (by createdAt)
-  // across all scopes (instance and workspace).
-  async getLastCompletedCommandNameOrThrow(): Promise<string> {
+  // Returns the most recently attempted command (by createdAt)
+  // across all scopes (instance and workspace), with its status.
+  async getLastAttemptedCommandNameOrThrow(): Promise<{
+    name: string;
+    status: UpgradeMigrationStatus;
+  }> {
     const migration = await this.upgradeMigrationRepository
       .createQueryBuilder('migration')
-      .select('migration.name')
-      .where({ status: 'completed' })
+      .select(['migration.name', 'migration.status'])
       .andWhere(
         `migration.attempt = (
           SELECT MAX(sub.attempt)
@@ -138,16 +143,16 @@ export class UpgradeMigrationService {
 
     if (!migration) {
       throw new Error(
-        'No completed upgrade migration found — the database may not have been initialized',
+        'No upgrade migration found — the database may not have been initialized',
       );
     }
 
-    return migration.name;
+    return { name: migration.name, status: migration.status };
   }
 
-  async getWorkspaceCursorsOrThrow(
+  async getWorkspaceLastAttemptedCommandNameOrThrow(
     workspaceIds: string[],
-  ): Promise<Map<string, string>> {
+  ): Promise<Map<string, { name: string; status: UpgradeMigrationStatus }>> {
     if (workspaceIds.length === 0) {
       return new Map();
     }
@@ -156,9 +161,9 @@ export class UpgradeMigrationService {
       .createQueryBuilder('migration')
       .select('migration.workspaceId', 'workspaceId')
       .addSelect('migration.name', 'name')
+      .addSelect('migration.status', 'status')
       .where({
         workspaceId: In(workspaceIds),
-        status: 'completed',
       })
       .andWhere(
         `migration.attempt = (
@@ -170,12 +175,19 @@ export class UpgradeMigrationService {
       )
       .orderBy('migration.createdAt', 'DESC')
       .distinctOn(['migration.workspaceId'])
-      .getRawMany<{ workspaceId: string; name: string }>();
+      .getRawMany<{
+        workspaceId: string;
+        name: string;
+        status: UpgradeMigrationStatus;
+      }>();
 
-    const cursors = new Map<string, string>();
+    const cursors = new Map<
+      string,
+      { name: string; status: UpgradeMigrationStatus }
+    >();
 
     for (const row of results) {
-      cursors.set(row.workspaceId, row.name);
+      cursors.set(row.workspaceId, { name: row.name, status: row.status });
     }
 
     const missingWorkspaceIds = workspaceIds.filter(
@@ -184,7 +196,7 @@ export class UpgradeMigrationService {
 
     if (missingWorkspaceIds.length > 0) {
       throw new Error(
-        `No completed upgrade migration found for workspace(s): ${missingWorkspaceIds.join(', ')}`,
+        `No upgrade migration found for workspace(s): ${missingWorkspaceIds.join(', ')}`,
       );
     }
 
