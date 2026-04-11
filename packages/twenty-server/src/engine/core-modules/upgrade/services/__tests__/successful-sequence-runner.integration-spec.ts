@@ -1,4 +1,3 @@
-import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
 
 import {
@@ -294,68 +293,125 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
     );
   });
 
-  it('should pass workspaceId filter to the iterator', async () => {
-    const sequence = [makeFastInstance('Ic1'), makeWorkspace('Wc1')];
+  it('should execute the full sequence from the initial cursor on a fresh run', async () => {
+    const sequence = [
+      makeFastInstance('Ic1'),
+      makeFastInstance('Ic2'),
+      makeWorkspace('Wc1'),
+    ];
 
     await seedMigration(context.dataSource, {
-      name: 'Wc1',
+      name: 'Ic1',
       status: 'completed',
-      workspaceId: WS_1,
     });
-    await seedMigration(context.dataSource, {
-      name: 'Wc1',
-      status: 'completed',
-      workspaceId: WS_2,
-    });
-
-    const iterateMock = context.module.get(WorkspaceIteratorService)
-      .iterate as jest.Mock;
-
-    await context.runner.run({
-      sequence,
-      activeWorkspaceIds: [WS_1, WS_2],
-      options: {
-        ...DEFAULT_OPTIONS,
-        workspaceId: new Set([WS_1]),
-      },
-    });
-
-    expect(iterateMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        workspaceIds: [WS_1],
-      }),
-    );
-  });
-
-  it('should forward startFromWorkspaceId, workspaceCountLimit, and dryRun to the iterator', async () => {
-    const sequence = [makeFastInstance('Ic1'), makeWorkspace('Wc1')];
-
-    await seedMigration(context.dataSource, {
-      name: 'Wc1',
-      status: 'completed',
-      workspaceId: WS_1,
-    });
-
-    const iterateMock = context.module.get(WorkspaceIteratorService)
-      .iterate as jest.Mock;
 
     await context.runner.run({
       sequence,
       activeWorkspaceIds: [WS_1],
-      options: {
-        ...DEFAULT_OPTIONS,
-        startFromWorkspaceId: WS_1,
-        workspaceCountLimit: 5,
-        dryRun: true,
-      },
+      options: DEFAULT_OPTIONS,
     });
 
-    expect(iterateMock).toHaveBeenCalledWith(
+    const ic2 = await testGetLatestMigrationForCommand(context.dataSource, {
+      name: 'Ic2',
+    });
+    const wc1 = await testGetLatestMigrationForCommand(context.dataSource, {
+      name: 'Wc1',
+      workspaceId: WS_1,
+    });
+
+    expect(ic2).toEqual(
+      expect.objectContaining({ name: 'Ic2', status: 'completed' }),
+    );
+    expect(wc1).toEqual(
+      expect.objectContaining({ name: 'Wc1', status: 'completed' }),
+    );
+  });
+
+  it('should retry a failed workspace command', async () => {
+    const sequence = [
+      makeFastInstance('Ic1'),
+      makeWorkspace('Wc1'),
+      makeWorkspace('Wc2'),
+    ];
+
+    await seedMigration(context.dataSource, {
+      name: 'Ic1',
+      status: 'completed',
+    });
+    await seedMigration(context.dataSource, {
+      name: 'Wc1',
+      status: 'failed',
+      workspaceId: WS_1,
+    });
+
+    const report = await context.runner.run({
+      sequence,
+      activeWorkspaceIds: [WS_1],
+      options: DEFAULT_OPTIONS,
+    });
+
+    expect(report.totalFailures).toBe(0);
+
+    const wc1 = await testGetLatestMigrationForCommand(context.dataSource, {
+      name: 'Wc1',
+      workspaceId: WS_1,
+    });
+    const wc2 = await testGetLatestMigrationForCommand(context.dataSource, {
+      name: 'Wc2',
+      workspaceId: WS_1,
+    });
+
+    expect(wc1).toEqual(
       expect.objectContaining({
-        startFromWorkspaceId: WS_1,
-        workspaceCountLimit: 5,
-        dryRun: true,
+        name: 'Wc1',
+        status: 'completed',
+        attempt: 2,
       }),
+    );
+    expect(wc2).toEqual(
+      expect.objectContaining({ name: 'Wc2', status: 'completed' }),
+    );
+  });
+
+  it('should traverse a multi-segment sequence with sync barriers', async () => {
+    const sequence = [
+      makeFastInstance('Ic1'),
+      makeWorkspace('Wc1'),
+      makeFastInstance('Ic2'),
+      makeWorkspace('Wc2'),
+    ];
+
+    await seedMigration(context.dataSource, {
+      name: 'Ic1',
+      status: 'completed',
+    });
+    await seedMigration(context.dataSource, {
+      name: 'Wc1',
+      status: 'completed',
+      workspaceId: WS_1,
+    });
+
+    const report = await context.runner.run({
+      sequence,
+      activeWorkspaceIds: [WS_1],
+      options: DEFAULT_OPTIONS,
+    });
+
+    expect(report.totalFailures).toBe(0);
+
+    const ic2 = await testGetLatestMigrationForCommand(context.dataSource, {
+      name: 'Ic2',
+    });
+    const wc2 = await testGetLatestMigrationForCommand(context.dataSource, {
+      name: 'Wc2',
+      workspaceId: WS_1,
+    });
+
+    expect(ic2).toEqual(
+      expect.objectContaining({ name: 'Ic2', status: 'completed' }),
+    );
+    expect(wc2).toEqual(
+      expect.objectContaining({ name: 'Wc2', status: 'completed' }),
     );
   });
 });

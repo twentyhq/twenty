@@ -41,6 +41,22 @@ const makeFailingWorkspace = (
     },
   }) as unknown as WorkspaceUpgradeStep;
 
+const makeWorkspaceFailingForIds = (
+  name: string,
+  failingWorkspaceIds: Set<string>,
+  error: Error,
+): WorkspaceUpgradeStep =>
+  ({
+    ...makeStep('workspace', name),
+    command: {
+      runOnWorkspace: async ({ workspaceId }: { workspaceId: string }) => {
+        if (failingWorkspaceIds.has(workspaceId)) {
+          throw error;
+        }
+      },
+    },
+  }) as unknown as WorkspaceUpgradeStep;
+
 describe('UpgradeSequenceRunnerService — failing sequence (integration)', () => {
   let context: IntegrationTestContext;
 
@@ -282,6 +298,90 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
       workspaceId: WS_1,
     });
 
-    expect(wc1).toEqual(expect.objectContaining({ status: 'failed' }));
+    expect(wc1).toEqual(
+      expect.objectContaining({ status: 'failed', attempt: 2 }),
+    );
+  });
+
+  it('should abort at workspace failure in a multi-segment sequence with two workspaces starting aligned', async () => {
+    const error = new Error('Wc2 exploded for WS_2');
+
+    const sequence = [
+      makeWorkspace('Wc0'),
+      makeFastInstance('Ic1'),
+      makeWorkspace('Wc1'),
+      makeWorkspaceFailingForIds('Wc2', new Set([WS_2]), error),
+      makeFastInstance('Ic2'),
+      makeWorkspace('Wc3'),
+    ];
+
+    await seedMigration(context.dataSource, {
+      name: 'Wc0',
+      status: 'completed',
+      workspaceId: WS_1,
+    });
+    await seedMigration(context.dataSource, {
+      name: 'Wc0',
+      status: 'completed',
+      workspaceId: WS_2,
+    });
+    await seedMigration(context.dataSource, {
+      name: 'Ic1',
+      status: 'completed',
+    });
+    await seedMigration(context.dataSource, {
+      name: 'Wc1',
+      status: 'completed',
+      workspaceId: WS_1,
+    });
+    await seedMigration(context.dataSource, {
+      name: 'Wc1',
+      status: 'completed',
+      workspaceId: WS_2,
+    });
+
+    const report = await context.runner.run({
+      sequence,
+      activeWorkspaceIds: [WS_1, WS_2],
+      options: DEFAULT_OPTIONS,
+    });
+
+    expect(report.totalSuccesses).toBe(1);
+    expect(report.totalFailures).toBe(1);
+
+    // WS_1 succeeded Wc2
+    const ws1Wc2 = await testGetLatestMigrationForCommand(context.dataSource, {
+      name: 'Wc2',
+      workspaceId: WS_1,
+    });
+
+    expect(ws1Wc2).toEqual(
+      expect.objectContaining({ name: 'Wc2', status: 'completed' }),
+    );
+
+    // WS_2 failed Wc2
+    const ws2Wc2 = await testGetLatestMigrationForCommand(context.dataSource, {
+      name: 'Wc2',
+      workspaceId: WS_2,
+    });
+
+    expect(ws2Wc2).toEqual(
+      expect.objectContaining({ name: 'Wc2', status: 'failed' }),
+    );
+
+    // Ic2 never ran — runner aborted at the workspace segment failure
+    const ic2 = await testGetLatestMigrationForCommand(context.dataSource, {
+      name: 'Ic2',
+    });
+
+    expect(ic2).toBeNull();
+
+    // Wc3 never ran either
+    const ws1Wc3 = await testGetLatestMigrationForCommand(context.dataSource, {
+      name: 'Wc3',
+      workspaceId: WS_1,
+    });
+
+    expect(ws1Wc3).toBeNull();
   });
 });

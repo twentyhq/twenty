@@ -217,6 +217,25 @@ export const seedMigration = async (
   );
 };
 
+export const testCountMigrationsForCommand = async (
+  dataSource: DataSource,
+  {
+    name,
+    workspaceId = null,
+  }: {
+    name: string;
+    workspaceId?: string | null;
+  },
+): Promise<number> => {
+  const rows = await dataSource.query(
+    `SELECT COUNT(*)::int AS count FROM core."upgradeMigration"
+     WHERE name = $1 AND ($2::uuid IS NULL AND "workspaceId" IS NULL OR "workspaceId" = $2)`,
+    [name, workspaceId],
+  );
+
+  return rows[0].count;
+};
+
 export const testGetLatestMigrationForCommand = async (
   dataSource: DataSource,
   {
