@@ -11,7 +11,8 @@ export function generateFrontConfig(): void {
   const configObject = {
     window: {
       _env_: {
-        REACT_APP_SERVER_BASE_URL: process.env.SERVER_URL,
+        REACT_APP_SERVER_BASE_URL:
+          process.env.REACT_APP_SERVER_BASE_URL ?? process.env.SERVER_URL,
       },
     },
   };
