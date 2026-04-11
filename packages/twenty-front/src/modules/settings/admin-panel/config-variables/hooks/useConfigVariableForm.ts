@@ -35,9 +35,10 @@ export const useConfigVariableForm = (
   });
 
   const currentValue = watch('value');
-  const isSensitiveEditing = !!(variable?.isSensitive && isEditing);
   const hasValueChanged =
-    isSensitiveEditing || currentValue !== variable?.value;
+    variable?.isSensitive && isEditing
+      ? typeof currentValue === 'string' && currentValue.length > 0
+      : currentValue !== variable?.value;
   const isValueValid = !!(
     variable &&
     !variable.isEnvOnly &&
