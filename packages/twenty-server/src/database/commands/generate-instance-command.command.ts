@@ -6,7 +6,7 @@ import { Logger } from '@nestjs/common';
 import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { InstanceCommandGenerationService } from 'src/database/commands/instance-command-generation.service';
-import { type CrossUpgradeSupportedVersion } from 'src/engine/core-modules/upgrade/constants/cross-upgrade-supported-version.constant';
+import { type TwentyCrossUpgradeSupportedVersion } from 'src/engine/core-modules/upgrade/constants/twenty-cross-upgrade-supported-version.constant';
 import { TWENTY_CURRENT_VERSION } from 'src/engine/core-modules/upgrade/constants/twenty-current-version.constant';
 import { TWENTY_NEXT_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-next-versions.constant';
 import { TWENTY_PREVIOUS_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant';
@@ -20,7 +20,7 @@ const UPGRADE_VERSION_COMMAND_DIR = path.resolve(
 type GenerateInstanceCommandOptions = {
   name: string;
   type: InstanceCommandType;
-  version?: CrossUpgradeSupportedVersion;
+  version?: TwentyCrossUpgradeSupportedVersion;
 };
 
 @Command({
@@ -64,7 +64,7 @@ export class GenerateInstanceCommandCommand extends CommandRunner {
     flags: '--version <version>',
     description: 'Target version (e.g. 1.23.0). Defaults to CURRENT_VERSION.',
   })
-  parseVersion(value: string): CrossUpgradeSupportedVersion {
+  parseVersion(value: string): TwentyCrossUpgradeSupportedVersion {
     const allVersions = [...TWENTY_PREVIOUS_VERSIONS, ...TWENTY_NEXT_VERSIONS];
 
     if (!allVersions.includes(value as (typeof allVersions)[number])) {
@@ -73,7 +73,7 @@ export class GenerateInstanceCommandCommand extends CommandRunner {
       );
     }
 
-    return value as CrossUpgradeSupportedVersion;
+    return value as TwentyCrossUpgradeSupportedVersion;
   }
 
   async run(

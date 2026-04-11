@@ -3,11 +3,11 @@ import { DiscoveryService } from '@nestjs/core';
 
 import { type ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { type WorkspaceCommandRunner } from 'src/database/commands/command-runners/workspace.command-runner';
-import { CROSS_UPGRADE_SUPPORTED_VERSIONS } from 'src/engine/core-modules/upgrade/constants/cross-upgrade-supported-version.constant';
 import {
-  ALL_TWENTY_VERSIONS,
-  type AllTwentyVersion,
+  TWENTY_ALL_VERSIONS,
+  type TwentyAllVersion,
 } from 'src/engine/core-modules/upgrade/constants/twenty-all-versions.constant';
+import { TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-cross-upgrade-supported-version.constant';
 import { TWENTY_CURRENT_VERSION } from 'src/engine/core-modules/upgrade/constants/twenty-current-version.constant';
 import { TWENTY_NEXT_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-next-versions.constant';
 import { TWENTY_PREVIOUS_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant';
@@ -24,21 +24,21 @@ type WorkspaceCommand =
 export type RegisteredFastInstanceCommand = {
   name: string;
   command: FastInstanceCommand;
-  version: AllTwentyVersion;
+  version: TwentyAllVersion;
   timestamp: number;
 };
 
 export type RegisteredSlowInstanceCommand = {
   name: string;
   command: SlowInstanceCommand;
-  version: AllTwentyVersion;
+  version: TwentyAllVersion;
   timestamp: number;
 };
 
 export type RegisteredWorkspaceCommand = {
   name: string;
   command: WorkspaceCommand;
-  version: AllTwentyVersion;
+  version: TwentyAllVersion;
   timestamp: number;
 };
 
@@ -59,14 +59,14 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
   private readonly logger = new Logger(UpgradeCommandRegistryService.name);
 
   private readonly bundlesByVersion = new Map<
-    AllTwentyVersion,
+    TwentyAllVersion,
     VersionBundle
   >();
 
   constructor(private readonly discoveryService: DiscoveryService) {}
 
   onModuleInit(): void {
-    for (const version of ALL_TWENTY_VERSIONS) {
+    for (const version of TWENTY_ALL_VERSIONS) {
       this.bundlesByVersion.set(version, {
         fastInstanceCommands: [],
         slowInstanceCommands: [],
@@ -176,12 +176,12 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
     }
   }
 
-  getBundleForVersion(version: AllTwentyVersion): VersionBundle {
+  getBundleForVersion(version: TwentyAllVersion): VersionBundle {
     return this.bundlesByVersion.get(version) ?? buildEmptyVersionBundle();
   }
 
   getLastWorkspaceCommandForVersion(
-    version: AllTwentyVersion,
+    version: TwentyAllVersion,
   ): RegisteredWorkspaceCommand | undefined {
     const bundle = this.getBundleForVersion(version);
 
@@ -189,19 +189,19 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
   }
 
   getAllFastInstanceCommands(): RegisteredFastInstanceCommand[] {
-    return CROSS_UPGRADE_SUPPORTED_VERSIONS.flatMap(
+    return TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS.flatMap(
       (version) => this.getBundleForVersion(version).fastInstanceCommands,
     );
   }
 
   getAllSlowInstanceCommands(): RegisteredSlowInstanceCommand[] {
-    return CROSS_UPGRADE_SUPPORTED_VERSIONS.flatMap(
+    return TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS.flatMap(
       (version) => this.getBundleForVersion(version).slowInstanceCommands,
     );
   }
 
   private computeCommandName(
-    version: AllTwentyVersion,
+    version: TwentyAllVersion,
     className: string,
     timestamp: number,
   ): string {
@@ -247,7 +247,7 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
   }
 
   private validateAtLeastOneVersionBundleHasWorkspaceCommands(): void {
-    const hasWorkspaceCommands = CROSS_UPGRADE_SUPPORTED_VERSIONS.some(
+    const hasWorkspaceCommands = TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS.some(
       (version) =>
         this.getBundleForVersion(version).workspaceCommands.length > 0,
     );
@@ -260,7 +260,7 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
   }
 
   private validateNoTimestampDuplicatesWithinKind(
-    version: AllTwentyVersion,
+    version: TwentyAllVersion,
     kind: 'fast-instance' | 'slow-instance' | 'workspace',
     entries:
       | RegisteredFastInstanceCommand[]

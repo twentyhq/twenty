@@ -2,27 +2,25 @@ import 'reflect-metadata';
 
 import { Injectable } from '@nestjs/common';
 
-import {
-  type AllTwentyVersion,
-  type CrossUpgradeSupportedVersion,
-} from 'src/engine/core-modules/upgrade/constants/cross-upgrade-supported-version.constant';
+import { type TwentyAllVersion } from 'src/engine/core-modules/upgrade/constants/twenty-all-versions.constant';
+import { type TwentyCrossUpgradeSupportedVersion } from 'src/engine/core-modules/upgrade/constants/twenty-cross-upgrade-supported-version.constant';
 
 export type InstanceCommandType = 'fast' | 'slow';
 
 export type RegisteredInstanceCommandMetadata = {
-  version: CrossUpgradeSupportedVersion;
+  version: TwentyCrossUpgradeSupportedVersion;
   timestamp: number;
   type: InstanceCommandType;
 };
 
 const REGISTERED_INSTANCE_COMMAND_KEY = 'REGISTERED_INSTANCE_COMMAND';
 
-// When dropping a version from CROSS_UPGRADE_SUPPORTED_VERSIONS, also
+// When dropping a version from TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS, also
 // remove the @RegisteredInstanceCommand decorator from its associated
 // command files.
 export const RegisteredInstanceCommand =
   (
-    version: AllTwentyVersion,
+    version: TwentyAllVersion,
     timestamp: number,
     options?: { type: 'slow' },
   ): ClassDecorator =>

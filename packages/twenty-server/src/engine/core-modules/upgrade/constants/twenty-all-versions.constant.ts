@@ -2,10 +2,10 @@ import { TWENTY_CURRENT_VERSION } from 'src/engine/core-modules/upgrade/constant
 import { TWENTY_NEXT_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-next-versions.constant';
 import { TWENTY_PREVIOUS_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant';
 
-export const ALL_TWENTY_VERSIONS = [
+export const TWENTY_ALL_VERSIONS = [
   ...TWENTY_PREVIOUS_VERSIONS,
   TWENTY_CURRENT_VERSION,
   ...TWENTY_NEXT_VERSIONS,
 ] as const;
 
-export type AllTwentyVersion = (typeof ALL_TWENTY_VERSIONS)[number];
+export type TwentyAllVersion = (typeof TWENTY_ALL_VERSIONS)[number];

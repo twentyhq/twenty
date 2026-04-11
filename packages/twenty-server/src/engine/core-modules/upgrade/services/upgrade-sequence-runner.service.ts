@@ -27,8 +27,8 @@ export class UpgradeSequenceRunnerService {
 
   constructor(
     private readonly upgradeMigrationService: UpgradeMigrationService,
-    private readonly instanceUpgradeService: InstanceCommandRunnerService,
-    private readonly workspaceUpgradeService: WorkspaceCommandRunnerService,
+    private readonly instanceCommandRunnerService: InstanceCommandRunnerService,
+    private readonly workspaceCommandRunnerService: WorkspaceCommandRunnerService,
     private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
     private readonly workspaceIteratorService: WorkspaceIteratorService,
   ) {}
@@ -182,7 +182,7 @@ export class UpgradeSequenceRunnerService {
     switch (step.kind) {
       case 'fast-instance': {
         const result =
-          await this.instanceUpgradeService.runFastInstanceCommand({
+          await this.instanceCommandRunnerService.runFastInstanceCommand({
             command: step.command,
             name: step.name,
           });
@@ -195,7 +195,7 @@ export class UpgradeSequenceRunnerService {
       }
       case 'slow-instance': {
         const result =
-          await this.instanceUpgradeService.runSlowInstanceCommand({
+          await this.instanceCommandRunnerService.runSlowInstanceCommand({
             command: step.command,
             name: step.name,
             skipDataMigration,
@@ -249,7 +249,7 @@ export class UpgradeSequenceRunnerService {
             workspaceCursor,
           });
 
-        await this.workspaceUpgradeService.runWorkspaceCommands({
+        await this.workspaceCommandRunnerService.runWorkspaceCommands({
           iteratorContext: context,
           options,
           workspaceCommands: pendingCommands,
