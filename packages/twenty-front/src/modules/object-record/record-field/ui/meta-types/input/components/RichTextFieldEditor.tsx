@@ -32,6 +32,12 @@ import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
+const LIST_ITEM_NODE_NAMES = new Set([
+  'bulletListItem',
+  'numberedListItem',
+  'checkListItem',
+]);
+
 type RichTextFieldEditorProps = {
   recordId: string;
   objectNameSingular: string;
@@ -212,6 +218,43 @@ export const RichTextFieldEditor = ({
     uploadFile: handleEditorBuiltInUploadFile,
     placeholders: {
       default: t`Type '/' for commands, '@' for mentions`,
+    },
+    _tiptapOptions: {
+      editorProps: {
+        /**
+         * Override ProseMirror's default clipboard text serializer which joins
+         * every block with \n\n. In BlockNote each list item is its own block,
+         * so the default produces a blank line between every bullet/numbered item.
+         *
+         * Rules:
+         * - list item followed by list item  → \n  (no blank line)
+         * - anything else between blocks     → \n\n (standard spacing)
+         */
+        clipboardTextSerializer: (slice) => {
+          const blockContainers: { typeName: string; text: string }[] = [];
+
+          slice.content.forEach((blockContainer) => {
+            const blockContent = blockContainer.firstChild;
+            if (blockContent) {
+              blockContainers.push({
+                typeName: blockContent.type.name,
+                text: blockContent.textContent,
+              });
+            }
+          });
+
+          return blockContainers
+            .map(({ typeName, text }, index) => {
+              if (index === 0) return text;
+              const prevTypeName = blockContainers[index - 1].typeName;
+              const bothListItems =
+                LIST_ITEM_NODE_NAMES.has(typeName) &&
+                LIST_ITEM_NODE_NAMES.has(prevTypeName);
+              return (bothListItems ? '\n' : '\n\n') + text;
+            })
+            .join('');
+        },
+      },
     },
   });
 
