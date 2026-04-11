@@ -227,9 +227,6 @@ export class UpgradeCommand extends CommandRunner {
 
   // Schema changes required by the upgrade engine itself (e.g. new columns
   // on upgradeMigration) must be applied before the sequence runs.
-  // Only the specific bootstrap migration is executed here.
-  // To remove starting from 1.23
-
   private async runBootstrapMigrations(): DeprecatedSinceVersion<
     '1.23.0',
     Promise<void>
