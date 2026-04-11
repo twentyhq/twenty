@@ -1,21 +1,18 @@
-import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import {
   createTestModule,
   makeFastInstance,
   makeSlowInstance,
   makeWorkspace,
 } from 'src/engine/core-modules/upgrade/services/__tests__/utils/upgrade-sequence-runner-test.util';
-import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
-import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
-import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
-import { WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
+
+type TestModule = Awaited<ReturnType<typeof createTestModule>>;
 
 describe('UpgradeSequenceRunnerService — execution', () => {
-  let runner: UpgradeSequenceRunnerService;
-  let upgradeMigrationService: UpgradeMigrationService;
-  let instanceUpgradeService: InstanceCommandRunnerService;
-  let workspaceUpgradeService: WorkspaceCommandRunnerService;
-  let workspaceIteratorService: WorkspaceIteratorService;
+  let runner: TestModule['runner'];
+  let upgradeMigrationService: TestModule['upgradeMigrationService'];
+  let instanceUpgradeService: TestModule['instanceUpgradeService'];
+  let workspaceUpgradeService: TestModule['workspaceUpgradeService'];
+  let workspaceIteratorService: TestModule['workspaceIteratorService'];
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -43,9 +40,9 @@ describe('UpgradeSequenceRunnerService — execution', () => {
 
   describe('cursor resolution', () => {
     it('should start after the last completed instance command', async () => {
-      (
-        upgradeMigrationService.getLastAttemptedCommandNameOrThrow as jest.Mock
-      ).mockResolvedValue({ name: 'Ic1', status: 'completed' });
+      upgradeMigrationService.getLastAttemptedCommandNameOrThrow.mockResolvedValue(
+        { name: 'Ic1', status: 'completed' },
+      );
 
       await runner.run({
         sequence: [makeFastInstance('Ic1'), makeFastInstance('Ic2')],
@@ -62,9 +59,9 @@ describe('UpgradeSequenceRunnerService — execution', () => {
     });
 
     it('should re-run the last failed instance command', async () => {
-      (
-        upgradeMigrationService.getLastAttemptedCommandNameOrThrow as jest.Mock
-      ).mockResolvedValue({ name: 'Ic2', status: 'failed' });
+      upgradeMigrationService.getLastAttemptedCommandNameOrThrow.mockResolvedValue(
+        { name: 'Ic2', status: 'failed' },
+      );
 
       await runner.run({
         sequence: [
@@ -94,12 +91,10 @@ describe('UpgradeSequenceRunnerService — execution', () => {
     });
 
     it('should start at workspace slice start when cursor is on a workspace step', async () => {
-      (
-        upgradeMigrationService.getLastAttemptedCommandNameOrThrow as jest.Mock
-      ).mockResolvedValue({ name: 'Wc2', status: 'completed' });
-      (
-        upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow as jest.Mock
-      ).mockResolvedValue(
+      upgradeMigrationService.getLastAttemptedCommandNameOrThrow.mockResolvedValue(
+        { name: 'Wc2', status: 'completed' },
+      );
+      upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow.mockResolvedValue(
         new Map([['ws-1', { name: 'Wc2', status: 'completed' }]]),
       );
 
@@ -126,12 +121,10 @@ describe('UpgradeSequenceRunnerService — execution', () => {
 
   describe('workspace cursor alignment — accepted cases', () => {
     it('should accept workspace cursors within the same slice', async () => {
-      (
-        upgradeMigrationService.getLastAttemptedCommandNameOrThrow as jest.Mock
-      ).mockResolvedValue({ name: 'Wc3', status: 'completed' });
-      (
-        upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow as jest.Mock
-      ).mockResolvedValue(
+      upgradeMigrationService.getLastAttemptedCommandNameOrThrow.mockResolvedValue(
+        { name: 'Wc3', status: 'completed' },
+      );
+      upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow.mockResolvedValue(
         new Map([
           ['ws-1', { name: 'Wc3', status: 'completed' }],
           ['ws-2', { name: 'Wc2', status: 'completed' }],
@@ -152,12 +145,10 @@ describe('UpgradeSequenceRunnerService — execution', () => {
     });
 
     it('should accept a failed workspace cursor within the same slice', async () => {
-      (
-        upgradeMigrationService.getLastAttemptedCommandNameOrThrow as jest.Mock
-      ).mockResolvedValue({ name: 'Wc2', status: 'failed' });
-      (
-        upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow as jest.Mock
-      ).mockResolvedValue(
+      upgradeMigrationService.getLastAttemptedCommandNameOrThrow.mockResolvedValue(
+        { name: 'Wc2', status: 'failed' },
+      );
+      upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow.mockResolvedValue(
         new Map([
           ['ws-1', { name: 'Wc2', status: 'failed' }],
           ['ws-2', { name: 'Wc1', status: 'completed' }],
@@ -182,34 +173,32 @@ describe('UpgradeSequenceRunnerService — execution', () => {
     it('should run instance and workspace steps in correct order', async () => {
       const executionOrder: string[] = [];
 
-      (
-        upgradeMigrationService.getLastAttemptedCommandNameOrThrow as jest.Mock
-      ).mockResolvedValue({ name: 'Ic1', status: 'completed' });
-      (
-        upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow as jest.Mock
-      ).mockResolvedValue(
+      upgradeMigrationService.getLastAttemptedCommandNameOrThrow.mockResolvedValue(
+        { name: 'Ic1', status: 'completed' },
+      );
+      upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow.mockResolvedValue(
         new Map([['ws-1', { name: 'Wc1', status: 'completed' }]]),
       );
 
-      (
-        instanceUpgradeService.runFastInstanceCommand as jest.Mock
-      ).mockImplementation(async () => {
-        executionOrder.push('fast-instance');
+      instanceUpgradeService.runFastInstanceCommand.mockImplementation(
+        async () => {
+          executionOrder.push('fast-instance');
 
-        return { status: 'success' };
-      });
-      (
-        instanceUpgradeService.runSlowInstanceCommand as jest.Mock
-      ).mockImplementation(async () => {
-        executionOrder.push('slow-instance');
+          return { status: 'success' };
+        },
+      );
+      instanceUpgradeService.runSlowInstanceCommand.mockImplementation(
+        async () => {
+          executionOrder.push('slow-instance');
 
-        return { status: 'success' };
-      });
-      (
-        workspaceUpgradeService.runWorkspaceCommands as jest.Mock
-      ).mockImplementation(async () => {
-        executionOrder.push('workspace');
-      });
+          return { status: 'success' };
+        },
+      );
+      workspaceUpgradeService.runWorkspaceCommands.mockImplementation(
+        async () => {
+          executionOrder.push('workspace');
+        },
+      );
 
       await runner.run({
         sequence: [
@@ -226,12 +215,12 @@ describe('UpgradeSequenceRunnerService — execution', () => {
     });
 
     it('should pass skipDataMigration true when no active workspaces exist', async () => {
-      (
-        upgradeMigrationService.getLastAttemptedCommandNameOrThrow as jest.Mock
-      ).mockResolvedValue({ name: 'Ic1', status: 'completed' });
-      (
-        upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow as jest.Mock
-      ).mockResolvedValue(new Map());
+      upgradeMigrationService.getLastAttemptedCommandNameOrThrow.mockResolvedValue(
+        { name: 'Ic1', status: 'completed' },
+      );
+      upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow.mockResolvedValue(
+        new Map(),
+      );
 
       await runner.run({
         sequence: [
