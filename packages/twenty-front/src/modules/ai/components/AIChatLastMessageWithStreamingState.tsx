@@ -1,8 +1,8 @@
 import { AIChatMessage } from '@/ai/components/AIChatMessage';
+import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
 import { agentChatLastMessageIdComponentSelector } from '@/ai/states/agentChatLastMessageIdComponentSelector';
-import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -13,14 +13,14 @@ export const AIChatLastMessageWithStreamingState = () => {
     agentChatLastMessageIdComponentSelector,
   );
 
-  const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
+  const displayedThread = useAtomStateValue(agentChatDisplayedThreadState);
   const agentChatIsStreaming = useAtomComponentFamilyStateValue(
     agentChatIsStreamingComponentFamilyState,
-    { threadId: currentAIChatThread },
+    { threadId: displayedThread },
   );
   const agentChatError = useAtomComponentFamilyStateValue(
     agentChatErrorComponentFamilyState,
-    { threadId: currentAIChatThread },
+    { threadId: displayedThread },
   );
 
   if (!isDefined(lastMessageId)) {
