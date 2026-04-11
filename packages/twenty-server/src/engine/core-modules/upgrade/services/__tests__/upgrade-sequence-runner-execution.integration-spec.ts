@@ -5,6 +5,7 @@ import {
   makeFastInstance,
   makeSlowInstance,
   makeWorkspace,
+  resetSeedSequenceCounter,
   seedMigration,
   WS_1,
 } from './utils/upgrade-sequence-runner-integration-test.util';
@@ -26,6 +27,7 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
 
   beforeEach(async () => {
     await context.dataSource.query('DELETE FROM core."upgradeMigration"');
+    resetSeedSequenceCounter();
     jest.clearAllMocks();
   });
 

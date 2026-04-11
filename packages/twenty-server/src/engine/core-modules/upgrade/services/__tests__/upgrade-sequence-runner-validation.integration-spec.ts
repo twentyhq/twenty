@@ -3,7 +3,9 @@ import {
   createUpgradeSequenceRunnerIntegrationTestModule,
   DEFAULT_OPTIONS,
   makeFastInstance,
+  makeSlowInstance,
   makeWorkspace,
+  resetSeedSequenceCounter,
   seedMigration,
   WS_1,
   WS_2,
@@ -26,6 +28,7 @@ describe('UpgradeSequenceRunnerService — validation (integration)', () => {
 
   beforeEach(async () => {
     await context.dataSource.query('DELETE FROM core."upgradeMigration"');
+    resetSeedSequenceCounter();
     jest.clearAllMocks();
   });
 
@@ -40,6 +43,25 @@ describe('UpgradeSequenceRunnerService — validation (integration)', () => {
       }),
     ).rejects.toThrow(
       'No upgrade migration found — the database may not have been initialized',
+    );
+  });
+
+  it('should throw when cursor command is not found in the sequence', async () => {
+    const sequence = [makeFastInstance('Ic1'), makeFastInstance('Ic2')];
+
+    await seedMigration(context.dataSource, {
+      name: 'RemovedCommand',
+      status: 'completed',
+    });
+
+    await expect(
+      context.runner.run({
+        sequence,
+        activeWorkspaceIds: [],
+        options: DEFAULT_OPTIONS,
+      }),
+    ).rejects.toThrow(
+      'Step "RemovedCommand" not found in upgrade sequence',
     );
   });
 
@@ -92,5 +114,134 @@ describe('UpgradeSequenceRunnerService — validation (integration)', () => {
         options: DEFAULT_OPTIONS,
       }),
     ).rejects.toThrow('workspaces are not aligned');
+  });
+
+  it('should throw when an active workspace has no migration history', async () => {
+    const sequence = [
+      makeFastInstance('Ic1'),
+      makeWorkspace('Wc1'),
+    ];
+
+    // Only seed instance command — WS_2 has no workspace migration rows
+    await seedMigration(context.dataSource, {
+      name: 'Wc1',
+      status: 'completed',
+      workspaceId: WS_1,
+    });
+
+    await expect(
+      context.runner.run({
+        sequence,
+        activeWorkspaceIds: [WS_1, WS_2],
+        options: DEFAULT_OPTIONS,
+      }),
+    ).rejects.toThrow('No upgrade migration found for workspace(s)');
+  });
+
+  it('should throw when workspace sync barrier is not met', async () => {
+    // Sequence: [Wc1, Ic1] — barrier requires all workspaces to have completed Wc1
+    // WS_1 completed Wc1, WS_2 has not
+    const sequence = [
+      makeWorkspace('Wc1'),
+      makeFastInstance('Ic1'),
+    ];
+
+    await seedMigration(context.dataSource, {
+      name: 'Wc1',
+      status: 'completed',
+      workspaceId: WS_1,
+    });
+    await seedMigration(context.dataSource, {
+      name: 'Wc1',
+      status: 'failed',
+      workspaceId: WS_2,
+    });
+
+    await expect(
+      context.runner.run({
+        sequence,
+        activeWorkspaceIds: [WS_1, WS_2],
+        options: DEFAULT_OPTIONS,
+      }),
+    ).rejects.toThrow(
+      'Cannot run instance step: not all workspaces have completed "Wc1"',
+    );
+  });
+
+  it('should throw when a fast instance command fails', async () => {
+    const sequence = [makeFastInstance('Ic1'), makeFastInstance('Ic2')];
+
+    await seedMigration(context.dataSource, {
+      name: 'Ic1',
+      status: 'completed',
+    });
+
+    const error = new Error('fast command exploded');
+
+    context.instanceUpgradeService.runFastInstanceCommand.mockResolvedValueOnce(
+      { status: 'failed', error },
+    );
+
+    await expect(
+      context.runner.run({
+        sequence,
+        activeWorkspaceIds: [],
+        options: DEFAULT_OPTIONS,
+      }),
+    ).rejects.toThrow('fast command exploded');
+  });
+
+  it('should throw when a slow instance command fails', async () => {
+    const sequence = [makeFastInstance('Ic1'), makeSlowInstance('Ic2')];
+
+    await seedMigration(context.dataSource, {
+      name: 'Ic1',
+      status: 'completed',
+    });
+
+    const error = new Error('slow command exploded');
+
+    context.instanceUpgradeService.runSlowInstanceCommand.mockResolvedValueOnce(
+      { status: 'failed', error },
+    );
+
+    await expect(
+      context.runner.run({
+        sequence,
+        activeWorkspaceIds: [],
+        options: DEFAULT_OPTIONS,
+      }),
+    ).rejects.toThrow('slow command exploded');
+  });
+
+  it('should abort and report failures when workspace commands fail', async () => {
+    // Sequence: [Wc1, Ic1] — if Wc1 fails for a workspace, runner should
+    // report the failure and not proceed to Ic1
+    const sequence = [
+      makeWorkspace('Wc1'),
+      makeFastInstance('Ic1'),
+    ];
+
+    await seedMigration(context.dataSource, {
+      name: 'Wc1',
+      status: 'failed',
+      workspaceId: WS_1,
+    });
+
+    context.workspaceUpgradeService.runWorkspaceCommands.mockRejectedValueOnce(
+      new Error('workspace command exploded'),
+    );
+
+    const report = await context.runner.run({
+      sequence,
+      activeWorkspaceIds: [WS_1],
+      options: DEFAULT_OPTIONS,
+    });
+
+    expect(report.totalFailures).toBe(1);
+    expect(report.totalSuccesses).toBe(0);
+    expect(
+      context.instanceUpgradeService.runFastInstanceCommand,
+    ).not.toHaveBeenCalled();
   });
 });
