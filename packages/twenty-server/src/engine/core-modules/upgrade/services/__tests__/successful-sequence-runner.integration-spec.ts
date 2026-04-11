@@ -10,8 +10,6 @@ import {
   WS_1,
 } from './utils/upgrade-sequence-runner-integration-test.util';
 
-// These tests share a real database table and must run sequentially
-// (maxWorkers: 1 in jest-integration.config.ts ensures this).
 describe('UpgradeSequenceRunnerService — execution (integration)', () => {
   let context: IntegrationTestContext;
 
@@ -133,9 +131,7 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
       context.workspaceUpgradeService.runWorkspaceCommands.mock.calls[0][0];
 
     expect(
-      callArgs.workspaceCommands.find(
-        (command: any) => command.name === 'Wc1',
-      ),
+      callArgs.workspaceCommands.find((command: any) => command.name === 'Wc1'),
     ).toBeUndefined();
   });
 

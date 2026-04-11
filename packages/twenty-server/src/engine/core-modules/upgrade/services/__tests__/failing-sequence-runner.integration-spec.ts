@@ -11,8 +11,6 @@ import {
   WS_2,
 } from './utils/upgrade-sequence-runner-integration-test.util';
 
-// These tests share a real database table and must run sequentially
-// (maxWorkers: 1 in jest-integration.config.ts ensures this).
 describe('UpgradeSequenceRunnerService — validation (integration)', () => {
   let context: IntegrationTestContext;
 
@@ -60,9 +58,7 @@ describe('UpgradeSequenceRunnerService — validation (integration)', () => {
         activeWorkspaceIds: [],
         options: DEFAULT_OPTIONS,
       }),
-    ).rejects.toThrow(
-      'Step "RemovedCommand" not found in upgrade sequence',
-    );
+    ).rejects.toThrow('Step "RemovedCommand" not found in upgrade sequence');
   });
 
   it('should throw when workspace cursors are outside the current slice', async () => {
@@ -117,10 +113,7 @@ describe('UpgradeSequenceRunnerService — validation (integration)', () => {
   });
 
   it('should throw when an active workspace has no migration history', async () => {
-    const sequence = [
-      makeFastInstance('Ic1'),
-      makeWorkspace('Wc1'),
-    ];
+    const sequence = [makeFastInstance('Ic1'), makeWorkspace('Wc1')];
 
     // Only seed instance command — WS_2 has no workspace migration rows
     await seedMigration(context.dataSource, {
@@ -141,10 +134,7 @@ describe('UpgradeSequenceRunnerService — validation (integration)', () => {
   it('should throw when workspace sync barrier is not met', async () => {
     // Sequence: [Wc1, Ic1] — barrier requires all workspaces to have completed Wc1
     // WS_1 completed Wc1, WS_2 has not
-    const sequence = [
-      makeWorkspace('Wc1'),
-      makeFastInstance('Ic1'),
-    ];
+    const sequence = [makeWorkspace('Wc1'), makeFastInstance('Ic1')];
 
     await seedMigration(context.dataSource, {
       name: 'Wc1',
@@ -217,10 +207,7 @@ describe('UpgradeSequenceRunnerService — validation (integration)', () => {
   it('should abort and report failures when workspace commands fail', async () => {
     // Sequence: [Wc1, Ic1] — if Wc1 fails for a workspace, runner should
     // report the failure and not proceed to Ic1
-    const sequence = [
-      makeWorkspace('Wc1'),
-      makeFastInstance('Ic1'),
-    ];
+    const sequence = [makeWorkspace('Wc1'), makeFastInstance('Ic1')];
 
     await seedMigration(context.dataSource, {
       name: 'Wc1',
