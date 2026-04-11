@@ -1,5 +1,19 @@
 import { type ApiService } from '@/cli/utilities/api/api-service';
 import { type ConfigService } from '@/cli/utilities/config/config-service';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
+
+const isAlreadyClaimedError = (error: unknown): boolean => {
+  if (!isPlainObject(error)) {
+    return false;
+  }
+
+  const { extensions } = error as { extensions?: { subCode?: string } };
+
+  return (
+    isDefined(extensions) &&
+    extensions.subCode === 'UNIVERSAL_IDENTIFIER_ALREADY_CLAIMED'
+  );
+};
 
 export const ensureAppRegistration = async (
   apiService: ApiService,
@@ -15,7 +29,7 @@ export const ensureAppRegistration = async (
     universalIdentifier: app.universalIdentifier,
   });
 
-  if (createResult.success && createResult.data) {
+  if (createResult.success) {
     const { applicationRegistration, clientSecret } = createResult.data;
 
     await configService.setConfig({
@@ -28,6 +42,16 @@ export const ensureAppRegistration = async (
       clientSecret,
       isNewRegistration: true,
     };
+  }
+
+  if (!isAlreadyClaimedError(createResult.error)) {
+    const errorDetail =
+      createResult.error instanceof Error
+        ? createResult.error.message
+        : (createResult.error as { message?: string })?.message ??
+          String(createResult.error);
+
+    throw new Error(`Failed to create app registration: ${errorDetail}`);
   }
 
   const findResult =

@@ -67,9 +67,11 @@ export class RegisterAppOrchestratorStep {
       this.state.applyStepEvents([
         {
           message: `Failed to register app: ${error instanceof Error ? error.message : String(error)}`,
-          status: 'warning',
+          status: 'error',
         },
       ]);
+
+      throw error;
     }
 
     this.notify();

@@ -80,49 +80,24 @@ jobs:
           fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
-      - name: Build SDK and Server
-        run: npx nx build twenty-sdk && npx nx build twenty-server
+      - name: Build SDK
+        run: npx nx build twenty-sdk
       - name: Setup server environment
-        run: |
-          cp packages/twenty-server/.env.example packages/twenty-server/.env
-          echo "APP_SECRET=twenty-app-dev-secret-not-for-production" >> packages/twenty-server/.env
-          echo "PG_DATABASE_URL=postgres://postgres:postgres@localhost:5432/default" >> packages/twenty-server/.env
-          echo "REDIS_URL=redis://localhost:6379" >> packages/twenty-server/.env
-          echo "SIGN_IN_PREFILLED=true" >> packages/twenty-server/.env
-      - name: Create databases
-        run: |
-          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
-          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+        run: cp packages/twenty-server/.env.test packages/twenty-server/.env
+      - name: Create test database
+        run: PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
       - name: Setup database
         run: npx nx run twenty-server:database:reset
       - name: Start server
         run: nohup npx nx start:ci twenty-server > /tmp/twenty-server.log 2>&1 &
       - name: Wait for server to be ready
         run: npx wait-on http://localhost:3000/healthz --timeout 120000 --interval 1000
-      - name: Verify token works
-        run: |
-          echo "=== Testing token against /metadata ==="
-          HTTP_CODE=$(curl -s -o /tmp/token-test.json -w "%{http_code}" \
-            -X POST http://localhost:3000/metadata \
-            -H "Authorization: Bearer $TWENTY_API_KEY" \
-            -H "Content-Type: application/json" \
-            -d '{"query":"{ currentWorkspace { id } }"}')
-          echo "HTTP Status: $HTTP_CODE"
-          cat /tmp/token-test.json
-          if [ "$HTTP_CODE" != "200" ]; then
-            echo "::warning::Token test returned non-200 status"
-          fi
       - name: SDK / Run e2e Tests
         run: NODE_ENV=test npx vitest run --config ./vitest.e2e.config.ts
         working-directory: packages/twenty-sdk
       - name: Server / Dump logs on failure
         if: failure()
-        run: |
-          echo "=== twenty-server logs (last 100 lines) ==="
-          tail -100 /tmp/twenty-server.log || echo "No server log file found"
-          echo ""
-          echo "=== Token test result ==="
-          cat /tmp/token-test.json 2>/dev/null || echo "No token test result"
+        run: tail -100 /tmp/twenty-server.log || echo "No server log file found"
   ci-sdk-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
