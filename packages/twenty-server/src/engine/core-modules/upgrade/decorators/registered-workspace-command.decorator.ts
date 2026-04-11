@@ -10,7 +10,10 @@ export type RegisteredWorkspaceCommandMetadata = {
 const REGISTERED_WORKSPACE_COMMAND_KEY = 'REGISTERED_WORKSPACE_COMMAND';
 
 export const RegisteredWorkspaceCommand =
-  (version: TwentyCrossUpgradeSupportedVersion, timestamp: number): ClassDecorator =>
+  (
+    version: TwentyCrossUpgradeSupportedVersion,
+    timestamp: number,
+  ): ClassDecorator =>
   (target) => {
     Reflect.defineMetadata(
       REGISTERED_WORKSPACE_COMMAND_KEY,

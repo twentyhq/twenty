@@ -239,7 +239,7 @@ export class UpgradeSequenceRunnerService {
 
         if (!workspaceCursor) {
           throw new Error(
-            `No upgrade migration found for workspace ${context.workspaceId} should never occur`,
+            `No upgrade migration found for workspace ${context.workspaceId}. This should never occur.`,
           );
         }
 
