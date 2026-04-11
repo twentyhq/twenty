@@ -161,6 +161,12 @@ export const createUpgradeSequenceRunnerIntegrationTestModule = async () => {
   };
 };
 
+let seedSequenceCounter = 0;
+
+export const resetSeedSequenceCounter = () => {
+  seedSequenceCounter = 0;
+};
+
 export const seedMigration = async (
   dataSource: DataSource,
   {
@@ -175,11 +181,15 @@ export const seedMigration = async (
     attempt?: number;
   },
 ) => {
+  const createdAt = new Date(
+    Date.now() + seedSequenceCounter * 1000,
+  ).toISOString();
+
+  seedSequenceCounter++;
+
   await dataSource.query(
-    `INSERT INTO core."upgradeMigration" (name, status, attempt, "executedByVersion", "workspaceId")
-     VALUES ($1, $2, $3, $4, $5)`,
-    [name, status, attempt, '42.42.42', workspaceId],
+    `INSERT INTO core."upgradeMigration" (name, status, attempt, "executedByVersion", "workspaceId", "createdAt")
+     VALUES ($1, $2, $3, $4, $5, $6)`,
+    [name, status, attempt, '42.42.42', workspaceId, createdAt],
   );
-  // Ensure distinct createdAt ordering between rows
-  await new Promise((resolve) => setTimeout(resolve, 15));
 };
