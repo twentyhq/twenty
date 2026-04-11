@@ -64,6 +64,10 @@ vi.mock('@/cli/utilities/auth/resolve-app-access-token', () => ({
     accessToken: 'mock-app-access-token',
     refreshToken: 'mock-app-refresh-token',
   }),
+  ensureAppRegistrationAndTokens: vi.fn().mockResolvedValue({
+    appAccessToken: 'mock-app-access-token',
+    isNewRegistration: true,
+  }),
 }));
 
 vi.mock('@/cli/utilities/client/client-service', () => ({

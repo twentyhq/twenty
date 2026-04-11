@@ -8,8 +8,8 @@ import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-a
 import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import {
+  ensureAppRegistrationAndTokens,
   ensureValidAppAccessTokenOrRefresh,
-  exchangeCredentialsForTokens,
 } from '@/cli/utilities/auth/resolve-app-access-token';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
@@ -124,36 +124,19 @@ const innerAppDevOnce = async (
 
   const configService = new ConfigService();
 
-  const appAccessToken =
-    await ensureValidAppAccessTokenOrRefresh(configService);
-
-  if (!appAccessToken) {
-    const createResult = await apiService.createApplicationRegistration({
+  try {
+    await ensureAppRegistrationAndTokens(apiService, configService, {
       name: manifest.application.displayName,
       universalIdentifier: manifest.application.universalIdentifier,
     });
-
-    if (!createResult.success) {
-      return {
-        success: false,
-        error: {
-          code: APP_ERROR_CODES.SYNC_FAILED,
-          message: `Failed to create app registration: ${serializeError(createResult.error)}`,
-        },
-      };
-    }
-
-    const { applicationRegistration, clientSecret } = createResult.data;
-
-    await configService.setConfig({
-      appRegistrationId: applicationRegistration.id,
-      appRegistrationClientId: applicationRegistration.oAuthClientId,
-    });
-
-    await exchangeCredentialsForTokens(configService, {
-      clientId: applicationRegistration.oAuthClientId,
-      clientSecret,
-    });
+  } catch (error) {
+    return {
+      success: false,
+      error: {
+        code: APP_ERROR_CODES.SYNC_FAILED,
+        message: `Failed to register application: ${serializeError(error)}`,
+      },
+    };
   }
 
   const createDevAppResult = await apiService.createDevelopmentApplication({
