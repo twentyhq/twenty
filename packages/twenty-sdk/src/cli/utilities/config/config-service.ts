@@ -86,8 +86,7 @@ export class ConfigService {
       apiUrl: str(source.apiUrl) ?? '',
       apiKey: str(source.apiKey),
       twentyCLIRegistrationClientId:
-        str(source.twentyCLIRegistrationClientId) ??
-        str(source.oauthClientId),
+        str(source.twentyCLIRegistrationClientId) ?? str(source.oauthClientId),
       twentyCLIAccessToken:
         str(source.twentyCLIAccessToken) ??
         str(source.accessToken) ??

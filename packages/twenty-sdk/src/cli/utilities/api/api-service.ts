@@ -80,7 +80,9 @@ export class ApiService {
     return this.applicationApi.syncMarketplaceCatalog();
   }
 
-  getSchema(options?: { appAccessToken?: string }): Promise<ApiResponse<string>> {
+  getSchema(options?: {
+    appAccessToken?: string;
+  }): Promise<ApiResponse<string>> {
     return this.schemaApi.getSchema(options);
   }
 

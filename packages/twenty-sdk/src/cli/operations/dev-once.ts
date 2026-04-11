@@ -120,9 +120,9 @@ const innerAppDevOnce = async (
   onProgress?.('Registering application...');
 
   const configService = new ConfigService();
-  const config = await configService.getConfig();
 
-  const appAccessToken = await ensureValidAppAccessTokenOrRefresh(configService);
+  const appAccessToken =
+    await ensureValidAppAccessTokenOrRefresh(configService);
 
   if (!appAccessToken) {
     const createResult = await apiService.createApplicationRegistration({
@@ -235,7 +235,8 @@ const innerAppDevOnce = async (
   onProgress?.('Generating API client...');
 
   try {
-    const appAccessToken = await ensureValidAppAccessTokenOrRefresh(configService);
+    const appAccessToken =
+      await ensureValidAppAccessTokenOrRefresh(configService);
     const clientService = new ClientService();
 
     await clientService.generateCoreClient({

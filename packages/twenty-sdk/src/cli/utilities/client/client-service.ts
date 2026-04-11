@@ -26,7 +26,9 @@ export class ClientService {
     appPath: string;
     appAccessToken?: string;
   }): Promise<void> {
-    const coreSchemaResponse = await this.apiService.getSchema({ appAccessToken });
+    const coreSchemaResponse = await this.apiService.getSchema({
+      appAccessToken,
+    });
 
     if (!coreSchemaResponse.success) {
       throw new Error(

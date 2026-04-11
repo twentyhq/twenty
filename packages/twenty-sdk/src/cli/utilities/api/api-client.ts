@@ -115,7 +115,10 @@ export class ApiClient {
   async refreshToken(): Promise<string | null> {
     const config = await this.configService.getConfig();
 
-    if (!config.twentyCLIRefreshToken || !config.twentyCLIRegistrationClientId) {
+    if (
+      !config.twentyCLIRefreshToken ||
+      !config.twentyCLIRegistrationClientId
+    ) {
       return null;
     }
 
@@ -131,9 +134,7 @@ export class ApiClient {
 
       await this.configService.setConfig({
         twentyCLIAccessToken: newAccessToken,
-        ...(newRefreshToken
-          ? { twentyCLIRefreshToken: newRefreshToken }
-          : {}),
+        ...(newRefreshToken ? { twentyCLIRefreshToken: newRefreshToken } : {}),
       });
 
       return newAccessToken;

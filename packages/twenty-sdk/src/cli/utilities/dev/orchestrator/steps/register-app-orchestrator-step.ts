@@ -28,7 +28,9 @@ export class RegisterAppOrchestratorStep {
   }
 
   async execute(input: { manifest: Manifest }): Promise<void> {
-    const existingToken = await ensureValidAppAccessTokenOrRefresh(this.configService);
+    const existingToken = await ensureValidAppAccessTokenOrRefresh(
+      this.configService,
+    );
 
     if (existingToken) {
       this.state.applyStepEvents([
