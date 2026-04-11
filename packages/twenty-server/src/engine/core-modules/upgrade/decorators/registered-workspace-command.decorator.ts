@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 
-import { type CrossUpgradeSupportedTwentyVersions } from 'src/engine/core-modules/upgrade/constants/upgrade-command-supported-versions.constant';
+import { type CrossUpgradeSupportedVersion } from 'src/engine/core-modules/upgrade/constants/upgrade-command-supported-versions.constant';
 
 export type RegisteredWorkspaceCommandMetadata = {
-  version: CrossUpgradeSupportedTwentyVersions;
+  version: CrossUpgradeSupportedVersion;
   timestamp: number;
 };
 
@@ -11,7 +11,7 @@ const REGISTERED_WORKSPACE_COMMAND_KEY = 'REGISTERED_WORKSPACE_COMMAND';
 
 export const RegisteredWorkspaceCommand =
   (
-    version: CrossUpgradeSupportedTwentyVersions,
+    version: CrossUpgradeSupportedVersion,
     timestamp: number,
   ): ClassDecorator =>
   (target) => {

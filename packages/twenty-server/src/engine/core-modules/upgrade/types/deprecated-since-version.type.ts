@@ -1,8 +1,8 @@
 import {
   ALL_TWENTY_VERSIONS,
-  AllTwentyVersion,
-  TWENTY_CURRENT_VERSION,
+  type AllTwentyVersion,
 } from 'src/engine/core-modules/upgrade/constants/upgrade-command-supported-versions.constant';
+import { TWENTY_CURRENT_VERSION } from 'src/engine/core-modules/upgrade/constants/twenty-current-version.constant';
 import { IndexOf, IsGreaterOrEqual } from 'twenty-shared/types';
 
 export type DeprecatedSinceVersion<
