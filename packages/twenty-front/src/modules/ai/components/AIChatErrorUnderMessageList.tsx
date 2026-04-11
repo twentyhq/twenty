@@ -4,6 +4,7 @@ import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
 import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
 import { agentChatMessageComponentFamilySelector } from '@/ai/states/agentChatMessageComponentFamilySelector';
 import { agentChatMessageIdsComponentSelector } from '@/ai/states/agentChatMessageIdsComponentSelector';
+import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -16,6 +17,8 @@ const StyledErrorWrapper = styled.div`
 
 export const AIChatErrorUnderMessageList = () => {
   const agentChatError = useAtomStateValue(agentChatErrorState);
+  const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
+  const currentThreadError = agentChatError[currentAIChatThread ?? ''] ?? null;
   const agentChatIsStreaming = useAtomStateValue(agentChatIsStreamingState);
 
   const agentChatMessageIds = useAtomComponentSelectorValue(
@@ -29,7 +32,7 @@ export const AIChatErrorUnderMessageList = () => {
   );
 
   const showError =
-    agentChatError &&
+    currentThreadError &&
     !agentChatIsStreaming &&
     agentChatMessage?.role === AgentMessageRole.USER;
 
@@ -39,7 +42,7 @@ export const AIChatErrorUnderMessageList = () => {
 
   return (
     <StyledErrorWrapper>
-      <AIChatErrorRenderer error={agentChatError} />
+      <AIChatErrorRenderer error={currentThreadError} />
     </StyledErrorWrapper>
   );
 };

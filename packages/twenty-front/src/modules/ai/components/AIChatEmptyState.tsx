@@ -37,6 +37,7 @@ export const AIChatEmptyState = ({ editor }: AIChatEmptyStateProps) => {
     skipMessagesSkeletonUntilLoadedState,
   );
   const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
+  const currentThreadError = agentChatError[currentAIChatThread ?? ''] ?? null;
 
   const hasMessages = useAtomComponentSelectorValue(
     agentChatHasMessageComponentSelector,
@@ -48,7 +49,7 @@ export const AIChatEmptyState = ({ editor }: AIChatEmptyStateProps) => {
     (agentChatThreadsLoading && isOnNewChatSlot) ||
     (agentChatMessagesLoading && !skipMessagesSkeletonUntilLoaded);
   const shouldRender =
-    !hasMessages && !isDefined(agentChatError) && !skeletonShowing;
+    !hasMessages && !isDefined(currentThreadError) && !skeletonShowing;
 
   if (!shouldRender) {
     return null;

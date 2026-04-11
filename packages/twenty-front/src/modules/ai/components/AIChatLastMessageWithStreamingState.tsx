@@ -2,6 +2,7 @@ import { AIChatMessage } from '@/ai/components/AIChatMessage';
 import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
 import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
 import { agentChatLastMessageIdComponentSelector } from '@/ai/states/agentChatLastMessageIdComponentSelector';
+import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,6 +14,8 @@ export const AIChatLastMessageWithStreamingState = () => {
 
   const agentChatIsStreaming = useAtomStateValue(agentChatIsStreamingState);
   const agentChatError = useAtomStateValue(agentChatErrorState);
+  const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
+  const currentThreadError = agentChatError[currentAIChatThread ?? ''] ?? null;
 
   if (!isDefined(lastMessageId)) {
     return null;
@@ -22,7 +25,7 @@ export const AIChatLastMessageWithStreamingState = () => {
     <AIChatMessage
       messageId={lastMessageId}
       isLastMessageStreaming={agentChatIsStreaming}
-      error={agentChatError ?? undefined}
+      error={currentThreadError ?? undefined}
     />
   );
 };

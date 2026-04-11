@@ -4,7 +4,6 @@ import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
@@ -51,7 +50,6 @@ export const useSwitchToNewAIChat = () => {
     setAgentChatInput(newChatDraft);
     setCurrentAIChatThreadTitle(null);
     setAgentChatUsage(null);
-    store.set(agentChatErrorState.atom, null);
     openAskAIPage();
     store.set(shouldFocusChatEditorState.atom, true);
   };

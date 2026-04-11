@@ -288,7 +288,10 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           };
 
           streamError.code = event.code;
-          store.set(agentChatErrorState.atom, streamError);
+          store.set(agentChatErrorState.atom, (prev) => ({
+            ...prev,
+            [threadId]: streamError,
+          }));
 
           closeWriter();
           store.set(agentChatIsStreamingState.atom, false);

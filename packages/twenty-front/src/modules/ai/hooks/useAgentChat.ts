@@ -15,6 +15,7 @@ import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
@@ -82,6 +83,11 @@ export const useAgentChat = (
     if (draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
       setPendingThreadIdAfterFirstSend(threadId);
     }
+
+    store.set(agentChatErrorState.atom, (prev) => ({
+      ...prev,
+      [threadId]: null,
+    }));
 
     setAgentChatInput('');
     setAgentChatDraftsByThreadId((prev) => ({
