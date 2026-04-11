@@ -129,9 +129,7 @@ const buildUpgradeCommandModule = async ({
             }
 
             if (sql.includes('upgradeMigration')) {
-              return hasWorkspaces
-                ? [{ workspaceId: 'workspace-1' }]
-                : [];
+              return hasWorkspaces ? [{ workspaceId: 'workspace-1' }] : [];
             }
 
             return [];

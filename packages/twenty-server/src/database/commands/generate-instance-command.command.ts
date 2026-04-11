@@ -64,8 +64,7 @@ export class GenerateInstanceCommandCommand extends CommandRunner {
 
   @Option({
     flags: '--version <version>',
-    description:
-      'Target version (e.g. 1.23.0). Defaults to CURRENT_VERSION.',
+    description: 'Target version (e.g. 1.23.0). Defaults to CURRENT_VERSION.',
   })
   parseVersion(value: string): UpgradeCommandVersion {
     const allVersions = [

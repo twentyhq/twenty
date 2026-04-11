@@ -156,5 +156,4 @@ export class UpgradeSequenceReaderService {
       'No workspace commands found in upgrade sequence — this should have been caught at startup',
     );
   }
-
 }
