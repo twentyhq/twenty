@@ -35,6 +35,7 @@ import { ModulesModule } from 'src/modules/modules.module';
 import { ClickHouseModule } from './database/clickHouse/clickHouse.module';
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
 import { I18nModule } from './engine/core-modules/i18n/i18n.module';
+import { WorkspaceActivationModule } from './engine/core-modules/workspace/workspace-activation.module';
 
 // TODO: Remove this middleware when all the rest endpoints are migrated to TwentyORM
 const MIGRATED_REST_METHODS = [
@@ -58,6 +59,8 @@ const MIGRATED_REST_METHODS = [
     ClickHouseModule,
     // Core engine module, contains all the core modules
     CoreEngineModule,
+    // Global module for workspace activation (server-only, not loaded by worker)
+    WorkspaceActivationModule,
     // Modules module, contains all business logic modules
     ModulesModule,
     // Needed for the user workspace middleware

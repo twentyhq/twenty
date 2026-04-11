@@ -9,8 +9,7 @@ import { ApplicationRegistrationService } from 'src/engine/core-modules/applicat
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
-import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
+import { WorkspaceActivationService } from 'src/engine/core-modules/workspace/services/workspace-activation.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
@@ -56,8 +55,7 @@ export class DevSeederService {
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
-    private readonly upgradeMigrationService: UpgradeMigrationService,
-    private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
+    private readonly workspaceActivationService: WorkspaceActivationService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     @InjectRepository(WorkspaceEntity)
@@ -70,16 +68,10 @@ export class DevSeederService {
   ): Promise<void> {
     const light = options?.light ?? false;
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
-    const appVersion = this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
-
-    const lastWorkspaceCommand =
-      this.upgradeSequenceReaderService.getLastWorkspaceCommand();
 
     await this.seedCoreSchema({
       workspaceId,
       seedBilling: isBillingEnabled,
-      appVersion,
-      lastUpgradeStepName: lastWorkspaceCommand.name,
     });
 
     await this.applicationRegistrationService.createCliRegistrationIfNotExists();
@@ -193,13 +185,9 @@ export class DevSeederService {
 
   private async seedCoreSchema({
     workspaceId,
-    appVersion,
-    lastUpgradeStepName,
     seedBilling = true,
   }: {
     workspaceId: SeededWorkspacesIds;
-    appVersion: string;
-    lastUpgradeStepName: string;
     seedBilling?: boolean;
   }): Promise<void> {
     const schemaName = 'core';
@@ -258,12 +246,12 @@ export class DevSeederService {
 
       await seedMetadataEntities({ queryRunner, schemaName, workspaceId });
 
-      await this.upgradeMigrationService.markAsInitial({
-        name: lastUpgradeStepName,
-        workspaceId,
-        executedByVersion: appVersion,
-        queryRunner,
-      });
+      await this.workspaceActivationService.initializeUpgradeStateInTransaction(
+        {
+          workspaceId,
+          queryRunner,
+        },
+      );
 
       await queryRunner.commitTransaction();
     } catch (error) {

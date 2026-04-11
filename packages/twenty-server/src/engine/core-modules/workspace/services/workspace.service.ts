@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
@@ -29,12 +29,9 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
-import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { type ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
@@ -127,8 +124,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly coreEntityCacheService: CoreEntityCacheService,
-    private readonly upgradeMigrationService: UpgradeMigrationService,
-    private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
   ) {
     super(workspaceRepository);
   }
@@ -310,27 +305,10 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     return updatedWorkspace;
   }
 
-  async activateWorkspace(
+  async provisionWorkspace(
     user: AuthContextUser,
     workspace: WorkspaceEntity,
-    data: ActivateWorkspaceInput,
   ) {
-    if (!data.displayName || !data.displayName.length) {
-      throw new BadRequestException("'displayName' not provided");
-    }
-
-    if (
-      workspace.activationStatus === WorkspaceActivationStatus.ONGOING_CREATION
-    ) {
-      throw new Error('Workspace is already being created');
-    }
-
-    if (
-      workspace.activationStatus !== WorkspaceActivationStatus.PENDING_CREATION
-    ) {
-      throw new Error('Workspace is not pending creation');
-    }
-
     await this.workspaceRepository.update(workspace.id, {
       activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
     });
@@ -356,60 +334,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       workspaceId: workspace.id,
       schemaName: getWorkspaceSchemaName(workspace.id),
     });
-
-    await this.activateAndInitializeUpgradeState({
-      workspaceId: workspace.id,
-      displayName: data.displayName,
-    });
-
-    await this.coreEntityCacheService.invalidate(
-      'workspaceEntity',
-      workspace.id,
-    );
-
-    return await this.workspaceRepository.findOneBy({
-      id: workspace.id,
-    });
-  }
-
-  private async activateAndInitializeUpgradeState({
-    displayName,
-    workspaceId,
-  }: {
-    workspaceId: string;
-    displayName: string;
-  }): Promise<void> {
-    const lastWorkspaceCommand =
-      this.upgradeSequenceReaderService.getLastWorkspaceCommand();
-
-    const executedByVersion =
-      this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
-
-    const queryRunner = this.coreDataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      await queryRunner.manager.update(WorkspaceEntity, workspaceId, {
-        displayName,
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      });
-
-      await this.upgradeMigrationService.markAsInitial({
-        name: lastWorkspaceCommand.name,
-        workspaceId,
-        executedByVersion,
-        queryRunner,
-      });
-
-      await queryRunner.commitTransaction();
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
   }
 
   async deleteWorkspace(id: string, softDelete = false) {

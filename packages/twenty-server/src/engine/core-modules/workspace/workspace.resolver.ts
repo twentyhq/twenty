@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   type ExecutionContext,
   UseFilters,
   UseGuards,
@@ -11,6 +12,7 @@ import assert from 'assert';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -42,6 +44,7 @@ import {
 } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { WorkspaceUrlsDTO } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
+import { WorkspaceActivationService } from 'src/engine/core-modules/workspace/services/workspace-activation.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { getAuthBypassProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-bypass-providers-by-workspace.util';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
@@ -99,6 +102,7 @@ export class WorkspaceResolver {
     private readonly customDomainManagerService: CustomDomainManagerService,
     private readonly applicationService: ApplicationService,
     private readonly enterprisePlanService: EnterprisePlanService,
+    private readonly workspaceActivationService: WorkspaceActivationService,
   ) {}
 
   @Query(() => WorkspaceEntity)
@@ -118,7 +122,28 @@ export class WorkspaceResolver {
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    return await this.workspaceService.activateWorkspace(user, workspace, data);
+    if (!data.displayName || !data.displayName.length) {
+      throw new BadRequestException("'displayName' not provided");
+    }
+
+    if (
+      workspace.activationStatus === WorkspaceActivationStatus.ONGOING_CREATION
+    ) {
+      throw new Error('Workspace is already being created');
+    }
+
+    if (
+      workspace.activationStatus !== WorkspaceActivationStatus.PENDING_CREATION
+    ) {
+      throw new Error('Workspace is not pending creation');
+    }
+
+    await this.workspaceService.provisionWorkspace(user, workspace);
+
+    return await this.workspaceActivationService.activateWorkspace({
+      workspaceId: workspace.id,
+      displayName: data.displayName,
+    });
   }
 
   @Mutation(() => WorkspaceEntity)
