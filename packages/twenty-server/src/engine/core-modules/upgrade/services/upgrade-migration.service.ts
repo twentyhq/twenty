@@ -173,7 +173,8 @@ export class UpgradeMigrationService {
           AND sub."workspaceId" = migration."workspaceId"
         )`,
       )
-      .orderBy('migration.createdAt', 'DESC')
+      .orderBy('migration.workspaceId')
+      .addOrderBy('migration.createdAt', 'DESC')
       .distinctOn(['migration.workspaceId'])
       .getRawMany<{
         workspaceId: string;
