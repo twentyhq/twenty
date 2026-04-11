@@ -14,8 +14,8 @@ type RunSingleMigrationResult =
   | { status: 'failed'; error: unknown };
 
 @Injectable()
-export class InstanceUpgradeService {
-  private readonly logger = new Logger(InstanceUpgradeService.name);
+export class InstanceCommandRunnerService {
+  private readonly logger = new Logger(InstanceCommandRunnerService.name);
 
   constructor(
     @InjectDataSource()

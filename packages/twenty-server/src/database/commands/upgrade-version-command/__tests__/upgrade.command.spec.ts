@@ -9,18 +9,18 @@ import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import {
   UpgradeCommand,
   UpgradeCommandOptions,
 } from 'src/database/commands/upgrade-version-command/upgrade.command';
 import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
-import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
+import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
+import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
 import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
-import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
+import { WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 const CURRENT_VERSION =
@@ -132,8 +132,8 @@ const buildUpgradeCommandModule = async ({
         provide: UpgradeSequenceRunnerService,
         useFactory: (
           upgradeMigrationService: UpgradeMigrationService,
-          instanceUpgradeService: InstanceUpgradeService,
-          workspaceUpgradeService: WorkspaceUpgradeService,
+          instanceUpgradeService: InstanceCommandRunnerService,
+          workspaceUpgradeService: WorkspaceCommandRunnerService,
           upgradeSequenceReaderService: UpgradeSequenceReaderService,
           workspaceIteratorService: WorkspaceIteratorService,
         ) =>
@@ -146,14 +146,14 @@ const buildUpgradeCommandModule = async ({
           ),
         inject: [
           UpgradeMigrationService,
-          InstanceUpgradeService,
-          WorkspaceUpgradeService,
+          InstanceCommandRunnerService,
+          WorkspaceCommandRunnerService,
           UpgradeSequenceReaderService,
           WorkspaceIteratorService,
         ],
       },
       {
-        provide: InstanceUpgradeService,
+        provide: InstanceCommandRunnerService,
         useValue: {
           runFastInstanceCommand: jest
             .fn()
@@ -164,7 +164,7 @@ const buildUpgradeCommandModule = async ({
         },
       },
       {
-        provide: WorkspaceUpgradeService,
+        provide: WorkspaceCommandRunnerService,
         useValue: {
           runWorkspaceCommands: jest.fn().mockResolvedValue(undefined),
         },
@@ -239,7 +239,7 @@ describe('UpgradeCommandRunner', () => {
   it('should delegate workspace upgrade to WorkspaceUpgradeService', async () => {
     const module = await buildModuleAndSetupSpies({});
 
-    const workspaceUpgradeService = module.get(WorkspaceUpgradeService);
+    const workspaceUpgradeService = module.get(WorkspaceCommandRunnerService);
 
     const passedParams: string[] = [];
     const options: UpgradeCommandOptions = {};
@@ -269,7 +269,7 @@ describe('UpgradeCommandRunner', () => {
       migrations: [addIndex, addColumn],
     });
 
-    const instanceUpgradeService = module.get(InstanceUpgradeService);
+    const instanceUpgradeService = module.get(InstanceCommandRunnerService);
 
     await upgradeCommandRunner.run([], {});
 
@@ -301,7 +301,7 @@ describe('UpgradeCommandRunner', () => {
       migrations: [new FailingMigration1770000000000()],
     });
 
-    const instanceUpgradeService = module.get(InstanceUpgradeService);
+    const instanceUpgradeService = module.get(InstanceCommandRunnerService);
 
     (
       instanceUpgradeService.runFastInstanceCommand as jest.Mock
@@ -329,7 +329,7 @@ describe('UpgradeCommandRunner', () => {
       migrations: [slowMigration],
     });
 
-    const instanceUpgradeService = module.get(InstanceUpgradeService);
+    const instanceUpgradeService = module.get(InstanceCommandRunnerService);
 
     await upgradeCommandRunner.run([], {});
 
@@ -368,7 +368,7 @@ describe('UpgradeCommandRunner', () => {
       ],
     });
 
-    const instanceUpgradeService = module.get(InstanceUpgradeService);
+    const instanceUpgradeService = module.get(InstanceCommandRunnerService);
 
     (
       instanceUpgradeService.runFastInstanceCommand as jest.Mock
@@ -416,7 +416,7 @@ describe('UpgradeCommandRunner', () => {
       migrations: [new SlowMigrationFreshInstall()],
     });
 
-    const instanceUpgradeService = module.get(InstanceUpgradeService);
+    const instanceUpgradeService = module.get(InstanceCommandRunnerService);
 
     await upgradeCommandRunner.run([], {});
 
@@ -441,7 +441,7 @@ describe('UpgradeCommandRunner', () => {
       migrations: [new FailingSlowMigration()],
     });
 
-    const instanceUpgradeService = module.get(InstanceUpgradeService);
+    const instanceUpgradeService = module.get(InstanceCommandRunnerService);
 
     (
       instanceUpgradeService.runSlowInstanceCommand as jest.Mock
@@ -516,7 +516,7 @@ describe('UpgradeCommandRunner', () => {
       migrations: [alreadyDone, notDone],
     });
 
-    const instanceUpgradeService = module.get(InstanceUpgradeService);
+    const instanceUpgradeService = module.get(InstanceCommandRunnerService);
 
     (
       instanceUpgradeService.runFastInstanceCommand as jest.Mock

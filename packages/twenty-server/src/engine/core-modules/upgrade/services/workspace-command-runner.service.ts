@@ -18,8 +18,8 @@ export type RunWorkspaceCommandsArgs = {
 };
 
 @Injectable()
-export class WorkspaceUpgradeService {
-  private readonly logger = new Logger(WorkspaceUpgradeService.name);
+export class WorkspaceCommandRunnerService {
+  private readonly logger = new Logger(WorkspaceCommandRunnerService.name);
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,

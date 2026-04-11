@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { DataSource } from 'typeorm';
 
-import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
+import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
 import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
@@ -27,7 +27,7 @@ export class RunInstanceCommandsCommand extends CommandRunner {
     private readonly dataSource: DataSource,
     private readonly workspaceVersionService: WorkspaceVersionService,
     private readonly upgradeCommandRegistryService: UpgradeCommandRegistryService,
-    private readonly instanceUpgradeService: InstanceUpgradeService,
+    private readonly instanceUpgradeService: InstanceCommandRunnerService,
   ) {
     super();
   }

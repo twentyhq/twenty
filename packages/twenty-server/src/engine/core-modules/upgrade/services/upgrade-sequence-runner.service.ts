@@ -5,14 +5,14 @@ import {
   WorkspaceIteratorService,
 } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type UpgradeCommandOptions } from 'src/database/commands/upgrade-version-command/upgrade.command';
-import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
+import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import {
   type UpgradeStep,
   type WorkspaceUpgradeStep,
   UpgradeSequenceReaderService,
 } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
-import { WorkspaceUpgradeService } from 'src/engine/core-modules/upgrade/services/workspace-upgrade.service';
+import { WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 export type UpgradeSequenceRunnerReport = {
@@ -26,8 +26,8 @@ export class UpgradeSequenceRunnerService {
 
   constructor(
     private readonly upgradeMigrationService: UpgradeMigrationService,
-    private readonly instanceUpgradeService: InstanceUpgradeService,
-    private readonly workspaceUpgradeService: WorkspaceUpgradeService,
+    private readonly instanceUpgradeService: InstanceCommandRunnerService,
+    private readonly workspaceUpgradeService: WorkspaceCommandRunnerService,
     private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
     private readonly workspaceIteratorService: WorkspaceIteratorService,
   ) {}
