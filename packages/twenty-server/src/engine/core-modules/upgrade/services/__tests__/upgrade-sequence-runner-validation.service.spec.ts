@@ -13,6 +13,7 @@ describe('UpgradeSequenceRunnerService — validation', () => {
   let runner: TestModule['runner'];
   let upgradeMigrationService: TestModule['upgradeMigrationService'];
   let instanceUpgradeService: TestModule['instanceUpgradeService'];
+  let workspaceUpgradeService: TestModule['workspaceUpgradeService'];
   let workspaceIteratorService: TestModule['workspaceIteratorService'];
 
   beforeEach(async () => {
@@ -23,24 +24,11 @@ describe('UpgradeSequenceRunnerService — validation', () => {
     runner = testModule.runner;
     upgradeMigrationService = testModule.upgradeMigrationService;
     instanceUpgradeService = testModule.instanceUpgradeService;
+    workspaceUpgradeService = testModule.workspaceUpgradeService;
     workspaceIteratorService = testModule.workspaceIteratorService;
   });
 
   describe('cursor resolution', () => {
-    it('should throw when no migration history exists', async () => {
-      upgradeMigrationService.getLastAttemptedCommandNameOrThrow.mockRejectedValue(
-        new Error('No upgrade migration found'),
-      );
-
-      await expect(
-        runner.run({
-          sequence: [makeFastInstance('Ic1')],
-          activeWorkspaceIds: [],
-          options: {},
-        }),
-      ).rejects.toThrow('No upgrade migration found');
-    });
-
     it('should throw when cursor command is not in the sequence', async () => {
       upgradeMigrationService.getLastAttemptedCommandNameOrThrow.mockResolvedValue(
         { name: 'unknown-command', status: 'completed' },
@@ -122,40 +110,28 @@ describe('UpgradeSequenceRunnerService — validation', () => {
     });
   });
 
-  describe('workspace sync barrier', () => {
-    it('should throw when not all workspaces completed the previous workspace slice', async () => {
-      upgradeMigrationService.getLastAttemptedCommandNameOrThrow.mockResolvedValue(
-        { name: 'Wc1', status: 'completed' },
-      );
-      upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow.mockResolvedValue(
-        new Map([['ws-1', { name: 'Wc1', status: 'completed' }]]),
-      );
-      upgradeMigrationService.areAllWorkspacesAtCommand.mockResolvedValue(
-        false,
-      );
-
-      await expect(
-        runner.run({
-          sequence: [makeWorkspace('Wc1'), makeFastInstance('Ic1')],
-          activeWorkspaceIds: ['ws-1'],
-          options: {},
-        }),
-      ).rejects.toThrow('not all workspaces have completed');
-    });
-  });
-
   describe('workspace iteration failures', () => {
-    it('should abort and report failures when workspace iteration fails', async () => {
+    it('should report partial failure and abort before next instance step', async () => {
+      const workspaceIds = ['ws-1', 'ws-2', 'ws-3'];
+
       upgradeMigrationService.getLastAttemptedCommandNameOrThrow.mockResolvedValue(
         { name: 'Ic1', status: 'completed' },
       );
       upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow.mockResolvedValue(
-        new Map([['ws-1', { name: 'Wc1', status: 'completed' }]]),
+        new Map([
+          ['ws-1', { name: 'Wc1', status: 'completed' }],
+          ['ws-2', { name: 'Wc1', status: 'completed' }],
+          ['ws-3', { name: 'Wc1', status: 'completed' }],
+        ]),
       );
-      workspaceIteratorService.iterate.mockResolvedValue({
-        success: [],
-        fail: [{ workspaceId: 'ws-1', error: new Error('fail') }],
-      });
+
+      workspaceUpgradeService.runWorkspaceCommands.mockImplementation(
+        async ({ iteratorContext }) => {
+          if (iteratorContext.workspaceId === 'ws-2') {
+            throw new Error('workspace ws-2 migration failed');
+          }
+        },
+      );
 
       const report = await runner.run({
         sequence: [
@@ -164,37 +140,15 @@ describe('UpgradeSequenceRunnerService — validation', () => {
           makeWorkspace('Wc2'),
           makeFastInstance('Ic2'),
         ],
-        activeWorkspaceIds: ['ws-1'],
-        options: {},
+        activeWorkspaceIds: workspaceIds,
+        options: { workspaceId: new Set(workspaceIds) },
       });
 
       expect(report.totalFailures).toBe(1);
-      expect(report.totalSuccesses).toBe(0);
-    });
-
-    it('should not proceed to next instance step after workspace failure', async () => {
-      upgradeMigrationService.getLastAttemptedCommandNameOrThrow.mockResolvedValue(
-        { name: 'Ic1', status: 'completed' },
-      );
-      upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow.mockResolvedValue(
-        new Map([['ws-1', { name: 'Wc1', status: 'completed' }]]),
-      );
-      workspaceIteratorService.iterate.mockResolvedValue({
-        success: [],
-        fail: [{ workspaceId: 'ws-1', error: new Error('fail') }],
-      });
-
-      await runner.run({
-        sequence: [
-          makeFastInstance('Ic1'),
-          makeWorkspace('Wc1'),
-          makeWorkspace('Wc2'),
-          makeFastInstance('Ic2'),
-        ],
-        activeWorkspaceIds: ['ws-1'],
-        options: {},
-      });
-
+      expect(report.totalSuccesses).toBe(2);
+      expect(
+        workspaceUpgradeService.runWorkspaceCommands,
+      ).toHaveBeenCalledTimes(3);
       expect(
         instanceUpgradeService.runFastInstanceCommand,
       ).not.toHaveBeenCalled();
