@@ -6,7 +6,10 @@ import { type WorkspaceCommandRunner } from 'src/database/commands/command-runne
 import {
   CROSS_UPGRADE_SUPPORTED_VERSIONS,
   type CrossUpgradeSupportedVersion,
-} from 'src/engine/core-modules/upgrade/constants/upgrade-command-supported-versions.constant';
+} from 'src/engine/core-modules/upgrade/constants/cross-upgrade-supported-version.constant';
+import { TWENTY_CURRENT_VERSION } from 'src/engine/core-modules/upgrade/constants/twenty-current-version.constant';
+import { TWENTY_NEXT_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-next-versions.constant';
+import { TWENTY_PREVIOUS_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant';
 import { getRegisteredInstanceCommandMetadata } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { getRegisteredWorkspaceCommandMetadata } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
@@ -149,6 +152,8 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
       );
     }
 
+    this.validateNoVersionDuplicatesAcrossConstants();
+    this.validatePreviousVersionsNotEmpty();
     this.validateNoDuplicates();
     this.validateAtLeastOneVersionBundleHasWorkspaceCommands();
 
@@ -166,9 +171,7 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
     }
   }
 
-  getBundleForVersion(
-    version: CrossUpgradeSupportedVersion,
-  ): VersionBundle {
+  getBundleForVersion(version: CrossUpgradeSupportedVersion): VersionBundle {
     return this.bundlesByVersion.get(version) ?? buildEmptyVersionBundle();
   }
 
@@ -269,6 +272,34 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
       }
 
       seenTimestamps.add(entry.timestamp);
+    }
+  }
+
+  private validateNoVersionDuplicatesAcrossConstants(): void {
+    const allVersions = [
+      ...TWENTY_PREVIOUS_VERSIONS,
+      TWENTY_CURRENT_VERSION,
+      ...TWENTY_NEXT_VERSIONS,
+    ];
+
+    const uniqueVersions = new Set(allVersions);
+
+    if (uniqueVersions.size !== allVersions.length) {
+      const duplicates = allVersions.filter(
+        (version, index) => allVersions.indexOf(version) !== index,
+      );
+
+      throw new Error(
+        `Duplicate version(s) across TWENTY_PREVIOUS_VERSIONS, TWENTY_CURRENT_VERSION, and TWENTY_NEXT_VERSIONS: ${duplicates.join(', ')}`,
+      );
+    }
+  }
+
+  private validatePreviousVersionsNotEmpty(): void {
+    if ((TWENTY_PREVIOUS_VERSIONS as readonly string[]).length === 0) {
+      throw new Error(
+        'TWENTY_PREVIOUS_VERSIONS must contain at least one version before TWENTY_CURRENT_VERSION',
+      );
     }
   }
 }
