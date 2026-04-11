@@ -5,10 +5,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, type QueryRunner, Repository } from 'typeorm';
 
 import {
-  UpgradeMigrationEntity,
   type UpgradeMigrationStatus,
-} from 'src/engine/core-modules/upgrade-migration/upgrade-migration.entity';
-import { formatUpgradeErrorForStorage } from 'src/engine/core-modules/upgrade-migration/utils/format-upgrade-error-for-storage.util';
+  UpgradeMigrationEntity,
+} from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
+import { formatUpgradeErrorForStorage } from 'src/engine/core-modules/upgrade/utils/format-upgrade-error-for-storage.util';
 
 @Injectable()
 export class UpgradeMigrationService {

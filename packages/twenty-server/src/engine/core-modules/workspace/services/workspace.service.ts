@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  Optional,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
@@ -34,7 +29,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade-migration/services/upgrade-migration.service';
+import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -133,8 +128,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     private readonly coreDataSource: DataSource,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly upgradeMigrationService: UpgradeMigrationService,
-    @Optional()
-    private readonly upgradeSequenceReaderService?: UpgradeSequenceReaderService,
+    private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
   ) {
     super(workspaceRepository);
   }
@@ -385,12 +379,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     workspaceId: string;
     displayName: string;
   }): Promise<void> {
-    if (!this.upgradeSequenceReaderService) {
-      throw new Error(
-        'UpgradeSequenceReaderService is not available — workspace activation requires the full upgrade module',
-      );
-    }
-
     const lastWorkspaceCommand =
       this.upgradeSequenceReaderService.getLastWorkspaceCommand();
 

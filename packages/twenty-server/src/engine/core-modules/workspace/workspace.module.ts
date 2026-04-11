@@ -25,7 +25,7 @@ import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-modules/workspace/crons/commands/check-custom-domain-valid-records.cron.command';
 import { CheckCustomDomainValidRecordsCronJob } from 'src/engine/core-modules/workspace/crons/jobs/check-custom-domain-valid-records.cron.job';
-import { UpgradeMigrationModule } from 'src/engine/core-modules/upgrade-migration/upgrade-migration.module';
+import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { WorkspaceEntityCacheProviderService } from 'src/engine/core-modules/workspace/services/workspace-entity-cache-provider.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
@@ -84,7 +84,7 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
         EnterpriseModule,
         StandardObjectsPrefillModule,
         CoreEntityCacheModule,
-        UpgradeMigrationModule,
+        UpgradeModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,

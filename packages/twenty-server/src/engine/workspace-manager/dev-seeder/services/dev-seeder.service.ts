@@ -1,4 +1,4 @@
-import { Injectable, Logger, Optional } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
@@ -9,7 +9,7 @@ import { ApplicationRegistrationService } from 'src/engine/core-modules/applicat
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade-migration/services/upgrade-migration.service';
+import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -18,24 +18,24 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { seedBillingCustomers } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-customers.util';
-import { seedBillingSubscriptions } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-subscriptions.util';
 import {
   type SeededWorkspacesIds,
   SEEDER_CREATE_WORKSPACE_INPUT,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { seedBillingCustomers } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-customers.util';
+import { seedBillingSubscriptions } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-subscriptions.util';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
 import { seedAgents } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-agents.util';
 import { seedApiKeys } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-api-keys.util';
 import { seedFeatureFlags } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-feature-flags.util';
 import { seedMetadataEntities } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-metadata-entities.util';
-import { seedPageLayoutTabs } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layout-tabs.util';
-import { seedPageLayoutWidgets } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layout-widgets.util';
-import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
 import { seedServerId } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-server-id.util';
 import { seedUserWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { createWorkspace } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
+import { seedPageLayoutTabs } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layout-tabs.util';
+import { seedPageLayoutWidgets } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layout-widgets.util';
+import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
@@ -57,12 +57,11 @@ export class DevSeederService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
     private readonly upgradeMigrationService: UpgradeMigrationService,
+    private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @Optional()
-    private readonly upgradeSequenceReaderService?: UpgradeSequenceReaderService,
   ) {}
 
   public async seedDev(
@@ -72,12 +71,6 @@ export class DevSeederService {
     const light = options?.light ?? false;
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
     const appVersion = this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
-
-    if (!this.upgradeSequenceReaderService) {
-      throw new Error(
-        'UpgradeSequenceReaderService is not available — dev seeding requires the full upgrade module',
-      );
-    }
 
     const lastWorkspaceCommand =
       this.upgradeSequenceReaderService.getLastWorkspaceCommand();

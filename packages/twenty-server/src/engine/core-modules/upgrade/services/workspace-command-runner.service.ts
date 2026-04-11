@@ -3,8 +3,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { type WorkspaceIteratorContext } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type UpgradeCommandOptions } from 'src/database/commands/upgrade-version-command/upgrade.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade-migration/services/upgrade-migration.service';
 import { type RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
+import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 
 type WorkspaceCommandEntry = Pick<
   RegisteredWorkspaceCommand,

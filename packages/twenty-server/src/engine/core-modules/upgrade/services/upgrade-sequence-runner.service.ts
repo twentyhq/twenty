@@ -5,8 +5,8 @@ import {
   WorkspaceIteratorService,
 } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type UpgradeCommandOptions } from 'src/database/commands/upgrade-version-command/upgrade.command';
-import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade-migration/services/upgrade-migration.service';
 import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
+import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import {
   type InstanceUpgradeStep,
   type UpgradeStep,
