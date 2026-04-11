@@ -119,6 +119,28 @@ export class UpgradeSequenceReaderService {
     return slice;
   }
 
+  getPendingWorkspaceCommands({
+    workspaceCommands,
+    workspaceCursor,
+  }: {
+    workspaceCommands: WorkspaceUpgradeStep[];
+    workspaceCursor: { name: string; status: 'completed' | 'failed' };
+  }): WorkspaceUpgradeStep[] {
+    const cursorIndex = workspaceCommands.findIndex(
+      (command) => command.name === workspaceCursor.name,
+    );
+
+    if (cursorIndex === -1) {
+      throw new Error(
+        `Workspace cursor "${workspaceCursor.name}" not found in current workspace commands slice`,
+      );
+    }
+
+    return workspaceCursor.status === 'completed'
+      ? workspaceCommands.slice(cursorIndex + 1)
+      : workspaceCommands.slice(cursorIndex);
+  }
+
   getLastWorkspaceCommand(): RegisteredWorkspaceCommand {
     const sequence = this.getUpgradeSequence();
 

@@ -235,10 +235,11 @@ export class UpgradeSequenceRunnerService {
           );
         }
 
-        const pendingCommands = this.getPendingWorkspaceCommands({
-          workspaceCommands,
-          workspaceCursor,
-        });
+        const pendingCommands =
+          this.upgradeSequenceReaderService.getPendingWorkspaceCommands({
+            workspaceCommands,
+            workspaceCursor,
+          });
 
         await this.workspaceUpgradeService.runWorkspaceCommands({
           iteratorContext: context,
@@ -247,28 +248,6 @@ export class UpgradeSequenceRunnerService {
         });
       },
     });
-  }
-
-  private getPendingWorkspaceCommands({
-    workspaceCommands,
-    workspaceCursor,
-  }: {
-    workspaceCommands: WorkspaceUpgradeStep[];
-    workspaceCursor: { name: string; status: 'completed' | 'failed' };
-  }): WorkspaceUpgradeStep[] {
-    const cursorIndex = workspaceCommands.findIndex(
-      (command) => command.name === workspaceCursor.name,
-    );
-
-    if (cursorIndex === -1) {
-      throw new Error(
-        `Workspace cursor "${workspaceCursor.name}" not found in current workspace commands slice should never occur`,
-      );
-    }
-
-    return workspaceCursor.status === 'completed'
-      ? workspaceCommands.slice(cursorIndex + 1)
-      : workspaceCommands.slice(cursorIndex);
   }
 
   private async enforceWorkspaceSyncBarrier(
