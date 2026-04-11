@@ -70,7 +70,6 @@ jobs:
         ports:
           - 6379:6379
     env:
-      NODE_ENV: test
       APP_SECRET: twenty-app-dev-secret-not-for-production
       TWENTY_API_URL: http://localhost:3000
       TWENTY_API_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC0xYzI1LTRkMDItYmYyNS02YWVjY2Y3ZWE0MTkiLCJ0eXBlIjoiQVBJX0tFWSIsIndvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWMyNS00ZDAyLWJmMjUtNmFlY2NmN2VhNDE5IiwiaWF0IjoxNzM1Njg5NjAwLCJleHAiOjQ4OTE0NDk2MDAsImp0aSI6IjIwMjAyMDIwLWY0MDEtNGQ4YS1hNzMxLTY0ZDAwN2MyN2JhZCJ9.bfQjfyN0NEtTCLE_xPyNcwonDzlSXFoP8kdCQTdnuDc
@@ -83,19 +82,18 @@ jobs:
         uses: ./.github/actions/yarn-install
       - name: Build SDK and Server
         run: npx nx build twenty-sdk && npx nx build twenty-server
-      - name: Server / Create Test DB
+      - name: Setup server environment
+        run: npx nx reset:env:e2e-testing-server twenty-server
+      - name: Create databases
         run: |
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
-      - name: Server / Reset Database
-        run: npx nx database:reset twenty-server
-      - name: Server / Start
-        run: |
-          echo "Starting twenty-server in background..."
-          cd packages/twenty-server && nohup node dist/main.js > /tmp/twenty-server.log 2>&1 &
-          echo "Server PID: $!"
-          echo "Waiting for server to be healthy..."
-          npx wait-on http://localhost:3000/healthz --timeout 120000 --interval 2000 --log
-          echo "Server is healthy!"
+      - name: Setup database
+        run: npx nx run twenty-server:database:reset
+      - name: Start server
+        run: nohup npx nx start:ci twenty-server > /tmp/twenty-server.log 2>&1 &
+      - name: Wait for server to be ready
+        run: npx wait-on http://localhost:3000/healthz --timeout 120000 --interval 1000
       - name: SDK / Run e2e Tests
         run: NODE_ENV=test npx vitest run --config ./vitest.e2e.config.ts
         working-directory: packages/twenty-sdk
