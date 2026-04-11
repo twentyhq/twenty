@@ -160,6 +160,10 @@ describe('UpgradeCommandRegistryService', () => {
     expect(v121.workspaceCommands).toStrictEqual([]);
   });
 
+  it('should not throw when no commands are discovered (empty bundle)', async () => {
+    await expect(buildRegistryService([])).resolves.not.toThrow();
+  });
+
   it('should return empty array for unsupported version', async () => {
     const service = await buildRegistryService([]);
 
