@@ -1,9 +1,15 @@
+import { Test, type TestingModule } from '@nestjs/testing';
+
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
+import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import {
   type UpgradeStep,
   type WorkspaceUpgradeStep,
   UpgradeSequenceReaderService,
 } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
+import { WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
 
 export const makeStep = (
   kind: UpgradeStep['kind'],
@@ -26,61 +32,92 @@ export const makeSlowInstance = (name: string) =>
 export const makeWorkspace = (name: string) =>
   makeStep('workspace', name) as WorkspaceUpgradeStep;
 
-export const createMocks = () => {
-  const upgradeMigrationService = {
-    getLastAttemptedCommandNameOrThrow: jest.fn(),
-    getWorkspaceLastAttemptedCommandNameOrThrow: jest.fn(),
-    areAllWorkspacesAtCommand: jest.fn().mockResolvedValue(true),
-  };
+export const createTestModule = async () => {
+  const module: TestingModule = await Test.createTestingModule({
+    providers: [
+      {
+        provide: UpgradeMigrationService,
+        useValue: {
+          getLastAttemptedCommandNameOrThrow: jest.fn(),
+          getWorkspaceLastAttemptedCommandNameOrThrow: jest.fn(),
+          areAllWorkspacesAtCommand: jest.fn().mockResolvedValue(true),
+        },
+      },
+      {
+        provide: InstanceCommandRunnerService,
+        useValue: {
+          runFastInstanceCommand: jest
+            .fn()
+            .mockResolvedValue({ status: 'success' }),
+          runSlowInstanceCommand: jest
+            .fn()
+            .mockResolvedValue({ status: 'success' }),
+        },
+      },
+      {
+        provide: WorkspaceCommandRunnerService,
+        useValue: {
+          runWorkspaceCommands: jest.fn().mockResolvedValue(undefined),
+        },
+      },
+      {
+        provide: UpgradeSequenceReaderService,
+        useFactory: () => new UpgradeSequenceReaderService({} as any),
+      },
+      {
+        provide: WorkspaceIteratorService,
+        useValue: {
+          iterate: jest.fn().mockImplementation(async (args: any) => {
+            const { callback, workspaceIds } = args;
+            const ids = workspaceIds ?? ['ws-1'];
+            const report = { fail: [] as any[], success: [] as any[] };
 
-  const instanceUpgradeService = {
-    runFastInstanceCommand: jest
-      .fn()
-      .mockResolvedValue({ status: 'success' }),
-    runSlowInstanceCommand: jest
-      .fn()
-      .mockResolvedValue({ status: 'success' }),
-  };
+            for (const [index, workspaceId] of ids.entries()) {
+              try {
+                await callback({
+                  workspaceId,
+                  index,
+                  total: ids.length,
+                  dataSource: {} as any,
+                });
+                report.success.push({ workspaceId });
+              } catch (error) {
+                report.fail.push({ error, workspaceId });
+              }
+            }
 
-  const workspaceUpgradeService = {
-    runWorkspaceCommands: jest.fn().mockResolvedValue(undefined),
-  };
+            return report;
+          }),
+        },
+      },
+      {
+        provide: UpgradeSequenceRunnerService,
+        useFactory: (
+          upgradeMigrationService: UpgradeMigrationService,
+          instanceUpgradeService: InstanceCommandRunnerService,
+          workspaceUpgradeService: WorkspaceCommandRunnerService,
+          upgradeSequenceReaderService: UpgradeSequenceReaderService,
+          workspaceIteratorService: WorkspaceIteratorService,
+        ) =>
+          new UpgradeSequenceRunnerService(
+            upgradeMigrationService,
+            instanceUpgradeService,
+            workspaceUpgradeService,
+            upgradeSequenceReaderService,
+            workspaceIteratorService,
+          ),
+        inject: [
+          UpgradeMigrationService,
+          InstanceCommandRunnerService,
+          WorkspaceCommandRunnerService,
+          UpgradeSequenceReaderService,
+          WorkspaceIteratorService,
+        ],
+      },
+    ],
+  }).compile();
 
-  const upgradeSequenceReaderService = new UpgradeSequenceReaderService(
-    {} as any,
-  );
-
-  const workspaceIteratorService = {
-    iterate: jest.fn().mockImplementation(async (args: any) => {
-      const { callback, workspaceIds } = args;
-      const ids = workspaceIds ?? ['ws-1'];
-      const report = { fail: [] as any[], success: [] as any[] };
-
-      for (const [index, workspaceId] of ids.entries()) {
-        try {
-          await callback({
-            workspaceId,
-            index,
-            total: ids.length,
-            dataSource: {} as any,
-          });
-          report.success.push({ workspaceId });
-        } catch (error) {
-          report.fail.push({ error, workspaceId });
-        }
-      }
-
-      return report;
-    }),
-  };
-
-  const runner = new UpgradeSequenceRunnerService(
-    upgradeMigrationService as any,
-    instanceUpgradeService as any,
-    workspaceUpgradeService as any,
-    upgradeSequenceReaderService,
-    workspaceIteratorService as any,
-  );
+  const runner = module.get(UpgradeSequenceRunnerService);
 
   jest.spyOn(runner['logger'], 'log').mockImplementation();
   jest.spyOn(runner['logger'], 'error').mockImplementation();
@@ -88,10 +125,10 @@ export const createMocks = () => {
 
   return {
     runner,
-    upgradeMigrationService,
-    instanceUpgradeService,
-    workspaceUpgradeService,
-    upgradeSequenceReaderService,
-    workspaceIteratorService,
+    upgradeMigrationService: module.get(UpgradeMigrationService),
+    instanceUpgradeService: module.get(InstanceCommandRunnerService),
+    workspaceUpgradeService: module.get(WorkspaceCommandRunnerService),
+    upgradeSequenceReaderService: module.get(UpgradeSequenceReaderService),
+    workspaceIteratorService: module.get(WorkspaceIteratorService),
   };
 };
