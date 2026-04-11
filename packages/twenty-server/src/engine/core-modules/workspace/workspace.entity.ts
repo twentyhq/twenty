@@ -32,7 +32,6 @@ import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-v
 import { PostgresCredentialsEntity } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { type DeprecatedSince } from 'src/engine/core-modules/upgrade/constants/upgrade-command-supported-versions.constant';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
@@ -297,7 +296,7 @@ export class WorkspaceEntity {
 
   @Field(() => String, { nullable: true })
   @Column({ type: 'varchar', nullable: true })
-  version: DeprecatedSince<'1.23.0', string | null>;
+  version: DeprecatedSinceVersion<'1.23.0', string | null>;
 
   @Field(() => String, { nullable: false })
   @Column({

@@ -5,11 +5,11 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { DataSource } from 'typeorm';
 
 import { CommandLogger } from 'src/database/commands/logger';
-import { type DeprecatedSince } from 'src/engine/core-modules/upgrade/constants/upgrade-command-supported-versions.constant';
 import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
+import { DeprecatedSinceVersion } from 'src/engine/core-modules/upgrade/types/deprecated-since-version.type';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 export type UpgradeCommandOptions = {
@@ -171,7 +171,7 @@ export class UpgradeCommand extends CommandRunner {
   // Workspaces created during 1.21 were activated before the cursor-based
   // upgrade system existed. They have no upgradeMigration record yet.
   // Stamp them with the last 1.21 workspace command as their initial cursor.
-  private async backfillWorkspaceCreatedIn1_21_0Cursors(): DeprecatedSince<
+  private async backfillWorkspaceCreatedIn1_21_0Cursors(): DeprecatedSinceVersion<
     '1.23.0',
     Promise<void>
   > {
@@ -230,7 +230,7 @@ export class UpgradeCommand extends CommandRunner {
   // Only the specific bootstrap migration is executed here.
   // To remove starting from 1.23
 
-  private async runBootstrapMigrations(): DeprecatedSince<
+  private async runBootstrapMigrations(): DeprecatedSinceVersion<
     '1.23.0',
     Promise<void>
   > {
