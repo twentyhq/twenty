@@ -14,6 +14,7 @@ import {
   UpgradeSequenceReaderService,
 } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
+import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 export type UpgradeSequenceRunnerReport = {
@@ -31,21 +32,25 @@ export class UpgradeSequenceRunnerService {
     private readonly workspaceCommandRunnerService: WorkspaceCommandRunnerService,
     private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
     private readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly workspaceVersionService: WorkspaceVersionService,
   ) {}
 
   async run({
     sequence,
-    activeWorkspaceIds,
     options,
   }: {
     sequence: UpgradeStep[];
-    activeWorkspaceIds: string[];
     options: UpgradeCommandOptions;
   }): Promise<UpgradeSequenceRunnerReport> {
     if (sequence.length === 0) {
       return { totalSuccesses: 0, totalFailures: 0 };
     }
 
+    const activeWorkspaceIds =
+      await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds({
+        startFromWorkspaceId: options.startFromWorkspaceId,
+        workspaceCountLimit: options.workspaceCountLimit,
+      });
     const hasNoWorkspaces = activeWorkspaceIds.length === 0;
 
     const startCursor = await this.resolveStartCursor(
@@ -106,12 +111,27 @@ export class UpgradeSequenceRunnerService {
     return { totalSuccesses, totalFailures };
   }
 
+  private async getActiveWorkspaceIds(
+    options: UpgradeCommandOptions,
+  ): Promise<string[]> {
+    if (options.workspaceId && options.workspaceId.size > 0) {
+      return Array.from(options.workspaceId);
+    }
+
+    return this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds({
+      startFromWorkspaceId: options.startFromWorkspaceId,
+      workspaceCountLimit: options.workspaceCountLimit,
+    });
+  }
+
   private async resolveStartCursor(
     sequence: UpgradeStep[],
     activeWorkspaceIds: string[],
   ): Promise<number> {
     const lastAttempted =
-      await this.upgradeMigrationService.getLastAttemptedCommandNameOrThrow();
+      await this.upgradeMigrationService.getLastAttemptedCommandNameOrThrow(
+        activeWorkspaceIds,
+      );
 
     const lastAttemptedCursor =
       this.upgradeSequenceReaderService.locateStepInSequenceOrThrow({

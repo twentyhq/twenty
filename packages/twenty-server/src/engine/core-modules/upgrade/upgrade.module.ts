@@ -11,11 +11,13 @@ import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/se
 import { WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
 import { UpgradeMigrationEntity } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-version/workspace-version.module';
 
 @Module({
   imports: [
     DiscoveryModule,
     WorkspaceIteratorModule,
+    WorkspaceVersionModule,
     TypeOrmModule.forFeature([UpgradeMigrationEntity, WorkspaceEntity]),
   ],
   providers: [

@@ -135,27 +135,17 @@ export class UpgradeCommand extends CommandRunner {
         ),
       );
 
-      const hasWorkspaces =
-        await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
-
-      const activeWorkspaceIds = hasWorkspaces
-        ? await this.getActiveWorkspaceIds(options)
-        : [];
-
       const { totalSuccesses, totalFailures } =
         await this.upgradeSequenceRunnerService.run({
           sequence,
-          activeWorkspaceIds,
           options,
         });
 
-      if (hasWorkspaces) {
-        this.logger.log(
-          chalk.blue(
-            `Upgrade summary: ${totalSuccesses} workspace(s) succeeded, ${totalFailures} workspace(s) failed`,
-          ),
-        );
-      }
+      this.logger.log(
+        chalk.blue(
+          `Upgrade summary: ${totalSuccesses} workspace(s) succeeded, ${totalFailures} workspace(s) failed`,
+        ),
+      );
 
       if (totalFailures > 0) {
         throw new Error(
@@ -273,18 +263,5 @@ export class UpgradeCommand extends CommandRunner {
     } finally {
       await queryRunner.release();
     }
-  }
-
-  private async getActiveWorkspaceIds(
-    options: UpgradeCommandOptions,
-  ): Promise<string[]> {
-    if (options.workspaceId && options.workspaceId.size > 0) {
-      return Array.from(options.workspaceId);
-    }
-
-    return this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds({
-      startFromWorkspaceId: options.startFromWorkspaceId,
-      workspaceCountLimit: options.workspaceCountLimit,
-    });
   }
 }

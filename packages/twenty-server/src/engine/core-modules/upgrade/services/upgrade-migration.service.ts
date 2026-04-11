@@ -119,12 +119,16 @@ export class UpgradeMigrationService {
   }
 
   // Returns the most recently attempted command (by createdAt)
-  // across all scopes (instance and workspace), with its status.
-  async getLastAttemptedCommandNameOrThrow(): Promise<{
+  // across instance and active-workspace scopes, with its status.
+  // Workspace-scoped records from inactive/deleted workspaces are
+  // excluded so they cannot incorrectly influence the global cursor.
+  async getLastAttemptedCommandNameOrThrow(
+    activeWorkspaceIds: string[],
+  ): Promise<{
     name: string;
     status: UpgradeMigrationStatus;
   }> {
-    const migration = await this.upgradeMigrationRepository
+    const queryBuilder = this.upgradeMigrationRepository
       .createQueryBuilder('migration')
       .select(['migration.name', 'migration.status'])
       .andWhere(
@@ -137,7 +141,18 @@ export class UpgradeMigrationService {
             OR sub."workspaceId" = migration."workspaceId"
           )
         )`,
-      )
+      );
+
+    if (activeWorkspaceIds.length > 0) {
+      queryBuilder.andWhere(
+        '(migration."workspaceId" IS NULL OR migration."workspaceId" IN (:...activeWorkspaceIds))',
+        { activeWorkspaceIds },
+      );
+    } else {
+      queryBuilder.andWhere('migration."workspaceId" IS NULL');
+    }
+
+    const migration = await queryBuilder
       .orderBy('migration.createdAt', 'DESC')
       .getOne();
 

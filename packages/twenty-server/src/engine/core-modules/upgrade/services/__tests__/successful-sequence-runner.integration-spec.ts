@@ -9,6 +9,7 @@ import {
   makeWorkspace,
   resetSeedSequenceCounter,
   seedMigration,
+  setMockActiveWorkspaceIds,
   testGetLatestMigrationForCommand,
   WS_1,
   WS_2,
@@ -30,13 +31,13 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
   beforeEach(async () => {
     await context.dataSource.query('DELETE FROM core."upgradeMigration"');
     resetSeedSequenceCounter();
+    setMockActiveWorkspaceIds([]);
     jest.restoreAllMocks();
   });
 
   it('should return zero counts for an empty sequence', async () => {
     const report = await context.runner.run({
       sequence: [],
-      activeWorkspaceIds: [],
       options: DEFAULT_OPTIONS,
     });
 
@@ -61,7 +62,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
 
     await context.runner.run({
       sequence,
-      activeWorkspaceIds: [],
       options: DEFAULT_OPTIONS,
     });
 
@@ -98,7 +98,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
 
     await context.runner.run({
       sequence,
-      activeWorkspaceIds: [],
       options: DEFAULT_OPTIONS,
     });
 
@@ -118,6 +117,8 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
       makeWorkspace('Wc2'),
     ];
 
+    setMockActiveWorkspaceIds([WS_1]);
+
     await seedMigration(context.dataSource, {
       name: 'Ic1',
       status: 'completed',
@@ -130,7 +131,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
 
     await context.runner.run({
       sequence,
-      activeWorkspaceIds: [WS_1],
       options: DEFAULT_OPTIONS,
     });
 
@@ -147,6 +147,8 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
   it('should enforce workspace sync barrier before instance step', async () => {
     const sequence = [makeWorkspace('Wc1'), makeFastInstance('Ic1')];
 
+    setMockActiveWorkspaceIds([WS_1]);
+
     await seedMigration(context.dataSource, {
       name: 'Wc1',
       status: 'completed',
@@ -155,7 +157,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
 
     await context.runner.run({
       sequence,
-      activeWorkspaceIds: [WS_1],
       options: DEFAULT_OPTIONS,
     });
 
@@ -186,7 +187,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
 
     await context.runner.run({
       sequence,
-      activeWorkspaceIds: [],
       options: DEFAULT_OPTIONS,
     });
 
@@ -206,6 +206,8 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
   it('should run data migration for slow instance commands when workspaces exist', async () => {
     const sequence = [makeFastInstance('Ic0'), makeSlowInstance('Ic1')];
 
+    setMockActiveWorkspaceIds([WS_1]);
+
     await seedMigration(context.dataSource, {
       name: 'Ic0',
       status: 'completed',
@@ -221,7 +223,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
 
     await context.runner.run({
       sequence,
-      activeWorkspaceIds: [WS_1],
       options: DEFAULT_OPTIONS,
     });
 
@@ -245,6 +246,8 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
       makeWorkspace('Wc2'),
     ];
 
+    setMockActiveWorkspaceIds([WS_1, WS_2]);
+
     await seedMigration(context.dataSource, {
       name: 'Ic1',
       status: 'completed',
@@ -262,7 +265,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
 
     const report = await context.runner.run({
       sequence,
-      activeWorkspaceIds: [WS_1, WS_2],
       options: {
         ...DEFAULT_OPTIONS,
         workspaceId: new Set([WS_1, WS_2]),
@@ -296,6 +298,8 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
       makeWorkspace('Wc1'),
     ];
 
+    setMockActiveWorkspaceIds([WS_1]);
+
     await seedMigration(context.dataSource, {
       name: 'Wc0',
       status: 'completed',
@@ -308,7 +312,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
 
     await context.runner.run({
       sequence,
-      activeWorkspaceIds: [WS_1],
       options: DEFAULT_OPTIONS,
     });
 
@@ -335,6 +338,8 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
       makeWorkspace('Wc2'),
     ];
 
+    setMockActiveWorkspaceIds([WS_1]);
+
     await seedMigration(context.dataSource, {
       name: 'Ic1',
       status: 'completed',
@@ -347,7 +352,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
 
     const report = await context.runner.run({
       sequence,
-      activeWorkspaceIds: [WS_1],
       options: DEFAULT_OPTIONS,
     });
 
@@ -382,6 +386,8 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
       makeWorkspace('Wc2'),
     ];
 
+    setMockActiveWorkspaceIds([WS_1]);
+
     await seedMigration(context.dataSource, {
       name: 'Ic1',
       status: 'completed',
@@ -394,7 +400,6 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
 
     const report = await context.runner.run({
       sequence,
-      activeWorkspaceIds: [WS_1],
       options: DEFAULT_OPTIONS,
     });
 
@@ -411,6 +416,49 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
     expect(ic2).toEqual(
       expect.objectContaining({ name: 'Ic2', status: 'completed' }),
     );
+    expect(wc2).toEqual(
+      expect.objectContaining({ name: 'Wc2', status: 'completed' }),
+    );
+  });
+
+  it('should ignore migration records from inactive workspaces when resolving the global cursor', async () => {
+    const sequence = [
+      makeFastInstance('Ic1'),
+      makeWorkspace('Wc1'),
+      makeWorkspace('Wc2'),
+    ];
+
+    setMockActiveWorkspaceIds([WS_1]);
+
+    await seedMigration(context.dataSource, {
+      name: 'Ic1',
+      status: 'completed',
+    });
+    await seedMigration(context.dataSource, {
+      name: 'Wc1',
+      status: 'completed',
+      workspaceId: WS_1,
+    });
+    // WS_2 is inactive — its record is more recent (seeded later)
+    // but should not influence the global cursor
+    await seedMigration(context.dataSource, {
+      name: 'Wc2',
+      status: 'completed',
+      workspaceId: WS_2,
+    });
+
+    const report = await context.runner.run({
+      sequence,
+      options: DEFAULT_OPTIONS,
+    });
+
+    expect(report.totalFailures).toBe(0);
+
+    const wc2 = await testGetLatestMigrationForCommand(context.dataSource, {
+      name: 'Wc2',
+      workspaceId: WS_1,
+    });
+
     expect(wc2).toEqual(
       expect.objectContaining({ name: 'Wc2', status: 'completed' }),
     );

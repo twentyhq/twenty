@@ -20,6 +20,7 @@ import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 jest.useRealTimers();
 
@@ -63,6 +64,12 @@ export const makeSlowInstance = (name: string) =>
 
 export const makeWorkspace = (name: string) =>
   makeStep('workspace', name) as WorkspaceUpgradeStep;
+
+let mockActiveWorkspaceIds: string[] = [];
+
+export const setMockActiveWorkspaceIds = (ids: string[]) => {
+  mockActiveWorkspaceIds = ids;
+};
 
 export const DEFAULT_OPTIONS = {
   workspaceId: undefined,
@@ -115,6 +122,17 @@ export const createUpgradeSequenceRunnerIntegrationTestModule = async () => {
         },
       },
       UpgradeMigrationService,
+      {
+        provide: WorkspaceVersionService,
+        useValue: {
+          getActiveOrSuspendedWorkspaceIds: jest
+            .fn()
+            .mockImplementation(async () => mockActiveWorkspaceIds),
+          hasActiveOrSuspendedWorkspaces: jest
+            .fn()
+            .mockImplementation(async () => mockActiveWorkspaceIds.length > 0),
+        },
+      },
       {
         provide: UpgradeSequenceReaderService,
         useFactory: () => new UpgradeSequenceReaderService({} as any),
