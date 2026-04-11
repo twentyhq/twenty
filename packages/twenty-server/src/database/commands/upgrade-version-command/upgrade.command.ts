@@ -255,6 +255,7 @@ export class UpgradeCommand extends CommandRunner {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
+    await queryRunner.startTransaction();
 
     try {
       await migration.up(queryRunner);
@@ -263,6 +264,12 @@ export class UpgradeCommand extends CommandRunner {
         `INSERT INTO "core"."_typeorm_migrations" ("timestamp", "name") VALUES ($1, $2)`,
         [1775909335324, BOOTSTRAP_MIGRATION],
       );
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+
+      throw error;
     } finally {
       await queryRunner.release();
     }

@@ -8,6 +8,7 @@ import { type UpgradeCommandOptions } from 'src/database/commands/upgrade-versio
 import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import {
+  type InstanceUpgradeStep,
   type UpgradeStep,
   type WorkspaceUpgradeStep,
   UpgradeSequenceReaderService,
@@ -175,32 +176,39 @@ export class UpgradeSequenceRunnerService {
   }
 
   private async runInstanceStep(
-    step: UpgradeStep,
+    step: InstanceUpgradeStep,
     { skipDataMigration }: { skipDataMigration: boolean },
   ): Promise<void> {
-    if (step.kind === 'fast-instance') {
-      const result = await this.instanceUpgradeService.runFastInstanceCommand({
-        command: step.command,
-        name: step.name,
-      });
+    switch (step.kind) {
+      case 'fast-instance': {
+        const result =
+          await this.instanceUpgradeService.runFastInstanceCommand({
+            command: step.command,
+            name: step.name,
+          });
 
-      if (result.status === 'failed') {
-        throw result.error;
+        if (result.status === 'failed') {
+          throw result.error;
+        }
+
+        return;
       }
+      case 'slow-instance': {
+        const result =
+          await this.instanceUpgradeService.runSlowInstanceCommand({
+            command: step.command,
+            name: step.name,
+            skipDataMigration,
+          });
 
-      return;
-    }
+        if (result.status === 'failed') {
+          throw result.error;
+        }
 
-    if (step.kind === 'slow-instance') {
-      const result = await this.instanceUpgradeService.runSlowInstanceCommand({
-        command: step.command,
-        name: step.name,
-        skipDataMigration,
-      });
-
-      if (result.status === 'failed') {
-        throw result.error;
+        return;
       }
+      default:
+        assertUnreachable(step);
     }
   }
 

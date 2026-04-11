@@ -8,14 +8,23 @@ import {
   UpgradeCommandRegistryService,
 } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 
+export type FastInstanceUpgradeStep = {
+  kind: 'fast-instance';
+} & RegisteredFastInstanceCommand;
+
+export type SlowInstanceUpgradeStep = {
+  kind: 'slow-instance';
+} & RegisteredSlowInstanceCommand;
+
+export type InstanceUpgradeStep =
+  | FastInstanceUpgradeStep
+  | SlowInstanceUpgradeStep;
+
 export type WorkspaceUpgradeStep = {
   kind: 'workspace';
 } & RegisteredWorkspaceCommand;
 
-export type UpgradeStep =
-  | ({ kind: 'fast-instance' } & RegisteredFastInstanceCommand)
-  | ({ kind: 'slow-instance' } & RegisteredSlowInstanceCommand)
-  | WorkspaceUpgradeStep;
+export type UpgradeStep = InstanceUpgradeStep | WorkspaceUpgradeStep;
 
 @Injectable()
 export class UpgradeSequenceReaderService {
