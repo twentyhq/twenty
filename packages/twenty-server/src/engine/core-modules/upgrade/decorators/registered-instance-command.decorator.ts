@@ -3,12 +3,11 @@ import 'reflect-metadata';
 import { Injectable } from '@nestjs/common';
 
 import { type TwentyAllVersion } from 'src/engine/core-modules/upgrade/constants/twenty-all-versions.constant';
-import { type TwentyCrossUpgradeSupportedVersion } from 'src/engine/core-modules/upgrade/constants/twenty-cross-upgrade-supported-version.constant';
 
 export type InstanceCommandType = 'fast' | 'slow';
 
 export type RegisteredInstanceCommandMetadata = {
-  version: TwentyCrossUpgradeSupportedVersion;
+  version: TwentyAllVersion;
   timestamp: number;
   type: InstanceCommandType;
 };

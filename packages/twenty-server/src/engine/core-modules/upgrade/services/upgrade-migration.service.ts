@@ -145,7 +145,7 @@ export class UpgradeMigrationService {
 
     if (allActiveOrSuspendedWorkspaceIds.length > 0) {
       queryBuilder.andWhere(
-        '(migration."workspaceId" IS NULL OR migration."workspaceId" IN (:...activeWorkspaceIds))',
+        '(migration."workspaceId" IS NULL OR migration."workspaceId" IN (:...allActiveOrSuspendedWorkspaceIds))',
         { allActiveOrSuspendedWorkspaceIds },
       );
     } else {
