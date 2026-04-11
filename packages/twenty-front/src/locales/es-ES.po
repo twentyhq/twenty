@@ -1392,6 +1392,7 @@ msgstr "Preparación de la solicitud de IA"
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 msgid "AI Usage"
 msgstr ""
 
@@ -1408,6 +1409,11 @@ msgstr ""
 #. js-lingui-id: U2F/HK
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 msgid "AI usage analytics requires ClickHouse. Contact your administrator."
+msgstr ""
+
+#. js-lingui-id: KgAAyO
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+msgid "AI usage analytics will appear here once you start using AI features."
 msgstr ""
 
 #. js-lingui-id: SknniY
@@ -4014,6 +4020,7 @@ msgid "Credit Usage"
 msgstr "Uso de Crédito"
 
 #. js-lingui-id: 6/q4+J
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Credit usage breakdown for your workspace."
 msgstr "Desglose del uso de créditos de tu espacio de trabajo."
@@ -10142,6 +10149,12 @@ msgstr "No hay desencadenadores configurados para esta función."
 msgid "No usage data"
 msgstr "Sin datos de uso"
 
+#. js-lingui-id: TayaS7
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "No usage data yet"
+msgstr ""
+
 #. js-lingui-id: wJwIUq
 #: src/modules/object-record/record-field/ui/form-types/components/FormSelectFieldInput.tsx
 msgid "No value"
@@ -14546,6 +14559,7 @@ msgstr "Tiempo total"
 #. js-lingui-id: BxecEJ
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 msgid "Track AI consumption across your workspace."
 msgstr ""
 
@@ -15182,12 +15196,18 @@ msgstr "Uso en todos los espacios de trabajo de este servidor"
 
 #. js-lingui-id: 21hsGI
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Usage Analytics"
 msgstr "Analíticas de uso"
 
 #. js-lingui-id: 7Kq6TI
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Usage analytics requires ClickHouse. Contact your administrator."
+msgstr ""
+
+#. js-lingui-id: XglEba
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Usage analytics will appear here once you start using credits."
 msgstr ""
 
 #. js-lingui-id: 7vRxpC

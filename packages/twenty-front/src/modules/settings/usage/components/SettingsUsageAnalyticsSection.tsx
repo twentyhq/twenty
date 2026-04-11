@@ -4,6 +4,8 @@ import { SubscriptionInfoContainer } from '@/settings/billing/components/Subscri
 import { UsageBreakdownPieSection } from '@/settings/usage/components/UsageBreakdownPieSection';
 import { UsageByUserTableSection } from '@/settings/usage/components/UsageByUserTableSection';
 import { UsageDailyChartSection } from '@/settings/usage/components/UsageDailyChartSection';
+import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSkeleton';
+import { useUsageAnalyticsData } from '@/settings/usage/hooks/useUsageAnalyticsData';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { Link } from 'react-router-dom';
@@ -17,6 +19,10 @@ import { SETTINGS_AI_TABS } from '~/pages/settings/ai/constants/SettingsAiTabs';
 export const SettingsUsageAnalyticsSection = () => {
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
 
+  const { analytics, isInitialLoading } = useUsageAnalyticsData({
+    skip: !isClickHouseConfigured,
+  });
+
   if (!isClickHouseConfigured) {
     return (
       <Section>
@@ -28,6 +34,33 @@ export const SettingsUsageAnalyticsSection = () => {
           <SettingsBillingLabelValueItem
             label={t`ClickHouse Not Configured`}
             value={t`Usage analytics requires ClickHouse. Contact your administrator.`}
+          />
+        </SubscriptionInfoContainer>
+      </Section>
+    );
+  }
+
+  if (isInitialLoading) {
+    return <UsageSectionSkeleton />;
+  }
+
+  const hasData =
+    analytics &&
+    (analytics.timeSeries.length > 0 ||
+      analytics.usageByOperationType.length > 0 ||
+      analytics.usageByUser.length > 0);
+
+  if (!hasData) {
+    return (
+      <Section>
+        <H2Title
+          title={t`Usage Analytics`}
+          description={t`Credit usage breakdown for your workspace.`}
+        />
+        <SubscriptionInfoContainer>
+          <SettingsBillingLabelValueItem
+            label={t`No usage data yet`}
+            value={t`Usage analytics will appear here once you start using credits.`}
           />
         </SubscriptionInfoContainer>
       </Section>
