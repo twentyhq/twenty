@@ -1,6 +1,6 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const agentChatDisplayedThreadState = createAtomState<string>({
+export const agentChatDisplayedThreadState = createAtomState<string | null>({
   key: 'ai/agentChatDisplayedThreadState',
-  defaultValue: '',
+  defaultValue: null,
 });

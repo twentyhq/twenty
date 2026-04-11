@@ -14,6 +14,8 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
+import { shouldFailSafely } from 'src/modules/workflow/workflow-executor/utils/should-fail-safely.util';
+import { shouldSkipStepExecution } from 'src/modules/workflow/workflow-executor/utils/should-skip-step-execution.util';
 import {
   type WorkflowAction,
   WorkflowActionType,
@@ -30,9 +32,23 @@ jest.mock(
 
     return {
       ...actual,
-      shouldExecuteStep: jest.fn().mockReturnValue(true), // default behavior
+      shouldExecuteStep: jest.fn().mockReturnValue(true),
     };
   },
+);
+
+jest.mock(
+  'src/modules/workflow/workflow-executor/utils/should-fail-safely.util',
+  () => ({
+    shouldFailSafely: jest.fn().mockReturnValue(false),
+  }),
+);
+
+jest.mock(
+  'src/modules/workflow/workflow-executor/utils/should-skip-step-execution.util',
+  () => ({
+    shouldSkipStepExecution: jest.fn().mockReturnValue(false),
+  }),
 );
 
 describe('WorkflowExecutorWorkspaceService', () => {
@@ -356,6 +372,40 @@ describe('WorkflowExecutorWorkspaceService', () => {
         workflowRunId: mockWorkflowRunId,
         workspaceId: 'workspace-id',
       });
+    });
+
+    it('should not emit billing event for skipped steps', async () => {
+      (shouldExecuteStep as jest.Mock).mockReturnValue(false);
+      (shouldSkipStepExecution as jest.Mock).mockReturnValue(true);
+
+      await service.executeFromSteps({
+        workflowRunId: mockWorkflowRunId,
+        stepIds: ['step-1'],
+        workspaceId: mockWorkspaceId,
+      });
+
+      expect(workflowActionFactory.get).not.toHaveBeenCalled();
+      expect(workspaceEventEmitter.emitCustomBatchEvent).not.toHaveBeenCalled();
+
+      (shouldExecuteStep as jest.Mock).mockReturnValue(true);
+      (shouldSkipStepExecution as jest.Mock).mockReturnValue(false);
+    });
+
+    it('should not emit billing event for fail-safely steps', async () => {
+      (shouldExecuteStep as jest.Mock).mockReturnValue(false);
+      (shouldFailSafely as jest.Mock).mockReturnValue(true);
+
+      await service.executeFromSteps({
+        workflowRunId: mockWorkflowRunId,
+        stepIds: ['step-1'],
+        workspaceId: mockWorkspaceId,
+      });
+
+      expect(workflowActionFactory.get).not.toHaveBeenCalled();
+      expect(workspaceEventEmitter.emitCustomBatchEvent).not.toHaveBeenCalled();
+
+      (shouldExecuteStep as jest.Mock).mockReturnValue(true);
+      (shouldFailSafely as jest.Mock).mockReturnValue(false);
     });
 
     it('should return if step should not be executed', async () => {
