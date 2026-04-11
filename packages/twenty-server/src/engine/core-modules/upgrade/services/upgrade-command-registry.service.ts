@@ -170,6 +170,14 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
     return this.bundlesByVersion.get(version) ?? buildEmptyVersionBundle();
   }
 
+  getLastWorkspaceCommandForVersion(
+    version: UpgradeCommandVersion,
+  ): RegisteredWorkspaceCommand | undefined {
+    const bundle = this.getBundleForVersion(version);
+
+    return bundle.workspaceCommands[bundle.workspaceCommands.length - 1];
+  }
+
   getAllFastInstanceCommands(): RegisteredFastInstanceCommand[] {
     return UPGRADE_COMMAND_SUPPORTED_VERSIONS.flatMap(
       (version) => this.getBundleForVersion(version).fastInstanceCommands,

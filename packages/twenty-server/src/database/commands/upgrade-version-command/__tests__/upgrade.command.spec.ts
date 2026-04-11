@@ -69,6 +69,10 @@ const buildUpgradeCommandModule = async ({
             slowInstanceCommands: [],
             workspaceCommands: [],
           }),
+          getLastWorkspaceCommandForVersion: jest.fn().mockReturnValue({
+            name: 'mock_last_workspace_command',
+            version: '1.21.0',
+          }),
         },
       };
 
@@ -91,21 +95,27 @@ const buildUpgradeCommandModule = async ({
       {
         provide: commandRunner,
         useFactory: (
+          upgradeCommandRegistryService: UpgradeCommandRegistryService,
           upgradeSequenceReaderService: UpgradeSequenceReaderService,
           upgradeSequenceRunnerService: UpgradeSequenceRunnerService,
+          upgradeMigrationService: UpgradeMigrationService,
           workspaceVersionService: WorkspaceVersionService,
           dataSource: DataSource,
         ) => {
           return new commandRunner(
+            upgradeCommandRegistryService,
             upgradeSequenceReaderService,
             upgradeSequenceRunnerService,
+            upgradeMigrationService,
             workspaceVersionService,
             dataSource,
           );
         },
         inject: [
+          UpgradeCommandRegistryService,
           UpgradeSequenceReaderService,
           UpgradeSequenceRunnerService,
+          UpgradeMigrationService,
           WorkspaceVersionService,
           'DATA_SOURCE',
         ],
@@ -113,7 +123,19 @@ const buildUpgradeCommandModule = async ({
       {
         provide: 'DATA_SOURCE',
         useValue: {
-          query: jest.fn().mockResolvedValue([{ '1': 1 }]),
+          query: jest.fn().mockImplementation((sql: string) => {
+            if (sql.includes('_typeorm_migrations')) {
+              return [{ '1': 1 }];
+            }
+
+            if (sql.includes('upgradeMigration')) {
+              return hasWorkspaces
+                ? [{ workspaceId: 'workspace-1' }]
+                : [];
+            }
+
+            return [];
+          }),
           migrations: [],
           createQueryRunner: jest.fn().mockReturnValue({
             connect: jest.fn(),
@@ -141,6 +163,7 @@ const buildUpgradeCommandModule = async ({
             .fn()
             .mockResolvedValue(new Map()),
           areAllWorkspacesAtCommand: jest.fn().mockResolvedValue(true),
+          markAsInitial: jest.fn().mockResolvedValue(undefined),
         },
       },
       {

@@ -5,6 +5,8 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { DataSource } from 'typeorm';
 
 import { CommandLogger } from 'src/database/commands/logger';
+import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
+import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
@@ -25,8 +27,10 @@ export class UpgradeCommand extends CommandRunner {
   protected logger: CommandLogger;
 
   constructor(
+    protected readonly upgradeCommandRegistryService: UpgradeCommandRegistryService,
     protected readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
     protected readonly upgradeSequenceRunnerService: UpgradeSequenceRunnerService,
+    protected readonly upgradeMigrationService: UpgradeMigrationService,
     protected readonly workspaceVersionService: WorkspaceVersionService,
     @InjectDataSource()
     protected readonly dataSource: DataSource,
@@ -113,6 +117,7 @@ export class UpgradeCommand extends CommandRunner {
 
     try {
       await this.runBootstrapMigrations();
+      await this.backfillWorkspaceCreatedIn1_21_0Cursors();
 
       const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
 
@@ -159,6 +164,61 @@ export class UpgradeCommand extends CommandRunner {
     } catch (error) {
       this.logger.error(chalk.red(`Upgrade failed: ${error.message}`));
       throw error;
+    }
+  }
+
+  // Workspaces created during 1.21 were activated before the cursor-based
+  // upgrade system existed. They have no upgradeMigration record yet.
+  // Stamp them with the last 1.21 workspace command as their initial cursor.
+  // To remove starting from 1.23
+  private async backfillWorkspaceCreatedIn1_21_0Cursors(): Promise<void> {
+    const allWorkspaceIds =
+      await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
+
+    if (allWorkspaceIds.length === 0) {
+      return;
+    }
+
+    const existingCursorWorkspaceIds: { workspaceId: string }[] =
+      await this.dataSource.query(
+        `SELECT DISTINCT "workspaceId" FROM "core"."upgradeMigration" WHERE "workspaceId" IS NOT NULL`,
+      );
+
+    const existingCursorSet = new Set(
+      existingCursorWorkspaceIds.map((row) => row.workspaceId),
+    );
+
+    const workspacesWithoutCursor = allWorkspaceIds.filter(
+      (workspaceId) => !existingCursorSet.has(workspaceId),
+    );
+
+    if (workspacesWithoutCursor.length === 0) {
+      return;
+    }
+
+    const lastWorkspaceCommand =
+      this.upgradeCommandRegistryService.getLastWorkspaceCommandForVersion(
+        '1.21.0',
+      );
+
+    if (!lastWorkspaceCommand) {
+      throw new Error(
+        `Cannot backfill workspace cursors: no workspace commands found for version 1.21.0`,
+      );
+    }
+
+    this.logger.log(
+      chalk.blue(
+        `Backfilling initial cursor for ${workspacesWithoutCursor.length} workspace(s) → "${lastWorkspaceCommand.name}"`,
+      ),
+    );
+
+    for (const workspaceId of workspacesWithoutCursor) {
+      await this.upgradeMigrationService.markAsInitial({
+        name: lastWorkspaceCommand.name,
+        workspaceId,
+        executedByVersion: '1.21.0',
+      });
     }
   }
 

@@ -294,6 +294,11 @@ export class WorkspaceEntity {
   @Field(() => RoleDTO, { nullable: true })
   defaultRole: RoleDTO | null;
 
+  // Deprecated — to be removed in 1.23, version is now inferred from upgradeMigration cursors
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', nullable: true })
+  version: string | null;
+
   @Field(() => String, { nullable: false })
   @Column({
     type: 'varchar',
