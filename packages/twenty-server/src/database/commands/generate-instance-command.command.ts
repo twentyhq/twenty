@@ -6,7 +6,7 @@ import { Logger } from '@nestjs/common';
 import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { InstanceCommandGenerationService } from 'src/database/commands/instance-command-generation.service';
-import { type CrossUpgradeSupportedVersion } from 'src/engine/core-modules/upgrade/constants/upgrade-command-supported-versions.constant';
+import { type CrossUpgradeSupportedVersion } from 'src/engine/core-modules/upgrade/constants/cross-upgrade-supported-version.constant';
 import { TWENTY_CURRENT_VERSION } from 'src/engine/core-modules/upgrade/constants/twenty-current-version.constant';
 import { TWENTY_NEXT_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-next-versions.constant';
 import { TWENTY_PREVIOUS_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant';

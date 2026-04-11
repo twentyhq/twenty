@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 import {
   type AllTwentyVersion,
   type CrossUpgradeSupportedVersion,
-} from 'src/engine/core-modules/upgrade/constants/upgrade-command-supported-versions.constant';
+} from 'src/engine/core-modules/upgrade/constants/cross-upgrade-supported-version.constant';
 
 export type InstanceCommandType = 'fast' | 'slow';
 
