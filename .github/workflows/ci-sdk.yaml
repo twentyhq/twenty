@@ -79,16 +79,29 @@ jobs:
           fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
-      - name: Build
-        run: npx nx build twenty-sdk
+      - name: Build SDK and Server
+        run: npx nx build twenty-sdk && npx nx build twenty-server
       - name: Server / Create Test DB
         run: |
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+      - name: Server / Reset Database
+        run: npx nx database:reset twenty-server
+      - name: Server / Start
+        run: |
+          echo "Starting twenty-server in background..."
+          cd packages/twenty-server && nohup node dist/main.js > /tmp/twenty-server.log 2>&1 &
+          echo "Server PID: $!"
+          echo "Waiting for server to be healthy..."
+          npx wait-on http://localhost:3000/healthz --timeout 120000 --interval 2000 --log
+          echo "Server is healthy!"
       - name: SDK / Run e2e Tests
-        uses: ./.github/actions/nx-affected
-        with:
-          tag: scope:sdk
-          tasks: test:e2e
+        run: NODE_ENV=test npx vitest run --config ./vitest.e2e.config.ts
+        working-directory: packages/twenty-sdk
+      - name: Server / Dump logs on failure
+        if: failure()
+        run: |
+          echo "=== twenty-server logs ==="
+          cat /tmp/twenty-server.log || echo "No server log file found"
   ci-sdk-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
