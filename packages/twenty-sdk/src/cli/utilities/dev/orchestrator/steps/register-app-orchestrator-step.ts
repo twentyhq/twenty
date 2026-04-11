@@ -1,5 +1,5 @@
 import { type ApiService } from '@/cli/utilities/api/api-service';
-import { ensureAppRegistrationAndTokens } from '@/cli/utilities/auth/resolve-app-access-token';
+import { ensureAppRegistration } from '@/cli/utilities/auth';
 import { type ConfigService } from '@/cli/utilities/config/config-service';
 import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import { type Manifest } from 'twenty-shared/application';
@@ -9,6 +9,10 @@ export class RegisterAppOrchestratorStep {
   private configService: ConfigService;
   private state: OrchestratorState;
   private notify: () => void;
+
+  registrationCredentials:
+    | { clientId: string; clientSecret: string }
+    | undefined;
 
   constructor({
     apiService,
@@ -29,7 +33,7 @@ export class RegisterAppOrchestratorStep {
 
   async execute(input: { manifest: Manifest }): Promise<void> {
     try {
-      const { isNewRegistration } = await ensureAppRegistrationAndTokens(
+      const reg = await ensureAppRegistration(
         this.apiService,
         this.configService,
         {
@@ -38,14 +42,19 @@ export class RegisterAppOrchestratorStep {
         },
       );
 
+      this.registrationCredentials = {
+        clientId: reg.clientId,
+        clientSecret: reg.clientSecret,
+      };
+
       this.state.applyStepEvents([
         {
-          message: isNewRegistration
+          message: reg.isNewRegistration
             ? `App registration created: ${input.manifest.application.displayName}`
-            : 'App registration found in config',
-          status: isNewRegistration ? 'success' : 'info',
+            : 'Existing app registration found',
+          status: reg.isNewRegistration ? 'success' : 'info',
         },
-        ...(isNewRegistration
+        ...(reg.isNewRegistration
           ? [
               {
                 message: 'Credentials saved to config.' as const,
