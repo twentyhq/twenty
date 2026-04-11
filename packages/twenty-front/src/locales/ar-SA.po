@@ -5621,6 +5621,11 @@ msgstr "استمتع بفترة تجريبية مجانية لمدة 30 يومً
 msgid "Enter a JSON object"
 msgstr "أدخل كائن JSON"
 
+#. js-lingui-id: peBb6B
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
+msgid "Enter a new secret value"
+msgstr ""
+
 #. js-lingui-id: u2fAme
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
 msgid "Enter a number"
