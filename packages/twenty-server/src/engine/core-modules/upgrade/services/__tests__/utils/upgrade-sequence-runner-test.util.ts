@@ -125,9 +125,7 @@ export const createUpgradeSequenceRunnerTestModule = async () => {
 
   return {
     runner,
-    upgradeMigrationService: jest.mocked(
-      module.get(UpgradeMigrationService),
-    ),
+    upgradeMigrationService: jest.mocked(module.get(UpgradeMigrationService)),
     instanceUpgradeService: jest.mocked(
       module.get(InstanceCommandRunnerService),
     ),
@@ -135,8 +133,6 @@ export const createUpgradeSequenceRunnerTestModule = async () => {
       module.get(WorkspaceCommandRunnerService),
     ),
     upgradeSequenceReaderService: module.get(UpgradeSequenceReaderService),
-    workspaceIteratorService: jest.mocked(
-      module.get(WorkspaceIteratorService),
-    ),
+    workspaceIteratorService: jest.mocked(module.get(WorkspaceIteratorService)),
   };
 };

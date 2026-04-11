@@ -80,16 +80,10 @@ describe('UpgradeSequenceRunnerService — execution', () => {
       ).toHaveBeenCalledTimes(2);
       expect(
         instanceUpgradeService.runFastInstanceCommand,
-      ).toHaveBeenNthCalledWith(
-        1,
-        expect.objectContaining({ name: 'Ic2' }),
-      );
+      ).toHaveBeenNthCalledWith(1, expect.objectContaining({ name: 'Ic2' }));
       expect(
         instanceUpgradeService.runFastInstanceCommand,
-      ).toHaveBeenNthCalledWith(
-        2,
-        expect.objectContaining({ name: 'Ic3' }),
-      );
+      ).toHaveBeenNthCalledWith(2, expect.objectContaining({ name: 'Ic3' }));
     });
 
     it('should start at workspace slice start when cursor is on a workspace step', async () => {
@@ -111,9 +105,7 @@ describe('UpgradeSequenceRunnerService — execution', () => {
         options: {},
       });
 
-      expect(
-        workspaceUpgradeService.runWorkspaceCommands,
-      ).toHaveBeenCalledWith(
+      expect(workspaceUpgradeService.runWorkspaceCommands).toHaveBeenCalledWith(
         expect.objectContaining({
           workspaceCommands: [expect.objectContaining({ name: 'Wc3' })],
         }),
