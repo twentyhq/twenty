@@ -13,14 +13,16 @@ export const AIChatLastMessageWithStreamingState = () => {
     agentChatLastMessageIdComponentSelector,
   );
 
-  const displayedThread = useAtomStateValue(agentChatDisplayedThreadState);
+  const agentChatDisplayedThread = useAtomStateValue(
+    agentChatDisplayedThreadState,
+  );
   const agentChatIsStreaming = useAtomComponentFamilyStateValue(
     agentChatIsStreamingComponentFamilyState,
-    { threadId: displayedThread },
+    { threadId: agentChatDisplayedThread },
   );
   const agentChatError = useAtomComponentFamilyStateValue(
     agentChatErrorComponentFamilyState,
-    { threadId: displayedThread },
+    { threadId: agentChatDisplayedThread },
   );
 
   if (!isDefined(lastMessageId)) {

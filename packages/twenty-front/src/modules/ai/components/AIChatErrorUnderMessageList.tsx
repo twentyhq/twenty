@@ -17,14 +17,16 @@ const StyledErrorWrapper = styled.div`
 `;
 
 export const AIChatErrorUnderMessageList = () => {
-  const displayedThread = useAtomStateValue(agentChatDisplayedThreadState);
+  const agentChatDisplayedThread = useAtomStateValue(
+    agentChatDisplayedThreadState,
+  );
   const agentChatError = useAtomComponentFamilyStateValue(
     agentChatErrorComponentFamilyState,
-    { threadId: displayedThread },
+    { threadId: agentChatDisplayedThread },
   );
   const agentChatIsStreaming = useAtomComponentFamilyStateValue(
     agentChatIsStreamingComponentFamilyState,
-    { threadId: displayedThread },
+    { threadId: agentChatDisplayedThread },
   );
 
   const agentChatMessageIds = useAtomComponentSelectorValue(
