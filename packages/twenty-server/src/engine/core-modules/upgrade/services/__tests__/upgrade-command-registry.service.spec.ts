@@ -95,6 +95,7 @@ describe('UpgradeCommandRegistryService', () => {
       new MigrationA1770000000000(),
       new MigrationB1771000000000(),
       new MigrationC1772000000000(),
+      new WorkspaceCommandA(),
     ]);
 
     const v120 = service.getBundleForVersion('1.20.0');
@@ -118,6 +119,7 @@ describe('UpgradeCommandRegistryService', () => {
       new MigrationC1772000000000(),
       new MigrationA1770000000000(),
       new MigrationB1771000000000(),
+      new WorkspaceCommandA(),
     ]);
 
     const names = service
@@ -135,6 +137,7 @@ describe('UpgradeCommandRegistryService', () => {
     const service = await buildRegistryService([
       new UndecoratedMigration1768000000000(),
       new MigrationA1770000000000(),
+      new WorkspaceCommandA(),
     ]);
 
     const v121 = service.getBundleForVersion('1.21.0');
@@ -255,6 +258,7 @@ describe('UpgradeCommandRegistryService', () => {
       new MigrationD1769000000000(),
       new MigrationA1770000000000(),
       new MigrationB1771000000000(),
+      new WorkspaceCommandA(),
     ]);
 
     const allCommands = service.getCrossUpgradeSupportedFastInstanceCommands();
@@ -318,6 +322,7 @@ describe('UpgradeCommandRegistryService', () => {
     const service = await buildRegistryService([
       new SlowMigrationB1780000000000(),
       new SlowMigrationA1779000000000(),
+      new WorkspaceCommandA(),
     ]);
 
     const { slowInstanceCommands } = service.getBundleForVersion('1.21.0');
@@ -343,6 +348,7 @@ describe('UpgradeCommandRegistryService', () => {
     const service = await buildRegistryService([
       new MigrationA1770000000000(),
       new SlowMigration1780000000000(),
+      new WorkspaceCommandA(),
     ]);
 
     const bucket = service.getBundleForVersion('1.21.0');
@@ -393,6 +399,7 @@ describe('UpgradeCommandRegistryService', () => {
     const service = await buildRegistryService([
       new MigrationA1770000000000(),
       new SlowMigrationSameTimestamp(),
+      new WorkspaceCommandA(),
     ]);
 
     const bucket = service.getBundleForVersion('1.21.0');
@@ -423,6 +430,7 @@ describe('UpgradeCommandRegistryService', () => {
     const service = await buildRegistryService([
       new SlowMigration1780000000000(),
       new SlowMigration1768000000000(),
+      new WorkspaceCommandA(),
     ]);
 
     const allSlowCommands =
