@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
+import { UPGRADE_CROSS_VERSION_SUPPORTED_TWENTY_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import {
   type RegisteredFastInstanceCommand,
   type RegisteredSlowInstanceCommand,
@@ -26,7 +26,7 @@ export class UpgradeSequenceReaderService {
   getUpgradeSequence(): UpgradeStep[] {
     const sequence: UpgradeStep[] = [];
 
-    for (const version of UPGRADE_COMMAND_SUPPORTED_VERSIONS) {
+    for (const version of UPGRADE_CROSS_VERSION_SUPPORTED_TWENTY_VERSIONS) {
       const bundle =
         this.upgradeCommandRegistryService.getBundleForVersion(version);
 

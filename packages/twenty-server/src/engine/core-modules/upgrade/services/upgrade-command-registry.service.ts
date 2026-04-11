@@ -4,7 +4,7 @@ import { DiscoveryService } from '@nestjs/core';
 import { type ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { type WorkspaceCommandRunner } from 'src/database/commands/command-runners/workspace.command-runner';
 import {
-  UPGRADE_COMMAND_SUPPORTED_VERSIONS,
+  UPGRADE_CROSS_VERSION_SUPPORTED_TWENTY_VERSIONS,
   type UpgradeCommandVersion,
 } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { getRegisteredInstanceCommandMetadata } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
@@ -62,7 +62,7 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
   constructor(private readonly discoveryService: DiscoveryService) {}
 
   onModuleInit(): void {
-    for (const version of UPGRADE_COMMAND_SUPPORTED_VERSIONS) {
+    for (const version of UPGRADE_CROSS_VERSION_SUPPORTED_TWENTY_VERSIONS) {
       this.bundlesByVersion.set(version, {
         fastInstanceCommands: [],
         slowInstanceCommands: [],
@@ -179,13 +179,13 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
   }
 
   getAllFastInstanceCommands(): RegisteredFastInstanceCommand[] {
-    return UPGRADE_COMMAND_SUPPORTED_VERSIONS.flatMap(
+    return UPGRADE_CROSS_VERSION_SUPPORTED_TWENTY_VERSIONS.flatMap(
       (version) => this.getBundleForVersion(version).fastInstanceCommands,
     );
   }
 
   getAllSlowInstanceCommands(): RegisteredSlowInstanceCommand[] {
-    return UPGRADE_COMMAND_SUPPORTED_VERSIONS.flatMap(
+    return UPGRADE_CROSS_VERSION_SUPPORTED_TWENTY_VERSIONS.flatMap(
       (version) => this.getBundleForVersion(version).slowInstanceCommands,
     );
   }
@@ -237,10 +237,11 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
   }
 
   private validateAtLeastOneVersionBundleHasWorkspaceCommands(): void {
-    const hasWorkspaceCommands = UPGRADE_COMMAND_SUPPORTED_VERSIONS.some(
-      (version) =>
-        this.getBundleForVersion(version).workspaceCommands.length > 0,
-    );
+    const hasWorkspaceCommands =
+      UPGRADE_CROSS_VERSION_SUPPORTED_TWENTY_VERSIONS.some(
+        (version) =>
+          this.getBundleForVersion(version).workspaceCommands.length > 0,
+      );
 
     if (!hasWorkspaceCommands) {
       throw new Error(

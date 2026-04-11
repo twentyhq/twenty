@@ -13,7 +13,7 @@ import {
   UpgradeCommand,
   UpgradeCommandOptions,
 } from 'src/database/commands/upgrade-version-command/upgrade.command';
-import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
+import { TWENTY_CURRENT_VERSION } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
 import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
@@ -22,11 +22,6 @@ import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/se
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
 import { WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
-
-const CURRENT_VERSION =
-  UPGRADE_COMMAND_SUPPORTED_VERSIONS[
-    UPGRADE_COMMAND_SUPPORTED_VERSIONS.length - 1
-  ];
 
 type CommandRunnerValues = typeof UpgradeCommand;
 
@@ -286,13 +281,13 @@ describe('UpgradeCommandRunner', () => {
   });
 
   it('should call runFastInstanceCommand for each current-version instance command', async () => {
-    @RegisteredInstanceCommand(CURRENT_VERSION, 1770000000000)
+    @RegisteredInstanceCommand(TWENTY_CURRENT_VERSION, 1770000000000)
     class AddIndexToUsers1770000000000 implements FastInstanceCommand {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
     }
 
-    @RegisteredInstanceCommand(CURRENT_VERSION, 1771000000000)
+    @RegisteredInstanceCommand(TWENTY_CURRENT_VERSION, 1771000000000)
     class AddColumnToAccounts1771000000000 implements FastInstanceCommand {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
@@ -316,18 +311,18 @@ describe('UpgradeCommandRunner', () => {
       instanceUpgradeService.runFastInstanceCommand,
     ).toHaveBeenNthCalledWith(1, {
       command: addIndex,
-      name: `${CURRENT_VERSION}_AddIndexToUsers1770000000000_1770000000000`,
+      name: `${TWENTY_CURRENT_VERSION}_AddIndexToUsers1770000000000_1770000000000`,
     });
     expect(
       instanceUpgradeService.runFastInstanceCommand,
     ).toHaveBeenNthCalledWith(2, {
       command: addColumn,
-      name: `${CURRENT_VERSION}_AddColumnToAccounts1771000000000_1771000000000`,
+      name: `${TWENTY_CURRENT_VERSION}_AddColumnToAccounts1771000000000_1771000000000`,
     });
   });
 
   it('should propagate errors from runFastInstanceCommand', async () => {
-    @RegisteredInstanceCommand(CURRENT_VERSION, 1770000000000)
+    @RegisteredInstanceCommand(TWENTY_CURRENT_VERSION, 1770000000000)
     class FailingMigration1770000000000 implements FastInstanceCommand {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
@@ -350,7 +345,7 @@ describe('UpgradeCommandRunner', () => {
   });
 
   it('should call runSlowInstanceCommand for each current-version slow command', async () => {
-    @RegisteredInstanceCommand(CURRENT_VERSION, 1780000000000, {
+    @RegisteredInstanceCommand(TWENTY_CURRENT_VERSION, 1780000000000, {
       type: 'slow',
     })
     class SlowMigration1780000000000 implements SlowInstanceCommand {
@@ -374,7 +369,7 @@ describe('UpgradeCommandRunner', () => {
     );
     expect(instanceUpgradeService.runSlowInstanceCommand).toHaveBeenCalledWith({
       command: slowMigration,
-      name: `${CURRENT_VERSION}_SlowMigration1780000000000_1780000000000`,
+      name: `${TWENTY_CURRENT_VERSION}_SlowMigration1780000000000_1780000000000`,
       skipDataMigration: false,
     });
   });
@@ -382,13 +377,13 @@ describe('UpgradeCommandRunner', () => {
   it('should run slow commands after fast commands but before workspace commands', async () => {
     const executionOrder: string[] = [];
 
-    @RegisteredInstanceCommand(CURRENT_VERSION, 1770000000000)
+    @RegisteredInstanceCommand(TWENTY_CURRENT_VERSION, 1770000000000)
     class FastMigration1770000000000 implements FastInstanceCommand {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
     }
 
-    @RegisteredInstanceCommand(CURRENT_VERSION, 1780000000000, {
+    @RegisteredInstanceCommand(TWENTY_CURRENT_VERSION, 1780000000000, {
       type: 'slow',
     })
     class SlowMigration1780000000000 implements SlowInstanceCommand {
@@ -438,7 +433,7 @@ describe('UpgradeCommandRunner', () => {
   });
 
   it('should pass skipDataMigration: true on fresh install (no workspaces)', async () => {
-    @RegisteredInstanceCommand(CURRENT_VERSION, 1780000000000, {
+    @RegisteredInstanceCommand(TWENTY_CURRENT_VERSION, 1780000000000, {
       type: 'slow',
     })
     class SlowMigrationFreshInstall implements SlowInstanceCommand {
@@ -458,13 +453,13 @@ describe('UpgradeCommandRunner', () => {
 
     expect(instanceUpgradeService.runSlowInstanceCommand).toHaveBeenCalledWith({
       command: expect.any(SlowMigrationFreshInstall),
-      name: `${CURRENT_VERSION}_SlowMigrationFreshInstall_1780000000000`,
+      name: `${TWENTY_CURRENT_VERSION}_SlowMigrationFreshInstall_1780000000000`,
       skipDataMigration: true,
     });
   });
 
   it('should propagate errors from runSlowInstanceCommand', async () => {
-    @RegisteredInstanceCommand(CURRENT_VERSION, 1780000000000, {
+    @RegisteredInstanceCommand(TWENTY_CURRENT_VERSION, 1780000000000, {
       type: 'slow',
     })
     class FailingSlowMigration implements SlowInstanceCommand {
@@ -508,7 +503,7 @@ describe('UpgradeCommandRunner', () => {
     it.each(eachTestingContextFilter(failingTestUseCases))(
       '$title',
       async () => {
-        @RegisteredInstanceCommand(CURRENT_VERSION, 1770000000000)
+        @RegisteredInstanceCommand(TWENTY_CURRENT_VERSION, 1770000000000)
         class FastMigration1770000000000 implements FastInstanceCommand {
           async up(_queryRunner: QueryRunner) {}
           async down(_queryRunner: QueryRunner) {}
@@ -533,13 +528,13 @@ describe('UpgradeCommandRunner', () => {
   });
 
   it('should skip already completed instance commands via service guard', async () => {
-    @RegisteredInstanceCommand(CURRENT_VERSION, 1770000000000)
+    @RegisteredInstanceCommand(TWENTY_CURRENT_VERSION, 1770000000000)
     class AlreadyDone1770000000000 implements FastInstanceCommand {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
     }
 
-    @RegisteredInstanceCommand(CURRENT_VERSION, 1771000000000)
+    @RegisteredInstanceCommand(TWENTY_CURRENT_VERSION, 1771000000000)
     class NotDone1771000000000 implements FastInstanceCommand {
       async up(_queryRunner: QueryRunner) {}
       async down(_queryRunner: QueryRunner) {}
@@ -558,7 +553,8 @@ describe('UpgradeCommandRunner', () => {
       instanceUpgradeService.runFastInstanceCommand as jest.Mock
     ).mockImplementation(async ({ name }: { name: string }) => {
       if (
-        name === `${CURRENT_VERSION}_AlreadyDone1770000000000_1770000000000`
+        name ===
+        `${TWENTY_CURRENT_VERSION}_AlreadyDone1770000000000_1770000000000`
       ) {
         return { status: 'already-executed' };
       }
@@ -575,7 +571,7 @@ describe('UpgradeCommandRunner', () => {
       instanceUpgradeService.runFastInstanceCommand,
     ).toHaveBeenNthCalledWith(2, {
       command: notDone,
-      name: `${CURRENT_VERSION}_NotDone1771000000000_1771000000000`,
+      name: `${TWENTY_CURRENT_VERSION}_NotDone1771000000000_1771000000000`,
     });
   });
 });

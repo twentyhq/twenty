@@ -7,9 +7,9 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { InstanceCommandGenerationService } from 'src/database/commands/instance-command-generation.service';
 import {
-  CURRENT_VERSION,
-  UPGRADE_COMMAND_NEXT_VERSIONS,
-  UPGRADE_COMMAND_SUPPORTED_VERSIONS,
+  TWENTY_CURRENT_VERSION,
+  TWENTY_NEXT_VERSIONS,
+  TWENTY_PREVIOUS_VERSIONS,
   type UpgradeCommandVersion,
 } from 'src/engine/constants/upgrade-command-supported-versions.constant';
 import { type InstanceCommandType } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
@@ -67,12 +67,9 @@ export class GenerateInstanceCommandCommand extends CommandRunner {
     description: 'Target version (e.g. 1.23.0). Defaults to CURRENT_VERSION.',
   })
   parseVersion(value: string): UpgradeCommandVersion {
-    const allVersions = [
-      ...UPGRADE_COMMAND_SUPPORTED_VERSIONS,
-      ...UPGRADE_COMMAND_NEXT_VERSIONS,
-    ];
+    const allVersions = [...TWENTY_PREVIOUS_VERSIONS, ...TWENTY_NEXT_VERSIONS];
 
-    if (!allVersions.includes(value as UpgradeCommandVersion)) {
+    if (!allVersions.includes(value as (typeof allVersions)[number])) {
       throw new Error(
         `Invalid version "${value}". Must be one of: ${allVersions.join(', ')}`,
       );
@@ -86,7 +83,7 @@ export class GenerateInstanceCommandCommand extends CommandRunner {
     options: GenerateInstanceCommandOptions,
   ): Promise<void> {
     const migrationName = options.name;
-    const version = options.version ?? CURRENT_VERSION;
+    const version = options.version ?? TWENTY_CURRENT_VERSION;
 
     const commandType = options.type;
 
