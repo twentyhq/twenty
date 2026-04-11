@@ -1,6 +1,7 @@
 import type DataLoader from 'dataloader';
 
 import {
+  type ApiKeyRoleLoaderPayload,
   type FieldMetadataLoaderPayload,
   type IndexFieldMetadataLoaderPayload,
   type IndexMetadataLoaderPayload,
@@ -17,6 +18,7 @@ import {
 } from 'src/engine/dataloaders/dataloader.service';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
+import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
@@ -28,6 +30,8 @@ import { type ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/v
 import { type ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
 
 export interface IDataloaders {
+  apiKeyRoleLoader: DataLoader<ApiKeyRoleLoaderPayload, RoleDTO | null>;
+
   relationLoader: DataLoader<RelationLoaderPayload, RelationDTO | null>;
 
   morphRelationLoader: DataLoader<
