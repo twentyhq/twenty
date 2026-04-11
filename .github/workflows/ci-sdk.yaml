@@ -70,9 +70,9 @@ jobs:
         ports:
           - 6379:6379
     env:
-      APP_SECRET: twenty-app-dev-secret-not-for-production
+      NODE_ENV: test
       TWENTY_API_URL: http://localhost:3000
-      TWENTY_API_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC0xYzI1LTRkMDItYmYyNS02YWVjY2Y3ZWE0MTkiLCJ0eXBlIjoiQVBJX0tFWSIsIndvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWMyNS00ZDAyLWJmMjUtNmFlY2NmN2VhNDE5IiwiaWF0IjoxNzM1Njg5NjAwLCJleHAiOjQ4OTE0NDk2MDAsImp0aSI6IjIwMjAyMDIwLWY0MDEtNGQ4YS1hNzMxLTY0ZDAwN2MyN2JhZCJ9.bfQjfyN0NEtTCLE_xPyNcwonDzlSXFoP8kdCQTdnuDc
+      TWENTY_API_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ1c2VySWQiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtNDYzZi00MzViLTgyOGMtMTA3ZTAwN2EyNzExIiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWU3Yy00M2Q5LWE1ZGItNjg1YjUwNjlkODE2IiwidHlwZSI6IkFDQ0VTUyIsImF1dGhQcm92aWRlciI6InBhc3N3b3JkIiwiaWF0IjoxNzUxMjgxNzA0LCJleHAiOjIwNjY4NTc3MDR9.HMGqCsVlOAPVUBhKSGlD1X86VoHKt4LIUtET3CGIdik
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -80,28 +80,18 @@ jobs:
           fetch-depth: 10
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
-      - name: Build SDK and Server
-        run: npx nx build twenty-sdk && npx nx build twenty-server
-      - name: Setup server environment
-        run: npx nx reset:env:e2e-testing-server twenty-server
-      - name: Create databases
+      - name: Build
+        run: npx nx build twenty-sdk
+      - name: Server / Create Test DB
         run: |
-          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
-      - name: Setup database
-        run: npx nx run twenty-server:database:reset
-      - name: Start server
-        run: nohup npx nx start:ci twenty-server > /tmp/twenty-server.log 2>&1 &
-      - name: Wait for server to be ready
-        run: npx wait-on http://localhost:3000/healthz --timeout 120000 --interval 1000
       - name: SDK / Run e2e Tests
-        run: NODE_ENV=test npx vitest run --config ./vitest.e2e.config.ts
-        working-directory: packages/twenty-sdk
-      - name: Server / Dump logs on failure
-        if: failure()
-        run: |
-          echo "=== twenty-server logs ==="
-          cat /tmp/twenty-server.log || echo "No server log file found"
+        uses: ./.github/actions/nx-affected
+        env:
+          NODE_ENV: test
+        with:
+          tag: scope:sdk
+          tasks: test:e2e
   ci-sdk-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
