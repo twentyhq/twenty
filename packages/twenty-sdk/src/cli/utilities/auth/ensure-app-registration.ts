@@ -48,8 +48,8 @@ export const ensureAppRegistration = async (
     const errorDetail =
       createResult.error instanceof Error
         ? createResult.error.message
-        : (createResult.error as { message?: string })?.message ??
-          String(createResult.error);
+        : ((createResult.error as { message?: string })?.message ??
+          String(createResult.error));
 
     throw new Error(`Failed to create app registration: ${errorDetail}`);
   }
