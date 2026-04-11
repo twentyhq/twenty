@@ -2,7 +2,7 @@ import 'reflect-metadata';
 
 import { Injectable } from '@nestjs/common';
 
-import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
+import { type UpgradeCommandVersion } from 'src/engine/core-modules/upgrade/constants/upgrade-command-supported-versions.constant';
 
 export type InstanceCommandType = 'fast' | 'slow';
 

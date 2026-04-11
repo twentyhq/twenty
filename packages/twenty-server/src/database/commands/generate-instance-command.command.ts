@@ -11,7 +11,7 @@ import {
   TWENTY_NEXT_VERSIONS,
   TWENTY_PREVIOUS_VERSIONS,
   type UpgradeCommandVersion,
-} from 'src/engine/constants/upgrade-command-supported-versions.constant';
+} from 'src/engine/core-modules/upgrade/constants/upgrade-command-supported-versions.constant';
 import { type InstanceCommandType } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 
 const UPGRADE_VERSION_COMMAND_DIR = path.resolve(

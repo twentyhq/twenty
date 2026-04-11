@@ -13,7 +13,7 @@ import {
   UpgradeCommand,
   UpgradeCommandOptions,
 } from 'src/database/commands/upgrade-version-command/upgrade.command';
-import { TWENTY_CURRENT_VERSION } from 'src/engine/constants/upgrade-command-supported-versions.constant';
+import { TWENTY_CURRENT_VERSION } from 'src/engine/core-modules/upgrade/constants/upgrade-command-supported-versions.constant';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
 import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';

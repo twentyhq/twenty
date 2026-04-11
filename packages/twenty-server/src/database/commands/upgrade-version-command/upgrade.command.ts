@@ -5,6 +5,7 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { DataSource } from 'typeorm';
 
 import { CommandLogger } from 'src/database/commands/logger';
+import { type DeprecatedSince } from 'src/engine/core-modules/upgrade/constants/upgrade-command-supported-versions.constant';
 import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
@@ -170,8 +171,10 @@ export class UpgradeCommand extends CommandRunner {
   // Workspaces created during 1.21 were activated before the cursor-based
   // upgrade system existed. They have no upgradeMigration record yet.
   // Stamp them with the last 1.21 workspace command as their initial cursor.
-  // To remove starting from 1.23
-  private async backfillWorkspaceCreatedIn1_21_0Cursors(): Promise<void> {
+  private async backfillWorkspaceCreatedIn1_21_0Cursors(): DeprecatedSince<
+    '1.23.0',
+    Promise<void>
+  > {
     const allWorkspaceIds =
       await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
 
@@ -226,7 +229,11 @@ export class UpgradeCommand extends CommandRunner {
   // on upgradeMigration) must be applied before the sequence runs.
   // Only the specific bootstrap migration is executed here.
   // To remove starting from 1.23
-  private async runBootstrapMigrations(): Promise<void> {
+
+  private async runBootstrapMigrations(): DeprecatedSince<
+    '1.23.0',
+    Promise<void>
+  > {
     const BOOTSTRAP_MIGRATION = 'AddIsInitialToUpgradeMigration1775909335324';
 
     const alreadyExecuted = await this.dataSource.query(

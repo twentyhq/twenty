@@ -4,7 +4,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { pascalCase } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
-import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
+import { type UpgradeCommandVersion } from 'src/engine/core-modules/upgrade/constants/upgrade-command-supported-versions.constant';
 import { type InstanceCommandType } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 
 type GenerateInstanceCommandArgs = {

@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
+import { type UpgradeCommandVersion } from 'src/engine/core-modules/upgrade/constants/upgrade-command-supported-versions.constant';
 
 export type RegisteredWorkspaceCommandMetadata = {
   version: UpgradeCommandVersion;

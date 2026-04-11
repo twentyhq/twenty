@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { UPGRADE_CROSS_VERSION_SUPPORTED_TWENTY_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
+import { UPGRADE_CROSS_VERSION_SUPPORTED_TWENTY_VERSIONS } from 'src/engine/core-modules/upgrade/constants/upgrade-command-supported-versions.constant';
 import {
   type RegisteredFastInstanceCommand,
   type RegisteredSlowInstanceCommand,

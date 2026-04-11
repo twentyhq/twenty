@@ -6,7 +6,7 @@ import { type WorkspaceCommandRunner } from 'src/database/commands/command-runne
 import {
   UPGRADE_CROSS_VERSION_SUPPORTED_TWENTY_VERSIONS,
   type UpgradeCommandVersion,
-} from 'src/engine/constants/upgrade-command-supported-versions.constant';
+} from 'src/engine/core-modules/upgrade/constants/upgrade-command-supported-versions.constant';
 import { getRegisteredInstanceCommandMetadata } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { getRegisteredWorkspaceCommandMetadata } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';

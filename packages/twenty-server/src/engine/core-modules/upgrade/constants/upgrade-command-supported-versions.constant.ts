@@ -19,7 +19,7 @@ const ALL_TWENTY_VERSIONS = [
 
 type AllVersions = typeof ALL_TWENTY_VERSIONS;
 
-export type DeprecatedSince<RemoveAtVersion extends UpgradeCommandVersion, T> =
+export type DeprecatedSince<RemoveAtVersion extends AllVersions, T> =
   IsGreaterOrEqual<
     IndexOf<typeof TWENTY_CURRENT_VERSION, AllVersions>,
     IndexOf<RemoveAtVersion, AllVersions>
