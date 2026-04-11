@@ -8,9 +8,9 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import {
+  UpgradeSequenceReaderService,
   type UpgradeStep,
   type WorkspaceUpgradeStep,
-  UpgradeSequenceReaderService,
 } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
 import { WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
@@ -163,15 +163,22 @@ export const createUpgradeSequenceRunnerIntegrationTestModule = async () => {
 
 export const seedMigration = async (
   dataSource: DataSource,
-  name: string,
-  status: 'completed' | 'failed',
-  workspaceId: string | null = null,
-  attempt = 1,
+  {
+    name,
+    status,
+    workspaceId = null,
+    attempt = 1,
+  }: {
+    name: string;
+    status: 'completed' | 'failed';
+    workspaceId?: string | null;
+    attempt?: number;
+  },
 ) => {
   await dataSource.query(
     `INSERT INTO core."upgradeMigration" (name, status, attempt, "executedByVersion", "workspaceId")
      VALUES ($1, $2, $3, $4, $5)`,
-    [name, status, attempt, '1.21.0', workspaceId],
+    [name, status, attempt, '42.42.42', workspaceId],
   );
   // Ensure distinct createdAt ordering between rows
   await new Promise((resolve) => setTimeout(resolve, 15));

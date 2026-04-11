@@ -55,12 +55,35 @@ describe('UpgradeSequenceRunnerService — validation (integration)', () => {
       makeWorkspace('Wc4'),
     ];
 
-    await seedMigration(context.dataSource, 'Wc1', 'completed', WS_1);
-    await seedMigration(context.dataSource, 'Wc2', 'completed', WS_1);
-    await seedMigration(context.dataSource, 'Wc1', 'completed', WS_2);
-    await seedMigration(context.dataSource, 'Ic1', 'completed');
-    await seedMigration(context.dataSource, 'Wc3', 'completed', WS_1);
-    await seedMigration(context.dataSource, 'Wc4', 'completed', WS_1);
+    await seedMigration(context.dataSource, {
+      name: 'Wc1',
+      status: 'completed',
+      workspaceId: WS_1,
+    });
+    await seedMigration(context.dataSource, {
+      name: 'Wc2',
+      status: 'completed',
+      workspaceId: WS_1,
+    });
+    await seedMigration(context.dataSource, {
+      name: 'Wc1',
+      status: 'completed',
+      workspaceId: WS_2,
+    });
+    await seedMigration(context.dataSource, {
+      name: 'Ic1',
+      status: 'completed',
+    });
+    await seedMigration(context.dataSource, {
+      name: 'Wc3',
+      status: 'completed',
+      workspaceId: WS_1,
+    });
+    await seedMigration(context.dataSource, {
+      name: 'Wc4',
+      status: 'completed',
+      workspaceId: WS_1,
+    });
 
     await expect(
       context.runner.run({

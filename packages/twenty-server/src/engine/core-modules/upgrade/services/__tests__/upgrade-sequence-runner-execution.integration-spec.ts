@@ -36,8 +36,14 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
       makeSlowInstance('Ic3'),
     ];
 
-    await seedMigration(context.dataSource, 'Ic1', 'completed');
-    await seedMigration(context.dataSource, 'Ic2', 'completed');
+    await seedMigration(context.dataSource, {
+      name: 'Ic1',
+      status: 'completed',
+    });
+    await seedMigration(context.dataSource, {
+      name: 'Ic2',
+      status: 'completed',
+    });
 
     const report = await context.runner.run({
       sequence,
@@ -60,8 +66,14 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
   it('should retry a failed instance command', async () => {
     const sequence = [makeFastInstance('Ic1'), makeFastInstance('Ic2')];
 
-    await seedMigration(context.dataSource, 'Ic1', 'completed');
-    await seedMigration(context.dataSource, 'Ic2', 'failed');
+    await seedMigration(context.dataSource, {
+      name: 'Ic1',
+      status: 'completed',
+    });
+    await seedMigration(context.dataSource, {
+      name: 'Ic2',
+      status: 'failed',
+    });
 
     const report = await context.runner.run({
       sequence,
@@ -85,8 +97,15 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
       makeWorkspace('Wc2'),
     ];
 
-    await seedMigration(context.dataSource, 'Ic1', 'completed');
-    await seedMigration(context.dataSource, 'Wc1', 'completed', WS_1);
+    await seedMigration(context.dataSource, {
+      name: 'Ic1',
+      status: 'completed',
+    });
+    await seedMigration(context.dataSource, {
+      name: 'Wc1',
+      status: 'completed',
+      workspaceId: WS_1,
+    });
 
     const report = await context.runner.run({
       sequence,
@@ -121,7 +140,11 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
   it('should enforce workspace sync barrier before instance step', async () => {
     const sequence = [makeWorkspace('Wc1'), makeFastInstance('Ic1')];
 
-    await seedMigration(context.dataSource, 'Wc1', 'completed', WS_1);
+    await seedMigration(context.dataSource, {
+      name: 'Wc1',
+      status: 'completed',
+      workspaceId: WS_1,
+    });
 
     const report = await context.runner.run({
       sequence,
