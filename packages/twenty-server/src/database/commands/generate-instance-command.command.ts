@@ -67,7 +67,9 @@ export class GenerateInstanceCommandCommand extends CommandRunner {
   })
   parseVersion(value: string): TwentyAllVersion {
     if (
-      !TWENTY_ALL_VERSIONS.includes(value as (typeof TWENTY_ALL_VERSIONS)[number])
+      !TWENTY_ALL_VERSIONS.includes(
+        value as (typeof TWENTY_ALL_VERSIONS)[number],
+      )
     ) {
       throw new Error(
         `Invalid version "${value}". Must be one of: ${TWENTY_ALL_VERSIONS.join(', ')}`,

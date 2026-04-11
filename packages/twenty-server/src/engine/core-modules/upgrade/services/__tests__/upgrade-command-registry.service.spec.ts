@@ -161,7 +161,7 @@ describe('UpgradeCommandRegistryService', () => {
   });
 
   it('should not throw when no commands are discovered (empty bundle)', async () => {
-    await expect(buildRegistryService([])).resolves.not.toThrow();
+    await expect(buildRegistryService([])).resolves.toBeDefined();
   });
 
   it('should return empty array for unsupported version', async () => {

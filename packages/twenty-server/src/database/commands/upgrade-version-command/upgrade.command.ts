@@ -14,7 +14,7 @@ import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-
 import { isDefined } from 'twenty-shared/utils';
 
 type RawUpgradeCommandOptions = {
-  workspaceIds?: Set<string>;
+  workspaceId?: Set<string>;
   startFromWorkspaceId?: string;
   workspaceCountLimit?: number;
   dryRun?: boolean;
@@ -149,8 +149,8 @@ export class UpgradeCommand extends CommandRunner {
           sequence,
           options: {
             ...options,
-            workspaceIds: isDefined(options.workspaceIds)
-              ? Array.from(options.workspaceIds)
+            workspaceIds: isDefined(options.workspaceId)
+              ? Array.from(options.workspaceId)
               : undefined,
           },
         });
