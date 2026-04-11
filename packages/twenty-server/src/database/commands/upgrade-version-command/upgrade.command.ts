@@ -9,7 +9,7 @@ import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/s
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
-import { DeprecatedSinceVersion } from 'src/engine/core-modules/upgrade/types/deprecated-since-version.type';
+import { RemovedSinceVersion } from 'src/engine/core-modules/upgrade/types/removed-since-version.type';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 export type UpgradeCommandOptions = {
@@ -171,7 +171,7 @@ export class UpgradeCommand extends CommandRunner {
   // Workspaces created during 1.21 were activated before the cursor-based
   // upgrade system existed. They have no upgradeMigration record yet.
   // Stamp them with the last 1.21 workspace command as their initial cursor.
-  private async backfillWorkspaceCreatedIn1_21_0Cursors(): DeprecatedSinceVersion<
+  private async backfillWorkspaceCreatedIn1_21_0Cursors(): RemovedSinceVersion<
     '1.23.0',
     Promise<void>
   > {
@@ -227,7 +227,7 @@ export class UpgradeCommand extends CommandRunner {
 
   // Schema changes required by the upgrade engine itself (e.g. new columns
   // on upgradeMigration) must be applied before the sequence runs.
-  private async runBootstrapMigrations(): DeprecatedSinceVersion<
+  private async runBootstrapMigrations(): RemovedSinceVersion<
     '1.23.0',
     Promise<void>
   > {
