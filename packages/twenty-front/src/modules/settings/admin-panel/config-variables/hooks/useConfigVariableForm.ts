@@ -9,10 +9,20 @@ type FormValues = {
   value: ConfigVariableValue;
 };
 
-export const useConfigVariableForm = (
-  variable?: ConfigVariable,
-  isEditing?: boolean,
-) => {
+const hasMeaningfulValue = (value: ConfigVariableValue): boolean => {
+  if (value === null || value === undefined) {
+    return false;
+  }
+  if (typeof value === 'string') {
+    return value.trim() !== '';
+  }
+  if (Array.isArray(value)) {
+    return value.length > 0;
+  }
+  return true;
+};
+
+export const useConfigVariableForm = (variable?: ConfigVariable) => {
   const validationSchema = z.object({
     value: z.union([
       z.string(),
@@ -25,9 +35,10 @@ export const useConfigVariableForm = (
   });
 
   const {
+    control,
     handleSubmit,
-    setValue,
-    formState: { isSubmitting },
+    reset,
+    formState: { isSubmitting, isDirty },
     watch,
   } = useForm<FormValues>({
     resolver: zodResolver(validationSchema),
@@ -35,30 +46,19 @@ export const useConfigVariableForm = (
   });
 
   const currentValue = watch('value');
-  const hasValueChanged =
-    variable?.isSensitive && isEditing
-      ? typeof currentValue === 'string' && currentValue.length > 0
-      : currentValue !== variable?.value;
-  const isValueValid = !!(
-    variable &&
+  const isValueValid =
+    variable !== undefined &&
     !variable.isEnvOnly &&
-    hasValueChanged &&
-    ((typeof currentValue === 'string' && currentValue.trim() !== '') ||
-      typeof currentValue === 'boolean' ||
-      typeof currentValue === 'number' ||
-      (Array.isArray(currentValue) && currentValue.length > 0) ||
-      (typeof currentValue === 'object' &&
-        currentValue !== null &&
-        !Array.isArray(currentValue)))
-  );
+    isDirty &&
+    hasMeaningfulValue(currentValue);
 
   return {
+    control,
     handleSubmit,
-    setValue,
+    reset,
     isSubmitting,
-    watch,
     currentValue,
-    hasValueChanged,
+    hasValueChanged: isDirty,
     isValueValid,
   };
 };

@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { Controller } from 'react-hook-form';
 import { Form, useParams } from 'react-router-dom';
 
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
@@ -76,13 +77,13 @@ export const SettingsAdminConfigVariableDetails = () => {
     useConfigVariableActions(variable?.name ?? '');
 
   const {
+    control,
     handleSubmit,
-    setValue,
+    reset,
     isSubmitting,
-    watch,
     hasValueChanged,
     isValueValid,
-  } = useConfigVariableForm(variable, isEditing);
+  } = useConfigVariableForm(variable);
 
   if (loading === true || isDefined(variable) === false) {
     return <SettingsSkeletonLoader />;
@@ -98,24 +99,18 @@ export const SettingsAdminConfigVariableDetails = () => {
 
   const handleEditClick = () => {
     if (variable.isSensitive) {
-      setValue('value', '');
+      reset({ value: '' });
     }
     setIsEditing(true);
   };
 
   const handleXButtonClick = () => {
-    if (isFromDatabase && hasValueChanged) {
-      setValue('value', variable.value);
-      setIsEditing(false);
-      return;
-    }
-
     if (isFromDatabase && !hasValueChanged) {
       openModal(RESET_VARIABLE_MODAL_ID);
       return;
     }
 
-    setValue('value', variable.value);
+    reset({ value: variable.value });
     setIsEditing(false);
   };
 
@@ -158,11 +153,17 @@ export const SettingsAdminConfigVariableDetails = () => {
           <StyledFormContainer>
             <Form onSubmit={handleSubmit(onSubmit)}>
               <StyledRow>
-                <ConfigVariableValueInput
-                  variable={variable}
-                  value={watch('value')}
-                  onChange={(value) => setValue('value', value)}
-                  disabled={isEnvOnly || !isEditing}
+                <Controller
+                  control={control}
+                  name="value"
+                  render={({ field }) => (
+                    <ConfigVariableValueInput
+                      variable={variable}
+                      value={field.value}
+                      onChange={field.onChange}
+                      disabled={isEnvOnly || !isEditing}
+                    />
+                  )}
                 />
 
                 {!isEditing ? (
@@ -180,9 +181,7 @@ export const SettingsAdminConfigVariableDetails = () => {
                       variant="secondary"
                       position="left"
                       type="submit"
-                      disabled={
-                        isSubmitting || !isValueValid || !hasValueChanged
-                      }
+                      disabled={isSubmitting || !isValueValid}
                     />
                     <Button
                       Icon={IconX}
