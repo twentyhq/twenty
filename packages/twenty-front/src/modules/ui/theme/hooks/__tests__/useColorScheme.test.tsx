@@ -1,9 +1,11 @@
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import {
+  currentWorkspaceMemberState,
+  type CurrentWorkspaceMember,
+} from '@/auth/states/currentWorkspaceMemberState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { resetJotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 
 const updateOneRecordMock = jest.fn();
 
