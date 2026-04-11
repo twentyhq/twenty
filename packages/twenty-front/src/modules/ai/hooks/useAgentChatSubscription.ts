@@ -139,6 +139,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     let throttleTimer: ReturnType<typeof setTimeout> | null = null;
     let latestMessage: ExtendedUIMessage | null = null;
     let writer: WritableStreamDefaultWriter<UIMessageChunk> | null = null;
+    let disposed = false;
 
     store.set(firstLiveSeqAtom, null);
 
@@ -253,7 +254,9 @@ export const useAgentChatSubscription = (threadId: string | null) => {
       }
       flushToAtom();
 
-      store.set(isStreamingAtom, false);
+      if (!disposed) {
+        store.set(isStreamingAtom, false);
+      }
     };
 
     const handleEvent = (event: AgentChatSubscriptionEvent) => {
@@ -274,7 +277,9 @@ export const useAgentChatSubscription = (threadId: string | null) => {
             );
 
             startReadLoop(adaptedReadable).catch(() => {
-              store.set(isStreamingAtom, false);
+              if (!disposed) {
+                store.set(isStreamingAtom, false);
+              }
             });
           }
 
@@ -329,12 +334,15 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           // graphql-sse handles reconnection automatically
         },
         complete: () => {
-          cleanupStream();
+          if (!disposed) {
+            cleanupStream();
+          }
         },
       },
     );
 
     return () => {
+      disposed = true;
       store.set(handleEventCallbackAtom, null);
       if (isDefined(throttleTimer)) {
         clearTimeout(throttleTimer);
