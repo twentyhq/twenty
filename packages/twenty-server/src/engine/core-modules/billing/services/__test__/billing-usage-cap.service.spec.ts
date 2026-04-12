@@ -115,8 +115,8 @@ describe('BillingUsageCapService', () => {
       expect(query).toContain('FROM usageEvent');
       expect(params).toMatchObject({
         workspaceId: 'workspace_123',
-        operationTypes: ['WORKFLOW_EXECUTION'],
       });
+      expect(query).not.toContain('operationType');
     });
 
     it('coerces string totals returned by ClickHouse to a number', async () => {

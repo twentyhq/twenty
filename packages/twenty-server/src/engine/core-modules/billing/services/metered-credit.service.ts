@@ -57,9 +57,6 @@ export class MeteredCreditService {
     return this.extractMeteredPricingInfoFromSubscription(subscription);
   }
 
-  // Pure extraction from an already-loaded subscription. Callers that already
-  // hold the subscription (with billingSubscriptionItems.billingProduct.billingPrices
-  // eager-loaded) should use this to avoid re-querying the DB.
   extractMeteredPricingInfoFromSubscription(
     subscription: BillingSubscriptionEntity,
   ): MeteredPricingInfo | null {

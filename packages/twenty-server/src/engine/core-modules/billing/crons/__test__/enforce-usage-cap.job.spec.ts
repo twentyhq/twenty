@@ -12,9 +12,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 describe('EnforceUsageCapJob', () => {
   let job: EnforceUsageCapJob;
-  let billingSubscriptionRepository: jest.Mocked<{
-    find: jest.Mock;
-  }>;
+  let getManyMock: jest.Mock;
   let billingSubscriptionItemRepository: jest.Mocked<{
     update: jest.Mock;
   }>;
@@ -47,13 +45,26 @@ describe('EnforceUsageCapJob', () => {
     }) as unknown as BillingSubscriptionEntity;
 
   beforeEach(async () => {
+    getManyMock = jest.fn().mockResolvedValue([]);
+
+    const queryBuilderMock = {
+      innerJoinAndSelect: jest.fn().mockReturnThis(),
+      leftJoinAndSelect: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      getMany: getManyMock,
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         EnforceUsageCapJob,
         {
           provide: getRepositoryToken(BillingSubscriptionEntity),
           useValue: {
-            find: jest.fn(),
+            createQueryBuilder: jest.fn().mockReturnValue(queryBuilderMock),
           },
         },
         {
@@ -79,9 +90,6 @@ describe('EnforceUsageCapJob', () => {
     }).compile();
 
     job = module.get<EnforceUsageCapJob>(EnforceUsageCapJob);
-    billingSubscriptionRepository = module.get(
-      getRepositoryToken(BillingSubscriptionEntity),
-    );
     billingSubscriptionItemRepository = module.get(
       getRepositoryToken(BillingSubscriptionItemEntity),
     );
@@ -110,7 +118,7 @@ describe('EnforceUsageCapJob', () => {
 
     await job.handle();
 
-    expect(billingSubscriptionRepository.find).not.toHaveBeenCalled();
+    expect(getManyMock).not.toHaveBeenCalled();
   });
 
   it('no-ops when ClickHouse is not configured', async () => {
@@ -119,12 +127,12 @@ describe('EnforceUsageCapJob', () => {
 
     await job.handle();
 
-    expect(billingSubscriptionRepository.find).not.toHaveBeenCalled();
+    expect(getManyMock).not.toHaveBeenCalled();
   });
 
   it('skips transitions in shadow mode (flag off)', async () => {
     mockConfig({ BILLING_USAGE_CAP_CLICKHOUSE_ENABLED: false });
-    billingSubscriptionRepository.find.mockResolvedValue([
+    getManyMock.mockResolvedValueOnce([
       buildSubscription({ hasReachedCurrentPeriodCap: false }),
     ]);
     billingUsageCapService.evaluateCap.mockResolvedValue({
@@ -143,7 +151,7 @@ describe('EnforceUsageCapJob', () => {
 
   it('flips hasReachedCurrentPeriodCap=true in active mode when usage exceeds allowance', async () => {
     mockConfig({ BILLING_USAGE_CAP_CLICKHOUSE_ENABLED: true });
-    billingSubscriptionRepository.find.mockResolvedValue([
+    getManyMock.mockResolvedValueOnce([
       buildSubscription({
         itemId: 'item_123',
         hasReachedCurrentPeriodCap: false,
@@ -168,7 +176,7 @@ describe('EnforceUsageCapJob', () => {
 
   it('flips hasReachedCurrentPeriodCap=false in active mode when usage drops below allowance', async () => {
     mockConfig({ BILLING_USAGE_CAP_CLICKHOUSE_ENABLED: true });
-    billingSubscriptionRepository.find.mockResolvedValue([
+    getManyMock.mockResolvedValueOnce([
       buildSubscription({
         itemId: 'item_123',
         hasReachedCurrentPeriodCap: true,
@@ -193,7 +201,7 @@ describe('EnforceUsageCapJob', () => {
 
   it('does not update when state already matches', async () => {
     mockConfig({ BILLING_USAGE_CAP_CLICKHOUSE_ENABLED: true });
-    billingSubscriptionRepository.find.mockResolvedValue([
+    getManyMock.mockResolvedValueOnce([
       buildSubscription({ hasReachedCurrentPeriodCap: true }),
     ]);
     billingUsageCapService.evaluateCap.mockResolvedValue({
@@ -212,9 +220,7 @@ describe('EnforceUsageCapJob', () => {
 
   it('skips subscriptions without a metered item', async () => {
     mockConfig({ BILLING_USAGE_CAP_CLICKHOUSE_ENABLED: true });
-    billingSubscriptionRepository.find.mockResolvedValue([
-      buildSubscription(),
-    ]);
+    getManyMock.mockResolvedValueOnce([buildSubscription()]);
     billingUsageCapService.evaluateCap.mockResolvedValue({
       skipped: true,
       reason: 'no-metered-item',
@@ -227,7 +233,7 @@ describe('EnforceUsageCapJob', () => {
 
   it('continues processing after a per-subscription error', async () => {
     mockConfig({ BILLING_USAGE_CAP_CLICKHOUSE_ENABLED: true });
-    billingSubscriptionRepository.find.mockResolvedValue([
+    getManyMock.mockResolvedValueOnce([
       buildSubscription({ id: 'sub_1', itemId: 'item_1' }),
       buildSubscription({ id: 'sub_2', itemId: 'item_2' }),
     ]);

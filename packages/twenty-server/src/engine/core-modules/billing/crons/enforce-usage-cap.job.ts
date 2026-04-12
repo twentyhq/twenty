@@ -1,9 +1,9 @@
 /* @license Enterprise */
 
-import { Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { enforceUsageCapCronPattern } from 'src/engine/core-modules/billing/crons/enforce-usage-cap.cron.pattern';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
@@ -17,6 +17,9 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
+const BATCH_SIZE = 100;
+
+@Injectable()
 @Processor(MessageQueue.cronQueue)
 export class EnforceUsageCapJob {
   private readonly logger = new Logger(EnforceUsageCapJob.name);
@@ -49,86 +52,101 @@ export class EnforceUsageCapJob {
       'BILLING_USAGE_CAP_CLICKHOUSE_ENABLED',
     );
 
-    const subscriptions = await this.billingSubscriptionRepository.find({
-      where: {
-        status: In([
-          SubscriptionStatus.Active,
-          SubscriptionStatus.Trialing,
-          SubscriptionStatus.PastDue,
-        ]),
-      },
-      relations: [
-        'billingSubscriptionItems',
-        'billingSubscriptionItems.billingProduct',
-        'billingSubscriptionItems.billingProduct.billingPrices',
-      ],
-    });
-
     let evaluated = 0;
     let transitioned = 0;
     let errors = 0;
+    let offset = 0;
 
-    for (const subscription of subscriptions) {
-      try {
-        const evaluation =
-          await this.billingUsageCapService.evaluateCap(subscription);
+    // Process subscriptions in batches, only loading those that have a
+    // metered (WORKFLOW_NODE_EXECUTION) item to skip the majority that don't.
+    let batch: BillingSubscriptionEntity[];
 
-        if (evaluation.skipped) {
-          continue;
-        }
+    do {
+      batch = await this.billingSubscriptionRepository
+        .createQueryBuilder('subscription')
+        .innerJoinAndSelect(
+          'subscription.billingSubscriptionItems',
+          'item',
+          'item.billingSubscriptionId = subscription.id',
+        )
+        .innerJoinAndSelect('item.billingProduct', 'product')
+        .leftJoinAndSelect('product.billingPrices', 'price')
+        .where('subscription.status IN (:...statuses)', {
+          statuses: [
+            SubscriptionStatus.Active,
+            SubscriptionStatus.Trialing,
+            SubscriptionStatus.PastDue,
+          ],
+        })
+        .andWhere("product.metadata->>'productKey' = :productKey", {
+          productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
+        })
+        .orderBy('subscription.id', 'ASC')
+        .take(BATCH_SIZE)
+        .skip(offset)
+        .getMany();
 
-        evaluated += 1;
+      for (const subscription of batch) {
+        try {
+          const evaluation =
+            await this.billingUsageCapService.evaluateCap(subscription);
 
-        const meteredItem = subscription.billingSubscriptionItems.find(
-          (item) =>
-            item.billingProduct?.metadata?.productKey ===
-            BillingProductKey.WORKFLOW_NODE_EXECUTION,
-        );
+          if (evaluation.skipped) {
+            continue;
+          }
 
-        if (!meteredItem) {
-          continue;
-        }
+          evaluated += 1;
 
-        const shouldBeCapped = evaluation.hasReachedCap;
+          const meteredItem = subscription.billingSubscriptionItems.find(
+            (item) =>
+              item.billingProduct?.metadata?.productKey ===
+              BillingProductKey.WORKFLOW_NODE_EXECUTION,
+          );
 
-        if (meteredItem.hasReachedCurrentPeriodCap === shouldBeCapped) {
-          continue;
-        }
+          if (!meteredItem) {
+            continue;
+          }
 
-        // Shadow mode: compute and log the would-be transition, but do not
-        // touch hasReachedCurrentPeriodCap. Stripe alerts remain the source
-        // of truth until BILLING_USAGE_CAP_CLICKHOUSE_ENABLED is flipped on.
-        if (!isEnforcementActive) {
+          const shouldBeCapped = evaluation.hasReachedCap;
+
+          if (meteredItem.hasReachedCurrentPeriodCap === shouldBeCapped) {
+            continue;
+          }
+
+          if (!isEnforcementActive) {
+            this.logger.log(
+              `[shadow] would set hasReachedCurrentPeriodCap=${shouldBeCapped} ` +
+                `for subscription=${subscription.id} workspace=${subscription.workspaceId} ` +
+                `usage=${evaluation.usage} allowance=${evaluation.allowance} ` +
+                `tierCap=${evaluation.tierCap} creditBalance=${evaluation.creditBalance}`,
+            );
+            continue;
+          }
+
+          await this.billingSubscriptionItemRepository.update(
+            { id: meteredItem.id },
+            { hasReachedCurrentPeriodCap: shouldBeCapped },
+          );
+
+          transitioned += 1;
+
           this.logger.log(
-            `[shadow] would set hasReachedCurrentPeriodCap=${shouldBeCapped} ` +
+            `Set hasReachedCurrentPeriodCap=${shouldBeCapped} ` +
               `for subscription=${subscription.id} workspace=${subscription.workspaceId} ` +
               `usage=${evaluation.usage} allowance=${evaluation.allowance} ` +
               `tierCap=${evaluation.tierCap} creditBalance=${evaluation.creditBalance}`,
           );
-          continue;
+        } catch (error) {
+          errors += 1;
+          this.logger.error(
+            `Failed to evaluate usage cap for subscription=${subscription.id}`,
+            error instanceof Error ? error.stack : String(error),
+          );
         }
-
-        await this.billingSubscriptionItemRepository.update(
-          { id: meteredItem.id },
-          { hasReachedCurrentPeriodCap: shouldBeCapped },
-        );
-
-        transitioned += 1;
-
-        this.logger.log(
-          `Set hasReachedCurrentPeriodCap=${shouldBeCapped} ` +
-            `for subscription=${subscription.id} workspace=${subscription.workspaceId} ` +
-            `usage=${evaluation.usage} allowance=${evaluation.allowance} ` +
-            `tierCap=${evaluation.tierCap} creditBalance=${evaluation.creditBalance}`,
-        );
-      } catch (error) {
-        errors += 1;
-        this.logger.error(
-          `Failed to evaluate usage cap for subscription=${subscription.id}`,
-          error instanceof Error ? error.stack : String(error),
-        );
       }
-    }
+
+      offset += batch.length;
+    } while (batch.length === BATCH_SIZE);
 
     this.logger.log(
       `Usage cap enforcement run complete: evaluated=${evaluated} ` +

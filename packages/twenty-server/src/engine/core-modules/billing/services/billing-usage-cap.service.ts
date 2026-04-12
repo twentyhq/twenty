@@ -4,10 +4,14 @@ import { Injectable } from '@nestjs/common';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
-import { METERED_OPERATION_TYPES } from 'src/engine/core-modules/billing/constants/metered-operation-types.constant';
 import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+// Unit reference:
+// - ClickHouse `creditsUsedMicro`: 1 credit = $0.000001 (DOLLAR_TO_CREDIT_MULTIPLIER = 1_000_000 credits/$)
+// - Stripe tier `up_to`: same unit (credits)
+// - Display: converted from credits to dollars via toDollars()
 
 export type BillingCapEvaluation =
   | {
@@ -39,11 +43,7 @@ export class BillingUsageCapService {
     return Boolean(this.twentyConfigService.get('CLICKHOUSE_URL'));
   }
 
-  // Returns the sum of creditsUsedMicro for a workspace in [periodStart, periodEnd).
-  // Matches Stripe meter semantics: StripeBillingMeterEventService sends
-  // creditsUsedMicro as the meter value, so summing the same field in ClickHouse
-  // yields the same quantity that Stripe's billing alert would compare against
-  // tiers[0].up_to.
+  // Sums all creditsUsedMicro for a workspace in [periodStart, periodEnd).
   async getCurrentPeriodCreditsUsed(
     workspaceId: string,
     periodStart: Date,
@@ -57,14 +57,12 @@ export class BillingUsageCapService {
       SELECT sum(creditsUsedMicro) AS total
       FROM usageEvent
       WHERE workspaceId = {workspaceId:String}
-        AND operationType IN ({operationTypes:Array(String)})
         AND timestamp >= {periodStart:String}
         AND timestamp < {periodEnd:String}
     `;
 
     const rows = await this.clickHouseService.select<UsageSumRow>(query, {
       workspaceId,
-      operationTypes: [...METERED_OPERATION_TYPES],
       periodStart: formatDateForClickHouse(periodStart),
       periodEnd: formatDateForClickHouse(periodEnd),
     });
@@ -75,15 +73,6 @@ export class BillingUsageCapService {
     return Number.isFinite(total) ? total : 0;
   }
 
-  // Evaluates whether a subscription has reached its metered-credit cap using
-  // live pricing read from the already-loaded subscription. Because pricing is
-  // re-read on every evaluation, tier changes propagate to enforcement within
-  // one poll cycle — there is no cached Stripe alert threshold to get out of sync.
-  //
-  // The caller must load the subscription with
-  // ['billingSubscriptionItems', 'billingSubscriptionItems.billingProduct',
-  //  'billingSubscriptionItems.billingProduct.billingPrices']
-  // so pricing can be extracted without a second DB round-trip.
   async evaluateCap(
     subscription: BillingSubscriptionEntity,
   ): Promise<BillingCapEvaluation> {
