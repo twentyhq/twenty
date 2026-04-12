@@ -161,4 +161,19 @@ describe('topologicallySortUniversalFlatEntitiesForSelfReferentialFks', () => {
 
     expect(result).toEqual([itemA, itemB]);
   });
+
+  it('throws on cyclic self-referential foreign keys', () => {
+    const idA = uuidv4();
+    const idB = uuidv4();
+
+    expect(() =>
+      topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
+        metadataName: 'navigationMenuItem',
+        universalFlatEntityMaps: buildMaps([
+          createEntity(idA, idB),
+          createEntity(idB, idA),
+        ]) as never,
+      }),
+    ).toThrow(/Cyclic self-referential foreign key detected/);
+  });
 });

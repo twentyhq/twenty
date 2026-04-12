@@ -94,15 +94,24 @@ export const topologicallySortUniversalFlatEntitiesForSelfReferentialFks = <
     (id) => (inDegree.get(id) ?? 0) === 0,
   );
 
-  return roots.reduce<string[]>((sorted, root) => {
-    sorted.push(root);
+  const sorted = roots.reduce<string[]>((accumulator, root) => {
+    accumulator.push(root);
 
-    for (let i = sorted.length - 1; i < sorted.length; i++) {
-      const children = childrenByParent.get(sorted[i]) ?? [];
+    for (let i = accumulator.length - 1; i < accumulator.length; i++) {
+      const children = childrenByParent.get(accumulator[i]) ?? [];
 
-      sorted.push(...children);
+      accumulator.push(...children);
     }
 
-    return sorted;
+    return accumulator;
   }, []);
+
+  if (sorted.length !== allUniversalIdentifiers.length) {
+    throw new Error(
+      `Cyclic self-referential foreign key detected for ${metadataName}: ` +
+        `expected ${allUniversalIdentifiers.length} entities but sorted ${sorted.length}`,
+    );
+  }
+
+  return sorted;
 };
