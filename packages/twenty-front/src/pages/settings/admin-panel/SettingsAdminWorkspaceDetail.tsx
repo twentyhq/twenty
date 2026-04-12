@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -7,20 +6,16 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
 import { GET_ADMIN_WORKSPACE_CHAT_THREADS } from '@/settings/admin-panel/graphql/queries/getAdminWorkspaceChatThreads';
 import { WORKSPACE_LOOKUP_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/workspaceLookupAdminPanel';
 import { useFeatureFlagState } from '@/settings/admin-panel/hooks/useFeatureFlagState';
-import { useImpersonationSession } from '@/auth/hooks/useImpersonationSession';
-import { useImpersonationRedirect } from '@/settings/admin-panel/hooks/useImpersonationRedirect';
-import { type UserLookup } from '@/settings/admin-panel/types/UserLookup';
-import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
+import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpersonate';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -29,7 +24,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   H2Title,
@@ -45,7 +40,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type FeatureFlagKey,
   type GetAdminWorkspaceChatThreadsQuery,
-  ImpersonateDocument,
+  type WorkspaceLookupAdminPanelQuery,
   UpdateWorkspaceFeatureFlagDocument,
 } from '~/generated-metadata/graphql';
 
@@ -61,33 +56,25 @@ const WORKSPACE_DETAIL_TAB_IDS = {
 export const SettingsAdminWorkspaceDetail = () => {
   const { workspaceId } = useParams<{ workspaceId: string }>();
 
-  const [activeTabId] = useAtomComponentState(
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     WORKSPACE_DETAIL_TABS_ID,
   );
 
   const currentUser = useAtomStateValue(currentUserState);
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
   const { enqueueErrorSnackBar } = useSnackBar();
-  const [updateFeatureFlag] = useMutation(UpdateWorkspaceFeatureFlagDocument);
   const { updateFeatureFlagState } = useFeatureFlagState();
-  const { startImpersonating } = useImpersonationSession();
-  const { executeImpersonationRedirect } = useImpersonationRedirect();
-  const [impersonate] = useMutation(ImpersonateDocument);
-  const [impersonatingUserId, setImpersonatingUserId] = useState<string | null>(
-    null,
-  );
+  const { handleImpersonate, impersonatingUserId } = useHandleImpersonate();
+  const [updateFeatureFlag] = useMutation(UpdateWorkspaceFeatureFlagDocument);
 
-  const { data: workspaceData, loading: isLoadingWorkspace } = useQuery<{
-    workspaceLookupAdminPanel: UserLookup;
-  }>(WORKSPACE_LOOKUP_ADMIN_PANEL, {
-    variables: { workspaceId },
-    skip: !workspaceId,
-  });
+  const { data: workspaceData, loading: isLoadingWorkspace } =
+    useQuery<WorkspaceLookupAdminPanelQuery>(WORKSPACE_LOOKUP_ADMIN_PANEL, {
+      variables: { workspaceId },
+      skip: !workspaceId,
+    });
 
-  const workspace = workspaceData?.workspaceLookupAdminPanel
-    ?.workspaces?.[0] as WorkspaceInfo | undefined;
+  const workspace = workspaceData?.workspaceLookupAdminPanel?.workspaces?.[0];
 
   const effectiveTabId = activeTabId || WORKSPACE_DETAIL_TAB_IDS.INFO;
 
@@ -104,40 +91,6 @@ export const SettingsAdminWorkspaceDetail = () => {
     );
 
   const threads = threadsData?.getAdminWorkspaceChatThreads ?? [];
-
-  const handleImpersonate = async (userId: string) => {
-    if (!workspaceId) return;
-
-    setImpersonatingUserId(userId);
-
-    await impersonate({
-      variables: { userId, workspaceId },
-      onCompleted: async (data) => {
-        const { loginToken, workspace: impersonatedWorkspace } =
-          data.impersonate;
-        const isCurrentWorkspace =
-          impersonatedWorkspace.id === currentWorkspace?.id;
-
-        if (isCurrentWorkspace) {
-          await startImpersonating(loginToken.token);
-          return;
-        }
-
-        return executeImpersonationRedirect(
-          impersonatedWorkspace.workspaceUrls,
-          loginToken.token,
-          '_blank',
-        );
-      },
-      onError: (error) => {
-        enqueueErrorSnackBar({
-          message: `Failed to impersonate user. ${error.message}`,
-        });
-      },
-    }).finally(() => {
-      setImpersonatingUserId(null);
-    });
-  };
 
   const handleFeatureFlagUpdate = async (
     featureFlag: FeatureFlagKey,
@@ -277,7 +230,7 @@ export const SettingsAdminWorkspaceDetail = () => {
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-                              handleImpersonate(userId);
+                              handleImpersonate(userId, workspaceId!);
                             }}
                             disabled={impersonatingUserId === userId}
                           />

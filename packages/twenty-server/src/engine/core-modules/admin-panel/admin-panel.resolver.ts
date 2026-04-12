@@ -11,7 +11,11 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
-import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
+import { AdminPanelChatService } from 'src/engine/core-modules/admin-panel/services/admin-panel-chat.service';
+import { AdminPanelConfigService } from 'src/engine/core-modules/admin-panel/services/admin-panel-config.service';
+import { AdminPanelStatisticsService } from 'src/engine/core-modules/admin-panel/services/admin-panel-statistics.service';
+import { AdminPanelUserLookupService } from 'src/engine/core-modules/admin-panel/services/admin-panel-user-lookup.service';
+import { AdminPanelVersionService } from 'src/engine/core-modules/admin-panel/services/admin-panel-version.service';
 import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
 import { AdminPanelRecentUserDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-recent-user.dto';
 import { AdminPanelTopWorkspaceDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-top-workspace.dto';
@@ -82,7 +86,11 @@ import { SetMaintenanceModeInput } from './dtos/set-maintenance-mode.input';
 )
 export class AdminPanelResolver {
   constructor(
-    private readonly adminService: AdminPanelService,
+    private readonly adminUserLookupService: AdminPanelUserLookupService,
+    private readonly adminStatisticsService: AdminPanelStatisticsService,
+    private readonly adminChatService: AdminPanelChatService,
+    private readonly adminConfigService: AdminPanelConfigService,
+    private readonly adminVersionService: AdminPanelVersionService,
     private readonly adminPanelHealthService: AdminPanelHealthService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private adminPanelQueueService: AdminPanelQueueService,
@@ -101,7 +109,9 @@ export class AdminPanelResolver {
   async userLookupAdminPanel(
     @Args() userLookupInput: UserLookupInput,
   ): Promise<UserLookup> {
-    return await this.adminService.userLookup(userLookupInput.userIdentifier);
+    return await this.adminUserLookupService.userLookup(
+      userLookupInput.userIdentifier,
+    );
   }
 
   @UseGuards(ServerLevelImpersonateGuard)
@@ -114,7 +124,7 @@ export class AdminPanelResolver {
     })
     searchTerm: string,
   ): Promise<AdminPanelRecentUserDTO[]> {
-    return this.adminService.getRecentUsers(searchTerm);
+    return this.adminStatisticsService.getRecentUsers(searchTerm);
   }
 
   @UseGuards(ServerLevelImpersonateGuard)
@@ -127,7 +137,7 @@ export class AdminPanelResolver {
     })
     searchTerm: string,
   ): Promise<AdminPanelTopWorkspaceDTO[]> {
-    return this.adminService.getTopWorkspaces(searchTerm);
+    return this.adminStatisticsService.getTopWorkspaces(searchTerm);
   }
 
   @UseGuards(AdminPanelGuard)
@@ -155,7 +165,7 @@ export class AdminPanelResolver {
   @UseGuards(AdminPanelGuard)
   @Query(() => ConfigVariablesDTO)
   async getConfigVariablesGrouped(): Promise<ConfigVariablesDTO> {
-    return this.adminService.getConfigVariablesGrouped();
+    return this.adminConfigService.getConfigVariablesGrouped();
   }
 
   @UseGuards(AdminPanelGuard)
@@ -196,7 +206,7 @@ export class AdminPanelResolver {
   @UseGuards(AdminPanelGuard)
   @Query(() => VersionInfoDTO)
   async versionInfo(): Promise<VersionInfoDTO> {
-    return this.adminService.getVersionInfo();
+    return this.adminVersionService.getVersionInfo();
   }
 
   @UseGuards(AdminPanelGuard)
@@ -314,7 +324,7 @@ export class AdminPanelResolver {
   ): Promise<ConfigVariableDTO> {
     this.twentyConfigService.validateConfigVariableExists(key as string);
 
-    return this.adminService.getConfigVariable(key);
+    return this.adminConfigService.getConfigVariable(key);
   }
 
   @UseGuards(AdminPanelGuard)
@@ -652,7 +662,7 @@ export class AdminPanelResolver {
   async workspaceLookupAdminPanel(
     @Args('workspaceId', { type: () => UUIDScalarType }) workspaceId: string,
   ): Promise<UserLookup> {
-    return this.adminService.workspaceLookup(workspaceId);
+    return this.adminUserLookupService.workspaceLookup(workspaceId);
   }
 
   @UseGuards(ServerLevelImpersonateGuard)
@@ -660,7 +670,7 @@ export class AdminPanelResolver {
   async getAdminWorkspaceChatThreads(
     @Args('workspaceId', { type: () => UUIDScalarType }) workspaceId: string,
   ): Promise<AdminWorkspaceChatThreadDTO[]> {
-    return this.adminService.getWorkspaceChatThreads(workspaceId);
+    return this.adminChatService.getWorkspaceChatThreads(workspaceId);
   }
 
   @UseGuards(ServerLevelImpersonateGuard)
@@ -668,6 +678,6 @@ export class AdminPanelResolver {
   async getAdminChatThreadMessages(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
   ): Promise<AdminChatThreadMessagesDTO> {
-    return this.adminService.getChatThreadMessages(threadId);
+    return this.adminChatService.getChatThreadMessages(threadId);
   }
 }

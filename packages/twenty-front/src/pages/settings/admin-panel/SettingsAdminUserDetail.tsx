@@ -1,7 +1,6 @@
-import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { useMutation, useQuery } from '@apollo/client/react';
+import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -9,20 +8,17 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getImageAbsoluteURI, getSettingsPath } from 'twenty-shared/utils';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
 import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
-import { useImpersonationSession } from '@/auth/hooks/useImpersonationSession';
-import { useImpersonationRedirect } from '@/settings/admin-panel/hooks/useImpersonationRedirect';
+import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpersonate';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
-import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   H2Title,
@@ -37,7 +33,6 @@ import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
-  ImpersonateDocument,
   type UserLookupAdminPanelQuery,
   UserLookupAdminPanelDocument,
 } from '~/generated-metadata/graphql';
@@ -49,7 +44,7 @@ const StyledButtonContainer = styled.div`
 export const SettingsAdminUserDetail = () => {
   const { userId } = useParams<{ userId: string }>();
 
-  const [activeTabId] = useAtomComponentState(
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID,
   );
@@ -63,48 +58,9 @@ export const SettingsAdminUserDetail = () => {
   const userLookupResult = userLookupData?.userLookupAdminPanel;
 
   const currentUser = useAtomStateValue(currentUserState);
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const { enqueueErrorSnackBar } = useSnackBar();
-  const { startImpersonating } = useImpersonationSession();
-  const { executeImpersonationRedirect } = useImpersonationRedirect();
-  const [impersonate] = useMutation(ImpersonateDocument);
-  const [isImpersonateLoading, setIsImpersonateLoading] = useState(false);
+  const { handleImpersonate, impersonatingUserId } = useHandleImpersonate();
 
   const effectiveTabId = activeTabId || userLookupResult?.workspaces?.[0]?.id;
-
-  const handleImpersonate = async (workspaceId: string) => {
-    if (!userLookupResult?.user.id) {
-      return;
-    }
-
-    setIsImpersonateLoading(true);
-
-    await impersonate({
-      variables: { userId: userLookupResult.user.id, workspaceId },
-      onCompleted: async (data) => {
-        const { loginToken, workspace } = data.impersonate;
-        const isCurrentWorkspace = workspace.id === currentWorkspace?.id;
-
-        if (isCurrentWorkspace) {
-          await startImpersonating(loginToken.token);
-          return;
-        }
-
-        return executeImpersonationRedirect(
-          workspace.workspaceUrls,
-          loginToken.token,
-          '_blank',
-        );
-      },
-      onError: (error) => {
-        enqueueErrorSnackBar({
-          message: `Failed to impersonate user. ${error.message}`,
-        });
-      },
-    }).finally(() => {
-      setIsImpersonateLoading(false);
-    });
-  };
 
   const userFullName = `${userLookupResult?.user.firstName || ''} ${
     userLookupResult?.user.lastName || ''
@@ -211,9 +167,14 @@ export const SettingsAdminUserDetail = () => {
                         ? t`Impersonation is disabled for this workspace`
                         : t`Impersonate`
                     }
-                    onClick={() => handleImpersonate(activeWorkspace.id)}
+                    onClick={() =>
+                      handleImpersonate(
+                        userLookupResult.user.id,
+                        activeWorkspace.id,
+                      )
+                    }
                     disabled={
-                      isImpersonateLoading ||
+                      impersonatingUserId !== null ||
                       activeWorkspace.allowImpersonation === false
                     }
                   />

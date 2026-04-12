@@ -1,14 +1,13 @@
 import { gql } from '@apollo/client';
 
+import { USER_INFO_FRAGMENT } from '@/settings/admin-panel/graphql/fragments/userInfoFragment';
+
 export const USER_LOOKUP_ADMIN_PANEL = gql`
+  ${USER_INFO_FRAGMENT}
   query UserLookupAdminPanel($userIdentifier: String!) {
     userLookupAdminPanel(userIdentifier: $userIdentifier) {
       user {
-        id
-        email
-        firstName
-        lastName
-        createdAt
+        ...UserInfoFragment
       }
       workspaces {
         id

@@ -5,7 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
 import { AdminPanelResolver } from 'src/engine/core-modules/admin-panel/admin-panel.resolver';
-import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
+import { AdminPanelChatService } from 'src/engine/core-modules/admin-panel/services/admin-panel-chat.service';
+import { AdminPanelConfigService } from 'src/engine/core-modules/admin-panel/services/admin-panel-config.service';
+import { AdminPanelStatisticsService } from 'src/engine/core-modules/admin-panel/services/admin-panel-statistics.service';
+import { AdminPanelUserLookupService } from 'src/engine/core-modules/admin-panel/services/admin-panel-user-lookup.service';
+import { AdminPanelVersionService } from 'src/engine/core-modules/admin-panel/services/admin-panel-version.service';
 import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
@@ -63,7 +67,11 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
   ],
   providers: [
     AdminPanelResolver,
-    AdminPanelService,
+    AdminPanelUserLookupService,
+    AdminPanelStatisticsService,
+    AdminPanelChatService,
+    AdminPanelConfigService,
+    AdminPanelVersionService,
     AdminPanelHealthService,
     AdminPanelQueueService,
     MaintenanceModeService,
@@ -73,6 +81,13 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     ConnectedAccountHealth,
     AppHealthIndicator,
   ],
-  exports: [AdminPanelService, MaintenanceModeService],
+  exports: [
+    AdminPanelUserLookupService,
+    AdminPanelStatisticsService,
+    AdminPanelChatService,
+    AdminPanelConfigService,
+    AdminPanelVersionService,
+    MaintenanceModeService,
+  ],
 })
 export class AdminPanelModule {}

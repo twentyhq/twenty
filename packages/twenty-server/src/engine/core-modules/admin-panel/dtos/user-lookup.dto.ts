@@ -7,7 +7,7 @@ import { FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/featur
 import { WorkspaceUrlsDTO } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
 
 @ObjectType('UserInfo')
-class UserInfoDTO {
+export class UserInfoDTO {
   @Field(() => UUIDScalarType)
   id: string;
 
