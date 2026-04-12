@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const WORKSPACE_LOOKUP_ADMIN_PANEL = gql`
-  query WorkspaceLookupAdminPanel($workspaceId: String!) {
+  query WorkspaceLookupAdminPanel($workspaceId: UUID!) {
     workspaceLookupAdminPanel(workspaceId: $workspaceId) {
       user {
         id

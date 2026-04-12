@@ -225,13 +225,16 @@ export class AdminPanelService {
     }
 
     const results = await this.userRepository.manager.query(
-      `SELECT u.id, u.email, u."firstName", u."lastName", u."createdAt",
-              w."displayName" AS "workspaceName", w.id AS "workspaceId"
-       FROM core."user" u
-       LEFT JOIN core."userWorkspace" uw ON uw."userId" = u.id AND uw."deletedAt" IS NULL
-       LEFT JOIN core.workspace w ON w.id = uw."workspaceId" AND w."deletedAt" IS NULL
-       WHERE ${whereClause}
-       ORDER BY u."createdAt" DESC
+      `SELECT * FROM (
+         SELECT DISTINCT ON (u.id) u.id, u.email, u."firstName", u."lastName", u."createdAt",
+                w."displayName" AS "workspaceName", w.id AS "workspaceId"
+         FROM core."user" u
+         LEFT JOIN core."userWorkspace" uw ON uw."userId" = u.id AND uw."deletedAt" IS NULL
+         LEFT JOIN core.workspace w ON w.id = uw."workspaceId" AND w."deletedAt" IS NULL
+         WHERE ${whereClause}
+         ORDER BY u.id, u."createdAt" DESC
+       ) sub
+       ORDER BY sub."createdAt" DESC
        LIMIT 10`,
       params,
     );
@@ -335,22 +338,19 @@ export class AdminPanelService {
     }));
   }
 
-  async getChatThreadMessages(
-    workspaceId: string,
-    threadId: string,
-  ): Promise<{
+  async getChatThreadMessages(threadId: string): Promise<{
     thread: AdminWorkspaceChatThreadDTO;
     messages: AdminChatMessageDTO[];
   }> {
-    await this.assertWorkspaceAllowsImpersonation(workspaceId);
-
     const thread = await this.agentChatThreadRepository.findOne({
-      where: { id: threadId, workspaceId },
+      where: { id: threadId },
     });
 
     if (!thread) {
-      throw new UserInputError('Thread not found in this workspace');
+      throw new UserInputError('Thread not found');
     }
+
+    await this.assertWorkspaceAllowsImpersonation(thread.workspaceId);
 
     const messages = await this.agentMessageRepository.find({
       where: { threadId },

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -17,7 +17,6 @@ import { useFeatureFlagState } from '@/settings/admin-panel/hooks/useFeatureFlag
 import { useImpersonationSession } from '@/auth/hooks/useImpersonationSession';
 import { useImpersonationRedirect } from '@/settings/admin-panel/hooks/useImpersonationRedirect';
 import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
-import { type AdminChatThread } from '@/settings/admin-panel/types/AdminChatThread';
 import { type UserLookup } from '@/settings/admin-panel/types/UserLookup';
 import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -47,6 +46,7 @@ import { Card, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type FeatureFlagKey,
+  type GetAdminWorkspaceChatThreadsQuery,
   ImpersonateDocument,
   UpdateWorkspaceFeatureFlagDocument,
 } from '~/generated-metadata/graphql';
@@ -102,15 +102,17 @@ export const SettingsAdminWorkspaceDetail = () => {
 
   const effectiveTabId = activeTabId || WORKSPACE_DETAIL_TAB_IDS.INFO;
 
-  const { data: threadsData, loading: isLoadingThreads } = useQuery<{
-    getAdminWorkspaceChatThreads: AdminChatThread[];
-  }>(GET_ADMIN_WORKSPACE_CHAT_THREADS, {
-    variables: { workspaceId },
-    skip:
-      !workspaceId ||
-      !workspace?.allowImpersonation ||
-      effectiveTabId !== WORKSPACE_DETAIL_TAB_IDS.CHATS,
-  });
+  const { data: threadsData, loading: isLoadingThreads } =
+    useQuery<GetAdminWorkspaceChatThreadsQuery>(
+      GET_ADMIN_WORKSPACE_CHAT_THREADS,
+      {
+        variables: { workspaceId },
+        skip:
+          !workspaceId ||
+          !workspace?.allowImpersonation ||
+          effectiveTabId !== WORKSPACE_DETAIL_TAB_IDS.CHATS,
+      },
+    );
 
   const threads = threadsData?.getAdminWorkspaceChatThreads ?? [];
 
@@ -176,45 +178,40 @@ export const SettingsAdminWorkspaceDetail = () => {
     });
   };
 
-  const tabs = useMemo(() => {
-    const result = [
-      {
-        id: WORKSPACE_DETAIL_TAB_IDS.INFO,
-        title: t`Info`,
-        Icon: IconSettings2,
-      },
-    ];
-
-    if (currentUser?.canImpersonate) {
-      result.push({
-        id: WORKSPACE_DETAIL_TAB_IDS.MEMBERS,
-        title: t`Members`,
-        Icon: IconUsers,
-      });
-    }
-
-    if (canManageFeatureFlags) {
-      result.push({
-        id: WORKSPACE_DETAIL_TAB_IDS.FEATURE_FLAGS,
-        title: t`Feature Flags`,
-        Icon: IconFlag,
-      });
-    }
-
-    if (workspace?.allowImpersonation) {
-      result.push({
-        id: WORKSPACE_DETAIL_TAB_IDS.CHATS,
-        title: t`Chats`,
-        Icon: IconMessage,
-      });
-    }
-
-    return result;
-  }, [
-    workspace?.allowImpersonation,
-    canManageFeatureFlags,
-    currentUser?.canImpersonate,
-  ]);
+  const tabs = [
+    {
+      id: WORKSPACE_DETAIL_TAB_IDS.INFO,
+      title: t`Info`,
+      Icon: IconSettings2,
+    },
+    ...(currentUser?.canImpersonate
+      ? [
+          {
+            id: WORKSPACE_DETAIL_TAB_IDS.MEMBERS,
+            title: t`Members`,
+            Icon: IconUsers,
+          },
+        ]
+      : []),
+    ...(canManageFeatureFlags
+      ? [
+          {
+            id: WORKSPACE_DETAIL_TAB_IDS.FEATURE_FLAGS,
+            title: t`Feature Flags`,
+            Icon: IconFlag,
+          },
+        ]
+      : []),
+    ...(workspace?.allowImpersonation
+      ? [
+          {
+            id: WORKSPACE_DETAIL_TAB_IDS.CHATS,
+            title: t`Chats`,
+            Icon: IconMessage,
+          },
+        ]
+      : []),
+  ];
 
   const workspaceName = workspace?.name || workspaceId || '';
 
@@ -351,16 +348,16 @@ export const SettingsAdminWorkspaceDetail = () => {
               title={t`Chat Sessions`}
               description={t`AI chat threads for this workspace`}
             />
-            {threads.length === 0 ? (
+            {isLoadingThreads ? (
+              <SettingsSkeletonLoader />
+            ) : threads.length === 0 ? (
               <Card rounded>
                 <TableRow gridTemplateColumns="1fr">
                   <TableCell
                     color={themeCssVariables.font.color.tertiary}
                     align="center"
                   >
-                    {isLoadingThreads
-                      ? t`Loading...`
-                      : t`No chat threads found.`}
+                    {t`No chat threads found.`}
                   </TableCell>
                 </TableRow>
               </Card>

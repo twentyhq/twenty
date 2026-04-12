@@ -86,13 +86,14 @@ export const SettingsAdminUserDetail = () => {
         if (isDefined(data?.userLookupAdminPanel)) {
           setUserLookupResult(data.userLookupAdminPanel);
 
-          if (data.userLookupAdminPanel.workspaces.length > 0 && !activeTabId) {
+          if (data.userLookupAdminPanel.workspaces.length > 0) {
             setActiveTabId(data.userLookupAdminPanel.workspaces[0].id);
           }
         }
       },
     });
-  }, [userId, userLookup, setUserLookupResult, setActiveTabId, activeTabId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
 
   const handleImpersonate = async (workspaceId: string) => {
     if (!userLookupResult?.user.id) {

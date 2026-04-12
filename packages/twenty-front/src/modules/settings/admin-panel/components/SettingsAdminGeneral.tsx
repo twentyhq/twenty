@@ -2,6 +2,7 @@ import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeat
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
 import { ADMIN_PANEL_RECENT_USERS } from '@/settings/admin-panel/graphql/queries/adminPanelRecentUsers';
 import { ADMIN_PANEL_TOP_WORKSPACES } from '@/settings/admin-panel/graphql/queries/adminPanelTopWorkspaces';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -99,11 +100,11 @@ export const SettingsAdminGeneral = () => {
               placeholder={t`Search by name, email, or user ID...`}
               fullWidth
             />
-            {recentUsers.length === 0 ? (
+            {isLoadingUsers ? (
+              <SettingsSkeletonLoader />
+            ) : recentUsers.length === 0 ? (
               <StyledEmptyState>
-                {isLoadingUsers
-                  ? t`Loading...`
-                  : t`No users found matching your search criteria.`}
+                {t`No users found matching your search criteria.`}
               </StyledEmptyState>
             ) : (
               <Table>
@@ -148,11 +149,11 @@ export const SettingsAdminGeneral = () => {
               placeholder={t`Search by workspace name, subdomain, or ID...`}
               fullWidth
             />
-            {topWorkspaces.length === 0 ? (
+            {isLoadingWorkspaces ? (
+              <SettingsSkeletonLoader />
+            ) : topWorkspaces.length === 0 ? (
               <StyledEmptyState>
-                {isLoadingWorkspaces
-                  ? t`Loading...`
-                  : t`No workspaces found matching your search criteria.`}
+                {t`No workspaces found matching your search criteria.`}
               </StyledEmptyState>
             ) : (
               <Table>

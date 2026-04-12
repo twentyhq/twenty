@@ -7,6 +7,8 @@ import { In, type Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
@@ -645,28 +647,27 @@ export class AdminPanelResolver {
     return true;
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(ServerLevelImpersonateGuard)
   @Query(() => UserLookup)
   async workspaceLookupAdminPanel(
-    @Args('workspaceId', { type: () => String }) workspaceId: string,
+    @Args('workspaceId', { type: () => UUIDScalarType }) workspaceId: string,
   ): Promise<UserLookup> {
     return this.adminService.workspaceLookup(workspaceId);
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(ServerLevelImpersonateGuard)
   @Query(() => [AdminWorkspaceChatThreadDTO])
   async getAdminWorkspaceChatThreads(
-    @Args('workspaceId', { type: () => String }) workspaceId: string,
+    @Args('workspaceId', { type: () => UUIDScalarType }) workspaceId: string,
   ): Promise<AdminWorkspaceChatThreadDTO[]> {
     return this.adminService.getWorkspaceChatThreads(workspaceId);
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(ServerLevelImpersonateGuard)
   @Query(() => AdminChatThreadMessagesDTO)
   async getAdminChatThreadMessages(
-    @Args('workspaceId', { type: () => String }) workspaceId: string,
-    @Args('threadId', { type: () => String }) threadId: string,
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
   ): Promise<AdminChatThreadMessagesDTO> {
-    return this.adminService.getChatThreadMessages(workspaceId, threadId);
+    return this.adminService.getChatThreadMessages(threadId);
   }
 }

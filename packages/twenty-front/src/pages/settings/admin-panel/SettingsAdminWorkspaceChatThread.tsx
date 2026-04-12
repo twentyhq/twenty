@@ -9,29 +9,16 @@ import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { GET_ADMIN_CHAT_THREAD_MESSAGES } from '@/settings/admin-panel/graphql/queries/getAdminChatThreadMessages';
-import { type AdminChatThread } from '@/settings/admin-panel/types/AdminChatThread';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { styled } from '@linaria/react';
-import { Card, Section } from 'twenty-ui/layout';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { Card, Section } from 'twenty-ui/layout';
 import { H2Title } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-type AdminChatMessagePart = {
-  type: string;
-  textContent: string | null;
-  toolName: string | null;
-};
-
-type AdminChatMessage = {
-  id: string;
-  role: string;
-  parts: AdminChatMessagePart[];
-  createdAt: string;
-};
+import { type GetAdminChatThreadMessagesQuery } from '~/generated-metadata/graphql';
 
 const StyledMessagesContainer = styled.div`
   display: flex;
@@ -84,15 +71,11 @@ export const SettingsAdminWorkspaceChatThread = () => {
     threadId: string;
   }>();
 
-  const { data, loading: isLoading } = useQuery<{
-    getAdminChatThreadMessages: {
-      thread: AdminChatThread;
-      messages: AdminChatMessage[];
-    };
-  }>(GET_ADMIN_CHAT_THREAD_MESSAGES, {
-    variables: { workspaceId, threadId },
-    skip: !workspaceId || !threadId,
-  });
+  const { data, loading: isLoading } =
+    useQuery<GetAdminChatThreadMessagesQuery>(GET_ADMIN_CHAT_THREAD_MESSAGES, {
+      variables: { threadId },
+      skip: !threadId,
+    });
 
   const thread = data?.getAdminChatThreadMessages?.thread;
   const messages = data?.getAdminChatThreadMessages?.messages ?? [];
@@ -163,14 +146,14 @@ export const SettingsAdminWorkspaceChatThread = () => {
                       part.type === 'tool-call' && part.toolName !== null,
                   );
 
-                  if (!textParts && toolParts.length === 0) {
+                  if (textParts.length === 0 && toolParts.length === 0) {
                     return null;
                   }
 
                   return (
                     <StyledMessageBubble key={message.id} isUser={isUser}>
                       <StyledRoleLabel>{message.role}</StyledRoleLabel>
-                      {textParts && (
+                      {textParts.length > 0 && (
                         <StyledMessageContent isUser={isUser}>
                           {isUser ? (
                             textParts

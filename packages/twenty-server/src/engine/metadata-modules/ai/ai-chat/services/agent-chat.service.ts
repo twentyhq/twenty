@@ -132,9 +132,6 @@ export class AgentChatService {
       actualTurnId = turnInsertResult.identifiers[0].id as string;
     }
 
-    // Use .insert() instead of .create() + .save() to bypass a TypeORM
-    // issue where @ManyToOne/@JoinColumn on the same column as @Column can
-    // cause the explicit workspaceId value to be dropped during .save().
     const messageValues = {
       ...(id ? { id } : {}),
       threadId,
