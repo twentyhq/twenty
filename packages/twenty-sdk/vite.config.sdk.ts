@@ -11,10 +11,6 @@ const isExternal = (id: string): boolean => {
     return false;
   }
 
-  if (id === 'twenty-shared' || id.startsWith('twenty-shared/')) {
-    return false;
-  }
-
   return true;
 };
 
