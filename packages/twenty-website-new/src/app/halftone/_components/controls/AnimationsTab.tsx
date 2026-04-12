@@ -18,6 +18,9 @@ import {
   ToggleControl,
 } from './controls-ui';
 
+const MIN_ROTATION_SPEED = 0.01;
+const ROTATION_SPEED_STEP = 0.01;
+
 type AnimationsTabProps = {
   onAnimationSettingsChange: (
     value: Partial<HalftoneStudioSettings['animation']>,
@@ -179,15 +182,15 @@ export function AnimationsTab({
                 <>
                   <SliderControl
                     max={4}
-                    min={0.05}
+                    min={MIN_ROTATION_SPEED}
                     onChange={(event) =>
                       onAnimationSettingsChange({
                         autoSpeed: Number(event.target.value),
                       })
                     }
-                    step={0.05}
+                    step={ROTATION_SPEED_STEP}
                     value={animation.autoSpeed}
-                    valueLabel={formatDecimal(animation.autoSpeed, 1)}
+                    valueLabel={formatDecimal(animation.autoSpeed, 2)}
                   >
                     Speed
                   </SliderControl>
@@ -264,15 +267,15 @@ export function AnimationsTab({
                   ) : null}
                   <SliderControl
                     max={4}
-                    min={0.1}
+                    min={MIN_ROTATION_SPEED}
                     onChange={(event) =>
                       onAnimationSettingsChange({
                         rotateSpeed: Number(event.target.value),
                       })
                     }
-                    step={0.1}
+                    step={ROTATION_SPEED_STEP}
                     value={animation.rotateSpeed}
-                    valueLabel={formatDecimal(animation.rotateSpeed, 1)}
+                    valueLabel={formatDecimal(animation.rotateSpeed, 2)}
                   >
                     Speed
                   </SliderControl>

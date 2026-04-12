@@ -18,10 +18,10 @@ import {
   ColorControlRow,
   ColorField,
   ControlGrid,
-  SelectControl,
   Section,
   SectionTitle,
   SectionToggleHeader,
+  SegmentedControl,
   SelectInput,
   ShapeRow,
   SliderControl,
@@ -330,11 +330,9 @@ export function DesignTab({
           <Section>
             <SectionTitle>Material</SectionTitle>
             <ControlGrid>
-              <SelectControl
-                onChange={(event) =>
-                  handleSurfaceChange(
-                    event.target.value === 'glass' ? 'glass' : 'solid',
-                  )
+              <SegmentedControl
+                onChange={(value) =>
+                  handleSurfaceChange(value === 'glass' ? 'glass' : 'solid')
                 }
                 options={[
                   { label: 'Solid', value: 'solid' },
@@ -343,7 +341,7 @@ export function DesignTab({
                 value={settings.material.surface}
               >
                 Surface
-              </SelectControl>
+              </SegmentedControl>
               <SliderControl
                 max={1}
                 min={0}
