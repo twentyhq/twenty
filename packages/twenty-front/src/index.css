@@ -22,3 +22,7 @@ form {
 .grecaptcha-badge {
   visibility: hidden !important;
 }
+
+canvas.hiddenCanvasElement {
+  position: absolute;
+}
