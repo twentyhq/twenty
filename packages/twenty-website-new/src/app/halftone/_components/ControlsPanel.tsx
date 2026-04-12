@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  IconLayoutSidebarRightCollapse,
-  IconShare,
-} from '@tabler/icons-react';
+import { IconLayoutSidebarRightCollapse, IconShare } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
 import type {
   HalftoneBackgroundSettings,
@@ -191,6 +188,7 @@ export function ControlsPanel({
       {visible && activeTab === 'design' ? (
         <DesignTab
           imageFileName={imageFileName}
+          onAnimationSettingsChange={onAnimationSettingsChange}
           onBackgroundChange={onBackgroundChange}
           onDashColorChange={onDashColorChange}
           onHalftoneChange={onHalftoneChange}

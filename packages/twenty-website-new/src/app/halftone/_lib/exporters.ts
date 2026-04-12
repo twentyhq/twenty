@@ -108,6 +108,9 @@ const halftoneFragmentShader = `
   uniform vec2 interactionUv;
   uniform vec2 interactionVelocity;
   uniform vec2 dragOffset;
+  uniform float hoverHalftonePowerShift;
+  uniform float hoverHalftoneRadius;
+  uniform float hoverHalftoneWidthShift;
   uniform float hoverLightStrength;
   uniform float hoverLightRadius;
   uniform float hoverFlowStrength;
@@ -163,6 +166,15 @@ const halftoneFragmentShader = `
       hoverLightMask = smoothstep(lightRadiusPx, 0.0, fragDist);
     }
 
+    float hoverHalftoneMask = 0.0;
+    if (
+      abs(hoverHalftonePowerShift) > 0.0001 ||
+      abs(hoverHalftoneWidthShift) > 0.0001
+    ) {
+      float hoverHalftoneRadiusPx = hoverHalftoneRadius * logicalResolution.y;
+      hoverHalftoneMask = smoothstep(hoverHalftoneRadiusPx, 0.0, fragDist);
+    }
+
     float hoverFlowMask = 0.0;
     if (hoverFlowStrength > 0.0) {
       float hoverRadiusPx = hoverFlowRadius * logicalResolution.y;
@@ -190,6 +202,16 @@ const halftoneFragmentShader = `
 
     vec4 sceneSample = texture2D(tScene, sampleUv);
     float mask = smoothstep(0.02, 0.08, sceneSample.a);
+    float localPower = clamp(
+      s_3 + hoverHalftonePowerShift * hoverHalftoneMask,
+      -1.5,
+      1.5
+    );
+    float localWidth = clamp(
+      s_4 + hoverHalftoneWidthShift * hoverHalftoneMask,
+      0.05,
+      1.4
+    );
     float lightLift =
       hoverLightStrength * hoverLightMask * mix(0.78, 1.18, motionBias) * 0.22;
     float bandRadius = clamp(
@@ -198,7 +220,7 @@ const halftoneFragmentShader = `
           sceneSample.r +
           sceneSample.g +
           sceneSample.b +
-          s_3 * length(vec2(0.5))
+          localPower * length(vec2(0.5))
         ) *
         (1.0 / 3.0)
       ) + lightLift,
@@ -208,7 +230,7 @@ const halftoneFragmentShader = `
 
     float alpha = 0.0;
     if (bandRadius > 0.0001) {
-      float signedDistance = lineSimpleEt(cellUv, bandRadius, s_4);
+      float signedDistance = lineSimpleEt(cellUv, bandRadius, localWidth);
       float edge = 0.02;
       alpha = (1.0 - smoothstep(0.0, edge, signedDistance)) * mask;
     }
@@ -2024,6 +2046,9 @@ async function mountHalftoneCanvas(options) {
       interactionUv: { value: new THREE.Vector2(0.5, 0.5) },
       interactionVelocity: { value: new THREE.Vector2(0, 0) },
       dragOffset: { value: new THREE.Vector2(0, 0) },
+      hoverHalftonePowerShift: { value: 0 },
+      hoverHalftoneRadius: { value: 0.2 },
+      hoverHalftoneWidthShift: { value: 0 },
       hoverLightStrength: { value: 0 },
       hoverLightRadius: { value: 0.2 },
       hoverFlowStrength: { value: 0 },
@@ -2595,6 +2620,9 @@ async function mountHalftoneCanvas(options) {
       interactionUv: { value: new THREE.Vector2(0.5, 0.5) },
       interactionVelocity: { value: new THREE.Vector2(0, 0) },
       dragOffset: { value: new THREE.Vector2(0, 0) },
+      hoverHalftonePowerShift: { value: 0 },
+      hoverHalftoneRadius: { value: settings.animation.hoverHalftoneRadius },
+      hoverHalftoneWidthShift: { value: 0 },
       hoverLightStrength: { value: 0 },
       hoverLightRadius: { value: settings.animation.hoverLightRadius },
       hoverFlowStrength: { value: 0 },
@@ -2804,6 +2832,16 @@ async function mountHalftoneCanvas(options) {
       -interaction.pointerVelocityY * getVirtualHeight(),
     );
     halftoneMaterial.uniforms.dragOffset.value.set(0, 0);
+    halftoneMaterial.uniforms.hoverHalftonePowerShift.value =
+      pointerActive && settings.animation.hoverHalftoneEnabled
+        ? settings.animation.hoverHalftonePowerShift
+        : 0;
+    halftoneMaterial.uniforms.hoverHalftoneRadius.value =
+      settings.animation.hoverHalftoneRadius;
+    halftoneMaterial.uniforms.hoverHalftoneWidthShift.value =
+      pointerActive && settings.animation.hoverHalftoneEnabled
+        ? settings.animation.hoverHalftoneWidthShift
+        : 0;
     halftoneMaterial.uniforms.hoverLightStrength.value =
       pointerActive && settings.animation.hoverLightEnabled
         ? settings.animation.hoverLightIntensity

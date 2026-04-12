@@ -18,6 +18,7 @@ export function formatAnimationName(animation: {
   followHoverEnabled: boolean;
   followDragEnabled: boolean;
   floatEnabled: boolean;
+  hoverHalftoneEnabled: boolean;
   hoverLightEnabled: boolean;
   lightSweepEnabled: boolean;
   rotateEnabled: boolean;
@@ -27,6 +28,10 @@ export function formatAnimationName(animation: {
   const activeModes: string[] = [];
 
   if (sourceMode === 'image') {
+    if (animation.hoverHalftoneEnabled) {
+      activeModes.push('hoverHalftone');
+    }
+
     if (animation.hoverLightEnabled) {
       activeModes.push('hoverLight');
     }

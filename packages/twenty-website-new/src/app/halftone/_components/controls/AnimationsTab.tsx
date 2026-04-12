@@ -42,6 +42,75 @@ export function AnimationsTab({
         <>
           <Section $first>
             <SectionToggleHeader
+              checked={animation.hoverHalftoneEnabled}
+              onChange={(event) =>
+                onAnimationSettingsChange({
+                  hoverHalftoneEnabled: event.target.checked,
+                })
+              }
+              preserveCase
+            >
+              {effectLabel(
+                'Hover Halftone',
+                'Uses the cursor radius to locally push the halftone power and width, so the bars open or tighten around the mouse instead of only brightening.',
+              )}
+            </SectionToggleHeader>
+            {animation.hoverHalftoneEnabled ? (
+              <ControlGrid>
+                <SliderControl
+                  max={1.5}
+                  min={-1.5}
+                  onChange={(event) =>
+                    onAnimationSettingsChange({
+                      hoverHalftonePowerShift: Number(event.target.value),
+                    })
+                  }
+                  step={0.01}
+                  value={animation.hoverHalftonePowerShift}
+                  valueLabel={formatDecimal(
+                    animation.hoverHalftonePowerShift,
+                    2,
+                  )}
+                >
+                  Power shift
+                </SliderControl>
+                <SliderControl
+                  max={1.35}
+                  min={-1.35}
+                  onChange={(event) =>
+                    onAnimationSettingsChange({
+                      hoverHalftoneWidthShift: Number(event.target.value),
+                    })
+                  }
+                  step={0.01}
+                  value={animation.hoverHalftoneWidthShift}
+                  valueLabel={formatDecimal(
+                    animation.hoverHalftoneWidthShift,
+                    2,
+                  )}
+                >
+                  Width shift
+                </SliderControl>
+                <SliderControl
+                  max={0.45}
+                  min={0.06}
+                  onChange={(event) =>
+                    onAnimationSettingsChange({
+                      hoverHalftoneRadius: Number(event.target.value),
+                    })
+                  }
+                  step={0.01}
+                  value={animation.hoverHalftoneRadius}
+                  valueLabel={formatDecimal(animation.hoverHalftoneRadius, 2)}
+                >
+                  Radius
+                </SliderControl>
+              </ControlGrid>
+            ) : null}
+          </Section>
+
+          <Section>
+            <SectionToggleHeader
               checked={animation.hoverLightEnabled}
               onChange={(event) =>
                 onAnimationSettingsChange({

@@ -2,7 +2,11 @@
 
 import { formatAngle, formatDecimal } from '@/app/halftone/_lib/formatters';
 import {
+  DEFAULT_GLASS_ANIMATION_SETTINGS,
+  DEFAULT_GLASS_LIGHTING_SETTINGS,
   DEFAULT_GLASS_MATERIAL_SETTINGS,
+  DEFAULT_SOLID_ANIMATION_SETTINGS,
+  DEFAULT_SOLID_LIGHTING_SETTINGS,
   DEFAULT_SOLID_MATERIAL_SETTINGS,
   type HalftoneBackgroundSettings,
   type HalftoneSourceMode,
@@ -62,6 +66,9 @@ const ColorSwapButton = styled.button`
 `;
 
 type DesignTabProps = {
+  onAnimationSettingsChange: (
+    value: Partial<HalftoneStudioSettings['animation']>,
+  ) => void;
   imageFileName: string | null;
   onBackgroundChange: (value: Partial<HalftoneBackgroundSettings>) => void;
   onDashColorChange: (value: string) => void;
@@ -83,7 +90,14 @@ type DesignTabProps = {
   shapeOptions: Array<{ label: string; value: string }>;
 };
 
+function matchesSettings<T extends object>(value: T, target: T) {
+  return (Object.keys(target) as Array<keyof T>).every(
+    (key) => value[key] === target[key],
+  );
+}
+
 export function DesignTab({
+  onAnimationSettingsChange,
   imageFileName,
   onBackgroundChange,
   onDashColorChange,
@@ -106,6 +120,39 @@ export function DesignTab({
     imageFileName === null || imageFileName === DEFAULT_IMAGE_FILE_NAME
       ? DEFAULT_IMAGE_OPTION_LABEL
       : imageFileName;
+
+  const handleSurfaceChange = (surface: 'glass' | 'solid') => {
+    const switchingToGlass = surface === 'glass';
+
+    onMaterialChange(
+      switchingToGlass
+        ? DEFAULT_GLASS_MATERIAL_SETTINGS
+        : DEFAULT_SOLID_MATERIAL_SETTINGS,
+    );
+
+    if (switchingToGlass) {
+      if (matchesSettings(settings.lighting, DEFAULT_SOLID_LIGHTING_SETTINGS)) {
+        onLightingChange(DEFAULT_GLASS_LIGHTING_SETTINGS);
+      }
+
+      if (
+        matchesSettings(settings.animation, DEFAULT_SOLID_ANIMATION_SETTINGS)
+      ) {
+        onAnimationSettingsChange(DEFAULT_GLASS_ANIMATION_SETTINGS);
+      }
+
+      return;
+    }
+
+    if (matchesSettings(settings.lighting, DEFAULT_GLASS_LIGHTING_SETTINGS)) {
+      onLightingChange(DEFAULT_SOLID_LIGHTING_SETTINGS);
+    }
+
+    if (matchesSettings(settings.animation, DEFAULT_GLASS_ANIMATION_SETTINGS)) {
+      onAnimationSettingsChange(DEFAULT_SOLID_ANIMATION_SETTINGS);
+    }
+  };
+
   const handleSwapColors = () => {
     const nextDashColor = settings.background.color;
     const nextBackgroundColor = settings.halftone.dashColor;
@@ -285,10 +332,8 @@ export function DesignTab({
             <ControlGrid>
               <SelectControl
                 onChange={(event) =>
-                  onMaterialChange(
-                    event.target.value === 'glass'
-                      ? DEFAULT_GLASS_MATERIAL_SETTINGS
-                      : DEFAULT_SOLID_MATERIAL_SETTINGS,
+                  handleSurfaceChange(
+                    event.target.value === 'glass' ? 'glass' : 'solid',
                   )
                 }
                 options={[

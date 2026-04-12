@@ -52,6 +52,7 @@ export interface HalftoneAnimationSettings {
   followHoverEnabled: boolean;
   followDragEnabled: boolean;
   floatEnabled: boolean;
+  hoverHalftoneEnabled: boolean;
   hoverLightEnabled: boolean;
   dragFlowEnabled: boolean;
   lightSweepEnabled: boolean;
@@ -81,6 +82,9 @@ export interface HalftoneAnimationSettings {
   springDamping: number;
   springReturnEnabled: boolean;
   springStrength: number;
+  hoverHalftonePowerShift: number;
+  hoverHalftoneRadius: number;
+  hoverHalftoneWidthShift: number;
   hoverLightIntensity: number;
   hoverLightRadius: number;
   dragFlowDecay: number;
@@ -228,6 +232,138 @@ export const DEFAULT_GLASS_MATERIAL_SETTINGS: HalftoneMaterialSettings = {
   environmentPower: 5,
 };
 
+export const DEFAULT_SOLID_LIGHTING_SETTINGS: HalftoneLightingSettings = {
+  intensity: 1.5,
+  fillIntensity: 0.15,
+  ambientIntensity: 0.08,
+  angleDegrees: 45,
+  height: 2,
+};
+
+export const DEFAULT_GLASS_LIGHTING_SETTINGS: HalftoneLightingSettings = {
+  intensity: 3,
+  fillIntensity: 0,
+  ambientIntensity: 0.3,
+  angleDegrees: 53,
+  height: 2,
+};
+
+export const DEFAULT_SOLID_BACKGROUND_SETTINGS: HalftoneBackgroundSettings = {
+  transparent: true,
+  color: '#000000',
+};
+
+export const DEFAULT_GLASS_BACKGROUND_SETTINGS: HalftoneBackgroundSettings = {
+  transparent: true,
+  color: '#000000',
+};
+
+export const DEFAULT_SOLID_ANIMATION_SETTINGS: HalftoneAnimationSettings = {
+  autoRotateEnabled: true,
+  breatheEnabled: false,
+  cameraParallaxEnabled: false,
+  followHoverEnabled: false,
+  followDragEnabled: false,
+  floatEnabled: false,
+  hoverHalftoneEnabled: false,
+  hoverLightEnabled: false,
+  dragFlowEnabled: false,
+  lightSweepEnabled: false,
+  rotateEnabled: false,
+  autoSpeed: 4,
+  autoWobble: 0.3,
+  breatheAmount: 0.04,
+  breatheSpeed: 0.8,
+  cameraParallaxAmount: 0.3,
+  cameraParallaxEase: 0.08,
+  driftAmount: 8,
+  hoverRange: 25,
+  hoverEase: 0.08,
+  hoverReturn: true,
+  dragSens: 0.008,
+  dragFriction: 0.08,
+  dragMomentum: true,
+  rotateAxis: 'y',
+  rotatePreset: 'axis',
+  rotateSpeed: 0.2,
+  rotatePingPong: false,
+  floatAmplitude: 0.16,
+  floatSpeed: 0.8,
+  lightSweepHeightRange: 0.5,
+  lightSweepRange: 28,
+  lightSweepSpeed: 0.7,
+  springDamping: 0.72,
+  springReturnEnabled: false,
+  springStrength: 0.18,
+  hoverHalftonePowerShift: 0.42,
+  hoverHalftoneRadius: 0.2,
+  hoverHalftoneWidthShift: -0.18,
+  hoverLightIntensity: 0.8,
+  hoverLightRadius: 0.2,
+  dragFlowDecay: 0.08,
+  dragFlowRadius: 0.24,
+  dragFlowStrength: 1.8,
+  hoverWarpStrength: 3,
+  hoverWarpRadius: 0.15,
+  dragWarpStrength: 5,
+  waveEnabled: false,
+  waveSpeed: 1,
+  waveAmount: 2,
+};
+
+export const DEFAULT_GLASS_ANIMATION_SETTINGS: HalftoneAnimationSettings = {
+  autoRotateEnabled: true,
+  breatheEnabled: false,
+  cameraParallaxEnabled: false,
+  followHoverEnabled: false,
+  followDragEnabled: true,
+  floatEnabled: false,
+  hoverHalftoneEnabled: false,
+  hoverLightEnabled: false,
+  dragFlowEnabled: false,
+  lightSweepEnabled: false,
+  rotateEnabled: false,
+  autoSpeed: 0.2,
+  autoWobble: 0.3,
+  breatheAmount: 0.04,
+  breatheSpeed: 0.8,
+  cameraParallaxAmount: 0.3,
+  cameraParallaxEase: 0.08,
+  driftAmount: 8,
+  hoverRange: 25,
+  hoverEase: 0.08,
+  hoverReturn: true,
+  dragSens: 0.008,
+  dragFriction: 0.08,
+  dragMomentum: true,
+  rotateAxis: 'y',
+  rotatePreset: 'axis',
+  rotateSpeed: 0.1,
+  rotatePingPong: false,
+  floatAmplitude: 0.16,
+  floatSpeed: 0.8,
+  lightSweepHeightRange: 0.5,
+  lightSweepRange: 28,
+  lightSweepSpeed: 0.7,
+  springDamping: 0.72,
+  springReturnEnabled: false,
+  springStrength: 0.18,
+  hoverHalftonePowerShift: 0.42,
+  hoverHalftoneRadius: 0.2,
+  hoverHalftoneWidthShift: -0.18,
+  hoverLightIntensity: 0.8,
+  hoverLightRadius: 0.2,
+  dragFlowDecay: 0.08,
+  dragFlowRadius: 0.24,
+  dragFlowStrength: 1.8,
+  hoverWarpStrength: 3,
+  hoverWarpRadius: 0.15,
+  dragWarpStrength: 5,
+  waveEnabled: false,
+  waveSpeed: 1,
+  waveAmount: 2,
+};
+
 export const LEGACY_HALFTONE_SETTING_KEYS = [
   'numRows',
   'contrast',
@@ -320,77 +456,13 @@ function normalizeMaterialSettings(
 export const DEFAULT_HALFTONE_SETTINGS: HalftoneStudioSettings = {
   sourceMode: 'shape' as HalftoneSourceMode,
   shapeKey: 'torusKnot',
-  lighting: {
-    intensity: 3,
-    fillIntensity: 0,
-    ambientIntensity: 0.3,
-    angleDegrees: 53,
-    height: 2,
-  },
+  lighting: { ...DEFAULT_GLASS_LIGHTING_SETTINGS },
   material: {
     ...DEFAULT_SOLID_MATERIAL_SETTINGS,
   },
   halftone: DEFAULT_SHAPE_HALFTONE_SETTINGS,
-  background: {
-    transparent: true,
-    color: '#000000',
-  },
-  animation: {
-    autoRotateEnabled: true,
-    breatheEnabled: false,
-    cameraParallaxEnabled: false,
-    followHoverEnabled: false,
-    followDragEnabled: true,
-    floatEnabled: false,
-    hoverLightEnabled: false,
-    dragFlowEnabled: false,
-    lightSweepEnabled: false,
-    rotateEnabled: false,
-    autoSpeed: 0.2,
-    autoWobble: 0.3,
-    breatheAmount: 0.04,
-    breatheSpeed: 0.8,
-    cameraParallaxAmount: 0.3,
-    cameraParallaxEase: 0.08,
-    driftAmount: 8,
-    hoverRange: 25,
-    hoverEase: 0.08,
-    hoverReturn: true,
-    dragSens: 0.008,
-    dragFriction: 0.08,
-    dragMomentum: true,
-    rotateAxis: 'y',
-    rotatePreset: 'axis',
-    rotateSpeed: 0.1,
-    rotatePingPong: false,
-    floatAmplitude: 0.16,
-    floatSpeed: 0.8,
-    lightSweepHeightRange: 0.5,
-    lightSweepRange: 28,
-    lightSweepSpeed: 0.7,
-    springDamping: 0.72,
-    springReturnEnabled: false,
-    springStrength: 0.18,
-    hoverLightIntensity: 0.8,
-    hoverLightRadius: 0.2,
-    dragFlowDecay: 0.08,
-    dragFlowRadius: 0.24,
-    dragFlowStrength: 1.8,
-    hoverWarpStrength: 3,
-    hoverWarpRadius: 0.15,
-    dragWarpStrength: 5,
-    waveEnabled: false,
-    waveSpeed: 1,
-    waveAmount: 2,
-  },
-};
-
-const LEGACY_GLASS_LIGHTING_SETTINGS: HalftoneLightingSettings = {
-  intensity: 1.5,
-  fillIntensity: 0.15,
-  ambientIntensity: 0.08,
-  angleDegrees: 45,
-  height: 2,
+  background: { ...DEFAULT_GLASS_BACKGROUND_SETTINGS },
+  animation: { ...DEFAULT_GLASS_ANIMATION_SETTINGS },
 };
 
 const LEGACY_GLASS_MATERIAL_SETTINGS: HalftoneMaterialSettings = {
@@ -402,27 +474,6 @@ const LEGACY_GLASS_MATERIAL_SETTINGS: HalftoneMaterialSettings = {
   refraction: 2,
   environmentPower: 5,
 };
-
-const DEFAULT_GLASS_LIGHTING_SETTINGS: HalftoneLightingSettings = {
-  intensity: 3,
-  fillIntensity: 0,
-  ambientIntensity: 0.3,
-  angleDegrees: 53,
-  height: 2,
-};
-
-function lightingMatches(
-  value: Partial<HalftoneLightingSettings> | undefined,
-  target: HalftoneLightingSettings,
-) {
-  return (
-    value?.intensity === target.intensity &&
-    value?.fillIntensity === target.fillIntensity &&
-    value?.ambientIntensity === target.ambientIntensity &&
-    value?.angleDegrees === target.angleDegrees &&
-    value?.height === target.height
-  );
-}
 
 function materialMatches(
   value: Partial<HalftoneMaterialSettings> | undefined,
@@ -450,25 +501,13 @@ export function normalizeHalftoneStudioSettings(
     materialMatches(settings?.material, LEGACY_GLASS_MATERIAL_SETTINGS)
       ? { ...DEFAULT_GLASS_MATERIAL_SETTINGS }
       : mergedMaterial;
-  const useGlassLightingDefaults =
-    material.surface === 'glass' &&
-    lightingMatches(settings?.lighting, LEGACY_GLASS_LIGHTING_SETTINGS);
-  const lightingDefaults = useGlassLightingDefaults
-    ? DEFAULT_GLASS_LIGHTING_SETTINGS
-    : DEFAULT_HALFTONE_SETTINGS.lighting;
-  const backgroundDefaults =
-    material.surface === 'glass' &&
-    settings?.background?.color === '#ffffff' &&
-    settings?.background?.transparent === true
-      ? { ...DEFAULT_HALFTONE_SETTINGS.background, color: '#000000' }
-      : DEFAULT_HALFTONE_SETTINGS.background;
 
   return {
     ...DEFAULT_HALFTONE_SETTINGS,
     ...settings,
     sourceMode,
     lighting: {
-      ...lightingDefaults,
+      ...DEFAULT_GLASS_LIGHTING_SETTINGS,
       ...settings?.lighting,
     },
     material,
@@ -477,11 +516,11 @@ export function normalizeHalftoneStudioSettings(
       settings?.halftone,
     ),
     background: {
-      ...backgroundDefaults,
+      ...DEFAULT_GLASS_BACKGROUND_SETTINGS,
       ...settings?.background,
     },
     animation: {
-      ...DEFAULT_HALFTONE_SETTINGS.animation,
+      ...DEFAULT_GLASS_ANIMATION_SETTINGS,
       ...settings?.animation,
     },
   };
