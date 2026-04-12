@@ -1,4 +1,5 @@
 import { type ConfigService } from '@/cli/utilities/config/config-service';
+import { isOAuthInvalidClientError } from '@/cli/utilities/error/parse-server-error';
 
 import { exchangeCredentialsForTokens } from './exchange-credentials-for-tokens';
 
@@ -37,8 +38,10 @@ export const ensureAppAccessTokenIsValidOrRefresh = async (
       }),
     });
 
+    const body = await response.json();
+
     if (response.ok) {
-      const data = (await response.json()) as {
+      const data = body as {
         access_token: string;
         refresh_token?: string;
       };
@@ -49,6 +52,15 @@ export const ensureAppAccessTokenIsValidOrRefresh = async (
       });
 
       return data.access_token;
+    }
+
+    if (isOAuthInvalidClientError(body)) {
+      await configService.setConfig({
+        appRegistrationId: undefined,
+        appRegistrationClientId: undefined,
+        appAccessToken: undefined,
+        appRefreshToken: undefined,
+      });
     }
   }
 
