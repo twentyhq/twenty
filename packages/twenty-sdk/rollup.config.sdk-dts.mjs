@@ -12,6 +12,9 @@ export default {
     if (id === 'twenty-shared' || id.startsWith('twenty-shared/')) {
       return false;
     }
+    if (id.startsWith('@/')) {
+      return false;
+    }
     return !id.startsWith('.') && !id.startsWith('/');
   },
   plugins: [
