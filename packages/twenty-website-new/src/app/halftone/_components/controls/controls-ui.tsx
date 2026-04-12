@@ -951,7 +951,11 @@ export function SegmentedControl({
               $active={isActive}
               aria-checked={isActive}
               key={option.value}
-              onClick={() => onChange(option.value)}
+              onClick={() => {
+                if (!isActive) {
+                  onChange(option.value);
+                }
+              }}
               role="radio"
               type="button"
             >

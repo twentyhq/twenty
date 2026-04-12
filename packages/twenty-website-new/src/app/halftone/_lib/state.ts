@@ -258,6 +258,22 @@ export const DEFAULT_GLASS_BACKGROUND_SETTINGS: HalftoneBackgroundSettings = {
   color: '#000000',
 };
 
+function getDefaultLightingSettings(
+  surface: HalftoneMaterialSurface,
+): HalftoneLightingSettings {
+  return surface === 'glass'
+    ? DEFAULT_GLASS_LIGHTING_SETTINGS
+    : DEFAULT_SOLID_LIGHTING_SETTINGS;
+}
+
+function getDefaultBackgroundSettings(
+  surface: HalftoneMaterialSurface,
+): HalftoneBackgroundSettings {
+  return surface === 'glass'
+    ? DEFAULT_GLASS_BACKGROUND_SETTINGS
+    : DEFAULT_SOLID_BACKGROUND_SETTINGS;
+}
+
 export const DEFAULT_SOLID_ANIMATION_SETTINGS: HalftoneAnimationSettings = {
   autoRotateEnabled: true,
   breatheEnabled: false,
@@ -364,6 +380,14 @@ export const DEFAULT_GLASS_ANIMATION_SETTINGS: HalftoneAnimationSettings = {
   waveAmount: 2,
 };
 
+function getDefaultAnimationSettings(
+  surface: HalftoneMaterialSurface,
+): HalftoneAnimationSettings {
+  return surface === 'glass'
+    ? DEFAULT_GLASS_ANIMATION_SETTINGS
+    : DEFAULT_SOLID_ANIMATION_SETTINGS;
+}
+
 export const LEGACY_HALFTONE_SETTING_KEYS = [
   'numRows',
   'contrast',
@@ -456,13 +480,13 @@ function normalizeMaterialSettings(
 export const DEFAULT_HALFTONE_SETTINGS: HalftoneStudioSettings = {
   sourceMode: 'shape' as HalftoneSourceMode,
   shapeKey: 'torusKnot',
-  lighting: { ...DEFAULT_GLASS_LIGHTING_SETTINGS },
+  lighting: { ...DEFAULT_SOLID_LIGHTING_SETTINGS },
   material: {
     ...DEFAULT_SOLID_MATERIAL_SETTINGS,
   },
   halftone: DEFAULT_SHAPE_HALFTONE_SETTINGS,
-  background: { ...DEFAULT_GLASS_BACKGROUND_SETTINGS },
-  animation: { ...DEFAULT_GLASS_ANIMATION_SETTINGS },
+  background: { ...DEFAULT_SOLID_BACKGROUND_SETTINGS },
+  animation: { ...DEFAULT_SOLID_ANIMATION_SETTINGS },
 };
 
 const LEGACY_GLASS_MATERIAL_SETTINGS: HalftoneMaterialSettings = {
@@ -501,13 +525,16 @@ export function normalizeHalftoneStudioSettings(
     materialMatches(settings?.material, LEGACY_GLASS_MATERIAL_SETTINGS)
       ? { ...DEFAULT_GLASS_MATERIAL_SETTINGS }
       : mergedMaterial;
+  const lightingDefaults = getDefaultLightingSettings(material.surface);
+  const backgroundDefaults = getDefaultBackgroundSettings(material.surface);
+  const animationDefaults = getDefaultAnimationSettings(material.surface);
 
   return {
     ...DEFAULT_HALFTONE_SETTINGS,
     ...settings,
     sourceMode,
     lighting: {
-      ...DEFAULT_GLASS_LIGHTING_SETTINGS,
+      ...lightingDefaults,
       ...settings?.lighting,
     },
     material,
@@ -516,11 +543,11 @@ export function normalizeHalftoneStudioSettings(
       settings?.halftone,
     ),
     background: {
-      ...DEFAULT_GLASS_BACKGROUND_SETTINGS,
+      ...backgroundDefaults,
       ...settings?.background,
     },
     animation: {
-      ...DEFAULT_GLASS_ANIMATION_SETTINGS,
+      ...animationDefaults,
       ...settings?.animation,
     },
   };
