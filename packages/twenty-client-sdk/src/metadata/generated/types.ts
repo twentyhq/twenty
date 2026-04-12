@@ -7004,6 +7004,15 @@ export default {
                     ]
                 }
             ],
+            "userLookupAdminPanel": [
+                209,
+                {
+                    "userIdentifier": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "adminPanelRecentUsers": [
                 157,
                 {
@@ -9166,15 +9175,6 @@ export default {
                     "input": [
                         497,
                         "UpdateLabPublicFeatureFlagInput!"
-                    ]
-                }
-            ],
-            "userLookupAdminPanel": [
-                209,
-                {
-                    "userIdentifier": [
-                        1,
-                        "String!"
                     ]
                 }
             ],

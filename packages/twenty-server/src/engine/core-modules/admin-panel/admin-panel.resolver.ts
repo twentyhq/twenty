@@ -97,7 +97,7 @@ export class AdminPanelResolver {
   ) {}
 
   @UseGuards(ServerLevelImpersonateGuard)
-  @Mutation(() => UserLookup)
+  @Query(() => UserLookup)
   async userLookupAdminPanel(
     @Args() userLookupInput: UserLookupInput,
   ): Promise<UserLookup> {

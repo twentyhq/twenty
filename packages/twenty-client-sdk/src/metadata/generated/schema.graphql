@@ -3333,6 +3333,7 @@ type Query {
   getConnectedImapSmtpCaldavAccount(id: UUID!): ConnectedImapSmtpCaldavAccount!
   getAutoCompleteAddress(address: String!, token: String!, country: String, isFieldCity: Boolean): [AutocompleteResult!]!
   getAddressDetails(placeId: String!, token: String!): PlaceDetailsResult!
+  userLookupAdminPanel(userIdentifier: String!): UserLookup!
   adminPanelRecentUsers(searchTerm: String = ""): [AdminPanelRecentUser!]!
   adminPanelTopWorkspaces(searchTerm: String = ""): [AdminPanelTopWorkspace!]!
   getConfigVariablesGrouped: ConfigVariables!
@@ -3664,7 +3665,6 @@ type Mutation {
   startChannelSync(connectedAccountId: UUID!): ChannelSyncSuccess!
   saveImapSmtpCaldavAccount(accountOwnerId: UUID!, handle: String!, connectionParameters: EmailAccountConnectionParameters!, id: UUID): ImapSmtpCaldavConnectionSuccess!
   updateLabPublicFeatureFlag(input: UpdateLabPublicFeatureFlagInput!): FeatureFlag!
-  userLookupAdminPanel(userIdentifier: String!): UserLookup!
   updateWorkspaceFeatureFlag(workspaceId: UUID!, featureFlag: String!, value: Boolean!): Boolean!
   setAdminAiModelEnabled(modelId: String!, enabled: Boolean!): Boolean!
   setAdminAiModelsEnabled(modelIds: [String!]!, enabled: Boolean!): Boolean!

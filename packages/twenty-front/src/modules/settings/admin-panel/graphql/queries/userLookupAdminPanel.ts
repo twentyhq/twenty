@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const USER_LOOKUP_ADMIN_PANEL = gql`
-  mutation UserLookupAdminPanel($userIdentifier: String!) {
+  query UserLookupAdminPanel($userIdentifier: String!) {
     userLookupAdminPanel(userIdentifier: $userIdentifier) {
       user {
         id

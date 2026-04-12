@@ -1,16 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { useMutation } from '@apollo/client/react';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
-import {
-  getImageAbsoluteURI,
-  getSettingsPath,
-  isDefined,
-} from 'twenty-shared/utils';
+import { getImageAbsoluteURI, getSettingsPath } from 'twenty-shared/utils';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -18,7 +14,6 @@ import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components
 import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
 import { useImpersonationSession } from '@/auth/hooks/useImpersonationSession';
 import { useImpersonationRedirect } from '@/settings/admin-panel/hooks/useImpersonationRedirect';
-import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
@@ -27,7 +22,6 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
@@ -44,6 +38,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   ImpersonateDocument,
+  type UserLookupAdminPanelQuery,
   UserLookupAdminPanelDocument,
 } from '~/generated-metadata/graphql';
 
@@ -54,18 +49,18 @@ const StyledButtonContainer = styled.div`
 export const SettingsAdminUserDetail = () => {
   const { userId } = useParams<{ userId: string }>();
 
-  const [activeTabId, setActiveTabId] = useAtomComponentState(
+  const [activeTabId] = useAtomComponentState(
     activeTabIdComponentState,
     SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID,
   );
 
-  const [userLookupResult, setUserLookupResult] = useAtomState(
-    userLookupResultState,
-  );
+  const { data: userLookupData, loading: isLoading } =
+    useQuery<UserLookupAdminPanelQuery>(UserLookupAdminPanelDocument, {
+      variables: { userIdentifier: userId },
+      skip: !userId,
+    });
 
-  const [userLookup, { loading: isLoading }] = useMutation(
-    UserLookupAdminPanelDocument,
-  );
+  const userLookupResult = userLookupData?.userLookupAdminPanel;
 
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -75,25 +70,7 @@ export const SettingsAdminUserDetail = () => {
   const [impersonate] = useMutation(ImpersonateDocument);
   const [isImpersonateLoading, setIsImpersonateLoading] = useState(false);
 
-  useEffect(() => {
-    if (!userId) {
-      return;
-    }
-
-    userLookup({
-      variables: { userIdentifier: userId },
-      onCompleted: (data) => {
-        if (isDefined(data?.userLookupAdminPanel)) {
-          setUserLookupResult(data.userLookupAdminPanel);
-
-          if (data.userLookupAdminPanel.workspaces.length > 0) {
-            setActiveTabId(data.userLookupAdminPanel.workspaces[0].id);
-          }
-        }
-      },
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]);
+  const effectiveTabId = activeTabId || userLookupResult?.workspaces?.[0]?.id;
 
   const handleImpersonate = async (workspaceId: string) => {
     if (!userLookupResult?.user.id) {
@@ -134,7 +111,7 @@ export const SettingsAdminUserDetail = () => {
   }`.trim();
 
   const activeWorkspace = userLookupResult?.workspaces.find(
-    (workspace) => workspace.id === activeTabId,
+    (workspace) => workspace.id === effectiveTabId,
   );
 
   const tabs =
@@ -177,7 +154,7 @@ export const SettingsAdminUserDetail = () => {
 
   const displayName = userFullName || userId || '';
 
-  if (isLoading && !userLookupResult) {
+  if (isLoading) {
     return <SettingsSkeletonLoader />;
   }
 
@@ -198,7 +175,7 @@ export const SettingsAdminUserDetail = () => {
       ]}
     >
       <SettingsPageContainer>
-        {isDefined(userLookupResult) && (
+        {userLookupResult && (
           <>
             <Section>
               <H2Title title={t`User Info`} description={t`About this user`} />
