@@ -15,9 +15,7 @@ type OAuthErrorBody = {
   error_description?: string;
 };
 
-const asGraphQLErrorEntry = (
-  value: unknown,
-): GraphQLErrorEntry | undefined => {
+const asGraphQLErrorEntry = (value: unknown): GraphQLErrorEntry | undefined => {
   if (!isPlainObject(value)) {
     return undefined;
   }
