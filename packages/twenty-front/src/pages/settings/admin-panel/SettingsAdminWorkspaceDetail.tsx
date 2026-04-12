@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -16,7 +16,6 @@ import { WORKSPACE_LOOKUP_ADMIN_PANEL } from '@/settings/admin-panel/graphql/que
 import { useFeatureFlagState } from '@/settings/admin-panel/hooks/useFeatureFlagState';
 import { useImpersonationSession } from '@/auth/hooks/useImpersonationSession';
 import { useImpersonationRedirect } from '@/settings/admin-panel/hooks/useImpersonationRedirect';
-import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
 import { type UserLookup } from '@/settings/admin-panel/types/UserLookup';
 import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -30,7 +29,6 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
@@ -81,21 +79,12 @@ export const SettingsAdminWorkspaceDetail = () => {
     null,
   );
 
-  const [, setUserLookupResult] = useAtomState(userLookupResultState);
-  const userLookupResult = useAtomStateValue(userLookupResultState);
-
   const { data: workspaceData, loading: isLoadingWorkspace } = useQuery<{
     workspaceLookupAdminPanel: UserLookup;
   }>(WORKSPACE_LOOKUP_ADMIN_PANEL, {
     variables: { workspaceId },
     skip: !workspaceId,
   });
-
-  useEffect(() => {
-    if (isDefined(workspaceData?.workspaceLookupAdminPanel)) {
-      setUserLookupResult(workspaceData.workspaceLookupAdminPanel);
-    }
-  }, [workspaceData, setUserLookupResult]);
 
   const workspace = workspaceData?.workspaceLookupAdminPanel
     ?.workspaces?.[0] as WorkspaceInfo | undefined;
@@ -156,9 +145,9 @@ export const SettingsAdminWorkspaceDetail = () => {
   ) => {
     if (!workspaceId) return;
 
-    const previousValue = userLookupResult?.workspaces
-      .find((ws) => ws.id === workspaceId)
-      ?.featureFlags.find((flag) => flag.key === featureFlag)?.value;
+    const previousValue = workspace?.featureFlags?.find(
+      (flag) => flag.key === featureFlag,
+    )?.value;
 
     updateFeatureFlagState(workspaceId, featureFlag, value);
     await updateFeatureFlag({

@@ -1573,6 +1573,51 @@ enum LogicFunctionExecutionStatus {
   ERROR
 }
 
+type AdminPanelRecentUser {
+  id: UUID!
+  email: String!
+  firstName: String
+  lastName: String
+  createdAt: DateTime!
+  workspaceName: String
+  workspaceId: UUID
+}
+
+type AdminPanelTopWorkspace {
+  id: UUID!
+  name: String!
+  totalUsers: Int!
+  subdomain: String!
+}
+
+type AdminWorkspaceChatThread {
+  id: UUID!
+  title: String
+  totalInputTokens: Int!
+  totalOutputTokens: Int!
+  conversationSize: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type AdminChatMessagePart {
+  type: String!
+  textContent: String
+  toolName: String
+}
+
+type AdminChatMessage {
+  id: UUID!
+  role: String!
+  parts: [AdminChatMessagePart!]!
+  createdAt: DateTime!
+}
+
+type AdminChatThreadMessages {
+  thread: AdminWorkspaceChatThread!
+  messages: [AdminChatMessage!]!
+}
+
 type BillingTrialPeriod {
   duration: Float!
   isCreditCardRequired: Boolean!
@@ -1940,6 +1985,7 @@ type UserInfo {
   email: String!
   firstName: String
   lastName: String
+  createdAt: DateTime!
 }
 
 type WorkspaceInfo {
@@ -1948,6 +1994,8 @@ type WorkspaceInfo {
   allowImpersonation: Boolean!
   logo: String
   totalUsers: Float!
+  activationStatus: WorkspaceActivationStatus!
+  createdAt: DateTime!
   workspaceUrls: WorkspaceUrls!
   users: [UserInfo!]!
   featureFlags: [FeatureFlag!]!
@@ -3285,6 +3333,8 @@ type Query {
   getConnectedImapSmtpCaldavAccount(id: UUID!): ConnectedImapSmtpCaldavAccount!
   getAutoCompleteAddress(address: String!, token: String!, country: String, isFieldCity: Boolean): [AutocompleteResult!]!
   getAddressDetails(placeId: String!, token: String!): PlaceDetailsResult!
+  adminPanelRecentUsers(searchTerm: String = ""): [AdminPanelRecentUser!]!
+  adminPanelTopWorkspaces(searchTerm: String = ""): [AdminPanelTopWorkspace!]!
   getConfigVariablesGrouped: ConfigVariables!
   getSystemHealthStatus: SystemHealth!
   getIndicatorHealthStatus(indicatorId: HealthIndicatorId!): AdminPanelHealthServiceData!
@@ -3299,6 +3349,9 @@ type Query {
   getModelsDevSuggestions(providerType: String!): [ModelsDevModelSuggestion!]!
   getAdminAiUsageByWorkspace(periodStart: DateTime, periodEnd: DateTime): [UsageBreakdownItem!]!
   getMaintenanceMode: MaintenanceMode
+  workspaceLookupAdminPanel(workspaceId: UUID!): UserLookup!
+  getAdminWorkspaceChatThreads(workspaceId: UUID!): [AdminWorkspaceChatThread!]!
+  getAdminChatThreadMessages(threadId: UUID!): AdminChatThreadMessages!
   getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   getPostgresCredentials: PostgresCredentials
   findManyPublicDomains: [PublicDomain!]!

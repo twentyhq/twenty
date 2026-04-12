@@ -1283,6 +1283,57 @@ export interface LogicFunctionExecutionResult {
 /** Status of the logic function execution */
 export type LogicFunctionExecutionStatus = 'IDLE' | 'SUCCESS' | 'ERROR'
 
+export interface AdminPanelRecentUser {
+    id: Scalars['UUID']
+    email: Scalars['String']
+    firstName?: Scalars['String']
+    lastName?: Scalars['String']
+    createdAt: Scalars['DateTime']
+    workspaceName?: Scalars['String']
+    workspaceId?: Scalars['UUID']
+    __typename: 'AdminPanelRecentUser'
+}
+
+export interface AdminPanelTopWorkspace {
+    id: Scalars['UUID']
+    name: Scalars['String']
+    totalUsers: Scalars['Int']
+    subdomain: Scalars['String']
+    __typename: 'AdminPanelTopWorkspace'
+}
+
+export interface AdminWorkspaceChatThread {
+    id: Scalars['UUID']
+    title?: Scalars['String']
+    totalInputTokens: Scalars['Int']
+    totalOutputTokens: Scalars['Int']
+    conversationSize: Scalars['Int']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    __typename: 'AdminWorkspaceChatThread'
+}
+
+export interface AdminChatMessagePart {
+    type: Scalars['String']
+    textContent?: Scalars['String']
+    toolName?: Scalars['String']
+    __typename: 'AdminChatMessagePart'
+}
+
+export interface AdminChatMessage {
+    id: Scalars['UUID']
+    role: Scalars['String']
+    parts: AdminChatMessagePart[]
+    createdAt: Scalars['DateTime']
+    __typename: 'AdminChatMessage'
+}
+
+export interface AdminChatThreadMessages {
+    thread: AdminWorkspaceChatThread
+    messages: AdminChatMessage[]
+    __typename: 'AdminChatThreadMessages'
+}
+
 export interface BillingTrialPeriod {
     duration: Scalars['Float']
     isCreditCardRequired: Scalars['Boolean']
@@ -1600,6 +1651,7 @@ export interface UserInfo {
     email: Scalars['String']
     firstName?: Scalars['String']
     lastName?: Scalars['String']
+    createdAt: Scalars['DateTime']
     __typename: 'UserInfo'
 }
 
@@ -1609,6 +1661,8 @@ export interface WorkspaceInfo {
     allowImpersonation: Scalars['Boolean']
     logo?: Scalars['String']
     totalUsers: Scalars['Float']
+    activationStatus: WorkspaceActivationStatus
+    createdAt: Scalars['DateTime']
     workspaceUrls: WorkspaceUrls
     users: UserInfo[]
     featureFlags: FeatureFlag[]
@@ -2846,6 +2900,8 @@ export interface Query {
     getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount
     getAutoCompleteAddress: AutocompleteResult[]
     getAddressDetails: PlaceDetailsResult
+    adminPanelRecentUsers: AdminPanelRecentUser[]
+    adminPanelTopWorkspaces: AdminPanelTopWorkspace[]
     getConfigVariablesGrouped: ConfigVariables
     getSystemHealthStatus: SystemHealth
     getIndicatorHealthStatus: AdminPanelHealthServiceData
@@ -2860,6 +2916,9 @@ export interface Query {
     getModelsDevSuggestions: ModelsDevModelSuggestion[]
     getAdminAiUsageByWorkspace: UsageBreakdownItem[]
     getMaintenanceMode?: MaintenanceMode
+    workspaceLookupAdminPanel: UserLookup
+    getAdminWorkspaceChatThreads: AdminWorkspaceChatThread[]
+    getAdminChatThreadMessages: AdminChatThreadMessages
     getUsageAnalytics: UsageAnalytics
     getPostgresCredentials?: PostgresCredentials
     findManyPublicDomains: PublicDomain[]
@@ -4456,6 +4515,63 @@ export interface LogicFunctionExecutionResultGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface AdminPanelRecentUserGenqlSelection{
+    id?: boolean | number
+    email?: boolean | number
+    firstName?: boolean | number
+    lastName?: boolean | number
+    createdAt?: boolean | number
+    workspaceName?: boolean | number
+    workspaceId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AdminPanelTopWorkspaceGenqlSelection{
+    id?: boolean | number
+    name?: boolean | number
+    totalUsers?: boolean | number
+    subdomain?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AdminWorkspaceChatThreadGenqlSelection{
+    id?: boolean | number
+    title?: boolean | number
+    totalInputTokens?: boolean | number
+    totalOutputTokens?: boolean | number
+    conversationSize?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AdminChatMessagePartGenqlSelection{
+    type?: boolean | number
+    textContent?: boolean | number
+    toolName?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AdminChatMessageGenqlSelection{
+    id?: boolean | number
+    role?: boolean | number
+    parts?: AdminChatMessagePartGenqlSelection
+    createdAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AdminChatThreadMessagesGenqlSelection{
+    thread?: AdminWorkspaceChatThreadGenqlSelection
+    messages?: AdminChatMessageGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface BillingTrialPeriodGenqlSelection{
     duration?: boolean | number
     isCreditCardRequired?: boolean | number
@@ -4779,6 +4895,7 @@ export interface UserInfoGenqlSelection{
     email?: boolean | number
     firstName?: boolean | number
     lastName?: boolean | number
+    createdAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4789,6 +4906,8 @@ export interface WorkspaceInfoGenqlSelection{
     allowImpersonation?: boolean | number
     logo?: boolean | number
     totalUsers?: boolean | number
+    activationStatus?: boolean | number
+    createdAt?: boolean | number
     workspaceUrls?: WorkspaceUrlsGenqlSelection
     users?: UserInfoGenqlSelection
     featureFlags?: FeatureFlagGenqlSelection
@@ -6142,6 +6261,8 @@ export interface QueryGenqlSelection{
     getConnectedImapSmtpCaldavAccount?: (ConnectedImapSmtpCaldavAccountGenqlSelection & { __args: {id: Scalars['UUID']} })
     getAutoCompleteAddress?: (AutocompleteResultGenqlSelection & { __args: {address: Scalars['String'], token: Scalars['String'], country?: (Scalars['String'] | null), isFieldCity?: (Scalars['Boolean'] | null)} })
     getAddressDetails?: (PlaceDetailsResultGenqlSelection & { __args: {placeId: Scalars['String'], token: Scalars['String']} })
+    adminPanelRecentUsers?: (AdminPanelRecentUserGenqlSelection & { __args?: {searchTerm?: (Scalars['String'] | null)} })
+    adminPanelTopWorkspaces?: (AdminPanelTopWorkspaceGenqlSelection & { __args?: {searchTerm?: (Scalars['String'] | null)} })
     getConfigVariablesGrouped?: ConfigVariablesGenqlSelection
     getSystemHealthStatus?: SystemHealthGenqlSelection
     getIndicatorHealthStatus?: (AdminPanelHealthServiceDataGenqlSelection & { __args: {indicatorId: HealthIndicatorId} })
@@ -6156,6 +6277,9 @@ export interface QueryGenqlSelection{
     getModelsDevSuggestions?: (ModelsDevModelSuggestionGenqlSelection & { __args: {providerType: Scalars['String']} })
     getAdminAiUsageByWorkspace?: (UsageBreakdownItemGenqlSelection & { __args?: {periodStart?: (Scalars['DateTime'] | null), periodEnd?: (Scalars['DateTime'] | null)} })
     getMaintenanceMode?: MaintenanceModeGenqlSelection
+    workspaceLookupAdminPanel?: (UserLookupGenqlSelection & { __args: {workspaceId: Scalars['UUID']} })
+    getAdminWorkspaceChatThreads?: (AdminWorkspaceChatThreadGenqlSelection & { __args: {workspaceId: Scalars['UUID']} })
+    getAdminChatThreadMessages?: (AdminChatThreadMessagesGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     getUsageAnalytics?: (UsageAnalyticsGenqlSelection & { __args?: {input?: (UsageAnalyticsInput | null)} })
     getPostgresCredentials?: PostgresCredentialsGenqlSelection
     findManyPublicDomains?: PublicDomainGenqlSelection
@@ -7572,6 +7696,54 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isLogicFunctionExecutionResult = (obj?: { __typename?: any } | null): obj is LogicFunctionExecutionResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isLogicFunctionExecutionResult"')
       return LogicFunctionExecutionResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AdminPanelRecentUser_possibleTypes: string[] = ['AdminPanelRecentUser']
+    export const isAdminPanelRecentUser = (obj?: { __typename?: any } | null): obj is AdminPanelRecentUser => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAdminPanelRecentUser"')
+      return AdminPanelRecentUser_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AdminPanelTopWorkspace_possibleTypes: string[] = ['AdminPanelTopWorkspace']
+    export const isAdminPanelTopWorkspace = (obj?: { __typename?: any } | null): obj is AdminPanelTopWorkspace => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAdminPanelTopWorkspace"')
+      return AdminPanelTopWorkspace_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AdminWorkspaceChatThread_possibleTypes: string[] = ['AdminWorkspaceChatThread']
+    export const isAdminWorkspaceChatThread = (obj?: { __typename?: any } | null): obj is AdminWorkspaceChatThread => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAdminWorkspaceChatThread"')
+      return AdminWorkspaceChatThread_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AdminChatMessagePart_possibleTypes: string[] = ['AdminChatMessagePart']
+    export const isAdminChatMessagePart = (obj?: { __typename?: any } | null): obj is AdminChatMessagePart => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAdminChatMessagePart"')
+      return AdminChatMessagePart_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AdminChatMessage_possibleTypes: string[] = ['AdminChatMessage']
+    export const isAdminChatMessage = (obj?: { __typename?: any } | null): obj is AdminChatMessage => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAdminChatMessage"')
+      return AdminChatMessage_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AdminChatThreadMessages_possibleTypes: string[] = ['AdminChatThreadMessages']
+    export const isAdminChatThreadMessages = (obj?: { __typename?: any } | null): obj is AdminChatThreadMessages => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAdminChatThreadMessages"')
+      return AdminChatThreadMessages_possibleTypes.includes(obj.__typename)
     }
     
 
