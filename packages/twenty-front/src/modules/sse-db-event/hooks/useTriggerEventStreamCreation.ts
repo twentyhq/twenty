@@ -131,7 +131,9 @@ export const useTriggerEventStreamCreation = () => {
                 const subCode = result.errors[0]?.extensions?.subCode;
 
                 switch (subCode) {
-                  case 'EVENT_STREAM_ALREADY_EXISTS': {
+                  case 'EVENT_STREAM_ALREADY_EXISTS':
+                  case 'UNAUTHENTICATED':
+                  case 'FORBIDDEN': {
                     store.set(shouldDestroyEventStreamState.atom, true);
                     break;
                   }
