@@ -440,8 +440,7 @@ export const WithDefaultGroups: Story = {
     const generalHeader = await canvas.findByText('General');
     expect(generalHeader).toBeVisible();
 
-    const creationDateElements =
-      await canvas.findAllByText('Creation date');
+    const creationDateElements = await canvas.findAllByText('Creation date');
     expect(creationDateElements.length).toBeGreaterThan(0);
     expect(creationDateElements[0]).toBeVisible();
   },
