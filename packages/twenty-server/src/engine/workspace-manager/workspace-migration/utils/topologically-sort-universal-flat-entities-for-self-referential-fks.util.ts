@@ -9,8 +9,12 @@ const getSelfReferentialUniversalForeignKeys = (
 ): string[] =>
   Object.values(ALL_MANY_TO_ONE_METADATA_RELATIONS[metadataName])
     .filter(
-      (relation): relation is { metadataName: AllMetadataName; universalForeignKey: string } =>
-        isDefined(relation) && relation.metadataName === metadataName,
+      (
+        relation,
+      ): relation is {
+        metadataName: AllMetadataName;
+        universalForeignKey: string;
+      } => isDefined(relation) && relation.metadataName === metadataName,
     )
     .map((relation) => relation.universalForeignKey);
 
@@ -23,7 +27,9 @@ const getParentUniversalIdentifier = ({
 }): string | null =>
   selfReferentialUniversalForeignKeys.reduce<string | null>(
     (found, universalForeignKey) =>
-      found ?? (entity[universalForeignKey] as string | null | undefined) ?? null,
+      found ??
+      (entity[universalForeignKey] as string | null | undefined) ??
+      null,
     null,
   );
 
@@ -77,7 +83,10 @@ export const topologicallySortUniversalFlatEntitiesForSelfReferentialFks = <
         ...(childrenByParent.get(parentId) ?? []),
         universalIdentifier,
       ]);
-      inDegree.set(universalIdentifier, (inDegree.get(universalIdentifier) ?? 0) + 1);
+      inDegree.set(
+        universalIdentifier,
+        (inDegree.get(universalIdentifier) ?? 0) + 1,
+      );
     }
   }
 
@@ -85,18 +94,15 @@ export const topologicallySortUniversalFlatEntitiesForSelfReferentialFks = <
     (id) => (inDegree.get(id) ?? 0) === 0,
   );
 
-  return roots.reduce<string[]>(
-    (sorted, root) => {
-      sorted.push(root);
+  return roots.reduce<string[]>((sorted, root) => {
+    sorted.push(root);
 
-      for (let i = sorted.length - 1; i < sorted.length; i++) {
-        const children = childrenByParent.get(sorted[i]) ?? [];
+    for (let i = sorted.length - 1; i < sorted.length; i++) {
+      const children = childrenByParent.get(sorted[i]) ?? [];
 
-        sorted.push(...children);
-      }
+      sorted.push(...children);
+    }
 
-      return sorted;
-    },
-    [],
-  );
+    return sorted;
+  }, []);
 };

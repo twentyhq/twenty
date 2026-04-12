@@ -30,11 +30,10 @@ const buildMaps = (
 
 describe('topologicallySortUniversalFlatEntitiesForSelfReferentialFks', () => {
   it('returns empty array for empty maps', () => {
-    const result =
-      topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
-        metadataName: 'navigationMenuItem',
-        universalFlatEntityMaps: buildMaps([]) as never,
-      });
+    const result = topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
+      metadataName: 'navigationMenuItem',
+      universalFlatEntityMaps: buildMaps([]) as never,
+    });
 
     expect(result).toEqual([]);
   });
@@ -56,11 +55,10 @@ describe('topologicallySortUniversalFlatEntitiesForSelfReferentialFks', () => {
       },
     };
 
-    const result =
-      topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
-        metadataName: 'objectMetadata',
-        universalFlatEntityMaps: maps as never,
-      });
+    const result = topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
+      metadataName: 'objectMetadata',
+      universalFlatEntityMaps: maps as never,
+    });
 
     expect(result).toEqual([idA, idB]);
   });
@@ -69,14 +67,13 @@ describe('topologicallySortUniversalFlatEntitiesForSelfReferentialFks', () => {
     const itemA = uuidv4();
     const itemB = uuidv4();
 
-    const result =
-      topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
-        metadataName: 'navigationMenuItem',
-        universalFlatEntityMaps: buildMaps([
-          createEntity(itemA),
-          createEntity(itemB),
-        ]) as never,
-      });
+    const result = topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
+      metadataName: 'navigationMenuItem',
+      universalFlatEntityMaps: buildMaps([
+        createEntity(itemA),
+        createEntity(itemB),
+      ]) as never,
+    });
 
     expect(result).toEqual([itemA, itemB]);
   });
@@ -85,14 +82,13 @@ describe('topologicallySortUniversalFlatEntitiesForSelfReferentialFks', () => {
     const parentId = uuidv4();
     const childId = uuidv4();
 
-    const result =
-      topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
-        metadataName: 'navigationMenuItem',
-        universalFlatEntityMaps: buildMaps([
-          createEntity(childId, parentId),
-          createEntity(parentId),
-        ]) as never,
-      });
+    const result = topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
+      metadataName: 'navigationMenuItem',
+      universalFlatEntityMaps: buildMaps([
+        createEntity(childId, parentId),
+        createEntity(parentId),
+      ]) as never,
+    });
 
     expect(result).toEqual([parentId, childId]);
   });
@@ -101,14 +97,13 @@ describe('topologicallySortUniversalFlatEntitiesForSelfReferentialFks', () => {
     const parentId = uuidv4();
     const childId = uuidv4();
 
-    const result =
-      topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
-        metadataName: 'navigationMenuItem',
-        universalFlatEntityMaps: buildMaps([
-          createEntity(parentId),
-          createEntity(childId, parentId),
-        ]) as never,
-      });
+    const result = topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
+      metadataName: 'navigationMenuItem',
+      universalFlatEntityMaps: buildMaps([
+        createEntity(parentId),
+        createEntity(childId, parentId),
+      ]) as never,
+    });
 
     expect(result).toEqual([parentId, childId]);
   });
@@ -118,15 +113,14 @@ describe('topologicallySortUniversalFlatEntitiesForSelfReferentialFks', () => {
     const parentId = uuidv4();
     const childId = uuidv4();
 
-    const result =
-      topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
-        metadataName: 'navigationMenuItem',
-        universalFlatEntityMaps: buildMaps([
-          createEntity(childId, parentId),
-          createEntity(grandparentId),
-          createEntity(parentId, grandparentId),
-        ]) as never,
-      });
+    const result = topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
+      metadataName: 'navigationMenuItem',
+      universalFlatEntityMaps: buildMaps([
+        createEntity(childId, parentId),
+        createEntity(grandparentId),
+        createEntity(parentId, grandparentId),
+      ]) as never,
+    });
 
     expect(result).toEqual([grandparentId, parentId, childId]);
   });
@@ -137,16 +131,15 @@ describe('topologicallySortUniversalFlatEntitiesForSelfReferentialFks', () => {
     const childA = uuidv4();
     const childB = uuidv4();
 
-    const result =
-      topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
-        metadataName: 'navigationMenuItem',
-        universalFlatEntityMaps: buildMaps([
-          createEntity(childB, rootB),
-          createEntity(childA, rootA),
-          createEntity(rootA),
-          createEntity(rootB),
-        ]) as never,
-      });
+    const result = topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
+      metadataName: 'navigationMenuItem',
+      universalFlatEntityMaps: buildMaps([
+        createEntity(childB, rootB),
+        createEntity(childA, rootA),
+        createEntity(rootA),
+        createEntity(rootB),
+      ]) as never,
+    });
 
     expect(result.indexOf(rootA)).toBeLessThan(result.indexOf(childA));
     expect(result.indexOf(rootB)).toBeLessThan(result.indexOf(childB));
@@ -158,14 +151,13 @@ describe('topologicallySortUniversalFlatEntitiesForSelfReferentialFks', () => {
     const itemA = uuidv4();
     const itemB = uuidv4();
 
-    const result =
-      topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
-        metadataName: 'navigationMenuItem',
-        universalFlatEntityMaps: buildMaps([
-          createEntity(itemA, externalParentId),
-          createEntity(itemB),
-        ]) as never,
-      });
+    const result = topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
+      metadataName: 'navigationMenuItem',
+      universalFlatEntityMaps: buildMaps([
+        createEntity(itemA, externalParentId),
+        createEntity(itemB),
+      ]) as never,
+    });
 
     expect(result).toEqual([itemA, itemB]);
   });
