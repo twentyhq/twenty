@@ -162,24 +162,22 @@ describe('topologicallySortUniversalFlatEntitiesForSelfReferentialFks', () => {
     expect(result).toEqual([itemA, itemB]);
   });
 
-  it('appends cyclic entities for deferrable self-referential FKs', () => {
+  it('throws on cycles for entities without expected cycles', () => {
     const idA = uuidv4();
     const idB = uuidv4();
 
-    const result = topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
-      metadataName: 'navigationMenuItem',
-      universalFlatEntityMaps: buildMaps([
-        createEntity(idA, idB),
-        createEntity(idB, idA),
-      ]) as never,
-    });
-
-    expect(result).toHaveLength(2);
-    expect(result).toContain(idA);
-    expect(result).toContain(idB);
+    expect(() =>
+      topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
+        metadataName: 'navigationMenuItem',
+        universalFlatEntityMaps: buildMaps([
+          createEntity(idA, idB),
+          createEntity(idB, idA),
+        ]) as never,
+      }),
+    ).toThrow(/Cyclic self-referential foreign key detected/);
   });
 
-  it('throws on cycles for non-deferrable self-referential FKs', () => {
+  it('appends cyclic entities for fieldMetadata (expected bidirectional cycles)', () => {
     const idA = uuidv4();
     const idB = uuidv4();
 
@@ -188,21 +186,23 @@ describe('topologicallySortUniversalFlatEntitiesForSelfReferentialFks', () => {
         [idA]: {
           universalIdentifier: idA,
           applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-          parentRowLevelPermissionPredicateGroupUniversalIdentifier: idB,
+          relationTargetFieldMetadataUniversalIdentifier: idB,
         },
         [idB]: {
           universalIdentifier: idB,
           applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-          parentRowLevelPermissionPredicateGroupUniversalIdentifier: idA,
+          relationTargetFieldMetadataUniversalIdentifier: idA,
         },
       },
     };
 
-    expect(() =>
-      topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
-        metadataName: 'rowLevelPermissionPredicateGroup',
-        universalFlatEntityMaps: maps as never,
-      }),
-    ).toThrow(/Cyclic self-referential foreign key detected/);
+    const result = topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
+      metadataName: 'fieldMetadata',
+      universalFlatEntityMaps: maps as never,
+    });
+
+    expect(result).toHaveLength(2);
+    expect(result).toContain(idA);
+    expect(result).toContain(idB);
   });
 });

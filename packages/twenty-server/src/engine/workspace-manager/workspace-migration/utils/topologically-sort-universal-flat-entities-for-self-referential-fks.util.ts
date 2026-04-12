@@ -4,13 +4,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 
-// Self-referential FKs that use DEFERRABLE INITIALLY DEFERRED at the DB level,
-// allowing out-of-order inserts within a transaction. Cycles in these entities
-// are expected (e.g. fieldMetadata relation pairs) and safe to append unsorted.
-const DEFERRABLE_SELF_REFERENTIAL_METADATA_NAMES = new Set<AllMetadataName>([
+// fieldMetadata has bidirectional self-references (relation field A -> B and
+// B -> A) that are handled by a separate pre-allocation code path in the
+// runner. Cycles are expected and safe to append unsorted here.
+const METADATA_NAMES_WITH_EXPECTED_CYCLES = new Set<AllMetadataName>([
   'fieldMetadata',
-  'viewFilterGroup',
-  'navigationMenuItem',
 ]);
 
 const getSelfReferentialUniversalForeignKeys = (
@@ -116,7 +114,7 @@ export const topologicallySortUniversalFlatEntitiesForSelfReferentialFks = <
   }, []);
 
   if (sorted.length < allUniversalIdentifiers.length) {
-    if (!DEFERRABLE_SELF_REFERENTIAL_METADATA_NAMES.has(metadataName)) {
+    if (!METADATA_NAMES_WITH_EXPECTED_CYCLES.has(metadataName)) {
       throw new Error(
         `Cyclic self-referential foreign key detected for ${metadataName}: ` +
           `expected ${allUniversalIdentifiers.length} entities but sorted ${sorted.length}. ` +
