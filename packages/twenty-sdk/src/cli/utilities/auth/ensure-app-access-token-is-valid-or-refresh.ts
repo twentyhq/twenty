@@ -38,10 +38,8 @@ export const ensureAppAccessTokenIsValidOrRefresh = async (
       }),
     });
 
-    const body = await response.json();
-
     if (response.ok) {
-      const data = body as {
+      const data = (await response.json()) as {
         access_token: string;
         refresh_token?: string;
       };
@@ -54,13 +52,21 @@ export const ensureAppAccessTokenIsValidOrRefresh = async (
       return data.access_token;
     }
 
-    if (isOAuthInvalidClientError(body)) {
-      await configService.setConfig({
-        appRegistrationId: undefined,
-        appRegistrationClientId: undefined,
-        appAccessToken: undefined,
-        appRefreshToken: undefined,
-      });
+    try {
+      const body = await response.json();
+
+      if (isOAuthInvalidClientError(body)) {
+        await configService.setConfig({
+          appRegistrationId: undefined,
+          appRegistrationClientId: undefined,
+          appAccessToken: undefined,
+          appRefreshToken: undefined,
+        });
+
+        return undefined;
+      }
+    } catch {
+      // Non-JSON error response (e.g. proxy 502) — fall through to credential exchange
     }
   }
 

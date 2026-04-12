@@ -1,6 +1,5 @@
 import { isPlainObject } from 'twenty-shared/utils';
 
-// Shape of entries in GraphQL `response.data.errors[]`
 type GraphQLErrorEntry = {
   message?: string;
   extensions?: {
@@ -9,7 +8,6 @@ type GraphQLErrorEntry = {
   };
 };
 
-// Shape of OAuth error responses from `/oauth/token`
 type OAuthErrorBody = {
   error?: string;
   error_description?: string;
