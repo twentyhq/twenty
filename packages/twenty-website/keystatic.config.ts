@@ -36,8 +36,10 @@ export default config({
             },
           },
         }),
-        // TODO: Define the date with a normalized format
-        Date: fields.text({ label: 'Date' }),
+        Date: fields.date({
+          label: 'Date',
+          validation: { isRequired: true },
+        }),
         content: fields.mdx({
           label: 'Content',
           options: {
