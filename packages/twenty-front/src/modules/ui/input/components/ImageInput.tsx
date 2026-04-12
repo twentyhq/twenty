@@ -91,6 +91,7 @@ type ImageInputProps = Omit<React.ComponentProps<'div'>, 'children'> & {
   errorMessage?: string | null;
   disabled?: boolean;
   className?: string;
+  pictureTestId?: string;
 };
 
 export const ImageInput = ({
@@ -102,6 +103,7 @@ export const ImageInput = ({
   errorMessage,
   disabled = false,
   className,
+  pictureTestId,
 }: ImageInputProps) => {
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
@@ -124,6 +126,7 @@ export const ImageInput = ({
         withPicture={!!pictureURI}
         disabled={disabled}
         onClick={onUploadButtonClick}
+        data-testid={pictureTestId}
       >
         {pictureURI && !isPictureURLError ? (
           <img

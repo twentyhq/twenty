@@ -160,6 +160,7 @@ export const WorkspaceMemberPictureUploader = ({
   return (
     <ImageInput
       picture={displayAvatarUrl}
+      pictureTestId="workspace-member-picture-preview"
       onUpload={handleUpload}
       onRemove={handleRemove}
       onAbort={handleAbort}
