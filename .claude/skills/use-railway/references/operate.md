@@ -160,6 +160,15 @@ Always verify after fixing. Don't assume the redeploy succeeded.
 - **Metrics query returns empty**: verify IDs from `railway status --json` and check the time window
 - **Config patch type error**: check the typed paths in [configure.md](configure.md), for example, `numReplicas` is an integer, not a string
 
+## Database inspection
+
+For database-level metrics and introspection, always use the analysis scripts. See [analyze-db.md](analyze-db.md) for comprehensive database analysis including:
+
+- Deep Postgres analysis (pg_stat_statements, vacuum health, index health, cache hit ratios)
+- HA cluster checks (Patroni, etcd, HAProxy)
+- Redis, MySQL, and MongoDB introspection
+- Combined analysis via `scripts/analyze-<type>.py` (postgres, mysql, redis, mongo)
+
 ## Validated against
 
 - Docs: [status.md](https://docs.railway.com/cli/status), [logs.md](https://docs.railway.com/cli/logs), [observability.md](https://docs.railway.com/observability), [observability/logs.md](https://docs.railway.com/observability/logs), [observability/metrics.md](https://docs.railway.com/observability/metrics)
