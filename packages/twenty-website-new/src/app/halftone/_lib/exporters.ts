@@ -1,3 +1,4 @@
+import { normalizeExportComponentName } from '@/app/halftone/_lib/exportNames';
 import {
   HALFTONE_FOOTPRINT_RUNTIME_SOURCE,
   REFERENCE_PREVIEW_DISTANCE,
@@ -1218,26 +1219,6 @@ function normalizePreviewDistance(previewDistance: number | undefined) {
     : REFERENCE_PREVIEW_DISTANCE;
 }
 
-function toPascalCase(value: string) {
-  const tokens = value
-    .replace(/\.[^.]+$/, '')
-    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-    .replace(/[^a-zA-Z0-9]+/g, ' ')
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean);
-
-  const joined = tokens
-    .map((token) => token.charAt(0).toUpperCase() + token.slice(1))
-    .join('');
-
-  if (!joined) {
-    return 'HalftoneDashes';
-  }
-
-  return /^[A-Za-z_]/.test(joined) ? joined : `Halftone${joined}`;
-}
-
 function extractSerializedJson<T>(
   content: string,
   name: string,
@@ -1370,7 +1351,7 @@ export function deriveExportComponentName(
     shape?.key ??
     'HalftoneDashes';
 
-  return toPascalCase(source);
+  return normalizeExportComponentName(source);
 }
 
 function createShapeDescriptor(
@@ -2939,6 +2920,8 @@ export function generateReactComponent(
     modelFilenameOverride,
   );
   const pose = normalizeExportPose(initialPose);
+  const normalizedComponentName =
+    normalizeExportComponentName(componentName);
   const defaultModelUrl =
     modelFilenameOverride ?? shape.filename ?? 'model.glb';
   const defaultImageUrl = imageFilename ?? 'image.png';
@@ -2950,15 +2933,15 @@ ${serializeRuntimeSource(settings, shape, pose, previewDistance)}
 
 ${createImageMountScript()}
 
-type ${componentName}Props = {
+type ${normalizedComponentName}Props = {
   imageUrl?: string;
   style?: CSSProperties;
 };
 
-export default function ${componentName}({
+export default function ${normalizedComponentName}({
   imageUrl = ${JSON.stringify(`./${defaultImageUrl}`)},
   style,
-}: ${componentName}Props) {
+}: ${normalizedComponentName}Props) {
   const mountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -3006,15 +2989,15 @@ ${serializeRuntimeSource(settings, shape, pose, previewDistance)}
 
 ${createMountScript()}
 
-type ${componentName}Props = {
+type ${normalizedComponentName}Props = {
   modelUrl?: string;
   style?: CSSProperties;
 };
 
-export default function ${componentName}({
+export default function ${normalizedComponentName}({
   modelUrl = ${JSON.stringify(`./${defaultModelUrl}`)},
   style,
-}: ${componentName}Props) {
+}: ${normalizedComponentName}Props) {
   const mountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -3071,6 +3054,8 @@ export async function generateStandaloneHtml(
     modelFilenameOverride,
   );
   const pose = normalizeExportPose(initialPose);
+  const normalizedComponentName =
+    normalizeExportComponentName(componentName);
   const defaultImageUrl = imageFilename ?? 'image.png';
   const embeddedImportedModelUrl =
     !isImageMode && shape.kind === 'imported' && importedFile
@@ -3125,7 +3110,7 @@ export async function generateStandaloneHtml(
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${componentName}</title>
+    <title>${normalizedComponentName}</title>
     <link rel="icon" href="data:," />
     <style>
       * {
