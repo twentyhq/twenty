@@ -220,7 +220,7 @@ export const FormAdvancedTextFieldInput = ({
 
               {enableFullScreen && (
                 <StyledEditorActionButtonContainer
-                  hasVariablePicker={isDefined(VariablePicker)}
+                  hasVariablePicker={isDefined(VariablePicker) && !readonly}
                 >
                   {!readonly && !isFullScreen && (
                     <LightIconButton
