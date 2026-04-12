@@ -1,7 +1,10 @@
 export {
   AggregateOperations,
+  DateDisplayFormat,
+  FieldMetadataSettingsOnClickAction,
   HTTPMethod,
   NavigationMenuItemType,
+  NumberDataType,
   ObjectRecordGroupByDateGranularity,
   PageLayoutTabLayoutMode,
   ViewFilterGroupLogicalOperator,
