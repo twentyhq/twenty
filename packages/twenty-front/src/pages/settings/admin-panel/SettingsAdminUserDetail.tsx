@@ -16,7 +16,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
 import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
-import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
+import { useImpersonationSession } from '@/auth/hooks/useImpersonationSession';
 import { useImpersonationRedirect } from '@/settings/admin-panel/hooks/useImpersonationRedirect';
 import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -70,7 +70,7 @@ export const SettingsAdminUserDetail = () => {
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { executeImpersonationAuth } = useImpersonationAuth();
+  const { startImpersonating } = useImpersonationSession();
   const { executeImpersonationRedirect } = useImpersonationRedirect();
   const [impersonate] = useMutation(ImpersonateDocument);
   const [isImpersonateLoading, setIsImpersonateLoading] = useState(false);
@@ -108,7 +108,7 @@ export const SettingsAdminUserDetail = () => {
         const isCurrentWorkspace = workspace.id === currentWorkspace?.id;
 
         if (isCurrentWorkspace) {
-          await executeImpersonationAuth(loginToken.token);
+          await startImpersonating(loginToken.token);
           return;
         }
 

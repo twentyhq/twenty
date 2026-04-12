@@ -14,7 +14,7 @@ import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components
 import { GET_ADMIN_WORKSPACE_CHAT_THREADS } from '@/settings/admin-panel/graphql/queries/getAdminWorkspaceChatThreads';
 import { WORKSPACE_LOOKUP_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/workspaceLookupAdminPanel';
 import { useFeatureFlagState } from '@/settings/admin-panel/hooks/useFeatureFlagState';
-import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
+import { useImpersonationSession } from '@/auth/hooks/useImpersonationSession';
 import { useImpersonationRedirect } from '@/settings/admin-panel/hooks/useImpersonationRedirect';
 import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
 import { type AdminChatThread } from '@/settings/admin-panel/types/AdminChatThread';
@@ -74,7 +74,7 @@ export const SettingsAdminWorkspaceDetail = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const [updateFeatureFlag] = useMutation(UpdateWorkspaceFeatureFlagDocument);
   const { updateFeatureFlagState } = useFeatureFlagState();
-  const { executeImpersonationAuth } = useImpersonationAuth();
+  const { startImpersonating } = useImpersonationSession();
   const { executeImpersonationRedirect } = useImpersonationRedirect();
   const [impersonate] = useMutation(ImpersonateDocument);
   const [impersonatingUserId, setImpersonatingUserId] = useState<string | null>(
@@ -128,7 +128,7 @@ export const SettingsAdminWorkspaceDetail = () => {
           impersonatedWorkspace.id === currentWorkspace?.id;
 
         if (isCurrentWorkspace) {
-          await executeImpersonationAuth(loginToken.token);
+          await startImpersonating(loginToken.token);
           return;
         }
 
