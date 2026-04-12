@@ -937,8 +937,7 @@ export class ConfigVariables {
   })
   @IsOptional()
   @CastToUpperSnakeCase()
-  APPLICATION_LOG_DRIVER: ApplicationLogDriver =
-    ApplicationLogDriver.DISABLED;
+  APPLICATION_LOG_DRIVER: ApplicationLogDriver = ApplicationLogDriver.DISABLED;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SUPPORT_CHAT_CONFIG,
