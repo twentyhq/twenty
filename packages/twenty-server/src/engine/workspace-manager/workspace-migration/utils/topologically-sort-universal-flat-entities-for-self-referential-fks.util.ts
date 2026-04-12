@@ -4,6 +4,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 
+// Self-referential FKs that use DEFERRABLE INITIALLY DEFERRED at the DB level,
+// allowing out-of-order inserts within a transaction. Cycles in these entities
+// are expected (e.g. fieldMetadata relation pairs) and safe to append unsorted.
+const DEFERRABLE_SELF_REFERENTIAL_METADATA_NAMES = new Set<AllMetadataName>([
+  'fieldMetadata',
+  'viewFilterGroup',
+  'navigationMenuItem',
+]);
+
 const getSelfReferentialUniversalForeignKeys = (
   metadataName: AllMetadataName,
 ): string[] =>
@@ -106,11 +115,19 @@ export const topologicallySortUniversalFlatEntitiesForSelfReferentialFks = <
     return accumulator;
   }, []);
 
-  // Bidirectional self-references (e.g. fieldMetadata relation pairs where
-  // A -> B and B -> A) create cycles that cannot be topologically sorted.
-  // These rely on DEFERRABLE INITIALLY DEFERRED FKs at the DB level,
-  // so we append them at the end in their original order.
   if (sorted.length < allUniversalIdentifiers.length) {
+    if (!DEFERRABLE_SELF_REFERENTIAL_METADATA_NAMES.has(metadataName)) {
+      throw new Error(
+        `Cyclic self-referential foreign key detected for ${metadataName}: ` +
+          `expected ${allUniversalIdentifiers.length} entities but sorted ${sorted.length}. ` +
+          `This entity does not use deferrable FKs, so cycles are not supported.`,
+      );
+    }
+
+    // Bidirectional self-references (e.g. fieldMetadata relation pairs where
+    // A -> B and B -> A) create cycles that cannot be topologically sorted.
+    // These rely on DEFERRABLE INITIALLY DEFERRED FKs at the DB level,
+    // so we append them at the end in their original order.
     const sortedSet = new Set(sorted);
 
     for (const universalIdentifier of allUniversalIdentifiers) {

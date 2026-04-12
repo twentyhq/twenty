@@ -162,7 +162,7 @@ describe('topologicallySortUniversalFlatEntitiesForSelfReferentialFks', () => {
     expect(result).toEqual([itemA, itemB]);
   });
 
-  it('appends cyclic entities at the end instead of dropping them', () => {
+  it('appends cyclic entities for deferrable self-referential FKs', () => {
     const idA = uuidv4();
     const idB = uuidv4();
 
@@ -177,5 +177,32 @@ describe('topologicallySortUniversalFlatEntitiesForSelfReferentialFks', () => {
     expect(result).toHaveLength(2);
     expect(result).toContain(idA);
     expect(result).toContain(idB);
+  });
+
+  it('throws on cycles for non-deferrable self-referential FKs', () => {
+    const idA = uuidv4();
+    const idB = uuidv4();
+
+    const maps = {
+      byUniversalIdentifier: {
+        [idA]: {
+          universalIdentifier: idA,
+          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+          parentRowLevelPermissionPredicateGroupUniversalIdentifier: idB,
+        },
+        [idB]: {
+          universalIdentifier: idB,
+          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+          parentRowLevelPermissionPredicateGroupUniversalIdentifier: idA,
+        },
+      },
+    };
+
+    expect(() =>
+      topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
+        metadataName: 'rowLevelPermissionPredicateGroup',
+        universalFlatEntityMaps: maps as never,
+      }),
+    ).toThrow(/Cyclic self-referential foreign key detected/);
   });
 });
