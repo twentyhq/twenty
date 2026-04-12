@@ -66,10 +66,12 @@ export const useOpenFieldInputEditMode = () => {
       fieldDefinition,
       recordId,
       prefix,
+      onClose,
     }: {
       fieldDefinition: FieldDefinition<FieldMetadata>;
       recordId: string;
       prefix?: string;
+      onClose?: () => void;
     }) => {
       const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
 
@@ -106,6 +108,7 @@ export const useOpenFieldInputEditMode = () => {
                 updateOneRecordInput: updateInput,
               });
             },
+            onClose,
             fieldDefinition: {
               metadata: {
                 settings: fieldDefinition.metadata.settings ?? undefined,

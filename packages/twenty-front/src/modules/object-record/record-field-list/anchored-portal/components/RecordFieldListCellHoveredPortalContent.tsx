@@ -52,6 +52,7 @@ export const RecordFieldListCellHoveredPortalContent = () => {
         fieldDefinition,
         recordId,
         prefix: instanceId,
+        onClose: () => setRecordFieldListCellEditModePosition(null),
       });
     }
   };
