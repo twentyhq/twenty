@@ -106,11 +106,18 @@ export const topologicallySortUniversalFlatEntitiesForSelfReferentialFks = <
     return accumulator;
   }, []);
 
-  if (sorted.length !== allUniversalIdentifiers.length) {
-    throw new Error(
-      `Cyclic self-referential foreign key detected for ${metadataName}: ` +
-        `expected ${allUniversalIdentifiers.length} entities but sorted ${sorted.length}`,
-    );
+  // Bidirectional self-references (e.g. fieldMetadata relation pairs where
+  // A -> B and B -> A) create cycles that cannot be topologically sorted.
+  // These rely on DEFERRABLE INITIALLY DEFERRED FKs at the DB level,
+  // so we append them at the end in their original order.
+  if (sorted.length < allUniversalIdentifiers.length) {
+    const sortedSet = new Set(sorted);
+
+    for (const universalIdentifier of allUniversalIdentifiers) {
+      if (!sortedSet.has(universalIdentifier)) {
+        sorted.push(universalIdentifier);
+      }
+    }
   }
 
   return sorted;
