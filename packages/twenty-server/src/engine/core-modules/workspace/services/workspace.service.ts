@@ -788,7 +788,15 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       );
 
       await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
 
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+
+    try {
       await prefillWorkflowCommandMenuItems({
         workspaceId,
         applicationService: this.applicationService,
@@ -797,19 +805,11 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
           this.workspaceMigrationValidateBuildAndRunService,
       });
     } catch (error) {
-      if (queryRunner.isTransactionActive) {
-        try {
-          await queryRunner.rollbackTransaction();
-        } catch (rollbackError) {
-          this.logger.error(
-            `Failed to rollback prefill transaction: ${rollbackError.message}`,
-          );
-        }
-      }
-
-      throw error;
-    } finally {
-      await queryRunner.release();
+      this.logger.error(
+        `Non-critical: failed to prefill workflow command menu items for workspace ${workspaceId}`,
+        error,
+      );
+      this.exceptionHandlerService.captureExceptions([error as Error]);
     }
   }
 }
