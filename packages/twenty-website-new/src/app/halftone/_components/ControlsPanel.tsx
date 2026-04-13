@@ -26,6 +26,7 @@ type ControlsPanelProps = {
   onBackgroundChange: (value: Partial<HalftoneBackgroundSettings>) => void;
   onCopyShareLink: () => void;
   onDashColorChange: (value: string) => void;
+  onHoverDashColorChange: (value: string) => void;
   onExportHalftoneImage: (width: number, height: number) => void;
   onExportBackgroundChange: (value: boolean) => void;
   onExportHtml: () => void;
@@ -121,6 +122,7 @@ export function ControlsPanel({
   onBackgroundChange,
   onCopyShareLink,
   onDashColorChange,
+  onHoverDashColorChange,
   onExportHalftoneImage,
   onExportBackgroundChange,
   onExportHtml,
@@ -207,6 +209,7 @@ export function ControlsPanel({
       {visible && activeTab === 'animations' ? (
         <AnimationsTab
           onAnimationSettingsChange={onAnimationSettingsChange}
+          onHoverDashColorChange={onHoverDashColorChange}
           settings={settings}
         />
       ) : null}

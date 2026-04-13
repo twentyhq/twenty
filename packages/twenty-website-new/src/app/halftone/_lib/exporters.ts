@@ -102,6 +102,7 @@ const halftoneFragmentShader = `
   uniform float s_3;
   uniform float s_4;
   uniform vec3 dashColor;
+  uniform vec3 hoverDashColor;
   uniform float time;
   uniform float waveAmount;
   uniform float waveSpeed;
@@ -109,6 +110,7 @@ const halftoneFragmentShader = `
   uniform vec2 interactionUv;
   uniform vec2 interactionVelocity;
   uniform vec2 dragOffset;
+  uniform float hoverHalftoneActive;
   uniform float hoverHalftonePowerShift;
   uniform float hoverHalftoneRadius;
   uniform float hoverHalftoneWidthShift;
@@ -168,10 +170,7 @@ const halftoneFragmentShader = `
     }
 
     float hoverHalftoneMask = 0.0;
-    if (
-      abs(hoverHalftonePowerShift) > 0.0001 ||
-      abs(hoverHalftoneWidthShift) > 0.0001
-    ) {
+    if (hoverHalftoneActive > 0.0) {
       float hoverHalftoneRadiusPx = hoverHalftoneRadius * logicalResolution.y;
       hoverHalftoneMask = smoothstep(hoverHalftoneRadiusPx, 0.0, fragDist);
     }
@@ -236,7 +235,8 @@ const halftoneFragmentShader = `
       alpha = (1.0 - smoothstep(0.0, edge, signedDistance)) * mask;
     }
 
-    vec3 color = dashColor * alpha;
+    vec3 activeDashColor = mix(dashColor, hoverDashColor, hoverHalftoneMask);
+    vec3 color = activeDashColor * alpha;
     gl_FragColor = vec4(color, alpha);
 
     #include <tonemapping_fragment>
@@ -2020,6 +2020,9 @@ async function mountHalftoneCanvas(options) {
       s_3: { value: settings.halftone.power },
       s_4: { value: settings.halftone.width },
       dashColor: { value: new THREE.Color(settings.halftone.dashColor) },
+      hoverDashColor: {
+        value: new THREE.Color(settings.halftone.hoverDashColor),
+      },
       time: { value: 0 },
       waveAmount: { value: 0 },
       waveSpeed: { value: 1 },
@@ -2027,6 +2030,7 @@ async function mountHalftoneCanvas(options) {
       interactionUv: { value: new THREE.Vector2(0.5, 0.5) },
       interactionVelocity: { value: new THREE.Vector2(0, 0) },
       dragOffset: { value: new THREE.Vector2(0, 0) },
+      hoverHalftoneActive: { value: 0 },
       hoverHalftonePowerShift: { value: 0 },
       hoverHalftoneRadius: { value: 0.2 },
       hoverHalftoneWidthShift: { value: 0 },
@@ -2594,6 +2598,9 @@ async function mountHalftoneCanvas(options) {
       s_3: { value: settings.halftone.power },
       s_4: { value: settings.halftone.width },
       dashColor: { value: new THREE.Color(settings.halftone.dashColor) },
+      hoverDashColor: {
+        value: new THREE.Color(settings.halftone.hoverDashColor),
+      },
       time: { value: 0 },
       waveAmount: { value: 0 },
       waveSpeed: { value: settings.animation.waveSpeed },
@@ -2601,6 +2608,7 @@ async function mountHalftoneCanvas(options) {
       interactionUv: { value: new THREE.Vector2(0.5, 0.5) },
       interactionVelocity: { value: new THREE.Vector2(0, 0) },
       dragOffset: { value: new THREE.Vector2(0, 0) },
+      hoverHalftoneActive: { value: 0 },
       hoverHalftonePowerShift: { value: 0 },
       hoverHalftoneRadius: { value: settings.animation.hoverHalftoneRadius },
       hoverHalftoneWidthShift: { value: 0 },
@@ -2813,6 +2821,8 @@ async function mountHalftoneCanvas(options) {
       -interaction.pointerVelocityY * getVirtualHeight(),
     );
     halftoneMaterial.uniforms.dragOffset.value.set(0, 0);
+    halftoneMaterial.uniforms.hoverHalftoneActive.value =
+      pointerActive && settings.animation.hoverHalftoneEnabled ? 1 : 0;
     halftoneMaterial.uniforms.hoverHalftonePowerShift.value =
       pointerActive && settings.animation.hoverHalftoneEnabled
         ? settings.animation.hoverHalftonePowerShift

@@ -1,9 +1,13 @@
 import {
   generateReactComponent,
+  parseExportedPreset,
   generateStandaloneHtml,
 } from '@/app/halftone/_lib/exporters';
 import { resolveExportArtifactNames } from '@/app/halftone/_lib/exportNames';
-import { DEFAULT_HALFTONE_SETTINGS } from '@/app/halftone/_lib/state';
+import {
+  DEFAULT_HALFTONE_SETTINGS,
+  normalizeHalftoneStudioSettings,
+} from '@/app/halftone/_lib/state';
 
 describe('halftone export naming', () => {
   it('normalizes free-form export names into safe component and file names', () => {
@@ -33,5 +37,25 @@ describe('halftone export naming', () => {
     );
 
     expect(output).toContain('<title>HeroExport2026</title>');
+  });
+
+  it('parses legacy exported presets without a hover dash color', () => {
+    const output = generateReactComponent(
+      DEFAULT_HALFTONE_SETTINGS,
+      undefined,
+      'legacy hover color preset',
+    );
+    const legacyOutput = output.replace(
+      /("dashColor": "[^"]+"),\n(\s*)"hoverDashColor": "[^"]+"/,
+      '$1',
+    );
+
+    const parsed = parseExportedPreset(legacyOutput);
+
+    expect(
+      normalizeHalftoneStudioSettings(parsed.settings).halftone.hoverDashColor,
+    ).toBe(
+      DEFAULT_HALFTONE_SETTINGS.halftone.hoverDashColor,
+    );
   });
 });

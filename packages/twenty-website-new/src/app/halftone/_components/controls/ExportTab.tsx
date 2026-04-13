@@ -177,6 +177,9 @@ export function ExportTab({
             {`// Dash color: ${settings.halftone.dashColor}`}
           </div>
           <div style={{ color: 'rgba(255, 255, 255, 0.35)' }}>
+            {`// Hover color: ${settings.halftone.hoverDashColor}`}
+          </div>
+          <div style={{ color: 'rgba(255, 255, 255, 0.35)' }}>
             {`// Scale: ${settings.halftone.scale.toFixed(2)}`}
           </div>
           <div style={{ color: 'rgba(255, 255, 255, 0.35)' }}>
