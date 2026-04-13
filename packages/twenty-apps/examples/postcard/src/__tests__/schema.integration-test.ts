@@ -1,7 +1,13 @@
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application.config';
 import { describe, expect, it } from 'vitest';
 
-import { findInstalledApp, findObjectByName } from './helpers';
+import {
+  createPostCard,
+  deletePostCard,
+  findInstalledApp,
+  findObjectByName,
+  isCoreClientAvailable,
+} from './helpers';
 
 describe('App installation', () => {
   it('should find the installed app in the applications list', async () => {
@@ -23,4 +29,16 @@ describe('PostCard object', () => {
     expect(names).toContain('deliveredAt');
     expect(names).toContain('recipient');
   });
+
+  it.skipIf(!isCoreClientAvailable())(
+    'should support CRUD via GraphQL',
+    async () => {
+      const id = await createPostCard({
+        name: 'Schema test postcard',
+        content: 'Hello from integration tests',
+      });
+      expect(id).toBeDefined();
+      await deletePostCard(id);
+    },
+  );
 });
