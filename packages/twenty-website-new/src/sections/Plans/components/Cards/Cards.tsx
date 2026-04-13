@@ -1,3 +1,5 @@
+'use client';
+
 import type { PlanCardType } from '@/sections/Plans/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';

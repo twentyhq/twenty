@@ -23,14 +23,12 @@ import type { Metadata } from 'next';
 const PricingPlansContainer = styled.div`
   display: grid;
   margin: 0 auto;
-  max-width: 820px;
   row-gap: ${theme.spacing(8)};
   width: 100%;
 `;
 
 const PricingBannerContainer = styled.div`
   margin: 0 auto;
-  max-width: 820px;
   width: 100%;
 `;
 

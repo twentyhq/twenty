@@ -13,21 +13,26 @@ const PRO_BULLETS_DEFAULT = [
 
 const PRO_BULLETS_SELF_HOST_MONTHLY = [
   { text: 'Full customisation' },
-  { text: 'AI Agents with custom skills' },
-  { text: 'Standard support' },
+  { text: 'Community support' },
 ];
 
 const PRO_BULLETS_SELF_HOST_YEARLY = [
   { text: 'Full customisation' },
-  { text: 'AI Agents with custom skills' },
-  { text: 'Standard support' },
+  { text: 'Community support' },
 ];
 
-const ORGANIZATION_BULLETS = [
+const ORGANIZATION_BULLETS_DEFAULT = [
   { text: 'Everything in Pro' },
   { text: 'Roles & Permissions' },
   { text: 'SAML/OIDC SSO' },
   { text: '2K automation credits' },
+  { text: 'Priority support' },
+];
+
+const ORGANIZATION_BULLETS_SELF_HOST = [
+  { text: 'Everything in Pro' },
+  { text: 'Roles & Permissions' },
+  { text: 'SAML/OIDC SSO' },
   { text: 'Priority support' },
 ];
 
@@ -38,33 +43,33 @@ export const PLANS_DATA = {
     cells: {
       cloud: {
         monthly: {
-          featureBullets: ORGANIZATION_BULLETS,
+          featureBullets: ORGANIZATION_BULLETS_DEFAULT,
           price: {
-            body: { text: '/month, paid monthly' },
-            heading: { fontFamily: 'sans', text: '$25 USD' },
+            body: { text: '/user/month' },
+            heading: { fontFamily: 'sans', text: '$25' },
           },
         },
         yearly: {
-          featureBullets: ORGANIZATION_BULLETS,
+          featureBullets: ORGANIZATION_BULLETS_DEFAULT,
           price: {
-            body: { text: '/month, paid yearly' },
-            heading: { fontFamily: 'sans', text: '$19 USD' },
+            body: { text: '/user/month' },
+            heading: { fontFamily: 'sans', text: '$19' },
           },
         },
       },
       selfHost: {
         monthly: {
-          featureBullets: ORGANIZATION_BULLETS,
+          featureBullets: ORGANIZATION_BULLETS_SELF_HOST,
           price: {
-            body: { text: '/month, paid monthly' },
-            heading: { fontFamily: 'sans', text: '$25 USD' },
+            body: { text: '/user/month' },
+            heading: { fontFamily: 'sans', text: '$25' },
           },
         },
         yearly: {
-          featureBullets: ORGANIZATION_BULLETS,
+          featureBullets: ORGANIZATION_BULLETS_SELF_HOST,
           price: {
-            body: { text: '/month, paid yearly' },
-            heading: { fontFamily: 'sans', text: '$19 USD' },
+            body: { text: '/user/month' },
+            heading: { fontFamily: 'sans', text: '$19' },
           },
         },
       },
@@ -81,15 +86,15 @@ export const PLANS_DATA = {
         monthly: {
           featureBullets: PRO_BULLETS_DEFAULT,
           price: {
-            body: { text: '/month, paid monthly' },
-            heading: { fontFamily: 'sans', text: '$12 USD' },
+            body: { text: '/user/month' },
+            heading: { fontFamily: 'sans', text: '$12' },
           },
         },
         yearly: {
           featureBullets: PRO_BULLETS_DEFAULT,
           price: {
-            body: { text: '/month, paid yearly' },
-            heading: { fontFamily: 'sans', text: '$9 USD' },
+            body: { text: '/user/month' },
+            heading: { fontFamily: 'sans', text: '$9' },
           },
         },
       },
@@ -97,15 +102,15 @@ export const PLANS_DATA = {
         monthly: {
           featureBullets: PRO_BULLETS_SELF_HOST_MONTHLY,
           price: {
-            body: { text: '/month, paid monthly' },
-            heading: { fontFamily: 'sans', text: '$0 USD' },
+            body: { text: '/user/month' },
+            heading: { fontFamily: 'sans', text: '$0' },
           },
         },
         yearly: {
           featureBullets: PRO_BULLETS_SELF_HOST_YEARLY,
           price: {
-            body: { text: '/month, paid yearly' },
-            heading: { fontFamily: 'sans', text: '$0 USD' },
+            body: { text: '/user/month' },
+            heading: { fontFamily: 'sans', text: '$0' },
           },
         },
       },
