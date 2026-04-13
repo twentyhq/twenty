@@ -5,15 +5,12 @@ import { styled } from '@linaria/react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-const MARKETING_ORIGIN =
-  process.env.NEXT_PUBLIC_MARKETING_ASSET_ORIGIN ?? 'https://twenty.com';
-
 function resolveAssetUrl(url: string | undefined): string {
   if (!url) {
     return '';
   }
   if (url.startsWith('/')) {
-    return `${MARKETING_ORIGIN}${url}`;
+    return url;
   }
   return url;
 }
@@ -110,7 +107,8 @@ const Prose = styled.div`
     display: block;
     height: auto;
     margin-top: ${theme.spacing(6)};
-    max-width: 100%;
+    max-width: min(100%, 720px);
+    width: auto;
   }
 
   hr {
@@ -142,7 +140,13 @@ export function ReleaseMarkdown({ markdown }: ReleaseMarkdownProps) {
             </a>
           ),
           img: ({ alt, src, ...props }) => (
-            <img alt={alt ?? ''} src={resolveAssetUrl(src)} {...props} />
+            <img
+              alt={alt ?? ''}
+              decoding="async"
+              loading="lazy"
+              src={resolveAssetUrl(src)}
+              {...props}
+            />
           ),
         }}
         remarkPlugins={[remarkGfm]}
