@@ -60,11 +60,6 @@ export const seedFeatureFlags = async ({
         workspaceId: workspaceId,
         value: true,
       },
-      {
-        key: FeatureFlagKey.IS_RECORD_TABLE_WIDGET_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
     ])
     .execute();
 };
