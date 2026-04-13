@@ -22,7 +22,7 @@ const StyledVisual = styled.div`
 `;
 
 const StyledMasked = styled.div`
-  background-color: ${theme.colors.primary.background[100]};
+  background-color: #1c1c1c;
   height: 100%;
   isolation: isolate;
   -webkit-mask-image: ${mobileMask};

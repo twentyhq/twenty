@@ -1,6 +1,6 @@
 'use client';
 
-import { HalftoneCanvas } from '@/app/halftone/_components/HalftoneCanvas';
+import { HourglassCanvas } from '@/illustrations/Testimonials/HourglassCanvas';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -473,8 +473,6 @@ const HOURGLASS_INITIAL_POSE: HalftoneExportPose = {
   timeElapsed: 411.9648000000736,
 };
 
-const NO_OP = () => {};
-
 const VisualFrame = styled.div`
   background-color: transparent;
   border-radius: ${theme.radius(1)};
@@ -534,12 +532,9 @@ export function Hourglass() {
   return (
     <VisualFrame>
       {geometry ? (
-        <HalftoneCanvas
+        <HourglassCanvas
           geometry={geometry}
-          imageElement={null}
           initialPose={HOURGLASS_INITIAL_POSE}
-          onFirstInteraction={NO_OP}
-          onPoseChange={NO_OP}
           previewDistance={HOURGLASS_PREVIEW_DISTANCE}
           settings={HOURGLASS_SETTINGS}
         />

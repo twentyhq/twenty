@@ -32,12 +32,9 @@ import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-v
 import { PostgresCredentialsEntity } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { RemovedSinceVersion } from 'src/engine/core-modules/upgrade/types/removed-since-version.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import {
-  AUTO_SELECT_FAST_MODEL_ID,
-  AUTO_SELECT_SMART_MODEL_ID,
-} from 'twenty-shared/constants';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
@@ -53,6 +50,10 @@ import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/v
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
+import {
+  AUTO_SELECT_FAST_MODEL_ID,
+  AUTO_SELECT_SMART_MODEL_ID,
+} from 'twenty-shared/constants';
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
@@ -296,7 +297,7 @@ export class WorkspaceEntity {
 
   @Field(() => String, { nullable: true })
   @Column({ type: 'varchar', nullable: true })
-  version: string | null;
+  version: RemovedSinceVersion<'1.23.0', string | null>;
 
   @Field(() => String, { nullable: false })
   @Column({

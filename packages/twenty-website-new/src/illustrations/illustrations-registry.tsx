@@ -22,8 +22,6 @@ import { Lock } from './ThreeCards/Lock';
 import { Programming } from './ThreeCards/Programming';
 import { SingleScreen } from './ThreeCards/SingleScreen';
 import { Speed } from './ThreeCards/Speed';
-import { Sun } from './ThreeCards/Sun';
-import { Wheelx } from './ThreeCards/Wheelx';
 import { Logo as WhyTwentyStepperLogo } from './WhyTwentyStepper/Logo';
 
 export const THREE_CARDS_ILLUSTRATIONS = {
@@ -36,8 +34,6 @@ export const THREE_CARDS_ILLUSTRATIONS = {
   programming: Programming,
   singleScreen: SingleScreen,
   speed: Speed,
-  sun: Sun,
-  wheelx: Wheelx,
 } as const satisfies Record<string, ComponentType>;
 
 export type ThreeCardsIllustrationId = keyof typeof THREE_CARDS_ILLUSTRATIONS;

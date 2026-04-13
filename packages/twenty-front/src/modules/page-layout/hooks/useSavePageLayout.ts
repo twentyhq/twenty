@@ -1,3 +1,4 @@
+import { useCreatePendingFieldsWidgetViews } from '@/page-layout/hooks/useCreatePendingFieldsWidgetViews';
 import { useUpdatePageLayoutWithTabsAndWidgets } from '@/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
@@ -41,12 +42,17 @@ export const useSavePageLayout = (pageLayoutIdFromProps: string) => {
   const { updatePageLayoutWithTabsAndWidgets } =
     useUpdatePageLayoutWithTabsAndWidgets();
 
+  const { createPendingFieldsWidgetViews } =
+    useCreatePendingFieldsWidgetViews();
+
   const featureFlags = useFeatureFlagsMap();
   const isRecordPageLayoutEditingEnabled =
     featureFlags[FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED];
   const store = useStore();
 
   const savePageLayout = useCallback(async () => {
+    await createPendingFieldsWidgetViews(pageLayoutId);
+
     const pageLayoutDraft = store.get(pageLayoutDraftCallbackState);
     const updateInput = convertPageLayoutDraftToUpdateInput(pageLayoutDraft, {
       shouldFilterDynamicRelationWidgets: !isRecordPageLayoutEditingEnabled,
@@ -84,6 +90,7 @@ export const useSavePageLayout = (pageLayoutIdFromProps: string) => {
 
     return result;
   }, [
+    createPendingFieldsWidgetViews,
     isRecordPageLayoutEditingEnabled,
     pageLayoutCurrentLayoutsCallbackState,
     pageLayoutDraftCallbackState,

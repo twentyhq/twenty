@@ -220,7 +220,8 @@
       "options": {
         "cwd": "packages/twenty-server",
         "command": "node dist/command/command.js generate:instance-command"
-      }
+      },
+      "cache": false
     },
     "generate:integration-test": {
       "executor": "nx:run-commands",

@@ -27,6 +27,7 @@ import { resetUniversalFlatEntityForeignKeyAggregators } from 'src/engine/worksp
 import { flatEntityDeletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/universal-flat-entity-deleted-created-updated-matrix-dispatcher.util';
 import { getMetadataEmptyWorkspaceMigrationActionRecord } from 'src/engine/workspace-manager/workspace-migration/utils/get-metadata-empty-workspace-migration-action-record.util';
 import { shouldInferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration/utils/should-infer-deletion-from-missing-entities.util';
+import { topologicallySortUniversalFlatEntitiesForSelfReferentialFks } from 'src/engine/workspace-manager/workspace-migration/utils/topologically-sort-universal-flat-entities-for-self-referential-fks.util';
 import { FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { FailedFlatEntityValidateAndBuild } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/failed-flat-entity-validate-and-build.type';
 import { SuccessfulFlatEntityValidateAndBuild } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/successful-flat-entity-validate-and-build.type';
@@ -247,7 +248,14 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       `EntityBuilder ${this.metadataName}`,
       'creation validation',
     );
-    for (const flatEntityToCreateUniversalIdentifier in createdFlatEntityMaps.byUniversalIdentifier) {
+
+    const sortedCreateUniversalIdentifiers =
+      topologicallySortUniversalFlatEntitiesForSelfReferentialFks({
+        metadataName: this.metadataName,
+        universalFlatEntityMaps: createdFlatEntityMaps,
+      });
+
+    for (const flatEntityToCreateUniversalIdentifier of sortedCreateUniversalIdentifiers) {
       const rawUniversalflatEntityToCreate =
         findFlatEntityByUniversalIdentifierOrThrow({
           universalIdentifier: flatEntityToCreateUniversalIdentifier,
