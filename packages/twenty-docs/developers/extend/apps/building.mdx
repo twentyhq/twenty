@@ -555,7 +555,7 @@ export default defineLogicFunction({
   httpRouteTriggerSettings: {
     path: '/webhook',
     httpMethod: 'POST',
-    isAuthRequired: true,
+    isAuthRequired: false,
     forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
   },
 });
