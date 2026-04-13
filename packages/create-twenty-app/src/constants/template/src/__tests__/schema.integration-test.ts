@@ -1,11 +1,25 @@
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { describe, expect, it } from 'vitest';
 
-import { core, findInstalledApp, isCoreClientAvailable } from './helpers';
+import { core, isCoreClientAvailable, metadata } from './helpers/client';
 
 describe('App installation', () => {
   it('should find the installed app in the applications list', async () => {
-    const app = await findInstalledApp(APPLICATION_UNIVERSAL_IDENTIFIER);
+    const client = metadata();
+
+    const result = await client.query({
+      findManyApplications: {
+        id: true,
+        name: true,
+        universalIdentifier: true,
+      },
+    });
+
+    const app = result.findManyApplications.find(
+      (a: { universalIdentifier: string }) =>
+        a.universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
+    );
+
     expect(app).toBeDefined();
   });
 });

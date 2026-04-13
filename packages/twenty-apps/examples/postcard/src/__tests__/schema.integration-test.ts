@@ -1,28 +1,57 @@
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application.config';
 import { describe, expect, it } from 'vitest';
 
-import {
-  createPostCard,
-  deletePostCard,
-  findInstalledApp,
-  findObjectByName,
-  isCoreClientAvailable,
-} from './helpers';
+import { isCoreClientAvailable, metadata } from './helpers/client';
+import { createPostCard, deletePostCard } from './helpers/mutations';
 
 describe('App installation', () => {
   it('should find the installed app in the applications list', async () => {
-    const app = await findInstalledApp(APPLICATION_UNIVERSAL_IDENTIFIER);
+    const client = metadata();
+
+    const result = await client.query({
+      findManyApplications: {
+        id: true,
+        name: true,
+        universalIdentifier: true,
+      },
+    });
+
+    const app = result.findManyApplications.find(
+      (a: { universalIdentifier: string }) =>
+        a.universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
+    );
+
     expect(app).toBeDefined();
   });
 });
 
 describe('PostCard object', () => {
   it('should exist with expected fields and relations', async () => {
-    const obj = await findObjectByName('postCard');
+    const client = metadata();
 
+    const { objects } = await client.query({
+      objects: {
+        __args: {
+          paging: { first: 1000 },
+          filter: { nameSingular: { eq: 'postCard' } },
+        },
+        edges: {
+          node: {
+            nameSingular: true,
+            fields: {
+              edges: { node: { name: true } },
+            },
+          },
+        },
+      },
+    });
+
+    const obj = objects.edges[0]?.node;
     expect(obj).toBeDefined();
 
-    const names = obj!.fields.edges.map((e) => e.node.name);
+    const names = obj!.fields.edges.map(
+      (e: { node: { name: string } }) => e.node.name,
+    );
     expect(names).toContain('name');
     expect(names).toContain('content');
     expect(names).toContain('status');
