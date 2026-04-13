@@ -41,7 +41,7 @@ export const prefillFrontComponentCommandMenuItems = async ({
     return;
   }
 
-  const { twentyStandardFlatApplication } =
+  const { workspaceCustomFlatApplication } =
     await applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
       { workspaceId },
     );
@@ -110,7 +110,7 @@ export const prefillFrontComponentCommandMenuItems = async ({
         },
         workspaceId,
         applicationUniversalIdentifier:
-          twentyStandardFlatApplication.universalIdentifier,
+          workspaceCustomFlatApplication.universalIdentifier,
       },
     );
 
