@@ -328,6 +328,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       const newWidget: PageLayoutWidget = {
         __typename: 'PageLayoutWidget',
         id: widgetId,
+        isActive: true,
         pageLayoutTabId: tabId,
         title: frontComponent.name,
         type: WidgetType.FRONT_COMPONENT,

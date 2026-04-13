@@ -8,6 +8,7 @@ export type ViewField = {
   viewId?: string;
   fieldMetadataId: string;
   position: number;
+  isActive: boolean;
   isVisible: boolean;
   size: number;
   aggregateOperation?: AggregateOperations | null;
