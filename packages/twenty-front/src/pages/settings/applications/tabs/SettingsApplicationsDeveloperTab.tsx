@@ -27,6 +27,7 @@ import {
   IconCopy,
   IconFileInfo,
   OverflowingTextWithTooltip,
+  InlineBanner,
 } from 'twenty-ui/display';
 import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -221,6 +222,15 @@ export const SettingsApplicationsDeveloperTab = () => {
           <H2Title
             title={t`NPM packages`}
             description={t`Apps made by other developers published on npm`}
+          />
+          <InlineBanner
+            color={'danger'}
+            message={t`These apps are not vetted. Use at your own risk.`}
+            button={{
+              title: t`Access`,
+              hidden: false,
+              onClick: () => console.log('toto'),
+            }}
           />
           <StyledSearchInputContainer>
             <SearchInput
