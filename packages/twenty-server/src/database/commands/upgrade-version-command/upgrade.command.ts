@@ -130,8 +130,8 @@ export class UpgradeCommand extends CommandRunner {
 
     try {
       await this.runBootstrapMigrations();
-      await this.backfillWorkspaceCreatedIn1_21_0Cursors();
       await this.guardAllActiveOrSuspendedWorkspacesAreIn1_21_0();
+      await this.backfillWorkspaceCreatedIn1_21_0Cursors();
 
       const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
 
