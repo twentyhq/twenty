@@ -1589,6 +1589,11 @@ msgstr "Tüm sistem nesneleri zaten kenar çubuğunda"
 msgid "All tasks addressed. Maintain the momentum."
 msgstr "Tüm görevler ele alındı. İvmeyi koruyun."
 
+#. js-lingui-id: 45Gm/K
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+msgid "All the applications currently installed on this workspace"
+msgstr ""
+
 #. js-lingui-id: XuuWVF
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 msgid "All the standard objects"
@@ -7850,10 +7855,10 @@ msgstr "Kurulum"
 msgid "Installed"
 msgstr "Yüklü"
 
-#. js-lingui-id: N52taw
+#. js-lingui-id: OMxM9j
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-msgid "Installed applications"
-msgstr "Yüklü uygulamalar"
+msgid "Installed apps"
+msgstr ""
 
 #. js-lingui-id: wJJ+Wy
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -8609,11 +8614,6 @@ msgstr "şununla bir e-postayı ilişkilendirdi"
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "list"
 msgstr ""
-
-#. js-lingui-id: 5Kn+XX
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-msgid "List installed applications. Use filter to search for a specific application"
-msgstr "Yüklü uygulamaları listeleyin. Belirli bir uygulamayı aramak için filtreyi kullanın"
 
 #. js-lingui-id: Ap948/
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -14263,6 +14263,11 @@ msgstr "Bu uygulama, npm'de yayımlandığı için pazaryerinde listeleniyor."
 #: src/pages/settings/applications/components/SettingsApplicationDetailTitle.tsx
 msgid "This application is not listed on the marketplace. It was shared via a direct link."
 msgstr "Bu uygulama pazaryerinde listelenmiyor. Doğrudan bir bağlantı aracılığıyla paylaşıldı."
+
+#. js-lingui-id: D8qhoN
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+msgid "This application is required for your workspace to function properly and cannot be uninstalled."
+msgstr ""
 
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx

@@ -1589,6 +1589,11 @@ msgstr "모든 시스템 개체가 이미 사이드바에 있습니다"
 msgid "All tasks addressed. Maintain the momentum."
 msgstr "모든 작업이 처리되었습니다. 이 기세를 유지하세요."
 
+#. js-lingui-id: 45Gm/K
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+msgid "All the applications currently installed on this workspace"
+msgstr ""
+
 #. js-lingui-id: XuuWVF
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 msgid "All the standard objects"
@@ -7850,10 +7855,10 @@ msgstr "설치"
 msgid "Installed"
 msgstr "설치됨"
 
-#. js-lingui-id: N52taw
+#. js-lingui-id: OMxM9j
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-msgid "Installed applications"
-msgstr "설치된 애플리케이션"
+msgid "Installed apps"
+msgstr ""
 
 #. js-lingui-id: wJJ+Wy
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -8609,11 +8614,6 @@ msgstr "다음과 이메일을 연결함"
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "list"
 msgstr ""
-
-#. js-lingui-id: 5Kn+XX
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-msgid "List installed applications. Use filter to search for a specific application"
-msgstr "설치된 애플리케이션 목록입니다. 특정 애플리케이션을 검색하려면 필터를 사용하세요."
 
 #. js-lingui-id: Ap948/
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -14263,6 +14263,11 @@ msgstr "이 앱은 npm에 게시되어 있어 마켓플레이스에 표시됩니
 #: src/pages/settings/applications/components/SettingsApplicationDetailTitle.tsx
 msgid "This application is not listed on the marketplace. It was shared via a direct link."
 msgstr "이 앱은 마켓플레이스에 등재되어 있지 않습니다. 직접 링크로 공유되었습니다."
+
+#. js-lingui-id: D8qhoN
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+msgid "This application is required for your workspace to function properly and cannot be uninstalled."
+msgstr ""
 
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx

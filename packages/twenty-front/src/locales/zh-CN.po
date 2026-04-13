@@ -1589,6 +1589,11 @@ msgstr "所有系统对象已在侧边栏中"
 msgid "All tasks addressed. Maintain the momentum."
 msgstr "所有任务都已处理。继续保持势头。"
 
+#. js-lingui-id: 45Gm/K
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+msgid "All the applications currently installed on this workspace"
+msgstr ""
+
 #. js-lingui-id: XuuWVF
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 msgid "All the standard objects"
@@ -7850,10 +7855,10 @@ msgstr "安装"
 msgid "Installed"
 msgstr "已安装"
 
-#. js-lingui-id: N52taw
+#. js-lingui-id: OMxM9j
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-msgid "Installed applications"
-msgstr "已安装的应用程序"
+msgid "Installed apps"
+msgstr ""
 
 #. js-lingui-id: wJJ+Wy
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -8609,11 +8614,6 @@ msgstr "将一封电子邮件与"
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "list"
 msgstr ""
-
-#. js-lingui-id: 5Kn+XX
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-msgid "List installed applications. Use filter to search for a specific application"
-msgstr "列出已安装的应用程序。使用筛选器搜索特定的应用程序。"
 
 #. js-lingui-id: Ap948/
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -14263,6 +14263,11 @@ msgstr "此应用已在应用市场中列出，因为它已发布到 npm。"
 #: src/pages/settings/applications/components/SettingsApplicationDetailTitle.tsx
 msgid "This application is not listed on the marketplace. It was shared via a direct link."
 msgstr "此应用未在应用市场上架。它是通过直接链接共享的。"
+
+#. js-lingui-id: D8qhoN
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+msgid "This application is required for your workspace to function properly and cannot be uninstalled."
+msgstr ""
 
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx

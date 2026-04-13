@@ -1584,6 +1584,11 @@ msgstr ""
 msgid "All tasks addressed. Maintain the momentum."
 msgstr ""
 
+#. js-lingui-id: 45Gm/K
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+msgid "All the applications currently installed on this workspace"
+msgstr ""
+
 #. js-lingui-id: XuuWVF
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 msgid "All the standard objects"
@@ -7845,9 +7850,9 @@ msgstr ""
 msgid "Installed"
 msgstr ""
 
-#. js-lingui-id: N52taw
+#. js-lingui-id: OMxM9j
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-msgid "Installed applications"
+msgid "Installed apps"
 msgstr ""
 
 #. js-lingui-id: wJJ+Wy
@@ -8603,11 +8608,6 @@ msgstr ""
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "list"
-msgstr ""
-
-#. js-lingui-id: 5Kn+XX
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-msgid "List installed applications. Use filter to search for a specific application"
 msgstr ""
 
 #. js-lingui-id: Ap948/
@@ -14257,6 +14257,11 @@ msgstr ""
 #. js-lingui-id: SYslQU
 #: src/pages/settings/applications/components/SettingsApplicationDetailTitle.tsx
 msgid "This application is not listed on the marketplace. It was shared via a direct link."
+msgstr ""
+
+#. js-lingui-id: D8qhoN
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+msgid "This application is required for your workspace to function properly and cannot be uninstalled."
 msgstr ""
 
 #. js-lingui-id: SLIRqz
