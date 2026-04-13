@@ -7,6 +7,9 @@ import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { ThreeCardsCardShape } from './CardShape';
 
+const CARD_OUTLINE_COLOR = theme.colors.primary.border[20];
+const CARD_DIVIDER_COLOR = theme.colors.primary.border[40];
+
 const IllustrationCardContainer = styled.div`
   position: relative;
   display: grid;
@@ -24,7 +27,7 @@ const IllustrationCardContainer = styled.div`
 
 const CardRule = styled.div`
   height: 0;
-  border-top: 1px dotted ${theme.colors.primary.border[20]};
+  border-top: 1px dotted ${CARD_DIVIDER_COLOR};
   width: 100%;
 `;
 
@@ -48,13 +51,17 @@ const AttributionPipe = styled.span`
   display: block;
   width: 0;
   height: 21px;
-  border-left: 1px solid ${theme.colors.primary.border[20]};
+  border-left: 1px solid ${CARD_DIVIDER_COLOR};
 `;
 
 const CardBodyCell = styled.div`
   align-self: start;
   min-height: 0;
   min-width: 0;
+`;
+
+const CardBody = styled(Body)`
+  color: ${theme.colors.primary.text[80]};
 `;
 
 type IllustrationCardProps = {
@@ -74,7 +81,7 @@ export function IllustrationCard({
       {variant === 'shaped' && (
         <ThreeCardsCardShape
           fillColor={theme.colors.primary.background[100]}
-          strokeColor={theme.colors.primary.border[40]}
+          strokeColor={CARD_OUTLINE_COLOR}
         />
       )}
       <Heading
@@ -89,7 +96,7 @@ export function IllustrationCard({
       </CardEmbed>
       <CardRule />
       <CardBodyCell>
-        <Body body={illustrationCard.body} size="sm" weight="regular" />
+        <CardBody body={illustrationCard.body} size="sm" weight="regular" />
       </CardBodyCell>
 
       {illustrationCard.attribution && (

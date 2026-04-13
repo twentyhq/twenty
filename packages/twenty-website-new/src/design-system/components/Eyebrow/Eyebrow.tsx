@@ -6,17 +6,19 @@ import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
 const EyebrowRow = styled.div`
-  align-items: start;
-  display: grid;
+  align-items: center;
+  display: flex;
   gap: ${theme.spacing(2)};
-  grid-template-columns: auto 1fr;
   text-align: start;
 `;
 
 const IconWrapper = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   height: ${theme.lineHeight(6)};
+  justify-content: center;
+  width: ${theme.lineHeight(6)};
+  flex-shrink: 0;
 `;
 
 const eyebrowColorPrimary = css`

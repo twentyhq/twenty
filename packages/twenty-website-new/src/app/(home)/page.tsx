@@ -22,12 +22,48 @@ import { Testimonials } from '@/sections/Testimonials/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Twenty — Open Source CRM',
   description: 'Modular, scalable open source CRM for modern teams.',
 };
+
+const ThreeCardsIllustrationIntroContent = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: ${theme.spacing(2)};
+  width: 100%;
+`;
+
+const ThreeCardsIllustrationIntroHeader = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: ${theme.spacing(6)};
+  width: 100%;
+`;
+
+const threeCardsIllustrationHeadingClassName = css`
+  width: 100%;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    max-width: 921px;
+  }
+
+  [data-family='sans'] {
+    letter-spacing: -0.02em;
+  }
+`;
+
+const threeCardsIllustrationBodyClassName = css`
+  width: 100%;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    max-width: 571px;
+  }
+`;
 
 export default async function HomePage() {
   const stats = await fetchCommunityStats();
@@ -84,16 +120,25 @@ export default async function HomePage() {
 
       <ThreeCards.Root backgroundColor={theme.colors.primary.background[100]}>
         <ThreeCards.Intro page={Pages.Home} align="left">
-          <Eyebrow
-            colorScheme="primary"
-            heading={THREE_CARDS_ILLUSTRATION_DATA.eyebrow.heading}
-          />
-          <Heading
-            segments={THREE_CARDS_ILLUSTRATION_DATA.heading}
-            size="lg"
-            weight="light"
-          />
-          <Body body={THREE_CARDS_ILLUSTRATION_DATA.body} size="sm" />
+          <ThreeCardsIllustrationIntroContent>
+            <ThreeCardsIllustrationIntroHeader>
+              <Eyebrow
+                colorScheme="primary"
+                heading={THREE_CARDS_ILLUSTRATION_DATA.eyebrow.heading}
+              />
+              <Heading
+                className={threeCardsIllustrationHeadingClassName}
+                segments={THREE_CARDS_ILLUSTRATION_DATA.heading}
+                size="lg"
+                weight="light"
+              />
+            </ThreeCardsIllustrationIntroHeader>
+            <Body
+              body={THREE_CARDS_ILLUSTRATION_DATA.body}
+              className={threeCardsIllustrationBodyClassName}
+              size="sm"
+            />
+          </ThreeCardsIllustrationIntroContent>
         </ThreeCards.Intro>
         <ThreeCards.IllustrationCards
           illustrationCards={THREE_CARDS_ILLUSTRATION_DATA.illustrationCards}

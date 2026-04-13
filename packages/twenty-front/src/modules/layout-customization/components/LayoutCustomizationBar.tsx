@@ -46,7 +46,7 @@ const LayoutCustomizationBarContent = () => {
         ease: 'easeInOut',
       }}
     >
-      <StyledContainer>
+      <StyledContainer data-globally-prevent-click-outside="true">
         <StyledTitle>
           <IconPaint size={theme.icon.size.md} />
           {t`Layout customization`}

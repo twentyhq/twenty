@@ -73,6 +73,8 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
       : undefined,
   extra: {
     query_timeout: Number(process.env.PG_DATABASE_PRIMARY_TIMEOUT_MS ?? 10000),
+    idleTimeoutMillis: Number(process.env.PG_POOL_IDLE_TIMEOUT_MS ?? 600000),
+    allowExitOnIdle: process.env.PG_POOL_ALLOW_EXIT_ON_IDLE === 'true',
   },
 };
 

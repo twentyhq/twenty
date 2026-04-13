@@ -4,12 +4,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AIChatSuggestedPrompts } from '@/ai/components/suggested-prompts/AIChatSuggestedPrompts';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
+import { agentChatHasMessageComponentSelector } from '@/ai/states/agentChatHasMessageComponentSelector';
 import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
 import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
-import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
-import { agentChatHasMessageComponentSelector } from '@/ai/states/agentChatHasMessageComponentSelector';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -26,7 +27,11 @@ type AIChatEmptyStateProps = {
 };
 
 export const AIChatEmptyState = ({ editor }: AIChatEmptyStateProps) => {
-  const agentChatError = useAtomStateValue(agentChatErrorState);
+  const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
+  const agentChatError = useAtomComponentFamilyStateValue(
+    agentChatErrorComponentFamilyState,
+    { threadId: currentAIChatThread },
+  );
   const agentChatThreadsLoading = useAtomStateValue(
     agentChatThreadsLoadingState,
   );
@@ -36,7 +41,6 @@ export const AIChatEmptyState = ({ editor }: AIChatEmptyStateProps) => {
   const skipMessagesSkeletonUntilLoaded = useAtomStateValue(
     skipMessagesSkeletonUntilLoadedState,
   );
-  const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
 
   const hasMessages = useAtomComponentSelectorValue(
     agentChatHasMessageComponentSelector,

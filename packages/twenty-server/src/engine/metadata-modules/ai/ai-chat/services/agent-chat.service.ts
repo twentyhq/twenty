@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { ExtendedUIMessage } from 'twenty-shared/ai';
 import { In, Repository } from 'typeorm';
+import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
 
@@ -122,18 +123,16 @@ export class AgentChatService {
     let actualTurnId = turnId;
 
     if (!actualTurnId) {
-      const turn = this.turnRepository.create({
+      const turnInsertResult = await this.turnRepository.insert({
         threadId,
         agentId: agentId ?? null,
         workspaceId,
       });
 
-      const savedTurn = await this.turnRepository.save(turn);
-
-      actualTurnId = savedTurn.id;
+      actualTurnId = turnInsertResult.identifiers[0].id as string;
     }
 
-    const message = this.messageRepository.create({
+    const messageValues = {
       ...(id ? { id } : {}),
       threadId,
       turnId: actualTurnId,
@@ -141,21 +140,33 @@ export class AgentChatService {
       agentId: agentId ?? null,
       processedAt: new Date(),
       workspaceId,
-    });
+    };
 
-    const savedMessage = await this.messageRepository.save(message);
+    const insertResult = await this.messageRepository.insert(messageValues);
+
+    const savedMessageId = (id ?? insertResult.identifiers[0].id) as string;
 
     if (uiMessage.parts && uiMessage.parts.length > 0) {
       const dbParts = mapUIMessagePartsToDBParts(
         uiMessage.parts,
-        savedMessage.id,
+        savedMessageId,
         workspaceId,
       );
 
-      await this.messagePartRepository.save(dbParts);
+      await this.messagePartRepository.insert(
+        dbParts as QueryDeepPartialEntity<AgentMessagePartEntity>[],
+      );
     }
 
-    return savedMessage;
+    return {
+      id: savedMessageId,
+      threadId,
+      turnId: actualTurnId,
+      role: uiMessage.role as AgentMessageRole,
+      agentId: agentId ?? null,
+      processedAt: new Date(),
+      workspaceId,
+    } as AgentMessageEntity;
   }
 
   async getMessagesForThread(threadId: string, userWorkspaceId: string) {
@@ -193,7 +204,7 @@ export class AgentChatService {
     fileIds?: string[];
     workspaceId: string;
   }): Promise<AgentMessageEntity> {
-    const message = this.messageRepository.create({
+    const messageValues = {
       ...(id ? { id } : {}),
       threadId,
       turnId: null,
@@ -201,9 +212,11 @@ export class AgentChatService {
       agentId: null,
       status: AgentMessageStatus.QUEUED,
       workspaceId,
-    });
+    };
 
-    const savedMessage = await this.messageRepository.save(message);
+    const insertResult = await this.messageRepository.insert(messageValues);
+
+    const savedMessageId = (id ?? insertResult.identifiers[0].id) as string;
 
     const files =
       fileIds && fileIds.length > 0
@@ -213,28 +226,29 @@ export class AgentChatService {
         : [];
 
     const parts = [
-      this.messagePartRepository.create({
-        messageId: savedMessage.id,
+      {
+        messageId: savedMessageId,
         orderIndex: 0,
         type: 'text',
         textContent: text,
         workspaceId,
-      }),
-      ...files.map((file, index) =>
-        this.messagePartRepository.create({
-          messageId: savedMessage.id,
-          orderIndex: index + 1,
-          type: 'file',
-          fileId: file.id,
-          fileFilename: file.path.split('/').pop() ?? null,
-          workspaceId,
-        }),
-      ),
+      },
+      ...files.map((file, index) => ({
+        messageId: savedMessageId,
+        orderIndex: index + 1,
+        type: 'file',
+        fileId: file.id,
+        fileFilename: file.path.split('/').pop() ?? null,
+        workspaceId,
+      })),
     ];
 
-    await this.messagePartRepository.save(parts);
+    await this.messagePartRepository.insert(parts);
 
-    return savedMessage;
+    return {
+      id: savedMessageId,
+      ...messageValues,
+    } as AgentMessageEntity;
   }
 
   async getQueuedMessages(threadId: string): Promise<AgentMessageEntity[]> {
@@ -270,30 +284,30 @@ export class AgentChatService {
     threadId: string,
     workspaceId: string,
   ): Promise<string | null> {
-    const turn = this.turnRepository.create({
+    const turnInsertResult = await this.turnRepository.insert({
       threadId,
       agentId: null,
       workspaceId,
     });
 
-    const savedTurn = await this.turnRepository.save(turn);
+    const savedTurnId = turnInsertResult.identifiers[0].id as string;
 
     const result = await this.messageRepository.update(
       { id: messageId, threadId, status: AgentMessageStatus.QUEUED },
       {
         status: AgentMessageStatus.SENT,
         processedAt: new Date(),
-        turnId: savedTurn.id,
+        turnId: savedTurnId,
       },
     );
 
     if ((result.affected ?? 0) === 0) {
-      await this.turnRepository.delete(savedTurn.id);
+      await this.turnRepository.delete(savedTurnId);
 
       return null;
     }
 
-    return savedTurn.id;
+    return savedTurnId;
   }
 
   async generateTitleIfNeeded({

@@ -11,8 +11,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { t } from '@lingui/core/macro';
 import {
   IconChartBar,
@@ -40,10 +38,6 @@ export const SettingsAI = () => {
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID,
-  );
-
-  const isUsageAnalyticsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_USAGE_ANALYTICS_ENABLED,
   );
 
   const handleCreateTool = async () => {
@@ -100,15 +94,11 @@ export const SettingsAI = () => {
       title: t`Tools`,
       Icon: IconTool,
     },
-    ...(isUsageAnalyticsEnabled
-      ? [
-          {
-            id: SETTINGS_AI_TABS.TABS_IDS.USAGE,
-            title: t`Usage`,
-            Icon: IconChartBar,
-          },
-        ]
-      : []),
+    {
+      id: SETTINGS_AI_TABS.TABS_IDS.USAGE,
+      title: t`Usage`,
+      Icon: IconChartBar,
+    },
     {
       id: SETTINGS_AI_TABS.TABS_IDS.MORE,
       title: t`More`,

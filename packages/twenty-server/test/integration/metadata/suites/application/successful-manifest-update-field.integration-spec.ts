@@ -268,4 +268,55 @@ describe('Manifest update - fields', () => {
       ),
     ).toBeUndefined();
   }, 60000);
+
+  it('should create a unique index when field has isUnique set to true', async () => {
+    await syncApplication({
+      manifest: buildManifest({
+        fields: [
+          {
+            universalIdentifier: TEST_FIELD_ID,
+            type: FieldMetadataType.TEXT,
+            name: 'externalId',
+            label: 'External ID',
+            description: 'Unique external identifier',
+            icon: 'IconId',
+            isUnique: true,
+            isNullable: false,
+            objectUniversalIdentifier: TEST_OBJECT.universalIdentifier,
+          },
+        ],
+      }),
+      expectToFail: false,
+    });
+
+    const objects = await findManyObjectMetadataWithIndexes({
+      expectToFail: false,
+    });
+
+    const object = objects.find(
+      (objectMetadata) =>
+        objectMetadata.universalIdentifier ===
+        TEST_OBJECT.universalIdentifier,
+    );
+
+    expect(object).toBeDefined();
+
+    const externalIdField = object?.fieldsList.find(
+      (field) => field.name === 'externalId',
+    );
+
+    expect(externalIdField).toBeDefined();
+
+    const uniqueIndex = object?.indexMetadataList.find(
+      (index) =>
+        index.isUnique &&
+        index.indexFieldMetadataList.some(
+          (indexField) =>
+            indexField.fieldMetadataId === externalIdField?.id,
+        ),
+    );
+
+    expect(uniqueIndex).toBeDefined();
+    expect(uniqueIndex?.isUnique).toBe(true);
+  }, 60000);
 });

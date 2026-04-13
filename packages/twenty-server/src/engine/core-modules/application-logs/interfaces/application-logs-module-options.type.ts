@@ -1,5 +1,5 @@
-import { type ApplicationLogDriverType } from 'src/engine/core-modules/application-logs/interfaces/application-log-driver-type.enum';
+import { type ApplicationLogDriver } from 'src/engine/core-modules/application-logs/interfaces/application-log-driver.enum';
 
 export type ApplicationLogsModuleOptions = {
-  type: ApplicationLogDriverType;
+  type: ApplicationLogDriver;
 };
