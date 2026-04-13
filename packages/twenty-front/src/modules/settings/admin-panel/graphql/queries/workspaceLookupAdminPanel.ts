@@ -1,20 +1,22 @@
 import { gql } from '@apollo/client';
 
-export const USER_LOOKUP_ADMIN_PANEL = gql`
-  mutation UserLookupAdminPanel($userIdentifier: String!) {
-    userLookupAdminPanel(userIdentifier: $userIdentifier) {
+import { USER_INFO_FRAGMENT } from '@/settings/admin-panel/graphql/fragments/userInfoFragment';
+
+export const WORKSPACE_LOOKUP_ADMIN_PANEL = gql`
+  ${USER_INFO_FRAGMENT}
+  query WorkspaceLookupAdminPanel($workspaceId: UUID!) {
+    workspaceLookupAdminPanel(workspaceId: $workspaceId) {
       user {
-        id
-        email
-        firstName
-        lastName
+        ...UserInfoFragment
       }
       workspaces {
         id
         name
+        allowImpersonation
         logo
         totalUsers
-        allowImpersonation
+        activationStatus
+        createdAt
         workspaceUrls {
           customUrl
           subdomainUrl

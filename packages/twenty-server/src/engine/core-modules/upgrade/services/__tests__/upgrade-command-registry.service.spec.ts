@@ -95,6 +95,7 @@ describe('UpgradeCommandRegistryService', () => {
       new MigrationA1770000000000(),
       new MigrationB1771000000000(),
       new MigrationC1772000000000(),
+      new WorkspaceCommandA(),
     ]);
 
     const v120 = service.getBundleForVersion('1.20.0');
@@ -118,6 +119,7 @@ describe('UpgradeCommandRegistryService', () => {
       new MigrationC1772000000000(),
       new MigrationA1770000000000(),
       new MigrationB1771000000000(),
+      new WorkspaceCommandA(),
     ]);
 
     const names = service
@@ -135,6 +137,7 @@ describe('UpgradeCommandRegistryService', () => {
     const service = await buildRegistryService([
       new UndecoratedMigration1768000000000(),
       new MigrationA1770000000000(),
+      new WorkspaceCommandA(),
     ]);
 
     const v121 = service.getBundleForVersion('1.21.0');
@@ -155,6 +158,10 @@ describe('UpgradeCommandRegistryService', () => {
     expect(v121.fastInstanceCommands).toStrictEqual([]);
     expect(v120.workspaceCommands).toStrictEqual([]);
     expect(v121.workspaceCommands).toStrictEqual([]);
+  });
+
+  it('should not throw when no commands are discovered (empty bundle)', async () => {
+    await expect(buildRegistryService([])).resolves.toBeDefined();
   });
 
   it('should return empty array for unsupported version', async () => {
@@ -255,9 +262,10 @@ describe('UpgradeCommandRegistryService', () => {
       new MigrationD1769000000000(),
       new MigrationA1770000000000(),
       new MigrationB1771000000000(),
+      new WorkspaceCommandA(),
     ]);
 
-    const allCommands = service.getAllFastInstanceCommands();
+    const allCommands = service.getCrossUpgradeSupportedFastInstanceCommands();
 
     expect(allCommands.map((entry) => entry.name)).toStrictEqual([
       '1.20.0_MigrationD1769000000000_1769000000000',
@@ -267,10 +275,12 @@ describe('UpgradeCommandRegistryService', () => {
     ]);
   });
 
-  it('should return empty array from getAllFastInstanceCommands when no commands registered', async () => {
+  it('should return empty array from getCrossUpgradeSupportedFastInstanceCommands when no commands registered', async () => {
     const service = await buildRegistryService([]);
 
-    expect(service.getAllFastInstanceCommands()).toStrictEqual([]);
+    expect(
+      service.getCrossUpgradeSupportedFastInstanceCommands(),
+    ).toStrictEqual([]);
   });
 
   it('should allow same class name with different timestamps across kinds', async () => {
@@ -316,6 +326,7 @@ describe('UpgradeCommandRegistryService', () => {
     const service = await buildRegistryService([
       new SlowMigrationB1780000000000(),
       new SlowMigrationA1779000000000(),
+      new WorkspaceCommandA(),
     ]);
 
     const { slowInstanceCommands } = service.getBundleForVersion('1.21.0');
@@ -341,6 +352,7 @@ describe('UpgradeCommandRegistryService', () => {
     const service = await buildRegistryService([
       new MigrationA1770000000000(),
       new SlowMigration1780000000000(),
+      new WorkspaceCommandA(),
     ]);
 
     const bucket = service.getBundleForVersion('1.21.0');
@@ -391,6 +403,7 @@ describe('UpgradeCommandRegistryService', () => {
     const service = await buildRegistryService([
       new MigrationA1770000000000(),
       new SlowMigrationSameTimestamp(),
+      new WorkspaceCommandA(),
     ]);
 
     const bucket = service.getBundleForVersion('1.21.0');
@@ -421,9 +434,11 @@ describe('UpgradeCommandRegistryService', () => {
     const service = await buildRegistryService([
       new SlowMigration1780000000000(),
       new SlowMigration1768000000000(),
+      new WorkspaceCommandA(),
     ]);
 
-    const allSlowCommands = service.getAllSlowInstanceCommands();
+    const allSlowCommands =
+      service.getCrossUpgradeSupportedSlowInstanceCommands();
 
     expect(allSlowCommands.map((entry) => entry.name)).toStrictEqual([
       '1.20.0_SlowMigration1768000000000_1768000000000',

@@ -1,134 +1,74 @@
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
-import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
-import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
+import { ADMIN_PANEL_RECENT_USERS } from '@/settings/admin-panel/graphql/queries/adminPanelRecentUsers';
+import { ADMIN_PANEL_TOP_WORKSPACES } from '@/settings/admin-panel/graphql/queries/adminPanelTopWorkspaces';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
-import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
+import { Table } from '@/ui/layout/table/components/Table';
+import { TableBody } from '@/ui/layout/table/components/TableBody';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useState } from 'react';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { useMutation } from '@apollo/client/react';
-import { UserLookupAdminPanelDocument } from '~/generated-metadata/graphql';
+import { useDebounce } from 'use-debounce';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
-import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
-import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
-import {
-  H2Title,
-  IconId,
-  IconMail,
-  IconSearch,
-  IconUser,
-} from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing[2]};
+const StyledEmptyState = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  padding: ${themeCssVariables.spacing[4]} 0;
 `;
 
 export const SettingsAdminGeneral = () => {
-  const [userIdentifier, setUserIdentifier] = useState('');
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const [userSearchTerm, setUserSearchTerm] = useState('');
+  const [debouncedUserSearchTerm] = useDebounce(userSearchTerm, 300);
 
-  const [activeTabId, setActiveTabId] = useAtomComponentState(
-    activeTabIdComponentState,
-    SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID,
-  );
-  const [userLookupResult, setUserLookupResult] = useAtomState(
-    userLookupResultState,
-  );
-  const [isUserLookupLoading, setIsUserLookupLoading] = useState(false);
-
-  const [userLookup] = useMutation(UserLookupAdminPanelDocument);
+  const [workspaceSearchTerm, setWorkspaceSearchTerm] = useState('');
+  const [debouncedWorkspaceSearchTerm] = useDebounce(workspaceSearchTerm, 300);
 
   const currentUser = useAtomStateValue(currentUserState);
-
   const canAccessFullAdminPanel = currentUser?.canAccessFullAdminPanel;
-
   const canImpersonate = currentUser?.canImpersonate;
-
   const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
 
-  const handleSearch = async () => {
-    setActiveTabId('');
-    setIsUserLookupLoading(true);
-    setUserLookupResult(null);
+  const { data: recentUsersData, loading: isLoadingUsers } = useQuery<{
+    adminPanelRecentUsers: {
+      id: string;
+      email: string;
+      firstName?: string | null;
+      lastName?: string | null;
+      createdAt: string;
+      workspaceName?: string | null;
+      workspaceId?: string | null;
+    }[];
+  }>(ADMIN_PANEL_RECENT_USERS, {
+    variables: { searchTerm: debouncedUserSearchTerm },
+    skip: !canImpersonate,
+  });
 
-    const response = await userLookup({
-      variables: { userIdentifier },
-      onCompleted: (data) => {
-        setIsUserLookupLoading(false);
-        if (isDefined(data?.userLookupAdminPanel)) {
-          setUserLookupResult(data.userLookupAdminPanel);
-        }
-      },
-      onError: (error) => {
-        setIsUserLookupLoading(false);
-        enqueueErrorSnackBar({
-          apolloError: error,
-        });
-      },
-    });
+  const { data: topWorkspacesData, loading: isLoadingWorkspaces } = useQuery<{
+    adminPanelTopWorkspaces: {
+      id: string;
+      name: string;
+      totalUsers: number;
+      subdomain: string;
+    }[];
+  }>(ADMIN_PANEL_TOP_WORKSPACES, {
+    variables: { searchTerm: debouncedWorkspaceSearchTerm },
+    skip: !canImpersonate,
+  });
 
-    const result = response.data?.userLookupAdminPanel;
-
-    if (isDefined(result?.workspaces) && result.workspaces.length > 0) {
-      setActiveTabId(result.workspaces[0].id);
-    }
-  };
-
-  const activeWorkspace = userLookupResult?.workspaces.find(
-    (workspace) => workspace.id === activeTabId,
-  );
-
-  const tabs =
-    userLookupResult?.workspaces.map((workspace) => ({
-      id: workspace.id,
-      title: workspace.name,
-      logo:
-        getImageAbsoluteURI({
-          imageUrl: isNonEmptyString(workspace.logo)
-            ? workspace.logo
-            : DEFAULT_WORKSPACE_LOGO,
-          baseUrl: REACT_APP_SERVER_BASE_URL,
-        }) ?? '',
-    })) ?? [];
-
-  const userFullName = `${userLookupResult?.user.firstName || ''} ${
-    userLookupResult?.user.lastName || ''
-  }`.trim();
-
-  const userInfoItems = [
-    {
-      Icon: IconUser,
-      label: t`Name`,
-      value: userFullName,
-    },
-    {
-      Icon: IconMail,
-      label: t`Email`,
-      value: userLookupResult?.user.email,
-    },
-    {
-      Icon: IconId,
-      label: t`ID`,
-      value: userLookupResult?.user.id,
-    },
-  ];
+  const recentUsers = recentUsersData?.adminPanelRecentUsers ?? [];
+  const topWorkspaces = topWorkspacesData?.adminPanelTopWorkspaces ?? [];
 
   return (
     <>
@@ -143,63 +83,105 @@ export const SettingsAdminGeneral = () => {
       )}
 
       {canImpersonate && (
-        <Section>
-          <H2Title
-            title={
-              canManageFeatureFlags
-                ? t`Feature Flags & Impersonation`
-                : t`User Impersonation`
-            }
-            description={
-              canManageFeatureFlags
-                ? t`Look up users and manage their workspace feature flags or impersonate them.`
-                : t`Look up users to impersonate them.`
-            }
-          />
-
-          <StyledContainer>
-            <SettingsTextInput
-              instanceId="admin-user-lookup"
-              value={userIdentifier}
-              onChange={setUserIdentifier}
-              onInputEnter={handleSearch}
-              placeholder={t`Enter user ID or email address`}
-              fullWidth
-              disabled={isUserLookupLoading}
-            />
-            <Button
-              Icon={IconSearch}
-              variant="primary"
-              accent="blue"
-              title={t`Search`}
-              onClick={handleSearch}
-              disabled={!userIdentifier.trim() || isUserLookupLoading}
-            />
-          </StyledContainer>
-        </Section>
-      )}
-
-      {isDefined(userLookupResult) && (
         <>
           <Section>
-            <H2Title title={t`User Info`} description={t`About this user`} />
-            <SettingsTableCard
-              items={userInfoItems}
-              rounded
-              gridAutoColumns="1fr 4fr"
+            <H2Title
+              title={t`Recent Users`}
+              description={
+                canManageFeatureFlags
+                  ? t`Last 10 users created. Click to manage feature flags or impersonate.`
+                  : t`Last 10 users created. Click to impersonate.`
+              }
             />
+            <SettingsTextInput
+              instanceId="admin-panel-user-search"
+              value={userSearchTerm}
+              onChange={setUserSearchTerm}
+              placeholder={t`Search by name, email, or user ID...`}
+              fullWidth
+            />
+            {isLoadingUsers ? (
+              <SettingsSkeletonLoader />
+            ) : recentUsers.length === 0 ? (
+              <StyledEmptyState>
+                {t`No users found matching your search criteria.`}
+              </StyledEmptyState>
+            ) : (
+              <Table>
+                <TableBody>
+                  <TableRow gridTemplateColumns="1fr 2fr 1fr">
+                    <TableHeader>{t`Name`}</TableHeader>
+                    <TableHeader>{t`Email`}</TableHeader>
+                    <TableHeader align="right">{t`Workspace`}</TableHeader>
+                  </TableRow>
+                  {recentUsers.map((user) => (
+                    <TableRow
+                      key={user.id}
+                      gridTemplateColumns="1fr 2fr 1fr"
+                      to={getSettingsPath(SettingsPath.AdminPanelUserDetail, {
+                        userId: user.id,
+                      })}
+                    >
+                      <TableCell color={themeCssVariables.font.color.primary}>
+                        {`${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+                          '\u2014'}
+                      </TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell align="right">
+                        {user.workspaceName || '\u2014'}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </Section>
+
           <Section>
             <H2Title
-              title={t`Workspaces`}
-              description={t`All workspaces this user is a member of`}
+              title={t`Top Workspaces`}
+              description={t`Top 10 workspaces by number of users`}
             />
-            <TabList
-              tabs={tabs}
-              behaveAsLinks={false}
-              componentInstanceId={SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID}
+            <SettingsTextInput
+              instanceId="admin-panel-workspace-search"
+              value={workspaceSearchTerm}
+              onChange={setWorkspaceSearchTerm}
+              placeholder={t`Search by workspace name, subdomain, or ID...`}
+              fullWidth
             />
-            <SettingsAdminWorkspaceContent activeWorkspace={activeWorkspace} />
+            {isLoadingWorkspaces ? (
+              <SettingsSkeletonLoader />
+            ) : topWorkspaces.length === 0 ? (
+              <StyledEmptyState>
+                {t`No workspaces found matching your search criteria.`}
+              </StyledEmptyState>
+            ) : (
+              <Table>
+                <TableBody>
+                  <TableRow gridTemplateColumns="2fr 1fr">
+                    <TableHeader>{t`Workspace`}</TableHeader>
+                    <TableHeader align="right">{t`Users`}</TableHeader>
+                  </TableRow>
+                  {topWorkspaces.map((workspace) => (
+                    <TableRow
+                      key={workspace.id}
+                      gridTemplateColumns="2fr 1fr"
+                      to={getSettingsPath(
+                        SettingsPath.AdminPanelWorkspaceDetail,
+                        { workspaceId: workspace.id },
+                      )}
+                    >
+                      <TableCell color={themeCssVariables.font.color.primary}>
+                        {workspace.name || '\u2014'}
+                      </TableCell>
+                      <TableCell align="right">
+                        {workspace.totalUsers}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </Section>
         </>
       )}

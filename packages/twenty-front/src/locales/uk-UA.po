@@ -668,7 +668,7 @@ msgid "About my subscription"
 msgstr "Про мою підписку"
 
 #. js-lingui-id: DhgC7B
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 msgid "About this user"
 msgstr "Про цього користувача"
 
@@ -756,6 +756,7 @@ msgid "Action on click"
 msgstr "Дія при натисканні"
 
 #. js-lingui-id: 7L01XJ
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
@@ -1203,6 +1204,8 @@ msgid "Admin"
 msgstr ""
 
 #. js-lingui-id: g1in8j
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -1214,6 +1217,11 @@ msgstr ""
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Admin Panel"
 msgstr "Панель адміністратора"
+
+#. js-lingui-id: 6X68yA
+#: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
+msgid "Admin Panel - General"
+msgstr ""
 
 #. js-lingui-id: sxkWRg
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
@@ -1346,6 +1354,8 @@ msgstr ""
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -1360,6 +1370,11 @@ msgstr "ШІ"
 #: src/modules/settings/usage/utils/getOperationTypeLabel.ts
 msgid "AI Chat"
 msgstr "Чат ШІ"
+
+#. js-lingui-id: qiD/6r
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+msgid "AI chat threads for this workspace"
+msgstr ""
 
 #. js-lingui-id: E/lGXl
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -1585,7 +1600,7 @@ msgid "All workspace members already have this role"
 msgstr "Усі члени робочого простору вже мають цю роль"
 
 #. js-lingui-id: MLmnB2
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 msgid "All workspaces this user is a member of"
 msgstr "Усі робочі області, учасником яких є цей користувач"
 
@@ -2952,10 +2967,25 @@ msgstr "Діаграма"
 msgid "Chat"
 msgstr "Чат"
 
+#. js-lingui-id: eKz2ln
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
+msgid "Chat conversation"
+msgstr ""
+
+#. js-lingui-id: jTS+KY
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+msgid "Chat Sessions"
+msgstr ""
+
 #. js-lingui-id: UxeiNP
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Chat with AI agents and use AI features"
 msgstr "Спілкування з AI агентами та використання AI функцій"
+
+#. js-lingui-id: 8Q+lLG
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+msgid "Chats"
+msgstr ""
 
 #. js-lingui-id: xK2nU3
 #: src/pages/settings/updates/SettingsUpdates.tsx
@@ -3968,7 +3998,9 @@ msgid "Create, edit, and delete workspace views"
 msgstr "Створюйте, редагуйте та видаляйте перегляди робочого простору"
 
 #. js-lingui-id: d+F6q9
+#: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/activities/calendar/components/CalendarEventDetails.tsx
 msgid "Created"
 msgstr "Створено"
@@ -5355,6 +5387,8 @@ msgstr "інакше якщо"
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
@@ -5800,11 +5834,6 @@ msgstr "Введіть системний запит, який визначає 
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Enter the workspace subdomain to transfer this app to. You will lose access to manage it."
 msgstr "Введіть піддомен робочого простору, на який потрібно передати цей додаток. Ви втратите доступ до його керування."
-
-#. js-lingui-id: rYIISB
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "Enter user ID or email address"
-msgstr "Введіть ID користувача або електронну адресу"
 
 #. js-lingui-id: pubQie
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
@@ -6441,11 +6470,6 @@ msgstr ""
 msgid "Failed to get response"
 msgstr "Не вдалося отримати відповідь"
 
-#. js-lingui-id: CUzkVp
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Failed to impersonate user. {errorMessage}"
-msgstr "Не вдалося увійти від імені користувача. {errorMessage}"
-
 #. js-lingui-id: qZwtAi
 #: src/modules/marketplace/hooks/useInstallApp.ts
 msgid "Failed to install the application."
@@ -6532,11 +6556,6 @@ msgstr "Не вдалося передати право власності. Пе
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Failed to update default model"
 msgstr "Не вдалося оновити модель за замовчуванням"
-
-#. js-lingui-id: P1NmNz
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Failed to update feature flag. {errorMessage}"
-msgstr "Не вдалося оновити прапорець функції. {errorMessage}"
 
 #. js-lingui-id: 1R13Ov
 #: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
@@ -6646,14 +6665,15 @@ msgid "Favorites"
 msgstr "Обрані"
 
 #. js-lingui-id: YXjpZx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Feature Flag"
 msgstr "Прапор функцій"
 
-#. js-lingui-id: kP/brT
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "Feature Flags & Impersonation"
-msgstr "Прапори функцій та персонуфікація"
+#. js-lingui-id: +ZqAYI
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+msgid "Feature Flags"
+msgstr ""
 
 #. js-lingui-id: FkMol5
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
@@ -7513,8 +7533,8 @@ msgid "Icon and Name"
 msgstr "Іконка та назва"
 
 #. js-lingui-id: S0kLOH
+#: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "ID"
 msgstr "Ідентифікатор"
 
@@ -7619,9 +7639,10 @@ msgid "imap.example.com"
 msgstr "imap.example.com"
 
 #. js-lingui-id: tSVr6t
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/members/components/MemberInfosTab.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Impersonate"
 msgstr "Персонуфікація"
 
@@ -7631,7 +7652,7 @@ msgid "Impersonate workspace users"
 msgstr "Імітувати користувачів робочої області"
 
 #. js-lingui-id: yImXof
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 msgid "Impersonation is disabled for this workspace"
 msgstr "Імперсонізацію вимкнено для цього робочого простору"
 
@@ -7734,6 +7755,7 @@ msgid "Indexes"
 msgstr "Індекси"
 
 #. js-lingui-id: CE+M2e
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 msgid "Info"
 msgstr "Інформація"
@@ -8287,6 +8309,16 @@ msgstr "Остання 1 година"
 msgid "Last 1 Hour (oldest → newest)"
 msgstr "Остання 1 година (найстаріша → найновіша)"
 
+#. js-lingui-id: YoKFgq
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "Last 10 users created. Click to impersonate."
+msgstr ""
+
+#. js-lingui-id: sgqwjE
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "Last 10 users created. Click to manage feature flags or impersonate."
+msgstr ""
+
 #. js-lingui-id: XUlP/Y
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Last 12 hours"
@@ -8767,16 +8799,6 @@ msgstr "Вийти"
 msgid "Logs"
 msgstr "Журнали"
 
-#. js-lingui-id: PTozs8
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "Look up users and manage their workspace feature flags or impersonate them."
-msgstr "Шукати користувачів та керувати їх прапорами функцій робочого простору або персонуфікувати їх."
-
-#. js-lingui-id: GPSwzy
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "Look up users to impersonate them."
-msgstr "Шукати користувачів для їх персонуфікації."
-
 #. js-lingui-id: tL2lBI
 #: src/modules/workflow/workflow-diagram/utils/generateNodesAndEdgesForIteratorNode.ts
 msgid "loop"
@@ -8829,6 +8851,11 @@ msgstr "Керування платіжною інформацією"
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Manage favorite"
 msgstr "Керувати обраними"
+
+#. js-lingui-id: Dt05oz
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+msgid "Manage feature flags for this workspace"
+msgstr ""
 
 #. js-lingui-id: T6YjCk
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
@@ -8994,6 +9021,8 @@ msgstr ""
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -9052,6 +9081,7 @@ msgstr "Синхронізація повідомлень недоступна, 
 
 #. js-lingui-id: t7TeQU
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Messages"
 msgstr "Повідомлення"
 
@@ -9364,6 +9394,8 @@ msgstr "mySkill"
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/workspace/components/NameField.tsx
@@ -9764,6 +9796,11 @@ msgstr "Без коду країни"
 msgid "No chat"
 msgstr ""
 
+#. js-lingui-id: NjIy4U
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+msgid "No chat threads found."
+msgstr ""
+
 #. js-lingui-id: wgUPZ1
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 msgid "No comment"
@@ -9995,6 +10032,11 @@ msgstr "Жоден учасник не відповідає вашому зап�
 msgid "No messages found for this turn"
 msgstr ""
 
+#. js-lingui-id: IohPnt
+#: src/modules/settings/admin-panel/components/SettingsAdminChatThreadMessageList.tsx
+msgid "No messages found."
+msgstr ""
+
 #. js-lingui-id: 0NudpV
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "No metrics data available"
@@ -10158,6 +10200,11 @@ msgstr "Немає даних про використання"
 msgid "No usage data yet"
 msgstr ""
 
+#. js-lingui-id: EsP4NW
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "No users found matching your search criteria."
+msgstr ""
+
 #. js-lingui-id: wJwIUq
 #: src/modules/object-record/record-field/ui/form-types/components/FormSelectFieldInput.tsx
 msgid "No value"
@@ -10193,6 +10240,11 @@ msgstr "Версій Workflow поки що немає"
 #: src/modules/settings/lab/hooks/useLabPublicFeatureFlags.ts
 msgid "No workspace selected"
 msgstr "Робочий простір не вибрано"
+
+#. js-lingui-id: TiRphK
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "No workspaces found matching your search criteria."
+msgstr ""
 
 #. js-lingui-id: Ah7JCB
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
@@ -10710,6 +10762,9 @@ msgstr "Упорядкувати"
 #. js-lingui-id: /IX/7x
 #: src/pages/settings/updates/SettingsUpdates.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
+#: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -11135,11 +11190,6 @@ msgstr "Підключіть знову вашу поштову скриньку
 msgid "Please refresh the page."
 msgstr "Будь ласка, оновіть сторінку."
 
-#. js-lingui-id: X5x85V
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-msgid "Please search for a user first"
-msgstr "Спочатку знайдіть користувача"
-
 #. js-lingui-id: wCgL30
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "Please select at least one destination object for this relation."
@@ -11547,6 +11597,11 @@ msgstr "Отримати лист з посиланням для оновлен�
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "Recent Events (oldest → newest)"
 msgstr "Нещодавні події (найстаріша → найновіша)"
+
+#. js-lingui-id: EoiSFI
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "Recent Users"
+msgstr ""
 
 #. js-lingui-id: yPrbsy
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
@@ -12313,7 +12368,6 @@ msgstr "SDK"
 #: src/modules/side-panel/hooks/useOpenRecordsSearchPageInSidePanel.ts
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 msgid "Search"
@@ -12445,6 +12499,16 @@ msgstr "Пошук будь-якого поля"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "Search API keys"
 msgstr "Пошук ключів API"
+
+#. js-lingui-id: iRegw9
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "Search by name, email, or user ID..."
+msgstr ""
+
+#. js-lingui-id: KI1xjO
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "Search by workspace name, subdomain, or ID..."
+msgstr ""
 
 #. js-lingui-id: yI4D/V
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartColorSelectionDropdownContent.tsx
@@ -13496,6 +13560,7 @@ msgstr "Стан"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -14438,6 +14503,11 @@ msgstr "Таймінг"
 msgid "title"
 msgstr "заголовок"
 
+#. js-lingui-id: MHrjPM
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+msgid "Title"
+msgstr ""
+
 #. js-lingui-id: /jQctM
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
@@ -14501,6 +14571,12 @@ msgstr ""
 msgid "Too many records. Up to {maxRecordsString} allowed"
 msgstr "Занадто багато записів. Дозволено до {maxRecordsString}"
 
+#. js-lingui-id: tfaidv
+#. placeholder {0}: part.toolName
+#: src/modules/settings/admin-panel/components/SettingsAdminChatThreadMessageList.tsx
+msgid "Tool call: {0}"
+msgstr ""
+
 #. js-lingui-id: GnoLfm
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Tool calls made"
@@ -14531,6 +14607,16 @@ msgstr "Генерація інструмента"
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
 msgid "Tools"
 msgstr "Інструменти"
+
+#. js-lingui-id: nCq25C
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "Top 10 workspaces by number of users"
+msgstr ""
+
+#. js-lingui-id: A4dnvW
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+msgid "Top Workspaces"
+msgstr ""
 
 #. js-lingui-id: 72c5Qo
 #: src/modules/page-layout/widgets/graph/graph-widget-pie-chart/hooks/usePieChartCenterMetricData.ts
@@ -14961,6 +15047,8 @@ msgid "Unordered list with bullets"
 msgstr ""
 
 #. js-lingui-id: wja8aL
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
 #: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
 #: src/modules/ui/field/display/components/ArrayDisplay.tsx
 #: src/modules/ui/field/display/components/ActorDisplay.tsx
@@ -15061,6 +15149,7 @@ msgid "updated"
 msgstr "оновлено"
 
 #. js-lingui-id: +b7T3G
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 msgid "Updated"
 msgstr "Оновлено"
@@ -15295,13 +15384,8 @@ msgstr "Користувач"
 msgid "User Context"
 msgstr "Контекст користувача"
 
-#. js-lingui-id: RNv3YS
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
-msgid "User Impersonation"
-msgstr "Імітація користувача"
-
 #. js-lingui-id: tNT8wT
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 msgid "User Info"
 msgstr "Інформація користувача"
 
@@ -15326,6 +15410,7 @@ msgstr "Використання користувача"
 
 #. js-lingui-id: Sxm8rQ
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Users"
 msgstr "Користувачі"
 
@@ -15979,6 +16064,7 @@ msgstr "Робочі процеси"
 #: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -15991,6 +16077,8 @@ msgstr "Робочі процеси"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -16040,6 +16128,11 @@ msgstr "Логотип працевлаштування"
 msgid "Workspace Member"
 msgstr "Член робочого простору"
 
+#. js-lingui-id: wtxjAY
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+msgid "Workspace members"
+msgstr ""
+
 #. js-lingui-id: CozWO1
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace name"
@@ -16051,7 +16144,7 @@ msgid "Workspace views require manage views permission"
 msgstr "Для перегляду робочого простору необхідно дозволити керування переглядами"
 
 #. js-lingui-id: pmt7u4
-#: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 msgid "Workspaces"
 msgstr "Робочі простори"
 
