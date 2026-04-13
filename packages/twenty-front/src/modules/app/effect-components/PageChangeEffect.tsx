@@ -179,7 +179,7 @@ export const PageChangeEffect = () => {
       if (consumedReturnToPath) {
         clearReturnToPath();
       }
-      if (pageChangeEffectNavigateLocation === settingsRedirectPath) {
+      if (isDefined(settingsRedirectPath)) {
         setSettingsRedirectPath(undefined);
       }
     }
