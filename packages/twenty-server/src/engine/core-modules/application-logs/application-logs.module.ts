@@ -12,7 +12,7 @@ import { ApplicationLogsService } from 'src/engine/core-modules/application-logs
 import { ClickHouseApplicationLogDriver } from 'src/engine/core-modules/application-logs/drivers/clickhouse.driver';
 import { ConsoleApplicationLogDriver } from 'src/engine/core-modules/application-logs/drivers/console.driver';
 import { DisabledApplicationLogDriver } from 'src/engine/core-modules/application-logs/drivers/disabled.driver';
-import { ApplicationLogDriverType } from 'src/engine/core-modules/application-logs/interfaces/application-log-driver-type.enum';
+import { ApplicationLogDriver } from 'src/engine/core-modules/application-logs/interfaces/application-log-driver.enum';
 
 @Global()
 @Module({
@@ -64,13 +64,13 @@ export class ApplicationLogsModule extends ConfigurableModuleClass {
   }
 
   private static createDriver(
-    type: ApplicationLogDriverType,
+    type: ApplicationLogDriver,
     clickHouseService?: ClickHouseService,
   ) {
     switch (type) {
-      case ApplicationLogDriverType.CONSOLE:
+      case ApplicationLogDriver.CONSOLE:
         return new ConsoleApplicationLogDriver();
-      case ApplicationLogDriverType.CLICKHOUSE:
+      case ApplicationLogDriver.CLICKHOUSE:
         if (!clickHouseService) {
           throw new Error(
             'ClickHouseService is required for the ClickHouse application log driver',
@@ -78,7 +78,7 @@ export class ApplicationLogsModule extends ConfigurableModuleClass {
         }
 
         return new ClickHouseApplicationLogDriver(clickHouseService);
-      case ApplicationLogDriverType.DISABLED:
+      case ApplicationLogDriver.DISABLED:
       default:
         return new DisabledApplicationLogDriver();
     }

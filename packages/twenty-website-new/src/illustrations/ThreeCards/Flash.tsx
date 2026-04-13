@@ -7,61 +7,136 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-const DRACO_DECODER_PATH =
-  'https://www.gstatic.com/draco/versioned/decoders/1.5.6/';
-
-const GLB_URL = '/illustrations/home/three-cards/flash.glb';
 const VIRTUAL_RENDER_HEIGHT = 768;
+const REFERENCE_PREVIEW_DISTANCE = 4;
+const MIN_FOOTPRINT_SCALE = 0.001;
+const MODEL_SCALE_TARGET = 2.75;
+const FLASH_MODEL_URL = '/illustrations/home/three-cards/flash.glb';
 
-const LIGHTING = {
-  intensity: 4,
-  fillIntensity: 1.31,
-  ambientIntensity: 0.1,
-  angleDegrees: 25,
-  height: 2,
+export type ModelHalftoneRotateAxis =
+  | 'x'
+  | 'y'
+  | 'z'
+  | 'xy'
+  | '-x'
+  | '-y'
+  | '-z'
+  | '-xy';
+
+export type ModelHalftoneLightingSettings = {
+  ambientIntensity: number;
+  angleDegrees: number;
+  fillIntensity: number;
+  height: number;
+  intensity: number;
 };
 
-const MATERIAL = {
-  roughness: 0.42,
-  metalness: 0.16,
+export type ModelHalftoneMaterialSettings = {
+  metalness: number;
+  roughness: number;
 };
 
-const HALFTONE = {
-  numRows: 48,
-  contrast: 2.7,
-  power: 1.1,
-  shading: 3,
-  baseInk: 0.19,
-  maxBar: 0.23,
-  cellRatio: 2,
-  cutoff: 0.02,
-  dashColor: '#4A38F5',
-  waveAmount: 0,
-  waveSpeed: 0,
+export type ModelHalftoneSettings = {
+  dashColor: string;
+  power: number;
+  scale: number;
+  width: number;
 };
 
-const ANIMATION = {
-  autoSpeed: 0.1,
-  autoWobble: 0.3,
-  dragFriction: 0.08,
-  dragMomentum: true,
-  dragSens: 0.008,
-  followDragEnabled: true,
-  followHoverEnabled: true,
-  hoverEase: 0.08,
-  hoverRange: 25,
-  hoverReturn: true,
+export type ModelHalftoneAnimationSettings = {
+  autoRotateEnabled: boolean;
+  autoSpeed: number;
+  autoWobble: number;
+  dragFriction: number;
+  dragMomentum: boolean;
+  dragSens: number;
+  followDragEnabled: boolean;
+  followHoverEnabled: boolean;
+  hoverEase: number;
+  hoverRange: number;
+  hoverReturn: boolean;
+  lightSweepEnabled: boolean;
+  lightSweepHeightRange: number;
+  lightSweepRange: number;
+  lightSweepSpeed: number;
+  rotateAxis: ModelHalftoneRotateAxis;
+  rotateEnabled: boolean;
+  rotatePingPong: boolean;
+  rotateSpeed: number;
+  springDamping: number;
+  springReturnEnabled: boolean;
+  springStrength: number;
 };
+
+export type ModelHalftoneIllustrationSettings = {
+  animation: ModelHalftoneAnimationSettings;
+  cameraDistance: number;
+  halftone: ModelHalftoneSettings;
+  lighting: ModelHalftoneLightingSettings;
+  material: ModelHalftoneMaterialSettings;
+  rotationOffsetX: number;
+  rotationOffsetY: number;
+  rotationOffsetZ: number;
+};
+
+const FLASH_EFFECT_SETTINGS: ModelHalftoneIllustrationSettings = {
+  animation: {
+    autoRotateEnabled: false,
+    autoSpeed: 0.1,
+    autoWobble: 0,
+    dragFriction: 0.08,
+    dragMomentum: true,
+    dragSens: 0.008,
+    followDragEnabled: true,
+    followHoverEnabled: true,
+    hoverEase: 0.08,
+    hoverRange: 25,
+    hoverReturn: true,
+    lightSweepEnabled: true,
+    lightSweepHeightRange: 0.5,
+    lightSweepRange: 28,
+    lightSweepSpeed: 0.2,
+    rotateAxis: 'y',
+    rotateEnabled: true,
+    rotatePingPong: false,
+    rotateSpeed: 0.1,
+    springDamping: 0.4,
+    springReturnEnabled: true,
+    springStrength: 0.06,
+  },
+  cameraDistance: 4.27,
+  halftone: {
+    dashColor: '#4A38F5',
+    power: 1.11,
+    scale: 11.06,
+    width: 1.03,
+  },
+  lighting: {
+    ambientIntensity: 0,
+    angleDegrees: 46,
+    fillIntensity: 0,
+    height: 2,
+    intensity: 2,
+  },
+  material: {
+    metalness: 1,
+    roughness: 0,
+  },
+  rotationOffsetX: 0,
+  rotationOffsetY: 0,
+  rotationOffsetZ: 0,
+} as const;
 
 const INITIAL_POSE = {
-  autoElapsed: 16.16666666666703,
-  rotationX: -0.09184084195435831,
-  rotationY: 1.7614744750399298,
-  rotationZ: 0,
+  autoElapsed: 42.43333333333221,
+  rotateElapsed: 89.98333333332951,
+  rotationX: -8.99639917695435,
+  rotationY: -8.99639917695435,
+  rotationZ: FLASH_EFFECT_SETTINGS.rotationOffsetZ,
   targetRotationX: 0,
   targetRotationY: 0,
-  timeElapsed: 325.47089999996314,
-};
+  timeElapsed: 851.4676000003166,
+} as const;
 
 const passThroughVertexShader = /* glsl */ `
   varying vec2 vUv;
@@ -109,299 +184,343 @@ const halftoneFragmentShader = /* glsl */ `
 
   uniform sampler2D tScene;
   uniform sampler2D tGlow;
-  uniform vec2 resolution;
-  uniform float numRows;
-  uniform float glowStr;
-  uniform float contrast;
-  uniform float power;
-  uniform float shading;
-  uniform float baseInk;
-  uniform float maxBar;
-  uniform float cellRatio;
-  uniform float cutoff;
+  uniform vec2 effectResolution;
+  uniform vec2 logicalResolution;
+  uniform float tile;
+  uniform float s_3;
+  uniform float s_4;
   uniform vec3 dashColor;
   uniform float time;
   uniform float waveAmount;
   uniform float waveSpeed;
+  uniform float footprintScale;
+  uniform vec2 interactionUv;
+  uniform vec2 interactionVelocity;
+  uniform vec2 dragOffset;
+  uniform float hoverLightStrength;
+  uniform float hoverLightRadius;
+  uniform float hoverFlowStrength;
+  uniform float hoverFlowRadius;
+  uniform float dragFlowStrength;
+  uniform float cropToBounds;
 
   varying vec2 vUv;
 
+  float distSegment(in vec2 p, in vec2 a, in vec2 b) {
+    vec2 pa = p - a;
+    vec2 ba = b - a;
+    float denom = max(dot(ba, ba), 0.000001);
+    float h = clamp(dot(pa, ba) / denom, 0.0, 1.0);
+    return length(pa - ba * h);
+  }
+
+  float lineSimpleEt(in vec2 p, in float r, in float thickness) {
+    vec2 a = vec2(0.5) + vec2(-r, 0.0);
+    vec2 b = vec2(0.5) + vec2(r, 0.0);
+    float distToSegment = distSegment(p, a, b);
+    float halfThickness = thickness * r;
+    return distToSegment - halfThickness;
+  }
+
   void main() {
-    float rowH = resolution.y / numRows;
-    float row = floor(gl_FragCoord.y / rowH);
-    float rowFrac = gl_FragCoord.y / rowH - row;
-    float rowV = (row + 0.5) * rowH / resolution.y;
-    float dy = abs(rowFrac - 0.5);
-
-    float waveOffset = waveAmount * sin(time * waveSpeed + row * 0.5) * rowH;
-    float effectiveX = gl_FragCoord.x + waveOffset;
-
-    float cellW = rowH * cellRatio;
-    float cellIdx = floor(effectiveX / cellW);
-    float cellFrac = (effectiveX - cellIdx * cellW) / cellW;
-    float cellU = (cellIdx + 0.5) * cellW / resolution.x;
-
-    vec2 sampleUv = vec2(
-      clamp(cellU, 0.0, 1.0),
-      clamp(rowV, 0.0, 1.0)
-    );
-
-    vec4 sceneSample = texture2D(tScene, sampleUv);
-    vec4 glowCell = texture2D(tGlow, sampleUv);
-
-    float mask = smoothstep(0.02, 0.08, sceneSample.a);
-    float lum = dot(sceneSample.rgb, vec3(0.299, 0.587, 0.114));
-    float avgLum = dot(glowCell.rgb, vec3(0.299, 0.587, 0.114));
-    float detail = lum - avgLum;
-
-    float litLum = lum + max(detail, 0.0) * shading
-      - max(-detail, 0.0) * shading * 0.55;
-    litLum = clamp((litLum - cutoff) / max(1.0 - cutoff, 0.001), 0.0, 1.0);
-    litLum = pow(litLum, contrast);
-
-    float ink = mix(baseInk, 1.0, 1.0 - litLum);
-    float fill = pow(ink, 1.05) * power;
-    fill = clamp(fill, 0.0, 1.0) * mask;
-
-    float dynamicBarHalf = mix(0.08, maxBar, smoothstep(0.03, 0.85, ink));
-    float dx2 = abs(cellFrac - 0.5);
-    float halfFill = fill * 0.5;
-    float bodyHalfW = max(halfFill - dynamicBarHalf * (rowH / cellW), 0.0);
-    float capR = dynamicBarHalf * rowH;
-
-    float inDash = 0.0;
-    if (dx2 <= bodyHalfW) {
-      float edgeDist = dynamicBarHalf - dy;
-      inDash = smoothstep(-0.03, 0.03, edgeDist);
-    } else {
-      float cdx = (dx2 - bodyHalfW) * cellW;
-      float cdy = dy * rowH;
-      float d = sqrt(cdx * cdx + cdy * cdy);
-      inDash = 1.0 - smoothstep(capR - 1.5, capR + 1.5, d);
+    if (cropToBounds > 0.5) {
+      vec4 boundsCheck = texture2D(tScene, vUv);
+      if (boundsCheck.a < 0.01) {
+        gl_FragColor = vec4(0.0);
+        return;
+      }
     }
 
-    inDash *= step(0.001, ink) * mask;
-    inDash *= 1.0 + 0.03 * sin(time * 0.8 + row * 0.1);
+    vec2 fragCoord =
+      (gl_FragCoord.xy / max(effectResolution, vec2(1.0))) * logicalResolution;
+    float halftoneSize = max(tile * max(footprintScale, 0.001), 1.0);
+    vec2 pointerPx = interactionUv * logicalResolution;
+    vec2 fragDelta = fragCoord - pointerPx;
+    float fragDist = length(fragDelta);
+    vec2 radialDir = fragDist > 0.001 ? fragDelta / fragDist : vec2(0.0, 1.0);
+    float velocityMagnitude = length(interactionVelocity);
+    vec2 motionDir = velocityMagnitude > 0.001
+      ? interactionVelocity / velocityMagnitude
+      : vec2(0.0, 0.0);
+    float motionBias = velocityMagnitude > 0.001
+      ? dot(-radialDir, motionDir) * 0.5 + 0.5
+      : 0.5;
 
-    vec4 glow = texture2D(tGlow, vUv);
-    float glowLum = dot(glow.rgb, vec3(0.299, 0.587, 0.114));
-    float halo = glowLum * glowStr * 0.25 * (1.0 - inDash);
-    float sharp = smoothstep(0.3, 0.5, inDash + halo);
-    vec3 color = dashColor * sharp;
+    float hoverLightMask = 0.0;
+    if (hoverLightStrength > 0.0) {
+      float lightRadiusPx = hoverLightRadius * logicalResolution.y;
+      hoverLightMask = smoothstep(lightRadiusPx, 0.0, fragDist);
+    }
 
-    gl_FragColor = vec4(color, sharp);
+    float hoverFlowMask = 0.0;
+    if (hoverFlowStrength > 0.0) {
+      float hoverRadiusPx = hoverFlowRadius * logicalResolution.y;
+      hoverFlowMask = smoothstep(hoverRadiusPx, 0.0, fragDist);
+    }
+
+    vec2 hoverDisplacement =
+      radialDir * hoverFlowStrength * hoverFlowMask * halftoneSize * 0.55 +
+      motionDir * hoverFlowStrength * hoverFlowMask * (0.4 + motionBias) * halftoneSize * 1.15;
+    vec2 travelDisplacement = dragOffset * dragFlowStrength * 0.45;
+    vec2 effectCoord = fragCoord + hoverDisplacement + travelDisplacement;
+
+    float bandRow = floor(effectCoord.y / halftoneSize);
+    float waveOffset =
+      waveAmount * sin(time * waveSpeed + bandRow * 0.5) * halftoneSize;
+    effectCoord.x += waveOffset;
+
+    vec2 cellIndex = floor(effectCoord / halftoneSize);
+    vec2 sampleUv = clamp(
+      (cellIndex + 0.5) * halftoneSize / logicalResolution,
+      vec2(0.0),
+      vec2(1.0)
+    );
+    vec2 cellUv = fract(effectCoord / halftoneSize);
+
+    vec4 sceneSample = texture2D(tScene, sampleUv);
+    float mask = smoothstep(0.02, 0.08, sceneSample.a);
+    float lightLift =
+      hoverLightStrength * hoverLightMask * mix(0.78, 1.18, motionBias) * 0.22;
+    float bandRadius = clamp(
+      (
+        (
+          sceneSample.r +
+          sceneSample.g +
+          sceneSample.b +
+          s_3 * length(vec2(0.5))
+        ) *
+        (1.0 / 3.0)
+      ) + lightLift,
+      0.0,
+      1.0
+    ) * 1.86 * 0.5;
+
+    float alpha = 0.0;
+    if (bandRadius > 0.0001) {
+      float signedDistance = lineSimpleEt(cellUv, bandRadius, s_4);
+      float edge = 0.02;
+      alpha = (1.0 - smoothstep(0.0, edge, signedDistance)) * mask;
+    }
+
+    vec3 color = dashColor * alpha;
+    gl_FragColor = vec4(color, alpha);
 
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
   }
 `;
 
-const EMPTY_TEXTURE_DATA_URL =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO8B7Q8AAAAASUVORK5CYII=';
+type ViewportRect = {
+  height: number;
+  width: number;
+  x: number;
+  y: number;
+};
 
-function createLoadingManager() {
-  const loadingManager = new THREE.LoadingManager();
-  loadingManager.setURLModifier((url) =>
-    /\.(png|jpe?g|webp|gif|bmp)$/i.test(url) ? EMPTY_TEXTURE_DATA_URL : url,
-  );
-  return loadingManager;
-}
+type DiamondInteractionState = {
+  autoElapsed: number;
+  dragging: boolean;
+  mouseX: number;
+  mouseY: number;
+  pointerInside: boolean;
+  pointerX: number;
+  pointerY: number;
+  rotateElapsed: number;
+  rotationVelocityX: number;
+  rotationVelocityY: number;
+  rotationVelocityZ: number;
+  rotationX: number;
+  rotationY: number;
+  rotationZ: number;
+  targetRotationX: number;
+  targetRotationY: number;
+  velocityX: number;
+  velocityY: number;
+};
 
-function mergeGeometries(geometries: THREE.BufferGeometry[]) {
-  if (geometries.length === 1) {
-    return geometries[0];
+function clampRectToViewport(
+  rect: ViewportRect,
+  viewportWidth: number,
+  viewportHeight: number,
+) {
+  const minX = Math.max(rect.x, 0);
+  const minY = Math.max(rect.y, 0);
+  const maxX = Math.min(rect.x + rect.width, viewportWidth);
+  const maxY = Math.min(rect.y + rect.height, viewportHeight);
+
+  if (maxX <= minX || maxY <= minY) {
+    return null;
   }
 
-  let totalVertices = 0;
-  let totalIndices = 0;
-  let hasUv = false;
+  return {
+    height: maxY - minY,
+    width: maxX - minX,
+    x: minX,
+    y: minY,
+  };
+}
 
-  const geometryInfos = geometries.map((geometry) => {
-    const position = geometry.attributes.position as THREE.BufferAttribute;
-    const normal = geometry.attributes.normal as THREE.BufferAttribute;
-    const uv = (geometry.attributes.uv as THREE.BufferAttribute) ?? null;
-    const index = geometry.index;
-    const indexCount = index ? index.count : position.count;
+function getRectArea(rect: ViewportRect | null) {
+  if (!rect) {
+    return 0;
+  }
 
-    totalVertices += position.count;
-    totalIndices += indexCount;
-    hasUv = hasUv || uv !== null;
+  return Math.max(rect.width, 0) * Math.max(rect.height, 0);
+}
 
-    return {
-      index,
-      indexCount,
-      normal,
-      position,
-      uv,
-      vertexCount: position.count,
-    };
-  });
+function createBox3Corners(bounds: THREE.Box3) {
+  const { min, max } = bounds;
 
-  const positions = new Float32Array(totalVertices * 3);
-  const normals = new Float32Array(totalVertices * 3);
-  const uvs = hasUv ? new Float32Array(totalVertices * 2) : null;
-  const indices = new Uint32Array(totalIndices);
+  return [
+    new THREE.Vector3(min.x, min.y, min.z),
+    new THREE.Vector3(min.x, min.y, max.z),
+    new THREE.Vector3(min.x, max.y, min.z),
+    new THREE.Vector3(min.x, max.y, max.z),
+    new THREE.Vector3(max.x, min.y, min.z),
+    new THREE.Vector3(max.x, min.y, max.z),
+    new THREE.Vector3(max.x, max.y, min.z),
+    new THREE.Vector3(max.x, max.y, max.z),
+  ];
+}
 
-  let vertexOffset = 0;
-  let indexOffset = 0;
+function projectBox3ToViewport({
+  camera,
+  localBounds,
+  meshMatrixWorld,
+  viewportHeight,
+  viewportWidth,
+}: {
+  camera: THREE.PerspectiveCamera;
+  localBounds: THREE.Box3;
+  meshMatrixWorld: THREE.Matrix4;
+  viewportHeight: number;
+  viewportWidth: number;
+}) {
+  if (
+    localBounds.isEmpty() ||
+    viewportWidth <= 0 ||
+    viewportHeight <= 0
+  ) {
+    return null;
+  }
 
-  for (const geometryInfo of geometryInfos) {
-    for (
-      let vertexIndex = 0;
-      vertexIndex < geometryInfo.vertexCount;
-      vertexIndex += 1
+  let minX = Number.POSITIVE_INFINITY;
+  let minY = Number.POSITIVE_INFINITY;
+  let maxX = Number.NEGATIVE_INFINITY;
+  let maxY = Number.NEGATIVE_INFINITY;
+  let hasProjectedCorner = false;
+
+  for (const corner of createBox3Corners(localBounds)) {
+    corner.applyMatrix4(meshMatrixWorld).project(camera);
+
+    if (
+      !Number.isFinite(corner.x) ||
+      !Number.isFinite(corner.y) ||
+      !Number.isFinite(corner.z)
     ) {
-      const positionOffset = (vertexOffset + vertexIndex) * 3;
-      positions[positionOffset] = geometryInfo.position.getX(vertexIndex);
-      positions[positionOffset + 1] = geometryInfo.position.getY(vertexIndex);
-      positions[positionOffset + 2] = geometryInfo.position.getZ(vertexIndex);
-      normals[positionOffset] = geometryInfo.normal.getX(vertexIndex);
-      normals[positionOffset + 1] = geometryInfo.normal.getY(vertexIndex);
-      normals[positionOffset + 2] = geometryInfo.normal.getZ(vertexIndex);
-
-      if (uvs !== null) {
-        const uvOffset = (vertexOffset + vertexIndex) * 2;
-        uvs[uvOffset] = geometryInfo.uv?.getX(vertexIndex) ?? 0;
-        uvs[uvOffset + 1] = geometryInfo.uv?.getY(vertexIndex) ?? 0;
-      }
+      continue;
     }
 
-    if (geometryInfo.index) {
-      for (
-        let localIndex = 0;
-        localIndex < geometryInfo.indexCount;
-        localIndex += 1
-      ) {
-        indices[indexOffset + localIndex] =
-          geometryInfo.index.getX(localIndex) + vertexOffset;
-      }
-    } else {
-      for (
-        let localIndex = 0;
-        localIndex < geometryInfo.indexCount;
-        localIndex += 1
-      ) {
-        indices[indexOffset + localIndex] = localIndex + vertexOffset;
-      }
-    }
+    hasProjectedCorner = true;
 
-    vertexOffset += geometryInfo.vertexCount;
-    indexOffset += geometryInfo.indexCount;
+    const x = (corner.x * 0.5 + 0.5) * viewportWidth;
+    const y = (1 - (corner.y * 0.5 + 0.5)) * viewportHeight;
+
+    minX = Math.min(minX, x);
+    minY = Math.min(minY, y);
+    maxX = Math.max(maxX, x);
+    maxY = Math.max(maxY, y);
   }
 
-  const merged = new THREE.BufferGeometry();
-  merged.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  merged.setAttribute('normal', new THREE.BufferAttribute(normals, 3));
-
-  if (uvs !== null) {
-    merged.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+  if (!hasProjectedCorner) {
+    return null;
   }
 
-  merged.setIndex(new THREE.BufferAttribute(indices, 1));
-
-  return merged;
+  return clampRectToViewport(
+    {
+      height: maxY - minY,
+      width: maxX - minX,
+      x: minX,
+      y: minY,
+    },
+    viewportWidth,
+    viewportHeight,
+  );
 }
 
-function normalizeImportedGeometry(geometry: THREE.BufferGeometry) {
-  geometry.computeBoundingBox();
+function getFootprintScaleFromRects(
+  currentRect: ViewportRect | null,
+  referenceRect: ViewportRect | null,
+) {
+  const currentArea = getRectArea(currentRect);
+  const referenceArea = getRectArea(referenceRect);
 
-  let boundingBox = geometry.boundingBox;
-  let center = new THREE.Vector3();
-  let size = new THREE.Vector3();
-
-  boundingBox?.getCenter(center);
-  boundingBox?.getSize(size);
-  geometry.translate(-center.x, -center.y, -center.z);
-
-  const dimensions = [size.x, size.y, size.z];
-  const thinnestAxis = dimensions.indexOf(Math.min(...dimensions));
-
-  if (thinnestAxis === 0) {
-    geometry.applyMatrix4(new THREE.Matrix4().makeRotationY(Math.PI / 2));
-  } else if (thinnestAxis === 1) {
-    geometry.applyMatrix4(new THREE.Matrix4().makeRotationX(Math.PI / 2));
+  if (currentArea <= 0 || referenceArea <= 0) {
+    return 1;
   }
 
-  geometry.computeBoundingBox();
-  geometry.computeBoundingSphere();
-
-  const radius = geometry.boundingSphere?.radius || 1;
-  const scale = 1.6 / radius;
-  geometry.scale(scale, scale, scale);
-
-  geometry.computeBoundingBox();
-  boundingBox = geometry.boundingBox;
-  center = new THREE.Vector3();
-  boundingBox?.getCenter(center);
-  geometry.translate(-center.x, -center.y, -center.z);
-
-  geometry.computeVertexNormals();
-  geometry.computeBoundingBox();
-  geometry.computeBoundingSphere();
-
-  return geometry;
+  return Math.max(
+    Math.sqrt(currentArea / referenceArea),
+    MIN_FOOTPRINT_SCALE,
+  );
 }
 
-function extractMergedGeometry(root: THREE.Object3D) {
-  root.updateMatrixWorld(true);
-  const geometries: THREE.BufferGeometry[] = [];
-
-  root.traverse((object) => {
-    if (!(object instanceof THREE.Mesh) || !object.geometry) {
-      return;
-    }
-
-    const geometry = object.geometry.clone();
-
-    if (!geometry.attributes.normal) {
-      geometry.computeVertexNormals();
-    }
-
-    geometry.applyMatrix4(object.matrixWorld);
-    geometries.push(geometry);
+function getObjectFootprintScale({
+  camera,
+  localBounds,
+  lookAtTarget,
+  meshMatrixWorld,
+  viewportHeight,
+  viewportWidth,
+}: {
+  camera: THREE.PerspectiveCamera;
+  localBounds: THREE.Box3;
+  lookAtTarget: THREE.Vector3;
+  meshMatrixWorld: THREE.Matrix4;
+  viewportHeight: number;
+  viewportWidth: number;
+}) {
+  const currentRect = projectBox3ToViewport({
+    camera,
+    localBounds,
+    meshMatrixWorld,
+    viewportHeight,
+    viewportWidth,
   });
 
-  if (geometries.length === 0) {
-    throw new Error('Model did not contain any mesh geometry.');
-  }
+  const referenceCamera = camera.clone();
+  const currentOffset = referenceCamera.position.clone().sub(lookAtTarget);
+  const referenceOffset =
+    currentOffset.lengthSq() > 0
+      ? currentOffset.setLength(REFERENCE_PREVIEW_DISTANCE)
+      : new THREE.Vector3(0, 0, REFERENCE_PREVIEW_DISTANCE);
 
-  return normalizeImportedGeometry(mergeGeometries(geometries));
-}
+  referenceCamera.position.copy(lookAtTarget).add(referenceOffset);
+  referenceCamera.lookAt(lookAtTarget);
+  referenceCamera.updateProjectionMatrix();
+  referenceCamera.updateMatrixWorld(true);
 
-function parseGlbGeometry(buffer: ArrayBuffer): Promise<THREE.BufferGeometry> {
-  const dracoLoader = new DRACOLoader();
-  dracoLoader.setDecoderPath(DRACO_DECODER_PATH);
-
-  const gltfLoader = new GLTFLoader(createLoadingManager());
-  gltfLoader.setDRACOLoader(dracoLoader);
-
-  return new Promise<THREE.BufferGeometry>((resolve, reject) => {
-    gltfLoader.parse(
-      buffer,
-      '',
-      (gltf) => {
-        try {
-          resolve(extractMergedGeometry(gltf.scene));
-        } catch (error) {
-          reject(error);
-        }
-      },
-      reject,
-    );
-  }).finally(() => {
-    dracoLoader.dispose();
+  const referenceRect = projectBox3ToViewport({
+    camera: referenceCamera,
+    localBounds,
+    meshMatrixWorld,
+    viewportHeight,
+    viewportWidth,
   });
+
+  return getFootprintScaleFromRects(currentRect, referenceRect);
 }
 
-async function loadGeometry(modelUrl: string) {
-  const response = await fetch(modelUrl);
+function createEnvironmentTexture(renderer: THREE.WebGLRenderer) {
+  const pmremGenerator = new THREE.PMREMGenerator(renderer);
+  const environmentTexture = pmremGenerator.fromScene(
+    new RoomEnvironment(),
+    0.04,
+  ).texture;
 
-  if (!response.ok) {
-    throw new Error('Unable to load model from ' + modelUrl);
-  }
+  pmremGenerator.dispose();
 
-  const buffer = await response.arrayBuffer();
-  return parseGlbGeometry(buffer);
+  return environmentTexture;
 }
 
 function createRenderTarget(width: number, height: number) {
@@ -412,38 +531,24 @@ function createRenderTarget(width: number, height: number) {
   });
 }
 
-type InteractionState = {
-  autoElapsed: number;
-  dragging: boolean;
-  mouseX: number;
-  mouseY: number;
-  pointerX: number;
-  pointerY: number;
-  rotationX: number;
-  rotationY: number;
-  rotationZ: number;
-  targetRotationX: number;
-  targetRotationY: number;
-  velocityX: number;
-  velocityY: number;
-};
+function disposeMaterial(material: THREE.Material | THREE.Material[]) {
+  if (Array.isArray(material)) {
+    material.forEach((item) => item.dispose());
+    return;
+  }
 
-function createInteractionState(): InteractionState {
-  return {
-    autoElapsed: INITIAL_POSE.autoElapsed,
-    dragging: false,
-    mouseX: 0.5,
-    mouseY: 0.5,
-    pointerX: 0,
-    pointerY: 0,
-    rotationX: INITIAL_POSE.rotationX,
-    rotationY: INITIAL_POSE.rotationY,
-    rotationZ: INITIAL_POSE.rotationZ,
-    targetRotationX: INITIAL_POSE.targetRotationX,
-    targetRotationY: INITIAL_POSE.targetRotationY,
-    velocityX: 0,
-    velocityY: 0,
-  };
+  material.dispose();
+}
+
+function disposeObjectSubtree(root: THREE.Object3D) {
+  root.traverse((sceneObject) => {
+    if (!(sceneObject instanceof THREE.Mesh)) {
+      return;
+    }
+
+    sceneObject.geometry?.dispose();
+    disposeMaterial(sceneObject.material);
+  });
 }
 
 function setPrimaryLightPosition(
@@ -459,373 +564,78 @@ function setPrimaryLightPosition(
   );
 }
 
-async function mountFlashCanvas(container: HTMLDivElement) {
-  const getWidth = () => Math.max(container.clientWidth, 1);
-  const getHeight = () => Math.max(container.clientHeight, 1);
-  const getVirtualHeight = () => Math.max(VIRTUAL_RENDER_HEIGHT, getHeight());
-  const getVirtualWidth = () =>
-    Math.max(
-      Math.round(getVirtualHeight() * (getWidth() / Math.max(getHeight(), 1))),
-      1,
-    );
+function normalizeModelRoot(modelRoot: THREE.Object3D) {
+  const bounds = new THREE.Box3().setFromObject(modelRoot);
+  const center = bounds.getCenter(new THREE.Vector3());
+  const size = bounds.getSize(new THREE.Vector3());
+  const maxAxis = Math.max(size.x, size.y, size.z, 0.001);
 
-  let geometry: THREE.BufferGeometry;
+  modelRoot.position.sub(center);
+  modelRoot.scale.setScalar(MODEL_SCALE_TARGET / maxAxis);
+}
 
-  try {
-    geometry = await loadGeometry(GLB_URL);
-  } catch (error) {
-    console.error(error);
-    geometry = new THREE.TorusKnotGeometry(1, 0.35, 200, 32);
-  }
-
-  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.setPixelRatio(1);
-  renderer.setClearColor(0x000000, 0);
-  renderer.setSize(getVirtualWidth(), getVirtualHeight(), false);
-
-  const canvas = renderer.domElement;
-  canvas.style.cursor = 'grab';
-  canvas.style.display = 'block';
-  canvas.style.height = '100%';
-  canvas.style.touchAction = 'none';
-  canvas.style.width = '100%';
-  container.appendChild(canvas);
-
-  const pmremGenerator = new THREE.PMREMGenerator(renderer);
-  const environmentTexture = pmremGenerator.fromScene(
-    new RoomEnvironment(),
-    0.04,
-  ).texture;
-  pmremGenerator.dispose();
-
-  const scene3d = new THREE.Scene();
-  scene3d.background = null;
-
-  const baseCameraDistance = 4;
-  const camera = new THREE.PerspectiveCamera(
-    45,
-    getWidth() / getHeight(),
-    0.1,
-    100,
-  );
-  camera.position.z = baseCameraDistance;
-
-  const primaryLight = new THREE.DirectionalLight(0xffffff, LIGHTING.intensity);
-  setPrimaryLightPosition(primaryLight, LIGHTING.angleDegrees, LIGHTING.height);
-  scene3d.add(primaryLight);
-
-  const fillLight = new THREE.DirectionalLight(
-    0xffffff,
-    LIGHTING.fillIntensity,
-  );
-  fillLight.position.set(-3, -1, 1);
-  scene3d.add(fillLight);
-
-  const ambientLight = new THREE.AmbientLight(
-    0xffffff,
-    LIGHTING.ambientIntensity,
-  );
-  scene3d.add(ambientLight);
-
-  const material = new THREE.MeshPhysicalMaterial({
-    clearcoat: 0,
-    clearcoatRoughness: 0.08,
-    color: 0xd4d0c8,
-    envMap: environmentTexture,
-    envMapIntensity: 0.25,
-    metalness: MATERIAL.metalness,
-    reflectivity: 0.5,
-    roughness: MATERIAL.roughness,
-    transmission: 0,
-  });
-
-  const mesh = new THREE.Mesh(geometry, material);
-  scene3d.add(mesh);
-
-  const sceneTarget = createRenderTarget(getVirtualWidth(), getVirtualHeight());
-  const blurTargetA = createRenderTarget(getVirtualWidth(), getVirtualHeight());
-  const blurTargetB = createRenderTarget(getVirtualWidth(), getVirtualHeight());
-  const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
-  const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-
-  const blurHorizontalMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-      dir: { value: new THREE.Vector2(1, 0) },
-      res: { value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()) },
-      tInput: { value: null },
-    },
-    fragmentShader: blurFragmentShader,
-    vertexShader: passThroughVertexShader,
-  });
-
-  const blurVerticalMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-      dir: { value: new THREE.Vector2(0, 1) },
-      res: { value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()) },
-      tInput: { value: null },
-    },
-    fragmentShader: blurFragmentShader,
-    vertexShader: passThroughVertexShader,
-  });
-
-  const halftoneMaterial = new THREE.ShaderMaterial({
-    transparent: true,
-    uniforms: {
-      baseInk: { value: HALFTONE.baseInk },
-      cellRatio: { value: HALFTONE.cellRatio },
-      contrast: { value: HALFTONE.contrast },
-      cutoff: { value: HALFTONE.cutoff },
-      dashColor: { value: new THREE.Color(HALFTONE.dashColor) },
-      glowStr: { value: 0 },
-      maxBar: { value: HALFTONE.maxBar },
-      numRows: { value: HALFTONE.numRows },
-      power: { value: HALFTONE.power },
-      resolution: {
-        value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
-      },
-      shading: { value: HALFTONE.shading },
-      tGlow: { value: blurTargetB.texture },
-      tScene: { value: sceneTarget.texture },
-      time: { value: 0 },
-      waveAmount: { value: HALFTONE.waveAmount },
-      waveSpeed: { value: HALFTONE.waveSpeed },
-    },
-    fragmentShader: halftoneFragmentShader,
-    vertexShader: passThroughVertexShader,
-  });
-
-  const blurHorizontalScene = new THREE.Scene();
-  blurHorizontalScene.add(
-    new THREE.Mesh(fullScreenGeometry, blurHorizontalMaterial),
-  );
-
-  const blurVerticalScene = new THREE.Scene();
-  blurVerticalScene.add(
-    new THREE.Mesh(fullScreenGeometry, blurVerticalMaterial),
-  );
-
-  const postScene = new THREE.Scene();
-  postScene.add(new THREE.Mesh(fullScreenGeometry, halftoneMaterial));
-
-  const interaction = createInteractionState();
-
-  const syncSize = () => {
-    const width = getWidth();
-    const height = getHeight();
-    const virtualWidth = getVirtualWidth();
-    const virtualHeight = getVirtualHeight();
-
-    renderer.setSize(virtualWidth, virtualHeight, false);
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-    sceneTarget.setSize(virtualWidth, virtualHeight);
-    blurTargetA.setSize(virtualWidth, virtualHeight);
-    blurTargetB.setSize(virtualWidth, virtualHeight);
-    blurHorizontalMaterial.uniforms.res.value.set(virtualWidth, virtualHeight);
-    blurVerticalMaterial.uniforms.res.value.set(virtualWidth, virtualHeight);
-    halftoneMaterial.uniforms.resolution.value.set(virtualWidth, virtualHeight);
-  };
-
-  const resizeObserver = new ResizeObserver(syncSize);
-  resizeObserver.observe(container);
-
-  const updatePointerPosition = (event: PointerEvent) => {
-    const rect = canvas.getBoundingClientRect();
-    const width = Math.max(rect.width, 1);
-    const height = Math.max(rect.height, 1);
-
-    interaction.mouseX = THREE.MathUtils.clamp(
-      (event.clientX - rect.left) / width,
-      0,
-      1,
-    );
-    interaction.mouseY = THREE.MathUtils.clamp(
-      (event.clientY - rect.top) / height,
-      0,
-      1,
-    );
-  };
-
-  const handlePointerDown = (event: PointerEvent) => {
-    updatePointerPosition(event);
-    interaction.dragging = true;
-    interaction.pointerX = event.clientX;
-    interaction.pointerY = event.clientY;
-    interaction.velocityX = 0;
-    interaction.velocityY = 0;
-    canvas.style.cursor = 'grabbing';
-  };
-
-  const handlePointerMove = (event: PointerEvent) => {
-    updatePointerPosition(event);
-  };
-
-  const handleWindowPointerMove = (event: PointerEvent) => {
-    updatePointerPosition(event);
-
-    if (!interaction.dragging || !ANIMATION.followDragEnabled) {
+function applyPhysicalMaterial(
+  modelRoot: THREE.Object3D,
+  environmentTexture: THREE.Texture,
+  materialSettings: ModelHalftoneMaterialSettings,
+) {
+  modelRoot.traverse((sceneObject) => {
+    if (!(sceneObject instanceof THREE.Mesh)) {
       return;
     }
 
-    const deltaX = (event.clientX - interaction.pointerX) * ANIMATION.dragSens;
-    const deltaY = (event.clientY - interaction.pointerY) * ANIMATION.dragSens;
+    disposeMaterial(sceneObject.material);
+    sceneObject.material = new THREE.MeshPhysicalMaterial({
+      clearcoat: 0,
+      clearcoatRoughness: 0.08,
+      color: 0xd4d0c8,
+      envMap: environmentTexture,
+      envMapIntensity: 0.25,
+      metalness: materialSettings.metalness,
+      reflectivity: 0.5,
+      roughness: materialSettings.roughness,
+      transmission: 0,
+    });
+  });
+}
 
-    interaction.velocityX = deltaY;
-    interaction.velocityY = deltaX;
-    interaction.targetRotationY += deltaX;
-    interaction.targetRotationX += deltaY;
-    interaction.pointerX = event.clientX;
-    interaction.pointerY = event.clientY;
+function createInteractionState(
+  settings: ModelHalftoneIllustrationSettings,
+): DiamondInteractionState {
+  return {
+    autoElapsed: INITIAL_POSE.autoElapsed,
+    dragging: false,
+    mouseX: 0.5,
+    mouseY: 0.5,
+    pointerInside: false,
+    pointerX: 0,
+    pointerY: 0,
+    rotateElapsed: INITIAL_POSE.rotateElapsed,
+    rotationVelocityX: 0,
+    rotationVelocityY: 0,
+    rotationVelocityZ: 0,
+    rotationX: INITIAL_POSE.rotationX,
+    rotationY: INITIAL_POSE.rotationY,
+    rotationZ: settings.rotationOffsetZ,
+    targetRotationX: INITIAL_POSE.targetRotationX,
+    targetRotationY: INITIAL_POSE.targetRotationY,
+    velocityX: 0,
+    velocityY: 0,
   };
+}
 
-  const handlePointerLeave = () => {
-    if (interaction.dragging) {
-      return;
-    }
+function applySpringStep(
+  current: number,
+  target: number,
+  velocity: number,
+  strength: number,
+  damping: number,
+) {
+  const nextVelocity = (velocity + (target - current) * strength) * damping;
 
-    interaction.mouseX = 0.5;
-    interaction.mouseY = 0.5;
-  };
-
-  const handlePointerUp = () => {
-    interaction.dragging = false;
-    canvas.style.cursor = 'grab';
-  };
-
-  const handleWindowBlur = () => {
-    handlePointerUp();
-    handlePointerLeave();
-  };
-
-  canvas.addEventListener('pointerdown', handlePointerDown);
-  canvas.addEventListener('pointerleave', handlePointerLeave);
-  canvas.addEventListener('pointermove', handlePointerMove);
-  window.addEventListener('blur', handleWindowBlur);
-  window.addEventListener('pointermove', handleWindowPointerMove);
-  window.addEventListener('pointerup', handlePointerUp);
-
-  const clock = new THREE.Clock();
-  let animationFrameId = 0;
-
-  const renderFrame = () => {
-    animationFrameId = window.requestAnimationFrame(renderFrame);
-
-    const delta = Math.min(clock.getDelta(), 0.1);
-    const elapsedTime = INITIAL_POSE.timeElapsed + clock.getElapsedTime();
-
-    halftoneMaterial.uniforms.time.value = elapsedTime;
-
-    if (!interaction.dragging) {
-      interaction.autoElapsed += delta;
-
-      if (ANIMATION.dragMomentum) {
-        interaction.targetRotationX += interaction.velocityX;
-        interaction.targetRotationY += interaction.velocityY;
-        interaction.velocityX *= 1 - ANIMATION.dragFriction;
-        interaction.velocityY *= 1 - ANIMATION.dragFriction;
-      }
-    }
-
-    const baseRotationX =
-      Math.sin(interaction.autoElapsed * 0.2) * ANIMATION.autoWobble;
-    const baseRotationY = interaction.autoElapsed * ANIMATION.autoSpeed;
-
-    let targetX = baseRotationX;
-    let targetY = baseRotationY;
-    let easing = 0.12;
-
-    if (ANIMATION.followHoverEnabled) {
-      const rangeRadians = THREE.MathUtils.degToRad(ANIMATION.hoverRange);
-
-      if (
-        ANIMATION.hoverReturn ||
-        interaction.mouseX !== 0.5 ||
-        interaction.mouseY !== 0.5
-      ) {
-        targetX += (interaction.mouseY - 0.5) * rangeRadians;
-        targetY += (interaction.mouseX - 0.5) * rangeRadians;
-      }
-
-      easing = ANIMATION.hoverEase;
-    }
-
-    if (ANIMATION.followDragEnabled) {
-      targetX += interaction.targetRotationX;
-      targetY += interaction.targetRotationY;
-      easing = ANIMATION.dragFriction;
-    }
-
-    interaction.rotationX += (targetX - interaction.rotationX) * easing;
-    interaction.rotationY += (targetY - interaction.rotationY) * easing;
-    interaction.rotationZ += (0 - interaction.rotationZ) * 0.12;
-
-    mesh.rotation.set(
-      interaction.rotationX,
-      interaction.rotationY,
-      interaction.rotationZ,
-    );
-
-    camera.position.x += (0 - camera.position.x) * 0.12;
-    camera.position.y += (0 - camera.position.y) * 0.12;
-    camera.position.z += (baseCameraDistance - camera.position.z) * 0.12;
-    camera.lookAt(0, 0, 0);
-    setPrimaryLightPosition(
-      primaryLight,
-      LIGHTING.angleDegrees,
-      LIGHTING.height,
-    );
-
-    renderer.setRenderTarget(sceneTarget);
-    renderer.render(scene3d, camera);
-
-    blurHorizontalMaterial.uniforms.tInput.value = sceneTarget.texture;
-    renderer.setRenderTarget(blurTargetA);
-    renderer.render(blurHorizontalScene, orthographicCamera);
-
-    blurVerticalMaterial.uniforms.tInput.value = blurTargetA.texture;
-    renderer.setRenderTarget(blurTargetB);
-    renderer.render(blurVerticalScene, orthographicCamera);
-
-    blurHorizontalMaterial.uniforms.tInput.value = blurTargetB.texture;
-    renderer.setRenderTarget(blurTargetA);
-    renderer.render(blurHorizontalScene, orthographicCamera);
-
-    blurVerticalMaterial.uniforms.tInput.value = blurTargetA.texture;
-    renderer.setRenderTarget(blurTargetB);
-    renderer.render(blurVerticalScene, orthographicCamera);
-
-    renderer.setRenderTarget(null);
-    renderer.clear();
-    renderer.render(postScene, orthographicCamera);
-  };
-
-  renderFrame();
-
-  return () => {
-    window.cancelAnimationFrame(animationFrameId);
-    resizeObserver.disconnect();
-    canvas.removeEventListener('pointerdown', handlePointerDown);
-    canvas.removeEventListener('pointerleave', handlePointerLeave);
-    canvas.removeEventListener('pointermove', handlePointerMove);
-    window.removeEventListener('blur', handleWindowBlur);
-    window.removeEventListener('pointermove', handleWindowPointerMove);
-    window.removeEventListener('pointerup', handlePointerUp);
-    blurHorizontalMaterial.dispose();
-    blurVerticalMaterial.dispose();
-    halftoneMaterial.dispose();
-    fullScreenGeometry.dispose();
-    mesh.geometry.dispose();
-    material.dispose();
-    sceneTarget.dispose();
-    blurTargetA.dispose();
-    blurTargetB.dispose();
-    environmentTexture.dispose();
-    renderer.dispose();
-
-    if (canvas.parentNode === container) {
-      container.removeChild(canvas);
-    }
+  return {
+    value: current + nextVelocity,
+    velocity: nextVelocity,
   };
 }
 
@@ -836,7 +646,15 @@ const StyledVisualMount = styled.div`
   width: 100%;
 `;
 
-export function Flash() {
+type ModelHalftoneIllustrationProps = {
+  modelUrl: string;
+  settings: ModelHalftoneIllustrationSettings;
+};
+
+export function ModelHalftoneIllustration({
+  modelUrl,
+  settings,
+}: ModelHalftoneIllustrationProps) {
   const mountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -846,12 +664,559 @@ export function Flash() {
       return;
     }
 
-    const unmount = mountFlashCanvas(container);
+    const getWidth = () => Math.max(container.clientWidth, 1);
+    const getHeight = () => Math.max(container.clientHeight, 1);
+    const getVirtualHeight = () => Math.max(VIRTUAL_RENDER_HEIGHT, getHeight());
+    const getVirtualWidth = () =>
+      Math.max(
+        Math.round(getVirtualHeight() * (getWidth() / Math.max(getHeight(), 1))),
+        1,
+      );
+
+    let animationFrameId = 0;
+    let cancelled = false;
+    let modelRoot: THREE.Object3D | null = null;
+    let modelLocalBounds: THREE.Box3 | null = null;
+
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.setPixelRatio(1);
+    renderer.setClearColor(0x000000, 0);
+    renderer.setSize(getVirtualWidth(), getVirtualHeight(), false);
+
+    const canvas = renderer.domElement;
+    canvas.style.cursor = settings.animation.followDragEnabled
+      ? 'grab'
+      : 'default';
+    canvas.style.display = 'block';
+    canvas.style.height = '100%';
+    canvas.style.touchAction = 'none';
+    canvas.style.width = '100%';
+    container.appendChild(canvas);
+
+    const environmentTexture = createEnvironmentTexture(renderer);
+
+    const scene3d = new THREE.Scene();
+    scene3d.background = null;
+
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      getWidth() / getHeight(),
+      0.1,
+      100,
+    );
+    camera.position.z = settings.cameraDistance;
+
+    const primaryLight = new THREE.DirectionalLight(
+      0xffffff,
+      settings.lighting.intensity,
+    );
+    setPrimaryLightPosition(
+      primaryLight,
+      settings.lighting.angleDegrees,
+      settings.lighting.height,
+    );
+    scene3d.add(primaryLight);
+
+    const fillLight = new THREE.DirectionalLight(
+      0xffffff,
+      settings.lighting.fillIntensity,
+    );
+    fillLight.position.set(-3, -1, 1);
+    scene3d.add(fillLight);
+
+    const ambientLight = new THREE.AmbientLight(
+      0xffffff,
+      settings.lighting.ambientIntensity,
+    );
+    scene3d.add(ambientLight);
+
+    const pivot = new THREE.Group();
+    scene3d.add(pivot);
+
+    const sceneTarget = createRenderTarget(getVirtualWidth(), getVirtualHeight());
+    const blurTargetA = createRenderTarget(getVirtualWidth(), getVirtualHeight());
+    const blurTargetB = createRenderTarget(getVirtualWidth(), getVirtualHeight());
+    const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
+    const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+    const blurHorizontalMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        dir: { value: new THREE.Vector2(1, 0) },
+        res: { value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()) },
+        tInput: { value: null },
+      },
+      fragmentShader: blurFragmentShader,
+      vertexShader: passThroughVertexShader,
+    });
+
+    const blurVerticalMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        dir: { value: new THREE.Vector2(0, 1) },
+        res: { value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()) },
+        tInput: { value: null },
+      },
+      fragmentShader: blurFragmentShader,
+      vertexShader: passThroughVertexShader,
+    });
+
+    const halftoneMaterial = new THREE.ShaderMaterial({
+      fragmentShader: halftoneFragmentShader,
+      transparent: true,
+      uniforms: {
+        cropToBounds: { value: 0 },
+        dashColor: { value: new THREE.Color(settings.halftone.dashColor) },
+        dragFlowStrength: { value: 0 },
+        dragOffset: { value: new THREE.Vector2(0, 0) },
+        effectResolution: {
+          value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
+        },
+        footprintScale: { value: 1 },
+        hoverFlowRadius: { value: 0.18 },
+        hoverFlowStrength: { value: 0 },
+        hoverLightRadius: { value: 0.2 },
+        hoverLightStrength: { value: 0 },
+        interactionUv: { value: new THREE.Vector2(0.5, 0.5) },
+        interactionVelocity: { value: new THREE.Vector2(0, 0) },
+        logicalResolution: {
+          value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
+        },
+        s_3: { value: settings.halftone.power },
+        s_4: { value: settings.halftone.width },
+        tGlow: { value: blurTargetB.texture },
+        tScene: { value: sceneTarget.texture },
+        tile: { value: settings.halftone.scale },
+        time: { value: 0 },
+        waveAmount: { value: 0 },
+        waveSpeed: { value: 1 },
+      },
+      vertexShader: passThroughVertexShader,
+    });
+
+    const blurHorizontalScene = new THREE.Scene();
+    blurHorizontalScene.add(
+      new THREE.Mesh(fullScreenGeometry, blurHorizontalMaterial),
+    );
+
+    const blurVerticalScene = new THREE.Scene();
+    blurVerticalScene.add(new THREE.Mesh(fullScreenGeometry, blurVerticalMaterial));
+
+    const postScene = new THREE.Scene();
+    postScene.add(new THREE.Mesh(fullScreenGeometry, halftoneMaterial));
+
+    const updateViewportUniforms = (
+      logicalWidth: number,
+      logicalHeight: number,
+      effectWidth: number,
+      effectHeight: number,
+    ) => {
+      blurHorizontalMaterial.uniforms.res.value.set(effectWidth, effectHeight);
+      blurVerticalMaterial.uniforms.res.value.set(effectWidth, effectHeight);
+      halftoneMaterial.uniforms.effectResolution.value.set(
+        effectWidth,
+        effectHeight,
+      );
+      halftoneMaterial.uniforms.logicalResolution.value.set(
+        logicalWidth,
+        logicalHeight,
+      );
+    };
+
+    const interaction = createInteractionState(settings);
+    const lookAtTarget = new THREE.Vector3(0, 0, 0);
+
+    const syncSize = () => {
+      const width = getWidth();
+      const height = getHeight();
+      const virtualWidth = getVirtualWidth();
+      const virtualHeight = getVirtualHeight();
+
+      renderer.setSize(virtualWidth, virtualHeight, false);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      sceneTarget.setSize(virtualWidth, virtualHeight);
+      blurTargetA.setSize(virtualWidth, virtualHeight);
+      blurTargetB.setSize(virtualWidth, virtualHeight);
+      updateViewportUniforms(
+        virtualWidth,
+        virtualHeight,
+        virtualWidth,
+        virtualHeight,
+      );
+    };
+
+    const resizeObserver = new ResizeObserver(syncSize);
+    resizeObserver.observe(container);
+
+    const updatePointerPosition = (event: PointerEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      const width = Math.max(rect.width, 1);
+      const height = Math.max(rect.height, 1);
+      const localX = (event.clientX - rect.left) / width;
+      const localY = (event.clientY - rect.top) / height;
+
+      interaction.pointerInside =
+        localX >= 0 &&
+        localX <= 1 &&
+        localY >= 0 &&
+        localY <= 1;
+      interaction.mouseX = THREE.MathUtils.clamp(localX, 0, 1);
+      interaction.mouseY = THREE.MathUtils.clamp(localY, 0, 1);
+    };
+
+    const handlePointerEnter = (event: PointerEvent) => {
+      updatePointerPosition(event);
+      interaction.pointerInside = true;
+    };
+
+    const handlePointerDown = (event: PointerEvent) => {
+      updatePointerPosition(event);
+      interaction.dragging = true;
+      interaction.pointerX = event.clientX;
+      interaction.pointerY = event.clientY;
+      interaction.velocityX = 0;
+      interaction.velocityY = 0;
+      canvas.style.cursor = 'grabbing';
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      updatePointerPosition(event);
+    };
+
+    const handleWindowPointerMove = (event: PointerEvent) => {
+      if (!interaction.dragging || !settings.animation.followDragEnabled) {
+        return;
+      }
+
+      updatePointerPosition(event);
+
+      const deltaX =
+        (event.clientX - interaction.pointerX) * settings.animation.dragSens;
+      const deltaY =
+        (event.clientY - interaction.pointerY) * settings.animation.dragSens;
+      interaction.velocityX = deltaY;
+      interaction.velocityY = deltaX;
+      interaction.targetRotationY += deltaX;
+      interaction.targetRotationX += deltaY;
+      interaction.pointerX = event.clientX;
+      interaction.pointerY = event.clientY;
+    };
+
+    const handlePointerLeave = () => {
+      interaction.pointerInside = false;
+
+      if (interaction.dragging) {
+        return;
+      }
+
+      interaction.mouseX = 0.5;
+      interaction.mouseY = 0.5;
+    };
+
+    const handlePointerUp = () => {
+      interaction.dragging = false;
+      canvas.style.cursor = settings.animation.followDragEnabled
+        ? 'grab'
+        : 'default';
+
+      if (!settings.animation.springReturnEnabled) {
+        return;
+      }
+
+      const springImpulse = Math.max(
+        settings.animation.springStrength * 10,
+        1.2,
+      );
+      interaction.rotationVelocityX += interaction.velocityX * springImpulse;
+      interaction.rotationVelocityY += interaction.velocityY * springImpulse;
+      interaction.rotationVelocityZ += interaction.velocityY * springImpulse * 0.12;
+      interaction.targetRotationX = 0;
+      interaction.targetRotationY = 0;
+      interaction.velocityX = 0;
+      interaction.velocityY = 0;
+    };
+
+    const handleWindowBlur = () => {
+      handlePointerUp();
+      handlePointerLeave();
+    };
+
+    canvas.addEventListener('pointerdown', handlePointerDown);
+    canvas.addEventListener('pointerenter', handlePointerEnter);
+    canvas.addEventListener('pointerleave', handlePointerLeave);
+    canvas.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointermove', handleWindowPointerMove);
+    window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('blur', handleWindowBlur);
+
+    const clock = new THREE.Clock();
+
+    const renderFrame = () => {
+      if (cancelled) {
+        return;
+      }
+
+      animationFrameId = window.requestAnimationFrame(renderFrame);
+
+      const delta = clock.getDelta();
+      const elapsedTime = INITIAL_POSE.timeElapsed + clock.elapsedTime;
+      halftoneMaterial.uniforms.time.value = elapsedTime;
+      halftoneMaterial.uniforms.interactionUv.value.set(
+        interaction.mouseX,
+        1 - interaction.mouseY,
+      );
+      halftoneMaterial.uniforms.interactionVelocity.value.set(
+        interaction.velocityY,
+        -interaction.velocityX,
+      );
+
+      let baseRotationX = settings.rotationOffsetX;
+      let baseRotationY = settings.rotationOffsetY;
+      let baseRotationZ = settings.rotationOffsetZ;
+      let lightAngle = settings.lighting.angleDegrees;
+      let lightHeight = settings.lighting.height;
+
+      if (settings.animation.autoRotateEnabled) {
+        interaction.autoElapsed += delta;
+        baseRotationY += interaction.autoElapsed * settings.animation.autoSpeed;
+        baseRotationX +=
+          Math.sin(interaction.autoElapsed * 0.2) *
+          settings.animation.autoWobble;
+      }
+
+      if (settings.animation.rotateEnabled) {
+        interaction.rotateElapsed += delta;
+        const rotateProgress = settings.animation.rotatePingPong
+          ? Math.sin(interaction.rotateElapsed * settings.animation.rotateSpeed) *
+            Math.PI
+          : interaction.rotateElapsed * settings.animation.rotateSpeed;
+        const axisDirection = settings.animation.rotateAxis.startsWith('-')
+          ? -1
+          : 1;
+        const axisProgress = rotateProgress * axisDirection;
+
+        if (settings.animation.rotateAxis.includes('x')) {
+          baseRotationX += axisProgress;
+        }
+
+        if (settings.animation.rotateAxis.includes('y')) {
+          baseRotationY += axisProgress;
+        }
+
+        if (settings.animation.rotateAxis.includes('z')) {
+          baseRotationZ += axisProgress;
+        }
+      }
+
+      if (settings.animation.lightSweepEnabled) {
+        const lightPhase = elapsedTime * settings.animation.lightSweepSpeed;
+        lightAngle += Math.sin(lightPhase) * settings.animation.lightSweepRange;
+        lightHeight +=
+          Math.cos(lightPhase * 0.85) *
+          settings.animation.lightSweepHeightRange;
+      }
+
+      let targetX = baseRotationX;
+      let targetY = baseRotationY;
+      let easing = 0.12;
+
+      if (settings.animation.followHoverEnabled) {
+        const rangeRadians = THREE.MathUtils.degToRad(
+          settings.animation.hoverRange,
+        );
+
+        if (
+          settings.animation.hoverReturn ||
+          interaction.mouseX !== 0.5 ||
+          interaction.mouseY !== 0.5
+        ) {
+          targetX += (interaction.mouseY - 0.5) * rangeRadians;
+          targetY += (interaction.mouseX - 0.5) * rangeRadians;
+        }
+
+        easing = settings.animation.hoverEase;
+      }
+
+      if (settings.animation.followDragEnabled) {
+        if (!interaction.dragging && settings.animation.dragMomentum) {
+          interaction.targetRotationX += interaction.velocityX;
+          interaction.targetRotationY += interaction.velocityY;
+          interaction.velocityX *= 1 - settings.animation.dragFriction;
+          interaction.velocityY *= 1 - settings.animation.dragFriction;
+        }
+
+        targetX += interaction.targetRotationX;
+        targetY += interaction.targetRotationY;
+        easing = settings.animation.dragFriction;
+      }
+
+      if (settings.animation.springReturnEnabled) {
+        const springX = applySpringStep(
+          interaction.rotationX,
+          targetX,
+          interaction.rotationVelocityX,
+          settings.animation.springStrength,
+          settings.animation.springDamping,
+        );
+        const springY = applySpringStep(
+          interaction.rotationY,
+          targetY,
+          interaction.rotationVelocityY,
+          settings.animation.springStrength,
+          settings.animation.springDamping,
+        );
+        const springZ = applySpringStep(
+          interaction.rotationZ,
+          baseRotationZ,
+          interaction.rotationVelocityZ,
+          settings.animation.springStrength,
+          settings.animation.springDamping,
+        );
+
+        interaction.rotationX = springX.value;
+        interaction.rotationY = springY.value;
+        interaction.rotationZ = springZ.value;
+        interaction.rotationVelocityX = springX.velocity;
+        interaction.rotationVelocityY = springY.velocity;
+        interaction.rotationVelocityZ = springZ.velocity;
+      } else {
+        interaction.rotationX += (targetX - interaction.rotationX) * easing;
+        interaction.rotationY += (targetY - interaction.rotationY) * easing;
+        interaction.rotationZ +=
+          (baseRotationZ - interaction.rotationZ) *
+          (settings.animation.rotatePingPong ? 0.18 : 0.12);
+      }
+
+      pivot.rotation.set(
+        interaction.rotationX,
+        interaction.rotationY,
+        interaction.rotationZ,
+      );
+
+      camera.lookAt(lookAtTarget);
+      camera.updateMatrixWorld(true);
+      setPrimaryLightPosition(primaryLight, lightAngle, lightHeight);
+
+      if (modelRoot && modelLocalBounds) {
+        modelRoot.updateMatrixWorld(true);
+        halftoneMaterial.uniforms.footprintScale.value = getObjectFootprintScale(
+          {
+            camera,
+            localBounds: modelLocalBounds,
+            lookAtTarget,
+            meshMatrixWorld: modelRoot.matrixWorld,
+            viewportHeight: getVirtualHeight(),
+            viewportWidth: getVirtualWidth(),
+          },
+        );
+      }
+
+      renderer.setRenderTarget(sceneTarget);
+      renderer.render(scene3d, camera);
+
+      blurHorizontalMaterial.uniforms.tInput.value = sceneTarget.texture;
+      renderer.setRenderTarget(blurTargetA);
+      renderer.render(blurHorizontalScene, orthographicCamera);
+
+      blurVerticalMaterial.uniforms.tInput.value = blurTargetA.texture;
+      renderer.setRenderTarget(blurTargetB);
+      renderer.render(blurVerticalScene, orthographicCamera);
+
+      blurHorizontalMaterial.uniforms.tInput.value = blurTargetB.texture;
+      renderer.setRenderTarget(blurTargetA);
+      renderer.render(blurHorizontalScene, orthographicCamera);
+
+      blurVerticalMaterial.uniforms.tInput.value = blurTargetA.texture;
+      renderer.setRenderTarget(blurTargetB);
+      renderer.render(blurVerticalScene, orthographicCamera);
+
+      renderer.setRenderTarget(null);
+      renderer.clear();
+      renderer.render(postScene, orthographicCamera);
+    };
+
+    renderFrame();
+
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath(
+      'https://www.gstatic.com/draco/versioned/decoders/1.5.6/',
+    );
+
+    const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
+
+    loader.load(
+      modelUrl,
+      (gltf) => {
+        if (cancelled) {
+          disposeObjectSubtree(gltf.scene);
+          return;
+        }
+
+        const nextModelRoot = gltf.scene;
+        normalizeModelRoot(nextModelRoot);
+        applyPhysicalMaterial(
+          nextModelRoot,
+          environmentTexture,
+          settings.material,
+        );
+        nextModelRoot.updateMatrixWorld(true);
+        const worldBounds = new THREE.Box3().setFromObject(nextModelRoot);
+        modelLocalBounds = worldBounds.applyMatrix4(
+          nextModelRoot.matrixWorld.clone().invert(),
+        );
+        modelRoot = nextModelRoot;
+        pivot.add(nextModelRoot);
+      },
+      undefined,
+      (error) => {
+        if (!cancelled) {
+          console.error(error);
+        }
+      },
+    );
 
     return () => {
-      void Promise.resolve(unmount).then((dispose) => dispose?.());
+      cancelled = true;
+      resizeObserver.disconnect();
+      canvas.removeEventListener('pointerdown', handlePointerDown);
+      canvas.removeEventListener('pointerenter', handlePointerEnter);
+      canvas.removeEventListener('pointerleave', handlePointerLeave);
+      canvas.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointermove', handleWindowPointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('blur', handleWindowBlur);
+      window.cancelAnimationFrame(animationFrameId);
+
+      if (modelRoot) {
+        disposeObjectSubtree(modelRoot);
+      }
+
+      blurHorizontalMaterial.dispose();
+      blurVerticalMaterial.dispose();
+      halftoneMaterial.dispose();
+      fullScreenGeometry.dispose();
+      sceneTarget.dispose();
+      blurTargetA.dispose();
+      blurTargetB.dispose();
+      environmentTexture.dispose();
+      renderer.dispose();
+      dracoLoader.dispose();
+
+      if (canvas.parentNode === container) {
+        container.removeChild(canvas);
+      }
     };
-  }, []);
+  }, [modelUrl, settings]);
 
   return <StyledVisualMount aria-hidden ref={mountReference} />;
+}
+
+export function Flash() {
+  return (
+    <ModelHalftoneIllustration
+      modelUrl={FLASH_MODEL_URL}
+      settings={FLASH_EFFECT_SETTINGS}
+    />
+  );
 }

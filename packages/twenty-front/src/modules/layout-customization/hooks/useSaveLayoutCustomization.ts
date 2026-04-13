@@ -6,6 +6,7 @@ import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/sta
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterWorkspaceNavigationMenuItems';
 import { useSaveNavigationMenuItemsDraft } from '@/navigation-menu-item/edit/hooks/useSaveNavigationMenuItemsDraft';
+import { useCreatePendingFieldsWidgetViews } from '@/page-layout/hooks/useCreatePendingFieldsWidgetViews';
 import { useSavePageLayoutWidgetsData } from '@/page-layout/hooks/useSavePageLayoutWidgetsData';
 import { useUpdatePageLayoutWithTabsAndWidgets } from '@/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
@@ -38,6 +39,8 @@ export const useSaveLayoutCustomization = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const { updatePageLayoutWithTabsAndWidgets } =
     useUpdatePageLayoutWithTabsAndWidgets();
+  const { createPendingFieldsWidgetViews } =
+    useCreatePendingFieldsWidgetViews();
   const { exitLayoutCustomizationMode } = useExitLayoutCustomizationMode();
   const { savePageLayoutWidgetsData } = useSavePageLayoutWidgetsData();
 
@@ -103,6 +106,8 @@ export const useSaveLayoutCustomization = () => {
           draft,
           persistedAsDraft,
         );
+
+        await createPendingFieldsWidgetViews(pageLayoutId);
 
         if (isPageLayoutStructureDirty) {
           const updateInput = convertPageLayoutDraftToUpdateInput(draft, {
@@ -174,6 +179,7 @@ export const useSaveLayoutCustomization = () => {
     saveDraft,
     saveCommandMenuItemsDraft,
     isCommandMenuItemsDirty,
+    createPendingFieldsWidgetViews,
     updatePageLayoutWithTabsAndWidgets,
     savePageLayoutWidgetsData,
     exitLayoutCustomizationMode,

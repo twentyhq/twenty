@@ -14,7 +14,7 @@ import { createPortal } from 'react-dom';
 
 const TAB_LABEL_WIDTH = 72;
 
-export const PanelShell = styled.aside`
+export const PanelShell = styled.aside<{ $collapsed?: boolean }>`
   background: rgba(18, 18, 22, 0.88);
   backdrop-filter: blur(24px) saturate(1.4);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -27,22 +27,24 @@ export const PanelShell = styled.aside`
   flex-direction: column;
   font-family: ${theme.font.family.sans};
   font-size: 11px;
-  height: 100%;
+  height: ${(props) => (props.$collapsed ? 'auto' : '100%')};
   overflow: hidden;
-  width: min(320px, calc(100vw - 32px));
+  width: ${(props) =>
+    props.$collapsed ? 'auto' : 'min(320px, calc(100vw - 32px))'};
 
   @media (max-width: ${theme.breakpoints.md - 1}px) {
-    height: 100%;
-    width: 100%;
+    height: ${(props) => (props.$collapsed ? 'auto' : '100%')};
+    width: ${(props) => (props.$collapsed ? 'auto' : '100%')};
   }
 `;
 
-export const TabsBar = styled.div`
+export const TabsBar = styled.div<{ $collapsed?: boolean }>`
+  align-items: center;
   display: flex;
   flex-shrink: 0;
   gap: 6px;
   margin: 0;
-  padding: 12px 12px 0;
+  padding: ${(props) => (props.$collapsed ? '12px' : '12px 12px 0')};
 `;
 
 export const TabButton = styled.button<{ $active: boolean }>`
@@ -65,9 +67,7 @@ export const TabButton = styled.button<{ $active: boolean }>`
 
   &:hover {
     background: ${(props) =>
-      props.$active
-        ? 'rgba(255, 255, 255, 0.1)'
-        : 'rgba(255, 255, 255, 0.04)'};
+      props.$active ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.04)'};
     color: ${(props) =>
       props.$active
         ? 'rgba(255, 255, 255, 0.94)'
@@ -134,12 +134,60 @@ export const SelectLabel = styled.label`
   grid-template-columns: ${TAB_LABEL_WIDTH}px minmax(0, 1fr);
 `;
 
+export const SegmentedLabel = styled.div`
+  align-items: center;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: ${TAB_LABEL_WIDTH}px minmax(0, 1fr);
+`;
+
 export const ControlValue = styled.span`
   color: rgba(255, 255, 255, 0.5);
   font-size: 10px;
   font-variant-numeric: tabular-nums;
   min-width: 34px;
   text-align: right;
+`;
+
+const SegmentedGroup = styled.div`
+  align-items: stretch;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  display: grid;
+  gap: 1px;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  height: 24px;
+  padding: 1px;
+  width: 100%;
+`;
+
+const SegmentedButton = styled.button<{ $active: boolean }>`
+  background: ${(props) =>
+    props.$active ? 'rgba(255, 255, 255, 0.14)' : 'transparent'};
+  border: none;
+  border-radius: 6px;
+  color: ${(props) =>
+    props.$active ? 'rgba(255, 255, 255, 0.94)' : 'rgba(255, 255, 255, 0.58)'};
+  cursor: pointer;
+  font-family: ${theme.font.family.sans};
+  font-size: 11px;
+  font-weight: ${(props) => (props.$active ? 600 : 500)};
+  height: 100%;
+  padding: 0 10px;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.86);
+  }
+
+  &:focus-visible {
+    outline: 1px solid rgba(255, 255, 255, 0.35);
+    outline-offset: 1px;
+  }
 `;
 
 const EditableControlValueButton = styled.button`
@@ -250,8 +298,9 @@ export const SelectInput = styled.select`
   cursor: pointer;
   font-family: ${theme.font.family.sans};
   font-size: 11px;
+  height: 24px;
   outline: none;
-  padding: 7px 34px 7px 10px;
+  padding: 0 34px 0 10px;
   transition: border-color 0.15s ease;
   width: 100%;
 
@@ -527,7 +576,9 @@ export function ColorField({ ariaLabel, onChange, value }: ColorFieldProps) {
         aria-label={`${ariaLabel} hex value`}
         maxLength={7}
         onBlur={commitDraftValue}
+        onClick={(event) => event.currentTarget.select()}
         onChange={(event) => setDraftValue(event.target.value.toUpperCase())}
+        onFocus={(event) => event.currentTarget.select()}
         onKeyDown={(event) => {
           if (event.key === 'Enter') {
             event.preventDefault();
@@ -574,10 +625,10 @@ export const UploadButton = styled.button`
   display: flex;
   flex-shrink: 0;
   font-size: 13px;
-  height: 32px;
+  height: 24px;
   justify-content: center;
   transition: all 0.15s ease;
-  width: 32px;
+  width: 24px;
 
   &:hover {
     background: rgba(255, 255, 255, 0.12);
@@ -629,30 +680,53 @@ export const ExportPreview = styled.div`
 export const ExportButton = styled.button<{ $primary?: boolean }>`
   align-items: center;
   background: ${(props) =>
-    props.$primary ? '#4A38F5' : 'rgba(255, 255, 255, 0.08)'};
-  border: 1px solid
-    ${(props) =>
-      props.$primary ? 'rgba(116, 98, 255, 0.7)' : 'rgba(255, 255, 255, 0.12)'};
+    props.$primary ? 'rgba(255, 255, 255, 0.24)' : 'rgba(255, 255, 255, 0.2)'};
+  border: none;
   border-radius: 8px;
-  color: ${(props) => (props.$primary ? '#fff' : 'rgba(255, 255, 255, 0.8)')};
+  color: ${(props) =>
+    props.$primary ? 'rgba(255, 255, 255, 0.92)' : 'rgba(255, 255, 255, 0.8)'};
   cursor: pointer;
   display: flex;
   font-family: ${theme.font.family.sans};
   font-size: 11px;
-  font-weight: 600;
+  font-weight: ${theme.font.weight.medium};
   gap: 8px;
   justify-content: center;
+  line-height: normal;
   margin-top: ${(props) => (props.$primary ? '0' : '8px')};
-  min-height: 31px;
   padding: 7px 12px;
-  transition: all 0.2s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
   width: 100%;
 
   &:hover {
     background: ${(props) =>
-      props.$primary ? '#5a4af7' : 'rgba(255, 255, 255, 0.14)'};
-    border-color: ${(props) =>
-      props.$primary ? 'rgba(130, 114, 255, 0.9)' : 'rgba(255, 255, 255, 0.22)'};
+      props.$primary
+        ? 'rgba(255, 255, 255, 0.28)'
+        : 'rgba(255, 255, 255, 0.24)'};
+    color: rgba(255, 255, 255, 0.92);
+  }
+
+  &:active {
+    background: ${(props) =>
+      props.$primary
+        ? 'rgba(255, 255, 255, 0.3)'
+        : 'rgba(255, 255, 255, 0.28)'};
+    transform: translateY(1px);
+  }
+
+  &:focus-visible {
+    outline: 1px solid rgba(255, 255, 255, 0.36);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.36);
+    cursor: not-allowed;
+    transform: none;
   }
 `;
 
@@ -721,9 +795,7 @@ function clampAndSnapValue(
   const precision = getStepPrecision(step);
   const snappedValue = Math.round((clampedValue - min) / step) * step + min;
 
-  return Number(
-    Math.min(Math.max(snappedValue, min), max).toFixed(precision),
-  );
+  return Number(Math.min(Math.max(snappedValue, min), max).toFixed(precision));
 }
 
 export function SliderControl({
@@ -848,6 +920,51 @@ export function SelectControl({
         ))}
       </SelectInput>
     </SelectLabel>
+  );
+}
+
+type SegmentedControlProps = {
+  children: ReactNode;
+  onChange: (value: string) => void;
+  value: string;
+  options: Array<{ label: string; value: string }>;
+};
+
+export function SegmentedControl({
+  children,
+  onChange,
+  options,
+  value,
+}: SegmentedControlProps) {
+  return (
+    <SegmentedLabel>
+      <span>{children}</span>
+      <SegmentedGroup
+        aria-label={typeof children === 'string' ? children : undefined}
+        role="radiogroup"
+      >
+        {options.map((option) => {
+          const isActive = option.value === value;
+
+          return (
+            <SegmentedButton
+              $active={isActive}
+              aria-checked={isActive}
+              key={option.value}
+              onClick={() => {
+                if (!isActive) {
+                  onChange(option.value);
+                }
+              }}
+              role="radio"
+              type="button"
+            >
+              {option.label}
+            </SegmentedButton>
+          );
+        })}
+      </SegmentedGroup>
+    </SegmentedLabel>
   );
 }
 

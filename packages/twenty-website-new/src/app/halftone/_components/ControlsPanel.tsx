@@ -1,132 +1,33 @@
 'use client';
 
+import { IconLayoutSidebarRightCollapse, IconShare } from '@tabler/icons-react';
+import { styled } from '@linaria/react';
+import type {
+  HalftoneBackgroundSettings,
+  HalftoneGeometrySpec,
+  HalftoneSourceMode,
+  HalftoneStudioSettings,
+  HalftoneTabId,
+} from '@/app/halftone/_lib/state';
 import { AnimationsTab } from './controls/AnimationsTab';
 import { DesignTab } from './controls/DesignTab';
 import { ExportTab } from './controls/ExportTab';
 import { PanelShell, TabButton, TabsBar } from './controls/controls-ui';
 
-type HalftoneTabId = 'design' | 'animations' | 'export';
-type HalftoneSourceMode = 'shape' | 'image';
-type HalftoneRotateAxis = 'x' | 'y' | 'z' | 'xy' | '-x' | '-y' | '-z' | '-xy';
-type HalftoneRotatePreset = 'axis' | 'lissajous' | 'orbit' | 'tumble';
-type HalftoneModelLoader = 'fbx' | 'glb';
-
-interface HalftoneLightingSettings {
-  intensity: number;
-  fillIntensity: number;
-  ambientIntensity: number;
-  angleDegrees: number;
-  height: number;
-}
-
-interface HalftoneMaterialSettings {
-  roughness: number;
-  metalness: number;
-}
-
-interface HalftoneEffectSettings {
-  enabled: boolean;
-  numRows: number;
-  contrast: number;
-  power: number;
-  shading: number;
-  baseInk: number;
-  maxBar: number;
-  rowMerge: number;
-  cellRatio: number;
-  cutoff: number;
-  highlightOpen: number;
-  shadowGrouping: number;
-  shadowCrush: number;
-  dashColor: string;
-}
-
-interface HalftoneBackgroundSettings {
-  transparent: boolean;
-  color: string;
-}
-
-interface HalftoneAnimationSettings {
-  autoRotateEnabled: boolean;
-  breatheEnabled: boolean;
-  cameraParallaxEnabled: boolean;
-  followHoverEnabled: boolean;
-  followDragEnabled: boolean;
-  floatEnabled: boolean;
-  hoverLightEnabled: boolean;
-  dragFlowEnabled: boolean;
-  lightSweepEnabled: boolean;
-  rotateEnabled: boolean;
-  autoSpeed: number;
-  autoWobble: number;
-  breatheAmount: number;
-  breatheSpeed: number;
-  cameraParallaxAmount: number;
-  cameraParallaxEase: number;
-  driftAmount: number;
-  hoverRange: number;
-  hoverEase: number;
-  hoverReturn: boolean;
-  dragSens: number;
-  dragFriction: number;
-  dragMomentum: boolean;
-  rotateAxis: HalftoneRotateAxis;
-  rotatePreset: HalftoneRotatePreset;
-  rotateSpeed: number;
-  rotatePingPong: boolean;
-  floatAmplitude: number;
-  floatSpeed: number;
-  lightSweepHeightRange: number;
-  lightSweepRange: number;
-  lightSweepSpeed: number;
-  springDamping: number;
-  springReturnEnabled: boolean;
-  springStrength: number;
-  hoverLightIntensity: number;
-  hoverLightRadius: number;
-  dragFlowDecay: number;
-  dragFlowRadius: number;
-  dragFlowStrength: number;
-  hoverWarpStrength: number;
-  hoverWarpRadius: number;
-  dragWarpStrength: number;
-  waveEnabled: boolean;
-  waveSpeed: number;
-  waveAmount: number;
-}
-
-interface HalftoneStudioSettings {
-  sourceMode: HalftoneSourceMode;
-  shapeKey: string;
-  lighting: HalftoneLightingSettings;
-  material: HalftoneMaterialSettings;
-  halftone: HalftoneEffectSettings;
-  background: HalftoneBackgroundSettings;
-  animation: HalftoneAnimationSettings;
-}
-
-interface HalftoneGeometrySpec {
-  key: string;
-  label: string;
-  kind: 'builtin' | 'imported';
-  loader?: HalftoneModelLoader;
-  filename?: string;
-  description?: string;
-  extensions?: readonly string[];
-  userProvided?: boolean;
-}
-
 type ControlsPanelProps = {
   activeTab: HalftoneTabId;
   defaultExportName: string;
+  exportBackground: boolean;
   exportName: string;
   imageFileName: string | null;
   onAnimationSettingsChange: (
     value: Partial<HalftoneStudioSettings['animation']>,
   ) => void;
   onBackgroundChange: (value: Partial<HalftoneBackgroundSettings>) => void;
+  onCopyShareLink: () => void;
   onDashColorChange: (value: string) => void;
   onExportHalftoneImage: (width: number, height: number) => void;
+  onExportBackgroundChange: (value: boolean) => void;
   onExportHtml: () => void;
   onExportNameChange: (value: string) => void;
   onExportReact: () => void;
@@ -144,9 +45,10 @@ type ControlsPanelProps = {
   onShapeChange: (value: string) => void;
   onSourceModeChange: (value: HalftoneSourceMode) => void;
   onTabChange: (value: HalftoneTabId) => void;
-  onUploadImage: () => void;
-  onUploadModel: () => void;
+  onToggleVisibility: () => void;
+  onUploadSource: () => void;
   previewDistance: number;
+  visible: boolean;
   selectedShape: HalftoneGeometrySpec | undefined;
   settings: HalftoneStudioSettings;
   shapeOptions: Array<{ label: string; value: string }>;
@@ -160,15 +62,67 @@ const TAB_LABELS: Record<HalftoneTabId, string> = {
   export: 'Export',
 };
 
+const TabsGroup = styled.div`
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+`;
+
+const TABLER_STROKE = 1.7;
+
+const PanelActions = styled.div`
+  display: inline-flex;
+  gap: 2px;
+  margin-left: auto;
+`;
+
+const PanelActionButton = styled.button`
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  color: rgba(255, 255, 255, 0.44);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: inherit;
+  height: 28px;
+  justify-content: center;
+  padding: 0;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+  width: 28px;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.74);
+  }
+
+  &:focus-visible {
+    outline: 1px solid rgba(255, 255, 255, 0.35);
+    outline-offset: 1px;
+  }
+`;
+
+const PanelToggleTabButton = styled(PanelActionButton)<{ $collapsed: boolean }>`
+  & > svg {
+    transform: ${(props) => (props.$collapsed ? 'scaleX(-1)' : 'none')};
+    transition: transform 0.18s ease;
+  }
+`;
+
 export function ControlsPanel({
   activeTab,
   defaultExportName,
+  exportBackground,
   exportName,
   imageFileName,
   onAnimationSettingsChange,
   onBackgroundChange,
+  onCopyShareLink,
   onDashColorChange,
   onExportHalftoneImage,
+  onExportBackgroundChange,
   onExportHtml,
   onExportNameChange,
   onExportReact,
@@ -180,31 +134,61 @@ export function ControlsPanel({
   onShapeChange,
   onSourceModeChange,
   onTabChange,
-  onUploadImage,
-  onUploadModel,
+  onToggleVisibility,
+  onUploadSource,
   previewDistance,
+  visible,
   selectedShape,
   settings,
   shapeOptions,
 }: ControlsPanelProps) {
   return (
-    <PanelShell>
-      <TabsBar>
-        {TABS.map((tab) => (
-          <TabButton
-            $active={tab === activeTab}
-            key={tab}
-            onClick={() => onTabChange(tab)}
+    <PanelShell $collapsed={!visible}>
+      <TabsBar $collapsed={!visible}>
+        {visible ? (
+          <TabsGroup>
+            {TABS.map((tab) => (
+              <TabButton
+                $active={tab === activeTab}
+                key={tab}
+                onClick={() => onTabChange(tab)}
+                type="button"
+              >
+                {TAB_LABELS[tab]}
+              </TabButton>
+            ))}
+          </TabsGroup>
+        ) : null}
+        <PanelActions>
+          <PanelActionButton
+            aria-label="Copy share link"
+            onClick={onCopyShareLink}
+            title="Copy share link"
             type="button"
           >
-            {TAB_LABELS[tab]}
-          </TabButton>
-        ))}
+            <IconShare aria-hidden size={16} stroke={TABLER_STROKE} />
+          </PanelActionButton>
+          <PanelToggleTabButton
+            $collapsed={!visible}
+            aria-expanded={visible}
+            aria-label={visible ? 'Hide right panel' : 'Show right panel'}
+            onClick={onToggleVisibility}
+            title={visible ? 'Hide right panel' : 'Show right panel'}
+            type="button"
+          >
+            <IconLayoutSidebarRightCollapse
+              aria-hidden
+              size={16}
+              stroke={TABLER_STROKE}
+            />
+          </PanelToggleTabButton>
+        </PanelActions>
       </TabsBar>
 
-      {activeTab === 'design' ? (
+      {visible && activeTab === 'design' ? (
         <DesignTab
           imageFileName={imageFileName}
+          onAnimationSettingsChange={onAnimationSettingsChange}
           onBackgroundChange={onBackgroundChange}
           onDashColorChange={onDashColorChange}
           onHalftoneChange={onHalftoneChange}
@@ -213,26 +197,28 @@ export function ControlsPanel({
           onPreviewDistanceChange={onPreviewDistanceChange}
           onShapeChange={onShapeChange}
           onSourceModeChange={onSourceModeChange}
-          onUploadImage={onUploadImage}
-          onUploadModel={onUploadModel}
+          onUploadSource={onUploadSource}
           previewDistance={previewDistance}
           settings={settings}
           shapeOptions={shapeOptions}
         />
       ) : null}
 
-      {activeTab === 'animations' ? (
+      {visible && activeTab === 'animations' ? (
         <AnimationsTab
           onAnimationSettingsChange={onAnimationSettingsChange}
           settings={settings}
         />
       ) : null}
 
-      {activeTab === 'export' ? (
+      {visible && activeTab === 'export' ? (
         <ExportTab
           defaultExportName={defaultExportName}
+          exportBackground={exportBackground}
           exportName={exportName}
+          imageFileName={imageFileName}
           onExportHalftoneImage={onExportHalftoneImage}
+          onExportBackgroundChange={onExportBackgroundChange}
           onExportHtml={onExportHtml}
           onExportNameChange={onExportNameChange}
           onExportReact={onExportReact}

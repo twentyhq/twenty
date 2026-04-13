@@ -1,128 +1,24 @@
 'use client';
 
+import { resolveExportArtifactNames } from '@/app/halftone/_lib/exportNames';
 import { formatAnimationName } from '@/app/halftone/_lib/formatters';
+import type {
+  HalftoneGeometrySpec,
+  HalftoneStudioSettings,
+} from '@/app/halftone/_lib/state';
 import { useState } from 'react';
 import {
   ExportButton,
   ExportNameInput,
   ExportNote,
   ExportPreview,
+  LabelWithTooltip,
   Section,
   SectionTitle,
   SelectControl,
-  SmallBody,
   TabContent,
+  ToggleControl,
 } from './controls-ui';
-
-type HalftoneSourceMode = 'shape' | 'image';
-type HalftoneRotateAxis = 'x' | 'y' | 'z' | 'xy' | '-x' | '-y' | '-z' | '-xy';
-type HalftoneRotatePreset = 'axis' | 'lissajous' | 'orbit' | 'tumble';
-type HalftoneModelLoader = 'fbx' | 'glb';
-
-interface HalftoneLightingSettings {
-  intensity: number;
-  fillIntensity: number;
-  ambientIntensity: number;
-  angleDegrees: number;
-  height: number;
-}
-
-interface HalftoneMaterialSettings {
-  roughness: number;
-  metalness: number;
-}
-
-interface HalftoneEffectSettings {
-  enabled: boolean;
-  numRows: number;
-  contrast: number;
-  power: number;
-  shading: number;
-  baseInk: number;
-  maxBar: number;
-  rowMerge: number;
-  cellRatio: number;
-  cutoff: number;
-  highlightOpen: number;
-  shadowGrouping: number;
-  shadowCrush: number;
-  dashColor: string;
-}
-
-interface HalftoneBackgroundSettings {
-  transparent: boolean;
-  color: string;
-}
-
-interface HalftoneAnimationSettings {
-  autoRotateEnabled: boolean;
-  breatheEnabled: boolean;
-  cameraParallaxEnabled: boolean;
-  followHoverEnabled: boolean;
-  followDragEnabled: boolean;
-  floatEnabled: boolean;
-  hoverLightEnabled: boolean;
-  dragFlowEnabled: boolean;
-  lightSweepEnabled: boolean;
-  rotateEnabled: boolean;
-  autoSpeed: number;
-  autoWobble: number;
-  breatheAmount: number;
-  breatheSpeed: number;
-  cameraParallaxAmount: number;
-  cameraParallaxEase: number;
-  driftAmount: number;
-  hoverRange: number;
-  hoverEase: number;
-  hoverReturn: boolean;
-  dragSens: number;
-  dragFriction: number;
-  dragMomentum: boolean;
-  rotateAxis: HalftoneRotateAxis;
-  rotatePreset: HalftoneRotatePreset;
-  rotateSpeed: number;
-  rotatePingPong: boolean;
-  floatAmplitude: number;
-  floatSpeed: number;
-  lightSweepHeightRange: number;
-  lightSweepRange: number;
-  lightSweepSpeed: number;
-  springDamping: number;
-  springReturnEnabled: boolean;
-  springStrength: number;
-  hoverLightIntensity: number;
-  hoverLightRadius: number;
-  dragFlowDecay: number;
-  dragFlowRadius: number;
-  dragFlowStrength: number;
-  hoverWarpStrength: number;
-  hoverWarpRadius: number;
-  dragWarpStrength: number;
-  waveEnabled: boolean;
-  waveSpeed: number;
-  waveAmount: number;
-}
-
-interface HalftoneStudioSettings {
-  sourceMode: HalftoneSourceMode;
-  shapeKey: string;
-  lighting: HalftoneLightingSettings;
-  material: HalftoneMaterialSettings;
-  halftone: HalftoneEffectSettings;
-  background: HalftoneBackgroundSettings;
-  animation: HalftoneAnimationSettings;
-}
-
-interface HalftoneGeometrySpec {
-  key: string;
-  label: string;
-  kind: 'builtin' | 'imported';
-  loader?: HalftoneModelLoader;
-  filename?: string;
-  description?: string;
-  extensions?: readonly string[];
-  userProvided?: boolean;
-}
 
 const RESOLUTION_OPTIONS = [
   { label: '720p (1280 × 720)', value: '1280x720' },
@@ -130,11 +26,20 @@ const RESOLUTION_OPTIONS = [
   { label: '2K (2560 × 1440)', value: '2560x1440' },
   { label: '4K (3840 × 2160)', value: '3840x2160' },
 ];
+const DEFAULT_IMAGE_FILE_NAME = 'twenty-logo.svg';
+const DEFAULT_IMAGE_LABEL = 'Twenty image';
+
+function sectionLabel(label: string, description: string) {
+  return <LabelWithTooltip description={description} label={label} />;
+}
 
 type ExportTabProps = {
   defaultExportName: string;
+  exportBackground: boolean;
   exportName: string;
+  imageFileName: string | null;
   onExportHalftoneImage: (width: number, height: number) => void;
+  onExportBackgroundChange: (value: boolean) => void;
   onExportHtml: () => void;
   onExportNameChange: (value: string) => void;
   onExportReact: () => void;
@@ -145,8 +50,11 @@ type ExportTabProps = {
 
 export function ExportTab({
   defaultExportName,
+  exportBackground,
   exportName,
+  imageFileName,
   onExportHalftoneImage,
+  onExportBackgroundChange,
   onExportHtml,
   onExportNameChange,
   onExportReact,
@@ -160,8 +68,16 @@ export function ExportTab({
     settings.animation,
     settings.sourceMode,
   );
-
-  const componentName = exportName || defaultExportName;
+  const sourceLabel = isImageMode
+    ? imageFileName === null || imageFileName === DEFAULT_IMAGE_FILE_NAME
+      ? DEFAULT_IMAGE_LABEL
+      : imageFileName
+    : (selectedShape?.label ?? settings.shapeKey);
+  const inputName = exportName || defaultExportName;
+  const { componentName } = resolveExportArtifactNames(
+    exportName,
+    defaultExportName,
+  );
 
   const handleDownloadHalftoneImage = () => {
     const [widthStr, heightStr] = resolution.split('x');
@@ -173,11 +89,39 @@ export function ExportTab({
   return (
     <TabContent>
       <Section $first>
-        <SectionTitle>Download Image</SectionTitle>
-        <SmallBody>
-          Downloads a PNG snapshot of the current halftone effect at the selected
-          resolution.
-        </SmallBody>
+        <SectionTitle>
+          {sectionLabel(
+            'Export Name',
+            'Sets the base name used across the PNG, React component, and standalone HTML exports.',
+          )}
+        </SectionTitle>
+
+        <ExportNameInput
+          onChange={(event) => onExportNameChange(event.target.value)}
+          onClick={(event) => event.currentTarget.select()}
+          onFocus={(event) => event.currentTarget.select()}
+          placeholder={defaultExportName}
+          type="text"
+          value={inputName}
+        />
+
+        <ToggleControl
+          checked={exportBackground}
+          label={sectionLabel(
+            'Export background',
+            'Includes the current background color in PNG, React component, and standalone HTML exports instead of keeping them transparent.',
+          )}
+          onChange={(event) => onExportBackgroundChange(event.target.checked)}
+        />
+      </Section>
+
+      <Section>
+        <SectionTitle>
+          {sectionLabel(
+            'Download Image',
+            'Downloads a PNG snapshot of the current halftone effect at the selected resolution.',
+          )}
+        </SectionTitle>
 
         <SelectControl
           onChange={(event) => setResolution(event.target.value)}
@@ -197,18 +141,12 @@ export function ExportTab({
       </Section>
 
       <Section>
-        <SectionTitle>Export React Component</SectionTitle>
-        <SmallBody>
-          Downloads a self-contained React component with the current design and
-          animation settings baked in. Requires <code>three</code>.
-        </SmallBody>
-
-        <ExportNameInput
-          onChange={(event) => onExportNameChange(event.target.value)}
-          placeholder={defaultExportName}
-          type="text"
-          value={exportName}
-        />
+        <SectionTitle>
+          {sectionLabel(
+            'Code Exports',
+            'Downloads either a self-contained React component or standalone HTML with the current design and animation settings baked in. React exports require three.',
+          )}
+        </SectionTitle>
 
         <ExportPreview>
           <div>
@@ -230,7 +168,7 @@ export function ExportTab({
           </div>
           <br />
           <div style={{ color: 'rgba(255, 255, 255, 0.35)' }}>
-            {`// Shape: ${selectedShape?.key ?? settings.shapeKey}`}
+            {`// Source: ${sourceLabel}`}
           </div>
           <div style={{ color: 'rgba(255, 255, 255, 0.35)' }}>
             {`// Animation: ${animationLabel}`}
@@ -239,7 +177,13 @@ export function ExportTab({
             {`// Dash color: ${settings.halftone.dashColor}`}
           </div>
           <div style={{ color: 'rgba(255, 255, 255, 0.35)' }}>
-            {`// Rows: ${settings.halftone.numRows}`}
+            {`// Scale: ${settings.halftone.scale.toFixed(2)}`}
+          </div>
+          <div style={{ color: 'rgba(255, 255, 255, 0.35)' }}>
+            {`// Power: ${settings.halftone.power.toFixed(2)}`}
+          </div>
+          <div style={{ color: 'rgba(255, 255, 255, 0.35)' }}>
+            {`// Width: ${settings.halftone.width.toFixed(2)}`}
           </div>
         </ExportPreview>
 
@@ -260,12 +204,12 @@ export function ExportTab({
       </Section>
 
       <Section>
-        <SectionTitle>Import Preset</SectionTitle>
-        <SmallBody>
-          Loads a previously exported <code>.tsx</code> or <code>.html</code>{' '}
-          halftone preset. If that preset depends on a separate image or model
-          file, select that asset in the picker too.
-        </SmallBody>
+        <SectionTitle>
+          {sectionLabel(
+            'Import Preset',
+            'Loads a previously exported TSX or HTML halftone preset. If that preset depends on a separate image or model file, select that asset in the picker too.',
+          )}
+        </SectionTitle>
 
         <ExportButton onClick={onImportPreset} type="button">
           Import Exported Preset

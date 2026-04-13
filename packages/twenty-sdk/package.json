@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "0.9.0",
+  "version": "1.22.0-canary.6",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/sdk/index.d.ts",
@@ -83,6 +83,7 @@
     "@types/node": "^24.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "rollup-plugin-dts": "^6.4.1",
     "ts-morph": "^25.0.0",
     "tsx": "^4.7.0",
     "twenty-shared": "workspace:*",
