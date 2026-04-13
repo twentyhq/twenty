@@ -92,7 +92,6 @@ exports[`View Field Resolver - Successful object metadata identifier update side
             "universalIdentifier": Any<String>,
           },
           "metadataName": "viewField",
-          "status": "fail",
           "type": "delete",
         },
       ],
