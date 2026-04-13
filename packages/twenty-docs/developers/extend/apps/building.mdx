@@ -476,7 +476,7 @@ export default defineLogicFunction({
   httpRouteTriggerSettings: {
     path: '/post-card/create',
     httpMethod: 'GET',
-    isAuthRequired: false,
+    isAuthRequired: true,
   },
   /*databaseEventTriggerSettings: {
     eventName: 'people.created',
@@ -555,7 +555,7 @@ export default defineLogicFunction({
   httpRouteTriggerSettings: {
     path: '/webhook',
     httpMethod: 'POST',
-    isAuthRequired: false,
+    isAuthRequired: true,
     forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
   },
 });
