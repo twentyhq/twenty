@@ -86,6 +86,8 @@ export const SettingsApplicationsDeveloperTab = () => {
   const { theme } = useContext(ThemeContext);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
+  const [displayNotVettedApps, setDisplayNotVettedApps] = useState(false);
+
   const { copyToClipboard } = useCopyToClipboard();
 
   const { data, loading } = useQuery(FindManyApplicationRegistrationsDocument);
@@ -228,68 +230,72 @@ export const SettingsApplicationsDeveloperTab = () => {
             message={t`These apps are not vetted. Use at your own risk.`}
             button={{
               title: t`Access`,
-              hidden: false,
-              onClick: () => console.log('toto'),
+              hidden: displayNotVettedApps,
+              onClick: () => setDisplayNotVettedApps(true),
             }}
           />
-          <StyledSearchInputContainer>
-            <SearchInput
-              placeholder={t`Search an application`}
-              value={npmSearchTerm}
-              onChange={setNpmSearchTerm}
-            />
-          </StyledSearchInputContainer>
-          {filteredMarketplaceApps.length === 0 ? (
-            <SettingsEmptyPlaceholder>{t`No application found`}</SettingsEmptyPlaceholder>
-          ) : (
-            <Table>
-              <TableRow gridAutoColumns={NPM_PACKAGES_GRID_COLUMNS}>
-                <TableHeader>{t`Name`}</TableHeader>
-                <TableHeader>{t`Description`}</TableHeader>
-                <TableHeader />
-              </TableRow>
-              <StyledTableRowsContainer>
-                {filteredMarketplaceApps.map((application) => (
-                  <TableRow
-                    key={application.id}
-                    gridAutoColumns={NPM_PACKAGES_GRID_COLUMNS}
-                    to={getSettingsPath(
-                      SettingsPath.AvailableApplicationDetail,
-                      {
-                        availableApplicationId: application.id,
-                      },
-                    )}
-                  >
-                    <StyledNameTableCell>
-                      <Avatar
-                        avatarUrl={application.logo || null}
-                        placeholder={application.name}
-                        placeholderColorSeed={application.name}
-                        size="md"
-                        type="squared"
-                      />
-                      <OverflowingTextWithTooltip text={application.name} />
-                    </StyledNameTableCell>
-                    <TableCell
-                      overflow="hidden"
-                      textOverflow="ellipsis"
-                      whiteSpace="nowrap"
-                    >
-                      <OverflowingTextWithTooltip
-                        text={application.description}
-                      />
-                    </TableCell>
-                    <StyledActionTableCell>
-                      <IconChevronRight
-                        size={theme.icon.size.md}
-                        stroke={theme.icon.stroke.sm}
-                        color={theme.font.color.tertiary}
-                      />
-                    </StyledActionTableCell>
+          {displayNotVettedApps && (
+            <>
+              <StyledSearchInputContainer>
+                <SearchInput
+                  placeholder={t`Search an application`}
+                  value={npmSearchTerm}
+                  onChange={setNpmSearchTerm}
+                />
+              </StyledSearchInputContainer>
+              {filteredMarketplaceApps.length === 0 ? (
+                <SettingsEmptyPlaceholder>{t`No application found`}</SettingsEmptyPlaceholder>
+              ) : (
+                <Table>
+                  <TableRow gridAutoColumns={NPM_PACKAGES_GRID_COLUMNS}>
+                    <TableHeader>{t`Name`}</TableHeader>
+                    <TableHeader>{t`Description`}</TableHeader>
+                    <TableHeader />
                   </TableRow>
-                ))}
-              </StyledTableRowsContainer>
-            </Table>
+                  <StyledTableRowsContainer>
+                    {filteredMarketplaceApps.map((application) => (
+                      <TableRow
+                        key={application.id}
+                        gridAutoColumns={NPM_PACKAGES_GRID_COLUMNS}
+                        to={getSettingsPath(
+                          SettingsPath.AvailableApplicationDetail,
+                          {
+                            availableApplicationId: application.id,
+                          },
+                        )}
+                      >
+                        <StyledNameTableCell>
+                          <Avatar
+                            avatarUrl={application.logo || null}
+                            placeholder={application.name}
+                            placeholderColorSeed={application.name}
+                            size="md"
+                            type="squared"
+                          />
+                          <OverflowingTextWithTooltip text={application.name} />
+                        </StyledNameTableCell>
+                        <TableCell
+                          overflow="hidden"
+                          textOverflow="ellipsis"
+                          whiteSpace="nowrap"
+                        >
+                          <OverflowingTextWithTooltip
+                            text={application.description}
+                          />
+                        </TableCell>
+                        <StyledActionTableCell>
+                          <IconChevronRight
+                            size={theme.icon.size.md}
+                            stroke={theme.icon.stroke.sm}
+                            color={theme.font.color.tertiary}
+                          />
+                        </StyledActionTableCell>
+                      </TableRow>
+                    ))}
+                  </StyledTableRowsContainer>
+                </Table>
+              )}
+            </>
           )}
         </Section>
       )}
