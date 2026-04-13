@@ -23,9 +23,16 @@ export const FOOTER_DATA: FooterDataType = {
       title: 'Help',
       ctas: [],
       links: [
-        { label: 'Developers', href: '#', external: false },
-        { label: 'FAQ', href: '#', external: false },
-        { label: 'Support', href: '#', external: false },
+        {
+          label: 'Developers',
+          href: 'https://docs.twenty.com/developers/introduction',
+          external: true,
+        },
+        {
+          label: 'User Guide',
+          href: 'https://docs.twenty.com/user-guide/introduction',
+          external: true,
+        },
         { label: 'Release Notes', href: '/release-notes', external: false },
         {
           label: 'Halftone generator',
