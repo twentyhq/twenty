@@ -3,33 +3,30 @@ import { ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
-import {
-  type OrchestratorActionsReport,
-  type OrchestratorFailureReport,
-} from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
+import { type OrchestratorFailureReport } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
+import { type UniversalDeleteViewFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/types/workspace-migration-view-field-action.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 
 export const validateViewFieldLabelIdentifierCrossEntity = ({
   optimisticUniversalFlatMaps,
-  orchestratorActionsReport,
+  deletedViewFieldActions,
   preDeletionFlatViewFieldMaps,
 }: {
   optimisticUniversalFlatMaps: Pick<
     AllUniversalFlatEntityMaps,
     'flatObjectMetadataMaps' | 'flatViewMaps' | 'flatViewFieldMaps'
   >;
-  orchestratorActionsReport: Pick<OrchestratorActionsReport, 'viewField'>;
+  deletedViewFieldActions: UniversalDeleteViewFieldAction[];
   preDeletionFlatViewFieldMaps: UniversalFlatEntityMaps<UniversalFlatViewField>;
 }): Pick<OrchestratorFailureReport, 'viewField'> => {
   const validationErrors: Pick<OrchestratorFailureReport, 'viewField'> = {
     viewField: [],
   };
-
-  const deletedViewFieldActions = orchestratorActionsReport.viewField.delete;
 
   if (deletedViewFieldActions.length === 0) {
     return validationErrors;
@@ -38,14 +35,10 @@ export const validateViewFieldLabelIdentifierCrossEntity = ({
   const alreadyCheckedViewUniversalIdentifiers = new Set<string>();
 
   for (const deleteAction of deletedViewFieldActions) {
-    const deletedViewField = findFlatEntityByUniversalIdentifier({
+    const deletedViewField = findFlatEntityByUniversalIdentifierOrThrow({
       universalIdentifier: deleteAction.universalIdentifier,
       flatEntityMaps: preDeletionFlatViewFieldMaps,
     });
-
-    if (!isDefined(deletedViewField)) {
-      continue;
-    }
 
     const { viewUniversalIdentifier, fieldMetadataUniversalIdentifier } =
       deletedViewField;
@@ -56,23 +49,19 @@ export const validateViewFieldLabelIdentifierCrossEntity = ({
 
     alreadyCheckedViewUniversalIdentifiers.add(viewUniversalIdentifier);
 
-    const view = findFlatEntityByUniversalIdentifier({
+    const view = findFlatEntityByUniversalIdentifierOrThrow({
       universalIdentifier: viewUniversalIdentifier,
       flatEntityMaps: optimisticUniversalFlatMaps.flatViewMaps,
     });
 
-    if (!isDefined(view) || view.type === ViewType.FIELDS_WIDGET) {
+    if (view.type === ViewType.FIELDS_WIDGET) {
       continue;
     }
 
-    const objectMetadata = findFlatEntityByUniversalIdentifier({
+    const objectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
       universalIdentifier: view.objectMetadataUniversalIdentifier,
       flatEntityMaps: optimisticUniversalFlatMaps.flatObjectMetadataMaps,
     });
-
-    if (!isDefined(objectMetadata)) {
-      continue;
-    }
 
     const { labelIdentifierFieldMetadataUniversalIdentifier } = objectMetadata;
 

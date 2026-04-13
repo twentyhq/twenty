@@ -24,7 +24,7 @@ export const crossEntityTransversalValidation = ({
 
   const { viewField } = validateViewFieldLabelIdentifierCrossEntity({
     optimisticUniversalFlatMaps,
-    orchestratorActionsReport,
+    deletedViewFieldActions: orchestratorActionsReport.viewField.delete,
     preDeletionFlatViewFieldMaps,
   });
 
