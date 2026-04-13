@@ -11,6 +11,7 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { DataSource, QueryRunner, Repository } from 'typeorm';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
@@ -58,10 +59,11 @@ import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-
 import { prefillDashboards } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-dashboards.util';
 import { prefillOpportunities } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-opportunities.util';
 import { prefillPeople } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-people.util';
-import { prefillWorkflowCommandMenuItems } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util';
 import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-code-step-logic-functions.util';
+import { prefillWorkflowCommandMenuItems } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflows.util';
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
@@ -115,6 +117,8 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     private readonly dnsManagerService: DnsManagerService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly prefillLogicFunctionService: PrefillLogicFunctionService,
+    private readonly applicationService: ApplicationService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
@@ -735,8 +739,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
         flatFieldMetadataMaps,
       );
 
-      await prefillWorkflowCommandMenuItems(queryRunner.manager, workspaceId);
-
       await prefillOpportunities(queryRunner.manager, schemaName);
 
       await prefillDashboards(
@@ -746,6 +748,14 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       );
 
       await queryRunner.commitTransaction();
+
+      await prefillWorkflowCommandMenuItems({
+        workspaceId,
+        applicationService: this.applicationService,
+        flatEntityMapsCacheService: this.flatEntityMapsCacheService,
+        workspaceMigrationValidateBuildAndRunService:
+          this.workspaceMigrationValidateBuildAndRunService,
+      });
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         try {
