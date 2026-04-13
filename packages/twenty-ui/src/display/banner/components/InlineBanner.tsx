@@ -47,7 +47,7 @@ export const InlineBanner = ({
         <LeftIcon size={theme.icon.size.md} />
         <StyledBannerText>{message}</StyledBannerText>
       </StyledBannerContent>
-      {!button?.hidden && (
+      {button && !button.hidden && (
         <Button
           size="small"
           variant="secondary"
