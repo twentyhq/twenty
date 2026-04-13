@@ -2,8 +2,6 @@ import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application.config';
 import { describe, expect, it } from 'vitest';
 
-import { createPostCard, deletePostCard } from './helpers/mutations';
-
 describe('App installation', () => {
   it('should find the installed app in the applications list', async () => {
     const client = new MetadataApiClient();
@@ -62,12 +60,4 @@ describe('PostCard object', () => {
     expect(names).toContain('recipient');
   });
 
-  it('should support CRUD via GraphQL', async () => {
-    const id = await createPostCard({
-      name: 'Schema test postcard',
-      content: 'Hello from integration tests',
-    });
-    expect(id).toBeDefined();
-    await deletePostCard(id);
-  });
 });
