@@ -3178,6 +3178,7 @@ msgstr "Die Zwischenablage erfordert eine sichere Verbindung (HTTPS). Bitte grei
 
 #. js-lingui-id: yz7wBu
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/side-panel/components/SidePanelToggleButton.tsx
 msgid "Close"
 msgstr "Schließen"
 
