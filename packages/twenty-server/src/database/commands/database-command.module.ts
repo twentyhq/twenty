@@ -75,7 +75,6 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     ApplicationUpgradeModule,
     StaleRegistrationCleanupModule,
     BillingModule,
-    CoreEngineVersionModule,
     WorkspaceVersionModule,
     UpgradeModule,
   ],
