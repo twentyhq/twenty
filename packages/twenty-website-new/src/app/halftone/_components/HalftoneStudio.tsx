@@ -13,6 +13,11 @@ import {
 } from '@/app/halftone/_lib/geometry-registry';
 import { REFERENCE_PREVIEW_DISTANCE } from '@/app/halftone/_lib/footprint';
 import {
+  createPreviewDistanceBySourceMode,
+  DEFAULT_SHAPE_PREVIEW_DISTANCE,
+  switchPreviewDistanceSourceMode,
+} from '@/app/halftone/_lib/preview-distance';
+import {
   deriveExportComponentName,
   generateReactComponent,
   generateStandaloneHtml,
@@ -284,7 +289,7 @@ export function HalftoneStudio() {
   );
   const [controlsVisible, setControlsVisible] = useState(true);
   const [previewDistance, setPreviewDistance] = useState(
-    DEFAULT_PREVIEW_DISTANCE,
+    DEFAULT_SHAPE_PREVIEW_DISTANCE,
   );
   const [activeGeometry, setActiveGeometry] = useState<THREE.BufferGeometry>(
     () => createFallbackGeometry(),
@@ -315,6 +320,12 @@ export function HalftoneStudio() {
     shape: { ...DEFAULT_SHAPE_HALFTONE_SETTINGS },
     image: { ...DEFAULT_IMAGE_HALFTONE_SETTINGS },
   });
+  const previewDistanceBySourceModeReference = useRef(
+    createPreviewDistanceBySourceMode(
+      'shape',
+      DEFAULT_SHAPE_PREVIEW_DISTANCE,
+    ),
+  );
 
   const selectedShape = useMemo(
     () =>
@@ -369,6 +380,11 @@ export function HalftoneStudio() {
     };
   }, [state.settings.halftone, state.settings.sourceMode]);
 
+  useEffect(() => {
+    previewDistanceBySourceModeReference.current[state.settings.sourceMode] =
+      previewDistance;
+  }, [previewDistance, state.settings.sourceMode]);
+
   // Hydrate from URL hash on first mount. Done in an effect (not the reducer
   // initializer) so the server-rendered HTML matches the client and we don't
   // touch `window` during render.
@@ -388,6 +404,11 @@ export function HalftoneStudio() {
 
     dispatch({ type: 'replaceSettings', value: decoded.settings });
     setPreviewDistance(decoded.previewDistance);
+    previewDistanceBySourceModeReference.current =
+      createPreviewDistanceBySourceMode(
+        decoded.settings.sourceMode,
+        decoded.previewDistance,
+      );
     setExportName(decoded.exportName);
   }, []);
 
@@ -568,6 +589,14 @@ export function HalftoneStudio() {
 
   const activateUploadedModel = useCallback(
     (file: File) => {
+      const { nextPreviewDistance, nextPreviewDistanceBySourceMode } =
+        switchPreviewDistanceSourceMode({
+          currentMode: state.settings.sourceMode,
+          currentPreviewDistance: previewDistance,
+          nextMode: 'shape',
+          previewDistanceBySourceMode:
+            previewDistanceBySourceModeReference.current,
+        });
       const currentDashColor = state.settings.halftone.dashColor;
       const currentHoverDashColor = state.settings.halftone.hoverDashColor;
       const extension = file.name.split('.').pop()?.toLowerCase();
@@ -601,12 +630,23 @@ export function HalftoneStudio() {
           hoverDashColor: currentHoverDashColor,
         },
       });
+      previewDistanceBySourceModeReference.current =
+        nextPreviewDistanceBySourceMode;
+      setPreviewDistance(nextPreviewDistance);
     },
-    [state.settings.halftone, state.settings.sourceMode],
+    [previewDistance, state.settings.halftone, state.settings.sourceMode],
   );
 
   const activateUploadedImage = useCallback(
     (file: File) => {
+      const { nextPreviewDistance, nextPreviewDistanceBySourceMode } =
+        switchPreviewDistanceSourceMode({
+          currentMode: state.settings.sourceMode,
+          currentPreviewDistance: previewDistance,
+          nextMode: 'image',
+          previewDistanceBySourceMode:
+            previewDistanceBySourceModeReference.current,
+        });
       const currentDashColor = state.settings.halftone.dashColor;
       const currentHoverDashColor = state.settings.halftone.hoverDashColor;
       setImageFile(file);
@@ -622,8 +662,11 @@ export function HalftoneStudio() {
           hoverDashColor: currentHoverDashColor,
         },
       });
+      previewDistanceBySourceModeReference.current =
+        nextPreviewDistanceBySourceMode;
+      setPreviewDistance(nextPreviewDistance);
     },
-    [state.settings.halftone, state.settings.sourceMode],
+    [previewDistance, state.settings.halftone, state.settings.sourceMode],
   );
 
   const handleUploadSource = useCallback(async () => {
@@ -675,6 +718,15 @@ export function HalftoneStudio() {
   const handleSourceModeChange = useCallback(
     (mode: HalftoneSourceMode) => {
       if (mode !== state.settings.sourceMode) {
+        const { nextPreviewDistance, nextPreviewDistanceBySourceMode } =
+          switchPreviewDistanceSourceMode({
+            currentMode: state.settings.sourceMode,
+            currentPreviewDistance: previewDistance,
+            nextMode: mode,
+            previewDistanceBySourceMode:
+              previewDistanceBySourceModeReference.current,
+          });
+
         halftoneBySourceModeReference.current[state.settings.sourceMode] = {
           ...state.settings.halftone,
         };
@@ -683,6 +735,9 @@ export function HalftoneStudio() {
           type: 'patchHalftone',
           value: { ...halftoneBySourceModeReference.current[mode] },
         });
+        previewDistanceBySourceModeReference.current =
+          nextPreviewDistanceBySourceMode;
+        setPreviewDistance(nextPreviewDistance);
       }
 
       if (mode !== 'image' || imageFile) {
@@ -700,6 +755,7 @@ export function HalftoneStudio() {
     [
       imageFile,
       loadDefaultImageFile,
+      previewDistance,
       state.settings.halftone,
       state.settings.sourceMode,
     ],
@@ -798,6 +854,10 @@ export function HalftoneStudio() {
       const nextPreviewDistance =
         preset.previewDistance ?? REFERENCE_PREVIEW_DISTANCE;
       setPreviewDistance(nextPreviewDistance);
+      previewDistanceBySourceModeReference.current = {
+        ...previewDistanceBySourceModeReference.current,
+        [nextSettings.sourceMode]: nextPreviewDistance,
+      };
       setExportName(
         preset.componentName ?? presetFile.name.replace(/\.(tsx|html)$/i, ''),
       );
