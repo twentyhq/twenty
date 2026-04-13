@@ -104,7 +104,7 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
         sequence,
         options: DEFAULT_OPTIONS,
       }),
-    ).rejects.toThrow('Step "RemovedCommand" not found in upgrade sequence');
+    ).rejects.toThrowErrorMatchingSnapshot();
   });
 
   it('should throw when workspace cursors are outside the current slice', async () => {
