@@ -109,6 +109,8 @@ export const validateViewFieldLabelIdentifierCrossEntity = ({
       const failedValidation = getEmptyFlatEntityValidationError({
         flatEntityMinimalInformation: {
           universalIdentifier: deleteAction.universalIdentifier,
+          viewUniversalIdentifier,
+          fieldMetadataUniversalIdentifier,
         },
         metadataName: 'viewField',
         type: 'delete',

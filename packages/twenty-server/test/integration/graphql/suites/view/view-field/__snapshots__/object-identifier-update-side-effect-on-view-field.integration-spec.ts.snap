@@ -89,7 +89,9 @@ exports[`View Field Resolver - Successful object metadata identifier update side
             },
           ],
           "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
           },
           "metadataName": "viewField",
           "type": "delete",
