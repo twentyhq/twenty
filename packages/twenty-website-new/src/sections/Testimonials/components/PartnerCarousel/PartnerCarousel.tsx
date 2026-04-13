@@ -14,6 +14,7 @@ import { Separator } from '../Separator/Separator';
 const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
   day: 'numeric',
   month: 'long',
+  timeZone: 'UTC',
   year: 'numeric',
 });
 
@@ -73,6 +74,21 @@ const PortraitFrame = styled.div`
   max-width: 328px;
   overflow: hidden;
   position: relative;
+  width: 100%;
+`;
+
+const PortraitFallback = styled.div`
+  align-items: center;
+  background: linear-gradient(135deg, #202020 0%, #4c4c4c 100%);
+  color: ${theme.colors.secondary.text[100]};
+  display: flex;
+  font-family: ${theme.font.family.sans};
+  font-size: ${theme.font.size(16)};
+  font-weight: ${theme.font.weight.medium};
+  height: 100%;
+  justify-content: center;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
   width: 100%;
 `;
 
@@ -204,6 +220,30 @@ type PartnerCarouselProps = {
   testimonials: TestimonialCardType[];
 };
 
+function getAuthorDateText(date: Date | string | undefined) {
+  if (!date) {
+    return null;
+  }
+
+  const normalizedDate = date instanceof Date ? date : new Date(date);
+
+  if (Number.isNaN(normalizedDate.getTime())) {
+    return null;
+  }
+
+  return DATE_FORMATTER.format(normalizedDate);
+}
+
+function getAuthorInitials(name: string) {
+  const segments = name.trim().split(/\s+/).filter(Boolean).slice(0, 2);
+
+  if (segments.length === 0) {
+    return '?';
+  }
+
+  return segments.map((segment) => segment[0]).join('');
+}
+
 export function PartnerCarousel({
   children,
   eyebrow,
@@ -217,6 +257,9 @@ export function PartnerCarousel({
   const hasPrevious = index > 0;
   const hasNext = index < total - 1;
   const current = testimonials[index];
+  const authorSecondaryLine =
+    current.author.handle ?? current.author.designation ?? null;
+  const authorDateText = getAuthorDateText(current.author.date);
 
   const goToPrevious = () => {
     if (hasPrevious) setIndex(index - 1);
@@ -235,17 +278,23 @@ export function PartnerCarousel({
       <LeftColumn>
         <AuthorCard>
           <PortraitFrame>
-            <NextImage
-              alt={current.author.avatar.alt || ''}
-              fill
-              priority
-              sizes="(min-width: 921px) 328px, 100vw"
-              src={current.author.avatar.src}
-              style={{
-                filter: 'grayscale(1) contrast(1.1)',
-                objectFit: 'cover',
-              }}
-            />
+            {current.author.avatar ? (
+              <NextImage
+                alt={current.author.avatar.alt || ''}
+                fill
+                priority
+                sizes="(min-width: 921px) 328px, 100vw"
+                src={current.author.avatar.src}
+                style={{
+                  filter: 'grayscale(1) contrast(1.1)',
+                  objectFit: 'cover',
+                }}
+              />
+            ) : (
+              <PortraitFallback aria-hidden>
+                {getAuthorInitials(current.author.name.text)}
+              </PortraitFallback>
+            )}
           </PortraitFrame>
 
           <AuthorMeta>
@@ -257,22 +306,26 @@ export function PartnerCarousel({
                 size="sm"
                 weight="medium"
               />
-              <HandleText>
-                <Body
-                  as="span"
-                  body={current.author.handle}
-                  className={handleTextClassName}
-                  size="sm"
-                />
-              </HandleText>
+              {authorSecondaryLine ? (
+                <HandleText>
+                  <Body
+                    as="span"
+                    body={authorSecondaryLine}
+                    className={handleTextClassName}
+                    size="sm"
+                  />
+                </HandleText>
+              ) : null}
             </NameHandleRow>
 
-            <Body
-              as="p"
-              body={{ text: DATE_FORMATTER.format(current.author.date) }}
-              className={dateTextClassName}
-              size="xs"
-            />
+            {authorDateText ? (
+              <Body
+                as="p"
+                body={{ text: authorDateText }}
+                className={dateTextClassName}
+                size="xs"
+              />
+            ) : null}
           </AuthorMeta>
         </AuthorCard>
 

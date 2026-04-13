@@ -148,7 +148,7 @@ export const SALESFORCE_DATA: SalesforceDataType = {
         rightLabel: 'Out of stock',
         tooltip: {
           title: 'Out of stock',
-          body: "Your data prefers someone else's servers.",
+          body: 'Self-hosting, now for rent!',
         },
       },
       {
