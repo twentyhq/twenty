@@ -1,3 +1,4 @@
+import { VisibleWhenTabActive } from '@/components/VisibleWhenTabActive';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
@@ -22,7 +23,9 @@ const StyledContainer = styled.div`
 export function PartnerVisual() {
   return (
     <StyledContainer>
-      <PartnerHalftoneOverlay imageUrl={HERO_IMAGE_URL} />
+      <VisibleWhenTabActive>
+        <PartnerHalftoneOverlay imageUrl={HERO_IMAGE_URL} />
+      </VisibleWhenTabActive>
     </StyledContainer>
   );
 }

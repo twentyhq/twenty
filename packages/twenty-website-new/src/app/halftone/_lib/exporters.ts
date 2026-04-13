@@ -13,6 +13,35 @@ import {
 } from '@/app/halftone/_lib/state';
 import { GLASS_ENVIRONMENT_DATA_URL } from '@/app/halftone/_lib/glassEnvironmentData';
 
+export type ReactExportSettings = {
+  includeNamedAndDefaultExport: boolean;
+  includePublicAssetUrl: boolean;
+  includeRegistryComment: boolean;
+  includeTsNoCheck: boolean;
+  includeUseClientDirective: boolean;
+  includeStyledMount: boolean;
+};
+
+export type ReactExportOptions = {
+  assetUrl?: string;
+  background?: string;
+  exportSettings?: Partial<ReactExportSettings>;
+  imageFilename?: string;
+  importedFile?: File;
+  initialPose?: HalftoneExportPose;
+  modelFilenameOverride?: string;
+  previewDistance?: number;
+};
+
+export const DEFAULT_REACT_EXPORT_SETTINGS: ReactExportSettings = {
+  includeNamedAndDefaultExport: true,
+  includePublicAssetUrl: true,
+  includeRegistryComment: true,
+  includeTsNoCheck: true,
+  includeUseClientDirective: true,
+  includeStyledMount: true,
+};
+
 const passThroughVertexShader = `
   varying vec2 vUv;
 
@@ -1021,7 +1050,7 @@ function createBuiltinGeometry(shapeKey) {
 }
 `;
 
-const IMPORTED_RUNTIME_SOURCE = String.raw`
+const IMPORTED_RUNTIME_SHARED_SOURCE = String.raw`
 const EMPTY_TEXTURE_DATA_URL =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO8B7Q8AAAAASUVORK5CYII=';
 
@@ -1098,6 +1127,9 @@ function extractMergedGeometry(root, emptyMessage) {
 
   return normalizeImportedGeometry(mergeGeometries(geometries));
 }
+`;
+
+const IMPORTED_FBX_RUNTIME_SOURCE = String.raw`
 
 function parseFbxGeometry(buffer, label) {
   const originalWarn = console.warn;
@@ -1117,10 +1149,26 @@ function parseFbxGeometry(buffer, label) {
     console.warn = originalWarn;
   }
 }
+`;
+
+const IMPORTED_GLB_RUNTIME_SOURCE = String.raw`
+const DRACO_DECODER_PATH =
+  'https://www.gstatic.com/draco/versioned/decoders/1.5.6/';
 
 function parseGlbGeometry(buffer, label) {
   return new Promise((resolve, reject) => {
-    new GLTFLoader(createLoadingManager()).parse(
+    const loadingManager = createLoadingManager();
+    const dracoLoader = new DRACOLoader(loadingManager);
+    dracoLoader.setDecoderPath(DRACO_DECODER_PATH);
+
+    const loader = new GLTFLoader(loadingManager);
+    loader.setDRACOLoader(dracoLoader);
+
+    const cleanup = () => {
+      dracoLoader.dispose();
+    };
+
+    loader.parse(
       buffer,
       '',
       (gltf) => {
@@ -1133,14 +1181,29 @@ function parseGlbGeometry(buffer, label) {
           );
         } catch (error) {
           reject(error);
+        } finally {
+          cleanup();
         }
       },
-      reject,
+      (error) => {
+        cleanup();
+        reject(error);
+      },
     );
   });
 }
+`;
 
-async function loadImportedGeometryFromUrl(loader, modelUrl, label) {
+function createImportedRuntimeSource(loader: HalftoneGeometrySpec['loader']) {
+  const loaderSource =
+    loader === 'fbx'
+      ? IMPORTED_FBX_RUNTIME_SOURCE
+      : IMPORTED_GLB_RUNTIME_SOURCE;
+
+  return `${IMPORTED_RUNTIME_SHARED_SOURCE}
+${loaderSource}
+
+async function loadImportedGeometryFromUrl(modelUrl, label) {
   const response = await fetch(modelUrl);
 
   if (!response.ok) {
@@ -1149,13 +1212,14 @@ async function loadImportedGeometryFromUrl(loader, modelUrl, label) {
 
   const buffer = await response.arrayBuffer();
 
-  if (loader === 'fbx') {
-    return parseFbxGeometry(buffer, label);
+  ${
+    loader === 'fbx'
+      ? 'return parseFbxGeometry(buffer, label);'
+      : 'return parseGlbGeometry(buffer, label);'
   }
-
-  return parseGlbGeometry(buffer, label);
 }
 `;
+}
 
 type ExportedShapeDescriptor = {
   filename: string | null;
@@ -1174,6 +1238,147 @@ export type ParsedExportedPreset = {
   settings: HalftoneStudioSettings;
   shape: ExportedShapeDescriptor;
 };
+
+function getExportedShapeLoader(
+  shape: ExportedShapeDescriptor,
+): HalftoneGeometrySpec['loader'] | null {
+  if (shape.loader) {
+    return shape.loader;
+  }
+
+  const filename = shape.filename?.toLowerCase() ?? '';
+
+  if (filename.endsWith('.fbx')) {
+    return 'fbx';
+  }
+
+  if (filename.endsWith('.glb')) {
+    return 'glb';
+  }
+
+  return null;
+}
+
+function createImportedGeometryRuntimeSource(shape: ExportedShapeDescriptor) {
+  if (shape.kind !== 'imported') {
+    return '';
+  }
+
+  const loader = getExportedShapeLoader(shape) ?? 'glb';
+
+  return createImportedRuntimeSource(loader);
+}
+
+function toIllustrationRegistryKey(componentName: string) {
+  return componentName.charAt(0).toLowerCase() + componentName.slice(1);
+}
+
+function toPublicAssetDestination(assetUrl: string) {
+  return assetUrl.startsWith('/') ? `public${assetUrl}` : assetUrl;
+}
+
+function normalizeReactExportSettings(
+  exportSettings?: Partial<ReactExportSettings>,
+): ReactExportSettings {
+  return {
+    ...DEFAULT_REACT_EXPORT_SETTINGS,
+    ...exportSettings,
+  };
+}
+
+function getReactImportBlock(
+  exportSettings: ReactExportSettings,
+  isImageMode: boolean,
+  shape: ExportedShapeDescriptor,
+) {
+  const imports = new Set<string>();
+
+  imports.add("import { useEffect, useRef, type CSSProperties } from 'react';");
+  imports.add("import * as THREE from 'three';");
+
+  if (exportSettings.includeStyledMount) {
+    imports.add("import { styled } from '@linaria/react';");
+  }
+
+  if (!isImageMode) {
+    imports.add(
+      "import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';",
+    );
+  }
+
+  const loader = getExportedShapeLoader(shape);
+
+  if (shape.kind === 'imported' && loader === 'fbx') {
+    imports.add(
+      "import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';",
+    );
+  }
+
+  if (shape.kind === 'imported' && loader === 'glb') {
+    imports.add(
+      "import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';",
+    );
+    imports.add(
+      "import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';",
+    );
+  }
+
+  return Array.from(imports).join('\n');
+}
+
+function getStandaloneThreeImports(
+  isImageMode: boolean,
+  shape: ExportedShapeDescriptor,
+) {
+  if (isImageMode) {
+    return `import * as THREE from 'three';`;
+  }
+
+  const imports = [
+    `import * as THREE from 'three';`,
+    `import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';`,
+  ];
+
+  const loader = getExportedShapeLoader(shape);
+
+  if (shape.kind === 'imported' && loader === 'fbx') {
+    imports.push(
+      `import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';`,
+    );
+  }
+
+  if (shape.kind === 'imported' && loader === 'glb') {
+    imports.push(
+      `import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';`,
+      `import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';`,
+    );
+  }
+
+  return imports.join('\n      ');
+}
+
+function getTwentyReactHeaderComment(
+  componentName: string,
+  registryKey: string,
+  assetUrl?: string,
+) {
+  const lines = [
+    `// Suggested component destination: src/illustrations/${componentName}.tsx`,
+  ];
+
+  if (assetUrl) {
+    lines.push(
+      `// Suggested public asset destination: ${toPublicAssetDestination(assetUrl)}`,
+    );
+  }
+
+  lines.push(
+    `// illustrations-registry.tsx: import { ${componentName} } from './${componentName}';`,
+    `// illustrations-registry.tsx: ${registryKey}: ${componentName},`,
+  );
+
+  return `${lines.join('\n')}\n`;
+}
 
 function createDefaultExportPose(): HalftoneExportPose {
   return {
@@ -1318,6 +1523,8 @@ export function parseExportedPreset(content: string): ParsedExportedPreset {
   const componentName =
     extractFirstMatch(content, [
       /export\s+default\s+function\s+([A-Za-z0-9_]+)/,
+      /export\s+function\s+([A-Za-z0-9_]+)/,
+      /export\s+default\s+([A-Za-z0-9_]+)\s*;/,
       /<title>([^<]+)<\/title>/i,
     ]) ?? null;
   const modelAssetReference = extractFirstMatch(content, [
@@ -1817,7 +2024,7 @@ ${HALFTONE_FOOTPRINT_RUNTIME_SOURCE}
 
 ${isImageMode ? '' : GEOMETRY_RUNTIME_SOURCE}
 
-${isImageMode ? '' : IMPORTED_RUNTIME_SOURCE}
+${isImageMode ? '' : createImportedGeometryRuntimeSource(shape)}
 
 ${isImageMode ? '' : GLASS_MATERIAL_RUNTIME_SOURCE}
 
@@ -1891,8 +2098,12 @@ function resetInteractionState(interactionState) {
 }
 
 async function createGeometry(modelUrl) {
-  if (shape.kind === 'imported' && shape.loader && modelUrl) {
-    return loadImportedGeometryFromUrl(shape.loader, modelUrl, shape.label);
+  if (shape.kind === 'imported') {
+    if (!modelUrl) {
+      throw new Error('No model URL was provided for ' + shape.label + '.');
+    }
+
+    return loadImportedGeometryFromUrl(modelUrl, shape.label);
   }
 
   return createBuiltinGeometry(shape.key);
@@ -1926,7 +2137,7 @@ async function mountHalftoneCanvas(options) {
     geometry = await createGeometry(modelUrl);
   } catch (error) {
     onError?.(error);
-    geometry = createBuiltinGeometry('torusKnot');
+    return () => {};
   }
 
   const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
@@ -2204,6 +2415,14 @@ async function mountHalftoneCanvas(options) {
     interaction.velocityY = 0;
   };
 
+  const handlePointerCancel = () => {
+    interaction.dragging = false;
+    interaction.velocityX = 0;
+    interaction.velocityY = 0;
+    canvas.style.cursor = followDragEnabled ? 'grab' : 'default';
+    handlePointerLeave();
+  };
+
   const handleWindowBlur = () => {
     handlePointerUp();
     handlePointerLeave();
@@ -2211,6 +2430,7 @@ async function mountHalftoneCanvas(options) {
 
   canvas.addEventListener('pointermove', handlePointerMove);
   canvas.addEventListener('pointerleave', handlePointerLeave);
+  canvas.addEventListener('pointercancel', handlePointerCancel);
   window.addEventListener('pointerup', handlePointerUp);
   window.addEventListener('pointermove', handleWindowPointerMove);
   window.addEventListener('blur', handleWindowBlur);
@@ -2228,9 +2448,9 @@ async function mountHalftoneCanvas(options) {
     const elapsedTime = initialPose.timeElapsed + clock.getElapsed();
     halftoneMaterial.uniforms.time.value = elapsedTime;
 
-    let baseRotationX = 0;
-    let baseRotationY = 0;
-    let baseRotationZ = 0;
+    let baseRotationX = initialPose.rotationX;
+    let baseRotationY = initialPose.rotationY;
+    let baseRotationZ = initialPose.rotationZ;
     let meshOffsetY = 0;
     let meshScale = 1;
     let lightAngle = settings.lighting.angleDegrees;
@@ -2476,7 +2696,8 @@ async function mountHalftoneCanvas(options) {
     resizeObserver.disconnect();
     canvas.removeEventListener('pointermove', handlePointerMove);
     canvas.removeEventListener('pointerleave', handlePointerLeave);
-    canvas.removeEventListener('pointerup', handlePointerUp);
+    window.removeEventListener('pointerup', handlePointerUp);
+    window.removeEventListener('pointermove', handleWindowPointerMove);
     canvas.removeEventListener('pointercancel', handlePointerCancel);
     window.removeEventListener('blur', handleWindowBlur);
     canvas.removeEventListener('pointerdown', handlePointerDown);
@@ -2915,65 +3136,87 @@ export function generateReactComponent(
   settings: HalftoneStudioSettings,
   selectedShape: HalftoneGeometrySpec | undefined,
   componentName = 'HalftoneDashes',
-  modelFilenameOverride?: string,
-  initialPose?: HalftoneExportPose,
-  previewDistance?: number,
-  importedFile?: File,
-  imageFilename?: string,
-  background = 'transparent',
+  options: ReactExportOptions = {},
 ) {
   const isImageMode = settings.sourceMode === 'image';
+  const exportSettings = normalizeReactExportSettings(options.exportSettings);
   const shape = createShapeDescriptor(
     selectedShape,
     settings,
-    importedFile,
-    modelFilenameOverride,
+    options.importedFile,
+    options.modelFilenameOverride,
   );
-  const pose = normalizeExportPose(initialPose);
+  const pose = normalizeExportPose(options.initialPose);
   const normalizedComponentName = normalizeExportComponentName(componentName);
-  const defaultModelUrl =
-    modelFilenameOverride ?? shape.filename ?? 'model.glb';
-  const defaultImageUrl = imageFilename ?? 'image.png';
-  if (isImageMode) {
-    return `import { useEffect, useRef, type CSSProperties } from 'react';
-import * as THREE from 'three';
-
-${serializeRuntimeSource(settings, shape, pose, previewDistance)}
-
-${createImageMountScript()}
-
-type ${normalizedComponentName}Props = {
-  imageUrl?: string;
-  style?: CSSProperties;
-};
-
-export default function ${normalizedComponentName}({
-  imageUrl = ${JSON.stringify(`./${defaultImageUrl}`)},
-  style,
-}: ${normalizedComponentName}Props) {
-  const mountReference = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const container = mountReference.current;
-
-    if (!container) {
-      return;
-    }
-
-    const unmount = mountHalftoneCanvas({
-      container,
-      imageUrl,
-      onError: (error) => {
-        console.error(error);
-      },
-    });
-
-    return () => {
-      void Promise.resolve(unmount).then((dispose) => dispose?.());
-    };
-  }, [imageUrl]);
-
-  return (
+  const background = options.background ?? 'transparent';
+  const assetUrl =
+    exportSettings.includePublicAssetUrl && options.assetUrl
+      ? options.assetUrl
+      : null;
+  const defaultModelFilename =
+    options.modelFilenameOverride ?? shape.filename ?? 'model.glb';
+  const defaultImageFilename = options.imageFilename ?? 'image.png';
+  const defaultModelUrl = assetUrl ?? `./${defaultModelFilename}`;
+  const defaultImageUrl = assetUrl ?? `./${defaultImageFilename}`;
+  const importBlock = getReactImportBlock(exportSettings, isImageMode, shape);
+  const headerComment = exportSettings.includeRegistryComment
+    ? getTwentyReactHeaderComment(
+        normalizedComponentName,
+        toIllustrationRegistryKey(normalizedComponentName),
+        isImageMode || shape.kind === 'imported'
+          ? (assetUrl ?? undefined)
+          : undefined,
+      )
+    : '';
+  const mountScript = isImageMode
+    ? createImageMountScript()
+    : createMountScript();
+  const serializedRuntime = serializeRuntimeSource(
+    settings,
+    shape,
+    pose,
+    options.previewDistance,
+  );
+  const directiveLines = [
+    exportSettings.includeTsNoCheck ? '// @ts-nocheck' : null,
+    exportSettings.includeUseClientDirective ? "'use client';" : null,
+  ]
+    .filter((line): line is string => line !== null)
+    .join('\n');
+  const mountStyleBlock = exportSettings.includeStyledMount
+    ? `const StyledVisualMount = styled.div\`
+  background: ${background};
+  display: block;
+  height: 100%;
+  min-width: 0;
+  width: 100%;
+\`;
+`
+    : '';
+  const assetPropName = isImageMode
+    ? 'imageUrl'
+    : shape.kind === 'imported'
+      ? 'modelUrl'
+      : null;
+  const assetPropDefaultValue =
+    assetPropName === 'imageUrl'
+      ? defaultImageUrl
+      : assetPropName === 'modelUrl'
+        ? defaultModelUrl
+        : null;
+  const propsTypeBlock = assetPropName
+    ? `type ${normalizedComponentName}Props = {\n  ${assetPropName}?: string;\n  style?: CSSProperties;\n};`
+    : `type ${normalizedComponentName}Props = {\n  style?: CSSProperties;\n};`;
+  const propsSignature = assetPropName
+    ? `{\n  ${assetPropName} = ${JSON.stringify(assetPropDefaultValue)},\n  style,\n}: ${normalizedComponentName}Props`
+    : `{\n  style,\n}: ${normalizedComponentName}Props`;
+  const mountOptionsBlock = assetPropName
+    ? `const unmount = mountHalftoneCanvas({\n      container,\n      ${assetPropName},\n      onError: (error) => {\n        console.error(error);\n      },\n    });`
+    : `const unmount = mountHalftoneCanvas({\n      container,\n      onError: (error) => {\n        console.error(error);\n      },\n    });`;
+  const effectDependencies = assetPropName ? `[${assetPropName}]` : '[]';
+  const returnBlock = exportSettings.includeStyledMount
+    ? `return <StyledVisualMount aria-hidden ref={mountReference} style={style} />;`
+    : `return (
     <div
       ref={mountReference}
       style={{
@@ -2983,30 +3226,9 @@ export default function ${normalizedComponentName}({
         ...style,
       }}
     />
-  );
-}
-`;
-  }
-
-  return `import { useEffect, useRef, type CSSProperties } from 'react';
-import * as THREE from 'three';
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-
-${serializeRuntimeSource(settings, shape, pose, previewDistance)}
-
-${createMountScript()}
-
-type ${normalizedComponentName}Props = {
-  modelUrl?: string;
-  style?: CSSProperties;
-};
-
-export default function ${normalizedComponentName}({
-  modelUrl = ${JSON.stringify(`./${defaultModelUrl}`)},
-  style,
-}: ${normalizedComponentName}Props) {
+  );`;
+  const componentFunctionBlock = exportSettings.includeNamedAndDefaultExport
+    ? `export function ${normalizedComponentName}(${propsSignature}) {
   const mountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -3016,31 +3238,46 @@ export default function ${normalizedComponentName}({
       return;
     }
 
-    const unmount = mountHalftoneCanvas({
-      container,
-      modelUrl,
-      onError: (error) => {
-        console.error(error);
-      },
-    });
+    ${mountOptionsBlock}
 
     return () => {
       void Promise.resolve(unmount).then((dispose) => dispose?.());
     };
-  }, [modelUrl]);
+  }, ${effectDependencies});
 
-  return (
-    <div
-      ref={mountReference}
-      style={{
-        background: ${JSON.stringify(background)},
-        height: '100%',
-        width: '100%',
-        ...style,
-      }}
-    />
-  );
+  ${returnBlock}
 }
+
+export default ${normalizedComponentName};`
+    : `export default function ${normalizedComponentName}(${propsSignature}) {
+  const mountReference = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = mountReference.current;
+
+    if (!container) {
+      return;
+    }
+
+    ${mountOptionsBlock}
+
+    return () => {
+      void Promise.resolve(unmount).then((dispose) => dispose?.());
+    };
+  }, ${effectDependencies});
+
+  ${returnBlock}
+}`;
+
+  return `${directiveLines ? `${directiveLines}\n\n` : ''}${importBlock}
+
+${headerComment}${serializedRuntime}
+
+${mountScript}
+
+${mountStyleBlock ? `${mountStyleBlock}\n` : ''}${propsTypeBlock}
+
+${componentFunctionBlock}
 `;
 }
 
@@ -3048,39 +3285,30 @@ export async function generateStandaloneHtml(
   settings: HalftoneStudioSettings,
   selectedShape: HalftoneGeometrySpec | undefined,
   componentName = 'HalftoneDashes',
-  modelFilenameOverride?: string,
-  initialPose?: HalftoneExportPose,
-  previewDistance?: number,
-  importedFile?: File,
-  imageFilename?: string,
-  background = 'transparent',
+  options: ReactExportOptions = {},
 ) {
   const isImageMode = settings.sourceMode === 'image';
   const shape = createShapeDescriptor(
     selectedShape,
     settings,
-    importedFile,
-    modelFilenameOverride,
+    options.importedFile,
+    options.modelFilenameOverride,
   );
-  const pose = normalizeExportPose(initialPose);
+  const pose = normalizeExportPose(options.initialPose);
   const normalizedComponentName = normalizeExportComponentName(componentName);
-  const defaultImageUrl = imageFilename ?? 'image.png';
+  const defaultImageUrl = options.imageFilename ?? 'image.png';
   const embeddedImportedModelUrl =
-    !isImageMode && shape.kind === 'imported' && importedFile
-      ? await fileToDataUrl(importedFile, shape.loader)
+    !isImageMode && shape.kind === 'imported' && options.importedFile
+      ? await fileToDataUrl(options.importedFile, shape.loader)
       : null;
   const defaultModelUrl =
     embeddedImportedModelUrl ??
-    modelFilenameOverride ??
+    options.modelFilenameOverride ??
     shape.filename ??
     'model.glb';
+  const background = options.background ?? 'transparent';
 
-  const threeImports = isImageMode
-    ? `import * as THREE from 'three';`
-    : `import * as THREE from 'three';
-      import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-      import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
-      import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';`;
+  const threeImports = getStandaloneThreeImports(isImageMode, shape);
 
   const mountScript = isImageMode
     ? createImageMountScript()
@@ -3189,7 +3417,7 @@ export async function generateStandaloneHtml(
     <script type="module">
       ${threeImports}
 
-      ${serializeRuntimeSource(settings, shape, pose, previewDistance)}
+      ${serializeRuntimeSource(settings, shape, pose, options.previewDistance)}
 
       ${mountScript}
 

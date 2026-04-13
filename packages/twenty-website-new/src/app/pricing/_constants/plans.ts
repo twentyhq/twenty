@@ -77,7 +77,10 @@ export const PLANS_DATA = {
     },
     featuresTitle: ORGANIZATION_FEATURES_TITLE,
     heading: ORGANIZATION_HEADING,
-    illustration: 'planOrganization',
+    icon: {
+      alt: 'Organization plan icon',
+      src: '/images/pricing/plans/organization-icon.png',
+    },
   },
   pro: {
     cells: {
@@ -116,6 +119,10 @@ export const PLANS_DATA = {
     },
     featuresTitle: PRO_FEATURES_TITLE,
     heading: PRO_HEADING,
-    illustration: 'planPro',
+    icon: {
+      alt: 'Pro plan icon',
+      src: '/images/pricing/plans/pro-icon.png',
+      width: 60,
+    },
   },
 } satisfies PlansDataType;

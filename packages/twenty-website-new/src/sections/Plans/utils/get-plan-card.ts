@@ -17,7 +17,7 @@ export function getPlanCard(
 
   return {
     heading: tier.heading,
-    illustration: tier.illustration,
+    icon: tier.icon,
     price: cell.price,
     features: {
       bullets: cell.featureBullets,

@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
+import NextImage from 'next/image';
 
 import { Body, Heading, LinkButton } from '@/design-system/components';
 import { CheckIcon } from '@/icons/informative/Check';
-import { IllustrationMount } from '@/illustrations';
 import type { PlanCardType } from '@/sections/Plans/types';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
@@ -70,20 +70,29 @@ const PriceLine = styled.div`
   white-space: nowrap;
 `;
 
-const CardIllustrationEmbed = styled.div`
+const CardIcon = styled.div`
   background-color: ${theme.colors.primary.background[100]};
   border: none;
   border-radius: ${theme.radius(2)};
   display: block;
   flex-shrink: 0;
   height: 80px;
+  margin-top: ${theme.spacing(2)};
   overflow: hidden;
-  width: 197px;
+  position: relative;
+  width: 80px;
+
+  img {
+    object-fit: contain;
+    object-position: center right;
+  }
 
   @media (min-width: ${theme.breakpoints.md}px) {
     display: block;
     margin-left: auto;
-    transform: translateX(${theme.spacing(4)});
+    margin-top: 0;
+    height: 80px;
+    width: 80px;
   }
 `;
 
@@ -129,6 +138,7 @@ type CardProps = {
 
 export function Card({ card, highlighted = false, maxBullets }: CardProps) {
   const totalRows = FIXED_ROWS + maxBullets;
+  const iconWidth = card.icon.width ?? 80;
 
   return (
     <StyledCard style={{ gridRow: `span ${totalRows}` }}>
@@ -156,9 +166,14 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
             />
           </PriceLine>
         </CardHeaderInfo>
-        <CardIllustrationEmbed>
-          <IllustrationMount illustration={card.illustration} />
-        </CardIllustrationEmbed>
+        <CardIcon style={{ width: `${iconWidth}px` }}>
+          <NextImage
+            alt={card.icon.alt}
+            fill
+            sizes={`${iconWidth}px`}
+            src={card.icon.src}
+          />
+        </CardIcon>
       </CardHeader>
 
       <CtaWrapper>
