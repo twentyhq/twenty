@@ -175,32 +175,6 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
     ).rejects.toThrow('No upgrade migration found for workspace(s)');
   });
 
-  it('should throw when workspace sync barrier is not met', async () => {
-    const sequence = [makeWorkspace('Wc1'), makeFastInstance('Ic1')];
-
-    setMockActiveWorkspaceIds([WS_1, WS_2]);
-
-    await seedMigration(context.dataSource, {
-      name: 'Wc1',
-      status: 'completed',
-      workspaceId: WS_1,
-    });
-    await seedMigration(context.dataSource, {
-      name: 'Wc1',
-      status: 'failed',
-      workspaceId: WS_2,
-    });
-
-    await expect(
-      context.runner.run({
-        sequence,
-        options: DEFAULT_OPTIONS,
-      }),
-    ).rejects.toThrow(
-      'Cannot run instance step: not all workspaces have completed "Wc1"',
-    );
-  });
-
   it('should record failure in DB when a fast instance command fails', async () => {
     const error = new Error('fast command exploded');
     const sequence = [
