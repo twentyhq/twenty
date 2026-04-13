@@ -12,7 +12,7 @@ const FIXED_ROWS = 4;
 const StyledCard = styled.div`
   background-color: ${theme.colors.primary.background[100]};
   border: 1px solid transparent;
-  border-radius: ${theme.radius(1)};
+  border-radius: ${theme.radius(2)};
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: subgrid;
@@ -93,6 +93,15 @@ const CardRule = styled.div`
   width: 100%;
 `;
 
+const CtaWrapper = styled.div`
+  width: 100%;
+
+  > * {
+    display: flex;
+    width: 100%;
+  }
+`;
+
 const FeaturesList = styled.ul`
   display: grid;
   grid-template-columns: 1fr;
@@ -152,13 +161,15 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
         </CardIllustrationEmbed>
       </CardHeader>
 
-      <LinkButton
-        color="secondary"
-        href="https://app.twenty.com/welcome"
-        label="Start for free"
-        type="anchor"
-        variant={highlighted ? 'contained' : 'outlined'}
-      />
+      <CtaWrapper>
+        <LinkButton
+          color="secondary"
+          href="https://app.twenty.com/welcome"
+          label="Start for free"
+          type="anchor"
+          variant={highlighted ? 'contained' : 'outlined'}
+        />
+      </CtaWrapper>
 
       <CardRule />
 

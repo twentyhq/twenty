@@ -216,19 +216,6 @@ export const computeStandardPersonViewFields = (
         viewFieldGroupName: 'general',
       },
     }),
-    personRecordPageFieldsFavorites: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'person',
-      context: {
-        viewName: 'personRecordPageFields',
-        viewFieldName: 'favorites',
-        fieldName: 'favorites',
-        position: 6,
-        isVisible: false,
-        size: 150,
-        viewFieldGroupName: 'general',
-      },
-    }),
     personRecordPageFieldsAttachments: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'person',

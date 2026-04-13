@@ -12,6 +12,7 @@ export const SUPPORTED_FILE_FOLDERS = [
   FileFolder.FilesField,
   FileFolder.Workflow,
   FileFolder.AgentChat,
+  FileFolder.EmailAttachment,
   FileFolder.AppTarball,
 ] as const;
 

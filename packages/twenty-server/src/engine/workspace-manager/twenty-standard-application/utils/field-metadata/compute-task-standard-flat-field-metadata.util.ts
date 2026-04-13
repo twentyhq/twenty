@@ -384,26 +384,4 @@ export const buildTaskStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  favorites: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'favorites',
-      label: i18nLabel(msg`Favorites`),
-      description: i18nLabel(msg`Favorites linked to the task`),
-      icon: 'IconHeart',
-      isNullable: false,
-      targetObjectName: 'favorite',
-      targetFieldName: 'task',
-      settings: {
-        relationType: RelationType.ONE_TO_MANY,
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
 });

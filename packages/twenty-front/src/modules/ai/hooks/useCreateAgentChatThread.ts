@@ -5,9 +5,7 @@ import {
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
-import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
-import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
 import { isCreatingChatThreadState } from '@/ai/states/isCreatingChatThreadState';
@@ -24,10 +22,6 @@ import { CreateChatThreadDocument } from '~/generated-metadata/graphql';
 export const useCreateAgentChatThread = () => {
   const setCurrentAIChatThread = useSetAtomState(currentAIChatThreadState);
   const setAgentChatInput = useSetAtomState(agentChatInputState);
-  const setAgentChatUsage = useSetAtomState(agentChatUsageState);
-  const setCurrentAIChatThreadTitle = useSetAtomState(
-    currentAIChatThreadTitleState,
-  );
   const setIsCreatingChatThread = useSetAtomState(isCreatingChatThreadState);
   const setAgentChatDraftsByThreadId = useSetAtomState(
     agentChatDraftsByThreadIdState,
@@ -87,8 +81,6 @@ export const useCreateAgentChatThread = () => {
 
       setCurrentAIChatThread(newThreadId);
       setAgentChatInput(newDraft);
-      setCurrentAIChatThreadTitle(null);
-      setAgentChatUsage(null);
     },
     onError: () => {
       setIsCreatingChatThread(false);

@@ -96,6 +96,7 @@ export class StreamAgentChatJob {
           },
         })
         .catch(() => {});
+      throw error;
     } finally {
       await this.cancelSubscriberService.unsubscribe(cancelChannel);
       await this.threadRepository
@@ -190,6 +191,7 @@ export class StreamAgentChatJob {
       };
       let lastStepConversationSize = 0;
       let totalCacheCreationTokens = 0;
+      let streamError: unknown;
 
       // onFinish fires before the uiStream is fully drained. We use this
       // promise to coordinate: the IIFE waits for DB persist to complete
@@ -247,6 +249,8 @@ export class StreamAgentChatJob {
           writer.merge(
             stream.toUIMessageStream({
               onError: (error) => {
+                streamError = error;
+
                 return error instanceof Error ? error.message : String(error);
               },
               sendStart: false,
@@ -307,13 +311,16 @@ export class StreamAgentChatJob {
 
           await streamFinishedPromise;
 
-          await this.eventPublisherService.publish({
-            threadId: data.threadId,
-            workspaceId: data.workspaceId,
-            event: { type: 'message-persisted', messageId: data.threadId },
-          });
-
-          resolve();
+          if (streamError) {
+            reject(streamError);
+          } else {
+            await this.eventPublisherService.publish({
+              threadId: data.threadId,
+              workspaceId: data.workspaceId,
+              event: { type: 'message-persisted', messageId: data.threadId },
+            });
+            resolve();
+          }
         } catch (error) {
           reject(error);
         }

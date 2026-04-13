@@ -7,6 +7,7 @@ import { AddPermissionFlagRoleIdIndexFastInstanceCommand } from 'src/database/co
 import { AddWorkspaceIdToIndirectEntitiesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-22/1-22-instance-command-fast-1775758621017-add-workspace-id-to-indirect-entities';
 import { BackfillWorkspaceIdOnIndirectEntitiesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/1-22/1-22-instance-command-slow-1775758621018-backfill-workspace-id-on-indirect-entities';
 import { AddWorkspaceIdIndexesAndFksFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-22/1-22-instance-command-fast-1775761294897-add-workspace-id-indexes-and-fks-to-indirect-entities';
+import { DropObjectMetadataDataSourceFkFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-22/1-22-instance-command-fast-1775804361516-drop-object-metadata-data-source-fk';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -16,4 +17,5 @@ export const INSTANCE_COMMANDS = [
   AddWorkspaceIdToIndirectEntitiesFastInstanceCommand,
   BackfillWorkspaceIdOnIndirectEntitiesSlowInstanceCommand,
   AddWorkspaceIdIndexesAndFksFastInstanceCommand,
+  DropObjectMetadataDataSourceFkFastInstanceCommand,
 ];

@@ -125,19 +125,6 @@ export const computeStandardNoteViewFields = (
         },
       },
     ),
-    noteRecordPageFieldsFavorites: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'note',
-      context: {
-        viewName: 'noteRecordPageFields',
-        viewFieldName: 'favorites',
-        fieldName: 'favorites',
-        position: 4,
-        isVisible: false,
-        size: 150,
-        viewFieldGroupName: 'general',
-      },
-    }),
     // System group
     noteRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata({
       ...args,

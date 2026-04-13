@@ -1741,7 +1741,6 @@ enum FeatureFlagKey {
   IS_JUNCTION_RELATIONS_ENABLED
   IS_DRAFT_EMAIL_ENABLED
   IS_CONNECTED_ACCOUNT_MIGRATED
-  IS_USAGE_ANALYTICS_ENABLED
   IS_RICH_TEXT_V1_MIGRATED
   IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED
   IS_RECORD_TABLE_WIDGET_ENABLED
@@ -3441,6 +3440,7 @@ type Mutation {
   updateNavigationMenuItem(input: UpdateOneNavigationMenuItemInput!): NavigationMenuItem!
   deleteManyNavigationMenuItems(ids: [UUID!]!): [NavigationMenuItem!]!
   deleteNavigationMenuItem(id: UUID!): NavigationMenuItem!
+  uploadEmailAttachmentFile(file: Upload!): FileWithSignedUrl!
   uploadAIChatFile(file: Upload!): FileWithSignedUrl!
   uploadWorkflowFile(file: Upload!): FileWithSignedUrl!
   uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl!
@@ -4592,6 +4592,12 @@ input SendEmailInput {
   subject: String!
   body: String!
   inReplyTo: String
+  files: [SendEmailAttachmentInput!]
+}
+
+input SendEmailAttachmentInput {
+  id: String!
+  name: String!
 }
 
 input EmailAccountConnectionParameters {
@@ -4658,6 +4664,7 @@ enum FileFolder {
   FilesField
   Dependencies
   Workflow
+  EmailAttachment
   AppTarball
   GeneratedSdkClient
 }

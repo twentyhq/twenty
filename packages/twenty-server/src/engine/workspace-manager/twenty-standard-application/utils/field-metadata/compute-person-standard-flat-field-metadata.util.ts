@@ -434,28 +434,6 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  favorites: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'favorites',
-      label: i18nLabel(msg`Favorites`),
-      description: i18nLabel(msg`Favorites linked to the contact`),
-      icon: 'IconHeart',
-      isNullable: true,
-      targetObjectName: 'favorite',
-      targetFieldName: 'person',
-      settings: {
-        relationType: RelationType.ONE_TO_MANY,
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   attachments: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

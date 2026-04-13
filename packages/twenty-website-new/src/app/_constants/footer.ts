@@ -27,6 +27,11 @@ export const FOOTER_DATA: FooterDataType = {
         { label: 'FAQ', href: '#', external: false },
         { label: 'Support', href: '#', external: false },
         { label: 'Release Notes', href: '/release-notes', external: false },
+        {
+          label: 'Halftone generator',
+          href: '/halftone',
+          external: false,
+        },
       ],
     },
     {

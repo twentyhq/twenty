@@ -22,7 +22,6 @@ import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserResolver } from 'src/engine/core-modules/user/user.resolver';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
-import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
@@ -44,7 +43,6 @@ import { UserService } from './services/user.service';
       resolvers: userAutoResolverOpts,
     }),
     NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
-    DataSourceModule,
     WorkspaceModule,
     OnboardingModule,
     TypeOrmModule.forFeature([KeyValuePairEntity, UserWorkspaceEntity]),

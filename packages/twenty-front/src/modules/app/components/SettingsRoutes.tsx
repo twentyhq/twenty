@@ -6,10 +6,7 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const SettingsGraphQLPlayground = lazy(() =>
   import(
@@ -561,19 +558,11 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsLogicFunctionDetail />}
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
+        <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
         <Route
-          element={
-            <SettingsProtectedRouteWrapper
-              requiredFeatureFlag={FeatureFlagKey.IS_USAGE_ANALYTICS_ENABLED}
-            />
-          }
-        >
-          <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
-          <Route
-            path={SettingsPath.UsageUserDetail}
-            element={<SettingsUsageUserDetail />}
-          />
-        </Route>
+          path={SettingsPath.UsageUserDetail}
+          element={<SettingsUsageUserDetail />}
+        />
         <Route
           path={SettingsPath.Subdomain}
           element={<SettingsSubdomainPage />}

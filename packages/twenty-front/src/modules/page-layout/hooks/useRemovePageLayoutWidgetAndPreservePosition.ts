@@ -3,6 +3,7 @@ import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pag
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
 import { removeWidgetLayoutFromTab } from '@/page-layout/utils/removeWidgetLayoutFromTab';
@@ -48,6 +49,11 @@ export const useRemovePageLayoutWidgetAndPreservePosition = (
   const { deleteViewForRecordTableWidget } =
     useDeleteViewForRecordTableWidget();
 
+  const pageLayoutPersistedState = useAtomComponentStateCallbackState(
+    pageLayoutPersistedComponentState,
+    pageLayoutId,
+  );
+
   const store = useStore();
 
   const removePageLayoutWidgetAndPreservePosition = useCallback(
@@ -63,7 +69,16 @@ export const useRemovePageLayoutWidgetAndPreservePosition = (
         (widget) => widget.id === widgetId,
       );
 
-      if (isDefined(widgetToRemove)) {
+      const persisted = store.get(pageLayoutPersistedState);
+      const persistedWidgetIds = new Set(
+        persisted?.tabs.flatMap((tab) =>
+          tab.widgets.map((widget) => widget.id),
+        ) ?? [],
+      );
+
+      const isWidgetPersisted = persistedWidgetIds.has(widgetId);
+
+      if (isWidgetPersisted && isDefined(widgetToRemove)) {
         const viewId = getWidgetConfigurationViewId(
           widgetToRemove.configuration,
         );
@@ -122,6 +137,7 @@ export const useRemovePageLayoutWidgetAndPreservePosition = (
       pageLayoutDraftState,
       pageLayoutDraggedAreaState,
       pageLayoutEditingWidgetIdState,
+      pageLayoutPersistedState,
       store,
     ],
   );

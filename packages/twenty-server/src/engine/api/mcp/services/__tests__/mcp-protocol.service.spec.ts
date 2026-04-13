@@ -261,6 +261,7 @@ describe('McpProtocolService', () => {
           ),
         ),
         mockRequest.params,
+        undefined,
       );
     });
 

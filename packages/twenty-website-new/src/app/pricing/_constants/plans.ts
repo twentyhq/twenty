@@ -5,7 +5,7 @@ const ORGANIZATION_HEADING = {
 };
 
 const PRO_FEATURES_TITLE = { text: 'Key Features' };
-const ORGANIZATION_FEATURES_TITLE = { text: 'everything in pro +' };
+const ORGANIZATION_FEATURES_TITLE = { text: 'Everything in Pro +' };
 
 const PRO_BULLETS_DEFAULT = [
   { text: 'Full customisation' },

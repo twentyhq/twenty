@@ -1,6 +1,6 @@
-import type { HeroIllustrationDataType } from '@/sections/Hero/types';
+import type { HeroBaseDataType } from '@/sections/Hero/types';
 
-export const HERO_DATA: HeroIllustrationDataType = {
+export const HERO_DATA = {
   heading: [
     { text: 'The CRM that moves ', fontFamily: 'serif' },
     { text: 'as fast as you do', fontFamily: 'sans' },
@@ -8,5 +8,4 @@ export const HERO_DATA: HeroIllustrationDataType = {
   body: {
     text: 'Modern interface. AI assistance. All the features you need, ready from day one.',
   },
-  illustration: 'heroProduct',
-};
+} satisfies HeroBaseDataType;
