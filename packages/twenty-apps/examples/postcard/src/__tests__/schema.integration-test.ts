@@ -1,18 +1,8 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application.config';
 import { describe, expect, it } from 'vitest';
 
 import { createPostCard, deletePostCard } from './helpers/mutations';
-
-function isCoreClientAvailable(): boolean {
-  try {
-    new CoreApiClient();
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 describe('App installation', () => {
   it('should find the installed app in the applications list', async () => {
@@ -41,11 +31,15 @@ describe('PostCard object', () => {
 
     const { objects } = await client.query({
       objects: {
-        __args: { paging: { first: 1000 } },
+        __args: {
+          filter: { isCustom: { is: true } },
+          paging: { first: 50 },
+        },
         edges: {
           node: {
             nameSingular: true,
             fields: {
+              __args: { paging: { first: 500 } },
               edges: { node: { name: true } },
             },
           },
@@ -68,15 +62,12 @@ describe('PostCard object', () => {
     expect(names).toContain('recipient');
   });
 
-  it.skipIf(!isCoreClientAvailable())(
-    'should support CRUD via GraphQL',
-    async () => {
-      const id = await createPostCard({
-        name: 'Schema test postcard',
-        content: 'Hello from integration tests',
-      });
-      expect(id).toBeDefined();
-      await deletePostCard(id);
-    },
-  );
+  it('should support CRUD via GraphQL', async () => {
+    const id = await createPostCard({
+      name: 'Schema test postcard',
+      content: 'Hello from integration tests',
+    });
+    expect(id).toBeDefined();
+    await deletePostCard(id);
+  });
 });
