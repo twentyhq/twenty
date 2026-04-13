@@ -19,7 +19,7 @@ const OVERRIDABLE_ENTITY_METADATA_NAMES = new Set<AllMetadataName>([
 const resolveRecordOverrides = (
   record: Record<string, unknown>,
 ): Record<string, unknown> => {
-  const { overrides, isActive, ...base } = record;
+  const { overrides, ...base } = record;
 
   if (!isDefined(overrides)) {
     return base;
@@ -30,12 +30,8 @@ const resolveRecordOverrides = (
 
 const sanitizeCreatedEvent = (
   event: CreateMetadataEvent<AllMetadataName>,
-): MetadataEvent | null => {
+): MetadataEvent => {
   const after = event.properties.after as Record<string, unknown>;
-
-  if (after.isActive === false) {
-    return null;
-  }
 
   return {
     ...event,
@@ -56,31 +52,9 @@ const sanitizeDeletedEvent = (
 
 const sanitizeUpdatedEvent = (
   event: UpdateMetadataEvent<AllMetadataName>,
-): MetadataEvent | null => {
+): MetadataEvent => {
   const before = event.properties.before as Record<string, unknown>;
   const after = event.properties.after as Record<string, unknown>;
-
-  if (before.isActive === false && after.isActive === false) {
-    return null;
-  }
-
-  if (after.isActive === false) {
-    return {
-      type: 'deleted',
-      metadataName: event.metadataName,
-      recordId: event.recordId,
-      properties: { before: resolveRecordOverrides(before) },
-    } as MetadataEvent;
-  }
-
-  if (before.isActive === false) {
-    return {
-      type: 'created',
-      metadataName: event.metadataName,
-      recordId: event.recordId,
-      properties: { after: resolveRecordOverrides(after) },
-    } as MetadataEvent;
-  }
 
   return {
     ...event,

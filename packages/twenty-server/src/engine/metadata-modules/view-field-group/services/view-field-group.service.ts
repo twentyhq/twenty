@@ -350,10 +350,7 @@ export class ViewFieldGroupService {
     return Object.values(flatViewFieldGroupMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter(
-        (group) =>
-          group.viewId === viewId &&
-          group.isActive &&
-          !isDefined(group.deletedAt),
+        (group) => group.viewId === viewId && !isDefined(group.deletedAt),
       )
       .map(fromFlatViewFieldGroupToViewFieldGroupDto)
       .sort((a, b) => a.position - b.position);

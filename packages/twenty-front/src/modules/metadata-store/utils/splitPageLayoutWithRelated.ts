@@ -27,12 +27,15 @@ export const splitPageLayoutWithRelated = (
       flatPageLayoutTabs.push({
         ...tabProperties,
         pageLayoutId: pageLayout.id,
+        isActive: (tab as unknown as FlatPageLayoutTab).isActive ?? true,
       });
 
       for (const widget of widgets) {
         flatPageLayoutWidgets.push({
           ...widget,
           pageLayoutTabId: tab.id,
+          isActive:
+            (widget as unknown as FlatPageLayoutWidget).isActive ?? true,
         });
       }
     }

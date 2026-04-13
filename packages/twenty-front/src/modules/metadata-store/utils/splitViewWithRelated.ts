@@ -46,6 +46,7 @@ export const splitViewWithRelated = (
       flatViewFields.push({
         ...viewField,
         viewId: viewWithRelated.id,
+        isActive: (viewField as FlatViewField).isActive ?? true,
       });
     }
 
@@ -79,7 +80,11 @@ export const splitViewWithRelated = (
       const { viewFields: _viewFields, ...viewFieldGroupProperties } =
         viewFieldGroup;
 
-      flatViewFieldGroups.push(viewFieldGroupProperties);
+      flatViewFieldGroups.push({
+        ...viewFieldGroupProperties,
+        isActive:
+          (viewFieldGroup as unknown as FlatViewFieldGroup).isActive ?? true,
+      });
     }
   }
 

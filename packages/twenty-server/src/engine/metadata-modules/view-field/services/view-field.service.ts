@@ -352,7 +352,7 @@ export class ViewFieldService {
 
     return Object.values(flatViewFieldMaps.byUniversalIdentifier)
       .filter(isDefined)
-      .filter((field) => field.isActive && !isDefined(field.deletedAt))
+      .filter((field) => !isDefined(field.deletedAt))
       .map(fromFlatViewFieldToViewFieldDto)
       .sort((a, b) => a.position - b.position);
   }
@@ -372,10 +372,7 @@ export class ViewFieldService {
     return Object.values(flatViewFieldMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter(
-        (field) =>
-          field.viewId === viewId &&
-          field.isActive &&
-          !isDefined(field.deletedAt),
+        (field) => field.viewId === viewId && !isDefined(field.deletedAt),
       )
       .map(fromFlatViewFieldToViewFieldDto)
       .sort((a, b) => a.position - b.position);

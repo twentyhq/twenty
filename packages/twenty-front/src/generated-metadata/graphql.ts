@@ -4146,6 +4146,7 @@ export type PageLayoutTab = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
+  isActive?: Scalars['Boolean'];
   /** @deprecated isOverridden is deprecated */
   isOverridden?: Maybe<Scalars['Boolean']>;
   layoutMode?: Maybe<PageLayoutTabLayoutMode>;
@@ -4177,6 +4178,7 @@ export type PageLayoutWidget = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   gridPosition: GridPosition;
   id: Scalars['UUID'];
+  isActive?: Scalars['Boolean'];
   /** @deprecated isOverridden is deprecated */
   isOverridden?: Maybe<Scalars['Boolean']>;
   objectMetadataId?: Maybe<Scalars['UUID']>;
@@ -6060,6 +6062,7 @@ export type ViewField = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   fieldMetadataId: Scalars['UUID'];
   id: Scalars['UUID'];
+  isActive?: Scalars['Boolean'];
   /** @deprecated isOverridden is deprecated */
   isOverridden?: Maybe<Scalars['Boolean']>;
   isVisible: Scalars['Boolean'];
@@ -6076,6 +6079,7 @@ export type ViewFieldGroup = {
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['UUID'];
+  isActive?: Scalars['Boolean'];
   /** @deprecated isOverridden is deprecated */
   isOverridden: Scalars['Boolean'];
   isVisible: Scalars['Boolean'];
