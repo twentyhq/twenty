@@ -81,12 +81,8 @@ export const useTriggerEventStreamCreation = () => {
           }>,
         ) => {
           if (isDefined(value?.errors) && Array.isArray(value.errors)) {
-            const subCode = value.errors[0]?.extensions?.subCode as
-              | string
-              | undefined;
-            const code = value.errors[0]?.extensions?.code as
-              | string
-              | undefined;
+            const subCode = value.errors[0]?.extensions?.subCode;
+            const code = value.errors[0]?.extensions?.code;
 
             if (!isGracefullyHandledEventStreamError({ subCode, code })) {
               captureException(
