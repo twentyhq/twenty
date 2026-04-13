@@ -62,6 +62,34 @@ const Article = styled.article`
   p:first-of-type {
     margin-top: ${theme.spacing(6)};
   }
+
+  ol,
+  ul {
+    color: ${theme.colors.primary.text[80]};
+    font-size: ${theme.font.size(4)};
+    line-height: 1.65;
+    margin: 0;
+    margin-top: ${theme.spacing(4)};
+    padding-left: ${theme.spacing(6)};
+  }
+
+  li {
+    margin-top: ${theme.spacing(2)};
+  }
+
+  li:first-child {
+    margin-top: 0;
+  }
+
+  strong {
+    color: ${theme.colors.primary.text[100]};
+    font-weight: ${theme.font.weight.medium};
+  }
+
+  a {
+    color: ${theme.colors.highlight[100]};
+    text-decoration: underline;
+  }
 `;
 
 type LegalDocumentPageProps = {
