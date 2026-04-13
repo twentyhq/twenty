@@ -12,15 +12,23 @@ const StyledTrigger = styled.button`
   ${buttonBaseStyles}
 `;
 
-export function BecomePartnerButton() {
+type BecomePartnerButtonProps = {
+  color?: 'primary' | 'secondary';
+  variant?: 'contained' | 'outlined';
+};
+
+export function BecomePartnerButton({
+  color = 'secondary',
+  variant = 'contained',
+}: BecomePartnerButtonProps) {
   const { openPartnerApplicationModal } = usePartnerApplicationModal();
 
   return (
     <StyledTrigger type="button" onClick={openPartnerApplicationModal}>
       <BaseButton
-        color="secondary"
+        color={color}
         label="Become a partner"
-        variant="contained"
+        variant={variant}
       />
     </StyledTrigger>
   );

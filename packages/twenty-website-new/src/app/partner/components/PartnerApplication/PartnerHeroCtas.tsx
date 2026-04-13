@@ -5,7 +5,7 @@ import { BecomePartnerButton } from './BecomePartnerButton';
 export function PartnerHeroCtas() {
   return (
     <>
-      <BecomePartnerButton />
+      <BecomePartnerButton variant="contained" />
     </>
   );
 }

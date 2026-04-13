@@ -7,7 +7,7 @@ import { BecomePartnerButton } from './BecomePartnerButton';
 export function PartnerSignoffCtas() {
   return (
     <>
-      <BecomePartnerButton />
+      <BecomePartnerButton variant="outlined" />
       <TalkToUsButton
         color="secondary"
         label="Talk to us"
