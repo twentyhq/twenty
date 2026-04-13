@@ -7,9 +7,10 @@ import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdSta
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
 import { isGracefullyHandledEventStreamError } from '@/sse-db-event/utils/isGracefullyHandledEventStreamError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useMutation } from '@apollo/client/react';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation } from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import {
   compareArraysOfObjectsByProperty,
@@ -20,7 +21,6 @@ import {
   type AddQuerySubscriptionInput,
   type RemoveQueryFromEventStreamInput,
 } from '~/generated-metadata/graphql';
-import { useStore } from 'jotai';
 
 export const SSEQuerySubscribeEffect = () => {
   const store = useStore();
@@ -88,10 +88,8 @@ export const SSEQuerySubscribeEffect = () => {
       }
     } catch (error) {
       if (CombinedGraphQLErrors.is(error)) {
-        const subCode = error.errors[0]?.extensions?.subCode as
-          | string
-          | undefined;
-        const code = error.errors[0]?.extensions?.code as string | undefined;
+        const subCode = error.errors[0]?.extensions?.subCode;
+        const code = error.errors[0]?.extensions?.code;
 
         if (isGracefullyHandledEventStreamError({ subCode, code })) {
           store.set(activeQueryListenersState.atom, []);

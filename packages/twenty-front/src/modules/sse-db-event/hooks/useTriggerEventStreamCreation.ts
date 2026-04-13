@@ -141,12 +141,8 @@ export const useTriggerEventStreamCreation = () => {
           try {
             if (event === 'next') {
               if (isDefined(result?.errors)) {
-                const subCode = result.errors[0]?.extensions?.subCode as
-                  | string
-                  | undefined;
-                const code = result.errors[0]?.extensions?.code as
-                  | string
-                  | undefined;
+                const subCode = result.errors[0]?.extensions?.subCode;
+                const code = result.errors[0]?.extensions?.code;
 
                 if (!isGracefullyHandledEventStreamError({ subCode, code })) {
                   for (const error of result.errors) {
