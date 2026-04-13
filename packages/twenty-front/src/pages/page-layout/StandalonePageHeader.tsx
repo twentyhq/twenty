@@ -1,4 +1,7 @@
+import { StandalonePageCommandMenu } from '@/command-menu-item/components/StandalonePageCommandMenu';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
+import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,6 +16,9 @@ export const StandalonePageHeader = ({
 }: StandalonePageHeaderProps) => {
   const { getIcon } = useIcons();
   const navigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
 
   const navigationMenuItem = navigationMenuItems.find(
     (item) => item.pageLayoutId === pageLayoutId,
@@ -23,5 +29,10 @@ export const StandalonePageHeader = ({
     ? getIcon(navigationMenuItem.icon)
     : undefined;
 
-  return <PageHeader title={title} Icon={Icon} />;
+  return (
+    <PageHeader title={title} Icon={Icon}>
+      <StandalonePageCommandMenu />
+      {!isLayoutCustomizationModeEnabled && <SidePanelToggleButton />}
+    </PageHeader>
+  );
 };
