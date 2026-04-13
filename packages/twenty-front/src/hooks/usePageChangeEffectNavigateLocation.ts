@@ -1,4 +1,5 @@
 import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
+import { settingsRedirectPathState } from '@/app/states/settingsRedirectPathState';
 import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
 import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
@@ -47,6 +48,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   const verifyEmailRedirectPath = useAtomStateValue(
     verifyEmailRedirectPathState,
   );
+  const settingsRedirectPath = useAtomStateValue(settingsRedirectPathState);
 
   const returnToPath = useAtomStateValue(returnToPathState);
   const resolvedReturnToPath = isNonEmptyString(returnToPath)
@@ -148,6 +150,10 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (isMatchingLocation(location, AppPath.Index) && hasAccessTokenPair) {
     return resolvedReturnToPath ?? defaultHomePagePath;
+  }
+
+  if (isDefined(settingsRedirectPath)) {
+    return settingsRedirectPath;
   }
 
   if (

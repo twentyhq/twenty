@@ -1,8 +1,10 @@
 import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { type ReactNode } from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { settingsRedirectPathState } from '@/app/states/settingsRedirectPathState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { type ReactNode, useEffect } from 'react';
+import { Outlet } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
@@ -26,16 +28,28 @@ export const SettingsProtectedRouteWrapper = ({
   const requiredFeatureFlagEnabled = useIsFeatureEnabled(
     requiredFeatureFlag || null,
   );
+  const setSettingsRedirectPath = useSetAtomState(settingsRedirectPathState);
+
+  const shouldRedirect =
+    (requiredFeatureFlag && !requiredFeatureFlagEnabled) || !hasPermission;
+
+  useEffect(() => {
+    if (!hasAccessTokenPair) {
+      return;
+    }
+    if (shouldRedirect) {
+      setSettingsRedirectPath(getSettingsPath(SettingsPath.ProfilePage));
+      return;
+    }
+    setSettingsRedirectPath(undefined);
+  }, [hasAccessTokenPair, setSettingsRedirectPath, shouldRedirect]);
 
   if (!hasAccessTokenPair) {
     return null;
   }
 
-  // TODO: this should be part of PageChangeEffect as otherwise we will have multiple sources of redirection that can:
-  // - conflict (race conditions)
-  // - degrade performance as we will redirect multiple times
-  if ((requiredFeatureFlag && !requiredFeatureFlagEnabled) || !hasPermission) {
-    return <Navigate to={getSettingsPath(SettingsPath.ProfilePage)} replace />;
+  if (shouldRedirect) {
+    return null;
   }
 
   return children ?? <Outlet />;

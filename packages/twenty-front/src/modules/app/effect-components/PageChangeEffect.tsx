@@ -4,6 +4,7 @@ import {
 } from '@/analytics/hooks/useEventTracker';
 import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksOnAnyLocationChange';
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
+import { settingsRedirectPathState } from '@/app/states/settingsRedirectPathState';
 import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
 import { useReturnToPath } from '@/auth/hooks/useReturnToPath';
@@ -32,6 +33,7 @@ import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useRes
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useState } from 'react';
 import {
@@ -106,6 +108,8 @@ export const PageChangeEffect = () => {
   const isAppEffectRedirectEnabled = useAtomStateValue(
     isAppEffectRedirectEnabledState,
   );
+  const settingsRedirectPath = useAtomStateValue(settingsRedirectPathState);
+  const setSettingsRedirectPath = useSetAtomState(settingsRedirectPathState);
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -175,6 +179,9 @@ export const PageChangeEffect = () => {
       if (consumedReturnToPath) {
         clearReturnToPath();
       }
+      if (pageChangeEffectNavigateLocation === settingsRedirectPath) {
+        setSettingsRedirectPath(undefined);
+      }
     }
   }, [
     navigate,
@@ -185,6 +192,8 @@ export const PageChangeEffect = () => {
     saveReturnToPath,
     getReturnToPath,
     clearReturnToPath,
+    settingsRedirectPath,
+    setSettingsRedirectPath,
   ]);
 
   useEffect(() => {
