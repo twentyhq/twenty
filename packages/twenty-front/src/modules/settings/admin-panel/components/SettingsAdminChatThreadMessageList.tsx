@@ -1,13 +1,15 @@
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
-import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { Card } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { type GetAdminChatThreadMessagesQuery } from '~/generated-metadata/graphql';
+import {
+  AgentMessageRole,
+  type GetAdminChatThreadMessagesQuery,
+} from '~/generated-metadata/graphql';
 
 type ChatMessage = NonNullable<
   GetAdminChatThreadMessagesQuery['getAdminChatThreadMessages']
