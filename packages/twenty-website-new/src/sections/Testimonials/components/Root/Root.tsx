@@ -29,6 +29,7 @@ type RootProps = {
   backgroundColor: string;
   children: ReactNode;
   color: string;
+  shapeBodyFillColor?: string;
   shapeFillColor?: string;
 };
 
@@ -36,11 +37,17 @@ export function Root({
   backgroundColor,
   children,
   color,
+  shapeBodyFillColor,
   shapeFillColor,
 }: RootProps) {
   return (
     <StyledSection style={{ backgroundColor, color }}>
-      {shapeFillColor && <TestimonialsShape fillColor={shapeFillColor} />}
+      {shapeFillColor && (
+        <TestimonialsShape
+          bodyFillColor={shapeBodyFillColor}
+          fillColor={shapeFillColor}
+        />
+      )}
       <StyledContainer>{children}</StyledContainer>
     </StyledSection>
   );

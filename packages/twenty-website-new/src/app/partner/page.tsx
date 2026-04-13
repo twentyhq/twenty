@@ -111,15 +111,17 @@ export default async function PartnerPage() {
       </ThreeCards.Root>
 
       <Testimonials.Root
-        backgroundColor={theme.colors.secondary.background[5]}
-        color={theme.colors.primary.text[100]}
+        backgroundColor={theme.colors.secondary.background[100]}
+        color={theme.colors.secondary.text[100]}
+        shapeBodyFillColor={theme.colors.secondary.background[100]}
+        shapeFillColor={theme.colors.primary.background[100]}
       >
-        <Testimonials.Carousel
+        <Testimonials.PartnerCarousel
           eyebrow={TESTIMONIALS_DATA.eyebrow}
           testimonials={TESTIMONIALS_DATA.testimonials}
         >
           <Testimonials.PartnerVisual />
-        </Testimonials.Carousel>
+        </Testimonials.PartnerCarousel>
       </Testimonials.Root>
 
       <Signoff.Root
