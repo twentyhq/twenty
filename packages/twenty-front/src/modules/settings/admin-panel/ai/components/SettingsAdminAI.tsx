@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react';
 
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
 import { H2Title, IconBolt, IconLock, IconRobot } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
@@ -319,6 +321,9 @@ export const SettingsAdminAI = () => {
                 <TableRow
                   key={item.key}
                   gridTemplateColumns={USAGE_TABLE_GRID_TEMPLATE_COLUMNS}
+                  to={getSettingsPath(SettingsPath.AdminPanelWorkspaceDetail, {
+                    workspaceId: item.key,
+                  })}
                 >
                   <TableCell color={themeCssVariables.font.color.primary}>
                     {item.label ?? item.key}

@@ -1,25 +1,13 @@
-import { IllustrationMount } from '@/illustrations';
-import { createElement } from 'react';
+import { Hourglass } from '@/illustrations/Testimonials/Hourglass';
+import { Partner as PartnerVisual } from '@/illustrations/Testimonials/Partner';
 import { Carousel } from './Carousel/Carousel';
 import { PartnerCarousel } from './PartnerCarousel/PartnerCarousel';
 import { Root } from './Root/Root';
 import { Separator } from './Separator/Separator';
 
-function HomeVisual() {
-  return createElement(IllustrationMount, {
-    illustration: 'testimonialsHourglass',
-  });
-}
-
-function PartnerVisual() {
-  return createElement(IllustrationMount, {
-    illustration: 'testimonialsPartner',
-  });
-}
-
 export const Testimonials = {
   Carousel,
-  HomeVisual,
+  HomeVisual: Hourglass,
   PartnerCarousel,
   PartnerVisual,
   Root,

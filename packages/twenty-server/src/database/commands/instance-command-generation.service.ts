@@ -4,12 +4,12 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { pascalCase } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
-import { type UpgradeCommandVersion } from 'src/engine/constants/upgrade-command-supported-versions.constant';
+import { type TwentyAllVersion } from 'src/engine/core-modules/upgrade/constants/twenty-all-versions.constant';
 import { type InstanceCommandType } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 
 type GenerateInstanceCommandArgs = {
   migrationName: string;
-  version: UpgradeCommandVersion;
+  version: TwentyAllVersion;
   timestamp: number;
   type?: InstanceCommandType;
 };

@@ -664,131 +664,128 @@ export function PricingWindow({
       <Panel>
         <WindowChrome aria-hidden="true" />
         <PricingHeader>
-        <TitleBar>
-          <TitleBarText>{pricing.windowTitle}</TitleBarText>
-          <TitleBarActions>
-            <TitleBarActionButton
-              aria-label="Help"
-              onClick={() => undefined}
-              type="button"
-            >
-              ?
-            </TitleBarActionButton>
-            <TitleBarActionButton
-              aria-label="Close pricing window"
-              onClick={onClose}
-              type="button"
-            >
-              ×
-            </TitleBarActionButton>
-          </TitleBarActions>
-        </TitleBar>
-        <SummaryPad>
-          <SummaryInner>
-            <ProductBlock>
-              <ProductHeader>
-                <ProductCopy>
-                  <ProductTitle>{pricing.productTitle}</ProductTitle>
-                  <PriceRow>
-                    {perSeatPriceAmount > pricing.basePriceAmount ? (
-                      <BasePriceAmount>
-                        {formatPriceAmount(pricing.basePriceAmount)}
-                      </BasePriceAmount>
+          <TitleBar>
+            <TitleBarText>{pricing.windowTitle}</TitleBarText>
+            <TitleBarActions>
+              <TitleBarActionButton
+                aria-label="Help"
+                onClick={() => undefined}
+                type="button"
+              >
+                ?
+              </TitleBarActionButton>
+              <TitleBarActionButton
+                aria-label="Close pricing window"
+                onClick={onClose}
+                type="button"
+              >
+                ×
+              </TitleBarActionButton>
+            </TitleBarActions>
+          </TitleBar>
+          <SummaryPad>
+            <SummaryInner>
+              <ProductBlock>
+                <ProductHeader>
+                  <ProductCopy>
+                    <ProductTitle>{pricing.productTitle}</ProductTitle>
+                    <PriceRow>
+                      {perSeatPriceAmount > pricing.basePriceAmount ? (
+                        <BasePriceAmount>
+                          {formatPriceAmount(pricing.basePriceAmount)}
+                        </BasePriceAmount>
+                      ) : null}
+                      <PriceAmount>
+                        {formatPriceAmount(animatedPerSeat)}
+                      </PriceAmount>
+                      <PriceSuffix>{pricing.priceSuffix}</PriceSuffix>
+                    </PriceRow>
+                    {fixedPriceAmount > 0 ? (
+                      <TotalPriceRow>
+                        <TotalPriceAmount>
+                          {formatPriceAmount(animatedTotal)}
+                        </TotalPriceAmount>
+                        <TotalPriceLabel>
+                          {pricing.totalPriceLabel}
+                        </TotalPriceLabel>
+                      </TotalPriceRow>
                     ) : null}
-                    <PriceAmount>
-                      {formatPriceAmount(animatedPerSeat)}
-                    </PriceAmount>
-                    <PriceSuffix>{pricing.priceSuffix}</PriceSuffix>
-                  </PriceRow>
-                  {fixedPriceAmount > 0 ? (
-                    <TotalPriceRow>
-                      <TotalPriceAmount>
-                        {formatPriceAmount(animatedTotal)}
-                      </TotalPriceAmount>
-                      <TotalPriceLabel>
-                        {pricing.totalPriceLabel}
-                      </TotalPriceLabel>
-                    </TotalPriceRow>
-                  ) : null}
-                </ProductCopy>
-                <ProductIcon
-                  alt={pricing.productIconAlt}
-                  src={pricing.productIconSrc}
-                />
-              </ProductHeader>
-            </ProductBlock>
-            <Separator aria-hidden="true" />
-          </SummaryInner>
-        </SummaryPad>
-      </PricingHeader>
-      <ContentPad>
-        <Inner>
-          <SectionHeader>
-            <SectionLabel>{pricing.featureSectionHeading}</SectionLabel>
-            <SelectAllButton
-              onClick={onSelectAll}
-              type="button"
-            >
-              Select all
-            </SelectAllButton>
-          </SectionHeader>
-          {pricing.addons.map((addon) => {
-            const checked = checkedIds.has(addon.id);
-            return (
-              <AddonRow key={addon.id}>
-                <CheckboxLabel
-                  disabled={addon.disabled}
-                  ref={(node) => {
-                    addonAnchorRefs.current[addon.id] = node;
-                  }}
-                >
-                  <HiddenCheckbox
-                    checked={checked}
-                    disabled={addon.disabled}
-                    onChange={() =>
-                      onAddonToggle(
-                        addon,
-                        addonAnchorRefs.current[
-                          addon.id
-                        ]?.getBoundingClientRect() ?? null,
-                      )
-                    }
-                    type="checkbox"
+                  </ProductCopy>
+                  <ProductIcon
+                    alt={pricing.productIconAlt}
+                    src={pricing.productIconSrc}
                   />
-                  <CheckboxFace checked={checked} aria-hidden="true">
-                    {checked ? <CheckGlyph>✓</CheckGlyph> : null}
-                  </CheckboxFace>
-                  <AddonLabelText>{addon.label}</AddonLabelText>
-                </CheckboxLabel>
-                <AddonRightText>
-                  {addon.rightLabelParts
-                    ? renderRightLabelParts(addon.rightLabelParts)
-                    : renderRightLabel(addon.rightLabel)}
-                </AddonRightText>
-                {addon.tooltip ? (
-                  <Tooltip>
-                    <TooltipTitleBar>{addon.tooltip.title}</TooltipTitleBar>
-                    <TooltipBody>{addon.tooltip.body}</TooltipBody>
-                  </Tooltip>
-                ) : null}
-              </AddonRow>
-            );
-          })}
-          <FooterCtaSection>
-            <Separator aria-hidden="true" />
-            {pricing.secondaryCtaNote ? (
-              <FooterNote>{pricing.secondaryCtaNote}</FooterNote>
-            ) : null}
-            <FakeButton
-              href={pricing.secondaryCtaHref}
-              rel="noreferrer"
-              target="_blank"
-            >
-              {pricing.secondaryCtaLabel}
-            </FakeButton>
-          </FooterCtaSection>
-        </Inner>
-      </ContentPad>
+                </ProductHeader>
+              </ProductBlock>
+              <Separator aria-hidden="true" />
+            </SummaryInner>
+          </SummaryPad>
+        </PricingHeader>
+        <ContentPad>
+          <Inner>
+            <SectionHeader>
+              <SectionLabel>{pricing.featureSectionHeading}</SectionLabel>
+              <SelectAllButton onClick={onSelectAll} type="button">
+                Select all
+              </SelectAllButton>
+            </SectionHeader>
+            {pricing.addons.map((addon) => {
+              const checked = checkedIds.has(addon.id);
+              return (
+                <AddonRow key={addon.id}>
+                  <CheckboxLabel
+                    disabled={addon.disabled}
+                    ref={(node) => {
+                      addonAnchorRefs.current[addon.id] = node;
+                    }}
+                  >
+                    <HiddenCheckbox
+                      checked={checked}
+                      disabled={addon.disabled}
+                      onChange={() =>
+                        onAddonToggle(
+                          addon,
+                          addonAnchorRefs.current[
+                            addon.id
+                          ]?.getBoundingClientRect() ?? null,
+                        )
+                      }
+                      type="checkbox"
+                    />
+                    <CheckboxFace checked={checked} aria-hidden="true">
+                      {checked ? <CheckGlyph>✓</CheckGlyph> : null}
+                    </CheckboxFace>
+                    <AddonLabelText>{addon.label}</AddonLabelText>
+                  </CheckboxLabel>
+                  <AddonRightText>
+                    {addon.rightLabelParts
+                      ? renderRightLabelParts(addon.rightLabelParts)
+                      : renderRightLabel(addon.rightLabel)}
+                  </AddonRightText>
+                  {addon.tooltip ? (
+                    <Tooltip>
+                      <TooltipTitleBar>{addon.tooltip.title}</TooltipTitleBar>
+                      <TooltipBody>{addon.tooltip.body}</TooltipBody>
+                    </Tooltip>
+                  ) : null}
+                </AddonRow>
+              );
+            })}
+            <FooterCtaSection>
+              <Separator aria-hidden="true" />
+              {pricing.secondaryCtaNote ? (
+                <FooterNote>{pricing.secondaryCtaNote}</FooterNote>
+              ) : null}
+              <FakeButton
+                href={pricing.secondaryCtaHref}
+                rel="noreferrer"
+                target="_blank"
+              >
+                {pricing.secondaryCtaLabel}
+              </FakeButton>
+            </FooterCtaSection>
+          </Inner>
+        </ContentPad>
       </Panel>
     </PanelWrapper>
   );

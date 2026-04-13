@@ -7,4 +7,5 @@ export type HeadingCardType = {
   illustration: IllustrationId;
   heading: HeadingType;
   body: BodyType;
+  href: string;
 };

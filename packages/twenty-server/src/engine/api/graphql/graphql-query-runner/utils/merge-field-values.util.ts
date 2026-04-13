@@ -1,9 +1,9 @@
 import {
   FieldMetadataType,
-  type RelationType,
   type EmailsMetadata,
   type LinksMetadata,
   type PhonesMetadata,
+  type RelationType,
 } from 'twenty-shared/types';
 
 import { mergeArrayFieldValues } from './merge-array-field-values.util';
@@ -11,7 +11,7 @@ import { mergeEmailsFieldValues } from './merge-emails-field-values.util';
 import { mergeLinksFieldValues } from './merge-links-field-values.util';
 import { mergePhonesFieldValues } from './merge-phones-field-values.util';
 import { mergeRelationFieldValuesForDryRunRecord } from './merge-relation-field-values-for-dry-run-record.util';
-import { selectPriorityFieldValue } from './select-priority-field-value.util';
+import { defaultMergeFieldValue } from './default-merge-field-value.util';
 
 export const mergeFieldValues = (
   fieldType: FieldMetadataType,
@@ -34,7 +34,7 @@ export const mergeFieldValues = (
         );
       }
 
-      return selectPriorityFieldValue(recordsWithValues, priorityRecordId);
+      return defaultMergeFieldValue(recordsWithValues, priorityRecordId);
 
     case FieldMetadataType.EMAILS:
       return mergeEmailsFieldValues(
@@ -55,6 +55,6 @@ export const mergeFieldValues = (
       );
 
     default:
-      return selectPriorityFieldValue(recordsWithValues, priorityRecordId);
+      return defaultMergeFieldValue(recordsWithValues, priorityRecordId);
   }
 };

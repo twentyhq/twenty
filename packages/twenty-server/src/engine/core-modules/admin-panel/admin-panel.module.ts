@@ -5,7 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
 import { AdminPanelResolver } from 'src/engine/core-modules/admin-panel/admin-panel.resolver';
-import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
+import { AdminPanelChatService } from 'src/engine/core-modules/admin-panel/services/admin-panel-chat.service';
+import { AdminPanelConfigService } from 'src/engine/core-modules/admin-panel/services/admin-panel-config.service';
+import { AdminPanelStatisticsService } from 'src/engine/core-modules/admin-panel/services/admin-panel-statistics.service';
+import { AdminPanelUserLookupService } from 'src/engine/core-modules/admin-panel/services/admin-panel-user-lookup.service';
+import { AdminPanelVersionService } from 'src/engine/core-modules/admin-panel/services/admin-panel-version.service';
 import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
@@ -24,15 +28,26 @@ import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-cl
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { KeyValuePairModule } from 'src/engine/core-modules/key-value-pair/key-value-pair.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserEntity, WorkspaceEntity]),
+    TypeOrmModule.forFeature([
+      UserEntity,
+      WorkspaceEntity,
+      UserWorkspaceEntity,
+      FeatureFlagEntity,
+      AgentChatThreadEntity,
+      AgentMessageEntity,
+    ]),
     AuthModule,
     FileModule,
     WorkspaceDomainsModule,
@@ -52,7 +67,11 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
   ],
   providers: [
     AdminPanelResolver,
-    AdminPanelService,
+    AdminPanelUserLookupService,
+    AdminPanelStatisticsService,
+    AdminPanelChatService,
+    AdminPanelConfigService,
+    AdminPanelVersionService,
     AdminPanelHealthService,
     AdminPanelQueueService,
     MaintenanceModeService,
@@ -62,6 +81,13 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     ConnectedAccountHealth,
     AppHealthIndicator,
   ],
-  exports: [AdminPanelService, MaintenanceModeService],
+  exports: [
+    AdminPanelUserLookupService,
+    AdminPanelStatisticsService,
+    AdminPanelChatService,
+    AdminPanelConfigService,
+    AdminPanelVersionService,
+    MaintenanceModeService,
+  ],
 })
 export class AdminPanelModule {}
