@@ -1806,8 +1806,8 @@ msgid "Any {fieldLabel} field"
 msgstr "Elk {fieldLabel}-veld"
 
 #. js-lingui-id: COyjuu
-#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
-#: src/modules/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/hooks/useVisibilityLabels.ts
+#: src/modules/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel.ts
 msgid "Any device"
 msgstr ""
 
@@ -4652,7 +4652,8 @@ msgstr "verwijderen"
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainRowDropdownMenu.tsx
@@ -4905,8 +4906,8 @@ msgid "Description"
 msgstr "Beschrijving"
 
 #. js-lingui-id: BBqGS9
-#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
-#: src/modules/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/hooks/useVisibilityLabels.ts
+#: src/modules/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel.ts
 msgid "Desktop"
 msgstr ""
 
@@ -5129,7 +5130,7 @@ msgid "Drop file here..."
 msgstr "Bestand hier neerzetten..."
 
 #. js-lingui-id: euc6Ns
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 msgid "Duplicate"
 msgstr ""
 
@@ -7079,6 +7080,11 @@ msgstr "Frontendcomponenten"
 msgid "Full access"
 msgstr "Volledige toegang"
 
+#. js-lingui-id: Ld0Tt4
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
+msgid "Full tab widget"
+msgstr ""
+
 #. js-lingui-id: YMZBxa
 #: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 msgid "Function"
@@ -8826,6 +8832,7 @@ msgstr ""
 
 #. js-lingui-id: wckWOP
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 msgid "Manage"
 msgstr ""
 
@@ -9158,8 +9165,8 @@ msgid "Mission accomplished!"
 msgstr "Missie volbracht!"
 
 #. js-lingui-id: dMsM20
-#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
-#: src/modules/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/hooks/useVisibilityLabels.ts
+#: src/modules/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel.ts
 msgid "Mobile"
 msgstr ""
 
@@ -9308,14 +9315,16 @@ msgid "Move Down"
 msgstr ""
 
 #. js-lingui-id: iSLA/r
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Move left"
 msgstr "Verplaats naar links"
 
 #. js-lingui-id: Ubl2by
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Move right"
@@ -11125,6 +11134,11 @@ msgstr "Afbeelding"
 msgid "Pie Chart"
 msgstr "Cirkeldiagram"
 
+#. js-lingui-id: 3pU8e+
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
+msgid "Pin tab"
+msgstr ""
+
 #. js-lingui-id: 2FIjLb
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Pink"
@@ -11144,6 +11158,7 @@ msgstr "Placeholder"
 
 #. js-lingui-id: MFTZK8
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 msgid "Placement"
 msgstr ""
 
@@ -12005,7 +12020,8 @@ msgstr "E-mail opnieuw verzenden"
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 msgid "Reset"
 msgstr "Resetten"
 
@@ -12028,8 +12044,10 @@ msgstr "Reset naar"
 #. js-lingui-id: L+rMC9
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 msgid "Reset to default"
@@ -13003,7 +13021,7 @@ msgid "Set as default"
 msgstr "Instellen als standaard"
 
 #. js-lingui-id: 7f09hf
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 msgid "Set as pinned tab"
 msgstr "Instellen als vastgezet tabblad"
 
@@ -13076,7 +13094,7 @@ msgstr "Uw database opzetten..."
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -14390,7 +14408,8 @@ msgid "This week"
 msgstr "Deze week"
 
 #. js-lingui-id: DF2voz
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 msgid "This will cancel all modifications done on the tab and its widgets. Edit mode will be canceled and the page will refresh. This action cannot be undone."
 msgstr ""
 
@@ -15721,6 +15740,11 @@ msgstr "Violet"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Visibility"
 msgstr "Zichtbaarheid"
+
+#. js-lingui-id: XQC+sL
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
+msgid "Visibility restriction"
+msgstr ""
 
 #. js-lingui-id: gkAApJ
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
