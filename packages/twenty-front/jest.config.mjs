@@ -17,14 +17,6 @@ const jestConfig = {
   // For more information please have a look to official docs https://jestjs.io/docs/configuration/#prettierpath-string
   // Prettier v3 will should be supported in jest v30 https://github.com/jestjs/jest/releases/tag/v30.0.0-alpha.1
   prettierPath: null,
-  ...(process.env.CI === 'true'
-    ? {
-        reporters: [
-          'default',
-          resolve(__dirname, 'jest/ci-failed-tests-reporter.cjs'),
-        ],
-      }
-    : {}),
   displayName: 'twenty-front',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['./setupTests.ts'],
