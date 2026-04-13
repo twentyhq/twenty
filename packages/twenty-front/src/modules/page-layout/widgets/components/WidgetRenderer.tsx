@@ -205,6 +205,9 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
         variant={variant}
         hasHeader={showHeader}
         isEditable={isWidgetEditable}
+        isInVerticalListTab={
+          layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST
+        }
         hasInteractiveContent={widget.type === WidgetType.RECORD_TABLE}
       >
         {hasAccess ? (

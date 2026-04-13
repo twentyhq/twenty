@@ -1,3 +1,4 @@
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
@@ -6,55 +7,23 @@ type WidgetCardContentStyledProps = {
   variant: WidgetCardVariant;
   hasHeader: boolean;
   isEditable: boolean;
-};
-
-const getWidgetCardContentBorderStyle = ({
-  variant,
-  isEditable,
-}: {
-  variant: WidgetCardVariant;
-  isEditable: boolean;
-}) =>
-  variant === 'record-page' || (variant === 'side-column' && isEditable)
-    ? `1px solid ${themeCssVariables.border.color.medium}`
-    : 'none';
-
-const getWidgetCardContentBorderRadiusStyle = ({
-  variant,
-  isEditable,
-}: {
-  variant: WidgetCardVariant;
-  isEditable: boolean;
-}) =>
-  variant === 'record-page' || (variant === 'side-column' && isEditable)
-    ? themeCssVariables.border.radius.md
-    : '0';
-
-const getWidgetCardContentMarginTopStyle = ({
-  hasHeader,
-}: {
-  hasHeader: boolean;
-}) => (hasHeader ? themeCssVariables.spacing[2] : '0');
-
-const getWidgetCardContentPaddingStyle = ({
-  variant,
-  isEditable,
-}: {
-  variant: WidgetCardVariant;
-  isEditable: boolean;
-}) => {
-  if (variant === 'dashboard') return themeCssVariables.spacing[2];
-  if (variant === 'record-page' || (variant === 'side-column' && isEditable)) {
-    return themeCssVariables.spacing[2];
-  }
-  return '0';
+  isInVerticalListTab: boolean;
+  isMobile: boolean;
 };
 
 const StyledWidgetCardContent = styled.div<WidgetCardContentStyledProps>`
+  background-color: ${({ variant, isInVerticalListTab, isMobile }) =>
+    variant === 'record-page' && isInVerticalListTab && !isMobile
+      ? themeCssVariables.background.secondary
+      : 'transparent'};
   border: ${({ variant, isEditable }) =>
-    getWidgetCardContentBorderStyle({ variant, isEditable })};
+    variant === 'record-page' || (variant === 'side-column' && isEditable)
+      ? `1px solid ${themeCssVariables.border.color.medium}`
+      : 'none'};
   border-radius: ${({ variant, isEditable }) =>
-    getWidgetCardContentBorderRadiusStyle({ variant, isEditable })};
+    variant === 'record-page' || (variant === 'side-column' && isEditable)
+      ? themeCssVariables.border.radius.md
+      : '0'};
   box-sizing: border-box;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -62,28 +31,26 @@ const StyledWidgetCardContent = styled.div<WidgetCardContentStyledProps>`
   height: 100%;
 
   margin-top: ${({ hasHeader }) =>
-    getWidgetCardContentMarginTopStyle({ hasHeader })};
+    hasHeader ? themeCssVariables.spacing[2] : '0'};
 
   overflow: hidden;
 
-  padding: ${({ variant, isEditable }) =>
-    getWidgetCardContentPaddingStyle({ variant, isEditable })};
+  padding: ${({ variant, isEditable }) => {
+    if (variant === 'dashboard') return themeCssVariables.spacing[2];
+    if (
+      variant === 'record-page' ||
+      (variant === 'side-column' && isEditable)
+    ) {
+      return themeCssVariables.spacing[2];
+    }
+    return '0';
+  }};
 
   &:empty {
-    border: ${({ variant, isEditable }) =>
-      !isEditable
-        ? 'none'
-        : getWidgetCardContentBorderStyle({ variant, isEditable })};
-    border-radius: ${({ variant, isEditable }) =>
-      !isEditable
-        ? '0'
-        : getWidgetCardContentBorderRadiusStyle({ variant, isEditable })};
-    margin-top: ${({ hasHeader, isEditable }) =>
-      !isEditable ? '0' : getWidgetCardContentMarginTopStyle({ hasHeader })};
-    padding: ${({ variant, isEditable }) =>
-      !isEditable
-        ? '0'
-        : getWidgetCardContentPaddingStyle({ variant, isEditable })};
+    border: none;
+    border-radius: 0;
+    margin-top: 0;
+    padding: 0;
   }
 `;
 
@@ -91,6 +58,7 @@ type WidgetCardContentProps = {
   variant: WidgetCardVariant;
   hasHeader: boolean;
   isEditable: boolean;
+  isInVerticalListTab: boolean;
   hasInteractiveContent?: boolean;
   className?: string;
   children?: React.ReactNode;
@@ -100,10 +68,13 @@ export const WidgetCardContent = ({
   variant,
   hasHeader,
   isEditable,
+  isInVerticalListTab,
   hasInteractiveContent = false,
   className,
   children,
 }: WidgetCardContentProps) => {
+  const isMobile = useIsMobile();
+
   const handleContentClick = (event: React.MouseEvent) => {
     if (!isEditable || !hasInteractiveContent) {
       return;
@@ -117,6 +88,8 @@ export const WidgetCardContent = ({
       variant={variant}
       hasHeader={hasHeader}
       isEditable={isEditable}
+      isInVerticalListTab={isInVerticalListTab}
+      isMobile={isMobile}
       className={className}
       onClick={handleContentClick}
     >
