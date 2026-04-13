@@ -2730,6 +2730,7 @@ export type Mutation = {
   updateWorkspace: Workspace;
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
   updateWorkspaceMemberRole: WorkspaceMember;
+  updateWorkspaceMemberSettings: Scalars['Boolean'];
   upgradeApplication: Scalars['Boolean'];
   uploadAIChatFile: FileWithSignedUrl;
   uploadAppTarball: ApplicationRegistration;
@@ -3722,6 +3723,11 @@ export type MutationUpdateWorkspaceFeatureFlagArgs = {
 export type MutationUpdateWorkspaceMemberRoleArgs = {
   roleId: Scalars['UUID'];
   workspaceMemberId: Scalars['UUID'];
+};
+
+
+export type MutationUpdateWorkspaceMemberSettingsArgs = {
+  input: UpdateWorkspaceMemberSettingsInput;
 };
 
 
@@ -5719,6 +5725,11 @@ export type UpdateWorkspaceInput = {
   subdomain?: InputMaybe<Scalars['String']>;
   trashRetentionDays?: InputMaybe<Scalars['Float']>;
   useRecommendedModels?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type UpdateWorkspaceMemberSettingsInput = {
+  update: Scalars['JSON'];
+  workspaceMemberId: Scalars['UUID'];
 };
 
 export type UpsertFieldPermissionsInput = {
