@@ -294,11 +294,9 @@ export class ApplicationService {
     {
       workspaceId,
       applicationId,
-      workspaceDisplayName,
     }: {
       workspaceId: string;
       applicationId: string;
-      workspaceDisplayName?: string;
     },
     queryRunner?: QueryRunner,
   ) {
@@ -307,9 +305,9 @@ export class ApplicationService {
     const workspaceCustomApplication = await this.create(
       {
         description: 'Workspace custom application',
-        name: `${isDefined(workspaceDisplayName) ? workspaceDisplayName : 'Workspace'}'s custom application`,
+        name: 'Custom',
         sourcePath: 'workspace-custom',
-        version: '1.0.0',
+        version: '1.0.1',
         universalIdentifier: applicationId,
         workspaceId,
         id: applicationId,
