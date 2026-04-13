@@ -52,7 +52,6 @@ export const FOOTER_DATA: FooterDataType = {
           color: 'secondary',
           href: 'https://app.twenty.com/welcome',
           label: 'Talk to us',
-          type: 'anchor',
           variant: 'contained',
         },
         {

@@ -6,15 +6,8 @@ import { ArrowLeftIcon, ArrowRightIcon } from '@/icons';
 import type { TestimonialCardType } from '@/sections/Testimonials/types/TestimonialCard';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import NextImage from 'next/image';
 import { type ReactNode, useState } from 'react';
 import { Separator } from '../Separator/Separator';
-
-const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-});
 
 const StyledCarousel = styled.div`
   display: grid;
@@ -125,7 +118,6 @@ const FooterRow = styled.div`
   @media (min-width: ${theme.breakpoints.md}px) {
     align-items: center;
     grid-template-columns: auto 1fr;
-    justify-items: end;
   }
 `;
 
@@ -142,42 +134,17 @@ const NavGroup = styled.div`
 `;
 
 const AuthorBlock = styled.div`
-  align-items: center;
-  column-gap: ${theme.spacing(4)};
-  display: grid;
-  grid-template-columns: 48px 1fr;
-  order: 1;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    order: 2;
-  }
-`;
-
-const AvatarFrame = styled.div`
-  border-radius: ${theme.radius(0.5)};
-  height: 48px;
-  overflow: hidden;
-  position: relative;
-  width: 48px;
-`;
-
-const AuthorMeta = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  row-gap: ${theme.spacing(2)};
-`;
+  justify-items: start;
+  order: 1;
+  row-gap: ${theme.spacing(1)};
+  text-align: left;
 
-const NameHandleRow = styled.div`
-  align-items: center;
-  column-gap: ${theme.spacing(2)};
-  display: grid;
-  grid-auto-flow: column;
-  justify-content: start;
-`;
-
-const HandleText = styled.span`
-  border-left: 1px solid ${theme.colors.primary.border[20]};
-  padding-left: ${theme.spacing(2)};
+  @media (min-width: ${theme.breakpoints.md}px) {
+    justify-self: end;
+    order: 2;
+  }
 `;
 
 type CarouselProps = {
@@ -273,33 +240,18 @@ export function Carousel({ children, eyebrow, testimonials }: CarouselProps) {
           </NavGroup>
 
           <AuthorBlock>
-            <AvatarFrame>
-              <NextImage
-                alt={current.author.avatar.alt || ''}
-                fill
-                sizes="48px"
-                src={current.author.avatar.src}
-                style={{ objectFit: 'cover' }}
-              />
-            </AvatarFrame>
-            <AuthorMeta>
-              <NameHandleRow>
-                <Body
-                  as="span"
-                  body={current.author.name}
-                  size="sm"
-                  weight="medium"
-                />
-                <HandleText>
-                  <Body as="span" body={current.author.handle} size="sm" />
-                </HandleText>
-              </NameHandleRow>
-              <Body
-                as="p"
-                body={{ text: DATE_FORMATTER.format(current.author.date) }}
-                size="xs"
-              />
-            </AuthorMeta>
+            <Body
+              as="span"
+              body={current.author.name}
+              size="sm"
+              weight="medium"
+            />
+            <Body
+              as="span"
+              body={current.author.designation}
+              size="xs"
+              weight="light"
+            />
           </AuthorBlock>
         </FooterRow>
       </RightColumn>
