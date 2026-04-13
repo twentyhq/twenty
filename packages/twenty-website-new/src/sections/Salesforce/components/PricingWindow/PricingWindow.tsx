@@ -114,13 +114,20 @@ const PromoTagBorder = styled.div`
   clip-path: ${STARBURST_CLIP};
   background: #005fb2;
   filter: drop-shadow(2px 3px 6px rgba(0, 40, 80, 0.45));
-  height: 130px;
+  display: inline-flex;
+  min-width: 200px;
+  padding: 4px;
   position: absolute;
   right: ${theme.spacing(25)};
   top: -16px;
   transform: rotate(-8deg);
-  width: 200px;
   z-index: 30;
+
+  @media (max-width: ${theme.breakpoints.md - 1}px) {
+    min-width: 168px;
+    right: ${theme.spacing(8)};
+    top: -8px;
+  }
 `;
 
 const PromoTagInner = styled.div`
@@ -132,17 +139,20 @@ const PromoTagInner = styled.div`
   font-family: ${theme.font.family.retro};
   font-size: ${theme.font.size(4.5)};
   font-weight: bold;
-  height: calc(100% - 8px);
   justify-content: center;
-  left: 4px;
   letter-spacing: 1px;
-  line-height: 1.3;
-  position: absolute;
+  line-height: 1.15;
+  min-height: 104px;
+  padding: ${theme.spacing(7)} ${theme.spacing(10)};
   text-align: center;
   text-transform: uppercase;
-  top: 4px;
   white-space: pre-line;
-  width: calc(100% - 8px);
+
+  @media (max-width: ${theme.breakpoints.md - 1}px) {
+    font-size: ${theme.font.size(4)};
+    min-height: 88px;
+    padding: ${theme.spacing(6)} ${theme.spacing(7)};
+  }
 `;
 
 const Panel = styled.div`

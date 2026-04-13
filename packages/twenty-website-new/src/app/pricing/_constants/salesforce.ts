@@ -219,7 +219,7 @@ export const SALESFORCE_DATA: SalesforceDataType = {
       },
     ],
     basePriceAmount: 100,
-    promoTag: 'Best for\nSalesforce',
+    promoTag: '1‑800‑YES‑SOFTWARE',
     featureSectionHeading: 'Add-ons',
     productIconAlt: 'Retro help document icon',
     productIconSrc: '/images/pricing/salesforce/help-icon.png',

@@ -1,6 +1,7 @@
 import { styled } from "@linaria/react";
 
 interface ButtonShapeProps {
+  dataSlot?: string;
   fillColor: string;
   strokeColor: string;
 }
@@ -38,14 +39,18 @@ const RightCap = styled.svg`
   flex-shrink: 0;
 `;
 
-export function ButtonShape({ fillColor, strokeColor }: ButtonShapeProps) {
+export function ButtonShape({
+  dataSlot,
+  fillColor,
+  strokeColor,
+}: ButtonShapeProps) {
   const isOutline = fillColor === "none";
 
   return (
-    <ShapeContainer>
+    <ShapeContainer data-slot={dataSlot}>
       <LeftCap width="4" height="40" viewBox="0 0 4 40" fill="none" xmlns="http://www.w3.org/2000/svg">
         {isOutline ? (
-          <path d={LEFT_OUTLINE} fill={fillColor} stroke={strokeColor} strokeWidth="1" />
+          <path d={LEFT_OUTLINE} fill={fillColor} stroke={strokeColor} strokeWidth="1" strokeLinejoin="round" strokeLinecap="round" />
         ) : (
           <path d={LEFT_FILL} fill={fillColor} stroke={strokeColor} />
         )}

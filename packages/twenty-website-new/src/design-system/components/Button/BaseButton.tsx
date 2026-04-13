@@ -3,6 +3,9 @@ import { styled } from '@linaria/react';
 import { ButtonShape } from './ButtonShape';
 
 export const buttonBaseStyles = `
+  --button-label-color: ${theme.colors.primary.text[100]};
+  --button-label-hover-color: ${theme.colors.secondary.text[100]};
+
   align-items: center;
   background: transparent;
   border: none;
@@ -15,10 +18,38 @@ export const buttonBaseStyles = `
   height: ${theme.spacing(10)};
   justify-content: center;
   letter-spacing: 0;
+  overflow: hidden;
   padding: 0 ${theme.spacing(5)};
   position: relative;
   text-decoration: none;
   text-transform: uppercase;
+
+  &[data-variant='contained'][data-color='secondary'] {
+    --button-label-color: ${theme.colors.secondary.text[100]};
+    --button-label-hover-color: ${theme.colors.secondary.text[100]};
+  }
+
+  &[data-variant='outlined'][data-color='secondary'] {
+    --button-label-color: ${theme.colors.primary.text[100]};
+    --button-label-hover-color: ${theme.colors.primary.text[100]};
+  }
+
+  &[data-variant='outlined'][data-color='primary'] {
+    --button-label-color: ${theme.colors.secondary.text[100]};
+    --button-label-hover-color: ${theme.colors.primary.text[100]};
+  }
+
+  &:is(:hover, :focus-visible) {
+    --button-label-color: var(--button-label-hover-color);
+  }
+
+  &:is(:hover, :focus-visible) [data-slot='button-hover-fill'] {
+    transform: translateX(0);
+  }
+
+  &[data-variant='outlined'] [data-slot='button-base-shape'] {
+    z-index: 1;
+  }
 
   &:focus-visible {
     outline: 1px solid ${theme.colors.highlight[100]};
@@ -27,16 +58,10 @@ export const buttonBaseStyles = `
 `;
 
 const Label = styled.span`
+  color: var(--button-label-color);
   position: relative;
+  transition: color 220ms ease;
   z-index: 1;
-
-  &[data-color='primary'] {
-    color: ${theme.colors.primary.text[100]};
-  }
-
-  &[data-color='secondary'] {
-    color: ${theme.colors.secondary.text[100]};
-  }
 `;
 
 export type BaseButtonProps = {
@@ -45,31 +70,51 @@ export type BaseButtonProps = {
   variant: 'contained' | 'outlined';
 };
 
+const secondaryContainedHoverFillColor = theme.colors.secondary.background.hover;
+const secondaryOutlinedHoverFillColor = theme.colors.primary.text[100];
+const secondaryOutlinedHoverFillOpacity = 0.05;
+
+const HoverFill = styled.span`
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  transform: translateX(calc(-100% - ${theme.spacing(4)}));
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 0;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+`;
+
 export function BaseButton({ color, label, variant }: BaseButtonProps) {
   let fillColor: string;
+  let hoverFillColor: string;
+  let hoverFillOpacity = 1;
   let strokeColor: string;
-  let labelColor: 'primary' | 'secondary';
 
   switch (`${variant}.${color}`) {
     case 'contained.primary':
       fillColor = theme.colors.primary.background[100];
+      hoverFillColor = theme.colors.primary.background.hover;
       strokeColor = 'none';
-      labelColor = 'primary';
       break;
     case 'contained.secondary':
       fillColor = theme.colors.secondary.background[100];
+      hoverFillColor = secondaryContainedHoverFillColor;
       strokeColor = 'none';
-      labelColor = 'secondary';
       break;
     case 'outlined.primary':
       fillColor = 'none';
+      hoverFillColor = theme.colors.primary.background[100];
       strokeColor = theme.colors.primary.background[100];
-      labelColor = 'secondary';
       break;
     case 'outlined.secondary':
       fillColor = 'none';
+      hoverFillColor = secondaryOutlinedHoverFillColor;
+      hoverFillOpacity = secondaryOutlinedHoverFillOpacity;
       strokeColor = theme.colors.secondary.background[100];
-      labelColor = 'primary';
       break;
     default:
       throw new Error(`Unhandled button appearance: ${variant} ${color}`);
@@ -77,8 +122,15 @@ export function BaseButton({ color, label, variant }: BaseButtonProps) {
 
   return (
     <>
-      <ButtonShape fillColor={fillColor} strokeColor={strokeColor} />
-      <Label data-color={labelColor}>{label}</Label>
+      <ButtonShape
+        dataSlot="button-base-shape"
+        fillColor={fillColor}
+        strokeColor={strokeColor}
+      />
+      <HoverFill data-slot="button-hover-fill" style={{ opacity: hoverFillOpacity }}>
+        <ButtonShape fillColor={hoverFillColor} strokeColor="none" />
+      </HoverFill>
+      <Label data-slot="button-label">{label}</Label>
     </>
   );
 }
