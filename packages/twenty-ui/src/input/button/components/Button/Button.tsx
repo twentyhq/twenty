@@ -18,6 +18,7 @@ export type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
 export type ButtonAccent = 'default' | 'blue' | 'danger';
 
 export type ButtonProps = {
+  id?: string;
   className?: string;
   Icon?: IconComponent;
   title?: string;
@@ -441,7 +442,9 @@ const computeButtonWrapperColor = (
             : themeCssVariables.font.color.inverted;
         case 'danger':
           return !inverted
-            ? themeCssVariables.font.color.danger
+            ? !disabled
+              ? themeCssVariables.font.color.danger
+              : themeCssVariables.color.red5
             : themeCssVariables.font.color.inverted;
       }
       break;
@@ -453,6 +456,7 @@ export const Button = ({
   className,
   Icon,
   title,
+  id,
   fullWidth = false,
   variant = 'primary',
   inverted = false,
@@ -512,6 +516,7 @@ export const Button = ({
       style={dynamicStyles}
     >
       <StyledButton
+        id={id}
         fullWidth={fullWidth}
         position={position}
         disabled={isDisabled}
