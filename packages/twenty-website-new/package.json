@@ -10,6 +10,7 @@
   "dependencies": {
     "@base-ui/react": "^1.3.0",
     "@base-ui/utils": "^0.2.6",
+    "@calcom/embed-react": "^1.5.3",
     "@gsap/react": "2.1.2",
     "@linaria/core": "^7.0.0",
     "@linaria/react": "^7.0.1",

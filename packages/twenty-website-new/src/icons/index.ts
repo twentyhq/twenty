@@ -1,4 +1,13 @@
-export { CLIENT_ICONS, FlexportIcon, ZapierIcon } from './clients';
+export {
+  ActEducationIcon,
+  AlternativePartnersIcon,
+  CLIENT_ICONS,
+  ElevateConsultingIcon,
+  NetZeroIcon,
+  NineDotsIcon,
+  W3villaIcon,
+  type ClientIconProps,
+} from './clients';
 export { ArrowLeftIcon } from './functional/ArrowLeft';
 export { ArrowRightIcon } from './functional/ArrowRight';
 export { ArrowRightUpIcon } from './functional/ArrowRightUp';

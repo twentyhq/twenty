@@ -13,7 +13,6 @@ const VisualColumn = styled.div`
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    align-self: start;
     max-width: 672px;
     position: sticky;
     top: calc(4.5rem + (100vh - 4.5rem) * 0.5 - 368px);

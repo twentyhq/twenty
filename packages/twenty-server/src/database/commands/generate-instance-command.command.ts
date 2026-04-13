@@ -6,7 +6,11 @@ import { Logger } from '@nestjs/common';
 import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { InstanceCommandGenerationService } from 'src/database/commands/instance-command-generation.service';
-import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
+import {
+  TWENTY_ALL_VERSIONS,
+  type TwentyAllVersion,
+} from 'src/engine/core-modules/upgrade/constants/twenty-all-versions.constant';
+import { TWENTY_CURRENT_VERSION } from 'src/engine/core-modules/upgrade/constants/twenty-current-version.constant';
 import { type InstanceCommandType } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 
 const UPGRADE_VERSION_COMMAND_DIR = path.resolve(
@@ -17,6 +21,7 @@ const UPGRADE_VERSION_COMMAND_DIR = path.resolve(
 type GenerateInstanceCommandOptions = {
   name: string;
   type: InstanceCommandType;
+  version?: TwentyAllVersion;
 };
 
 @Command({
@@ -56,17 +61,30 @@ export class GenerateInstanceCommandCommand extends CommandRunner {
     return value;
   }
 
+  @Option({
+    flags: '--version <version>',
+    description: 'Target version (e.g. 1.23.0). Defaults to CURRENT_VERSION.',
+  })
+  parseVersion(value: string): TwentyAllVersion {
+    if (
+      !TWENTY_ALL_VERSIONS.includes(
+        value as (typeof TWENTY_ALL_VERSIONS)[number],
+      )
+    ) {
+      throw new Error(
+        `Invalid version "${value}". Must be one of: ${TWENTY_ALL_VERSIONS.join(', ')}`,
+      );
+    }
+
+    return value as TwentyAllVersion;
+  }
+
   async run(
     _passedParams: string[],
     options: GenerateInstanceCommandOptions,
   ): Promise<void> {
     const migrationName = options.name;
-
-    const version = UPGRADE_COMMAND_SUPPORTED_VERSIONS.slice(-1)[0];
-
-    if (!version) {
-      throw new Error('No supported versions found');
-    }
+    const version = options.version ?? TWENTY_CURRENT_VERSION;
 
     const commandType = options.type;
 

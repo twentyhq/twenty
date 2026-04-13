@@ -12,7 +12,6 @@ type SettingsApplicationDetailTitleProps = {
 };
 
 const StyledTitleContainer = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[4]};
   width: ${() => {
     return OBJECT_SETTINGS_WIDTH + 'px';
   }};
@@ -34,7 +33,7 @@ const StyledHeaderLeft = styled.div`
 const StyledHeaderTop = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[3]};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledLogo = styled.div`
@@ -75,9 +74,10 @@ const StyledAppName = styled.div`
 `;
 
 const StyledAppDescription = styled.div`
-  color: ${themeCssVariables.font.color.secondary};
+  color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.regular};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
 `;
 
 const StyledUnlistedBanner = styled.div`
