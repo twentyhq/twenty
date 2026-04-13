@@ -156,6 +156,75 @@ describe('BillingUsageCapService', () => {
     });
   });
 
+  describe('getBatchPeriodCreditsUsed', () => {
+    beforeEach(() => {
+      twentyConfigService.get.mockReturnValue('http://clickhouse:8123');
+    });
+
+    it('returns empty map when ClickHouse is disabled', async () => {
+      twentyConfigService.get.mockReturnValue('');
+
+      const result = await service.getBatchPeriodCreditsUsed(
+        ['ws_1', 'ws_2'],
+        new Date('2026-04-01T00:00:00Z'),
+        new Date('2026-05-01T00:00:00Z'),
+      );
+
+      expect(result.size).toBe(0);
+      expect(clickHouseService.select).not.toHaveBeenCalled();
+    });
+
+    it('returns empty map when workspaceIds is empty', async () => {
+      const result = await service.getBatchPeriodCreditsUsed(
+        [],
+        new Date('2026-04-01T00:00:00Z'),
+        new Date('2026-05-01T00:00:00Z'),
+      );
+
+      expect(result.size).toBe(0);
+      expect(clickHouseService.select).not.toHaveBeenCalled();
+    });
+
+    it('returns usage grouped by workspaceId', async () => {
+      clickHouseService.select.mockResolvedValue([
+        { workspaceId: 'ws_1', total: 500_000 },
+        { workspaceId: 'ws_2', total: 1_200_000 },
+      ]);
+
+      const result = await service.getBatchPeriodCreditsUsed(
+        ['ws_1', 'ws_2', 'ws_3'],
+        new Date('2026-04-01T00:00:00Z'),
+        new Date('2026-05-01T00:00:00Z'),
+      );
+
+      expect(result.get('ws_1')).toBe(500_000);
+      expect(result.get('ws_2')).toBe(1_200_000);
+      expect(result.has('ws_3')).toBe(false);
+
+      const [query, params] = clickHouseService.select.mock.calls[0];
+
+      expect(query).toContain('GROUP BY workspaceId');
+      expect(query).toContain('IN {workspaceIds:Array(String)}');
+      expect(params).toMatchObject({
+        workspaceIds: ['ws_1', 'ws_2', 'ws_3'],
+      });
+    });
+
+    it('coerces string totals from ClickHouse', async () => {
+      clickHouseService.select.mockResolvedValue([
+        { workspaceId: 'ws_1', total: '9876543210' },
+      ]);
+
+      const result = await service.getBatchPeriodCreditsUsed(
+        ['ws_1'],
+        new Date('2026-04-01T00:00:00Z'),
+        new Date('2026-05-01T00:00:00Z'),
+      );
+
+      expect(result.get('ws_1')).toBe(9876543210);
+    });
+  });
+
   describe('evaluateCap', () => {
     beforeEach(() => {
       twentyConfigService.get.mockReturnValue('http://clickhouse:8123');
@@ -261,6 +330,119 @@ describe('BillingUsageCapService', () => {
         skipped: false,
         hasReachedCap: true,
         allowance: 500_000,
+      });
+    });
+  });
+
+  describe('evaluateCapBatch', () => {
+    it('returns evaluations keyed by subscription id', () => {
+      meteredCreditService.extractMeteredPricingInfoFromSubscription.mockReturnValue(
+        { tierCap: 1_000_000, unitPriceCents: 10 },
+      );
+
+      const sub1 = buildSubscription({
+        id: 'sub_1',
+        workspaceId: 'ws_1',
+        stripeCustomerId: 'cus_1',
+      });
+      const sub2 = buildSubscription({
+        id: 'sub_2',
+        workspaceId: 'ws_2',
+        stripeCustomerId: 'cus_2',
+      });
+
+      const usageByWorkspace = new Map([
+        ['ws_1', 500_000],
+        ['ws_2', 1_500_000],
+      ]);
+      const creditBalanceByCustomer = new Map([
+        ['cus_1', 0],
+        ['cus_2', 200_000],
+      ]);
+
+      const results = service.evaluateCapBatch(
+        [sub1, sub2],
+        usageByWorkspace,
+        creditBalanceByCustomer,
+      );
+
+      expect(results.get('sub_1')).toMatchObject({
+        skipped: false,
+        hasReachedCap: false,
+        usage: 500_000,
+        allowance: 1_000_000,
+      });
+      expect(results.get('sub_2')).toMatchObject({
+        skipped: false,
+        hasReachedCap: true,
+        usage: 1_500_000,
+        allowance: 1_200_000,
+      });
+    });
+
+    it('defaults usage to 0 for workspaces not in the map', () => {
+      meteredCreditService.extractMeteredPricingInfoFromSubscription.mockReturnValue(
+        { tierCap: 1_000_000, unitPriceCents: 10 },
+      );
+
+      const sub = buildSubscription({
+        id: 'sub_1',
+        workspaceId: 'ws_unknown',
+        stripeCustomerId: 'cus_1',
+      });
+
+      const results = service.evaluateCapBatch(
+        [sub],
+        new Map(),
+        new Map([['cus_1', 0]]),
+      );
+
+      expect(results.get('sub_1')).toMatchObject({
+        skipped: false,
+        hasReachedCap: false,
+        usage: 0,
+        allowance: 1_000_000,
+      });
+    });
+
+    it('defaults credit balance to 0 for unknown customers', () => {
+      meteredCreditService.extractMeteredPricingInfoFromSubscription.mockReturnValue(
+        { tierCap: 1_000_000, unitPriceCents: 10 },
+      );
+
+      const sub = buildSubscription({
+        id: 'sub_1',
+        workspaceId: 'ws_1',
+        stripeCustomerId: 'cus_unknown',
+      });
+
+      const results = service.evaluateCapBatch(
+        [sub],
+        new Map([['ws_1', 500_000]]),
+        new Map(),
+      );
+
+      expect(results.get('sub_1')).toMatchObject({
+        skipped: false,
+        hasReachedCap: false,
+        usage: 500_000,
+        creditBalance: 0,
+        allowance: 1_000_000,
+      });
+    });
+
+    it('returns skipped for subscriptions without metered pricing', () => {
+      meteredCreditService.extractMeteredPricingInfoFromSubscription.mockReturnValue(
+        null,
+      );
+
+      const sub = buildSubscription({ id: 'sub_1' });
+
+      const results = service.evaluateCapBatch([sub], new Map(), new Map());
+
+      expect(results.get('sub_1')).toEqual({
+        skipped: true,
+        reason: 'no-metered-item',
       });
     });
   });

@@ -41,6 +41,9 @@ export class BillingCustomerEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: false, unique: true })
   stripeCustomerId: string;
 
+  @Column({ type: 'integer', nullable: false, default: 0 })
+  creditBalanceMicro: number;
+
   @OneToMany(
     () => BillingSubscriptionEntity,
     (billingSubscription) => billingSubscription.billingCustomer,

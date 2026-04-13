@@ -3,6 +3,8 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { In } from 'typeorm';
+
 import { EnforceUsageCapJob } from 'src/engine/core-modules/billing/crons/enforce-usage-cap.job';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -24,13 +26,19 @@ describe('EnforceUsageCapJob', () => {
     workspaceId = 'workspace_123',
     itemId = 'item_123',
     hasReachedCurrentPeriodCap = false,
+    stripeCustomerId = 'cus_123',
+    creditBalanceMicro = 0,
   } = {}) =>
     ({
       id,
       workspaceId,
-      stripeCustomerId: 'cus_123',
+      stripeCustomerId,
       currentPeriodStart: new Date('2026-04-01T00:00:00Z'),
       currentPeriodEnd: new Date('2026-05-01T00:00:00Z'),
+      billingCustomer: {
+        stripeCustomerId,
+        creditBalanceMicro,
+      },
       billingSubscriptionItems: [
         {
           id: itemId,
@@ -49,6 +57,7 @@ describe('EnforceUsageCapJob', () => {
 
     const queryBuilderMock = {
       innerJoinAndSelect: jest.fn().mockReturnThis(),
+      innerJoin: jest.fn().mockReturnThis(),
       leftJoinAndSelect: jest.fn().mockReturnThis(),
       where: jest.fn().mockReturnThis(),
       andWhere: jest.fn().mockReturnThis(),
@@ -77,7 +86,8 @@ describe('EnforceUsageCapJob', () => {
           provide: BillingUsageCapService,
           useValue: {
             isClickHouseEnabled: jest.fn().mockReturnValue(true),
-            evaluateCap: jest.fn(),
+            getBatchPeriodCreditsUsed: jest.fn().mockResolvedValue(new Map()),
+            evaluateCapBatch: jest.fn().mockReturnValue(new Map()),
           },
         },
         {
@@ -132,86 +142,130 @@ describe('EnforceUsageCapJob', () => {
 
   it('skips transitions in shadow mode (flag off)', async () => {
     mockConfig({ BILLING_USAGE_CAP_CLICKHOUSE_ENABLED: false });
-    getManyMock.mockResolvedValueOnce([
-      buildSubscription({ hasReachedCurrentPeriodCap: false }),
-    ]);
-    billingUsageCapService.evaluateCap.mockResolvedValue({
-      skipped: false,
-      hasReachedCap: true,
-      usage: 2_000_000,
-      allowance: 1_000_000,
-      tierCap: 1_000_000,
-      creditBalance: 0,
-    });
+    const sub = buildSubscription({ hasReachedCurrentPeriodCap: false });
+
+    getManyMock.mockResolvedValueOnce([sub]);
+
+    billingUsageCapService.getBatchPeriodCreditsUsed.mockResolvedValue(
+      new Map([['workspace_123', 2_000_000]]),
+    );
+    billingUsageCapService.evaluateCapBatch.mockReturnValue(
+      new Map([
+        [
+          'sub_123',
+          {
+            skipped: false as const,
+            hasReachedCap: true,
+            usage: 2_000_000,
+            allowance: 1_000_000,
+            tierCap: 1_000_000,
+            creditBalance: 0,
+          },
+        ],
+      ]),
+    );
 
     await job.handle();
 
     expect(billingSubscriptionItemRepository.update).not.toHaveBeenCalled();
   });
 
-  it('flips hasReachedCurrentPeriodCap=true in active mode when usage exceeds allowance', async () => {
+  it('batch-updates hasReachedCurrentPeriodCap=true in active mode when usage exceeds allowance', async () => {
     mockConfig({ BILLING_USAGE_CAP_CLICKHOUSE_ENABLED: true });
-    getManyMock.mockResolvedValueOnce([
-      buildSubscription({
-        itemId: 'item_123',
-        hasReachedCurrentPeriodCap: false,
-      }),
-    ]);
-    billingUsageCapService.evaluateCap.mockResolvedValue({
-      skipped: false,
-      hasReachedCap: true,
-      usage: 2_000_000,
-      allowance: 1_000_000,
-      tierCap: 1_000_000,
-      creditBalance: 0,
+    const sub = buildSubscription({
+      itemId: 'item_123',
+      hasReachedCurrentPeriodCap: false,
     });
+
+    getManyMock.mockResolvedValueOnce([sub]);
+
+    billingUsageCapService.getBatchPeriodCreditsUsed.mockResolvedValue(
+      new Map([['workspace_123', 2_000_000]]),
+    );
+    billingUsageCapService.evaluateCapBatch.mockReturnValue(
+      new Map([
+        [
+          'sub_123',
+          {
+            skipped: false as const,
+            hasReachedCap: true,
+            usage: 2_000_000,
+            allowance: 1_000_000,
+            tierCap: 1_000_000,
+            creditBalance: 0,
+          },
+        ],
+      ]),
+    );
 
     await job.handle();
 
     expect(billingSubscriptionItemRepository.update).toHaveBeenCalledWith(
-      { id: 'item_123' },
+      { id: In(['item_123']) },
       { hasReachedCurrentPeriodCap: true },
     );
   });
 
-  it('flips hasReachedCurrentPeriodCap=false in active mode when usage drops below allowance', async () => {
+  it('batch-updates hasReachedCurrentPeriodCap=false in active mode when usage drops below allowance', async () => {
     mockConfig({ BILLING_USAGE_CAP_CLICKHOUSE_ENABLED: true });
-    getManyMock.mockResolvedValueOnce([
-      buildSubscription({
-        itemId: 'item_123',
-        hasReachedCurrentPeriodCap: true,
-      }),
-    ]);
-    billingUsageCapService.evaluateCap.mockResolvedValue({
-      skipped: false,
-      hasReachedCap: false,
-      usage: 500_000,
-      allowance: 1_000_000,
-      tierCap: 1_000_000,
-      creditBalance: 0,
+    const sub = buildSubscription({
+      itemId: 'item_123',
+      hasReachedCurrentPeriodCap: true,
     });
+
+    getManyMock.mockResolvedValueOnce([sub]);
+
+    billingUsageCapService.getBatchPeriodCreditsUsed.mockResolvedValue(
+      new Map([['workspace_123', 500_000]]),
+    );
+    billingUsageCapService.evaluateCapBatch.mockReturnValue(
+      new Map([
+        [
+          'sub_123',
+          {
+            skipped: false as const,
+            hasReachedCap: false,
+            usage: 500_000,
+            allowance: 1_000_000,
+            tierCap: 1_000_000,
+            creditBalance: 0,
+          },
+        ],
+      ]),
+    );
 
     await job.handle();
 
     expect(billingSubscriptionItemRepository.update).toHaveBeenCalledWith(
-      { id: 'item_123' },
+      { id: In(['item_123']) },
       { hasReachedCurrentPeriodCap: false },
     );
   });
 
   it('does not update when state already matches', async () => {
     mockConfig({ BILLING_USAGE_CAP_CLICKHOUSE_ENABLED: true });
-    getManyMock.mockResolvedValueOnce([
-      buildSubscription({ hasReachedCurrentPeriodCap: true }),
-    ]);
-    billingUsageCapService.evaluateCap.mockResolvedValue({
-      skipped: false,
-      hasReachedCap: true,
-      usage: 2_000_000,
-      allowance: 1_000_000,
-      tierCap: 1_000_000,
-      creditBalance: 0,
-    });
+    const sub = buildSubscription({ hasReachedCurrentPeriodCap: true });
+
+    getManyMock.mockResolvedValueOnce([sub]);
+
+    billingUsageCapService.getBatchPeriodCreditsUsed.mockResolvedValue(
+      new Map([['workspace_123', 2_000_000]]),
+    );
+    billingUsageCapService.evaluateCapBatch.mockReturnValue(
+      new Map([
+        [
+          'sub_123',
+          {
+            skipped: false as const,
+            hasReachedCap: true,
+            usage: 2_000_000,
+            allowance: 1_000_000,
+            tierCap: 1_000_000,
+            creditBalance: 0,
+          },
+        ],
+      ]),
+    );
 
     await job.handle();
 
@@ -220,40 +274,61 @@ describe('EnforceUsageCapJob', () => {
 
   it('skips subscriptions without a metered item', async () => {
     mockConfig({ BILLING_USAGE_CAP_CLICKHOUSE_ENABLED: true });
-    getManyMock.mockResolvedValueOnce([buildSubscription()]);
-    billingUsageCapService.evaluateCap.mockResolvedValue({
-      skipped: true,
-      reason: 'no-metered-item',
-    });
+    const sub = buildSubscription();
+
+    getManyMock.mockResolvedValueOnce([sub]);
+
+    billingUsageCapService.getBatchPeriodCreditsUsed.mockResolvedValue(
+      new Map(),
+    );
+    billingUsageCapService.evaluateCapBatch.mockReturnValue(
+      new Map([
+        [
+          'sub_123',
+          { skipped: true as const, reason: 'no-metered-item' as const },
+        ],
+      ]),
+    );
 
     await job.handle();
 
     expect(billingSubscriptionItemRepository.update).not.toHaveBeenCalled();
   });
 
-  it('continues processing after a per-subscription error', async () => {
+  it('passes credit balance from billingCustomer to evaluateCapBatch', async () => {
     mockConfig({ BILLING_USAGE_CAP_CLICKHOUSE_ENABLED: true });
-    getManyMock.mockResolvedValueOnce([
-      buildSubscription({ id: 'sub_1', itemId: 'item_1' }),
-      buildSubscription({ id: 'sub_2', itemId: 'item_2' }),
-    ]);
-    billingUsageCapService.evaluateCap
-      .mockRejectedValueOnce(new Error('clickhouse exploded'))
-      .mockResolvedValueOnce({
-        skipped: false,
-        hasReachedCap: true,
-        usage: 2_000_000,
-        allowance: 1_000_000,
-        tierCap: 1_000_000,
-        creditBalance: 0,
-      });
+    const sub = buildSubscription({
+      stripeCustomerId: 'cus_456',
+      creditBalanceMicro: 300_000,
+    });
+
+    getManyMock.mockResolvedValueOnce([sub]);
+
+    billingUsageCapService.getBatchPeriodCreditsUsed.mockResolvedValue(
+      new Map(),
+    );
+    billingUsageCapService.evaluateCapBatch.mockReturnValue(new Map());
 
     await job.handle();
 
-    expect(billingSubscriptionItemRepository.update).toHaveBeenCalledTimes(1);
-    expect(billingSubscriptionItemRepository.update).toHaveBeenCalledWith(
-      { id: 'item_2' },
-      { hasReachedCurrentPeriodCap: true },
+    expect(billingUsageCapService.evaluateCapBatch).toHaveBeenCalledWith(
+      [sub],
+      expect.any(Map),
+      new Map([['cus_456', 300_000]]),
     );
+  });
+
+  it('handles ClickHouse batch query errors gracefully', async () => {
+    mockConfig({ BILLING_USAGE_CAP_CLICKHOUSE_ENABLED: true });
+    const sub = buildSubscription();
+
+    getManyMock.mockResolvedValueOnce([sub]);
+
+    billingUsageCapService.getBatchPeriodCreditsUsed.mockRejectedValue(
+      new Error('clickhouse exploded'),
+    );
+    billingUsageCapService.evaluateCapBatch.mockReturnValue(new Map());
+
+    await expect(job.handle()).resolves.not.toThrow();
   });
 });

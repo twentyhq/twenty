@@ -3,7 +3,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { enforceUsageCapCronPattern } from 'src/engine/core-modules/billing/crons/enforce-usage-cap.cron.pattern';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
@@ -57,8 +57,6 @@ export class EnforceUsageCapJob {
     let errors = 0;
     let offset = 0;
 
-    // Process subscriptions in batches, only loading those that have a
-    // metered (WORKFLOW_NODE_EXECUTION) item to skip the majority that don't.
     let batch: BillingSubscriptionEntity[];
 
     do {
@@ -71,6 +69,8 @@ export class EnforceUsageCapJob {
         )
         .innerJoinAndSelect('item.billingProduct', 'product')
         .leftJoinAndSelect('product.billingPrices', 'price')
+        .innerJoinAndSelect('subscription.billingCustomer', 'customer')
+        .innerJoin('subscription.workspace', 'workspace')
         .where('subscription.status IN (:...statuses)', {
           statuses: [
             SubscriptionStatus.Active,
@@ -78,71 +78,129 @@ export class EnforceUsageCapJob {
             SubscriptionStatus.PastDue,
           ],
         })
-        .andWhere("product.metadata->>'productKey' = :productKey", {
-          productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
-        })
+        .andWhere('workspace.suspendedAt IS NULL')
         .orderBy('subscription.id', 'ASC')
         .take(BATCH_SIZE)
         .skip(offset)
         .getMany();
 
-      for (const subscription of batch) {
+      if (batch.length === 0) {
+        break;
+      }
+
+      // Group subscriptions by period boundaries for batched ClickHouse queries.
+      // Most subscriptions share the same period, so this typically yields 1 query.
+      const periodGroups = this.groupByPeriod(batch);
+      const usageByWorkspace = new Map<string, number>();
+
+      for (const [, group] of periodGroups) {
         try {
-          const evaluation =
-            await this.billingUsageCapService.evaluateCap(subscription);
-
-          if (evaluation.skipped) {
-            continue;
-          }
-
-          evaluated += 1;
-
-          const meteredItem = subscription.billingSubscriptionItems.find(
-            (item) =>
-              item.billingProduct?.metadata?.productKey ===
-              BillingProductKey.WORKFLOW_NODE_EXECUTION,
-          );
-
-          if (!meteredItem) {
-            continue;
-          }
-
-          const shouldBeCapped = evaluation.hasReachedCap;
-
-          if (meteredItem.hasReachedCurrentPeriodCap === shouldBeCapped) {
-            continue;
-          }
-
-          if (!isEnforcementActive) {
-            this.logger.log(
-              `[shadow] would set hasReachedCurrentPeriodCap=${shouldBeCapped} ` +
-                `for subscription=${subscription.id} workspace=${subscription.workspaceId} ` +
-                `usage=${evaluation.usage} allowance=${evaluation.allowance} ` +
-                `tierCap=${evaluation.tierCap} creditBalance=${evaluation.creditBalance}`,
+          const workspaceIds = group.map((s) => s.workspaceId);
+          const batchUsage =
+            await this.billingUsageCapService.getBatchPeriodCreditsUsed(
+              workspaceIds,
+              group[0].currentPeriodStart,
+              group[0].currentPeriodEnd,
             );
-            continue;
+
+          for (const [id, usage] of batchUsage) {
+            usageByWorkspace.set(id, usage);
           }
-
-          await this.billingSubscriptionItemRepository.update(
-            { id: meteredItem.id },
-            { hasReachedCurrentPeriodCap: shouldBeCapped },
+        } catch (error) {
+          errors += group.length;
+          this.logger.error(
+            `Failed to fetch batch usage from ClickHouse for ${group.length} subscriptions`,
+            error instanceof Error ? error.stack : String(error),
           );
+        }
+      }
 
-          transitioned += 1;
+      // Build credit balance map from pre-loaded billingCustomer relation
+      const creditBalanceByCustomer = new Map<string, number>();
 
+      for (const subscription of batch) {
+        if (subscription.billingCustomer) {
+          creditBalanceByCustomer.set(
+            subscription.stripeCustomerId,
+            subscription.billingCustomer.creditBalanceMicro,
+          );
+        }
+      }
+
+      // Evaluate caps for the entire batch
+      const evaluations = this.billingUsageCapService.evaluateCapBatch(
+        batch,
+        usageByWorkspace,
+        creditBalanceByCustomer,
+      );
+
+      const idsToCapTrue: string[] = [];
+      const idsToCapFalse: string[] = [];
+
+      for (const subscription of batch) {
+        const evaluation = evaluations.get(subscription.id);
+
+        if (!evaluation || evaluation.skipped) {
+          continue;
+        }
+
+        evaluated += 1;
+
+        const meteredItem = subscription.billingSubscriptionItems.find(
+          (item) =>
+            item.billingProduct?.metadata?.productKey ===
+            BillingProductKey.WORKFLOW_NODE_EXECUTION,
+        );
+
+        if (!meteredItem) {
+          continue;
+        }
+
+        const shouldBeCapped = evaluation.hasReachedCap;
+
+        if (meteredItem.hasReachedCurrentPeriodCap === shouldBeCapped) {
+          continue;
+        }
+
+        if (!isEnforcementActive) {
           this.logger.log(
-            `Set hasReachedCurrentPeriodCap=${shouldBeCapped} ` +
+            `[shadow] would set hasReachedCurrentPeriodCap=${shouldBeCapped} ` +
               `for subscription=${subscription.id} workspace=${subscription.workspaceId} ` +
               `usage=${evaluation.usage} allowance=${evaluation.allowance} ` +
               `tierCap=${evaluation.tierCap} creditBalance=${evaluation.creditBalance}`,
           );
-        } catch (error) {
-          errors += 1;
-          this.logger.error(
-            `Failed to evaluate usage cap for subscription=${subscription.id}`,
-            error instanceof Error ? error.stack : String(error),
-          );
+          continue;
         }
+
+        if (shouldBeCapped) {
+          idsToCapTrue.push(meteredItem.id);
+        } else {
+          idsToCapFalse.push(meteredItem.id);
+        }
+
+        this.logger.log(
+          `Set hasReachedCurrentPeriodCap=${shouldBeCapped} ` +
+            `for subscription=${subscription.id} workspace=${subscription.workspaceId} ` +
+            `usage=${evaluation.usage} allowance=${evaluation.allowance} ` +
+            `tierCap=${evaluation.tierCap} creditBalance=${evaluation.creditBalance}`,
+        );
+      }
+
+      // Batch DB updates
+      if (idsToCapTrue.length > 0) {
+        await this.billingSubscriptionItemRepository.update(
+          { id: In(idsToCapTrue) },
+          { hasReachedCurrentPeriodCap: true },
+        );
+        transitioned += idsToCapTrue.length;
+      }
+
+      if (idsToCapFalse.length > 0) {
+        await this.billingSubscriptionItemRepository.update(
+          { id: In(idsToCapFalse) },
+          { hasReachedCurrentPeriodCap: false },
+        );
+        transitioned += idsToCapFalse.length;
       }
 
       offset += batch.length;
@@ -153,5 +211,24 @@ export class EnforceUsageCapJob {
         `transitioned=${transitioned} errors=${errors} ` +
         `mode=${isEnforcementActive ? 'active' : 'shadow'}`,
     );
+  }
+
+  private groupByPeriod(
+    subscriptions: BillingSubscriptionEntity[],
+  ): Map<string, BillingSubscriptionEntity[]> {
+    const groups = new Map<string, BillingSubscriptionEntity[]>();
+
+    for (const subscription of subscriptions) {
+      const key = `${subscription.currentPeriodStart.toISOString()}|${subscription.currentPeriodEnd.toISOString()}`;
+      const group = groups.get(key);
+
+      if (group) {
+        group.push(subscription);
+      } else {
+        groups.set(key, [subscription]);
+      }
+    }
+
+    return groups;
   }
 }
