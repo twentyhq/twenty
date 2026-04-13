@@ -37,9 +37,7 @@ export const viewsSelector = createAtomSelector<ViewWithRelations[]>({
     const allFlatViewFieldGroups = get(metadataStoreState, 'viewFieldGroups')
       .current as FlatViewFieldGroup[];
 
-    const flatViewFields = allFlatViewFields.filter(
-      (field) => field.isActive,
-    );
+    const flatViewFields = allFlatViewFields.filter((field) => field.isActive);
     const flatViewFieldGroups = allFlatViewFieldGroups.filter(
       (group) => group.isActive,
     );
