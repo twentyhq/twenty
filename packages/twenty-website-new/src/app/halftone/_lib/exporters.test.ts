@@ -54,8 +54,6 @@ describe('halftone export naming', () => {
 
     expect(
       normalizeHalftoneStudioSettings(parsed.settings).halftone.hoverDashColor,
-    ).toBe(
-      DEFAULT_HALFTONE_SETTINGS.halftone.hoverDashColor,
-    );
+    ).toBe(DEFAULT_HALFTONE_SETTINGS.halftone.hoverDashColor);
   });
 });
