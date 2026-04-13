@@ -18,6 +18,7 @@ export function formatAnimationName(animation: {
   followHoverEnabled: boolean;
   followDragEnabled: boolean;
   floatEnabled: boolean;
+  hoverHalftoneEnabled: boolean;
   hoverLightEnabled: boolean;
   lightSweepEnabled: boolean;
   rotateEnabled: boolean;
@@ -27,12 +28,12 @@ export function formatAnimationName(animation: {
   const activeModes: string[] = [];
 
   if (sourceMode === 'image') {
-    if (animation.hoverLightEnabled) {
-      activeModes.push('hoverLight');
+    if (animation.hoverHalftoneEnabled) {
+      activeModes.push('hoverHalftone');
     }
 
-    if (animation.dragFlowEnabled) {
-      activeModes.push('dragSmear');
+    if (animation.hoverLightEnabled) {
+      activeModes.push('hoverLight');
     }
 
     return activeModes.length > 0 ? activeModes.join(' + ') : 'still';

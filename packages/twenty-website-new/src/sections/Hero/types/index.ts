@@ -31,5 +31,4 @@ export type {
   HeroTablePageDefinition,
   HeroVisualType,
 } from './HeroHomeData';
-export type { HeroIllustrationDataType } from './HeroIllustrationData';
 export type { HeroWhyTwentyDataType } from './HeroWhyTwentyData';

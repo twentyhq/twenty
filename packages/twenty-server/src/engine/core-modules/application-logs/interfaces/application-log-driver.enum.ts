@@ -1,4 +1,4 @@
-export enum ApplicationLogDriverType {
+export enum ApplicationLogDriver {
   DISABLED = 'DISABLED',
   CONSOLE = 'CONSOLE',
   CLICKHOUSE = 'CLICKHOUSE',

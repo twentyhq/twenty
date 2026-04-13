@@ -1,4 +1,6 @@
-import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
+import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
+import { currentAIChatThreadTitleComponentFamilyState } from '@/ai/states/currentAIChatThreadTitleComponentFamilyState';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -12,8 +14,10 @@ const StyledPageTitle = styled.div`
 `;
 
 export const SidePanelAskAIInfo = () => {
-  const currentAIChatThreadTitle = useAtomStateValue(
-    currentAIChatThreadTitleState,
+  const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
+  const currentAIChatThreadTitle = useAtomComponentFamilyStateValue(
+    currentAIChatThreadTitleComponentFamilyState,
+    { threadId: currentAIChatThread },
   );
 
   return (

@@ -438,10 +438,10 @@ msgstr "{totalCost} кредита"
 msgid "{totalCount} selected"
 msgstr "{totalCount} изабрано"
 
-#. js-lingui-id: WwbakM
+#. js-lingui-id: XdG+hI
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
-msgid "{totalFieldsCount} fields"
-msgstr "{totalFieldsCount} поља"
+msgid "{totalFieldsCount} visible fields"
+msgstr ""
 
 #. js-lingui-id: ITVweg
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
@@ -1392,6 +1392,7 @@ msgstr "Припрема AI захтева"
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 msgid "AI Usage"
 msgstr ""
 
@@ -1408,6 +1409,11 @@ msgstr ""
 #. js-lingui-id: U2F/HK
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 msgid "AI usage analytics requires ClickHouse. Contact your administrator."
+msgstr ""
+
+#. js-lingui-id: KgAAyO
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+msgid "AI usage analytics will appear here once you start using AI features."
 msgstr ""
 
 #. js-lingui-id: SknniY
@@ -4015,6 +4021,7 @@ msgstr "Кредитно коришћење"
 
 #. js-lingui-id: 6/q4+J
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Credit usage breakdown for your workspace."
 msgstr "Преглед коришћења кредита за ваш радни простор."
 
@@ -5614,6 +5621,11 @@ msgstr "Уживајте у 30-дневном бесплатном пробно�
 msgid "Enter a JSON object"
 msgstr "Унесите JSON објекат"
 
+#. js-lingui-id: peBb6B
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
+msgid "Enter a new secret value"
+msgstr ""
+
 #. js-lingui-id: u2fAme
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
 msgid "Enter a number"
@@ -7071,8 +7083,6 @@ msgstr ""
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay.ts
-#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
-#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 msgid "General"
 msgstr "Опште"
@@ -10142,6 +10152,12 @@ msgstr "Нема конфигурисаних окидача за ову фун�
 msgid "No usage data"
 msgstr "Нема података о коришћењу"
 
+#. js-lingui-id: TayaS7
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "No usage data yet"
+msgstr ""
+
 #. js-lingui-id: wJwIUq
 #: src/modules/object-record/record-field/ui/form-types/components/FormSelectFieldInput.tsx
 msgid "No value"
@@ -10699,7 +10715,6 @@ msgstr "Организујте"
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
@@ -14544,6 +14559,7 @@ msgstr "Укупно време"
 #. js-lingui-id: BxecEJ
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 msgid "Track AI consumption across your workspace."
 msgstr ""
 
@@ -15180,12 +15196,18 @@ msgstr "Употреба у свим радним просторима на ов
 
 #. js-lingui-id: 21hsGI
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Usage Analytics"
 msgstr "Аналитика коришћења"
 
 #. js-lingui-id: 7Kq6TI
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Usage analytics requires ClickHouse. Contact your administrator."
+msgstr ""
+
+#. js-lingui-id: XglEba
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Usage analytics will appear here once you start using credits."
 msgstr ""
 
 #. js-lingui-id: 7vRxpC

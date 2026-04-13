@@ -433,10 +433,10 @@ msgstr "{totalCost} credits"
 msgid "{totalCount} selected"
 msgstr "{totalCount} selected"
 
-#. js-lingui-id: WwbakM
+#. js-lingui-id: XdG+hI
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
-msgid "{totalFieldsCount} fields"
-msgstr "{totalFieldsCount} fields"
+msgid "{totalFieldsCount} visible fields"
+msgstr "{totalFieldsCount} visible fields"
 
 #. js-lingui-id: ITVweg
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
@@ -1387,6 +1387,7 @@ msgstr "AI request prep"
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 msgid "AI Usage"
 msgstr "AI Usage"
 
@@ -1404,6 +1405,11 @@ msgstr "AI usage analytics is available with an Enterprise key."
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 msgid "AI usage analytics requires ClickHouse. Contact your administrator."
 msgstr "AI usage analytics requires ClickHouse. Contact your administrator."
+
+#. js-lingui-id: KgAAyO
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+msgid "AI usage analytics will appear here once you start using AI features."
+msgstr "AI usage analytics will appear here once you start using AI features."
 
 #. js-lingui-id: SknniY
 #: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
@@ -4010,6 +4016,7 @@ msgstr "Credit Usage"
 
 #. js-lingui-id: 6/q4+J
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Credit usage breakdown for your workspace."
 msgstr "Credit usage breakdown for your workspace."
 
@@ -5609,6 +5616,11 @@ msgstr "Enjoy a 30-day free trial"
 msgid "Enter a JSON object"
 msgstr "Enter a JSON object"
 
+#. js-lingui-id: peBb6B
+#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
+msgid "Enter a new secret value"
+msgstr "Enter a new secret value"
+
 #. js-lingui-id: u2fAme
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
 msgid "Enter a number"
@@ -7066,8 +7078,6 @@ msgstr "Gauge Chart"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay.ts
-#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
-#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 msgid "General"
 msgstr "General"
@@ -10137,6 +10147,12 @@ msgstr "No triggers configured for this function."
 msgid "No usage data"
 msgstr "No usage data"
 
+#. js-lingui-id: TayaS7
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "No usage data yet"
+msgstr "No usage data yet"
+
 #. js-lingui-id: wJwIUq
 #: src/modules/object-record/record-field/ui/form-types/components/FormSelectFieldInput.tsx
 msgid "No value"
@@ -10694,7 +10710,6 @@ msgstr "Organize"
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroups.ts
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
@@ -14541,6 +14556,7 @@ msgstr "Total time"
 #. js-lingui-id: BxecEJ
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 #: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 msgid "Track AI consumption across your workspace."
 msgstr "Track AI consumption across your workspace."
 
@@ -15177,6 +15193,7 @@ msgstr "Usage across all workspaces on this server"
 
 #. js-lingui-id: 21hsGI
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Usage Analytics"
 msgstr "Usage Analytics"
 
@@ -15184,6 +15201,11 @@ msgstr "Usage Analytics"
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Usage analytics requires ClickHouse. Contact your administrator."
 msgstr "Usage analytics requires ClickHouse. Contact your administrator."
+
+#. js-lingui-id: XglEba
+#: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
+msgid "Usage analytics will appear here once you start using credits."
+msgstr "Usage analytics will appear here once you start using credits."
 
 #. js-lingui-id: 7vRxpC
 #: src/pages/settings/SettingsUsageUserDetail.tsx

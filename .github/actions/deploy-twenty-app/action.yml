@@ -8,6 +8,10 @@ inputs:
   api-key:
     description: API key or access token for the target instance
     required: true
+  app-path:
+    description: Path to the app directory (relative to repo root). Defaults to repo root.
+    required: false
+    default: '.'
 
 runs:
   using: composite
@@ -19,11 +23,13 @@ runs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version-file: '.nvmrc'
+        node-version-file: '${{ inputs.app-path }}/.nvmrc'
         cache: yarn
+        cache-dependency-path: '${{ inputs.app-path }}/yarn.lock'
 
     - name: Install dependencies
       shell: bash
+      working-directory: ${{ inputs.app-path }}
       run: yarn install --immutable
 
     - name: Configure remote
@@ -43,4 +49,5 @@ runs:
 
     - name: Deploy
       shell: bash
+      working-directory: ${{ inputs.app-path }}
       run: yarn twenty deploy --remote target

@@ -108,7 +108,7 @@ export const SidePanelRecordPageFieldsSettings = () => {
                 Icon={IconLayoutSidebarRight}
                 hasSubMenu
                 onClick={handleNavigateToLayout}
-                description={t`${totalFieldsCount} fields`}
+                description={t`${totalFieldsCount} visible fields`}
                 contextualTextPosition="right"
               />
             </SelectableListItem>
