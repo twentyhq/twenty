@@ -21,7 +21,6 @@ export function getPlanCard(
     price: cell.price,
     features: {
       bullets: cell.featureBullets,
-      title: tier.featuresTitle,
     },
   };
 }

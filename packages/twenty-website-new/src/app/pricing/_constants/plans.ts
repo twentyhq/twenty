@@ -4,37 +4,31 @@ const ORGANIZATION_HEADING = {
   text: 'Organization',
 };
 
-const PRO_FEATURES_TITLE = { text: 'Key Features' };
-const ORGANIZATION_FEATURES_TITLE = { text: 'Everything in Pro +' };
-
 const PRO_BULLETS_DEFAULT = [
   { text: 'Full customisation' },
   { text: 'AI Agents with custom skills' },
   { text: '1K automation credits' },
   { text: 'Standard support' },
-  { text: 'Add-on AI (1-month trial)' },
 ];
 
 const PRO_BULLETS_SELF_HOST_MONTHLY = [
   { text: 'Full customisation' },
   { text: 'AI Agents with custom skills' },
   { text: 'Standard support' },
-  { text: 'Add-on AI (1-month trial)' },
 ];
 
 const PRO_BULLETS_SELF_HOST_YEARLY = [
   { text: 'Full customisation' },
   { text: 'AI Agents with custom skills' },
   { text: 'Standard support' },
-  { text: 'Add-on AI (1-month trial)' },
 ];
 
 const ORGANIZATION_BULLETS = [
+  { text: 'Everything in Pro' },
   { text: 'Roles & Permissions' },
   { text: 'SAML/OIDC SSO' },
   { text: '2K automation credits' },
   { text: 'Priority support' },
-  { text: 'Add-on AI full time' },
 ];
 
 import type { PlansDataType } from '@/sections/Plans/types';
@@ -75,7 +69,6 @@ export const PLANS_DATA = {
         },
       },
     },
-    featuresTitle: ORGANIZATION_FEATURES_TITLE,
     heading: ORGANIZATION_HEADING,
     icon: {
       alt: 'Organization plan icon',
@@ -117,7 +110,6 @@ export const PLANS_DATA = {
         },
       },
     },
-    featuresTitle: PRO_FEATURES_TITLE,
     heading: PRO_HEADING,
     icon: {
       alt: 'Pro plan icon',

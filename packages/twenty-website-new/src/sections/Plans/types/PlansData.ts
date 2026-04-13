@@ -27,7 +27,6 @@ export type PlansTierCellsType = {
 // Shared across all eight combinations for this tier.
 export type PlansTierType = {
   cells: PlansTierCellsType;
-  featuresTitle: BodyType;
   heading: HeadingType;
   icon: PlanIconType;
 };

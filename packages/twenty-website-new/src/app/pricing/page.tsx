@@ -20,11 +20,17 @@ import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { Metadata } from 'next';
 
-const PricingSectionContainer = styled.div`
+const PricingPlansContainer = styled.div`
   display: grid;
   margin: 0 auto;
-  max-width: 800px;
+  max-width: 820px;
   row-gap: ${theme.spacing(8)};
+  width: 100%;
+`;
+
+const PricingBannerContainer = styled.div`
+  margin: 0 auto;
+  max-width: 820px;
   width: 100%;
 `;
 
@@ -58,16 +64,17 @@ export default async function PricingPage() {
       </Hero.Root>
 
       <Plans.Root backgroundColor={theme.colors.secondary.background[5]}>
-        <PricingSectionContainer>
+        <PricingPlansContainer>
           <Plans.Content />
-        </PricingSectionContainer>
+        </PricingPlansContainer>
       </Plans.Root>
 
       <EngagementBand.Root
         backgroundColor={theme.colors.secondary.background[5]}
       >
-        <PricingSectionContainer>
+        <PricingBannerContainer>
           <EngagementBand.Strip
+            desktopCopyMaxWidth="60%"
             fillColor={theme.colors.primary.background[100]}
             variant="primary"
           >
@@ -79,13 +86,13 @@ export default async function PricingPage() {
               <LinkButton
                 color="secondary"
                 href="https://app.twenty.com/welcome"
-                label="Read our case studies"
+                label="Find a partner"
                 type="anchor"
-                variant="contained"
+                variant="outlined"
               />
             </EngagementBand.Actions>
           </EngagementBand.Strip>
-        </PricingSectionContainer>
+        </PricingBannerContainer>
       </EngagementBand.Root>
 
       <PlanTable.Root backgroundColor={theme.colors.secondary.background[100]}>

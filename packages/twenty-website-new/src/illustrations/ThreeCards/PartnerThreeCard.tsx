@@ -114,6 +114,8 @@ const initialPose = {
   "targetRotationY": 0,
   "timeElapsed": 11.523399999928476
 };
+const DIAMOND_MODEL_URL = '/illustrations/home/three-cards/diamond.glb';
+const LEGACY_IMPORTED_GEOMETRY_SCALE_TARGET = 2.75;
 const previewDistance = 4.5;
 const VIRTUAL_RENDER_HEIGHT = 768;
 const passThroughVertexShader = "\n  varying vec2 vUv;\n\n  void main() {\n    vUv = uv;\n    gl_Position = vec4(position, 1.0);\n  }\n";
@@ -124,6 +126,29 @@ const halftoneFragmentShader = "\n  precision highp float;\n\n  uniform sampler2
 
 const REFERENCE_PREVIEW_DISTANCE = 4;
 const MIN_FOOTPRINT_SCALE = 0.001;
+
+function getModelOverrides(modelUrl) {
+  if (modelUrl !== DIAMOND_MODEL_URL) {
+    return null;
+  }
+
+  return {
+    animation: {
+      autoRotateEnabled: false,
+    },
+    importedGeometry: {
+      useLegacyNormalization: true,
+    },
+    initialPose: {
+      ...initialPose,
+      autoElapsed: 42.43333333333221,
+      rotateElapsed: 89.98333333332951,
+      rotationX: -8.99639917695435,
+      rotationY: -8.99639917695435,
+      timeElapsed: 851.4676000003166,
+    },
+  };
+}
 
 function clampRectToViewport(rect, viewportWidth, viewportHeight) {
   const minX = Math.max(rect.x, 0);
@@ -785,7 +810,11 @@ function createLoadingManager() {
   return loadingManager;
 }
 
-function normalizeImportedGeometry(geometry) {
+function normalizeImportedGeometry(
+  geometry,
+  options = {},
+) {
+  const { useLegacyNormalization = false } = options;
   geometry.computeBoundingBox();
 
   let boundingBox = geometry.boundingBox;
@@ -796,20 +825,24 @@ function normalizeImportedGeometry(geometry) {
   boundingBox?.getSize(size);
   geometry.translate(-center.x, -center.y, -center.z);
 
-  const dimensions = [size.x, size.y, size.z];
-  const thinnestAxis = dimensions.indexOf(Math.min(...dimensions));
+  if (!useLegacyNormalization) {
+    const dimensions = [size.x, size.y, size.z];
+    const thinnestAxis = dimensions.indexOf(Math.min(...dimensions));
 
-  if (thinnestAxis === 0) {
-    geometry.applyMatrix4(new THREE.Matrix4().makeRotationY(Math.PI / 2));
-  } else if (thinnestAxis === 1) {
-    geometry.applyMatrix4(new THREE.Matrix4().makeRotationX(Math.PI / 2));
+    if (thinnestAxis === 0) {
+      geometry.applyMatrix4(new THREE.Matrix4().makeRotationY(Math.PI / 2));
+    } else if (thinnestAxis === 1) {
+      geometry.applyMatrix4(new THREE.Matrix4().makeRotationX(Math.PI / 2));
+    }
   }
 
   geometry.computeBoundingBox();
   geometry.computeBoundingSphere();
 
-  const radius = geometry.boundingSphere?.radius || 1;
-  const scale = 1.6 / radius;
+  const scale = useLegacyNormalization
+    ? LEGACY_IMPORTED_GEOMETRY_SCALE_TARGET /
+      Math.max(size.x, size.y, size.z, 0.001)
+    : 1.6 / (geometry.boundingSphere?.radius || 1);
   geometry.scale(scale, scale, scale);
 
   geometry.computeBoundingBox();
@@ -825,7 +858,7 @@ function normalizeImportedGeometry(geometry) {
   return geometry;
 }
 
-function extractMergedGeometry(root, emptyMessage) {
+function extractMergedGeometry(root, emptyMessage, geometryOptions) {
   root.updateMatrixWorld(true);
   const geometries = [];
 
@@ -848,10 +881,13 @@ function extractMergedGeometry(root, emptyMessage) {
     throw new Error(emptyMessage);
   }
 
-  return normalizeImportedGeometry(mergeGeometries(geometries));
+  return normalizeImportedGeometry(
+    mergeGeometries(geometries),
+    geometryOptions,
+  );
 }
 
-function parseFbxGeometry(buffer, label) {
+function parseFbxGeometry(buffer, label, geometryOptions) {
   const originalWarn = console.warn;
 
   console.warn = (...args) => {
@@ -864,13 +900,17 @@ function parseFbxGeometry(buffer, label) {
 
   try {
     const root = new FBXLoader(createLoadingManager()).parse(buffer, '');
-    return extractMergedGeometry(root, label + ' did not contain any mesh geometry.');
+    return extractMergedGeometry(
+      root,
+      label + ' did not contain any mesh geometry.',
+      geometryOptions,
+    );
   } finally {
     console.warn = originalWarn;
   }
 }
 
-function parseGlbGeometry(buffer, label) {
+function parseGlbGeometry(buffer, label, geometryOptions) {
   return new Promise((resolve, reject) => {
     const loadingManager = createLoadingManager();
     const dracoLoader = new DRACOLoader(loadingManager);
@@ -892,6 +932,7 @@ function parseGlbGeometry(buffer, label) {
             extractMergedGeometry(
               gltf.scene,
               label + ' did not contain any mesh geometry.',
+              geometryOptions,
             ),
           );
         } catch (error) {
@@ -908,7 +949,12 @@ function parseGlbGeometry(buffer, label) {
   });
 }
 
-async function loadImportedGeometryFromUrl(loader, modelUrl, label) {
+async function loadImportedGeometryFromUrl(
+  loader,
+  modelUrl,
+  label,
+  geometryOptions,
+) {
   const response = await fetch(modelUrl);
 
   if (!response.ok) {
@@ -918,10 +964,10 @@ async function loadImportedGeometryFromUrl(loader, modelUrl, label) {
   const buffer = await response.arrayBuffer();
 
   if (loader === 'fbx') {
-    return parseFbxGeometry(buffer, label);
+    return parseFbxGeometry(buffer, label, geometryOptions);
   }
 
-  return parseGlbGeometry(buffer, label);
+  return parseGlbGeometry(buffer, label, geometryOptions);
 }
 
 
@@ -1343,12 +1389,13 @@ function resetInteractionState(interactionState) {
   interactionState.autoElapsed = 0;
 }
 
-async function createGeometry(modelUrl) {
+async function createGeometry(modelUrl, geometryOptions) {
   if (shape.kind === 'imported' && shape.loader && modelUrl) {
     return loadImportedGeometryFromUrl(
       shape.loader,
       modelUrl,
       modelUrl.split('/').pop() ?? shape.label,
+      geometryOptions,
     );
   }
 
@@ -1368,15 +1415,27 @@ async function mountHalftoneCanvas(options) {
     modelUrl,
     onError,
   } = options;
+  const modelOverrides = getModelOverrides(modelUrl);
   const resolvedAnimation = {
     ...settings.animation,
+    ...modelOverrides?.animation,
     ...animationOverrides,
   };
   const resolvedInitialPose = {
     ...initialPose,
-    rotationX: initialRotationX ?? initialPose.rotationX,
-    rotationY: initialRotationY ?? initialPose.rotationY,
-    rotationZ: initialRotationZ ?? initialPose.rotationZ,
+    ...modelOverrides?.initialPose,
+    rotationX:
+      initialRotationX ??
+      modelOverrides?.initialPose?.rotationX ??
+      initialPose.rotationX,
+    rotationY:
+      initialRotationY ??
+      modelOverrides?.initialPose?.rotationY ??
+      initialPose.rotationY,
+    rotationZ:
+      initialRotationZ ??
+      modelOverrides?.initialPose?.rotationZ ??
+      initialPose.rotationZ,
   };
 
   const getWidth = () => Math.max(container.clientWidth, 1);
@@ -1391,7 +1450,10 @@ async function mountHalftoneCanvas(options) {
   let geometry;
 
   try {
-    geometry = await createGeometry(modelUrl);
+    geometry = await createGeometry(
+      modelUrl,
+      modelOverrides?.importedGeometry,
+    );
   } catch (error) {
     onError?.(error);
     geometry = createBuiltinGeometry('torusKnot');

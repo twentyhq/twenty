@@ -6,8 +6,9 @@ import { CheckIcon } from '@/icons/informative/Check';
 import type { PlanCardType } from '@/sections/Plans/types';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
+import type { CSSProperties } from 'react';
 
-const FIXED_ROWS = 4;
+const FIXED_ROWS = 3;
 
 const StyledCard = styled.div`
   background-color: ${theme.colors.primary.background[100]};
@@ -27,14 +28,15 @@ const StyledCard = styled.div`
 `;
 
 const CardHeader = styled.div`
+  align-items: flex-start;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  gap: ${theme.spacing(3)};
+  justify-content: space-between;
   overflow: visible;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    align-items: flex-start;
-    flex-direction: row;
-    justify-content: space-between;
+    gap: ${theme.spacing(4)};
   }
 `;
 
@@ -48,6 +50,10 @@ const CardHeaderInfo = styled.div`
 `;
 
 const cardPlanTitleClassName = css`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
   &[data-size='xs'] {
     line-height: ${theme.lineHeight(5)};
   }
@@ -61,26 +67,48 @@ const cardPlanTitleClassName = css`
 
 const priceBodyClassName = css`
   color: ${theme.colors.primary.text[60]};
+  display: block;
+  min-width: 0;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 `;
 
 const PriceLine = styled.div`
   align-items: baseline;
   display: flex;
+  flex-wrap: wrap;
   gap: ${theme.spacing(1)};
-  white-space: nowrap;
+  min-width: 0;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    flex-wrap: nowrap;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+`;
+
+const CardRule = styled.div`
+  border-top: 1px dotted ${theme.colors.primary.border[10]};
+  height: 0;
+  width: 100%;
 `;
 
 const CardIcon = styled.div`
+  --card-icon-width: 80px;
   background-color: ${theme.colors.primary.background[100]};
   border: none;
   border-radius: ${theme.radius(2)};
   display: block;
   flex-shrink: 0;
   height: 80px;
-  margin-top: ${theme.spacing(2)};
+  margin-left: auto;
   overflow: hidden;
   position: relative;
-  width: 80px;
+  width: var(--card-icon-width);
 
   img {
     object-fit: contain;
@@ -90,16 +118,9 @@ const CardIcon = styled.div`
   @media (min-width: ${theme.breakpoints.md}px) {
     display: block;
     margin-left: auto;
-    margin-top: 0;
     height: 80px;
-    width: 80px;
+    width: var(--card-icon-width);
   }
-`;
-
-const CardRule = styled.div`
-  border-top: 1px dotted ${theme.colors.primary.border[10]};
-  height: 0;
-  width: 100%;
 `;
 
 const CtaWrapper = styled.div`
@@ -139,6 +160,9 @@ type CardProps = {
 export function Card({ card, highlighted = false, maxBullets }: CardProps) {
   const totalRows = FIXED_ROWS + maxBullets;
   const iconWidth = card.icon.width ?? 80;
+  const iconStyle = {
+    '--card-icon-width': `${iconWidth}px`,
+  } as CSSProperties;
 
   return (
     <StyledCard style={{ gridRow: `span ${totalRows}` }}>
@@ -166,7 +190,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
             />
           </PriceLine>
         </CardHeaderInfo>
-        <CardIcon style={{ width: `${iconWidth}px` }}>
+        <CardIcon style={iconStyle}>
           <NextImage
             alt={card.icon.alt}
             fill
@@ -175,6 +199,17 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
           />
         </CardIcon>
       </CardHeader>
+
+      <CardRule />
+
+      <FeaturesList style={{ gridRow: `span ${maxBullets}` }}>
+        {card.features.bullets.map((bullet, index) => (
+          <FeatureItem key={index}>
+            <CheckIcon color={theme.colors.highlight[100]} size={16} />
+            <Body as="span" body={bullet} size="sm" />
+          </FeatureItem>
+        ))}
+      </FeaturesList>
 
       <CtaWrapper>
         <LinkButton
@@ -185,19 +220,6 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
           variant={highlighted ? 'contained' : 'outlined'}
         />
       </CtaWrapper>
-
-      <CardRule />
-
-      <Body body={card.features.title} size="md" />
-
-      <FeaturesList style={{ gridRow: `span ${maxBullets}` }}>
-        {card.features.bullets.map((bullet, index) => (
-          <FeatureItem key={index}>
-            <CheckIcon color={theme.colors.highlight[100]} size={16} />
-            <Body as="span" body={bullet} size="sm" />
-          </FeatureItem>
-        ))}
-      </FeaturesList>
     </StyledCard>
   );
 }

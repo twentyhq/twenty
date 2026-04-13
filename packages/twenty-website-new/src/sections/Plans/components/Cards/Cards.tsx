@@ -4,13 +4,13 @@ import { styled } from '@linaria/react';
 import { Card } from '../Card/Card';
 
 const CardsGrid = styled.div`
-  column-gap: ${theme.spacing(4)};
   display: grid;
   grid-template-columns: 1fr;
   row-gap: ${theme.spacing(4)};
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
+    column-gap: ${theme.spacing(6)};
     grid-template-columns: 1fr 1fr;
   }
 `;
