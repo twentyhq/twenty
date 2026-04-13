@@ -47,21 +47,23 @@ export const validateViewFieldLabelIdentifierCrossEntity = ({
       continue;
     }
 
-    alreadyCheckedViewUniversalIdentifiers.add(viewUniversalIdentifier);
-
-    const view = findFlatEntityByUniversalIdentifierOrThrow({
+    const view = findFlatEntityByUniversalIdentifier({
       universalIdentifier: viewUniversalIdentifier,
       flatEntityMaps: optimisticUniversalFlatMaps.flatViewMaps,
     });
 
-    if (view.type === ViewType.FIELDS_WIDGET) {
+    if (!isDefined(view) || view.type === ViewType.FIELDS_WIDGET) {
       continue;
     }
 
-    const objectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
+    const objectMetadata = findFlatEntityByUniversalIdentifier({
       universalIdentifier: view.objectMetadataUniversalIdentifier,
       flatEntityMaps: optimisticUniversalFlatMaps.flatObjectMetadataMaps,
     });
+
+    if (!isDefined(objectMetadata)) {
+      continue;
+    }
 
     const { labelIdentifierFieldMetadataUniversalIdentifier } = objectMetadata;
 
@@ -75,6 +77,8 @@ export const validateViewFieldLabelIdentifierCrossEntity = ({
     ) {
       continue;
     }
+
+    alreadyCheckedViewUniversalIdentifiers.add(viewUniversalIdentifier);
 
     const viewFieldUniversalIdentifiers =
       view.viewFieldUniversalIdentifiers ?? [];
