@@ -103,7 +103,6 @@ export const SidePanelPageLayoutTabSettingsContent = ({
   if (isCanvasTab) {
     return (
       <CanvasTabSettingsContent
-        tabId={tab.id}
         pageLayoutId={pageLayoutId}
         canvasWidget={tab.widgets.at(0)}
         canSetAsPinned={canSetAsPinned}

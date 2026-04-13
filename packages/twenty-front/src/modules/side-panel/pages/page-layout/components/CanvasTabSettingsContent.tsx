@@ -24,7 +24,6 @@ import {
 const RESET_TAB_TO_DEFAULT_MODAL_ID = 'reset-canvas-tab-to-default-modal';
 
 type CanvasTabSettingsContentProps = {
-  tabId: string;
   pageLayoutId: string;
   canvasWidget: PageLayoutWidget | undefined;
   canSetAsPinned: boolean;
