@@ -8,8 +8,16 @@ export class AddCreditBalanceToBillingCustomerFastInstanceCommand
   implements FastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    const tableExists = await queryRunner.query(
+      `SELECT 1 FROM pg_tables WHERE schemaname = 'core' AND tablename = 'billingCustomer'`,
+    );
+
+    if (tableExists.length === 0) {
+      return;
+    }
+
     await queryRunner.query(
-      `ALTER TABLE "core"."billingCustomer" ADD COLUMN IF NOT EXISTS "creditBalanceMicro" integer NOT NULL DEFAULT 0`,
+      `ALTER TABLE "core"."billingCustomer" ADD COLUMN IF NOT EXISTS "creditBalanceMicro" bigint NOT NULL DEFAULT 0`,
     );
   }
 

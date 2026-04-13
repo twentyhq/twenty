@@ -14,7 +14,8 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 describe('EnforceUsageCapJob', () => {
   let job: EnforceUsageCapJob;
-  let getManyMock: jest.Mock;
+  let idQueryMock: jest.Mock;
+  let fullQueryMock: jest.Mock;
   let billingSubscriptionItemRepository: jest.Mocked<{
     update: jest.Mock;
   }>;
@@ -53,34 +54,43 @@ describe('EnforceUsageCapJob', () => {
     }) as unknown as BillingSubscriptionEntity;
 
   beforeEach(async () => {
-    getManyMock = jest.fn().mockResolvedValue([]);
+    idQueryMock = jest.fn().mockResolvedValue([]);
+    fullQueryMock = jest.fn().mockResolvedValue([]);
 
-    const queryBuilderMock = {
-      innerJoinAndSelect: jest.fn().mockReturnThis(),
+    const idQueryBuilderMock = {
+      select: jest.fn().mockReturnThis(),
       innerJoin: jest.fn().mockReturnThis(),
-      leftJoinAndSelect: jest.fn().mockReturnThis(),
       where: jest.fn().mockReturnThis(),
       andWhere: jest.fn().mockReturnThis(),
       orderBy: jest.fn().mockReturnThis(),
-      take: jest.fn().mockReturnThis(),
-      skip: jest.fn().mockReturnThis(),
-      getMany: getManyMock,
+      limit: jest.fn().mockReturnThis(),
+      offset: jest.fn().mockReturnThis(),
+      getRawMany: idQueryMock,
     };
+
+    const fullQueryBuilderMock = {
+      innerJoinAndSelect: jest.fn().mockReturnThis(),
+      leftJoinAndSelect: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      getMany: fullQueryMock,
+    };
+
+    const createQueryBuilder = jest
+      .fn()
+      .mockReturnValueOnce(idQueryBuilderMock)
+      .mockReturnValueOnce(fullQueryBuilderMock);
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         EnforceUsageCapJob,
         {
           provide: getRepositoryToken(BillingSubscriptionEntity),
-          useValue: {
-            createQueryBuilder: jest.fn().mockReturnValue(queryBuilderMock),
-          },
+          useValue: { createQueryBuilder },
         },
         {
           provide: getRepositoryToken(BillingSubscriptionItemEntity),
-          useValue: {
-            update: jest.fn(),
-          },
+          useValue: { update: jest.fn() },
         },
         {
           provide: BillingUsageCapService,
@@ -92,9 +102,7 @@ describe('EnforceUsageCapJob', () => {
         },
         {
           provide: TwentyConfigService,
-          useValue: {
-            get: jest.fn(),
-          },
+          useValue: { get: jest.fn() },
         },
       ],
     }).compile();
@@ -128,7 +136,7 @@ describe('EnforceUsageCapJob', () => {
 
     await job.handle();
 
-    expect(getManyMock).not.toHaveBeenCalled();
+    expect(idQueryMock).not.toHaveBeenCalled();
   });
 
   it('no-ops when ClickHouse is not configured', async () => {
@@ -137,14 +145,15 @@ describe('EnforceUsageCapJob', () => {
 
     await job.handle();
 
-    expect(getManyMock).not.toHaveBeenCalled();
+    expect(idQueryMock).not.toHaveBeenCalled();
   });
 
   it('skips transitions in shadow mode (flag off)', async () => {
     mockConfig({ BILLING_USAGE_CAP_CLICKHOUSE_ENABLED: false });
     const sub = buildSubscription({ hasReachedCurrentPeriodCap: false });
 
-    getManyMock.mockResolvedValueOnce([sub]);
+    idQueryMock.mockResolvedValueOnce([{ subscription_id: 'sub_123' }]);
+    fullQueryMock.mockResolvedValueOnce([sub]);
 
     billingUsageCapService.getBatchPeriodCreditsUsed.mockResolvedValue(
       new Map([['workspace_123', 2_000_000]]),
@@ -177,7 +186,8 @@ describe('EnforceUsageCapJob', () => {
       hasReachedCurrentPeriodCap: false,
     });
 
-    getManyMock.mockResolvedValueOnce([sub]);
+    idQueryMock.mockResolvedValueOnce([{ subscription_id: 'sub_123' }]);
+    fullQueryMock.mockResolvedValueOnce([sub]);
 
     billingUsageCapService.getBatchPeriodCreditsUsed.mockResolvedValue(
       new Map([['workspace_123', 2_000_000]]),
@@ -213,7 +223,8 @@ describe('EnforceUsageCapJob', () => {
       hasReachedCurrentPeriodCap: true,
     });
 
-    getManyMock.mockResolvedValueOnce([sub]);
+    idQueryMock.mockResolvedValueOnce([{ subscription_id: 'sub_123' }]);
+    fullQueryMock.mockResolvedValueOnce([sub]);
 
     billingUsageCapService.getBatchPeriodCreditsUsed.mockResolvedValue(
       new Map([['workspace_123', 500_000]]),
@@ -246,7 +257,8 @@ describe('EnforceUsageCapJob', () => {
     mockConfig({ BILLING_USAGE_CAP_CLICKHOUSE_ENABLED: true });
     const sub = buildSubscription({ hasReachedCurrentPeriodCap: true });
 
-    getManyMock.mockResolvedValueOnce([sub]);
+    idQueryMock.mockResolvedValueOnce([{ subscription_id: 'sub_123' }]);
+    fullQueryMock.mockResolvedValueOnce([sub]);
 
     billingUsageCapService.getBatchPeriodCreditsUsed.mockResolvedValue(
       new Map([['workspace_123', 2_000_000]]),
@@ -276,7 +288,8 @@ describe('EnforceUsageCapJob', () => {
     mockConfig({ BILLING_USAGE_CAP_CLICKHOUSE_ENABLED: true });
     const sub = buildSubscription();
 
-    getManyMock.mockResolvedValueOnce([sub]);
+    idQueryMock.mockResolvedValueOnce([{ subscription_id: 'sub_123' }]);
+    fullQueryMock.mockResolvedValueOnce([sub]);
 
     billingUsageCapService.getBatchPeriodCreditsUsed.mockResolvedValue(
       new Map(),
@@ -302,7 +315,8 @@ describe('EnforceUsageCapJob', () => {
       creditBalanceMicro: 300_000,
     });
 
-    getManyMock.mockResolvedValueOnce([sub]);
+    idQueryMock.mockResolvedValueOnce([{ subscription_id: 'sub_123' }]);
+    fullQueryMock.mockResolvedValueOnce([sub]);
 
     billingUsageCapService.getBatchPeriodCreditsUsed.mockResolvedValue(
       new Map(),
@@ -318,17 +332,34 @@ describe('EnforceUsageCapJob', () => {
     );
   });
 
-  it('handles ClickHouse batch query errors gracefully', async () => {
+  it('skips subscriptions whose ClickHouse query failed', async () => {
     mockConfig({ BILLING_USAGE_CAP_CLICKHOUSE_ENABLED: true });
-    const sub = buildSubscription();
+    const sub = buildSubscription({ hasReachedCurrentPeriodCap: true });
 
-    getManyMock.mockResolvedValueOnce([sub]);
+    idQueryMock.mockResolvedValueOnce([{ subscription_id: 'sub_123' }]);
+    fullQueryMock.mockResolvedValueOnce([sub]);
 
     billingUsageCapService.getBatchPeriodCreditsUsed.mockRejectedValue(
       new Error('clickhouse exploded'),
     );
-    billingUsageCapService.evaluateCapBatch.mockReturnValue(new Map());
+    billingUsageCapService.evaluateCapBatch.mockReturnValue(
+      new Map([
+        [
+          'sub_123',
+          {
+            skipped: false as const,
+            hasReachedCap: false,
+            usage: 0,
+            allowance: 1_000_000,
+            tierCap: 1_000_000,
+            creditBalance: 0,
+          },
+        ],
+      ]),
+    );
 
     await expect(job.handle()).resolves.not.toThrow();
+
+    expect(billingSubscriptionItemRepository.update).not.toHaveBeenCalled();
   });
 });

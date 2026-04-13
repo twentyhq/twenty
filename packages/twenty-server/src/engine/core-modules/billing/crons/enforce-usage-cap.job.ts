@@ -58,18 +58,12 @@ export class EnforceUsageCapJob {
     let offset = 0;
 
     let batch: BillingSubscriptionEntity[];
+    let idRows: { subscription_id: string }[];
 
     do {
-      batch = await this.billingSubscriptionRepository
+      idRows = await this.billingSubscriptionRepository
         .createQueryBuilder('subscription')
-        .innerJoinAndSelect(
-          'subscription.billingSubscriptionItems',
-          'item',
-          'item.billingSubscriptionId = subscription.id',
-        )
-        .innerJoinAndSelect('item.billingProduct', 'product')
-        .leftJoinAndSelect('product.billingPrices', 'price')
-        .innerJoinAndSelect('subscription.billingCustomer', 'customer')
+        .select('subscription.id')
         .innerJoin('subscription.workspace', 'workspace')
         .where('subscription.status IN (:...statuses)', {
           statuses: [
@@ -80,18 +74,37 @@ export class EnforceUsageCapJob {
         })
         .andWhere('workspace.suspendedAt IS NULL')
         .orderBy('subscription.id', 'ASC')
-        .take(BATCH_SIZE)
-        .skip(offset)
+        .limit(BATCH_SIZE)
+        .offset(offset)
+        .getRawMany<{ subscription_id: string }>();
+
+      if (idRows.length === 0) {
+        break;
+      }
+
+      const ids = idRows.map((row) => row.subscription_id);
+
+      batch = await this.billingSubscriptionRepository
+        .createQueryBuilder('subscription')
+        .innerJoinAndSelect(
+          'subscription.billingSubscriptionItems',
+          'item',
+          'item.billingSubscriptionId = subscription.id',
+        )
+        .innerJoinAndSelect('item.billingProduct', 'product')
+        .leftJoinAndSelect('product.billingPrices', 'price')
+        .innerJoinAndSelect('subscription.billingCustomer', 'customer')
+        .where('subscription.id IN (:...ids)', { ids })
+        .orderBy('subscription.id', 'ASC')
         .getMany();
 
       if (batch.length === 0) {
         break;
       }
 
-      // Group subscriptions by period boundaries for batched ClickHouse queries.
-      // Most subscriptions share the same period, so this typically yields 1 query.
       const periodGroups = this.groupByPeriod(batch);
       const usageByWorkspace = new Map<string, number>();
+      const failedWorkspaceIds = new Set<string>();
 
       for (const [, group] of periodGroups) {
         try {
@@ -107,6 +120,9 @@ export class EnforceUsageCapJob {
             usageByWorkspace.set(id, usage);
           }
         } catch (error) {
+          for (const sub of group) {
+            failedWorkspaceIds.add(sub.workspaceId);
+          }
           errors += group.length;
           this.logger.error(
             `Failed to fetch batch usage from ClickHouse for ${group.length} subscriptions`,
@@ -115,7 +131,6 @@ export class EnforceUsageCapJob {
         }
       }
 
-      // Build credit balance map from pre-loaded billingCustomer relation
       const creditBalanceByCustomer = new Map<string, number>();
 
       for (const subscription of batch) {
@@ -127,7 +142,6 @@ export class EnforceUsageCapJob {
         }
       }
 
-      // Evaluate caps for the entire batch
       const evaluations = this.billingUsageCapService.evaluateCapBatch(
         batch,
         usageByWorkspace,
@@ -138,6 +152,10 @@ export class EnforceUsageCapJob {
       const idsToCapFalse: string[] = [];
 
       for (const subscription of batch) {
+        if (failedWorkspaceIds.has(subscription.workspaceId)) {
+          continue;
+        }
+
         const evaluation = evaluations.get(subscription.id);
 
         if (!evaluation || evaluation.skipped) {
@@ -186,7 +204,6 @@ export class EnforceUsageCapJob {
         );
       }
 
-      // Batch DB updates
       if (idsToCapTrue.length > 0) {
         await this.billingSubscriptionItemRepository.update(
           { id: In(idsToCapTrue) },
@@ -203,8 +220,8 @@ export class EnforceUsageCapJob {
         transitioned += idsToCapFalse.length;
       }
 
-      offset += batch.length;
-    } while (batch.length === BATCH_SIZE);
+      offset += idRows.length;
+    } while (idRows.length === BATCH_SIZE);
 
     this.logger.log(
       `Usage cap enforcement run complete: evaluated=${evaluated} ` +

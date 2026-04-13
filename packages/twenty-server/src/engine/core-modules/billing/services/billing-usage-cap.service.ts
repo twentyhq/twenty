@@ -8,11 +8,6 @@ import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/
 import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-// All credit values in this service are in micro-credits:
-// 1 micro-credit = $0.000001, so 1$ = 1,000,000 micro-credits.
-// ClickHouse creditsUsedMicro, Stripe tier up_to, and creditBalanceMicro
-// all use this same unit.
-
 export type BillingCapEvaluation =
   | {
       skipped: false;
@@ -48,7 +43,6 @@ export class BillingUsageCapService {
     return Boolean(this.twentyConfigService.get('CLICKHOUSE_URL'));
   }
 
-  // Sums all creditsUsedMicro for a workspace in [periodStart, periodEnd).
   async getCurrentPeriodCreditsUsed(
     workspaceId: string,
     periodStart: Date,
@@ -78,8 +72,6 @@ export class BillingUsageCapService {
     return Number.isFinite(total) ? total : 0;
   }
 
-  // Sums creditsUsedMicro for multiple workspaces in a single ClickHouse query.
-  // Returns a Map keyed by workspaceId. Missing entries default to 0.
   async getBatchPeriodCreditsUsed(
     workspaceIds: string[],
     periodStart: Date,
@@ -116,8 +108,6 @@ export class BillingUsageCapService {
     return result;
   }
 
-  // Evaluates cap for a single subscription. Makes async calls to ClickHouse + Stripe.
-  // Used by non-cron callers. The cron uses evaluateCapBatch instead.
   async evaluateCap(
     subscription: BillingSubscriptionEntity,
   ): Promise<BillingCapEvaluation> {
@@ -158,9 +148,6 @@ export class BillingUsageCapService {
     };
   }
 
-  // Evaluates cap for a batch of subscriptions using pre-fetched data.
-  // usageByWorkspace: Map<workspaceId, creditsUsedMicro> from getBatchPeriodCreditsUsed
-  // creditBalanceByCustomer: Map<stripeCustomerId, creditBalanceMicro> from Postgres
   evaluateCapBatch(
     subscriptions: BillingSubscriptionEntity[],
     usageByWorkspace: Map<string, number>,
