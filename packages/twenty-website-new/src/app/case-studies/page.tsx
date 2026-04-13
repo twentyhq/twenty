@@ -1,6 +1,6 @@
 import { FAQ_DATA, MENU_DATA } from '@/app/_constants';
 import { TalkToUsButton } from '@/app/components/ContactCalModal';
-import { ALL_CASE_STUDIES } from '@/app/case-studies/_constants';
+import type { CaseStudyCatalogEntry } from '@/app/case-studies/_constants/types';
 import { Eyebrow, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
@@ -37,6 +37,119 @@ const SIGNOFF_BODY = {
   text: 'Join the teams that chose to own their CRM. Start building with Twenty today.',
 };
 
+const PLACEHOLDER_HERO = '/images/home/hero/avatars/katherine-adams.jpg';
+
+const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
+  {
+    href: '/case-studies/elevate-consulting',
+    hero: {
+      readingTime: '8 min',
+      title: [
+        { text: 'Twenty as the API backbone ', fontFamily: 'serif' },
+        { text: 'of a go-to-market stack', fontFamily: 'sans' },
+      ],
+      author: 'Justin Beadle',
+      clientIcon: 'elevate-consulting',
+      heroImageSrc: PLACEHOLDER_HERO,
+    },
+    catalogCard: {
+      summary:
+        'Elevate Consulting uses Twenty as the API backbone connecting billing, Teams, resourcing, and a custom front end around client and opportunity data.',
+      date: 'Jun 2025',
+    },
+  },
+  {
+    href: '/case-studies/9dots',
+    hero: {
+      readingTime: '9 min',
+      title: [
+        { text: 'A real estate agency on WhatsApp ', fontFamily: 'serif' },
+        { text: 'built a CRM around it', fontFamily: 'sans' },
+      ],
+      author: 'Mike Babiy & Azmat Parveen',
+      clientIcon: 'nine-dots',
+      heroImageSrc: PLACEHOLDER_HERO,
+    },
+    catalogCard: {
+      summary:
+        'Nine Dots put Twenty at the center of Homeseller\'s stack with APIs, automation, and AI on top of WhatsApp-heavy operations.',
+      date: 'Jul 2025',
+    },
+  },
+  {
+    href: '/case-studies/alternative-partners',
+    hero: {
+      readingTime: '7 min',
+      title: [
+        { text: 'From Salesforce to ', fontFamily: 'serif' },
+        { text: 'self-hosted Twenty', fontFamily: 'sans' },
+      ],
+      author: 'Benjamin Reynolds',
+      clientIcon: 'alternative-partners',
+      heroImageSrc: PLACEHOLDER_HERO,
+    },
+    catalogCard: {
+      summary:
+        'Alternative Partners replaced Salesforce with self-hosted Twenty, using agentic AI to compress migration work.',
+      date: '2025',
+    },
+  },
+  {
+    href: '/case-studies/netzero',
+    hero: {
+      readingTime: '8 min',
+      title: [
+        { text: 'A CRM that ', fontFamily: 'serif' },
+        { text: 'grows with you', fontFamily: 'sans' },
+      ],
+      author: 'Olivier Reinaud',
+      clientIcon: 'netzero',
+      heroImageSrc: PLACEHOLDER_HERO,
+    },
+    catalogCard: {
+      summary:
+        'NetZero uses Twenty as a modular CRM across product lines and countries, with a roadmap into AI-assisted workflows.',
+      date: '2025',
+    },
+  },
+  {
+    href: '/case-studies/act-education',
+    hero: {
+      readingTime: '7 min',
+      title: [
+        { text: 'A CRM they ', fontFamily: 'serif' },
+        { text: 'actually own', fontFamily: 'sans' },
+      ],
+      author: 'Joseph Chiang',
+      clientIcon: 'act-education',
+      heroImageSrc: PLACEHOLDER_HERO,
+    },
+    catalogCard: {
+      summary:
+        'AC&T and Flycoder moved from a dead vendor export to self-hosted Twenty — over 90% lower CRM cost and full control.',
+      date: '2025',
+    },
+  },
+  {
+    href: '/case-studies/w3villa',
+    hero: {
+      readingTime: '8 min',
+      title: [
+        { text: 'When your CRM ', fontFamily: 'serif' },
+        { text: 'is the product', fontFamily: 'sans' },
+      ],
+      author: 'Amrendra Pratap Singh',
+      clientIcon: 'w3villa',
+      heroImageSrc: PLACEHOLDER_HERO,
+    },
+    catalogCard: {
+      summary:
+        'W3villa shipped W3Grads on Twenty — AI interviews, scoring, and institution-scale workflows without rebuilding CRM plumbing.',
+      date: '2025',
+    },
+  },
+];
+
 export default async function CaseStudiesCatalogPage() {
   const stats = await fetchCommunityStats();
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
@@ -60,7 +173,7 @@ export default async function CaseStudiesCatalogPage() {
         <Hero.Body page={Pages.CaseStudies} body={HERO_BODY} />
       </Hero.Root>
 
-      <CaseStudyCatalog.Grid caseStudies={ALL_CASE_STUDIES} />
+      <CaseStudyCatalog.Grid entries={CASE_STUDY_CATALOG_ENTRIES} />
 
       <Signoff.Root
         backgroundColor={theme.colors.primary.background[100]}

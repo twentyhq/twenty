@@ -78,7 +78,7 @@ type CardProps = {
 
 export function Card({ card }: CardProps) {
   const IconComponent = CLIENT_ICONS[card.icon];
-  const logoWidth = card.icon === 'evergreen' ? 96 : 104;
+  const logoWidth = 104;
 
   return (
     <CardRoot>

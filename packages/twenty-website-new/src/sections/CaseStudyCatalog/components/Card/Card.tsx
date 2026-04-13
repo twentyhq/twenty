@@ -1,4 +1,4 @@
-import type { CaseStudyData } from '@/app/case-studies/_constants/types';
+import type { CaseStudyCatalogEntry } from '@/app/case-studies/_constants/types';
 import { CLIENT_ICONS } from '@/icons';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -130,19 +130,19 @@ const DateLabel = styled.span`
 `;
 
 type CardProps = {
-  caseStudy: CaseStudyData;
+  entry: CaseStudyCatalogEntry;
 };
 
-export function Card({ caseStudy }: CardProps) {
-  const ClientIcon = CLIENT_ICONS[caseStudy.hero.clientIcon];
-  const logoWidth = caseStudy.hero.clientIcon === 'evergreen' ? 96 : 140;
-  const initials = caseStudy.hero.author
+export function Card({ entry }: CardProps) {
+  const ClientIcon = CLIENT_ICONS[entry.hero.clientIcon];
+  const logoWidth = 140;
+  const initials = entry.hero.author
     .split(' ')
     .map((word) => word[0])
     .join('');
 
   return (
-    <CardLink href={`/case-studies/${caseStudy.slug}`}>
+    <CardLink href={entry.href}>
       <Thumbnail>
         {ClientIcon ? (
           <ClientIcon
@@ -155,16 +155,16 @@ export function Card({ caseStudy }: CardProps) {
       <CardBody>
         <Tag>Case Study</Tag>
         <Title>
-          {caseStudy.hero.title.map((segment) => segment.text).join('')}
+          {entry.hero.title.map((segment) => segment.text).join('')}
         </Title>
-        <Summary>{caseStudy.catalogCard.summary}</Summary>
+        <Summary>{entry.catalogCard.summary}</Summary>
       </CardBody>
 
       <Footer>
         <AuthorAvatar>{initials}</AuthorAvatar>
-        <AuthorName>{caseStudy.hero.author}</AuthorName>
+        <AuthorName>{entry.hero.author}</AuthorName>
         <Dot />
-        <DateLabel>{caseStudy.catalogCard.date}</DateLabel>
+        <DateLabel>{entry.catalogCard.date}</DateLabel>
       </Footer>
     </CardLink>
   );

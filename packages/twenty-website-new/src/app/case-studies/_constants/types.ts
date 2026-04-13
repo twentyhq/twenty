@@ -24,7 +24,6 @@ export type CaseStudyTestimonialAuthor = {
 };
 
 export type CaseStudyData = {
-  slug: string;
   meta: { title: string; description: string };
   hero: {
     readingTime: string;
@@ -44,4 +43,10 @@ export type CaseStudyData = {
     summary: string;
     date: string;
   };
+};
+
+export type CaseStudyCatalogEntry = {
+  href: string;
+  hero: CaseStudyData['hero'];
+  catalogCard: CaseStudyData['catalogCard'];
 };

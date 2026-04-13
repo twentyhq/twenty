@@ -1,4 +1,4 @@
-import type { CaseStudyData } from '@/app/case-studies/_constants/types';
+import type { CaseStudyCatalogEntry } from '@/app/case-studies/_constants/types';
 import { Container } from '@/design-system/components';
 import { Card } from '@/sections/CaseStudyCatalog/components/Card/Card';
 import { theme } from '@/theme';
@@ -34,16 +34,16 @@ const CardGrid = styled.div`
 `;
 
 type GridProps = {
-  caseStudies: readonly CaseStudyData[];
+  entries: readonly CaseStudyCatalogEntry[];
 };
 
-export function Grid({ caseStudies }: GridProps) {
+export function Grid({ entries }: GridProps) {
   return (
     <Section>
       <StyledContainer>
         <CardGrid>
-          {caseStudies.map((caseStudy) => (
-            <Card key={caseStudy.slug} caseStudy={caseStudy} />
+          {entries.map((entry) => (
+            <Card key={entry.href} entry={entry} />
           ))}
         </CardGrid>
       </StyledContainer>
