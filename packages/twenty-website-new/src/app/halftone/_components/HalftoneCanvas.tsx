@@ -668,6 +668,11 @@ export function HalftoneCanvas({
       }
 
       const texture = new THREE.Texture(imageElement);
+      texture.wrapS = THREE.ClampToEdgeWrapping;
+      texture.wrapT = THREE.ClampToEdgeWrapping;
+      texture.generateMipmaps = false;
+      texture.minFilter = THREE.LinearFilter;
+      texture.magFilter = THREE.LinearFilter;
       texture.needsUpdate = true;
       texture.colorSpace = THREE.SRGBColorSpace;
       resources.imageTexture = texture;
