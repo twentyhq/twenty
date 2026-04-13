@@ -35,6 +35,17 @@ export const validateFields = (
         `Field "${field.label}" is a SELECT/MULTI_SELECT type and must have options`,
       );
     }
+
+    if (
+      field.isUnique === true &&
+      (field.type === FieldMetadataType.RELATION ||
+        field.type === FieldMetadataType.MORPH_RELATION ||
+        field.type === FieldMetadataType.FILES)
+    ) {
+      errors.push(
+        `Field "${field.label}" of type ${field.type} cannot be unique`,
+      );
+    }
   }
 
   return errors;

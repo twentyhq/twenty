@@ -6,16 +6,24 @@ import {
   getMeshFootprintScale,
   VIRTUAL_RENDER_HEIGHT,
 } from '@/app/halftone/_lib/footprint';
+import {
+  applyHalftoneMaterialSettings,
+  createHalftoneMaterial,
+  createHalftoneMaterialAssets,
+  disposeHalftoneMaterialAssets,
+  type HalftoneMaterialAssets,
+  type HalftoneTransmissionMaterial,
+  renderHalftoneMaterialScene,
+} from '@/app/halftone/_lib/materials';
 import type {
   HalftoneExportPose,
   HalftoneStudioSettings,
 } from '@/app/halftone/_lib/state';
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { styled } from '@linaria/react';
 import { type MutableRefObject, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
-const passThroughVertexShader = /* glsl */ `
+const passThroughVertexShader = `
   varying vec2 vUv;
 
   void main() {
@@ -24,7 +32,7 @@ const passThroughVertexShader = /* glsl */ `
   }
 `;
 
-const blurFragmentShader = /* glsl */ `
+const blurFragmentShader = `
   precision highp float;
 
   uniform sampler2D tInput;
@@ -56,7 +64,7 @@ const blurFragmentShader = /* glsl */ `
   }
 `;
 
-const imagePassthroughFragmentShader = /* glsl */ `
+const imagePassthroughFragmentShader = `
   precision highp float;
 
   uniform sampler2D tImage;
@@ -73,7 +81,6 @@ const imagePassthroughFragmentShader = /* glsl */ `
 
     vec2 uv = vUv;
 
-    // Contain: show full image, letterbox/pillarbox as needed
     if (imageAspect > viewAspect) {
       float scale = viewAspect / imageAspect;
       uv.y = (uv.y - 0.5) / scale + 0.5;
@@ -94,7 +101,7 @@ const imagePassthroughFragmentShader = /* glsl */ `
   }
 `;
 
-const halftoneFragmentShader = /* glsl */ `
+const halftoneFragmentShader = `
   precision highp float;
 
   uniform sampler2D tScene;
@@ -112,6 +119,9 @@ const halftoneFragmentShader = /* glsl */ `
   uniform vec2 interactionUv;
   uniform vec2 interactionVelocity;
   uniform vec2 dragOffset;
+  uniform float hoverHalftonePowerShift;
+  uniform float hoverHalftoneRadius;
+  uniform float hoverHalftoneWidthShift;
   uniform float hoverLightStrength;
   uniform float hoverLightRadius;
   uniform float hoverFlowStrength;
@@ -138,7 +148,6 @@ const halftoneFragmentShader = /* glsl */ `
   }
 
   void main() {
-    // Crop to image bounds: discard fragments outside source image (image mode only)
     if (cropToBounds > 0.5) {
       vec4 boundsCheck = texture2D(tScene, vUv);
       if (boundsCheck.a < 0.01) {
@@ -168,6 +177,15 @@ const halftoneFragmentShader = /* glsl */ `
       hoverLightMask = smoothstep(lightRadiusPx, 0.0, fragDist);
     }
 
+    float hoverHalftoneMask = 0.0;
+    if (
+      abs(hoverHalftonePowerShift) > 0.0001 ||
+      abs(hoverHalftoneWidthShift) > 0.0001
+    ) {
+      float hoverHalftoneRadiusPx = hoverHalftoneRadius * logicalResolution.y;
+      hoverHalftoneMask = smoothstep(hoverHalftoneRadiusPx, 0.0, fragDist);
+    }
+
     float hoverFlowMask = 0.0;
     if (hoverFlowStrength > 0.0) {
       float hoverRadiusPx = hoverFlowRadius * logicalResolution.y;
@@ -195,6 +213,16 @@ const halftoneFragmentShader = /* glsl */ `
 
     vec4 sceneSample = texture2D(tScene, sampleUv);
     float mask = smoothstep(0.02, 0.08, sceneSample.a);
+    float localPower = clamp(
+      s_3 + hoverHalftonePowerShift * hoverHalftoneMask,
+      -1.5,
+      1.5
+    );
+    float localWidth = clamp(
+      s_4 + hoverHalftoneWidthShift * hoverHalftoneMask,
+      0.05,
+      1.4
+    );
     float lightLift =
       hoverLightStrength *
       hoverLightMask *
@@ -206,7 +234,7 @@ const halftoneFragmentShader = /* glsl */ `
           sceneSample.r +
           sceneSample.g +
           sceneSample.b +
-          s_3 * length(vec2(0.5))
+          localPower * length(vec2(0.5))
         ) *
         (1.0 / 3.0)
       ) + lightLift,
@@ -216,7 +244,7 @@ const halftoneFragmentShader = /* glsl */ `
 
     float alpha = 0.0;
     if (bandRadius > 0.0001) {
-      float signedDistance = lineSimpleEt(cellUv, bandRadius, s_4);
+      float signedDistance = lineSimpleEt(cellUv, bandRadius, localWidth);
       float edge = 0.02;
       alpha = (1.0 - smoothstep(0.0, edge, signedDistance)) * mask;
     }
@@ -232,17 +260,6 @@ const halftoneFragmentShader = /* glsl */ `
 const IMAGE_POINTER_FOLLOW = 0.38;
 const IMAGE_POINTER_VELOCITY_DAMPING = 0.82;
 const MAX_PREVIEW_PIXEL_RATIO = 2;
-
-function createEnvironmentTexture(renderer: THREE.WebGLRenderer) {
-  const pmremGenerator = new THREE.PMREMGenerator(renderer);
-  const environmentTexture = pmremGenerator.fromScene(
-    new RoomEnvironment(),
-    0.04,
-  ).texture;
-  pmremGenerator.dispose();
-
-  return environmentTexture;
-}
 
 const CanvasMount = styled.div<{ $background: string }>`
   background: ${(props) => props.$background};
@@ -282,14 +299,14 @@ type SceneResources = {
   blurVerticalScene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
   canvas: HTMLCanvasElement;
-  environmentTexture: THREE.Texture;
   fillLight: THREE.DirectionalLight;
   fullScreenGeometry: THREE.PlaneGeometry;
   halftoneMaterial: THREE.ShaderMaterial;
   imageMaterial: THREE.ShaderMaterial;
   imageScene: THREE.Scene;
   imageTexture: THREE.Texture | null;
-  material: THREE.MeshPhysicalMaterial;
+  materialAssets: HalftoneMaterialAssets;
+  material: HalftoneTransmissionMaterial;
   mesh: THREE.Mesh;
   orthographicCamera: THREE.OrthographicCamera;
   postScene: THREE.Scene;
@@ -297,6 +314,8 @@ type SceneResources = {
   renderer: THREE.WebGLRenderer;
   scene3d: THREE.Scene;
   sceneTarget: THREE.WebGLRenderTarget;
+  transmissionBacksideTarget: THREE.WebGLRenderTarget;
+  transmissionTarget: THREE.WebGLRenderTarget;
 };
 
 type InteractionState = {
@@ -455,9 +474,11 @@ function updateMaterial(
   resources: SceneResources,
   settings: HalftoneStudioSettings,
 ) {
-  resources.material.roughness = settings.material.roughness;
-  resources.material.metalness = settings.material.metalness;
-  resources.material.needsUpdate = true;
+  applyHalftoneMaterialSettings(
+    resources.material,
+    settings.material,
+    resources.materialAssets,
+  );
 }
 
 function updateHalftone(
@@ -552,6 +573,8 @@ export function HalftoneCanvas({
   const initialPoseReference = useRef(initialPose);
   const poseChangeReference = useRef(onPoseChange);
   const previewDistanceReference = useRef(previewDistance);
+  const geometryReference = useRef(geometry);
+  const snapshotReference = useRef(snapshotRef);
 
   useEffect(() => {
     initialPoseReference.current = initialPose;
@@ -591,6 +614,7 @@ export function HalftoneCanvas({
       prev.autoRotateEnabled !== next.autoRotateEnabled ||
       prev.followHoverEnabled !== next.followHoverEnabled ||
       prev.followDragEnabled !== next.followDragEnabled ||
+      prev.hoverHalftoneEnabled !== next.hoverHalftoneEnabled ||
       prev.hoverLightEnabled !== next.hoverLightEnabled ||
       prev.dragFlowEnabled !== next.dragFlowEnabled
     ) {
@@ -613,6 +637,8 @@ export function HalftoneCanvas({
   }, [settings]);
 
   useEffect(() => {
+    geometryReference.current = geometry;
+
     const resources = resourcesReference.current;
 
     if (!resources || !geometry) {
@@ -621,6 +647,10 @@ export function HalftoneCanvas({
 
     resources.mesh.geometry = geometry;
   }, [geometry]);
+
+  useEffect(() => {
+    snapshotReference.current = snapshotRef;
+  }, [snapshotRef]);
 
   useEffect(() => {
     const resources = resourcesReference.current;
@@ -654,8 +684,11 @@ export function HalftoneCanvas({
 
   useEffect(() => {
     const container = mountReference.current;
+    const initialSettings = settingsReference.current;
+    const initialPreviewDistance = previewDistanceReference.current;
+    const activeSnapshotRef = snapshotReference.current;
 
-    if (!container || !geometry) {
+    if (!container || !geometryReference.current) {
       return;
     }
 
@@ -693,1122 +726,1258 @@ export function HalftoneCanvas({
     canvas.style.width = '100%';
     container.appendChild(canvas);
 
-    const environmentTexture = createEnvironmentTexture(renderer);
-
-    const scene3d = new THREE.Scene();
-    scene3d.background = null;
-
-    const camera = new THREE.PerspectiveCamera(
-      45,
-      getWidth() / getHeight(),
-      0.1,
-      100,
-    );
-    camera.position.z = previewDistance;
-
-    const primaryLight = new THREE.DirectionalLight(0xffffff, 1.5);
-    scene3d.add(primaryLight);
-
-    const fillLight = new THREE.DirectionalLight(0xffffff, 0.15);
-    fillLight.position.set(-3, -1, 1);
-    scene3d.add(fillLight);
-
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.08);
-    scene3d.add(ambientLight);
-
-    const material = new THREE.MeshPhysicalMaterial({
-      color: 0xd4d0c8,
-      roughness: 0.42,
-      metalness: 0.16,
-      envMap: environmentTexture,
-      envMapIntensity: 0.25,
-      clearcoat: 0,
-      clearcoatRoughness: 0.08,
-      reflectivity: 0.5,
-      transmission: 0,
-    });
-
-    const mesh = new THREE.Mesh(geometry, material);
-    scene3d.add(mesh);
-
-    const sceneTarget = createRenderTarget(getRenderWidth(), getRenderHeight());
-    const blurTargetA = createRenderTarget(getRenderWidth(), getRenderHeight());
-    const blurTargetB = createRenderTarget(getRenderWidth(), getRenderHeight());
-    const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
-    const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-
-    const blurHorizontalMaterial = new THREE.ShaderMaterial({
-      uniforms: {
-        tInput: { value: null },
-        dir: { value: new THREE.Vector2(1, 0) },
-        res: {
-          value: new THREE.Vector2(getRenderWidth(), getRenderHeight()),
-        },
-      },
-      vertexShader: passThroughVertexShader,
-      fragmentShader: blurFragmentShader,
-    });
-
-    const blurVerticalMaterial = new THREE.ShaderMaterial({
-      uniforms: {
-        tInput: { value: null },
-        dir: { value: new THREE.Vector2(0, 1) },
-        res: {
-          value: new THREE.Vector2(getRenderWidth(), getRenderHeight()),
-        },
-      },
-      vertexShader: passThroughVertexShader,
-      fragmentShader: blurFragmentShader,
-    });
-
-    const halftoneMaterial = new THREE.ShaderMaterial({
-      transparent: true,
-      uniforms: {
-        tScene: { value: sceneTarget.texture },
-        tGlow: { value: blurTargetB.texture },
-        effectResolution: {
-          value: new THREE.Vector2(getRenderWidth(), getRenderHeight()),
-        },
-        logicalResolution: {
-          value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
-        },
-        tile: { value: settings.halftone.scale },
-        s_3: { value: settings.halftone.power },
-        s_4: { value: settings.halftone.width },
-        dashColor: { value: new THREE.Color(settings.halftone.dashColor) },
-        time: { value: 0 },
-        waveAmount: { value: 0 },
-        waveSpeed: { value: 1 },
-        footprintScale: { value: 1.0 },
-        interactionUv: { value: new THREE.Vector2(0.5, 0.5) },
-        interactionVelocity: { value: new THREE.Vector2(0, 0) },
-        dragOffset: { value: new THREE.Vector2(0, 0) },
-        hoverLightStrength: { value: 0 },
-        hoverLightRadius: { value: 0.2 },
-        hoverFlowStrength: { value: 0 },
-        hoverFlowRadius: { value: 0.18 },
-        dragFlowStrength: { value: 0 },
-        cropToBounds: { value: 0 },
-      },
-      vertexShader: passThroughVertexShader,
-      fragmentShader: halftoneFragmentShader,
-    });
-
-    const blurHorizontalScene = new THREE.Scene();
-    blurHorizontalScene.add(
-      new THREE.Mesh(fullScreenGeometry, blurHorizontalMaterial),
-    );
-
-    const blurVerticalScene = new THREE.Scene();
-    blurVerticalScene.add(
-      new THREE.Mesh(fullScreenGeometry, blurVerticalMaterial),
-    );
-
-    const postScene = new THREE.Scene();
-    postScene.add(new THREE.Mesh(fullScreenGeometry, halftoneMaterial));
-
-    const imageMaterial = new THREE.ShaderMaterial({
-      uniforms: {
-        tImage: { value: null },
-        imageSize: { value: new THREE.Vector2(1, 1) },
-        viewportSize: {
-          value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
-        },
-        zoom: { value: getImagePreviewZoom(previewDistance) },
-        contrast: { value: settings.halftone.imageContrast },
-      },
-      vertexShader: passThroughVertexShader,
-      fragmentShader: imagePassthroughFragmentShader,
-    });
-
-    const imageScene = new THREE.Scene();
-    imageScene.add(new THREE.Mesh(fullScreenGeometry, imageMaterial));
-
-    const resources: SceneResources = {
-      ambientLight,
-      blurHorizontalMaterial,
-      blurHorizontalScene,
-      blurTargetA,
-      blurTargetB,
-      blurVerticalMaterial,
-      blurVerticalScene,
-      camera,
-      canvas,
-      environmentTexture,
-      fillLight,
-      fullScreenGeometry,
-      halftoneMaterial,
-      imageMaterial,
-      imageScene,
-      imageTexture: null,
-      material,
-      mesh,
-      orthographicCamera,
-      postScene,
-      primaryLight,
-      renderer,
-      scene3d,
-      sceneTarget,
-    };
-
-    const updateViewportUniforms = (
-      logicalWidth: number,
-      logicalHeight: number,
-      effectWidth: number,
-      effectHeight: number,
-    ) => {
-      blurHorizontalMaterial.uniforms.res.value.set(effectWidth, effectHeight);
-      blurVerticalMaterial.uniforms.res.value.set(effectWidth, effectHeight);
-      halftoneMaterial.uniforms.effectResolution.value.set(
-        effectWidth,
-        effectHeight,
-      );
-      halftoneMaterial.uniforms.logicalResolution.value.set(
-        logicalWidth,
-        logicalHeight,
-      );
-      imageMaterial.uniforms.viewportSize.value.set(
-        logicalWidth,
-        logicalHeight,
-      );
-    };
-
-    const getImageHalftoneScale = (
-      viewportWidth: number,
-      viewportHeight: number,
-      activePreviewDistance: number,
-    ) => {
-      const imageSize = imageMaterial.uniforms.imageSize.value as THREE.Vector2;
-
-      return getImageFootprintScale({
-        imageHeight: imageSize.y,
-        imageWidth: imageSize.x,
-        previewDistance: activePreviewDistance,
-        viewportHeight,
-        viewportWidth,
-      });
-    };
-
-    const getMeshHalftoneScale = (
-      viewportWidth: number,
-      viewportHeight: number,
-      lookAtTarget: THREE.Vector3,
-    ) => {
-      if (!mesh.geometry.boundingBox) {
-        mesh.geometry.computeBoundingBox();
-      }
-
-      const localBounds = mesh.geometry.boundingBox;
-
-      if (!localBounds) {
-        return 1;
-      }
-
-      mesh.updateMatrixWorld();
-      camera.updateMatrixWorld();
-
-      return getMeshFootprintScale({
-        camera,
-        localBounds,
-        lookAtTarget,
-        meshMatrixWorld: mesh.matrixWorld,
-        viewportHeight,
-        viewportWidth,
-      });
-    };
-
-    resourcesReference.current = resources;
-    syncResources(resources, settingsReference.current);
-
-    // Snapshot: render the current frame at arbitrary resolution and return a PNG blob
-    const captureSnapshot: HalftoneSnapshotFn = async (
-      snapshotWidth: number,
-      snapshotHeight: number,
-      options,
-    ) => {
-      const activeSettings = settingsReference.current;
-      const isImage =
-        activeSettings.sourceMode === 'image' &&
-        resources.imageTexture !== null;
-      const includeBackground = options?.includeBackground ?? false;
-      const backgroundColor =
-        options?.backgroundColor ?? activeSettings.background.color;
-
-      // Create temporary render targets at export resolution
-      const snapScene = createRenderTarget(snapshotWidth, snapshotHeight);
-      const snapBlurA = createRenderTarget(snapshotWidth, snapshotHeight);
-      const snapBlurB = createRenderTarget(snapshotWidth, snapshotHeight);
-
-      // Save current renderer state
-      const prevSize = renderer.getSize(new THREE.Vector2());
-
-      // Resize renderer to snapshot resolution
-      renderer.setSize(snapshotWidth, snapshotHeight, false);
-
-      // Update material uniforms for snapshot resolution
-      updateViewportUniforms(
-        snapshotWidth,
-        snapshotHeight,
-        snapshotWidth,
-        snapshotHeight,
-      );
-      halftoneMaterial.uniforms.hoverLightStrength.value = 0;
-      halftoneMaterial.uniforms.hoverFlowStrength.value = 0;
-      halftoneMaterial.uniforms.dragFlowStrength.value = 0;
-      halftoneMaterial.uniforms.interactionVelocity.value.set(0, 0);
-      halftoneMaterial.uniforms.dragOffset.value.set(0, 0);
-      halftoneMaterial.uniforms.cropToBounds.value = isImage ? 1 : 0;
-
-      if (isImage) {
-        imageMaterial.uniforms.zoom.value = getImagePreviewZoom(
-          previewDistanceReference.current,
-        );
-        halftoneMaterial.uniforms.footprintScale.value = getImageHalftoneScale(
-          snapshotWidth,
-          snapshotHeight,
-          previewDistanceReference.current,
-        );
-      } else {
-        camera.aspect = snapshotWidth / snapshotHeight;
-        camera.updateProjectionMatrix();
-        halftoneMaterial.uniforms.footprintScale.value = getMeshHalftoneScale(
-          snapshotWidth,
-          snapshotHeight,
-          new THREE.Vector3(0, mesh.position.y * 0.2, 0),
-        );
-      }
-
-      // Render scene to snapshot target
-      renderer.setRenderTarget(snapScene);
-      if (isImage) {
-        renderer.render(imageScene, orthographicCamera);
-      } else {
-        renderer.render(scene3d, camera);
-      }
-
-      // Blur passes
-      halftoneMaterial.uniforms.tScene.value = snapScene.texture;
-
-      blurHorizontalMaterial.uniforms.tInput.value = snapScene.texture;
-      renderer.setRenderTarget(snapBlurA);
-      renderer.render(blurHorizontalScene, orthographicCamera);
-
-      blurVerticalMaterial.uniforms.tInput.value = snapBlurA.texture;
-      renderer.setRenderTarget(snapBlurB);
-      renderer.render(blurVerticalScene, orthographicCamera);
-
-      blurHorizontalMaterial.uniforms.tInput.value = snapBlurB.texture;
-      renderer.setRenderTarget(snapBlurA);
-      renderer.render(blurHorizontalScene, orthographicCamera);
-
-      blurVerticalMaterial.uniforms.tInput.value = snapBlurA.texture;
-      renderer.setRenderTarget(snapBlurB);
-      renderer.render(blurVerticalScene, orthographicCamera);
-
-      halftoneMaterial.uniforms.tGlow.value = snapBlurB.texture;
-
-      // Final halftone render to a target we can read pixels from
-      const outputTarget = createRenderTarget(snapshotWidth, snapshotHeight);
-      renderer.setRenderTarget(outputTarget);
-      renderer.clear();
-      renderer.render(postScene, orthographicCamera);
-
-      // Read pixels
-      const pixelBuffer = new Uint8Array(snapshotWidth * snapshotHeight * 4);
-      renderer.readRenderTargetPixels(
-        outputTarget,
-        0,
-        0,
-        snapshotWidth,
-        snapshotHeight,
-        pixelBuffer,
-      );
-
-      // Restore renderer state
-      renderer.setSize(prevSize.x, prevSize.y, false);
-      halftoneMaterial.uniforms.tScene.value = sceneTarget.texture;
-      halftoneMaterial.uniforms.tGlow.value = blurTargetB.texture;
-      updateViewportUniforms(
-        getVirtualWidth(),
-        getVirtualHeight(),
-        prevSize.x,
-        prevSize.y,
-      );
-      if (isImage) {
-        imageMaterial.uniforms.zoom.value = getImagePreviewZoom(
-          previewDistanceReference.current,
-        );
-      } else {
-        camera.aspect = getWidth() / Math.max(getHeight(), 1);
-        camera.updateProjectionMatrix();
-      }
-
-      // Dispose temporary targets
-      snapScene.dispose();
-      snapBlurA.dispose();
-      snapBlurB.dispose();
-      outputTarget.dispose();
-
-      // Convert pixels to PNG via canvas
-      // WebGL readPixels returns rows bottom-to-top, so flip vertically
-      const flippedBuffer = new Uint8Array(snapshotWidth * snapshotHeight * 4);
-      const rowSize = snapshotWidth * 4;
-      for (let y = 0; y < snapshotHeight; y++) {
-        const srcOffset = y * rowSize;
-        const dstOffset = (snapshotHeight - 1 - y) * rowSize;
-        flippedBuffer.set(
-          pixelBuffer.subarray(srcOffset, srcOffset + rowSize),
-          dstOffset,
-        );
-      }
-
-      const fullSnapshotBounds = {
-        minX: 0,
-        minY: 0,
-        maxX: snapshotWidth - 1,
-        maxY: snapshotHeight - 1,
-      };
-      const alphaCropBounds = getAlphaCropBounds(
-        flippedBuffer,
-        snapshotWidth,
-        snapshotHeight,
-      );
-      const cropBounds =
-        includeBackground
-          ? fullSnapshotBounds
-          : (alphaCropBounds ?? fullSnapshotBounds);
-      const croppedWidth = cropBounds.maxX - cropBounds.minX + 1;
-      const croppedHeight = cropBounds.maxY - cropBounds.minY + 1;
-      const croppedBuffer = new Uint8ClampedArray(
-        croppedWidth * croppedHeight * 4,
-      );
-
-      for (let y = 0; y < croppedHeight; y++) {
-        const sourceStart =
-          ((cropBounds.minY + y) * snapshotWidth + cropBounds.minX) * 4;
-        const sourceEnd = sourceStart + croppedWidth * 4;
-        const destinationStart = y * croppedWidth * 4;
-
-        croppedBuffer.set(
-          flippedBuffer.subarray(sourceStart, sourceEnd),
-          destinationStart,
-        );
-      }
-
-      const imageData = new ImageData(
-        croppedBuffer,
-        croppedWidth,
-        croppedHeight,
-      );
-      const offscreen = document.createElement('canvas');
-      offscreen.width = croppedWidth;
-      offscreen.height = croppedHeight;
-      const ctx = offscreen.getContext('2d');
-
-      if (!ctx) {
-        return null;
-      }
-
-      if (includeBackground) {
-        const sourceCanvas = document.createElement('canvas');
-        sourceCanvas.width = croppedWidth;
-        sourceCanvas.height = croppedHeight;
-        const sourceContext = sourceCanvas.getContext('2d');
-
-        if (!sourceContext) {
-          return null;
-        }
-
-        sourceContext.putImageData(imageData, 0, 0);
-        ctx.fillStyle = backgroundColor;
-        ctx.fillRect(0, 0, croppedWidth, croppedHeight);
-        ctx.drawImage(sourceCanvas, 0, 0);
-      } else {
-        ctx.putImageData(imageData, 0, 0);
-      }
-
-      return new Promise<Blob | null>((resolve) => {
-        offscreen.toBlob((blob) => resolve(blob), 'image/png');
-      });
-    };
-
-    if (snapshotRef) {
-      snapshotRef.current = captureSnapshot;
-    }
-
-    const syncSize = () => {
-      if (cancelled) {
-        return;
-      }
-
-      const width = getWidth();
-      const height = getHeight();
-      const logicalWidth = getVirtualWidth();
-      const logicalHeight = getVirtualHeight();
-      const renderWidth = getRenderWidth();
-      const renderHeight = getRenderHeight();
-
-      renderer.setSize(renderWidth, renderHeight, false);
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-      sceneTarget.setSize(renderWidth, renderHeight);
-      blurTargetA.setSize(renderWidth, renderHeight);
-      blurTargetB.setSize(renderWidth, renderHeight);
-      updateViewportUniforms(
-        logicalWidth,
-        logicalHeight,
-        renderWidth,
-        renderHeight,
-      );
-    };
-
-    const resizeObserver = new ResizeObserver(syncSize);
-    resizeObserver.observe(container);
-
-    const updatePointerPosition = (
-      event: PointerEvent,
-      options?: { resetVelocity?: boolean },
-    ) => {
-      const interaction = interactionReference.current;
-      const rect = canvas.getBoundingClientRect();
-      const width = Math.max(rect.width, 1);
-      const height = Math.max(rect.height, 1);
-
-      const nextMouseX = THREE.MathUtils.clamp(
-        (event.clientX - rect.left) / width,
-        0,
-        1,
-      );
-      const nextMouseY = THREE.MathUtils.clamp(
-        (event.clientY - rect.top) / height,
-        0,
-        1,
-      );
-
-      const deltaX = nextMouseX - interaction.mouseX;
-      const deltaY = nextMouseY - interaction.mouseY;
-
-      interaction.mouseX = nextMouseX;
-      interaction.mouseY = nextMouseY;
-      interaction.pointerInside =
-        interaction.dragging ||
-        (event.clientX >= rect.left &&
-          event.clientX <= rect.right &&
-          event.clientY >= rect.top &&
-          event.clientY <= rect.bottom);
-
-      if (options?.resetVelocity) {
-        interaction.pointerVelocityX = 0;
-        interaction.pointerVelocityY = 0;
-        interaction.smoothedMouseX = nextMouseX;
-        interaction.smoothedMouseY = nextMouseY;
-      } else {
-        interaction.pointerVelocityX = deltaX;
-        interaction.pointerVelocityY = deltaY;
-      }
-
-      return { deltaX, deltaY };
-    };
-
-    const releasePointerCapture = (pointerId: number | null) => {
-      if (pointerId === null) {
-        return;
-      }
-
-      if (!canvas.hasPointerCapture(pointerId)) {
-        return;
-      }
-
-      try {
-        canvas.releasePointerCapture(pointerId);
-      } catch {
-        // Ignore capture release failures during teardown.
-      }
-    };
-
-    const markFirstInteraction = () => {
-      if (didInteractReference.current) {
-        return;
-      }
-
-      didInteractReference.current = true;
-      onFirstInteraction();
-    };
-
-    const handlePointerDown = (event: PointerEvent) => {
-      const interaction = interactionReference.current;
-      const activeSettings = settingsReference.current;
-      const canDrag =
-        activeSettings.sourceMode === 'image'
-          ? false
-          : activeSettings.animation.followDragEnabled;
-
-      updatePointerPosition(event, { resetVelocity: true });
-      interaction.pointerX = event.clientX;
-      interaction.pointerY = event.clientY;
-
-      if (canDrag) {
-        interaction.dragging = true;
-        interaction.activePointerId = event.pointerId;
-        interaction.velocityX = 0;
-        interaction.velocityY = 0;
-
-        try {
-          canvas.setPointerCapture(event.pointerId);
-        } catch {
-          // Pointer capture can fail in some browsers if the canvas is detached.
-        }
-      }
-
-      canvas.style.cursor = getCanvasCursor(
-        activeSettings,
-        interaction.dragging,
-      );
-
-      markFirstInteraction();
-    };
-
-    const handlePointerMove = (event: PointerEvent) => {
-      const interaction = interactionReference.current;
-      const resetVelocity = !interaction.pointerInside && !interaction.dragging;
-      updatePointerPosition(
-        event,
-        resetVelocity ? { resetVelocity: true } : undefined,
-      );
-      const activeSettings = settingsReference.current;
-
-      if (activeSettings.sourceMode === 'image' && interaction.pointerInside) {
-        markFirstInteraction();
-      }
-
-      if (!interaction.dragging) {
-        return;
-      }
-
-      if (
-        interaction.activePointerId !== null &&
-        event.pointerId !== interaction.activePointerId
-      ) {
-        return;
-      }
-
-      const animation = activeSettings.animation;
-
-      if (!animation.followDragEnabled) {
-        return;
-      }
-
-      const deltaX =
-        (event.clientX - interaction.pointerX) * animation.dragSens;
-      const deltaY =
-        (event.clientY - interaction.pointerY) * animation.dragSens;
-      interaction.velocityX = deltaY;
-      interaction.velocityY = deltaX;
-      interaction.targetRotationY += deltaX;
-      interaction.targetRotationX += deltaY;
-      interaction.pointerX = event.clientX;
-      interaction.pointerY = event.clientY;
-    };
-
-    const handlePointerLeave = () => {
-      const interaction = interactionReference.current;
-      const activeSettings = settingsReference.current;
-
-      if (interaction.dragging) {
-        return;
-      }
-
-      interaction.pointerInside = false;
-      interaction.pointerVelocityX = 0;
-      interaction.pointerVelocityY = 0;
-
-      if (activeSettings.sourceMode !== 'image') {
-        interaction.mouseX = 0.5;
-        interaction.mouseY = 0.5;
-      }
-
-      canvas.style.cursor = getCanvasCursor(activeSettings, false);
-    };
-
-    const handlePointerUp = (event: PointerEvent) => {
-      const interaction = interactionReference.current;
-      const activeSettings = settingsReference.current;
-      const animation = activeSettings.animation;
-
-      updatePointerPosition(event, { resetVelocity: true });
-      releasePointerCapture(interaction.activePointerId);
-      interaction.activePointerId = null;
-      interaction.dragging = false;
-      const rect = canvas.getBoundingClientRect();
-      interaction.pointerInside =
-        event.clientX >= rect.left &&
-        event.clientX <= rect.right &&
-        event.clientY >= rect.top &&
-        event.clientY <= rect.bottom;
-
-      if (!interaction.pointerInside && activeSettings.sourceMode !== 'image') {
-        interaction.mouseX = 0.5;
-        interaction.mouseY = 0.5;
-      }
-
-      canvas.style.cursor = getCanvasCursor(activeSettings, false);
-
-      if (!animation.springReturnEnabled) {
-        return;
-      }
-
-      const springImpulse = Math.max(animation.springStrength * 10, 1.2);
-      interaction.rotationVelocityX += interaction.velocityX * springImpulse;
-      interaction.rotationVelocityY += interaction.velocityY * springImpulse;
-      interaction.rotationVelocityZ +=
-        interaction.velocityY * springImpulse * 0.12;
-      interaction.targetRotationX = 0;
-      interaction.targetRotationY = 0;
-      interaction.velocityX = 0;
-      interaction.velocityY = 0;
-    };
-
-    const handlePointerCancel = () => {
-      const interaction = interactionReference.current;
-      const activeSettings = settingsReference.current;
-      releasePointerCapture(interaction.activePointerId);
-      interaction.activePointerId = null;
-      interaction.dragging = false;
-      interaction.pointerInside = false;
-      interaction.pointerVelocityX = 0;
-      interaction.pointerVelocityY = 0;
-
-      interaction.mouseX = 0.5;
-      interaction.mouseY = 0.5;
-      interaction.smoothedMouseX = 0.5;
-      interaction.smoothedMouseY = 0.5;
-
-      canvas.style.cursor = getCanvasCursor(activeSettings, false);
-    };
-
-    const handleWindowBlur = () => {
-      handlePointerCancel();
-    };
-
-    canvas.addEventListener('pointermove', handlePointerMove);
-    canvas.addEventListener('pointerleave', handlePointerLeave);
-    canvas.addEventListener('pointerup', handlePointerUp);
-    canvas.addEventListener('pointercancel', handlePointerCancel);
-    window.addEventListener('blur', handleWindowBlur);
-    canvas.addEventListener('pointerdown', handlePointerDown);
-
-    const clock = new THREE.Clock();
-
-    const renderFrame = () => {
-      if (cancelled) {
-        return;
-      }
-
-      animationFrameId = window.requestAnimationFrame(renderFrame);
-
-      const interaction = interactionReference.current;
-      const activeSettings = settingsReference.current;
-      const delta = clock.getDelta();
-      const elapsedTime =
-        (initialPoseReference.current?.timeElapsed ?? 0) +
-        clock.elapsedTime;
-      const baseDistance = previewDistanceReference.current;
-      const logicalWidth = getVirtualWidth();
-      const logicalHeight = getVirtualHeight();
-      const isImageMode = activeSettings.sourceMode === 'image';
-      const hasImageTexture = resources.imageTexture !== null;
-
-      halftoneMaterial.uniforms.time.value = elapsedTime;
-      halftoneMaterial.uniforms.waveAmount.value =
-        activeSettings.animation.waveEnabled && !isImageMode
-          ? activeSettings.animation.waveAmount
-          : 0;
-      halftoneMaterial.uniforms.waveSpeed.value =
-        activeSettings.animation.waveSpeed;
-
-      // Image mode selected but no image loaded yet — show empty canvas
-      if (isImageMode && !hasImageTexture) {
-        renderer.setRenderTarget(null);
-        renderer.clear();
-        return;
-      }
-
-      halftoneMaterial.uniforms.cropToBounds.value = isImageMode ? 1 : 0;
-
-      if (isImageMode) {
-        const pointerActive = interaction.pointerInside;
-
-        interaction.smoothedMouseX +=
-          (interaction.mouseX - interaction.smoothedMouseX) *
-          IMAGE_POINTER_FOLLOW;
-        interaction.smoothedMouseY +=
-          (interaction.mouseY - interaction.smoothedMouseY) *
-          IMAGE_POINTER_FOLLOW;
-        interaction.pointerVelocityX *= IMAGE_POINTER_VELOCITY_DAMPING;
-        interaction.pointerVelocityY *= IMAGE_POINTER_VELOCITY_DAMPING;
-
-        halftoneMaterial.uniforms.interactionUv.value.set(
-          interaction.smoothedMouseX,
-          1 - interaction.smoothedMouseY,
-        );
-        halftoneMaterial.uniforms.interactionVelocity.value.set(
-          interaction.pointerVelocityX * logicalWidth,
-          -interaction.pointerVelocityY * logicalHeight,
-        );
-        halftoneMaterial.uniforms.dragOffset.value.set(0, 0);
-        halftoneMaterial.uniforms.hoverLightStrength.value =
-          pointerActive && activeSettings.animation.hoverLightEnabled
-            ? activeSettings.animation.hoverLightIntensity
-            : 0;
-        halftoneMaterial.uniforms.hoverLightRadius.value =
-          activeSettings.animation.hoverLightRadius;
-        halftoneMaterial.uniforms.hoverFlowStrength.value = 0;
-        halftoneMaterial.uniforms.hoverFlowRadius.value = 0.18;
-        halftoneMaterial.uniforms.dragFlowStrength.value = 0;
-
-        imageMaterial.uniforms.zoom.value = getImagePreviewZoom(baseDistance);
-        imageMaterial.uniforms.viewportSize.value.set(
-          logicalWidth,
-          logicalHeight,
-        );
-        halftoneMaterial.uniforms.footprintScale.value = getImageHalftoneScale(
-          logicalWidth,
-          logicalHeight,
-          baseDistance,
-        );
-
-        poseChangeReference.current({
-          autoElapsed: 0,
-          rotateElapsed: 0,
-          rotationX: 0,
-          rotationY: 0,
-          rotationZ: 0,
-          targetRotationX: interaction.targetRotationX,
-          targetRotationY: interaction.targetRotationY,
-          timeElapsed: elapsedTime,
-        });
-
-        if (!activeSettings.halftone.enabled) {
-          renderer.setRenderTarget(null);
-          renderer.clear();
-          renderer.render(imageScene, orthographicCamera);
-          return;
-        }
-
-        renderer.setRenderTarget(sceneTarget);
-        renderer.render(imageScene, orthographicCamera);
-      }
-
-      if (!isImageMode) {
-        let baseRotationX = 0;
-        let baseRotationY = 0;
-        let baseRotationZ = 0;
-        let meshOffsetY = 0;
-        let meshScale = 1;
-        let lightAngle = activeSettings.lighting.angleDegrees;
-        let lightHeight = activeSettings.lighting.height;
-
-        if (activeSettings.animation.autoRotateEnabled) {
-          interaction.autoElapsed += delta;
-          baseRotationY +=
-            interaction.autoElapsed * activeSettings.animation.autoSpeed;
-          baseRotationX +=
-            Math.sin(interaction.autoElapsed * 0.2) *
-            activeSettings.animation.autoWobble;
-        }
-
-        if (activeSettings.animation.floatEnabled) {
-          const floatPhase = elapsedTime * activeSettings.animation.floatSpeed;
-          const driftAmount =
-            (activeSettings.animation.driftAmount * Math.PI) / 180;
-
-          meshOffsetY +=
-            Math.sin(floatPhase) * activeSettings.animation.floatAmplitude;
-          baseRotationX += Math.sin(floatPhase * 0.72) * driftAmount * 0.45;
-          baseRotationZ += Math.cos(floatPhase * 0.93) * driftAmount * 0.3;
-        }
-
-        if (activeSettings.animation.breatheEnabled) {
-          meshScale *=
-            1 +
-            Math.sin(elapsedTime * activeSettings.animation.breatheSpeed) *
-              activeSettings.animation.breatheAmount;
-        }
-
-        if (activeSettings.animation.rotateEnabled) {
-          interaction.rotateElapsed += delta;
-          const rotateProgress = activeSettings.animation.rotatePingPong
-            ? Math.sin(
-                interaction.rotateElapsed *
-                  activeSettings.animation.rotateSpeed,
-              ) * Math.PI
-            : interaction.rotateElapsed * activeSettings.animation.rotateSpeed;
-
-          if (activeSettings.animation.rotatePreset === 'axis') {
-            const axisDirection =
-              activeSettings.animation.rotateAxis.startsWith('-') ? -1 : 1;
-            const axisProgress = rotateProgress * axisDirection;
-
-            if (
-              activeSettings.animation.rotateAxis === 'x' ||
-              activeSettings.animation.rotateAxis === 'xy' ||
-              activeSettings.animation.rotateAxis === '-x' ||
-              activeSettings.animation.rotateAxis === '-xy'
-            ) {
-              baseRotationX += axisProgress;
-            }
-
-            if (
-              activeSettings.animation.rotateAxis === 'y' ||
-              activeSettings.animation.rotateAxis === 'xy' ||
-              activeSettings.animation.rotateAxis === '-y' ||
-              activeSettings.animation.rotateAxis === '-xy'
-            ) {
-              baseRotationY += axisProgress;
-            }
-
-            if (
-              activeSettings.animation.rotateAxis === 'z' ||
-              activeSettings.animation.rotateAxis === '-z'
-            ) {
-              baseRotationZ += axisProgress;
-            }
-          } else if (activeSettings.animation.rotatePreset === 'lissajous') {
-            baseRotationX += Math.sin(rotateProgress * 0.85) * 0.65;
-            baseRotationY += Math.sin(rotateProgress * 1.35 + 0.8) * 1.05;
-            baseRotationZ += Math.sin(rotateProgress * 0.55 + 1.6) * 0.32;
-          } else if (activeSettings.animation.rotatePreset === 'orbit') {
-            baseRotationX += Math.sin(rotateProgress * 0.75) * 0.42;
-            baseRotationY += Math.cos(rotateProgress) * 1.2;
-            baseRotationZ += Math.sin(rotateProgress * 1.25) * 0.24;
-          } else if (activeSettings.animation.rotatePreset === 'tumble') {
-            baseRotationX += rotateProgress * 0.55;
-            baseRotationY += Math.sin(rotateProgress * 0.8) * 0.9;
-            baseRotationZ += Math.cos(rotateProgress * 1.1) * 0.38;
-          }
-        }
-
-        if (activeSettings.animation.lightSweepEnabled) {
-          const lightPhase =
-            elapsedTime * activeSettings.animation.lightSweepSpeed;
-          lightAngle +=
-            Math.sin(lightPhase) * activeSettings.animation.lightSweepRange;
-          lightHeight +=
-            Math.cos(lightPhase * 0.85) *
-            activeSettings.animation.lightSweepHeightRange;
-        }
-
-        let targetX = baseRotationX;
-        let targetY = baseRotationY;
-        let easing = 0.12;
-
-        if (activeSettings.animation.followHoverEnabled) {
-          const rangeRadians =
-            (activeSettings.animation.hoverRange * Math.PI) / 180;
-
-          if (
-            activeSettings.animation.hoverReturn ||
-            interaction.mouseX !== 0.5 ||
-            interaction.mouseY !== 0.5
-          ) {
-            targetX += (interaction.mouseY - 0.5) * rangeRadians;
-            targetY += (interaction.mouseX - 0.5) * rangeRadians;
-          }
-
-          easing = activeSettings.animation.hoverEase;
-        }
-
-        if (activeSettings.animation.followDragEnabled) {
-          if (!interaction.dragging && activeSettings.animation.dragMomentum) {
-            interaction.targetRotationX += interaction.velocityX;
-            interaction.targetRotationY += interaction.velocityY;
-            interaction.velocityX *= 1 - activeSettings.animation.dragFriction;
-            interaction.velocityY *= 1 - activeSettings.animation.dragFriction;
-          }
-
-          targetX += interaction.targetRotationX;
-          targetY += interaction.targetRotationY;
-          easing = activeSettings.animation.dragFriction;
-        }
-
-        if (
-          activeSettings.animation.autoRotateEnabled &&
-          !activeSettings.animation.followHoverEnabled &&
-          !activeSettings.animation.followDragEnabled
-        ) {
-          targetX = baseRotationX + interaction.targetRotationX;
-          targetY = baseRotationY + interaction.targetRotationY;
-
-          if (interaction.dragging) {
-            targetX = interaction.targetRotationX;
-            targetY = interaction.targetRotationY;
-          }
-
-          easing = 0.08;
-        }
-
-        if (activeSettings.animation.springReturnEnabled) {
-          const springX = applySpringStep(
-            interaction.rotationX,
-            targetX,
-            interaction.rotationVelocityX,
-            activeSettings.animation.springStrength,
-            activeSettings.animation.springDamping,
-          );
-          const springY = applySpringStep(
-            interaction.rotationY,
-            targetY,
-            interaction.rotationVelocityY,
-            activeSettings.animation.springStrength,
-            activeSettings.animation.springDamping,
-          );
-          const springZ = applySpringStep(
-            interaction.rotationZ,
-            baseRotationZ,
-            interaction.rotationVelocityZ,
-            activeSettings.animation.springStrength,
-            activeSettings.animation.springDamping,
-          );
-
-          interaction.rotationX = springX.value;
-          interaction.rotationY = springY.value;
-          interaction.rotationZ = springZ.value;
-          interaction.rotationVelocityX = springX.velocity;
-          interaction.rotationVelocityY = springY.velocity;
-          interaction.rotationVelocityZ = springZ.velocity;
-        } else {
-          interaction.rotationX += (targetX - interaction.rotationX) * easing;
-          interaction.rotationY += (targetY - interaction.rotationY) * easing;
-          interaction.rotationZ +=
-            (baseRotationZ - interaction.rotationZ) *
-            (activeSettings.animation.rotatePingPong ? 0.18 : 0.12);
-        }
-
-        mesh.rotation.set(
-          interaction.rotationX,
-          interaction.rotationY,
-          interaction.rotationZ,
-        );
-        mesh.position.y = meshOffsetY;
-        mesh.scale.setScalar(meshScale);
-
-        if (activeSettings.animation.cameraParallaxEnabled) {
-          const cameraRange = activeSettings.animation.cameraParallaxAmount;
-          const cameraEase = activeSettings.animation.cameraParallaxEase;
-          const centeredX = (interaction.mouseX - 0.5) * 2;
-          const centeredY = (0.5 - interaction.mouseY) * 2;
-          const orbitYaw = centeredX * cameraRange;
-          const orbitPitch = centeredY * cameraRange * 0.7;
-          const horizontalRadius = Math.cos(orbitPitch) * baseDistance;
-          const targetCameraX = Math.sin(orbitYaw) * horizontalRadius;
-          const targetCameraY = Math.sin(orbitPitch) * baseDistance * 0.85;
-          const targetCameraZ = Math.cos(orbitYaw) * horizontalRadius;
-
-          camera.position.x += (targetCameraX - camera.position.x) * cameraEase;
-          camera.position.y += (targetCameraY - camera.position.y) * cameraEase;
-          camera.position.z += (targetCameraZ - camera.position.z) * cameraEase;
-        } else {
-          camera.position.x += (0 - camera.position.x) * 0.12;
-          camera.position.y += (0 - camera.position.y) * 0.12;
-          camera.position.z += (baseDistance - camera.position.z) * 0.12;
-        }
-
-        const lookAtTarget = new THREE.Vector3(0, meshOffsetY * 0.2, 0);
-
-        camera.lookAt(lookAtTarget);
-        setPrimaryLightPosition(primaryLight, lightAngle, lightHeight);
-        halftoneMaterial.uniforms.footprintScale.value = getMeshHalftoneScale(
-          logicalWidth,
-          logicalHeight,
-          lookAtTarget,
-        );
-
-        poseChangeReference.current({
-          autoElapsed: interaction.autoElapsed,
-          rotateElapsed: interaction.rotateElapsed,
-          rotationX: interaction.rotationX,
-          rotationY: interaction.rotationY,
-          rotationZ: interaction.rotationZ,
-          targetRotationX: interaction.targetRotationX,
-          targetRotationY: interaction.targetRotationY,
-          timeElapsed: elapsedTime,
-        });
-
-        if (!activeSettings.halftone.enabled) {
-          renderer.setRenderTarget(null);
-          renderer.clear();
-          renderer.render(scene3d, camera);
-          return;
-        }
-
-        renderer.setRenderTarget(sceneTarget);
-        renderer.render(scene3d, camera);
-        halftoneMaterial.uniforms.hoverLightStrength.value = 0;
-        halftoneMaterial.uniforms.hoverFlowStrength.value = 0;
-        halftoneMaterial.uniforms.dragFlowStrength.value = 0;
-        halftoneMaterial.uniforms.interactionVelocity.value.set(0, 0);
-        halftoneMaterial.uniforms.dragOffset.value.set(0, 0);
-      } // end if (!isImageMode)
-
-      blurHorizontalMaterial.uniforms.tInput.value = sceneTarget.texture;
-      renderer.setRenderTarget(blurTargetA);
-      renderer.render(blurHorizontalScene, orthographicCamera);
-
-      blurVerticalMaterial.uniforms.tInput.value = blurTargetA.texture;
-      renderer.setRenderTarget(blurTargetB);
-      renderer.render(blurVerticalScene, orthographicCamera);
-
-      blurHorizontalMaterial.uniforms.tInput.value = blurTargetB.texture;
-      renderer.setRenderTarget(blurTargetA);
-      renderer.render(blurHorizontalScene, orthographicCamera);
-
-      blurVerticalMaterial.uniforms.tInput.value = blurTargetA.texture;
-      renderer.setRenderTarget(blurTargetB);
-      renderer.render(blurVerticalScene, orthographicCamera);
-
-      renderer.setRenderTarget(null);
-      renderer.clear();
-      renderer.render(postScene, orthographicCamera);
-    };
-
-    renderFrame();
-
-    return () => {
-      cancelled = true;
-      resizeObserver.disconnect();
-      canvas.removeEventListener('pointermove', handlePointerMove);
-      canvas.removeEventListener('pointerleave', handlePointerLeave);
-      canvas.removeEventListener('pointerup', handlePointerUp);
-      canvas.removeEventListener('pointercancel', handlePointerCancel);
-      window.removeEventListener('blur', handleWindowBlur);
-      canvas.removeEventListener('pointerdown', handlePointerDown);
-      window.cancelAnimationFrame(animationFrameId);
-
-      blurHorizontalMaterial.dispose();
-      blurVerticalMaterial.dispose();
-      halftoneMaterial.dispose();
-      imageMaterial.dispose();
-
-      if (resources.imageTexture) {
-        resources.imageTexture.dispose();
-      }
-
-      fullScreenGeometry.dispose();
-      material.dispose();
-      sceneTarget.dispose();
-      blurTargetA.dispose();
-      blurTargetB.dispose();
-      environmentTexture.dispose();
+    let cleanup = () => {
       renderer.dispose();
       resourcesReference.current = null;
 
-      if (snapshotRef) {
-        snapshotRef.current = null;
+      if (activeSnapshotRef) {
+        activeSnapshotRef.current = null;
       }
 
       if (canvas.parentNode === container) {
         container.removeChild(canvas);
       }
+    };
+
+    void (async () => {
+      const materialAssets = await createHalftoneMaterialAssets(renderer);
+
+      if (cancelled) {
+        disposeHalftoneMaterialAssets(materialAssets);
+        cleanup();
+
+        return;
+      }
+
+      const scene3d = new THREE.Scene();
+      scene3d.background = null;
+
+      const camera = new THREE.PerspectiveCamera(
+        45,
+        getWidth() / getHeight(),
+        0.1,
+        100,
+      );
+      camera.position.z = initialPreviewDistance;
+
+      const primaryLight = new THREE.DirectionalLight(0xffffff, 1.5);
+      scene3d.add(primaryLight);
+
+      const fillLight = new THREE.DirectionalLight(0xffffff, 0.15);
+      fillLight.position.set(-3, -1, 1);
+      scene3d.add(fillLight);
+
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.08);
+      scene3d.add(ambientLight);
+
+      const material = createHalftoneMaterial();
+      applyHalftoneMaterialSettings(
+        material,
+        settingsReference.current.material,
+        materialAssets,
+      );
+
+      const currentGeometry = geometryReference.current;
+
+      if (!currentGeometry) {
+        disposeHalftoneMaterialAssets(materialAssets);
+        cleanup();
+
+        return;
+      }
+
+      const mesh = new THREE.Mesh(currentGeometry, material);
+      scene3d.add(mesh);
+
+      const sceneTarget = createRenderTarget(
+        getRenderWidth(),
+        getRenderHeight(),
+      );
+      const transmissionBacksideTarget = createRenderTarget(
+        getRenderWidth(),
+        getRenderHeight(),
+      );
+      const transmissionTarget = createRenderTarget(
+        getRenderWidth(),
+        getRenderHeight(),
+      );
+      const blurTargetA = createRenderTarget(
+        getRenderWidth(),
+        getRenderHeight(),
+      );
+      const blurTargetB = createRenderTarget(
+        getRenderWidth(),
+        getRenderHeight(),
+      );
+      const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
+      const orthographicCamera = new THREE.OrthographicCamera(
+        -1,
+        1,
+        1,
+        -1,
+        0,
+        1,
+      );
+
+      const blurHorizontalMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+          tInput: { value: null },
+          dir: { value: new THREE.Vector2(1, 0) },
+          res: {
+            value: new THREE.Vector2(getRenderWidth(), getRenderHeight()),
+          },
+        },
+        vertexShader: passThroughVertexShader,
+        fragmentShader: blurFragmentShader,
+      });
+
+      const blurVerticalMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+          tInput: { value: null },
+          dir: { value: new THREE.Vector2(0, 1) },
+          res: {
+            value: new THREE.Vector2(getRenderWidth(), getRenderHeight()),
+          },
+        },
+        vertexShader: passThroughVertexShader,
+        fragmentShader: blurFragmentShader,
+      });
+
+      const halftoneMaterial = new THREE.ShaderMaterial({
+        transparent: true,
+        uniforms: {
+          tScene: { value: sceneTarget.texture },
+          tGlow: { value: blurTargetB.texture },
+          effectResolution: {
+            value: new THREE.Vector2(getRenderWidth(), getRenderHeight()),
+          },
+          logicalResolution: {
+            value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
+          },
+          tile: { value: initialSettings.halftone.scale },
+          s_3: { value: initialSettings.halftone.power },
+          s_4: { value: initialSettings.halftone.width },
+          dashColor: {
+            value: new THREE.Color(initialSettings.halftone.dashColor),
+          },
+          time: { value: 0 },
+          waveAmount: { value: 0 },
+          waveSpeed: { value: 1 },
+          footprintScale: { value: 1.0 },
+          interactionUv: { value: new THREE.Vector2(0.5, 0.5) },
+          interactionVelocity: { value: new THREE.Vector2(0, 0) },
+          dragOffset: { value: new THREE.Vector2(0, 0) },
+          hoverHalftonePowerShift: { value: 0 },
+          hoverHalftoneRadius: { value: 0.2 },
+          hoverHalftoneWidthShift: { value: 0 },
+          hoverLightStrength: { value: 0 },
+          hoverLightRadius: { value: 0.2 },
+          hoverFlowStrength: { value: 0 },
+          hoverFlowRadius: { value: 0.18 },
+          dragFlowStrength: { value: 0 },
+          cropToBounds: { value: 0 },
+        },
+        vertexShader: passThroughVertexShader,
+        fragmentShader: halftoneFragmentShader,
+      });
+
+      const blurHorizontalScene = new THREE.Scene();
+      blurHorizontalScene.add(
+        new THREE.Mesh(fullScreenGeometry, blurHorizontalMaterial),
+      );
+
+      const blurVerticalScene = new THREE.Scene();
+      blurVerticalScene.add(
+        new THREE.Mesh(fullScreenGeometry, blurVerticalMaterial),
+      );
+
+      const postScene = new THREE.Scene();
+      postScene.add(new THREE.Mesh(fullScreenGeometry, halftoneMaterial));
+
+      const imageMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+          tImage: { value: null },
+          imageSize: { value: new THREE.Vector2(1, 1) },
+          viewportSize: {
+            value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
+          },
+          zoom: { value: getImagePreviewZoom(initialPreviewDistance) },
+          contrast: { value: initialSettings.halftone.imageContrast },
+        },
+        vertexShader: passThroughVertexShader,
+        fragmentShader: imagePassthroughFragmentShader,
+      });
+
+      const imageScene = new THREE.Scene();
+      imageScene.add(new THREE.Mesh(fullScreenGeometry, imageMaterial));
+
+      const resources: SceneResources = {
+        ambientLight,
+        blurHorizontalMaterial,
+        blurHorizontalScene,
+        blurTargetA,
+        blurTargetB,
+        blurVerticalMaterial,
+        blurVerticalScene,
+        camera,
+        canvas,
+        fillLight,
+        fullScreenGeometry,
+        halftoneMaterial,
+        imageMaterial,
+        imageScene,
+        imageTexture: null,
+        materialAssets,
+        material,
+        mesh,
+        orthographicCamera,
+        postScene,
+        primaryLight,
+        renderer,
+        scene3d,
+        sceneTarget,
+        transmissionBacksideTarget,
+        transmissionTarget,
+      };
+
+      const updateViewportUniforms = (
+        logicalWidth: number,
+        logicalHeight: number,
+        effectWidth: number,
+        effectHeight: number,
+      ) => {
+        blurHorizontalMaterial.uniforms.res.value.set(
+          effectWidth,
+          effectHeight,
+        );
+        blurVerticalMaterial.uniforms.res.value.set(effectWidth, effectHeight);
+        halftoneMaterial.uniforms.effectResolution.value.set(
+          effectWidth,
+          effectHeight,
+        );
+        halftoneMaterial.uniforms.logicalResolution.value.set(
+          logicalWidth,
+          logicalHeight,
+        );
+        imageMaterial.uniforms.viewportSize.value.set(
+          logicalWidth,
+          logicalHeight,
+        );
+      };
+
+      const getImageHalftoneScale = (
+        viewportWidth: number,
+        viewportHeight: number,
+        activePreviewDistance: number,
+      ) => {
+        const imageSize = imageMaterial.uniforms.imageSize
+          .value as THREE.Vector2;
+
+        return getImageFootprintScale({
+          imageHeight: imageSize.y,
+          imageWidth: imageSize.x,
+          previewDistance: activePreviewDistance,
+          viewportHeight,
+          viewportWidth,
+        });
+      };
+
+      const getMeshHalftoneScale = (
+        viewportWidth: number,
+        viewportHeight: number,
+        lookAtTarget: THREE.Vector3,
+      ) => {
+        if (!mesh.geometry.boundingBox) {
+          mesh.geometry.computeBoundingBox();
+        }
+
+        const localBounds = mesh.geometry.boundingBox;
+
+        if (!localBounds) {
+          return 1;
+        }
+
+        mesh.updateMatrixWorld();
+        camera.updateMatrixWorld();
+
+        return getMeshFootprintScale({
+          camera,
+          localBounds,
+          lookAtTarget,
+          meshMatrixWorld: mesh.matrixWorld,
+          viewportHeight,
+          viewportWidth,
+        });
+      };
+
+      resourcesReference.current = resources;
+      const latestGeometry = geometryReference.current;
+
+      if (latestGeometry && resources.mesh.geometry !== latestGeometry) {
+        resources.mesh.geometry = latestGeometry;
+      }
+
+      syncResources(resources, settingsReference.current);
+
+      const captureSnapshot: HalftoneSnapshotFn = async (
+        snapshotWidth: number,
+        snapshotHeight: number,
+        options,
+      ) => {
+        const activeSettings = settingsReference.current;
+        const isImage =
+          activeSettings.sourceMode === 'image' &&
+          resources.imageTexture !== null;
+        const includeBackground = options?.includeBackground ?? false;
+        const backgroundColor =
+          options?.backgroundColor ?? activeSettings.background.color;
+
+        const snapScene = createRenderTarget(snapshotWidth, snapshotHeight);
+        const snapTransmissionBackside = createRenderTarget(
+          snapshotWidth,
+          snapshotHeight,
+        );
+        const snapTransmission = createRenderTarget(
+          snapshotWidth,
+          snapshotHeight,
+        );
+        const snapBlurA = createRenderTarget(snapshotWidth, snapshotHeight);
+        const snapBlurB = createRenderTarget(snapshotWidth, snapshotHeight);
+
+        const prevSize = renderer.getSize(new THREE.Vector2());
+
+        renderer.setSize(snapshotWidth, snapshotHeight, false);
+
+        updateViewportUniforms(
+          snapshotWidth,
+          snapshotHeight,
+          snapshotWidth,
+          snapshotHeight,
+        );
+        halftoneMaterial.uniforms.hoverHalftonePowerShift.value = 0;
+        halftoneMaterial.uniforms.hoverHalftoneWidthShift.value = 0;
+        halftoneMaterial.uniforms.hoverLightStrength.value = 0;
+        halftoneMaterial.uniforms.hoverFlowStrength.value = 0;
+        halftoneMaterial.uniforms.dragFlowStrength.value = 0;
+        halftoneMaterial.uniforms.interactionVelocity.value.set(0, 0);
+        halftoneMaterial.uniforms.dragOffset.value.set(0, 0);
+        halftoneMaterial.uniforms.cropToBounds.value = isImage ? 1 : 0;
+
+        if (isImage) {
+          imageMaterial.uniforms.zoom.value = getImagePreviewZoom(
+            previewDistanceReference.current,
+          );
+          halftoneMaterial.uniforms.footprintScale.value =
+            getImageHalftoneScale(
+              snapshotWidth,
+              snapshotHeight,
+              previewDistanceReference.current,
+            );
+        } else {
+          camera.aspect = snapshotWidth / snapshotHeight;
+          camera.updateProjectionMatrix();
+          halftoneMaterial.uniforms.footprintScale.value = getMeshHalftoneScale(
+            snapshotWidth,
+            snapshotHeight,
+            new THREE.Vector3(0, mesh.position.y * 0.2, 0),
+          );
+        }
+
+        if (isImage) {
+          renderer.setRenderTarget(snapScene);
+          renderer.render(imageScene, orthographicCamera);
+        } else {
+          renderHalftoneMaterialScene({
+            camera,
+            elapsedTime: halftoneMaterial.uniforms.time.value as number,
+            material,
+            mesh,
+            outputTarget: snapScene,
+            renderer,
+            scene: scene3d,
+            transmissionBackground: materialAssets.glassBackgroundTexture,
+            transmissionScene: materialAssets.glassTransmissionScene,
+            transmissionBacksideTarget: snapTransmissionBackside,
+            transmissionTarget: snapTransmission,
+          });
+        }
+
+        halftoneMaterial.uniforms.tScene.value = snapScene.texture;
+
+        blurHorizontalMaterial.uniforms.tInput.value = snapScene.texture;
+        renderer.setRenderTarget(snapBlurA);
+        renderer.render(blurHorizontalScene, orthographicCamera);
+
+        blurVerticalMaterial.uniforms.tInput.value = snapBlurA.texture;
+        renderer.setRenderTarget(snapBlurB);
+        renderer.render(blurVerticalScene, orthographicCamera);
+
+        blurHorizontalMaterial.uniforms.tInput.value = snapBlurB.texture;
+        renderer.setRenderTarget(snapBlurA);
+        renderer.render(blurHorizontalScene, orthographicCamera);
+
+        blurVerticalMaterial.uniforms.tInput.value = snapBlurA.texture;
+        renderer.setRenderTarget(snapBlurB);
+        renderer.render(blurVerticalScene, orthographicCamera);
+
+        halftoneMaterial.uniforms.tGlow.value = snapBlurB.texture;
+
+        const outputTarget = createRenderTarget(snapshotWidth, snapshotHeight);
+        renderer.setRenderTarget(outputTarget);
+        renderer.clear();
+        renderer.render(postScene, orthographicCamera);
+
+        const pixelBuffer = new Uint8Array(snapshotWidth * snapshotHeight * 4);
+        renderer.readRenderTargetPixels(
+          outputTarget,
+          0,
+          0,
+          snapshotWidth,
+          snapshotHeight,
+          pixelBuffer,
+        );
+
+        renderer.setSize(prevSize.x, prevSize.y, false);
+        halftoneMaterial.uniforms.tScene.value = sceneTarget.texture;
+        halftoneMaterial.uniforms.tGlow.value = blurTargetB.texture;
+        updateViewportUniforms(
+          getVirtualWidth(),
+          getVirtualHeight(),
+          prevSize.x,
+          prevSize.y,
+        );
+        if (isImage) {
+          imageMaterial.uniforms.zoom.value = getImagePreviewZoom(
+            previewDistanceReference.current,
+          );
+        } else {
+          camera.aspect = getWidth() / Math.max(getHeight(), 1);
+          camera.updateProjectionMatrix();
+        }
+
+        snapScene.dispose();
+        snapTransmissionBackside.dispose();
+        snapTransmission.dispose();
+        snapBlurA.dispose();
+        snapBlurB.dispose();
+        outputTarget.dispose();
+
+        const flippedBuffer = new Uint8Array(
+          snapshotWidth * snapshotHeight * 4,
+        );
+        const rowSize = snapshotWidth * 4;
+        for (let y = 0; y < snapshotHeight; y++) {
+          const srcOffset = y * rowSize;
+          const dstOffset = (snapshotHeight - 1 - y) * rowSize;
+          flippedBuffer.set(
+            pixelBuffer.subarray(srcOffset, srcOffset + rowSize),
+            dstOffset,
+          );
+        }
+
+        const fullSnapshotBounds = {
+          minX: 0,
+          minY: 0,
+          maxX: snapshotWidth - 1,
+          maxY: snapshotHeight - 1,
+        };
+        const alphaCropBounds = getAlphaCropBounds(
+          flippedBuffer,
+          snapshotWidth,
+          snapshotHeight,
+        );
+        const cropBounds = includeBackground
+          ? fullSnapshotBounds
+          : (alphaCropBounds ?? fullSnapshotBounds);
+        const croppedWidth = cropBounds.maxX - cropBounds.minX + 1;
+        const croppedHeight = cropBounds.maxY - cropBounds.minY + 1;
+        const croppedBuffer = new Uint8ClampedArray(
+          croppedWidth * croppedHeight * 4,
+        );
+
+        for (let y = 0; y < croppedHeight; y++) {
+          const sourceStart =
+            ((cropBounds.minY + y) * snapshotWidth + cropBounds.minX) * 4;
+          const sourceEnd = sourceStart + croppedWidth * 4;
+          const destinationStart = y * croppedWidth * 4;
+
+          croppedBuffer.set(
+            flippedBuffer.subarray(sourceStart, sourceEnd),
+            destinationStart,
+          );
+        }
+
+        const imageData = new ImageData(
+          croppedBuffer,
+          croppedWidth,
+          croppedHeight,
+        );
+        const offscreen = document.createElement('canvas');
+        offscreen.width = croppedWidth;
+        offscreen.height = croppedHeight;
+        const ctx = offscreen.getContext('2d');
+
+        if (!ctx) {
+          return null;
+        }
+
+        if (includeBackground) {
+          const sourceCanvas = document.createElement('canvas');
+          sourceCanvas.width = croppedWidth;
+          sourceCanvas.height = croppedHeight;
+          const sourceContext = sourceCanvas.getContext('2d');
+
+          if (!sourceContext) {
+            return null;
+          }
+
+          sourceContext.putImageData(imageData, 0, 0);
+          ctx.fillStyle = backgroundColor;
+          ctx.fillRect(0, 0, croppedWidth, croppedHeight);
+          ctx.drawImage(sourceCanvas, 0, 0);
+        } else {
+          ctx.putImageData(imageData, 0, 0);
+        }
+
+        return new Promise<Blob | null>((resolve) => {
+          offscreen.toBlob((blob) => resolve(blob), 'image/png');
+        });
+      };
+
+      if (activeSnapshotRef) {
+        activeSnapshotRef.current = captureSnapshot;
+      }
+
+      const syncSize = () => {
+        if (cancelled) {
+          return;
+        }
+
+        const width = getWidth();
+        const height = getHeight();
+        const logicalWidth = getVirtualWidth();
+        const logicalHeight = getVirtualHeight();
+        const renderWidth = getRenderWidth();
+        const renderHeight = getRenderHeight();
+
+        renderer.setSize(renderWidth, renderHeight, false);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        sceneTarget.setSize(renderWidth, renderHeight);
+        transmissionBacksideTarget.setSize(renderWidth, renderHeight);
+        transmissionTarget.setSize(renderWidth, renderHeight);
+        blurTargetA.setSize(renderWidth, renderHeight);
+        blurTargetB.setSize(renderWidth, renderHeight);
+        updateViewportUniforms(
+          logicalWidth,
+          logicalHeight,
+          renderWidth,
+          renderHeight,
+        );
+      };
+
+      const resizeObserver = new ResizeObserver(syncSize);
+      resizeObserver.observe(container);
+
+      const updatePointerPosition = (
+        event: PointerEvent,
+        options?: { resetVelocity?: boolean },
+      ) => {
+        const interaction = interactionReference.current;
+        const rect = canvas.getBoundingClientRect();
+        const width = Math.max(rect.width, 1);
+        const height = Math.max(rect.height, 1);
+
+        const nextMouseX = THREE.MathUtils.clamp(
+          (event.clientX - rect.left) / width,
+          0,
+          1,
+        );
+        const nextMouseY = THREE.MathUtils.clamp(
+          (event.clientY - rect.top) / height,
+          0,
+          1,
+        );
+
+        const deltaX = nextMouseX - interaction.mouseX;
+        const deltaY = nextMouseY - interaction.mouseY;
+
+        interaction.mouseX = nextMouseX;
+        interaction.mouseY = nextMouseY;
+        interaction.pointerInside =
+          interaction.dragging ||
+          (event.clientX >= rect.left &&
+            event.clientX <= rect.right &&
+            event.clientY >= rect.top &&
+            event.clientY <= rect.bottom);
+
+        if (options?.resetVelocity) {
+          interaction.pointerVelocityX = 0;
+          interaction.pointerVelocityY = 0;
+          interaction.smoothedMouseX = nextMouseX;
+          interaction.smoothedMouseY = nextMouseY;
+        } else {
+          interaction.pointerVelocityX = deltaX;
+          interaction.pointerVelocityY = deltaY;
+        }
+
+        return { deltaX, deltaY };
+      };
+
+      const releasePointerCapture = (pointerId: number | null) => {
+        if (pointerId === null) {
+          return;
+        }
+
+        if (!canvas.hasPointerCapture(pointerId)) {
+          return;
+        }
+
+        try {
+          canvas.releasePointerCapture(pointerId);
+        } catch (error) {
+          void error;
+        }
+      };
+
+      const markFirstInteraction = () => {
+        if (didInteractReference.current) {
+          return;
+        }
+
+        didInteractReference.current = true;
+        onFirstInteraction();
+      };
+
+      const handlePointerDown = (event: PointerEvent) => {
+        const interaction = interactionReference.current;
+        const activeSettings = settingsReference.current;
+        const canDrag =
+          activeSettings.sourceMode === 'image'
+            ? false
+            : activeSettings.animation.followDragEnabled;
+
+        updatePointerPosition(event, { resetVelocity: true });
+        interaction.pointerX = event.clientX;
+        interaction.pointerY = event.clientY;
+
+        if (canDrag) {
+          interaction.dragging = true;
+          interaction.activePointerId = event.pointerId;
+          interaction.velocityX = 0;
+          interaction.velocityY = 0;
+
+          try {
+            canvas.setPointerCapture(event.pointerId);
+          } catch (error) {
+            void error;
+          }
+        }
+
+        canvas.style.cursor = getCanvasCursor(
+          activeSettings,
+          interaction.dragging,
+        );
+
+        markFirstInteraction();
+      };
+
+      const handlePointerMove = (event: PointerEvent) => {
+        const interaction = interactionReference.current;
+        const resetVelocity =
+          !interaction.pointerInside && !interaction.dragging;
+        updatePointerPosition(
+          event,
+          resetVelocity ? { resetVelocity: true } : undefined,
+        );
+        const activeSettings = settingsReference.current;
+
+        if (
+          activeSettings.sourceMode === 'image' &&
+          interaction.pointerInside
+        ) {
+          markFirstInteraction();
+        }
+
+        if (!interaction.dragging) {
+          return;
+        }
+
+        if (
+          interaction.activePointerId !== null &&
+          event.pointerId !== interaction.activePointerId
+        ) {
+          return;
+        }
+
+        const animation = activeSettings.animation;
+
+        if (!animation.followDragEnabled) {
+          return;
+        }
+
+        const deltaX =
+          (event.clientX - interaction.pointerX) * animation.dragSens;
+        const deltaY =
+          (event.clientY - interaction.pointerY) * animation.dragSens;
+        interaction.velocityX = deltaY;
+        interaction.velocityY = deltaX;
+        interaction.targetRotationY += deltaX;
+        interaction.targetRotationX += deltaY;
+        interaction.pointerX = event.clientX;
+        interaction.pointerY = event.clientY;
+      };
+
+      const handlePointerLeave = () => {
+        const interaction = interactionReference.current;
+        const activeSettings = settingsReference.current;
+
+        if (interaction.dragging) {
+          return;
+        }
+
+        interaction.pointerInside = false;
+        interaction.pointerVelocityX = 0;
+        interaction.pointerVelocityY = 0;
+
+        if (activeSettings.sourceMode !== 'image') {
+          interaction.mouseX = 0.5;
+          interaction.mouseY = 0.5;
+        }
+
+        canvas.style.cursor = getCanvasCursor(activeSettings, false);
+      };
+
+      const handlePointerUp = (event: PointerEvent) => {
+        const interaction = interactionReference.current;
+        const activeSettings = settingsReference.current;
+        const animation = activeSettings.animation;
+
+        updatePointerPosition(event, { resetVelocity: true });
+        releasePointerCapture(interaction.activePointerId);
+        interaction.activePointerId = null;
+        interaction.dragging = false;
+        const rect = canvas.getBoundingClientRect();
+        interaction.pointerInside =
+          event.clientX >= rect.left &&
+          event.clientX <= rect.right &&
+          event.clientY >= rect.top &&
+          event.clientY <= rect.bottom;
+
+        if (
+          !interaction.pointerInside &&
+          activeSettings.sourceMode !== 'image'
+        ) {
+          interaction.mouseX = 0.5;
+          interaction.mouseY = 0.5;
+        }
+
+        canvas.style.cursor = getCanvasCursor(activeSettings, false);
+
+        if (!animation.springReturnEnabled) {
+          return;
+        }
+
+        const springImpulse = Math.max(animation.springStrength * 10, 1.2);
+        interaction.rotationVelocityX += interaction.velocityX * springImpulse;
+        interaction.rotationVelocityY += interaction.velocityY * springImpulse;
+        interaction.rotationVelocityZ +=
+          interaction.velocityY * springImpulse * 0.12;
+        interaction.targetRotationX = 0;
+        interaction.targetRotationY = 0;
+        interaction.velocityX = 0;
+        interaction.velocityY = 0;
+      };
+
+      const handlePointerCancel = () => {
+        const interaction = interactionReference.current;
+        const activeSettings = settingsReference.current;
+        releasePointerCapture(interaction.activePointerId);
+        interaction.activePointerId = null;
+        interaction.dragging = false;
+        interaction.pointerInside = false;
+        interaction.pointerVelocityX = 0;
+        interaction.pointerVelocityY = 0;
+
+        interaction.mouseX = 0.5;
+        interaction.mouseY = 0.5;
+        interaction.smoothedMouseX = 0.5;
+        interaction.smoothedMouseY = 0.5;
+
+        canvas.style.cursor = getCanvasCursor(activeSettings, false);
+      };
+
+      const handleWindowBlur = () => {
+        handlePointerCancel();
+      };
+
+      canvas.addEventListener('pointermove', handlePointerMove);
+      canvas.addEventListener('pointerleave', handlePointerLeave);
+      canvas.addEventListener('pointerup', handlePointerUp);
+      canvas.addEventListener('pointercancel', handlePointerCancel);
+      window.addEventListener('blur', handleWindowBlur);
+      canvas.addEventListener('pointerdown', handlePointerDown);
+
+      const clock = new THREE.Timer();
+      clock.connect(document);
+
+      const renderFrame = (timestamp?: DOMHighResTimeStamp) => {
+        if (cancelled) {
+          return;
+        }
+
+        animationFrameId = window.requestAnimationFrame(renderFrame);
+        clock.update(timestamp);
+
+        const interaction = interactionReference.current;
+        const activeSettings = settingsReference.current;
+        const delta = clock.getDelta();
+        const elapsedTime =
+          (initialPoseReference.current?.timeElapsed ?? 0) + clock.getElapsed();
+        const baseDistance = previewDistanceReference.current;
+        const logicalWidth = getVirtualWidth();
+        const logicalHeight = getVirtualHeight();
+        const isImageMode = activeSettings.sourceMode === 'image';
+        const hasImageTexture = resources.imageTexture !== null;
+
+        halftoneMaterial.uniforms.time.value = elapsedTime;
+        halftoneMaterial.uniforms.waveAmount.value =
+          activeSettings.animation.waveEnabled && !isImageMode
+            ? activeSettings.animation.waveAmount
+            : 0;
+        halftoneMaterial.uniforms.waveSpeed.value =
+          activeSettings.animation.waveSpeed;
+
+        if (isImageMode && !hasImageTexture) {
+          renderer.setRenderTarget(null);
+          renderer.clear();
+          return;
+        }
+
+        halftoneMaterial.uniforms.cropToBounds.value = isImageMode ? 1 : 0;
+
+        if (isImageMode) {
+          const pointerActive = interaction.pointerInside;
+
+          interaction.smoothedMouseX +=
+            (interaction.mouseX - interaction.smoothedMouseX) *
+            IMAGE_POINTER_FOLLOW;
+          interaction.smoothedMouseY +=
+            (interaction.mouseY - interaction.smoothedMouseY) *
+            IMAGE_POINTER_FOLLOW;
+          interaction.pointerVelocityX *= IMAGE_POINTER_VELOCITY_DAMPING;
+          interaction.pointerVelocityY *= IMAGE_POINTER_VELOCITY_DAMPING;
+
+          halftoneMaterial.uniforms.interactionUv.value.set(
+            interaction.smoothedMouseX,
+            1 - interaction.smoothedMouseY,
+          );
+          halftoneMaterial.uniforms.interactionVelocity.value.set(
+            interaction.pointerVelocityX * logicalWidth,
+            -interaction.pointerVelocityY * logicalHeight,
+          );
+          halftoneMaterial.uniforms.dragOffset.value.set(0, 0);
+          halftoneMaterial.uniforms.hoverHalftonePowerShift.value =
+            pointerActive && activeSettings.animation.hoverHalftoneEnabled
+              ? activeSettings.animation.hoverHalftonePowerShift
+              : 0;
+          halftoneMaterial.uniforms.hoverHalftoneRadius.value =
+            activeSettings.animation.hoverHalftoneRadius;
+          halftoneMaterial.uniforms.hoverHalftoneWidthShift.value =
+            pointerActive && activeSettings.animation.hoverHalftoneEnabled
+              ? activeSettings.animation.hoverHalftoneWidthShift
+              : 0;
+          halftoneMaterial.uniforms.hoverLightStrength.value =
+            pointerActive && activeSettings.animation.hoverLightEnabled
+              ? activeSettings.animation.hoverLightIntensity
+              : 0;
+          halftoneMaterial.uniforms.hoverLightRadius.value =
+            activeSettings.animation.hoverLightRadius;
+          halftoneMaterial.uniforms.hoverFlowStrength.value = 0;
+          halftoneMaterial.uniforms.hoverFlowRadius.value = 0.18;
+          halftoneMaterial.uniforms.dragFlowStrength.value = 0;
+
+          imageMaterial.uniforms.zoom.value = getImagePreviewZoom(baseDistance);
+          imageMaterial.uniforms.viewportSize.value.set(
+            logicalWidth,
+            logicalHeight,
+          );
+          halftoneMaterial.uniforms.footprintScale.value =
+            getImageHalftoneScale(logicalWidth, logicalHeight, baseDistance);
+
+          poseChangeReference.current({
+            autoElapsed: 0,
+            rotateElapsed: 0,
+            rotationX: 0,
+            rotationY: 0,
+            rotationZ: 0,
+            targetRotationX: interaction.targetRotationX,
+            targetRotationY: interaction.targetRotationY,
+            timeElapsed: elapsedTime,
+          });
+
+          if (!activeSettings.halftone.enabled) {
+            renderer.setRenderTarget(null);
+            renderer.clear();
+            renderer.render(imageScene, orthographicCamera);
+            return;
+          }
+
+          renderer.setRenderTarget(sceneTarget);
+          renderer.render(imageScene, orthographicCamera);
+        }
+
+        if (!isImageMode) {
+          let baseRotationX = 0;
+          let baseRotationY = 0;
+          let baseRotationZ = 0;
+          let meshOffsetY = 0;
+          let meshScale = 1;
+          let lightAngle = activeSettings.lighting.angleDegrees;
+          let lightHeight = activeSettings.lighting.height;
+
+          if (activeSettings.animation.autoRotateEnabled) {
+            interaction.autoElapsed += delta;
+            baseRotationY +=
+              interaction.autoElapsed * activeSettings.animation.autoSpeed;
+            baseRotationX +=
+              Math.sin(interaction.autoElapsed * 0.2) *
+              activeSettings.animation.autoWobble;
+          }
+
+          if (activeSettings.animation.floatEnabled) {
+            const floatPhase =
+              elapsedTime * activeSettings.animation.floatSpeed;
+            const driftAmount =
+              (activeSettings.animation.driftAmount * Math.PI) / 180;
+
+            meshOffsetY +=
+              Math.sin(floatPhase) * activeSettings.animation.floatAmplitude;
+            baseRotationX += Math.sin(floatPhase * 0.72) * driftAmount * 0.45;
+            baseRotationZ += Math.cos(floatPhase * 0.93) * driftAmount * 0.3;
+          }
+
+          if (activeSettings.animation.breatheEnabled) {
+            meshScale *=
+              1 +
+              Math.sin(elapsedTime * activeSettings.animation.breatheSpeed) *
+                activeSettings.animation.breatheAmount;
+          }
+
+          if (activeSettings.animation.rotateEnabled) {
+            interaction.rotateElapsed += delta;
+            const rotateProgress = activeSettings.animation.rotatePingPong
+              ? Math.sin(
+                  interaction.rotateElapsed *
+                    activeSettings.animation.rotateSpeed,
+                ) * Math.PI
+              : interaction.rotateElapsed *
+                activeSettings.animation.rotateSpeed;
+
+            if (activeSettings.animation.rotatePreset === 'axis') {
+              const axisDirection =
+                activeSettings.animation.rotateAxis.startsWith('-') ? -1 : 1;
+              const axisProgress = rotateProgress * axisDirection;
+
+              if (
+                activeSettings.animation.rotateAxis === 'x' ||
+                activeSettings.animation.rotateAxis === 'xy' ||
+                activeSettings.animation.rotateAxis === '-x' ||
+                activeSettings.animation.rotateAxis === '-xy'
+              ) {
+                baseRotationX += axisProgress;
+              }
+
+              if (
+                activeSettings.animation.rotateAxis === 'y' ||
+                activeSettings.animation.rotateAxis === 'xy' ||
+                activeSettings.animation.rotateAxis === '-y' ||
+                activeSettings.animation.rotateAxis === '-xy'
+              ) {
+                baseRotationY += axisProgress;
+              }
+
+              if (
+                activeSettings.animation.rotateAxis === 'z' ||
+                activeSettings.animation.rotateAxis === '-z'
+              ) {
+                baseRotationZ += axisProgress;
+              }
+            } else if (activeSettings.animation.rotatePreset === 'lissajous') {
+              baseRotationX += Math.sin(rotateProgress * 0.85) * 0.65;
+              baseRotationY += Math.sin(rotateProgress * 1.35 + 0.8) * 1.05;
+              baseRotationZ += Math.sin(rotateProgress * 0.55 + 1.6) * 0.32;
+            } else if (activeSettings.animation.rotatePreset === 'orbit') {
+              baseRotationX += Math.sin(rotateProgress * 0.75) * 0.42;
+              baseRotationY += Math.cos(rotateProgress) * 1.2;
+              baseRotationZ += Math.sin(rotateProgress * 1.25) * 0.24;
+            } else if (activeSettings.animation.rotatePreset === 'tumble') {
+              baseRotationX += rotateProgress * 0.55;
+              baseRotationY += Math.sin(rotateProgress * 0.8) * 0.9;
+              baseRotationZ += Math.cos(rotateProgress * 1.1) * 0.38;
+            }
+          }
+
+          if (activeSettings.animation.lightSweepEnabled) {
+            const lightPhase =
+              elapsedTime * activeSettings.animation.lightSweepSpeed;
+            lightAngle +=
+              Math.sin(lightPhase) * activeSettings.animation.lightSweepRange;
+            lightHeight +=
+              Math.cos(lightPhase * 0.85) *
+              activeSettings.animation.lightSweepHeightRange;
+          }
+
+          let targetX = baseRotationX;
+          let targetY = baseRotationY;
+          let easing = 0.12;
+
+          if (activeSettings.animation.followHoverEnabled) {
+            const rangeRadians =
+              (activeSettings.animation.hoverRange * Math.PI) / 180;
+
+            if (
+              activeSettings.animation.hoverReturn ||
+              interaction.mouseX !== 0.5 ||
+              interaction.mouseY !== 0.5
+            ) {
+              targetX += (interaction.mouseY - 0.5) * rangeRadians;
+              targetY += (interaction.mouseX - 0.5) * rangeRadians;
+            }
+
+            easing = activeSettings.animation.hoverEase;
+          }
+
+          if (activeSettings.animation.followDragEnabled) {
+            if (
+              !interaction.dragging &&
+              activeSettings.animation.dragMomentum
+            ) {
+              interaction.targetRotationX += interaction.velocityX;
+              interaction.targetRotationY += interaction.velocityY;
+              interaction.velocityX *=
+                1 - activeSettings.animation.dragFriction;
+              interaction.velocityY *=
+                1 - activeSettings.animation.dragFriction;
+            }
+
+            targetX += interaction.targetRotationX;
+            targetY += interaction.targetRotationY;
+            easing = activeSettings.animation.dragFriction;
+          }
+
+          if (
+            activeSettings.animation.autoRotateEnabled &&
+            !activeSettings.animation.followHoverEnabled &&
+            !activeSettings.animation.followDragEnabled
+          ) {
+            targetX = baseRotationX + interaction.targetRotationX;
+            targetY = baseRotationY + interaction.targetRotationY;
+
+            if (interaction.dragging) {
+              targetX = interaction.targetRotationX;
+              targetY = interaction.targetRotationY;
+            }
+
+            easing = 0.08;
+          }
+
+          if (activeSettings.animation.springReturnEnabled) {
+            const springX = applySpringStep(
+              interaction.rotationX,
+              targetX,
+              interaction.rotationVelocityX,
+              activeSettings.animation.springStrength,
+              activeSettings.animation.springDamping,
+            );
+            const springY = applySpringStep(
+              interaction.rotationY,
+              targetY,
+              interaction.rotationVelocityY,
+              activeSettings.animation.springStrength,
+              activeSettings.animation.springDamping,
+            );
+            const springZ = applySpringStep(
+              interaction.rotationZ,
+              baseRotationZ,
+              interaction.rotationVelocityZ,
+              activeSettings.animation.springStrength,
+              activeSettings.animation.springDamping,
+            );
+
+            interaction.rotationX = springX.value;
+            interaction.rotationY = springY.value;
+            interaction.rotationZ = springZ.value;
+            interaction.rotationVelocityX = springX.velocity;
+            interaction.rotationVelocityY = springY.velocity;
+            interaction.rotationVelocityZ = springZ.velocity;
+          } else {
+            interaction.rotationX += (targetX - interaction.rotationX) * easing;
+            interaction.rotationY += (targetY - interaction.rotationY) * easing;
+            interaction.rotationZ +=
+              (baseRotationZ - interaction.rotationZ) *
+              (activeSettings.animation.rotatePingPong ? 0.18 : 0.12);
+          }
+
+          mesh.rotation.set(
+            interaction.rotationX,
+            interaction.rotationY,
+            interaction.rotationZ,
+          );
+          mesh.position.y = meshOffsetY;
+          mesh.scale.setScalar(meshScale);
+
+          if (activeSettings.animation.cameraParallaxEnabled) {
+            const cameraRange = activeSettings.animation.cameraParallaxAmount;
+            const cameraEase = activeSettings.animation.cameraParallaxEase;
+            const centeredX = (interaction.mouseX - 0.5) * 2;
+            const centeredY = (0.5 - interaction.mouseY) * 2;
+            const orbitYaw = centeredX * cameraRange;
+            const orbitPitch = centeredY * cameraRange * 0.7;
+            const horizontalRadius = Math.cos(orbitPitch) * baseDistance;
+            const targetCameraX = Math.sin(orbitYaw) * horizontalRadius;
+            const targetCameraY = Math.sin(orbitPitch) * baseDistance * 0.85;
+            const targetCameraZ = Math.cos(orbitYaw) * horizontalRadius;
+
+            camera.position.x +=
+              (targetCameraX - camera.position.x) * cameraEase;
+            camera.position.y +=
+              (targetCameraY - camera.position.y) * cameraEase;
+            camera.position.z +=
+              (targetCameraZ - camera.position.z) * cameraEase;
+          } else {
+            camera.position.x += (0 - camera.position.x) * 0.12;
+            camera.position.y += (0 - camera.position.y) * 0.12;
+            camera.position.z += (baseDistance - camera.position.z) * 0.12;
+          }
+
+          const lookAtTarget = new THREE.Vector3(0, meshOffsetY * 0.2, 0);
+
+          camera.lookAt(lookAtTarget);
+          setPrimaryLightPosition(primaryLight, lightAngle, lightHeight);
+          halftoneMaterial.uniforms.footprintScale.value = getMeshHalftoneScale(
+            logicalWidth,
+            logicalHeight,
+            lookAtTarget,
+          );
+
+          poseChangeReference.current({
+            autoElapsed: interaction.autoElapsed,
+            rotateElapsed: interaction.rotateElapsed,
+            rotationX: interaction.rotationX,
+            rotationY: interaction.rotationY,
+            rotationZ: interaction.rotationZ,
+            targetRotationX: interaction.targetRotationX,
+            targetRotationY: interaction.targetRotationY,
+            timeElapsed: elapsedTime,
+          });
+
+          if (!activeSettings.halftone.enabled) {
+            renderHalftoneMaterialScene({
+              camera,
+              elapsedTime,
+              material,
+              mesh,
+              outputTarget: null,
+              renderer,
+              scene: scene3d,
+              transmissionBackground: materialAssets.glassBackgroundTexture,
+              transmissionScene: materialAssets.glassTransmissionScene,
+              transmissionBacksideTarget,
+              transmissionTarget,
+            });
+            return;
+          }
+
+          renderHalftoneMaterialScene({
+            camera,
+            elapsedTime,
+            material,
+            mesh,
+            outputTarget: sceneTarget,
+            renderer,
+            scene: scene3d,
+            transmissionBackground: materialAssets.glassBackgroundTexture,
+            transmissionScene: materialAssets.glassTransmissionScene,
+            transmissionBacksideTarget,
+            transmissionTarget,
+          });
+          halftoneMaterial.uniforms.hoverHalftonePowerShift.value = 0;
+          halftoneMaterial.uniforms.hoverHalftoneWidthShift.value = 0;
+          halftoneMaterial.uniforms.hoverLightStrength.value = 0;
+          halftoneMaterial.uniforms.hoverFlowStrength.value = 0;
+          halftoneMaterial.uniforms.dragFlowStrength.value = 0;
+          halftoneMaterial.uniforms.interactionVelocity.value.set(0, 0);
+          halftoneMaterial.uniforms.dragOffset.value.set(0, 0);
+        }
+
+        blurHorizontalMaterial.uniforms.tInput.value = sceneTarget.texture;
+        renderer.setRenderTarget(blurTargetA);
+        renderer.render(blurHorizontalScene, orthographicCamera);
+
+        blurVerticalMaterial.uniforms.tInput.value = blurTargetA.texture;
+        renderer.setRenderTarget(blurTargetB);
+        renderer.render(blurVerticalScene, orthographicCamera);
+
+        blurHorizontalMaterial.uniforms.tInput.value = blurTargetB.texture;
+        renderer.setRenderTarget(blurTargetA);
+        renderer.render(blurHorizontalScene, orthographicCamera);
+
+        blurVerticalMaterial.uniforms.tInput.value = blurTargetA.texture;
+        renderer.setRenderTarget(blurTargetB);
+        renderer.render(blurVerticalScene, orthographicCamera);
+
+        renderer.setRenderTarget(null);
+        renderer.clear();
+        renderer.render(postScene, orthographicCamera);
+      };
+
+      renderFrame();
+
+      cleanup = () => {
+        resizeObserver.disconnect();
+        canvas.removeEventListener('pointermove', handlePointerMove);
+        canvas.removeEventListener('pointerleave', handlePointerLeave);
+        canvas.removeEventListener('pointerup', handlePointerUp);
+        canvas.removeEventListener('pointercancel', handlePointerCancel);
+        window.removeEventListener('blur', handleWindowBlur);
+        canvas.removeEventListener('pointerdown', handlePointerDown);
+        window.cancelAnimationFrame(animationFrameId);
+        clock.dispose();
+
+        blurHorizontalMaterial.dispose();
+        blurVerticalMaterial.dispose();
+        halftoneMaterial.dispose();
+        imageMaterial.dispose();
+
+        if (resources.imageTexture) {
+          resources.imageTexture.dispose();
+        }
+
+        fullScreenGeometry.dispose();
+        material.dispose();
+        sceneTarget.dispose();
+        transmissionBacksideTarget.dispose();
+        transmissionTarget.dispose();
+        blurTargetA.dispose();
+        blurTargetB.dispose();
+        disposeHalftoneMaterialAssets(materialAssets);
+        renderer.dispose();
+        resourcesReference.current = null;
+
+        if (activeSnapshotRef) {
+          activeSnapshotRef.current = null;
+        }
+
+        if (canvas.parentNode === container) {
+          container.removeChild(canvas);
+        }
+      };
+    })();
+
+    return () => {
+      cancelled = true;
+      cleanup();
     };
   }, [onFirstInteraction]);
 
