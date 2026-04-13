@@ -55,7 +55,6 @@ export function Root({
         <BackgroundShape>
           <NextImage
             alt=""
-            priority
             sizes="100vw"
             src={backgroundShapeSrc}
             style={{ height: 'auto', width: '100%' }}
