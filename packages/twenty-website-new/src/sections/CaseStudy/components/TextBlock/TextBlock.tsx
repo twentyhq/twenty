@@ -7,6 +7,7 @@ const Section = styled.section`
   background-color: ${theme.colors.primary.background[100]};
   color: ${theme.colors.primary.text[100]};
   min-width: 0;
+  scroll-margin-top: ${theme.spacing(22)};
   width: 100%;
 `;
 
@@ -70,11 +71,12 @@ const Callout = styled.p`
 
 type TextBlockProps = {
   block: CaseStudyTextBlock;
+  sectionId?: string;
 };
 
-export function TextBlock({ block }: TextBlockProps) {
+export function TextBlock({ block, sectionId }: TextBlockProps) {
   return (
-    <Section>
+    <Section id={sectionId}>
       <StyledContainer>
         <ContentWrap>
           {block.eyebrow && (
@@ -84,12 +86,7 @@ export function TextBlock({ block }: TextBlockProps) {
             />
           )}
 
-          <Heading
-            as="h2"
-            segments={block.heading}
-            size="md"
-            weight="light"
-          />
+          <Heading as="h2" segments={block.heading} size="md" weight="light" />
 
           <Body>
             {block.paragraphs.map((paragraph, index) => (

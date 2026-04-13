@@ -16,13 +16,6 @@ export type CaseStudyVisualBlock = {
 
 export type CaseStudyContentBlock = CaseStudyTextBlock | CaseStudyVisualBlock;
 
-export type CaseStudyTestimonialAuthor = {
-  name: string;
-  handle: string;
-  date: string;
-  avatarSrc: string;
-};
-
 export type CaseStudyData = {
   meta: { title: string; description: string };
   hero: {
@@ -33,11 +26,6 @@ export type CaseStudyData = {
     heroImageSrc: string;
   };
   sections: CaseStudyContentBlock[];
-  testimonial: {
-    eyebrow: string;
-    quote: string;
-    author: CaseStudyTestimonialAuthor;
-  };
   tableOfContents: string[];
   catalogCard: {
     summary: string;
