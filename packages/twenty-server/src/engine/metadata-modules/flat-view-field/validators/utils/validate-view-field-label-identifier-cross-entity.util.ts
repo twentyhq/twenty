@@ -13,11 +13,6 @@ import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/works
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 
-// After all entity builders have run, verify that deleting view fields did not
-// remove the last view field pointing to the label identifier from any
-// non-FIELDS_WIDGET view. This replaces the former atomic check in the view
-// field deletion validator, which could not account for the label identifier
-// being repointed or the view field being recreated in the same batch.
 export const validateViewFieldLabelIdentifierCrossEntity = ({
   optimisticUniversalFlatMaps,
   orchestratorActionsReport,
@@ -34,8 +29,7 @@ export const validateViewFieldLabelIdentifierCrossEntity = ({
     viewField: [],
   };
 
-  const deletedViewFieldActions =
-    orchestratorActionsReport.viewField.delete;
+  const deletedViewFieldActions = orchestratorActionsReport.viewField.delete;
 
   if (deletedViewFieldActions.length === 0) {
     return validationErrors;
