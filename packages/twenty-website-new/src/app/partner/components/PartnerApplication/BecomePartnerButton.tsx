@@ -20,7 +20,7 @@ export function BecomePartnerButton() {
       <BaseButton
         color="secondary"
         label="Become a partner"
-        variant="outlined"
+        variant="contained"
       />
     </StyledTrigger>
   );
