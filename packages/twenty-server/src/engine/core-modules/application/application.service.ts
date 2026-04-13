@@ -88,7 +88,7 @@ export class ApplicationService {
 
     if (!isDefined(twentyStandardApplicationId)) {
       throw new ApplicationException(
-        `Could not find workspace twenty standard applicationId in cache ${workspaceId}`,
+        `Could not find workspace Standard applicationId in cache ${workspaceId}`,
         ApplicationExceptionCode.APPLICATION_NOT_FOUND,
       );
     }
@@ -241,7 +241,7 @@ export class ApplicationService {
 
     if (!isDefined(application)) {
       throw new ApplicationException(
-        `Twenty standard application not found for workspace ${workspace.id}`,
+        `Standard application not found for workspace ${workspace.id}`,
         ApplicationExceptionCode.APPLICATION_NOT_FOUND,
       );
     }
