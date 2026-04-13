@@ -111,6 +111,10 @@ export class ApplicationInstallService {
   ): Promise<boolean> {
     let resolvedPackage: ResolvedPackage | null = null;
 
+    const universalIdentifier = appRegistration.universalIdentifier;
+
+    let isVersionUpgrade = true;
+
     try {
       resolvedPackage =
         await this.applicationPackageFetcherService.resolvePackage(
@@ -122,13 +126,13 @@ export class ApplicationInstallService {
         return true;
       }
 
-      const universalIdentifier = appRegistration.universalIdentifier;
-
       const existingApplication =
         await this.applicationService.findByUniversalIdentifier({
           universalIdentifier,
           workspaceId: params.workspaceId,
         });
+
+      isVersionUpgrade = isDefined(existingApplication);
 
       const previousVersion = existingApplication?.version ?? undefined;
 
@@ -141,9 +145,7 @@ export class ApplicationInstallService {
         );
       }
 
-      const isVersionUpgrade = isDefined(existingApplication);
-
-      const { application, wasCreated } = await this.ensureApplicationExists({
+      const application = await this.ensureApplicationExists({
         existingApplication,
         universalIdentifier,
         name: resolvedPackage.manifest.application.displayName,
@@ -155,7 +157,7 @@ export class ApplicationInstallService {
       const incomingVersion = resolvedPackage.packageJson.version;
 
       if (
-        !wasCreated &&
+        isVersionUpgrade &&
         isDefined(application.version) &&
         isDefined(incomingVersion)
       ) {
@@ -207,7 +209,7 @@ export class ApplicationInstallService {
           applicationRegistrationId: appRegistration.id,
         });
 
-      if (wasCreated || hasSchemaMetadataChanged) {
+      if (!isVersionUpgrade || hasSchemaMetadataChanged) {
         await this.sdkClientGenerationService.generateSdkClientForApplication({
           workspaceId: params.workspaceId,
           applicationId: application.id,
@@ -233,6 +235,20 @@ export class ApplicationInstallService {
       this.logger.error(
         `Failed to install app ${appRegistration.universalIdentifier}: ${error}`,
       );
+
+      if (!isVersionUpgrade) {
+        this.logger.log(
+          'Cleaning up application installation due to error during install',
+        );
+        try {
+          await this.applicationSyncService.uninstallApplication({
+            applicationUniversalIdentifier: universalIdentifier,
+            workspaceId: params.workspaceId,
+          });
+        } catch {
+          // ignore errors during uninstall
+        }
+      }
 
       throw error;
     } finally {
@@ -507,12 +523,12 @@ export class ApplicationInstallService {
     workspaceId: string;
     applicationRegistrationId: string;
     sourceType: ApplicationRegistrationSourceType;
-  }): Promise<{ application: ApplicationEntity; wasCreated: boolean }> {
+  }): Promise<ApplicationEntity> {
     if (isDefined(params.existingApplication)) {
-      return { application: params.existingApplication, wasCreated: false };
+      return params.existingApplication;
     }
 
-    const application = await this.applicationService.create({
+    return await this.applicationService.create({
       universalIdentifier: params.universalIdentifier,
       name: params.name,
       sourcePath: params.universalIdentifier,
@@ -520,7 +536,5 @@ export class ApplicationInstallService {
       applicationRegistrationId: params.applicationRegistrationId,
       workspaceId: params.workspaceId,
     });
-
-    return { application, wasCreated: true };
   }
 }
