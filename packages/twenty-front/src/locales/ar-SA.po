@@ -3569,9 +3569,7 @@ msgid "Content"
 msgstr "المحتوى"
 
 #. js-lingui-id: M73whl
-#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Context"
 msgstr "السياق"
@@ -12036,11 +12034,6 @@ msgstr "إعادة تعيين المصادقة الثنائية"
 #: src/modules/command-menu-item/edit/components/CommandMenuItemOptionsDropdown.tsx
 msgid "Reset label to default"
 msgstr ""
-
-#. js-lingui-id: 1IWc1n
-#: src/modules/side-panel/pages/root/components/SidePanelResetContextToSelectionButton.tsx
-msgid "Reset to"
-msgstr "\\\\"
 
 #. js-lingui-id: L+rMC9
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
