@@ -54,13 +54,6 @@ export default async function PartnerPage() {
             href="https://app.twenty.com/welcome"
             label="Become a partner"
             type="anchor"
-            variant="outlined"
-          />
-          <LinkButton
-            color="secondary"
-            href="https://app.twenty.com/welcome"
-            label="Find a partner"
-            type="anchor"
             variant="contained"
           />
         </Hero.Cta>
