@@ -167,6 +167,7 @@ const HiddenFileInput = styled.input`
   display: none;
 `;
 
+const DEFAULT_PREVIEW_DISTANCE = 6;
 const DEFAULT_IMAGE_ASSET_PATH = '/images/shared/halftone/twenty-logo.svg';
 const DEFAULT_IMAGE_FILENAME = 'twenty-logo.svg';
 type PendingFilePicker = {
@@ -282,7 +283,9 @@ export function HalftoneStudio() {
     createInitialHalftoneStudioState,
   );
   const [controlsVisible, setControlsVisible] = useState(true);
-  const [previewDistance, setPreviewDistance] = useState(7);
+  const [previewDistance, setPreviewDistance] = useState(
+    DEFAULT_PREVIEW_DISTANCE,
+  );
   const [activeGeometry, setActiveGeometry] = useState<THREE.BufferGeometry>(
     () => createFallbackGeometry(),
   );
@@ -566,6 +569,7 @@ export function HalftoneStudio() {
   const activateUploadedModel = useCallback(
     (file: File) => {
       const currentDashColor = state.settings.halftone.dashColor;
+      const currentHoverDashColor = state.settings.halftone.hoverDashColor;
       const extension = file.name.split('.').pop()?.toLowerCase();
       const loader = extension === 'glb' ? 'glb' : 'fbx';
       const nextShape: HalftoneGeometrySpec = {
@@ -594,6 +598,7 @@ export function HalftoneStudio() {
         value: {
           ...halftoneBySourceModeReference.current.shape,
           dashColor: currentDashColor,
+          hoverDashColor: currentHoverDashColor,
         },
       });
     },
@@ -603,6 +608,7 @@ export function HalftoneStudio() {
   const activateUploadedImage = useCallback(
     (file: File) => {
       const currentDashColor = state.settings.halftone.dashColor;
+      const currentHoverDashColor = state.settings.halftone.hoverDashColor;
       setImageFile(file);
       halftoneBySourceModeReference.current[state.settings.sourceMode] = {
         ...state.settings.halftone,
@@ -613,6 +619,7 @@ export function HalftoneStudio() {
         value: {
           ...halftoneBySourceModeReference.current.image,
           dashColor: currentDashColor,
+          hoverDashColor: currentHoverDashColor,
         },
       });
     },
@@ -788,7 +795,9 @@ export function HalftoneStudio() {
 
       exportPoseReference.current = preset.initialPose;
       setCanvasInitialPose(preset.initialPose);
-      setPreviewDistance(preset.previewDistance ?? REFERENCE_PREVIEW_DISTANCE);
+      const nextPreviewDistance =
+        preset.previewDistance ?? REFERENCE_PREVIEW_DISTANCE;
+      setPreviewDistance(nextPreviewDistance);
       setExportName(
         preset.componentName ?? presetFile.name.replace(/\.(tsx|html)$/i, ''),
       );
@@ -1098,6 +1107,12 @@ export function HalftoneStudio() {
               dispatch({
                 type: 'patchHalftone',
                 value: { dashColor: value },
+              })
+            }
+            onHoverDashColorChange={(value) =>
+              dispatch({
+                type: 'patchHalftone',
+                value: { hoverDashColor: value },
               })
             }
             onExportHalftoneImage={(width, height) => {

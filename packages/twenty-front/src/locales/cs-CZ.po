@@ -3178,6 +3178,7 @@ msgstr "Schránka vyžaduje zabezpečené připojení (HTTPS). Pro povolení kop
 
 #. js-lingui-id: yz7wBu
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/side-panel/components/SidePanelToggleButton.tsx
 msgid "Close"
 msgstr "Zavřít"
 

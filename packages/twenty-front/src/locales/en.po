@@ -3173,6 +3173,7 @@ msgstr "Clipboard requires a secure connection (HTTPS). Please access this app o
 
 #. js-lingui-id: yz7wBu
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/side-panel/components/SidePanelToggleButton.tsx
 msgid "Close"
 msgstr "Close"
 

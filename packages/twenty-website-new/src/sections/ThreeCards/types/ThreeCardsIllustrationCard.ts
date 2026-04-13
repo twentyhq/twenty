@@ -9,4 +9,5 @@ export type ThreeCardsIllustrationCardType = {
   benefits?: BodyType[];
   attribution?: ThreeCardsIllustrationCardAttributionType;
   illustration: ThreeCardsIllustrationId;
+  caseStudySlug?: string;
 };

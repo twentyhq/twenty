@@ -1,4 +1,5 @@
 import { FAQ_DATA, MENU_DATA } from '@/app/_constants';
+import { TalkToUsButton } from '@/app/components/ContactCalModal';
 import {
   ENGAGEMENT_BAND_DATA,
   HERO_DATA,
@@ -64,11 +65,9 @@ export default async function PricingPage() {
             <EngagementBand.Body body={ENGAGEMENT_BAND_DATA.body} />
           </EngagementBand.Copy>
           <EngagementBand.Actions>
-            <LinkButton
+            <TalkToUsButton
               color="secondary"
-              href="https://app.twenty.com/welcome"
-              label="Read our case studies"
-              type="anchor"
+              label="Contact us"
               variant="contained"
             />
           </EngagementBand.Actions>
@@ -98,11 +97,9 @@ export default async function PricingPage() {
               type="anchor"
               variant="contained"
             />
-            <LinkButton
+            <TalkToUsButton
               color="primary"
-              href="https://twenty.com/contact"
               label="Talk to us"
-              type="anchor"
               variant="outlined"
             />
           </Faq.Cta>

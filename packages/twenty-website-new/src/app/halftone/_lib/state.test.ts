@@ -56,4 +56,25 @@ describe('halftone studio state defaults', () => {
       hoverReturn: false,
     });
   });
+
+  it('backfills the hover dash color when older presets do not include it', () => {
+    const normalized = normalizeHalftoneStudioSettings(
+      JSON.parse(`{
+        "sourceMode": "image",
+        "halftone": {
+          "enabled": true,
+          "scale": 24.72,
+          "power": -0.07,
+          "width": 0.46,
+          "imageContrast": 1,
+          "dashColor": "#112233"
+        }
+      }`) as Partial<HalftoneStudioSettings>,
+    );
+
+    expect(normalized.halftone.dashColor).toBe('#112233');
+    expect(normalized.halftone.hoverDashColor).toBe(
+      DEFAULT_HALFTONE_SETTINGS.halftone.hoverDashColor,
+    );
+  });
 });

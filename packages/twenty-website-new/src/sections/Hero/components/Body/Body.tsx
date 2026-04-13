@@ -40,6 +40,10 @@ const BodyContainer = styled.div`
     &[data-page=${Pages.ReleaseNotes}] {
       max-width: 591px;
     }
+
+    &[data-page=${Pages.CaseStudies}] {
+      max-width: 550px;
+    }
   }
 `;
 

@@ -7,6 +7,9 @@ import {
 } from '@/app/halftone/_lib/formatters';
 import type { HalftoneStudioSettings } from '@/app/halftone/_lib/state';
 import {
+  ColorControlLabel,
+  ColorControlRow,
+  ColorField,
   ControlGrid,
   LabelWithTooltip,
   Section,
@@ -25,6 +28,7 @@ type AnimationsTabProps = {
   onAnimationSettingsChange: (
     value: Partial<HalftoneStudioSettings['animation']>,
   ) => void;
+  onHoverDashColorChange: (value: string) => void;
   settings: HalftoneStudioSettings;
 };
 
@@ -34,6 +38,7 @@ function effectLabel(label: string, description: string) {
 
 export function AnimationsTab({
   onAnimationSettingsChange,
+  onHoverDashColorChange,
   settings,
 }: AnimationsTabProps) {
   const animation = settings.animation;
@@ -108,6 +113,14 @@ export function AnimationsTab({
                 >
                   Radius
                 </SliderControl>
+                <ColorControlRow>
+                  <ColorControlLabel>Hover color</ColorControlLabel>
+                  <ColorField
+                    ariaLabel="Hover dash color"
+                    onChange={onHoverDashColorChange}
+                    value={settings.halftone.hoverDashColor}
+                  />
+                </ColorControlRow>
               </ControlGrid>
             ) : null}
           </Section>

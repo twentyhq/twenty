@@ -1,6 +1,7 @@
 'use client';
 
-import { Body, Heading } from '@/design-system/components';
+import { Body, Heading, IconButton } from '@/design-system/components';
+import { ArrowRightIcon } from '@/icons';
 import { THREE_CARDS_ILLUSTRATIONS } from '@/illustrations';
 import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
 import { theme } from '@/theme';
@@ -42,9 +43,14 @@ const CardEmbed = styled.div`
 `;
 
 const CardFooter = styled.footer`
-  display: flex;
-  align-items: center;
-  gap: ${theme.spacing(2)};
+  align-items: start;
+  column-gap: ${theme.spacing(2)};
+  display: grid;
+  grid-template-columns: auto auto auto 1fr;
+`;
+
+const FooterTrailingAction = styled.div`
+  justify-self: end;
 `;
 
 const AttributionPipe = styled.span`
@@ -112,6 +118,20 @@ export function IllustrationCard({
             size="xs"
             weight="regular"
           />
+          {illustrationCard.caseStudySlug !== undefined ? (
+            <FooterTrailingAction>
+              <IconButton
+                ariaLabel="Read case study"
+                borderColor={CARD_OUTLINE_COLOR}
+                href={`/case-studies/${illustrationCard.caseStudySlug}`}
+                icon={ArrowRightIcon}
+                iconFillColor="transparent"
+                iconSize={24}
+                iconStrokeColor={theme.colors.primary.text[80]}
+                size={48}
+              />
+            </FooterTrailingAction>
+          ) : null}
         </CardFooter>
       )}
     </IllustrationCardContainer>

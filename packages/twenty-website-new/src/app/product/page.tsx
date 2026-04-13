@@ -1,4 +1,5 @@
 import { FAQ_DATA, MENU_DATA, TRUSTED_BY_DATA } from '@/app/_constants';
+import { TalkToUsButton } from '@/app/components/ContactCalModal';
 import {
   DEMO_DATA,
   FEATURE_DATA,
@@ -140,11 +141,9 @@ export default async function ProductPage() {
               type="anchor"
               variant="contained"
             />
-            <LinkButton
+            <TalkToUsButton
               color="primary"
-              href="https://twenty.com/contact"
               label="Talk to us"
-              type="anchor"
               variant="outlined"
             />
           </Faq.Cta>

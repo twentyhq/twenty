@@ -99,7 +99,7 @@ export function BillingToggle({
         type="button"
       >
         <ToggleLabel>Yearly</ToggleLabel>
-        <DiscountBadge>-20%</DiscountBadge>
+        <DiscountBadge>-25%</DiscountBadge>
       </ToggleOption>
     </ToggleTrack>
   );

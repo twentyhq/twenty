@@ -112,6 +112,7 @@ const halftoneFragmentShader = `
   uniform float s_3;
   uniform float s_4;
   uniform vec3 dashColor;
+  uniform vec3 hoverDashColor;
   uniform float time;
   uniform float waveAmount;
   uniform float waveSpeed;
@@ -119,6 +120,7 @@ const halftoneFragmentShader = `
   uniform vec2 interactionUv;
   uniform vec2 interactionVelocity;
   uniform vec2 dragOffset;
+  uniform float hoverHalftoneActive;
   uniform float hoverHalftonePowerShift;
   uniform float hoverHalftoneRadius;
   uniform float hoverHalftoneWidthShift;
@@ -178,10 +180,7 @@ const halftoneFragmentShader = `
     }
 
     float hoverHalftoneMask = 0.0;
-    if (
-      abs(hoverHalftonePowerShift) > 0.0001 ||
-      abs(hoverHalftoneWidthShift) > 0.0001
-    ) {
+    if (hoverHalftoneActive > 0.0) {
       float hoverHalftoneRadiusPx = hoverHalftoneRadius * logicalResolution.y;
       hoverHalftoneMask = smoothstep(hoverHalftoneRadiusPx, 0.0, fragDist);
     }
@@ -249,7 +248,8 @@ const halftoneFragmentShader = `
       alpha = (1.0 - smoothstep(0.0, edge, signedDistance)) * mask;
     }
 
-    vec3 color = dashColor * alpha;
+    vec3 activeDashColor = mix(dashColor, hoverDashColor, hoverHalftoneMask);
+    vec3 color = activeDashColor * alpha;
     gl_FragColor = vec4(color, alpha);
 
     #include <tonemapping_fragment>
@@ -491,6 +491,9 @@ function updateHalftone(
   (resources.halftoneMaterial.uniforms.dashColor.value as THREE.Color).set(
     settings.halftone.dashColor,
   );
+  (resources.halftoneMaterial.uniforms.hoverDashColor.value as THREE.Color).set(
+    settings.halftone.hoverDashColor,
+  );
   resources.halftoneMaterial.uniforms.waveAmount.value =
     settings.animation.waveEnabled && settings.sourceMode !== 'image'
       ? settings.animation.waveAmount
@@ -665,6 +668,11 @@ export function HalftoneCanvas({
       }
 
       const texture = new THREE.Texture(imageElement);
+      texture.wrapS = THREE.ClampToEdgeWrapping;
+      texture.wrapT = THREE.ClampToEdgeWrapping;
+      texture.generateMipmaps = false;
+      texture.minFilter = THREE.LinearFilter;
+      texture.magFilter = THREE.LinearFilter;
       texture.needsUpdate = true;
       texture.colorSpace = THREE.SRGBColorSpace;
       resources.imageTexture = texture;
@@ -860,6 +868,9 @@ export function HalftoneCanvas({
           dashColor: {
             value: new THREE.Color(initialSettings.halftone.dashColor),
           },
+          hoverDashColor: {
+            value: new THREE.Color(initialSettings.halftone.hoverDashColor),
+          },
           time: { value: 0 },
           waveAmount: { value: 0 },
           waveSpeed: { value: 1 },
@@ -867,6 +878,7 @@ export function HalftoneCanvas({
           interactionUv: { value: new THREE.Vector2(0.5, 0.5) },
           interactionVelocity: { value: new THREE.Vector2(0, 0) },
           dragOffset: { value: new THREE.Vector2(0, 0) },
+          hoverHalftoneActive: { value: 0 },
           hoverHalftonePowerShift: { value: 0 },
           hoverHalftoneRadius: { value: 0.2 },
           hoverHalftoneWidthShift: { value: 0 },
@@ -1054,6 +1066,7 @@ export function HalftoneCanvas({
           snapshotWidth,
           snapshotHeight,
         );
+        halftoneMaterial.uniforms.hoverHalftoneActive.value = 0;
         halftoneMaterial.uniforms.hoverHalftonePowerShift.value = 0;
         halftoneMaterial.uniforms.hoverHalftoneWidthShift.value = 0;
         halftoneMaterial.uniforms.hoverLightStrength.value = 0;
@@ -1577,6 +1590,10 @@ export function HalftoneCanvas({
             -interaction.pointerVelocityY * logicalHeight,
           );
           halftoneMaterial.uniforms.dragOffset.value.set(0, 0);
+          halftoneMaterial.uniforms.hoverHalftoneActive.value =
+            pointerActive && activeSettings.animation.hoverHalftoneEnabled
+              ? 1
+              : 0;
           halftoneMaterial.uniforms.hoverHalftonePowerShift.value =
             pointerActive && activeSettings.animation.hoverHalftoneEnabled
               ? activeSettings.animation.hoverHalftonePowerShift
@@ -1902,6 +1919,7 @@ export function HalftoneCanvas({
             transmissionBacksideTarget,
             transmissionTarget,
           });
+          halftoneMaterial.uniforms.hoverHalftoneActive.value = 0;
           halftoneMaterial.uniforms.hoverHalftonePowerShift.value = 0;
           halftoneMaterial.uniforms.hoverHalftoneWidthShift.value = 0;
           halftoneMaterial.uniforms.hoverLightStrength.value = 0;
