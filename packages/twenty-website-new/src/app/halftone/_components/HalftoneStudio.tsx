@@ -5,6 +5,7 @@ import {
   type HalftoneSnapshotFn,
 } from '@/app/halftone/_components/HalftoneCanvas';
 import { ControlsPanel } from '@/app/halftone/_components/ControlsPanel';
+import { resolveExportArtifactNames } from '@/app/halftone/_lib/exportNames';
 import {
   createFallbackGeometry,
   disposeGeometryCache,
@@ -354,6 +355,10 @@ export function HalftoneStudio() {
     selectedShape,
     state.settings.sourceMode,
   ]);
+  const exportArtifactNames = useMemo(
+    () => resolveExportArtifactNames(exportName, defaultExportName),
+    [defaultExportName, exportName],
+  );
 
   useEffect(() => {
     halftoneBySourceModeReference.current[state.settings.sourceMode] = {
@@ -818,10 +823,8 @@ export function HalftoneStudio() {
   }, []);
 
   const handleExportReact = useCallback(() => {
-    const componentName = exportName || defaultExportName;
-    const kebabName = componentName
-      .replace(/([a-z])([A-Z])/g, '$1-$2')
-      .toLowerCase();
+    const componentName = exportArtifactNames.componentName;
+    const kebabName = exportArtifactNames.fileBaseName;
     const isImageMode = state.settings.sourceMode === 'image';
     const importedFile = selectedImportedFile;
     const exportBackgroundColor = exportBackground
@@ -857,8 +860,7 @@ export function HalftoneStudio() {
       downloadBlob(modelFilename ?? importedFile.name, importedFile);
     }
   }, [
-    defaultExportName,
-    exportName,
+    exportArtifactNames,
     exportBackground,
     imageFile,
     previewDistance,
@@ -870,10 +872,7 @@ export function HalftoneStudio() {
   const handleExportHalftoneImage = useCallback(
     async (width: number, height: number) => {
       const snapshotFn = snapshotReference.current;
-      const componentName = exportName || defaultExportName;
-      const kebabName = componentName
-        .replace(/([a-z])([A-Z])/g, '$1-$2')
-        .toLowerCase();
+      const kebabName = exportArtifactNames.fileBaseName;
 
       if (!snapshotFn) {
         return;
@@ -891,18 +890,15 @@ export function HalftoneStudio() {
       downloadBlob(`${kebabName}-${width}x${height}.png`, blob);
     },
     [
-      defaultExportName,
+      exportArtifactNames.fileBaseName,
       exportBackground,
-      exportName,
       state.settings.background.color,
     ],
   );
 
   const handleExportHtml = useCallback(async () => {
-    const componentName = exportName || defaultExportName;
-    const kebabName = componentName
-      .replace(/([a-z])([A-Z])/g, '$1-$2')
-      .toLowerCase();
+    const componentName = exportArtifactNames.componentName;
+    const kebabName = exportArtifactNames.fileBaseName;
     const isImageMode = state.settings.sourceMode === 'image';
     const importedFile = selectedImportedFile;
     const exportBackgroundColor = exportBackground
@@ -936,8 +932,7 @@ export function HalftoneStudio() {
       downloadBlob(imageExportFilename ?? imageFile.name, imageFile);
     }
   }, [
-    defaultExportName,
-    exportName,
+    exportArtifactNames,
     exportBackground,
     imageFile,
     previewDistance,

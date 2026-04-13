@@ -1,4 +1,5 @@
 import { type ConfigService } from '@/cli/utilities/config/config-service';
+import { isOAuthInvalidClientError } from '@/cli/utilities/error/parse-server-error';
 
 import { exchangeCredentialsForTokens } from './exchange-credentials-for-tokens';
 
@@ -49,6 +50,23 @@ export const ensureAppAccessTokenIsValidOrRefresh = async (
       });
 
       return data.access_token;
+    }
+
+    try {
+      const body = await response.json();
+
+      if (isOAuthInvalidClientError(body)) {
+        await configService.setConfig({
+          appRegistrationId: undefined,
+          appRegistrationClientId: undefined,
+          appAccessToken: undefined,
+          appRefreshToken: undefined,
+        });
+
+        return undefined;
+      }
+    } catch {
+      // Non-JSON error response (e.g. proxy 502) — fall through to credential exchange
     }
   }
 

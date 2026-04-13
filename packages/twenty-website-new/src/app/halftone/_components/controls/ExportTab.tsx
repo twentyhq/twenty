@@ -1,5 +1,6 @@
 'use client';
 
+import { resolveExportArtifactNames } from '@/app/halftone/_lib/exportNames';
 import { formatAnimationName } from '@/app/halftone/_lib/formatters';
 import type {
   HalftoneGeometrySpec,
@@ -72,8 +73,11 @@ export function ExportTab({
       ? DEFAULT_IMAGE_LABEL
       : imageFileName
     : (selectedShape?.label ?? settings.shapeKey);
-
-  const componentName = exportName || defaultExportName;
+  const inputName = exportName || defaultExportName;
+  const { componentName } = resolveExportArtifactNames(
+    exportName,
+    defaultExportName,
+  );
 
   const handleDownloadHalftoneImage = () => {
     const [widthStr, heightStr] = resolution.split('x');
@@ -98,7 +102,7 @@ export function ExportTab({
           onFocus={(event) => event.currentTarget.select()}
           placeholder={defaultExportName}
           type="text"
-          value={componentName}
+          value={inputName}
         />
 
         <ToggleControl

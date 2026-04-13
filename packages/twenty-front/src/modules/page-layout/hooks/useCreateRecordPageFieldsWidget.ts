@@ -5,7 +5,6 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultFieldsWidget } from '@/page-layout/utils/createDefaultFieldsWidget';
-import { useCreateViewForFieldsWidget } from '@/page-layout/widgets/fields/hooks/useCreateViewForFieldsWidget';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -25,8 +24,6 @@ export const useCreateRecordPageFieldsWidget = () => {
 
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
-  const { createViewForFieldsWidget } = useCreateViewForFieldsWidget();
-
   const pageLayoutDraftState = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
   );
@@ -39,15 +36,8 @@ export const useCreateRecordPageFieldsWidget = () => {
 
   const store = useStore();
 
-  const createRecordPageFieldsWidget = useCallback(async () => {
-    const viewId = await createViewForFieldsWidget({
-      objectMetadataId: objectMetadataItem.id,
-      viewName: `${objectMetadataItem.labelSingular} Fields`,
-    });
-
-    if (viewId === null) {
-      return;
-    }
+  const createRecordPageFieldsWidget = useCallback(() => {
+    const viewId = uuidv4();
 
     const activeTab = currentPageLayout.tabs.find((tab) => tab.id === tabId);
     const positionIndex = activeTab?.widgets.length ?? 0;
@@ -75,11 +65,9 @@ export const useCreateRecordPageFieldsWidget = () => {
       resetNavigationStack: true,
     });
   }, [
-    createViewForFieldsWidget,
     currentPageLayout.tabs,
     navigatePageLayoutSidePanel,
     objectMetadataItem.id,
-    objectMetadataItem.labelSingular,
     pageLayoutDraftState,
     pageLayoutEditingWidgetIdState,
     store,
