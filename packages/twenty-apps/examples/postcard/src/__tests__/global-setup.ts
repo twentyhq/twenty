@@ -7,6 +7,38 @@ import { appDevOnce, appUninstall } from 'twenty-sdk/cli';
 const APP_PATH = process.cwd();
 const CONFIG_DIR = path.join(os.homedir(), '.twenty');
 
+function validateEnv(): { apiUrl: string; apiKey: string } {
+  const apiUrl = process.env.TWENTY_API_URL;
+  const apiKey = process.env.TWENTY_API_KEY;
+
+  if (!apiUrl || !apiKey) {
+    throw new Error(
+      'TWENTY_API_URL and TWENTY_API_KEY must be set.\n' +
+        'Start a local server: yarn twenty server start\n' +
+        'Or set them in vitest env config.',
+    );
+  }
+
+  return { apiUrl, apiKey };
+}
+
+async function checkServer(apiUrl: string) {
+  let response: Response;
+
+  try {
+    response = await fetch(`${apiUrl}/healthz`);
+  } catch {
+    throw new Error(
+      `Twenty server is not reachable at ${apiUrl}. ` +
+        'Make sure the server is running before executing integration tests.',
+    );
+  }
+
+  if (!response.ok) {
+    throw new Error(`Server at ${apiUrl} returned ${response.status}`);
+  }
+}
+
 function writeConfig(apiUrl: string, apiKey: string) {
   const payload = JSON.stringify(
     {
@@ -24,8 +56,9 @@ function writeConfig(apiUrl: string, apiKey: string) {
 }
 
 export async function setup() {
-  const apiUrl = process.env.TWENTY_API_URL!;
-  const apiKey = process.env.TWENTY_API_KEY!;
+  const { apiUrl, apiKey } = validateEnv();
+
+  await checkServer(apiUrl);
 
   writeConfig(apiUrl, apiKey);
 
