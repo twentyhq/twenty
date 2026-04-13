@@ -42,12 +42,6 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
 
   const { closeDropdown } = useCloseDropdown();
 
-  const resetNavigationMenuItemState = () => {
-    store.set(selectedNavigationMenuItemIdInEditModeState.atom, null);
-    store.set(pendingInsertionNavigationMenuItemState.atom, null);
-    store.set(addToNavPayloadRegistryState.atom, new Map());
-  };
-
   const sidePanelCloseAnimationCompleteCleanup = useCallback(
     (options?: { emitSidePanelCloseEvent?: boolean }) => {
       closeDropdown(SIDE_PANEL_CONTEXT_CHIP_GROUPS_DROPDOWN_ID);
@@ -114,7 +108,9 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
       store.set(sidePanelShowHiddenObjectsState.atom, false);
       store.set(sidePanelNavigationMorphItemsByPageState.atom, new Map());
       store.set(sidePanelNavigationStackState.atom, []);
-      resetNavigationMenuItemState();
+      store.set(selectedNavigationMenuItemIdInEditModeState.atom, null);
+      store.set(pendingInsertionNavigationMenuItemState.atom, null);
+      store.set(addToNavPayloadRegistryState.atom, new Map());
       resetSelectedItem();
       store.set(hasUserSelectedSidePanelListItemState.atom, false);
 
@@ -141,12 +137,7 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
         );
       }
     },
-    [
-      closeDropdown,
-      resetNavigationMenuItemState,
-      resetSelectedItem,
-      store,
-    ],
+    [closeDropdown, resetSelectedItem, store],
   );
 
   return {
