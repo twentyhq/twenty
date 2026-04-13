@@ -450,11 +450,15 @@ export class EnterprisePlanService implements OnModuleInit {
     }
   }
 
-  // In development, try both keys so production keys work when testing locally
+  // In development and Jest integration tests, try both keys so production keys
+  // work locally
   private getPublicKeysToTry(): string[] {
     const nodeEnv = this.twentyConfigService.get('NODE_ENV');
 
-    if (nodeEnv === NodeEnvironment.DEVELOPMENT) {
+    if (
+      nodeEnv === NodeEnvironment.DEVELOPMENT ||
+      nodeEnv === NodeEnvironment.TEST
+    ) {
       return [ENTERPRISE_JWT_PUBLIC_KEY, ENTERPRISE_JWT_DEV_PUBLIC_KEY];
     }
 
