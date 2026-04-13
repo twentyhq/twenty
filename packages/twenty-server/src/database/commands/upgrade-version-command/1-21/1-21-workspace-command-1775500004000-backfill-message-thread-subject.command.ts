@@ -1,18 +1,22 @@
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 @RegisteredWorkspaceCommand('1.21.0', 1775500004000)
 @Command({
@@ -76,6 +80,64 @@ export class BackfillMessageThreadSubjectCommand extends ActiveOrSuspendedWorksp
     );
   }
 
+  private findFieldByNameOnObject({
+    flatFieldMetadataMaps,
+    objectUniversalIdentifier,
+    fieldName,
+  }: {
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    objectUniversalIdentifier: string;
+    fieldName: string;
+  }): FlatFieldMetadata | undefined {
+    return Object.values(flatFieldMetadataMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .find(
+        (field) =>
+          field.name === fieldName &&
+          field.objectMetadataUniversalIdentifier === objectUniversalIdentifier,
+      );
+  }
+
+  private async renameConflictingField({
+    conflictingField,
+    workspaceId,
+  }: {
+    conflictingField: FlatFieldMetadata;
+    workspaceId: string;
+  }): Promise<void> {
+    const fieldToUpdate: UniversalFlatFieldMetadata = {
+      ...conflictingField,
+      name: 'subjectOld',
+      label: 'Subject (old)',
+    };
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            fieldMetadata: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [fieldToUpdate],
+            },
+          },
+          workspaceId,
+          applicationUniversalIdentifier:
+            conflictingField.applicationUniversalIdentifier,
+        },
+      );
+
+    if (validateAndBuildResult.status === 'fail') {
+      throw new Error(
+        `Failed to rename conflicting subject field to subjectOld for workspace ${workspaceId}: ${JSON.stringify(validateAndBuildResult, null, 2)}`,
+      );
+    }
+
+    this.logger.log(
+      `Renamed conflicting subject field to subjectOld for workspace ${workspaceId}`,
+    );
+  }
+
   private async ensureSubjectFieldExists({
     workspaceId,
     isDryRun,
@@ -111,6 +173,26 @@ export class BackfillMessageThreadSubjectCommand extends ActiveOrSuspendedWorksp
 
     if (existingField) {
       return;
+    }
+
+    const conflictingField = this.findFieldByNameOnObject({
+      flatFieldMetadataMaps,
+      objectUniversalIdentifier:
+        messageThreadObjectMetadata.universalIdentifier,
+      fieldName: 'subject',
+    });
+
+    if (isDefined(conflictingField)) {
+      this.logger.log(
+        `Found conflicting field named "subject" (universalIdentifier: ${conflictingField.universalIdentifier}) on messageThread for workspace ${workspaceId}, renaming to subjectOld`,
+      );
+
+      if (!isDryRun) {
+        await this.renameConflictingField({
+          conflictingField,
+          workspaceId,
+        });
+      }
     }
 
     if (isDryRun) {
@@ -163,12 +245,8 @@ export class BackfillMessageThreadSubjectCommand extends ActiveOrSuspendedWorksp
       );
 
     if (validateAndBuildResult.status === 'fail') {
-      this.logger.error(
-        `Failed to create messageThread.subject field for workspace ${workspaceId}:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
-      );
-
       throw new Error(
-        `Failed to create messageThread.subject field for workspace ${workspaceId}`,
+        `Failed to create messageThread.subject field for workspace ${workspaceId}: ${JSON.stringify(validateAndBuildResult, null, 2)}`,
       );
     }
 
