@@ -6,11 +6,11 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
-const updateOneRecordMock = jest.fn();
+const mockUpdateWorkspaceMemberSettings = jest.fn();
 
-jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
-  useUpdateOneRecord: () => ({
-    updateOneRecord: updateOneRecordMock,
+jest.mock('@/settings/profile/hooks/useUpdateWorkspaceMemberSettings', () => ({
+  useUpdateWorkspaceMemberSettings: () => ({
+    updateWorkspaceMemberSettings: mockUpdateWorkspaceMemberSettings,
   }),
 }));
 
