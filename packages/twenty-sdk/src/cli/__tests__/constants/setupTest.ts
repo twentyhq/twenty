@@ -43,6 +43,4 @@ beforeAll(async () => {
       2,
     ),
   );
-
-  process.env.TWENTY_APP_ACCESS_TOKEN ??= token;
 });

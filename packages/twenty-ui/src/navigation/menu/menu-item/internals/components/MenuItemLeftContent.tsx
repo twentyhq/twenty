@@ -7,6 +7,7 @@ import {
   IconGripVertical,
   OverflowingTextWithTooltip,
 } from '@ui/display';
+import { type ThemeColor } from '@ui/theme';
 import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 import { type MenuItemDraggableGripMode } from '../../types/MenuItemDraggableGripMode';
 import { MenuItemIcon } from './MenuItemIcon';
@@ -42,6 +43,7 @@ type MenuItemLeftContentProps = {
   className?: string;
   LeftComponent?: ReactNode;
   LeftIcon: IconComponent | null | undefined;
+  iconThemeColor?: ThemeColor | null;
   withIconContainer?: boolean;
   withIconContainerBackground?: boolean;
   gripMode?: MenuItemDraggableGripMode;
@@ -55,6 +57,7 @@ export const MenuItemLeftContent = ({
   className,
   LeftComponent,
   LeftIcon,
+  iconThemeColor,
   withIconContainer = false,
   withIconContainerBackground = true,
   text,
@@ -96,12 +99,14 @@ export const MenuItemLeftContent = ({
       {gripMode === 'onHover' ? (
         <MenuItemIconWithGripSwap
           LeftIcon={LeftIcon}
+          iconThemeColor={iconThemeColor}
           withIconContainer={withIconContainer}
           gripIconColor={gripIconColor}
         />
       ) : (
         <MenuItemIcon
           Icon={LeftIcon}
+          iconThemeColor={iconThemeColor}
           withContainer={withIconContainer}
           withContainerBackground={withIconContainerBackground}
         />

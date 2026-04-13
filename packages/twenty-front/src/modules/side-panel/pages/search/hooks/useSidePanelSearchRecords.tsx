@@ -1,23 +1,31 @@
-import { Command } from '@/command-menu-item/display/components/Command';
-import { CommandLink } from '@/command-menu-item/display/components/CommandLink';
-import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
-import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
-import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { sidePanelShowHiddenObjectsState } from '@/side-panel/states/sidePanelShowHiddenObjectsState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { CoreObjectNameSingular, AppPath } from 'twenty-shared/types';
-import { t } from '@lingui/core/macro';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/display';
 import { useDebounce } from 'use-debounce';
 import { useQuery } from '@apollo/client/react';
 import { SearchDocument } from '~/generated/graphql';
+
+export type SearchResultItem = {
+  id: string;
+  label: string;
+  objectNameSingular: string;
+  recordId: string;
+  imageUrl?: string | null;
+  objectLabel: string;
+  avatarType: 'squared' | 'rounded';
+};
+
+export type SearchResultGroup = {
+  heading: string;
+  items: SearchResultItem[];
+};
 
 export const useSidePanelSearchRecords = () => {
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
@@ -55,91 +63,29 @@ export const useSidePanelSearchRecords = () => {
     },
   });
 
-  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
-
-  const actionItems = useMemo(() => {
+  const searchResultItems: SearchResultItem[] = useMemo(() => {
     return (searchData?.search.edges.map((edge) => edge.node) ?? []).map(
-      (searchRecord, index) => {
-        const baseAction = {
-          type: CommandMenuItemType.Navigation,
-          scope: CommandMenuItemScope.Global,
-          key: searchRecord.recordId,
-          label: searchRecord.label,
-          position: index,
-          Icon: () => (
-            <Avatar
-              type={
-                searchRecord.objectNameSingular ===
-                CoreObjectNameSingular.Company
-                  ? 'squared'
-                  : 'rounded'
-              }
-              avatarUrl={searchRecord.imageUrl}
-              placeholderColorSeed={searchRecord.recordId}
-              placeholder={searchRecord.label}
-            />
-          ),
-          shouldBeRegistered: () => true,
-          description:
-            readableObjectMetadataItems.find(
-              (item) => item.nameSingular === searchRecord.objectNameSingular,
-            )?.labelSingular ?? searchRecord.objectNameSingular,
-        };
-
-        if (
-          [CoreObjectNameSingular.Task, CoreObjectNameSingular.Note].includes(
-            searchRecord.objectNameSingular as CoreObjectNameSingular,
-          )
-        ) {
-          return {
-            ...baseAction,
-            component: (
-              <Command
-                onClick={() => {
-                  searchRecord.objectNameSingular ===
-                  CoreObjectNameSingular.Task
-                    ? openRecordInSidePanel({
-                        recordId: searchRecord.recordId,
-                        objectNameSingular: CoreObjectNameSingular.Task,
-                      })
-                    : openRecordInSidePanel({
-                        recordId: searchRecord.recordId,
-                        objectNameSingular: CoreObjectNameSingular.Note,
-                      });
-                }}
-                closeSidePanelOnCommandMenuListExecution={false}
-              />
-            ),
-          };
-        }
-
-        return {
-          ...baseAction,
-          component: (
-            <CommandLink
-              to={AppPath.RecordShowPage}
-              params={{
-                objectNameSingular: searchRecord.objectNameSingular,
-                objectRecordId: searchRecord.recordId,
-              }}
-            />
-          ),
-        };
-      },
+      (searchRecord) => ({
+        id: searchRecord.recordId,
+        label: searchRecord.label,
+        objectNameSingular: searchRecord.objectNameSingular,
+        recordId: searchRecord.recordId,
+        imageUrl: searchRecord.imageUrl,
+        objectLabel:
+          readableObjectMetadataItems.find(
+            (item) => item.nameSingular === searchRecord.objectNameSingular,
+          )?.labelSingular ?? searchRecord.objectNameSingular,
+        avatarType:
+          searchRecord.objectNameSingular === CoreObjectNameSingular.Company
+            ? ('squared' as const)
+            : ('rounded' as const),
+      }),
     );
-  }, [searchData, openRecordInSidePanel, readableObjectMetadataItems]);
+  }, [searchData, readableObjectMetadataItems]);
 
   return {
     loading,
-    noResults: !actionItems?.length,
-    commandGroups: [
-      {
-        heading: t`Results`,
-        items: actionItems,
-      },
-    ],
-    hasMore: false,
-    pageSize: 0,
-    onLoadMore: () => {},
+    noResults: !searchResultItems.length,
+    searchResultItems,
   };
 };

@@ -16,8 +16,6 @@ const OBJECTS_TO_GENERATE = [
   'note',
   'timelineActivity',
   'workspaceMember',
-  'favorite',
-  'favoriteFolder',
   'connectedAccount',
   'calendarEvent',
 ];

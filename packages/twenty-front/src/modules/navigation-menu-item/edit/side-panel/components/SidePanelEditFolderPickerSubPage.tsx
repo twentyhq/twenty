@@ -1,15 +1,14 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { useIcons } from 'twenty-ui/display';
+import { TintedIconTile, useIcons } from 'twenty-ui/display';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
+import { useFolderPickerSelectionData } from '@/navigation-menu-item/edit/side-panel/hooks/useFolderPickerSelectionData';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelSubViewWithSearch } from '@/side-panel/components/SidePanelSubViewWithSearch';
-import { useFolderPickerSelectionData } from '@/navigation-menu-item/edit/side-panel/hooks/useFolderPickerSelectionData';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -42,7 +41,6 @@ export const SidePanelEditFolderPickerSubPage = () => {
       onSearchChange={setSearchValue}
     >
       <SidePanelList
-        commandGroups={[]}
         selectableItemIds={selectableItemIds}
         noResults={isEmpty}
         noResultsText={noResultsText}
@@ -72,10 +70,7 @@ export const SidePanelEditFolderPickerSubPage = () => {
               >
                 <CommandMenuItem
                   LeftComponent={
-                    <NavigationMenuItemStyleIcon
-                      Icon={FolderIcon}
-                      color={folderColor}
-                    />
+                    <TintedIconTile Icon={FolderIcon} color={folderColor} />
                   }
                   label={folder.name}
                   id={folder.id}

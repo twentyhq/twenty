@@ -96,7 +96,7 @@ export const SidePanelRecordPageFieldsSettings = () => {
   return (
     <StyledContainer>
       <StyledSidePanelContainer>
-        <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
+        <SidePanelList selectableItemIds={selectableItemIds}>
           <SidePanelGroup heading={t`Data and display`}>
             <SelectableListItem
               itemId="layout"
@@ -108,7 +108,7 @@ export const SidePanelRecordPageFieldsSettings = () => {
                 Icon={IconLayoutSidebarRight}
                 hasSubMenu
                 onClick={handleNavigateToLayout}
-                description={t`${totalFieldsCount} fields`}
+                description={t`${totalFieldsCount} visible fields`}
                 contextualTextPosition="right"
               />
             </SelectableListItem>

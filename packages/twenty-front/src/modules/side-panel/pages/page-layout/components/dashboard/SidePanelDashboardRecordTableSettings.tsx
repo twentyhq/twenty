@@ -92,10 +92,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
         value={{ instanceId: widgetInEditMode.id }}
       >
         <StyledSettingsContainer>
-          <SidePanelList
-            commandGroups={[]}
-            selectableItemIds={selectableItemIds}
-          >
+          <SidePanelList selectableItemIds={selectableItemIds}>
             <SidePanelGroup heading={t`Settings`}>
               <SelectableListItem itemId="object-view-layout">
                 <CommandMenuItemDropdown

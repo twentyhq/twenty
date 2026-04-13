@@ -515,6 +515,11 @@ export { Info } from './info/components/Info';
 export { Status } from './status/components/Status';
 export { HorizontalSeparator } from './text/components/HorizontalSeparator';
 export { SeparatorLineText } from './text/components/SeparatorLineText';
+export { StyledTintedIconTileContainer } from './tinted-icon-tile/components/StyledTintedIconTileContainer';
+export type { TintedIconTileProps } from './tinted-icon-tile/components/TintedIconTile';
+export { TintedIconTile } from './tinted-icon-tile/components/TintedIconTile';
+export type { IconTileColorShades } from './tinted-icon-tile/utils/getIconTileColorShades';
+export { getIconTileColorShades } from './tinted-icon-tile/utils/getIconTileColorShades';
 export type { AppTooltipProps } from './tooltip/AppTooltip';
 export {
   TooltipPosition,

@@ -10,16 +10,22 @@ import type {
 import { theme } from '@/theme';
 import { Drawer } from '@base-ui/react/drawer';
 import { styled } from '@linaria/react';
-import { useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { CloseDrawerWhenNavigationExpandsEffect } from '../../effect-components/CloseDrawerWhenNavigationExpandsEffect';
 import { MenuDrawer } from '../Drawer/Drawer';
 
-const StyledSection = styled.section`
+const SCROLL_IDLE_TIMEOUT_MS = 150;
+
+const StyledSection = styled.section<{ $isScrolling: boolean }>`
   backdrop-filter: blur(10px);
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: ${({ $isScrolling }) =>
+    $isScrolling
+      ? '0 1px 3px 0 rgba(0, 0, 0, 0.06)'
+      : '0 1px 3px 0 rgba(0, 0, 0, 0)'};
   min-width: 0;
   position: sticky;
   top: 0;
+  transition: box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   width: 100%;
   z-index: 200;
 `;
@@ -76,6 +82,33 @@ export function Root({
   socialLinks,
 }: RootProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const scrollTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolling(true);
+
+      if (scrollTimeoutRef.current !== null) {
+        window.clearTimeout(scrollTimeoutRef.current);
+      }
+
+      scrollTimeoutRef.current = window.setTimeout(() => {
+        setIsScrolling(false);
+        scrollTimeoutRef.current = null;
+      }, SCROLL_IDLE_TIMEOUT_MS);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+
+      if (scrollTimeoutRef.current !== null) {
+        window.clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const buttonColor: {
     border: string;
@@ -103,7 +136,7 @@ export function Root({
       <CloseDrawerWhenNavigationExpandsEffect
         onClose={() => setIsDrawerOpen(false)}
       />
-      <StyledSection style={{ backgroundColor }}>
+      <StyledSection $isScrolling={isScrolling} style={{ backgroundColor }}>
         <StyledContainer>
           <StyledNav aria-label="Primary navigation" data-scheme={scheme}>
             {children}
