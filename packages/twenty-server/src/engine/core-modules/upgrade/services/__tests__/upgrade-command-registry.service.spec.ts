@@ -177,9 +177,8 @@ describe('UpgradeCommandRegistryService', () => {
     const service = await buildRegistryService([]);
 
     expect(
-      service.getBundleForVersion(
-        '99.0.0' as typeof VERSION_A,
-      ).fastInstanceCommands,
+      service.getBundleForVersion('99.0.0' as typeof VERSION_A)
+        .fastInstanceCommands,
     ).toStrictEqual([]);
   });
 
