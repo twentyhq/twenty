@@ -183,7 +183,7 @@ export default async function HomePage() {
 
       <Testimonials.Root
         backgroundColor={theme.colors.secondary.background[5]}
-        backgroundShapeSrc="/images/home/testimonials/background-shape.png"
+        backgroundShapeSrc="/images/home/testimonials/background-shape.webp"
         color={theme.colors.primary.text[100]}
       >
         <Testimonials.Carousel

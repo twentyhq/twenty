@@ -76,8 +76,8 @@ export default async function ReleaseNotesPage() {
         {allNotes.length === 0 ? (
           <ReleaseNotes.EmptyMessage>
             Release notes were not found. Add MDX under{' '}
-            <strong>packages/twenty-website-new/src/content/releases</strong> and
-            images under{' '}
+            <strong>packages/twenty-website-new/src/content/releases</strong>{' '}
+            and images under{' '}
             <strong>packages/twenty-website-new/public/images/releases</strong>.
           </ReleaseNotes.EmptyMessage>
         ) : visibleNotes.length === 0 ? (

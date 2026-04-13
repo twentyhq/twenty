@@ -135,7 +135,12 @@ export function ReleaseMarkdown({ markdown }: ReleaseMarkdownProps) {
       <ReactMarkdown
         components={{
           a: ({ children, href, ...props }) => (
-            <a href={resolveAssetUrl(href)} rel="noopener noreferrer" {...props}>
+            <a
+              href={resolveAssetUrl(href)}
+              rel="noopener noreferrer"
+              // oxlint-disable-next-line react/jsx-props-no-spreading -- ReactMarkdown component overrides
+              {...props}
+            >
               {children}
             </a>
           ),
@@ -145,6 +150,7 @@ export function ReleaseMarkdown({ markdown }: ReleaseMarkdownProps) {
               decoding="async"
               loading="lazy"
               src={resolveAssetUrl(src)}
+              // oxlint-disable-next-line react/jsx-props-no-spreading -- ReactMarkdown component overrides
               {...props}
             />
           ),

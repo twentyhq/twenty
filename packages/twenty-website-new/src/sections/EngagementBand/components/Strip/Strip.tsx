@@ -6,7 +6,7 @@ import NextImage from 'next/image';
 import type { ReactNode } from 'react';
 
 const ENGAGEMENT_BAND_OVERLAY_SRC =
-  '/images/pricing/engagement-band/overlay.png';
+  '/images/pricing/engagement-band/overlay.webp';
 
 const OverlayLayer = styled.div`
   bottom: 0;

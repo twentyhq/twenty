@@ -148,7 +148,7 @@ export const SALESFORCE_DATA: SalesforceDataType = {
         rightLabel: 'Out of stock',
         tooltip: {
           title: 'Out of stock',
-          body: 'Your data prefers someone else\'s servers.',
+          body: "Your data prefers someone else's servers.",
         },
       },
       {
@@ -222,7 +222,7 @@ export const SALESFORCE_DATA: SalesforceDataType = {
     promoTag: 'Best for\nSalesforce',
     featureSectionHeading: 'Add-ons',
     productIconAlt: 'Retro help document icon',
-    productIconSrc: '/images/pricing/salesforce/help-icon.png',
+    productIconSrc: '/images/pricing/salesforce/help-icon.webp',
     priceSuffix: ' / seat / month - billed yearly',
     productTitle: 'Salesforce Pro',
     secondaryCtaNote: 'More options available!',

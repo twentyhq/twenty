@@ -191,6 +191,7 @@ export function Item({ question, value }: ItemProps) {
             const isOpen = state.open;
             const ToggleIcon = isOpen ? MinusIcon : PlusIcon;
             return (
+              // oxlint-disable-next-line react/jsx-props-no-spreading -- Accordion.Trigger host props
               <RowTrigger {...props} type="button">
                 <QuestionIconContainer aria-hidden>
                   <QuestionIconLayer data-layer="outline">
