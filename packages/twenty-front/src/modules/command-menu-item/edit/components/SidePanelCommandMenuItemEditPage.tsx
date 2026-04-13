@@ -93,6 +93,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
 
   const allowedAvailabilityTypes = new Set<CommandMenuItemAvailabilityType>([
     CommandMenuItemAvailabilityType.GLOBAL,
+    CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
     mainContextStoreHasSelectedRecords
       ? CommandMenuItemAvailabilityType.RECORD_SELECTION
       : CommandMenuItemAvailabilityType.FALLBACK,

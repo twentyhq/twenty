@@ -1013,6 +1013,7 @@ export type CommandMenuItem = {
 export enum CommandMenuItemAvailabilityType {
   FALLBACK = 'FALLBACK',
   GLOBAL = 'GLOBAL',
+  GLOBAL_OBJECT_CONTEXT = 'GLOBAL_OBJECT_CONTEXT',
   RECORD_SELECTION = 'RECORD_SELECTION'
 }
 

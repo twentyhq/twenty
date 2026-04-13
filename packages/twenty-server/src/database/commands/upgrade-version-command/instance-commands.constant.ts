@@ -9,7 +9,7 @@ import { AddWorkspaceIdToIndirectEntitiesFastInstanceCommand } from 'src/databas
 import { AddWorkspaceIdIndexesAndFksFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-22/1-22-instance-command-fast-1775761294897-add-workspace-id-indexes-and-fks-to-indirect-entities';
 import { DropObjectMetadataDataSourceFkFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-22/1-22-instance-command-fast-1775804361516-drop-object-metadata-data-source-fk';
 import { BackfillWorkspaceIdOnIndirectEntitiesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/1-22/1-22-instance-command-slow-1775758621018-backfill-workspace-id-on-indirect-entities';
-import { DropWorkspaceVersionColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-23/1-23-instance-command-fast-1785000000000-drop-workspace-version-column';
+import { DropWorkspaceVersionColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-23/1-23-instance-command-fast-1785000000000-drop-workspace-version-column';import { AddGlobalObjectContextToCommandMenuItemAvailabilityTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-22/1-22-instance-command-fast-1776090711153-add-global-object-context-to-command-menu-item-availability-type';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -22,4 +22,5 @@ export const INSTANCE_COMMANDS = [
   AddWorkspaceIdIndexesAndFksFastInstanceCommand,
   DropObjectMetadataDataSourceFkFastInstanceCommand,
   DropWorkspaceVersionColumnFastInstanceCommand,
+  AddGlobalObjectContextToCommandMenuItemAvailabilityTypeFastInstanceCommand,
 ];

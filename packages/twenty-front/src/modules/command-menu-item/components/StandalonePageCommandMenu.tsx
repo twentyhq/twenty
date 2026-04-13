@@ -15,6 +15,7 @@ import {
 } from 'twenty-shared/types';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 export const StandalonePageCommandMenu = () => {
   const store = useStore();
@@ -46,7 +47,7 @@ export const StandalonePageCommandMenu = () => {
     }
 
     return {
-      pageType: CommandMenuContextApiPageType.INDEX_PAGE,
+      pageType: CommandMenuContextApiPageType.STANDALONE_PAGE,
       isInSidePanel: false,
       isPageInEditMode: false,
       favoriteRecordIds: [],
@@ -75,6 +76,13 @@ export const StandalonePageCommandMenu = () => {
   const filteredCommandMenuItems = useMemo(() => {
     return commandMenuItems
       .filter(doesCommandMenuItemMatchObjectMetadataId(undefined))
+      .filter(
+        (item) =>
+          item.availabilityType !==
+            CommandMenuItemAvailabilityType.RECORD_SELECTION &&
+          item.availabilityType !==
+            CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
+      )
       .filter((item) =>
         evaluateConditionalAvailabilityExpression(
           item.conditionalAvailabilityExpression,

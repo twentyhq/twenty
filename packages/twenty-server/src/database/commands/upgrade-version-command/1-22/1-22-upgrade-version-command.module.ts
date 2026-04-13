@@ -4,6 +4,7 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand } from 'src/database/commands/upgrade-version-command/1-22/1-22-workspace-command-1780000001000-backfill-page-layouts-and-fields-widget-view-fields.command';
 import { BackfillStandardSkillsCommand } from 'src/database/commands/upgrade-version-command/1-22/1-22-workspace-command-1780000002000-backfill-standard-skills.command';
 import { FixMergeCommandSelectAllCommand } from 'src/database/commands/upgrade-version-command/1-22/1-22-workspace-command-1780000003000-fix-merge-command-select-all.command';
+import { UpdateGlobalObjectContextCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-22/1-22-workspace-command-1780000005000-update-global-object-context-command-menu-items.command';
 import { AddSendEmailRecordSelectionCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-22/1-22-workspace-command-1775500016000-add-send-email-record-selection-command-menu-items.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -23,6 +24,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
     BackfillStandardSkillsCommand,
     FixMergeCommandSelectAllCommand,
+    UpdateGlobalObjectContextCommandMenuItemsCommand,
   ],
 })
 export class V1_22_UpgradeVersionCommandModule {}

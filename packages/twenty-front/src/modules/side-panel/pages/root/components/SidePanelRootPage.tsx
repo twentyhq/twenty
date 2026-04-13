@@ -42,7 +42,9 @@ export const SidePanelRootPage = () => {
     () =>
       commandMenuItems.filter(
         (item) =>
-          item.availabilityType === CommandMenuItemAvailabilityType.GLOBAL,
+          item.availabilityType === CommandMenuItemAvailabilityType.GLOBAL ||
+          item.availabilityType ===
+            CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
       ),
     [commandMenuItems],
   );
