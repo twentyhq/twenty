@@ -93,11 +93,7 @@ export const useCommandMenuHotKeys = () => {
       }
     },
     focusId: SIDE_PANEL_FOCUS_ID,
-    dependencies: [
-      sidePanelPage,
-      sidePanelSearch,
-      goBackOneSubPageOrMainPage,
-    ],
+    dependencies: [sidePanelPage, sidePanelSearch, goBackOneSubPageOrMainPage],
     options: {
       preventDefault: false,
       enableOnFormTags: false,
