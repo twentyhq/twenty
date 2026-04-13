@@ -10088,6 +10088,11 @@ msgstr "パラメーターなし"
 msgid "No payment method found. Please update your billing details."
 msgstr "お支払い方法が見つかりません。請求先の詳細を更新してください。"
 
+#. js-lingui-id: orE/ux
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "No permission defined for this application"
+msgstr ""
+
 #. js-lingui-id: Od1X93
 #: src/pages/settings/applications/tabs/SettingsApplicationPermissionsTab.tsx
 msgid "No permissions configured for this application."

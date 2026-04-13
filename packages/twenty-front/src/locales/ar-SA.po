@@ -10088,6 +10088,11 @@ msgstr "لا معلمات"
 msgid "No payment method found. Please update your billing details."
 msgstr "لم يتم العثور على وسيلة دفع. يرجى تحديث تفاصيل الفوترة الخاصة بك."
 
+#. js-lingui-id: orE/ux
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "No permission defined for this application"
+msgstr ""
+
 #. js-lingui-id: Od1X93
 #: src/pages/settings/applications/tabs/SettingsApplicationPermissionsTab.tsx
 msgid "No permissions configured for this application."

@@ -10088,6 +10088,11 @@ msgstr "매개변수 없음"
 msgid "No payment method found. Please update your billing details."
 msgstr "결제 수단을 찾을 수 없습니다. 청구 정보를 업데이트하세요."
 
+#. js-lingui-id: orE/ux
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "No permission defined for this application"
+msgstr ""
+
 #. js-lingui-id: Od1X93
 #: src/pages/settings/applications/tabs/SettingsApplicationPermissionsTab.tsx
 msgid "No permissions configured for this application."

@@ -10088,6 +10088,11 @@ msgstr "Nessun parametro"
 msgid "No payment method found. Please update your billing details."
 msgstr "Metodo di pagamento non trovato. Si prega di aggiornare i dettagli di fatturazione."
 
+#. js-lingui-id: orE/ux
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "No permission defined for this application"
+msgstr ""
+
 #. js-lingui-id: Od1X93
 #: src/pages/settings/applications/tabs/SettingsApplicationPermissionsTab.tsx
 msgid "No permissions configured for this application."
