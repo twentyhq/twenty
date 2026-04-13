@@ -1,3 +1,4 @@
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { addToNavPayloadRegistryState } from '@/navigation-menu-item/common/states/addToNavPayloadRegistryState';
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
@@ -48,17 +49,16 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
       // Snapshot values before any mutations (Jotai store.get is live and
       // reflects the latest state, so we capture before mutating).
       const currentPage = store.get(sidePanelPageState.atom);
-      const pageInfo = store.get(sidePanelPageInfoState.atom);
-      const targetedRecordsRule = store.get(
-        contextStoreTargetedRecordsRuleComponentState.atomFamily({
-          instanceId: pageInfo.instanceId,
-        }),
-      );
       const morphItemsByPage = store.get(
         sidePanelNavigationMorphItemsByPageState.atom,
       );
 
       if (isDefined(currentPage) && isPageLayoutSidePanelPage(currentPage)) {
+        const targetedRecordsRule = store.get(
+          contextStoreTargetedRecordsRuleComponentState.atomFamily({
+            instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+          }),
+        );
         if (
           targetedRecordsRule.mode === 'selection' &&
           targetedRecordsRule.selectedRecordIds.length === 1
