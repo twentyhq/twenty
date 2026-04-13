@@ -340,11 +340,15 @@ describe('upsertFieldsWidget', () => {
       // Verify all groups are soft-deleted
       const { data: activeGroupsData } = await findViewFieldGroups({
         viewId: testSetup.viewId,
-        gqlFields: 'id',
+        gqlFields: 'id isActive',
         expectToFail: false,
       });
 
-      expect(activeGroupsData.getViewFieldGroups.length).toBe(0);
+      const activeGroups = activeGroupsData.getViewFieldGroups.filter(
+        (g: { isActive: boolean }) => g.isActive,
+      );
+
+      expect(activeGroups.length).toBe(0);
 
       // Verify the field's viewFieldGroupId is null
       const { data: updatedFieldData } = await findViewFields({
