@@ -2,12 +2,7 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
-import {
-  type CreateMetadataEvent,
-  type DeleteMetadataEvent,
-  type MetadataEvent,
-  type UpdateMetadataEvent,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
+import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
 const OVERRIDABLE_ENTITY_METADATA_NAMES = new Set<AllMetadataName>([
   'viewField',
@@ -28,63 +23,32 @@ const resolveRecordOverrides = (
   return { ...base, ...(overrides as Record<string, unknown>) };
 };
 
-const sanitizeCreatedEvent = (
-  event: CreateMetadataEvent<AllMetadataName>,
-): MetadataEvent => {
-  const after = event.properties.after as Record<string, unknown>;
+const resolveEventOverrides = (event: MetadataEvent): MetadataEvent => {
+  const properties = { ...event.properties };
 
-  return {
-    ...event,
-    properties: { after: resolveRecordOverrides(after) },
-  } as typeof event;
+  if ('before' in properties && isDefined(properties.before)) {
+    properties.before = resolveRecordOverrides(
+      properties.before as Record<string, unknown>,
+    ) as typeof properties.before;
+  }
+
+  if ('after' in properties && isDefined(properties.after)) {
+    properties.after = resolveRecordOverrides(
+      properties.after as Record<string, unknown>,
+    ) as typeof properties.after;
+  }
+
+  return { ...event, properties } as typeof event;
 };
 
-const sanitizeDeletedEvent = (
-  event: DeleteMetadataEvent<AllMetadataName>,
-): MetadataEvent => {
-  const before = event.properties.before as Record<string, unknown>;
-
-  return {
-    ...event,
-    properties: { before: resolveRecordOverrides(before) },
-  } as typeof event;
-};
-
-const sanitizeUpdatedEvent = (
-  event: UpdateMetadataEvent<AllMetadataName>,
-): MetadataEvent => {
-  const before = event.properties.before as Record<string, unknown>;
-  const after = event.properties.after as Record<string, unknown>;
-
-  return {
-    ...event,
-    properties: {
-      ...event.properties,
-      before: resolveRecordOverrides(before),
-      after: resolveRecordOverrides(after),
-    },
-  } as typeof event;
-};
-
-export const sanitizeOverridableEntityEventBatch = (
+export const resolveOverridableEntityEventBatchOverrides = (
   metadataEventBatch: MetadataEventBatch,
 ): MetadataEventBatch => {
   if (!OVERRIDABLE_ENTITY_METADATA_NAMES.has(metadataEventBatch.metadataName)) {
     return metadataEventBatch;
   }
 
-  const events = metadataEventBatch.events
-    .map((event) => {
-      switch (event.type) {
-        case 'created':
-          return sanitizeCreatedEvent(event);
-        case 'updated':
-          return sanitizeUpdatedEvent(event);
-        case 'deleted':
-          return sanitizeDeletedEvent(event);
-      }
-    })
-    .filter(isDefined);
+  const events = metadataEventBatch.events.map(resolveEventOverrides);
 
   return { ...metadataEventBatch, events };
 };

@@ -583,6 +583,7 @@ type ViewField {
   workspaceId: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
+  isActive: Boolean!
   deletedAt: DateTime
   isOverridden: Boolean @deprecated(reason: "isOverridden is deprecated")
 }
@@ -691,6 +692,7 @@ type ViewFieldGroup {
   workspaceId: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
+  isActive: Boolean!
   deletedAt: DateTime
   viewFields: [ViewField!]!
   isOverridden: Boolean! @deprecated(reason: "isOverridden is deprecated")
@@ -899,6 +901,7 @@ type PageLayoutWidget {
   conditionalAvailabilityExpression: String
   createdAt: DateTime!
   updatedAt: DateTime!
+  isActive: Boolean!
   deletedAt: DateTime
   isOverridden: Boolean @deprecated(reason: "isOverridden is deprecated")
 }
@@ -1234,6 +1237,7 @@ type PageLayoutTab {
   layoutMode: PageLayoutTabLayoutMode
   createdAt: DateTime!
   updatedAt: DateTime!
+  isActive: Boolean!
   deletedAt: DateTime
   isOverridden: Boolean @deprecated(reason: "isOverridden is deprecated")
 }

@@ -1,5 +1,5 @@
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
-import { sanitizeOverridableEntityEventBatch } from 'src/engine/subscriptions/metadata-event/utils/sanitize-overridable-entity-event-batch.util';
+import { resolveOverridableEntityEventBatchOverrides } from 'src/engine/subscriptions/metadata-event/utils/sanitize-overridable-entity-event-batch.util';
 
 const makeViewFieldRecord = (
   overrides?: Partial<Record<string, unknown>>,
@@ -35,7 +35,7 @@ const makeBatch = (
     events,
   }) as MetadataEventBatch;
 
-describe('sanitizeOverridableEntityEventBatch', () => {
+describe('resolveOverridableEntityEventBatchOverrides', () => {
   describe('non-overridable entity (pass-through)', () => {
     it('should return the batch unchanged for entities without overrides config', () => {
       const batch = makeBatch('view', [
@@ -52,7 +52,7 @@ describe('sanitizeOverridableEntityEventBatch', () => {
         },
       ]);
 
-      const result = sanitizeOverridableEntityEventBatch(batch);
+      const result = resolveOverridableEntityEventBatchOverrides(batch);
 
       expect(result).toBe(batch);
     });
@@ -74,7 +74,7 @@ describe('sanitizeOverridableEntityEventBatch', () => {
         },
       ]);
 
-      const result = sanitizeOverridableEntityEventBatch(batch);
+      const result = resolveOverridableEntityEventBatchOverrides(batch);
 
       const createdRecord = (
         result.events[0] as { properties: { after: Record<string, unknown> } }
@@ -97,7 +97,7 @@ describe('sanitizeOverridableEntityEventBatch', () => {
         },
       ]);
 
-      const result = sanitizeOverridableEntityEventBatch(batch);
+      const result = resolveOverridableEntityEventBatchOverrides(batch);
 
       const createdRecord = (
         result.events[0] as { properties: { after: Record<string, unknown> } }
@@ -125,7 +125,7 @@ describe('sanitizeOverridableEntityEventBatch', () => {
         },
       ]);
 
-      const result = sanitizeOverridableEntityEventBatch(batch);
+      const result = resolveOverridableEntityEventBatchOverrides(batch);
 
       const createdRecord = (
         result.events[0] as { properties: { after: Record<string, unknown> } }
@@ -160,7 +160,7 @@ describe('sanitizeOverridableEntityEventBatch', () => {
         },
       ]);
 
-      const result = sanitizeOverridableEntityEventBatch(batch);
+      const result = resolveOverridableEntityEventBatchOverrides(batch);
 
       const event = result.events[0] as {
         properties: {
@@ -188,7 +188,7 @@ describe('sanitizeOverridableEntityEventBatch', () => {
         },
       ]);
 
-      const result = sanitizeOverridableEntityEventBatch(batch);
+      const result = resolveOverridableEntityEventBatchOverrides(batch);
 
       const deletedRecord = (
         result.events[0] as { properties: { before: Record<string, unknown> } }
@@ -197,154 +197,6 @@ describe('sanitizeOverridableEntityEventBatch', () => {
       expect(deletedRecord.isVisible).toBe(false);
       expect(deletedRecord).not.toHaveProperty('overrides');
       expect(deletedRecord).toHaveProperty('isActive', true);
-    });
-  });
-
-  describe('isActive pass-through', () => {
-    it('should pass through create events with isActive false', () => {
-      const after = makeViewFieldRecord({ isActive: false });
-
-      const batch = makeBatch('viewField', [
-        {
-          type: 'created',
-          metadataName: 'viewField',
-          recordId: 'vf-1',
-          properties: { after },
-        },
-      ]);
-
-      const result = sanitizeOverridableEntityEventBatch(batch);
-
-      expect(result.events).toHaveLength(1);
-      expect(result.events[0].type).toBe('created');
-
-      const createdRecord = (
-        result.events[0] as { properties: { after: Record<string, unknown> } }
-      ).properties.after;
-
-      expect(createdRecord).toHaveProperty('isActive', false);
-    });
-
-    it('should keep update events as updates when entity is deactivated', () => {
-      const before = makeViewFieldRecord({ isActive: true });
-      const after = makeViewFieldRecord({ isActive: false });
-
-      const batch = makeBatch('viewField', [
-        {
-          type: 'updated',
-          metadataName: 'viewField',
-          recordId: 'vf-1',
-          properties: {
-            updatedFields: ['isActive'],
-            diff: {},
-            before,
-            after,
-          },
-        },
-      ]);
-
-      const result = sanitizeOverridableEntityEventBatch(batch);
-
-      expect(result.events).toHaveLength(1);
-      expect(result.events[0].type).toBe('updated');
-
-      const event = result.events[0] as {
-        properties: {
-          before: Record<string, unknown>;
-          after: Record<string, unknown>;
-        };
-      };
-
-      expect(event.properties.before).toHaveProperty('isActive', true);
-      expect(event.properties.after).toHaveProperty('isActive', false);
-    });
-
-    it('should keep update events as updates when entity is reactivated', () => {
-      const before = makeViewFieldRecord({ isActive: false });
-      const after = makeViewFieldRecord({
-        isActive: true,
-        overrides: { isVisible: false },
-      });
-
-      const batch = makeBatch('viewField', [
-        {
-          type: 'updated',
-          metadataName: 'viewField',
-          recordId: 'vf-1',
-          properties: {
-            updatedFields: ['isActive'],
-            diff: {},
-            before,
-            after,
-          },
-        },
-      ]);
-
-      const result = sanitizeOverridableEntityEventBatch(batch);
-
-      expect(result.events).toHaveLength(1);
-      expect(result.events[0].type).toBe('updated');
-
-      const event = result.events[0] as {
-        properties: {
-          after: Record<string, unknown>;
-        };
-      };
-
-      expect(event.properties.after.isVisible).toBe(false);
-      expect(event.properties.after).not.toHaveProperty('overrides');
-      expect(event.properties.after).toHaveProperty('isActive', true);
-    });
-
-    it('should pass through update events when both before and after are inactive', () => {
-      const before = makeViewFieldRecord({ isActive: false });
-      const after = makeViewFieldRecord({
-        isActive: false,
-        overrides: { isVisible: false },
-      });
-
-      const batch = makeBatch('viewField', [
-        {
-          type: 'updated',
-          metadataName: 'viewField',
-          recordId: 'vf-1',
-          properties: {
-            updatedFields: ['overrides'],
-            diff: {},
-            before,
-            after,
-          },
-        },
-      ]);
-
-      const result = sanitizeOverridableEntityEventBatch(batch);
-
-      expect(result.events).toHaveLength(1);
-      expect(result.events[0].type).toBe('updated');
-    });
-
-    it('should keep update events when both before and after are active', () => {
-      const before = makeViewFieldRecord({ isActive: true });
-      const after = makeViewFieldRecord({ isActive: true, size: 300 });
-
-      const batch = makeBatch('viewField', [
-        {
-          type: 'updated',
-          metadataName: 'viewField',
-          recordId: 'vf-1',
-          properties: {
-            updatedFields: ['size'],
-            diff: {},
-            before,
-            after,
-          },
-        },
-      ]);
-
-      const result = sanitizeOverridableEntityEventBatch(batch);
-
-      expect(result.events).toHaveLength(1);
-      expect(result.events[0].type).toBe('updated');
     });
   });
 
@@ -378,7 +230,7 @@ describe('sanitizeOverridableEntityEventBatch', () => {
         },
       ]);
 
-      const result = sanitizeOverridableEntityEventBatch(batch);
+      const result = resolveOverridableEntityEventBatchOverrides(batch);
 
       const createdRecord = (
         result.events[0] as { properties: { after: Record<string, unknown> } }

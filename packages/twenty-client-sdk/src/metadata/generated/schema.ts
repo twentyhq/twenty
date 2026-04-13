@@ -415,6 +415,7 @@ export interface ViewField {
     workspaceId: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
+    isActive: Scalars['Boolean']
     deletedAt?: Scalars['DateTime']
     /** @deprecated isOverridden is deprecated */
     isOverridden?: Scalars['Boolean']
@@ -492,6 +493,7 @@ export interface ViewFieldGroup {
     workspaceId: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
+    isActive: Scalars['Boolean']
     deletedAt?: Scalars['DateTime']
     viewFields: ViewField[]
     /** @deprecated isOverridden is deprecated */
@@ -674,6 +676,7 @@ export interface PageLayoutWidget {
     conditionalAvailabilityExpression?: Scalars['String']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
+    isActive: Scalars['Boolean']
     deletedAt?: Scalars['DateTime']
     /** @deprecated isOverridden is deprecated */
     isOverridden?: Scalars['Boolean']
@@ -959,6 +962,7 @@ export interface PageLayoutTab {
     layoutMode?: PageLayoutTabLayoutMode
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
+    isActive: Scalars['Boolean']
     deletedAt?: Scalars['DateTime']
     /** @deprecated isOverridden is deprecated */
     isOverridden?: Scalars['Boolean']
@@ -3631,6 +3635,7 @@ export interface ViewFieldGenqlSelection{
     workspaceId?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
+    isActive?: boolean | number
     deletedAt?: boolean | number
     /** @deprecated isOverridden is deprecated */
     isOverridden?: boolean | number
@@ -3705,6 +3710,7 @@ export interface ViewFieldGroupGenqlSelection{
     workspaceId?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
+    isActive?: boolean | number
     deletedAt?: boolean | number
     viewFields?: ViewFieldGenqlSelection
     /** @deprecated isOverridden is deprecated */
@@ -3879,6 +3885,7 @@ export interface PageLayoutWidgetGenqlSelection{
     conditionalAvailabilityExpression?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
+    isActive?: boolean | number
     deletedAt?: boolean | number
     /** @deprecated isOverridden is deprecated */
     isOverridden?: boolean | number
@@ -4191,6 +4198,7 @@ export interface PageLayoutTabGenqlSelection{
     layoutMode?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
+    isActive?: boolean | number
     deletedAt?: boolean | number
     /** @deprecated isOverridden is deprecated */
     isOverridden?: boolean | number
