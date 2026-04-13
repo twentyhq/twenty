@@ -4,6 +4,7 @@ import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/works
 import { type UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -27,6 +28,22 @@ export class WorkspaceMemberUpdateOnePreQueryHook
     const workspace = authContext.workspace;
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+
+    await this.workspaceMemberPreQueryHookService.validateWorkspaceMemberUpdatePermissionOrThrow(
+      {
+        userWorkspaceId: isUserAuthContext(authContext)
+          ? authContext.userWorkspaceId
+          : undefined,
+        workspaceMemberId: isUserAuthContext(authContext)
+          ? authContext.workspaceMemberId
+          : undefined,
+        targettedWorkspaceMemberId: payload.id,
+        workspaceId: workspace.id,
+        apiKey: isApiKeyAuthContext(authContext)
+          ? authContext.apiKey
+          : undefined,
+      },
+    );
 
     // TODO: remove this code once we have migrated locale update to userWorkspace update
     if (isUserAuthContext(authContext) && isDefined(payload.data.locale)) {
