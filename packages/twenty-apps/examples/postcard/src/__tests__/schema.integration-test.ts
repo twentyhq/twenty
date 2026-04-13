@@ -1,12 +1,22 @@
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application.config';
 import { describe, expect, it } from 'vitest';
 
-import { isCoreClientAvailable, metadata } from './helpers/client';
 import { createPostCard, deletePostCard } from './helpers/mutations';
+
+function isCoreClientAvailable(): boolean {
+  try {
+    new CoreApiClient();
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 describe('App installation', () => {
   it('should find the installed app in the applications list', async () => {
-    const client = metadata();
+    const client = new MetadataApiClient();
 
     const result = await client.query({
       findManyApplications: {
@@ -27,7 +37,7 @@ describe('App installation', () => {
 
 describe('PostCard object', () => {
   it('should exist with expected fields and relations', async () => {
-    const client = metadata();
+    const client = new MetadataApiClient();
 
     const { objects } = await client.query({
       objects: {

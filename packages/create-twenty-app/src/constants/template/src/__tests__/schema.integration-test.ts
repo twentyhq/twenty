@@ -1,11 +1,20 @@
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { describe, expect, it } from 'vitest';
 
-import { core, isCoreClientAvailable, metadata } from './helpers/client';
+function isCoreClientAvailable(): boolean {
+  try {
+    new CoreApiClient();
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 describe('App installation', () => {
   it('should find the installed app in the applications list', async () => {
-    const client = metadata();
+    const client = new MetadataApiClient();
 
     const result = await client.query({
       findManyApplications: {
@@ -28,7 +37,7 @@ describe('CoreApiClient', () => {
   it.skipIf(!isCoreClientAvailable())(
     'should support CRUD on standard objects',
     async () => {
-      const client = core();
+      const client = new CoreApiClient();
 
       const created = await client.mutation({
         createNote: {

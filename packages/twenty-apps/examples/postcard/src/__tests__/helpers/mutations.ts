@@ -1,11 +1,11 @@
-import { core } from './client';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 export async function createPostCard(data: {
   name: string;
   content?: string;
   status?: string;
 }): Promise<string> {
-  const client = core();
+  const client = new CoreApiClient();
   const res = await client.mutation({
     createPostCard: {
       __args: { data },
@@ -17,7 +17,7 @@ export async function createPostCard(data: {
 }
 
 export async function deletePostCard(id: string): Promise<void> {
-  const client = core();
+  const client = new CoreApiClient();
   await client.mutation({
     destroyPostCard: {
       __args: { id },
