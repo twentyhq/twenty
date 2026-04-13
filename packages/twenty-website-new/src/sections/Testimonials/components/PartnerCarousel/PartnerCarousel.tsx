@@ -76,6 +76,20 @@ const PortraitFrame = styled.div`
   width: 100%;
 `;
 
+const PortraitPlaceholder = styled.div`
+  align-items: center;
+  background-color: ${theme.colors.secondary.border[10]};
+  color: ${theme.colors.secondary.text[60]};
+  display: flex;
+  font-family: ${theme.font.family.sans};
+  font-size: ${theme.font.size(12)};
+  font-weight: ${theme.font.weight.medium};
+  height: 100%;
+  justify-content: center;
+  letter-spacing: -0.02em;
+  width: 100%;
+`;
+
 const AuthorMeta = styled.div`
   display: grid;
   max-width: 253px;
@@ -128,6 +142,7 @@ const RightColumn = styled.div`
 `;
 
 const QuoteArea = styled.div`
+  isolation: isolate;
   min-width: 0;
   position: relative;
 
@@ -139,6 +154,8 @@ const QuoteArea = styled.div`
 const QuoteStack = styled.div`
   display: grid;
   min-width: 0;
+  position: relative;
+  z-index: 1;
 `;
 
 const QuoteWrapper = styled.div`
@@ -169,7 +186,7 @@ const QuoteDecoration = styled.div`
     overflow: hidden;
     pointer-events: none;
     position: absolute;
-    right: 48px;
+    right: 0;
     top: 56px;
     width: 646px;
     z-index: 0;
@@ -179,7 +196,7 @@ const QuoteDecoration = styled.div`
 const QuoteDecorationVisual = styled.div`
   @media (min-width: ${theme.breakpoints.md}px) {
     position: absolute;
-    right: 36px;
+    right: 0;
     top: -112px;
     transform: scale(1.9);
     transform-origin: top right;
@@ -226,6 +243,15 @@ export function PartnerCarousel({
     if (hasNext) setIndex(index + 1);
   };
 
+  const avatar = current.author.avatar;
+  const authorInitials = current.author.name.text
+    .split(/\s+/)
+    .map((word) => word[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+
   return (
     <StyledCarousel
       aria-label="Partner testimonials"
@@ -235,17 +261,23 @@ export function PartnerCarousel({
       <LeftColumn>
         <AuthorCard>
           <PortraitFrame>
-            <NextImage
-              alt={current.author.avatar.alt || ''}
-              fill
-              priority
-              sizes="(min-width: 921px) 328px, 100vw"
-              src={current.author.avatar.src}
-              style={{
-                filter: 'grayscale(1) contrast(1.1)',
-                objectFit: 'cover',
-              }}
-            />
+            {avatar ? (
+              <NextImage
+                alt={avatar.alt ?? ''}
+                fill
+                priority
+                sizes="(min-width: 921px) 328px, 100vw"
+                src={avatar.src}
+                style={{
+                  filter: 'grayscale(1) contrast(1.1)',
+                  objectFit: 'cover',
+                }}
+              />
+            ) : (
+              <PortraitPlaceholder aria-hidden>
+                {authorInitials}
+              </PortraitPlaceholder>
+            )}
           </PortraitFrame>
 
           <AuthorMeta>
@@ -260,19 +292,23 @@ export function PartnerCarousel({
               <HandleText>
                 <Body
                   as="span"
-                  body={current.author.handle}
+                  body={current.author.designation}
                   className={handleTextClassName}
                   size="sm"
                 />
               </HandleText>
             </NameHandleRow>
 
-            <Body
-              as="p"
-              body={{ text: DATE_FORMATTER.format(current.author.date) }}
-              className={dateTextClassName}
-              size="xs"
-            />
+            {current.author.date ? (
+              <Body
+                as="p"
+                body={{
+                  text: DATE_FORMATTER.format(current.author.date),
+                }}
+                className={dateTextClassName}
+                size="xs"
+              />
+            ) : null}
           </AuthorMeta>
         </AuthorCard>
 
