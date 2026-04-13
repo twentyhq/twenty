@@ -87,10 +87,11 @@ export default {
         371,
         373,
         380,
-        411,
-        492,
-        497,
-        498
+        387,
+        418,
+        500,
+        505,
+        506
     ],
     "types": {
         "BillingProductDTO": {
@@ -9038,7 +9039,7 @@ export default {
                 6,
                 {
                     "input": [
-                        481,
+                        488,
                         "UpdateWorkspaceMemberSettingsInput!"
                     ]
                 }
@@ -9072,7 +9073,7 @@ export default {
                 66,
                 {
                     "data": [
-                        481,
+                        489,
                         "ActivateWorkspaceInput!"
                     ]
                 }
@@ -9081,7 +9082,7 @@ export default {
                 66,
                 {
                     "data": [
-                        482,
+                        490,
                         "UpdateWorkspaceInput!"
                     ]
                 }
@@ -9096,7 +9097,7 @@ export default {
                 232,
                 {
                     "input": [
-                        483,
+                        491,
                         "SetupOIDCSsoInput!"
                     ]
                 }
@@ -9105,7 +9106,7 @@ export default {
                 232,
                 {
                     "input": [
-                        484,
+                        492,
                         "SetupSAMLSsoInput!"
                     ]
                 }
@@ -9114,7 +9115,7 @@ export default {
                 228,
                 {
                     "input": [
-                        485,
+                        493,
                         "DeleteSsoInput!"
                     ]
                 }
@@ -9123,7 +9124,7 @@ export default {
                 229,
                 {
                     "input": [
-                        486,
+                        494,
                         "EditSsoInput!"
                     ]
                 }
@@ -9145,7 +9146,7 @@ export default {
                 323,
                 {
                     "input": [
-                        487,
+                        495,
                         "SendEmailInput!"
                     ]
                 }
@@ -9171,7 +9172,7 @@ export default {
                         "String!"
                     ],
                     "connectionParameters": [
-                        489,
+                        497,
                         "EmailAccountConnectionParameters!"
                     ],
                     "id": [
@@ -9183,7 +9184,7 @@ export default {
                 157,
                 {
                     "input": [
-                        491,
+                        499,
                         "UpdateLabPublicFeatureFlagInput!"
                     ]
                 }
@@ -9261,7 +9262,7 @@ export default {
                 6,
                 {
                     "role": [
-                        492,
+                        500,
                         "AiModelRole!"
                     ],
                     "modelId": [
@@ -9466,7 +9467,7 @@ export default {
                 68,
                 {
                     "input": [
-                        493,
+                        501,
                         "CreateOneAppTokenInput!"
                     ]
                 }
@@ -9502,7 +9503,7 @@ export default {
                 6,
                 {
                     "workspaceMigration": [
-                        495,
+                        503,
                         "WorkspaceMigrationInput!"
                     ]
                 }
@@ -9576,7 +9577,7 @@ export default {
                         "String!"
                     ],
                     "fileFolder": [
-                        498,
+                        506,
                         "FileFolder!"
                     ],
                     "filePath": [
@@ -11784,7 +11785,7 @@ export default {
                 1
             ],
             "files": [
-                488
+                496
             ],
             "__typename": [
                 1
@@ -11803,13 +11804,13 @@ export default {
         },
         "EmailAccountConnectionParameters": {
             "IMAP": [
-                490
+                498
             ],
             "SMTP": [
-                490
+                498
             ],
             "CALDAV": [
-                490
+                498
             ],
             "__typename": [
                 1
@@ -11849,7 +11850,7 @@ export default {
         "AiModelRole": {},
         "CreateOneAppTokenInput": {
             "appToken": [
-                494
+                502
             ],
             "__typename": [
                 1
@@ -11865,7 +11866,7 @@ export default {
         },
         "WorkspaceMigrationInput": {
             "actions": [
-                496
+                504
             ],
             "__typename": [
                 1
@@ -11873,7 +11874,7 @@ export default {
         },
         "WorkspaceMigrationDeleteActionInput": {
             "type": [
-                497
+                505
             ],
             "metadataName": [
                 355
@@ -11901,7 +11902,7 @@ export default {
                 260,
                 {
                     "input": [
-                        500,
+                        508,
                         "LogicFunctionLogsInput!"
                     ]
                 }
