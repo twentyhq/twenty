@@ -3,18 +3,13 @@ import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pag
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
-import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
-import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
 import { removeWidgetLayoutFromTab } from '@/page-layout/utils/removeWidgetLayoutFromTab';
-import { useDeleteViewForFieldsWidget } from '@/page-layout/widgets/fields/hooks/useDeleteViewForFieldsWidget';
-import { useDeleteViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useDeleteViewForRecordTableWidget';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { WidgetType } from '~/generated-metadata/graphql';
 
 export const useRemovePageLayoutWidgetAndPreservePosition = (
   pageLayoutIdFromProps?: string,
@@ -44,16 +39,6 @@ export const useRemovePageLayoutWidgetAndPreservePosition = (
     pageLayoutId,
   );
 
-  const { deleteViewForFieldsWidget } = useDeleteViewForFieldsWidget();
-
-  const { deleteViewForRecordTableWidget } =
-    useDeleteViewForRecordTableWidget();
-
-  const pageLayoutPersistedState = useAtomComponentStateCallbackState(
-    pageLayoutPersistedComponentState,
-    pageLayoutId,
-  );
-
   const store = useStore();
 
   const removePageLayoutWidgetAndPreservePosition = useCallback(
@@ -64,35 +49,6 @@ export const useRemovePageLayoutWidgetAndPreservePosition = (
       const tabWithWidget = pageLayoutDraft.tabs.find((tab) =>
         tab.widgets.some((widget) => widget.id === widgetId),
       );
-
-      const widgetToRemove = tabWithWidget?.widgets.find(
-        (widget) => widget.id === widgetId,
-      );
-
-      const persisted = store.get(pageLayoutPersistedState);
-      const persistedWidgetIds = new Set(
-        persisted?.tabs.flatMap((tab) =>
-          tab.widgets.map((widget) => widget.id),
-        ) ?? [],
-      );
-
-      const isWidgetPersisted = persistedWidgetIds.has(widgetId);
-
-      if (isWidgetPersisted && isDefined(widgetToRemove)) {
-        const viewId = getWidgetConfigurationViewId(
-          widgetToRemove.configuration,
-        );
-
-        if (isDefined(viewId)) {
-          if (widgetToRemove.type === WidgetType.RECORD_TABLE) {
-            deleteViewForRecordTableWidget(viewId);
-          }
-
-          if (widgetToRemove.type === WidgetType.FIELDS) {
-            deleteViewForFieldsWidget(viewId);
-          }
-        }
-      }
 
       const tabId = tabWithWidget?.id;
 
@@ -131,13 +87,10 @@ export const useRemovePageLayoutWidgetAndPreservePosition = (
       store.set(pageLayoutEditingWidgetIdState, null);
     },
     [
-      deleteViewForFieldsWidget,
-      deleteViewForRecordTableWidget,
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
       pageLayoutDraggedAreaState,
       pageLayoutEditingWidgetIdState,
-      pageLayoutPersistedState,
       store,
     ],
   );
