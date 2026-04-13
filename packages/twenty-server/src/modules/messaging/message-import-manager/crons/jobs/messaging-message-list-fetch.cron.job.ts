@@ -92,6 +92,7 @@ export class MessagingMessageListFetchCronJob {
           .update()
           .set({
             syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
+            syncStageStartedAt: new Date(),
           })
           .where({
             id: In(messageChannelIdsToSchedule),

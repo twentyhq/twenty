@@ -94,6 +94,7 @@ export class CalendarEventsImportCronJob {
           .set({
             syncStage:
               CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED,
+            syncStageStartedAt: new Date(),
           })
           .where({
             id: In(calendarChannelIds),

@@ -93,6 +93,7 @@ export class MessagingMessagesImportCronJob {
           .update()
           .set({
             syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
+            syncStageStartedAt: new Date(),
           })
           .where({
             id: In(messageChannelIdsToSchedule),

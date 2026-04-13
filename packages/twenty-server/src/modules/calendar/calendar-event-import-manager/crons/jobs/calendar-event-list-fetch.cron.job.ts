@@ -94,6 +94,7 @@ export class CalendarEventListFetchCronJob {
           .set({
             syncStage:
               CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED,
+            syncStageStartedAt: new Date(),
           })
           .where({
             id: In(calendarChannelIds),
