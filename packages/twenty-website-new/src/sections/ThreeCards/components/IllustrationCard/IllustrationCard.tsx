@@ -118,22 +118,20 @@ export function IllustrationCard({
             size="xs"
             weight="regular"
           />
-          <FooterTrailingAction>
-            <IconButton
-              ariaLabel="Read case study"
-              borderColor={CARD_OUTLINE_COLOR}
-              href={
-                illustrationCard.caseStudySlug !== undefined
-                  ? `/case-studies/${illustrationCard.caseStudySlug}`
-                  : undefined
-              }
-              icon={ArrowRightIcon}
-              iconFillColor="transparent"
-              iconSize={24}
-              iconStrokeColor={theme.colors.primary.text[80]}
-              size={48}
-            />
-          </FooterTrailingAction>
+          {illustrationCard.caseStudySlug !== undefined ? (
+            <FooterTrailingAction>
+              <IconButton
+                ariaLabel="Read case study"
+                borderColor={CARD_OUTLINE_COLOR}
+                href={`/case-studies/${illustrationCard.caseStudySlug}`}
+                icon={ArrowRightIcon}
+                iconFillColor="transparent"
+                iconSize={24}
+                iconStrokeColor={theme.colors.primary.text[80]}
+                size={48}
+              />
+            </FooterTrailingAction>
+          ) : null}
         </CardFooter>
       )}
     </IllustrationCardContainer>
