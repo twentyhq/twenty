@@ -8,6 +8,7 @@ import { v4 } from 'uuid';
 
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
 import { SEND_CHAT_MESSAGE } from '@/ai/graphql/mutations/sendChatMessage';
@@ -188,6 +189,10 @@ export const useAgentChat = (
           ? error
           : new Error('An unexpected error occurred'),
       );
+
+      dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
+        content: contentToSend,
+      });
 
       if (draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
         setCurrentAIChatThread(threadId);
