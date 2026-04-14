@@ -65,7 +65,14 @@ export class UpgradeSequenceReaderService {
     const cursor = sequence.findIndex((step) => step.name === stepName);
 
     if (cursor === -1) {
-      throw new Error(`Step "${stepName}" not found in upgrade sequence`);
+      const supportedVersions =
+        TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS.join(', ');
+
+      throw new Error(
+        `Step "${stepName}" not found in upgrade sequence. ` +
+          `The sequence only covers versions [${supportedVersions}]. ` +
+          `Please upgrade to ${TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS[0]} first.`,
+      );
     }
 
     return cursor;

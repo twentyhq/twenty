@@ -8,13 +8,11 @@ import { compareSemanticVersions } from '@/lib/semver/compare-semantic-versions'
 
 function resolveReleasesDirectory(): string | null {
   const candidates = [
-    path.join(process.cwd(), '..', 'twenty-website', 'src', 'content', 'releases'),
+    path.join(process.cwd(), 'src', 'content', 'releases'),
     path.join(
       process.cwd(),
-      '..',
-      '..',
       'packages',
-      'twenty-website',
+      'twenty-website-new',
       'src',
       'content',
       'releases',

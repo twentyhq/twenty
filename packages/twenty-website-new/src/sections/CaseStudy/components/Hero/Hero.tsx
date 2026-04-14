@@ -194,7 +194,7 @@ export function Hero({ hero }: HeroProps) {
   const ClientIcon = CLIENT_ICONS[hero.clientIcon];
 
   return (
-    <Section>
+    <Section id="case-study-hero">
       <StyledContainer>
         <BackLink href="/case-studies">
           <IconArrowLeft size={20} stroke={1.5} />
@@ -208,12 +208,7 @@ export function Hero({ hero }: HeroProps) {
           </Badge>
 
           <TitleWrap>
-            <Heading
-              as="h1"
-              segments={hero.title}
-              size="xl"
-              weight="light"
-            />
+            <Heading as="h1" segments={hero.title} size="xl" weight="light" />
           </TitleWrap>
 
           <AuthorLine>
@@ -236,7 +231,7 @@ export function Hero({ hero }: HeroProps) {
               <TwentyLogo>T</TwentyLogo>
             </TwentyLogoWrap>
           </VisualContent>
-          
+
           {hero.heroImageSrc && (
             <ImageContent>
               <Image

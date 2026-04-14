@@ -7,6 +7,7 @@ import { AddPermissionFlagRoleIdIndexFastInstanceCommand } from 'src/database/co
 import { AddWorkspaceIdToIndirectEntitiesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-22/1-22-instance-command-fast-1775758621017-add-workspace-id-to-indirect-entities';
 import { AddWorkspaceIdIndexesAndFksFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-22/1-22-instance-command-fast-1775761294897-add-workspace-id-indexes-and-fks-to-indirect-entities';
 import { DropObjectMetadataDataSourceFkFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-22/1-22-instance-command-fast-1775804361516-drop-object-metadata-data-source-fk';
+import { AddCreditBalanceToBillingCustomerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-22/1-22-instance-command-fast-1776078919203-add-credit-balance-to-billing-customer';
 import { BackfillWorkspaceIdOnIndirectEntitiesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/1-22/1-22-instance-command-slow-1775758621018-backfill-workspace-id-on-indirect-entities';
 import { DropWorkspaceVersionColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-23/1-23-instance-command-fast-1785000000000-drop-workspace-version-column';
 
@@ -19,5 +20,6 @@ export const INSTANCE_COMMANDS = [
   BackfillWorkspaceIdOnIndirectEntitiesSlowInstanceCommand,
   AddWorkspaceIdIndexesAndFksFastInstanceCommand,
   DropObjectMetadataDataSourceFkFastInstanceCommand,
+  AddCreditBalanceToBillingCustomerFastInstanceCommand,
   DropWorkspaceVersionColumnFastInstanceCommand,
 ];

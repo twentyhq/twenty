@@ -20,9 +20,9 @@ const Checkbox = styled.span`
   border: 1px solid ${theme.colors.highlight[100]};
   border-radius: ${theme.radius(1)};
   display: grid;
-  height: 20px;
+  height: 16px;
   justify-items: center;
-  width: 20px;
+  width: 16px;
 
   &[data-checked='true'] {
     background-color: ${theme.colors.highlight[100]};
@@ -38,9 +38,9 @@ function CheckmarkIcon() {
     <svg
       aria-hidden
       fill="none"
-      height="12"
+      height="10"
       viewBox="0 0 12 12"
-      width="12"
+      width="10"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
@@ -84,9 +84,7 @@ export function SelfHostToggle({
     <ToggleRow>
       <HiddenInput
         checked={isSelfHost}
-        onChange={() =>
-          onHostingChange(isSelfHost ? 'cloud' : 'selfHost')
-        }
+        onChange={() => onHostingChange(isSelfHost ? 'cloud' : 'selfHost')}
         type="checkbox"
       />
       <LabelText>Selfhosting</LabelText>

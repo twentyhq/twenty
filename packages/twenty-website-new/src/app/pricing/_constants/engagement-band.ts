@@ -2,10 +2,10 @@ import type { EngagementBandDataType } from '@/sections/EngagementBand/types';
 
 export const ENGAGEMENT_BAND_DATA: EngagementBandDataType = {
   heading: {
-    text: 'Want a tailor-made plan?',
+    text: 'Need help with customization?',
     fontFamily: 'serif',
   },
   body: {
-    text: 'Help customers implement, customize, and succeed with Twenty. Combine sales and services to grow your business.',
+    text: 'Find the right partner to implement, customize, and tailor Twenty to your team.',
   },
 };

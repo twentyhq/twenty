@@ -18,7 +18,20 @@ import { Plans } from '@/sections/Plans/components';
 import { PlanTable } from '@/sections/PlanTable/components';
 import { Salesforce } from '@/sections/Salesforce/components';
 import { theme } from '@/theme';
+import { styled } from '@linaria/react';
 import type { Metadata } from 'next';
+
+const PricingPlansContainer = styled.div`
+  display: grid;
+  margin: 0 auto;
+  row-gap: ${theme.spacing(8)};
+  width: 100%;
+`;
+
+const PricingBannerContainer = styled.div`
+  margin: 0 auto;
+  width: 100%;
+`;
 
 export const metadata: Metadata = {
   title: 'Pricing — Twenty',
@@ -50,28 +63,35 @@ export default async function PricingPage() {
       </Hero.Root>
 
       <Plans.Root backgroundColor={theme.colors.secondary.background[5]}>
-        <Plans.Content />
+        <PricingPlansContainer>
+          <Plans.Content />
+        </PricingPlansContainer>
       </Plans.Root>
 
       <EngagementBand.Root
         backgroundColor={theme.colors.secondary.background[5]}
       >
-        <EngagementBand.Strip
-          fillColor={theme.colors.primary.background[100]}
-          variant="primary"
-        >
-          <EngagementBand.Copy>
-            <EngagementBand.Heading segments={ENGAGEMENT_BAND_DATA.heading} />
-            <EngagementBand.Body body={ENGAGEMENT_BAND_DATA.body} />
-          </EngagementBand.Copy>
-          <EngagementBand.Actions>
-            <TalkToUsButton
-              color="secondary"
-              label="Contact us"
-              variant="contained"
-            />
-          </EngagementBand.Actions>
-        </EngagementBand.Strip>
+        <PricingBannerContainer>
+          <EngagementBand.Strip
+            desktopCopyMaxWidth="60%"
+            fillColor={theme.colors.primary.background[100]}
+            variant="primary"
+          >
+            <EngagementBand.Copy>
+              <EngagementBand.Heading segments={ENGAGEMENT_BAND_DATA.heading} />
+              <EngagementBand.Body body={ENGAGEMENT_BAND_DATA.body} />
+            </EngagementBand.Copy>
+            <EngagementBand.Actions>
+              <LinkButton
+                color="secondary"
+                href="https://app.twenty.com/welcome"
+                label="Find a partner"
+                type="anchor"
+                variant="outlined"
+              />
+            </EngagementBand.Actions>
+          </EngagementBand.Strip>
+        </PricingBannerContainer>
       </EngagementBand.Root>
 
       <PlanTable.Root backgroundColor={theme.colors.secondary.background[100]}>

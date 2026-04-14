@@ -1,11 +1,8 @@
-import { FAQ_DATA, MENU_DATA } from '@/app/_constants';
-import { TalkToUsButton } from '@/app/components/ContactCalModal';
+import { MENU_DATA } from '@/app/_constants';
 import type { CaseStudyData } from '@/app/case-studies/_constants/types';
-import { Eyebrow, LinkButton } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { CaseStudy } from '@/sections/CaseStudy/components';
-import { Faq } from '@/sections/Faq/components';
 import { Menu } from '@/sections/Menu/components';
 import { theme } from '@/theme';
 import type { Metadata } from 'next';
@@ -53,7 +50,7 @@ const CASE_STUDY: CaseStudyData = {
         { text: 'to rule them all', fontFamily: 'sans' },
       ],
       paragraphs: [
-        'Justin\'s broader mission at Elevate has been to move the company off static documents and onto tools with API access. By the end of 2025, that was in place: time billing, resource planning, Microsoft Teams, and project management were all accessible via API, with Twenty at the center holding client and opportunity data. Team members could use that information strategically instead of re-keying it.',
+        "Justin's broader mission at Elevate has been to move the company off static documents and onto tools with API access. By the end of 2025, that was in place: time billing, resource planning, Microsoft Teams, and project management were all accessible via API, with Twenty at the center holding client and opportunity data. Team members could use that information strategically instead of re-keying it.",
         'That opened the door to something more powerful. Justin built a custom front end that pulls live data from those systems into a single view, tailored to each role. When a proposal is won, what used to require four separate people manually setting up instances across four different tools now happens in a single click, drawing on data collected in Twenty across the full opportunity lifecycle — another shift toward higher-value work for clients.',
         'Twenty is not only where CRM data lives. It is the API backbone that makes the rest of the stack possible.',
       ],
@@ -81,22 +78,11 @@ const CASE_STUDY: CaseStudyData = {
         { text: 'internal rollout', fontFamily: 'sans' },
       ],
       paragraphs: [
-        'Elevate\'s CEO was so impressed with Twenty he started recommending it to clients before the internal setup was even complete. The team is exploring bringing Twenty to client projects as part of their consulting practice, including as the backend for custom-built products tailored to specific operational needs.',
+        "Elevate's CEO was so impressed with Twenty he started recommending it to clients before the internal setup was even complete. The team is exploring bringing Twenty to client projects as part of their consulting practice, including as the backend for custom-built products tailored to specific operational needs.",
         'For a firm that once ran on sticky notes, this is more than an upgrade — it is a complete transformation.',
       ],
     },
   ],
-  testimonial: {
-    eyebrow: 'What they say',
-    quote:
-      'Because Twenty\'s API is fully open, I could connect it to every other tool in our stack. When a proposal is won, what used to take four people across four tools now happens in a single click.',
-    author: {
-      name: 'Justin Beadle',
-      handle: 'Director of Digital and Information, Elevate Consulting',
-      date: 'June 2025',
-      avatarSrc: PLACEHOLDER_HERO,
-    },
-  },
   tableOfContents: [
     'From documents to open APIs',
     'One API to rule them all',
@@ -119,6 +105,18 @@ export default async function ElevateConsultingCaseStudyPage() {
   const stats = await fetchCommunityStats();
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
+  let storySectionIndex = 0;
+  const sectionBlocks = CASE_STUDY.sections.map((block, index) => {
+    if (block.type === 'text') {
+      const sectionId = `case-study-section-${storySectionIndex}`;
+      storySectionIndex += 1;
+      return (
+        <CaseStudy.TextBlock key={index} block={block} sectionId={sectionId} />
+      );
+    }
+    return <CaseStudy.VisualBlock key={index} block={block} />;
+  });
+
   return (
     <>
       <Menu.Root
@@ -135,38 +133,9 @@ export default async function ElevateConsultingCaseStudyPage() {
 
       <CaseStudy.Hero hero={CASE_STUDY.hero} />
 
-      {CASE_STUDY.sections.map((block, index) => {
-        if (block.type === 'text') {
-          return <CaseStudy.TextBlock key={index} block={block} />;
-        }
-        return <CaseStudy.VisualBlock key={index} block={block} />;
-      })}
+      {sectionBlocks}
 
-      <CaseStudy.Testimonial testimonial={CASE_STUDY.testimonial} />
-
-      <Faq.Root illustration={FAQ_DATA.illustration}>
-        <Faq.Intro>
-          <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
-          <Faq.Heading segments={FAQ_DATA.heading} />
-          <Faq.Cta>
-            <LinkButton
-              color="primary"
-              href="https://app.twenty.com/welcome"
-              label="Get started"
-              type="anchor"
-              variant="contained"
-            />
-            <TalkToUsButton
-              color="primary"
-              label="Talk to us"
-              variant="outlined"
-            />
-          </Faq.Cta>
-        </Faq.Intro>
-        <Faq.Items questions={FAQ_DATA.questions} />
-      </Faq.Root>
-
-      <CaseStudy.TableOfContents items={CASE_STUDY.tableOfContents} />
+      <CaseStudy.SectionNav items={CASE_STUDY.tableOfContents} />
     </>
   );
 }

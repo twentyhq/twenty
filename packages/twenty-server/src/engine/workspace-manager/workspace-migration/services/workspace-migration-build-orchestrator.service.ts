@@ -131,6 +131,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
       dependencyAllFlatEntityMaps,
     });
 
+    const preDeletionFlatViewFieldMaps = structuredClone(
+      optimisticAllFlatEntityMaps.flatViewFieldMaps,
+    );
+
     const {
       flatObjectMetadataMaps,
       flatViewFieldMaps,
@@ -818,12 +822,14 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
-    const { objectMetadata } = crossEntityTransversalValidation({
+    const { objectMetadata, viewField } = crossEntityTransversalValidation({
       optimisticUniversalFlatMaps: optimisticAllFlatEntityMaps,
       orchestratorActionsReport,
+      preDeletionFlatViewFieldMaps,
     });
 
     orchestratorFailureReport.objectMetadata.push(...objectMetadata);
+    orchestratorFailureReport.viewField.push(...viewField);
 
     const allErrors = Object.values(orchestratorFailureReport);
 

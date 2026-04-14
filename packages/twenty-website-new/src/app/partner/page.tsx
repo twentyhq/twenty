@@ -112,14 +112,15 @@ export default async function PartnerPage() {
 
       <Testimonials.Root
         backgroundColor={theme.colors.secondary.background[5]}
-        color={theme.colors.primary.text[100]}
+        backgroundShapeSrc="/images/partner/testimonials/background-shape.webp"
+        color={theme.colors.secondary.text[100]}
       >
-        <Testimonials.Carousel
+        <Testimonials.PartnerCarousel
           eyebrow={TESTIMONIALS_DATA.eyebrow}
           testimonials={TESTIMONIALS_DATA.testimonials}
         >
           <Testimonials.PartnerVisual />
-        </Testimonials.Carousel>
+        </Testimonials.PartnerCarousel>
       </Testimonials.Root>
 
       <Signoff.Root
