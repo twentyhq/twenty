@@ -36,6 +36,9 @@ export class AddGlobalObjectContextToCommandMenuItemAvailabilityTypeFastInstance
       'ALTER TABLE "core"."commandMenuItem" ALTER COLUMN "availabilityType" DROP DEFAULT',
     );
     await queryRunner.query(
+      `UPDATE "core"."commandMenuItem" SET "availabilityType" = 'GLOBAL' WHERE "availabilityType" = 'GLOBAL_OBJECT_CONTEXT'`,
+    );
+    await queryRunner.query(
       'ALTER TABLE "core"."commandMenuItem" ALTER COLUMN "availabilityType" TYPE "core"."commandMenuItem_availabilitytype_enum_old" USING "availabilityType"::"text"::"core"."commandMenuItem_availabilitytype_enum_old"',
     );
     await queryRunner.query(

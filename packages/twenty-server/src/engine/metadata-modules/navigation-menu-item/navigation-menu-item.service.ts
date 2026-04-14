@@ -344,11 +344,17 @@ export class NavigationMenuItemService {
         { workspaceId },
       );
 
-    const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
+    const {
+      flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
+      flatPageLayoutMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatNavigationMenuItemMaps'],
+          flatMapsKeys: [
+            'flatNavigationMenuItemMaps',
+            'flatPageLayoutMaps',
+          ],
         },
       );
 
@@ -381,6 +387,7 @@ export class NavigationMenuItemService {
         fromUpdateNavigationMenuItemInputToFlatNavigationMenuItemToUpdateOrThrow(
           {
             flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
+            flatPageLayoutMaps,
             updateNavigationMenuItemInput: updateInput,
           },
         ),

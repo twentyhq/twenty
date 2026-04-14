@@ -58,10 +58,13 @@ export const usePageChangeEffectNavigateLocation = () => {
     AppPath.PageLayoutPage,
   );
 
-  const { data: pageLayoutData } = useQuery(FindOnePageLayoutDocument, {
-    variables: { id: pageLayoutId ?? '' },
-    skip: !isOnPageLayoutPage || !isDefined(pageLayoutId),
-  });
+  const { data: pageLayoutData, loading: isPageLayoutLoading } = useQuery(
+    FindOnePageLayoutDocument,
+    {
+      variables: { id: pageLayoutId ?? '' },
+      skip: !isOnPageLayoutPage || !isDefined(pageLayoutId),
+    },
+  );
   const verifyEmailRedirectPath = useAtomStateValue(
     verifyEmailRedirectPathState,
   );
@@ -177,8 +180,10 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     isOnPageLayoutPage &&
-    isDefined(pageLayoutData?.getPageLayout) &&
-    pageLayoutData.getPageLayout.type !== PageLayoutType.STANDALONE_PAGE
+    isDefined(pageLayoutId) &&
+    !isPageLayoutLoading &&
+    (!isDefined(pageLayoutData?.getPageLayout) ||
+      pageLayoutData.getPageLayout.type !== PageLayoutType.STANDALONE_PAGE)
   ) {
     return AppPath.NotFound;
   }
