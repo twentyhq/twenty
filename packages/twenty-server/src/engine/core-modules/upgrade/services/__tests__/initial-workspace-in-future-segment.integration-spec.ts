@@ -9,10 +9,10 @@ import {
   makeFastInstance,
   makeSlowInstance,
   makeWorkspace,
+  migrationRecordToKey,
   resetSeedSequenceCounter,
   seedMigration,
   setMockActiveWorkspaceIds,
-  migrationRecordToKey,
   testGetExecutedMigrationsInOrder,
   WS_1,
   WS_2,
@@ -41,13 +41,6 @@ describe('UpgradeSequenceRunnerService — initial workspace in future segment (
   });
 
   it('should upgrade all workspaces when some were activated with isInitial in future segments', async () => {
-    // Sequence (3 segments):
-    //   [Ic0] | [Wc0, Wc1, Wc2] — seg A | [Ic1, Ic2, Ic3] | [Wc3, Wc4, Wc5] — seg B | [Ic4, Ic5] | [Wc6, Wc7] — seg C
-    //
-    // WS_1: failed at Wc1 in segment A — needs retry from Wc1
-    // WS_2: completed through Wc2 in segment A — needs segments B and C
-    // WS_3: isInitial at Wc3 (start of segment B) — skip seg A, join at seg B
-    // WS_4: isInitial at Wc6 (start of segment C) — skip seg A and B, join at seg C
     const sequence = [
       makeFastInstance('Ic0'),
       makeWorkspace('Wc0'),
