@@ -25,11 +25,6 @@ export type UpgradeSequenceRunnerReport = {
   totalFailures: number;
 };
 
-type WorkspaceSegmentResult = {
-  report: WorkspaceIteratorReport;
-  processedWorkspaceIds: string[];
-};
-
 @Injectable()
 export class UpgradeSequenceRunnerService {
   private readonly logger = new Logger(UpgradeSequenceRunnerService.name);
@@ -65,7 +60,9 @@ export class UpgradeSequenceRunnerService {
     let totalSuccesses = 0;
     let totalFailures = 0;
     let cursor = startCursor;
-    let lastSegmentProcessedWorkspaceIds: string[] | undefined;
+    let workspaceCursors = await this.fetchWorkspaceCursors(
+      allActiveOrSuspendedWorkspaceIds,
+    );
 
     while (cursor < sequence.length) {
       const step = sequence[cursor];
@@ -74,9 +71,10 @@ export class UpgradeSequenceRunnerService {
         const previousStep = cursor > 0 ? sequence[cursor - 1] : undefined;
 
         if (previousStep?.kind === 'workspace') {
-          await this.enforceWorkspaceSyncBarrier({
+          this.enforceWorkspacesCompletedPreviousWorkspaceSegment({
+            sequence,
             previousWorkspaceStep: previousStep,
-            processedWorkspaceIds: lastSegmentProcessedWorkspaceIds ?? [],
+            workspaceCursors,
           });
         }
 
@@ -94,14 +92,13 @@ export class UpgradeSequenceRunnerService {
           fromWorkspaceCommand: step,
         });
 
-      const { report, processedWorkspaceIds } =
-        await this.resumeWorkspaceCommandsFromCursors({
-          contiguousWorkspaceSteps,
-          allActiveOrSuspendedWorkspaceIds,
-          options,
-        });
+      const report = await this.resumeWorkspaceCommandsFromCursors({
+        contiguousWorkspaceSteps,
+        workspaceCursors,
+        allActiveOrSuspendedWorkspaceIds,
+        options,
+      });
 
-      lastSegmentProcessedWorkspaceIds = processedWorkspaceIds;
       totalSuccesses += report.success.length;
       totalFailures += report.fail.length;
 
@@ -115,6 +112,10 @@ export class UpgradeSequenceRunnerService {
       }
 
       cursor += contiguousWorkspaceSteps.length;
+
+      workspaceCursors = await this.fetchWorkspaceCursors(
+        allActiveOrSuspendedWorkspaceIds,
+      );
     }
 
     return { totalSuccesses, totalFailures };
@@ -167,9 +168,6 @@ export class UpgradeSequenceRunnerService {
     }
   }
 
-  // Validates that every workspace cursor falls within the current segment
-  // or is ahead in a future segment with isInitial: true (meaning the
-  // workspace was activated at that point and never ran earlier steps).
   private async validateWorkspaceCursorsAreInSameSegmentOrAhead({
     allActiveOrSuspendedWorkspaceIds,
     sequence,
@@ -205,6 +203,14 @@ export class UpgradeSequenceRunnerService {
           'workspaces are not aligned',
       );
     }
+  }
+
+  private async fetchWorkspaceCursors(
+    allActiveOrSuspendedWorkspaceIds: string[],
+  ): Promise<Map<string, WorkspaceCursor>> {
+    return this.upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow(
+      allActiveOrSuspendedWorkspaceIds,
+    );
   }
 
   private async runInstanceStep({
@@ -249,18 +255,15 @@ export class UpgradeSequenceRunnerService {
 
   private async resumeWorkspaceCommandsFromCursors({
     contiguousWorkspaceSteps,
+    workspaceCursors,
     allActiveOrSuspendedWorkspaceIds,
     options,
   }: {
     contiguousWorkspaceSteps: WorkspaceUpgradeStep[];
+    workspaceCursors: Map<string, WorkspaceCursor>;
     allActiveOrSuspendedWorkspaceIds: string[];
     options: ParsedUpgradeCommandOptions;
-  }): Promise<WorkspaceSegmentResult> {
-    const workspaceCursors =
-      await this.upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow(
-        allActiveOrSuspendedWorkspaceIds,
-      );
-
+  }): Promise<WorkspaceIteratorReport> {
     const segmentStepNames = new Set(
       contiguousWorkspaceSteps.map((step) => step.name),
     );
@@ -272,7 +275,7 @@ export class UpgradeSequenceRunnerService {
       options,
     });
 
-    const report = await this.workspaceIteratorService.iterate({
+    return this.workspaceIteratorService.iterate({
       workspaceIds: workspaceIdsForSegment,
       startFromWorkspaceId: options.startFromWorkspaceId,
       workspaceCountLimit: options.workspaceCountLimit,
@@ -299,8 +302,6 @@ export class UpgradeSequenceRunnerService {
         });
       },
     });
-
-    return { report, processedWorkspaceIds: workspaceIdsForSegment };
   }
 
   private filterWorkspaceIdsForSegment({
@@ -336,24 +337,45 @@ export class UpgradeSequenceRunnerService {
     });
   }
 
-  private async enforceWorkspaceSyncBarrier({
+  private enforceWorkspacesCompletedPreviousWorkspaceSegment({
+    sequence,
     previousWorkspaceStep,
-    processedWorkspaceIds,
+    workspaceCursors,
   }: {
+    sequence: UpgradeStep[];
     previousWorkspaceStep: WorkspaceUpgradeStep;
-    processedWorkspaceIds: string[];
-  }): Promise<void> {
-    const allWorkspacesReady =
-      await this.upgradeMigrationService.areAllWorkspacesAtCommand({
-        commandName: previousWorkspaceStep.name,
-        workspaceIds: processedWorkspaceIds,
+    workspaceCursors: Map<string, WorkspaceCursor>;
+  }): void {
+    const barrierCursor =
+      this.upgradeSequenceReaderService.locateStepInSequenceOrThrow({
+        sequence,
+        stepName: previousWorkspaceStep.name,
       });
 
-    if (!allWorkspacesReady) {
-      throw new Error(
-        'Cannot run instance step: not all workspaces have completed ' +
-          `"${previousWorkspaceStep.name}"`,
-      );
+    for (const [workspaceId, workspaceCursor] of workspaceCursors) {
+      const cursorPosition =
+        this.upgradeSequenceReaderService.locateStepInSequenceOrThrow({
+          sequence,
+          stepName: workspaceCursor.name,
+        });
+
+      const isAtBarrierAndCompleted =
+        cursorPosition === barrierCursor &&
+        workspaceCursor.status === 'completed';
+
+      const isBeyondBarrierWithInitialCursor =
+        cursorPosition > barrierCursor && workspaceCursor.isInitial;
+
+      const isAtOrBeyondBarrier =
+        isAtBarrierAndCompleted || isBeyondBarrierWithInitialCursor;
+
+      if (!isAtOrBeyondBarrier) {
+        throw new Error(
+          `Cannot run instance step: workspace ${workspaceId} ` +
+            `has not completed "${previousWorkspaceStep.name}" ` +
+            `(cursor: "${workspaceCursor.name}", status: "${workspaceCursor.status}")`,
+        );
+      }
     }
   }
 }
