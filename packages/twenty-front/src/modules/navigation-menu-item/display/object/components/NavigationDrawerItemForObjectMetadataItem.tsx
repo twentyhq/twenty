@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { Fragment, type ReactNode, useContext } from 'react';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/common/utils/isLocationMatchingNavigationMenuItem';
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/common/utils/recordIdentifierToObjectRecordIdentifier';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
@@ -74,9 +75,9 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const isRecord = navigationMenuItem?.type === NavigationMenuItemType.RECORD;
   const isView = navigationMenuItem?.type === NavigationMenuItemType.VIEW;
   const isObject = navigationMenuItem?.type === NavigationMenuItemType.OBJECT;
-  const hasCustomLink = isRecord || isView || isObject;
+  const hasNavigationMenuItem = isRecord || isView || isObject;
 
-  const navigationPath = hasCustomLink
+  const navigationPath = hasNavigationMenuItem
     ? getNavigationMenuItemComputedLink(
         navigationMenuItem!,
         objectMetadataItems,
@@ -88,21 +89,27 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         lastVisitedViewId ? { viewId: lastVisitedViewId } : undefined,
       );
 
-  const computedLink = hasCustomLink ? navigationPath : '';
+  const isOnObjectIndexPage =
+    currentPath ===
+    getAppPath(AppPath.RecordIndexPage, {
+      objectNamePlural: objectMetadataItem.namePlural,
+    });
 
-  const isActive = hasCustomLink
-    ? (isView || isObject ? currentPathWithSearch : currentPath) ===
-      computedLink
-    : currentPath ===
-        getAppPath(AppPath.RecordIndexPage, {
-          objectNamePlural: objectMetadataItem.namePlural,
-        }) ||
-      currentPath.includes(
-        getAppPath(AppPath.RecordShowPage, {
-          objectNameSingular: objectMetadataItem.nameSingular,
-          objectRecordId: '',
-        }) + '/',
-      );
+  const isOnObjectRecordPage = currentPath.includes(
+    getAppPath(AppPath.RecordShowPage, {
+      objectNameSingular: objectMetadataItem.nameSingular,
+      objectRecordId: '',
+    }) + '/',
+  );
+
+  const isActive = hasNavigationMenuItem
+    ? isLocationMatchingNavigationMenuItem(
+        currentPath,
+        currentPathWithSearch,
+        navigationMenuItem.type,
+        navigationPath,
+      )
+    : isOnObjectIndexPage || isOnObjectRecordPage;
 
   const handleClick = isLayoutCustomizationModeEnabled
     ? onEditModeClick
