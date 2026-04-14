@@ -237,7 +237,6 @@ export class DevSeederService {
         {
           workspaceId,
           applicationId: workspaceCustomApplicationId,
-          workspaceDisplayName: createWorkspaceStaticInput.displayName,
         },
         queryRunner,
       );

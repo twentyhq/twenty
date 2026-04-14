@@ -677,6 +677,11 @@ msgstr "關於此使用者"
 msgid "About this workspace"
 msgstr "關於此工作區"
 
+#. js-lingui-id: LuXP9q
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Access"
+msgstr ""
+
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Access Key ID"
@@ -1589,6 +1594,11 @@ msgstr "所有系統物件已在側邊欄中"
 msgid "All tasks addressed. Maintain the momentum."
 msgstr "所有任務已處理。請繼續保持。"
 
+#. js-lingui-id: 45Gm/K
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
+msgid "All the applications currently installed on this workspace"
+msgstr ""
+
 #. js-lingui-id: XuuWVF
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 msgid "All the standard objects"
@@ -1801,8 +1811,8 @@ msgid "Any {fieldLabel} field"
 msgstr "任何 {fieldLabel} 欄位"
 
 #. js-lingui-id: COyjuu
-#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
-#: src/modules/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/hooks/useVisibilityLabels.ts
+#: src/modules/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel.ts
 msgid "Any device"
 msgstr ""
 
@@ -3173,6 +3183,7 @@ msgstr "剪貼簿需要安全連線 (HTTPS)。請透過 HTTPS 存取此應用程
 
 #. js-lingui-id: yz7wBu
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/side-panel/components/SidePanelToggleButton.tsx
 msgid "Close"
 msgstr "關閉"
 
@@ -3563,9 +3574,7 @@ msgid "Content"
 msgstr "內容"
 
 #. js-lingui-id: M73whl
-#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Context"
 msgstr "上下文"
@@ -4647,7 +4656,8 @@ msgstr "刪除"
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainRowDropdownMenu.tsx
@@ -4900,8 +4910,8 @@ msgid "Description"
 msgstr "描述"
 
 #. js-lingui-id: BBqGS9
-#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
-#: src/modules/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/hooks/useVisibilityLabels.ts
+#: src/modules/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel.ts
 msgid "Desktop"
 msgstr ""
 
@@ -5124,7 +5134,7 @@ msgid "Drop file here..."
 msgstr "將文件拖到這裡……"
 
 #. js-lingui-id: euc6Ns
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 msgid "Duplicate"
 msgstr ""
 
@@ -7074,6 +7084,11 @@ msgstr "前端元件"
 msgid "Full access"
 msgstr "完全訪問"
 
+#. js-lingui-id: Ld0Tt4
+#: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
+msgid "Full tab widget"
+msgstr ""
+
 #. js-lingui-id: YMZBxa
 #: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 msgid "Function"
@@ -7850,10 +7865,10 @@ msgstr "安裝"
 msgid "Installed"
 msgstr "已安裝"
 
-#. js-lingui-id: N52taw
+#. js-lingui-id: OMxM9j
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-msgid "Installed applications"
-msgstr "已安裝的應用程式"
+msgid "Installed apps"
+msgstr ""
 
 #. js-lingui-id: wJJ+Wy
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -8610,11 +8625,6 @@ msgstr "已將電子郵件連結至"
 msgid "list"
 msgstr ""
 
-#. js-lingui-id: 5Kn+XX
-#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-msgid "List installed applications. Use filter to search for a specific application"
-msgstr "列出已安裝的應用程式。使用篩選器搜尋特定的應用程式"
-
 #. js-lingui-id: Ap948/
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Listed"
@@ -8826,6 +8836,7 @@ msgstr ""
 
 #. js-lingui-id: wckWOP
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 msgid "Manage"
 msgstr ""
 
@@ -9158,8 +9169,8 @@ msgid "Mission accomplished!"
 msgstr "任務完成！"
 
 #. js-lingui-id: dMsM20
-#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
-#: src/modules/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/hooks/useVisibilityLabels.ts
+#: src/modules/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel.ts
 msgid "Mobile"
 msgstr ""
 
@@ -9308,14 +9319,16 @@ msgid "Move Down"
 msgstr ""
 
 #. js-lingui-id: iSLA/r
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Move left"
 msgstr "向左移動"
 
 #. js-lingui-id: Ubl2by
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 msgid "Move right"
@@ -10087,6 +10100,11 @@ msgstr "無參數"
 #: src/modules/settings/billing/hooks/useEndSubscriptionTrialPeriod.ts
 msgid "No payment method found. Please update your billing details."
 msgstr "未找到支付方式。請更新您的結算詳情。"
+
+#. js-lingui-id: orE/ux
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "No permission defined for this application"
+msgstr ""
 
 #. js-lingui-id: Od1X93
 #: src/pages/settings/applications/tabs/SettingsApplicationPermissionsTab.tsx
@@ -11120,6 +11138,11 @@ msgstr "圖片"
 msgid "Pie Chart"
 msgstr "餅圖"
 
+#. js-lingui-id: 3pU8e+
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
+msgid "Pin tab"
+msgstr ""
+
 #. js-lingui-id: 2FIjLb
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Pink"
@@ -11139,6 +11162,7 @@ msgstr "預留位置文字"
 
 #. js-lingui-id: MFTZK8
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 msgid "Placement"
 msgstr ""
 
@@ -12000,7 +12024,8 @@ msgstr "重新發送電子郵件"
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 msgid "Reset"
 msgstr "重設"
 
@@ -12015,16 +12040,13 @@ msgstr "重置 2FA"
 msgid "Reset label to default"
 msgstr ""
 
-#. js-lingui-id: 1IWc1n
-#: src/modules/side-panel/pages/root/components/SidePanelResetContextToSelectionButton.tsx
-msgid "Reset to"
-msgstr "重置為"
-
 #. js-lingui-id: L+rMC9
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 msgid "Reset to default"
@@ -12998,7 +13020,7 @@ msgid "Set as default"
 msgstr "設為默認"
 
 #. js-lingui-id: 7f09hf
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 msgid "Set as pinned tab"
 msgstr "設為釘選分頁"
 
@@ -13071,7 +13093,7 @@ msgstr "正在設置您的數據庫..."
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -14176,6 +14198,11 @@ msgstr "此記錄沒有相關的活動。"
 msgid "There was an error while updating password."
 msgstr "更新密碼時出現錯誤。"
 
+#. js-lingui-id: vg1S0X
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "These apps are not vetted. Use at your own risk."
+msgstr ""
+
 #. js-lingui-id: AUV+TY
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "Thinking"
@@ -14263,6 +14290,11 @@ msgstr "此應用程式會在 Marketplace 上列出，因為它已發佈到 npm�
 #: src/pages/settings/applications/components/SettingsApplicationDetailTitle.tsx
 msgid "This application is not listed on the marketplace. It was shared via a direct link."
 msgstr "此應用程式未在市集上架。它是透過直接連結分享的。"
+
+#. js-lingui-id: D8qhoN
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+msgid "This application is required for your workspace to function properly and cannot be uninstalled."
+msgstr ""
 
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -14378,7 +14410,8 @@ msgid "This week"
 msgstr "本週"
 
 #. js-lingui-id: DF2voz
-#: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 msgid "This will cancel all modifications done on the tab and its widgets. Edit mode will be canceled and the page will refresh. This action cannot be undone."
 msgstr ""
 
@@ -15709,6 +15742,11 @@ msgstr "紫羅蘭色"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Visibility"
 msgstr "可見性"
+
+#. js-lingui-id: XQC+sL
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
+msgid "Visibility restriction"
+msgstr ""
 
 #. js-lingui-id: gkAApJ
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx

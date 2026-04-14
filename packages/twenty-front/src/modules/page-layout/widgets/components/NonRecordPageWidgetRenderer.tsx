@@ -11,6 +11,8 @@ export const NonRecordPageWidgetRenderer = ({
 }: NonRecordPageWidgetRendererProps) => {
   const state = useWidgetRendererState(widget);
 
+  const isCanvasVariant = state.variant === 'canvas';
+
   return (
     <WidgetCardShell
       widget={widget}
@@ -28,8 +30,8 @@ export const NonRecordPageWidgetRenderer = ({
       isDeletingWidgetEnabled={true}
       onClick={state.isPageLayoutInEditMode ? state.handleClick : undefined}
       onRemove={state.handleRemove}
-      onMouseEnter={state.handleMouseEnter}
-      onMouseLeave={state.handleMouseLeave}
+      onMouseEnter={isCanvasVariant ? undefined : state.handleMouseEnter}
+      onMouseLeave={isCanvasVariant ? undefined : state.handleMouseLeave}
     />
   );
 };

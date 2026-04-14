@@ -53,12 +53,23 @@ export const SettingsApplicationDetails = () => {
   const tabs: SingleTabProps[] = [
     { id: 'about', title: t`About`, Icon: IconInfoCircle },
     { id: 'content', title: t`Content`, Icon: IconBox },
-    { id: 'permissions', title: t`Permissions`, Icon: IconLock },
+    {
+      id: 'permissions',
+      title: t`Permissions`,
+      Icon: IconLock,
+      tooltipContent: !isDefined(application?.defaultRoleId)
+        ? t`No permission defined for this application`
+        : undefined,
+      disabled: !isDefined(application?.defaultRoleId),
+    },
     {
       id: 'settings',
       title: t`Settings`,
       Icon: IconSettings,
-      tooltipContent: t`No variables to set for this application`,
+      tooltipContent:
+        (application?.applicationVariables ?? []).length === 0
+          ? t`No variables to set for this application`
+          : undefined,
       disabled: (application?.applicationVariables ?? []).length === 0,
     },
     ...(isDefined(settingsCustomTabFrontComponentId)

@@ -8,30 +8,49 @@ import { Spaceship } from './Helped/Spaceship';
 import { Target } from './Helped/Target';
 import { Product } from './Hero/Product';
 import { WhyTwenty } from './Hero/WhyTwenty';
-import { Organization } from './Plans/Organization';
-import { Pro } from './Plans/Pro';
 import { Quotes } from './Quote/Quotes';
 import { Hourglass } from './Testimonials/Hourglass';
 import { Partner } from './Testimonials/Partner';
-import { Connect } from './ThreeCards/Connect';
-import { Diamond } from './ThreeCards/Diamond';
 import { Eye } from './ThreeCards/Eye';
-import { Flash } from './ThreeCards/Flash';
-import { Grow } from './ThreeCards/Grow';
-import { Lock } from './ThreeCards/Lock';
-import { Programming } from './ThreeCards/Programming';
+import { PartnerThreeCard } from './ThreeCards/PartnerThreeCard';
 import { SingleScreen } from './ThreeCards/SingleScreen';
 import { Speed } from './ThreeCards/Speed';
 import { Logo as WhyTwentyStepperLogo } from './WhyTwentyStepper/Logo';
 
+const DiamondIllustration = () => (
+  <PartnerThreeCard modelUrl="/illustrations/home/three-cards/diamond.glb" />
+);
+
+const FlashIllustration = () => (
+  <PartnerThreeCard modelUrl="/illustrations/home/three-cards/flash.glb" />
+);
+
+const LockIllustration = () => (
+  <PartnerThreeCard modelUrl="/illustrations/home/three-cards/lock.glb" />
+);
+
+const ConnectIllustration = () => (
+  <PartnerThreeCard modelUrl="/illustrations/partner/three-cards/connect.glb" />
+);
+
+const GrowIllustration = () => (
+  <PartnerThreeCard modelUrl="/illustrations/partner/three-cards/grow.glb" />
+);
+
+const ProgrammingIllustration = () => (
+  <PartnerThreeCard
+    modelUrl="/illustrations/partner/three-cards/programming.glb"
+  />
+);
+
 export const THREE_CARDS_ILLUSTRATIONS = {
-  diamond: Diamond,
+  diamond: DiamondIllustration,
   eye: Eye,
-  flash: Flash,
-  lock: Lock,
-  connect: Connect,
-  grow: Grow,
-  programming: Programming,
+  flash: FlashIllustration,
+  lock: LockIllustration,
+  connect: ConnectIllustration,
+  grow: GrowIllustration,
+  programming: ProgrammingIllustration,
   singleScreen: SingleScreen,
   speed: Speed,
 } as const satisfies Record<string, ComponentType>;
@@ -48,8 +67,6 @@ export const ILLUSTRATIONS = {
   heroWhyTwenty: WhyTwenty,
   testimonialsPartner: Partner,
   testimonialsHourglass: Hourglass,
-  planPro: Pro,
-  planOrganization: Organization,
   money: Money,
   spaceship: Spaceship,
   target: Target,

@@ -116,6 +116,9 @@ const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
   &:hover {
     // border-color shorthand must precede border-bottom-color longhand for correct CSS cascade
     border-color: ${(props) => {
+      if (props.variant === 'canvas') {
+        return computeBorderColor(props);
+      }
       if (
         props.isEditable &&
         !props.isDragging &&
@@ -128,6 +131,10 @@ const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
     }};
 
     border-bottom-color: ${(props) => {
+      if (props.variant === 'canvas') {
+        return computeBorderColor(props);
+      }
+
       const { variant, isEditable } = props;
 
       if (variant === 'side-column' && !isEditable) {

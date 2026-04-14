@@ -54,6 +54,8 @@ export const RecordPageWidgetRenderer = ({
     state.variant === 'side-column' &&
     !isRecordPageGlobalEditionEnabled;
 
+  const isCanvasVariant = state.variant === 'canvas';
+
   const shell = (
     <WidgetCardShell
       widget={widget}
@@ -71,8 +73,8 @@ export const RecordPageWidgetRenderer = ({
       isDeletingWidgetEnabled={isDeletingWidgetEnabled}
       onClick={isWidgetEditable ? state.handleClick : undefined}
       onRemove={state.handleRemove}
-      onMouseEnter={state.handleMouseEnter}
-      onMouseLeave={state.handleMouseLeave}
+      onMouseEnter={isCanvasVariant ? undefined : state.handleMouseEnter}
+      onMouseLeave={isCanvasVariant ? undefined : state.handleMouseLeave}
     />
   );
 

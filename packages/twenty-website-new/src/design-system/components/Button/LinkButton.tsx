@@ -32,6 +32,8 @@ export function LinkButton({
   if (type === 'anchor') {
     return (
       <StyledButtonAnchor
+        data-color={color}
+        data-variant={variant}
         href={href}
         rel="noopener noreferrer"
         target="_blank"
@@ -42,7 +44,7 @@ export function LinkButton({
   }
 
   return (
-    <StyledButtonLink href={href}>
+    <StyledButtonLink data-color={color} data-variant={variant} href={href}>
       {inner}
     </StyledButtonLink>
   );

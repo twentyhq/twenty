@@ -7,47 +7,34 @@ export const TESTIMONIALS_DATA: TestimonialsDataType = {
   testimonials: [
     {
       heading: {
-        text: "YES @twentycrm has json object fields. Such a simple feature and yet so many CRMs don't. It allows me to add data without caring too much about the data model, and eventually make it cleaner if the model gets stable.",
+        text: 'The flexibility is really what made the difference. Our needs evolve very fast. I discover a new need and in two clicks I can address it. That is a real advantage when you are moving quickly.',
         fontFamily: 'sans',
       },
       author: {
-        avatar: {
-          src: '/images/home/testimonials/avatar-one.png',
-          alt: '',
-        },
-        name: { text: 'Wayne Hamadi' },
-        handle: { text: '@wayne_hamadi' },
-        date: new Date('2024-05-23'),
+        name: { text: 'Olivier Reinaud' },
+        designation: { text: 'Co-founder at NetZero' },
       },
     },
     {
       heading: {
-        text: 'We switched from a rigid CRM where every custom field felt like a ticket. Twenty lets our team model how we actually sell without waiting on consultants.',
+        text: "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind.",
         fontFamily: 'sans',
       },
       author: {
-        avatar: {
-          src: '/images/home/testimonials/avatar-two.png',
-          alt: '',
-        },
-        name: { text: 'Priya Nandakumar' },
-        handle: { text: '@priya_builds' },
-        date: new Date('2024-07-11'),
+        name: { text: 'Amrendra Pratap Singh' },
+        designation: { text: 'VP of Engineering at W3villa Technologies' },
       },
     },
     {
       heading: {
-        text: 'Open source was the hook; the product is what kept us. Pipelines, people, and reporting finally live in one place our engineers are happy to extend.',
+        text: 'It is just such a nicer experience than dealing with a Salesforce or a HubSpot. My mission has been to get every tool API-accessible, so everything talks to each other. Twenty made that possible in a way older CRM platforms simply do not.',
         fontFamily: 'sans',
       },
       author: {
-        avatar: {
-          src: '/images/home/testimonials/avatar-three.png',
-          alt: '',
+        name: { text: 'Justin Beadle' },
+        designation: {
+          text: 'Director of Digital and Information, Elevate Consulting',
         },
-        name: { text: 'Marcus Chen' },
-        handle: { text: '@marcus_ops' },
-        date: new Date('2024-09-02'),
       },
     },
   ],

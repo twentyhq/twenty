@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactExportSettings } from '@/app/halftone/_lib/exporters';
 import { resolveExportArtifactNames } from '@/app/halftone/_lib/exportNames';
 import { formatAnimationName } from '@/app/halftone/_lib/formatters';
 import type {
@@ -28,6 +29,48 @@ const RESOLUTION_OPTIONS = [
 ];
 const DEFAULT_IMAGE_FILE_NAME = 'twenty-logo.svg';
 const DEFAULT_IMAGE_LABEL = 'Twenty image';
+const REACT_EXPORT_SETTING_OPTIONS: Array<{
+  description: string;
+  key: keyof ReactExportSettings;
+  label: string;
+}> = [
+  {
+    key: 'includePublicAssetUrl',
+    label: 'Use public asset URL',
+    description:
+      'Bakes the public asset path into the React export instead of using a relative file path.',
+  },
+  {
+    key: 'includeStyledMount',
+    label: 'Use Linaria wrapper',
+    description:
+      'Wraps the mount node with a StyledVisualMount using @linaria/react and keeps the Twenty-ready mount shape.',
+  },
+  {
+    key: 'includeUseClientDirective',
+    label: "Add 'use client'",
+    description:
+      'Prepends the Next.js client directive so the exported component can be dropped into the Twenty website directly.',
+  },
+  {
+    key: 'includeTsNoCheck',
+    label: 'Add @ts-nocheck',
+    description:
+      'Prepends // @ts-nocheck so generated self-contained files do not need hand-cleaning to satisfy strict TypeScript.',
+  },
+  {
+    key: 'includeNamedAndDefaultExport',
+    label: 'Named + default export',
+    description:
+      'Exports both a named component and a default export to match the current Twenty illustration import pattern.',
+  },
+  {
+    key: 'includeRegistryComment',
+    label: 'Add Twenty header comment',
+    description:
+      'Adds suggested destination and registry wiring comments at the top of the generated file.',
+  },
+];
 
 function sectionLabel(label: string, description: string) {
   return <LabelWithTooltip description={description} label={label} />;
@@ -44,8 +87,17 @@ type ExportTabProps = {
   onExportNameChange: (value: string) => void;
   onExportReact: () => void;
   onImportPreset: () => void;
+  onReactAssetPublicUrlChange: (value: string) => void;
+  onReactExportSettingChange: (
+    key: keyof ReactExportSettings,
+    value: boolean,
+  ) => void;
+  reactAssetPublicUrl: string;
+  reactExportSettings: ReactExportSettings;
   selectedShape: HalftoneGeometrySpec | undefined;
   settings: HalftoneStudioSettings;
+  defaultReactAssetPublicUrl: string;
+  showReactAssetPublicUrl: boolean;
 };
 
 export function ExportTab({
@@ -59,8 +111,14 @@ export function ExportTab({
   onExportNameChange,
   onExportReact,
   onImportPreset,
+  onReactAssetPublicUrlChange,
+  onReactExportSettingChange,
+  reactAssetPublicUrl,
+  reactExportSettings,
   selectedShape,
   settings,
+  defaultReactAssetPublicUrl,
+  showReactAssetPublicUrl,
 }: ExportTabProps) {
   const [resolution, setResolution] = useState('1920x1080');
   const isImageMode = settings.sourceMode === 'image';
@@ -171,10 +229,27 @@ export function ExportTab({
             {`// Source: ${sourceLabel}`}
           </div>
           <div style={{ color: 'rgba(255, 255, 255, 0.35)' }}>
+            {`// Public asset URL: ${reactExportSettings.includePublicAssetUrl ? 'on' : 'off'}`}
+          </div>
+          <div style={{ color: 'rgba(255, 255, 255, 0.35)' }}>
+            {`// Linaria wrapper: ${reactExportSettings.includeStyledMount ? 'on' : 'off'}`}
+          </div>
+          <div style={{ color: 'rgba(255, 255, 255, 0.35)' }}>
+            {`// use client: ${reactExportSettings.includeUseClientDirective ? 'on' : 'off'}`}
+          </div>
+          {showReactAssetPublicUrl ? (
+            <div style={{ color: 'rgba(255, 255, 255, 0.35)' }}>
+              {`// Asset URL: ${reactAssetPublicUrl || defaultReactAssetPublicUrl}`}
+            </div>
+          ) : null}
+          <div style={{ color: 'rgba(255, 255, 255, 0.35)' }}>
             {`// Animation: ${animationLabel}`}
           </div>
           <div style={{ color: 'rgba(255, 255, 255, 0.35)' }}>
             {`// Dash color: ${settings.halftone.dashColor}`}
+          </div>
+          <div style={{ color: 'rgba(255, 255, 255, 0.35)' }}>
+            {`// Hover color: ${settings.halftone.hoverDashColor}`}
           </div>
           <div style={{ color: 'rgba(255, 255, 255, 0.35)' }}>
             {`// Scale: ${settings.halftone.scale.toFixed(2)}`}
@@ -186,6 +261,36 @@ export function ExportTab({
             {`// Width: ${settings.halftone.width.toFixed(2)}`}
           </div>
         </ExportPreview>
+
+        {REACT_EXPORT_SETTING_OPTIONS.map((option) => (
+          <ToggleControl
+            checked={reactExportSettings[option.key]}
+            key={option.key}
+            label={sectionLabel(option.label, option.description)}
+            onChange={(event) =>
+              onReactExportSettingChange(option.key, event.target.checked)
+            }
+          />
+        ))}
+
+        {showReactAssetPublicUrl ? (
+          <div style={{ marginTop: 12 }}>
+            <SectionTitle $preserveCase>
+              {sectionLabel(
+                'Asset public URL',
+                'Used as the baked-in public path for the downloaded image or model asset when "Use public asset URL" is enabled.',
+              )}
+            </SectionTitle>
+            <ExportNameInput
+              onChange={(event) =>
+                onReactAssetPublicUrlChange(event.target.value)
+              }
+              placeholder={defaultReactAssetPublicUrl}
+              type="text"
+              value={reactAssetPublicUrl}
+            />
+          </div>
+        ) : null}
 
         <ExportButton onClick={onExportReact} type="button">
           Download React Component

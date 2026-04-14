@@ -38,8 +38,8 @@ type WidgetCardShellProps = {
   isDeletingWidgetEnabled: boolean;
   onClick?: () => void;
   onRemove: (e?: MouseEvent) => void;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 };
 
 export const WidgetCardShell = ({
