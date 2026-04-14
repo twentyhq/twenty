@@ -202,7 +202,7 @@ export class PageLayoutResetService {
     await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByWidgetId({
       widgetId: id,
       workspaceId,
-      updatedAt: now,
+      updatedAt: new Date(now),
     });
 
     return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(updatedWidget);
@@ -349,7 +349,7 @@ export class PageLayoutResetService {
     await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
       tabId: id,
       workspaceId,
-      updatedAt: now,
+      updatedAt: new Date(now),
     });
 
     return fromFlatPageLayoutTabToPageLayoutTabDto(updatedTab);
@@ -538,7 +538,7 @@ export class PageLayoutResetService {
       {
         pageLayoutId: id,
         workspaceId,
-        updatedAt: now,
+        updatedAt: new Date(now),
       },
     );
 
