@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import { defineFrontComponent, useRecordId } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-shared/utils';
 
 import { QUOTE_SECTIONS_PANEL_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -312,52 +311,76 @@ const QuoteSectionsPanel = () => {
 
     try {
       setError(null);
-      const client = new CoreApiClient();
 
-      const result = await client.query({
-        quoteSections: {
-          __args: {
-            filter: { quote: { id: { eq: recordId } } },
-            orderBy: [{ sectionPosition: 'AscNullsLast' }],
-          },
-          edges: {
-            node: {
-              id: true,
-              name: true,
-              serviceCategory: true,
-              sectionPosition: true,
-              subtotal: { amountMicros: true, currencyCode: true },
-              lineItems: {
-                edges: {
-                  node: {
-                    id: true,
-                    name: true,
-                    feeType: true,
-                    estimatedHours: true,
-                    hourlyRate: { amountMicros: true, currencyCode: true },
-                    fixedFeeAmount: { amountMicros: true, currencyCode: true },
-                    estimatedLineAmount: { amountMicros: true, currencyCode: true },
-                    lineItemPosition: true,
-                  },
-                },
-              },
-              quoteTerms: {
-                edges: {
-                  node: {
-                    id: true,
-                    termType: true,
-                    feePercentage: true,
-                    affectsFees: true,
-                  },
-                },
-              },
-            },
-          },
+      const baseUrl = process.env.TWENTY_API_URL ?? '';
+      const apiUrl = baseUrl.endsWith('/graphql')
+        ? baseUrl
+        : `${baseUrl}/graphql`;
+      const token =
+        process.env.TWENTY_APP_ACCESS_TOKEN ?? process.env.TWENTY_API_KEY;
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token ?? ''}`,
         },
+        body: JSON.stringify({
+          query: `
+            query GetQuoteSections($quoteId: UUID!) {
+              quoteSections(
+                filter: { quoteId: { eq: $quoteId } }
+                orderBy: [{ sectionPosition: AscNullsLast }]
+              ) {
+                edges {
+                  node {
+                    id
+                    name
+                    serviceCategory
+                    sectionPosition
+                    subtotal { amountMicros currencyCode }
+                    lineItems {
+                      edges {
+                        node {
+                          id
+                          name
+                          feeType
+                          estimatedHours
+                          hourlyRate { amountMicros currencyCode }
+                          fixedFeeAmount { amountMicros currencyCode }
+                          estimatedLineAmount { amountMicros currencyCode }
+                          lineItemPosition
+                        }
+                      }
+                    }
+                    quoteTerms {
+                      edges {
+                        node {
+                          id
+                          termType
+                          feePercentage
+                          affectsFees
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          `,
+          variables: { quoteId: recordId },
+        }),
       });
 
+      const json = await response.json();
+      if (json.errors?.length) {
+        throw new Error(json.errors[0].message);
+      }
+
       const fetched: QuoteSection[] =
-        result?.quoteSections?.edges?.map((e: { node: QuoteSection }) => e.node) ?? [];
+        json.data?.quoteSections?.edges?.map(
+          (e: { node: QuoteSection }) => e.node,
+        ) ?? [];
       setSections(fetched);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
