@@ -65,7 +65,7 @@ const YARN_INSTALL_LAMBDA_MEMORY_MB = 1024;
 const COMMON_LAYER_NAME_PREFIX = 'twenty-common-layer';
 const BUILDER_LAMBDA_TIMEOUT_SECONDS = 60;
 const BUILDER_LAMBDA_MEMORY_MB = 512;
-const LAMBDA_EPHEMERAL_STORAGE_MB = 2048;
+const LAMBDA_EPHEMERAL_STORAGE_MB = 4096;
 const YARN_INSTALL_HANDLER_PATH = resolve(
   __dirname,
   join(
@@ -930,12 +930,6 @@ export class LambdaDriver implements LogicFunctionDriver {
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }) {
-    this.logger.log(
-      `buildLambdaExecutor: functionId=${flatLogicFunction.id}, ` +
-        `appId=${flatApplication.id}, ` +
-        `appUniversalId=${applicationUniversalIdentifier}`,
-    );
-
     const buildArgs = {
       flatLogicFunction,
       flatApplication,
@@ -945,16 +939,8 @@ export class LambdaDriver implements LogicFunctionDriver {
     const { canSkip } = await this.checkLambdaExecutorBuildStatus(buildArgs);
 
     if (canSkip) {
-      this.logger.log(
-        `buildLambdaExecutor: skipping build for ${flatLogicFunction.id} (already up to date)`,
-      );
-
       return;
     }
-
-    this.logger.log(
-      `buildLambdaExecutor: acquiring lock for ${flatLogicFunction.id}`,
-    );
 
     const buildLockTtlMs = 120_000;
     const buildLockRetryMs = 500;
@@ -967,22 +953,10 @@ export class LambdaDriver implements LogicFunctionDriver {
           await this.checkLambdaExecutorBuildStatus(buildArgs);
 
         if (canSkip) {
-          this.logger.log(
-            `buildLambdaExecutor: skipping build inside lock for ${flatLogicFunction.id}`,
-          );
-
           return;
         }
 
-        this.logger.log(
-          `buildLambdaExecutor: lock acquired, calling ensureLambdaExecutor for ${flatLogicFunction.id}`,
-        );
-
         await this.ensureLambdaExecutor({ ...buildArgs, lambdaExecutor });
-
-        this.logger.log(
-          `buildLambdaExecutor: ensureLambdaExecutor completed for ${flatLogicFunction.id}`,
-        );
       },
       `lambda-build:${flatLogicFunction.id}`,
       {
@@ -1030,34 +1004,35 @@ export class LambdaDriver implements LogicFunctionDriver {
     applicationUniversalIdentifier: string;
     lambdaExecutor: GetFunctionCommandOutput | undefined;
   }) {
-    this.logger.log(
-      `ensureLambdaExecutor: getting deps layer for app ${flatApplication.id}, ` +
-        `yarnLockChecksum=${flatApplication.yarnLockChecksum}`,
-    );
+    let depsLayerArn: string;
 
-    const depsLayerArn = await this.getLayerArn({
-      flatApplication,
-      applicationUniversalIdentifier,
-    });
+    try {
+      depsLayerArn = await this.getLayerArn({
+        flatApplication,
+        applicationUniversalIdentifier,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to get dependency layer for function ${flatLogicFunction.id}: ${error}`,
+      );
+      throw error;
+    }
 
-    this.logger.log(
-      `ensureLambdaExecutor: depsLayerArn=${depsLayerArn}`,
-    );
+    let sdkLayerArn: string;
 
-    const sdkLayerArn = await this.ensureSdkLayer({
-      flatApplication,
-      applicationUniversalIdentifier,
-    });
-
-    this.logger.log(
-      `ensureLambdaExecutor: sdkLayerArn=${sdkLayerArn}`,
-    );
+    try {
+      sdkLayerArn = await this.ensureSdkLayer({
+        flatApplication,
+        applicationUniversalIdentifier,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to get SDK layer for function ${flatLogicFunction.id}: ${error}`,
+      );
+      throw error;
+    }
 
     if (!isDefined(lambdaExecutor)) {
-      this.logger.log(
-        `ensureLambdaExecutor: creating new lambda for ${flatLogicFunction.id}`,
-      );
-
       await this.createLambdaExecutor({
         flatLogicFunction,
         depsLayerArn,
@@ -1065,16 +1040,8 @@ export class LambdaDriver implements LogicFunctionDriver {
       });
       await this.waitFunctionActive(flatLogicFunction.id);
 
-      this.logger.log(
-        `ensureLambdaExecutor: lambda ${flatLogicFunction.id} created and active`,
-      );
-
       return;
     }
-
-    this.logger.log(
-      `ensureLambdaExecutor: updating lambda configuration for ${flatLogicFunction.id}`,
-    );
 
     await this.updateLambdaExecutorConfiguration({
       flatLogicFunction,
@@ -1082,10 +1049,6 @@ export class LambdaDriver implements LogicFunctionDriver {
       sdkLayerArn,
     });
     await this.waitFunctionUpdated(flatLogicFunction.id);
-
-    this.logger.log(
-      `ensureLambdaExecutor: lambda ${flatLogicFunction.id} updated`,
-    );
   }
 
   private async createLambdaExecutor({
@@ -1153,21 +1116,11 @@ export class LambdaDriver implements LogicFunctionDriver {
     env,
     timeoutMs = 900_000,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
-    this.logger.log(
-      `execute: starting for function=${flatLogicFunction.id}, ` +
-        `app=${applicationUniversalIdentifier}, ` +
-        `timeoutMs=${timeoutMs}`,
-    );
-
     await this.buildLambdaExecutor({
       flatLogicFunction,
       flatApplication,
       applicationUniversalIdentifier,
     });
-
-    this.logger.log(
-      `execute: buildLambdaExecutor completed for ${flatLogicFunction.id}`,
-    );
 
     const startTime = Date.now();
 
@@ -1176,10 +1129,6 @@ export class LambdaDriver implements LogicFunctionDriver {
       applicationUniversalIdentifier,
       builtHandlerPath: flatLogicFunction.builtHandlerPath,
     });
-
-    this.logger.log(
-      `execute: built code loaded (${compiledCode.length} chars) for ${flatLogicFunction.id}`,
-    );
 
     const executorPayload: LambdaDriverExecutorPayload = {
       params: payload,
@@ -1195,10 +1144,6 @@ export class LambdaDriver implements LogicFunctionDriver {
     };
 
     const command = new InvokeCommand(params);
-
-    this.logger.log(
-      `execute: invoking lambda ${flatLogicFunction.id} with timeoutMs=${timeoutMs}`,
-    );
 
     try {
       const lambdaClient = await this.getLambdaClient();
@@ -1217,10 +1162,6 @@ export class LambdaDriver implements LogicFunctionDriver {
       const duration = Date.now() - startTime;
 
       if (result.FunctionError) {
-        this.logger.error(
-          `execute: lambda ${flatLogicFunction.id} returned FunctionError: ${JSON.stringify(parsedResult)}`,
-        );
-
         return {
           data: null,
           duration,
@@ -1230,10 +1171,6 @@ export class LambdaDriver implements LogicFunctionDriver {
         };
       }
 
-      this.logger.log(
-        `execute: lambda ${flatLogicFunction.id} completed successfully in ${duration}ms`,
-      );
-
       return {
         data: parsedResult,
         logs,
@@ -1242,7 +1179,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       };
     } catch (error) {
       this.logger.error(
-        `execute: lambda ${flatLogicFunction.id} invoke failed: ${error}`,
+        `Lambda invocation failed for function ${flatLogicFunction.id}: ${error}`,
       );
 
       if (error instanceof ResourceNotFoundException) {

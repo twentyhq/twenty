@@ -41,10 +41,6 @@ export class RouteTriggerService {
   }> {
     const host = `${request.protocol}://${request.get('host')}`;
 
-    this.logger.log(
-      `Resolving workspace for host=${host}, path=${request.path}, method=${httpMethod}`,
-    );
-
     const workspace =
       await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         host,
@@ -58,8 +54,6 @@ export class RouteTriggerService {
       ),
     );
 
-    this.logger.log(`Workspace resolved: id=${workspace.id}`);
-
     const logicFunctionsWithHttpRouteTrigger =
       await this.logicFunctionRepository.find({
         where: {
@@ -68,20 +62,10 @@ export class RouteTriggerService {
         },
       });
 
-    this.logger.log(
-      `Found ${logicFunctionsWithHttpRouteTrigger.length} logic function(s) with HTTP route triggers for workspace ${workspace.id}`,
-    );
-
     const requestPath = request.path.replace(/^\/s\//, '/');
 
     for (const logicFunction of logicFunctionsWithHttpRouteTrigger) {
       const httpRouteSettings = logicFunction.httpRouteTriggerSettings;
-
-      this.logger.log(
-        `Checking logic function ${logicFunction.id} (name=${logicFunction.name}): ` +
-          `route=${httpRouteSettings?.path}, method=${httpRouteSettings?.httpMethod}, ` +
-          `requestPath=${requestPath}, requestMethod=${httpMethod}`,
-      );
 
       if (
         !isDefined(httpRouteSettings) ||
@@ -96,20 +80,12 @@ export class RouteTriggerService {
       const routeMatched = routeMatcher(requestPath);
 
       if (routeMatched) {
-        this.logger.log(
-          `Route matched: logicFunction=${logicFunction.id}, params=${JSON.stringify(routeMatched.params)}`,
-        );
-
         return {
           logicFunction,
           pathParams: routeMatched.params,
         };
       }
     }
-
-    this.logger.warn(
-      `No route trigger matched for path=${requestPath}, method=${httpMethod}`,
-    );
 
     throw new RouteTriggerException(
       'No Route trigger found',
@@ -151,8 +127,6 @@ export class RouteTriggerService {
     request: Request;
     httpMethod: HTTPMethod;
   }) {
-    this.logger.log(`Handling route trigger: ${httpMethod} ${request.path}`);
-
     const { logicFunction, pathParams } =
       await this.getLogicFunctionWithPathParamsOrFail({
         request,
@@ -162,9 +136,6 @@ export class RouteTriggerService {
     const httpRouteSettings = logicFunction.httpRouteTriggerSettings;
 
     if (httpRouteSettings?.isAuthRequired) {
-      this.logger.log(
-        `Auth required for logic function ${logicFunction.id}, validating...`,
-      );
       await this.validateWorkspaceFromRequest({
         request,
         workspaceId: logicFunction.workspaceId,
@@ -177,29 +148,34 @@ export class RouteTriggerService {
       forwardedRequestHeaders: httpRouteSettings?.forwardedRequestHeaders ?? [],
     });
 
-    this.logger.log(
-      `Executing logic function ${logicFunction.id} for workspace ${logicFunction.workspaceId}`,
-    );
+    let result;
 
-    const result = await this.logicFunctionExecutorService.execute({
-      logicFunctionId: logicFunction.id,
-      workspaceId: logicFunction.workspaceId,
-      payload: event,
-    });
+    try {
+      result = await this.logicFunctionExecutorService.execute({
+        logicFunctionId: logicFunction.id,
+        workspaceId: logicFunction.workspaceId,
+        payload: event,
+      });
+    } catch (error) {
+      if (error instanceof RouteTriggerException) {
+        throw error;
+      }
 
-    this.logger.log(
-      `Execution complete for logic function ${logicFunction.id}: status=${result?.status}`,
-    );
+      this.logger.error(
+        `Unexpected error executing logic function ${logicFunction.id}: ${error}`,
+      );
+
+      throw new RouteTriggerException(
+        `Logic function execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        RouteTriggerExceptionCode.LOGIC_FUNCTION_EXECUTION_ERROR,
+      );
+    }
 
     if (!isDefined(result)) {
       return result;
     }
 
     if (result.error) {
-      this.logger.error(
-        `Logic function ${logicFunction.id} returned error: ${result.error.errorMessage}`,
-      );
-
       throw new RouteTriggerException(
         result.error.errorMessage,
         RouteTriggerExceptionCode.LOGIC_FUNCTION_EXECUTION_ERROR,

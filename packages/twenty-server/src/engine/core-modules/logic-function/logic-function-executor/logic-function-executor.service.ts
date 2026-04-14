@@ -73,12 +73,7 @@ export class LogicFunctionExecutorService {
     workspaceId: string;
     payload: object;
   }): Promise<LogicFunctionExecuteResult> {
-    this.logger.log(
-      `Starting execution: logicFunctionId=${logicFunctionId}, workspaceId=${workspaceId}`,
-    );
-
     await this.throttleExecution(workspaceId);
-    this.logger.log(`Throttle passed for workspace ${workspaceId}`);
 
     const { flatApplication, flatLogicFunction, flatApplicationVariables } =
       await this.getFlatEntitiesOrThrow({
@@ -86,38 +81,34 @@ export class LogicFunctionExecutorService {
         logicFunctionId,
       });
 
-    this.logger.log(
-      `Flat entities resolved: logicFunction=${flatLogicFunction.id} (name=${flatLogicFunction.name}), ` +
-        `application=${flatApplication.id} (universalId=${flatApplication.universalIdentifier}), ` +
-        `isBuildUpToDate=${flatLogicFunction.isBuildUpToDate}, ` +
-        `timeoutSeconds=${flatLogicFunction.timeoutSeconds}`,
-    );
-
     const envVariables = await this.getExecutionEnvVariables({
       workspaceId,
       flatApplication,
       flatApplicationVariables,
     });
 
-    this.logger.log(`Env variables built, calling driver.execute()`);
-
     const driver = this.logicFunctionDriverFactory.getCurrentDriver();
 
-    this.logger.log(`Driver type: ${driver.constructor.name}`);
+    let resultLogicFunction: LogicFunctionExecuteResult;
 
-    const resultLogicFunction = await driver.execute({
-      flatLogicFunction,
-      flatApplication,
-      applicationUniversalIdentifier: flatApplication.universalIdentifier,
-      payload,
-      env: envVariables,
-      timeoutMs: flatLogicFunction.timeoutSeconds * 1_000,
-    });
-
-    this.logger.log(
-      `Driver execution complete: status=${resultLogicFunction.status}, ` +
-        `duration=${resultLogicFunction.duration}ms`,
-    );
+    try {
+      resultLogicFunction = await driver.execute({
+        flatLogicFunction,
+        flatApplication,
+        applicationUniversalIdentifier: flatApplication.universalIdentifier,
+        payload,
+        env: envVariables,
+        timeoutMs: flatLogicFunction.timeoutSeconds * 1_000,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Logic function execution failed: ` +
+          `functionId=${logicFunctionId}, ` +
+          `workspaceId=${workspaceId}, ` +
+          `driver=${driver.constructor.name}: ${error}`,
+      );
+      throw error;
+    }
 
     await this.handleExecutionResult({
       result: resultLogicFunction,
