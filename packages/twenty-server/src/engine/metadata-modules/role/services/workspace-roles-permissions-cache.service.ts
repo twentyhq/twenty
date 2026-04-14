@@ -167,7 +167,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
                 PermissionFlagType.WORKSPACE_MEMBERS,
               );
 
-            canRead = hasWorkspaceMembersPermissions;
+            canRead = true;
             canUpdate = hasWorkspaceMembersPermissions;
             canSoftDelete = hasWorkspaceMembersPermissions;
             canDestroy = hasWorkspaceMembersPermissions;
