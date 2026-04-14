@@ -110,7 +110,7 @@ export const getSeedFrontComponentCommandMenuItemDefinitions = (
       ),
       frontComponentId: showNotificationId,
       label: 'Show Notification',
-      icon: 'IconBell',
+      icon: 'IconStar',
       position: 202,
       isPinned: true,
       pageLayoutId: generateSeedId(
