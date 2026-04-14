@@ -2,6 +2,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Patch,
   Post,
   Put,
@@ -22,10 +23,16 @@ import { RouteTriggerService } from 'src/engine/core-modules/logic-function/logi
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
 @UseFilters(RouteTriggerRestApiExceptionFilter)
 export class RouteTriggerController {
+  private readonly logger = new Logger(RouteTriggerController.name);
+
   constructor(private readonly routeTriggerService: RouteTriggerService) {}
 
   @Get('*path')
   async get(@Req() request: Request) {
+    this.logger.log(
+      `Incoming GET ${request.path} from ${request.get('host')}`,
+    );
+
     return await this.routeTriggerService.handle({
       request,
       httpMethod: HTTPMethod.GET,
@@ -34,6 +41,10 @@ export class RouteTriggerController {
 
   @Post('*path')
   async post(@Req() request: Request) {
+    this.logger.log(
+      `Incoming POST ${request.path} from ${request.get('host')}`,
+    );
+
     return await this.routeTriggerService.handle({
       request,
       httpMethod: HTTPMethod.POST,
@@ -42,6 +53,10 @@ export class RouteTriggerController {
 
   @Put('*path')
   async put(@Req() request: Request) {
+    this.logger.log(
+      `Incoming PUT ${request.path} from ${request.get('host')}`,
+    );
+
     return await this.routeTriggerService.handle({
       request,
       httpMethod: HTTPMethod.PUT,
@@ -50,6 +65,10 @@ export class RouteTriggerController {
 
   @Patch('*path')
   async patch(@Req() request: Request) {
+    this.logger.log(
+      `Incoming PATCH ${request.path} from ${request.get('host')}`,
+    );
+
     return await this.routeTriggerService.handle({
       request,
       httpMethod: HTTPMethod.PATCH,
@@ -58,6 +77,10 @@ export class RouteTriggerController {
 
   @Delete('*path')
   async delete(@Req() request: Request) {
+    this.logger.log(
+      `Incoming DELETE ${request.path} from ${request.get('host')}`,
+    );
+
     return await this.routeTriggerService.handle({
       request,
       httpMethod: HTTPMethod.DELETE,

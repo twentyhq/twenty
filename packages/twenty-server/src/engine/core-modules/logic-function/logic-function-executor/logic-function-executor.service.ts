@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import {
   DEFAULT_API_KEY_NAME,
@@ -50,6 +50,8 @@ export enum LogicFunctionExecutionExceptionCode {
 
 @Injectable()
 export class LogicFunctionExecutorService {
+  private readonly logger = new Logger(LogicFunctionExecutorService.name);
+
   constructor(
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly throttlerService: ThrottlerService,
@@ -71,7 +73,12 @@ export class LogicFunctionExecutorService {
     workspaceId: string;
     payload: object;
   }): Promise<LogicFunctionExecuteResult> {
+    this.logger.log(
+      `Starting execution: logicFunctionId=${logicFunctionId}, workspaceId=${workspaceId}`,
+    );
+
     await this.throttleExecution(workspaceId);
+    this.logger.log(`Throttle passed for workspace ${workspaceId}`);
 
     const { flatApplication, flatLogicFunction, flatApplicationVariables } =
       await this.getFlatEntitiesOrThrow({
@@ -79,13 +86,24 @@ export class LogicFunctionExecutorService {
         logicFunctionId,
       });
 
+    this.logger.log(
+      `Flat entities resolved: logicFunction=${flatLogicFunction.id} (name=${flatLogicFunction.name}), ` +
+        `application=${flatApplication.id} (universalId=${flatApplication.universalIdentifier}), ` +
+        `isBuildUpToDate=${flatLogicFunction.isBuildUpToDate}, ` +
+        `timeoutSeconds=${flatLogicFunction.timeoutSeconds}`,
+    );
+
     const envVariables = await this.getExecutionEnvVariables({
       workspaceId,
       flatApplication,
       flatApplicationVariables,
     });
 
+    this.logger.log(`Env variables built, calling driver.execute()`);
+
     const driver = this.logicFunctionDriverFactory.getCurrentDriver();
+
+    this.logger.log(`Driver type: ${driver.constructor.name}`);
 
     const resultLogicFunction = await driver.execute({
       flatLogicFunction,
@@ -95,6 +113,11 @@ export class LogicFunctionExecutorService {
       env: envVariables,
       timeoutMs: flatLogicFunction.timeoutSeconds * 1_000,
     });
+
+    this.logger.log(
+      `Driver execution complete: status=${resultLogicFunction.status}, ` +
+        `duration=${resultLogicFunction.duration}ms`,
+    );
 
     await this.handleExecutionResult({
       result: resultLogicFunction,
