@@ -15,10 +15,8 @@ export const NavigationDrawerOpenedSection = () => {
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
-  const {
-    objectMetadataIdsWithAnyNavigationItem,
-    objectMetadataIdsWithObjectNavigationItem,
-  } = useWorkspaceNavigationObjectMetadataIds();
+  const { objectMetadataIdsWithObjectNavigationItem } =
+    useWorkspaceNavigationObjectMetadataIds();
 
   const activeNavigationMenuItem = useAtomStateValue(
     activeNavigationMenuItemState,
@@ -37,6 +35,8 @@ export const NavigationDrawerOpenedSection = () => {
       item.nameSingular === currentObjectNameSingular,
   );
 
+  const currentPathWithSearch = location.pathname + location.search;
+
   const isOnRecordShowPage =
     isDefined(objectMetadataItem) &&
     location.pathname.includes(
@@ -46,19 +46,20 @@ export const NavigationDrawerOpenedSection = () => {
       }) + '/',
     );
 
-  const hasActiveItemForCurrentObject =
+  const isActiveItemOnCurrentPage =
+    isDefined(activeNavigationMenuItem) &&
+    currentPathWithSearch === activeNavigationMenuItem.path;
+
+  const isActiveItemForCurrentObject =
     isOnRecordShowPage &&
     isDefined(activeNavigationMenuItem) &&
     activeNavigationMenuItem.objectMetadataId === objectMetadataItem?.id;
 
-  const relevantMetadataIds = isOnRecordShowPage
-    ? objectMetadataIdsWithObjectNavigationItem
-    : objectMetadataIdsWithAnyNavigationItem;
-
   const shouldShowOpenedSection =
     isDefined(objectMetadataItem) &&
-    !relevantMetadataIds.has(objectMetadataItem.id) &&
-    !hasActiveItemForCurrentObject;
+    !objectMetadataIdsWithObjectNavigationItem.has(objectMetadataItem.id) &&
+    !isActiveItemOnCurrentPage &&
+    !isActiveItemForCurrentObject;
 
   return (
     <AnimatedExpandableContainer isExpanded={shouldShowOpenedSection}>
