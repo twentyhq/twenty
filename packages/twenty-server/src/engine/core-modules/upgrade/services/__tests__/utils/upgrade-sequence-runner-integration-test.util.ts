@@ -215,11 +215,13 @@ export const seedMigration = async (
     status,
     workspaceId = null,
     attempt = 1,
+    isInitial = false,
   }: {
     name: string;
     status: 'completed' | 'failed';
     workspaceId?: string | null;
     attempt?: number;
+    isInitial?: boolean;
   },
 ) => {
   const createdAt = new Date(
@@ -229,9 +231,17 @@ export const seedMigration = async (
   seedSequenceCounter++;
 
   await dataSource.query(
-    `INSERT INTO core."upgradeMigration" (name, status, attempt, "executedByVersion", "workspaceId", "createdAt")
-     VALUES ($1, $2, $3, $4, $5, $6)`,
-    [name, status, attempt, EXECUTED_BY_VERSION, workspaceId, createdAt],
+    `INSERT INTO core."upgradeMigration" (name, status, attempt, "executedByVersion", "workspaceId", "createdAt", "isInitial")
+     VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+    [
+      name,
+      status,
+      attempt,
+      EXECUTED_BY_VERSION,
+      workspaceId,
+      createdAt,
+      isInitial,
+    ],
   );
 };
 
