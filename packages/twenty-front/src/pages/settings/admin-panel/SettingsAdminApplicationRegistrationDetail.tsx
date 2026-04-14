@@ -41,11 +41,7 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
           href: getSettingsPath(SettingsPath.AdminPanel),
         },
         {
-          children: t`Admin Panel`,
-          href: getSettingsPath(SettingsPath.AdminPanel),
-        },
-        {
-          children: t`App registrations`,
+          children: t`Admin Panel - Apps`,
           href: APPLICATION_REGISTRATION_ADMIN_PATH,
         },
         { children: registration.name },
