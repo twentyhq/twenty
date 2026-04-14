@@ -9,6 +9,10 @@ export function getImapSentFolderCandidatesByRegex(
   const regexCandidateFolders: string[] = [];
 
   for (const folder of list) {
+    if (folder.flags?.has('\\Noselect')) {
+      continue;
+    }
+
     const standardFolder = getStandardFolderByRegex(folder.name);
 
     if (standardFolder === StandardFolder.SENT) {
