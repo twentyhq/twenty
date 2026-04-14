@@ -29,10 +29,7 @@ export const getPageLayoutTabFlatEntitySeeds = ({
     title,
     position,
     pageLayoutId: generateSeedId(workspaceId, pageLayoutSeed),
-    pageLayoutUniversalIdentifier: generateSeedId(
-      workspaceId,
-      pageLayoutSeed,
-    ),
+    pageLayoutUniversalIdentifier: generateSeedId(workspaceId, pageLayoutSeed),
     widgetIds: [],
     widgetUniversalIdentifiers: [],
     isActive: true,

@@ -351,10 +351,7 @@ export class NavigationMenuItemService {
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: [
-            'flatNavigationMenuItemMaps',
-            'flatPageLayoutMaps',
-          ],
+          flatMapsKeys: ['flatNavigationMenuItemMaps', 'flatPageLayoutMaps'],
         },
       );
 

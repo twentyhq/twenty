@@ -23,7 +23,10 @@ export const fromUpdateNavigationMenuItemInputToFlatNavigationMenuItemToUpdateOr
     updateNavigationMenuItemInput: UpdateNavigationMenuItemInput & {
       id: string;
     };
-  } & Pick<AllFlatEntityMaps, 'flatPageLayoutMaps'>): FlatNavigationMenuItem => {
+  } & Pick<
+    AllFlatEntityMaps,
+    'flatPageLayoutMaps'
+  >): FlatNavigationMenuItem => {
     const existingFlatNavigationMenuItem = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: updateNavigationMenuItemInput.id,
       flatEntityMaps: flatNavigationMenuItemMaps,

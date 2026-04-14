@@ -8,10 +8,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
-import {
-  OnboardingStatus,
-  PageLayoutType,
-} from '~/generated-metadata/graphql';
+import { OnboardingStatus, PageLayoutType } from '~/generated-metadata/graphql';
 
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
@@ -63,10 +60,7 @@ const setupMockIsOnAWorkspace = (isOnAWorkspace: boolean) => {
 };
 
 jest.mock('@apollo/client/react');
-const setupMockUseQuery = (result?: {
-  data?: unknown;
-  loading?: boolean;
-}) => {
+const setupMockUseQuery = (result?: { data?: unknown; loading?: boolean }) => {
   jest.mocked(useQuery).mockReturnValueOnce({
     data: result?.data ?? undefined,
     loading: result?.loading ?? false,

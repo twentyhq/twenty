@@ -65,8 +65,7 @@ export const seedPageLayouts = async ({
           },
         },
         workspaceId,
-        applicationUniversalIdentifier:
-          flatApplication.universalIdentifier,
+        applicationUniversalIdentifier: flatApplication.universalIdentifier,
       },
     );
 
