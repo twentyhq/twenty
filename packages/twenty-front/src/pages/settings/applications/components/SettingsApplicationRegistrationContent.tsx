@@ -12,7 +12,7 @@ import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings
 const REGISTRATION_DETAIL_TAB_LIST_ID =
   'application-registration-detail-tab-list';
 
-type SettingsApplicationRegistrationContentData = {
+type SettingsApplicationRegistrationContentProps = {
   registration: ApplicationRegistrationData;
   hasActiveInstalls: boolean;
 };
@@ -20,7 +20,7 @@ type SettingsApplicationRegistrationContentData = {
 export const SettingsApplicationRegistrationContent = ({
   registration,
   hasActiveInstalls,
-}: SettingsApplicationRegistrationContentData) => {
+}: SettingsApplicationRegistrationContentProps) => {
   const { t } = useLingui();
 
   const activeTabId = useAtomComponentStateValue(
