@@ -4,14 +4,15 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigationMenuItemsData } from './useNavigationMenuItemsData';
 
-export const useWorkspaceNavigationMenuItems = (): {
-  objectMetadataIdsInWorkspaceNav: Set<string>;
+export const useWorkspaceNavigationObjectMetadataIds = (): {
+  objectMetadataIdsWithAnyNavigationItem: Set<string>;
+  objectMetadataIdsWithObjectNavigationItem: Set<string>;
 } => {
   const { workspaceNavigationMenuItems: rawWorkspaceNavigationMenuItems } =
     useNavigationMenuItemsData();
   const views = useAtomStateValue(viewsSelector);
 
-  const objectMetadataIdsInWorkspaceNav = new Set(
+  const objectMetadataIdsWithAnyNavigationItem = new Set(
     rawWorkspaceNavigationMenuItems
       .map((item) => {
         if (
@@ -29,7 +30,15 @@ export const useWorkspaceNavigationMenuItems = (): {
       .filter(isDefined),
   );
 
+  const objectMetadataIdsWithObjectNavigationItem = new Set(
+    rawWorkspaceNavigationMenuItems
+      .filter((item) => item.type === NavigationMenuItemType.OBJECT)
+      .map((item) => item.targetObjectMetadataId)
+      .filter(isDefined),
+  );
+
   return {
-    objectMetadataIdsInWorkspaceNav,
+    objectMetadataIdsWithAnyNavigationItem,
+    objectMetadataIdsWithObjectNavigationItem,
   };
 };
