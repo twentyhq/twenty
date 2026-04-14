@@ -898,11 +898,6 @@ export class PageLayoutUpdateService {
     for (const widget of widgetsToUpdate) {
       if (!widget.isActive) {
         directlyRemovedWidgetIds.add(widget.id);
-        const viewId = this.getViewIdFromFieldsWidget(widget);
-
-        if (isDefined(viewId)) {
-          viewIdsToDelete.add(viewId);
-        }
       }
     }
 
