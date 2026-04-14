@@ -5,6 +5,7 @@ import {
   Catch,
   type ExceptionFilter,
 } from '@nestjs/common';
+import { type GqlContextType } from '@nestjs/graphql';
 
 import Stripe from 'stripe';
 
@@ -17,7 +18,7 @@ export class BillingGraphqlApiExceptionFilter implements ExceptionFilter {
     exception: BillingException | Stripe.errors.StripeError,
     host: ArgumentsHost,
   ) {
-    if (host.getType() !== 'graphql') {
+    if (host.getType<GqlContextType>() !== 'graphql') {
       throw exception;
     }
 
