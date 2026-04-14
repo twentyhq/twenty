@@ -57014,7 +57014,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sharp@npm:^0.33.1":
+"sharp@npm:^0.33.1, sharp@npm:^0.33.5":
   version: 0.33.5
   resolution: "sharp@npm:0.33.5"
   dependencies:
@@ -60944,6 +60944,7 @@ __metadata:
     react-dom: "npm:19.2.3"
     react-markdown: "npm:^10.1.0"
     remark-gfm: "npm:^4.0.1"
+    sharp: "npm:^0.33.5"
     three: "npm:^0.183.2"
   languageName: unknown
   linkType: soft

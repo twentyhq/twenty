@@ -222,7 +222,7 @@ export const SALESFORCE_DATA: SalesforceDataType = {
     promoTag: '1‑800‑YES‑SOFTWARE',
     featureSectionHeading: 'Add-ons',
     productIconAlt: 'Retro help document icon',
-    productIconSrc: '/images/pricing/salesforce/help-icon.png',
+    productIconSrc: '/images/pricing/salesforce/help-icon.webp',
     priceSuffix: ' / seat / month - billed yearly',
     productTitle: 'Salesforce Pro',
     secondaryCtaNote: 'More options available!',

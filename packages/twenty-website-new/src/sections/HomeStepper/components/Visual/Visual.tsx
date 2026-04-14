@@ -3,8 +3,8 @@
 import { StepperVisualFrame } from '../StepperVisualFrame/StepperVisualFrame';
 import { StepperLottie } from './StepperLottie';
 
-const HOME_STEPPER_BACKGROUND = '/images/home/stepper/background.png';
-const HOME_STEPPER_SHAPE = '/images/home/stepper/background-shape.png';
+const HOME_STEPPER_BACKGROUND = '/images/home/stepper/background.webp';
+const HOME_STEPPER_SHAPE = '/images/home/stepper/background-shape.webp';
 
 type VisualProps = {
   scrollProgress: number;

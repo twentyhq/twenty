@@ -14,7 +14,6 @@ import { Separator } from '../Separator/Separator';
 const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
   day: 'numeric',
   month: 'long',
-  timeZone: 'UTC',
   year: 'numeric',
 });
 
@@ -77,18 +76,17 @@ const PortraitFrame = styled.div`
   width: 100%;
 `;
 
-const PortraitFallback = styled.div`
+const PortraitPlaceholder = styled.div`
   align-items: center;
-  background: linear-gradient(135deg, #202020 0%, #4c4c4c 100%);
-  color: ${theme.colors.secondary.text[100]};
+  background-color: ${theme.colors.secondary.border[10]};
+  color: ${theme.colors.secondary.text[60]};
   display: flex;
   font-family: ${theme.font.family.sans};
-  font-size: ${theme.font.size(16)};
+  font-size: ${theme.font.size(12)};
   font-weight: ${theme.font.weight.medium};
   height: 100%;
   justify-content: center;
-  letter-spacing: -0.04em;
-  text-transform: uppercase;
+  letter-spacing: -0.02em;
   width: 100%;
 `;
 
@@ -144,6 +142,7 @@ const RightColumn = styled.div`
 `;
 
 const QuoteArea = styled.div`
+  isolation: isolate;
   min-width: 0;
   position: relative;
 
@@ -155,6 +154,8 @@ const QuoteArea = styled.div`
 const QuoteStack = styled.div`
   display: grid;
   min-width: 0;
+  position: relative;
+  z-index: 1;
 `;
 
 const QuoteWrapper = styled.div`
@@ -185,7 +186,7 @@ const QuoteDecoration = styled.div`
     overflow: hidden;
     pointer-events: none;
     position: absolute;
-    right: 48px;
+    right: 0;
     top: 56px;
     width: 646px;
     z-index: 0;
@@ -195,7 +196,7 @@ const QuoteDecoration = styled.div`
 const QuoteDecorationVisual = styled.div`
   @media (min-width: ${theme.breakpoints.md}px) {
     position: absolute;
-    right: 36px;
+    right: 0;
     top: -112px;
     transform: scale(1.9);
     transform-origin: top right;
@@ -220,30 +221,6 @@ type PartnerCarouselProps = {
   testimonials: TestimonialCardType[];
 };
 
-function getAuthorDateText(date: Date | string | undefined) {
-  if (!date) {
-    return null;
-  }
-
-  const normalizedDate = date instanceof Date ? date : new Date(date);
-
-  if (Number.isNaN(normalizedDate.getTime())) {
-    return null;
-  }
-
-  return DATE_FORMATTER.format(normalizedDate);
-}
-
-function getAuthorInitials(name: string) {
-  const segments = name.trim().split(/\s+/).filter(Boolean).slice(0, 2);
-
-  if (segments.length === 0) {
-    return '?';
-  }
-
-  return segments.map((segment) => segment[0]).join('');
-}
-
 export function PartnerCarousel({
   children,
   eyebrow,
@@ -257,9 +234,6 @@ export function PartnerCarousel({
   const hasPrevious = index > 0;
   const hasNext = index < total - 1;
   const current = testimonials[index];
-  const authorSecondaryLine =
-    current.author.handle ?? current.author.designation ?? null;
-  const authorDateText = getAuthorDateText(current.author.date);
 
   const goToPrevious = () => {
     if (hasPrevious) setIndex(index - 1);
@@ -268,6 +242,15 @@ export function PartnerCarousel({
   const goToNext = () => {
     if (hasNext) setIndex(index + 1);
   };
+
+  const avatar = current.author.avatar;
+  const authorInitials = current.author.name.text
+    .split(/\s+/)
+    .map((word) => word[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
 
   return (
     <StyledCarousel
@@ -278,22 +261,22 @@ export function PartnerCarousel({
       <LeftColumn>
         <AuthorCard>
           <PortraitFrame>
-            {current.author.avatar ? (
+            {avatar ? (
               <NextImage
-                alt={current.author.avatar.alt || ''}
+                alt={avatar.alt ?? ''}
                 fill
                 priority
                 sizes="(min-width: 921px) 328px, 100vw"
-                src={current.author.avatar.src}
+                src={avatar.src}
                 style={{
                   filter: 'grayscale(1) contrast(1.1)',
                   objectFit: 'cover',
                 }}
               />
             ) : (
-              <PortraitFallback aria-hidden>
-                {getAuthorInitials(current.author.name.text)}
-              </PortraitFallback>
+              <PortraitPlaceholder aria-hidden>
+                {authorInitials}
+              </PortraitPlaceholder>
             )}
           </PortraitFrame>
 
@@ -306,22 +289,22 @@ export function PartnerCarousel({
                 size="sm"
                 weight="medium"
               />
-              {authorSecondaryLine ? (
-                <HandleText>
-                  <Body
-                    as="span"
-                    body={authorSecondaryLine}
-                    className={handleTextClassName}
-                    size="sm"
-                  />
-                </HandleText>
-              ) : null}
+              <HandleText>
+                <Body
+                  as="span"
+                  body={current.author.designation}
+                  className={handleTextClassName}
+                  size="sm"
+                />
+              </HandleText>
             </NameHandleRow>
 
-            {authorDateText ? (
+            {current.author.date ? (
               <Body
                 as="p"
-                body={{ text: authorDateText }}
+                body={{
+                  text: DATE_FORMATTER.format(current.author.date),
+                }}
                 className={dateTextClassName}
                 size="xs"
               />

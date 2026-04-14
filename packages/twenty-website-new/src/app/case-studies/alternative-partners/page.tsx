@@ -1,11 +1,8 @@
-import { FAQ_DATA, MENU_DATA } from '@/app/_constants';
-import { TalkToUsButton } from '@/app/components/ContactCalModal';
+import { MENU_DATA } from '@/app/_constants';
 import type { CaseStudyData } from '@/app/case-studies/_constants/types';
-import { Eyebrow, LinkButton } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { CaseStudy } from '@/sections/CaseStudy/components';
-import { Faq } from '@/sections/Faq/components';
 import { Menu } from '@/sections/Menu/components';
 import { theme } from '@/theme';
 import type { Metadata } from 'next';
@@ -38,7 +35,7 @@ const CASE_STUDY: CaseStudyData = {
         { text: 'migration workflow', fontFamily: 'sans' },
       ],
       paragraphs: [
-        'Alternative Partners is a consulting firm that moved from Salesforce to a self-hosted Twenty instance. Benjamin Reynolds led the migration — he had already become a Twenty expert implementing Twenty for one of Twenty\'s first cloud customers.',
+        "Alternative Partners is a consulting firm that moved from Salesforce to a self-hosted Twenty instance. Benjamin Reynolds led the migration — he had already become a Twenty expert implementing Twenty for one of Twenty's first cloud customers.",
         'His approach was unconventional. Instead of mapping fields manually, scripting transforms, and validating data step by step, he handed the job to agentic AI tools with a brief: where the data lives, the GitHub repo for the target platform, the Railway deployment — start, and only return if something breaks beyond a 70% confidence fix.',
         'It worked. This is AI-assisted iteration in practice: not AI as a product feature, but as part of implementation work, compressing what would typically be weeks into something one person can oversee without being the bottleneck.',
       ],
@@ -55,18 +52,10 @@ const CASE_STUDY: CaseStudyData = {
       ],
     },
   ],
-  testimonial: {
-    eyebrow: 'What they say',
-    quote:
-      'Agentic AI let us migrate faster than a traditional playbook, and self-hosted Twenty means we own where our CRM data lives.',
-    author: {
-      name: 'Benjamin Reynolds',
-      handle: 'Alternative Partners',
-      date: '2025',
-      avatarSrc: PLACEHOLDER_HERO,
-    },
-  },
-  tableOfContents: ['AI in the migration workflow', 'Self-hosted means control'],
+  tableOfContents: [
+    'AI in the migration workflow',
+    'Self-hosted means control',
+  ],
   catalogCard: {
     summary:
       'Alternative Partners replaced Salesforce with self-hosted Twenty, using agentic AI to compress migration work.',
@@ -82,6 +71,18 @@ export const metadata: Metadata = {
 export default async function AlternativePartnersCaseStudyPage() {
   const stats = await fetchCommunityStats();
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
+
+  let storySectionIndex = 0;
+  const sectionBlocks = CASE_STUDY.sections.map((block, index) => {
+    if (block.type === 'text') {
+      const sectionId = `case-study-section-${storySectionIndex}`;
+      storySectionIndex += 1;
+      return (
+        <CaseStudy.TextBlock key={index} block={block} sectionId={sectionId} />
+      );
+    }
+    return <CaseStudy.VisualBlock key={index} block={block} />;
+  });
 
   return (
     <>
@@ -99,38 +100,9 @@ export default async function AlternativePartnersCaseStudyPage() {
 
       <CaseStudy.Hero hero={CASE_STUDY.hero} />
 
-      {CASE_STUDY.sections.map((block, index) => {
-        if (block.type === 'text') {
-          return <CaseStudy.TextBlock key={index} block={block} />;
-        }
-        return <CaseStudy.VisualBlock key={index} block={block} />;
-      })}
+      {sectionBlocks}
 
-      <CaseStudy.Testimonial testimonial={CASE_STUDY.testimonial} />
-
-      <Faq.Root illustration={FAQ_DATA.illustration}>
-        <Faq.Intro>
-          <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
-          <Faq.Heading segments={FAQ_DATA.heading} />
-          <Faq.Cta>
-            <LinkButton
-              color="primary"
-              href="https://app.twenty.com/welcome"
-              label="Get started"
-              type="anchor"
-              variant="contained"
-            />
-            <TalkToUsButton
-              color="primary"
-              label="Talk to us"
-              variant="outlined"
-            />
-          </Faq.Cta>
-        </Faq.Intro>
-        <Faq.Items questions={FAQ_DATA.questions} />
-      </Faq.Root>
-
-      <CaseStudy.TableOfContents items={CASE_STUDY.tableOfContents} />
+      <CaseStudy.SectionNav items={CASE_STUDY.tableOfContents} />
     </>
   );
 }
