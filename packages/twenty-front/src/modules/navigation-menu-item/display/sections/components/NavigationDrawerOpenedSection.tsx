@@ -1,8 +1,10 @@
 import { useLocation, useParams } from 'react-router-dom';
 
+import { activeNavigationMenuItemState } from '@/navigation-menu-item/common/states/activeNavigationMenuItemState';
 import { useWorkspaceNavigationObjectMetadataIds } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationObjectMetadataIds';
 import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
@@ -17,6 +19,10 @@ export const NavigationDrawerOpenedSection = () => {
     objectMetadataIdsWithAnyNavigationItem,
     objectMetadataIdsWithObjectNavigationItem,
   } = useWorkspaceNavigationObjectMetadataIds();
+
+  const activeNavigationMenuItem = useAtomStateValue(
+    activeNavigationMenuItemState,
+  );
 
   const {
     objectNamePlural: currentObjectNamePlural,
@@ -40,13 +46,19 @@ export const NavigationDrawerOpenedSection = () => {
       }) + '/',
     );
 
+  const hasActiveItemForCurrentObject =
+    isOnRecordShowPage &&
+    isDefined(activeNavigationMenuItem) &&
+    activeNavigationMenuItem.objectMetadataId === objectMetadataItem?.id;
+
   const relevantMetadataIds = isOnRecordShowPage
     ? objectMetadataIdsWithObjectNavigationItem
     : objectMetadataIdsWithAnyNavigationItem;
 
-  const shouldShowOpenedSection = isDefined(objectMetadataItem)
-    ? !relevantMetadataIds.has(objectMetadataItem.id)
-    : false;
+  const shouldShowOpenedSection =
+    isDefined(objectMetadataItem) &&
+    !relevantMetadataIds.has(objectMetadataItem.id) &&
+    !hasActiveItemForCurrentObject;
 
   return (
     <AnimatedExpandableContainer isExpanded={shouldShowOpenedSection}>
