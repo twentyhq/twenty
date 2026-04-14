@@ -8,18 +8,18 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
-export type DeepCopyViewResult = {
+export type CloneViewResult = {
   newViewId: string;
   copiedViewFieldGroups: FlatViewFieldGroup[];
   copiedViewFields: FlatViewField[];
 };
 
-export const useDeepCopyViewInMetadataStore = () => {
+export const useCloneViewInMetadataStore = () => {
   const store = useStore();
   const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
-  const deepCopyView = useCallback(
-    (sourceViewId: string): DeepCopyViewResult | null => {
+  const cloneView = useCallback(
+    (sourceViewId: string): CloneViewResult | null => {
       const flatViews = store.get(metadataStoreState.atomFamily('views'))
         .current as FlatView[];
       const allFlatViewFields = store.get(
@@ -82,5 +82,5 @@ export const useDeepCopyViewInMetadataStore = () => {
     [addToDraft, applyChanges, store],
   );
 
-  return { deepCopyView };
+  return { cloneView };
 };

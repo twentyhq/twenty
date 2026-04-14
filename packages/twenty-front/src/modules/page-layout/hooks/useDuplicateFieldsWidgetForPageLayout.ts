@@ -1,5 +1,5 @@
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { useDeepCopyViewInMetadataStore } from '@/page-layout/hooks/useDeepCopyViewInMetadataStore';
+import { useCloneViewInMetadataStore } from '@/page-layout/hooks/useCloneViewInMetadataStore';
 import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
@@ -43,7 +43,7 @@ export const useDuplicateFieldsWidgetForPageLayout = ({
 }) => {
   const store = useStore();
 
-  const { deepCopyView } = useDeepCopyViewInMetadataStore();
+  const { cloneView } = useCloneViewInMetadataStore();
 
   const pageLayoutDraftState = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
@@ -83,7 +83,7 @@ export const useDuplicateFieldsWidgetForPageLayout = ({
         return null;
       }
 
-      const copyResult = deepCopyView(sourceViewId);
+      const copyResult = cloneView(sourceViewId);
 
       if (!isDefined(copyResult)) {
         return null;
@@ -99,10 +99,6 @@ export const useDuplicateFieldsWidgetForPageLayout = ({
         sourceWidget.id
       ];
 
-      // Prefer the source widget's current draft so unsaved edits (reorders,
-      // visibility toggles, new groups) carry over to the duplicate. Fall back
-      // to building from the freshly-copied flat view data when no draft has
-      // been initialized yet for the source widget.
       const hasSourceDraft =
         isDefined(sourceEditorMode) &&
         ((isDefined(sourceGroups) && sourceGroups.length > 0) ||
@@ -147,9 +143,6 @@ export const useDuplicateFieldsWidgetForPageLayout = ({
         newUngroupedFields = built.ungroupedFields;
       }
 
-      // Always seed both draft atoms so the initialization effect's
-      // `widgetId in currentDraft` check resolves true and it doesn't
-      // overwrite the duplicated widget's draft with computed defaults.
       store.set(fieldsWidgetGroupsDraftState, (prev) => ({
         ...prev,
         [newWidgetId]: newGroups,
@@ -168,7 +161,7 @@ export const useDuplicateFieldsWidgetForPageLayout = ({
       return { newViewId: copyResult.newViewId };
     },
     [
-      deepCopyView,
+      cloneView,
       fieldsWidgetEditorModeDraftState,
       fieldsWidgetGroupsDraftState,
       fieldsWidgetUngroupedFieldsDraftState,
