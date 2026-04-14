@@ -11,7 +11,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IconPlus, useIcons } from 'twenty-ui/display';
-import { LightButton } from 'twenty-ui/input';
+import { TabButton } from 'twenty-ui/input';
 
 import { isPageLayoutTabDraggingComponentState } from '@/page-layout/states/isPageLayoutTabDraggingComponentState';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -368,10 +368,11 @@ export const PageLayoutTabList = ({
           addButtonMeasurement={
             addTabStrategy ? (
               <StyledAddButton>
-                <LightButton
-                  Icon={IconPlus}
+                <TabButton
+                  id="add-tab"
+                  LeftIcon={IconPlus}
                   title={t`New Tab`}
-                  accent="tertiary"
+                  disableTestId
                 />
               </StyledAddButton>
             ) : undefined
@@ -417,11 +418,12 @@ export const PageLayoutTabList = ({
 
               {addTabStrategy?.mode === 'direct' && (
                 <StyledAddButton>
-                  <LightButton
-                    Icon={IconPlus}
+                  <TabButton
+                    id="add-tab"
+                    LeftIcon={IconPlus}
                     title={t`New Tab`}
-                    accent="tertiary"
                     onClick={() => addTabStrategy.onCreate()}
+                    disableTestId
                   />
                 </StyledAddButton>
               )}
@@ -430,10 +432,11 @@ export const PageLayoutTabList = ({
                   <Dropdown
                     dropdownId={addTabDropdownId}
                     clickableComponent={
-                      <LightButton
-                        Icon={IconPlus}
+                      <TabButton
+                        id="add-tab"
+                        LeftIcon={IconPlus}
                         title={t`New Tab`}
-                        accent="tertiary"
+                        disableTestId
                       />
                     }
                     dropdownComponents={
@@ -478,11 +481,12 @@ export const PageLayoutTabList = ({
             )}
             {addTabStrategy?.mode === 'direct' && (
               <StyledAddButton>
-                <LightButton
-                  Icon={IconPlus}
+                <TabButton
+                  id="add-tab"
+                  LeftIcon={IconPlus}
                   title={t`New Tab`}
-                  accent="tertiary"
                   onClick={() => addTabStrategy.onCreate()}
+                  disableTestId
                 />
               </StyledAddButton>
             )}
@@ -491,10 +495,11 @@ export const PageLayoutTabList = ({
                 <Dropdown
                   dropdownId={addTabDropdownId}
                   clickableComponent={
-                    <LightButton
-                      Icon={IconPlus}
+                    <TabButton
+                      id="add-tab"
+                      LeftIcon={IconPlus}
                       title={t`New Tab`}
-                      accent="tertiary"
+                      disableTestId
                     />
                   }
                   dropdownComponents={
