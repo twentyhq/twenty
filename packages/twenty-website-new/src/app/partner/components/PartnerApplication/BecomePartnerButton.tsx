@@ -24,12 +24,13 @@ export function BecomePartnerButton({
   const { openPartnerApplicationModal } = usePartnerApplicationModal();
 
   return (
-    <StyledTrigger type="button" onClick={openPartnerApplicationModal}>
-      <BaseButton
-        color={color}
-        label="Become a partner"
-        variant={variant}
-      />
+    <StyledTrigger
+      data-color={color}
+      data-variant={variant}
+      type="button"
+      onClick={openPartnerApplicationModal}
+    >
+      <BaseButton color={color} label="Become a partner" variant={variant} />
     </StyledTrigger>
   );
 }

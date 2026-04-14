@@ -20,7 +20,12 @@ export function SubmitButton({
   variant,
 }: SubmitButtonProps) {
   return (
-    <StyledSubmitButton type="submit" onClick={onClick}>
+    <StyledSubmitButton
+      data-color={color}
+      data-variant={variant}
+      type="submit"
+      onClick={onClick}
+    >
       <BaseButton color={color} label={label} variant={variant} />
     </StyledSubmitButton>
   );

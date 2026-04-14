@@ -1,6 +1,6 @@
 'use client';
 
-import { WhyTwenty as WhyTwentyGlb } from '@/illustrations/Hero/WhyTwenty';
+import { IllustrationMount } from '@/illustrations';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -38,7 +38,7 @@ export function WhyTwentyVisual() {
           src="/images/why-twenty/hero/background.webp"
         />
       </BackgroundLayer>
-      <WhyTwentyGlb />
+      <IllustrationMount illustration="heroWhyTwenty" />
     </VisualContainer>
   );
 }
