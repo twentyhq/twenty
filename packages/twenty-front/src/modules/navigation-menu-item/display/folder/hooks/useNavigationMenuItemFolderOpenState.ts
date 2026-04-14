@@ -68,7 +68,11 @@ export const useNavigationMenuItemFolderOpenState = ({
   });
 
   const selectedNavigationMenuItemIndex =
-    clickedItemIndex >= 0 ? clickedItemIndex : urlMatchingItemIndex;
+    clickedItemIndex >= 0
+      ? clickedItemIndex
+      : hasActiveNavigationMenuItemOnCurrentPage
+        ? -1
+        : urlMatchingItemIndex;
 
   const isExplicitlyOpen = openNavigationMenuItemFolderIds.includes(folderId);
   const hasActiveChild = selectedNavigationMenuItemIndex >= 0;
