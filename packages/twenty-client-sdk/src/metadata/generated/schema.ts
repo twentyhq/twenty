@@ -2929,6 +2929,7 @@ export interface Query {
     workspaceLookupAdminPanel: UserLookup
     getAdminWorkspaceChatThreads: AdminWorkspaceChatThread[]
     getAdminChatThreadMessages: AdminChatThreadMessages
+    findOneAdminApplicationRegistration: ApplicationRegistration
     getUsageAnalytics: UsageAnalytics
     getPostgresCredentials?: PostgresCredentials
     findManyPublicDomains: PublicDomain[]
@@ -3028,6 +3029,7 @@ export interface Mutation {
     updatePageLayout: PageLayout
     destroyPageLayout: Scalars['Boolean']
     updatePageLayoutWithTabsAndWidgets: PageLayout
+    resetPageLayoutToDefault: PageLayout
     resetPageLayoutWidgetToDefault: PageLayoutWidget
     resetPageLayoutTabToDefault: PageLayoutTab
     createPageLayoutWidget: PageLayoutWidget
@@ -6295,6 +6297,7 @@ export interface QueryGenqlSelection{
     workspaceLookupAdminPanel?: (UserLookupGenqlSelection & { __args: {workspaceId: Scalars['UUID']} })
     getAdminWorkspaceChatThreads?: (AdminWorkspaceChatThreadGenqlSelection & { __args: {workspaceId: Scalars['UUID']} })
     getAdminChatThreadMessages?: (AdminChatThreadMessagesGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    findOneAdminApplicationRegistration?: (ApplicationRegistrationGenqlSelection & { __args: {id: Scalars['String']} })
     getUsageAnalytics?: (UsageAnalyticsGenqlSelection & { __args?: {input?: (UsageAnalyticsInput | null)} })
     getPostgresCredentials?: PostgresCredentialsGenqlSelection
     findManyPublicDomains?: PublicDomainGenqlSelection
@@ -6413,6 +6416,7 @@ export interface MutationGenqlSelection{
     updatePageLayout?: (PageLayoutGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutInput} })
     destroyPageLayout?: { __args: {id: Scalars['String']} }
     updatePageLayoutWithTabsAndWidgets?: (PageLayoutGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutWithTabsInput} })
+    resetPageLayoutToDefault?: (PageLayoutGenqlSelection & { __args: {id: Scalars['String']} })
     resetPageLayoutWidgetToDefault?: (PageLayoutWidgetGenqlSelection & { __args: {id: Scalars['String']} })
     resetPageLayoutTabToDefault?: (PageLayoutTabGenqlSelection & { __args: {id: Scalars['String']} })
     createPageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {input: CreatePageLayoutWidgetInput} })

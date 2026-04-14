@@ -3367,6 +3367,7 @@ type Query {
   workspaceLookupAdminPanel(workspaceId: UUID!): UserLookup!
   getAdminWorkspaceChatThreads(workspaceId: UUID!): [AdminWorkspaceChatThread!]!
   getAdminChatThreadMessages(threadId: UUID!): AdminChatThreadMessages!
+  findOneAdminApplicationRegistration(id: String!): ApplicationRegistration!
   getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   getPostgresCredentials: PostgresCredentials
   findManyPublicDomains: [PublicDomain!]!
@@ -3573,6 +3574,7 @@ type Mutation {
   updatePageLayout(id: String!, input: UpdatePageLayoutInput!): PageLayout!
   destroyPageLayout(id: String!): Boolean!
   updatePageLayoutWithTabsAndWidgets(id: String!, input: UpdatePageLayoutWithTabsInput!): PageLayout!
+  resetPageLayoutToDefault(id: String!): PageLayout!
   resetPageLayoutWidgetToDefault(id: String!): PageLayoutWidget!
   resetPageLayoutTabToDefault(id: String!): PageLayoutTab!
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!

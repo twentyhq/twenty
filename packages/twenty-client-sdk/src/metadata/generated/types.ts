@@ -7166,6 +7166,15 @@ export default {
                     ]
                 }
             ],
+            "findOneAdminApplicationRegistration": [
+                7,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "getUsageAnalytics": [
                 283,
                 {
@@ -8091,6 +8100,15 @@ export default {
                     "input": [
                         426,
                         "UpdatePageLayoutWithTabsInput!"
+                    ]
+                }
+            ],
+            "resetPageLayoutToDefault": [
+                114,
+                {
+                    "id": [
+                        1,
+                        "String!"
                     ]
                 }
             ],

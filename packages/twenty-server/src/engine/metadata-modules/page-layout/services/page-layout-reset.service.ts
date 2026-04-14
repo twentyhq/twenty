@@ -4,12 +4,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { splitEntitiesByResetStrategy } from 'src/engine/metadata-modules/flat-entity/utils/split-entities-by-reset-strategy.util';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { isFlatPageLayoutWidgetConfigurationOfType } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/is-flat-page-layout-widget-configuration-of-type.util';
+import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
 import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type PageLayoutTabDTO } from 'src/engine/metadata-modules/page-layout-tab/dtos/page-layout-tab.dto';
@@ -20,6 +21,7 @@ import {
   generatePageLayoutTabExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
 import { fromFlatPageLayoutTabToPageLayoutTabDto } from 'src/engine/metadata-modules/page-layout-tab/utils/from-flat-page-layout-tab-to-page-layout-tab-dto.util';
+import { type PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import {
   PageLayoutWidgetException,
@@ -27,8 +29,15 @@ import {
   PageLayoutWidgetExceptionMessageKey,
   generatePageLayoutWidgetExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
-import { type PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
+import { type PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
+import {
+  PageLayoutException,
+  PageLayoutExceptionCode,
+  PageLayoutExceptionMessageKey,
+  generatePageLayoutExceptionMessage,
+} from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
+import { fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-with-tabs-and-widgets-to-page-layout-dto.util';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -193,7 +202,7 @@ export class PageLayoutResetService {
     await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByWidgetId({
       widgetId: id,
       workspaceId,
-      updatedAt: new Date(updatedWidget.updatedAt),
+      updatedAt: new Date(now),
     });
 
     return fromFlatPageLayoutWidgetToPageLayoutWidgetDto(updatedWidget);
@@ -340,10 +349,206 @@ export class PageLayoutResetService {
     await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByTabId({
       tabId: id,
       workspaceId,
-      updatedAt: new Date(updatedTab.updatedAt),
+      updatedAt: new Date(now),
     });
 
     return fromFlatPageLayoutTabToPageLayoutTabDto(updatedTab);
+  }
+
+  async resetPageLayoutToDefault({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<PageLayoutDTO> {
+    const {
+      flatPageLayoutMaps,
+      flatPageLayoutTabMaps,
+      flatPageLayoutWidgetMaps,
+      flatViewFieldGroupMaps,
+      flatViewFieldMaps,
+    } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatPageLayoutMaps',
+            'flatPageLayoutTabMaps',
+            'flatPageLayoutWidgetMaps',
+            'flatViewFieldGroupMaps',
+            'flatViewFieldMaps',
+          ],
+        },
+      );
+
+    const layout = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatPageLayoutMaps,
+    });
+
+    if (!isDefined(layout) || isDefined(layout.deletedAt)) {
+      throw new PageLayoutException(
+        generatePageLayoutExceptionMessage(
+          PageLayoutExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
+          id,
+        ),
+        PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND,
+      );
+    }
+
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    if (
+      layout.applicationUniversalIdentifier ===
+      workspaceCustomFlatApplication.universalIdentifier
+    ) {
+      throw new PageLayoutException(
+        `Custom page layout "${id}" cannot be reset to default`,
+        PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA,
+      );
+    }
+
+    const now = new Date().toISOString();
+
+    const existingTabs = Object.values(
+      flatPageLayoutTabMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter((tab) => tab.pageLayoutId === id && !isDefined(tab.deletedAt));
+
+    const { toHardDelete: tabsToDelete, toReset: tabsToReset } =
+      splitEntitiesByResetStrategy({
+        entities: existingTabs,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        now,
+      });
+
+    let allWidgetsToUpdate: FlatPageLayoutWidget[] = [];
+    let allWidgetsToDelete: FlatPageLayoutWidget[] = [];
+    let allViewFieldGroupsToUpdate: FlatViewFieldGroup[] = [];
+    let allViewFieldGroupsToDelete: FlatViewFieldGroup[] = [];
+    let allViewFieldsToUpdate: FlatViewField[] = [];
+    let allViewFieldsToDelete: FlatViewField[] = [];
+    let allOrphanedViewIds: string[] = [];
+
+    for (const tab of [...tabsToReset, ...tabsToDelete]) {
+      const {
+        widgetsToUpdate,
+        widgetsToDelete,
+        viewFieldGroupsToUpdate,
+        viewFieldGroupsToDelete,
+        viewFieldsToUpdate,
+        viewFieldsToDelete,
+        orphanedViewIds,
+      } = this.computeTabChildResetOperations({
+        tabId: tab.id,
+        flatPageLayoutWidgetMaps,
+        flatViewFieldGroupMaps,
+        flatViewFieldMaps,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        now,
+      });
+
+      allWidgetsToUpdate = [...allWidgetsToUpdate, ...widgetsToUpdate];
+      allWidgetsToDelete = [...allWidgetsToDelete, ...widgetsToDelete];
+      allViewFieldGroupsToUpdate = [
+        ...allViewFieldGroupsToUpdate,
+        ...viewFieldGroupsToUpdate,
+      ];
+      allViewFieldGroupsToDelete = [
+        ...allViewFieldGroupsToDelete,
+        ...viewFieldGroupsToDelete,
+      ];
+      allViewFieldsToUpdate = [...allViewFieldsToUpdate, ...viewFieldsToUpdate];
+      allViewFieldsToDelete = [...allViewFieldsToDelete, ...viewFieldsToDelete];
+      allOrphanedViewIds = [...allOrphanedViewIds, ...orphanedViewIds];
+    }
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            pageLayoutTab: {
+              flatEntityToCreate: [],
+              flatEntityToUpdate: tabsToReset,
+              flatEntityToDelete: tabsToDelete,
+            },
+            pageLayoutWidget: {
+              flatEntityToCreate: [],
+              flatEntityToUpdate: allWidgetsToUpdate,
+              flatEntityToDelete: allWidgetsToDelete,
+            },
+            viewFieldGroup: {
+              flatEntityToCreate: [],
+              flatEntityToUpdate: allViewFieldGroupsToUpdate,
+              flatEntityToDelete: allViewFieldGroupsToDelete,
+            },
+            viewField: {
+              flatEntityToCreate: [],
+              flatEntityToUpdate: allViewFieldsToUpdate,
+              flatEntityToDelete: allViewFieldsToDelete,
+            },
+          },
+          workspaceId,
+          isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+        },
+      );
+
+    if (validateAndBuildResult.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while resetting page layout to default',
+      );
+    }
+
+    await this.destroyOrphanedFieldsWidgetViews({
+      viewIds: allOrphanedViewIds,
+      workspaceId,
+    });
+
+    const {
+      flatPageLayoutMaps: recomputedLayoutMaps,
+      flatPageLayoutTabMaps: recomputedTabMaps,
+      flatPageLayoutWidgetMaps: recomputedWidgetMaps,
+    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatPageLayoutMaps',
+          'flatPageLayoutTabMaps',
+          'flatPageLayoutWidgetMaps',
+        ],
+      },
+    );
+
+    const updatedLayout = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: id,
+      flatEntityMaps: recomputedLayoutMaps,
+    });
+
+    await this.dashboardSyncService.updateLinkedDashboardsUpdatedAtByPageLayoutId(
+      {
+        pageLayoutId: id,
+        workspaceId,
+        updatedAt: new Date(now),
+      },
+    );
+
+    return fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto(
+      reconstructFlatPageLayoutWithTabsAndWidgets({
+        layout: updatedLayout,
+        flatPageLayoutTabMaps: recomputedTabMaps,
+        flatPageLayoutWidgetMaps: recomputedWidgetMaps,
+      }),
+    );
   }
 
   private computeTabChildResetOperations({
