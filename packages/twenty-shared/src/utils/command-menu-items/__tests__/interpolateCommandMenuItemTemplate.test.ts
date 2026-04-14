@@ -1,7 +1,4 @@
-import {
-  ContextStorePageType,
-  type CommandMenuContextApi,
-} from '@/types';
+import { ContextStorePageType, type CommandMenuContextApi } from '@/types';
 import { interpolateCommandMenuItemTemplate } from '../interpolateCommandMenuItemTemplate';
 
 const buildContext = (
