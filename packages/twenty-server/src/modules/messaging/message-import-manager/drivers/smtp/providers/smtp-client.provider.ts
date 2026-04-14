@@ -30,9 +30,9 @@ export class SmtpClientProvider {
     const validatedSmtpHost =
       await this.secureHttpClientService.getValidatedHost(smtpParams.host);
 
-    const auth: any = {
+    const auth = {
       user: smtpParams.username ?? connectedAccount.handle ?? '',
-    };
+    } as any;
 
     if (
       connectedAccount.provider === ConnectedAccountProvider.GOOGLE ||
@@ -49,7 +49,7 @@ export class SmtpClientProvider {
       port: smtpParams.port,
       auth,
       tls: {
-        rejectUnauthorized: false,
+        rejectUnauthorized: true,
       },
     };
 

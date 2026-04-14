@@ -98,7 +98,7 @@ export class ImapClientProvider {
       auth,
       logger: false,
       tls: {
-        rejectUnauthorized: false,
+        rejectUnauthorized: true,
       },
       connectionTimeout: ImapClientProvider.CONNECTION_TIMEOUT_MS,
       greetingTimeout: ImapClientProvider.GREETING_TIMEOUT_MS,
