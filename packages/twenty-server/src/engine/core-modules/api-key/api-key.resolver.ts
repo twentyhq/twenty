@@ -1,12 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import {
-  Args,
-  Context,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-} from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -24,7 +17,6 @@ import {
 } from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
 import { apiKeyGraphqlApiExceptionHandler } from 'src/engine/core-modules/api-key/utils/api-key-graphql-api-exception-handler.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -133,20 +125,10 @@ export class ApiKeyResolver {
   async role(
     @Parent() apiKey: ApiKeyEntity,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @Context() context: { loaders: IDataloaders },
   ): Promise<RoleDTO> {
-    const role = await context.loaders.apiKeyRoleLoader.load({
+    return this.apiKeyRoleService.getRoleDtoByApiKeyId({
       apiKeyId: apiKey.id,
       workspaceId: workspace.id,
     });
-
-    if (!role) {
-      throw new ApiKeyException(
-        `API key ${apiKey.id} has no role assigned`,
-        ApiKeyExceptionCode.API_KEY_NO_ROLE_ASSIGNED,
-      );
-    }
-
-    return role;
   }
 }

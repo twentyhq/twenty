@@ -7,7 +7,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
@@ -37,12 +36,6 @@ import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-me
 import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
-
-export type ApiKeyRoleLoaderPayload = {
-  workspaceId: string;
-  apiKeyId: string;
-};
 
 export type RelationMetadataLoaderPayload = {
   workspaceId: string;
@@ -123,11 +116,9 @@ export class DataloaderService {
   constructor(
     private readonly i18nService: I18nService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly apiKeyRoleService: ApiKeyRoleService,
   ) {}
 
   createLoaders(): IDataloaders {
-    const apiKeyRoleLoader = this.createApiKeyRoleLoader();
     const relationLoader = this.createRelationLoader();
     const morphRelationLoader = this.createMorphRelationLoader();
     const fieldMetadataLoader = this.createFieldMetadataLoader();
@@ -146,7 +137,6 @@ export class DataloaderService {
       this.createViewFilterGroupsByViewIdLoader();
 
     return {
-      apiKeyRoleLoader,
       relationLoader,
       morphRelationLoader,
       fieldMetadataLoader,
@@ -161,24 +151,6 @@ export class DataloaderService {
       viewGroupsByViewIdLoader,
       viewFilterGroupsByViewIdLoader,
     };
-  }
-
-  private createApiKeyRoleLoader() {
-    return new DataLoader<ApiKeyRoleLoaderPayload, RoleDTO | null>(
-      async (dataLoaderParams: ApiKeyRoleLoaderPayload[]) => {
-        const workspaceId = dataLoaderParams[0].workspaceId;
-        const apiKeyIds = dataLoaderParams.map((param) => param.apiKeyId);
-
-        const rolesMap = await this.apiKeyRoleService.getRolesByApiKeys({
-          apiKeyIds,
-          workspaceId,
-        });
-
-        return dataLoaderParams.map(
-          ({ apiKeyId }) => rolesMap.get(apiKeyId) ?? null,
-        );
-      },
-    );
   }
 
   private createRelationLoader() {
