@@ -97,6 +97,9 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
     isInSidePanel,
   });
 
+  const isInVerticalListTab =
+    layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
+
   return {
     isPageLayoutInEditMode,
     isEditing,
@@ -108,6 +111,8 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
     isLastWidget,
     showHeader,
     variant,
+    isMobile,
+    isInVerticalListTab,
     handleClick,
     handleRemove,
     handleMouseEnter,

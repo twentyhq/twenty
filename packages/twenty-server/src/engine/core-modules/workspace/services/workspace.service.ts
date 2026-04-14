@@ -12,6 +12,7 @@ import { DataSource, QueryRunner, Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -66,6 +67,7 @@ import { prefillWorkflowCommandMenuItems } from 'src/engine/workspace-manager/st
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflows.util';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
@@ -116,6 +118,8 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     private readonly dnsManagerService: DnsManagerService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly prefillLogicFunctionService: PrefillLogicFunctionService,
+    private readonly applicationService: ApplicationService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
@@ -775,8 +779,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
         flatFieldMetadataMaps,
       );
 
-      await prefillWorkflowCommandMenuItems(queryRunner.manager, workspaceId);
-
       await prefillOpportunities(queryRunner.manager, schemaName);
 
       await prefillDashboards(
@@ -788,18 +790,28 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       await queryRunner.commitTransaction();
     } catch (error) {
       if (queryRunner.isTransactionActive) {
-        try {
-          await queryRunner.rollbackTransaction();
-        } catch (rollbackError) {
-          this.logger.error(
-            `Failed to rollback prefill transaction: ${rollbackError.message}`,
-          );
-        }
+        await queryRunner.rollbackTransaction();
       }
 
       throw error;
     } finally {
       await queryRunner.release();
+    }
+
+    try {
+      await prefillWorkflowCommandMenuItems({
+        workspaceId,
+        applicationService: this.applicationService,
+        flatEntityMapsCacheService: this.flatEntityMapsCacheService,
+        workspaceMigrationValidateBuildAndRunService:
+          this.workspaceMigrationValidateBuildAndRunService,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Non-critical: failed to prefill workflow command menu items for workspace ${workspaceId}`,
+        error,
+      );
+      this.exceptionHandlerService.captureExceptions([error as Error]);
     }
   }
 }

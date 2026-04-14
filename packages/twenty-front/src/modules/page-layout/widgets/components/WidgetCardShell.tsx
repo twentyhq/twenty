@@ -34,6 +34,8 @@ type WidgetCardShellProps = {
   hasAccess: boolean;
   restriction: WidgetAccessDenialInfo;
   actions: WidgetAction[];
+  isInVerticalListTab: boolean;
+  isMobile: boolean;
   isReorderEnabled: boolean;
   isDeletingWidgetEnabled: boolean;
   onClick?: () => void;
@@ -54,6 +56,8 @@ export const WidgetCardShell = ({
   hasAccess,
   restriction,
   actions,
+  isInVerticalListTab,
+  isMobile,
   isReorderEnabled,
   isDeletingWidgetEnabled,
   onClick,
@@ -106,6 +110,8 @@ export const WidgetCardShell = ({
           variant={variant}
           hasHeader={showHeader}
           isEditable={isEditable}
+          isInVerticalListTab={isInVerticalListTab}
+          isMobile={isMobile}
           hasInteractiveContent={widget.type === WidgetType.RECORD_TABLE}
         >
           {hasAccess ? (

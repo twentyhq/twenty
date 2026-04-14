@@ -74,6 +74,9 @@ export class PageLayoutWidgetDTO {
   @Field()
   updatedAt: Date;
 
+  @Field(() => Boolean, { nullable: false })
+  isActive: boolean;
+
   @Field(() => Date, { nullable: true })
   deletedAt?: Date;
 

@@ -21,6 +21,7 @@ export const DEFAULT_MESSAGE_THREAD_RECORD_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       applicationId: '',
       id: 'message-thread-tab-home',
+      isActive: true,
       title: 'Home',
       icon: 'IconHome',
       position: 100,
@@ -33,6 +34,7 @@ export const DEFAULT_MESSAGE_THREAD_RECORD_PAGE_LAYOUT: PageLayout = {
         {
           __typename: 'PageLayoutWidget',
           id: 'message-thread-widget-email-thread',
+          isActive: true,
           pageLayoutTabId: 'message-thread-tab-home',
           title: 'Thread',
           type: WidgetType.EMAIL_THREAD,

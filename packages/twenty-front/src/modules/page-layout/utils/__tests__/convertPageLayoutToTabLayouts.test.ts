@@ -20,6 +20,7 @@ describe('convertPageLayoutToTabLayouts', () => {
         {
           id: 'tab-1',
           applicationId: '',
+          isActive: true,
           title: 'Tab 1',
           position: 0,
           pageLayoutId: 'page-layout-1',
@@ -27,6 +28,7 @@ describe('convertPageLayoutToTabLayouts', () => {
             {
               __typename: 'PageLayoutWidget',
               id: 'widget-1',
+              isActive: true,
               pageLayoutTabId: 'tab-1',
               title: 'Widget 1',
               type: WidgetType.GRAPH,
@@ -45,6 +47,7 @@ describe('convertPageLayoutToTabLayouts', () => {
             {
               __typename: 'PageLayoutWidget',
               id: 'widget-2',
+              isActive: true,
               pageLayoutTabId: 'tab-1',
               title: 'Widget 2',
               type: WidgetType.GRAPH,
@@ -99,6 +102,7 @@ describe('convertPageLayoutToTabLayouts', () => {
         {
           id: 'tab-1',
           applicationId: '',
+          isActive: true,
           title: 'Tab 1',
           position: 0,
           pageLayoutId: 'page-layout-1',
@@ -106,6 +110,7 @@ describe('convertPageLayoutToTabLayouts', () => {
             {
               __typename: 'PageLayoutWidget',
               id: 'rich-text-widget',
+              isActive: true,
               pageLayoutTabId: 'tab-1',
               title: 'Rich Text',
               type: WidgetType.STANDALONE_RICH_TEXT,

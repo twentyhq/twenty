@@ -1,14 +1,20 @@
 import { styled } from '@linaria/react';
-import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
 
 type WidgetCardContentStyledProps = {
   variant: WidgetCardVariant;
   hasHeader: boolean;
   isEditable: boolean;
+  isInVerticalListTab: boolean;
+  isMobile: boolean;
 };
 
 const StyledWidgetCardContent = styled.div<WidgetCardContentStyledProps>`
+  background-color: ${({ variant, isInVerticalListTab, isMobile }) =>
+    variant === 'record-page' && isInVerticalListTab && !isMobile
+      ? themeCssVariables.background.secondary
+      : 'transparent'};
   border: ${({ variant, isEditable }) =>
     variant === 'record-page' || (variant === 'side-column' && isEditable)
       ? `1px solid ${themeCssVariables.border.color.medium}`
@@ -41,10 +47,10 @@ const StyledWidgetCardContent = styled.div<WidgetCardContentStyledProps>`
   }};
 
   &:empty {
-    margin-top: ${({ hasHeader, variant, isEditable }) => {
-      if (hasHeader && variant === 'side-column' && !isEditable) return '0';
-      return hasHeader ? themeCssVariables.spacing[2] : '0';
-    }};
+    border: none;
+    border-radius: 0;
+    margin-top: 0;
+    padding: 0;
   }
 `;
 
@@ -52,6 +58,8 @@ type WidgetCardContentProps = {
   variant: WidgetCardVariant;
   hasHeader: boolean;
   isEditable: boolean;
+  isInVerticalListTab: boolean;
+  isMobile: boolean;
   hasInteractiveContent?: boolean;
   className?: string;
   children?: React.ReactNode;
@@ -61,6 +69,8 @@ export const WidgetCardContent = ({
   variant,
   hasHeader,
   isEditable,
+  isInVerticalListTab,
+  isMobile,
   hasInteractiveContent = false,
   className,
   children,
@@ -78,6 +88,8 @@ export const WidgetCardContent = ({
       variant={variant}
       hasHeader={hasHeader}
       isEditable={isEditable}
+      isInVerticalListTab={isInVerticalListTab}
+      isMobile={isMobile}
       className={className}
       onClick={handleContentClick}
     >
