@@ -20,6 +20,8 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
   const { commandMenuItems, commandMenuContextApi } =
     useContext(CommandMenuContext);
+
+  console.log('commandMenuContextApi', commandMenuContextApi);
   const commandMenuPinnedInlineLayout = useAtomStateValue(
     commandMenuPinnedInlineLayoutState,
   );

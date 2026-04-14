@@ -36,7 +36,7 @@ import { RecordComponentInstanceContextsWrapper } from '@/object-record/componen
 import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
-import { type SidePanelRootPage } from '@/side-panel/pages/root/components/SidePanelRootPage';
+import { type SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
@@ -77,7 +77,7 @@ const ContextStoreDecorator: Decorator = (Story) => {
   );
 };
 
-const meta: Meta<typeof SidePanelRootPage> = {
+const meta: Meta<typeof SidePanelCommandMenuItemDisplayPage> = {
   title: 'Modules/CommandMenu/CommandMenu',
   component: SidePanelRouter,
   decorators: [
@@ -153,7 +153,7 @@ const meta: Meta<typeof SidePanelRootPage> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof SidePanelRootPage>;
+type Story = StoryObj<typeof SidePanelCommandMenuItemDisplayPage>;
 
 export const DefaultWithoutSearch: Story = {
   play: async ({ canvasElement }) => {
