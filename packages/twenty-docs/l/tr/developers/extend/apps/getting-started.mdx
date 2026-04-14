@@ -229,19 +229,19 @@ npx create-twenty-app@latest my-twenty-app --example postcard
 
 Veriler, yeniden başlatmalar arasında iki Docker biriminde kalıcıdır (PostgreSQL için `twenty-app-dev-data`, dosyalar için `twenty-app-dev-storage`). Her şeyi silip baştan başlamak için `reset` kullanın.
 
-### Running a test instance
+### Test örneği çalıştırma
 
-Pass `--test` to any `server` command to manage a second, fully isolated instance — useful for running integration tests or experimenting without touching your main dev data.
+`server` komutlarının herhangi birine `--test` parametresini vererek ikinci, tamamen yalıtılmış bir örneği yönetin — entegrasyon testlerini çalıştırmak veya ana geliştirme verilerinize dokunmadan denemeler yapmak için kullanışlıdır.
 
-| Komut                              | Açıklama                                        |
-| ---------------------------------- | ----------------------------------------------- |
-| `yarn twenty server start --test`  | Start the test instance (defaults to port 2021) |
-| `yarn twenty server stop --test`   | Stop the test instance                          |
-| `yarn twenty server status --test` | Show test instance status, URL, and credentials |
-| `yarn twenty server logs --test`   | Stream test instance logs                       |
-| `yarn twenty server reset --test`  | Wipe test data and start fresh                  |
+| Komut                              | Açıklama                                                       |
+| ---------------------------------- | -------------------------------------------------------------- |
+| `yarn twenty server start --test`  | Test örneğini başlatır (varsayılan bağlantı noktası 2021'dir)  |
+| `yarn twenty server stop --test`   | Test örneğini durdurur                                         |
+| `yarn twenty server status --test` | Test örneğinin durumunu, URL'yi ve kimlik bilgilerini gösterir |
+| `yarn twenty server logs --test`   | Test örneği günlüklerini akış olarak iletir                    |
+| `yarn twenty server reset --test`  | Test verilerini siler ve sıfırdan başlatır                     |
 
-The test instance runs in its own Docker container (`twenty-app-dev-test`) with dedicated volumes (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) and config, so it can run in parallel with your main instance without conflicts. Combine `--test` with `--port` to override the default 2021.
+Test örneği, kendine ait bir Docker konteynerinde (`twenty-app-dev-test`), ayrılmış birimlerle (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) ve yapılandırmayla çalışır; böylece ana örneğinizle çakışma olmadan paralel olarak çalışabilir. Varsayılan 2021'i geçersiz kılmak için `--test` ile `--port`'u birlikte kullanın.
 
 <Note>
   Sunucunun çalışması için **Docker**'ın çalışıyor olması gerekir. "Docker not running" hatası görürseniz Docker Desktop'ın (veya Docker daemon'ının) başlatıldığından emin olun.

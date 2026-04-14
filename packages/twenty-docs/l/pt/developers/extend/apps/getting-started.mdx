@@ -229,19 +229,19 @@ A ferramenta de scaffolding já iniciou um servidor local do Twenty para você. 
 
 Os dados são persistidos entre reinicializações em dois volumes do Docker (`twenty-app-dev-data` para PostgreSQL, `twenty-app-dev-storage` para arquivos). Use `reset` para apagar tudo e começar do zero.
 
-### Running a test instance
+### Executando uma instância de teste
 
-Pass `--test` to any `server` command to manage a second, fully isolated instance — useful for running integration tests or experimenting without touching your main dev data.
+Passe `--test` para qualquer comando de `server` para gerenciar uma segunda instância totalmente isolada — útil para executar testes de integração ou experimentar sem tocar nos seus dados principais de desenvolvimento.
 
-| Comando                            | Descrição                                       |
-| ---------------------------------- | ----------------------------------------------- |
-| `yarn twenty server start --test`  | Start the test instance (defaults to port 2021) |
-| `yarn twenty server stop --test`   | Stop the test instance                          |
-| `yarn twenty server status --test` | Show test instance status, URL, and credentials |
-| `yarn twenty server logs --test`   | Stream test instance logs                       |
-| `yarn twenty server reset --test`  | Wipe test data and start fresh                  |
+| Comando                            | Descrição                                                     |
+| ---------------------------------- | ------------------------------------------------------------- |
+| `yarn twenty server start --test`  | Inicia a instância de teste (padrão: porta 2021)              |
+| `yarn twenty server stop --test`   | Interrompe a instância de teste                               |
+| `yarn twenty server status --test` | Mostra o status da instância de teste, a URL e as credenciais |
+| `yarn twenty server logs --test`   | Transmite os logs da instância de teste                       |
+| `yarn twenty server reset --test`  | Exclui os dados de teste e inicia do zero                     |
 
-The test instance runs in its own Docker container (`twenty-app-dev-test`) with dedicated volumes (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) and config, so it can run in parallel with your main instance without conflicts. Combine `--test` with `--port` to override the default 2021.
+A instância de teste é executada em seu próprio contêiner Docker (`twenty-app-dev-test`) com volumes dedicados (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) e configuração própria, para que possa ser executada em paralelo com sua instância principal sem conflitos. Combine `--test` com `--port` para substituir a porta padrão 2021.
 
 <Note>
   O servidor requer que o **Docker** esteja em execução. Se você vir um erro "Docker not running", certifique-se de que o Docker Desktop (ou o daemon do Docker) esteja iniciado.
