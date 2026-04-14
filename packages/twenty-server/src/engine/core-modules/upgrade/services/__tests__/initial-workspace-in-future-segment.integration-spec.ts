@@ -1,5 +1,3 @@
-import { uuidv4 } from 'zod';
-
 import {
   type WorkspaceIteratorReport,
   WorkspaceIteratorService,
@@ -17,6 +15,8 @@ import {
   testGetExecutedMigrationsInOrder,
   WS_1,
   WS_2,
+  WS_3,
+  WS_4,
 } from './utils/upgrade-sequence-runner-integration-test.util';
 
 describe('UpgradeSequenceRunnerService — initial workspace in future segment (integration)', () => {
@@ -63,9 +63,6 @@ describe('UpgradeSequenceRunnerService — initial workspace in future segment (
       makeWorkspace('Wc6'),
       makeWorkspace('Wc7'),
     ];
-
-    const WS_3 = uuidv4().toString();
-    const WS_4 = uuidv4().toString();
 
     setMockActiveWorkspaceIds([WS_1, WS_2, WS_3, WS_4]);
 

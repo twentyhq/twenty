@@ -18,7 +18,9 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { seedBillingCustomers } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-customers.util';
 import { seedBillingSubscriptions } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-subscriptions.util';
 import {
+  type SeededEmptyWorkspacesIds,
   type SeededWorkspacesIds,
+  SEEDER_CREATE_EMPTY_WORKSPACE_INPUT,
   SEEDER_CREATE_WORKSPACE_INPUT,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
@@ -179,6 +181,56 @@ export class DevSeederService {
     });
 
     await this.workspaceCacheStorageService.flush(workspaceId, undefined);
+  }
+
+  public async seedEmptyWorkspace(
+    workspaceId: SeededEmptyWorkspacesIds,
+  ): Promise<void> {
+    const appVersion = this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
+    const lastWorkspaceCommand =
+      this.upgradeSequenceReaderService.getLastWorkspaceCommand();
+
+    const createWorkspaceStaticInput =
+      SEEDER_CREATE_EMPTY_WORKSPACE_INPUT[workspaceId];
+    const queryRunner = this.coreDataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const workspaceCustomApplicationId = v4();
+
+      await createWorkspace({
+        queryRunner,
+        schemaName: 'core',
+        createWorkspaceInput: {
+          ...createWorkspaceStaticInput,
+          workspaceCustomApplicationId,
+        },
+      });
+
+      await this.applicationService.createWorkspaceCustomApplication(
+        {
+          workspaceId,
+          applicationId: workspaceCustomApplicationId,
+        },
+        queryRunner,
+      );
+
+      await this.upgradeMigrationService.markAsInitial({
+        name: lastWorkspaceCommand.name,
+        workspaceId,
+        executedByVersion: appVersion,
+        queryRunner,
+      });
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   private async seedCoreSchema({
