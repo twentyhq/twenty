@@ -6,6 +6,8 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
@@ -18,6 +20,47 @@ import { PAGE_LAYOUT_WIDGET_SEEDS } from 'src/engine/workspace-manager/dev-seede
 import { type SeederFlatPageLayoutWidget } from 'src/engine/workspace-manager/dev-seeder/core/types/seeder-flat-page-layout-widget.type';
 import { generateSeedId } from 'src/engine/workspace-manager/dev-seeder/core/utils/generate-seed-id.util';
 import { getPageLayoutWidgetDataSeedsV2 } from 'src/engine/workspace-manager/dev-seeder/core/utils/get-page-layout-widget-data-seeds-v2.util';
+
+export const getPageLayoutWidgetFlatEntitySeeds = ({
+  workspaceId,
+  flatApplication,
+  objectMetadataItems,
+}: {
+  workspaceId: string;
+  flatApplication: FlatApplication;
+  objectMetadataItems: ObjectMetadataEntity[];
+}): FlatPageLayoutWidget[] => {
+  const seeds = getPageLayoutWidgetDataSeeds(workspaceId, objectMetadataItems);
+  const now = new Date().toISOString();
+
+  return seeds.map((seed) => {
+    const objectMetadata = isDefined(seed.objectMetadataId)
+      ? objectMetadataItems.find(
+          (objectMetadataItem) =>
+            objectMetadataItem.id === seed.objectMetadataId,
+        )
+      : undefined;
+
+    return {
+      ...seed,
+      universalIdentifier: seed.id,
+      applicationId: flatApplication.id,
+      applicationUniversalIdentifier: flatApplication.universalIdentifier,
+      workspaceId,
+      pageLayoutTabUniversalIdentifier: seed.pageLayoutTabId,
+      objectMetadataUniversalIdentifier:
+        objectMetadata?.universalIdentifier ?? null,
+      universalConfiguration: seed.configuration,
+      conditionalDisplay: null,
+      conditionalAvailabilityExpression: null,
+      isActive: true,
+      createdAt: now,
+      updatedAt: now,
+      deletedAt: null,
+      universalOverrides: null,
+    } as FlatPageLayoutWidget;
+  });
+};
 
 const getFieldId = (
   object: ObjectMetadataEntity | undefined,
