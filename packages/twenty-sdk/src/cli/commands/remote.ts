@@ -95,9 +95,7 @@ export const registerRemoteCommands = (program: Command): void => {
           await authenticate(config.apiUrl, options.apiKey);
 
           await configService.setDefaultRemote(options.as);
-          console.log(
-            chalk.green(`✓ Default remote set to "${options.as}".`),
-          );
+          console.log(chalk.green(`✓ Default remote set to "${options.as}".`));
 
           return;
         }
