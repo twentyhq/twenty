@@ -7,7 +7,6 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { QuoteTotalsService } from 'src/modules/quote/services/quote-totals.service';
 
 type QuoteTermRecord = {
-  owningSectionQuotationQuoteId?: string | null;
   owningSectionQuotationQuoteSectionId?: string | null;
 };
 
@@ -33,8 +32,6 @@ async function recomputeFromPayload(
   }
 
   await quoteTotalsService.recomputeFromTerm(authContext.workspace.id, {
-    owningSectionQuotationQuoteId:
-      record.owningSectionQuotationQuoteId ?? null,
     owningSectionQuotationQuoteSectionId:
       record.owningSectionQuotationQuoteSectionId ?? null,
   });

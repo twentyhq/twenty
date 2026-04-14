@@ -84,7 +84,6 @@ export class QuoteTotalsService {
   async recomputeFromTerm(
     workspaceId: string,
     term: {
-      owningSectionQuotationQuoteId: string | null;
       owningSectionQuotationQuoteSectionId: string | null;
     },
   ): Promise<void> {
@@ -117,13 +116,10 @@ export class QuoteTotalsService {
        FROM ${schema}."_quoteTerm"
        WHERE "affectsFees" = true
          AND "deletedAt" IS NULL
-         AND (
-           "owningSectionQuotationQuoteId" = $1
-           OR "owningSectionQuotationQuoteSectionId" IN (
-             SELECT "id"
-             FROM ${schema}."_quoteSection"
-             WHERE "quoteId" = $1 AND "deletedAt" IS NULL
-           )
+         AND "owningSectionQuotationQuoteSectionId" IN (
+           SELECT "id"
+           FROM ${schema}."_quoteSection"
+           WHERE "quoteId" = $1 AND "deletedAt" IS NULL
          )`,
       [quoteId],
     );
@@ -216,14 +212,9 @@ export class QuoteTotalsService {
   private async resolveQuoteIdFromTerm(
     schema: string,
     term: {
-      owningSectionQuotationQuoteId: string | null;
       owningSectionQuotationQuoteSectionId: string | null;
     },
   ): Promise<string | null> {
-    if (term.owningSectionQuotationQuoteId) {
-      return term.owningSectionQuotationQuoteId;
-    }
-
     if (term.owningSectionQuotationQuoteSectionId) {
       const rows: Array<{ quoteId: string }> = await this.dataSource.query(
         `SELECT "quoteId" FROM ${schema}."_quoteSection" WHERE "id" = $1`,
