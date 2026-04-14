@@ -95,44 +95,49 @@ export const RecordFieldList = ({
     >
       <PropertyBox dataTestId="record-fields-list-container">
         {legacyActivityTargetFieldMetadataItems?.map(
-          (fieldMetadataItem, index) => (
-            <FieldContext.Provider
-              key={objectRecordId + fieldMetadataItem.id}
-              value={{
-                recordId: objectRecordId,
-                maxWidth: 200,
-                isLabelIdentifier: false,
-                fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
-                  field: fieldMetadataItem,
-                  position: index,
-                  objectMetadataItem,
-                  showLabel: true,
-                  labelWidth: 90,
-                }),
-                useUpdateRecord: useUpdateOneObjectRecordMutation,
-                isDisplayModeFixHeight: true,
-                onMouseEnter: () => handleMouseEnter(index),
-                anchorId: `${getRecordFieldInputInstanceId({
+          (fieldMetadataItem, index) => {
+            const fieldDefinition = formatFieldMetadataItemAsColumnDefinition({
+              field: fieldMetadataItem,
+              position: index,
+              objectMetadataItem,
+              showLabel: true,
+              labelWidth: 90,
+            });
+
+            return (
+              <FieldContext.Provider
+                key={objectRecordId + fieldMetadataItem.id}
+                value={{
                   recordId: objectRecordId,
-                  fieldName: fieldMetadataItem.name,
-                  prefix: instanceId,
-                })}`,
-                isRecordFieldReadOnly: isRecordFieldReadOnly({
-                  isRecordReadOnly,
-                  isSystemObject: objectMetadataItem.isSystem,
-                  objectPermissions:
-                    getObjectPermissionsFromMapByObjectMetadataId({
-                      objectPermissionsByObjectMetadataId,
-                      objectMetadataId: objectMetadataItem.id,
-                    }),
-                  fieldMetadataItem: {
-                    id: fieldMetadataItem.id,
-                    isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
-                    isCustom: fieldMetadataItem.isCustom ?? false,
-                  },
-                }),
-              }}
-            >
+                  maxWidth: 200,
+                  isLabelIdentifier: false,
+                  fieldDefinition,
+                  useUpdateRecord: useUpdateOneObjectRecordMutation,
+                  isDisplayModeFixHeight: true,
+                  onMouseEnter: () => handleMouseEnter(index),
+                  anchorId: `${getRecordFieldInputInstanceId({
+                    recordId: objectRecordId,
+                    fieldName: fieldMetadataItem.name,
+                    prefix: instanceId,
+                  })}`,
+                  isRecordFieldReadOnly: isRecordFieldReadOnly({
+                    isRecordReadOnly,
+                    isSystemObject: objectMetadataItem.isSystem,
+                    objectPermissions:
+                      getObjectPermissionsFromMapByObjectMetadataId({
+                        objectPermissionsByObjectMetadataId,
+                        objectMetadataId: objectMetadataItem.id,
+                      }),
+                    fieldMetadataItem: {
+                      id: fieldMetadataItem.id,
+                      isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+                      isCustom: fieldMetadataItem.isCustom ?? false,
+                    },
+                    fieldDefinition,
+                    objectPermissionsByObjectMetadataId,
+                  }),
+                }}
+              >
               <ActivityTargetsInlineCell
                 componentInstanceId={getRecordFieldInputInstanceId({
                   recordId: objectRecordId,
@@ -148,39 +153,45 @@ export const RecordFieldList = ({
                 showLabel={true}
                 maxWidth={200}
               />
-            </FieldContext.Provider>
-          ),
+              </FieldContext.Provider>
+            );
+          },
         )}
-        {inlineFieldMetadataItems?.map((fieldMetadataItem, index) => (
-          <FieldContext.Provider
-            key={objectRecordId + fieldMetadataItem.id}
-            value={{
-              recordId: objectRecordId,
-              maxWidth: 200,
-              isLabelIdentifier: false,
-              fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
-                field: fieldMetadataItem,
-                position: index,
-                objectMetadataItem,
-                showLabel: true,
-                labelWidth: 90,
-              }),
-              useUpdateRecord: useUpdateOneObjectRecordMutation,
-              isDisplayModeFixHeight: true,
-              isRecordFieldReadOnly: isRecordFieldReadOnly({
-                isRecordReadOnly,
-                isSystemObject: objectMetadataItem.isSystem,
-                objectPermissions:
-                  getObjectPermissionsFromMapByObjectMetadataId({
-                    objectPermissionsByObjectMetadataId,
-                    objectMetadataId: objectMetadataItem.id,
-                  }),
-                fieldMetadataItem: {
-                  id: fieldMetadataItem.id,
-                  isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
-                  isCustom: fieldMetadataItem.isCustom ?? false,
-                },
-              }),
+        {inlineFieldMetadataItems?.map((fieldMetadataItem, index) => {
+          const fieldDefinition = formatFieldMetadataItemAsColumnDefinition({
+            field: fieldMetadataItem,
+            position: index,
+            objectMetadataItem,
+            showLabel: true,
+            labelWidth: 90,
+          });
+
+          return (
+            <FieldContext.Provider
+              key={objectRecordId + fieldMetadataItem.id}
+              value={{
+                recordId: objectRecordId,
+                maxWidth: 200,
+                isLabelIdentifier: false,
+                fieldDefinition,
+                useUpdateRecord: useUpdateOneObjectRecordMutation,
+                isDisplayModeFixHeight: true,
+                isRecordFieldReadOnly: isRecordFieldReadOnly({
+                  isRecordReadOnly,
+                  isSystemObject: objectMetadataItem.isSystem,
+                  objectPermissions:
+                    getObjectPermissionsFromMapByObjectMetadataId({
+                      objectPermissionsByObjectMetadataId,
+                      objectMetadataId: objectMetadataItem.id,
+                    }),
+                  fieldMetadataItem: {
+                    id: fieldMetadataItem.id,
+                    isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+                    isCustom: fieldMetadataItem.isCustom ?? false,
+                  },
+                  fieldDefinition,
+                  objectPermissionsByObjectMetadataId,
+                }),
               onMouseEnter: () =>
                 handleMouseEnter(
                   index + (legacyActivityTargetFieldMetadataItems?.length ?? 0),
@@ -213,7 +224,8 @@ export const RecordFieldList = ({
               />
             </RecordFieldComponentInstanceContext.Provider>
           </FieldContext.Provider>
-        ))}
+          );
+        })}
       </PropertyBox>
       {showDuplicatesSection && (
         <RecordDetailDuplicatesSection
@@ -227,42 +239,48 @@ export const RecordFieldList = ({
             fieldMetadataItem.type === FieldMetadataType.RELATION ||
             fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION,
         )
-        .map((fieldMetadataItem, index) => (
-          <FieldContext.Provider
-            key={objectRecordId + fieldMetadataItem.id}
-            value={{
-              recordId: objectRecordId,
-              isLabelIdentifier: false,
-              fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
-                field: fieldMetadataItem,
-                position: index,
-                objectMetadataItem,
-              }),
-              useUpdateRecord: useUpdateOneObjectRecordMutation,
-              isDisplayModeFixHeight: true,
-              isRecordFieldReadOnly: isRecordFieldReadOnly({
-                isRecordReadOnly,
-                isSystemObject: objectMetadataItem.isSystem,
-                objectPermissions:
-                  getObjectPermissionsFromMapByObjectMetadataId({
-                    objectPermissionsByObjectMetadataId,
-                    objectMetadataId: objectMetadataItem.id,
-                  }),
-                fieldMetadataItem: {
-                  id: fieldMetadataItem.id,
-                  isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
-                  isCustom: fieldMetadataItem.isCustom ?? false,
-                },
-              }),
-            }}
-          >
+        .map((fieldMetadataItem, index) => {
+          const fieldDefinition = formatFieldMetadataItemAsColumnDefinition({
+            field: fieldMetadataItem,
+            position: index,
+            objectMetadataItem,
+          });
+
+          return (
+            <FieldContext.Provider
+              key={objectRecordId + fieldMetadataItem.id}
+              value={{
+                recordId: objectRecordId,
+                isLabelIdentifier: false,
+                fieldDefinition,
+                useUpdateRecord: useUpdateOneObjectRecordMutation,
+                isDisplayModeFixHeight: true,
+                isRecordFieldReadOnly: isRecordFieldReadOnly({
+                  isRecordReadOnly,
+                  isSystemObject: objectMetadataItem.isSystem,
+                  objectPermissions:
+                    getObjectPermissionsFromMapByObjectMetadataId({
+                      objectPermissionsByObjectMetadataId,
+                      objectMetadataId: objectMetadataItem.id,
+                    }),
+                  fieldMetadataItem: {
+                    id: fieldMetadataItem.id,
+                    isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+                    isCustom: fieldMetadataItem.isCustom ?? false,
+                  },
+                  fieldDefinition,
+                  objectPermissionsByObjectMetadataId,
+                }),
+              }}
+            >
             {fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION ? (
               <RecordDetailMorphRelationSection loading={recordLoading} />
             ) : (
               <RecordDetailRelationSection loading={recordLoading} />
             )}
           </FieldContext.Provider>
-        ))}
+          );
+        })}
 
       <RecordFieldListCellHoveredPortal
         objectMetadataItem={objectMetadataItem}
