@@ -58,15 +58,20 @@ export const useNavigationMenuItemFolderOpenState = ({
         return;
       }
 
+      const computedLink = getNavigationMenuItemComputedLink(
+        item,
+        objectMetadataItems,
+        views,
+      );
+
       if (
         isNavigationMenuItemActive({
           navigationMenuItem: item,
+          computedLink,
           objectMetadataItem,
           currentPath,
           currentPathWithSearch: currentViewPath,
           activeNavigationMenuItem,
-          objectMetadataItems,
-          views,
         })
       ) {
         indices.add(index);

@@ -101,12 +101,11 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
 
   const isActive = isNavigationMenuItemActive({
     navigationMenuItem: navigationMenuItem ?? null,
+    computedLink: navigationPath,
     objectMetadataItem,
     currentPath,
     currentPathWithSearch,
     activeNavigationMenuItem,
-    objectMetadataItems,
-    views,
   });
 
   const handleClick = isLayoutCustomizationModeEnabled

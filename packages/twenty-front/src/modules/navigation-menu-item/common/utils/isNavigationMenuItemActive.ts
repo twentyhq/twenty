@@ -4,40 +4,28 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { type ActiveNavigationMenuItem } from '@/navigation-menu-item/common/types/ActiveNavigationMenuItem';
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/common/utils/isLocationMatchingNavigationMenuItem';
-import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { type View } from '@/views/types/View';
 
 type IsNavigationMenuItemActiveParams = {
   navigationMenuItem: NavigationMenuItem | null;
+  computedLink: string;
   objectMetadataItem: EnrichedObjectMetadataItem;
   currentPath: string;
   currentPathWithSearch: string;
   activeNavigationMenuItem: ActiveNavigationMenuItem | null;
-  objectMetadataItems: EnrichedObjectMetadataItem[];
-  views: View[];
 };
 
 export const isNavigationMenuItemActive = ({
   navigationMenuItem,
+  computedLink,
   objectMetadataItem,
   currentPath,
   currentPathWithSearch,
   activeNavigationMenuItem,
-  objectMetadataItems,
-  views,
 }: IsNavigationMenuItemActiveParams) => {
   const isRecord = navigationMenuItem?.type === NavigationMenuItemType.RECORD;
   const isObject = navigationMenuItem?.type === NavigationMenuItemType.OBJECT;
   const hasNavigationMenuItem = isDefined(navigationMenuItem);
-
-  const computedLink = hasNavigationMenuItem
-    ? getNavigationMenuItemComputedLink(
-        navigationMenuItem,
-        objectMetadataItems,
-        views,
-      )
-    : '';
 
   const isOnRecordShowPage = currentPath.includes(
     getAppPath(AppPath.RecordShowPage, {
@@ -80,13 +68,7 @@ export const isNavigationMenuItemActive = ({
     ) {
       return true;
     }
-    if (isObject && !hasRelevantActiveItem) {
-      return true;
-    }
-    if (!hasNavigationMenuItem) {
-      return !hasRelevantActiveItem;
-    }
-    return false;
+    return (isObject || !hasNavigationMenuItem) && !hasRelevantActiveItem;
   }
 
   return (
