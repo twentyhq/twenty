@@ -1,33 +1,43 @@
 'use client';
 
+import {
+  VIRTUAL_RENDER_HEIGHT,
+  getImageFootprintScale,
+  getImagePreviewZoom,
+} from '@/app/halftone/_lib/footprint';
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
-const PREVIEW_DISTANCE = 3.2;
-const SOURCE_PREVIEW_DISTANCE = 6.1;
-const REFERENCE_PREVIEW_DISTANCE = 4;
-const VIRTUAL_RENDER_HEIGHT = 768;
+const PREVIEW_DISTANCE = 4;
+const HOVER_FADE_IN = 18;
+const HOVER_FADE_OUT = 7;
 
-const HALFTONE_TILE_SIZE = 10;
-const HALFTONE_POWER = -0.1;
-const HALFTONE_WIDTH = 0.45;
-const HALFTONE_CONTRAST = 1;
-const HALFTONE_DASH_COLOR = '#959595';
-const HALFTONE_HOVER_COLOR = '#4A38F5';
-const HALFTONE_HOVER_RADIUS = 0.6;
-const HALFTONE_HOVER_POWER_SHIFT = 0.9;
-const HALFTONE_HOVER_WIDTH_SHIFT = -0.2;
-const HALFTONE_HOVER_LIGHT_INTENSITY = 0;
-const HALFTONE_HOVER_LIGHT_RADIUS = 0.2;
-const HALFTONE_HOVER_FADE_IN = 18;
-const HALFTONE_HOVER_FADE_OUT = 7;
+const HALFTONE_SETTINGS = {
+  animation: {
+    hoverHalftoneEnabled: true,
+    hoverHalftonePowerShift: 0.62,
+    hoverHalftoneRadius: 0.6,
+    hoverHalftoneWidthShift: -0.18,
+    hoverLightEnabled: false,
+    hoverLightIntensity: 0.12,
+    hoverLightRadius: 0.8,
+    waveAmount: 2,
+    waveEnabled: false,
+    waveSpeed: 1,
+  },
+  halftone: {
+    dashColor: '#dddddd',
+    hoverDashColor: '#FFF',
+    imageContrast: 1.12,
+    minimumTone: 0.26,
+    power: 0.18,
+    scale: 12,
+    width: 0.72,
+  },
+};
 
-const IMAGE_POINTER_FOLLOW = 0.38;
-const IMAGE_POINTER_VELOCITY_DAMPING = 0.82;
-const MIN_FOOTPRINT_SCALE = 0.001;
-
-const passThroughVertexShader = `
+const passThroughVertexShader = /* glsl */ `
   varying vec2 vUv;
 
   void main() {
@@ -36,7 +46,7 @@ const passThroughVertexShader = `
   }
 `;
 
-const imagePassthroughFragmentShader = `
+const imagePassthroughFragmentShader = /* glsl */ `
   precision highp float;
 
   uniform sampler2D tImage;
@@ -53,12 +63,13 @@ const imagePassthroughFragmentShader = `
 
     vec2 uv = vUv;
 
+    // Cover: match the underlying NextImage background crop.
     if (imageAspect > viewAspect) {
       float scale = viewAspect / imageAspect;
-      uv.y = (uv.y - 0.5) / scale + 0.5;
+      uv.x = (uv.x - 0.5) * scale + 0.5;
     } else {
       float scale = imageAspect / viewAspect;
-      uv.x = (uv.x - 0.5) / scale + 0.5;
+      uv.y = (uv.y - 0.5) * scale + 0.5;
     }
 
     uv = (uv - 0.5) / zoom + 0.5;
@@ -73,7 +84,7 @@ const imagePassthroughFragmentShader = `
   }
 `;
 
-const halftoneFragmentShader = `
+const halftoneFragmentShader = /* glsl */ `
   precision highp float;
 
   uniform sampler2D tScene;
@@ -84,6 +95,7 @@ const halftoneFragmentShader = `
   uniform float s_4;
   uniform vec3 dashColor;
   uniform vec3 hoverDashColor;
+  uniform float minimumTone;
   uniform float time;
   uniform float waveAmount;
   uniform float waveSpeed;
@@ -197,16 +209,17 @@ const halftoneFragmentShader = `
     );
     float lightLift =
       hoverLightStrength * hoverLightMask * mix(0.78, 1.18, motionBias) * 0.22;
-    float bandRadius = clamp(
+    float tonalAverage = (
       (
-        (
-          sceneSample.r +
-          sceneSample.g +
-          sceneSample.b +
-          localPower * length(vec2(0.5))
-        ) *
-        (1.0 / 3.0)
-      ) + lightLift,
+        sceneSample.r +
+        sceneSample.g +
+        sceneSample.b +
+        localPower * length(vec2(0.5))
+      ) *
+      (1.0 / 3.0)
+    ) + lightLift;
+    float bandRadius = clamp(
+      max(tonalAverage, minimumTone),
       0.0,
       1.0
     ) * 1.86 * 0.5;
@@ -227,8 +240,9 @@ const halftoneFragmentShader = `
   }
 `;
 
-const OverlayMount = styled.div`
+const OverlayRoot = styled.div`
   inset: 0;
+  pointer-events: none;
   position: absolute;
   z-index: 1;
 `;
@@ -244,167 +258,6 @@ type PointerState = {
   smoothedMouseY: number;
 };
 
-function clampRectToViewport(
-  rect: { height: number; width: number; x: number; y: number },
-  viewportWidth: number,
-  viewportHeight: number,
-) {
-  const minX = Math.max(rect.x, 0);
-  const minY = Math.max(rect.y, 0);
-  const maxX = Math.min(rect.x + rect.width, viewportWidth);
-  const maxY = Math.min(rect.y + rect.height, viewportHeight);
-
-  if (maxX <= minX || maxY <= minY) {
-    return null;
-  }
-
-  return {
-    height: maxY - minY,
-    width: maxX - minX,
-    x: minX,
-    y: minY,
-  };
-}
-
-function getRectArea(rect: { height: number; width: number } | null) {
-  if (!rect) {
-    return 0;
-  }
-
-  return Math.max(rect.width, 0) * Math.max(rect.height, 0);
-}
-
-function getImagePreviewZoom(previewDistance: number) {
-  return REFERENCE_PREVIEW_DISTANCE / Math.max(previewDistance, 0.001);
-}
-
-function getContainedImageRect({
-  imageHeight,
-  imageWidth,
-  viewportHeight,
-  viewportWidth,
-  zoom,
-}: {
-  imageHeight: number;
-  imageWidth: number;
-  viewportHeight: number;
-  viewportWidth: number;
-  zoom: number;
-}) {
-  if (
-    imageWidth <= 0 ||
-    imageHeight <= 0 ||
-    viewportWidth <= 0 ||
-    viewportHeight <= 0
-  ) {
-    return null;
-  }
-
-  const imageAspect = imageWidth / imageHeight;
-  const viewAspect = viewportWidth / viewportHeight;
-
-  let fittedWidth = viewportWidth;
-  let fittedHeight = viewportHeight;
-
-  if (imageAspect > viewAspect) {
-    fittedHeight = viewportWidth / imageAspect;
-  } else {
-    fittedWidth = viewportHeight * imageAspect;
-  }
-
-  const scaledWidth = fittedWidth * zoom;
-  const scaledHeight = fittedHeight * zoom;
-
-  return clampRectToViewport(
-    {
-      height: scaledHeight,
-      width: scaledWidth,
-      x: (viewportWidth - scaledWidth) * 0.5,
-      y: (viewportHeight - scaledHeight) * 0.5,
-    },
-    viewportWidth,
-    viewportHeight,
-  );
-}
-
-function getFootprintScaleFromRects(
-  currentRect: { height: number; width: number } | null,
-  referenceRect: { height: number; width: number } | null,
-) {
-  const currentArea = getRectArea(currentRect);
-  const referenceArea = getRectArea(referenceRect);
-
-  if (currentArea <= 0 || referenceArea <= 0) {
-    return 1;
-  }
-
-  return Math.max(Math.sqrt(currentArea / referenceArea), MIN_FOOTPRINT_SCALE);
-}
-
-function getImageFootprintScale({
-  imageHeight,
-  imageWidth,
-  previewDistance,
-  viewportHeight,
-  viewportWidth,
-}: {
-  imageHeight: number;
-  imageWidth: number;
-  previewDistance: number;
-  viewportHeight: number;
-  viewportWidth: number;
-}) {
-  const currentRect = getContainedImageRect({
-    imageHeight,
-    imageWidth,
-    viewportHeight,
-    viewportWidth,
-    zoom: getImagePreviewZoom(previewDistance),
-  });
-  const referenceRect = getContainedImageRect({
-    imageHeight,
-    imageWidth,
-    viewportHeight,
-    viewportWidth,
-    zoom: 1,
-  });
-
-  return getFootprintScaleFromRects(currentRect, referenceRect);
-}
-
-function getRelativeImageScale({
-  imageHeight,
-  imageWidth,
-  previewDistance,
-  referencePreviewDistance,
-  viewportHeight,
-  viewportWidth,
-}: {
-  imageHeight: number;
-  imageWidth: number;
-  previewDistance: number;
-  referencePreviewDistance: number;
-  viewportHeight: number;
-  viewportWidth: number;
-}) {
-  const currentRect = getContainedImageRect({
-    imageHeight,
-    imageWidth,
-    viewportHeight,
-    viewportWidth,
-    zoom: getImagePreviewZoom(previewDistance),
-  });
-  const referenceRect = getContainedImageRect({
-    imageHeight,
-    imageWidth,
-    viewportHeight,
-    viewportWidth,
-    zoom: getImagePreviewZoom(referencePreviewDistance),
-  });
-
-  return getFootprintScaleFromRects(currentRect, referenceRect);
-}
-
 function createRenderTarget(width: number, height: number) {
   return new THREE.WebGLRenderTarget(width, height, {
     format: THREE.RGBAFormat,
@@ -413,28 +266,37 @@ function createRenderTarget(width: number, height: number) {
   });
 }
 
-function loadImage(imageUrl: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
+function createPointerState(): PointerState {
+  return {
+    hoverStrength: 0,
+    mouseX: 0.5,
+    mouseY: 0.5,
+    pointerInside: false,
+    pointerVelocityX: 0,
+    pointerVelocityY: 0,
+    smoothedMouseX: 0.5,
+    smoothedMouseY: 0.5,
+  };
+}
+
+function loadImage(src: string) {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
     const image = new Image();
-    image.decoding = 'async';
     image.onload = () => resolve(image);
-    image.onerror = () =>
-      reject(new Error(`Failed to load hero image: ${imageUrl}`));
-    image.src = imageUrl;
+    image.onerror = () => reject(new Error(`Failed to load image: ${src}`));
+    image.src = src;
   });
 }
 
-async function mountHalftoneOverlay({
+async function mountHalftoneCanvas({
   container,
   imageUrl,
 }: {
   container: HTMLDivElement;
   imageUrl: string;
-}): Promise<() => void> {
-  const image = await loadImage(imageUrl);
-
-  const getWidth = () => Math.max(container.clientWidth, 1);
+}) {
   const getHeight = () => Math.max(container.clientHeight, 1);
+  const getWidth = () => Math.max(container.clientWidth, 1);
   const getVirtualHeight = () => Math.max(VIRTUAL_RENDER_HEIGHT, getHeight());
   const getVirtualWidth = () =>
     Math.max(
@@ -442,23 +304,31 @@ async function mountHalftoneOverlay({
       1,
     );
 
+  const image = await loadImage(imageUrl);
+
+  if (!container.isConnected) {
+    return;
+  }
+
   const renderer = new THREE.WebGLRenderer({
     alpha: true,
     antialias: false,
     powerPreference: 'high-performance',
   });
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.setPixelRatio(1);
   renderer.setClearColor(0x000000, 0);
+  renderer.setPixelRatio(1);
   renderer.setSize(getVirtualWidth(), getVirtualHeight(), false);
 
   const canvas = renderer.domElement;
   canvas.setAttribute('aria-hidden', 'true');
-  canvas.style.cursor = 'crosshair';
   canvas.style.display = 'block';
   canvas.style.height = '100%';
+  canvas.style.touchAction = 'auto';
   canvas.style.width = '100%';
   container.appendChild(canvas);
+
+  const interactionTarget = container.parentElement?.parentElement ?? container;
 
   const imageTexture = new THREE.Texture(image);
   imageTexture.colorSpace = THREE.SRGBColorSpace;
@@ -474,7 +344,7 @@ async function mountHalftoneOverlay({
   const imageMaterial = new THREE.ShaderMaterial({
     fragmentShader: imagePassthroughFragmentShader,
     uniforms: {
-      contrast: { value: HALFTONE_CONTRAST },
+      contrast: { value: HALFTONE_SETTINGS.halftone.imageContrast },
       imageSize: { value: new THREE.Vector2(image.width, image.height) },
       tImage: { value: imageTexture },
       viewportSize: {
@@ -485,69 +355,68 @@ async function mountHalftoneOverlay({
     vertexShader: passThroughVertexShader,
   });
 
-  const imageScene = new THREE.Scene();
-  imageScene.add(new THREE.Mesh(fullScreenGeometry, imageMaterial));
-
   const halftoneMaterial = new THREE.ShaderMaterial({
     fragmentShader: halftoneFragmentShader,
     transparent: true,
     uniforms: {
       cropToBounds: { value: 1 },
-      dashColor: { value: new THREE.Color(HALFTONE_DASH_COLOR) },
+      dashColor: {
+        value: new THREE.Color(HALFTONE_SETTINGS.halftone.dashColor),
+      },
       dragFlowStrength: { value: 0 },
       dragOffset: { value: new THREE.Vector2(0, 0) },
       effectResolution: {
         value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
       },
       footprintScale: { value: 1 },
-      hoverDashColor: { value: new THREE.Color(HALFTONE_HOVER_COLOR) },
+      hoverDashColor: {
+        value: new THREE.Color(HALFTONE_SETTINGS.halftone.hoverDashColor),
+      },
       hoverFlowRadius: { value: 0.18 },
       hoverFlowStrength: { value: 0 },
       hoverHalftoneActive: { value: 0 },
-      hoverHalftonePowerShift: { value: 0 },
-      hoverHalftoneRadius: { value: HALFTONE_HOVER_RADIUS },
+      hoverHalftonePowerShift: {
+        value: HALFTONE_SETTINGS.animation.hoverHalftonePowerShift,
+      },
+      hoverHalftoneRadius: {
+        value: HALFTONE_SETTINGS.animation.hoverHalftoneRadius,
+      },
       hoverHalftoneWidthShift: { value: 0 },
-      hoverLightRadius: { value: HALFTONE_HOVER_LIGHT_RADIUS },
+      hoverLightRadius: {
+        value: HALFTONE_SETTINGS.animation.hoverLightRadius,
+      },
       hoverLightStrength: { value: 0 },
       interactionUv: { value: new THREE.Vector2(0.5, 0.5) },
       interactionVelocity: { value: new THREE.Vector2(0, 0) },
       logicalResolution: {
         value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
       },
-      s_3: { value: HALFTONE_POWER },
-      s_4: { value: HALFTONE_WIDTH },
+      minimumTone: { value: HALFTONE_SETTINGS.halftone.minimumTone },
+      s_3: { value: HALFTONE_SETTINGS.halftone.power },
+      s_4: { value: HALFTONE_SETTINGS.halftone.width },
       tScene: { value: sceneTarget.texture },
-      tile: { value: HALFTONE_TILE_SIZE },
+      tile: { value: HALFTONE_SETTINGS.halftone.scale },
       time: { value: 0 },
-      waveAmount: { value: 0 },
-      waveSpeed: { value: 1 },
+      waveAmount: {
+        value: HALFTONE_SETTINGS.animation.waveEnabled
+          ? HALFTONE_SETTINGS.animation.waveAmount
+          : 0,
+      },
+      waveSpeed: { value: HALFTONE_SETTINGS.animation.waveSpeed },
     },
     vertexShader: passThroughVertexShader,
   });
 
+  const imageScene = new THREE.Scene();
+  imageScene.add(new THREE.Mesh(fullScreenGeometry, imageMaterial));
+
   const postScene = new THREE.Scene();
   postScene.add(new THREE.Mesh(fullScreenGeometry, halftoneMaterial));
 
-  const updateViewportUniforms = ({
-    effectHeight,
-    effectWidth,
-    logicalHeight,
-    logicalWidth,
-  }: {
-    effectHeight: number;
-    effectWidth: number;
-    logicalHeight: number;
-    logicalWidth: number;
-  }) => {
-    halftoneMaterial.uniforms.effectResolution.value.set(
-      effectWidth,
-      effectHeight,
-    );
-    halftoneMaterial.uniforms.logicalResolution.value.set(
-      logicalWidth,
-      logicalHeight,
-    );
-    imageMaterial.uniforms.viewportSize.value.set(logicalWidth, logicalHeight);
+  const updateViewportUniforms = (width: number, height: number) => {
+    halftoneMaterial.uniforms.effectResolution.value.set(width, height);
+    halftoneMaterial.uniforms.logicalResolution.value.set(width, height);
+    imageMaterial.uniforms.viewportSize.value.set(width, height);
   };
 
   const getHalftoneScale = () =>
@@ -559,26 +428,7 @@ async function mountHalftoneOverlay({
       viewportWidth: getVirtualWidth(),
     });
 
-  const getHoverScale = () =>
-    getRelativeImageScale({
-      imageHeight: image.height,
-      imageWidth: image.width,
-      previewDistance: PREVIEW_DISTANCE,
-      referencePreviewDistance: SOURCE_PREVIEW_DISTANCE,
-      viewportHeight: getVirtualHeight(),
-      viewportWidth: getVirtualWidth(),
-    });
-
-  const pointer: PointerState = {
-    hoverStrength: 0,
-    mouseX: 0.5,
-    mouseY: 0.5,
-    pointerInside: false,
-    pointerVelocityX: 0,
-    pointerVelocityY: 0,
-    smoothedMouseX: 0.5,
-    smoothedMouseY: 0.5,
-  };
+  const pointerState = createPointerState();
 
   const syncSize = () => {
     const virtualWidth = getVirtualWidth();
@@ -586,12 +436,7 @@ async function mountHalftoneOverlay({
 
     renderer.setSize(virtualWidth, virtualHeight, false);
     sceneTarget.setSize(virtualWidth, virtualHeight);
-    updateViewportUniforms({
-      effectHeight: virtualHeight,
-      effectWidth: virtualWidth,
-      logicalHeight: virtualHeight,
-      logicalWidth: virtualWidth,
-    });
+    updateViewportUniforms(virtualWidth, virtualHeight);
   };
 
   const resizeObserver = new ResizeObserver(syncSize);
@@ -601,7 +446,7 @@ async function mountHalftoneOverlay({
     event: PointerEvent,
     options?: { resetVelocity?: boolean },
   ) => {
-    const rect = canvas.getBoundingClientRect();
+    const rect = interactionTarget.getBoundingClientRect();
     const width = Math.max(rect.width, 1);
     const height = Math.max(rect.height, 1);
 
@@ -616,96 +461,98 @@ async function mountHalftoneOverlay({
       1,
     );
 
-    const deltaX = nextMouseX - pointer.mouseX;
-    const deltaY = nextMouseY - pointer.mouseY;
+    const deltaX = nextMouseX - pointerState.mouseX;
+    const deltaY = nextMouseY - pointerState.mouseY;
 
-    pointer.mouseX = nextMouseX;
-    pointer.mouseY = nextMouseY;
-    pointer.pointerInside =
+    pointerState.mouseX = nextMouseX;
+    pointerState.mouseY = nextMouseY;
+    pointerState.pointerInside =
       event.clientX >= rect.left &&
       event.clientX <= rect.right &&
       event.clientY >= rect.top &&
       event.clientY <= rect.bottom;
 
     if (options?.resetVelocity) {
-      pointer.pointerVelocityX = 0;
-      pointer.pointerVelocityY = 0;
-      pointer.smoothedMouseX = nextMouseX;
-      pointer.smoothedMouseY = nextMouseY;
+      pointerState.pointerVelocityX = 0;
+      pointerState.pointerVelocityY = 0;
+      pointerState.smoothedMouseX = nextMouseX;
+      pointerState.smoothedMouseY = nextMouseY;
       return;
     }
 
-    pointer.pointerVelocityX = deltaX;
-    pointer.pointerVelocityY = deltaY;
+    pointerState.pointerVelocityX = deltaX;
+    pointerState.pointerVelocityY = deltaY;
   };
 
   const handlePointerMove = (event: PointerEvent) => {
-    const resetVelocity = !pointer.pointerInside;
+    const shouldResetVelocity = !pointerState.pointerInside;
     updatePointerPosition(
       event,
-      resetVelocity ? { resetVelocity: true } : undefined,
+      shouldResetVelocity ? { resetVelocity: true } : undefined,
     );
   };
 
   const handlePointerLeave = () => {
-    pointer.pointerInside = false;
-    pointer.pointerVelocityX = 0;
-    pointer.pointerVelocityY = 0;
+    pointerState.pointerInside = false;
+    pointerState.pointerVelocityX = 0;
+    pointerState.pointerVelocityY = 0;
   };
 
-  canvas.addEventListener('pointermove', handlePointerMove);
-  canvas.addEventListener('pointerleave', handlePointerLeave);
+  interactionTarget.addEventListener('pointerleave', handlePointerLeave);
+  interactionTarget.addEventListener('pointermove', handlePointerMove);
 
+  const clock = new THREE.Timer();
+  clock.connect(document);
   let animationFrameId = 0;
-  let previousTimestamp = 0;
 
-  const renderFrame = (timestamp: number) => {
+  const renderFrame = (timestamp?: number) => {
     animationFrameId = window.requestAnimationFrame(renderFrame);
-    halftoneMaterial.uniforms.time.value = timestamp / 1000;
-    const hoverScale = getHoverScale();
-    const deltaSeconds =
-      previousTimestamp === 0
-        ? 1 / 60
-        : Math.min((timestamp - previousTimestamp) / 1000, 0.1);
-    previousTimestamp = timestamp;
+    clock.update(timestamp);
+    const deltaSeconds = clock.getDelta();
     const hoverEasing =
       1 -
       Math.exp(
         -deltaSeconds *
-          (pointer.pointerInside
-            ? HALFTONE_HOVER_FADE_IN
-            : HALFTONE_HOVER_FADE_OUT),
+          (pointerState.pointerInside ? HOVER_FADE_IN : HOVER_FADE_OUT),
       );
-    pointer.hoverStrength +=
-      ((pointer.pointerInside ? 1 : 0) - pointer.hoverStrength) * hoverEasing;
+    pointerState.hoverStrength +=
+      ((pointerState.pointerInside ? 1 : 0) - pointerState.hoverStrength) *
+      hoverEasing;
 
-    pointer.smoothedMouseX +=
-      (pointer.mouseX - pointer.smoothedMouseX) * IMAGE_POINTER_FOLLOW;
-    pointer.smoothedMouseY +=
-      (pointer.mouseY - pointer.smoothedMouseY) * IMAGE_POINTER_FOLLOW;
-    pointer.pointerVelocityX *= IMAGE_POINTER_VELOCITY_DAMPING;
-    pointer.pointerVelocityY *= IMAGE_POINTER_VELOCITY_DAMPING;
+    pointerState.smoothedMouseX +=
+      (pointerState.mouseX - pointerState.smoothedMouseX) * 0.38;
+    pointerState.smoothedMouseY +=
+      (pointerState.mouseY - pointerState.smoothedMouseY) * 0.38;
+    pointerState.pointerVelocityX *= 0.82;
+    pointerState.pointerVelocityY *= 0.82;
 
+    halftoneMaterial.uniforms.footprintScale.value = getHalftoneScale();
+    halftoneMaterial.uniforms.hoverHalftoneActive.value =
+      HALFTONE_SETTINGS.animation.hoverHalftoneEnabled
+        ? pointerState.hoverStrength
+        : 0;
+    halftoneMaterial.uniforms.hoverHalftonePowerShift.value =
+      HALFTONE_SETTINGS.animation.hoverHalftoneEnabled
+        ? HALFTONE_SETTINGS.animation.hoverHalftonePowerShift
+        : 0;
+    halftoneMaterial.uniforms.hoverHalftoneWidthShift.value =
+      HALFTONE_SETTINGS.animation.hoverHalftoneEnabled
+        ? HALFTONE_SETTINGS.animation.hoverHalftoneWidthShift
+        : 0;
+    halftoneMaterial.uniforms.hoverLightStrength.value =
+      HALFTONE_SETTINGS.animation.hoverLightEnabled
+        ? HALFTONE_SETTINGS.animation.hoverLightIntensity *
+          pointerState.hoverStrength
+        : 0;
     halftoneMaterial.uniforms.interactionUv.value.set(
-      pointer.smoothedMouseX,
-      1 - pointer.smoothedMouseY,
+      pointerState.smoothedMouseX,
+      1 - pointerState.smoothedMouseY,
     );
     halftoneMaterial.uniforms.interactionVelocity.value.set(
-      pointer.pointerVelocityX * getVirtualWidth(),
-      -pointer.pointerVelocityY * getVirtualHeight(),
+      pointerState.pointerVelocityX * getVirtualWidth(),
+      -pointerState.pointerVelocityY * getVirtualHeight(),
     );
-    halftoneMaterial.uniforms.hoverHalftoneActive.value = pointer.hoverStrength;
-    halftoneMaterial.uniforms.hoverHalftonePowerShift.value =
-      HALFTONE_HOVER_POWER_SHIFT;
-    halftoneMaterial.uniforms.hoverHalftoneRadius.value =
-      HALFTONE_HOVER_RADIUS * hoverScale;
-    halftoneMaterial.uniforms.hoverHalftoneWidthShift.value =
-      HALFTONE_HOVER_WIDTH_SHIFT;
-    halftoneMaterial.uniforms.hoverLightStrength.value =
-      HALFTONE_HOVER_LIGHT_INTENSITY * pointer.hoverStrength;
-    halftoneMaterial.uniforms.hoverLightRadius.value =
-      HALFTONE_HOVER_LIGHT_RADIUS * hoverScale;
-    halftoneMaterial.uniforms.footprintScale.value = getHalftoneScale();
+    halftoneMaterial.uniforms.time.value = clock.getElapsed();
     imageMaterial.uniforms.zoom.value = getImagePreviewZoom(PREVIEW_DISTANCE);
 
     renderer.setRenderTarget(sceneTarget);
@@ -720,15 +567,16 @@ async function mountHalftoneOverlay({
 
   return () => {
     window.cancelAnimationFrame(animationFrameId);
+    clock.dispose();
     resizeObserver.disconnect();
-    canvas.removeEventListener('pointermove', handlePointerMove);
-    canvas.removeEventListener('pointerleave', handlePointerLeave);
+    interactionTarget.removeEventListener('pointerleave', handlePointerLeave);
+    interactionTarget.removeEventListener('pointermove', handlePointerMove);
+    fullScreenGeometry.dispose();
     halftoneMaterial.dispose();
     imageMaterial.dispose();
     imageTexture.dispose();
-    fullScreenGeometry.dispose();
-    sceneTarget.dispose();
     renderer.dispose();
+    sceneTarget.dispose();
 
     if (canvas.parentNode === container) {
       container.removeChild(canvas);
@@ -736,46 +584,51 @@ async function mountHalftoneOverlay({
   };
 }
 
-type PartnerHalftoneOverlayProps = {
-  imageUrl: string;
+type StepperBackgroundHalftoneProps = {
+  imageUrl?: string;
 };
 
-export function PartnerHalftoneOverlay({
-  imageUrl,
-}: PartnerHalftoneOverlayProps) {
-  const mountRef = useRef<HTMLDivElement>(null);
+export function StepperBackgroundHalftone({
+  imageUrl = '/images/home/stepper/background.webp',
+}: StepperBackgroundHalftoneProps) {
+  const mountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return;
     }
 
-    const container = mountRef.current;
+    const container = mountReference.current;
 
     if (!container) {
       return;
     }
 
-    let disposed = false;
-    const disposePromise = mountHalftoneOverlay({ container, imageUrl }).catch(
-      (error) => {
-        console.error(error);
-        return undefined;
-      },
-    );
+    let cleanup: (() => void) | undefined;
+    let isDisposed = false;
 
-    return () => {
-      disposed = true;
-
-      void disposePromise.then((dispose) => {
-        if (!disposed) {
+    void mountHalftoneCanvas({ container, imageUrl })
+      .then((nextCleanup) => {
+        if (!nextCleanup) {
           return;
         }
 
-        dispose?.();
+        if (isDisposed) {
+          nextCleanup();
+          return;
+        }
+
+        cleanup = nextCleanup;
+      })
+      .catch((error: unknown) => {
+        console.error(error);
       });
+
+    return () => {
+      isDisposed = true;
+      cleanup?.();
     };
   }, [imageUrl]);
 
-  return <OverlayMount ref={mountRef} />;
+  return <OverlayRoot aria-hidden ref={mountReference} />;
 }
