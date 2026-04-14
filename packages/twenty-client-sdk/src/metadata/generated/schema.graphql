@@ -792,7 +792,6 @@ type Workspace {
   isCustomDomainEnabled: Boolean!
   editableProfileFields: [String!]
   defaultRole: Role
-  version: String
   fastModel: String!
   smartModel: String!
   aiAdditionalInstructions: String
@@ -2587,6 +2586,7 @@ type Location {
 }
 
 type PlaceDetailsResult {
+  street: String
   state: String
   postcode: String
   city: String

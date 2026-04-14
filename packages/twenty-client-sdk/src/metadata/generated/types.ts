@@ -1675,9 +1675,6 @@ export default {
             "defaultRole": [
                 29
             ],
-            "version": [
-                1
-            ],
             "fastModel": [
                 1
             ],
@@ -5173,6 +5170,9 @@ export default {
             ]
         },
         "PlaceDetailsResult": {
+            "street": [
+                1
+            ],
             "state": [
                 1
             ],

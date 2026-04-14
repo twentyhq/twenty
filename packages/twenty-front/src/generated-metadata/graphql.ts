@@ -4305,6 +4305,7 @@ export type PlaceDetailsResult = {
   location?: Maybe<Location>;
   postcode?: Maybe<Scalars['String']>;
   state?: Maybe<Scalars['String']>;
+  street?: Maybe<Scalars['String']>;
 };
 
 export type PostgresCredentials = {
@@ -6333,7 +6334,6 @@ export type Workspace = {
   trashRetentionDays: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
   useRecommendedModels: Scalars['Boolean'];
-  version?: Maybe<Scalars['String']>;
   viewFields?: Maybe<Array<ViewField>>;
   viewFilterGroups?: Maybe<Array<ViewFilterGroup>>;
   viewFilters?: Maybe<Array<ViewFilter>>;

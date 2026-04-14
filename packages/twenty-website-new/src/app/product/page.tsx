@@ -27,7 +27,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Product — Twenty',
   description:
-    'Modern interface. AI assistance. All the features you need, ready from day one.',
+    'Track relationships, manage pipelines, and take action quickly with a CRM that feels intuitive from day one.',
 };
 
 export default async function ProductPage() {

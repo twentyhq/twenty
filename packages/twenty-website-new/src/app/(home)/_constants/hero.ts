@@ -314,7 +314,7 @@ function createTablePage({
 
 export const HERO_DATA: HeroHomeDataType = {
   heading: [
-    { text: 'Build', fontFamily: 'sans' },
+    { text: 'Build', fontFamily: 'serif' },
     { text: ' your Enterprise CRM ', fontFamily: 'serif' },
     { text: 'at AI Speed', fontFamily: 'sans' },
   ],
