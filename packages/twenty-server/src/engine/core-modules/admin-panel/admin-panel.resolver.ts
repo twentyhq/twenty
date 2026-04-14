@@ -71,6 +71,7 @@ import { ModelsDevModelSuggestionDTO } from './dtos/models-dev-model-suggestion.
 import { ModelsDevProviderSuggestionDTO } from './dtos/models-dev-provider-suggestion.dto';
 import { QueueMetricsDataDTO } from './dtos/queue-metrics-data.dto';
 import { SetMaintenanceModeInput } from './dtos/set-maintenance-mode.input';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -679,5 +680,13 @@ export class AdminPanelResolver {
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
   ): Promise<AdminChatThreadMessagesDTO> {
     return this.adminChatService.getChatThreadMessages(threadId);
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Query(() => ApplicationRegistrationEntity)
+  async findOneAdminApplicationRegistration(
+    @Args('id') id: string,
+  ): Promise<ApplicationRegistrationEntity> {
+    return this.applicationRegistrationService.findOneByIdGlobal(id);
   }
 }

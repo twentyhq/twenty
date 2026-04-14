@@ -133,4 +133,5 @@ export const createTestWidget = (
   updatedAt: '2024-01-01',
   deletedAt: null,
   ...overrides,
+  isActive: overrides.isActive ?? true,
 });

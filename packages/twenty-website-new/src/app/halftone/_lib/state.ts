@@ -38,6 +38,7 @@ export interface HalftoneEffectSettings {
   width: number;
   imageContrast: number;
   dashColor: string;
+  hoverDashColor: string;
 }
 
 export interface HalftoneBackgroundSettings {
@@ -201,6 +202,7 @@ export const DEFAULT_SHAPE_HALFTONE_SETTINGS: HalftoneEffectSettings = {
   width: 0.46,
   imageContrast: 1,
   dashColor: '#4A38F5',
+  hoverDashColor: '#4A38F5',
 };
 
 export const DEFAULT_IMAGE_HALFTONE_SETTINGS: HalftoneEffectSettings = {
@@ -210,6 +212,7 @@ export const DEFAULT_IMAGE_HALFTONE_SETTINGS: HalftoneEffectSettings = {
   width: 0.46,
   imageContrast: 1,
   dashColor: '#4A38F5',
+  hoverDashColor: '#4A38F5',
 };
 
 export const DEFAULT_SOLID_MATERIAL_SETTINGS: HalftoneMaterialSettings = {
@@ -286,7 +289,7 @@ export const DEFAULT_SOLID_ANIMATION_SETTINGS: HalftoneAnimationSettings = {
   dragFlowEnabled: false,
   lightSweepEnabled: false,
   rotateEnabled: false,
-  autoSpeed: 4,
+  autoSpeed: 0.2,
   autoWobble: 0.3,
   breatheAmount: 0.04,
   breatheSpeed: 0.8,
@@ -402,9 +405,12 @@ export const LEGACY_HALFTONE_SETTING_KEYS = [
   'shadowCrush',
 ] as const;
 
-export function isRoundedBandHalftoneSettings(
-  value: unknown,
-): value is HalftoneEffectSettings {
+export function isRoundedBandHalftoneSettings(value: unknown): value is Omit<
+  HalftoneEffectSettings,
+  'hoverDashColor'
+> & {
+  hoverDashColor?: string;
+} {
   if (!value || typeof value !== 'object') {
     return false;
   }
@@ -417,7 +423,9 @@ export function isRoundedBandHalftoneSettings(
     typeof candidate.power === 'number' &&
     typeof candidate.width === 'number' &&
     typeof candidate.imageContrast === 'number' &&
-    typeof candidate.dashColor === 'string'
+    typeof candidate.dashColor === 'string' &&
+    (typeof candidate.hoverDashColor === 'string' ||
+      typeof candidate.hoverDashColor === 'undefined')
   );
 }
 
@@ -438,6 +446,7 @@ function normalizeHalftoneEffectSettings(
     width: settings?.width ?? defaults.width,
     imageContrast: settings?.imageContrast ?? defaults.imageContrast,
     dashColor: settings?.dashColor ?? defaults.dashColor,
+    hoverDashColor: settings?.hoverDashColor ?? defaults.hoverDashColor,
   };
 }
 

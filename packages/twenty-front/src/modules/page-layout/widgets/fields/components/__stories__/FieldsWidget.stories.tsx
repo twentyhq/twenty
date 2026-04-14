@@ -141,6 +141,7 @@ const createPageLayoutWithWidget = (
   tabs: [
     {
       __typename: 'PageLayoutTab' as const,
+      isActive: true,
       applicationId: '',
       id: TAB_ID_OVERVIEW,
       title: 'Overview',
@@ -159,6 +160,7 @@ const createPageLayoutWithWidget = (
 
 const createFieldsWidget = (viewId: string | null): PageLayoutWidget => ({
   __typename: 'PageLayoutWidget',
+  isActive: true,
   id: 'widget-fields',
   pageLayoutTabId: TAB_ID_OVERVIEW,
   type: WidgetType.FIELDS,
@@ -213,6 +215,7 @@ const createViewField = (
   fieldMetadataId,
   position,
   isVisible: true,
+  isActive: true,
   size: 200,
   aggregateOperation: null,
   viewId: FIELDS_VIEW_ID,
@@ -230,6 +233,7 @@ const createViewFieldGroup = (
   name,
   position,
   isVisible,
+  isActive: true,
   viewId: FIELDS_VIEW_ID,
   viewFields,
 });

@@ -27,20 +27,22 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
     throw new Error('Tab not found');
   }
 
+  const activeWidgets = tab.widgets.filter((widget) => widget.isActive);
+
   if (isPageLayoutInEditMode) {
     return {
       ...tab,
       widgets:
         tab.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST
-          ? sortWidgetsByVerticalListPosition(tab.widgets)
-          : tab.widgets,
+          ? sortWidgetsByVerticalListPosition(activeWidgets)
+          : activeWidgets,
     };
   }
 
   const context = buildWidgetVisibilityContext({ isMobile, isInSidePanel });
 
   const visibleWidgets = filterVisibleWidgets({
-    widgets: tab.widgets,
+    widgets: activeWidgets,
     context,
   });
 

@@ -59,6 +59,8 @@ const IntroBlock = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   row-gap: ${theme.spacing(2)};
+  margin-top: calc(${theme.spacing(2)} - ${theme.spacing(26)});
+  margin-bottom: ${theme.spacing(4)};
 `;
 
 const StepRowHeader = styled.div`
@@ -148,7 +150,7 @@ export function Content({
                     />
                   ) : null}
                 </StepIconBox>
-                <Heading segments={step.heading} size="md" weight="regular" />
+                <Heading segments={step.heading} size="sm" weight="regular" />
               </StepRowHeader>
               <Body body={step.body} size="sm" />
             </StepBlock>

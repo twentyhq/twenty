@@ -1,3 +1,5 @@
+'use client';
+
 import { LinkButton } from '@/design-system/components';
 import { ArrowRightUpIcon, SOCIAL_ICONS } from '@/icons';
 import type {
@@ -10,6 +12,7 @@ import { Drawer } from '@base-ui/react/drawer';
 import { Separator } from '@base-ui/react/separator';
 import { styled } from '@linaria/react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import React from 'react';
 
 const StyledDrawerContent = styled.div`
@@ -62,6 +65,21 @@ const NavItem = styled(Link)`
 
   &[data-scheme='secondary'] {
     color: ${theme.colors.secondary.text[100]};
+  }
+
+  position: relative;
+
+  &[data-active] {
+    color: ${theme.colors.highlight[100]};
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 25%;
+      width: 50%;
+      height: 1px;
+      background: ${theme.colors.highlight[100]};
+    }
   }
 
   &:focus-visible {
@@ -147,6 +165,7 @@ export function MenuDrawer({
   scheme,
   socialLinks,
 }: MenuDrawerProps) {
+  const pathname = usePathname();
   const buttonColor = scheme === 'primary' ? 'secondary' : 'primary';
 
   const iconFillColor =
@@ -169,7 +188,13 @@ export function MenuDrawer({
               <Drawer.Close
                 nativeButton={false}
                 render={
-                  <NavItem data-scheme={scheme} href={item.href} />
+                  <NavItem
+                    data-scheme={scheme}
+                    data-active={
+                      pathname?.startsWith(item.href) || undefined
+                    }
+                    href={item.href}
+                  />
                 }
               >
                 {item.label}

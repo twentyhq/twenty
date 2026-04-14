@@ -35,7 +35,7 @@ export const VISUAL_TOKENS = {
     },
   },
   background: {
-    noisy: 'url("/images/shared/light-noise.png")',
+    noisy: 'url("/images/shared/light-noise.webp")',
     primary: '#ffffff',
     secondary: '#fcfcfc',
     transparent: {
@@ -52,8 +52,7 @@ export const VISUAL_TOKENS = {
     primary: '#d9e2fc',
   },
   boxShadow: {
-    light:
-      '0px 2px 4px rgba(0, 0, 0, 0.04), 0px 0px 4px rgba(0, 0, 0, 0.08)',
+    light: '0px 2px 4px rgba(0, 0, 0, 0.04), 0px 0px 4px rgba(0, 0, 0, 0.08)',
   },
   icon: {
     size: {

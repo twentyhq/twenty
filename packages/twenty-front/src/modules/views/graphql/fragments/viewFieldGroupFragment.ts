@@ -9,6 +9,7 @@ export const VIEW_FIELD_GROUP_FRAGMENT = gql`
     position
     isVisible
     viewId
+    isActive
     createdAt
     updatedAt
     deletedAt

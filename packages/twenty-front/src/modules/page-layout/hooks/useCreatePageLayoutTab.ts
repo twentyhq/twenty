@@ -54,6 +54,7 @@ export const useCreatePageLayoutTab = ({
       const newTab: PageLayoutTab = {
         id: newTabId,
         applicationId: '',
+        isActive: true,
         title: title || `Tab ${tabsLength + 1}`,
         position: maxPosition + 1,
         pageLayoutId: pageLayoutId,

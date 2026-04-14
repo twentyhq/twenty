@@ -9,7 +9,6 @@ import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useRe
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { indexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/indexViewIdFromObjectMetadataItemFamilySelector';
 import { styled } from '@linaria/react';
@@ -24,7 +23,6 @@ import {
   TooltipPosition,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { RelationType } from '~/generated-metadata/graphql';
 
 const StyledLinkContainer = styled.div`
@@ -35,21 +33,14 @@ const StyledLinkContainer = styled.div`
   }
 `;
 
-const StyledSeeAllButtonWrapper = styled.div<{ isMobile: boolean }>`
-  opacity: ${({ isMobile }) => (isMobile ? '1' : '0')};
-  pointer-events: none;
-  transition: opacity ${themeCssVariables.animation.duration.instant}s ease;
-
-  .widget:hover & {
-    opacity: 1;
-    pointer-events: auto;
-  }
+const StyledSeeAllButtonWrapper = styled.div`
+  opacity: 1;
+  pointer-events: auto;
 `;
 
 export const WidgetActionFieldSeeAll = () => {
   const widget = useCurrentWidget();
   const targetRecord = useTargetRecord();
-  const isMobile = useIsMobile();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
@@ -145,7 +136,7 @@ export const WidgetActionFieldSeeAll = () => {
       <div id={tooltipId}>
         <StyledLinkContainer>
           <Link to={filterLinkHref} data-testid="widget-see-all-link">
-            <StyledSeeAllButtonWrapper isMobile={isMobile}>
+            <StyledSeeAllButtonWrapper>
               <LightIconButton Icon={IconArrowUpRight} accent="secondary" />
             </StyledSeeAllButtonWrapper>
           </Link>

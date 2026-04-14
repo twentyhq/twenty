@@ -11,6 +11,11 @@ export type SalesforceRichTextPartType = {
   text: string;
 };
 
+export type SalesforceAddonTooltipType = {
+  body: string;
+  title: string;
+};
+
 export type SalesforceAddonRowType = {
   cost: number;
   defaultChecked?: boolean;
@@ -23,6 +28,7 @@ export type SalesforceAddonRowType = {
   rightLabelParts?: SalesforceRichTextPartType[][];
   rightLabel: string;
   sharedCostKey?: string;
+  tooltip?: SalesforceAddonTooltipType;
 };
 
 export type SalesforcePricingPanelType = {
@@ -33,6 +39,7 @@ export type SalesforcePricingPanelType = {
   windowTitle: string;
   productTitle: string;
   priceSuffix: string;
+  promoTag?: string;
   featureSectionHeading: string;
   addons: SalesforceAddonRowType[];
   secondaryCtaNote?: string;

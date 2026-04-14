@@ -75,10 +75,10 @@ export default async function ReleaseNotesPage() {
       <ReleaseNotes.Root>
         {allNotes.length === 0 ? (
           <ReleaseNotes.EmptyMessage>
-            Release notes were not found. This app reads release MDX from{' '}
-            <strong>packages/twenty-website/src/content/releases</strong> in the
-            monorepo. Ensure that folder is present when building or running
-            locally.
+            Release notes were not found. Add MDX under{' '}
+            <strong>packages/twenty-website-new/src/content/releases</strong>{' '}
+            and images under{' '}
+            <strong>packages/twenty-website-new/public/images/releases</strong>.
           </ReleaseNotes.EmptyMessage>
         ) : visibleNotes.length === 0 ? (
           <ReleaseNotes.EmptyMessage>

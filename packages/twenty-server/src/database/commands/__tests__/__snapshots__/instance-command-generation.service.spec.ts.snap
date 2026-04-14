@@ -3,13 +3,13 @@
 exports[`InstanceCommandGenerationService should encode version correctly in file and class names 1`] = `
 {
   "className": "TestFastInstanceCommand",
-  "fileName": "1-20-instance-command-fast-1775000000000-test.ts",
+  "fileName": "1-21-instance-command-fast-1775000000000-test.ts",
   "fileTemplate": "import { QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('1.20.0', 1775000000000)
+@RegisteredInstanceCommand('1.21.0', 1775000000000)
 export class TestFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('SELECT 1');
@@ -26,13 +26,13 @@ export class TestFastInstanceCommand implements FastInstanceCommand {
 exports[`InstanceCommandGenerationService should escape backslashes in SQL queries 1`] = `
 {
   "className": "UpdatePathFastInstanceCommand",
-  "fileName": "1-21-instance-command-fast-1775000000000-update-path.ts",
+  "fileName": "1-23-instance-command-fast-1775000000000-update-path.ts",
   "fileTemplate": "import { QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('1.21.0', 1775000000000)
+@RegisteredInstanceCommand('1.23.0', 1775000000000)
 export class UpdatePathFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('UPDATE "core"."config" SET "value" = E\\'path\\\\\\\\to\\\\\\\\file\\'');
@@ -49,13 +49,13 @@ export class UpdatePathFastInstanceCommand implements FastInstanceCommand {
 exports[`InstanceCommandGenerationService should escape single quotes in SQL queries 1`] = `
 {
   "className": "UpdateConfigFastInstanceCommand",
-  "fileName": "1-21-instance-command-fast-1775000000000-update-config.ts",
+  "fileName": "1-23-instance-command-fast-1775000000000-update-config.ts",
   "fileTemplate": "import { QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('1.21.0', 1775000000000)
+@RegisteredInstanceCommand('1.23.0', 1775000000000)
 export class UpdateConfigFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('UPDATE "core"."config" SET "value" = \\'it\\'\\'s done\\'');
@@ -72,13 +72,13 @@ export class UpdateConfigFastInstanceCommand implements FastInstanceCommand {
 exports[`InstanceCommandGenerationService should generate a migration with a single up/down query 1`] = `
 {
   "className": "AddFooColumnFastInstanceCommand",
-  "fileName": "1-21-instance-command-fast-1775000000000-add-foo-column.ts",
+  "fileName": "1-23-instance-command-fast-1775000000000-add-foo-column.ts",
   "fileTemplate": "import { QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('1.21.0', 1775000000000)
+@RegisteredInstanceCommand('1.23.0', 1775000000000)
 export class AddFooColumnFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('ALTER TABLE "core"."user" ADD "foo" varchar');
@@ -95,13 +95,13 @@ export class AddFooColumnFastInstanceCommand implements FastInstanceCommand {
 exports[`InstanceCommandGenerationService should generate a migration with multiple queries 1`] = `
 {
   "className": "CreateTaskTableFastInstanceCommand",
-  "fileName": "1-21-instance-command-fast-1775000000000-create-task-table.ts",
+  "fileName": "1-23-instance-command-fast-1775000000000-create-task-table.ts",
   "fileTemplate": "import { QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('1.21.0', 1775000000000)
+@RegisteredInstanceCommand('1.23.0', 1775000000000)
 export class CreateTaskTableFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('CREATE TABLE "core"."task" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" varchar NOT NULL)');
@@ -120,13 +120,13 @@ export class CreateTaskTableFastInstanceCommand implements FastInstanceCommand {
 exports[`InstanceCommandGenerationService should generate a migration with query parameters 1`] = `
 {
   "className": "SeedSettingFastInstanceCommand",
-  "fileName": "1-21-instance-command-fast-1775000000000-seed-setting.ts",
+  "fileName": "1-23-instance-command-fast-1775000000000-seed-setting.ts",
   "fileTemplate": "import { QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('1.21.0', 1775000000000)
+@RegisteredInstanceCommand('1.23.0', 1775000000000)
 export class SeedSettingFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('INSERT INTO "core"."setting" ("key", "value") VALUES ($1, $2)', ["theme","dark"]);
@@ -143,13 +143,13 @@ export class SeedSettingFastInstanceCommand implements FastInstanceCommand {
 exports[`InstanceCommandGenerationService should generate a slow instance command with populated up/down 1`] = `
 {
   "className": "MakeColumnNotNullableSlowInstanceCommand",
-  "fileName": "1-21-instance-command-slow-1775000000000-make-column-not-nullable.ts",
+  "fileName": "1-23-instance-command-slow-1775000000000-make-column-not-nullable.ts",
   "fileTemplate": "import { DataSource, QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
-@RegisteredInstanceCommand('1.21.0', 1775000000000, { type: 'slow' })
+@RegisteredInstanceCommand('1.23.0', 1775000000000, { type: 'slow' })
 export class MakeColumnNotNullableSlowInstanceCommand implements SlowInstanceCommand {
   async runDataMigration(dataSource: DataSource): Promise<void> {
     // TODO: implement data backfill before the DDL migration
@@ -170,13 +170,13 @@ export class MakeColumnNotNullableSlowInstanceCommand implements SlowInstanceCom
 exports[`InstanceCommandGenerationService should use default migration name in class and file names 1`] = `
 {
   "className": "AutoGeneratedFastInstanceCommand",
-  "fileName": "1-21-instance-command-fast-1775000000000-auto-generated.ts",
+  "fileName": "1-23-instance-command-fast-1775000000000-auto-generated.ts",
   "fileTemplate": "import { QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('1.21.0', 1775000000000)
+@RegisteredInstanceCommand('1.23.0', 1775000000000)
 export class AutoGeneratedFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('ALTER TABLE "core"."user" ADD "bar" integer');

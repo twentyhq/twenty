@@ -48,6 +48,7 @@ export const RecordCalendarCardCellHoveredPortalContent = () => {
         fieldDefinition,
         recordId,
         prefix: RECORD_CALENDAR_CARD_INPUT_ID_PREFIX,
+        onFileUploadClose: () => setRecordCalendarCardEditModePosition(null),
       });
     }
   };

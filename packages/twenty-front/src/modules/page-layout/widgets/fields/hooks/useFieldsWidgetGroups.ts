@@ -29,9 +29,12 @@ export const useFieldsWidgetGroups = ({
       objectNameSingular,
     });
 
-  const groups = useMemo<FieldsWidgetGroup[]>(() => {
+  const { groups, displayMode } = useMemo<{
+    groups: FieldsWidgetGroup[];
+    displayMode: FieldsWidgetDisplayMode;
+  }>(() => {
     if (!isDefined(objectMetadataItem)) {
-      return [];
+      return { groups: [], displayMode: 'grouped' };
     }
 
     if (isDefined(view) && isNonEmptyArray(view.viewFieldGroups)) {
@@ -41,7 +44,7 @@ export const useFieldsWidgetGroups = ({
 
       let globalIndex = 0;
 
-      return sortedGroups
+      const resultGroups = sortedGroups
         .filter((group) => group.isVisible)
         .map((group) => {
           const groupFields = [...(group.viewFields ?? [])].sort(
@@ -79,28 +82,76 @@ export const useFieldsWidgetGroups = ({
           };
         })
         .filter((group) => group.fields.length > 0);
+
+      return { groups: resultGroups, displayMode: 'grouped' };
     }
 
-    return filterDraftGroupsForDisplay(
-      buildDefaultFieldsWidgetGroups({
-        fields: objectMetadataItem.fields,
-        objectNameSingular,
-        labelIdentifierFieldMetadataItemId:
-          labelIdentifierFieldMetadataItem?.id,
-      }),
-    );
+    if (isDefined(view) && isNonEmptyArray(view.viewFields)) {
+      let globalIndex = 0;
+
+      const fields: FieldsWidgetGroupField[] = [...view.viewFields]
+        .sort((a, b) => a.position - b.position)
+        .filter((viewField) => viewField.isVisible)
+        .map((viewField) => {
+          const fieldMetadataItem = objectMetadataItem.fields.find(
+            (f) => f.id === viewField.fieldMetadataId,
+          );
+
+          if (!isDefined(fieldMetadataItem)) {
+            return null;
+          }
+
+          return {
+            fieldMetadataItem,
+            position: viewField.position,
+            isVisible: viewField.isVisible,
+            globalIndex: globalIndex++,
+          };
+        })
+        .filter(isDefined);
+
+      return {
+        groups:
+          fields.length > 0
+            ? [
+                {
+                  id: `${viewId}-ungrouped`,
+                  name: '',
+                  position: 0,
+                  isVisible: true,
+                  fields,
+                },
+              ]
+            : [],
+        displayMode: 'inline',
+      };
+    }
+
+    return {
+      groups: filterDraftGroupsForDisplay(
+        buildDefaultFieldsWidgetGroups({
+          fields: objectMetadataItem.fields,
+          objectNameSingular,
+          labelIdentifierFieldMetadataItemId:
+            labelIdentifierFieldMetadataItem?.id,
+        }),
+      ),
+      displayMode: 'grouped',
+    };
   }, [
     objectMetadataItem,
     objectNameSingular,
     labelIdentifierFieldMetadataItem,
     view,
+    viewId,
   ]);
-
-  const displayMode: FieldsWidgetDisplayMode = 'grouped';
 
   return {
     groups,
     displayMode,
-    isFromView: isDefined(view) && isNonEmptyArray(view.viewFieldGroups),
+    isFromView:
+      isDefined(view) &&
+      (isNonEmptyArray(view.viewFieldGroups) ||
+        isNonEmptyArray(view.viewFields)),
   };
 };

@@ -117,10 +117,10 @@
     },
     "worker": {
       "executor": "nx:run-commands",
-      "dependsOn": ["build"],
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "node dist/queue-worker/queue-worker.js"
+        "command": "NODE_ENV=development nest start --watch --entryFile queue-worker/queue-worker"
       }
     },
     "ts-node": {
@@ -220,7 +220,8 @@
       "options": {
         "cwd": "packages/twenty-server",
         "command": "node dist/command/command.js generate:instance-command"
-      }
+      },
+      "cache": false
     },
     "generate:integration-test": {
       "executor": "nx:run-commands",
