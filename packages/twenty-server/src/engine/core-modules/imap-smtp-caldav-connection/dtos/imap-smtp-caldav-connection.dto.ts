@@ -22,8 +22,8 @@ export class ConnectionParameters {
    * While encrypting it could provide an extra layer of defense, we have decided not to,
    * as database access implies a broader compromise. For context, see discussion in PR #12576.
    */
-  @Field(() => String)
-  password: string;
+  @Field(() => String, { nullable: true })
+  password?: string;
 
   @Field(() => Boolean, { nullable: true })
   secure?: boolean;
@@ -52,8 +52,8 @@ export class ConnectionParametersDTO {
   @Field(() => String, { nullable: true })
   username?: string;
 
-  @Field(() => String)
-  password: string;
+  @Field(() => String, { nullable: true })
+  password?: string;
 
   @Field(() => Boolean, { nullable: true })
   secure?: boolean;
