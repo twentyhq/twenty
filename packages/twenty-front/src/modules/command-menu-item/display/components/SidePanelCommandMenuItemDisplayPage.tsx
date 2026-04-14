@@ -21,7 +21,6 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const { commandMenuItems, commandMenuContextApi } =
     useContext(CommandMenuContext);
 
-  console.log('commandMenuContextApi', commandMenuContextApi);
   const commandMenuPinnedInlineLayout = useAtomStateValue(
     commandMenuPinnedInlineLayoutState,
   );
