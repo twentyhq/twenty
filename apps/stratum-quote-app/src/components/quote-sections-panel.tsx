@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+
 import { defineFrontComponent, useRecordId } from 'twenty-sdk';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -129,45 +130,6 @@ const S = {
     borderRadius: '6px',
     cursor: 'pointer',
     lineHeight: 1,
-  },
-  newSectionForm: {
-    background: '#fff',
-    border: '1px solid #d0d0d0',
-    borderRadius: '8px',
-    padding: '12px 16px',
-    marginBottom: '16px',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-  },
-  nameInput: {
-    flex: 1,
-    padding: '5px 8px',
-    fontSize: '13px',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    outline: 'none',
-    fontFamily: 'inherit',
-  },
-  saveButton: {
-    padding: '5px 12px',
-    fontSize: '12px',
-    fontWeight: 600,
-    color: '#fff',
-    background: '#2563eb',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-  },
-  cancelButton: {
-    padding: '5px 10px',
-    fontSize: '12px',
-    fontWeight: 600,
-    color: '#555',
-    background: '#f0f0f0',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
   },
   sectionCard: {
     background: '#ffffff',
@@ -389,59 +351,6 @@ const SectionCard = ({
   );
 };
 
-// ── New Section inline form ───────────────────────────────────────────────────
-
-const NewSectionForm = ({
-  onSave,
-  onCancel,
-  saving,
-}: {
-  onSave: (name: string) => Promise<void>;
-  onCancel: () => void;
-  saving: boolean;
-}) => {
-  const [name, setName] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && name.trim()) {
-      void onSave(name.trim());
-    }
-    if (e.key === 'Escape') {
-      onCancel();
-    }
-  };
-
-  return (
-    <div style={S.newSectionForm}>
-      <input
-        ref={inputRef}
-        style={S.nameInput}
-        type="text"
-        placeholder="Section name…"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        onKeyDown={handleKeyDown}
-        disabled={saving}
-      />
-      <button
-        style={S.saveButton}
-        onClick={() => name.trim() && void onSave(name.trim())}
-        disabled={saving || !name.trim()}
-      >
-        {saving ? 'Saving…' : 'Save'}
-      </button>
-      <button style={S.cancelButton} onClick={onCancel} disabled={saving}>
-        Cancel
-      </button>
-    </div>
-  );
-};
-
 // ── Main component ────────────────────────────────────────────────────────────
 
 const QuoteSectionsPanel = () => {
@@ -449,8 +358,7 @@ const QuoteSectionsPanel = () => {
   const [sections, setSections] = useState<QuoteSection[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showNewForm, setShowNewForm] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [creating, setCreating] = useState(false);
 
   const fetchSections = useCallback(async () => {
     if (!isDefined(recordId)) {
@@ -517,38 +425,34 @@ const QuoteSectionsPanel = () => {
     void fetchSections();
   }, [fetchSections]);
 
-  const handleCreateSection = useCallback(
-    async (name: string) => {
-      if (!isDefined(recordId)) return;
-      setSaving(true);
-      try {
-        const nextPosition =
-          sections.length > 0
-            ? Math.max(...sections.map((s) => s.sectionPosition ?? 0)) + 1
-            : 1;
+  const handleCreateSection = useCallback(async () => {
+    if (!isDefined(recordId) || creating) return;
+    setCreating(true);
+    try {
+      const nextPosition =
+        sections.length > 0
+          ? Math.max(...sections.map((s) => s.sectionPosition ?? 0)) + 1
+          : 1;
 
-        await gql(
-          `mutation CreateQuoteSection($name: String!, $quoteId: UUID!, $pos: Float) {
-            createOneQuoteSection(data: {
-              name: $name
-              quoteId: $quoteId
-              sectionPosition: $pos
-            }) {
-              id
-            }
-          }`,
-          { name, quoteId: recordId, pos: nextPosition },
-        );
+      await gql(
+        `mutation CreateQuoteSection($name: String!, $quoteId: UUID!, $pos: Float) {
+          createQuoteSection(data: {
+            name: $name
+            quoteId: $quoteId
+            sectionPosition: $pos
+          }) {
+            id
+          }
+        }`,
+        { name: `Section ${nextPosition}`, quoteId: recordId, pos: nextPosition },
+      );
 
-        setShowNewForm(false);
-        await fetchSections();
-      } catch (err) {
-        setError(err instanceof Error ? err.message : String(err));
-      }
-      setSaving(false);
-    },
-    [recordId, sections, fetchSections],
-  );
+      await fetchSections();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    }
+    setCreating(false);
+  }, [recordId, sections, creating, fetchSections]);
 
   if (loading) {
     return <div style={S.loadingState}>Loading sections…</div>;
@@ -561,20 +465,14 @@ const QuoteSectionsPanel = () => {
   return (
     <div style={S.container}>
       <div style={S.panelHeader}>
-        {!showNewForm && (
-          <button style={S.addButton} onClick={() => setShowNewForm(true)}>
-            + New Section
-          </button>
-        )}
+        <button
+          style={S.addButton}
+          onClick={() => void handleCreateSection()}
+          disabled={creating}
+        >
+          {creating ? 'Creating…' : '+ New Section'}
+        </button>
       </div>
-
-      {showNewForm && (
-        <NewSectionForm
-          onSave={handleCreateSection}
-          onCancel={() => setShowNewForm(false)}
-          saving={saving}
-        />
-      )}
 
       {sections.length === 0 ? (
         <div style={{ ...S.loadingState, color: '#bbb', fontStyle: 'italic', height: 'auto', paddingTop: '16px' }}>

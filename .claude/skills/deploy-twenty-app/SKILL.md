@@ -151,6 +151,21 @@ if (json.errors?.length) throw new Error(json.errors[0].message);
 Both `TWENTY_API_URL` and `TWENTY_APP_ACCESS_TOKEN` are injected by the SDK
 renderer at runtime via `setWorkerEnv` — they are NOT baked in at build time.
 
+**Mutation naming — CRITICAL: always introspect before writing a mutation.**
+
+Workspace custom objects use `create{PascalCase}` / `update{PascalCase}` / `delete{PascalCase}` — NOT `createOne*` (that is the metadata API convention). Before writing any mutation against a custom object for the first time, verify the exact field name:
+
+```bash
+API_KEY=$(grep TWENTY_UAT_API_KEY /home/clive/_Projects/stratum/.env | cut -d= -f2)
+curl -s -X POST https://twenty-uat-0a4c.up.railway.app/graphql \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $API_KEY" \
+  -d '{"query":"{__schema{mutationType{fields{name}}}}"}' \
+  | python3 -c "import sys,json; [print(f['name']) for f in json.load(sys.stdin)['data']['__schema']['mutationType']['fields'] if 'OBJECT' in f['name'].lower()]"
+```
+
+Replace `OBJECT` with the lowercase object name to filter results. Never guess the field name.
+
 **Filtering custom objects:** use the FK column directly, not the relation field name:
 ```graphql
 # WRONG — throws "Cannot filter by relation field"
@@ -252,11 +267,26 @@ Then hard-refresh the browser.
 
 ### 7. Updating an already-installed app
 
-After deploying a new version:
-- If the app was previously installed with valid UUIDs, the server may auto-sync.
-- If the install previously failed (e.g. invalid UUIDs), uninstall first via the UI
-  (Settings → Applications → Stratum Quote UI → Uninstall), then reinstall (step 5).
-- Always flush cache after reinstalling.
+`yarn twenty deploy` only updates `core."applicationRegistration"` (the app registry). The
+workspace's installed `core."frontComponent"` record is **NOT** refreshed automatically.
+
+**After every deploy that changes front component code, you must reinstall:**
+
+1. Settings → Applications → Stratum Quote UI → **Uninstall**
+2. **Reinstall** from the same screen
+3. Re-run migration 014 (the `frontComponent` id changes on every reinstall)
+4. Flush cache
+
+To confirm whether a redeploy took effect, query the DB:
+```sql
+-- applicationRegistration.updatedAt should match the deploy time
+SELECT "updatedAt" FROM core."applicationRegistration" WHERE name = 'Stratum Quote UI';
+-- frontComponent.updatedAt should match the reinstall time (will differ from above if stale)
+SELECT "updatedAt", "builtComponentChecksum" FROM core."frontComponent" WHERE name = 'quote-sections-panel';
+```
+
+If `frontComponent.updatedAt` is older than `applicationRegistration.updatedAt`, the workspace
+is still running the old bundle — reinstall is required.
 
 ---
 
