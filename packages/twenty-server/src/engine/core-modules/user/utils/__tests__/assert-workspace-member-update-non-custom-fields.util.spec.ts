@@ -23,6 +23,29 @@ describe('assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly', () => {
     ).not.toThrow();
   });
 
+  it.each(['userId', 'id'] as const)(
+    'should throw when the update includes %s',
+    (fieldName) => {
+      expect(() =>
+        assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly({
+          update: {
+            [fieldName]: 'value',
+          },
+        }),
+      ).toThrow(UserInputError);
+
+      expect(() =>
+        assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly({
+          update: {
+            [fieldName]: 'value',
+          },
+        }),
+      ).toThrow(
+        `Cannot update custom workspaceMember field via this endpoint: ${fieldName}`,
+      );
+    },
+  );
+
   it('should throw when a top-level key is not in the standard field allowlist', () => {
     const unknownKey = 'notAWorkspaceMemberField';
 

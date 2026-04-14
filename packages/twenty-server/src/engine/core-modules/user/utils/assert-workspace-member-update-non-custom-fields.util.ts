@@ -4,8 +4,16 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
+const WORKSPACE_MEMBER_UPDATE_DISALLOWED_FIELD_NAMES = new Set([
+  'id',
+  'userId',
+]);
+
 const WORKSPACE_MEMBER_NON_CUSTOM_UPDATE_FIELD_ALLOWLIST = new Set<string>(
-  Object.keys(STANDARD_OBJECTS.workspaceMember.fields),
+  Object.keys(STANDARD_OBJECTS.workspaceMember.fields).filter(
+    (fieldName) =>
+      !WORKSPACE_MEMBER_UPDATE_DISALLOWED_FIELD_NAMES.has(fieldName),
+  ),
 );
 
 export const assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly = ({

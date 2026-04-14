@@ -10,9 +10,9 @@ import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permis
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/role/services/workspace-roles-permissions-cache.service';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
-import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/role/services/workspace-roles-permissions-cache.service';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000000';
 const ROLE_ID = '11111111-1111-4111-8111-111111111111';
@@ -157,7 +157,7 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
       const workspaceMemberPermissions =
         result[ROLE_ID][WORKSPACE_MEMBER_OBJECT_METADATA_ID];
 
-      expect(workspaceMemberPermissions.canReadObjectRecords).toBe(false);
+      expect(workspaceMemberPermissions.canReadObjectRecords).toBe(true);
       expect(workspaceMemberPermissions.canUpdateObjectRecords).toBe(false);
       expect(workspaceMemberPermissions.canSoftDeleteObjectRecords).toBe(false);
       expect(workspaceMemberPermissions.canDestroyObjectRecords).toBe(false);

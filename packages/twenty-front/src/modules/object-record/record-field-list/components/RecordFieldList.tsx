@@ -138,21 +138,21 @@ export const RecordFieldList = ({
                   }),
                 }}
               >
-              <ActivityTargetsInlineCell
-                componentInstanceId={getRecordFieldInputInstanceId({
-                  recordId: objectRecordId,
-                  fieldName: fieldMetadataItem.name,
-                  prefix: instanceId,
-                })}
-                activityObjectNameSingular={
-                  objectNameSingular as
-                    | CoreObjectNameSingular.Note
-                    | CoreObjectNameSingular.Task
-                }
-                activityRecordId={objectRecordId}
-                showLabel={true}
-                maxWidth={200}
-              />
+                <ActivityTargetsInlineCell
+                  componentInstanceId={getRecordFieldInputInstanceId({
+                    recordId: objectRecordId,
+                    fieldName: fieldMetadataItem.name,
+                    prefix: instanceId,
+                  })}
+                  activityObjectNameSingular={
+                    objectNameSingular as
+                      | CoreObjectNameSingular.Note
+                      | CoreObjectNameSingular.Task
+                  }
+                  activityRecordId={objectRecordId}
+                  showLabel={true}
+                  maxWidth={200}
+                />
               </FieldContext.Provider>
             );
           },
@@ -192,38 +192,39 @@ export const RecordFieldList = ({
                   fieldDefinition,
                   objectPermissionsByObjectMetadataId,
                 }),
-              onMouseEnter: () =>
-                handleMouseEnter(
-                  index + (legacyActivityTargetFieldMetadataItems?.length ?? 0),
-                ),
-              anchorId: `${getRecordFieldInputInstanceId({
-                recordId: objectRecordId,
-                fieldName: fieldMetadataItem.name,
-                prefix: instanceId,
-              })}`,
-              isForbidden: isJunctionRelationForbidden({
-                fieldMetadataItem,
-                sourceObjectMetadataId: objectMetadataItem.id,
-                objectMetadataItems,
-                objectPermissionsByObjectMetadataId,
-              }),
-            }}
-          >
-            <RecordFieldComponentInstanceContext.Provider
-              value={{
-                instanceId: getRecordFieldInputInstanceId({
+                onMouseEnter: () =>
+                  handleMouseEnter(
+                    index +
+                      (legacyActivityTargetFieldMetadataItems?.length ?? 0),
+                  ),
+                anchorId: `${getRecordFieldInputInstanceId({
                   recordId: objectRecordId,
                   fieldName: fieldMetadataItem.name,
                   prefix: instanceId,
+                })}`,
+                isForbidden: isJunctionRelationForbidden({
+                  fieldMetadataItem,
+                  sourceObjectMetadataId: objectMetadataItem.id,
+                  objectMetadataItems,
+                  objectPermissionsByObjectMetadataId,
                 }),
               }}
             >
-              <RecordInlineCell
-                loading={recordLoading}
-                instanceIdPrefix={instanceId}
-              />
-            </RecordFieldComponentInstanceContext.Provider>
-          </FieldContext.Provider>
+              <RecordFieldComponentInstanceContext.Provider
+                value={{
+                  instanceId: getRecordFieldInputInstanceId({
+                    recordId: objectRecordId,
+                    fieldName: fieldMetadataItem.name,
+                    prefix: instanceId,
+                  }),
+                }}
+              >
+                <RecordInlineCell
+                  loading={recordLoading}
+                  instanceIdPrefix={instanceId}
+                />
+              </RecordFieldComponentInstanceContext.Provider>
+            </FieldContext.Provider>
           );
         })}
       </PropertyBox>
@@ -273,12 +274,12 @@ export const RecordFieldList = ({
                 }),
               }}
             >
-            {fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION ? (
-              <RecordDetailMorphRelationSection loading={recordLoading} />
-            ) : (
-              <RecordDetailRelationSection loading={recordLoading} />
-            )}
-          </FieldContext.Provider>
+              {fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION ? (
+                <RecordDetailMorphRelationSection loading={recordLoading} />
+              ) : (
+                <RecordDetailRelationSection loading={recordLoading} />
+              )}
+            </FieldContext.Provider>
           );
         })}
 
