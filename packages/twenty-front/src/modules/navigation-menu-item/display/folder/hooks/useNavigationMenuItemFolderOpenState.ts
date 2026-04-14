@@ -44,6 +44,9 @@ export const useNavigationMenuItemFolderOpenState = ({
   const activeNavigationMenuItem = useAtomStateValue(
     activeNavigationMenuItemState,
   );
+  const setActiveNavigationMenuItem = useSetAtomState(
+    activeNavigationMenuItemState,
+  );
 
   const activeNavigationMenuItemIndices = useMemo(() => {
     const indices = new Set<number>();
@@ -124,6 +127,16 @@ export const useNavigationMenuItemFolderOpenState = ({
           views,
         );
         if (isNonEmptyString(link)) {
+          const objectMetadataItem = getObjectMetadataForNavigationMenuItem(
+            firstNonLinkItem,
+            objectMetadataItems,
+            views,
+          );
+          setActiveNavigationMenuItem({
+            id: firstNonLinkItem.id,
+            path: link,
+            objectMetadataId: objectMetadataItem?.id ?? '',
+          });
           navigate(link);
         }
       }
