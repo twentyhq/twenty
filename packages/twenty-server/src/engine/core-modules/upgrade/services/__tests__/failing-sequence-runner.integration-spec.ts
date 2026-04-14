@@ -225,6 +225,12 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
       name: 'Ic1',
       status: 'completed',
     });
+    await seedMigration(context.dataSource, {
+      name: 'Ic1',
+      status: 'completed',
+      workspaceId: WS_1,
+      isInitial: true,
+    });
 
     await expect(
       context.runner.run({

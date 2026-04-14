@@ -212,6 +212,12 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
       name: 'Ic0',
       status: 'completed',
     });
+    await seedMigration(context.dataSource, {
+      name: 'Ic0',
+      status: 'completed',
+      workspaceId: WS_1,
+      isInitial: true,
+    });
 
     const instanceCommandRunnerService = context.module.get(
       InstanceCommandRunnerService,
