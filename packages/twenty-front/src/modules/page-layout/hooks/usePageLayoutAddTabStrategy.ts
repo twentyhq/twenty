@@ -61,8 +61,10 @@ export const usePageLayoutAddTabStrategy = ({
     return undefined;
   }
 
+  const hasInactiveTabs = currentPageLayout.tabs.some((tab) => !tab.isActive);
+
   const mode =
-    currentPageLayout.type === PageLayoutType.RECORD_PAGE
+    currentPageLayout.type === PageLayoutType.RECORD_PAGE && hasInactiveTabs
       ? 'dropdown'
       : 'direct';
 
