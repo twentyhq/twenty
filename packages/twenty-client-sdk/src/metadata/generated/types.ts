@@ -7163,6 +7163,15 @@ export default {
                     ]
                 }
             ],
+            "findOneAdminApplicationRegistration": [
+                7,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "getUsageAnalytics": [
                 283,
                 {

@@ -2928,6 +2928,7 @@ export interface Query {
     workspaceLookupAdminPanel: UserLookup
     getAdminWorkspaceChatThreads: AdminWorkspaceChatThread[]
     getAdminChatThreadMessages: AdminChatThreadMessages
+    findOneAdminApplicationRegistration: ApplicationRegistration
     getUsageAnalytics: UsageAnalytics
     getPostgresCredentials?: PostgresCredentials
     findManyPublicDomains: PublicDomain[]
@@ -6294,6 +6295,7 @@ export interface QueryGenqlSelection{
     workspaceLookupAdminPanel?: (UserLookupGenqlSelection & { __args: {workspaceId: Scalars['UUID']} })
     getAdminWorkspaceChatThreads?: (AdminWorkspaceChatThreadGenqlSelection & { __args: {workspaceId: Scalars['UUID']} })
     getAdminChatThreadMessages?: (AdminChatThreadMessagesGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    findOneAdminApplicationRegistration?: (ApplicationRegistrationGenqlSelection & { __args: {id: Scalars['String']} })
     getUsageAnalytics?: (UsageAnalyticsGenqlSelection & { __args?: {input?: (UsageAnalyticsInput | null)} })
     getPostgresCredentials?: PostgresCredentialsGenqlSelection
     findManyPublicDomains?: PublicDomainGenqlSelection
