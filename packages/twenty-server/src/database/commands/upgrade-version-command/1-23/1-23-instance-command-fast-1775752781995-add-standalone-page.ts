@@ -64,6 +64,9 @@ export class AddStandalonePageFastInstanceCommand
       'ALTER TABLE "core"."navigationMenuItem" DROP CONSTRAINT IF EXISTS "CHK_navigation_menu_item_type_fields"',
     );
     await queryRunner.query(
+      'DELETE FROM "core"."navigationMenuItem" WHERE "type" = \'PAGE_LAYOUT\'',
+    );
+    await queryRunner.query(
       "CREATE TYPE \"core\".\"navigationMenuItem_type_enum_old\" AS ENUM('FOLDER', 'LINK', 'OBJECT', 'RECORD', 'VIEW')",
     );
     await queryRunner.query(
@@ -75,6 +78,9 @@ export class AddStandalonePageFastInstanceCommand
     );
     await queryRunner.query(
       `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "CHK_navigation_menu_item_type_fields" CHECK (("type" = 'FOLDER') OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL) OR ("type" = 'VIEW' AND "viewId" IS NOT NULL) OR ("type" = 'RECORD' AND "targetRecordId" IS NOT NULL AND "targetObjectMetadataId" IS NOT NULL) OR ("type" = 'LINK' AND "link" IS NOT NULL))`,
+    );
+    await queryRunner.query(
+      'DELETE FROM "core"."pageLayout" WHERE "type" = \'STANDALONE_PAGE\'',
     );
     await queryRunner.query(
       "CREATE TYPE \"core\".\"pageLayout_type_enum_old\" AS ENUM('DASHBOARD', 'RECORD_INDEX', 'RECORD_PAGE')",
