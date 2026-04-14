@@ -18,7 +18,7 @@ import { sanitizeString } from 'src/modules/messaging/message-import-manager/uti
 
 type ConnectedAccount = Pick<
   ConnectedAccountEntity,
-  'id' | 'provider' | 'handle' | 'handleAliases' | 'connectionParameters'
+  'id' | 'provider' | 'handle' | 'handleAliases' | 'connectionParameters' | 'accessToken'
 >;
 
 @Injectable()
