@@ -1,4 +1,3 @@
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
@@ -59,6 +58,7 @@ type WidgetCardContentProps = {
   hasHeader: boolean;
   isEditable: boolean;
   isInVerticalListTab: boolean;
+  isMobile: boolean;
   hasInteractiveContent?: boolean;
   className?: string;
   children?: React.ReactNode;
@@ -69,12 +69,11 @@ export const WidgetCardContent = ({
   hasHeader,
   isEditable,
   isInVerticalListTab,
+  isMobile,
   hasInteractiveContent = false,
   className,
   children,
 }: WidgetCardContentProps) => {
-  const isMobile = useIsMobile();
-
   const handleContentClick = (event: React.MouseEvent) => {
     if (!isEditable || !hasInteractiveContent) {
       return;

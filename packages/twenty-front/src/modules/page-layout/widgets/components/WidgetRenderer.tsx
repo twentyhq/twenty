@@ -208,6 +208,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
         isInVerticalListTab={
           layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST
         }
+        isMobile={isMobile}
         hasInteractiveContent={widget.type === WidgetType.RECORD_TABLE}
       >
         {hasAccess ? (
