@@ -1,11 +1,8 @@
-import { FAQ_DATA, MENU_DATA } from '@/app/_constants';
-import { TalkToUsButton } from '@/app/components/ContactCalModal';
+import { MENU_DATA } from '@/app/_constants';
 import type { CaseStudyData } from '@/app/case-studies/_constants/types';
-import { Eyebrow, LinkButton } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { CaseStudy } from '@/sections/CaseStudy/components';
-import { Faq } from '@/sections/Faq/components';
 import { Menu } from '@/sections/Menu/components';
 import { theme } from '@/theme';
 import type { Metadata } from 'next';
@@ -49,7 +46,7 @@ const CASE_STUDY: CaseStudyData = {
       eyebrow: 'Implementation',
       heading: [
         { text: 'No more renting ', fontFamily: 'serif' },
-        { text: 'someone else\'s structure', fontFamily: 'sans' },
+        { text: "someone else's structure", fontFamily: 'sans' },
       ],
       paragraphs: [
         'They evaluated Salesforce, Zoho, Pipedrive, and SuiteCRM. Each came with the same tradeoffs: too expensive, too rigid, or too generic — and none fixed the underlying problem. They were still renting a structure they did not control.',
@@ -66,7 +63,7 @@ const CASE_STUDY: CaseStudyData = {
       ],
       paragraphs: [
         'Self-hosted means AC&T carries no vendor risk: no pricing model that can change, no platform that can disappear, no forced migration. The system is theirs.',
-        'Because everything is built on Twenty\'s open foundation, Flycoder could wire the exact logic AC&T needed without fighting the platform.',
+        "Because everything is built on Twenty's open foundation, Flycoder could wire the exact logic AC&T needed without fighting the platform.",
       ],
     },
     {
@@ -82,20 +79,9 @@ const CASE_STUDY: CaseStudyData = {
       ],
     },
   ],
-  testimonial: {
-    eyebrow: 'What they say',
-    quote:
-      'They did not want to learn someone else\'s system. They wanted to keep working the way they already did and make it smoother.',
-    author: {
-      name: 'Joseph Chiang',
-      handle: 'CRM Engineer, AC&T Education Migration',
-      date: '2025',
-      avatarSrc: PLACEHOLDER_HERO,
-    },
-  },
   tableOfContents: [
     'When the vendor pulled the plug',
-    'No more renting someone else\'s structure',
+    "No more renting someone else's structure",
     'Control without the overhead',
     'The result',
   ],
@@ -115,6 +101,18 @@ export default async function ActEducationCaseStudyPage() {
   const stats = await fetchCommunityStats();
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
+  let storySectionIndex = 0;
+  const sectionBlocks = CASE_STUDY.sections.map((block, index) => {
+    if (block.type === 'text') {
+      const sectionId = `case-study-section-${storySectionIndex}`;
+      storySectionIndex += 1;
+      return (
+        <CaseStudy.TextBlock key={index} block={block} sectionId={sectionId} />
+      );
+    }
+    return <CaseStudy.VisualBlock key={index} block={block} />;
+  });
+
   return (
     <>
       <Menu.Root
@@ -131,38 +129,9 @@ export default async function ActEducationCaseStudyPage() {
 
       <CaseStudy.Hero hero={CASE_STUDY.hero} />
 
-      {CASE_STUDY.sections.map((block, index) => {
-        if (block.type === 'text') {
-          return <CaseStudy.TextBlock key={index} block={block} />;
-        }
-        return <CaseStudy.VisualBlock key={index} block={block} />;
-      })}
+      {sectionBlocks}
 
-      <CaseStudy.Testimonial testimonial={CASE_STUDY.testimonial} />
-
-      <Faq.Root illustration={FAQ_DATA.illustration}>
-        <Faq.Intro>
-          <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
-          <Faq.Heading segments={FAQ_DATA.heading} />
-          <Faq.Cta>
-            <LinkButton
-              color="primary"
-              href="https://app.twenty.com/welcome"
-              label="Get started"
-              type="anchor"
-              variant="contained"
-            />
-            <TalkToUsButton
-              color="primary"
-              label="Talk to us"
-              variant="outlined"
-            />
-          </Faq.Cta>
-        </Faq.Intro>
-        <Faq.Items questions={FAQ_DATA.questions} />
-      </Faq.Root>
-
-      <CaseStudy.TableOfContents items={CASE_STUDY.tableOfContents} />
+      <CaseStudy.SectionNav items={CASE_STUDY.tableOfContents} />
     </>
   );
 }

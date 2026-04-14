@@ -39,46 +39,6 @@ export const useNavigationMenuItemFolderOpenState = ({
     currentNavigationMenuItemFolderIdState,
   );
 
-  const isOpen = openNavigationMenuItemFolderIds.includes(folderId);
-
-  const handleToggle = () => {
-    if (isMobile) {
-      setCurrentNavigationMenuItemFolderId((prev) =>
-        prev === folderId ? null : folderId,
-      );
-    } else {
-      setOpenNavigationMenuItemFolderIds((current) =>
-        isOpen
-          ? current.filter((id) => id !== folderId)
-          : [...current, folderId],
-      );
-    }
-
-    if (!isOpen) {
-      const firstNonLinkItem = navigationMenuItems.find((item) => {
-        if (item.type === NavigationMenuItemType.LINK) {
-          return false;
-        }
-        const computedLink = getNavigationMenuItemComputedLink(
-          item,
-          objectMetadataItems,
-          views,
-        );
-        return isNonEmptyString(computedLink);
-      });
-      if (isDefined(firstNonLinkItem)) {
-        const link = getNavigationMenuItemComputedLink(
-          firstNonLinkItem,
-          objectMetadataItems,
-          views,
-        );
-        if (isNonEmptyString(link)) {
-          navigate(link);
-        }
-      }
-    }
-  };
-
   const activeNavigationMenuItem = useAtomStateValue(
     activeNavigationMenuItemState,
   );
@@ -109,6 +69,48 @@ export const useNavigationMenuItemFolderOpenState = ({
 
   const selectedNavigationMenuItemIndex =
     clickedItemIndex >= 0 ? clickedItemIndex : urlMatchingItemIndex;
+
+  const isExplicitlyOpen = openNavigationMenuItemFolderIds.includes(folderId);
+  const hasActiveChild = selectedNavigationMenuItemIndex >= 0;
+  const isOpen = isExplicitlyOpen || hasActiveChild;
+
+  const handleToggle = () => {
+    if (isMobile) {
+      setCurrentNavigationMenuItemFolderId((prev) =>
+        prev === folderId ? null : folderId,
+      );
+    } else {
+      setOpenNavigationMenuItemFolderIds((current) =>
+        current.includes(folderId)
+          ? current.filter((id) => id !== folderId)
+          : [...current, folderId],
+      );
+    }
+
+    if (!isOpen) {
+      const firstNonLinkItem = navigationMenuItems.find((item) => {
+        if (item.type === NavigationMenuItemType.LINK) {
+          return false;
+        }
+        const computedLink = getNavigationMenuItemComputedLink(
+          item,
+          objectMetadataItems,
+          views,
+        );
+        return isNonEmptyString(computedLink);
+      });
+      if (isDefined(firstNonLinkItem)) {
+        const link = getNavigationMenuItemComputedLink(
+          firstNonLinkItem,
+          objectMetadataItems,
+          views,
+        );
+        if (isNonEmptyString(link)) {
+          navigate(link);
+        }
+      }
+    }
+  };
 
   return {
     isOpen,

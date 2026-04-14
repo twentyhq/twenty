@@ -1645,9 +1645,9 @@ export function HalftoneCanvas({
         }
 
         if (!isImageMode) {
-          let baseRotationX = 0;
-          let baseRotationY = 0;
-          let baseRotationZ = 0;
+          let baseRotationX = initialPoseReference.current?.rotationX ?? 0;
+          let baseRotationY = initialPoseReference.current?.rotationY ?? 0;
+          let baseRotationZ = initialPoseReference.current?.rotationZ ?? 0;
           let meshOffsetY = 0;
           let meshScale = 1;
           let lightAngle = activeSettings.lighting.angleDegrees;

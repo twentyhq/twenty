@@ -2930,8 +2930,7 @@ export function generateReactComponent(
     modelFilenameOverride,
   );
   const pose = normalizeExportPose(initialPose);
-  const normalizedComponentName =
-    normalizeExportComponentName(componentName);
+  const normalizedComponentName = normalizeExportComponentName(componentName);
   const defaultModelUrl =
     modelFilenameOverride ?? shape.filename ?? 'model.glb';
   const defaultImageUrl = imageFilename ?? 'image.png';
@@ -3064,8 +3063,7 @@ export async function generateStandaloneHtml(
     modelFilenameOverride,
   );
   const pose = normalizeExportPose(initialPose);
-  const normalizedComponentName =
-    normalizeExportComponentName(componentName);
+  const normalizedComponentName = normalizeExportComponentName(componentName);
   const defaultImageUrl = imageFilename ?? 'image.png';
   const embeddedImportedModelUrl =
     !isImageMode && shape.kind === 'imported' && importedFile

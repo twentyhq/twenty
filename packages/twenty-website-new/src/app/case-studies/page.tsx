@@ -1,12 +1,11 @@
-import { FAQ_DATA, MENU_DATA } from '@/app/_constants';
+import { MENU_DATA } from '@/app/_constants';
 import { TalkToUsButton } from '@/app/components/ContactCalModal';
 import type { CaseStudyCatalogEntry } from '@/app/case-studies/_constants/types';
-import { Eyebrow, LinkButton } from '@/design-system/components';
+import { LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog/components';
-import { Faq } from '@/sections/Faq/components';
 import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
 import { Signoff } from '@/sections/Signoff/components';
@@ -72,7 +71,7 @@ const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
     },
     catalogCard: {
       summary:
-        'Nine Dots put Twenty at the center of Homeseller\'s stack with APIs, automation, and AI on top of WhatsApp-heavy operations.',
+        "Nine Dots put Twenty at the center of Homeseller's stack with APIs, automation, and AI on top of WhatsApp-heavy operations.",
       date: 'Jul 2025',
     },
   },
@@ -196,28 +195,6 @@ export default async function CaseStudiesCatalogPage() {
           />
         </Signoff.Cta>
       </Signoff.Root>
-
-      <Faq.Root illustration={FAQ_DATA.illustration}>
-        <Faq.Intro>
-          <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
-          <Faq.Heading segments={FAQ_DATA.heading} />
-          <Faq.Cta>
-            <LinkButton
-              color="primary"
-              href="https://app.twenty.com/welcome"
-              label="Get started"
-              type="anchor"
-              variant="contained"
-            />
-            <TalkToUsButton
-              color="primary"
-              label="Talk to us"
-              variant="outlined"
-            />
-          </Faq.Cta>
-        </Faq.Intro>
-        <Faq.Items questions={FAQ_DATA.questions} />
-      </Faq.Root>
     </>
   );
 }

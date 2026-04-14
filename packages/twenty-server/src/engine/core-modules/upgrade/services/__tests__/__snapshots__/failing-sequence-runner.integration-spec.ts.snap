@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`UpgradeSequenceRunnerService — failing sequence (integration) should throw when cursor command is not found in the sequence 1`] = `"Step "RemovedCommand" not found in upgrade sequence. The sequence only covers versions [1.21.0, 1.22.0]. Please upgrade to 1.21.0 first."`;

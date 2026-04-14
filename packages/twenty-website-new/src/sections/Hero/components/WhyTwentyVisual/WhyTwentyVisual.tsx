@@ -35,7 +35,7 @@ export function WhyTwentyVisual() {
           fill
           priority
           sizes="100vw"
-          src="/images/why-twenty/hero/background.png"
+          src="/images/why-twenty/hero/background.webp"
         />
       </BackgroundLayer>
       <WhyTwentyGlb />

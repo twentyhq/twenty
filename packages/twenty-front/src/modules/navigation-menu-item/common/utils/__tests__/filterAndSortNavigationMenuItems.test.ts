@@ -13,6 +13,7 @@ describe('filterAndSortNavigationMenuItems', () => {
     namePlural: 'people',
     labelPlural: 'People',
     icon: 'IconUser',
+    isActive: true,
   } as EnrichedObjectMetadataItem;
 
   const mockView: Pick<View, 'id' | 'objectMetadataId' | 'key'> = {
@@ -219,6 +220,57 @@ describe('filterAndSortNavigationMenuItems', () => {
       ],
       [],
       [mockObjectMetadataItem],
+    );
+    expect(result).toEqual([]);
+  });
+
+  it('should filter out items for deactivated objects', () => {
+    const inactiveObjectMetadataItem = {
+      ...mockObjectMetadataItem,
+      id: 'inactive-metadata-id',
+      isActive: false,
+    } as EnrichedObjectMetadataItem;
+
+    const result = filterAndSortNavigationMenuItems(
+      [
+        {
+          id: 'obj-1',
+          type: NavigationMenuItemType.OBJECT,
+          targetObjectMetadataId: 'inactive-metadata-id',
+          position: 1,
+        } as NavigationMenuItem,
+      ],
+      [],
+      [inactiveObjectMetadataItem],
+    );
+    expect(result).toEqual([]);
+  });
+
+  it('should filter out view items for deactivated objects', () => {
+    const inactiveObjectMetadataItem = {
+      ...mockObjectMetadataItem,
+      id: 'inactive-metadata-id',
+      isActive: false,
+    } as EnrichedObjectMetadataItem;
+
+    const viewForInactiveObject: Pick<View, 'id' | 'objectMetadataId' | 'key'> =
+      {
+        id: 'view-for-inactive',
+        objectMetadataId: 'inactive-metadata-id',
+        key: ViewKey.INDEX,
+      };
+
+    const result = filterAndSortNavigationMenuItems(
+      [
+        {
+          id: 'view-item-1',
+          type: NavigationMenuItemType.VIEW,
+          viewId: 'view-for-inactive',
+          position: 1,
+        } as NavigationMenuItem,
+      ],
+      [viewForInactiveObject],
+      [inactiveObjectMetadataItem],
     );
     expect(result).toEqual([]);
   });

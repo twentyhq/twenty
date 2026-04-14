@@ -273,6 +273,26 @@ async function loadImportedGeometry(
   return parseGlbGeometry(buffer, '', label);
 }
 
+export async function loadImportedGeometryFromUrl(
+  loader: HalftoneModelLoader,
+  modelUrl: string,
+  label: string,
+) {
+  const response = await fetch(modelUrl);
+
+  if (!response.ok) {
+    throw new Error(`Unable to load ${label} from ${modelUrl}.`);
+  }
+
+  const buffer = await response.arrayBuffer();
+
+  if (loader === 'fbx') {
+    return parseFbxGeometry(buffer, '', label);
+  }
+
+  return parseGlbGeometry(buffer, '', label);
+}
+
 function makePolarShape(
   radiusFunction: (angle: number) => number,
   segments = 320,
