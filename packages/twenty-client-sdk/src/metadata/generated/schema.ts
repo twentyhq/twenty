@@ -579,7 +579,6 @@ export interface Workspace {
     isCustomDomainEnabled: Scalars['Boolean']
     editableProfileFields?: Scalars['String'][]
     defaultRole?: Role
-    version?: Scalars['String']
     fastModel: Scalars['String']
     smartModel: Scalars['String']
     aiAdditionalInstructions?: Scalars['String']
@@ -3788,7 +3787,6 @@ export interface WorkspaceGenqlSelection{
     isCustomDomainEnabled?: boolean | number
     editableProfileFields?: boolean | number
     defaultRole?: RoleGenqlSelection
-    version?: boolean | number
     fastModel?: boolean | number
     smartModel?: boolean | number
     aiAdditionalInstructions?: boolean | number
