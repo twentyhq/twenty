@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { DataSource, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -223,6 +224,12 @@ export class DevSeederService {
         executedByVersion: appVersion,
         queryRunner,
       });
+
+      await queryRunner.manager
+        .getRepository(WorkspaceEntity)
+        .update(workspaceId, {
+          activationStatus: WorkspaceActivationStatus.ACTIVE,
+        });
 
       await queryRunner.commitTransaction();
     } catch (error) {
