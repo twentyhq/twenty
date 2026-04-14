@@ -1,4 +1,4 @@
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { type UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -44,17 +44,6 @@ export class WorkspaceMemberUpdateOnePreQueryHook
           : undefined,
       },
     );
-
-    // TODO: remove this code once we have migrated locale update to userWorkspace update
-    if (isUserAuthContext(authContext) && isDefined(payload.data.locale)) {
-      await this.userWorkspaceService.updateUserWorkspaceLocaleForWorkspaceMember(
-        {
-          locale: payload.data.locale,
-          workspaceId: workspace.id,
-          workspaceMemberId: payload.id,
-        },
-      );
-    }
 
     await this.workspaceMemberPreQueryHookService.completeOnboardingProfileStepIfNameProvided(
       {

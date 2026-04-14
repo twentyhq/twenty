@@ -68,19 +68,13 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     super(userWorkspaceRepository);
   }
 
-  async syncUserWorkspaceLocale({
+  async updateUserWorkspaceLocaleForUserWorkspace({
     locale,
     userWorkspaceId,
-    throwIfUserWorkspaceMissing = false,
   }: {
     locale: UserWorkspaceEntity['locale'];
-    userWorkspaceId: string | undefined;
-    throwIfUserWorkspaceMissing?: boolean;
+    userWorkspaceId: string;
   }): Promise<void> {
-    if (!isDefined(userWorkspaceId)) {
-      return;
-    }
-
     const userWorkspace = await this.userWorkspaceRepository.findOne({
       where: {
         id: userWorkspaceId,
@@ -88,54 +82,16 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     });
 
     if (!isDefined(userWorkspace)) {
-      if (throwIfUserWorkspaceMissing) {
-        throw new AuthException(
-          'User workspace not found',
-          AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
-        );
-      }
-
       return;
     }
 
-    await this.userWorkspaceRepository.save({
-      ...userWorkspace,
-      locale,
-    });
+    userWorkspace.locale = locale;
+    await this.userWorkspaceRepository.save(userWorkspace);
 
     await this.coreEntityCacheService.invalidate(
       'userWorkspaceEntity',
       userWorkspaceId,
     );
-  }
-
-  async updateUserWorkspaceLocaleForWorkspaceMember({
-    locale,
-    workspaceId,
-    workspaceMemberId,
-  }: {
-    locale: UserWorkspaceEntity['locale'] | undefined;
-    workspaceId: string;
-    workspaceMemberId: string;
-  }): Promise<void> {
-    if (!isDefined(locale)) {
-      return;
-    }
-
-    const workspaceMember = await this.getWorkspaceMemberOrThrow({
-      workspaceMemberId,
-      workspaceId,
-    });
-
-    const targetUserWorkspace = await this.getUserWorkspaceForUserOrThrow({
-      userId: workspaceMember.userId,
-      workspaceId,
-    });
-
-    await this.syncUserWorkspaceLocale({
-      locale,
-      userWorkspaceId: targetUserWorkspace.id,
-    });
   }
 
   async create(

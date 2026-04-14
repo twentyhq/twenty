@@ -510,13 +510,16 @@ export class UserResolver {
     );
 
     if (isDefined(input.update.locale)) {
-      await this.userWorkspaceService.updateUserWorkspaceLocaleForWorkspaceMember(
-        {
-          locale: input.update.locale as UserWorkspaceEntity['locale'],
+      const targetUserWorkspace =
+        await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
+          userId: workspaceMember.userId,
           workspaceId: workspace.id,
-          workspaceMemberId: input.workspaceMemberId,
-        },
-      );
+        });
+
+      await this.userWorkspaceService.updateUserWorkspaceLocaleForUserWorkspace({
+        locale: input.update.locale as UserWorkspaceEntity['locale'],
+        userWorkspaceId: targetUserWorkspace.id,
+      });
     }
 
     return true;
