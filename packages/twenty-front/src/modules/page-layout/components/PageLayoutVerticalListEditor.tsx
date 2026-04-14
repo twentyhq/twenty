@@ -87,7 +87,7 @@ export const PageLayoutVerticalListEditor = ({
           <StyledVerticalListContainer
             ref={provided.innerRef}
             variant={variant}
-            shouldUseWhiteBackground={isMobile || isInSidePanel}
+            shouldUseWhiteBackground={!isInPinnedTab || isMobile}
             // oxlint-disable-next-line react/jsx-props-no-spreading
             {...provided.droppableProps}
           >

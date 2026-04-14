@@ -132,18 +132,20 @@ describe('geo-map GraphQL queries', () => {
         queryDefinition.selectionSet.selections[0].selectionSet;
       const fields = selectionSet.selections.map((s: any) => s.name.value);
 
+      expect(fields).toContain('street');
       expect(fields).toContain('state');
       expect(fields).toContain('postcode');
       expect(fields).toContain('city');
       expect(fields).toContain('country');
       expect(fields).toContain('location');
-      expect(fields).toHaveLength(5);
+      expect(fields).toHaveLength(6);
     });
 
     it('should match the expected query string', () => {
       const expectedQuery = gql`
         query GetAddressDetails($placeId: String!, $token: String!) {
           getAddressDetails(placeId: $placeId, token: $token) {
+            street
             state
             postcode
             city

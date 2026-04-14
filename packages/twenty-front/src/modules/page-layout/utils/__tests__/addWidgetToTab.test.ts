@@ -11,6 +11,7 @@ describe('addWidgetToTab', () => {
   const mockWidget: PageLayoutWidget = {
     __typename: 'PageLayoutWidget',
     id: 'widget-1',
+    isActive: true,
     pageLayoutTabId: 'tab-1',
     title: 'Test Widget',
     type: WidgetType.GRAPH,
@@ -31,6 +32,7 @@ describe('addWidgetToTab', () => {
     {
       id: 'tab-1',
       applicationId: '',
+      isActive: true,
       title: 'Tab 1',
       position: 0,
       pageLayoutId: 'layout-1',
@@ -42,6 +44,7 @@ describe('addWidgetToTab', () => {
     {
       id: 'tab-2',
       applicationId: '',
+      isActive: true,
       title: 'Tab 2',
       position: 1,
       pageLayoutId: 'layout-1',

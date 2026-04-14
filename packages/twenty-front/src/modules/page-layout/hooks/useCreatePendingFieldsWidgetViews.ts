@@ -39,7 +39,6 @@ export const useCreatePendingFieldsWidgetViews = () => {
           if (widget.type !== WidgetType.FIELDS) {
             return false;
           }
-
           const viewId = getWidgetConfigurationViewId(widget.configuration);
 
           return isDefined(viewId) && !persistedWidgetIds.has(widget.id);

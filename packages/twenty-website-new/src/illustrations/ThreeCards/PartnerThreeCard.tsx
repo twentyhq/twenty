@@ -1412,6 +1412,7 @@ async function mountHalftoneCanvas(options) {
     initialRotationX,
     initialRotationY,
     initialRotationZ,
+    meshScaleMultiplier = 1,
     modelUrl,
     onError,
   } = options;
@@ -1768,7 +1769,7 @@ async function mountHalftoneCanvas(options) {
     let baseRotationY = resolvedInitialPose.rotationY;
     let baseRotationZ = resolvedInitialPose.rotationZ;
     let meshOffsetY = 0;
-    let meshScale = 1;
+    let meshScale = meshScaleMultiplier;
     let lightAngle = settings.lighting.angleDegrees;
     let lightHeight = settings.lighting.height;
 
@@ -2043,6 +2044,7 @@ type PartnerThreeCardProps = {
   initialRotationX?: number;
   initialRotationY?: number;
   initialRotationZ?: number;
+  meshScaleMultiplier?: number;
   modelUrl: string;
   style?: CSSProperties;
 };
@@ -2052,6 +2054,7 @@ export function PartnerThreeCard({
   initialRotationX,
   initialRotationY,
   initialRotationZ,
+  meshScaleMultiplier = 1,
   modelUrl,
   style,
 }: PartnerThreeCardProps) {
@@ -2070,6 +2073,7 @@ export function PartnerThreeCard({
       initialRotationX,
       initialRotationY,
       initialRotationZ,
+      meshScaleMultiplier,
       modelUrl,
       onError: (error) => {
         console.error(error);
@@ -2084,6 +2088,7 @@ export function PartnerThreeCard({
     initialRotationX,
     initialRotationY,
     initialRotationZ,
+    meshScaleMultiplier,
     modelUrl,
   ]);
 

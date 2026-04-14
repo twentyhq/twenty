@@ -43,6 +43,7 @@ import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill.module';
 
 @Module({
@@ -83,6 +84,7 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
         ApplicationModule,
         EnterpriseModule,
         StandardObjectsPrefillModule,
+        WorkspaceMigrationModule,
         CoreEntityCacheModule,
         UpgradeModule,
       ],

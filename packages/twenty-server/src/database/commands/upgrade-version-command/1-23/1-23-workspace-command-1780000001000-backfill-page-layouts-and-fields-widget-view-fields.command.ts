@@ -82,9 +82,9 @@ const isRelationTargetAvailable = (
   return true;
 };
 
-@RegisteredWorkspaceCommand('1.22.0', 1780000001000)
+@RegisteredWorkspaceCommand('1.23.0', 1780000001000)
 @Command({
-  name: 'upgrade:1-22:backfill-page-layouts-and-fields-widget-view-fields',
+  name: 'upgrade:1-23:backfill-page-layouts-and-fields-widget-view-fields',
   description:
     'Backfill RECORD_PAGE page layouts, sync FIELDS_WIDGET view fields, create FIELD widgets, and enable IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED',
 })

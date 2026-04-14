@@ -140,6 +140,45 @@ describe('useAddressAutocomplete', () => {
     });
   });
 
+  it('should use place street over full autocomplete text', async () => {
+    const mockOnChange = jest.fn();
+
+    mockGetPlaceDetailsData.mockResolvedValue({
+      street: '123 Main St',
+      city: 'Springfield',
+      state: 'IL',
+      country: 'US',
+      postcode: '62704',
+    });
+    mockFindCountryNameByCountryCode.mockReturnValue('United States');
+
+    const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
+
+    await act(async () => {
+      await result.current.autoFillInputsFromPlaceDetails(
+        'place123',
+        'token123',
+        '123 Main St, Springfield, IL 62704, USA',
+        {
+          addressStreet1: '',
+          addressStreet2: null,
+          addressCity: null,
+          addressState: null,
+          addressCountry: null,
+          addressPostcode: null,
+          addressLat: null,
+          addressLng: null,
+        },
+      );
+    });
+
+    expect(mockOnChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        addressStreet1: '123 Main St',
+      }),
+    );
+  });
+
   it('should preserve existing values when place data is missing', async () => {
     const mockOnChange = jest.fn();
     const mockPlaceData = {

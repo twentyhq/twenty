@@ -3,6 +3,8 @@ import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { InstanceCommandProviderModule } from 'src/database/commands/upgrade-version-command/instance-command-provider.module';
+import { WorkspaceCommandProviderModule } from 'src/database/commands/upgrade-version-command/workspace-command-provider.module';
 import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
 import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
@@ -16,6 +18,8 @@ import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-v
 @Module({
   imports: [
     DiscoveryModule,
+    InstanceCommandProviderModule,
+    WorkspaceCommandProviderModule,
     WorkspaceIteratorModule,
     WorkspaceVersionModule,
     TypeOrmModule.forFeature([UpgradeMigrationEntity, WorkspaceEntity]),

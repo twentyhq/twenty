@@ -1,17 +1,12 @@
-export type AutocompleteSanitizedResult = {
-  text: string;
-  placeId: string;
-};
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
-type GooglePrediction = {
-  description: string;
-  place_id: string;
-};
+import { type GeoMapAutocompleteSanitizedResult } from 'src/engine/core-modules/geo-map/types/geo-map-autocomplete-sanitized-result.type';
+import { type GeoMapGooglePrediction } from 'src/engine/core-modules/geo-map/types/geo-map-google-prediction.type';
+
 export const sanitizeAutocompleteResults = (
-  autocompleteResults: GooglePrediction[],
-): AutocompleteSanitizedResult[] => {
-  if (!Array.isArray(autocompleteResults) || autocompleteResults.length === 0)
-    return [];
+  autocompleteResults: GeoMapGooglePrediction[],
+): GeoMapAutocompleteSanitizedResult[] => {
+  if (!isNonEmptyArray(autocompleteResults)) return [];
 
   return autocompleteResults.map((result) => ({
     text: result.description,

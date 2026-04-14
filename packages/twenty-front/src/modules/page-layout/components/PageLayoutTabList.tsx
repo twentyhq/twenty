@@ -58,6 +58,7 @@ const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   height: ${TAB_LIST_HEIGHT};
+  padding-left: ${themeCssVariables.spacing[2]};
   position: relative;
   user-select: none;
   width: 100%;

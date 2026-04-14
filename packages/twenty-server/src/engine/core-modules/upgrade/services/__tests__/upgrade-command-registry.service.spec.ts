@@ -157,24 +157,14 @@ describe('UpgradeCommandRegistryService', () => {
     );
   });
 
-  it('should return empty array for version with no commands', async () => {
-    const service = await buildRegistryService([]);
-
-    const bundleB = service.getBundleForVersion(VERSION_B);
-    const bundleA = service.getBundleForVersion(VERSION_A);
-
-    expect(bundleB.fastInstanceCommands).toStrictEqual([]);
-    expect(bundleA.fastInstanceCommands).toStrictEqual([]);
-    expect(bundleB.workspaceCommands).toStrictEqual([]);
-    expect(bundleA.workspaceCommands).toStrictEqual([]);
-  });
-
-  it('should not throw when no commands are discovered (empty bundle)', async () => {
-    await expect(buildRegistryService([])).resolves.toBeDefined();
+  it('should throw when no workspace commands are discovered', async () => {
+    await expect(buildRegistryService([])).rejects.toThrow(
+      'Upgrade sequence must contain at least one workspace command',
+    );
   });
 
   it('should return empty array for unsupported version', async () => {
-    const service = await buildRegistryService([]);
+    const service = await buildRegistryService([new WorkspaceCommandA()]);
 
     expect(
       service.getBundleForVersion('99.0.0' as typeof VERSION_A)
@@ -284,8 +274,8 @@ describe('UpgradeCommandRegistryService', () => {
     ]);
   });
 
-  it('should return empty array from getCrossUpgradeSupportedFastInstanceCommands when no commands registered', async () => {
-    const service = await buildRegistryService([]);
+  it('should return empty array from getCrossUpgradeSupportedFastInstanceCommands when no instance commands registered', async () => {
+    const service = await buildRegistryService([new WorkspaceCommandA()]);
 
     expect(
       service.getCrossUpgradeSupportedFastInstanceCommands(),
