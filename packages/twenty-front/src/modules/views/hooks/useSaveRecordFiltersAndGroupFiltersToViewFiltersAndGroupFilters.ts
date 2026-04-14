@@ -39,11 +39,12 @@ export const useSaveRecordFiltersAndGroupFiltersToViewFiltersAndGroupFilters =
     } = usePerformViewFilterAPIPersist();
 
     const currentRecordFilterGroupsCallbackState =
-      useAtomComponentStateCallbackState(currentRecordFilterGroupsComponentState);
+      useAtomComponentStateCallbackState(
+        currentRecordFilterGroupsComponentState,
+      );
 
-    const currentRecordFiltersCallbackState = useAtomComponentStateCallbackState(
-      currentRecordFiltersComponentState,
-    );
+    const currentRecordFiltersCallbackState =
+      useAtomComponentStateCallbackState(currentRecordFiltersComponentState);
 
     const saveRecordFiltersAndGroupFiltersToViewFiltersAndGroupFilters =
       useCallback(async () => {
@@ -105,9 +106,13 @@ export const useSaveRecordFiltersAndGroupFiltersToViewFiltersAndGroupFilters =
         }
 
         const currentViewFilters = currentView.viewFilters ?? [];
-        const currentRecordFilters = store.get(currentRecordFiltersCallbackState);
+        const currentRecordFilters = store.get(
+          currentRecordFiltersCallbackState,
+        );
 
-        const newViewFilters = currentRecordFilters.map(mapRecordFilterToViewFilter);
+        const newViewFilters = currentRecordFilters.map(
+          mapRecordFilterToViewFilter,
+        );
 
         const viewFiltersToCreate = getViewFiltersToCreate(
           currentViewFilters,
@@ -128,37 +133,43 @@ export const useSaveRecordFiltersAndGroupFiltersToViewFiltersAndGroupFilters =
           newViewFilters,
         );
 
-        const createViewFilterInputs = viewFiltersToCreate.map((viewFilter) => ({
-          input: {
-            id: viewFilter.id,
-            fieldMetadataId: viewFilter.fieldMetadataId,
-            viewId: currentView.id,
-            value: viewFilter.value,
-            operand: viewFilter.operand,
-            viewFilterGroupId: viewFilter.viewFilterGroupId,
-            positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
-            subFieldName: viewFilter.subFieldName ?? null,
-          },
-        }));
-
-        const updateViewFilterInputs = viewFiltersToUpdate.map((viewFilter) => ({
-          input: {
-            id: viewFilter.id,
-            update: {
+        const createViewFilterInputs = viewFiltersToCreate.map(
+          (viewFilter) => ({
+            input: {
+              id: viewFilter.id,
+              fieldMetadataId: viewFilter.fieldMetadataId,
+              viewId: currentView.id,
               value: viewFilter.value,
               operand: viewFilter.operand,
-              positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
               viewFilterGroupId: viewFilter.viewFilterGroupId,
+              positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
               subFieldName: viewFilter.subFieldName ?? null,
             },
-          },
-        }));
+          }),
+        );
 
-        const destroyViewFilterInputs = viewFiltersToDelete.map((viewFilter) => ({
-          input: {
-            id: viewFilter.id,
-          },
-        }));
+        const updateViewFilterInputs = viewFiltersToUpdate.map(
+          (viewFilter) => ({
+            input: {
+              id: viewFilter.id,
+              update: {
+                value: viewFilter.value,
+                operand: viewFilter.operand,
+                positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
+                viewFilterGroupId: viewFilter.viewFilterGroupId,
+                subFieldName: viewFilter.subFieldName ?? null,
+              },
+            },
+          }),
+        );
+
+        const destroyViewFilterInputs = viewFiltersToDelete.map(
+          (viewFilter) => ({
+            input: {
+              id: viewFilter.id,
+            },
+          }),
+        );
 
         const createResult = await performViewFilterAPICreate(
           createViewFilterInputs,
