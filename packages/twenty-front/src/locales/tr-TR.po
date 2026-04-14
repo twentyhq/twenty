@@ -7175,11 +7175,6 @@ msgstr "Ekibinizi davet ederek çalışma alanınızdan en iyi şekilde yararlan
 msgid "Get your subscription"
 msgstr "Aboneliğinizi alın"
 
-#. js-lingui-id: 2GT3Hf
-#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
-msgid "Global"
-msgstr "Küresel"
-
 #. js-lingui-id: sr0UJD
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
 msgid "Go Back"
@@ -10356,6 +10351,11 @@ msgstr "Not"
 msgid "Notes"
 msgstr "Notlar"
 
+#. js-lingui-id: DYCPYF
+#: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
+msgid "Nothing to see"
+msgstr ""
+
 #. js-lingui-id: YwzE9K
 #: src/utils/date-utils.ts
 #: src/utils/date-utils.ts
@@ -11705,11 +11705,6 @@ msgstr "Kayıt etiketi"
 msgid "Record Page"
 msgstr "Kayıt Sayfası"
 
-#. js-lingui-id: dSCufP
-#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
-msgid "Record Selection"
-msgstr "Kayıt Seçimi"
-
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Record Table Settings"
@@ -12411,11 +12406,6 @@ msgstr "SDK"
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 msgid "Search"
 msgstr "Arama"
-
-#. js-lingui-id: aOQ/Fi
-#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
-msgid "Search ''{sidePanelSearch}'' with..."
-msgstr "''{sidePanelSearch}'' ile ara..."
 
 #. js-lingui-id: g2dQp/
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
@@ -14362,6 +14352,11 @@ msgstr "Bu anahtar, gövde girişi üzerinden ayarlanmalıdır"
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "This model will be removed from the provider. You can re-add it later."
 msgstr "Bu model sağlayıcıdan kaldırılacak. Daha sonra yeniden ekleyebilirsiniz."
+
+#. js-lingui-id: NCA55L
+#: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
+msgid "This page has no content"
+msgstr ""
 
 #. js-lingui-id: R/PuIn
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx

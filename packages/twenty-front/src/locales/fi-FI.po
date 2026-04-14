@@ -7175,11 +7175,6 @@ msgstr "Saa kaiken irti työtilastasi kutsuen tiimisi mukaan."
 msgid "Get your subscription"
 msgstr "Hanki tilaus"
 
-#. js-lingui-id: 2GT3Hf
-#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
-msgid "Global"
-msgstr "Globaali"
-
 #. js-lingui-id: sr0UJD
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
 msgid "Go Back"
@@ -10356,6 +10351,11 @@ msgstr "Muistiinpano"
 msgid "Notes"
 msgstr "Muistiinpanot"
 
+#. js-lingui-id: DYCPYF
+#: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
+msgid "Nothing to see"
+msgstr ""
+
 #. js-lingui-id: YwzE9K
 #: src/utils/date-utils.ts
 #: src/utils/date-utils.ts
@@ -11705,11 +11705,6 @@ msgstr "Tietueen otsikko"
 msgid "Record Page"
 msgstr "Tietuesivu"
 
-#. js-lingui-id: dSCufP
-#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
-msgid "Record Selection"
-msgstr "Valitse tietueet"
-
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Record Table Settings"
@@ -12411,11 +12406,6 @@ msgstr "SDK"
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 msgid "Search"
 msgstr "Hae"
-
-#. js-lingui-id: aOQ/Fi
-#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
-msgid "Search ''{sidePanelSearch}'' with..."
-msgstr "Hae ''{sidePanelSearch}'' avulla..."
 
 #. js-lingui-id: g2dQp/
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
@@ -14362,6 +14352,11 @@ msgstr "Tämä avain tulisi asettaa viestirungon syötteessä"
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "This model will be removed from the provider. You can re-add it later."
 msgstr "Tämä malli poistetaan tarjoajalta. Voit lisätä sen uudelleen myöhemmin."
+
+#. js-lingui-id: NCA55L
+#: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
+msgid "This page has no content"
+msgstr ""
 
 #. js-lingui-id: R/PuIn
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
