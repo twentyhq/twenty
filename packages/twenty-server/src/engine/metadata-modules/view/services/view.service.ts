@@ -5,11 +5,14 @@ import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ViewType, ViewVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
@@ -68,11 +71,18 @@ export class ViewService {
     const {
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
+      flatViewFieldMaps: existingFlatViewFieldMaps,
     } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+          flatMapsKeys: [
+            'flatFieldMetadataMaps',
+            'flatObjectMetadataMaps',
+            'flatViewFieldGroupMaps',
+            'flatViewFieldMaps',
+          ],
         },
       );
 
