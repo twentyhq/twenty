@@ -6,7 +6,10 @@ import {
 } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type ParsedUpgradeCommandOptions } from 'src/database/commands/upgrade-version-command/upgrade.command';
 import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
-import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
+import {
+  type WorkspaceCursor,
+  UpgradeMigrationService,
+} from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import {
   type InstanceUpgradeStep,
   type UpgradeStep,
@@ -20,6 +23,11 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 export type UpgradeSequenceRunnerReport = {
   totalSuccesses: number;
   totalFailures: number;
+};
+
+type WorkspaceSegmentResult = {
+  report: WorkspaceIteratorReport;
+  processedWorkspaceIds: string[];
 };
 
 @Injectable()
@@ -57,16 +65,18 @@ export class UpgradeSequenceRunnerService {
     let totalSuccesses = 0;
     let totalFailures = 0;
     let cursor = startCursor;
+    let lastSegmentProcessedWorkspaceIds: string[] | undefined;
 
     while (cursor < sequence.length) {
       const step = sequence[cursor];
 
       if (step.kind === 'fast-instance' || step.kind === 'slow-instance') {
         const previousStep = cursor > 0 ? sequence[cursor - 1] : undefined;
+
         if (previousStep?.kind === 'workspace') {
           await this.enforceWorkspaceSyncBarrier({
             previousWorkspaceStep: previousStep,
-            allActiveOrSuspendedWorkspaceIds,
+            processedWorkspaceIds: lastSegmentProcessedWorkspaceIds ?? [],
           });
         }
 
@@ -84,12 +94,14 @@ export class UpgradeSequenceRunnerService {
           fromWorkspaceCommand: step,
         });
 
-      const report = await this.resumeWorkspaceCommandsFromCursors({
-        contiguousWorkspaceSteps,
-        allActiveOrSuspendedWorkspaceIds,
-        options,
-      });
+      const { report, processedWorkspaceIds } =
+        await this.resumeWorkspaceCommandsFromCursors({
+          contiguousWorkspaceSteps,
+          allActiveOrSuspendedWorkspaceIds,
+          options,
+        });
 
+      lastSegmentProcessedWorkspaceIds = processedWorkspaceIds;
       totalSuccesses += report.success.length;
       totalFailures += report.fail.length;
 
@@ -107,6 +119,7 @@ export class UpgradeSequenceRunnerService {
 
     return { totalSuccesses, totalFailures };
   }
+
   private async resolveStartCursor({
     sequence,
     allActiveOrSuspendedWorkspaceIds,
@@ -141,7 +154,7 @@ export class UpgradeSequenceRunnerService {
             workspaceCommand: lastAttemptedStep,
           });
 
-        await this.validateWorkspaceCursorsAreInSameWorkspaceStepsSlice({
+        await this.validateWorkspaceCursorsAreInSameSegmentOrAhead({
           sequence,
           allActiveOrSuspendedWorkspaceIds,
           workspaceSliceBounds,
@@ -154,7 +167,10 @@ export class UpgradeSequenceRunnerService {
     }
   }
 
-  private async validateWorkspaceCursorsAreInSameWorkspaceStepsSlice({
+  // Validates that every workspace cursor falls within the current segment
+  // or is ahead in a future segment with isInitial: true (meaning the
+  // workspace was activated at that point and never ran earlier steps).
+  private async validateWorkspaceCursorsAreInSameSegmentOrAhead({
     allActiveOrSuspendedWorkspaceIds,
     sequence,
     workspaceSliceBounds: { startCursor, endCursor },
@@ -175,13 +191,19 @@ export class UpgradeSequenceRunnerService {
           stepName: workspaceCursor.name,
         });
 
-      if (cursor < startCursor || cursor > endCursor) {
-        throw new Error(
-          `Workspace ${workspaceId} cursor "${workspaceCursor.name}" is outside the ` +
-            `current workspace slice [${startCursor}..${endCursor}] — ` +
-            'workspaces are not aligned',
-        );
+      if (cursor >= startCursor && cursor <= endCursor) {
+        continue;
       }
+
+      if (cursor > endCursor && workspaceCursor.isInitial) {
+        continue;
+      }
+
+      throw new Error(
+        `Workspace ${workspaceId} cursor "${workspaceCursor.name}" is outside the ` +
+          `current workspace slice [${startCursor}..${endCursor}] — ` +
+          'workspaces are not aligned',
+      );
     }
   }
 
@@ -233,17 +255,25 @@ export class UpgradeSequenceRunnerService {
     contiguousWorkspaceSteps: WorkspaceUpgradeStep[];
     allActiveOrSuspendedWorkspaceIds: string[];
     options: ParsedUpgradeCommandOptions;
-  }): Promise<WorkspaceIteratorReport> {
+  }): Promise<WorkspaceSegmentResult> {
     const workspaceCursors =
       await this.upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow(
         allActiveOrSuspendedWorkspaceIds,
       );
 
-    return this.workspaceIteratorService.iterate({
-      workspaceIds:
-        isDefined(options.workspaceIds) && options.workspaceIds.length > 0
-          ? options.workspaceIds
-          : allActiveOrSuspendedWorkspaceIds,
+    const segmentStepNames = new Set(
+      contiguousWorkspaceSteps.map((step) => step.name),
+    );
+
+    const workspaceIdsForSegment = this.filterWorkspaceIdsForSegment({
+      allActiveOrSuspendedWorkspaceIds,
+      workspaceCursors,
+      segmentStepNames,
+      options,
+    });
+
+    const report = await this.workspaceIteratorService.iterate({
+      workspaceIds: workspaceIdsForSegment,
       startFromWorkspaceId: options.startFromWorkspaceId,
       workspaceCountLimit: options.workspaceCountLimit,
       dryRun: options.dryRun,
@@ -269,19 +299,55 @@ export class UpgradeSequenceRunnerService {
         });
       },
     });
+
+    return { report, processedWorkspaceIds: workspaceIdsForSegment };
+  }
+
+  // Excludes workspaces whose isInitial cursor is ahead of the current
+  // segment — they were activated at a later point and don't need to
+  // run this segment's commands.
+  private filterWorkspaceIdsForSegment({
+    allActiveOrSuspendedWorkspaceIds,
+    workspaceCursors,
+    segmentStepNames,
+    options,
+  }: {
+    allActiveOrSuspendedWorkspaceIds: string[];
+    workspaceCursors: Map<string, WorkspaceCursor>;
+    segmentStepNames: Set<string>;
+    options: ParsedUpgradeCommandOptions;
+  }): string[] {
+    const candidateIds =
+      isDefined(options.workspaceIds) && options.workspaceIds.length > 0
+        ? options.workspaceIds
+        : allActiveOrSuspendedWorkspaceIds;
+
+    return candidateIds.filter((workspaceId) => {
+      const cursor = workspaceCursors.get(workspaceId);
+
+      if (!cursor) {
+        return true;
+      }
+
+      if (cursor.isInitial && !segmentStepNames.has(cursor.name)) {
+        return false;
+      }
+
+      return true;
+    });
   }
 
   private async enforceWorkspaceSyncBarrier({
     previousWorkspaceStep,
-    allActiveOrSuspendedWorkspaceIds,
+    processedWorkspaceIds,
   }: {
     previousWorkspaceStep: WorkspaceUpgradeStep;
-    allActiveOrSuspendedWorkspaceIds: string[];
+    processedWorkspaceIds: string[];
   }): Promise<void> {
     const allWorkspacesReady =
       await this.upgradeMigrationService.areAllWorkspacesAtCommand({
         commandName: previousWorkspaceStep.name,
-        workspaceIds: allActiveOrSuspendedWorkspaceIds,
+        workspaceIds: processedWorkspaceIds,
       });
 
     if (!allWorkspacesReady) {

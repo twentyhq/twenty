@@ -10,6 +10,12 @@ import {
 } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { formatUpgradeErrorForStorage } from 'src/engine/core-modules/upgrade/utils/format-upgrade-error-for-storage.util';
 
+export type WorkspaceCursor = {
+  name: string;
+  status: UpgradeMigrationStatus;
+  isInitial: boolean;
+};
+
 @Injectable()
 export class UpgradeMigrationService {
   constructor(
@@ -122,6 +128,8 @@ export class UpgradeMigrationService {
   // across instance and active-workspace scopes, with its status.
   // Workspace-scoped records from inactive/deleted workspaces are
   // excluded so they cannot incorrectly influence the global cursor.
+  // isInitial records are also excluded — they represent activation
+  // state, not execution progress.
   async getLastAttemptedCommandNameOrThrow(
     allActiveOrSuspendedWorkspaceIds: string[],
   ): Promise<{
@@ -131,6 +139,7 @@ export class UpgradeMigrationService {
     const queryBuilder = this.upgradeMigrationRepository
       .createQueryBuilder('migration')
       .select(['migration.name', 'migration.status'])
+      .andWhere('migration."isInitial" = false')
       .andWhere(
         `migration.attempt = (
           SELECT MAX(sub.attempt)
@@ -167,7 +176,7 @@ export class UpgradeMigrationService {
 
   async getWorkspaceLastAttemptedCommandNameOrThrow(
     workspaceIds: string[],
-  ): Promise<Map<string, { name: string; status: UpgradeMigrationStatus }>> {
+  ): Promise<Map<string, WorkspaceCursor>> {
     if (workspaceIds.length === 0) {
       return new Map();
     }
@@ -177,6 +186,7 @@ export class UpgradeMigrationService {
       .select('migration.workspaceId', 'workspaceId')
       .addSelect('migration.name', 'name')
       .addSelect('migration.status', 'status')
+      .addSelect('migration.isInitial', 'isInitial')
       .where({
         workspaceId: In(workspaceIds),
       })
@@ -195,15 +205,17 @@ export class UpgradeMigrationService {
         workspaceId: string;
         name: string;
         status: UpgradeMigrationStatus;
+        isInitial: boolean;
       }>();
 
-    const cursors = new Map<
-      string,
-      { name: string; status: UpgradeMigrationStatus }
-    >();
+    const cursors = new Map<string, WorkspaceCursor>();
 
     for (const row of results) {
-      cursors.set(row.workspaceId, { name: row.name, status: row.status });
+      cursors.set(row.workspaceId, {
+        name: row.name,
+        status: row.status,
+        isInitial: row.isInitial,
+      });
     }
 
     const missingWorkspaceIds = workspaceIds.filter(
