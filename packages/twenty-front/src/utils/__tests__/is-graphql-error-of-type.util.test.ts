@@ -45,6 +45,22 @@ describe('isGraphqlErrorOfType', () => {
     expect(isGraphqlErrorOfType(error, 'AGENT_EXECUTION_FAILED')).toBe(true);
   });
 
+  it('matches a subCode from a plain GraphQLFormattedError object', () => {
+    const error = {
+      message: 'Refresh token expired',
+      extensions: {
+        subCode: 'APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED',
+      },
+    };
+
+    expect(
+      isGraphqlErrorOfType(
+        error,
+        'APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED',
+      ),
+    ).toBe(true);
+  });
+
   it('returns false when the error code does not match', () => {
     const error = createCombinedGraphQLError([
       {

@@ -1,5 +1,4 @@
 import { type ErrorLike } from '@apollo/client';
-import { isErrorLike } from '@apollo/client/errors';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getGraphqlErrorExtensionsFromError } from '~/utils/get-graphql-error-extensions-from-error.util';
@@ -8,7 +7,7 @@ export const isGraphqlErrorOfType = (
   error: unknown,
   errorCode: string,
 ): error is ErrorLike => {
-  if (!isErrorLike(error)) {
+  if (!isDefined(error) || typeof error !== 'object') {
     return false;
   }
 
