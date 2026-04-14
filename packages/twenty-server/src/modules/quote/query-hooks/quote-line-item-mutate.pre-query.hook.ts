@@ -16,6 +16,18 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 const FEE_TYPE_FIXED = 'FIXED_PRICE';
 const FEE_TYPE_TM = 'TIME_AND_MATERIALS';
 
+// Twenty mutation payloads use composite field names (e.g. `fixedFeeAmount`,
+// `hourlyRate`) not flat column names (e.g. `fixedFeeAmountAmountMicros`).
+// The composite value is { amountMicros: number | null, currencyCode: string }.
+type CurrencyInput = { amountMicros?: number | null } | null | undefined;
+
+function amountIsMissing(field: CurrencyInput): boolean {
+  if (field == null) return true;
+  const m = field.amountMicros;
+
+  return m == null; // null or undefined — 0 is a valid amount
+}
+
 // Validate and strip fields irrelevant to the selected fee type.
 // isPartialUpdate=true (updateOne) skips presence checks for fields not
 // included in the payload — they are already stored on the record.
@@ -32,16 +44,15 @@ function validateAndStripFeeTypeFields(
   const cleaned = { ...data };
 
   if (feeType === FEE_TYPE_FIXED) {
-    const amountExplicitlySet = 'fixedFeeAmountAmountMicros' in cleaned;
+    const amountExplicitlySet = 'fixedFeeAmount' in cleaned;
 
     if (
       !isPartialUpdate || amountExplicitlySet
-        ? !cleaned['fixedFeeAmountAmountMicros'] &&
-          cleaned['fixedFeeAmountAmountMicros'] !== 0
+        ? amountIsMissing(cleaned['fixedFeeAmount'] as CurrencyInput)
         : false
     ) {
       throw new CommonQueryRunnerException(
-        'fixedFeeAmountAmountMicros is required when feeType is FIXED_PRICE',
+        'fixedFeeAmount is required when feeType is FIXED_PRICE',
         CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
         {
           userFriendlyMessage: msg`Fixed Fee Amount is required for a Fixed Price line item.`,
@@ -49,26 +60,24 @@ function validateAndStripFeeTypeFields(
       );
     }
 
-    // Clear T&M-specific fields
-    cleaned['hourlyRateAmountMicros'] = null;
-    cleaned['hourlyRateCurrencyCode'] = null;
+    // Clear T&M-specific fields (composite field names only)
+    cleaned['hourlyRate'] = null;
     cleaned['estimatedHours'] = null;
     cleaned['hasTimeCap'] = false;
     cleaned['timeCapHours'] = null;
   }
 
   if (feeType === FEE_TYPE_TM) {
-    const rateExplicitlySet = 'hourlyRateAmountMicros' in cleaned;
+    const rateExplicitlySet = 'hourlyRate' in cleaned;
     const hoursExplicitlySet = 'estimatedHours' in cleaned;
 
     if (
       !isPartialUpdate || rateExplicitlySet
-        ? !cleaned['hourlyRateAmountMicros'] &&
-          cleaned['hourlyRateAmountMicros'] !== 0
+        ? amountIsMissing(cleaned['hourlyRate'] as CurrencyInput)
         : false
     ) {
       throw new CommonQueryRunnerException(
-        'hourlyRateAmountMicros is required when feeType is TIME_AND_MATERIALS',
+        'hourlyRate is required when feeType is TIME_AND_MATERIALS',
         CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
         {
           userFriendlyMessage: msg`Hourly Rate is required for a Time & Materials line item.`,
@@ -90,9 +99,8 @@ function validateAndStripFeeTypeFields(
       );
     }
 
-    // Clear Fixed-specific fields
-    cleaned['fixedFeeAmountAmountMicros'] = null;
-    cleaned['fixedFeeAmountCurrencyCode'] = null;
+    // Clear Fixed-specific fields (composite field name only)
+    cleaned['fixedFeeAmount'] = null;
   }
 
   // If time cap is explicitly disabled, clear the cap hours field
