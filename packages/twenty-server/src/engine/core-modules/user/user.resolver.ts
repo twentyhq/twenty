@@ -56,7 +56,6 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -97,7 +96,6 @@ export class UserResolver {
     private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   private async getUserWorkspacePermissions({
@@ -473,11 +471,8 @@ export class UserResolver {
       );
     }
 
-    await assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly({
-      workspaceId: workspace.id,
+    assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly({
       update: input.update,
-      workspaceManyOrAllFlatEntityMapsCacheService:
-        this.workspaceManyOrAllFlatEntityMapsCacheService,
     });
 
     const workspaceMemberRepository =
@@ -515,7 +510,7 @@ export class UserResolver {
     );
 
     if (isDefined(input.update.locale)) {
-      await this.userWorkspaceService.syncUserWorkspaceLocaleForWorkspaceMember(
+      await this.userWorkspaceService.updateUserWorkspaceLocaleForWorkspaceMember(
         {
           locale: input.update.locale as UserWorkspaceEntity['locale'],
           workspaceId: workspace.id,

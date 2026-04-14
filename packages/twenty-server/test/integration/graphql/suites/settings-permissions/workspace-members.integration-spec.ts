@@ -381,6 +381,39 @@ describe('workspace members permissions', () => {
     );
   });
 
+  it('should reject unknown top-level keys through dedicated metadata mutation (allowlist)', async () => {
+    const unknownKey = 'notAStandardWorkspaceMemberField';
+
+    const operation = {
+      query: gql`
+        mutation UpdateWorkspaceMemberSettings(
+          $input: UpdateWorkspaceMemberSettingsInput!
+        ) {
+          updateWorkspaceMemberSettings(input: $input)
+        }
+      `,
+      variables: {
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          update: {
+            [unknownKey]: 'value',
+          },
+        },
+      },
+    };
+
+    const response = await makeMetadataAPIRequestWithMemberRole(operation);
+
+    expect(response.body.data).toBeNull();
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].message).toBe(
+      `Cannot update custom workspaceMember field via this endpoint: ${unknownKey}`,
+    );
+    expect(response.body.errors[0].extensions.code).toBe(
+      ErrorCode.BAD_USER_INPUT,
+    );
+  });
+
   it('should throw when calling deleteOne ', async () => {
     const graphqlOperation = deleteOneOperationFactory({
       objectMetadataSingularName: 'workspaceMember',

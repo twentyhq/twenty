@@ -47,7 +47,7 @@ export class WorkspaceMemberUpdateOnePreQueryHook
 
     // TODO: remove this code once we have migrated locale update to userWorkspace update
     if (isUserAuthContext(authContext) && isDefined(payload.data.locale)) {
-      await this.userWorkspaceService.syncUserWorkspaceLocaleForWorkspaceMember(
+      await this.userWorkspaceService.updateUserWorkspaceLocaleForWorkspaceMember(
         {
           locale: payload.data.locale,
           workspaceId: workspace.id,

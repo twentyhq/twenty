@@ -73,11 +73,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     userWorkspaceId,
     throwIfUserWorkspaceMissing = false,
   }: {
-    locale: UserWorkspaceEntity['locale'] | undefined;
+    locale: UserWorkspaceEntity['locale'];
     userWorkspaceId: string | undefined;
     throwIfUserWorkspaceMissing?: boolean;
   }): Promise<void> {
-    if (!isDefined(locale) || !isDefined(userWorkspaceId)) {
+    if (!isDefined(userWorkspaceId)) {
       return;
     }
 
@@ -109,7 +109,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     );
   }
 
-  async syncUserWorkspaceLocaleForWorkspaceMember({
+  async updateUserWorkspaceLocaleForWorkspaceMember({
     locale,
     workspaceId,
     workspaceMemberId,
