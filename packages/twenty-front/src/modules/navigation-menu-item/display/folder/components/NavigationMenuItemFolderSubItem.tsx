@@ -1,8 +1,10 @@
 import { type ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
+import { activeNavigationMenuItemState } from '@/navigation-menu-item/common/states/activeNavigationMenuItemState';
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import type { EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -16,6 +18,7 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 
 type NavigationMenuItemFolderSubItemProps = {
@@ -46,6 +49,10 @@ export const NavigationMenuItemFolderSubItem = ({
     useIsNavigationMenuItemEditHighlighted(navigationMenuItem);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
+  const navigate = useNavigate();
+  const setActiveNavigationMenuItem = useSetAtomState(
+    activeNavigationMenuItemState,
+  );
 
   const label = getNavigationMenuItemLabel(
     navigationMenuItem,
@@ -87,7 +94,13 @@ export const NavigationMenuItemFolderSubItem = ({
             item: navigationMenuItem,
             objectMetadataItem: objectMetadataItem ?? undefined,
           })
-      : undefined);
+      : () => {
+          setActiveNavigationMenuItem({
+            id: navigationMenuItem.id,
+            path: computedLink,
+          });
+          navigate(computedLink);
+        });
 
   return (
     <NavigationDrawerSubItem
@@ -107,7 +120,7 @@ export const NavigationMenuItemFolderSubItem = ({
         navigationMenuItem,
         objectMetadataItem ?? undefined,
       )}
-      to={isDragging || handleClick ? undefined : computedLink}
+      to={isDragging || isEditable ? undefined : computedLink}
       onClick={handleClick}
       active={index === selectedNavigationMenuItemIndex}
       isSelectedInEditMode={isEditHighlightedInNavigationMenu}

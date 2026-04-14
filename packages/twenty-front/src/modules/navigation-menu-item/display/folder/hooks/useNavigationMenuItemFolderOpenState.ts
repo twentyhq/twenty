@@ -1,15 +1,16 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { isNonEmptyString } from '@sniptt/guards';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
-import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
-import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/common/utils/isLocationMatchingNavigationMenuItem';
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { activeNavigationMenuItemState } from '@/navigation-menu-item/common/states/activeNavigationMenuItemState';
 import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
+import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
+import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/common/utils/isLocationMatchingNavigationMenuItem';
+import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -78,21 +79,36 @@ export const useNavigationMenuItemFolderOpenState = ({
     }
   };
 
-  const selectedNavigationMenuItemIndex = navigationMenuItems.findIndex(
-    (item) => {
-      const computedLink = getNavigationMenuItemComputedLink(
-        item,
-        objectMetadataItems,
-        views,
-      );
-      return isLocationMatchingNavigationMenuItem(
-        currentPath,
-        currentViewPath,
-        item.type,
-        computedLink,
-      );
-    },
+  const activeNavigationMenuItem = useAtomStateValue(
+    activeNavigationMenuItemState,
   );
+
+  const hasActiveNavigationMenuItemOnCurrentPage =
+    isDefined(activeNavigationMenuItem) &&
+    currentViewPath === activeNavigationMenuItem.path;
+
+  const clickedItemIndex = hasActiveNavigationMenuItemOnCurrentPage
+    ? navigationMenuItems.findIndex(
+        (item) => item.id === activeNavigationMenuItem!.id,
+      )
+    : -1;
+
+  const urlMatchingItemIndex = navigationMenuItems.findIndex((item) => {
+    const computedLink = getNavigationMenuItemComputedLink(
+      item,
+      objectMetadataItems,
+      views,
+    );
+    return isLocationMatchingNavigationMenuItem(
+      currentPath,
+      currentViewPath,
+      item.type,
+      computedLink,
+    );
+  });
+
+  const selectedNavigationMenuItemIndex =
+    clickedItemIndex >= 0 ? clickedItemIndex : urlMatchingItemIndex;
 
   return {
     isOpen,

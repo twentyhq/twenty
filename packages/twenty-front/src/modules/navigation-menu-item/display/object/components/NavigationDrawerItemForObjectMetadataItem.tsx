@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { Fragment, type ReactNode, useContext } from 'react';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { activeNavigationMenuItemState } from '@/navigation-menu-item/common/states/activeNavigationMenuItemState';
 import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/common/utils/isLocationMatchingNavigationMenuItem';
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/common/utils/recordIdentifierToObjectRecordIdentifier';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
@@ -16,8 +17,9 @@ import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObject
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   AppPath,
   CoreObjectNameSingular,
@@ -69,8 +71,16 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const { getIcon } = useIcons();
   const objectNavItemColor = getObjectColorWithFallback(objectMetadataItem);
   const location = useLocation();
+  const navigate = useNavigate();
   const currentPath = location.pathname;
   const currentPathWithSearch = `${location.pathname}${location.search}`;
+
+  const activeNavigationMenuItem = useAtomStateValue(
+    activeNavigationMenuItemState,
+  );
+  const setActiveNavigationMenuItem = useSetAtomState(
+    activeNavigationMenuItemState,
+  );
 
   const isRecord = navigationMenuItem?.type === NavigationMenuItemType.RECORD;
   const isView = navigationMenuItem?.type === NavigationMenuItemType.VIEW;
@@ -89,31 +99,44 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         lastVisitedViewId ? { viewId: lastVisitedViewId } : undefined,
       );
 
-  const isOnObjectIndexPage =
-    currentPath ===
-    getAppPath(AppPath.RecordIndexPage, {
-      objectNamePlural: objectMetadataItem.namePlural,
-    });
-
-  const isOnObjectRecordPage = currentPath.includes(
-    getAppPath(AppPath.RecordShowPage, {
-      objectNameSingular: objectMetadataItem.nameSingular,
-      objectRecordId: '',
-    }) + '/',
-  );
-
-  const isActive = hasNavigationMenuItem
+  const urlMatches = hasNavigationMenuItem
     ? isLocationMatchingNavigationMenuItem(
         currentPath,
         currentPathWithSearch,
         navigationMenuItem.type,
         navigationPath,
       )
-    : isOnObjectIndexPage || isOnObjectRecordPage;
+    : currentPath ===
+        getAppPath(AppPath.RecordIndexPage, {
+          objectNamePlural: objectMetadataItem.namePlural,
+        }) ||
+      currentPath.includes(
+        getAppPath(AppPath.RecordShowPage, {
+          objectNameSingular: objectMetadataItem.nameSingular,
+          objectRecordId: '',
+        }) + '/',
+      );
+
+  const hasActiveNavigationMenuItemOnCurrentPage =
+    isDefined(activeNavigationMenuItem) &&
+    currentPathWithSearch === activeNavigationMenuItem.path;
+
+  const isActive =
+    urlMatches &&
+    (!hasActiveNavigationMenuItemOnCurrentPage ||
+      activeNavigationMenuItem?.id === navigationMenuItem?.id);
 
   const handleClick = isLayoutCustomizationModeEnabled
     ? onEditModeClick
-    : undefined;
+    : hasNavigationMenuItem
+      ? () => {
+          setActiveNavigationMenuItem({
+            id: navigationMenuItem!.id,
+            path: navigationPath,
+          });
+          navigate(navigationPath);
+        }
+      : undefined;
 
   const shouldNavigate = !isLayoutCustomizationModeEnabled;
 
