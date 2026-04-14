@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { defineFrontComponent, useRecordId } from 'twenty-sdk';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -39,6 +39,40 @@ type QuoteSection = {
   quoteTerms: { edges: { node: QuoteTerm }[] } | null;
 };
 
+// ── API helper ────────────────────────────────────────────────────────────────
+
+function getApiConfig() {
+  const baseUrl = process.env.TWENTY_API_URL ?? '';
+  const apiUrl = baseUrl.endsWith('/graphql') ? baseUrl : `${baseUrl}/graphql`;
+  const token =
+    process.env.TWENTY_APP_ACCESS_TOKEN ?? process.env.TWENTY_API_KEY ?? '';
+
+  return { apiUrl, token };
+}
+
+async function gql(
+  query: string,
+  variables: Record<string, unknown>,
+): Promise<unknown> {
+  const { apiUrl, token } = getApiConfig();
+  const res = await fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ query, variables }),
+  });
+  const json = (await res.json()) as {
+    data?: unknown;
+    errors?: { message: string }[];
+  };
+
+  if (json.errors?.length) throw new Error(json.errors[0].message);
+
+  return json.data;
+}
+
 // ── Formatting helpers ────────────────────────────────────────────────────────
 
 const formatCurrency = (amount: CurrencyAmount | null): string => {
@@ -75,6 +109,65 @@ const S = {
     fontSize: '13px',
     color: '#1a1a1a',
     backgroundColor: '#fafafa',
+  },
+  panelHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    marginBottom: '12px',
+  },
+  addButton: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '4px',
+    padding: '5px 10px',
+    fontSize: '12px',
+    fontWeight: 600,
+    color: '#444',
+    background: '#fff',
+    border: '1px solid #ddd',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    lineHeight: 1,
+  },
+  newSectionForm: {
+    background: '#fff',
+    border: '1px solid #d0d0d0',
+    borderRadius: '8px',
+    padding: '12px 16px',
+    marginBottom: '16px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  },
+  nameInput: {
+    flex: 1,
+    padding: '5px 8px',
+    fontSize: '13px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    outline: 'none',
+    fontFamily: 'inherit',
+  },
+  saveButton: {
+    padding: '5px 12px',
+    fontSize: '12px',
+    fontWeight: 600,
+    color: '#fff',
+    background: '#2563eb',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+  },
+  cancelButton: {
+    padding: '5px 10px',
+    fontSize: '12px',
+    fontWeight: 600,
+    color: '#555',
+    background: '#f0f0f0',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
   },
   sectionCard: {
     background: '#ffffff',
@@ -296,6 +389,59 @@ const SectionCard = ({
   );
 };
 
+// ── New Section inline form ───────────────────────────────────────────────────
+
+const NewSectionForm = ({
+  onSave,
+  onCancel,
+  saving,
+}: {
+  onSave: (name: string) => Promise<void>;
+  onCancel: () => void;
+  saving: boolean;
+}) => {
+  const [name, setName] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && name.trim()) {
+      void onSave(name.trim());
+    }
+    if (e.key === 'Escape') {
+      onCancel();
+    }
+  };
+
+  return (
+    <div style={S.newSectionForm}>
+      <input
+        ref={inputRef}
+        style={S.nameInput}
+        type="text"
+        placeholder="Section name…"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        onKeyDown={handleKeyDown}
+        disabled={saving}
+      />
+      <button
+        style={S.saveButton}
+        onClick={() => name.trim() && void onSave(name.trim())}
+        disabled={saving || !name.trim()}
+      >
+        {saving ? 'Saving…' : 'Save'}
+      </button>
+      <button style={S.cancelButton} onClick={onCancel} disabled={saving}>
+        Cancel
+      </button>
+    </div>
+  );
+};
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 const QuoteSectionsPanel = () => {
@@ -303,6 +449,8 @@ const QuoteSectionsPanel = () => {
   const [sections, setSections] = useState<QuoteSection[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showNewForm, setShowNewForm] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const fetchSections = useCallback(async () => {
     if (!isDefined(recordId)) {
@@ -313,77 +461,51 @@ const QuoteSectionsPanel = () => {
 
     try {
       setError(null);
-
-      const baseUrl = process.env.TWENTY_API_URL ?? '';
-      const apiUrl = baseUrl.endsWith('/graphql')
-        ? baseUrl
-        : `${baseUrl}/graphql`;
-      const token =
-        process.env.TWENTY_APP_ACCESS_TOKEN ?? process.env.TWENTY_API_KEY;
-
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token ?? ''}`,
-        },
-        body: JSON.stringify({
-          query: `
-            query GetQuoteSections($quoteId: UUID!) {
-              quoteSections(
-                filter: { quoteId: { eq: $quoteId } }
-                orderBy: [{ sectionPosition: AscNullsLast }]
-              ) {
-                edges {
-                  node {
-                    id
-                    name
-                    serviceCategory
-                    sectionPosition
-                    subtotal { amountMicros currencyCode }
-                    lineItems {
-                      edges {
-                        node {
-                          id
-                          name
-                          feeType
-                          estimatedHours
-                          hourlyRate { amountMicros currencyCode }
-                          fixedFeeAmount { amountMicros currencyCode }
-                          estimatedLineAmount { amountMicros currencyCode }
-                          lineItemPosition
-                        }
-                      }
+      const data = (await gql(
+        `query GetQuoteSections($quoteId: UUID!) {
+          quoteSections(
+            filter: { quoteId: { eq: $quoteId } }
+            orderBy: [{ sectionPosition: AscNullsLast }]
+          ) {
+            edges {
+              node {
+                id
+                name
+                serviceCategory
+                sectionPosition
+                subtotal { amountMicros currencyCode }
+                lineItems {
+                  edges {
+                    node {
+                      id
+                      name
+                      feeType
+                      estimatedHours
+                      hourlyRate { amountMicros currencyCode }
+                      fixedFeeAmount { amountMicros currencyCode }
+                      estimatedLineAmount { amountMicros currencyCode }
+                      lineItemPosition
                     }
-                    quoteTerms {
-                      edges {
-                        node {
-                          id
-                          termType
-                          feePercentage
-                          affectsFees
-                        }
-                      }
+                  }
+                }
+                quoteTerms {
+                  edges {
+                    node {
+                      id
+                      termType
+                      feePercentage
+                      affectsFees
                     }
                   }
                 }
               }
             }
-          `,
-          variables: { quoteId: recordId },
-        }),
-      });
+          }
+        }`,
+        { quoteId: recordId },
+      )) as { quoteSections?: { edges?: { node: QuoteSection }[] } };
 
-      const json = await response.json();
-      if (json.errors?.length) {
-        throw new Error(json.errors[0].message);
-      }
-
-      const fetched: QuoteSection[] =
-        json.data?.quoteSections?.edges?.map(
-          (e: { node: QuoteSection }) => e.node,
-        ) ?? [];
-      setSections(fetched);
+      setSections(data?.quoteSections?.edges?.map((e) => e.node) ?? []);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     }
@@ -392,8 +514,41 @@ const QuoteSectionsPanel = () => {
   }, [recordId]);
 
   useEffect(() => {
-    fetchSections();
+    void fetchSections();
   }, [fetchSections]);
+
+  const handleCreateSection = useCallback(
+    async (name: string) => {
+      if (!isDefined(recordId)) return;
+      setSaving(true);
+      try {
+        const nextPosition =
+          sections.length > 0
+            ? Math.max(...sections.map((s) => s.sectionPosition ?? 0)) + 1
+            : 1;
+
+        await gql(
+          `mutation CreateQuoteSection($name: String!, $quoteId: UUID!, $pos: Float) {
+            createOneQuoteSection(data: {
+              name: $name
+              quoteId: $quoteId
+              sectionPosition: $pos
+            }) {
+              id
+            }
+          }`,
+          { name, quoteId: recordId, pos: nextPosition },
+        );
+
+        setShowNewForm(false);
+        await fetchSections();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : String(err));
+      }
+      setSaving(false);
+    },
+    [recordId, sections, fetchSections],
+  );
 
   if (loading) {
     return <div style={S.loadingState}>Loading sections…</div>;
@@ -403,19 +558,33 @@ const QuoteSectionsPanel = () => {
     return <div style={S.errorState}>Error: {error}</div>;
   }
 
-  if (sections.length === 0) {
-    return (
-      <div style={{ ...S.loadingState, color: '#bbb', fontStyle: 'italic' }}>
-        No quote sections yet
-      </div>
-    );
-  }
-
   return (
     <div style={S.container}>
-      {sections.map((section, idx) => (
-        <SectionCard key={section.id} section={section} index={idx} />
-      ))}
+      <div style={S.panelHeader}>
+        {!showNewForm && (
+          <button style={S.addButton} onClick={() => setShowNewForm(true)}>
+            + New Section
+          </button>
+        )}
+      </div>
+
+      {showNewForm && (
+        <NewSectionForm
+          onSave={handleCreateSection}
+          onCancel={() => setShowNewForm(false)}
+          saving={saving}
+        />
+      )}
+
+      {sections.length === 0 ? (
+        <div style={{ ...S.loadingState, color: '#bbb', fontStyle: 'italic', height: 'auto', paddingTop: '16px' }}>
+          No quote sections yet
+        </div>
+      ) : (
+        sections.map((section, idx) => (
+          <SectionCard key={section.id} section={section} index={idx} />
+        ))
+      )}
     </div>
   );
 };
