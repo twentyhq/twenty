@@ -219,7 +219,9 @@ const LineItemsTable = ({ items }: { items: LineItem[] }) => {
                     : '—'}
                 </td>
                 <td style={S.tdRight}>
-                  {formatCurrency(item.estimatedLineAmount ?? item.fixedFeeAmount)}
+                  {item.feeType === 'TIME_AND_MATERIALS'
+                    ? formatCurrency(item.estimatedLineAmount ?? item.fixedFeeAmount)
+                    : formatCurrency(item.fixedFeeAmount ?? item.estimatedLineAmount)}
                 </td>
               </tr>
             ))}
