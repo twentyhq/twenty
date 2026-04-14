@@ -4,7 +4,7 @@ import { UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers.const
 export default defineRole({
   universalIdentifier:
     UNIVERSAL_IDENTIFIERS.roles.defaultRole.universalIdentifier,
-  label: 'default role',
+  label: 'Self hosting default role',
   description: 'Add a description for your role',
   canReadAllObjectRecords: true,
   canUpdateAllObjectRecords: true,
