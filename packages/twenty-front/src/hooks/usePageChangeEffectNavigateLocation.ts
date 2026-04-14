@@ -18,7 +18,7 @@ import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
-  FindOnePageLayoutDocument,
+  FindOnePageLayoutTypeDocument,
   OnboardingStatus,
   PageLayoutType,
 } from '~/generated-metadata/graphql';
@@ -59,7 +59,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   );
 
   const { data: pageLayoutData, loading: isPageLayoutLoading } = useQuery(
-    FindOnePageLayoutDocument,
+    FindOnePageLayoutTypeDocument,
     {
       variables: { id: pageLayoutId ?? '' },
       skip: !isOnPageLayoutPage || !isDefined(pageLayoutId),
