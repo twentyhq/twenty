@@ -141,9 +141,7 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
       .filter(isDefined)
       .filter((widget) => tabIds.has(widget.pageLayoutTabId));
 
-    const fieldsWidgetViews = Object.values(
-      flatViewMaps.byUniversalIdentifier,
-    )
+    const fieldsWidgetViews = Object.values(flatViewMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter((view) => view.type === ViewType.FIELDS_WIDGET);
 
@@ -291,9 +289,7 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
 
     const fieldsWidgetViewUniversalIdentifiers = new Set<string>();
 
-    const views = Object.values(
-      standardMaps.flatViewMaps.byUniversalIdentifier,
-    )
+    const views = Object.values(standardMaps.flatViewMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter((view) => {
         if (view.type !== ViewType.FIELDS_WIDGET) {
