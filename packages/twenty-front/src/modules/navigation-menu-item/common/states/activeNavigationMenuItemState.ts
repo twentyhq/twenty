@@ -5,5 +5,5 @@ export const activeNavigationMenuItemState =
   createAtomState<ActiveNavigationMenuItem | null>({
     key: 'activeNavigationMenuItemState',
     defaultValue: null,
-    useLocalStorage: true,
+    useSessionStorage: true,
   });
