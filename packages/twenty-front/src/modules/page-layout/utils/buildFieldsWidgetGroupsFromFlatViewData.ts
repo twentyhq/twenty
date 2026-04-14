@@ -64,9 +64,7 @@ export const buildFieldsWidgetGroupsFromFlatViewData = ({
   const ungroupedFields = flatViewFields
     .sort((a, b) => a.position - b.position)
     .map((field, index) => {
-      const fieldMetadataItem = fieldMetadataById.get(
-        field.fieldMetadataId,
-      );
+      const fieldMetadataItem = fieldMetadataById.get(field.fieldMetadataId);
 
       if (!isDefined(fieldMetadataItem)) {
         return undefined;

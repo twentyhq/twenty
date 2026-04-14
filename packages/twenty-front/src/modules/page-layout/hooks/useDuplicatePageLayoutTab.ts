@@ -1,17 +1,11 @@
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { useDeepCopyViewInMetadataStore } from '@/page-layout/hooks/useDeepCopyViewInMetadataStore';
+import { useDuplicateFieldsWidgetForPageLayout } from '@/page-layout/hooks/useDuplicateFieldsWidgetForPageLayout';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
-import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
-import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
-import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { buildFieldsWidgetGroupsFromFlatViewData } from '@/page-layout/utils/buildFieldsWidgetGroupsFromFlatViewData';
 import { generateDuplicatedTimestamps } from '@/page-layout/utils/generateDuplicatedTimestamps';
-import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
@@ -25,7 +19,6 @@ import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
-import { WidgetType } from '~/generated-metadata/graphql';
 
 export const useDuplicatePageLayoutTab = ({
   pageLayoutId: pageLayoutIdFromProps,
@@ -49,21 +42,6 @@ export const useDuplicatePageLayoutTab = ({
     pageLayoutId,
   );
 
-  const fieldsWidgetGroupsDraft = useAtomComponentStateCallbackState(
-    fieldsWidgetGroupsDraftComponentState,
-    pageLayoutId,
-  );
-
-  const fieldsWidgetUngroupedFieldsDraft = useAtomComponentStateCallbackState(
-    fieldsWidgetUngroupedFieldsDraftComponentState,
-    pageLayoutId,
-  );
-
-  const fieldsWidgetEditorModeDraft = useAtomComponentStateCallbackState(
-    fieldsWidgetEditorModeDraftComponentState,
-    pageLayoutId,
-  );
-
   const store = useStore();
 
   const setActiveTabId = useSetAtomComponentState(
@@ -80,7 +58,9 @@ export const useDuplicatePageLayoutTab = ({
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
-  const { deepCopyView } = useDeepCopyViewInMetadataStore();
+  const { duplicateFieldsWidget } = useDuplicateFieldsWidgetForPageLayout({
+    pageLayoutId,
+  });
 
   const duplicateTab = useCallback(
     (tabId: string): string => {
@@ -96,14 +76,6 @@ export const useDuplicatePageLayoutTab = ({
         throw new Error(`Tab with id ${tabId} not found`);
       }
 
-      const objectMetadataId = currentPageLayoutDraft.objectMetadataId;
-
-      const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
-      const objectMetadataItem = isDefined(objectMetadataId)
-        ? objectMetadataItems.find((item) => item.id === objectMetadataId)
-        : undefined;
-      const fieldMetadataItems = objectMetadataItem?.fields ?? [];
-
       const newTabId = uuidv4();
       const widgetOldIdNewIdMap = new Map<string, string>();
 
@@ -112,47 +84,17 @@ export const useDuplicatePageLayoutTab = ({
           const newWidgetId = uuidv4();
           widgetOldIdNewIdMap.set(widget.id, newWidgetId);
 
-          let clonedConfiguration = widget.configuration;
-          const sourceViewId = getWidgetConfigurationViewId(
-            widget.configuration,
-          );
+          const fieldsWidgetCopyResult = duplicateFieldsWidget({
+            sourceWidget: widget,
+            newWidgetId,
+          });
 
-          if (
-            widget.type === WidgetType.FIELDS &&
-            isDefined(sourceViewId)
-          ) {
-            const copyResult = deepCopyView(sourceViewId);
-
-            if (isDefined(copyResult)) {
-              clonedConfiguration = {
+          const clonedConfiguration = isDefined(fieldsWidgetCopyResult)
+            ? {
                 ...widget.configuration,
-                viewId: copyResult.newViewId,
-              };
-
-              const buildResult = buildFieldsWidgetGroupsFromFlatViewData({
-                flatViewFieldGroups: copyResult.copiedViewFieldGroups,
-                flatViewFields: copyResult.copiedViewFields,
-                fieldMetadataItems,
-              });
-
-              if (buildResult.editorMode === 'grouped') {
-                store.set(fieldsWidgetGroupsDraft, (prev) => ({
-                  ...prev,
-                  [newWidgetId]: buildResult.groups,
-                }));
-              } else {
-                store.set(fieldsWidgetUngroupedFieldsDraft, (prev) => ({
-                  ...prev,
-                  [newWidgetId]: buildResult.ungroupedFields,
-                }));
+                viewId: fieldsWidgetCopyResult.newViewId,
               }
-
-              store.set(fieldsWidgetEditorModeDraft, (prev) => ({
-                ...prev,
-                [newWidgetId]: buildResult.editorMode,
-              }));
-            }
-          }
+            : widget.configuration;
 
           return {
             ...widget,
@@ -225,10 +167,7 @@ export const useDuplicatePageLayoutTab = ({
     },
     [
       closeSidePanelMenu,
-      deepCopyView,
-      fieldsWidgetEditorModeDraft,
-      fieldsWidgetGroupsDraft,
-      fieldsWidgetUngroupedFieldsDraft,
+      duplicateFieldsWidget,
       navigatePageLayoutSidePanel,
       pageLayoutCurrentLayouts,
       pageLayoutDraft,

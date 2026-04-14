@@ -1,19 +1,13 @@
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { useDeepCopyViewInMetadataStore } from '@/page-layout/hooks/useDeepCopyViewInMetadataStore';
+import { useDuplicateFieldsWidgetForPageLayout } from '@/page-layout/hooks/useDuplicateFieldsWidgetForPageLayout';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
-import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
-import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
-import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
-import { buildFieldsWidgetGroupsFromFlatViewData } from '@/page-layout/utils/buildFieldsWidgetGroupsFromFlatViewData';
 import { generateDuplicatedTimestamps } from '@/page-layout/utils/generateDuplicatedTimestamps';
 import { getScrollWrapperInstanceIdFromPageLayoutId } from '@/page-layout/utils/getScrollWrapperInstanceIdFromPageLayoutId';
 import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
-import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -22,7 +16,6 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
-import { WidgetType } from '~/generated-metadata/graphql';
 
 export const useDuplicatePageLayoutWidget = (
   pageLayoutIdFromProps?: string,
@@ -42,21 +35,6 @@ export const useDuplicatePageLayoutWidget = (
     pageLayoutId,
   );
 
-  const fieldsWidgetGroupsDraft = useAtomComponentStateCallbackState(
-    fieldsWidgetGroupsDraftComponentState,
-    pageLayoutId,
-  );
-
-  const fieldsWidgetUngroupedFieldsDraft = useAtomComponentStateCallbackState(
-    fieldsWidgetUngroupedFieldsDraftComponentState,
-    pageLayoutId,
-  );
-
-  const fieldsWidgetEditorModeDraft = useAtomComponentStateCallbackState(
-    fieldsWidgetEditorModeDraftComponentState,
-    pageLayoutId,
-  );
-
   const setPageLayoutEditingWidgetId = useSetAtomComponentState(
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
@@ -68,7 +46,9 @@ export const useDuplicatePageLayoutWidget = (
 
   const store = useStore();
 
-  const { deepCopyView } = useDeepCopyViewInMetadataStore();
+  const { duplicateFieldsWidget } = useDuplicateFieldsWidgetForPageLayout({
+    pageLayoutId,
+  });
 
   const duplicateWidget = useCallback(
     (widgetId: string): string => {
@@ -96,60 +76,17 @@ export const useDuplicatePageLayoutWidget = (
 
       const newWidgetId = uuidv4();
 
-      let clonedConfiguration = sourceWidget.configuration;
+      const fieldsWidgetCopyResult = duplicateFieldsWidget({
+        sourceWidget,
+        newWidgetId,
+      });
 
-      const sourceViewId = getWidgetConfigurationViewId(
-        sourceWidget.configuration,
-      );
-
-      if (
-        sourceWidget.type === WidgetType.FIELDS &&
-        isDefined(sourceViewId)
-      ) {
-        const copyResult = deepCopyView(sourceViewId);
-
-        if (isDefined(copyResult)) {
-          clonedConfiguration = {
+      const clonedConfiguration = isDefined(fieldsWidgetCopyResult)
+        ? {
             ...sourceWidget.configuration,
-            viewId: copyResult.newViewId,
-          };
-
-          const objectMetadataId = pageLayoutDraft.objectMetadataId;
-
-          const objectMetadataItems = store.get(
-            objectMetadataItemsSelector.atom,
-          );
-          const objectMetadataItem = isDefined(objectMetadataId)
-            ? objectMetadataItems.find(
-                (item) => item.id === objectMetadataId,
-              )
-            : undefined;
-          const fieldMetadataItems = objectMetadataItem?.fields ?? [];
-
-          const buildResult = buildFieldsWidgetGroupsFromFlatViewData({
-            flatViewFieldGroups: copyResult.copiedViewFieldGroups,
-            flatViewFields: copyResult.copiedViewFields,
-            fieldMetadataItems,
-          });
-
-          if (buildResult.editorMode === 'grouped') {
-            store.set(fieldsWidgetGroupsDraft, (prev) => ({
-              ...prev,
-              [newWidgetId]: buildResult.groups,
-            }));
-          } else {
-            store.set(fieldsWidgetUngroupedFieldsDraft, (prev) => ({
-              ...prev,
-              [newWidgetId]: buildResult.ungroupedFields,
-            }));
+            viewId: fieldsWidgetCopyResult.newViewId,
           }
-
-          store.set(fieldsWidgetEditorModeDraft, (prev) => ({
-            ...prev,
-            [newWidgetId]: buildResult.editorMode,
-          }));
-        }
-      }
+        : sourceWidget.configuration;
 
       const clonedWidget: PageLayoutWidget = {
         ...sourceWidget,
@@ -218,10 +155,7 @@ export const useDuplicatePageLayoutWidget = (
       return newWidgetId;
     },
     [
-      deepCopyView,
-      fieldsWidgetEditorModeDraft,
-      fieldsWidgetGroupsDraft,
-      fieldsWidgetUngroupedFieldsDraft,
+      duplicateFieldsWidget,
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
       setPageLayoutEditingWidgetId,

@@ -74,6 +74,7 @@ export const useDeepCopyViewInMetadataStore = () => {
       );
 
       addToDraft({ key: 'views', items: [copiedView] });
+
       applyChanges();
 
       return { newViewId, copiedViewFieldGroups, copiedViewFields };
