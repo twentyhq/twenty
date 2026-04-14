@@ -93,9 +93,9 @@ export const SidePanelCommandMenuItemEditPage = () => {
 
   const allowedAvailabilityTypes = new Set<CommandMenuItemAvailabilityType>([
     CommandMenuItemAvailabilityType.GLOBAL,
-    mainContextStoreHasSelectedRecords
-      ? CommandMenuItemAvailabilityType.RECORD_SELECTION
-      : CommandMenuItemAvailabilityType.FALLBACK,
+    ...(mainContextStoreHasSelectedRecords
+      ? [CommandMenuItemAvailabilityType.RECORD_SELECTION]
+      : []),
   ]);
 
   const filteredCommandMenuItems = commandMenuItemsDraft
