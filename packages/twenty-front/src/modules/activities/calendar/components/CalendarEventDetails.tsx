@@ -69,7 +69,8 @@ const StyledHeader = styled.header``;
 const StyledTitle = styled.h2<{ canceled?: boolean }>`
   color: ${themeCssVariables.font.color.primary};
   font-weight: ${themeCssVariables.font.weight.semiBold};
-  margin: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
+  margin: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[0]}
+    ${themeCssVariables.spacing[2]};
   text-decoration: ${({ canceled }) => (canceled ? 'line-through' : 'none')};
 `;
 

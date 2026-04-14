@@ -516,10 +516,12 @@ export class UserResolver {
           workspaceId: workspace.id,
         });
 
-      await this.userWorkspaceService.updateUserWorkspaceLocaleForUserWorkspace({
-        locale: input.update.locale as UserWorkspaceEntity['locale'],
-        userWorkspaceId: targetUserWorkspace.id,
-      });
+      await this.userWorkspaceService.updateUserWorkspaceLocaleForUserWorkspace(
+        {
+          locale: input.update.locale as UserWorkspaceEntity['locale'],
+          userWorkspaceId: targetUserWorkspace.id,
+        },
+      );
     }
 
     return true;
