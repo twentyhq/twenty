@@ -1,7 +1,9 @@
 import { uuidv4 } from 'zod';
 
-import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-
+import {
+  type WorkspaceIteratorReport,
+  WorkspaceIteratorService,
+} from 'src/database/commands/command-runners/workspace-iterator.service';
 import {
   type IntegrationTestContext,
   createUpgradeSequenceRunnerIntegrationTestModule,
@@ -115,7 +117,10 @@ describe('UpgradeSequenceRunnerService — initial workspace in future segment (
     const resumeSpy = jest.spyOn(
       context.runner as any,
       'resumeWorkspaceCommandsFromCursors',
-    );
+    ) as jest.SpyInstance<
+      Promise<WorkspaceIteratorReport>,
+      [{ contiguousWorkspaceSteps: { name: string }[] }]
+    >;
 
     const report = await context.runner.run({
       sequence,
@@ -127,37 +132,28 @@ describe('UpgradeSequenceRunnerService — initial workspace in future segment (
 
     expect(report.totalFailures).toBe(0);
 
-    // Segment A: only WS_1 and WS_2 should be iterated (WS_3 and WS_4 are ahead with isInitial)
-    expect(resumeSpy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        contiguousWorkspaceSteps: expect.arrayContaining([
-          expect.objectContaining({ name: 'Wc0' }),
-          expect.objectContaining({ name: 'Wc1' }),
-          expect.objectContaining({ name: 'Wc2' }),
-        ]),
-      }),
-    );
+    expect(resumeSpy).toHaveBeenCalledTimes(3);
 
-    // Segment B: WS_1, WS_2, and WS_3 should be iterated (WS_4 is still ahead)
-    expect(resumeSpy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        contiguousWorkspaceSteps: expect.arrayContaining([
-          expect.objectContaining({ name: 'Wc3' }),
-          expect.objectContaining({ name: 'Wc4' }),
-          expect.objectContaining({ name: 'Wc5' }),
-        ]),
-      }),
-    );
+    // Segment A
+    expect(
+      resumeSpy.mock.calls[0][0].contiguousWorkspaceSteps.map(
+        (step) => step.name,
+      ),
+    ).toStrictEqual(['Wc0', 'Wc1', 'Wc2']);
 
-    // Segment C: all 4 workspaces should be iterated
-    expect(resumeSpy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        contiguousWorkspaceSteps: expect.arrayContaining([
-          expect.objectContaining({ name: 'Wc6' }),
-          expect.objectContaining({ name: 'Wc7' }),
-        ]),
-      }),
-    );
+    // Segment B
+    expect(
+      resumeSpy.mock.calls[1][0].contiguousWorkspaceSteps.map(
+        (step) => step.name,
+      ),
+    ).toStrictEqual(['Wc3', 'Wc4', 'Wc5']);
+
+    // Segment C
+    expect(
+      resumeSpy.mock.calls[2][0].contiguousWorkspaceSteps.map(
+        (step) => step.name,
+      ),
+    ).toStrictEqual(['Wc6', 'Wc7']);
 
     const iterateCalls = iterateSpy.mock.calls;
 
@@ -176,6 +172,18 @@ describe('UpgradeSequenceRunnerService — initial workspace in future segment (
       WS_3,
       WS_4,
     ]);
+
+    // Instance steps: Ic0 was already completed, Ic1..Ic5 should now be completed too
+    for (const name of ['Ic1', 'Ic2', 'Ic3', 'Ic4', 'Ic5']) {
+      const migration = await testGetLatestMigrationForCommand(
+        context.dataSource,
+        { name },
+      );
+
+      expect(migration).toEqual(
+        expect.objectContaining({ name, status: 'completed', attempt: 1 }),
+      );
+    }
 
     // WS_1 retried Wc1 then completed through Wc7
     const ws1Wc1 = await testGetLatestMigrationForCommand(context.dataSource, {
