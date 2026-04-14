@@ -229,19 +229,19 @@ npx create-twenty-app@latest my-twenty-app --example postcard
 
 يتم الاحتفاظ بالبيانات عبر عمليات إعادة التشغيل في وحدتي تخزين Docker (`twenty-app-dev-data` لـ PostgreSQL، و`twenty-app-dev-storage` للملفات). استخدم `reset` لمسح كل شيء والبدء من جديد.
 
-### Running a test instance
+### تشغيل مثيل الاختبار
 
-Pass `--test` to any `server` command to manage a second, fully isolated instance — useful for running integration tests or experimenting without touching your main dev data.
+مرر `--test` إلى أي أمر `server` لإدارة مثيل ثانٍ معزول تمامًا — مفيد لتشغيل اختبارات التكامل أو للتجربة من دون لمس بيانات التطوير الرئيسية لديك.
 
-| أمر                                | الوصف                                           |
-| ---------------------------------- | ----------------------------------------------- |
-| `yarn twenty server start --test`  | Start the test instance (defaults to port 2021) |
-| `yarn twenty server stop --test`   | Stop the test instance                          |
-| `yarn twenty server status --test` | Show test instance status, URL, and credentials |
-| `yarn twenty server logs --test`   | Stream test instance logs                       |
-| `yarn twenty server reset --test`  | Wipe test data and start fresh                  |
+| أمر                                | الوصف                                                |
+| ---------------------------------- | ---------------------------------------------------- |
+| `yarn twenty server start --test`  | بدء مثيل الاختبار (المنفذ الافتراضي 2021)            |
+| `yarn twenty server stop --test`   | إيقاف مثيل الاختبار                                  |
+| `yarn twenty server status --test` | عرض حالة مثيل الاختبار، وعنوان URL، وبيانات الاعتماد |
+| `yarn twenty server logs --test`   | بث سجلات مثيل الاختبار                               |
+| `yarn twenty server reset --test`  | محو بيانات الاختبار والبدء من جديد                   |
 
-The test instance runs in its own Docker container (`twenty-app-dev-test`) with dedicated volumes (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) and config, so it can run in parallel with your main instance without conflicts. Combine `--test` with `--port` to override the default 2021.
+يعمل مثيل الاختبار في حاوية Docker خاصة به (`twenty-app-dev-test`) مع وحدات تخزين مخصصة (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) وتهيئة مستقلة، بحيث يمكنه العمل بالتوازي مع مثيلك الرئيسي من دون تعارضات. اجمع `--test` مع `--port` لتجاوز القيمة الافتراضية 2021.
 
 <Note>
   يتطلّب الخادم أن يكون **Docker** قيد التشغيل. إذا ظهرت لك رسالة خطأ "Docker not running"، فتأكّد من تشغيل Docker Desktop (أو خادوم Docker).
