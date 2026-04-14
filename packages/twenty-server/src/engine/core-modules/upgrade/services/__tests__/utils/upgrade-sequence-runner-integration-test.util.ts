@@ -306,3 +306,16 @@ export const testGetExecutedMigrationsInOrder = async (
      ORDER BY "createdAt" ASC`,
   );
 };
+
+export const migrationRecordToKey = ({
+  name,
+  workspaceId,
+  status,
+  attempt,
+  isInitial,
+}: ExecutedMigrationRecord): string => {
+  const scope = workspaceId ?? 'instance';
+  const initial = isInitial ? ':initial' : '';
+
+  return `${name}:${scope}:${status}:${attempt}${initial}`;
+};

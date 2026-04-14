@@ -12,6 +12,7 @@ import {
   resetSeedSequenceCounter,
   seedMigration,
   setMockActiveWorkspaceIds,
+  migrationRecordToKey,
   testGetExecutedMigrationsInOrder,
   WS_1,
   WS_2,
@@ -173,20 +174,7 @@ describe('UpgradeSequenceRunnerService — initial workspace in future segment (
     // Verify the full execution log in createdAt order
     const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
 
-    const toKey = ({
-      name,
-      workspaceId,
-      status,
-      attempt,
-      isInitial,
-    }: (typeof executed)[0]) => {
-      const scope = workspaceId ?? 'instance';
-      const initial = isInitial ? ':initial' : '';
-
-      return `${name}:${scope}:${status}:${attempt}${initial}`;
-    };
-
-    expect(executed.map(toKey)).toStrictEqual([
+    expect(executed.map(migrationRecordToKey)).toStrictEqual([
       // Seeds (non-initial, written before the run)
       'Ic0:instance:completed:1',
       `Wc0:${WS_1}:completed:1`,
