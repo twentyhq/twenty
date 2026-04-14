@@ -111,10 +111,9 @@ export default async function PartnerPage() {
       </ThreeCards.Root>
 
       <Testimonials.Root
-        backgroundColor={theme.colors.secondary.background[100]}
+        backgroundColor={theme.colors.secondary.background[5]}
+        backgroundShapeSrc="/images/partner/testimonials/background-shape.webp"
         color={theme.colors.secondary.text[100]}
-        shapeBodyFillColor={theme.colors.secondary.background[100]}
-        shapeFillColor={theme.colors.primary.background[100]}
       >
         <Testimonials.PartnerCarousel
           eyebrow={TESTIMONIALS_DATA.eyebrow}

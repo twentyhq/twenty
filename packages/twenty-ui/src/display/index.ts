@@ -17,6 +17,7 @@ export type { AvatarSize } from './avatar/types/AvatarSize';
 export type { AvatarType } from './avatar/types/AvatarType';
 export type { BannerColor, BannerVariant } from './banner/components/Banner';
 export { Banner } from './banner/components/Banner';
+export { InlineBanner } from './banner/components/InlineBanner';
 export type { SidePanelInformationBannerProps } from './banner/components/SidePanelInformationBanner';
 export { SidePanelInformationBanner } from './banner/components/SidePanelInformationBanner';
 export type { CalloutVariant, CalloutProps } from './callout/Callout';

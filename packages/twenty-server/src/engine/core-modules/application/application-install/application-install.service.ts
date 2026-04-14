@@ -18,10 +18,7 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import {
-  ApplicationPackageFetcherService,
-  type ResolvedPackage,
-} from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
+import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
@@ -109,53 +106,51 @@ export class ApplicationInstallService {
     appRegistration: ApplicationRegistrationEntity,
     params: { version?: string; workspaceId: string },
   ): Promise<boolean> {
-    let resolvedPackage: ResolvedPackage | null = null;
+    const resolvedPackage =
+      await this.applicationPackageFetcherService.resolvePackage(
+        appRegistration,
+        { targetVersion: params.version },
+      );
 
-    try {
-      resolvedPackage =
-        await this.applicationPackageFetcherService.resolvePackage(
-          appRegistration,
-          { targetVersion: params.version },
-        );
+    if (!resolvedPackage) {
+      return true;
+    }
 
-      if (!resolvedPackage) {
-        return true;
-      }
+    const universalIdentifier = appRegistration.universalIdentifier;
 
-      const universalIdentifier = appRegistration.universalIdentifier;
-
-      const existingApplication =
-        await this.applicationService.findByUniversalIdentifier({
-          universalIdentifier,
-          workspaceId: params.workspaceId,
-        });
-
-      const previousVersion = existingApplication?.version ?? undefined;
-
-      const newVersion = resolvedPackage.packageJson.version;
-
-      if (!isDefined(newVersion)) {
-        throw new ApplicationException(
-          `Package ${universalIdentifier} has no version`,
-          ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
-        );
-      }
-
-      const isVersionUpgrade = isDefined(existingApplication);
-
-      const { application, wasCreated } = await this.ensureApplicationExists({
-        existingApplication,
+    const existingApplication =
+      await this.applicationService.findByUniversalIdentifier({
         universalIdentifier,
-        name: resolvedPackage.manifest.application.displayName,
         workspaceId: params.workspaceId,
-        applicationRegistrationId: appRegistration.id,
-        sourceType: appRegistration.sourceType,
       });
 
-      const incomingVersion = resolvedPackage.packageJson.version;
+    const isVersionUpgrade = isDefined(existingApplication);
 
+    const previousVersion = existingApplication?.version ?? undefined;
+
+    const newVersion = resolvedPackage.packageJson.version;
+
+    if (!isDefined(newVersion)) {
+      throw new ApplicationException(
+        `Package ${universalIdentifier} has no version`,
+        ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
+      );
+    }
+
+    const application = await this.ensureApplicationExists({
+      existingApplication,
+      universalIdentifier,
+      name: resolvedPackage.manifest.application.displayName,
+      workspaceId: params.workspaceId,
+      applicationRegistrationId: appRegistration.id,
+      sourceType: appRegistration.sourceType,
+    });
+
+    const incomingVersion = resolvedPackage.packageJson.version;
+
+    try {
       if (
-        !wasCreated &&
+        isVersionUpgrade &&
         isDefined(application.version) &&
         isDefined(incomingVersion)
       ) {
@@ -207,7 +202,7 @@ export class ApplicationInstallService {
           applicationRegistrationId: appRegistration.id,
         });
 
-      if (wasCreated || hasSchemaMetadataChanged) {
+      if (!isVersionUpgrade || hasSchemaMetadataChanged) {
         await this.sdkClientGenerationService.generateSdkClientForApplication({
           workspaceId: params.workspaceId,
           applicationId: application.id,
@@ -233,6 +228,13 @@ export class ApplicationInstallService {
       this.logger.error(
         `Failed to install app ${appRegistration.universalIdentifier}: ${error}`,
       );
+
+      if (!isVersionUpgrade) {
+        await this.applicationSyncService.uninstallApplication({
+          applicationUniversalIdentifier: universalIdentifier,
+          workspaceId: params.workspaceId,
+        });
+      }
 
       throw error;
     } finally {
@@ -507,12 +509,12 @@ export class ApplicationInstallService {
     workspaceId: string;
     applicationRegistrationId: string;
     sourceType: ApplicationRegistrationSourceType;
-  }): Promise<{ application: ApplicationEntity; wasCreated: boolean }> {
+  }): Promise<ApplicationEntity> {
     if (isDefined(params.existingApplication)) {
-      return { application: params.existingApplication, wasCreated: false };
+      return params.existingApplication;
     }
 
-    const application = await this.applicationService.create({
+    return await this.applicationService.create({
       universalIdentifier: params.universalIdentifier,
       name: params.name,
       sourcePath: params.universalIdentifier,
@@ -520,7 +522,5 @@ export class ApplicationInstallService {
       applicationRegistrationId: params.applicationRegistrationId,
       workspaceId: params.workspaceId,
     });
-
-    return { application, wasCreated: true };
   }
 }

@@ -9,8 +9,6 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
-import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
@@ -18,16 +16,6 @@ import {
 import { MessagingMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-message-list-fetch.service';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-
-const toIsoStringOrNull = (
-  value: string | Date | null | undefined,
-): string | null => {
-  if (value == null) {
-    return null;
-  }
-
-  return value instanceof Date ? value.toISOString() : value;
-};
 
 export type MessagingMessageListFetchJobData = {
   messageChannelId: string;
@@ -46,7 +34,6 @@ export class MessagingMessageListFetchJob {
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
-    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
   ) {}
 
   @Process(MessagingMessageListFetchJob.name)
@@ -88,22 +75,6 @@ export class MessagingMessageListFetchJob {
       }
 
       try {
-        if (
-          isThrottled(
-            toIsoStringOrNull(messageChannel.syncStageStartedAt),
-            messageChannel.throttleFailureCount,
-            toIsoStringOrNull(messageChannel.throttleRetryAfter),
-          )
-        ) {
-          await this.messageChannelSyncStatusService.markAsMessagesListFetchPending(
-            [messageChannel.id],
-            workspaceId,
-            true,
-          );
-
-          return;
-        }
-
         await this.messagingMonitoringService.track({
           eventName: 'message_list_fetch.started',
           workspaceId,

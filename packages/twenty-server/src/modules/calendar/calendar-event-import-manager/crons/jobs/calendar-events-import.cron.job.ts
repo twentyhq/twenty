@@ -1,7 +1,8 @@
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { DataSource, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { CalendarChannelSyncStage } from 'twenty-shared/types';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
@@ -12,8 +13,13 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type CalendarEventListFetchJobData } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
-import { CalendarEventsImportJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
+import {
+  CalendarEventsImportJob,
+  type CalendarEventsImportJobData,
+} from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
+import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
+import { toIsoStringOrNull } from 'src/utils/date/toIsoStringOrNull';
 
 export const CALENDAR_EVENTS_IMPORT_CRON_PATTERN = '*/1 * * * *';
 
@@ -21,13 +27,15 @@ export const CALENDAR_EVENTS_IMPORT_CRON_PATTERN = '*/1 * * * *';
   queueName: MessageQueue.cronQueue,
 })
 export class CalendarEventsImportCronJob {
+  private readonly logger = new Logger(CalendarEventsImportCronJob.name);
+
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
+    @InjectRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
@@ -45,18 +53,67 @@ export class CalendarEventsImportCronJob {
 
     for (const activeWorkspace of activeWorkspaces) {
       try {
-        const now = new Date().toISOString();
+        const pendingCalendarChannels =
+          await this.calendarChannelRepository.find({
+            where: {
+              workspaceId: activeWorkspace.id,
+              isSyncEnabled: true,
+              syncStage:
+                CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
+            },
+          });
 
-        const [calendarChannels] = await this.coreDataSource.query(
-          `UPDATE core."calendarChannel" SET "syncStage" = '${CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED}', "syncStageStartedAt" = COALESCE("syncStageStartedAt", '${now}')
-           WHERE "workspaceId" = '${activeWorkspace.id}' AND "isSyncEnabled" = true AND "syncStage" = '${CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING}' RETURNING *`,
+        const calendarChannelsToSchedule = pendingCalendarChannels.filter(
+          (calendarChannel) =>
+            !isThrottled(
+              toIsoStringOrNull(calendarChannel.syncStageStartedAt),
+              calendarChannel.throttleFailureCount,
+            ),
         );
 
-        for (const calendarChannel of calendarChannels) {
-          await this.messageQueueService.add<CalendarEventListFetchJobData>(
+        const throttledCount =
+          pendingCalendarChannels.length - calendarChannelsToSchedule.length;
+
+        if (throttledCount > 0) {
+          this.logger.log(
+            `Skipped ${throttledCount} throttled calendar channels for workspace ${activeWorkspace.id}`,
+          );
+        }
+
+        if (calendarChannelsToSchedule.length === 0) {
+          continue;
+        }
+
+        const calendarChannelIds = calendarChannelsToSchedule.map(
+          (calendarChannel) => calendarChannel.id,
+        );
+
+        const updateResult = await this.calendarChannelRepository
+          .createQueryBuilder()
+          .update()
+          .set({
+            syncStage:
+              CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED,
+            syncStageStartedAt: new Date(),
+          })
+          .where({
+            id: In(calendarChannelIds),
+            workspaceId: activeWorkspace.id,
+            isSyncEnabled: true,
+            syncStage: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
+          })
+          .returning('id')
+          .execute();
+
+        const updatedIds = updateResult.raw.map(
+          (row: { id: string }) => row.id,
+        );
+
+        for (const calendarChannelId of updatedIds) {
+          await this.messageQueueService.add<CalendarEventsImportJobData>(
             CalendarEventsImportJob.name,
             {
-              calendarChannelId: calendarChannel.id,
+              calendarChannelId,
               workspaceId: activeWorkspace.id,
             },
           );

@@ -10,6 +10,7 @@ export const cssVariables = css`
     --color-white-10: #FFFFFF1A;
 
     --color-black-100: #1C1C1C;
+    --color-black-hover: #333333;
     --color-black-80: #1C1C1CCC;
     --color-black-60: #1C1C1C99;
     --color-black-40: #1C1C1C66;

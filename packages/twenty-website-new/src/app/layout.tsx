@@ -85,6 +85,7 @@ export default async function RootLayout({
     <html lang="en">
       <body
         className={`${cssVariables} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable} ${vt323.variable}`}
+        suppressHydrationWarning
       >
         <ContactCalModalRoot>
           <StyledMain>{children}</StyledMain>

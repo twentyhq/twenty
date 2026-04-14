@@ -672,6 +672,11 @@ msgstr "About this user"
 msgid "About this workspace"
 msgstr "About this workspace"
 
+#. js-lingui-id: LuXP9q
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Access"
+msgstr "Access"
+
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Access Key ID"
@@ -3564,9 +3569,7 @@ msgid "Content"
 msgstr "Content"
 
 #. js-lingui-id: M73whl
-#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Context"
 msgstr "Context"
@@ -12032,11 +12035,6 @@ msgstr "Reset 2FA"
 msgid "Reset label to default"
 msgstr "Reset label to default"
 
-#. js-lingui-id: 1IWc1n
-#: src/modules/side-panel/pages/root/components/SidePanelResetContextToSelectionButton.tsx
-msgid "Reset to"
-msgstr "Reset to"
-
 #. js-lingui-id: L+rMC9
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
@@ -14194,6 +14192,11 @@ msgstr "There is no activity associated with this record."
 #: src/pages/auth/PasswordReset.tsx
 msgid "There was an error while updating password."
 msgstr "There was an error while updating password."
+
+#. js-lingui-id: vg1S0X
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "These apps are not vetted. Use at your own risk."
+msgstr "These apps are not vetted. Use at your own risk."
 
 #. js-lingui-id: AUV+TY
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx

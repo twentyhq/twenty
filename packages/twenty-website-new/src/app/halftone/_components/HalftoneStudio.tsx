@@ -13,11 +13,13 @@ import {
 } from '@/app/halftone/_lib/geometry-registry';
 import { REFERENCE_PREVIEW_DISTANCE } from '@/app/halftone/_lib/footprint';
 import {
+  DEFAULT_REACT_EXPORT_SETTINGS,
   deriveExportComponentName,
   generateReactComponent,
   generateStandaloneHtml,
   getExportedModelFile,
   parseExportedPreset,
+  type ReactExportSettings,
 } from '@/app/halftone/_lib/exporters';
 import {
   DEFAULT_IMAGE_HALFTONE_SETTINGS,
@@ -203,6 +205,25 @@ function downloadText(filename: string, content: string) {
   downloadBlob(filename, new Blob([content], { type: 'text/plain' }));
 }
 
+function getFilenameExtension(
+  filename: string | null | undefined,
+  fallbackExtension: string,
+) {
+  const sanitizedFilename = filename?.split(/[?#]/, 1)[0] ?? '';
+  const match = sanitizedFilename.match(/(\.[^.\\/]+)$/);
+
+  return match?.[1] ?? fallbackExtension;
+}
+
+function getAssetFilenameFromUrl(assetUrl: string, fallbackFilename: string) {
+  const sanitizedAssetUrl = assetUrl.split(/[?#]/, 1)[0].replace(/\/+$/, '');
+  const assetFilename = sanitizedAssetUrl.split('/').filter(Boolean).pop();
+
+  return assetFilename && assetFilename.length > 0
+    ? assetFilename
+    : fallbackFilename;
+}
+
 function createInitialExportPose(): HalftoneExportPose {
   return {
     autoElapsed: 0,
@@ -291,6 +312,9 @@ export function HalftoneStudio() {
   );
   const [exportBackground, setExportBackground] = useState(false);
   const [exportName, setExportName] = useState('');
+  const [reactExportSettings, setReactExportSettings] =
+    useState<ReactExportSettings>(DEFAULT_REACT_EXPORT_SETTINGS);
+  const [reactAssetPublicUrl, setReactAssetPublicUrl] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageElement, setImageElement] = useState<HTMLImageElement | null>(
     null,
@@ -362,6 +386,38 @@ export function HalftoneStudio() {
     () => resolveExportArtifactNames(exportName, defaultExportName),
     [defaultExportName, exportName],
   );
+  const reactExportUsesExternalAsset = useMemo(
+    () =>
+      state.settings.sourceMode === 'image' ||
+      selectedShape?.kind === 'imported',
+    [selectedShape?.kind, state.settings.sourceMode],
+  );
+  const defaultReactAssetPublicUrl = useMemo(() => {
+    if (!reactExportUsesExternalAsset) {
+      return '';
+    }
+
+    const assetExtension =
+      state.settings.sourceMode === 'image'
+        ? getFilenameExtension(
+            imageFile?.name ?? DEFAULT_IMAGE_FILENAME,
+            '.svg',
+          )
+        : getFilenameExtension(
+            selectedImportedFile?.name ?? selectedShape?.filename,
+            selectedShape?.loader === 'fbx' ? '.fbx' : '.glb',
+          );
+
+    return `/illustrations/generated/${exportArtifactNames.fileBaseName}${assetExtension}`;
+  }, [
+    exportArtifactNames.fileBaseName,
+    imageFile?.name,
+    reactExportUsesExternalAsset,
+    selectedImportedFile?.name,
+    selectedShape?.filename,
+    selectedShape?.loader,
+    state.settings.sourceMode,
+  ]);
 
   useEffect(() => {
     halftoneBySourceModeReference.current[state.settings.sourceMode] = {
@@ -831,6 +887,16 @@ export function HalftoneStudio() {
     exportPoseReference.current = pose;
   }, []);
 
+  const handleReactExportSettingChange = useCallback(
+    (key: keyof ReactExportSettings, value: boolean) => {
+      setReactExportSettings((currentSettings) => ({
+        ...currentSettings,
+        [key]: value,
+      }));
+    },
+    [],
+  );
+
   const handleExportReact = useCallback(() => {
     const componentName = exportArtifactNames.componentName;
     const kebabName = exportArtifactNames.fileBaseName;
@@ -839,28 +905,45 @@ export function HalftoneStudio() {
     const exportBackgroundColor = exportBackground
       ? state.settings.background.color
       : 'transparent';
+    const effectiveReactAssetPublicUrl =
+      reactExportSettings.includePublicAssetUrl && reactExportUsesExternalAsset
+        ? reactAssetPublicUrl.trim() || defaultReactAssetPublicUrl
+        : undefined;
 
-    const modelFilename = importedFile
+    const defaultModelFilename = importedFile
       ? `${kebabName}${importedFile.name.replace(/^[^.]*/, '')}`
       : undefined;
+    const modelFilename =
+      effectiveReactAssetPublicUrl && defaultModelFilename
+        ? getAssetFilenameFromUrl(
+            effectiveReactAssetPublicUrl,
+            defaultModelFilename,
+          )
+        : defaultModelFilename;
 
-    const imageExportFilename = imageFile
+    const defaultImageExportFilename = imageFile
       ? `${kebabName}${imageFile.name.replace(/^[^.]*/, '')}`
       : undefined;
+    const imageExportFilename =
+      effectiveReactAssetPublicUrl && defaultImageExportFilename
+        ? getAssetFilenameFromUrl(
+            effectiveReactAssetPublicUrl,
+            defaultImageExportFilename,
+          )
+        : defaultImageExportFilename;
 
     downloadText(
       `${componentName}.tsx`,
-      generateReactComponent(
-        state.settings,
-        selectedShape,
-        componentName,
-        modelFilename,
-        exportPoseReference.current,
+      generateReactComponent(state.settings, selectedShape, componentName, {
+        assetUrl: effectiveReactAssetPublicUrl,
+        background: exportBackgroundColor,
+        imageFilename: imageExportFilename,
+        importedFile: importedFile ?? undefined,
+        initialPose: exportPoseReference.current,
+        modelFilenameOverride: modelFilename,
+        exportSettings: reactExportSettings,
         previewDistance,
-        importedFile ?? undefined,
-        imageExportFilename,
-        exportBackgroundColor,
-      ),
+      }),
     );
 
     if (isImageMode && imageFile) {
@@ -869,10 +952,14 @@ export function HalftoneStudio() {
       downloadBlob(modelFilename ?? importedFile.name, importedFile);
     }
   }, [
+    defaultReactAssetPublicUrl,
     exportArtifactNames,
     exportBackground,
     imageFile,
     previewDistance,
+    reactAssetPublicUrl,
+    reactExportSettings,
+    reactExportUsesExternalAsset,
     selectedImportedFile,
     selectedShape,
     state.settings,
@@ -928,12 +1015,14 @@ export function HalftoneStudio() {
         state.settings,
         selectedShape,
         componentName,
-        modelFilename,
-        exportPoseReference.current,
-        previewDistance,
-        importedFile ?? undefined,
-        imageExportFilename,
-        exportBackgroundColor,
+        {
+          background: exportBackgroundColor,
+          imageFilename: imageExportFilename,
+          importedFile: importedFile ?? undefined,
+          initialPose: exportPoseReference.current,
+          modelFilenameOverride: modelFilename,
+          previewDistance,
+        },
       ),
     );
 
@@ -1124,6 +1213,8 @@ export function HalftoneStudio() {
             }}
             onExportNameChange={setExportName}
             onExportReact={handleExportReact}
+            onReactAssetPublicUrlChange={setReactAssetPublicUrl}
+            onReactExportSettingChange={handleReactExportSettingChange}
             onImportPreset={() => {
               void handleImportPreset();
             }}
@@ -1150,9 +1241,16 @@ export function HalftoneStudio() {
               void handleUploadSource();
             }}
             previewDistance={previewDistance}
+            reactAssetPublicUrl={reactAssetPublicUrl}
+            reactExportSettings={reactExportSettings}
             selectedShape={selectedShape}
             settings={state.settings}
             shapeOptions={shapeOptions}
+            defaultReactAssetPublicUrl={defaultReactAssetPublicUrl}
+            showReactAssetPublicUrl={
+              reactExportSettings.includePublicAssetUrl &&
+              reactExportUsesExternalAsset
+            }
             visible={controlsVisible}
           />
         </ControlsPanelFrame>

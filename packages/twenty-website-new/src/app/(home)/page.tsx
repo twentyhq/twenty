@@ -183,8 +183,8 @@ export default async function HomePage() {
 
       <Testimonials.Root
         backgroundColor={theme.colors.secondary.background[5]}
+        backgroundShapeSrc="/images/home/testimonials/background-shape.webp"
         color={theme.colors.primary.text[100]}
-        shapeFillColor={theme.colors.primary.background[100]}
       >
         <Testimonials.Carousel
           eyebrow={TESTIMONIALS_DATA.eyebrow}
