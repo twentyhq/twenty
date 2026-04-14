@@ -27,6 +27,7 @@ export const DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       applicationId: '',
       id: 'workflow-version-tab-fields',
+      isActive: true,
       title: 'Home',
       icon: 'IconHome',
       position: 100,
@@ -39,6 +40,7 @@ export const DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT: PageLayout = {
         {
           __typename: 'PageLayoutWidget',
           id: 'workflow-version-widget-fields',
+          isActive: true,
           pageLayoutTabId: 'workflow-version-tab-fields',
           title: 'Fields',
           type: WidgetType.FIELDS,
@@ -66,6 +68,7 @@ export const DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       applicationId: '',
       id: 'workflow-version-tab-flow',
+      isActive: true,
       title: 'Flow',
       icon: 'IconSettings',
       position: 200,
@@ -78,6 +81,7 @@ export const DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT: PageLayout = {
         {
           __typename: 'PageLayoutWidget',
           id: 'workflow-version-widget-flow',
+          isActive: true,
           pageLayoutTabId: 'workflow-version-tab-flow',
           title: 'Flow',
           type: WidgetType.WORKFLOW_VERSION,

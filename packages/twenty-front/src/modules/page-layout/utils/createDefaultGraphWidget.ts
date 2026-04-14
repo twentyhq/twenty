@@ -72,6 +72,7 @@ export const createDefaultGraphWidget = ({
     id,
     pageLayoutTabId,
     title,
+    isActive: true,
     type: WidgetType.GRAPH,
     configuration,
     gridPosition,

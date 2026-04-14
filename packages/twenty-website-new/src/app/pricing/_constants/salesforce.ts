@@ -202,7 +202,8 @@ export const SALESFORCE_DATA: SalesforceDataType = {
           body: 'become a genius!',
           titleBar: SALESFORCE_POPUP_TITLE,
         },
-        rightLabel: '+$75/user per month',
+        rightLabel: '+$75/user per month\nSwitch to enterprise!',
+        sharedCostKey: 'enterprise-plan',
       },
       {
         cost: 75,

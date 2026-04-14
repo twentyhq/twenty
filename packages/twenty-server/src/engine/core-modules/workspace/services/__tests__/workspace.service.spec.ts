@@ -37,6 +37,8 @@ import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/co
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 
 describe('WorkspaceService', () => {
@@ -123,7 +125,9 @@ describe('WorkspaceService', () => {
           PermissionsService,
           FileCorePictureService,
           AiModelRegistryService,
+          ApplicationService,
           PrefillLogicFunctionService,
+          WorkspaceMigrationValidateBuildAndRunService,
           UpgradeMigrationService,
           UpgradeSequenceReaderService,
         ].map((service) => ({

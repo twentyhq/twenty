@@ -169,8 +169,14 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
         bundle.workspaceCommands.length;
 
       if (totalCount > 0) {
+        const crossUpgradeLabel = (
+          TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS as readonly string[]
+        ).includes(version)
+          ? 'cross-upgrade supported'
+          : 'pre-release';
+
         this.logger.log(
-          `Registered ${bundle.fastInstanceCommands.length} fast instance, ${bundle.slowInstanceCommands.length} slow instance, and ${bundle.workspaceCommands.length} workspace command(s) for ${version}`,
+          `Registered ${bundle.fastInstanceCommands.length} fast instance, ${bundle.slowInstanceCommands.length} slow instance, and ${bundle.workspaceCommands.length} workspace command(s) for ${version} (${crossUpgradeLabel})`,
         );
       }
     }
@@ -247,31 +253,14 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
   }
 
   private validateAtLeastOneVersionBundleHasWorkspaceCommands(): void {
-    let totalCommandCount = 0;
     let hasWorkspaceCommands = false;
 
     for (const version of TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS) {
       const bundle = this.getBundleForVersion(version);
 
-      totalCommandCount +=
-        bundle.fastInstanceCommands.length +
-        bundle.slowInstanceCommands.length +
-        bundle.workspaceCommands.length;
-
       if (bundle.workspaceCommands.length > 0) {
         hasWorkspaceCommands = true;
       }
-    }
-
-    // UpgradeModule is loaded in the worker transitively via WorkspaceModule,
-    // but no command modules are imported — zero providers are discovered.
-    // TODO: split WorkspaceModule so the worker doesn't pull in UpgradeModule
-    if (totalCommandCount === 0) {
-      this.logger.warn(
-        'No upgrade commands discovered — skipping workspace command validation',
-      );
-
-      return;
     }
 
     if (!hasWorkspaceCommands) {

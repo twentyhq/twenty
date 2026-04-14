@@ -4,16 +4,10 @@ import { uploadMultipleFiles } from '@/object-record/record-field/ui/meta-types/
 import { filesFieldUploadState } from '@/object-record/record-field/ui/states/filesFieldUploadState';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
-import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { useRemoveLastFocusItemFromFocusStackByComponentType } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackByComponentType';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useStore } from 'jotai';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
@@ -24,13 +18,6 @@ export const useOpenFilesFieldInput = () => {
   const { openFileUpload } = useFileUpload();
   const { uploadFile } = useUploadFilesFieldFile();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const { removeLastFocusItemFromFocusStackByComponentType } =
-    useRemoveLastFocusItemFromFocusStackByComponentType();
-  const { goBackToPreviousDropdownFocusId } =
-    useGoBackToPreviousDropdownFocusId();
-  const recordTableId = useAvailableComponentInstanceId(
-    RecordTableComponentInstanceContext,
-  );
   const { enqueueErrorSnackBar } = useSnackBar();
   const { t } = useLingui();
   const store = useStore();
@@ -42,7 +29,7 @@ export const useOpenFilesFieldInput = () => {
       recordId,
       prefix,
       updateRecord,
-      onClose,
+      onFileUploadClose,
       fieldDefinition,
     }: {
       fieldName: string;
@@ -50,7 +37,7 @@ export const useOpenFilesFieldInput = () => {
       recordId: string;
       prefix?: string;
       updateRecord: (updateInput: Record<string, unknown>) => void;
-      onClose?: () => void;
+      onFileUploadClose?: () => void;
       fieldDefinition?: {
         metadata: {
           settings?: {
@@ -86,8 +73,6 @@ export const useOpenFilesFieldInput = () => {
         return;
       }
 
-      const isTableContext = prefix === RECORD_TABLE_CELL_INPUT_ID_PREFIX;
-
       const maxNumberOfValues =
         fieldDefinition?.metadata?.settings?.maxNumberOfValues ??
         MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
@@ -112,20 +97,7 @@ export const useOpenFilesFieldInput = () => {
               null,
             );
 
-            if (isTableContext && isDefined(recordTableId)) {
-              store.set(
-                recordTableCellEditModePositionComponentState.atomFamily({
-                  instanceId: recordTableId,
-                }),
-                null,
-              );
-              goBackToPreviousDropdownFocusId();
-              removeLastFocusItemFromFocusStackByComponentType({
-                componentType: FocusComponentType.OPENED_FIELD_INPUT,
-              });
-            } else {
-              onClose?.();
-            }
+            onFileUploadClose?.();
             return;
           }
 
@@ -152,20 +124,7 @@ export const useOpenFilesFieldInput = () => {
               null,
             );
 
-            if (isTableContext && isDefined(recordTableId)) {
-              store.set(
-                recordTableCellEditModePositionComponentState.atomFamily({
-                  instanceId: recordTableId,
-                }),
-                null,
-              );
-              goBackToPreviousDropdownFocusId();
-              removeLastFocusItemFromFocusStackByComponentType({
-                componentType: FocusComponentType.OPENED_FIELD_INPUT,
-              });
-            } else {
-              onClose?.();
-            }
+            onFileUploadClose?.();
           }
         },
         onCancel: () => {
@@ -174,20 +133,7 @@ export const useOpenFilesFieldInput = () => {
             null,
           );
 
-          if (isTableContext && isDefined(recordTableId)) {
-            store.set(
-              recordTableCellEditModePositionComponentState.atomFamily({
-                instanceId: recordTableId,
-              }),
-              null,
-            );
-            goBackToPreviousDropdownFocusId();
-            removeLastFocusItemFromFocusStackByComponentType({
-              componentType: FocusComponentType.OPENED_FIELD_INPUT,
-            });
-          } else {
-            onClose?.();
-          }
+          onFileUploadClose?.();
         },
       });
     },
@@ -195,9 +141,6 @@ export const useOpenFilesFieldInput = () => {
       openFileUpload,
       uploadFile,
       pushFocusItemToFocusStack,
-      recordTableId,
-      goBackToPreviousDropdownFocusId,
-      removeLastFocusItemFromFocusStackByComponentType,
       enqueueErrorSnackBar,
       t,
       store,

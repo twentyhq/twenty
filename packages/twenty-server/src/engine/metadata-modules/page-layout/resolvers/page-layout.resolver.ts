@@ -126,6 +126,18 @@ export class PageLayoutResolver {
     });
   }
 
+  @Mutation(() => PageLayoutDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
+  async resetPageLayoutToDefault(
+    @Args('id', { type: () => String }) id: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<PageLayoutDTO> {
+    return this.pageLayoutResetService.resetPageLayoutToDefault({
+      id,
+      workspaceId: workspace.id,
+    });
+  }
+
   @Mutation(() => PageLayoutWidgetDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async resetPageLayoutWidgetToDefault(
