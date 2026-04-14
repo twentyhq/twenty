@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
@@ -33,6 +34,18 @@ export const getPageLayoutWidgetFlatEntitySeeds = ({
   const seeds = getPageLayoutWidgetDataSeeds(workspaceId, objectMetadataItems);
   const now = new Date().toISOString();
 
+  const fieldMetadataUniversalIdentifierById: Record<string, string> = {};
+
+  for (const objectMetadata of objectMetadataItems) {
+    if (!isDefined(objectMetadata.fields)) {
+      continue;
+    }
+    for (const field of objectMetadata.fields) {
+      fieldMetadataUniversalIdentifierById[field.id] =
+        field.universalIdentifier;
+    }
+  }
+
   return seeds.map((seed) => {
     const objectMetadata = isDefined(seed.objectMetadataId)
       ? objectMetadataItems.find(
@@ -40,6 +53,12 @@ export const getPageLayoutWidgetFlatEntitySeeds = ({
             objectMetadataItem.id === seed.objectMetadataId,
         )
       : undefined;
+
+    const universalConfiguration =
+      fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+        configuration: seed.configuration,
+        fieldMetadataUniversalIdentifierById,
+      });
 
     return {
       ...seed,
@@ -50,7 +69,7 @@ export const getPageLayoutWidgetFlatEntitySeeds = ({
       pageLayoutTabUniversalIdentifier: seed.pageLayoutTabId,
       objectMetadataUniversalIdentifier:
         objectMetadata?.universalIdentifier ?? null,
-      universalConfiguration: seed.configuration,
+      universalConfiguration,
       conditionalDisplay: null,
       conditionalAvailabilityExpression: null,
       isActive: true,
@@ -342,13 +361,13 @@ export const getPageLayoutWidgetDataSeeds = (
           ),
           title: 'Companies by Size (Stacked by City)',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 8, rowSpan: 10, columnSpan: 8 },
+          gridPosition: { row: 0, column: 6, rowSpan: 10, columnSpan: 6 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 0,
-            column: 8,
+            column: 6,
             rowSpan: 10,
-            columnSpan: 8,
+            columnSpan: 6,
           },
           configuration: {
             configurationType: WidgetConfigurationType.BAR_CHART,
