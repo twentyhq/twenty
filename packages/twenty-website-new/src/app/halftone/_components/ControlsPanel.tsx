@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactExportSettings } from '@/app/halftone/_lib/exporters';
 import { IconLayoutSidebarRightCollapse, IconShare } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
 import type {
@@ -33,6 +34,11 @@ type ControlsPanelProps = {
   onExportNameChange: (value: string) => void;
   onExportReact: () => void;
   onImportPreset: () => void;
+  onReactAssetPublicUrlChange: (value: string) => void;
+  onReactExportSettingChange: (
+    key: keyof ReactExportSettings,
+    value: boolean,
+  ) => void;
   onHalftoneChange: (
     value: Partial<HalftoneStudioSettings['halftone']>,
   ) => void;
@@ -49,10 +55,14 @@ type ControlsPanelProps = {
   onToggleVisibility: () => void;
   onUploadSource: () => void;
   previewDistance: number;
+  reactAssetPublicUrl: string;
+  reactExportSettings: ReactExportSettings;
   visible: boolean;
   selectedShape: HalftoneGeometrySpec | undefined;
   settings: HalftoneStudioSettings;
   shapeOptions: Array<{ label: string; value: string }>;
+  defaultReactAssetPublicUrl: string;
+  showReactAssetPublicUrl: boolean;
 };
 
 const TABS: HalftoneTabId[] = ['design', 'animations', 'export'];
@@ -129,6 +139,8 @@ export function ControlsPanel({
   onExportNameChange,
   onExportReact,
   onImportPreset,
+  onReactAssetPublicUrlChange,
+  onReactExportSettingChange,
   onHalftoneChange,
   onLightingChange,
   onMaterialChange,
@@ -139,10 +151,14 @@ export function ControlsPanel({
   onToggleVisibility,
   onUploadSource,
   previewDistance,
+  reactAssetPublicUrl,
+  reactExportSettings,
   visible,
   selectedShape,
   settings,
   shapeOptions,
+  defaultReactAssetPublicUrl,
+  showReactAssetPublicUrl,
 }: ControlsPanelProps) {
   return (
     <PanelShell $collapsed={!visible}>
@@ -226,8 +242,14 @@ export function ControlsPanel({
           onExportNameChange={onExportNameChange}
           onExportReact={onExportReact}
           onImportPreset={onImportPreset}
+          onReactAssetPublicUrlChange={onReactAssetPublicUrlChange}
+          onReactExportSettingChange={onReactExportSettingChange}
+          reactAssetPublicUrl={reactAssetPublicUrl}
+          reactExportSettings={reactExportSettings}
           selectedShape={selectedShape}
           settings={settings}
+          defaultReactAssetPublicUrl={defaultReactAssetPublicUrl}
+          showReactAssetPublicUrl={showReactAssetPublicUrl}
         />
       ) : null}
     </PanelShell>

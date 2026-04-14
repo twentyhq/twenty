@@ -9,6 +9,7 @@ import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestr
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
+import { isGracefullyHandledEventStreamError } from '@/sse-db-event/utils/isGracefullyHandledEventStreamError';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { captureException } from '@sentry/react';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -80,9 +81,17 @@ export const useTriggerEventStreamCreation = () => {
           }>,
         ) => {
           if (isDefined(value?.errors) && Array.isArray(value.errors)) {
-            captureException(
-              new Error(`SSE subscription error: ${value.errors[0]?.message}`),
-            );
+            const subCode = value.errors[0]?.extensions?.subCode;
+            const code = value.errors[0]?.extensions?.code;
+
+            if (!isGracefullyHandledEventStreamError({ subCode, code })) {
+              captureException(
+                new Error(
+                  `SSE subscription error: ${value.errors[0]?.message}`,
+                ),
+              );
+            }
+
             store.set(shouldDestroyEventStreamState.atom, true);
 
             return;
@@ -129,16 +138,11 @@ export const useTriggerEventStreamCreation = () => {
             if (event === 'next') {
               if (isDefined(result?.errors)) {
                 const subCode = result.errors[0]?.extensions?.subCode;
+                const code = result.errors[0]?.extensions?.code;
 
-                switch (subCode) {
-                  case 'EVENT_STREAM_ALREADY_EXISTS': {
-                    store.set(shouldDestroyEventStreamState.atom, true);
-                    break;
-                  }
-                  default: {
-                    for (const error of result.errors) {
-                      captureException(error);
-                    }
+                if (!isGracefullyHandledEventStreamError({ subCode, code })) {
+                  for (const error of result.errors) {
+                    captureException(error);
                   }
                 }
 

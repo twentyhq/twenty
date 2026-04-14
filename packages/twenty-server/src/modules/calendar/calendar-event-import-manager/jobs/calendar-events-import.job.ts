@@ -10,8 +10,6 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
-import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
-import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 
 export type CalendarEventsImportJobData = {
@@ -26,7 +24,6 @@ export type CalendarEventsImportJobData = {
 export class CalendarEventsImportJob {
   constructor(
     private readonly calendarEventsImportService: CalendarEventsImportService,
-    private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
@@ -56,23 +53,6 @@ export class CalendarEventsImportJob {
         calendarChannel.syncStage !==
         CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED
       ) {
-        return;
-      }
-
-      const syncStageStartedAt = calendarChannel.syncStageStartedAt;
-
-      if (
-        isThrottled(
-          syncStageStartedAt?.toISOString() ?? null,
-          calendarChannel.throttleFailureCount,
-        )
-      ) {
-        await this.calendarChannelSyncStatusService.markAsCalendarEventsImportPending(
-          [calendarChannel.id],
-          workspaceId,
-          true,
-        );
-
         return;
       }
 

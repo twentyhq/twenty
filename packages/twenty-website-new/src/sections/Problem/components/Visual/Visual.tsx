@@ -1,3 +1,4 @@
+import { VisibleWhenTabActive } from '@/components/VisibleWhenTabActive';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import Monolith from './monolith';
@@ -53,7 +54,9 @@ export function Visual() {
     <StyledVisual>
       <StyledMasked>
         <StyledHalftoneLayer>
-          <Monolith />
+          <VisibleWhenTabActive>
+            <Monolith />
+          </VisibleWhenTabActive>
         </StyledHalftoneLayer>
       </StyledMasked>
     </StyledVisual>

@@ -1,6 +1,6 @@
 import type { BodyType } from '@/design-system/components/Body/types/Body';
 import type { HeadingType } from '@/design-system/components/Heading/types/Heading';
-import type { IllustrationId } from '@/illustrations';
+import type { PlanIconType } from './PlanCard';
 import type { PlanPriceType } from './PlanPrice';
 
 // Same literals as UI toggles when reading cells.
@@ -27,9 +27,8 @@ export type PlansTierCellsType = {
 // Shared across all eight combinations for this tier.
 export type PlansTierType = {
   cells: PlansTierCellsType;
-  featuresTitle: BodyType;
   heading: HeadingType;
-  illustration: IllustrationId;
+  icon: PlanIconType;
 };
 
 export type PlansDataType = {

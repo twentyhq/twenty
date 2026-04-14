@@ -1,10 +1,11 @@
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import {
+  currentWorkspaceMemberState,
+  type CurrentWorkspaceMember,
+} from '@/auth/states/currentWorkspaceMemberState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { resetJotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const updateOneRecordMock = jest.fn();
 
@@ -14,11 +15,7 @@ jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
   }),
 }));
 
-const workspaceMember: Omit<
-  WorkspaceMember,
-  'createdAt' | 'updatedAt' | 'userId'
-> = {
-  __typename: 'WorkspaceMember',
+const workspaceMember: CurrentWorkspaceMember = {
   id: 'id',
   name: {
     firstName: 'firstName',
@@ -31,20 +28,16 @@ const workspaceMember: Omit<
 
 describe('useColorScheme', () => {
   it('should update color scheme', async () => {
+    const store = resetJotaiStore();
+    store.set(currentWorkspaceMemberState.atom, workspaceMember);
+
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
-      <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
+      <JotaiProvider store={store}>{children}</JotaiProvider>
     );
 
     const { result } = renderHook(
       () => {
         const colorScheme = useColorScheme();
-
-        const setCurrentWorkspaceMember = useSetAtomState(
-          currentWorkspaceMemberState,
-        );
-
-        setCurrentWorkspaceMember(workspaceMember);
-
         return colorScheme;
       },
       {
@@ -58,7 +51,6 @@ describe('useColorScheme', () => {
       await result.current.setColorScheme('Dark');
     });
 
-    // FIXME: For some reason, the color gets unset
-    // expect(result.current.colorScheme).toEqual('Dark');
+    expect(result.current.colorScheme).toEqual('Dark');
   });
 });

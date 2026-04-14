@@ -405,9 +405,10 @@ export const LEGACY_HALFTONE_SETTING_KEYS = [
   'shadowCrush',
 ] as const;
 
-export function isRoundedBandHalftoneSettings(
-  value: unknown,
-): value is Omit<HalftoneEffectSettings, 'hoverDashColor'> & {
+export function isRoundedBandHalftoneSettings(value: unknown): value is Omit<
+  HalftoneEffectSettings,
+  'hoverDashColor'
+> & {
   hoverDashColor?: string;
 } {
   if (!value || typeof value !== 'object') {

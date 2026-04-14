@@ -2,7 +2,7 @@
 
 import { Body, Heading, IconButton } from '@/design-system/components';
 import { ArrowRightIcon } from '@/icons';
-import { THREE_CARDS_ILLUSTRATIONS } from '@/illustrations';
+import { IllustrationMount } from '@/illustrations';
 import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -79,9 +79,6 @@ export function IllustrationCard({
   illustrationCard,
   variant = 'shaped',
 }: IllustrationCardProps) {
-  const ThreeCardsIllustration =
-    THREE_CARDS_ILLUSTRATIONS[illustrationCard.illustration];
-
   return (
     <IllustrationCardContainer>
       {variant === 'shaped' && (
@@ -98,7 +95,7 @@ export function IllustrationCard({
       />
       <CardRule />
       <CardEmbed>
-        <ThreeCardsIllustration />
+        <IllustrationMount illustration={illustrationCard.illustration} />
       </CardEmbed>
       <CardRule />
       <CardBodyCell>

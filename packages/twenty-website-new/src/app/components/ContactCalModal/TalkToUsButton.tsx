@@ -22,7 +22,12 @@ export function TalkToUsButton({ color, label, variant }: TalkToUsButtonProps) {
   const { openContactCalModal } = useContactCalModal();
 
   return (
-    <StyledTrigger type="button" onClick={openContactCalModal}>
+    <StyledTrigger
+      data-color={color}
+      data-variant={variant}
+      type="button"
+      onClick={openContactCalModal}
+    >
       <BaseButton color={color} label={label} variant={variant} />
     </StyledTrigger>
   );

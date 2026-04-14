@@ -27,7 +27,7 @@ export const TABS_DATA: TabsDataType = {
       },
       icon: 'search',
       image: {
-        src: '/images/product/tabs/deals.png',
+        src: '/images/product/tabs/deals.webp',
         alt: 'Deals view',
       },
     },
@@ -37,7 +37,7 @@ export const TABS_DATA: TabsDataType = {
       },
       icon: 'eye',
       image: {
-        src: '/images/product/tabs/tasks.png',
+        src: '/images/product/tabs/tasks.webp',
         alt: 'Tasks view',
       },
     },
@@ -47,7 +47,7 @@ export const TABS_DATA: TabsDataType = {
       },
       icon: 'edit',
       image: {
-        src: '/images/product/tabs/history.png',
+        src: '/images/product/tabs/history.webp',
         alt: 'History view',
       },
     },
@@ -57,7 +57,7 @@ export const TABS_DATA: TabsDataType = {
       },
       icon: 'check',
       image: {
-        src: '/images/product/tabs/workflow.png',
+        src: '/images/product/tabs/workflow.webp',
         alt: 'Workflow view',
       },
     },

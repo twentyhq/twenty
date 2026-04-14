@@ -22,7 +22,6 @@ import { isExistingWidgetMissingOrDifferentType } from '@/side-panel/pages/page-
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular, SidePanelPages } from 'twenty-shared/types';
@@ -34,11 +33,7 @@ import {
   IconFrame,
   IconTable,
 } from 'twenty-ui/display';
-import {
-  FeatureFlagKey,
-  type FrontComponent,
-  WidgetType,
-} from '~/generated-metadata/graphql';
+import { type FrontComponent, WidgetType } from '~/generated-metadata/graphql';
 
 export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
   const { pageLayoutId, recordId } = usePageLayoutIdFromContextStore();
@@ -100,10 +95,6 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
     [...readableObjectMetadataItems].sort((first, second) =>
       first.labelPlural.localeCompare(second.labelPlural),
     )[0];
-
-  const isRecordTableWidgetEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_RECORD_TABLE_WIDGET_ENABLED,
-  );
 
   const { data: frontComponentsData } = useQuery<{
     frontComponents: FrontComponent[];
@@ -246,7 +237,7 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
 
   const selectableItemIds = [
     'chart',
-    ...(isRecordTableWidgetEnabled ? ['record-table'] : []),
+    'record-table',
     'iframe',
     'rich-text',
     ...frontComponentsWithSelectItemId.map(({ selectItemId }) => selectItemId),
@@ -266,19 +257,17 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
             onClick={handleNavigateToGraphTypeSelect}
           />
         </SelectableListItem>
-        {isRecordTableWidgetEnabled && (
-          <SelectableListItem
-            itemId="record-table"
-            onEnter={handleNavigateToRecordTableSettings}
-          >
-            <CommandMenuItem
-              Icon={IconTable}
-              label={t`View`}
-              id="record-table"
-              onClick={handleNavigateToRecordTableSettings}
-            />
-          </SelectableListItem>
-        )}
+        <SelectableListItem
+          itemId="record-table"
+          onEnter={handleNavigateToRecordTableSettings}
+        >
+          <CommandMenuItem
+            Icon={IconTable}
+            label={t`View`}
+            id="record-table"
+            onClick={handleNavigateToRecordTableSettings}
+          />
+        </SelectableListItem>
         <SelectableListItem
           itemId="iframe"
           onEnter={handleNavigateToIframeSettings}
