@@ -8091,6 +8091,15 @@ export default {
                     ]
                 }
             ],
+            "resetPageLayoutToDefault": [
+                114,
+                {
+                    "id": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "resetPageLayoutWidgetToDefault": [
                 75,
                 {
