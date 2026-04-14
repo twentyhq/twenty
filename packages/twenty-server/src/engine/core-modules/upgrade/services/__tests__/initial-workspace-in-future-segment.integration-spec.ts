@@ -14,7 +14,7 @@ import {
   resetSeedSequenceCounter,
   seedMigration,
   setMockActiveWorkspaceIds,
-  testGetLatestMigrationForCommand,
+  testGetExecutedMigrationsInOrder,
   WS_1,
   WS_2,
 } from './utils/upgrade-sequence-runner-integration-test.util';
@@ -173,65 +173,66 @@ describe('UpgradeSequenceRunnerService — initial workspace in future segment (
       WS_4,
     ]);
 
-    // Instance steps: Ic0 was already completed, Ic1..Ic5 should now be completed too
-    for (const name of ['Ic1', 'Ic2', 'Ic3', 'Ic4', 'Ic5']) {
-      const migration = await testGetLatestMigrationForCommand(
-        context.dataSource,
-        { name },
-      );
+    // Verify the full execution log in createdAt order
+    const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
 
-      expect(migration).toEqual(
-        expect.objectContaining({ name, status: 'completed', attempt: 1 }),
-      );
-    }
+    const toKey = ({
+      name,
+      workspaceId,
+      status,
+      attempt,
+      isInitial,
+    }: (typeof executed)[0]) => {
+      const scope = workspaceId ?? 'instance';
+      const initial = isInitial ? ':initial' : '';
 
-    // WS_1 retried Wc1 then completed through Wc7
-    const ws1Wc1 = await testGetLatestMigrationForCommand(context.dataSource, {
-      name: 'Wc1',
-      workspaceId: WS_1,
-    });
+      return `${name}:${scope}:${status}:${attempt}${initial}`;
+    };
 
-    expect(ws1Wc1).toEqual(
-      expect.objectContaining({ status: 'completed', attempt: 2 }),
-    );
+    expect(executed.map(toKey)).toStrictEqual([
+      // Seeds (non-initial, written before the run)
+      'Ic0:instance:completed:1',
+      `Wc0:${WS_1}:completed:1`,
+      `Wc1:${WS_1}:failed:1`,
+      `Wc0:${WS_2}:completed:1`,
+      `Wc1:${WS_2}:completed:1`,
+      `Wc2:${WS_2}:completed:1`,
+      // Seeds (initial — workspaces activated on latest version)
+      `Wc3:${WS_3}:completed:1:initial`,
+      `Wc6:${WS_4}:completed:1:initial`,
 
-    const ws1Wc7 = await testGetLatestMigrationForCommand(context.dataSource, {
-      name: 'Wc7',
-      workspaceId: WS_1,
-    });
+      // Segment A: WS_1 retries Wc1, then Wc2; WS_2 already done
+      `Wc1:${WS_1}:completed:2`,
+      `Wc2:${WS_1}:completed:1`,
+      `Wc2:${WS_2}:completed:1`,
 
-    expect(ws1Wc7).toEqual(
-      expect.objectContaining({ status: 'completed', attempt: 1 }),
-    );
+      // Sync barrier passed → instance steps
+      'Ic1:instance:completed:1',
+      'Ic2:instance:completed:1',
+      'Ic3:instance:completed:1',
 
-    // WS_2 completed segments B and C
-    const ws2Wc7 = await testGetLatestMigrationForCommand(context.dataSource, {
-      name: 'Wc7',
-      workspaceId: WS_2,
-    });
+      // Segment B: WS_1, WS_2 run Wc3..Wc5; WS_3 already at Wc3 (initial), runs Wc4..Wc5
+      `Wc3:${WS_1}:completed:1`,
+      `Wc4:${WS_1}:completed:1`,
+      `Wc5:${WS_1}:completed:1`,
+      `Wc3:${WS_2}:completed:1`,
+      `Wc4:${WS_2}:completed:1`,
+      `Wc5:${WS_2}:completed:1`,
+      `Wc4:${WS_3}:completed:1`,
+      `Wc5:${WS_3}:completed:1`,
 
-    expect(ws2Wc7).toEqual(
-      expect.objectContaining({ status: 'completed', attempt: 1 }),
-    );
+      // Sync barrier passed → instance steps
+      'Ic4:instance:completed:1',
+      'Ic5:instance:completed:1',
 
-    // WS_3 (isInitial at Wc3) skipped seg A, ran seg B and C
-    const ws3Wc7 = await testGetLatestMigrationForCommand(context.dataSource, {
-      name: 'Wc7',
-      workspaceId: WS_3,
-    });
-
-    expect(ws3Wc7).toEqual(
-      expect.objectContaining({ status: 'completed', attempt: 1 }),
-    );
-
-    // WS_4 (isInitial at Wc6) skipped seg A and B, ran seg C
-    const ws4Wc7 = await testGetLatestMigrationForCommand(context.dataSource, {
-      name: 'Wc7',
-      workspaceId: WS_4,
-    });
-
-    expect(ws4Wc7).toEqual(
-      expect.objectContaining({ status: 'completed', attempt: 1 }),
-    );
+      // Segment C: all 4 workspaces; WS_4 already at Wc6 (initial), runs Wc7
+      `Wc6:${WS_1}:completed:1`,
+      `Wc7:${WS_1}:completed:1`,
+      `Wc6:${WS_2}:completed:1`,
+      `Wc7:${WS_2}:completed:1`,
+      `Wc6:${WS_3}:completed:1`,
+      `Wc7:${WS_3}:completed:1`,
+      `Wc7:${WS_4}:completed:1`,
+    ]);
   });
 });

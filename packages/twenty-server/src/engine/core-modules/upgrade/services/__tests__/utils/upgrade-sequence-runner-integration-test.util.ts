@@ -283,3 +283,22 @@ export const testGetLatestMigrationForCommand = async (
 
   return rows.length > 0 ? rows[0] : null;
 };
+
+export type ExecutedMigrationRecord = {
+  name: string;
+  status: string;
+  attempt: number;
+  workspaceId: string | null;
+  isInitial: boolean;
+};
+
+// Returns all migration records in execution order (by createdAt).
+export const testGetExecutedMigrationsInOrder = async (
+  dataSource: DataSource,
+): Promise<ExecutedMigrationRecord[]> => {
+  return dataSource.query(
+    `SELECT name, status, attempt, "workspaceId", "isInitial"
+     FROM core."upgradeMigration"
+     ORDER BY "createdAt" ASC`,
+  );
+};
