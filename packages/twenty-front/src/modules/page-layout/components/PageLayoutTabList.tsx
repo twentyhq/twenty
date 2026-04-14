@@ -61,6 +61,7 @@ const StyledContainer = styled.div`
   position: relative;
   user-select: none;
   width: 100%;
+  padding-left: ${themeCssVariables.spacing[2]};
 
   &::after {
     background-color: ${themeCssVariables.border.color.light};
