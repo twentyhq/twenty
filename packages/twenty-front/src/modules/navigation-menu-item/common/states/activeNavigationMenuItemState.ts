@@ -1,9 +1,5 @@
+import { type ActiveNavigationMenuItem } from '@/navigation-menu-item/common/types/ActiveNavigationMenuItem';
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
-
-type ActiveNavigationMenuItem = {
-  id: string;
-  path: string;
-};
 
 export const activeNavigationMenuItemState =
   createAtomState<ActiveNavigationMenuItem | null>({

@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -8,7 +9,8 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { activeNavigationMenuItemState } from '@/navigation-menu-item/common/states/activeNavigationMenuItemState';
 import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
-import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/common/utils/isLocationMatchingNavigationMenuItem';
+import { isNavigationMenuItemActive } from '@/navigation-menu-item/common/utils/isNavigationMenuItemActive';
+import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -43,39 +45,46 @@ export const useNavigationMenuItemFolderOpenState = ({
     activeNavigationMenuItemState,
   );
 
-  const hasActiveNavigationMenuItemOnCurrentPage =
-    isDefined(activeNavigationMenuItem) &&
-    currentViewPath === activeNavigationMenuItem.path;
+  const activeNavigationMenuItemIndices = useMemo(() => {
+    const indices = new Set<number>();
 
-  const clickedItemIndex = hasActiveNavigationMenuItemOnCurrentPage
-    ? navigationMenuItems.findIndex(
-        (item) => item.id === activeNavigationMenuItem!.id,
-      )
-    : -1;
+    navigationMenuItems.forEach((item, index) => {
+      const objectMetadataItem = getObjectMetadataForNavigationMenuItem(
+        item,
+        objectMetadataItems,
+        views,
+      );
+      if (!isDefined(objectMetadataItem)) {
+        return;
+      }
 
-  const urlMatchingItemIndex = navigationMenuItems.findIndex((item) => {
-    const computedLink = getNavigationMenuItemComputedLink(
-      item,
-      objectMetadataItems,
-      views,
-    );
-    return isLocationMatchingNavigationMenuItem(
-      currentPath,
-      currentViewPath,
-      item.type,
-      computedLink,
-    );
-  });
+      if (
+        isNavigationMenuItemActive({
+          navigationMenuItem: item,
+          objectMetadataItem,
+          currentPath,
+          currentPathWithSearch: currentViewPath,
+          activeNavigationMenuItem,
+          objectMetadataItems,
+          views,
+        })
+      ) {
+        indices.add(index);
+      }
+    });
 
-  const selectedNavigationMenuItemIndex =
-    clickedItemIndex >= 0
-      ? clickedItemIndex
-      : hasActiveNavigationMenuItemOnCurrentPage
-        ? -1
-        : urlMatchingItemIndex;
+    return indices;
+  }, [
+    navigationMenuItems,
+    objectMetadataItems,
+    views,
+    currentPath,
+    currentViewPath,
+    activeNavigationMenuItem,
+  ]);
 
   const isExplicitlyOpen = openNavigationMenuItemFolderIds.includes(folderId);
-  const hasActiveChild = selectedNavigationMenuItemIndex >= 0;
+  const hasActiveChild = activeNavigationMenuItemIndices.size > 0;
   const isOpen = isExplicitlyOpen || hasActiveChild;
 
   const handleToggle = () => {
@@ -119,6 +128,6 @@ export const useNavigationMenuItemFolderOpenState = ({
   return {
     isOpen,
     handleToggle,
-    selectedNavigationMenuItemIndex,
+    activeNavigationMenuItemIndices,
   };
 };

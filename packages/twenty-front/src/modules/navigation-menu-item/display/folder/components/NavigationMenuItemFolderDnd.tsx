@@ -39,8 +39,8 @@ import { NavigationMenuItemFolderLayout } from '@/navigation-menu-item/display/f
 import { NavigationMenuItemFolderNavigationDrawerItemDropdown } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderNavigationDrawerItemDropdown';
 import { NavigationMenuItemFolderSubItem } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderSubItem';
 import { useNavigationMenuItemFolderOpenState } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemFolderOpenState';
-import type { NavigationMenuItemClickParams } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { useIsNavigationMenuItemEditHighlighted } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuItemEditHighlighted';
+import type { NavigationMenuItemClickParams } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { useFavoritesFolderEdit } from '@/navigation-menu-item/edit/folder/hooks/useFavoritesFolderEdit';
 import { useOpenAddItemToFolderPage } from '@/navigation-menu-item/edit/hooks/useOpenAddItemToFolderPage';
 import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
@@ -116,7 +116,7 @@ export const NavigationMenuItemFolderDnd = ({
     ? NavigationSections.FAVORITES
     : NavigationSections.WORKSPACE;
 
-  const { isOpen, handleToggle, selectedNavigationMenuItemIndex } =
+  const { isOpen, handleToggle, activeNavigationMenuItemIndices } =
     useNavigationMenuItemFolderOpenState({ folderId, navigationMenuItems });
 
   const { isDragging: isContextDragging } = useContext(
@@ -228,7 +228,7 @@ export const NavigationMenuItemFolderDnd = ({
       Icon={FolderIcon}
       iconColor={iconColor}
       active={
-        (!isOpen && selectedNavigationMenuItemIndex >= 0) ||
+        (!isOpen && activeNavigationMenuItemIndices.size > 0) ||
         (isWorkspace && isSelectedInEditMode && !isOpen)
       }
       onClick={handleHeaderClick}
@@ -348,8 +348,8 @@ export const NavigationMenuItemFolderDnd = ({
                     navigationMenuItem={navigationMenuItem}
                     index={index}
                     arrayLength={folderContentLength}
-                    selectedNavigationMenuItemIndex={
-                      selectedNavigationMenuItemIndex
+                    activeNavigationMenuItemIndices={
+                      activeNavigationMenuItemIndices
                     }
                     isDragging={isDragging}
                     rightOptions={
@@ -399,7 +399,7 @@ export const NavigationMenuItemFolderDnd = ({
                   subItemState={getNavigationSubItemLeftAdornment({
                     index: navigationMenuItems.length,
                     arrayLength: folderContentLength,
-                    selectedIndex: selectedNavigationMenuItemIndex,
+                    selectedIndex: -1,
                   })}
                 />
               )}

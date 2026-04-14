@@ -4,7 +4,7 @@ import { Fragment, type ReactNode, useContext } from 'react';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { activeNavigationMenuItemState } from '@/navigation-menu-item/common/states/activeNavigationMenuItemState';
-import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/common/utils/isLocationMatchingNavigationMenuItem';
+import { isNavigationMenuItemActive } from '@/navigation-menu-item/common/utils/isNavigationMenuItemActive';
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/common/utils/recordIdentifierToObjectRecordIdentifier';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
@@ -99,32 +99,15 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         lastVisitedViewId ? { viewId: lastVisitedViewId } : undefined,
       );
 
-  const urlMatches = hasNavigationMenuItem
-    ? isLocationMatchingNavigationMenuItem(
-        currentPath,
-        currentPathWithSearch,
-        navigationMenuItem.type,
-        navigationPath,
-      )
-    : currentPath ===
-        getAppPath(AppPath.RecordIndexPage, {
-          objectNamePlural: objectMetadataItem.namePlural,
-        }) ||
-      currentPath.includes(
-        getAppPath(AppPath.RecordShowPage, {
-          objectNameSingular: objectMetadataItem.nameSingular,
-          objectRecordId: '',
-        }) + '/',
-      );
-
-  const hasActiveNavigationMenuItemOnCurrentPage =
-    isDefined(activeNavigationMenuItem) &&
-    currentPathWithSearch === activeNavigationMenuItem.path;
-
-  const isActive =
-    urlMatches &&
-    (!hasActiveNavigationMenuItemOnCurrentPage ||
-      activeNavigationMenuItem?.id === navigationMenuItem?.id);
+  const isActive = isNavigationMenuItemActive({
+    navigationMenuItem: navigationMenuItem ?? null,
+    objectMetadataItem,
+    currentPath,
+    currentPathWithSearch,
+    activeNavigationMenuItem,
+    objectMetadataItems,
+    views,
+  });
 
   const handleClick = isLayoutCustomizationModeEnabled
     ? onEditModeClick
@@ -133,6 +116,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
           setActiveNavigationMenuItem({
             id: navigationMenuItem!.id,
             path: navigationPath,
+            objectMetadataId: objectMetadataItem.id,
           });
           navigate(navigationPath);
         }

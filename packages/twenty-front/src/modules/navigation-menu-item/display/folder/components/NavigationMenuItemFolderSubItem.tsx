@@ -7,14 +7,14 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { activeNavigationMenuItemState } from '@/navigation-menu-item/common/states/activeNavigationMenuItemState';
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
-import type { EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
+import { useIsNavigationMenuItemEditHighlighted } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuItemEditHighlighted';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
+import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { getObjectNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
-import { useIsNavigationMenuItemEditHighlighted } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuItemEditHighlighted';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import type { EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -25,7 +25,7 @@ type NavigationMenuItemFolderSubItemProps = {
   navigationMenuItem: NavigationMenuItem;
   index: number;
   arrayLength: number;
-  selectedNavigationMenuItemIndex: number;
+  activeNavigationMenuItemIndices: Set<number>;
   isDragging: boolean;
   rightOptions?: ReactNode;
   onClick?: () => void;
@@ -39,7 +39,7 @@ export const NavigationMenuItemFolderSubItem = ({
   navigationMenuItem,
   index,
   arrayLength,
-  selectedNavigationMenuItemIndex,
+  activeNavigationMenuItemIndices,
   isDragging,
   rightOptions,
   onClick,
@@ -98,6 +98,7 @@ export const NavigationMenuItemFolderSubItem = ({
           setActiveNavigationMenuItem({
             id: navigationMenuItem.id,
             path: computedLink,
+            objectMetadataId: objectMetadataItem?.id ?? '',
           });
           navigate(computedLink);
         });
@@ -122,12 +123,12 @@ export const NavigationMenuItemFolderSubItem = ({
       )}
       to={isDragging || isEditable ? undefined : computedLink}
       onClick={handleClick}
-      active={index === selectedNavigationMenuItemIndex}
+      active={activeNavigationMenuItemIndices.has(index)}
       isSelectedInEditMode={isEditHighlightedInNavigationMenu}
       subItemState={getNavigationSubItemLeftAdornment({
         index,
         arrayLength,
-        selectedIndex: selectedNavigationMenuItemIndex,
+        selectedIndex: activeNavigationMenuItemIndices.has(index) ? index : -1,
       })}
       rightOptions={rightOptions}
       isDragging={isDragging}
