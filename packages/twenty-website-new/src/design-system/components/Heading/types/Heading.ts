@@ -1,4 +1,5 @@
 export type HeadingType = {
-    fontFamily: 'sans' | 'serif' | 'mono';
-    text: string;
-}
+  fontFamily: 'sans' | 'serif' | 'mono';
+  text: string;
+  lineBreakBefore?: boolean;
+};

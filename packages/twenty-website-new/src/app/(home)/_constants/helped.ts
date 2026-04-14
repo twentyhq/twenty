@@ -3,17 +3,17 @@ import type { HelpedDataType } from '@/sections/Helped/types/HelpedData';
 export const HELPED_DATA: HelpedDataType = {
   eyebrow: {
     heading: {
-      text: 'Twenty helped them',
+      text: 'In production.',
       fontFamily: 'sans',
     },
   },
   heading: [
     {
-      text: 'Make your GTM team happy with a',
+      text: 'Dev teams power\ncompany-wide\n',
       fontFamily: 'serif',
     },
     {
-      text: " CRM they'll love",
+      text: 'change with Twenty',
       fontFamily: 'sans',
     },
   ],

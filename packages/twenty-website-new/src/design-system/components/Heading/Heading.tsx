@@ -115,11 +115,12 @@ export function Heading({
   return (
     <Tag className={rootClassName} data-weight={weight} data-size={size}>
       {Array.isArray(segments) ? (
-        segments.map((segment, index) => (
+        segments.flatMap((segment, index) => [
+          segment.lineBreakBefore ? <br key={`break-${index}`} /> : null,
           <StyledSpan key={index} data-family={segment.fontFamily}>
             {segment.text}
-          </StyledSpan>
-        ))
+          </StyledSpan>,
+        ])
       ) : (
         <StyledSpan data-family={segments.fontFamily}>
           {segments.text}

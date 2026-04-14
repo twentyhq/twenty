@@ -7,7 +7,7 @@ import { Menu } from '@/sections/Menu/components';
 import { theme } from '@/theme';
 import type { Metadata } from 'next';
 
-const PLACEHOLDER_HERO = '/images/home/hero/avatars/katherine-adams.jpg';
+const PLACEHOLDER_HERO = '/images/shared/people/avatars/katherine-adams.jpg';
 
 const CASE_STUDY: CaseStudyData = {
   meta: {
