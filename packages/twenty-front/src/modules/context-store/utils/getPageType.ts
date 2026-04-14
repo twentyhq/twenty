@@ -1,4 +1,4 @@
-import { ContextStorePageType } from '@/context-store/types/ContextStorePageType';
+import { ContextStorePageType } from 'twenty-shared/types';
 
 export const getPageType = ({
   isSettingsPage,

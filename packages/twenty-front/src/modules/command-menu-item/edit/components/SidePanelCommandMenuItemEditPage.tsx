@@ -21,7 +21,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { type DropResult } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { CommandMenuContextApiPageType } from 'twenty-shared/types';
+import { ContextStorePageType } from 'twenty-shared/types';
 import {
   interpolateCommandMenuItemTemplate,
   isDefined,
@@ -72,12 +72,10 @@ export const SidePanelCommandMenuItemEditPage = () => {
     commandMenuContextApi.objectMetadataItem.id;
 
   const isRecordPage =
-    commandMenuContextApi.pageType ===
-    CommandMenuContextApiPageType.RECORD_PAGE;
+    commandMenuContextApi.pageType === ContextStorePageType.Record;
 
   const isIndexPage =
-    commandMenuContextApi.pageType ===
-    CommandMenuContextApiPageType.INDEX_PAGE;
+    commandMenuContextApi.pageType === ContextStorePageType.Index;
 
   const mainContextStoreHasSelectedRecords = useAtomStateValue(
     mainContextStoreHasSelectedRecordsSelector,
@@ -97,7 +95,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
 
   const allowedAvailabilityTypes = new Set<CommandMenuItemAvailabilityType>([
     CommandMenuItemAvailabilityType.GLOBAL,
-    ...((isIndexPage || isRecordPage)
+    ...(isIndexPage || isRecordPage
       ? [CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT]
       : []),
     mainContextStoreHasSelectedRecords

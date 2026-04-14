@@ -33,9 +33,7 @@ export const CommandMenuContextProviderContent = ({
       .filter(
         doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
       )
-      .filter(
-        doesCommandMenuItemMatchPageType(commandMenuContextApi.pageType),
-      )
+      .filter(doesCommandMenuItemMatchPageType(commandMenuContextApi.pageType))
       .filter((item) =>
         evaluateConditionalAvailabilityExpression(
           item.conditionalAvailabilityExpression,

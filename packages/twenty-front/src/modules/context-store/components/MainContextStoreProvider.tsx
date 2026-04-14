@@ -47,10 +47,7 @@ export const MainContextStoreProvider = () => {
     AppPath.RecordIndexPage,
   );
   const isRecordShowPage = isMatchingLocation(location, AppPath.RecordShowPage);
-  const isStandalonePage = isMatchingLocation(
-    location,
-    AppPath.PageLayoutPage,
-  );
+  const isStandalonePage = isMatchingLocation(location, AppPath.PageLayoutPage);
   const isSettingsPage = useIsSettingsPage();
   const showAuthModal = useShowAuthModal();
 

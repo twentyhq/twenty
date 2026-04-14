@@ -10,7 +10,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useStore } from 'jotai';
 import { useMemo } from 'react';
 import {
-  CommandMenuContextApiPageType,
+  ContextStorePageType,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
@@ -47,7 +47,7 @@ export const StandalonePageCommandMenu = () => {
     }
 
     return {
-      pageType: CommandMenuContextApiPageType.STANDALONE_PAGE,
+      pageType: ContextStorePageType.Standalone,
       isInSidePanel: false,
       isPageInEditMode: false,
       favoriteRecordIds: [],

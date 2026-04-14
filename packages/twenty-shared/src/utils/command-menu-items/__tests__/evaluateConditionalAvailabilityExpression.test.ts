@@ -1,5 +1,5 @@
 import {
-  CommandMenuContextApiPageType,
+  ContextStorePageType,
   type CommandMenuContextApi,
 } from '@/types';
 import { evaluateConditionalAvailabilityExpression } from '../evaluateConditionalAvailabilityExpression';
@@ -7,7 +7,7 @@ import { evaluateConditionalAvailabilityExpression } from '../evaluateConditiona
 const buildContext = (
   overrides: Partial<CommandMenuContextApi> = {},
 ): CommandMenuContextApi => ({
-  pageType: CommandMenuContextApiPageType.INDEX_PAGE,
+  pageType: ContextStorePageType.Index,
   isInSidePanel: false,
   isPageInEditMode: false,
   favoriteRecordIds: [],

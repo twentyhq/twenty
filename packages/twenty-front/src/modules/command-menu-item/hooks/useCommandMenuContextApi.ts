@@ -7,7 +7,6 @@ import { contextStoreCurrentPageTypeComponentState } from '@/context-store/state
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { ContextStorePageType } from '@/context-store/types/ContextStorePageType';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
@@ -23,7 +22,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import {
-  CommandMenuContextApiPageType,
+  ContextStorePageType,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { isDefined, resolveObjectMetadataLabel } from 'twenty-shared/utils';
@@ -116,21 +115,9 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
     contextStoreIsPageInEditModeComponentState,
   );
 
-  const PAGE_TYPE_MAP: Record<
-    ContextStorePageType,
-    CommandMenuContextApiPageType
-  > = {
-    [ContextStorePageType.Index]: CommandMenuContextApiPageType.INDEX_PAGE,
-    [ContextStorePageType.Record]: CommandMenuContextApiPageType.RECORD_PAGE,
-    [ContextStorePageType.Standalone]:
-      CommandMenuContextApiPageType.STANDALONE_PAGE,
-    [ContextStorePageType.Settings]:
-      CommandMenuContextApiPageType.SETTINGS_PAGE,
-  };
-
   const pageType = isDefined(contextStoreCurrentPageType)
-    ? PAGE_TYPE_MAP[contextStoreCurrentPageType]
-    : CommandMenuContextApiPageType.INDEX_PAGE;
+    ? contextStoreCurrentPageType
+    : ContextStorePageType.Index;
 
   const isSelectAll = contextStoreTargetedRecordsRule.mode === 'exclusion';
 

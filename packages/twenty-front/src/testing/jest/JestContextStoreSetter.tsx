@@ -13,7 +13,7 @@ import {
   type ContextStoreTargetedRecordsRule,
   contextStoreTargetedRecordsRuleComponentState,
 } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { type ContextStorePageType } from '@/context-store/types/ContextStorePageType';
+import { type ContextStorePageType } from 'twenty-shared/types';
 import { type ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
