@@ -12,7 +12,6 @@ import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
-import { UploadProfilePicturePermissionGuard } from 'src/engine/core-modules/user-workspace/guards/upload-profile-picture-permission.guard';
 import { UserWorkspaceEntityCacheProviderService } from 'src/engine/core-modules/user-workspace/services/user-workspace-entity-cache-provider.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -22,6 +21,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleValidationModule } from 'src/engine/metadata-modules/role-validation/role-validation.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
@@ -36,6 +36,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
           UserWorkspaceEntity,
           WorkspaceEntity,
           RoleTargetEntity,
+          RoleEntity,
         ]),
         RoleValidationModule,
         NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
@@ -58,10 +59,6 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     }),
   ],
   exports: [UserWorkspaceService],
-  providers: [
-    UserWorkspaceService,
-    UserWorkspaceEntityCacheProviderService,
-    UploadProfilePicturePermissionGuard,
-  ],
+  providers: [UserWorkspaceService, UserWorkspaceEntityCacheProviderService],
 })
 export class UserWorkspaceModule {}

@@ -448,10 +448,23 @@ export class UserResolver {
     @AuthUserWorkspaceId({ allowUndefined: true }) userWorkspaceId?: string,
     @AuthApiKey() apiKey?: ApiKeyEntity,
     @AuthWorkspaceMemberId() authenticatedWorkspaceMemberId?: string,
+    @AuthUser({ allowUndefined: true }) user?: AuthContextUser | null,
   ): Promise<boolean> {
-    const isUpdatingSelf =
+    let isUpdatingSelf =
       isDefined(authenticatedWorkspaceMemberId) &&
       authenticatedWorkspaceMemberId === input.workspaceMemberId;
+
+    // for signup
+    if (!isUpdatingSelf && isDefined(user?.id) && !isDefined(apiKey)) {
+      const targetWorkspaceMember =
+        await this.userWorkspaceService.getWorkspaceMemberOrThrow({
+          workspaceMemberId: input.workspaceMemberId,
+          workspaceId: workspace.id,
+        });
+
+      isUpdatingSelf = targetWorkspaceMember.userId === user.id;
+    }
+
     const canUpdateWorkspaceMember =
       isUpdatingSelf ||
       (await this.permissionsService.userHasWorkspaceSettingPermission({
