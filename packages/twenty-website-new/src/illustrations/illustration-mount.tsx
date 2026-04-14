@@ -1,5 +1,6 @@
 'use client';
 
+import { VisibleWhenTabActive } from '@/components/VisibleWhenTabActive';
 import {
   ILLUSTRATIONS,
   type IllustrationId,
@@ -12,5 +13,9 @@ type IllustrationMountProps = {
 export function IllustrationMount({ illustration }: IllustrationMountProps) {
   const IllustrationComponent = ILLUSTRATIONS[illustration];
 
-  return <IllustrationComponent />;
+  return (
+    <VisibleWhenTabActive>
+      <IllustrationComponent />
+    </VisibleWhenTabActive>
+  );
 }

@@ -7,8 +7,8 @@ import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { WidgetVisibilityDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityDropdownContent';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
+import { useTranslatedVisibilityLabel } from '@/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
-import { getVisibilityLabel } from '@/side-panel/pages/page-layout/utils/getVisibilityLabel';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -51,18 +51,13 @@ export const WidgetSettingsManageSection = ({
 
   const { openModal } = useModal();
 
+  const visibilityLabel = useTranslatedVisibilityLabel(
+    widgetInEditMode?.conditionalAvailabilityExpression,
+  );
+
   if (!isDefined(pageLayoutEditingWidgetId)) {
     return null;
   }
-
-  const visibilityLabel = getVisibilityLabel(
-    widgetInEditMode?.conditionalAvailabilityExpression,
-    {
-      anyDevice: t`Any device`,
-      mobile: t`Mobile`,
-      desktop: t`Desktop`,
-    },
-  );
 
   const handleResetToDefault = () => {
     openModal(RESET_WIDGET_TO_DEFAULT_MODAL_ID);

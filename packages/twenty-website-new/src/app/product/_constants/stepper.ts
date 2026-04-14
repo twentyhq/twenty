@@ -31,7 +31,7 @@ export const STEPPER_DATA: ProductStepperDataType = {
         text: 'Add objects and fields',
       },
       image: {
-        src: '/images/product/stepper/step-one.png',
+        src: '/images/product/stepper/step-one.webp',
         alt: 'Twenty data model: add objects and fields',
       },
     },
@@ -45,7 +45,7 @@ export const STEPPER_DATA: ProductStepperDataType = {
         text: 'Create a workflow',
       },
       image: {
-        src: '/images/product/stepper/step-two.png',
+        src: '/images/product/stepper/step-two.webp',
         alt: 'Twenty automation: create a workflow',
       },
     },
@@ -59,7 +59,7 @@ export const STEPPER_DATA: ProductStepperDataType = {
         text: 'Tailor record pages, menus, and views',
       },
       image: {
-        src: '/images/product/stepper/step-three.png',
+        src: '/images/product/stepper/step-three.webp',
         alt: 'Twenty layout: record pages, menus, and views',
       },
     },

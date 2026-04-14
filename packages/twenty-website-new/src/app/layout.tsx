@@ -1,5 +1,6 @@
-import { FOOTER_DATA } from '@/app/_constants/footer';
 import { FooterVisibilityGate } from '@/app/_components/FooterVisibilityGate';
+import { FOOTER_DATA } from '@/app/_constants/footer';
+import { ContactCalModalRoot } from '@/app/components/ContactCalModal';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Footer } from '@/sections/Footer/components';
@@ -84,18 +85,21 @@ export default async function RootLayout({
     <html lang="en">
       <body
         className={`${cssVariables} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable} ${vt323.variable}`}
+        suppressHydrationWarning
       >
-        <StyledMain>{children}</StyledMain>
-        <FooterVisibilityGate>
-          <Footer.Root illustration={FOOTER_DATA.illustration}>
-            <Footer.Logo />
-            <Footer.Nav groups={FOOTER_DATA.navGroups} />
-            <Footer.Bottom
-              copyright={FOOTER_DATA.bottom.copyright}
-              links={footerSocialLinks}
-            />
-          </Footer.Root>
-        </FooterVisibilityGate>
+        <ContactCalModalRoot>
+          <StyledMain>{children}</StyledMain>
+          <FooterVisibilityGate>
+            <Footer.Root illustration={FOOTER_DATA.illustration}>
+              <Footer.Logo />
+              <Footer.Nav groups={FOOTER_DATA.navGroups} />
+              <Footer.Bottom
+                copyright={FOOTER_DATA.bottom.copyright}
+                links={footerSocialLinks}
+              />
+            </Footer.Root>
+          </FooterVisibilityGate>
+        </ContactCalModalRoot>
       </body>
     </html>
   );

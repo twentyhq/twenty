@@ -242,7 +242,6 @@ describe('WorkspaceEntityManager', () => {
         IS_CONNECTED_ACCOUNT_MIGRATED: false,
         IS_RICH_TEXT_V1_MIGRATED: false,
         IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED: false,
-        IS_RECORD_TABLE_WIDGET_ENABLED: false,
         IS_DATASOURCE_MIGRATED: false,
         IS_COMMAND_MENU_ITEM_ENABLED: false,
       },

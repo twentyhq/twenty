@@ -2,7 +2,8 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
-import { DataSource } from 'typeorm';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { DataSource, In } from 'typeorm';
 
 import { CommandLogger } from 'src/database/commands/logger';
 import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
@@ -10,7 +11,9 @@ import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/service
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
 import { RemovedSinceVersion } from 'src/engine/core-modules/upgrade/types/removed-since-version.type';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
+import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-minor-and-major';
 import { isDefined } from 'twenty-shared/utils';
 
 type RawUpgradeCommandOptions = {
@@ -127,6 +130,7 @@ export class UpgradeCommand extends CommandRunner {
 
     try {
       await this.runBootstrapMigrations();
+      await this.guardAllActiveOrSuspendedWorkspacesAreIn1_21_0();
       await this.backfillWorkspaceCreatedIn1_21_0Cursors();
 
       const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
@@ -169,6 +173,50 @@ export class UpgradeCommand extends CommandRunner {
     } catch (error) {
       this.logger.error(chalk.red(`Upgrade failed: ${error.message}`));
       throw error;
+    }
+  }
+
+  private async guardAllActiveOrSuspendedWorkspacesAreIn1_21_0(): RemovedSinceVersion<
+    '1.23.0',
+    Promise<void>
+  > {
+    const MINIMUM_VERSION = '1.21.0';
+
+    const activeOrSuspendedWorkspaces = await this.dataSource
+      .getRepository(WorkspaceEntity)
+      .find({
+        select: {
+          version: true,
+          id: true,
+        },
+        where: {
+          activationStatus: In([
+            WorkspaceActivationStatus.ACTIVE,
+            WorkspaceActivationStatus.SUSPENDED,
+          ]),
+        },
+      });
+
+    const workspacesBelowMinimum = activeOrSuspendedWorkspaces.filter(
+      (workspace) =>
+        !isDefined(workspace.version) ||
+        compareVersionMajorAndMinor(workspace.version, MINIMUM_VERSION) ===
+          'lower',
+    );
+
+    if (workspacesBelowMinimum.length > 0) {
+      const listing = workspacesBelowMinimum
+        .map(
+          (workspace) =>
+            `  - ${workspace.id} (version: ${workspace.version ?? 'null'})`,
+        )
+        .join('\n');
+
+      throw new Error(
+        `Cannot upgrade: ${workspacesBelowMinimum.length} workspace(s) have a version below ${MINIMUM_VERSION}.\n` +
+          `All workspaces must be upgraded to at least ${MINIMUM_VERSION} before running the 1.22.0 upgrade.\n` +
+          `Affected workspaces:\n${listing}`,
+      );
     }
   }
 

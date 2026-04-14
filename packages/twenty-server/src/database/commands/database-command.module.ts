@@ -8,7 +8,6 @@ import { InstanceCommandGenerationService } from 'src/database/commands/instance
 import { ListOrphanedWorkspaceEntitiesCommand } from 'src/database/commands/list-and-delete-orphaned-workspace-entities.command';
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
 import { RunInstanceCommandsCommand } from 'src/database/commands/run-instance-commands.command';
-import { InstanceCommandProviderModule } from 'src/database/commands/upgrade-version-command/instance-command-provider.module';
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
 import { WorkspaceExportModule } from 'src/database/commands/workspace-export/workspace-export.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
@@ -17,6 +16,7 @@ import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { StaleRegistrationCleanupModule } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/stale-registration-cleanup.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
+import { EnforceUsageCapCronCommand } from 'src/engine/core-modules/billing/crons/commands/enforce-usage-cap.cron.command';
 import { EnterpriseKeyValidationCronCommand } from 'src/engine/core-modules/enterprise/cron/command/enterprise-key-validation.cron.command';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { EventLogCleanupModule } from 'src/engine/core-modules/event-logs/cleanup/event-log-cleanup.module';
@@ -44,7 +44,6 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
 @Module({
   imports: [
     UpgradeVersionCommandModule,
-    InstanceCommandProviderModule,
     TypeOrmModule.forFeature([WorkspaceEntity]),
     WorkspaceExportModule,
     // Cron command dependencies
@@ -86,6 +85,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     ListOrphanedWorkspaceEntitiesCommand,
     EnterpriseKeyValidationCronCommand,
     GenerateApiKeyCommand,
+    EnforceUsageCapCronCommand,
   ],
 })
 export class DatabaseCommandModule {}

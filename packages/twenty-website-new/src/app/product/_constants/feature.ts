@@ -11,11 +11,11 @@ export const FEATURE_DATA: FeatureDataType = {
     { text: 'Everything you need,', fontFamily: 'serif' },
     { text: ' out of the box', fontFamily: 'sans' },
   ],
-  mask: { src: '/images/product/feature/mask.png', alt: '' },
+  mask: { src: '/images/product/feature/mask.webp', alt: '' },
   tiles: [
     {
       icon: 'check',
-      image: { src: '/images/product/feature/dashboards.png', alt: '' },
+      image: { src: '/images/product/feature/dashboards.webp', alt: '' },
       heading: { text: 'Reports & Dashboards', fontFamily: 'sans' },
       bullets: [
         { text: 'Build custom dashboards' },
@@ -25,7 +25,7 @@ export const FEATURE_DATA: FeatureDataType = {
     },
     {
       icon: 'check',
-      image: { src: '/images/product/feature/tasks.png', alt: '' },
+      image: { src: '/images/product/feature/tasks.webp', alt: '' },
       heading: { text: 'Tasks & Activities', fontFamily: 'sans' },
       bullets: [
         { text: 'Create tasks from records' },
@@ -35,7 +35,7 @@ export const FEATURE_DATA: FeatureDataType = {
     },
     {
       icon: 'check',
-      image: { src: '/images/product/feature/emails.png', alt: '' },
+      image: { src: '/images/product/feature/emails.webp', alt: '' },
       heading: { text: 'Email & Calendar', fontFamily: 'sans' },
       bullets: [
         { text: 'Connect Google or Microsoft accounts' },
@@ -45,7 +45,7 @@ export const FEATURE_DATA: FeatureDataType = {
     },
     {
       icon: 'check',
-      image: { src: '/images/product/feature/contacts.png', alt: '' },
+      image: { src: '/images/product/feature/contacts.webp', alt: '' },
       heading: { text: 'Contacts & Companies', fontFamily: 'sans' },
       bullets: [
         { text: 'Custom fields and relationships' },
@@ -55,7 +55,7 @@ export const FEATURE_DATA: FeatureDataType = {
     },
     {
       icon: 'check',
-      image: { src: '/images/product/feature/pipeline.png', alt: '' },
+      image: { src: '/images/product/feature/pipeline.webp', alt: '' },
       heading: { text: 'Pipeline Management', fontFamily: 'sans' },
       bullets: [
         { text: 'Custom deal stages for your process' },
@@ -65,7 +65,7 @@ export const FEATURE_DATA: FeatureDataType = {
     },
     {
       icon: 'check',
-      image: { src: '/images/product/feature/files.png', alt: '' },
+      image: { src: '/images/product/feature/files.webp', alt: '' },
       heading: { text: 'Files', fontFamily: 'sans' },
       bullets: [
         { text: 'Multi-file upload on records' },
@@ -75,7 +75,7 @@ export const FEATURE_DATA: FeatureDataType = {
     },
     {
       icon: 'check',
-      image: { src: '/images/product/feature/data.png', alt: '' },
+      image: { src: '/images/product/feature/data.webp', alt: '' },
       heading: { text: 'Data import', fontFamily: 'sans' },
       bullets: [
         { text: 'CSV import flow' },

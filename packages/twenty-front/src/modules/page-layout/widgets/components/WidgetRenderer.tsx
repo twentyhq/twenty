@@ -161,6 +161,8 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     variant === 'side-column' &&
     !isRecordPageGlobalEditionEnabled;
 
+  const isCanvasVariant = variant === 'canvas';
+
   const widgetCard = (
     <WidgetCard
       headerLess={!showHeader}
@@ -171,8 +173,8 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
       isDragging={isDragging}
       isResizing={isResizing}
       isLastWidget={isLastWidget}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onMouseEnter={isCanvasVariant ? undefined : handleMouseEnter}
+      onMouseLeave={isCanvasVariant ? undefined : handleMouseLeave}
       data-widget-id={widget.id}
       data-testid={widget.id}
       className="widget"

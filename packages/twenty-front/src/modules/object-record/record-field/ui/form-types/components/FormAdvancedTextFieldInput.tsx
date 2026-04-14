@@ -46,10 +46,15 @@ const StyledAdvancedTextFieldInnerContainer = styled.div`
   width: 100%;
 `;
 
-const StyledEditorActionButtonContainer = styled.div`
+const StyledEditorActionButtonContainer = styled.div<{
+  hasVariablePicker?: boolean;
+}>`
   margin-top: ${themeCssVariables.spacing[1]};
   position: absolute;
-  right: ${themeCssVariables.spacing[1]};
+  right: ${({ hasVariablePicker }) =>
+    hasVariablePicker
+      ? `calc(${themeCssVariables.spacing[7]} + ${themeCssVariables.spacing[2]})`
+      : themeCssVariables.spacing[1]};
   top: ${themeCssVariables.spacing[0]};
   z-index: 1;
 `;
@@ -214,7 +219,9 @@ export const FormAdvancedTextFieldInput = ({
               )}
 
               {enableFullScreen && (
-                <StyledEditorActionButtonContainer>
+                <StyledEditorActionButtonContainer
+                  hasVariablePicker={isDefined(VariablePicker) && !readonly}
+                >
                   {!readonly && !isFullScreen && (
                     <LightIconButton
                       Icon={IconMaximize}

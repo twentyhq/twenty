@@ -57014,7 +57014,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sharp@npm:^0.33.1":
+"sharp@npm:^0.33.1, sharp@npm:^0.33.5":
   version: 0.33.5
   resolution: "sharp@npm:0.33.5"
   dependencies:
@@ -60921,6 +60921,7 @@ __metadata:
   dependencies:
     "@base-ui/react": "npm:^1.3.0"
     "@base-ui/utils": "npm:^0.2.6"
+    "@calcom/embed-react": "npm:^1.5.3"
     "@gsap/react": "npm:2.1.2"
     "@linaria/core": "npm:^7.0.0"
     "@linaria/react": "npm:^7.0.1"
@@ -60943,6 +60944,7 @@ __metadata:
     react-dom: "npm:19.2.3"
     react-markdown: "npm:^10.1.0"
     remark-gfm: "npm:^4.0.1"
+    sharp: "npm:^0.33.5"
     three: "npm:^0.183.2"
   languageName: unknown
   linkType: soft

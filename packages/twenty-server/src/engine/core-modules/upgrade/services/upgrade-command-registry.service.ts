@@ -247,31 +247,14 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
   }
 
   private validateAtLeastOneVersionBundleHasWorkspaceCommands(): void {
-    let totalCommandCount = 0;
     let hasWorkspaceCommands = false;
 
     for (const version of TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS) {
       const bundle = this.getBundleForVersion(version);
 
-      totalCommandCount +=
-        bundle.fastInstanceCommands.length +
-        bundle.slowInstanceCommands.length +
-        bundle.workspaceCommands.length;
-
       if (bundle.workspaceCommands.length > 0) {
         hasWorkspaceCommands = true;
       }
-    }
-
-    // UpgradeModule is loaded in the worker transitively via WorkspaceModule,
-    // but no command modules are imported — zero providers are discovered.
-    // TODO: split WorkspaceModule so the worker doesn't pull in UpgradeModule
-    if (totalCommandCount === 0) {
-      this.logger.warn(
-        'No upgrade commands discovered — skipping workspace command validation',
-      );
-
-      return;
     }
 
     if (!hasWorkspaceCommands) {

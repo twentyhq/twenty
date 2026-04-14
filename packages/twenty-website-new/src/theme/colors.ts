@@ -1,6 +1,9 @@
 export const colors = {
   primary: {
-    background: { 100: 'var(--color-white-100)' },
+    background: {
+      100: 'var(--color-white-100)',
+      hover: 'var(--color-black-100)',
+    },
     text: {
       100: 'var(--color-black-100)',
       80: 'var(--color-black-80)',
@@ -23,6 +26,7 @@ export const colors = {
   secondary: {
     background: {
       100: 'var(--color-black-100)',
+      hover: 'var(--color-black-hover)',
       80: 'var(--color-black-80)',
       5: 'var(--color-black-5)',
     },

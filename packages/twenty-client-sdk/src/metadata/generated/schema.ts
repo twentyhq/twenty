@@ -1293,7 +1293,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_AI_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_MARKETPLACE_SETTING_TAB_VISIBLE' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_DRAFT_EMAIL_ENABLED' | 'IS_CONNECTED_ACCOUNT_MIGRATED' | 'IS_RICH_TEXT_V1_MIGRATED' | 'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED' | 'IS_RECORD_TABLE_WIDGET_ENABLED' | 'IS_DATASOURCE_MIGRATED'
+export type FeatureFlagKey = 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_AI_ENABLED' | 'IS_COMMAND_MENU_ITEM_ENABLED' | 'IS_MARKETPLACE_SETTING_TAB_VISIBLE' | 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' | 'IS_PUBLIC_DOMAIN_ENABLED' | 'IS_EMAILING_DOMAIN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_DRAFT_EMAIL_ENABLED' | 'IS_CONNECTED_ACCOUNT_MIGRATED' | 'IS_RICH_TEXT_V1_MIGRATED' | 'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED' | 'IS_DATASOURCE_MIGRATED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -1883,29 +1883,18 @@ export interface DeletedWorkspaceMember {
     __typename: 'DeletedWorkspaceMember'
 }
 
-export interface BillingEntitlement {
-    key: BillingEntitlementKey
-    value: Scalars['Boolean']
-    __typename: 'BillingEntitlement'
+export interface Relation {
+    type: RelationType
+    sourceObjectMetadata: Object
+    targetObjectMetadata: Object
+    sourceFieldMetadata: Field
+    targetFieldMetadata: Field
+    __typename: 'Relation'
 }
 
-export type BillingEntitlementKey = 'SSO' | 'CUSTOM_DOMAIN' | 'RLS' | 'AUDIT_LOGS'
 
-export interface DomainRecord {
-    validationType: Scalars['String']
-    type: Scalars['String']
-    status: Scalars['String']
-    key: Scalars['String']
-    value: Scalars['String']
-    __typename: 'DomainRecord'
-}
-
-export interface DomainValidRecords {
-    id: Scalars['UUID']
-    domain: Scalars['String']
-    records: DomainRecord[]
-    __typename: 'DomainValidRecords'
-}
+/** Relation type */
+export type RelationType = 'ONE_TO_MANY' | 'MANY_TO_ONE'
 
 export interface IndexEdge {
     /** The node containing the Index */
@@ -2005,31 +1994,42 @@ export interface ObjectFieldsConnection {
     __typename: 'ObjectFieldsConnection'
 }
 
-export interface UpsertRowLevelPermissionPredicatesResult {
-    predicates: RowLevelPermissionPredicate[]
-    predicateGroups: RowLevelPermissionPredicateGroup[]
-    __typename: 'UpsertRowLevelPermissionPredicatesResult'
-}
-
-export interface Relation {
-    type: RelationType
-    sourceObjectMetadata: Object
-    targetObjectMetadata: Object
-    sourceFieldMetadata: Field
-    targetFieldMetadata: Field
-    __typename: 'Relation'
-}
-
-
-/** Relation type */
-export type RelationType = 'ONE_TO_MANY' | 'MANY_TO_ONE'
-
 export interface FieldConnection {
     /** Paging information */
     pageInfo: PageInfo
     /** Array of edges. */
     edges: FieldEdge[]
     __typename: 'FieldConnection'
+}
+
+export interface BillingEntitlement {
+    key: BillingEntitlementKey
+    value: Scalars['Boolean']
+    __typename: 'BillingEntitlement'
+}
+
+export type BillingEntitlementKey = 'SSO' | 'CUSTOM_DOMAIN' | 'RLS' | 'AUDIT_LOGS'
+
+export interface DomainRecord {
+    validationType: Scalars['String']
+    type: Scalars['String']
+    status: Scalars['String']
+    key: Scalars['String']
+    value: Scalars['String']
+    __typename: 'DomainRecord'
+}
+
+export interface DomainValidRecords {
+    id: Scalars['UUID']
+    domain: Scalars['String']
+    records: DomainRecord[]
+    __typename: 'DomainValidRecords'
+}
+
+export interface UpsertRowLevelPermissionPredicatesResult {
+    predicates: RowLevelPermissionPredicate[]
+    predicateGroups: RowLevelPermissionPredicateGroup[]
+    __typename: 'UpsertRowLevelPermissionPredicatesResult'
 }
 
 export interface AuthToken {
@@ -5157,27 +5157,12 @@ export interface DeletedWorkspaceMemberGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface BillingEntitlementGenqlSelection{
-    key?: boolean | number
-    value?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface DomainRecordGenqlSelection{
-    validationType?: boolean | number
+export interface RelationGenqlSelection{
     type?: boolean | number
-    status?: boolean | number
-    key?: boolean | number
-    value?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface DomainValidRecordsGenqlSelection{
-    id?: boolean | number
-    domain?: boolean | number
-    records?: DomainRecordGenqlSelection
+    sourceObjectMetadata?: ObjectGenqlSelection
+    targetObjectMetadata?: ObjectGenqlSelection
+    sourceFieldMetadata?: FieldGenqlSelection
+    targetFieldMetadata?: FieldGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5292,28 +5277,43 @@ export interface ObjectFieldsConnectionGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface UpsertRowLevelPermissionPredicatesResultGenqlSelection{
-    predicates?: RowLevelPermissionPredicateGenqlSelection
-    predicateGroups?: RowLevelPermissionPredicateGroupGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface RelationGenqlSelection{
-    type?: boolean | number
-    sourceObjectMetadata?: ObjectGenqlSelection
-    targetObjectMetadata?: ObjectGenqlSelection
-    sourceFieldMetadata?: FieldGenqlSelection
-    targetFieldMetadata?: FieldGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface FieldConnectionGenqlSelection{
     /** Paging information */
     pageInfo?: PageInfoGenqlSelection
     /** Array of edges. */
     edges?: FieldEdgeGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface BillingEntitlementGenqlSelection{
+    key?: boolean | number
+    value?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface DomainRecordGenqlSelection{
+    validationType?: boolean | number
+    type?: boolean | number
+    status?: boolean | number
+    key?: boolean | number
+    value?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface DomainValidRecordsGenqlSelection{
+    id?: boolean | number
+    domain?: boolean | number
+    records?: DomainRecordGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UpsertRowLevelPermissionPredicatesResultGenqlSelection{
+    predicates?: RowLevelPermissionPredicateGenqlSelection
+    predicateGroups?: RowLevelPermissionPredicateGroupGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8240,26 +8240,10 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const BillingEntitlement_possibleTypes: string[] = ['BillingEntitlement']
-    export const isBillingEntitlement = (obj?: { __typename?: any } | null): obj is BillingEntitlement => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingEntitlement"')
-      return BillingEntitlement_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const DomainRecord_possibleTypes: string[] = ['DomainRecord']
-    export const isDomainRecord = (obj?: { __typename?: any } | null): obj is DomainRecord => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isDomainRecord"')
-      return DomainRecord_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const DomainValidRecords_possibleTypes: string[] = ['DomainValidRecords']
-    export const isDomainValidRecords = (obj?: { __typename?: any } | null): obj is DomainValidRecords => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isDomainValidRecords"')
-      return DomainValidRecords_possibleTypes.includes(obj.__typename)
+    const Relation_possibleTypes: string[] = ['Relation']
+    export const isRelation = (obj?: { __typename?: any } | null): obj is Relation => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRelation"')
+      return Relation_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -8360,26 +8344,42 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const UpsertRowLevelPermissionPredicatesResult_possibleTypes: string[] = ['UpsertRowLevelPermissionPredicatesResult']
-    export const isUpsertRowLevelPermissionPredicatesResult = (obj?: { __typename?: any } | null): obj is UpsertRowLevelPermissionPredicatesResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUpsertRowLevelPermissionPredicatesResult"')
-      return UpsertRowLevelPermissionPredicatesResult_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const Relation_possibleTypes: string[] = ['Relation']
-    export const isRelation = (obj?: { __typename?: any } | null): obj is Relation => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isRelation"')
-      return Relation_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const FieldConnection_possibleTypes: string[] = ['FieldConnection']
     export const isFieldConnection = (obj?: { __typename?: any } | null): obj is FieldConnection => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isFieldConnection"')
       return FieldConnection_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const BillingEntitlement_possibleTypes: string[] = ['BillingEntitlement']
+    export const isBillingEntitlement = (obj?: { __typename?: any } | null): obj is BillingEntitlement => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingEntitlement"')
+      return BillingEntitlement_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const DomainRecord_possibleTypes: string[] = ['DomainRecord']
+    export const isDomainRecord = (obj?: { __typename?: any } | null): obj is DomainRecord => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isDomainRecord"')
+      return DomainRecord_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const DomainValidRecords_possibleTypes: string[] = ['DomainValidRecords']
+    export const isDomainValidRecords = (obj?: { __typename?: any } | null): obj is DomainValidRecords => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isDomainValidRecords"')
+      return DomainValidRecords_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UpsertRowLevelPermissionPredicatesResult_possibleTypes: string[] = ['UpsertRowLevelPermissionPredicatesResult']
+    export const isUpsertRowLevelPermissionPredicatesResult = (obj?: { __typename?: any } | null): obj is UpsertRowLevelPermissionPredicatesResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUpsertRowLevelPermissionPredicatesResult"')
+      return UpsertRowLevelPermissionPredicatesResult_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -9478,7 +9478,6 @@ export const enumFeatureFlagKey = {
    IS_CONNECTED_ACCOUNT_MIGRATED: 'IS_CONNECTED_ACCOUNT_MIGRATED' as const,
    IS_RICH_TEXT_V1_MIGRATED: 'IS_RICH_TEXT_V1_MIGRATED' as const,
    IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED: 'IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED' as const,
-   IS_RECORD_TABLE_WIDGET_ENABLED: 'IS_RECORD_TABLE_WIDGET_ENABLED' as const,
    IS_DATASOURCE_MIGRATED: 'IS_DATASOURCE_MIGRATED' as const
 }
 
@@ -9585,16 +9584,16 @@ export const enumQueueMetricsTimeRange = {
    OneHour: 'OneHour' as const
 }
 
+export const enumRelationType = {
+   ONE_TO_MANY: 'ONE_TO_MANY' as const,
+   MANY_TO_ONE: 'MANY_TO_ONE' as const
+}
+
 export const enumBillingEntitlementKey = {
    SSO: 'SSO' as const,
    CUSTOM_DOMAIN: 'CUSTOM_DOMAIN' as const,
    RLS: 'RLS' as const,
    AUDIT_LOGS: 'AUDIT_LOGS' as const
-}
-
-export const enumRelationType = {
-   ONE_TO_MANY: 'ONE_TO_MANY' as const,
-   MANY_TO_ONE: 'MANY_TO_ONE' as const
 }
 
 export const enumEmailingDomainDriver = {

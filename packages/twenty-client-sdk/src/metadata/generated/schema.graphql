@@ -1596,7 +1596,6 @@ enum FeatureFlagKey {
   IS_CONNECTED_ACCOUNT_MIGRATED
   IS_RICH_TEXT_V1_MIGRATED
   IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED
-  IS_RECORD_TABLE_WIDGET_ENABLED
   IS_DATASOURCE_MIGRATED
 }
 
@@ -2198,30 +2197,18 @@ type DeletedWorkspaceMember {
   userWorkspaceId: UUID
 }
 
-type BillingEntitlement {
-  key: BillingEntitlementKey!
-  value: Boolean!
+type Relation {
+  type: RelationType!
+  sourceObjectMetadata: Object!
+  targetObjectMetadata: Object!
+  sourceFieldMetadata: Field!
+  targetFieldMetadata: Field!
 }
 
-enum BillingEntitlementKey {
-  SSO
-  CUSTOM_DOMAIN
-  RLS
-  AUDIT_LOGS
-}
-
-type DomainRecord {
-  validationType: String!
-  type: String!
-  status: String!
-  key: String!
-  value: String!
-}
-
-type DomainValidRecords {
-  id: UUID!
-  domain: String!
-  records: [DomainRecord!]!
+"""Relation type"""
+enum RelationType {
+  ONE_TO_MANY
+  MANY_TO_ONE
 }
 
 type IndexEdge {
@@ -2323,31 +2310,43 @@ type ObjectFieldsConnection {
   edges: [FieldEdge!]!
 }
 
-type UpsertRowLevelPermissionPredicatesResult {
-  predicates: [RowLevelPermissionPredicate!]!
-  predicateGroups: [RowLevelPermissionPredicateGroup!]!
-}
-
-type Relation {
-  type: RelationType!
-  sourceObjectMetadata: Object!
-  targetObjectMetadata: Object!
-  sourceFieldMetadata: Field!
-  targetFieldMetadata: Field!
-}
-
-"""Relation type"""
-enum RelationType {
-  ONE_TO_MANY
-  MANY_TO_ONE
-}
-
 type FieldConnection {
   """Paging information"""
   pageInfo: PageInfo!
 
   """Array of edges."""
   edges: [FieldEdge!]!
+}
+
+type BillingEntitlement {
+  key: BillingEntitlementKey!
+  value: Boolean!
+}
+
+enum BillingEntitlementKey {
+  SSO
+  CUSTOM_DOMAIN
+  RLS
+  AUDIT_LOGS
+}
+
+type DomainRecord {
+  validationType: String!
+  type: String!
+  status: String!
+  key: String!
+  value: String!
+}
+
+type DomainValidRecords {
+  id: UUID!
+  domain: String!
+  records: [DomainRecord!]!
+}
+
+type UpsertRowLevelPermissionPredicatesResult {
+  predicates: [RowLevelPermissionPredicate!]!
+  predicateGroups: [RowLevelPermissionPredicateGroup!]!
 }
 
 type AuthToken {

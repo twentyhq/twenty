@@ -54,9 +54,15 @@ export class MeteredCreditService {
       return null;
     }
 
-    const meteredItem = subscription.billingSubscriptionItems.find(
+    return this.extractMeteredPricingInfoFromSubscription(subscription);
+  }
+
+  extractMeteredPricingInfoFromSubscription(
+    subscription: BillingSubscriptionEntity,
+  ): MeteredPricingInfo | null {
+    const meteredItem = subscription.billingSubscriptionItems?.find(
       (item) =>
-        item.billingProduct.metadata.productKey ===
+        item.billingProduct?.metadata?.productKey ===
         BillingProductKey.WORKFLOW_NODE_EXECUTION,
     );
 
@@ -64,7 +70,7 @@ export class MeteredCreditService {
       return null;
     }
 
-    const matchingPrice = meteredItem.billingProduct.billingPrices.find(
+    const matchingPrice = meteredItem.billingProduct.billingPrices?.find(
       (price) => price.stripePriceId === meteredItem.stripePriceId,
     );
 
