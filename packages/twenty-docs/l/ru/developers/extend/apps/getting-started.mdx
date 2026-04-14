@@ -220,6 +220,7 @@ npx create-twenty-app@latest my-twenty-app --example postcard
 | -------------------------------------- | -------------------------------------------------------------- |
 | `yarn twenty server start`             | Запустить локальный сервер (при необходимости скачивает образ) |
 | `yarn twenty server start --port 3030` | Запустить на пользовательском порту                            |
+| `yarn twenty server start --test`      | Запускает отдельный тестовый экземпляр на порту 2021           |
 | `yarn twenty server stop`              | Остановить сервер (данные сохраняются)                         |
 | `yarn twenty server status`            | Показать состояние сервера, URL и учётные данные               |
 | `yarn twenty server logs`              | Потоковый вывод журналов сервера                               |
@@ -227,6 +228,20 @@ npx create-twenty-app@latest my-twenty-app --example postcard
 | `yarn twenty server reset`             | Удалить все данные и начать с чистого листа                    |
 
 Данные сохраняются между перезапусками в двух томах Docker (`twenty-app-dev-data` для PostgreSQL, `twenty-app-dev-storage` для файлов). Используйте `reset`, чтобы стереть всё и начать заново.
+
+### Running a test instance
+
+Pass `--test` to any `server` command to manage a second, fully isolated instance — useful for running integration tests or experimenting without touching your main dev data.
+
+| Команда                            | Описание                                        |
+| ---------------------------------- | ----------------------------------------------- |
+| `yarn twenty server start --test`  | Start the test instance (defaults to port 2021) |
+| `yarn twenty server stop --test`   | Stop the test instance                          |
+| `yarn twenty server status --test` | Show test instance status, URL, and credentials |
+| `yarn twenty server logs --test`   | Stream test instance logs                       |
+| `yarn twenty server reset --test`  | Wipe test data and start fresh                  |
+
+The test instance runs in its own Docker container (`twenty-app-dev-test`) with dedicated volumes (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) and config, so it can run in parallel with your main instance without conflicts. Combine `--test` with `--port` to override the default 2021.
 
 <Note>
   Для работы сервера необходимо, чтобы **Docker** был запущен. Если вы видите ошибку "Docker not running", убедитесь, что запущен Docker Desktop (или демон Docker).

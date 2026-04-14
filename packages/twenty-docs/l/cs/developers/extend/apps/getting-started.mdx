@@ -220,6 +220,7 @@ Nástroj pro vytvoření kostry vám již spustil lokální server Twenty. Pro j
 | -------------------------------------- | ------------------------------------------------------ |
 | `yarn twenty server start`             | Spustí lokální server (v případě potřeby stáhne image) |
 | `yarn twenty server start --port 3030` | Spustí na vlastním portu                               |
+| `yarn twenty server start --test`      | Spusťte samostatnou testovací instanci na portu 2021   |
 | `yarn twenty server stop`              | Zastaví server (zachová data)                          |
 | `yarn twenty server status`            | Zobrazí stav serveru, URL a přihlašovací údaje         |
 | `yarn twenty server logs`              | Streamuje protokoly serveru                            |
@@ -227,6 +228,20 @@ Nástroj pro vytvoření kostry vám již spustil lokální server Twenty. Pro j
 | `yarn twenty server reset`             | Smaže všechna data a začne znovu                       |
 
 Data přetrvávají při restartech ve dvou svazcích Dockeru (`twenty-app-dev-data` pro PostgreSQL, `twenty-app-dev-storage` pro soubory). Pomocí `reset` vymažte vše a začněte znovu.
+
+### Running a test instance
+
+Pass `--test` to any `server` command to manage a second, fully isolated instance — useful for running integration tests or experimenting without touching your main dev data.
+
+| Příkaz                             | Popis                                           |
+| ---------------------------------- | ----------------------------------------------- |
+| `yarn twenty server start --test`  | Start the test instance (defaults to port 2021) |
+| `yarn twenty server stop --test`   | Stop the test instance                          |
+| `yarn twenty server status --test` | Show test instance status, URL, and credentials |
+| `yarn twenty server logs --test`   | Stream test instance logs                       |
+| `yarn twenty server reset --test`  | Wipe test data and start fresh                  |
+
+The test instance runs in its own Docker container (`twenty-app-dev-test`) with dedicated volumes (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) and config, so it can run in parallel with your main instance without conflicts. Combine `--test` with `--port` to override the default 2021.
 
 <Note>
   Server vyžaduje, aby **Docker** běžel. Pokud vidíte chybu "Docker not running", ujistěte se, že je spuštěný Docker Desktop (nebo démon Dockeru).

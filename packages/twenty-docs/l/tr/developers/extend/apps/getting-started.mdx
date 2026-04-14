@@ -216,17 +216,32 @@ npx create-twenty-app@latest my-twenty-app --example postcard
 
 İskelet oluşturucu sizin için zaten yerel bir Twenty sunucusu başlattı. Daha sonra yönetmek için `yarn twenty server` komutunu kullanın:
 
-| Komut                                  | Açıklama                                               |
-| -------------------------------------- | ------------------------------------------------------ |
-| `yarn twenty server start`             | Yerel sunucuyu başlatır (gerekirse imajı çeker)        |
-| `yarn twenty server start --port 3030` | Özel bir portta başlatır                               |
-| `yarn twenty server stop`              | Sunucuyu durdurur (verileri korur)                     |
-| `yarn twenty server status`            | Sunucu durumunu, URL'yi ve kimlik bilgilerini gösterir |
-| `yarn twenty server logs`              | Sunucu günlüklerini akış olarak iletir                 |
-| `yarn twenty server logs --lines 100`  | Son 100 günlük satırını gösterir                       |
-| `yarn twenty server reset`             | Tüm verileri siler ve sıfırdan başlatır                |
+| Komut                                  | Açıklama                                                        |
+| -------------------------------------- | --------------------------------------------------------------- |
+| `yarn twenty server start`             | Yerel sunucuyu başlatır (gerekirse imajı çeker)                 |
+| `yarn twenty server start --port 3030` | Özel bir portta başlatır                                        |
+| `yarn twenty server start --test`      | 2021 numaralı bağlantı noktasında ayrı bir test örneği başlatın |
+| `yarn twenty server stop`              | Sunucuyu durdurur (verileri korur)                              |
+| `yarn twenty server status`            | Sunucu durumunu, URL'yi ve kimlik bilgilerini gösterir          |
+| `yarn twenty server logs`              | Sunucu günlüklerini akış olarak iletir                          |
+| `yarn twenty server logs --lines 100`  | Son 100 günlük satırını gösterir                                |
+| `yarn twenty server reset`             | Tüm verileri siler ve sıfırdan başlatır                         |
 
 Veriler, yeniden başlatmalar arasında iki Docker biriminde kalıcıdır (PostgreSQL için `twenty-app-dev-data`, dosyalar için `twenty-app-dev-storage`). Her şeyi silip baştan başlamak için `reset` kullanın.
+
+### Running a test instance
+
+Pass `--test` to any `server` command to manage a second, fully isolated instance — useful for running integration tests or experimenting without touching your main dev data.
+
+| Komut                              | Açıklama                                        |
+| ---------------------------------- | ----------------------------------------------- |
+| `yarn twenty server start --test`  | Start the test instance (defaults to port 2021) |
+| `yarn twenty server stop --test`   | Stop the test instance                          |
+| `yarn twenty server status --test` | Show test instance status, URL, and credentials |
+| `yarn twenty server logs --test`   | Stream test instance logs                       |
+| `yarn twenty server reset --test`  | Wipe test data and start fresh                  |
+
+The test instance runs in its own Docker container (`twenty-app-dev-test`) with dedicated volumes (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) and config, so it can run in parallel with your main instance without conflicts. Combine `--test` with `--port` to override the default 2021.
 
 <Note>
   Sunucunun çalışması için **Docker**'ın çalışıyor olması gerekir. "Docker not running" hatası görürseniz Docker Desktop'ın (veya Docker daemon'ının) başlatıldığından emin olun.
