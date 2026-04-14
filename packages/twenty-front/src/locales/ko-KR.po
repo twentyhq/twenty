@@ -1787,7 +1787,6 @@ msgstr "이 이름을 가진 객체가 이미 존재합니다"
 
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
-#: src/modules/ai/utils/extractErrorMessage.ts
 msgid "An unexpected error occurred"
 msgstr "예상치 못한 오류가 발생했습니다"
 

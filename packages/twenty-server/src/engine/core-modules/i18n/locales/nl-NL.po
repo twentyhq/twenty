@@ -121,6 +121,7 @@ msgstr "Een doel voor notities"
 
 #. js-lingui-id: W6LTzL
 #: src/engine/core-modules/billing/billing.exception.ts
+#: src/engine/core-modules/billing/utils/billing-graphql-api-exception-handler.util.ts
 msgid "A payment processing error occurred."
 msgstr "Er is een fout opgetreden bij de betalingsverwerking."
 

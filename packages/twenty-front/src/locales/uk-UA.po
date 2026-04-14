@@ -1787,7 +1787,6 @@ msgstr "Об'єкт з цією назвою уже існує"
 
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
-#: src/modules/ai/utils/extractErrorMessage.ts
 msgid "An unexpected error occurred"
 msgstr "Сталася несподівана помилка"
 

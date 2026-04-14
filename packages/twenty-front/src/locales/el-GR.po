@@ -1787,7 +1787,6 @@ msgstr "Υπάρχει ήδη αντικείμενο με αυτό το όνομ
 
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
-#: src/modules/ai/utils/extractErrorMessage.ts
 msgid "An unexpected error occurred"
 msgstr "Παρουσιάστηκε ένα απρόβλεπτο σφάλμα"
 

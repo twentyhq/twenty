@@ -1787,7 +1787,6 @@ msgstr "Er bestaat al een object met deze naam"
 
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
-#: src/modules/ai/utils/extractErrorMessage.ts
 msgid "An unexpected error occurred"
 msgstr "Er is een onverwachte fout opgetreden"
 

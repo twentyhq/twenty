@@ -121,6 +121,7 @@ msgstr "노트 대상"
 
 #. js-lingui-id: W6LTzL
 #: src/engine/core-modules/billing/billing.exception.ts
+#: src/engine/core-modules/billing/utils/billing-graphql-api-exception-handler.util.ts
 msgid "A payment processing error occurred."
 msgstr "결제 처리 중 오류가 발생했습니다."
 

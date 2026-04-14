@@ -1787,7 +1787,6 @@ msgstr "يوجد بالفعل كائن يحمل هذا الاسم"
 
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
-#: src/modules/ai/utils/extractErrorMessage.ts
 msgid "An unexpected error occurred"
 msgstr "حدث خطأ غير متوقع"
 
