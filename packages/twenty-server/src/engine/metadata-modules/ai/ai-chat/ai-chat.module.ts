@@ -25,6 +25,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
+import { AgentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/ai-agent/interceptors/agent-graphql-api-exception.interceptor';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
@@ -114,6 +115,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     MessagePruningService,
     StreamAgentChatJob,
     SystemPromptBuilderService,
+    AgentGraphqlApiExceptionInterceptor,
   ],
   exports: [
     AgentChatService,

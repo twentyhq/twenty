@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { HttpAdapterHost } from '@nestjs/core';
+import { APP_FILTER, HttpAdapterHost } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
@@ -20,6 +20,7 @@ import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-acc
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingWebhookModule } from 'src/engine/core-modules/billing-webhook/billing-webhook.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { BillingGraphqlApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-graphql-api-exception.filter';
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
 import { CaptchaModule } from 'src/engine/core-modules/captcha/captcha.module';
@@ -163,6 +164,12 @@ import { FileModule } from './file/file.module';
     TrashCleanupModule,
     DashboardModule,
     EventLogsModule,
+  ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: BillingGraphqlApiExceptionFilter,
+    },
   ],
   exports: [
     AuditModule,
