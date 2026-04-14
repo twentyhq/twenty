@@ -3047,6 +3047,9 @@ export default {
             "folderId": [
                 3
             ],
+            "pageLayoutId": [
+                3
+            ],
             "position": [
                 11
             ],
@@ -9662,6 +9665,9 @@ export default {
             "folderId": [
                 3
             ],
+            "pageLayoutId": [
+                3
+            ],
             "position": [
                 11
             ],
@@ -9698,6 +9704,9 @@ export default {
             ],
             "color": [
                 1
+            ],
+            "pageLayoutId": [
+                3
             ],
             "__typename": [
                 1

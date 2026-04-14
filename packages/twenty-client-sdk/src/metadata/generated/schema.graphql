@@ -1254,6 +1254,7 @@ enum PageLayoutType {
   RECORD_INDEX
   RECORD_PAGE
   DASHBOARD
+  STANDALONE_PAGE
 }
 
 type Analytics {
@@ -1482,6 +1483,7 @@ type NavigationMenuItem {
   icon: String
   color: String
   folderId: UUID
+  pageLayoutId: UUID
   position: Float!
   applicationId: UUID
   createdAt: DateTime!
@@ -1495,6 +1497,7 @@ enum NavigationMenuItemType {
   LINK
   OBJECT
   RECORD
+  PAGE_LAYOUT
 }
 
 type ObjectRecordEventProperties {
@@ -2713,6 +2716,7 @@ enum EngineComponentKey {
 
 enum CommandMenuItemAvailabilityType {
   GLOBAL
+  GLOBAL_OBJECT_CONTEXT
   RECORD_SELECTION
   FALLBACK
 }
@@ -3734,6 +3738,7 @@ input CreateNavigationMenuItemInput {
   icon: String
   color: String
   folderId: UUID
+  pageLayoutId: UUID
   position: Float
 }
 
@@ -3752,6 +3757,7 @@ input UpdateNavigationMenuItemInput {
   link: String
   icon: String
   color: String
+  pageLayoutId: UUID
 }
 
 """The `Upload` scalar type represents a file upload."""
