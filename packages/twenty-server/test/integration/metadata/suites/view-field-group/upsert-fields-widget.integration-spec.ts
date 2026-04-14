@@ -337,18 +337,18 @@ describe('upsertFieldsWidget', () => {
         },
       });
 
-      // Verify all groups are soft-deleted
-      const { data: activeGroupsData } = await findViewFieldGroups({
+      // Verify custom group is hard-deleted (not just deactivated)
+      const { data: allGroupsData } = await findViewFieldGroups({
         viewId: testSetup.viewId,
         gqlFields: 'id isActive',
         expectToFail: false,
       });
 
-      const activeGroups = activeGroupsData.getViewFieldGroups.filter(
-        (g: { isActive: boolean }) => g.isActive,
+      const specificGroup = allGroupsData.getViewFieldGroups.find(
+        (g: { id: string }) => g.id === groupId,
       );
 
-      expect(activeGroups.length).toBe(0);
+      expect(specificGroup).toBeUndefined();
 
       // Verify the field's viewFieldGroupId is null
       const { data: updatedFieldData } = await findViewFields({
