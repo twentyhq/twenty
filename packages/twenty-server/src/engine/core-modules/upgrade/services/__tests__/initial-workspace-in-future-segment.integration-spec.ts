@@ -186,10 +186,9 @@ describe('UpgradeSequenceRunnerService — initial workspace in future segment (
       `Wc3:${WS_3}:completed:1:initial`,
       `Wc6:${WS_4}:completed:1:initial`,
 
-      // Segment A: WS_1 retries Wc1, then Wc2; WS_2 already done
+      // Segment A: WS_1 retries Wc1, then Wc2; WS_2 already done (no new records)
       `Wc1:${WS_1}:completed:2`,
       `Wc2:${WS_1}:completed:1`,
-      `Wc2:${WS_2}:completed:1`,
 
       // Sync barrier passed → instance steps
       'Ic1:instance:completed:1',

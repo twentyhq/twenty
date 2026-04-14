@@ -228,8 +228,10 @@ export const seedMigration = async (
     isInitial?: boolean;
   },
 ) => {
+  // Seeds must have past timestamps so the runner's NOW()-based records
+  // always sort after them in createdAt order.
   const createdAt = new Date(
-    Date.now() + seedSequenceCounter * 1000,
+    Date.now() - (1000000 - seedSequenceCounter * 1000),
   ).toISOString();
 
   seedSequenceCounter++;
