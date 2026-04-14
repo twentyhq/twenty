@@ -21,6 +21,10 @@ import { PAGE_LAYOUT_WIDGET_SEEDS } from 'src/engine/workspace-manager/dev-seede
 import { type SeederFlatPageLayoutWidget } from 'src/engine/workspace-manager/dev-seeder/core/types/seeder-flat-page-layout-widget.type';
 import { generateSeedId } from 'src/engine/workspace-manager/dev-seeder/core/utils/generate-seed-id.util';
 import { getPageLayoutWidgetDataSeedsV2 } from 'src/engine/workspace-manager/dev-seeder/core/utils/get-page-layout-widget-data-seeds-v2.util';
+import {
+  getSeedFrontComponentDefinitions,
+  getSeedFrontComponentIds,
+} from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-front-component-definitions.util';
 
 export const getPageLayoutWidgetFlatEntitySeeds = ({
   workspaceId,
@@ -46,6 +50,13 @@ export const getPageLayoutWidgetFlatEntitySeeds = ({
     }
   }
 
+  const frontComponentUniversalIdentifierById: Record<string, string> = {};
+
+  for (const definition of getSeedFrontComponentDefinitions(workspaceId)) {
+    frontComponentUniversalIdentifierById[definition.id] =
+      definition.universalIdentifier;
+  }
+
   return seeds.map((seed) => {
     const objectMetadata = isDefined(seed.objectMetadataId)
       ? objectMetadataItems.find(
@@ -58,6 +69,7 @@ export const getPageLayoutWidgetFlatEntitySeeds = ({
       fromPageLayoutWidgetConfigurationToUniversalConfiguration({
         configuration: seed.configuration,
         fieldMetadataUniversalIdentifierById,
+        frontComponentUniversalIdentifierById,
       });
 
     return {
@@ -578,7 +590,7 @@ export const getPageLayoutWidgetDataSeeds = (
       },
       configuration: {
         configurationType: WidgetConfigurationType.FRONT_COMPONENT,
-        frontComponentId: '6cdf2607-4b28-40e6-8c53-cc06799ddc88',
+        frontComponentId: getSeedFrontComponentIds(workspaceId).helloWorldId,
       } as const,
       objectMetadataId: null,
       overrides: null,
