@@ -109,7 +109,7 @@ export function Root({ children }: RootProps) {
               fill
               priority
               sizes="100vw"
-              src="/images/product/tabs/background-shape.png"
+              src="/images/product/tabs/background-shape.webp"
             />
           </ShapeClip>
           <PatternLayer>
@@ -118,7 +118,7 @@ export function Root({ children }: RootProps) {
               className={patternImageClassName}
               fill
               sizes="100vw"
-              src="/images/product/tabs/background.png"
+              src="/images/product/tabs/background.webp"
             />
           </PatternLayer>
         </BackgroundShape>

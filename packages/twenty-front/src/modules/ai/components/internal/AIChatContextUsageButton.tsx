@@ -10,11 +10,13 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ContextUsageProgressRing } from '@/ai/components/internal/ContextUsageProgressRing';
 import { agentChatHasMessageComponentSelector } from '@/ai/states/agentChatHasMessageComponentSelector';
 import {
-  agentChatUsageState,
+  agentChatUsageComponentFamilyState,
   type AgentChatLastMessageUsage,
-} from '@/ai/states/agentChatUsageState';
+} from '@/ai/states/agentChatUsageComponentFamilyState';
+import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { SettingsBillingLabelValueItem } from '@/settings/billing/components/internal/SettingsBillingLabelValueItem';
 import { billingState } from '@/client-config/states/billingState';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { formatNumber } from '~/utils/format/formatNumber';
@@ -94,7 +96,11 @@ const getCachedLabel = (lastMessage: AgentChatLastMessageUsage): string => {
 export const AIChatContextUsageButton = () => {
   const { t } = useLingui();
   const [isHovered, setIsHovered] = useState(false);
-  const agentChatUsage = useAtomStateValue(agentChatUsageState);
+  const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
+  const agentChatUsage = useAtomComponentFamilyStateValue(
+    agentChatUsageComponentFamilyState,
+    { threadId: currentAIChatThread },
+  );
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
 

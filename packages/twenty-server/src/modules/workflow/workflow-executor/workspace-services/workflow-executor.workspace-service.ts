@@ -177,7 +177,11 @@ export class WorkflowExecutorWorkspaceService {
     const isError =
       isDefined(actionOutput.error) && !actionOutput.shouldFailSafely;
 
-    if (!isError && !actionOutput.shouldFailSafely) {
+    if (
+      !isError &&
+      !actionOutput.shouldFailSafely &&
+      !actionOutput.shouldSkipStepExecution
+    ) {
       this.sendWorkflowNodeRunEvent(workspaceId, workflowRun.workflowId);
     }
 

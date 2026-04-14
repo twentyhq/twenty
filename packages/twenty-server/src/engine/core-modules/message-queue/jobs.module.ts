@@ -6,6 +6,8 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { AuditJobModule } from 'src/engine/core-modules/audit/jobs/audit-job.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { EnforceUsageCapJob } from 'src/engine/core-modules/billing/crons/enforce-usage-cap.job';
+import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { UpdateSubscriptionQuantityJob } from 'src/engine/core-modules/billing/jobs/update-subscription-quantity.job';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
@@ -35,7 +37,6 @@ import { WorkspaceCleanerModule } from 'src/engine/workspace-manager/workspace-c
 import { CalendarEventParticipantManagerModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant-manager.module';
 import { CalendarModule } from 'src/modules/calendar/calendar.module';
 import { AutoCompaniesAndContactsCreationJobModule } from 'src/modules/contact-creation-manager/jobs/auto-companies-and-contacts-creation-job.module';
-import { FavoriteModule } from 'src/modules/favorite/favorite.module';
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
 import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
@@ -43,7 +44,11 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([WorkspaceEntity, BillingSubscriptionEntity]),
+    TypeOrmModule.forFeature([
+      WorkspaceEntity,
+      BillingSubscriptionEntity,
+      BillingSubscriptionItemEntity,
+    ]),
     ObjectMetadataModule,
     TypeORMModule,
     UserModule,
@@ -62,7 +67,6 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     TimelineJobModule,
     WebhookJobModule,
     WorkflowModule,
-    FavoriteModule,
     NavigationMenuItemModule,
     SdkClientModule,
     WorkspaceCleanerModule,
@@ -77,6 +81,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     CleanSuspendedWorkspacesJob,
     CleanOnboardingWorkspacesJob,
     EmailSenderJob,
+    EnforceUsageCapJob,
     UpdateSubscriptionQuantityJob,
     HandleWorkspaceMemberDeletedJob,
     CleanWorkspaceDeletionWarningUserVarsJob,

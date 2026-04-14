@@ -191,19 +191,6 @@ export const computeStandardCompanyViewFields = (
         viewFieldGroupName: 'general',
       },
     }),
-    companyRecordPageFieldsFavorites: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'company',
-      context: {
-        viewName: 'companyRecordPageFields',
-        viewFieldName: 'favorites',
-        fieldName: 'favorites',
-        position: 6,
-        isVisible: false,
-        size: 150,
-        viewFieldGroupName: 'general',
-      },
-    }),
     companyRecordPageFieldsAttachments: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'company',

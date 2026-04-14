@@ -1,5 +1,6 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
@@ -17,7 +18,7 @@ import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
-import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
+import { HorizontalSeparator } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
@@ -75,8 +76,8 @@ export const WorkflowEditActionUpsertRecord = ({
   action,
   actionOptions,
 }: WorkflowEditActionUpsertRecordProps) => {
-  const { getIcon } = useIcons();
-
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
 
@@ -89,9 +90,9 @@ export const WorkflowEditActionUpsertRecord = ({
         }),
       )
       .map((item) => ({
-        Icon: getIcon(item.icon),
         label: item.labelPlural,
         value: item.nameSingular,
+        ...getSelectIconPropsFromObjectMetadataItem(item),
       }));
 
   const [formData, setFormData] = useState<UpsertRecordFormData>({

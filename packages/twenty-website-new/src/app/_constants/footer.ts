@@ -23,10 +23,22 @@ export const FOOTER_DATA: FooterDataType = {
       title: 'Help',
       ctas: [],
       links: [
-        { label: 'Developers', href: '#', external: false },
-        { label: 'FAQ', href: '#', external: false },
-        { label: 'Support', href: '#', external: false },
+        {
+          label: 'Developers',
+          href: 'https://docs.twenty.com/developers/introduction',
+          external: true,
+        },
+        {
+          label: 'User Guide',
+          href: 'https://docs.twenty.com/user-guide/introduction',
+          external: true,
+        },
         { label: 'Release Notes', href: '/release-notes', external: false },
+        {
+          label: 'Halftone generator',
+          href: '/halftone',
+          external: false,
+        },
       ],
     },
     {
@@ -34,7 +46,6 @@ export const FOOTER_DATA: FooterDataType = {
       title: 'Legal',
       ctas: [],
       links: [
-        { label: 'Cookie Policy', href: '#', external: false },
         { label: 'Privacy Policy', href: '/privacy-policy', external: false },
         { label: 'Terms and Conditions', href: '/terms', external: false },
       ],
@@ -45,16 +56,15 @@ export const FOOTER_DATA: FooterDataType = {
       ctas: [
         {
           color: 'secondary',
-          href: 'https://app.twenty.com/welcome',
+          kind: 'contactModal',
           label: 'Talk to us',
-          type: 'anchor',
           variant: 'contained',
         },
         {
           color: 'secondary',
           href: 'https://app.twenty.com/welcome',
+          kind: 'link',
           label: 'Get started',
-          type: 'anchor',
           variant: 'outlined',
         },
       ],

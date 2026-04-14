@@ -215,7 +215,8 @@ ENV PG_DATABASE_URL=postgres://twenty:twenty@localhost:5432/default \
     DISABLE_DB_MIGRATIONS=true \
     DISABLE_CRON_JOBS_REGISTRATION=true \
     IS_BILLING_ENABLED=false \
-    SIGN_IN_PREFILLED=true
+    SIGN_IN_PREFILLED=true \
+    APPLICATION_LOG_DRIVER=CONSOLE
 
 EXPOSE 2020
 VOLUME ["/data/postgres", "/app/packages/twenty-server/.local-storage"]

@@ -5,8 +5,8 @@ import { EmailComposerFields } from '@/activities/emails/components/EmailCompose
 import { useEmailComposerState } from '@/activities/emails/hooks/useEmailComposerState';
 import { type ReplyContextReady } from '@/activities/emails/hooks/useReplyContext';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
-import { sidePanelWidgetFooterActionsState } from '@/ui/layout/side-panel/states/sidePanelWidgetFooterActionsState';
-import { type SidePanelFooterAction } from '@/ui/layout/side-panel/types/SidePanelFooterAction';
+import { sidePanelWidgetFooterCommandMenuItemsState } from '@/ui/layout/side-panel/states/sidePanelWidgetFooterCommandMenuItemsState';
+import { type SidePanelFooterCommandMenuItem } from '@/ui/layout/side-panel/types/SidePanelFooterCommandMenuItem';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { t } from '@lingui/core/macro';
@@ -55,15 +55,15 @@ export const EmailThreadComposer = ({
     onSent: handleReplySent,
   });
 
-  const setSidePanelWidgetFooterActions = useSetAtomState(
-    sidePanelWidgetFooterActionsState,
+  const setSidePanelWidgetFooterCommandMenuItems = useSetAtomState(
+    sidePanelWidgetFooterCommandMenuItemsState,
   );
 
-  const footerActions = useMemo((): SidePanelFooterAction[] => {
+  const footerActions = useMemo((): SidePanelFooterCommandMenuItem[] => {
     if (!isComposerOpen) {
       return [
         {
-          key: 'reply',
+          id: 'reply',
           label: t`Reply`,
           Icon: IconArrowBackUp,
           isPrimaryCTA: true,
@@ -74,14 +74,14 @@ export const EmailThreadComposer = ({
 
     return [
       {
-        key: 'cancel-reply',
+        id: 'cancel-reply',
         label: t`Cancel reply`,
         Icon: IconX,
         isPinned: false,
         onClick: () => setIsComposerOpen(false),
       },
       {
-        key: 'send',
+        id: 'send',
         label: t`Send`,
         Icon: IconSend,
         isPrimaryCTA: true,
@@ -102,10 +102,10 @@ export const EmailThreadComposer = ({
       return;
     }
 
-    setSidePanelWidgetFooterActions(footerActions);
+    setSidePanelWidgetFooterCommandMenuItems(footerActions);
 
-    return () => setSidePanelWidgetFooterActions([]);
-  }, [isInSidePanel, footerActions, setSidePanelWidgetFooterActions]);
+    return () => setSidePanelWidgetFooterCommandMenuItems([]);
+  }, [isInSidePanel, footerActions, setSidePanelWidgetFooterCommandMenuItems]);
 
   const handleSendHotkey = useCallback(() => {
     if (isComposerOpen && composerState.canSend) {

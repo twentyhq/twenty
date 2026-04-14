@@ -17,7 +17,7 @@ import { type AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
-import { ApplicationLogDriverType } from 'src/engine/core-modules/application-logs/interfaces/application-log-driver-type.enum';
+import { ApplicationLogDriver } from 'src/engine/core-modules/application-logs/interfaces/application-log-driver.enum';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
 import { WebSearchDriverType } from 'src/engine/core-modules/web-search/web-search.interface';
@@ -816,6 +816,15 @@ export class ConfigVariables {
   BILLING_STRIPE_WEBHOOK_SECRET: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
+      'Use the ClickHouse-backed poller (instead of Stripe billing alerts) as the source of truth for metered-credit cap enforcement',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  BILLING_USAGE_CAP_CLICKHOUSE_ENABLED = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Url for the frontend application',
     type: ConfigVariableType.STRING,
@@ -932,13 +941,12 @@ export class ConfigVariables {
     description:
       'Driver used for application logs (Disabled, Console, or ClickHouse)',
     type: ConfigVariableType.ENUM,
-    options: Object.values(ApplicationLogDriverType),
+    options: Object.values(ApplicationLogDriver),
     isEnvOnly: true,
   })
   @IsOptional()
   @CastToUpperSnakeCase()
-  APPLICATION_LOG_DRIVER_TYPE: ApplicationLogDriverType =
-    ApplicationLogDriverType.DISABLED;
+  APPLICATION_LOG_DRIVER: ApplicationLogDriver = ApplicationLogDriver.DISABLED;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SUPPORT_CHAT_CONFIG,

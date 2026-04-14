@@ -1,10 +1,12 @@
 import { AIChatErrorRenderer } from '@/ai/components/AIChatErrorRenderer';
 import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
-import { agentChatErrorState } from '@/ai/states/agentChatErrorState';
-import { agentChatIsStreamingState } from '@/ai/states/agentChatIsStreamingState';
+import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
+import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
 import { agentChatMessageComponentFamilySelector } from '@/ai/states/agentChatMessageComponentFamilySelector';
 import { agentChatMessageIdsComponentSelector } from '@/ai/states/agentChatMessageIdsComponentSelector';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -15,8 +17,17 @@ const StyledErrorWrapper = styled.div`
 `;
 
 export const AIChatErrorUnderMessageList = () => {
-  const agentChatError = useAtomStateValue(agentChatErrorState);
-  const agentChatIsStreaming = useAtomStateValue(agentChatIsStreamingState);
+  const agentChatDisplayedThread = useAtomStateValue(
+    agentChatDisplayedThreadState,
+  );
+  const agentChatError = useAtomComponentFamilyStateValue(
+    agentChatErrorComponentFamilyState,
+    { threadId: agentChatDisplayedThread },
+  );
+  const agentChatIsStreaming = useAtomComponentFamilyStateValue(
+    agentChatIsStreamingComponentFamilyState,
+    { threadId: agentChatDisplayedThread },
+  );
 
   const agentChatMessageIds = useAtomComponentSelectorValue(
     agentChatMessageIdsComponentSelector,

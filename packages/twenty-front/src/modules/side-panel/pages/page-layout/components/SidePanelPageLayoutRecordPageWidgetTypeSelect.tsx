@@ -15,7 +15,6 @@ import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPositi
 import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
 import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
 import { getFieldWidgetDefaultDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
-import { useCreateViewForFieldsWidget } from '@/page-layout/widgets/fields/hooks/useCreateViewForFieldsWidget';
 import { useDeleteViewForFieldsWidget } from '@/page-layout/widgets/fields/hooks/useDeleteViewForFieldsWidget';
 import { useDeleteViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useDeleteViewForRecordTableWidget';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
@@ -91,8 +90,6 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
 
   const { insertCreatedWidgetAtContext } =
     useInsertCreatedWidgetAtContext(pageLayoutId);
-
-  const { createViewForFieldsWidget } = useCreateViewForFieldsWidget();
 
   const { deleteViewForFieldsWidget } = useDeleteViewForFieldsWidget();
 
@@ -187,21 +184,14 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     }),
   );
 
-  const handleCreateFieldsWidget = useCallback(async () => {
+  const handleCreateFieldsWidget = useCallback(() => {
     if (!isDefined(tabId)) {
       return;
     }
 
     const replacePositionIndex = getExistingWidgetPositionIndex();
 
-    const viewId = await createViewForFieldsWidget({
-      objectMetadataId: objectMetadataItem.id,
-      viewName: `${objectMetadataItem.labelSingular} Fields`,
-    });
-
-    if (viewId === null) {
-      return;
-    }
+    const viewId = uuidv4();
 
     removeExistingWidgetIfReplacing();
 
@@ -233,12 +223,10 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       resetNavigationStack: true,
     });
   }, [
-    createViewForFieldsWidget,
     getExistingWidgetPositionIndex,
     insertCreatedWidgetAtContext,
     navigatePageLayoutSidePanel,
     objectMetadataItem.id,
-    objectMetadataItem.labelSingular,
     pageLayoutDraftState,
     removeExistingWidgetIfReplacing,
     setPageLayoutEditingWidgetId,
@@ -395,7 +383,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
   ];
 
   return (
-    <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
+    <SidePanelList selectableItemIds={selectableItemIds}>
       <SidePanelGroup heading={t`Widget type`}>
         <SelectableListItem itemId="fields" onEnter={handleCreateFieldsWidget}>
           <CommandMenuItem

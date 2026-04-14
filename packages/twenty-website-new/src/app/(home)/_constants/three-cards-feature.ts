@@ -18,7 +18,7 @@ export const THREE_CARDS_FEATURE_DATA: ThreeCardsFeatureCardsDataType = {
         text: "Twenty makes it simple. It's clean, intuitive, and built to feel like Notion.",
       },
       image: {
-        src: '/images/home/three-cards-feature/familiar-interface.png',
+        src: '/images/home/three-cards-feature/familiar-interface.webp',
         alt: 'Familiar interface',
       },
     },
@@ -28,7 +28,7 @@ export const THREE_CARDS_FEATURE_DATA: ThreeCardsFeatureCardsDataType = {
         text: 'Smart patterns, shortcuts, and layouts make everyday tasks faster and easier to execute.',
       },
       image: {
-        src: '/images/home/three-cards-feature/fast-path.png',
+        src: '/images/home/three-cards-feature/fast-path.webp',
         alt: 'Fast path',
       },
     },
@@ -38,7 +38,7 @@ export const THREE_CARDS_FEATURE_DATA: ThreeCardsFeatureCardsDataType = {
         text: 'Everything updates in real time, with AI chat always ready to help you move faster.',
       },
       image: {
-        src: '/images/home/three-cards-feature/live-data.png',
+        src: '/images/home/three-cards-feature/live-data.webp',
         alt: 'Live data',
       },
     },

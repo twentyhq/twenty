@@ -16,6 +16,7 @@ import {
   type IconComponent,
 } from 'twenty-ui/display';
 import { ThemeContext } from 'twenty-ui/theme-constants';
+import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 type PageLayoutHeaderInfo = {
   headerIcon: IconComponent | undefined;
@@ -65,10 +66,12 @@ export const usePageLayoutHeaderInfo = ({
           ? tab.title
           : '';
 
+      const isCanvasTab = tab.layoutMode === PageLayoutTabLayoutMode.CANVAS;
+
       return {
         headerIcon: IconAppWindow,
         headerIconColor: iconColor,
-        headerType: t`Tab`,
+        headerType: isCanvasTab ? t`Full tab widget` : t`Tab`,
         title,
         isReadonly: false,
         tab,
