@@ -3,6 +3,7 @@ import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageL
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type PageLayoutAddTabStrategy } from '@/page-layout/types/PageLayoutAddTabStrategy';
+import { isReactivatableTab } from '@/page-layout/utils/isReactivatableTab';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -61,7 +62,7 @@ export const usePageLayoutAddTabStrategy = ({
     return undefined;
   }
 
-  const hasInactiveTabs = currentPageLayout.tabs.some((tab) => !tab.isActive);
+  const hasInactiveTabs = currentPageLayout.tabs.some(isReactivatableTab);
 
   const mode =
     currentPageLayout.type === PageLayoutType.RECORD_PAGE && hasInactiveTabs

@@ -3,6 +3,7 @@ import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageL
 import { useIsCurrentObjectCustom } from '@/page-layout/hooks/useIsCurrentObjectCustom';
 import { useUpdatePageLayoutTab } from '@/page-layout/hooks/useUpdatePageLayoutTab';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
+import { isReactivatableTab } from '@/page-layout/utils/isReactivatableTab';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -46,8 +47,7 @@ export const PageLayoutTabListNewTabDropdownContent = ({
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const inactiveTabs = useMemo(
-    () =>
-      sortTabsByPosition(currentPageLayout.tabs.filter((tab) => !tab.isActive)),
+    () => sortTabsByPosition(currentPageLayout.tabs.filter(isReactivatableTab)),
     [currentPageLayout.tabs],
   );
 
