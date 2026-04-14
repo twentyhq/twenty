@@ -166,6 +166,10 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
     client: ImapFlow,
     mailbox: ListResponse,
   ): Promise<bigint | null> {
+    if (!this.isMailboxSelectable(mailbox)) {
+      return null;
+    }
+
     if (mailbox.status?.uidValidity) {
       return mailbox.status.uidValidity;
     }
