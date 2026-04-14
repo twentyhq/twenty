@@ -110,20 +110,21 @@ export const useFieldsWidgetGroups = ({
         })
         .filter(isDefined);
 
-      if (fields.length > 0) {
-        return {
-          groups: [
-            {
-              id: `${viewId}-ungrouped`,
-              name: '',
-              position: 0,
-              isVisible: true,
-              fields,
-            },
-          ],
-          displayMode: 'inline',
-        };
-      }
+      return {
+        groups:
+          fields.length > 0
+            ? [
+                {
+                  id: `${viewId}-ungrouped`,
+                  name: '',
+                  position: 0,
+                  isVisible: true,
+                  fields,
+                },
+              ]
+            : [],
+        displayMode: 'inline',
+      };
     }
 
     return {
