@@ -91,6 +91,11 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
       workspaceId,
     );
 
+    await this.featureFlagService.enableFeatureFlags(
+      [FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED],
+      workspaceId,
+    );
+
     this.logger.log(
       `Successfully backfilled record page layouts for workspace ${workspaceId}`,
     );
