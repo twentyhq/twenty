@@ -18,8 +18,9 @@ import {
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { styled } from '@linaria/react';
 import { CustomError } from 'twenty-shared/utils';
-import { IconPlus } from 'twenty-ui/display';
+import { IconPencil, IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { RelationType } from '~/generated-metadata/graphql';
 
 type FieldWidgetRelationEditActionProps = {
   fieldDefinition:
@@ -71,9 +72,14 @@ export const FieldWidgetRelationEditAction = ({
 
   const isMorphRelation = isFieldMorphRelation(fieldDefinition);
 
+  const triggerIcon =
+    fieldDefinition.metadata.relationType === RelationType.MANY_TO_ONE
+      ? IconPencil
+      : IconPlus;
+
   const dropdownTriggerClickableComponent = (
     <StyledEditButtonWrapper>
-      <LightIconButton Icon={IconPlus} accent="secondary" />
+      <LightIconButton Icon={triggerIcon} accent="secondary" />
     </StyledEditButtonWrapper>
   );
 
