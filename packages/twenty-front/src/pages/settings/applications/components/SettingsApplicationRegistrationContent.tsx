@@ -4,16 +4,16 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { IconInfoCircle, IconKey, IconWorld } from 'twenty-ui/display';
-import { type ApplicationRegistrationData } from '~/pages/settings/applications/tabs/types/ApplicationRegistrationData';
 import { SettingsApplicationRegistrationGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab';
 import { SettingsApplicationRegistrationOAuthTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
 import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';
+import { ApplicationRegistration } from '~/generated-metadata/graphql';
 
 const REGISTRATION_DETAIL_TAB_LIST_ID =
   'application-registration-detail-tab-list';
 
 type SettingsApplicationRegistrationContentProps = {
-  registration: ApplicationRegistrationData;
+  registration: ApplicationRegistration;
   hasActiveInstalls: boolean;
 };
 
@@ -53,7 +53,6 @@ export const SettingsApplicationRegistrationContent = ({
         return (
           <SettingsApplicationRegistrationGeneralTab
             registration={registration}
-            hasActiveInstalls={hasActiveInstalls}
           />
         );
     }

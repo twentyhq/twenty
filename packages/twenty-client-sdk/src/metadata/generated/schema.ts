@@ -534,7 +534,7 @@ export interface View {
     __typename: 'View'
 }
 
-export type ViewType = 'TABLE' | 'KANBAN' | 'CALENDAR' | 'FIELDS_WIDGET' | 'TABLE_WIDGET'
+export type ViewType = 'TABLE' | 'KANBAN' | 'CALENDAR' | 'FIELDS_WIDGET'
 
 export type ViewKey = 'INDEX'
 
@@ -1219,7 +1219,7 @@ export interface NavigationMenuItem {
     __typename: 'NavigationMenuItem'
 }
 
-export type NavigationMenuItemType = 'VIEW' | 'FOLDER' | 'LINK' | 'OBJECT' | 'RECORD' | 'PAGE_LAYOUT'
+export type NavigationMenuItemType = 'VIEW' | 'FOLDER' | 'LINK' | 'OBJECT' | 'RECORD'
 
 export interface ObjectRecordEventProperties {
     updatedFields?: Scalars['String'][]
@@ -1428,6 +1428,13 @@ export interface PublicWorkspaceData {
     displayName?: Scalars['String']
     workspaceUrls: WorkspaceUrls
     __typename: 'PublicWorkspaceData'
+}
+
+export interface PublicWorkspaceDataSummary {
+    id: Scalars['UUID']
+    logo?: Scalars['String']
+    displayName?: Scalars['String']
+    __typename: 'PublicWorkspaceDataSummary'
 }
 
 export interface NativeModelCapabilities {
@@ -2905,6 +2912,7 @@ export interface Query {
     currentUser: User
     currentWorkspace: Workspace
     getPublicWorkspaceDataByDomain: PublicWorkspaceData
+    getPublicWorkspaceDataById: PublicWorkspaceDataSummary
     getSSOIdentityProviders: FindAvailableSSOIDP[]
     getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount
     getAutoCompleteAddress: AutocompleteResult[]
@@ -4680,6 +4688,14 @@ export interface PublicWorkspaceDataGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface PublicWorkspaceDataSummaryGenqlSelection{
+    id?: boolean | number
+    logo?: boolean | number
+    displayName?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface NativeModelCapabilitiesGenqlSelection{
     webSearch?: boolean | number
     twitterSearch?: boolean | number
@@ -6274,6 +6290,7 @@ export interface QueryGenqlSelection{
     currentUser?: UserGenqlSelection
     currentWorkspace?: WorkspaceGenqlSelection
     getPublicWorkspaceDataByDomain?: (PublicWorkspaceDataGenqlSelection & { __args?: {origin?: (Scalars['String'] | null)} })
+    getPublicWorkspaceDataById?: (PublicWorkspaceDataSummaryGenqlSelection & { __args: {id: Scalars['String']} })
     getSSOIdentityProviders?: FindAvailableSSOIDPGenqlSelection
     getConnectedImapSmtpCaldavAccount?: (ConnectedImapSmtpCaldavAccountGenqlSelection & { __args: {id: Scalars['UUID']} })
     getAutoCompleteAddress?: (AutocompleteResultGenqlSelection & { __args: {address: Scalars['String'], token: Scalars['String'], country?: (Scalars['String'] | null), isFieldCity?: (Scalars['Boolean'] | null)} })
@@ -7850,6 +7867,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const PublicWorkspaceDataSummary_possibleTypes: string[] = ['PublicWorkspaceDataSummary']
+    export const isPublicWorkspaceDataSummary = (obj?: { __typename?: any } | null): obj is PublicWorkspaceDataSummary => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPublicWorkspaceDataSummary"')
+      return PublicWorkspaceDataSummary_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const NativeModelCapabilities_possibleTypes: string[] = ['NativeModelCapabilities']
     export const isNativeModelCapabilities = (obj?: { __typename?: any } | null): obj is NativeModelCapabilities => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isNativeModelCapabilities"')
@@ -9267,8 +9292,7 @@ export const enumViewType = {
    TABLE: 'TABLE' as const,
    KANBAN: 'KANBAN' as const,
    CALENDAR: 'CALENDAR' as const,
-   FIELDS_WIDGET: 'FIELDS_WIDGET' as const,
-   TABLE_WIDGET: 'TABLE_WIDGET' as const
+   FIELDS_WIDGET: 'FIELDS_WIDGET' as const
 }
 
 export const enumViewKey = {
@@ -9452,8 +9476,7 @@ export const enumNavigationMenuItemType = {
    FOLDER: 'FOLDER' as const,
    LINK: 'LINK' as const,
    OBJECT: 'OBJECT' as const,
-   RECORD: 'RECORD' as const,
-   PAGE_LAYOUT: 'PAGE_LAYOUT' as const
+   RECORD: 'RECORD' as const
 }
 
 export const enumMetadataEventAction = {

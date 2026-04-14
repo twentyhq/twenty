@@ -1,13 +1,29 @@
 import { useParams } from 'react-router-dom';
-import { useQuery } from '@apollo/client/react';
-import { FindOneAdminApplicationRegistrationDocument } from '~/generated-metadata/graphql';
-import type { ApplicationRegistrationData } from '~/pages/settings/applications/tabs/types/ApplicationRegistrationData';
+import { useMutation, useQuery } from '@apollo/client/react';
+import {
+  FindAllApplicationRegistrationsDocument,
+  FindManyApplicationRegistrationsDocument,
+  FindOneAdminApplicationRegistrationDocument,
+  FindOneApplicationRegistrationDocument,
+  UpdateApplicationRegistrationDocument,
+} from '~/generated-metadata/graphql';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { SettingsApplicationRegistrationContent } from '~/pages/settings/applications/components/SettingsApplicationRegistrationContent';
 import { SettingsPath } from 'twenty-shared/types';
 import { useLingui } from '@lingui/react/macro';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { APPLICATION_REGISTRATION_ADMIN_PATH } from '@/settings/admin-panel/apps/constants/ApplicationRegistrationAdminPath';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsAdminApplicationRegistrationDetailContent } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent';
+import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { IconArrowBarToDown } from 'twenty-ui/display';
+import { Card, Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from '@linaria/react';
+
+const StyledToggleContainer = styled.div`
+  display: flex;
+  margin-top: ${themeCssVariables.spacing[4]};
+`;
 
 export const SettingsAdminApplicationRegistrationDetail = () => {
   const { t } = useLingui();
@@ -24,9 +40,17 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
     },
   );
 
-  const registration = data?.findOneAdminApplicationRegistration as
-    | ApplicationRegistrationData
-    | undefined;
+  const [updateRegistration] = useMutation(
+    UpdateApplicationRegistrationDocument,
+    {
+      refetchQueries: [
+        FindOneAdminApplicationRegistrationDocument,
+        FindAllApplicationRegistrationsDocument,
+      ],
+    },
+  );
+
+  const registration = data?.findOneAdminApplicationRegistration;
 
   if (loading || !isDefined(registration)) {
     return null;
@@ -47,10 +71,33 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
         { children: registration.name },
       ]}
     >
-      <SettingsApplicationRegistrationContent
-        registration={registration}
-        hasActiveInstalls={false}
-      />
+      <SettingsPageContainer>
+        <Section>
+          <SettingsAdminApplicationRegistrationDetailContent
+            registration={registration}
+          />
+          <StyledToggleContainer>
+            <Card rounded fullWidth>
+              <SettingsOptionCardContentToggle
+                Icon={IconArrowBarToDown}
+                title={t`Allow installation`}
+                description={t`Display this app in the NPM packages list`}
+                checked={registration.isListed}
+                onChange={() =>
+                  updateRegistration({
+                    variables: {
+                      input: {
+                        id: registration.id,
+                        update: { isListed: !registration.isListed },
+                      },
+                    },
+                  })
+                }
+              />
+            </Card>
+          </StyledToggleContainer>
+        </Section>
+      </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
 };

@@ -39,6 +39,7 @@ import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/a
 import {
   type AuthProvidersDTO,
   PublicWorkspaceDataDTO,
+  PublicWorkspaceDataSummaryDTO,
 } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { WorkspaceUrlsDTO } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
@@ -412,6 +413,39 @@ export class WorkspaceResolver {
           workspace,
           systemEnabledProviders,
         }),
+      };
+    } catch (err) {
+      workspaceGraphqlApiExceptionHandler(err);
+    }
+  }
+
+  @Query(() => PublicWorkspaceDataSummaryDTO)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  async getPublicWorkspaceDataById(
+    @Args({
+      name: 'id',
+      type: () => String,
+      nullable: false,
+    })
+    id: string,
+  ): Promise<PublicWorkspaceDataSummaryDTO | undefined> {
+    try {
+      const workspace = await this.workspaceService.findOneWorkspaceById(id);
+
+      assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+
+      const logo = isDefined(workspace.logoFileId)
+        ? this.fileUrlService.signFileByIdUrl({
+            fileId: workspace.logoFileId,
+            workspaceId: workspace.id,
+            fileFolder: FileFolder.CorePicture,
+          })
+        : (workspace.logo ?? '');
+
+      return {
+        id: workspace.id,
+        logo,
+        displayName: workspace.displayName,
       };
     } catch (err) {
       workspaceGraphqlApiExceptionHandler(err);

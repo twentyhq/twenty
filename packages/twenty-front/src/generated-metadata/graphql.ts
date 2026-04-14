@@ -3936,7 +3936,6 @@ export enum NavigationMenuItemType {
   FOLDER = 'FOLDER',
   LINK = 'LINK',
   OBJECT = 'OBJECT',
-  PAGE_LAYOUT = 'PAGE_LAYOUT',
   RECORD = 'RECORD',
   VIEW = 'VIEW'
 }
@@ -4383,6 +4382,13 @@ export type PublicWorkspaceData = {
   workspaceUrls: WorkspaceUrls;
 };
 
+export type PublicWorkspaceDataSummary = {
+  __typename?: 'PublicWorkspaceDataSummary';
+  displayName?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  logo?: Maybe<Scalars['String']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   adminPanelRecentUsers: Array<AdminPanelRecentUser>;
@@ -4460,6 +4466,7 @@ export type Query = {
   getPageLayouts: Array<PageLayout>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getPublicWorkspaceDataByDomain: PublicWorkspaceData;
+  getPublicWorkspaceDataById: PublicWorkspaceDataSummary;
   getQueueJobs: QueueJobsResponse;
   getQueueMetrics: QueueMetricsData;
   getRoles: Array<Role>;
@@ -4766,6 +4773,11 @@ export type QueryGetPageLayoutsArgs = {
 
 export type QueryGetPublicWorkspaceDataByDomainArgs = {
   origin?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryGetPublicWorkspaceDataByIdArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -6217,8 +6229,7 @@ export enum ViewType {
   CALENDAR = 'CALENDAR',
   FIELDS_WIDGET = 'FIELDS_WIDGET',
   KANBAN = 'KANBAN',
-  TABLE = 'TABLE',
-  TABLE_WIDGET = 'TABLE_WIDGET'
+  TABLE = 'TABLE'
 }
 
 export enum ViewVisibility {
@@ -8567,6 +8578,13 @@ export type GetAiSystemPromptPreviewQueryVariables = Exact<{ [key: string]: neve
 
 export type GetAiSystemPromptPreviewQuery = { __typename?: 'Query', getAISystemPromptPreview: { __typename?: 'AISystemPromptPreview', estimatedTokenCount: number, sections: Array<{ __typename?: 'AISystemPromptSection', title: string, content: string, estimatedTokenCount: number }> } };
 
+export type GetPublicWorkspaceDataByIdQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type GetPublicWorkspaceDataByIdQuery = { __typename?: 'Query', getPublicWorkspaceDataById: { __typename?: 'PublicWorkspaceDataSummary', id: string, displayName?: string | null, logo?: string | null } };
+
 export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
   inviteHash: Scalars['String'];
 }>;
@@ -8908,4 +8926,5 @@ export const UpdateWorkspaceDocument = {"kind":"Document","definitions":[{"kind"
 export const UploadWorkspaceLogoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UploadWorkspaceLogo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"file"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Upload"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uploadWorkspaceLogo"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"file"},"value":{"kind":"Variable","name":{"kind":"Name","value":"file"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]} as unknown as DocumentNode<UploadWorkspaceLogoMutation, UploadWorkspaceLogoMutationVariables>;
 export const CheckCustomDomainValidRecordsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CheckCustomDomainValidRecords"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"checkCustomDomainValidRecords"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"domain"}},{"kind":"Field","name":{"kind":"Name","value":"records"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"validationType"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]}}]} as unknown as DocumentNode<CheckCustomDomainValidRecordsMutation, CheckCustomDomainValidRecordsMutationVariables>;
 export const GetAiSystemPromptPreviewDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAISystemPromptPreview"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAISystemPromptPreview"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sections"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"estimatedTokenCount"}}]}},{"kind":"Field","name":{"kind":"Name","value":"estimatedTokenCount"}}]}}]}}]} as unknown as DocumentNode<GetAiSystemPromptPreviewQuery, GetAiSystemPromptPreviewQueryVariables>;
+export const GetPublicWorkspaceDataByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetPublicWorkspaceDataById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getPublicWorkspaceDataById"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}}]}}]}}]} as unknown as DocumentNode<GetPublicWorkspaceDataByIdQuery, GetPublicWorkspaceDataByIdQueryVariables>;
 export const GetWorkspaceFromInviteHashDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetWorkspaceFromInviteHash"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"inviteHash"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findWorkspaceFromInviteHash"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"inviteHash"},"value":{"kind":"Variable","name":{"kind":"Name","value":"inviteHash"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"allowImpersonation"}}]}}]}}]} as unknown as DocumentNode<GetWorkspaceFromInviteHashQuery, GetWorkspaceFromInviteHashQueryVariables>;

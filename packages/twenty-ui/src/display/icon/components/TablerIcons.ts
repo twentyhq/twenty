@@ -14,6 +14,7 @@ export {
   IconArchive,
   IconArchiveOff,
   IconArrowBackUp,
+  IconArrowBarToDown,
   IconArrowDown,
   IconArrowLeft,
   IconArrowMerge,
