@@ -8,10 +8,13 @@ import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoSta
 import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
+import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { ContextStorePageType } from '@/context-store/types/ContextStorePageType';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -38,6 +41,14 @@ jotaiStore.set(
 
 const wrapper = getJestMetadataAndApolloMocksAndCommandMenuWrapper({
   apolloMocks: [],
+  onInitializeJotaiStore: (store) => {
+    store.set(
+      contextStoreCurrentPageTypeComponentState.atomFamily({
+        instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+      }),
+      ContextStorePageType.Index,
+    );
+  },
   componentInstanceId: SIDE_PANEL_COMPONENT_INSTANCE_ID,
   contextStoreCurrentObjectMetadataNameSingular:
     personMockObjectMetadataItem.nameSingular,
@@ -91,6 +102,11 @@ describe('useSetGlobalCommandMenuContext', () => {
           SIDE_PANEL_COMPONENT_INSTANCE_ID,
         );
 
+        const contextStoreCurrentPageType = useAtomComponentStateValue(
+          contextStoreCurrentPageTypeComponentState,
+          SIDE_PANEL_COMPONENT_INSTANCE_ID,
+        );
+
         return {
           setGlobalCommandMenuContext,
           contextStoreTargetedRecordsRule,
@@ -98,6 +114,7 @@ describe('useSetGlobalCommandMenuContext', () => {
           contextStoreFilters,
           contextStoreFilterGroups,
           contextStoreCurrentViewType,
+          contextStoreCurrentPageType,
           contextStoreAnyFieldFilterValue,
         };
       },
@@ -140,6 +157,9 @@ describe('useSetGlobalCommandMenuContext', () => {
     expect(result.current.contextStoreAnyFieldFilterValue).toEqual('');
     expect(result.current.contextStoreCurrentViewType).toBe(
       ContextStoreViewType.Table,
+    );
+    expect(result.current.contextStoreCurrentPageType).toBe(
+      ContextStorePageType.Index,
     );
     const sidePanelPageInfoAfter = jotaiStore.get(sidePanelPageInfoState.atom);
     expect(sidePanelPageInfoAfter).toEqual({

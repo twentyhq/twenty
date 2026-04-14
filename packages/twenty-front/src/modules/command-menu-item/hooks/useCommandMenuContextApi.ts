@@ -2,12 +2,12 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
+import { ContextStorePageType } from '@/context-store/types/ContextStorePageType';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
@@ -108,18 +108,29 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
     recordIndexId,
   );
 
-  const contextStoreCurrentViewType = useAtomComponentStateValue(
-    contextStoreCurrentViewTypeComponentState,
+  const contextStoreCurrentPageType = useAtomComponentStateValue(
+    contextStoreCurrentPageTypeComponentState,
   );
 
   const contextStoreIsPageInEditMode = useAtomComponentStateValue(
     contextStoreIsPageInEditModeComponentState,
   );
 
-  const pageType =
-    contextStoreCurrentViewType === ContextStoreViewType.ShowPage
-      ? CommandMenuContextApiPageType.RECORD_PAGE
-      : CommandMenuContextApiPageType.INDEX_PAGE;
+  const PAGE_TYPE_MAP: Record<
+    ContextStorePageType,
+    CommandMenuContextApiPageType
+  > = {
+    [ContextStorePageType.Index]: CommandMenuContextApiPageType.INDEX_PAGE,
+    [ContextStorePageType.Record]: CommandMenuContextApiPageType.RECORD_PAGE,
+    [ContextStorePageType.Standalone]:
+      CommandMenuContextApiPageType.STANDALONE_PAGE,
+    [ContextStorePageType.Settings]:
+      CommandMenuContextApiPageType.SETTINGS_PAGE,
+  };
+
+  const pageType = isDefined(contextStoreCurrentPageType)
+    ? PAGE_TYPE_MAP[contextStoreCurrentPageType]
+    : CommandMenuContextApiPageType.INDEX_PAGE;
 
   const isSelectAll = contextStoreTargetedRecordsRule.mode === 'exclusion';
 

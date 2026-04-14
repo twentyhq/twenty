@@ -1,5 +1,6 @@
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
@@ -122,6 +123,19 @@ export const useCopyContextStoreStates = () => {
           instanceId: instanceIdToCopyTo,
         }),
         contextStoreCurrentViewType,
+      );
+
+      const contextStoreCurrentPageType = store.get(
+        contextStoreCurrentPageTypeComponentState.atomFamily({
+          instanceId: instanceIdToCopyFrom,
+        }),
+      );
+
+      store.set(
+        contextStoreCurrentPageTypeComponentState.atomFamily({
+          instanceId: instanceIdToCopyTo,
+        }),
+        contextStoreCurrentPageType,
       );
 
       const contextStoreIsFullTabWidgetInEditMode = store.get(

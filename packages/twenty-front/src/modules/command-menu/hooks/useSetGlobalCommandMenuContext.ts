@@ -4,6 +4,7 @@ import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoSta
 import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
@@ -11,6 +12,7 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { atom, useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -113,6 +115,17 @@ export const useSetGlobalCommandMenuContext = () => {
         );
 
         batchSet(
+          contextStoreCurrentPageTypeComponentState.atomFamily({
+            instanceId: toId,
+          }),
+          get(
+            contextStoreCurrentPageTypeComponentState.atomFamily({
+              instanceId: fromId,
+            }),
+          ),
+        );
+
+        batchSet(
           contextStoreIsPageInEditModeComponentState.atomFamily({
             instanceId: toId,
           }),
@@ -163,6 +176,17 @@ export const useSetGlobalCommandMenuContext = () => {
             instanceId: fromId,
           }),
           ContextStoreViewType.Table,
+        );
+
+        batchSet(
+          contextStoreCurrentPageTypeComponentState.atomFamily({
+            instanceId: fromId,
+          }),
+          get(
+            contextStoreCurrentPageTypeComponentState.atomFamily({
+              instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+            }),
+          ),
         );
 
         batchSet(sidePanelPageInfoState.atom, {

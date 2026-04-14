@@ -75,6 +75,10 @@ export const SidePanelCommandMenuItemEditPage = () => {
     commandMenuContextApi.pageType ===
     CommandMenuContextApiPageType.RECORD_PAGE;
 
+  const isIndexPage =
+    commandMenuContextApi.pageType ===
+    CommandMenuContextApiPageType.INDEX_PAGE;
+
   const mainContextStoreHasSelectedRecords = useAtomStateValue(
     mainContextStoreHasSelectedRecordsSelector,
   );
@@ -93,7 +97,9 @@ export const SidePanelCommandMenuItemEditPage = () => {
 
   const allowedAvailabilityTypes = new Set<CommandMenuItemAvailabilityType>([
     CommandMenuItemAvailabilityType.GLOBAL,
-    CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
+    ...((isIndexPage || isRecordPage)
+      ? [CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT]
+      : []),
     mainContextStoreHasSelectedRecords
       ? CommandMenuItemAvailabilityType.RECORD_SELECTION
       : CommandMenuItemAvailabilityType.FALLBACK,

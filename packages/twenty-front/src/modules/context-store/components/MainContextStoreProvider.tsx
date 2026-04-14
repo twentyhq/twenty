@@ -137,6 +137,7 @@ export const MainContextStoreProvider = () => {
       objectMetadataItem={objectMetadataItem}
       isRecordIndexPage={isRecordIndexPage}
       isRecordShowPage={isRecordShowPage}
+      isStandalonePage={isStandalonePage}
       isSettingsPage={isSettingsPage}
     />
   );
