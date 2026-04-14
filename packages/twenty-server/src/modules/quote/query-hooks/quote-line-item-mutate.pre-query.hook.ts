@@ -16,10 +16,12 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 const FEE_TYPE_FIXED = 'FIXED_PRICE';
 const FEE_TYPE_TM = 'TIME_AND_MATERIALS';
 
-// Shared validation that strips fields irrelevant to the selected fee type
-// and checks that required fields are present.
+// Validate and strip fields irrelevant to the selected fee type.
+// isPartialUpdate=true (updateOne) skips presence checks for fields not
+// included in the payload — they are already stored on the record.
 function validateAndStripFeeTypeFields(
   data: Record<string, unknown>,
+  isPartialUpdate = false,
 ): Record<string, unknown> {
   const feeType = data['feeType'] as string | undefined;
 
@@ -30,9 +32,13 @@ function validateAndStripFeeTypeFields(
   const cleaned = { ...data };
 
   if (feeType === FEE_TYPE_FIXED) {
+    const amountExplicitlySet = 'fixedFeeAmountAmountMicros' in cleaned;
+
     if (
-      !cleaned['fixedFeeAmountAmountMicros'] &&
-      cleaned['fixedFeeAmountAmountMicros'] !== 0
+      !isPartialUpdate || amountExplicitlySet
+        ? !cleaned['fixedFeeAmountAmountMicros'] &&
+          cleaned['fixedFeeAmountAmountMicros'] !== 0
+        : false
     ) {
       throw new CommonQueryRunnerException(
         'fixedFeeAmountAmountMicros is required when feeType is FIXED_PRICE',
@@ -52,9 +58,14 @@ function validateAndStripFeeTypeFields(
   }
 
   if (feeType === FEE_TYPE_TM) {
+    const rateExplicitlySet = 'hourlyRateAmountMicros' in cleaned;
+    const hoursExplicitlySet = 'estimatedHours' in cleaned;
+
     if (
-      !cleaned['hourlyRateAmountMicros'] &&
-      cleaned['hourlyRateAmountMicros'] !== 0
+      !isPartialUpdate || rateExplicitlySet
+        ? !cleaned['hourlyRateAmountMicros'] &&
+          cleaned['hourlyRateAmountMicros'] !== 0
+        : false
     ) {
       throw new CommonQueryRunnerException(
         'hourlyRateAmountMicros is required when feeType is TIME_AND_MATERIALS',
@@ -66,8 +77,9 @@ function validateAndStripFeeTypeFields(
     }
 
     if (
-      cleaned['estimatedHours'] === null ||
-      cleaned['estimatedHours'] === undefined
+      (!isPartialUpdate || hoursExplicitlySet) &&
+      (cleaned['estimatedHours'] === null ||
+        cleaned['estimatedHours'] === undefined)
     ) {
       throw new CommonQueryRunnerException(
         'estimatedHours is required when feeType is TIME_AND_MATERIALS',
@@ -132,6 +144,7 @@ export class QuoteLineItemUpdateOnePreQueryHook
       ...payload,
       data: validateAndStripFeeTypeFields(
         payload.data as Record<string, unknown>,
+        true,
       ),
     };
   }
