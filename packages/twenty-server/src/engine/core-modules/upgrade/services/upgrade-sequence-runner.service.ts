@@ -303,9 +303,6 @@ export class UpgradeSequenceRunnerService {
     return { report, processedWorkspaceIds: workspaceIdsForSegment };
   }
 
-  // Excludes workspaces whose isInitial cursor is ahead of the current
-  // segment — they were activated at a later point and don't need to
-  // run this segment's commands.
   private filterWorkspaceIdsForSegment({
     allActiveOrSuspendedWorkspaceIds,
     workspaceCursors,
@@ -326,7 +323,9 @@ export class UpgradeSequenceRunnerService {
       const cursor = workspaceCursors.get(workspaceId);
 
       if (!cursor) {
-        return true;
+        throw new Error(
+          `No upgrade migration cursor found for workspace ${workspaceId}. This should never occur.`,
+        );
       }
 
       if (cursor.isInitial && !segmentStepNames.has(cursor.name)) {
