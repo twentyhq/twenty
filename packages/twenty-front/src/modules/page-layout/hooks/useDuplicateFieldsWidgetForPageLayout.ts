@@ -99,17 +99,11 @@ export const useDuplicateFieldsWidgetForPageLayout = ({
         sourceWidget.id
       ];
 
-      const hasSourceDraft =
-        isDefined(sourceEditorMode) &&
-        ((isDefined(sourceGroups) && sourceGroups.length > 0) ||
-          (isDefined(sourceUngroupedFields) &&
-            sourceUngroupedFields.length > 0));
-
       let newGroups: FieldsWidgetGroup[] = [];
       let newUngroupedFields: FieldsWidgetGroupField[] = [];
       let newEditorMode: FieldsWidgetEditorMode;
 
-      if (hasSourceDraft && isDefined(sourceEditorMode)) {
+      if (isDefined(sourceEditorMode)) {
         newEditorMode = sourceEditorMode;
 
         if (newEditorMode === 'grouped') {
