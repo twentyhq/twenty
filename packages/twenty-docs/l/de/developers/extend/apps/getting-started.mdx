@@ -220,6 +220,7 @@ Der Scaffolder hat bereits einen lokalen Twenty-Server für Sie gestartet. Um ih
 | -------------------------------------- | ----------------------------------------------------------- |
 | `yarn twenty server start`             | Lokalen Server starten (lädt das Image bei Bedarf herunter) |
 | `yarn twenty server start --port 3030` | Auf einem benutzerdefinierten Port starten                  |
+| `yarn twenty server start --test`      | Starten Sie eine separate Testinstanz auf Port 2021         |
 | `yarn twenty server stop`              | Server stoppen (Daten bleiben erhalten)                     |
 | `yarn twenty server status`            | Serverstatus, URL und Anmeldedaten anzeigen                 |
 | `yarn twenty server logs`              | Serverprotokolle streamen                                   |
@@ -227,6 +228,20 @@ Der Scaffolder hat bereits einen lokalen Twenty-Server für Sie gestartet. Um ih
 | `yarn twenty server reset`             | Alle Daten löschen und neu starten                          |
 
 Daten bleiben über Neustarts hinweg in zwei Docker-Volumes bestehen (`twenty-app-dev-data` für PostgreSQL, `twenty-app-dev-storage` für Dateien). Verwenden Sie `reset`, um alles zu löschen und neu zu beginnen.
+
+### Eine Testinstanz ausführen
+
+Übergeben Sie `--test` an jeden `server`-Befehl, um eine zweite, vollständig isolierte Instanz zu verwalten — nützlich, um Integrationstests auszuführen oder zu experimentieren, ohne Ihre Hauptentwicklungsdaten anzutasten.
+
+| Befehl                             | Beschreibung                                          |
+| ---------------------------------- | ----------------------------------------------------- |
+| `yarn twenty server start --test`  | Die Testinstanz starten (standardmäßig Port 2021)     |
+| `yarn twenty server stop --test`   | Die Testinstanz stoppen                               |
+| `yarn twenty server status --test` | Status, URL und Anmeldedaten der Testinstanz anzeigen |
+| `yarn twenty server logs --test`   | Protokolle der Testinstanz streamen                   |
+| `yarn twenty server reset --test`  | Alle Testdaten löschen und neu starten                |
+
+Die Testinstanz läuft in einem eigenen Docker-Container (`twenty-app-dev-test`) mit dedizierten Volumes (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) und eigener Konfiguration, sodass sie parallel zu Ihrer Hauptinstanz ohne Konflikte ausgeführt werden kann. Kombinieren Sie `--test` mit `--port`, um den Standardport 2021 zu überschreiben.
 
 <Note>
   Der Server erfordert, dass **Docker** läuft. Wenn der Fehler "Docker not running" angezeigt wird, stellen Sie sicher, dass Docker Desktop (oder der Docker-Daemon) gestartet ist.

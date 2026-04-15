@@ -20,6 +20,8 @@ const HALFTONE_HOVER_POWER_SHIFT = 0.9;
 const HALFTONE_HOVER_WIDTH_SHIFT = -0.2;
 const HALFTONE_HOVER_LIGHT_INTENSITY = 0;
 const HALFTONE_HOVER_LIGHT_RADIUS = 0.2;
+const HALFTONE_HOVER_FADE_IN = 18;
+const HALFTONE_HOVER_FADE_OUT = 7;
 
 const IMAGE_POINTER_FOLLOW = 0.38;
 const IMAGE_POINTER_VELOCITY_DAMPING = 0.82;
@@ -151,7 +153,9 @@ const halftoneFragmentShader = `
     float hoverHalftoneMask = 0.0;
     if (hoverHalftoneActive > 0.0) {
       float hoverHalftoneRadiusPx = hoverHalftoneRadius * logicalResolution.y;
-      hoverHalftoneMask = smoothstep(hoverHalftoneRadiusPx, 0.0, fragDist);
+      hoverHalftoneMask =
+        smoothstep(hoverHalftoneRadiusPx, 0.0, fragDist) *
+        clamp(hoverHalftoneActive, 0.0, 1.0);
     }
 
     float hoverFlowMask = 0.0;
@@ -230,6 +234,7 @@ const OverlayMount = styled.div`
 `;
 
 type PointerState = {
+  hoverStrength: number;
   mouseX: number;
   mouseY: number;
   pointerInside: boolean;
@@ -565,6 +570,7 @@ async function mountHalftoneOverlay({
     });
 
   const pointer: PointerState = {
+    hoverStrength: 0,
     mouseX: 0.5,
     mouseY: 0.5,
     pointerInside: false,
@@ -651,11 +657,27 @@ async function mountHalftoneOverlay({
   canvas.addEventListener('pointerleave', handlePointerLeave);
 
   let animationFrameId = 0;
+  let previousTimestamp = 0;
 
   const renderFrame = (timestamp: number) => {
     animationFrameId = window.requestAnimationFrame(renderFrame);
     halftoneMaterial.uniforms.time.value = timestamp / 1000;
     const hoverScale = getHoverScale();
+    const deltaSeconds =
+      previousTimestamp === 0
+        ? 1 / 60
+        : Math.min((timestamp - previousTimestamp) / 1000, 0.1);
+    previousTimestamp = timestamp;
+    const hoverEasing =
+      1 -
+      Math.exp(
+        -deltaSeconds *
+          (pointer.pointerInside
+            ? HALFTONE_HOVER_FADE_IN
+            : HALFTONE_HOVER_FADE_OUT),
+      );
+    pointer.hoverStrength +=
+      ((pointer.pointerInside ? 1 : 0) - pointer.hoverStrength) * hoverEasing;
 
     pointer.smoothedMouseX +=
       (pointer.mouseX - pointer.smoothedMouseX) * IMAGE_POINTER_FOLLOW;
@@ -672,18 +694,15 @@ async function mountHalftoneOverlay({
       pointer.pointerVelocityX * getVirtualWidth(),
       -pointer.pointerVelocityY * getVirtualHeight(),
     );
-    halftoneMaterial.uniforms.hoverHalftoneActive.value = pointer.pointerInside
-      ? 1
-      : 0;
+    halftoneMaterial.uniforms.hoverHalftoneActive.value = pointer.hoverStrength;
     halftoneMaterial.uniforms.hoverHalftonePowerShift.value =
-      pointer.pointerInside ? HALFTONE_HOVER_POWER_SHIFT : 0;
+      HALFTONE_HOVER_POWER_SHIFT;
     halftoneMaterial.uniforms.hoverHalftoneRadius.value =
       HALFTONE_HOVER_RADIUS * hoverScale;
     halftoneMaterial.uniforms.hoverHalftoneWidthShift.value =
-      pointer.pointerInside ? HALFTONE_HOVER_WIDTH_SHIFT : 0;
-    halftoneMaterial.uniforms.hoverLightStrength.value = pointer.pointerInside
-      ? HALFTONE_HOVER_LIGHT_INTENSITY
-      : 0;
+      HALFTONE_HOVER_WIDTH_SHIFT;
+    halftoneMaterial.uniforms.hoverLightStrength.value =
+      HALFTONE_HOVER_LIGHT_INTENSITY * pointer.hoverStrength;
     halftoneMaterial.uniforms.hoverLightRadius.value =
       HALFTONE_HOVER_LIGHT_RADIUS * hoverScale;
     halftoneMaterial.uniforms.footprintScale.value = getHalftoneScale();

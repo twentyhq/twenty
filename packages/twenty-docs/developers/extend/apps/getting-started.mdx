@@ -220,6 +220,7 @@ The scaffolder already started a local Twenty server for you. To manage it later
 |---------|-------------|
 | `yarn twenty server start` | Start the local server (pulls image if needed) |
 | `yarn twenty server start --port 3030` | Start on a custom port |
+| `yarn twenty server start --test` | Start a separate test instance on port 2021 |
 | `yarn twenty server stop` | Stop the server (preserves data) |
 | `yarn twenty server status` | Show server status, URL, and credentials |
 | `yarn twenty server logs` | Stream server logs |
@@ -227,6 +228,20 @@ The scaffolder already started a local Twenty server for you. To manage it later
 | `yarn twenty server reset` | Delete all data and start fresh |
 
 Data is persisted across restarts in two Docker volumes (`twenty-app-dev-data` for PostgreSQL, `twenty-app-dev-storage` for files). Use `reset` to wipe everything and start fresh.
+
+### Running a test instance
+
+Pass `--test` to any `server` command to manage a second, fully isolated instance — useful for running integration tests or experimenting without touching your main dev data.
+
+| Command | Description |
+|---------|-------------|
+| `yarn twenty server start --test` | Start the test instance (defaults to port 2021) |
+| `yarn twenty server stop --test` | Stop the test instance |
+| `yarn twenty server status --test` | Show test instance status, URL, and credentials |
+| `yarn twenty server logs --test` | Stream test instance logs |
+| `yarn twenty server reset --test` | Wipe test data and start fresh |
+
+The test instance runs in its own Docker container (`twenty-app-dev-test`) with dedicated volumes (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) and config, so it can run in parallel with your main instance without conflicts. Combine `--test` with `--port` to override the default 2021.
 
 <Note>
   The server requires **Docker** to be running. If you see a "Docker not running" error, make sure Docker Desktop (or the Docker daemon) is started.

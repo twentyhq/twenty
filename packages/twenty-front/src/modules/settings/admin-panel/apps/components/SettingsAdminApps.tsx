@@ -80,7 +80,7 @@ export const SettingsAdminApps = () => {
               <UndecoratedLink
                 key={registration.id}
                 to={getSettingsPath(
-                  SettingsPath.ApplicationRegistrationDetail,
+                  SettingsPath.AdminPanelApplicationRegistrationDetail,
                   { applicationRegistrationId: registration.id },
                 )}
                 fullWidth

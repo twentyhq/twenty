@@ -3,7 +3,7 @@ import * as path from 'path';
 
 import { transformConditionalAvailabilityExpressionsForEsBuildPlugin } from '@/cli/utilities/build/common/conditional-availability/utils/transform-conditional-availability-expressions';
 import {
-  CommandMenuContextApiPageType,
+  ContextStorePageType,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
@@ -16,7 +16,7 @@ const readMock = (filename: string): string =>
 const buildMockCommandMenuContextApi = (
   overrides: Partial<CommandMenuContextApi> = {},
 ): CommandMenuContextApi => ({
-  pageType: CommandMenuContextApiPageType.INDEX_PAGE,
+  pageType: ContextStorePageType.Index,
   isInSidePanel: false,
   isPageInEditMode: false,
   favoriteRecordIds: [],
@@ -190,7 +190,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
     describe('simple-boolean-front-component', () => {
       it('should evaluate pageType when RECORD_PAGE', () => {
         const context = buildMockCommandMenuContextApi({
-          pageType: CommandMenuContextApiPageType.RECORD_PAGE,
+          pageType: ContextStorePageType.Record,
         });
 
         expect(
@@ -203,7 +203,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
 
       it('should evaluate pageType when INDEX_PAGE', () => {
         const context = buildMockCommandMenuContextApi({
-          pageType: CommandMenuContextApiPageType.INDEX_PAGE,
+          pageType: ContextStorePageType.Index,
         });
 
         expect(
@@ -348,7 +348,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
     describe('parenthesized-expression-front-component', () => {
       it('should allow when favorite and not remote', () => {
         const context = buildMockCommandMenuContextApi({
-          pageType: CommandMenuContextApiPageType.INDEX_PAGE,
+          pageType: ContextStorePageType.Index,
           favoriteRecordIds: ['rec-1'],
           objectMetadataItem: { isRemote: false },
         });
@@ -363,7 +363,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
 
       it('should deny when remote even if record page', () => {
         const context = buildMockCommandMenuContextApi({
-          pageType: CommandMenuContextApiPageType.RECORD_PAGE,
+          pageType: ContextStorePageType.Record,
           favoriteRecordIds: [],
           objectMetadataItem: { isRemote: true },
         });
@@ -422,7 +422,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
     describe('string-comparison-front-component', () => {
       it('should match when on record page and company name matches', () => {
         const context = buildMockCommandMenuContextApi({
-          pageType: CommandMenuContextApiPageType.RECORD_PAGE,
+          pageType: ContextStorePageType.Record,
           selectedRecords: [
             {
               id: 'rec-1',
@@ -444,7 +444,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
 
       it('should not match when company name differs', () => {
         const context = buildMockCommandMenuContextApi({
-          pageType: CommandMenuContextApiPageType.RECORD_PAGE,
+          pageType: ContextStorePageType.Record,
           selectedRecords: [
             {
               id: 'rec-1',
@@ -468,7 +468,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
     describe('target-permissions-front-component', () => {
       it('should allow when on record page with write permission', () => {
         const context = buildMockCommandMenuContextApi({
-          pageType: CommandMenuContextApiPageType.RECORD_PAGE,
+          pageType: ContextStorePageType.Record,
           targetObjectWritePermissions: { person: true },
         });
 
@@ -482,7 +482,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
 
       it('should deny when not on record page', () => {
         const context = buildMockCommandMenuContextApi({
-          pageType: CommandMenuContextApiPageType.INDEX_PAGE,
+          pageType: ContextStorePageType.Index,
           targetObjectWritePermissions: { person: true },
         });
 

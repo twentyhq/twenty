@@ -13,6 +13,7 @@ export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = ({
   objectMetadataIdToUniversalIdentifierMap,
   navigationMenuItemIdToUniversalIdentifierMap,
   viewIdToUniversalIdentifierMap,
+  pageLayoutIdToUniversalIdentifierMap,
 }: FromEntityToFlatEntityArgs<'navigationMenuItem'>): FlatNavigationMenuItem => {
   const applicationUniversalIdentifier =
     applicationIdToUniversalIdentifierMap.get(
@@ -73,6 +74,22 @@ export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = ({
     }
   }
 
+  let pageLayoutUniversalIdentifier: string | null = null;
+
+  if (isDefined(navigationMenuItemEntity.pageLayoutId)) {
+    pageLayoutUniversalIdentifier =
+      pageLayoutIdToUniversalIdentifierMap.get(
+        navigationMenuItemEntity.pageLayoutId,
+      ) ?? null;
+
+    if (!isDefined(pageLayoutUniversalIdentifier)) {
+      throw new FlatEntityMapsException(
+        `PageLayout with id ${navigationMenuItemEntity.pageLayoutId} not found for navigationMenuItem ${navigationMenuItemEntity.id}`,
+        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+  }
+
   return {
     id: navigationMenuItemEntity.id,
     type: navigationMenuItemEntity.type,
@@ -85,6 +102,7 @@ export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = ({
     link: navigationMenuItemEntity.link,
     icon: navigationMenuItemEntity.icon,
     color: navigationMenuItemEntity.color,
+    pageLayoutId: navigationMenuItemEntity.pageLayoutId,
     position: navigationMenuItemEntity.position,
     workspaceId: navigationMenuItemEntity.workspaceId,
     universalIdentifier: navigationMenuItemEntity.universalIdentifier,
@@ -95,5 +113,6 @@ export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = ({
     targetObjectMetadataUniversalIdentifier,
     folderUniversalIdentifier,
     viewUniversalIdentifier,
+    pageLayoutUniversalIdentifier,
   };
 };
