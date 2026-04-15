@@ -81,7 +81,9 @@ export class UpgradeSequenceRunnerService {
         await this.runInstanceStep({
           instanceStep: step,
           skipDataMigration: allActiveOrSuspendedWorkspaceIds.length === 0,
+          allActiveOrSuspendedWorkspaceIds,
         });
+
         cursor++;
         continue;
       }
@@ -227,9 +229,11 @@ export class UpgradeSequenceRunnerService {
   private async runInstanceStep({
     instanceStep,
     skipDataMigration,
+    allActiveOrSuspendedWorkspaceIds,
   }: {
     instanceStep: InstanceUpgradeStep;
     skipDataMigration: boolean;
+    allActiveOrSuspendedWorkspaceIds: string[];
   }): Promise<void> {
     switch (instanceStep.kind) {
       case 'fast-instance': {
@@ -237,6 +241,7 @@ export class UpgradeSequenceRunnerService {
           await this.instanceCommandRunnerService.runFastInstanceCommand({
             command: instanceStep.command,
             name: instanceStep.name,
+            activeOrSuspendedWorkspaceIds: allActiveOrSuspendedWorkspaceIds,
           });
 
         if (result.status === 'failed') {
@@ -251,6 +256,7 @@ export class UpgradeSequenceRunnerService {
             command: instanceStep.command,
             name: instanceStep.name,
             skipDataMigration,
+            activeOrSuspendedWorkspaceIds: allActiveOrSuspendedWorkspaceIds,
           });
 
         if (result.status === 'failed') {

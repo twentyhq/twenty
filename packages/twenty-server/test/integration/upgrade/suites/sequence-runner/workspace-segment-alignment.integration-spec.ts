@@ -120,9 +120,15 @@ describe('UpgradeSequenceRunnerService — workspace segment alignment (integrat
       `Wc1:${WS_2}:completed:2`,
       `Wc2:${WS_2}:completed:1`,
 
-      // Sync barrier → instance steps
+      // Sync barrier → instance steps (with workspace-level rows)
       'Ic1:instance:completed:1',
+      `Ic1:${WS_1}:completed:1`,
+      `Ic1:${WS_2}:completed:1`,
+      `Ic1:${WS_3}:completed:1`,
       'Ic2:instance:completed:1',
+      `Ic2:${WS_1}:completed:1`,
+      `Ic2:${WS_2}:completed:1`,
+      `Ic2:${WS_3}:completed:1`,
 
       // Segment B: all workspaces run Wc3, Wc4
       `Wc3:${WS_1}:completed:1`,

@@ -27,9 +27,13 @@ export class InstanceCommandRunnerService {
   async runFastInstanceCommand({
     command,
     name,
+    activeOrSuspendedWorkspaceIds,
+    skipHistory = false,
   }: {
     command: FastInstanceCommand;
     name: string;
+    activeOrSuspendedWorkspaceIds: string[];
+    skipHistory?: boolean;
   }): Promise<RunSingleMigrationResult> {
     const executedByVersion =
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
@@ -43,6 +47,12 @@ export class InstanceCommandRunnerService {
     if (isAlreadyCompleted) {
       this.logger.log(`${name} already executed, skipping`);
 
+      if (!skipHistory) {
+        await this.upgradeMigrationService.markInstanceCommandCompletedForWorkspaces(
+          { name, workspaceIds: activeOrSuspendedWorkspaceIds, executedByVersion },
+        );
+      }
+
       return { status: 'already-executed' };
     }
 
@@ -54,12 +64,14 @@ export class InstanceCommandRunnerService {
 
       await command.up(queryRunner);
 
-      await this.upgradeMigrationService.markAsCompleted({
-        name,
-        workspaceId: null,
-        executedByVersion,
-        queryRunner,
-      });
+      if (!skipHistory) {
+        await this.upgradeMigrationService.markAsCompleted({
+          name,
+          workspaceId: null,
+          executedByVersion,
+          queryRunner,
+        });
+      }
 
       await queryRunner.commitTransaction();
     } catch (error) {
@@ -67,12 +79,14 @@ export class InstanceCommandRunnerService {
         await queryRunner.rollbackTransaction();
       }
 
-      await this.upgradeMigrationService.markAsFailed({
-        name,
-        workspaceId: null,
-        executedByVersion,
-        error,
-      });
+      if (!skipHistory) {
+        await this.upgradeMigrationService.markAsFailed({
+          name,
+          workspaceId: null,
+          executedByVersion,
+          error,
+        });
+      }
 
       this.logger.error(
         `${name} failed`,
@@ -84,6 +98,12 @@ export class InstanceCommandRunnerService {
       await queryRunner.release();
     }
 
+    if (!skipHistory) {
+      await this.upgradeMigrationService.markInstanceCommandCompletedForWorkspaces(
+        { name, workspaceIds: activeOrSuspendedWorkspaceIds, executedByVersion },
+      );
+    }
+
     this.logger.log(`${name} executed successfully`);
 
     return { status: 'success' };
@@ -93,10 +113,14 @@ export class InstanceCommandRunnerService {
     command,
     name,
     skipDataMigration,
+    activeOrSuspendedWorkspaceIds,
+    skipHistory = false,
   }: {
     command: SlowInstanceCommand;
     name: string;
     skipDataMigration?: boolean;
+    activeOrSuspendedWorkspaceIds: string[];
+    skipHistory?: boolean;
   }): Promise<RunSingleMigrationResult> {
     const isAlreadyCompleted =
       await this.upgradeMigrationService.isLastAttemptCompleted({
@@ -106,6 +130,15 @@ export class InstanceCommandRunnerService {
 
     if (isAlreadyCompleted) {
       this.logger.log(`${name} already executed, skipping`);
+
+      if (!skipHistory) {
+        const executedByVersion =
+          this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
+
+        await this.upgradeMigrationService.markInstanceCommandCompletedForWorkspaces(
+          { name, workspaceIds: activeOrSuspendedWorkspaceIds, executedByVersion },
+        );
+      }
 
       return { status: 'already-executed' };
     }
@@ -117,12 +150,14 @@ export class InstanceCommandRunnerService {
       try {
         await command.runDataMigration(this.dataSource);
       } catch (error) {
-        await this.upgradeMigrationService.markAsFailed({
-          name,
-          workspaceId: null,
-          executedByVersion,
-          error,
-        });
+        if (!skipHistory) {
+          await this.upgradeMigrationService.markAsFailed({
+            name,
+            workspaceId: null,
+            executedByVersion,
+            error,
+          });
+        }
 
         this.logger.error(
           `${name} data migration failed`,
@@ -133,6 +168,11 @@ export class InstanceCommandRunnerService {
       }
     }
 
-    return this.runFastInstanceCommand({ command, name });
+    return this.runFastInstanceCommand({
+      command,
+      name,
+      activeOrSuspendedWorkspaceIds,
+      skipHistory,
+    });
   }
 }

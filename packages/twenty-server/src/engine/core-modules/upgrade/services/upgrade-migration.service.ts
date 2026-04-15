@@ -260,6 +260,50 @@ export class UpgradeMigrationService {
     return completedCount === workspaceIds.length;
   }
 
+  async markInstanceCommandCompletedForWorkspaces({
+    name,
+    workspaceIds,
+    executedByVersion,
+  }: {
+    name: string;
+    workspaceIds: string[];
+    executedByVersion: string;
+  }): Promise<void> {
+    if (workspaceIds.length === 0) {
+      return;
+    }
+
+    const existingRows = await this.upgradeMigrationRepository.find({
+      where: {
+        name,
+        workspaceId: In(workspaceIds),
+      },
+      select: ['workspaceId'],
+    });
+
+    const existingWorkspaceIds = new Set(
+      existingRows.map((row) => row.workspaceId),
+    );
+ 
+    const missingWorkspaceIds = workspaceIds.filter(
+      (workspaceId) => !existingWorkspaceIds.has(workspaceId),
+    );
+
+    if (missingWorkspaceIds.length === 0) {
+      return;
+    }
+
+    for (const workspaceId of missingWorkspaceIds) {
+      await this.upgradeMigrationRepository.save({
+        name,
+        status: 'completed' as UpgradeMigrationStatus,
+        attempt: 1,
+        executedByVersion,
+        workspaceId,
+      });
+    }
+  }
+
   async getLastCompletedInstanceCommandNameOrThrow(): Promise<string> {
     const migration = await this.upgradeMigrationRepository
       .createQueryBuilder('migration')

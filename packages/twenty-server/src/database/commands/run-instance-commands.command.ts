@@ -14,6 +14,7 @@ import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-
 type RunInstanceCommandsOptions = {
   force?: boolean;
   includeSlow?: boolean;
+  noHistory?: boolean;
 };
 
 // TODO should be replaced by a specific call to the upgrade
@@ -54,6 +55,15 @@ export class RunInstanceCommandsCommand extends CommandRunner {
     return true;
   }
 
+  @Option({
+    flags: '--no-history',
+    description: 'Run commands without writing to the upgrade migration history',
+    required: false,
+  })
+  parseNoHistory(): boolean {
+    return true;
+  }
+
   async run(
     _passedParams: string[],
     options: RunInstanceCommandsOptions,
@@ -61,6 +71,10 @@ export class RunInstanceCommandsCommand extends CommandRunner {
     try {
       await this.checkWorkspaceVersionSafety(options);
       await this.runLegacyPendingTypeOrmMigrations();
+
+      const activeOrSuspendedWorkspaceIds =
+        await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
+      const skipHistory = options.noHistory ?? false;
 
       for (const {
         command,
@@ -70,6 +84,8 @@ export class RunInstanceCommandsCommand extends CommandRunner {
           {
             command,
             name,
+            activeOrSuspendedWorkspaceIds,
+            skipHistory,
           },
         );
 
@@ -79,9 +95,6 @@ export class RunInstanceCommandsCommand extends CommandRunner {
       }
 
       if (options.includeSlow) {
-        const hasWorkspaces =
-          await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
-
         for (const {
           command,
           name,
@@ -90,7 +103,9 @@ export class RunInstanceCommandsCommand extends CommandRunner {
             await this.instanceUpgradeService.runSlowInstanceCommand({
               command,
               name,
-              skipDataMigration: !hasWorkspaces,
+              skipDataMigration: activeOrSuspendedWorkspaceIds.length === 0,
+              activeOrSuspendedWorkspaceIds,
+              skipHistory,
             });
 
           if (result.status === 'failed') {
@@ -119,10 +134,10 @@ export class RunInstanceCommandsCommand extends CommandRunner {
       return;
     }
 
-    const activeWorkspaceIds =
+    const activeOrSuspendedWorkspaceIds =
       await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
 
-    if (activeWorkspaceIds.length === 0) {
+    if (activeOrSuspendedWorkspaceIds.length === 0) {
       return;
     }
 
@@ -141,7 +156,7 @@ export class RunInstanceCommandsCommand extends CommandRunner {
     const allAtPreviousVersion =
       await this.upgradeMigrationService.areAllWorkspacesAtCommand({
         commandName: lastWorkspaceCommand.name,
-        workspaceIds: activeWorkspaceIds,
+        workspaceIds: activeOrSuspendedWorkspaceIds,
       });
 
     if (!allAtPreviousVersion) {
