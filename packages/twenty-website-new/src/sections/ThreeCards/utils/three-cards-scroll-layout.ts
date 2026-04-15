@@ -15,12 +15,35 @@ export type ThreeCardsScrollLayoutRefs = {
   gridRef: RefObject<HTMLDivElement | null>;
 };
 
-const STAGGER = 0.25;
+export type ThreeCardsScrollLayoutOptions = {
+  endEdgeRatio?: number;
+  initialScale?: number;
+  initialTranslateY?: number;
+  opacityRamp?: number;
+  stagger?: number;
+};
+
+const DEFAULT_SCROLL_LAYOUT_OPTIONS: Required<ThreeCardsScrollLayoutOptions> = {
+  endEdgeRatio: 0.2,
+  initialScale: 0.88,
+  initialTranslateY: 200,
+  opacityRamp: 0.4,
+  stagger: 0.25,
+};
 
 export function applyThreeCardsScrollLayout(
   refs: ThreeCardsScrollLayoutRefs,
   cardCount: number,
+  options: ThreeCardsScrollLayoutOptions = {},
 ): void {
+  const {
+    endEdgeRatio,
+    initialScale,
+    initialTranslateY,
+    opacityRamp,
+    stagger,
+  } = { ...DEFAULT_SCROLL_LAYOUT_OPTIONS, ...options };
+
   const grid = refs.gridRef.current;
   if (!grid) {
     return;
@@ -46,7 +69,7 @@ export function applyThreeCardsScrollLayout(
   const viewportHeight = window.innerHeight;
 
   const startEdge = viewportHeight;
-  const endEdge = viewportHeight * 0.2;
+  const endEdge = viewportHeight * endEdgeRatio;
   const progress = clamp01((startEdge - rect.top) / (startEdge - endEdge));
 
   for (let index = 0; index < cardCount; index++) {
@@ -55,13 +78,15 @@ export function applyThreeCardsScrollLayout(
       continue;
     }
 
-    const delay = index * STAGGER;
-    const localProgress = clamp01((progress - delay) / (1 - delay));
+    const delay = index * stagger;
+    const localProgress = clamp01(
+      (progress - delay) / Math.max(1 - delay, Number.EPSILON),
+    );
     const eased = easeOutQuint(localProgress);
 
-    const translateY = (1 - eased) * 200;
-    const scale = 0.88 + eased * 0.12;
-    const opacity = clamp01(localProgress / 0.4);
+    const translateY = (1 - eased) * initialTranslateY;
+    const scale = initialScale + eased * (1 - initialScale);
+    const opacity = clamp01(localProgress / opacityRamp);
 
     node.style.opacity = String(opacity);
     node.style.transform = `translateY(${translateY}px) scale(${scale})`;
