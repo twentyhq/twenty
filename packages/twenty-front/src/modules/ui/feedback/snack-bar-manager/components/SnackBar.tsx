@@ -146,7 +146,7 @@ const defaultAriaLabelByVariant: Record<
 export const SnackBar = ({
   className,
   progress: overrideProgressValue,
-  duration = 6000,
+  duration,
   icon: iconComponent,
   id,
   message,
@@ -161,14 +161,26 @@ export const SnackBar = ({
 }: SnackBarProps) => {
   const { i18n, t } = useLingui();
   const { theme } = useContext(ThemeContext);
+
+  const resolvedDuration =
+    variant === SnackBarVariant.Error ? duration : duration ?? 6000;
+
+  const shouldAutoDismiss =
+    isUndefined(overrideProgressValue) && isDefined(resolvedDuration);
+
+  const shouldShowProgressBar =
+    isDefined(overrideProgressValue) || isDefined(resolvedDuration);
+
   const { animation: progressAnimation, value: progressValue } =
     useProgressAnimation({
-      autoPlay: isUndefined(overrideProgressValue),
+      autoPlay: shouldAutoDismiss,
       initialValue: isDefined(overrideProgressValue)
         ? overrideProgressValue
         : 100,
       finalValue: 0,
-      options: { duration, onComplete: onClose },
+      options: shouldAutoDismiss
+        ? { duration: resolvedDuration, onComplete: onClose }
+        : undefined,
     });
 
   const icon = useMemo(() => {
@@ -231,12 +243,14 @@ export const SnackBar = ({
       role={role}
       data-globally-prevent-click-outside
     >
-      <StyledProgressBarContainer>
-        <ProgressBar
-          barColor={theme.snackBar[variant].backgroundColor}
-          value={progressValue}
-        />
-      </StyledProgressBarContainer>
+      {shouldShowProgressBar && (
+        <StyledProgressBarContainer>
+          <ProgressBar
+            barColor={theme.snackBar[variant].backgroundColor}
+            value={progressValue}
+          />
+        </StyledProgressBarContainer>
+      )}
       <StyledHeader>
         <StyledIcon>{icon}</StyledIcon>
         <StyledMessage>{sanitizedMessage ?? ''}</StyledMessage>
