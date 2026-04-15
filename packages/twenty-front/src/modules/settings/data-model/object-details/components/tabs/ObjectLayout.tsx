@@ -77,7 +77,6 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
 
     await resetPageLayoutToDefault({
       pageLayoutId: pageLayout.id,
-      pageLayout,
     });
   };
 
