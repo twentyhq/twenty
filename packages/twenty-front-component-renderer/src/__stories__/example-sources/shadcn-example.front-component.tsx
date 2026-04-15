@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { defineFrontComponent } from '@/sdk';
+import { useState } from 'react';
 
 const SHADCN_CSS = `
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}

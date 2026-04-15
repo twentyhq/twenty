@@ -77,6 +77,9 @@ const STORY_COMPONENTS = [
   'mui-example.front-component',
   'twenty-ui-example.front-component',
   'sdk-context-example.front-component',
+  'form-events.front-component',
+  'keyboard-events.front-component',
+  'host-api-calls.front-component',
 ];
 
 const resolveEntryPoints = (): Record<string, string> => {
