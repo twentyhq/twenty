@@ -82,15 +82,17 @@ const StyledAppDescription = styled.div`
 
 const StyledUnlistedBanner = styled.div`
   align-items: center;
+  justify-content: center;
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.secondary};
   display: flex;
   font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
   gap: ${themeCssVariables.spacing[2]};
-  margin-bottom: ${themeCssVariables.spacing[4]};
-  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
+  margin-bottom: ${themeCssVariables.spacing[8]};
+  padding: ${themeCssVariables.spacing[3]};
 `;
 
 export const SettingsApplicationDetailTitle = ({
@@ -104,7 +106,7 @@ export const SettingsApplicationDetailTitle = ({
       {isUnlisted && (
         <StyledUnlistedBanner>
           <IconEyeOff size={16} />
-          {t`This application is not listed on the marketplace. It was shared via a direct link.`}
+          {t`Application not listed on the marketplace. It was shared via a direct link`}
         </StyledUnlistedBanner>
       )}
       <StyledHeader>
