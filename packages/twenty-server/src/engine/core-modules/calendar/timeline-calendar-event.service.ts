@@ -55,6 +55,16 @@ export class TimelineCalendarEventService {
             'calendarEvent',
           );
 
+        const totalNumberOfCalendarEvents = await calendarEventRepository.count(
+          {
+            where: {
+              calendarEventParticipants: {
+                personId: Any(personIds),
+              },
+            },
+          },
+        );
+
         const calendarEventIds = await calendarEventRepository.find({
           where: {
             calendarEventParticipants: {
@@ -81,7 +91,7 @@ export class TimelineCalendarEventService {
           };
         }
 
-        const [events, total] = await calendarEventRepository.findAndCount({
+        const [events] = await calendarEventRepository.findAndCount({
           where: {
             id: Any(ids),
           },
@@ -241,7 +251,7 @@ export class TimelineCalendarEventService {
         });
 
         return {
-          totalNumberOfCalendarEvents: total,
+          totalNumberOfCalendarEvents,
           timelineCalendarEvents,
         };
       },

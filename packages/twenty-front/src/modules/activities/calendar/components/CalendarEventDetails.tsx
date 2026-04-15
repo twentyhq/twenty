@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback, useState } from 'react';
 
 import { CalendarEventParticipantsResponseStatus } from '@/activities/calendar/components/CalendarEventParticipantsResponseStatus';
+import { LinkifiedTextBody } from '@/ui/display/components/LinkifiedTextBody';
 import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -109,8 +110,9 @@ export const CalendarEventDetails = ({
     'endsAt',
     'conferenceLink',
     'location',
-    'description',
   ];
+
+  const fieldsWithCustomViews = ['description'];
 
   const standardFields = standardFieldOrder
     .map((fieldName) =>
@@ -121,7 +123,9 @@ export const CalendarEventDetails = ({
     .filter(isDefined);
 
   const customFields = inlineFieldMetadataItems.filter(
-    (field) => field.isCustom && !standardFieldOrder.includes(field.name),
+    (field) =>
+      field.isCustom &&
+      ![...standardFieldOrder, ...fieldsWithCustomViews].includes(field.name),
   );
 
   const { calendarEventParticipants } = calendarEvent;
@@ -241,6 +245,9 @@ export const CalendarEventDetails = ({
             />
           )}
           {standardFields.slice(2).map(renderField)}
+          {calendarEvent.description && (
+            <LinkifiedTextBody body={calendarEvent.description} isDisplayed />
+          )}
           {customFields.map(renderField)}
         </StyledFields>
       </StyledContainer>

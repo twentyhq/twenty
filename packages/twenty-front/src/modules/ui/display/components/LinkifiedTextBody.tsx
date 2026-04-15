@@ -4,7 +4,7 @@ import Linkify from 'linkify-react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 
-const StyledThreadMessageBody = styled(motion.div)`
+const StyledTextBody = styled(motion.div)`
   color: ${themeCssVariables.font.color.primary};
   display: flex;
   flex-direction: column;
@@ -13,30 +13,27 @@ const StyledThreadMessageBody = styled(motion.div)`
   white-space: pre-line;
 
   a {
-    color: ${themeCssVariables.font.color.primary};
-
+    color: ${themeCssVariables.color.blue};
     text-decoration: underline;
-    text-decoration-color: ${themeCssVariables.font.color.primary};
 
     &:hover {
-      color: ${themeCssVariables.font.color.tertiary};
-      text-decoration-color: ${themeCssVariables.border.color.strong};
+      text-decoration-color: ${themeCssVariables.color.blue};
     }
   }
 `;
 
-type EmailThreadMessageBodyProps = {
+type LinkifiedTextBodyProps = {
   body: string;
   isDisplayed: boolean;
 };
 
-export const EmailThreadMessageBody = ({
+export const LinkifiedTextBody = ({
   body,
   isDisplayed,
-}: EmailThreadMessageBodyProps) => {
+}: LinkifiedTextBodyProps) => {
   return (
     <AnimatedEaseInOut isOpen={isDisplayed} duration="fast">
-      <StyledThreadMessageBody>
+      <StyledTextBody>
         <Linkify
           options={{
             target: '_blank',
@@ -45,7 +42,7 @@ export const EmailThreadMessageBody = ({
         >
           {body}
         </Linkify>
-      </StyledThreadMessageBody>
+      </StyledTextBody>
     </AnimatedEaseInOut>
   );
 };
