@@ -75,8 +75,12 @@ export class DevSeederService {
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
     const appVersion = this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
+    const lastCompletedInstanceCommandName =
+      await this.upgradeMigrationService.getLastCompletedInstanceCommandNameOrThrow();
     const lastWorkspaceCommand =
-      this.upgradeSequenceReaderService.getLastWorkspaceCommand();
+      this.upgradeSequenceReaderService.getLastWorkspaceCommandInCurrentSegment(
+        lastCompletedInstanceCommandName,
+      );
 
     await this.seedCoreSchema({
       workspaceId,
@@ -187,8 +191,12 @@ export class DevSeederService {
     workspaceId: SeededEmptyWorkspacesIds,
   ): Promise<void> {
     const appVersion = this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
+    const lastCompletedInstanceCommandName =
+      await this.upgradeMigrationService.getLastCompletedInstanceCommandNameOrThrow();
     const lastWorkspaceCommand =
-      this.upgradeSequenceReaderService.getLastWorkspaceCommand();
+      this.upgradeSequenceReaderService.getLastWorkspaceCommandInCurrentSegment(
+        lastCompletedInstanceCommandName,
+      );
 
     const createWorkspaceStaticInput =
       SEEDER_CREATE_EMPTY_WORKSPACE_INPUT[workspaceId];

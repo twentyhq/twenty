@@ -161,22 +161,6 @@ export class UpgradeSequenceReaderService {
       : workspaceCommands.slice(cursorIndex);
   }
 
-  getLastWorkspaceCommand(): RegisteredWorkspaceCommand {
-    const sequence = this.getUpgradeSequence();
-
-    for (let index = sequence.length - 1; index >= 0; index--) {
-      const step = sequence[index];
-
-      if (step.kind === 'workspace') {
-        return step;
-      }
-    }
-
-    throw new Error(
-      'No workspace commands found in upgrade sequence — this should have been caught at startup',
-    );
-  }
-
   getLastWorkspaceCommandInCurrentSegment(
     lastCompletedInstanceCommandName: string,
   ): RegisteredWorkspaceCommand {
