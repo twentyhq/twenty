@@ -126,9 +126,7 @@ export class UpgradeMigrationService {
 
   // Returns the most recently attempted command (by createdAt)
   // across instance and active-workspace scopes, with its status.
-  // Workspace-scoped records from inactive/deleted workspaces are
-  // excluded so they cannot incorrectly influence the global cursor.
-  // isInitial records are also excluded — they represent activation
+  // isInitial records are excluded — they represent activation
   // state, not execution progress.
   async getLastAttemptedCommandNameOrThrow(
     allActiveOrSuspendedWorkspaceIds: string[],
