@@ -19,6 +19,7 @@ import {
 } from 'twenty-ui/display';
 import { ProgressBar, useProgressAnimation } from 'twenty-ui/feedback';
 import { LightButton, LightIconButton } from 'twenty-ui/input';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
@@ -41,6 +42,7 @@ export type SnackBarProps = Pick<ComponentPropsWithoutRef<'div'>, 'id'> & {
   message: string;
   buttonLabel?: string;
   buttonOnClick?: () => void;
+  buttonTo?: string;
   detailedMessage?: string;
   onCancel?: () => void;
   onClose?: () => void;
@@ -56,7 +58,8 @@ const StyledContainer = styled.div`
   box-shadow: ${themeCssVariables.boxShadow.strong};
   box-sizing: border-box;
   margin-top: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]}
+    ${themeCssVariables.spacing[1]};
   position: relative;
   width: 296px;
 
@@ -113,10 +116,15 @@ const StyledDescription = styled.div`
   width: 200px;
 `;
 
+const StyledBottomActionContainer = styled.div`
+  margin-top: ${themeCssVariables.spacing[2]};
+`;
+
 const StyledBottomAction = styled.div`
   align-items: center;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
+  padding-top: ${themeCssVariables.spacing[1]};
 `;
 
 const defaultAriaLabelByVariant: Record<
@@ -140,6 +148,7 @@ export const SnackBar = ({
   detailedMessage,
   buttonLabel,
   buttonOnClick,
+  buttonTo,
   onCancel,
   onClose,
   role = 'status',
@@ -233,14 +242,24 @@ export const SnackBar = ({
       {isDefined(sanitizedDetailedMessage) && (
         <StyledDescription>{sanitizedDetailedMessage}</StyledDescription>
       )}
-      {isDefined(buttonLabel) && isDefined(buttonOnClick) && (
-        <>
-          <HorizontalSeparator noMargin />
-          <StyledBottomAction>
-            <LightButton title={buttonLabel} onClick={buttonOnClick} />
-          </StyledBottomAction>
-        </>
-      )}
+      {isDefined(buttonLabel) &&
+        (isDefined(buttonOnClick) || isDefined(buttonTo)) && (
+          <StyledBottomActionContainer>
+            <HorizontalSeparator noMargin />
+            <StyledBottomAction>
+              {isDefined(buttonTo) ? (
+                <UndecoratedLink to={buttonTo}>
+                  <LightButton title={buttonLabel} />
+                </UndecoratedLink>
+              ) : (
+                <LightButton
+                  title={buttonLabel}
+                  onClick={buttonOnClick}
+                />
+              )}
+            </StyledBottomAction>
+          </StyledBottomActionContainer>
+        )}
     </StyledContainer>
   );
 };

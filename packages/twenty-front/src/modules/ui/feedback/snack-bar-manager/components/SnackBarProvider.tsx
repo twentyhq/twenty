@@ -60,6 +60,7 @@ export const SnackBarProvider = ({ children }: React.PropsWithChildren) => {
               variant,
               buttonLabel,
               buttonOnClick,
+              buttonTo,
             }) => (
               <motion.div
                 key={id}
@@ -79,6 +80,7 @@ export const SnackBarProvider = ({ children }: React.PropsWithChildren) => {
                     variant,
                     buttonLabel,
                     buttonOnClick,
+                    buttonTo,
                   }}
                   onClose={() => handleSnackBarClose(id)}
                 />
