@@ -5,6 +5,7 @@ import {
   IconTag,
   IconWorld,
 } from 'twenty-ui/display';
+import { Trans, useLingui } from '@lingui/react/macro';
 import {
   SettingsTableCard,
   TableItem,
@@ -13,11 +14,11 @@ import {
   ApplicationRegistration,
   ApplicationRegistrationSourceType,
   ApplicationRegistrationTarballUrlDocument,
+  FindOneApplicationDocument,
   GetPublicWorkspaceDataByIdDocument,
 } from '~/generated-metadata/graphql';
 import { isNonEmptyString } from '@sniptt/guards';
 import { IconGitBranch } from '@tabler/icons-react';
-import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { Button } from 'twenty-ui/input';
@@ -30,6 +31,20 @@ import {
 } from 'twenty-ui/components';
 import { isDefined } from 'twenty-shared/utils';
 
+const StyledSourceRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledDownloadLink = styled.a`
+  color: ${themeCssVariables.font.color.tertiary};
+  cursor: pointer;
+  text-decoration: underline;
+  &:hover {
+    color: ${themeCssVariables.font.color.primary};
+  }
+`;
 const StyledButtonGroup = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
@@ -105,7 +120,21 @@ export const SettingsAdminApplicationRegistrationDetailContent = ({
         items.push({
           Icon: IconBox,
           label: t`Source`,
-          value: 'Tarball',
+          value: isNonEmptyString(
+            tarballUrlData?.applicationRegistrationTarballUrl,
+          ) ? (
+            <StyledSourceRow>
+              <span>Tarball</span>
+              <StyledDownloadLink
+                href={tarballUrlData.applicationRegistrationTarballUrl}
+                download
+              >
+                <Trans>Download</Trans>
+              </StyledDownloadLink>
+            </StyledSourceRow>
+          ) : (
+            'Tarball'
+          ),
         });
         break;
       case ApplicationRegistrationSourceType.LOCAL:

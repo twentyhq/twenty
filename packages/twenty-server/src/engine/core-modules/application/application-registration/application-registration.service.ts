@@ -337,7 +337,10 @@ export class ApplicationRegistrationService {
 
   async findManyListed(): Promise<ApplicationRegistrationEntity[]> {
     return this.applicationRegistrationRepository.find({
-      where: { isListed: true },
+      where: {
+        isListed: true,
+        sourceType: ApplicationRegistrationSourceType.NPM,
+      },
     });
   }
 
