@@ -60,7 +60,6 @@ export class ApplicationRegistrationResolver {
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationTarballService: ApplicationTarballService,
     private readonly fileUrlService: FileUrlService,
-    private readonly domainServerConfigService: DomainServerConfigService,
   ) {}
 
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)

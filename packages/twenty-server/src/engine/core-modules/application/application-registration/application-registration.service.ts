@@ -24,6 +24,7 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 const BCRYPT_SALT_ROUNDS = 10;
 
 @Injectable()
@@ -35,6 +36,7 @@ export class ApplicationRegistrationService {
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
   ) {}
 
   async findMany(
@@ -308,6 +310,13 @@ export class ApplicationRegistrationService {
     });
 
     await this.applicationRegistrationRepository.save(registration);
+
+    if (params.manifest?.application?.serverVariables) {
+      await this.applicationRegistrationVariableService.syncVariableSchemas(
+        registration.id,
+        params.manifest.application.serverVariables,
+      );
+    }
   }
 
   async createCliRegistrationIfNotExists(): Promise<ApplicationRegistrationEntity | null> {
