@@ -385,17 +385,17 @@ describe('UpgradeSequenceRunnerService — workspace segment alignment (integrat
       workspaceIds: [WS_1],
     });
 
-    await seedWorkspaceMigration(context.dataSource, {
-      name: 'Wc0',
-      status: 'completed',
-      workspaceId: WS_1,
-    });
-
     // WS_2 at Ic0:failed — should be rejected
     await seedWorkspaceMigration(context.dataSource, {
       name: 'Ic0',
       status: 'failed',
       workspaceId: WS_2,
+    });
+
+    await seedWorkspaceMigration(context.dataSource, {
+      name: 'Wc0',
+      status: 'completed',
+      workspaceId: WS_1,
     });
 
     await expect(
@@ -582,4 +582,5 @@ describe('UpgradeSequenceRunnerService — workspace segment alignment (integrat
       `Wc1:${WS_3}:completed:1`,
     ]);
   });
+
 });
