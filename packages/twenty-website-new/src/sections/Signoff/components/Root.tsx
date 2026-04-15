@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
-import { Container } from '@/design-system/components';
+import { Container, GuideCrosshair } from '@/design-system/components';
+import { Pages } from '@/enums/pages';
 import { SignoffShape } from '@/sections/Signoff/SignoffShape';
 import { theme } from '@/theme';
 
@@ -13,6 +14,21 @@ const StyledSection = styled.section`
     isolation: isolate;
     overflow: hidden;
     position: relative;
+  }
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    &[data-page='partner'] {
+      min-height: 759px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    &[data-page='partner'] > div {
+      justify-content: center;
+      min-height: 759px;
+      padding-bottom: 0;
+      padding-top: 0;
+    }
   }
 `;
 
@@ -40,6 +56,7 @@ type RootPropsSimple = {
   backgroundColor: string;
   children: ReactNode;
   color: string;
+  page?: Pages;
   variant?: 'simple';
 };
 
@@ -47,6 +64,7 @@ type RootPropsShaped = {
   backgroundColor: string;
   children: ReactNode;
   color: string;
+  page?: Pages;
   shapeFillColor: string;
   variant: 'shaped';
 };
@@ -54,17 +72,21 @@ type RootPropsShaped = {
 type RootProps = RootPropsSimple | RootPropsShaped;
 
 export function Root(props: RootProps) {
-  const { backgroundColor, children, color } = props;
+  const { backgroundColor, children, color, page } = props;
   const isShaped = props.variant === 'shaped';
   const shapeFillColor = isShaped ? props.shapeFillColor : undefined;
 
   return (
     <StyledSection
+      data-page={page}
       data-shaped={isShaped ? '' : undefined}
       style={{ backgroundColor, color }}
     >
       {isShaped && shapeFillColor ? (
         <SignoffShape fillColor={shapeFillColor} />
+      ) : null}
+      {page === Pages.Partner ? (
+        <GuideCrosshair crossX="calc(50% - 334px)" crossY="198px" />
       ) : null}
       <StyledContainer>{children}</StyledContainer>
     </StyledSection>

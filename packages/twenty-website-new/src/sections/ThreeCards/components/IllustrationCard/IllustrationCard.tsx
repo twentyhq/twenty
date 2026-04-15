@@ -43,7 +43,7 @@ const CardEmbed = styled.div`
 `;
 
 const CardFooter = styled.footer`
-  align-items: start;
+  align-items: center;
   column-gap: ${theme.spacing(2)};
   display: grid;
   grid-template-columns: auto auto auto 1fr;
@@ -64,10 +64,6 @@ const CardBodyCell = styled.div`
   align-self: start;
   min-height: 0;
   min-width: 0;
-`;
-
-const CardBody = styled(Body)`
-  color: ${theme.colors.primary.text[80]};
 `;
 
 type IllustrationCardProps = {
@@ -99,7 +95,7 @@ export function IllustrationCard({
       </CardEmbed>
       <CardRule />
       <CardBodyCell>
-        <CardBody body={illustrationCard.body} size="sm" weight="regular" />
+        <Body body={illustrationCard.body} size="sm" weight="regular" />
       </CardBodyCell>
 
       {illustrationCard.attribution && (

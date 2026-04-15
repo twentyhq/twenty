@@ -4,13 +4,13 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
@@ -112,6 +112,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
           updateCurrentViewParams.mainGroupByFieldMetadataId = null;
           return await updateCurrentView(updateCurrentViewParams);
         }
+        case ViewType.TABLE_WIDGET:
         case ViewType.FIELDS_WIDGET: {
           return;
         }

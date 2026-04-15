@@ -36,7 +36,7 @@ const SIGNOFF_BODY = {
   text: 'Join the teams that chose to own their CRM. Start building with Twenty today.',
 };
 
-const PLACEHOLDER_HERO = '/images/home/hero/avatars/katherine-adams.jpg';
+const PLACEHOLDER_HERO = '/images/shared/people/avatars/katherine-adams.jpg';
 
 const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
   {

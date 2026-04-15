@@ -6,8 +6,9 @@ import { theme } from '@/theme';
 const Actions = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: ${theme.spacing(1)};
+  column-gap: ${theme.spacing(2)};
   justify-content: center;
+  row-gap: ${theme.spacing(1)};
 `;
 
 type CtaProps = {

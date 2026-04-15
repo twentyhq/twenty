@@ -1,5 +1,6 @@
 'use client';
 
+import { RatingStarIcon } from '@/icons';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
@@ -247,11 +248,12 @@ const StarsRow = styled.div`
   padding: 0 4px;
 `;
 
-const StarGlyph = styled.span<{ $filled: boolean }>`
-  color: ${({ $filled }) => ($filled ? COLORS.textSecondary : '#d6d6d6')};
-  font-family: ${APP_FONT};
-  font-size: 13px;
-  line-height: 1;
+const StarGlyph = styled.span`
+  align-items: center;
+  display: inline-flex;
+  height: 12px;
+  justify-content: center;
+  width: 12px;
 `;
 
 const AddCardButton = styled.div`
@@ -448,8 +450,10 @@ function RatingValue({ rating }: { rating: number }) {
   return (
     <StarsRow>
       {Array.from({ length: 5 }, (_, index) => (
-        <StarGlyph key={index} $filled={index < rating}>
-          {index < rating ? '★' : '★'}
+        <StarGlyph key={index}>
+          <RatingStarIcon
+            fillColor={index < rating ? COLORS.textSecondary : '#d6d6d6'}
+          />
         </StarGlyph>
       ))}
     </StarsRow>

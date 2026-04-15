@@ -790,7 +790,7 @@ msgstr "الإجراءات التي يمكن للمستخدمين تنفيذها
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/components/SettingsEnterpriseFeatureGateCard.tsx
-#: src/modules/information-banner/components/enterprise/InformationBannerLegacyEnterpriseKey.tsx
+#: src/modules/information-banner/components/enterprise/InformationBannerInvalidEnterpriseKey.tsx
 msgid "Activate"
 msgstr "تفعيل"
 
@@ -4958,6 +4958,11 @@ msgstr "المطوّر"
 msgid "Developers links"
 msgstr "روابط المطورين"
 
+#. js-lingui-id: E/QGRL
+#: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
+msgid "Disabled"
+msgstr ""
+
 #. js-lingui-id: Xm/s+u
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Display"
@@ -5599,6 +5604,11 @@ msgstr "صندوق الوارد فارغ"
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Empty Object"
 msgstr "كائن فارغ"
+
+#. js-lingui-id: 7A0K1Y
+#: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
+msgid "Empty tab"
+msgstr ""
 
 #. js-lingui-id: q11Dk2
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -9656,6 +9666,20 @@ msgstr "تكوين SSO الجديد"
 msgid "New SSO provider"
 msgstr "موفر دخول موحد جديد"
 
+#. js-lingui-id: 3YvS+c
+#: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
+msgid "New tab"
+msgstr ""
+
+#. js-lingui-id: Db+TX4
+#: src/modules/page-layout/components/PageLayoutTabList.tsx
+#: src/modules/page-layout/components/PageLayoutTabList.tsx
+#: src/modules/page-layout/components/PageLayoutTabList.tsx
+#: src/modules/page-layout/components/PageLayoutTabList.tsx
+#: src/modules/page-layout/components/PageLayoutTabList.tsx
+msgid "New Tab"
+msgstr ""
+
 #. js-lingui-id: wl18ST
 #: src/modules/activities/tasks/components/TaskGroups.tsx
 msgid "New task"
@@ -12322,6 +12346,11 @@ msgstr "جارٍ تشغيل {formattedName}"
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 msgid "Running function"
 msgstr "الدالة قيد التشغيل"
+
+#. js-lingui-id: SoR81K
+#: src/modules/command-menu-item/engine-command/hooks/useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation.ts
+msgid "Running workflows on all records is not yet supported. Please select records manually."
+msgstr ""
 
 #. js-lingui-id: LTC198
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
@@ -15101,7 +15130,7 @@ msgstr ""
 #: src/modules/ui/field/display/components/ActorDisplay.tsx
 #: src/modules/side-panel/components/SidePanelContextChip.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
-#: src/modules/page-layout/components/PageLayoutTabsRenderer.tsx
+#: src/modules/page-layout/hooks/usePageLayoutAddTabStrategy.ts
 #: src/modules/object-record/record-title-cell/components/RecordTitleFullNameFieldDisplay.tsx
 #: src/modules/object-record/record-title-cell/components/RecordTitleCellTextFieldDisplay.tsx
 #: src/modules/object-record/components/RecordChip.tsx
@@ -16430,10 +16459,10 @@ msgstr "سيتم تعطيل ميزات Enterprise لديك"
 msgid "Your enterprise features will remain active until {cancelAtDate}."
 msgstr "ستظل ميزات Enterprise لديك نشطة حتى {cancelAtDate}."
 
-#. js-lingui-id: 69Siss
-#: src/modules/information-banner/components/enterprise/InformationBannerLegacyEnterpriseKey.tsx
-msgid "Your enterprise key format is deprecated. Please activate a new key to keep enterprise features."
-msgstr "تنسيق مفتاح Enterprise الخاص بك لم يعد مدعومًا. يُرجى تفعيل مفتاح جديد للإبقاء على ميزات Enterprise."
+#. js-lingui-id: 5TsUUL
+#: src/modules/information-banner/components/enterprise/InformationBannerInvalidEnterpriseKey.tsx
+msgid "Your enterprise key is no longer valid. Activate a new key to continue using enterprise features."
+msgstr ""
 
 #. js-lingui-id: NTpA4U
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
