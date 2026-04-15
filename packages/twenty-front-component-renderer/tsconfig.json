@@ -13,6 +13,7 @@
     "noEmit": true,
     "types": ["jest", "node"],
     "paths": {
+      "@/sdk": ["../twenty-sdk/src/sdk/index.ts"],
       "@/*": ["./src/*"]
     }
   },
@@ -31,6 +32,7 @@
     "src/remote/mock/**/*",
     "src/host/generated/host-component-registry.ts",
     "src/remote/generated/remote-components.ts",
-    "src/remote/generated/remote-elements.ts"
+    "src/remote/generated/remote-elements.ts",
+    "src/__stories__/example-sources-built/**/*"
   ]
 }
