@@ -1,7 +1,10 @@
 import {
   H2Title,
   IconBox,
+  IconBrandDocker,
+  IconChartBar,
   IconDownload,
+  IconStatusChange,
   IconTag,
   IconWorld,
 } from 'twenty-ui/display';
@@ -14,7 +17,8 @@ import {
   ApplicationRegistration,
   ApplicationRegistrationSourceType,
   ApplicationRegistrationTarballUrlDocument,
-  FindOneApplicationDocument,
+  FindApplicationRegistrationStatsDocument,
+  FindOneApplicationSummaryDocument,
   GetPublicWorkspaceDataByIdDocument,
 } from '~/generated-metadata/graphql';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -28,8 +32,12 @@ import {
   Chip,
   ChipSize,
   ChipVariant,
+  Tag,
 } from 'twenty-ui/components';
-import { isDefined } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/layout';
+import { SettingsPath } from 'twenty-shared/types';
+import { SettingsApplicationRegistrationShareLinkButtons } from '~/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons';
 
 const StyledSourceRow = styled.div`
   align-items: center;
@@ -45,10 +53,11 @@ const StyledDownloadLink = styled.a`
     color: ${themeCssVariables.font.color.primary};
   }
 `;
-const StyledButtonGroup = styled.div`
+
+const StyledGeneralContainer = styled.div`
   display: flex;
+  flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsAdminApplicationRegistrationDetailContent = ({
@@ -68,6 +77,18 @@ export const SettingsAdminApplicationRegistrationDetailContent = ({
     },
   );
 
+  const { data: applicationSummaryData } = useQuery(
+    FindOneApplicationSummaryDocument,
+    {
+      variables: { universalIdentifier: registration.universalIdentifier },
+      skip: !registration.universalIdentifier,
+    },
+  );
+
+  const isApplicationInstalled = isDefined(
+    applicationSummaryData?.findOneApplication,
+  );
+
   const { data: ownerWorkspaceData } = useQuery(
     GetPublicWorkspaceDataByIdDocument,
     {
@@ -75,6 +96,18 @@ export const SettingsAdminApplicationRegistrationDetailContent = ({
       skip: !registration.ownerWorkspaceId,
     },
   );
+
+  const { data: statsData } = useQuery(
+    FindApplicationRegistrationStatsDocument,
+    {
+      variables: { id: applicationRegistrationId },
+      skip: !applicationRegistrationId,
+    },
+  );
+
+  const shareLink = getSettingsPath(SettingsPath.AvailableApplicationDetail, {
+    availableApplicationId: registration.universalIdentifier,
+  });
 
   const ownerWorkspace = ownerWorkspaceData?.getPublicWorkspaceDataById;
 
@@ -161,6 +194,16 @@ export const SettingsAdminApplicationRegistrationDetailContent = ({
       });
     }
 
+    items.push({
+      Icon: IconDownload,
+      label: t`Installed`,
+      value: isApplicationInstalled ? (
+        <Tag color="green" text={t`Yes`} />
+      ) : (
+        <Tag color="orange" text={t`No`} />
+      ),
+    });
+
     return items;
   };
 
@@ -183,15 +226,64 @@ export const SettingsAdminApplicationRegistrationDetailContent = ({
     );
   };
 
+  const stats = statsData?.findApplicationRegistrationStats;
+
+  const hasStats = (stats?.activeInstalls ?? 0) > 0;
+
+  const versionDistributionLabel =
+    stats?.versionDistribution
+      ?.map(
+        (entry: { version: string; count: number }) =>
+          `${entry.version} (${entry.count})`,
+      )
+      .join(', ') || '—';
+
+  const statsItems = [
+    {
+      Icon: IconBrandDocker,
+      label: t`Active installs`,
+      value: stats?.activeInstalls ?? '—',
+    },
+    {
+      Icon: IconStatusChange,
+      label: t`Most installed version`,
+      value: stats?.mostInstalledVersion ?? '—',
+    },
+    {
+      Icon: IconChartBar,
+      label: t`Distribution`,
+      value: versionDistributionLabel,
+    },
+  ];
+
   return (
     <>
-      <H2Title title={t`General`} description={t`About your app`} />
-      <SettingsTableCard
-        rounded
-        items={generateItems()}
-        gridAutoColumns="3fr 8fr"
-      />
-      <StyledButtonGroup>{getDownloadTarballButton()}</StyledButtonGroup>
+      <Section>
+        <H2Title title={t`General`} description={t`About your app`} />
+        <StyledGeneralContainer>
+          <SettingsTableCard
+            rounded
+            items={generateItems()}
+            gridAutoColumns="3fr 8fr"
+          />
+          <SettingsApplicationRegistrationShareLinkButtons
+            shareLink={shareLink}
+          />
+        </StyledGeneralContainer>
+      </Section>
+      {hasStats && (
+        <Section>
+          <H2Title
+            title={t`Install Stats`}
+            description={t`Usage across all workspaces on this server`}
+          />
+          <SettingsTableCard
+            rounded
+            items={statsItems}
+            gridAutoColumns="200px 1fr"
+          />
+        </Section>
+      )}
     </>
   );
 };

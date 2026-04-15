@@ -43,8 +43,13 @@ export const SettingsApplicationRegistrationDetails = () => {
           href: getSettingsPath(SettingsPath.Workspace),
         },
         {
-          children: t`Applications`,
-          href: getSettingsPath(SettingsPath.Applications),
+          children: t`Applications - Developer`,
+          href: getSettingsPath(
+            SettingsPath.Applications,
+            undefined,
+            undefined,
+            'developer',
+          ),
         },
         { children: registration.name },
       ]}

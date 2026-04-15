@@ -2,9 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@apollo/client/react';
 import {
   FindAllApplicationRegistrationsDocument,
-  FindManyApplicationRegistrationsDocument,
   FindOneAdminApplicationRegistrationDocument,
-  FindOneApplicationRegistrationDocument,
   UpdateApplicationRegistrationDocument,
 } from '~/generated-metadata/graphql';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -72,10 +70,10 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
       ]}
     >
       <SettingsPageContainer>
+        <SettingsAdminApplicationRegistrationDetailContent
+          registration={registration}
+        />
         <Section>
-          <SettingsAdminApplicationRegistrationDetailContent
-            registration={registration}
-          />
           <StyledToggleContainer>
             <Card rounded fullWidth>
               <SettingsOptionCardContentToggle
