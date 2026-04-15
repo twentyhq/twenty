@@ -3,8 +3,9 @@ import { css } from '@linaria/core';
 import { BodyType } from './types/Body';
 
 const bodyClassName = css`
+  color: inherit;
   margin: 0;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 
   &[data-family='sans'] {
     font-family: ${theme.font.family.sans};
@@ -37,6 +38,7 @@ const bodyClassName = css`
   }
 
   &[data-size='sm'] {
+    color: ${theme.colors.primary.text[60]};
     font-size: ${theme.font.size(4)};
     line-height: ${theme.lineHeight(5.5)};
   }

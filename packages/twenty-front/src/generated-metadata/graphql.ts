@@ -2791,6 +2791,7 @@ export type Mutation = {
   updateWorkspace: Workspace;
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
   updateWorkspaceMemberRole: WorkspaceMember;
+  updateWorkspaceMemberSettings: Scalars['Boolean'];
   upgradeApplication: Scalars['Boolean'];
   uploadAIChatFile: FileWithSignedUrl;
   uploadAppTarball: ApplicationRegistration;
@@ -3787,6 +3788,11 @@ export type MutationUpdateWorkspaceFeatureFlagArgs = {
 export type MutationUpdateWorkspaceMemberRoleArgs = {
   roleId: Scalars['UUID'];
   workspaceMemberId: Scalars['UUID'];
+};
+
+
+export type MutationUpdateWorkspaceMemberSettingsArgs = {
+  input: UpdateWorkspaceMemberSettingsInput;
 };
 
 
@@ -5829,6 +5835,11 @@ export type UpdateWorkspaceInput = {
   subdomain?: InputMaybe<Scalars['String']>;
   trashRetentionDays?: InputMaybe<Scalars['Float']>;
   useRecommendedModels?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type UpdateWorkspaceMemberSettingsInput = {
+  update: Scalars['JSON'];
+  workspaceMemberId: Scalars['UUID'];
 };
 
 export type UpsertFieldPermissionsInput = {
@@ -7969,6 +7980,13 @@ export type UpdateUserEmailMutationVariables = Exact<{
 
 export type UpdateUserEmailMutation = { __typename?: 'Mutation', updateUserEmail: boolean };
 
+export type UpdateWorkspaceMemberSettingsMutationVariables = Exact<{
+  input: UpdateWorkspaceMemberSettingsInput;
+}>;
+
+
+export type UpdateWorkspaceMemberSettingsMutation = { __typename?: 'Mutation', updateWorkspaceMemberSettings: boolean };
+
 export type ApiKeyForRoleFragmentFragment = { __typename?: 'ApiKeyForRole', id: string, name: string, expiresAt: string, revokedAt?: string | null };
 
 export type FieldPermissionFragmentFragment = { __typename?: 'FieldPermission', objectMetadataId: string, fieldMetadataId: string, canReadFieldValue?: boolean | null, canUpdateFieldValue?: boolean | null, id: string, roleId: string };
@@ -8805,6 +8823,7 @@ export const EnterpriseSubscriptionStatusDocument = {"kind":"Document","definiti
 export const UpdateLabPublicFeatureFlagDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateLabPublicFeatureFlag"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateLabPublicFeatureFlagInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateLabPublicFeatureFlag"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>;
 export const UploadWorkspaceMemberProfilePictureDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UploadWorkspaceMemberProfilePicture"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"file"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Upload"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uploadWorkspaceMemberProfilePicture"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"file"},"value":{"kind":"Variable","name":{"kind":"Name","value":"file"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]} as unknown as DocumentNode<UploadWorkspaceMemberProfilePictureMutation, UploadWorkspaceMemberProfilePictureMutationVariables>;
 export const UpdateUserEmailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateUserEmail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newEmail"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"verifyEmailRedirectPath"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateUserEmail"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"newEmail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newEmail"}}},{"kind":"Argument","name":{"kind":"Name","value":"verifyEmailRedirectPath"},"value":{"kind":"Variable","name":{"kind":"Name","value":"verifyEmailRedirectPath"}}}]}]}}]} as unknown as DocumentNode<UpdateUserEmailMutation, UpdateUserEmailMutationVariables>;
+export const UpdateWorkspaceMemberSettingsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateWorkspaceMemberSettings"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateWorkspaceMemberSettingsInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateWorkspaceMemberSettings"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}]}]}}]} as unknown as DocumentNode<UpdateWorkspaceMemberSettingsMutation, UpdateWorkspaceMemberSettingsMutationVariables>;
 export const CreateOneRoleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateOneRole"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"createRoleInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateRoleInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createOneRole"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"createRoleInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"createRoleInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RoleFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RoleFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Role"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"canUpdateAllSettings"}},{"kind":"Field","name":{"kind":"Name","value":"canAccessAllTools"}},{"kind":"Field","name":{"kind":"Name","value":"isEditable"}},{"kind":"Field","name":{"kind":"Name","value":"canReadAllObjectRecords"}},{"kind":"Field","name":{"kind":"Name","value":"canUpdateAllObjectRecords"}},{"kind":"Field","name":{"kind":"Name","value":"canSoftDeleteAllObjectRecords"}},{"kind":"Field","name":{"kind":"Name","value":"canDestroyAllObjectRecords"}},{"kind":"Field","name":{"kind":"Name","value":"canBeAssignedToUsers"}},{"kind":"Field","name":{"kind":"Name","value":"canBeAssignedToAgents"}},{"kind":"Field","name":{"kind":"Name","value":"canBeAssignedToApiKeys"}}]}}]} as unknown as DocumentNode<CreateOneRoleMutation, CreateOneRoleMutationVariables>;
 export const DeleteOneRoleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteOneRole"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roleId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteOneRole"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"roleId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roleId"}}}]}]}}]} as unknown as DocumentNode<DeleteOneRoleMutation, DeleteOneRoleMutationVariables>;
 export const UpdateOneRoleDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateOneRole"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"updateRoleInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateRoleInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateOneRole"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"updateRoleInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"updateRoleInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"RoleFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RoleFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Role"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"canUpdateAllSettings"}},{"kind":"Field","name":{"kind":"Name","value":"canAccessAllTools"}},{"kind":"Field","name":{"kind":"Name","value":"isEditable"}},{"kind":"Field","name":{"kind":"Name","value":"canReadAllObjectRecords"}},{"kind":"Field","name":{"kind":"Name","value":"canUpdateAllObjectRecords"}},{"kind":"Field","name":{"kind":"Name","value":"canSoftDeleteAllObjectRecords"}},{"kind":"Field","name":{"kind":"Name","value":"canDestroyAllObjectRecords"}},{"kind":"Field","name":{"kind":"Name","value":"canBeAssignedToUsers"}},{"kind":"Field","name":{"kind":"Name","value":"canBeAssignedToAgents"}},{"kind":"Field","name":{"kind":"Name","value":"canBeAssignedToApiKeys"}}]}}]} as unknown as DocumentNode<UpdateOneRoleMutation, UpdateOneRoleMutationVariables>;

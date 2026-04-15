@@ -92,6 +92,7 @@ export class BlocklistItemDeleteMessagesJob {
         await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
           workspaceId,
           'workspaceMember',
+          { shouldBypassPermissionChecks: true },
         );
 
       for (const workspaceMemberId of handlesToDeleteByWorkspaceMemberIdMap.keys()) {

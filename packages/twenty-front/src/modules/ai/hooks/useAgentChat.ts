@@ -1,3 +1,4 @@
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
@@ -7,6 +8,7 @@ import { v4 } from 'uuid';
 
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
 import { SEND_CHAT_MESSAGE } from '@/ai/graphql/mutations/sendChatMessage';
@@ -15,6 +17,7 @@ import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
@@ -109,10 +112,15 @@ export const useAgentChat = (
       instanceId: AGENT_CHAT_INSTANCE_ID,
       familyKey: { threadId },
     });
+    const errorAtom = agentChatErrorComponentFamilyState.atomFamily({
+      instanceId: AGENT_CHAT_INSTANCE_ID,
+      familyKey: { threadId },
+    });
 
     const currentMessages = store.get(messagesAtom);
 
     store.set(messagesAtom, [...currentMessages, optimisticUserMessage]);
+    store.set(errorAtom, null);
 
     const fileIds = agentChatUploadedFiles.map((file) => file.fileId);
 
@@ -155,11 +163,17 @@ export const useAgentChat = (
 
         return null;
       });
-    } catch {
+    } catch (error) {
+      const restoredDraftKey =
+        draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY ? threadId : draftKey;
+
       setAgentChatInput(contentToSend);
       setAgentChatDraftsByThreadId((prev) => ({
         ...prev,
-        [draftKey]: contentToSend,
+        [restoredDraftKey]: contentToSend,
+        ...(draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY
+          ? { [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: '' }
+          : {}),
       }));
 
       const latestMessages = store.get(messagesAtom);
@@ -168,6 +182,23 @@ export const useAgentChat = (
         messagesAtom,
         latestMessages.filter((message) => message.id !== messageId),
       );
+
+      store.set(
+        errorAtom,
+        CombinedGraphQLErrors.is(error) || error instanceof Error
+          ? error
+          : new Error('An unexpected error occurred'),
+      );
+
+      dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
+        content: contentToSend,
+      });
+
+      if (draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
+        setCurrentAIChatThread(threadId);
+      }
+
+      setPendingThreadIdAfterFirstSend(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [

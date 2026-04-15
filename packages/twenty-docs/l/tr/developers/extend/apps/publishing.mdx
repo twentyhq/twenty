@@ -80,6 +80,57 @@ Bir güncelleme yayımlamak için:
 
 {/* TODO: add screenshot of the Upgrade button */}
 
+## Otomatik CI/CD (hazır şablonlu iş akışları)
+
+`create-twenty-app` ile oluşturulan uygulamalar, kutudan çıktığı gibi `.github/workflows/` altında iki GitHub Actions iş akışıyla gelir. Depoyu GitHub’a iter itmez çalışmaya hazırdır — CI için ek bir kurulum gerekmez ve CD yalnızca tek bir gizli anahtar gerektirir.
+
+### CI — `ci.yml`
+
+Entegrasyon testlerini `main` dalına yapılan her itmede ve her çekme isteğinde otomatik olarak çalıştırır.
+
+**Ne yapar:**
+
+1. Uygulamanızın kaynak kodunu alır.
+2. `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` bileşik eylemini kullanarak yalıtılmış bir Twenty test örneği başlatır (CI'daki `yarn twenty server start --test` eşdeğeri).
+3. Corepack’i etkinleştirir, `.nvmrc` dosyanızdan Node.js'i kurar ve bağımlılıkları `yarn install --immutable` ile yükler.
+4. Oluşturulan örnekten `TWENTY_API_URL` ve `TWENTY_API_KEY` değerlerini aktararak `yarn test`i çalıştırır; böylece testleriniz gerçek bir sunucuyla haberleşebilir.
+
+**Yapılandırma seçenekleri:**
+
+* `TWENTY_VERSION` (ortam, varsayılanı `latest`) — CI’da kullanılan Twenty sunucu sürümünü `ci.yml` içinde bunu düzenleyerek sabitleyin.
+* Eşzamanlılık `github.ref` bazında gruplanır ve yeni itmelerde devam eden çalışmaları iptal eder.
+
+Gizli anahtar gerekmez — test örneği geçicidir ve yalnızca iş süresi boyunca çalışır.
+
+### CD — `cd.yml`
+
+`main` dalına yapılan her itmede uygulamanızı yapılandırılmış bir Twenty sunucusuna dağıtır ve isteğe bağlı olarak `deploy` etiketi uygulandığında bir çekme isteğinden de dağıtım yapar.
+
+**Ne yapar:**
+
+1. Etiketli PR'ler için PR'in head commit'ini ya da itilen commit'i alır.
+2. `twentyhq/twenty/.github/actions/deploy-twenty-app@main` çalıştırır — `yarn twenty deploy` komutunun CI eşdeğeridir.
+3. `twentyhq/twenty/.github/actions/install-twenty-app@main` eylemini çalıştırır; böylece yeni dağıtılan sürüm hedef çalışma alanına kurulur.
+
+**Gerekli yapılandırma:**
+
+| Ayar                    | Koşul                                                        | Amaç                                                                                                |
+| ----------------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| `TWENTY_DEPLOY_URL`     | `cd.yml` içinde `env` (varsayılan: `http://localhost:3000`)  | Dağıtımın yapılacağı Twenty sunucusu. İlk kullanımdan önce bunu gerçek sunucu URL'nizle değiştirin. |
+| `TWENTY_DEPLOY_API_KEY` | GitHub deposu **Settings → Secrets and variables → Actions** | Hedef sunucuda dağıtım iznine sahip API anahtarı.                                                   |
+
+<Note>
+Varsayılan `TWENTY_DEPLOY_URL` olan `http://localhost:3000` bir yer tutucudur — GitHub barındırmalı bir çalıştırıcıdan hiçbir yere erişemez. CD'yi etkinleştirmeden önce bunu sunucunuzun genel URL'siyle güncelleyin (veya ağ erişimi olan öz barındırılan bir çalıştırıcı kullanın).
+</Note>
+
+**Bir PR'den bir önizleme dağıtımını tetikleme:**
+
+Bir çekme isteğine `deploy` etiketini ekleyin. `cd.yml` içindeki `if:` koruması, ilgili PR için işi PR'in head commit'ini kullanarak çalıştırır; böylece birleştirmeden önce hedef sunucuda değişikliği doğrulayabilirsiniz.
+
+### Yeniden kullanılabilir eylemleri sabitleme
+
+Her iki iş akışı da `@main` üzerindeki yeniden kullanılabilir eylemlere başvurur; bu nedenle `twentyhq/twenty` deposundaki eylem güncellemeleri otomatik olarak alınır. Deterministik derlemeler istiyorsanız, her `uses:` satırında `@main` ifadesini bir commit SHA'sı veya sürüm etiketiyle değiştirin.
+
 ## npm’ye yayımlama
 
 npm’ye yayımlamak, uygulamanızın Twenty pazaryerinde keşfedilebilir olmasını sağlar. Herhangi bir Twenty çalışma alanı, pazaryeri uygulamalarına doğrudan arayüzden göz atabilir, yükleyebilir ve güncelleyebilir.

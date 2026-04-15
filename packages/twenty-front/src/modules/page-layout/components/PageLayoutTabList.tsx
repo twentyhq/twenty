@@ -11,7 +11,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IconPlus, useIcons } from 'twenty-ui/display';
-import { IconButton } from 'twenty-ui/input';
+import { TabButton } from 'twenty-ui/input';
 
 import { isPageLayoutTabDraggingComponentState } from '@/page-layout/states/isPageLayoutTabDraggingComponentState';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -29,6 +29,7 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
+import { PageLayoutTabListNewTabDropdownContent } from '@/page-layout/components/PageLayoutTabListNewTabDropdownContent';
 import { PageLayoutTabListReorderableOverflowDropdown } from '@/page-layout/components/PageLayoutTabListReorderableOverflowDropdown';
 import { PageLayoutTabListVisibleTabs } from '@/page-layout/components/PageLayoutTabListVisibleTabs';
 import { STANDARD_PAGE_LAYOUT_TAB_TITLE_TRANSLATIONS } from '@/page-layout/constants/StandardPageLayoutTabTitleTranslations';
@@ -37,9 +38,11 @@ import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutIn
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutTabListCurrentDragDroppableIdComponentState } from '@/page-layout/states/pageLayoutTabListCurrentDragDroppableIdComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
+import { type PageLayoutAddTabStrategy } from '@/page-layout/types/PageLayoutAddTabStrategy';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { TabListDropdown } from '@/ui/layout/tab-list/components/TabListDropdown';
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
@@ -89,7 +92,7 @@ const StyledAddButton = styled.div`
 type PageLayoutTabListProps = Omit<TabListProps, 'tabs'> & {
   tabs: PageLayoutTab[];
   isReorderEnabled: boolean;
-  onAddTab?: () => void;
+  addTabStrategy?: PageLayoutAddTabStrategy;
   onReorder?: (result: DropResult, provided: ResponderProvided) => boolean;
   behaveAsLinks: boolean;
   pageLayoutType: PageLayoutType;
@@ -103,7 +106,7 @@ export const PageLayoutTabList = ({
   className,
   componentInstanceId,
   onChangeTab,
-  onAddTab,
+  addTabStrategy,
   isReorderEnabled,
   onReorder,
   pageLayoutType,
@@ -147,7 +150,7 @@ export const PageLayoutTabList = ({
     onAddButtonWidthChange,
   } = useTabListMeasurements({
     visibleTabs: tabsWithIcons,
-    hasAddButton: isDefined(onAddTab),
+    hasAddButton: isDefined(addTabStrategy),
   });
 
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
@@ -155,6 +158,7 @@ export const PageLayoutTabList = ({
   );
 
   const dropdownId = `tab-overflow-${componentInstanceId}`;
+  const addTabDropdownId = `tab-add-${componentInstanceId}`;
   const { closeDropdown } = useCloseDropdown();
   const { openDropdown } = useOpenDropdown();
   const { toggleClickOutside } = useClickOutsideListener(dropdownId);
@@ -358,11 +362,18 @@ export const PageLayoutTabList = ({
           loading={loading}
           onTabWidthChange={onTabWidthChange}
           onMoreButtonWidthChange={onMoreButtonWidthChange}
-          onAddButtonWidthChange={onAddTab ? onAddButtonWidthChange : undefined}
+          onAddButtonWidthChange={
+            addTabStrategy ? onAddButtonWidthChange : undefined
+          }
           addButtonMeasurement={
-            onAddTab ? (
+            addTabStrategy ? (
               <StyledAddButton>
-                <IconButton Icon={IconPlus} size="small" variant="tertiary" />
+                <TabButton
+                  id="add-tab"
+                  LeftIcon={IconPlus}
+                  title={t`New Tab`}
+                  disableTestId
+                />
               </StyledAddButton>
             ) : undefined
           }
@@ -405,13 +416,36 @@ export const PageLayoutTabList = ({
                 </StyledDropdownContainer>
               )}
 
-              {onAddTab && (
+              {addTabStrategy?.mode === 'direct' && (
                 <StyledAddButton>
-                  <IconButton
-                    Icon={IconPlus}
-                    size="small"
-                    variant="tertiary"
-                    onClick={() => onAddTab()}
+                  <TabButton
+                    id="add-tab"
+                    LeftIcon={IconPlus}
+                    title={t`New Tab`}
+                    onClick={() => addTabStrategy.onCreate()}
+                    disableTestId
+                  />
+                </StyledAddButton>
+              )}
+              {addTabStrategy?.mode === 'dropdown' && (
+                <StyledAddButton>
+                  <Dropdown
+                    dropdownId={addTabDropdownId}
+                    clickableComponent={
+                      <TabButton
+                        id="add-tab"
+                        LeftIcon={IconPlus}
+                        title={t`New Tab`}
+                        disableTestId
+                      />
+                    }
+                    dropdownComponents={
+                      <PageLayoutTabListNewTabDropdownContent
+                        onCreate={addTabStrategy.onCreate}
+                        dropdownId={addTabDropdownId}
+                      />
+                    }
+                    dropdownPlacement="bottom-start"
                   />
                 </StyledAddButton>
               )}
@@ -445,13 +479,36 @@ export const PageLayoutTabList = ({
                 />
               </StyledDropdownContainer>
             )}
-            {onAddTab && (
+            {addTabStrategy?.mode === 'direct' && (
               <StyledAddButton>
-                <IconButton
-                  Icon={IconPlus}
-                  size="small"
-                  variant="tertiary"
-                  onClick={() => onAddTab()}
+                <TabButton
+                  id="add-tab"
+                  LeftIcon={IconPlus}
+                  title={t`New Tab`}
+                  onClick={() => addTabStrategy.onCreate()}
+                  disableTestId
+                />
+              </StyledAddButton>
+            )}
+            {addTabStrategy?.mode === 'dropdown' && (
+              <StyledAddButton>
+                <Dropdown
+                  dropdownId={addTabDropdownId}
+                  clickableComponent={
+                    <TabButton
+                      id="add-tab"
+                      LeftIcon={IconPlus}
+                      title={t`New Tab`}
+                      disableTestId
+                    />
+                  }
+                  dropdownComponents={
+                    <PageLayoutTabListNewTabDropdownContent
+                      onCreate={addTabStrategy.onCreate}
+                      dropdownId={addTabDropdownId}
+                    />
+                  }
+                  dropdownPlacement="bottom-start"
                 />
               </StyledAddButton>
             )}

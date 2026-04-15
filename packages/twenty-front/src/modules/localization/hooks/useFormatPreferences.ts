@@ -15,11 +15,9 @@ import { detectTimeFormat } from '@/localization/utils/detection/detectTimeForma
 import { detectTimeZone } from '@/localization/utils/detection/detectTimeZone';
 import { getFormatPreferencesFromWorkspaceMember } from '@/localization/utils/format-preferences/getFormatPreferencesFromWorkspaceMember';
 import { getWorkspaceMemberUpdateFromFormatPreferences } from '@/localization/utils/format-preferences/getWorkspaceMemberUpdateFromFormatPreferences';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { logError } from '~/utils/logError';
 
@@ -31,11 +29,8 @@ export const useFormatPreferences = () => {
     setWorkspaceMemberFormatPreferences,
   ] = useAtomState(workspaceMemberFormatPreferencesState);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const setCurrentWorkspaceMember = useSetAtomState(
-    currentWorkspaceMemberState,
-  );
 
-  const { updateOneRecord } = useUpdateOneRecord();
+  const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
 
   const updateFormatPreference = useCallback(
     async <K extends FormatPreferenceKey>(
@@ -96,19 +91,9 @@ export const useFormatPreferences = () => {
         });
 
       try {
-        await updateOneRecord({
-          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-          idToUpdate: currentWorkspaceMember.id,
-          updateOneRecordInput: workspaceMemberUpdate,
-        });
-
-        // Update the currentWorkspaceMemberState with the new backend values
-        setCurrentWorkspaceMember((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            ...workspaceMemberUpdate,
-          };
+        await updateWorkspaceMemberSettings({
+          workspaceMemberId: currentWorkspaceMember.id,
+          update: workspaceMemberUpdate,
         });
       } catch (error) {
         logError(error);
@@ -117,9 +102,8 @@ export const useFormatPreferences = () => {
     },
     [
       currentWorkspaceMember,
-      updateOneRecord,
+      updateWorkspaceMemberSettings,
       setWorkspaceMemberFormatPreferences,
-      setCurrentWorkspaceMember,
     ],
   );
 
@@ -167,19 +151,9 @@ export const useFormatPreferences = () => {
         getWorkspaceMemberUpdateFromFormatPreferences(updates);
 
       try {
-        await updateOneRecord({
-          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-          idToUpdate: currentWorkspaceMember.id,
-          updateOneRecordInput: workspaceMemberUpdate,
-        });
-
-        // Update the currentWorkspaceMemberState with the new backend values
-        setCurrentWorkspaceMember((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            ...workspaceMemberUpdate,
-          };
+        await updateWorkspaceMemberSettings({
+          workspaceMemberId: currentWorkspaceMember.id,
+          update: workspaceMemberUpdate,
         });
       } catch (error) {
         logError(error);
@@ -188,9 +162,8 @@ export const useFormatPreferences = () => {
     },
     [
       currentWorkspaceMember,
-      updateOneRecord,
+      updateWorkspaceMemberSettings,
       setWorkspaceMemberFormatPreferences,
-      setCurrentWorkspaceMember,
     ],
   );
 

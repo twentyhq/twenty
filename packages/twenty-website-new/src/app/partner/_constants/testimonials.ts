@@ -13,6 +13,10 @@ export const TESTIMONIALS_DATA: TestimonialsDataType = {
       author: {
         name: { text: 'Benjamin Reynolds' },
         designation: { text: 'Principal and Founder, Alternative Partners' },
+        avatar: {
+          src: '/images/partner/testimonials/benjamin-reynolds.webp',
+          alt: 'Portrait of Benjamin Reynolds',
+        },
       },
     },
     {
@@ -23,6 +27,10 @@ export const TESTIMONIALS_DATA: TestimonialsDataType = {
       author: {
         name: { text: 'Bertrams' },
         designation: { text: 'Founder, Wintactix' },
+        avatar: {
+          src: '/images/partner/testimonials/bertrams.jpeg',
+          alt: 'Portrait of Bertrams',
+        },
       },
     },
     {
@@ -33,6 +41,10 @@ export const TESTIMONIALS_DATA: TestimonialsDataType = {
       author: {
         name: { text: 'Mike Babiy' },
         designation: { text: 'Founder, Nine Dots Ventures' },
+        avatar: {
+          src: '/images/partner/testimonials/mike-babiy.png',
+          alt: 'Photo featuring Mike Babiy',
+        },
       },
     },
   ],
