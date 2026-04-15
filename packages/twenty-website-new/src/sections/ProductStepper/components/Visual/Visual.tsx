@@ -5,15 +5,14 @@ import { styled } from '@linaria/react';
 import NextImage from 'next/image';
 import { StepperVisualFrame } from '../StepperVisualFrame/StepperVisualFrame';
 
-const PRODUCT_STEPPER_BACKGROUND = '/images/product/stepper/background.png';
-const PRODUCT_STEPPER_SHAPE = '/images/product/stepper/background-shape.png';
+const PRODUCT_STEPPER_BACKGROUND = '/images/product/stepper/background.webp';
+const PRODUCT_STEPPER_SHAPE = '/images/product/stepper/background-shape.webp';
 
 const VisualColumn = styled.div`
   min-width: 0;
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    align-self: start;
     max-width: 672px;
     position: sticky;
     top: calc(4.5rem + (100vh - 4.5rem) * 0.5 - 368px);

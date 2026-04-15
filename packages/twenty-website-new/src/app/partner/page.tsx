@@ -1,4 +1,5 @@
 import { FAQ_DATA, MENU_DATA, TRUSTED_BY_DATA } from '@/app/_constants';
+import { TalkToUsButton } from '@/app/components/ContactCalModal';
 import {
   ENGAGEMENT_BAND_DATA,
   HERO_DATA,
@@ -6,6 +7,11 @@ import {
   TESTIMONIALS_DATA,
   THREE_CARDS_ILLUSTRATION_DATA,
 } from '@/app/partner/_constants';
+import {
+  PartnerApplicationModalRoot,
+  PartnerHeroCtas,
+  PartnerSignoffCtas,
+} from '@/app/partner/components/PartnerApplication';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
@@ -32,7 +38,7 @@ export default async function PartnerPage() {
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
-    <>
+    <PartnerApplicationModalRoot>
       <Menu.Root
         backgroundColor={theme.colors.primary.background[100]}
         scheme="primary"
@@ -49,20 +55,7 @@ export default async function PartnerPage() {
         <Hero.Heading page={Pages.Partner} segments={HERO_DATA.heading} />
         <Hero.Body page={Pages.Partner} body={HERO_DATA.body} />
         <Hero.Cta>
-          <LinkButton
-            color="secondary"
-            href="https://app.twenty.com/welcome"
-            label="Become a partner"
-            type="anchor"
-            variant="outlined"
-          />
-          <LinkButton
-            color="secondary"
-            href="https://app.twenty.com/welcome"
-            label="Find a partner"
-            type="anchor"
-            variant="contained"
-          />
+          <PartnerHeroCtas />
         </Hero.Cta>
         <Hero.PartnerVisual />
       </Hero.Root>
@@ -89,9 +82,9 @@ export default async function PartnerPage() {
           <EngagementBand.Actions>
             <LinkButton
               color="primary"
-              href="https://app.twenty.com/welcome"
+              href="/case-studies"
               label="Read our case studies"
-              type="anchor"
+              type="link"
               variant="contained"
             />
           </EngagementBand.Actions>
@@ -119,37 +112,26 @@ export default async function PartnerPage() {
 
       <Testimonials.Root
         backgroundColor={theme.colors.secondary.background[5]}
-        color={theme.colors.primary.text[100]}
+        backgroundShapeSrc="/images/partner/testimonials/background-shape.webp"
+        color={theme.colors.secondary.text[100]}
       >
-        <Testimonials.Carousel
+        <Testimonials.PartnerCarousel
           eyebrow={TESTIMONIALS_DATA.eyebrow}
           testimonials={TESTIMONIALS_DATA.testimonials}
         >
           <Testimonials.PartnerVisual />
-        </Testimonials.Carousel>
+        </Testimonials.PartnerCarousel>
       </Testimonials.Root>
 
       <Signoff.Root
         backgroundColor={theme.colors.primary.background[100]}
         color={theme.colors.primary.text[100]}
+        page={Pages.Partner}
       >
-        <Signoff.Heading segments={SIGNOFF_DATA.heading} />
-        <Signoff.Body body={SIGNOFF_DATA.body} />
+        <Signoff.Heading page={Pages.Partner} segments={SIGNOFF_DATA.heading} />
+        <Signoff.Body body={SIGNOFF_DATA.body} page={Pages.Partner} />
         <Signoff.Cta>
-          <LinkButton
-            color="secondary"
-            href="https://app.twenty.com/welcome"
-            label="Become a partner"
-            type="anchor"
-            variant="outlined"
-          />
-          <LinkButton
-            color="secondary"
-            href="https://twenty.com/contact"
-            label="Talk to us"
-            type="anchor"
-            variant="contained"
-          />
+          <PartnerSignoffCtas />
         </Signoff.Cta>
       </Signoff.Root>
 
@@ -165,17 +147,15 @@ export default async function PartnerPage() {
               type="anchor"
               variant="contained"
             />
-            <LinkButton
+            <TalkToUsButton
               color="primary"
-              href="https://twenty.com/contact"
               label="Talk to us"
-              type="anchor"
               variant="outlined"
             />
           </Faq.Cta>
         </Faq.Intro>
         <Faq.Items questions={FAQ_DATA.questions} />
       </Faq.Root>
-    </>
+    </PartnerApplicationModalRoot>
   );
 }

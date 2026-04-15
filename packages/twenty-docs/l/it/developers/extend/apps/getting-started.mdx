@@ -220,6 +220,7 @@ Lo scaffolder ha già avviato per te un server Twenty locale. Per gestirlo in se
 | -------------------------------------- | --------------------------------------------------------- |
 | `yarn twenty server start`             | Avvia il server locale (scarica l'immagine se necessario) |
 | `yarn twenty server start --port 3030` | Avvia su una porta personalizzata                         |
+| `yarn twenty server start --test`      | Avvia un'istanza di test separata sulla porta 2021        |
 | `yarn twenty server stop`              | Arresta il server (conserva i dati)                       |
 | `yarn twenty server status`            | Mostra stato del server, URL e credenziali                |
 | `yarn twenty server logs`              | Trasmetti in streaming i log del server                   |
@@ -227,6 +228,20 @@ Lo scaffolder ha già avviato per te un server Twenty locale. Per gestirlo in se
 | `yarn twenty server reset`             | Elimina tutti i dati e riparti da zero                    |
 
 I dati vengono mantenuti tra i riavvii in due volumi Docker (`twenty-app-dev-data` per PostgreSQL, `twenty-app-dev-storage` per i file). Usa `reset` per cancellare tutto e ripartire da zero.
+
+### Esecuzione di un'istanza di test
+
+Passa `--test` a qualsiasi comando `server` per gestire una seconda istanza completamente isolata — utile per eseguire test di integrazione o per sperimentare senza toccare i tuoi dati di sviluppo principali.
+
+| Comando                            | Descrizione                                                              |
+| ---------------------------------- | ------------------------------------------------------------------------ |
+| `yarn twenty server start --test`  | Avvia l'istanza di test (per impostazione predefinita usa la porta 2021) |
+| `yarn twenty server stop --test`   | Arresta l'istanza di test                                                |
+| `yarn twenty server status --test` | Mostra stato, URL e credenziali dell'istanza di test                     |
+| `yarn twenty server logs --test`   | Trasmetti in streaming i log dell'istanza di test                        |
+| `yarn twenty server reset --test`  | Cancella i dati di test e riparti da zero                                |
+
+L'istanza di test viene eseguita nel proprio container Docker (`twenty-app-dev-test`) con volumi dedicati (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) e configurazione dedicata, così può essere eseguita in parallelo con la tua istanza principale senza conflitti. Combina `--test` con `--port` per sovrascrivere il valore predefinito 2021.
 
 <Note>
   Il server richiede che **Docker** sia in esecuzione. Se vedi l'errore "Docker not running", assicurati che Docker Desktop (o il demone Docker) sia avviato.

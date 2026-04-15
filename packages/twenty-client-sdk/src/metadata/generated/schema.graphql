@@ -583,6 +583,7 @@ type ViewField {
   workspaceId: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
+  isActive: Boolean!
   deletedAt: DateTime
   isOverridden: Boolean @deprecated(reason: "isOverridden is deprecated")
 }
@@ -691,6 +692,7 @@ type ViewFieldGroup {
   workspaceId: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
+  isActive: Boolean!
   deletedAt: DateTime
   viewFields: [ViewField!]!
   isOverridden: Boolean! @deprecated(reason: "isOverridden is deprecated")
@@ -790,7 +792,6 @@ type Workspace {
   isCustomDomainEnabled: Boolean!
   editableProfileFields: [String!]
   defaultRole: Role
-  version: String
   fastModel: String!
   smartModel: String!
   aiAdditionalInstructions: String
@@ -899,6 +900,7 @@ type PageLayoutWidget {
   conditionalAvailabilityExpression: String
   createdAt: DateTime!
   updatedAt: DateTime!
+  isActive: Boolean!
   deletedAt: DateTime
   isOverridden: Boolean @deprecated(reason: "isOverridden is deprecated")
 }
@@ -1234,6 +1236,7 @@ type PageLayoutTab {
   layoutMode: PageLayoutTabLayoutMode
   createdAt: DateTime!
   updatedAt: DateTime!
+  isActive: Boolean!
   deletedAt: DateTime
   isOverridden: Boolean @deprecated(reason: "isOverridden is deprecated")
 }
@@ -1254,6 +1257,7 @@ enum PageLayoutType {
   RECORD_INDEX
   RECORD_PAGE
   DASHBOARD
+  STANDALONE_PAGE
 }
 
 type Analytics {
@@ -1482,6 +1486,7 @@ type NavigationMenuItem {
   icon: String
   color: String
   folderId: UUID
+  pageLayoutId: UUID
   position: Float!
   applicationId: UUID
   createdAt: DateTime!
@@ -1495,6 +1500,7 @@ enum NavigationMenuItemType {
   LINK
   OBJECT
   RECORD
+  PAGE_LAYOUT
 }
 
 type ObjectRecordEventProperties {
@@ -1573,14 +1579,114 @@ enum LogicFunctionExecutionStatus {
   ERROR
 }
 
-type BillingTrialPeriod {
-  duration: Float!
-  isCreditCardRequired: Boolean!
+type FeatureFlag {
+  key: FeatureFlagKey!
+  value: Boolean!
+}
+
+enum FeatureFlagKey {
+  IS_UNIQUE_INDEXES_ENABLED
+  IS_JSON_FILTER_ENABLED
+  IS_AI_ENABLED
+  IS_COMMAND_MENU_ITEM_ENABLED
+  IS_MARKETPLACE_SETTING_TAB_VISIBLE
+  IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED
+  IS_PUBLIC_DOMAIN_ENABLED
+  IS_EMAILING_DOMAIN_ENABLED
+  IS_JUNCTION_RELATIONS_ENABLED
+  IS_DRAFT_EMAIL_ENABLED
+  IS_CONNECTED_ACCOUNT_MIGRATED
+  IS_RICH_TEXT_V1_MIGRATED
+  IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED
+  IS_DATASOURCE_MIGRATED
 }
 
 type WorkspaceUrls {
   customUrl: String
   subdomainUrl: String!
+}
+
+type UserInfo {
+  id: UUID!
+  email: String!
+  firstName: String
+  lastName: String
+  createdAt: DateTime!
+}
+
+type WorkspaceInfo {
+  id: UUID!
+  name: String!
+  allowImpersonation: Boolean!
+  logo: String
+  totalUsers: Float!
+  activationStatus: WorkspaceActivationStatus!
+  createdAt: DateTime!
+  workspaceUrls: WorkspaceUrls!
+  users: [UserInfo!]!
+  featureFlags: [FeatureFlag!]!
+}
+
+type UserLookup {
+  user: UserInfo!
+  workspaces: [WorkspaceInfo!]!
+}
+
+type AdminPanelRecentUser {
+  id: UUID!
+  email: String!
+  firstName: String
+  lastName: String
+  createdAt: DateTime!
+  workspaceName: String
+  workspaceId: UUID
+}
+
+type AdminPanelTopWorkspace {
+  id: UUID!
+  name: String!
+  totalUsers: Int!
+  subdomain: String!
+}
+
+type AdminWorkspaceChatThread {
+  id: UUID!
+  title: String
+  totalInputTokens: Int!
+  totalOutputTokens: Int!
+  conversationSize: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type AdminChatMessagePart {
+  type: String!
+  textContent: String
+  toolName: String
+}
+
+type AdminChatMessage {
+  id: UUID!
+  role: AgentMessageRole!
+  parts: [AdminChatMessagePart!]!
+  createdAt: DateTime!
+}
+
+"""Role of a message in a chat thread"""
+enum AgentMessageRole {
+  SYSTEM
+  USER
+  ASSISTANT
+}
+
+type AdminChatThreadMessages {
+  thread: AdminWorkspaceChatThread!
+  messages: [AdminChatMessage!]!
+}
+
+type BillingTrialPeriod {
+  duration: Float!
+  isCreditCardRequired: Boolean!
 }
 
 type SSOIdentityProvider {
@@ -1727,25 +1833,6 @@ type PublicFeatureFlagMetadata {
 type PublicFeatureFlag {
   key: FeatureFlagKey!
   metadata: PublicFeatureFlagMetadata!
-}
-
-enum FeatureFlagKey {
-  IS_UNIQUE_INDEXES_ENABLED
-  IS_JSON_FILTER_ENABLED
-  IS_AI_ENABLED
-  IS_COMMAND_MENU_ITEM_ENABLED
-  IS_MARKETPLACE_SETTING_TAB_VISIBLE
-  IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED
-  IS_PUBLIC_DOMAIN_ENABLED
-  IS_EMAILING_DOMAIN_ENABLED
-  IS_JUNCTION_RELATIONS_ENABLED
-  IS_DRAFT_EMAIL_ENABLED
-  IS_CONNECTED_ACCOUNT_MIGRATED
-  IS_USAGE_ANALYTICS_ENABLED
-  IS_RICH_TEXT_V1_MIGRATED
-  IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED
-  IS_RECORD_TABLE_WIDGET_ENABLED
-  IS_DATASOURCE_MIGRATED
 }
 
 type ClientConfigMaintenanceMode {
@@ -1931,34 +2018,6 @@ type SystemHealth {
   services: [SystemHealthService!]!
 }
 
-type FeatureFlag {
-  key: FeatureFlagKey!
-  value: Boolean!
-}
-
-type UserInfo {
-  id: UUID!
-  email: String!
-  firstName: String
-  lastName: String
-}
-
-type WorkspaceInfo {
-  id: UUID!
-  name: String!
-  allowImpersonation: Boolean!
-  logo: String
-  totalUsers: Float!
-  workspaceUrls: WorkspaceUrls!
-  users: [UserInfo!]!
-  featureFlags: [FeatureFlag!]!
-}
-
-type UserLookup {
-  user: UserInfo!
-  workspaces: [WorkspaceInfo!]!
-}
-
 type VersionInfo {
   currentVersion: String
   latestVersion: String!
@@ -2140,30 +2199,18 @@ type DeletedWorkspaceMember {
   userWorkspaceId: UUID
 }
 
-type BillingEntitlement {
-  key: BillingEntitlementKey!
-  value: Boolean!
+type Relation {
+  type: RelationType!
+  sourceObjectMetadata: Object!
+  targetObjectMetadata: Object!
+  sourceFieldMetadata: Field!
+  targetFieldMetadata: Field!
 }
 
-enum BillingEntitlementKey {
-  SSO
-  CUSTOM_DOMAIN
-  RLS
-  AUDIT_LOGS
-}
-
-type DomainRecord {
-  validationType: String!
-  type: String!
-  status: String!
-  key: String!
-  value: String!
-}
-
-type DomainValidRecords {
-  id: UUID!
-  domain: String!
-  records: [DomainRecord!]!
+"""Relation type"""
+enum RelationType {
+  ONE_TO_MANY
+  MANY_TO_ONE
 }
 
 type IndexEdge {
@@ -2265,31 +2312,43 @@ type ObjectFieldsConnection {
   edges: [FieldEdge!]!
 }
 
-type UpsertRowLevelPermissionPredicatesResult {
-  predicates: [RowLevelPermissionPredicate!]!
-  predicateGroups: [RowLevelPermissionPredicateGroup!]!
-}
-
-type Relation {
-  type: RelationType!
-  sourceObjectMetadata: Object!
-  targetObjectMetadata: Object!
-  sourceFieldMetadata: Field!
-  targetFieldMetadata: Field!
-}
-
-"""Relation type"""
-enum RelationType {
-  ONE_TO_MANY
-  MANY_TO_ONE
-}
-
 type FieldConnection {
   """Paging information"""
   pageInfo: PageInfo!
 
   """Array of edges."""
   edges: [FieldEdge!]!
+}
+
+type BillingEntitlement {
+  key: BillingEntitlementKey!
+  value: Boolean!
+}
+
+enum BillingEntitlementKey {
+  SSO
+  CUSTOM_DOMAIN
+  RLS
+  AUDIT_LOGS
+}
+
+type DomainRecord {
+  validationType: String!
+  type: String!
+  status: String!
+  key: String!
+  value: String!
+}
+
+type DomainValidRecords {
+  id: UUID!
+  domain: String!
+  records: [DomainRecord!]!
+}
+
+type UpsertRowLevelPermissionPredicatesResult {
+  predicates: [RowLevelPermissionPredicate!]!
+  predicateGroups: [RowLevelPermissionPredicateGroup!]!
 }
 
 type AuthToken {
@@ -2527,6 +2586,7 @@ type Location {
 }
 
 type PlaceDetailsResult {
+  street: String
   state: String
   postcode: String
   city: String
@@ -2660,6 +2720,7 @@ enum EngineComponentKey {
 
 enum CommandMenuItemAvailabilityType {
   GLOBAL
+  GLOBAL_OBJECT_CONTEXT
   RECORD_SELECTION
   FALLBACK
 }
@@ -3286,6 +3347,9 @@ type Query {
   getConnectedImapSmtpCaldavAccount(id: UUID!): ConnectedImapSmtpCaldavAccount!
   getAutoCompleteAddress(address: String!, token: String!, country: String, isFieldCity: Boolean): [AutocompleteResult!]!
   getAddressDetails(placeId: String!, token: String!): PlaceDetailsResult!
+  userLookupAdminPanel(userIdentifier: String!): UserLookup!
+  adminPanelRecentUsers(searchTerm: String = ""): [AdminPanelRecentUser!]!
+  adminPanelTopWorkspaces(searchTerm: String = ""): [AdminPanelTopWorkspace!]!
   getConfigVariablesGrouped: ConfigVariables!
   getSystemHealthStatus: SystemHealth!
   getIndicatorHealthStatus(indicatorId: HealthIndicatorId!): AdminPanelHealthServiceData!
@@ -3300,6 +3364,10 @@ type Query {
   getModelsDevSuggestions(providerType: String!): [ModelsDevModelSuggestion!]!
   getAdminAiUsageByWorkspace(periodStart: DateTime, periodEnd: DateTime): [UsageBreakdownItem!]!
   getMaintenanceMode: MaintenanceMode
+  workspaceLookupAdminPanel(workspaceId: UUID!): UserLookup!
+  getAdminWorkspaceChatThreads(workspaceId: UUID!): [AdminWorkspaceChatThread!]!
+  getAdminChatThreadMessages(threadId: UUID!): AdminChatThreadMessages!
+  findOneAdminApplicationRegistration(id: String!): ApplicationRegistration!
   getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   getPostgresCredentials: PostgresCredentials
   findManyPublicDomains: [PublicDomain!]!
@@ -3506,6 +3574,7 @@ type Mutation {
   updatePageLayout(id: String!, input: UpdatePageLayoutInput!): PageLayout!
   destroyPageLayout(id: String!): Boolean!
   updatePageLayoutWithTabsAndWidgets(id: String!, input: UpdatePageLayoutWithTabsInput!): PageLayout!
+  resetPageLayoutToDefault(id: String!): PageLayout!
   resetPageLayoutWidgetToDefault(id: String!): PageLayoutWidget!
   resetPageLayoutTabToDefault(id: String!): PageLayoutTab!
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
@@ -3597,6 +3666,7 @@ type Mutation {
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser(otp: String!): VerifyTwoFactorAuthenticationMethod!
   deleteUser: User!
   deleteUserFromWorkspace(workspaceMemberIdToDelete: String!): UserWorkspace!
+  updateWorkspaceMemberSettings(input: UpdateWorkspaceMemberSettingsInput!): Boolean!
   updateUserEmail(newEmail: String!, verifyEmailRedirectPath: String): Boolean!
   resendEmailVerificationToken(email: String!, origin: String!): ResendEmailVerificationToken!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
@@ -3612,7 +3682,6 @@ type Mutation {
   startChannelSync(connectedAccountId: UUID!): ChannelSyncSuccess!
   saveImapSmtpCaldavAccount(accountOwnerId: UUID!, handle: String!, connectionParameters: EmailAccountConnectionParameters!, id: UUID): ImapSmtpCaldavConnectionSuccess!
   updateLabPublicFeatureFlag(input: UpdateLabPublicFeatureFlagInput!): FeatureFlag!
-  userLookupAdminPanel(userIdentifier: String!): UserLookup!
   updateWorkspaceFeatureFlag(workspaceId: UUID!, featureFlag: String!, value: Boolean!): Boolean!
   setAdminAiModelEnabled(modelId: String!, enabled: Boolean!): Boolean!
   setAdminAiModelsEnabled(modelIds: [String!]!, enabled: Boolean!): Boolean!
@@ -3676,6 +3745,7 @@ input CreateNavigationMenuItemInput {
   icon: String
   color: String
   folderId: UUID
+  pageLayoutId: UUID
   position: Float
 }
 
@@ -3694,6 +3764,7 @@ input UpdateNavigationMenuItemInput {
   link: String
   icon: String
   color: String
+  pageLayoutId: UUID
 }
 
 """The `Upload` scalar type represents a file upload."""
@@ -4528,6 +4599,11 @@ input UpdateApplicationRegistrationVariableInput {
 input UpdateApplicationRegistrationVariablePayload {
   value: String
   description: String
+}
+
+input UpdateWorkspaceMemberSettingsInput {
+  workspaceMemberId: UUID!
+  update: JSON!
 }
 
 input ActivateWorkspaceInput {

@@ -10,7 +10,6 @@ export const WORKSPACE_FIELDS_TO_SEED = [
   'logo',
   'activationStatus',
   'isTwoFactorAuthenticationEnforced',
-  'version',
   'workspaceCustomApplicationId',
 ] as const satisfies (keyof WorkspaceEntity)[];
 
@@ -48,5 +47,5 @@ export const SEEDER_CREATE_WORKSPACE_INPUT = {
   },
 } as const satisfies Record<
   SeededWorkspacesIds,
-  Omit<CreateWorkspaceInput, 'version' | 'workspaceCustomApplicationId'>
+  Omit<CreateWorkspaceInput, 'workspaceCustomApplicationId'>
 >;

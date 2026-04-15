@@ -28,7 +28,6 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -45,10 +44,6 @@ const StyledTabsAndDashboardContainer = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
-`;
-
-const StyledPageLayoutTabListContainer = styled.div`
-  padding-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledScrollWrapperContainer = styled.div`
@@ -168,27 +163,25 @@ export const PageLayoutTabsRenderer = () => {
           }
         />
         {(sortedTabs.length > 1 || isPageLayoutInEditMode) && (
-          <StyledPageLayoutTabListContainer>
-            <PageLayoutTabList
-              tabs={sortedTabs}
-              behaveAsLinks={!isInSidePanel && !isPageLayoutInEditMode}
-              isInSidePanel={isInSidePanel}
-              componentInstanceId={tabListInstanceId}
-              onAddTab={handleAddTab}
-              isReorderEnabled={canEnableTabEditing}
-              onReorder={
-                canEnableTabEditing
-                  ? (result, provided) =>
-                      reorderRecordPageTabs(
-                        result,
-                        provided,
-                        isDefined(pinnedLeftTab),
-                      )
-                  : undefined
-              }
-              pageLayoutType={currentPageLayout.type}
-            />
-          </StyledPageLayoutTabListContainer>
+          <PageLayoutTabList
+            tabs={sortedTabs}
+            behaveAsLinks={!isInSidePanel && !isPageLayoutInEditMode}
+            isInSidePanel={isInSidePanel}
+            componentInstanceId={tabListInstanceId}
+            onAddTab={handleAddTab}
+            isReorderEnabled={canEnableTabEditing}
+            onReorder={
+              canEnableTabEditing
+                ? (result, provided) =>
+                    reorderRecordPageTabs(
+                      result,
+                      provided,
+                      isDefined(pinnedLeftTab),
+                    )
+                : undefined
+            }
+            pageLayoutType={currentPageLayout.type}
+          />
         )}
 
         <StyledScrollWrapperContainer>

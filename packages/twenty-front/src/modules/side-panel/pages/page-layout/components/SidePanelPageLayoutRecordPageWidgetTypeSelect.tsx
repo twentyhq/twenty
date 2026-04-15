@@ -10,14 +10,10 @@ import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultFieldWidget } from '@/page-layout/utils/createDefaultFieldWidget';
 import { createDefaultFieldsWidget } from '@/page-layout/utils/createDefaultFieldsWidget';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
-import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPosition';
 import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
 import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
 import { getFieldWidgetDefaultDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
-import { useCreateViewForFieldsWidget } from '@/page-layout/widgets/fields/hooks/useCreateViewForFieldsWidget';
-import { useDeleteViewForFieldsWidget } from '@/page-layout/widgets/fields/hooks/useDeleteViewForFieldsWidget';
-import { useDeleteViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useDeleteViewForRecordTableWidget';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -92,13 +88,6 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
   const { insertCreatedWidgetAtContext } =
     useInsertCreatedWidgetAtContext(pageLayoutId);
 
-  const { createViewForFieldsWidget } = useCreateViewForFieldsWidget();
-
-  const { deleteViewForFieldsWidget } = useDeleteViewForFieldsWidget();
-
-  const { deleteViewForRecordTableWidget } =
-    useDeleteViewForRecordTableWidget();
-
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetObjectNameSingular,
   });
@@ -145,28 +134,11 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       return;
     }
 
-    if (isDefined(existingWidget)) {
-      const viewId = getWidgetConfigurationViewId(existingWidget.configuration);
-
-      if (isDefined(viewId)) {
-        if (existingWidget.type === WidgetType.RECORD_TABLE) {
-          deleteViewForRecordTableWidget(viewId);
-        }
-
-        if (existingWidget.type === WidgetType.FIELDS) {
-          deleteViewForFieldsWidget(viewId);
-        }
-      }
-    }
-
     store.set(pageLayoutDraftState, (prev) => ({
       ...prev,
       tabs: removeWidgetFromTab(prev.tabs, tabId, pageLayoutEditingWidgetId),
     }));
   }, [
-    deleteViewForFieldsWidget,
-    deleteViewForRecordTableWidget,
-    existingWidget,
     isReplaceMode,
     pageLayoutDraftState,
     pageLayoutEditingWidgetId,
@@ -187,21 +159,14 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     }),
   );
 
-  const handleCreateFieldsWidget = useCallback(async () => {
+  const handleCreateFieldsWidget = useCallback(() => {
     if (!isDefined(tabId)) {
       return;
     }
 
     const replacePositionIndex = getExistingWidgetPositionIndex();
 
-    const viewId = await createViewForFieldsWidget({
-      objectMetadataId: objectMetadataItem.id,
-      viewName: `${objectMetadataItem.labelSingular} Fields`,
-    });
-
-    if (viewId === null) {
-      return;
-    }
+    const viewId = uuidv4();
 
     removeExistingWidgetIfReplacing();
 
@@ -233,12 +198,10 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       resetNavigationStack: true,
     });
   }, [
-    createViewForFieldsWidget,
     getExistingWidgetPositionIndex,
     insertCreatedWidgetAtContext,
     navigatePageLayoutSidePanel,
     objectMetadataItem.id,
-    objectMetadataItem.labelSingular,
     pageLayoutDraftState,
     removeExistingWidgetIfReplacing,
     setPageLayoutEditingWidgetId,
@@ -340,6 +303,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       const newWidget: PageLayoutWidget = {
         __typename: 'PageLayoutWidget',
         id: widgetId,
+        isActive: true,
         pageLayoutTabId: tabId,
         title: frontComponent.name,
         type: WidgetType.FRONT_COMPONENT,

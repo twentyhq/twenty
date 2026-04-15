@@ -9,7 +9,7 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
     { text: " that's quick to flex", fontFamily: 'sans' },
   ],
   body: {
-    text: 'Compose your CRM and interal apps with a single exesibility toolkit.',
+    text: 'Compose your CRM and internal apps with a single extensibility toolkit.',
   },
   illustrationCards: [
     {
@@ -23,6 +23,7 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
         company: { text: 'Mid-Market Fintech' },
       },
       illustration: 'diamond',
+      caseStudySlug: '9dots',
     },
     {
       heading: { text: 'AI for rapid iterations', fontFamily: 'sans' },
@@ -35,6 +36,7 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
         company: { text: 'Mid-Market Fintech' },
       },
       illustration: 'flash',
+      caseStudySlug: 'alternative-partners',
     },
     {
       heading: { text: 'Control without drag', fontFamily: 'sans' },
@@ -46,7 +48,8 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
         role: { text: 'Head of Engineering' },
         company: { text: 'Mid-Market Fintech' },
       },
-      illustration: 'wheelx',
+      illustration: 'lock',
+      caseStudySlug: 'elevate-consulting',
     },
   ],
 };

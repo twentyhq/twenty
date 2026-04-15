@@ -7,47 +7,44 @@ export const TESTIMONIALS_DATA: TestimonialsDataType = {
   testimonials: [
     {
       heading: {
-        text: 'Our clients ask for a CRM they can trust and shape. Twenty gives us a credible stack to implement fast, without hiding the data model behind opaque APIs.',
+        text: "Twenty gives you the kind of flexibility that actually changes what you can offer your clients. The dev experience is clean, the APIs are open, and when something needs to be customized, you can just do it. There's no fighting the platform.",
         fontFamily: 'sans',
       },
       author: {
+        name: { text: 'Benjamin Reynolds' },
+        designation: { text: 'Principal and Founder, Alternative Partners' },
         avatar: {
-          src: '/images/partner/testimonials/avatar-four.png',
-          alt: '',
+          src: '/images/partner/testimonials/benjamin-reynolds.webp',
+          alt: 'Portrait of Benjamin Reynolds',
         },
-        name: { text: 'Elena Vasquez' },
-        handle: { text: '@elena_integrations' },
-        date: new Date('2024-04-18'),
       },
     },
     {
       heading: {
-        text: 'Partnering around an open codebase changed how we scope projects. We ship integrations with clear ownership and fewer surprises at go-live.',
+        text: "The flexibility is just amazing. Literally, there's nothing you cannot do. You can create objects, access everything through the API, pull notes and send them to the portal. Try doing that in HubSpot. No way. It's the true ability to build exactly what's actually needed.",
         fontFamily: 'sans',
       },
       author: {
+        name: { text: 'Bertrams' },
+        designation: { text: 'Founder, Wintactix' },
         avatar: {
-          src: '/images/partner/testimonials/avatar-five.png',
-          alt: '',
+          src: '/images/partner/testimonials/bertrams.jpeg',
+          alt: 'Portrait of Bertrams',
         },
-        name: { text: 'Jordan Okonkwo' },
-        handle: { text: '@jordan_solutions' },
-        date: new Date('2024-06-27'),
       },
     },
     {
       heading: {
-        text: 'We needed something modern for mid-market teams that outgrow spreadsheets but dread enterprise lock-in. Twenty hits that gap for the customers we serve.',
+        text: "Twenty Apps opens the door to building products, not just implementations. For example, we're developing a WhatsApp Business integration that any Twenty’s client could get. That's a recurring revenue stream we wouldn't have if we were just configuring someone else's platform.",
         fontFamily: 'sans',
       },
       author: {
+        name: { text: 'Mike Babiy' },
+        designation: { text: 'Founder, Nine Dots Ventures' },
         avatar: {
-          src: '/images/partner/testimonials/avatar-two.png',
-          alt: '',
+          src: '/images/partner/testimonials/mike-babiy.png',
+          alt: 'Photo featuring Mike Babiy',
         },
-        name: { text: 'Samira Haddad' },
-        handle: { text: '@samira_revenue' },
-        date: new Date('2024-08-14'),
       },
     },
   ],

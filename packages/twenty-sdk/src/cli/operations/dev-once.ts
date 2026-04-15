@@ -2,6 +2,10 @@ import path from 'path';
 import { OUTPUT_DIR, type Manifest } from 'twenty-shared/application';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
+import {
+  ensureAppAccessTokenIsValidOrRefresh,
+  ensureAppRegistration,
+} from '@/cli/utilities/auth';
 import { buildApplication } from '@/cli/utilities/build/common/build-application';
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
@@ -119,43 +123,15 @@ const innerAppDevOnce = async (
   onProgress?.('Registering application...');
 
   const configService = new ConfigService();
-  const registrationResult =
-    await apiService.findApplicationRegistrationByUniversalIdentifier(
-      manifest.application.universalIdentifier,
-    );
 
-  if (!registrationResult.success) {
-    return {
-      success: false,
-      error: {
-        code: APP_ERROR_CODES.SYNC_FAILED,
-        message: `Failed to check app registration: ${serializeError(registrationResult.error)}`,
-      },
-    };
-  }
-
-  if (!registrationResult.data) {
-    const createRegistrationResult =
-      await apiService.createApplicationRegistration({
-        name: manifest.application.displayName,
-        universalIdentifier: manifest.application.universalIdentifier,
-      });
-
-    if (!createRegistrationResult.success) {
-      return {
-        success: false,
-        error: {
-          code: APP_ERROR_CODES.SYNC_FAILED,
-          message: `Failed to create app registration: ${serializeError(createRegistrationResult.error)}`,
-        },
-      };
-    }
-
-    await configService.setConfig({
-      oauthClientId:
-        createRegistrationResult.data.applicationRegistration.oAuthClientId,
-    });
-  }
+  const { clientId, clientSecret } = await ensureAppRegistration(
+    apiService,
+    configService,
+    {
+      name: manifest.application.displayName,
+      universalIdentifier: manifest.application.universalIdentifier,
+    },
+  );
 
   const createDevAppResult = await apiService.createDevelopmentApplication({
     universalIdentifier: manifest.application.universalIdentifier,
@@ -167,7 +143,7 @@ const innerAppDevOnce = async (
       success: false,
       error: {
         code: APP_ERROR_CODES.SYNC_FAILED,
-        message: `Failed to create development application: ${serializeError(createDevAppResult.error)}`,
+        message: `Failed to install development application: ${serializeError(createDevAppResult.error)}`,
       },
     };
   }
@@ -239,12 +215,16 @@ const innerAppDevOnce = async (
   onProgress?.('Generating API client...');
 
   try {
-    const config = await configService.getConfig();
+    const appAccessToken = await ensureAppAccessTokenIsValidOrRefresh(
+      configService,
+      { clientId, clientSecret },
+    );
+
     const clientService = new ClientService();
 
     await clientService.generateCoreClient({
       appPath,
-      authToken: config.accessToken,
+      appAccessToken,
     });
   } catch (error) {
     return {

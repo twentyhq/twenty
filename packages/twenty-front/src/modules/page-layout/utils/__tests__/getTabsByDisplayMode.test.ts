@@ -10,6 +10,7 @@ describe('getTabsByDisplayMode', () => {
   const createMockTab = (id: string): PageLayoutTab => ({
     id,
     applicationId: '',
+    isActive: true,
     pageLayoutId: 'page-layout-1',
     title: `Tab ${id}`,
     position: 0,

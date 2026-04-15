@@ -18,8 +18,8 @@ const StyledSeparator = styled.div`
   }
 `;
 
-const SeparatorLine = styled.div`
-  background-color: ${theme.colors.primary.border[20]};
+const SeparatorLine = styled.div<{ color: string }>`
+  background-color: ${(props) => props.color};
   height: 1px;
   min-width: 0;
   width: 100%;
@@ -47,13 +47,22 @@ const SeparatorIcon = styled.div`
   }
 `;
 
-export function Separator() {
+type SeparatorProps = {
+  colorScheme?: 'primary' | 'secondary';
+};
+
+export function Separator({ colorScheme = 'primary' }: SeparatorProps) {
+  const lineColor =
+    colorScheme === 'secondary'
+      ? theme.colors.secondary.border[20]
+      : theme.colors.primary.border[20];
+
   return (
     <StyledSeparator>
       <SeparatorIcon>
         <PlusIcon size={12} strokeColor={theme.colors.highlight[100]} />
       </SeparatorIcon>
-      <SeparatorLine />
+      <SeparatorLine color={lineColor} />
       <SeparatorIcon>
         <PlusIcon size={12} strokeColor={theme.colors.highlight[100]} />
       </SeparatorIcon>

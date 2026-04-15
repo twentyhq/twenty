@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Subscription } from '@nestjs/graphql';
 
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,6 +19,7 @@ import {
   AgentException,
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+import { AgentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/ai-agent/interceptors/agent-graphql-api-exception.interceptor';
 import { AgentChatEventDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-event.dto';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
@@ -26,6 +27,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 
 @MetadataResolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+@UseInterceptors(AgentGraphqlApiExceptionInterceptor)
 export class AgentChatSubscriptionResolver {
   constructor(
     private readonly subscriptionService: SubscriptionService,

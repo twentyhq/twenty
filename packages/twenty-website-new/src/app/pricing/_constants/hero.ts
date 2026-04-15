@@ -1,11 +1,13 @@
 import type { HeroBaseDataType } from '@/sections/Hero/types';
 
-export const HERO_DATA: HeroBaseDataType = {
-  heading: [
-    { text: 'A pricing that scales ', fontFamily: 'serif' },
-    { text: 'with your need', fontFamily: 'sans' },
-  ],
-  body: {
-    text: "We're building the #1 open-source CRM, but we can't do it alone. Join our partner ecosystem and grow with us.",
-  },
+const PRICING_HERO_SUBTAGLINE = {
+  text: 'Start your free trial today without credit card.',
 };
+
+export const HERO_DATA = {
+  heading: [
+    { text: 'Simple', fontFamily: 'serif' },
+    { text: 'Pricing', fontFamily: 'sans', newLine: true },
+  ],
+  body: PRICING_HERO_SUBTAGLINE,
+} satisfies HeroBaseDataType;

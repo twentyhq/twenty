@@ -8,6 +8,10 @@ import { useExitLayoutCustomizationMode } from '@/layout-customization/hooks/use
 import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
+import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
+import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsDraftComponentState';
+import { hasInitializedFieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/hasInitializedFieldsWidgetGroupsDraftComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
@@ -50,6 +54,28 @@ export const useRefreshPageLayoutAfterReset = (
     pageLayoutId,
   );
 
+  const fieldsWidgetGroupsDraftState = useAtomComponentStateCallbackState(
+    fieldsWidgetGroupsDraftComponentState,
+    pageLayoutId,
+  );
+
+  const fieldsWidgetUngroupedFieldsDraftState =
+    useAtomComponentStateCallbackState(
+      fieldsWidgetUngroupedFieldsDraftComponentState,
+      pageLayoutId,
+    );
+
+  const fieldsWidgetEditorModeDraftState = useAtomComponentStateCallbackState(
+    fieldsWidgetEditorModeDraftComponentState,
+    pageLayoutId,
+  );
+
+  const hasInitializedFieldsWidgetGroupsDraftState =
+    useAtomComponentStateCallbackState(
+      hasInitializedFieldsWidgetGroupsDraftComponentState,
+      pageLayoutId,
+    );
+
   const refreshPageLayoutAfterReset = useCallback(
     async (collectAffectedViewIds: (layout: PageLayout) => Set<string>) => {
       const { data } = await client.query({
@@ -73,6 +99,11 @@ export const useRefreshPageLayoutAfterReset = (
         );
       }
 
+      store.set(fieldsWidgetGroupsDraftState, {});
+      store.set(fieldsWidgetUngroupedFieldsDraftState, {});
+      store.set(fieldsWidgetEditorModeDraftState, {});
+      store.set(hasInitializedFieldsWidgetGroupsDraftState, {});
+
       setIsPageLayoutInEditMode(false);
       exitLayoutCustomizationMode();
       evictViewMetadataForViewIds(store, affectedViewIds);
@@ -85,6 +116,10 @@ export const useRefreshPageLayoutAfterReset = (
       pageLayoutPersistedState,
       pageLayoutDraftState,
       pageLayoutCurrentLayoutsState,
+      fieldsWidgetGroupsDraftState,
+      fieldsWidgetUngroupedFieldsDraftState,
+      fieldsWidgetEditorModeDraftState,
+      hasInitializedFieldsWidgetGroupsDraftState,
       setIsPageLayoutInEditMode,
       exitLayoutCustomizationMode,
       invalidateMetadataStore,

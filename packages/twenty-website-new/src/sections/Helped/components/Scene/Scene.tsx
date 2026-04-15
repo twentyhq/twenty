@@ -1,12 +1,26 @@
 'use client';
 
-import { Eyebrow, Heading } from '@/design-system/components';
+import { Eyebrow, GuideCrosshair, Heading } from '@/design-system/components';
 import { HelpedSceneScrollLayoutEffect } from '@/sections/Helped/effect-components/HelpedSceneScrollLayoutEffect';
 import type { HelpedDataType } from '@/sections/Helped/types/HelpedData';
 import { theme } from '@/theme';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useRef } from 'react';
 import { Card } from '../Card/Card';
+
+const GUIDE_INTERSECTION_TOP = '176px';
+
+const helpedHeadingClassName = css`
+  @media (min-width: ${theme.breakpoints.md}px) {
+    max-width: 760px;
+    white-space: pre-line;
+  }
+
+  [data-family='sans'] {
+    white-space: nowrap;
+  }
+`;
 
 const ScrollStage = styled.section`
   height: 280vh;
@@ -39,6 +53,11 @@ const HeadlineBlock = styled.div`
   z-index: 1;
 `;
 
+const EyebrowExitTarget = styled.div`
+  display: grid;
+  justify-items: center;
+`;
+
 const CardsLayer = styled.div`
   inset: 0;
   pointer-events: none;
@@ -65,7 +84,11 @@ export function Scene({ data }: SceneProps) {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   return (
-    <ScrollStage aria-label="Customer stories" ref={sectionRef}>
+    <ScrollStage
+      aria-label="Customer stories"
+      id="homepage-cases"
+      ref={sectionRef}
+    >
       <HelpedSceneScrollLayoutEffect
         cardRefs={cardRefs}
         cards={data.cards}
@@ -73,9 +96,18 @@ export function Scene({ data }: SceneProps) {
         sectionRef={sectionRef}
       />
       <StickyInner ref={innerRef}>
+        <GuideCrosshair crossX="50%" crossY={GUIDE_INTERSECTION_TOP} zIndex={0} />
         <HeadlineBlock>
-          <Eyebrow colorScheme="primary" heading={data.eyebrow.heading} />
-          <Heading as="h2" segments={data.heading} size="xl" weight="light" />
+          <EyebrowExitTarget data-helped-exit-target>
+            <Eyebrow colorScheme="primary" heading={data.eyebrow.heading} />
+          </EyebrowExitTarget>
+          <Heading
+            as="h2"
+            className={helpedHeadingClassName}
+            segments={data.heading}
+            size="xl"
+            weight="light"
+          />
         </HeadlineBlock>
         <CardsLayer>
           {data.cards.map((card, index) => (

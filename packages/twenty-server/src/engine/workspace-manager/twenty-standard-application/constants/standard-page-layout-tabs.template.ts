@@ -140,7 +140,7 @@ export const TAB_PROPS = {
     title: 'Note',
     position: 15,
     icon: 'IconNotes',
-    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   },
   flow: {
     title: 'Flow',
@@ -203,13 +203,13 @@ export const WIDGET_PROPS = {
     title: 'Note',
     type: WidgetType.FIELD_RICH_TEXT,
     gridPosition: GRID_POSITIONS.RICH_TEXT,
-    position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
+    position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   taskRichText: {
     title: 'Task',
     type: WidgetType.FIELD_RICH_TEXT,
     gridPosition: GRID_POSITIONS.RICH_TEXT,
-    position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
+    position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   workflow: {
     title: 'Flow',

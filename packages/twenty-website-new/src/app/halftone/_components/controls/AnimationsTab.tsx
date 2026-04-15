@@ -5,7 +5,11 @@ import {
   formatDecimal,
   formatPercent,
 } from '@/app/halftone/_lib/formatters';
+import type { HalftoneStudioSettings } from '@/app/halftone/_lib/state';
 import {
+  ColorControlLabel,
+  ColorControlRow,
+  ColorField,
   ControlGrid,
   LabelWithTooltip,
   Section,
@@ -17,108 +21,14 @@ import {
   ToggleControl,
 } from './controls-ui';
 
-type HalftoneSourceMode = 'shape' | 'image';
-type HalftoneRotateAxis = 'x' | 'y' | 'z' | 'xy' | '-x' | '-y' | '-z' | '-xy';
-type HalftoneRotatePreset = 'axis' | 'lissajous' | 'orbit' | 'tumble';
-
-interface HalftoneLightingSettings {
-  intensity: number;
-  fillIntensity: number;
-  ambientIntensity: number;
-  angleDegrees: number;
-  height: number;
-}
-
-interface HalftoneMaterialSettings {
-  roughness: number;
-  metalness: number;
-}
-
-interface HalftoneEffectSettings {
-  enabled: boolean;
-  numRows: number;
-  contrast: number;
-  power: number;
-  shading: number;
-  baseInk: number;
-  maxBar: number;
-  rowMerge: number;
-  cellRatio: number;
-  cutoff: number;
-  highlightOpen: number;
-  shadowGrouping: number;
-  shadowCrush: number;
-  dashColor: string;
-}
-
-interface HalftoneBackgroundSettings {
-  transparent: boolean;
-  color: string;
-}
-
-interface HalftoneAnimationSettings {
-  autoRotateEnabled: boolean;
-  breatheEnabled: boolean;
-  cameraParallaxEnabled: boolean;
-  followHoverEnabled: boolean;
-  followDragEnabled: boolean;
-  floatEnabled: boolean;
-  hoverLightEnabled: boolean;
-  dragFlowEnabled: boolean;
-  lightSweepEnabled: boolean;
-  rotateEnabled: boolean;
-  autoSpeed: number;
-  autoWobble: number;
-  breatheAmount: number;
-  breatheSpeed: number;
-  cameraParallaxAmount: number;
-  cameraParallaxEase: number;
-  driftAmount: number;
-  hoverRange: number;
-  hoverEase: number;
-  hoverReturn: boolean;
-  dragSens: number;
-  dragFriction: number;
-  dragMomentum: boolean;
-  rotateAxis: HalftoneRotateAxis;
-  rotatePreset: HalftoneRotatePreset;
-  rotateSpeed: number;
-  rotatePingPong: boolean;
-  floatAmplitude: number;
-  floatSpeed: number;
-  lightSweepHeightRange: number;
-  lightSweepRange: number;
-  lightSweepSpeed: number;
-  springDamping: number;
-  springReturnEnabled: boolean;
-  springStrength: number;
-  hoverLightIntensity: number;
-  hoverLightRadius: number;
-  dragFlowDecay: number;
-  dragFlowRadius: number;
-  dragFlowStrength: number;
-  hoverWarpStrength: number;
-  hoverWarpRadius: number;
-  dragWarpStrength: number;
-  waveEnabled: boolean;
-  waveSpeed: number;
-  waveAmount: number;
-}
-
-interface HalftoneStudioSettings {
-  sourceMode: HalftoneSourceMode;
-  shapeKey: string;
-  lighting: HalftoneLightingSettings;
-  material: HalftoneMaterialSettings;
-  halftone: HalftoneEffectSettings;
-  background: HalftoneBackgroundSettings;
-  animation: HalftoneAnimationSettings;
-}
+const MIN_ROTATION_SPEED = 0.01;
+const ROTATION_SPEED_STEP = 0.01;
 
 type AnimationsTabProps = {
   onAnimationSettingsChange: (
     value: Partial<HalftoneStudioSettings['animation']>,
   ) => void;
+  onHoverDashColorChange: (value: string) => void;
   settings: HalftoneStudioSettings;
 };
 
@@ -128,6 +38,7 @@ function effectLabel(label: string, description: string) {
 
 export function AnimationsTab({
   onAnimationSettingsChange,
+  onHoverDashColorChange,
   settings,
 }: AnimationsTabProps) {
   const animation = settings.animation;
@@ -138,6 +49,83 @@ export function AnimationsTab({
       {isImageMode ? (
         <>
           <Section $first>
+            <SectionToggleHeader
+              checked={animation.hoverHalftoneEnabled}
+              onChange={(event) =>
+                onAnimationSettingsChange({
+                  hoverHalftoneEnabled: event.target.checked,
+                })
+              }
+              preserveCase
+            >
+              {effectLabel(
+                'Hover Halftone',
+                'Uses the cursor radius to locally push the halftone power and width, so the bars open or tighten around the mouse instead of only brightening.',
+              )}
+            </SectionToggleHeader>
+            {animation.hoverHalftoneEnabled ? (
+              <ControlGrid>
+                <SliderControl
+                  max={1.5}
+                  min={-1.5}
+                  onChange={(event) =>
+                    onAnimationSettingsChange({
+                      hoverHalftonePowerShift: Number(event.target.value),
+                    })
+                  }
+                  step={0.01}
+                  value={animation.hoverHalftonePowerShift}
+                  valueLabel={formatDecimal(
+                    animation.hoverHalftonePowerShift,
+                    2,
+                  )}
+                >
+                  Power shift
+                </SliderControl>
+                <SliderControl
+                  max={1.35}
+                  min={-1.35}
+                  onChange={(event) =>
+                    onAnimationSettingsChange({
+                      hoverHalftoneWidthShift: Number(event.target.value),
+                    })
+                  }
+                  step={0.01}
+                  value={animation.hoverHalftoneWidthShift}
+                  valueLabel={formatDecimal(
+                    animation.hoverHalftoneWidthShift,
+                    2,
+                  )}
+                >
+                  Width shift
+                </SliderControl>
+                <SliderControl
+                  max={0.45}
+                  min={0.06}
+                  onChange={(event) =>
+                    onAnimationSettingsChange({
+                      hoverHalftoneRadius: Number(event.target.value),
+                    })
+                  }
+                  step={0.01}
+                  value={animation.hoverHalftoneRadius}
+                  valueLabel={formatDecimal(animation.hoverHalftoneRadius, 2)}
+                >
+                  Radius
+                </SliderControl>
+                <ColorControlRow>
+                  <ColorControlLabel>Hover color</ColorControlLabel>
+                  <ColorField
+                    ariaLabel="Hover dash color"
+                    onChange={onHoverDashColorChange}
+                    value={settings.halftone.hoverDashColor}
+                  />
+                </ColorControlRow>
+              </ControlGrid>
+            ) : null}
+          </Section>
+
+          <Section>
             <SectionToggleHeader
               checked={animation.hoverLightEnabled}
               onChange={(event) =>
@@ -185,69 +173,6 @@ export function AnimationsTab({
               </ControlGrid>
             ) : null}
           </Section>
-
-          <Section>
-            <SectionToggleHeader
-              checked={animation.dragFlowEnabled}
-              onChange={(event) =>
-                onAnimationSettingsChange({
-                  dragFlowEnabled: event.target.checked,
-                })
-              }
-              preserveCase
-            >
-              {effectLabel(
-                'Drag Smear',
-                'Click and drag to pull the halftone pattern through the pointer. The distortion trails your motion instead of sitting above the image.',
-              )}
-            </SectionToggleHeader>
-            {animation.dragFlowEnabled ? (
-              <ControlGrid>
-                <SliderControl
-                  max={4}
-                  min={0.5}
-                  onChange={(event) =>
-                    onAnimationSettingsChange({
-                      dragFlowStrength: Number(event.target.value),
-                    })
-                  }
-                  step={0.1}
-                  value={animation.dragFlowStrength}
-                  valueLabel={formatDecimal(animation.dragFlowStrength, 1)}
-                >
-                  Strength
-                </SliderControl>
-                <SliderControl
-                  max={0.5}
-                  min={0.08}
-                  onChange={(event) =>
-                    onAnimationSettingsChange({
-                      dragFlowRadius: Number(event.target.value),
-                    })
-                  }
-                  step={0.01}
-                  value={animation.dragFlowRadius}
-                  valueLabel={formatDecimal(animation.dragFlowRadius, 2)}
-                >
-                  Radius
-                </SliderControl>
-                <SliderControl
-                  max={0.25}
-                  min={0.02}
-                  onChange={(event) =>
-                    onAnimationSettingsChange({
-                      dragFlowDecay: Number(event.target.value),
-                    })
-                  }
-                  step={0.01}
-                  value={animation.dragFlowDecay}
-                  valueLabel={formatDecimal(animation.dragFlowDecay, 2)}
-                >
-                  Decay
-                </SliderControl>
-              </ControlGrid>
-            ) : null}
-          </Section>
         </>
       ) : (
         <>
@@ -269,16 +194,16 @@ export function AnimationsTab({
               {animation.autoRotateEnabled ? (
                 <>
                   <SliderControl
-                    max={1.5}
-                    min={0.05}
+                    max={4}
+                    min={MIN_ROTATION_SPEED}
                     onChange={(event) =>
                       onAnimationSettingsChange({
                         autoSpeed: Number(event.target.value),
                       })
                     }
-                    step={0.05}
+                    step={ROTATION_SPEED_STEP}
                     value={animation.autoSpeed}
-                    valueLabel={formatDecimal(animation.autoSpeed, 1)}
+                    valueLabel={formatDecimal(animation.autoSpeed, 2)}
                   >
                     Speed
                   </SliderControl>
@@ -355,15 +280,15 @@ export function AnimationsTab({
                   ) : null}
                   <SliderControl
                     max={4}
-                    min={0.1}
+                    min={MIN_ROTATION_SPEED}
                     onChange={(event) =>
                       onAnimationSettingsChange({
                         rotateSpeed: Number(event.target.value),
                       })
                     }
-                    step={0.1}
+                    step={ROTATION_SPEED_STEP}
                     value={animation.rotateSpeed}
-                    valueLabel={formatDecimal(animation.rotateSpeed, 1)}
+                    valueLabel={formatDecimal(animation.rotateSpeed, 2)}
                   >
                     Speed
                   </SliderControl>

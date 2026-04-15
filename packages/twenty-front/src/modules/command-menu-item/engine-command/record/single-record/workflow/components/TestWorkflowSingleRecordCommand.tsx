@@ -2,6 +2,7 @@ import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-c
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { getTestPayloadFromTrigger } from '@/workflow/workflow-trigger/utils/getTestPayloadFromTrigger';
 import { isDefined } from 'twenty-shared/utils';
 
 export const TestWorkflowSingleRecordCommand = () => {
@@ -22,9 +23,16 @@ export const TestWorkflowSingleRecordCommand = () => {
       return;
     }
 
+    const { currentVersion } = workflowWithCurrentVersion;
+
+    if (!isDefined(currentVersion.trigger)) {
+      return;
+    }
+
     runWorkflowVersion({
-      workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
+      workflowVersionId: currentVersion.id,
       workflowId: workflowWithCurrentVersion.id,
+      payload: getTestPayloadFromTrigger(currentVersion.trigger),
     });
   };
 

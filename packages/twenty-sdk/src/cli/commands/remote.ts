@@ -94,6 +94,9 @@ export const registerRemoteCommands = (program: Command): void => {
           ConfigService.setActiveRemote(options.as);
           await authenticate(config.apiUrl, options.apiKey);
 
+          await configService.setDefaultRemote(options.as);
+          console.log(chalk.green(`✓ Default remote set to "${options.as}".`));
+
           return;
         }
 
@@ -142,11 +145,8 @@ export const registerRemoteCommands = (program: Command): void => {
         ConfigService.setActiveRemote(name);
         await authenticate(apiUrl, options.apiKey);
 
-        const defaultRemote = await configService.getDefaultRemote();
-
-        if (defaultRemote === 'local') {
-          await configService.setDefaultRemote(name);
-        }
+        await configService.setDefaultRemote(name);
+        console.log(chalk.green(`✓ Default remote set to "${name}".`));
       },
     );
 
@@ -170,7 +170,7 @@ export const registerRemoteCommands = (program: Command): void => {
       for (const remoteName of remotes) {
         const config = await configService.getConfigForRemote(remoteName);
 
-        const authMethod = config.accessToken
+        const authMethod = config.twentyCLIAccessToken
           ? 'oauth'
           : config.apiKey
             ? 'api-key'
@@ -230,7 +230,7 @@ export const registerRemoteCommands = (program: Command): void => {
       const activeRemote = ConfigService.getActiveRemote();
       const config = await configService.getConfig();
 
-      const authMethod = config.accessToken
+      const authMethod = config.twentyCLIAccessToken
         ? 'oauth'
         : config.apiKey
           ? 'api-key'

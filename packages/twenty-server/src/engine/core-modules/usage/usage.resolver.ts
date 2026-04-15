@@ -5,7 +5,6 @@ import { Args, Query } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
@@ -23,10 +22,6 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import {
-  FeatureFlagGuard,
-  RequireFeatureFlag,
-} from 'src/engine/guards/feature-flag.guard';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 
 @MetadataResolver()
@@ -43,10 +38,8 @@ export class UsageResolver {
   @Query(() => UsageAnalyticsDTO)
   @UseGuards(
     WorkspaceAuthGuard,
-    FeatureFlagGuard,
     SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
   )
-  @RequireFeatureFlag(FeatureFlagKey.IS_USAGE_ANALYTICS_ENABLED)
   async getUsageAnalytics(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('input', { nullable: true }) input?: UsageAnalyticsInput,

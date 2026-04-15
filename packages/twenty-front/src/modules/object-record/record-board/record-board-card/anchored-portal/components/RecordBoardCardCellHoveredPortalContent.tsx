@@ -48,6 +48,7 @@ export const RecordBoardCardCellHoveredPortalContent = () => {
         fieldDefinition,
         recordId,
         prefix: RECORD_BOARD_CARD_INPUT_ID_PREFIX,
+        onFileUploadClose: () => setRecordBoardCardEditModePosition(null),
       });
     }
   };

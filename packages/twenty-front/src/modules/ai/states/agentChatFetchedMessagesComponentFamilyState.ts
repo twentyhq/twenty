@@ -3,7 +3,10 @@ import { createAtomComponentFamilyState } from '@/ui/utilities/state/jotai/utils
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
 export const agentChatFetchedMessagesComponentFamilyState =
-  createAtomComponentFamilyState<ExtendedUIMessage[], { threadId: string }>({
+  createAtomComponentFamilyState<
+    ExtendedUIMessage[],
+    { threadId: string | null }
+  >({
     key: 'agentChatFetchedMessagesComponentFamilyState',
     defaultValue: [],
     componentInstanceContext: AgentChatComponentInstanceContext,

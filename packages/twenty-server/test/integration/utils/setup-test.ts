@@ -1,7 +1,6 @@
 import { type JestConfigWithTsJest } from 'ts-jest';
 import 'tsconfig-paths/register';
 
-import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 
 import { createApp } from './create-app';
@@ -19,5 +18,4 @@ export default async (_: unknown, projectConfig: JestConfigWithTsJest) => {
 
   global.app = app;
   global.testDataSource = rawDataSource;
-  global.dataSeedWorkspaceCommand = app.get(DataSeedWorkspaceCommand);
 };

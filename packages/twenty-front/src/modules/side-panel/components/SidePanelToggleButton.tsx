@@ -44,7 +44,7 @@ export const SidePanelToggleButton = () => {
         size={isMobile ? 'medium' : 'small'}
         variant="secondary"
         accent="default"
-        title={t`More`}
+        title={isSidePanelOpened ? t`Close` : t`More`}
         ariaLabel={ariaLabel}
         onClick={toggleSidePanelMenu}
       />

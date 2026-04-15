@@ -8,6 +8,8 @@ import { UsageBreakdownPieSection } from '@/settings/usage/components/UsageBreak
 import { UsageByUserTableSection } from '@/settings/usage/components/UsageByUserTableSection';
 import { UsageDailyChartSection } from '@/settings/usage/components/UsageDailyChartSection';
 import { AI_OPERATION_TYPES } from '@/settings/usage/constants/AiOperationTypes';
+import { useUsageAnalyticsData } from '@/settings/usage/hooks/useUsageAnalyticsData';
+import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSkeleton';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -24,6 +26,13 @@ export const SettingsAIUsageTab = () => {
 
   const hasEnterpriseAccess =
     isBillingEnabled || currentWorkspace?.hasValidEnterpriseKey === true;
+
+  const shouldSkipQuery = !hasEnterpriseAccess || !isClickHouseConfigured;
+
+  const { analytics, isInitialLoading } = useUsageAnalyticsData({
+    operationTypes: AI_OPERATION_TYPES,
+    skip: shouldSkipQuery,
+  });
 
   if (!hasEnterpriseAccess) {
     return (
@@ -58,6 +67,34 @@ export const SettingsAIUsageTab = () => {
           <SettingsBillingLabelValueItem
             label={t`ClickHouse Not Configured`}
             value={t`AI usage analytics requires ClickHouse. Contact your administrator.`}
+          />
+        </SubscriptionInfoContainer>
+      </Section>
+    );
+  }
+
+  if (isInitialLoading) {
+    return <UsageSectionSkeleton />;
+  }
+
+  const hasData =
+    analytics &&
+    (analytics.timeSeries.length > 0 ||
+      analytics.usageByOperationType.length > 0 ||
+      analytics.usageByModel.length > 0 ||
+      analytics.usageByUser.length > 0);
+
+  if (!hasData) {
+    return (
+      <Section>
+        <H2Title
+          title={t`AI Usage`}
+          description={t`Track AI consumption across your workspace.`}
+        />
+        <SubscriptionInfoContainer>
+          <SettingsBillingLabelValueItem
+            label={t`No usage data yet`}
+            value={t`AI usage analytics will appear here once you start using AI features.`}
           />
         </SubscriptionInfoContainer>
       </Section>

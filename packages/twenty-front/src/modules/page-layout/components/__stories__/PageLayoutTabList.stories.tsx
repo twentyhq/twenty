@@ -23,6 +23,7 @@ const StyledContainer = styled.div`
 const createInitialTabs = (): PageLayoutTab[] => [
   {
     __typename: 'PageLayoutTab',
+    isActive: true,
     applicationId: '',
     id: 'overview',
     title: 'Overview',
@@ -36,6 +37,7 @@ const createInitialTabs = (): PageLayoutTab[] => [
   },
   {
     __typename: 'PageLayoutTab',
+    isActive: true,
     applicationId: '',
     id: 'revenue',
     title: 'Revenue',
@@ -48,6 +50,7 @@ const createInitialTabs = (): PageLayoutTab[] => [
   },
   {
     __typename: 'PageLayoutTab',
+    isActive: true,
     applicationId: '',
     id: 'forecasts',
     title: 'Forecasts',
@@ -77,6 +80,7 @@ const PageLayoutTabListPlayground = ({
       ...prev,
       {
         __typename: 'PageLayoutTab',
+        isActive: true,
         applicationId: '',
         id: `new-tab-${nextIndex}`,
         title: `New Tab ${nextIndex}`,

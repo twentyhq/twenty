@@ -1,10 +1,10 @@
 import {
-  CommandMenuContextApiPageType,
+  ContextStorePageType,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 
 export const EMPTY_COMMAND_MENU_CONTEXT_API: CommandMenuContextApi = {
-  pageType: CommandMenuContextApiPageType.INDEX_PAGE,
+  pageType: ContextStorePageType.Index,
   isInSidePanel: false,
   isPageInEditMode: false,
   favoriteRecordIds: [],

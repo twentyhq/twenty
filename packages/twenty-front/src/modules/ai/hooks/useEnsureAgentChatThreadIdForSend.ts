@@ -20,7 +20,10 @@ export const useEnsureAgentChatThreadIdForSend = (
   > => {
     const currentThreadId = store.get(currentAIChatThreadState.atom);
 
-    if (currentThreadId !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
+    if (
+      currentThreadId !== null &&
+      currentThreadId !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY
+    ) {
       return currentThreadId;
     }
 

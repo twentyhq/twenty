@@ -4,20 +4,14 @@ import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/const
 import { commandMenuPinnedInlineLayoutState } from '@/command-menu-item/display/states/commandMenuPinnedInlineLayoutState';
 import { getVisibleCommandMenuItemCountForContainerWidth } from '@/command-menu-item/display/utils/getVisibleCommandMenuItemCountForContainerWidth';
 import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelPreviousComponentInstanceId';
-import { SIDE_PANEL_RESET_CONTEXT_TO_SELECTION } from '@/side-panel/constants/SidePanelResetContextToSelection';
-import { SidePanelResetContextToSelectionButton } from '@/side-panel/pages/root/components/SidePanelResetContextToSelectionButton';
 import { useFilterCommandMenuItemsWithSidePanelSearch } from '@/side-panel/pages/root/hooks/useFilterCommandMenuItemsWithSidePanelSearch';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { isNumber } from '@sniptt/guards';
 import { useContext, useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 export const SidePanelCommandMenuItemDisplayPage = () => {
@@ -26,6 +20,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
   const { commandMenuItems, commandMenuContextApi } =
     useContext(CommandMenuContext);
+
   const commandMenuPinnedInlineLayout = useAtomStateValue(
     commandMenuPinnedInlineLayoutState,
   );
@@ -99,24 +94,8 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     ...(noResults ? fallbackCommandMenuItems : []),
   ].map((item) => item.id);
 
-  // oxlint-disable-next-line twenty/matching-state-variable
-  const previousContextStoreCurrentObjectMetadataItemId =
-    useAtomComponentStateValue(
-      contextStoreCurrentObjectMetadataItemIdComponentState,
-      SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID,
-    );
-
-  if (isDefined(previousContextStoreCurrentObjectMetadataItemId)) {
-    selectableItemIds.unshift(SIDE_PANEL_RESET_CONTEXT_TO_SELECTION);
-  }
-
   return (
     <SidePanelList selectableItemIds={selectableItemIds} noResults={noResults}>
-      {isDefined(previousContextStoreCurrentObjectMetadataItemId) && (
-        <SidePanelGroup heading={t`Context`}>
-          <SidePanelResetContextToSelectionButton />
-        </SidePanelGroup>
-      )}
       {matchingPinnedItems.length > 0 && (
         <SidePanelGroup heading={t`Pinned`}>
           {matchingPinnedItems.map((item) => (

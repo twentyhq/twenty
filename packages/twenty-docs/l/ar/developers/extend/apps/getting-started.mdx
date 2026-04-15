@@ -220,6 +220,7 @@ npx create-twenty-app@latest my-twenty-app --example postcard
 | -------------------------------------- | --------------------------------------------- |
 | `yarn twenty server start`             | بدء الخادم المحلي (يسحب الصورة إذا لزم الأمر) |
 | `yarn twenty server start --port 3030` | ابدأ على منفذ مخصّص                           |
+| `yarn twenty server start --test`      | ابدأ مثيل اختبار منفصل على المنفذ 2021        |
 | `yarn twenty server stop`              | إيقاف الخادم (مع الحفاظ على البيانات)         |
 | `yarn twenty server status`            | عرض حالة الخادم، وعنوان URL، وبيانات الاعتماد |
 | `yarn twenty server logs`              | بث سجلات الخادم                               |
@@ -227,6 +228,20 @@ npx create-twenty-app@latest my-twenty-app --example postcard
 | `yarn twenty server reset`             | حذف جميع البيانات والبدء من جديد              |
 
 يتم الاحتفاظ بالبيانات عبر عمليات إعادة التشغيل في وحدتي تخزين Docker (`twenty-app-dev-data` لـ PostgreSQL، و`twenty-app-dev-storage` للملفات). استخدم `reset` لمسح كل شيء والبدء من جديد.
+
+### تشغيل مثيل الاختبار
+
+مرر `--test` إلى أي أمر `server` لإدارة مثيل ثانٍ معزول تمامًا — مفيد لتشغيل اختبارات التكامل أو للتجربة من دون لمس بيانات التطوير الرئيسية لديك.
+
+| أمر                                | الوصف                                                |
+| ---------------------------------- | ---------------------------------------------------- |
+| `yarn twenty server start --test`  | بدء مثيل الاختبار (المنفذ الافتراضي 2021)            |
+| `yarn twenty server stop --test`   | إيقاف مثيل الاختبار                                  |
+| `yarn twenty server status --test` | عرض حالة مثيل الاختبار، وعنوان URL، وبيانات الاعتماد |
+| `yarn twenty server logs --test`   | بث سجلات مثيل الاختبار                               |
+| `yarn twenty server reset --test`  | محو بيانات الاختبار والبدء من جديد                   |
+
+يعمل مثيل الاختبار في حاوية Docker خاصة به (`twenty-app-dev-test`) مع وحدات تخزين مخصصة (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) وتهيئة مستقلة، بحيث يمكنه العمل بالتوازي مع مثيلك الرئيسي من دون تعارضات. اجمع `--test` مع `--port` لتجاوز القيمة الافتراضية 2021.
 
 <Note>
   يتطلّب الخادم أن يكون **Docker** قيد التشغيل. إذا ظهرت لك رسالة خطأ "Docker not running"، فتأكّد من تشغيل Docker Desktop (أو خادوم Docker).

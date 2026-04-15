@@ -3,45 +3,47 @@ import type { HelpedDataType } from '@/sections/Helped/types/HelpedData';
 export const HELPED_DATA: HelpedDataType = {
   eyebrow: {
     heading: {
-      text: 'Twenty helped them',
+      text: 'In production.',
       fontFamily: 'sans',
     },
   },
   heading: [
     {
-      text: 'Make your GTM team happy with a',
+      text: 'Dev teams power\ncompany-wide\n',
       fontFamily: 'serif',
     },
     {
-      text: " CRM they'll love",
+      text: 'change with Twenty',
       fontFamily: 'sans',
     },
   ],
   cards: [
     {
-      icon: 'realytics',
-      heading: { text: 'Increase lead qualification', fontFamily: 'sans' },
+      icon: 'w3villa',
+      heading: { text: 'Ship a product on Twenty', fontFamily: 'sans' },
       body: {
-        text: 'Realytics built lead scoring into their CRM and increased qualified outbound by 40%.',
+        text: 'W3villa built W3Grads — AI mock interviews at scale — on Twenty as the operational backbone.',
       },
       illustration: 'target',
+      href: '/case-studies/w3villa',
     },
     {
-      icon: 'beagle',
-      heading: { text: 'Build performing onboarding', fontFamily: 'sans' },
+      icon: 'act-education',
+      heading: { text: 'Own your CRM end to end', fontFamily: 'sans' },
       body: {
-        text: 'Beagle launched a custom onboarding pipeline and shortened their sales cycle by 30%.',
+        text: 'AC&T replaced a shuttered vendor CRM with self-hosted Twenty and cut CRM costs by more than 90%.',
       },
       illustration: 'spaceship',
+      href: '/case-studies/act-education',
     },
-
     {
-      icon: 'evergreen',
-      heading: { text: 'Unify workflow', fontFamily: 'sans' },
+      icon: 'netzero',
+      heading: { text: 'Grow with a flexible foundation', fontFamily: 'sans' },
       body: {
-        text: 'Evergreen unified sales and CS workflows, boosting expansion revenue by 25%.',
+        text: 'NetZero runs a modular Twenty setup across carbon credits, ag products, and industrial systems.',
       },
       illustration: 'money',
+      href: '/case-studies/netzero',
     },
   ],
 };

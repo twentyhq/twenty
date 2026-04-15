@@ -80,6 +80,57 @@ Pre-Release-Tags funktionieren wie erwartet: Das Erhöhen von `1.0.0-rc.1` → `
 
 {/* TODO: add screenshot of the Upgrade button */}
 
+## Automatisiertes CI/CD (vorgefertigte Workflows)
+
+Apps, die mit `create-twenty-app` erzeugt wurden, enthalten von Haus aus zwei GitHub-Actions-Workflows unter `.github/workflows/`. Sie sind einsatzbereit, sobald Sie das Repository zu GitHub pushen — für CI ist keine zusätzliche Einrichtung erforderlich, und für CD ist nur ein einziges Secret nötig.
+
+### CI — `ci.yml`
+
+Führt Ihre Integrationstests bei jedem Push auf `main` und bei Pull Requests aus.
+
+**Was sie macht:**
+
+1. Checkt den Quellcode Ihrer App aus.
+2. Startet eine isolierte Twenty-Testinstanz mithilfe der Composite-Action `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` (das CI-Äquivalent zu `yarn twenty server start --test`).
+3. Aktiviert Corepack, richtet Node.js anhand Ihrer `.nvmrc` ein und installiert Abhängigkeiten mit `yarn install --immutable`.
+4. Führt `yarn test` aus und übergibt `TWENTY_API_URL` und `TWENTY_API_KEY` aus der gestarteten Instanz, damit Ihre Tests mit einem echten Server kommunizieren können.
+
+**Konfigurationsoptionen:**
+
+* `TWENTY_VERSION` (env, standardmäßig `latest`) — fixieren Sie die in CI verwendete Twenty-Server-Version, indem Sie dies in `ci.yml` anpassen.
+* Die Parallelität wird nach `github.ref` gruppiert und bricht laufende Ausführungen bei neuen Pushes ab.
+
+Es sind keine Secrets erforderlich — die Testinstanz ist flüchtig und existiert nur für die Dauer des Jobs.
+
+### CD — `cd.yml`
+
+Stellt Ihre App bei jedem Push auf `main` auf einem konfigurierten Twenty-Server bereit und optional aus einem Pull Request, wenn das Label `deploy` gesetzt ist.
+
+**Was sie macht:**
+
+1. Checkt den PR-Head (bei PRs mit Label) oder den gepushten Commit aus.
+2. Führt `twentyhq/twenty/.github/actions/deploy-twenty-app@main` aus — das CI-Äquivalent zu `yarn twenty deploy`.
+3. Führt `twentyhq/twenty/.github/actions/install-twenty-app@main` aus, damit die neu bereitgestellte Version in den Ziel-Workspace installiert wird.
+
+**Erforderliche Konfiguration:**
+
+| Einstellung             | Wo                                                               | Zweck                                                                                                                      |
+| ----------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `TWENTY_DEPLOY_URL`     | `env` in `cd.yml` (standardmäßig `http://localhost:3000`)        | Der Twenty-Server, auf den bereitgestellt werden soll. Ändern Sie dies vor der ersten Verwendung auf die echte Server-URL. |
+| `TWENTY_DEPLOY_API_KEY` | GitHub-Repository **Settings → Secrets and variables → Actions** | API-Schlüssel mit Berechtigung zum Bereitstellen auf dem Zielserver.                                                       |
+
+<Note>
+Der Standardwert von `TWENTY_DEPLOY_URL` (`http://localhost:3000`) ist ein Platzhalter — von einem GitHub-gehosteten Runner ist er nicht erreichbar. Aktualisieren Sie sie auf die öffentliche URL Ihres Servers (oder verwenden Sie einen selbstgehosteten Runner mit Netzwerkzugriff), bevor Sie CD aktivieren.
+</Note>
+
+**Eine Vorschau-Bereitstellung aus einem PR auslösen:**
+
+Fügen Sie einem Pull Request das Label `deploy` hinzu. Die `if:`-Bedingung in `cd.yml` führt den Job für diesen PR mit dem Head-Commit des PR aus, sodass Sie eine Änderung auf dem Zielserver vor dem Mergen validieren können.
+
+### Fixieren der wiederverwendbaren Actions
+
+Beide Workflows verweisen auf wiederverwendbare Actions mit `@main`, sodass Aktualisierungen der Actions im Repository `twentyhq/twenty` automatisch übernommen werden. Wenn Sie deterministische Builds möchten, ersetzen Sie `@main` in jeder `uses:`-Zeile durch eine Commit-SHA oder einen Release-Tag.
+
 ## Auf npm veröffentlichen
 
 Die Veröffentlichung auf npm macht Ihre App im Twenty-Marktplatz auffindbar. Jeder Twenty-Arbeitsbereich kann Marktplatz-Apps direkt über die Benutzeroberfläche durchsuchen, installieren und aktualisieren.
@@ -87,7 +138,7 @@ Die Veröffentlichung auf npm macht Ihre App im Twenty-Marktplatz auffindbar. Je
 ### Anforderungen
 
 * Ein [npm](https://www.npmjs.com)-Konto
-* Das Schlüsselwort `twenty-app` in Ihrem `package.json`-Array `keywords` (bereits enthalten, wenn Sie mit `create-twenty-app` ein Gerüst erstellen)
+* Das Schlüsselwort `twenty-app` in Ihrem `package.json`-Array `keywords` (manuell hinzufügen — es ist in der `create-twenty-app`-Vorlage standardmäßig nicht enthalten)
 
 ```json filename="package.json"
 {

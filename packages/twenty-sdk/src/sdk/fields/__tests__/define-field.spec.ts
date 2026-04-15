@@ -175,5 +175,58 @@ describe('defineField', () => {
         'Field "Status" is a SELECT/MULTI_SELECT type and must have options',
       );
     });
+
+    it('should accept isUnique on a TEXT field', () => {
+      const config: FieldManifest = {
+        ...validConfig,
+        isUnique: true,
+      };
+
+      const result = defineField(config);
+
+      expect(result.success).toBe(true);
+      expect(result.config?.isUnique).toBe(true);
+    });
+
+    it('should return error when isUnique is set on a RELATION field', () => {
+      const config = {
+        objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+        universalIdentifier: '550e8400-e29b-41d4-a716-446655440001',
+        type: FieldMetadataType.RELATION,
+        name: 'company',
+        label: 'Company',
+        isUnique: true,
+        relationTargetFieldMetadataUniversalIdentifier:
+          '550e8400-e29b-41d4-a716-446655440002',
+        relationTargetObjectMetadataUniversalIdentifier:
+          '550e8400-e29b-41d4-a716-446655440003',
+        universalSettings: { relationType: 'ONE_TO_MANY' },
+      };
+
+      const result = defineField(config as any);
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toContain(
+        `Field "Company" of type ${FieldMetadataType.RELATION} cannot be unique`,
+      );
+    });
+
+    it('should return error when isUnique is set on a FILES field', () => {
+      const config = {
+        objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+        universalIdentifier: '550e8400-e29b-41d4-a716-446655440001',
+        type: FieldMetadataType.FILES,
+        name: 'attachments',
+        label: 'Attachments',
+        isUnique: true,
+      };
+
+      const result = defineField(config as any);
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toContain(
+        `Field "Attachments" of type ${FieldMetadataType.FILES} cannot be unique`,
+      );
+    });
   });
 });
