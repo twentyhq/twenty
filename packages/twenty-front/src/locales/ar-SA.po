@@ -790,7 +790,7 @@ msgstr "الإجراءات التي يمكن للمستخدمين تنفيذها
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/components/SettingsEnterpriseFeatureGateCard.tsx
-#: src/modules/information-banner/components/enterprise/InformationBannerLegacyEnterpriseKey.tsx
+#: src/modules/information-banner/components/enterprise/InformationBannerInvalidEnterpriseKey.tsx
 msgid "Activate"
 msgstr "تفعيل"
 
@@ -16454,10 +16454,10 @@ msgstr "سيتم تعطيل ميزات Enterprise لديك"
 msgid "Your enterprise features will remain active until {cancelAtDate}."
 msgstr "ستظل ميزات Enterprise لديك نشطة حتى {cancelAtDate}."
 
-#. js-lingui-id: 69Siss
-#: src/modules/information-banner/components/enterprise/InformationBannerLegacyEnterpriseKey.tsx
-msgid "Your enterprise key format is deprecated. Please activate a new key to keep enterprise features."
-msgstr "تنسيق مفتاح Enterprise الخاص بك لم يعد مدعومًا. يُرجى تفعيل مفتاح جديد للإبقاء على ميزات Enterprise."
+#. js-lingui-id: 5TsUUL
+#: src/modules/information-banner/components/enterprise/InformationBannerInvalidEnterpriseKey.tsx
+msgid "Your enterprise key is no longer valid. Activate a new key to continue using enterprise features."
+msgstr ""
 
 #. js-lingui-id: NTpA4U
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

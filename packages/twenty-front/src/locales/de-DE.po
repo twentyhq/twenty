@@ -790,7 +790,7 @@ msgstr "Aktionen, die Benutzer auf diesem Objekt durchführen können"
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/components/SettingsEnterpriseFeatureGateCard.tsx
-#: src/modules/information-banner/components/enterprise/InformationBannerLegacyEnterpriseKey.tsx
+#: src/modules/information-banner/components/enterprise/InformationBannerInvalidEnterpriseKey.tsx
 msgid "Activate"
 msgstr "Aktivieren"
 
@@ -16456,10 +16456,10 @@ msgstr "Ihre Enterprise-Funktionen werden deaktiviert"
 msgid "Your enterprise features will remain active until {cancelAtDate}."
 msgstr "Ihre Enterprise-Funktionen bleiben bis {cancelAtDate} aktiv."
 
-#. js-lingui-id: 69Siss
-#: src/modules/information-banner/components/enterprise/InformationBannerLegacyEnterpriseKey.tsx
-msgid "Your enterprise key format is deprecated. Please activate a new key to keep enterprise features."
-msgstr "Das Format Ihres Enterprise-Schlüssels ist veraltet. Bitte aktivieren Sie einen neuen Schlüssel, um die Enterprise-Funktionen beizubehalten."
+#. js-lingui-id: 5TsUUL
+#: src/modules/information-banner/components/enterprise/InformationBannerInvalidEnterpriseKey.tsx
+msgid "Your enterprise key is no longer valid. Activate a new key to continue using enterprise features."
+msgstr ""
 
 #. js-lingui-id: NTpA4U
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

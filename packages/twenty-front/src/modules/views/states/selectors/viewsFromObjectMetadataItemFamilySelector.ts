@@ -14,7 +14,8 @@ export const viewsFromObjectMetadataItemFamilySelector =
           .filter(
             (view) =>
               view.objectMetadataId === objectMetadataItemId &&
-              view.type !== ViewType.FIELDS_WIDGET,
+              view.type !== ViewType.FIELDS_WIDGET &&
+              view.type !== ViewType.TABLE_WIDGET,
           )
           .sort((a, b) => a.position - b.position);
       },
