@@ -13,14 +13,14 @@ const EVENT_NAME_MAP: Record<string, string> = Object.fromEntries(
 );
 
 const VOID_ELEMENTS = new Set([
-  'input',
-  'br',
-  'hr',
-  'img',
   'area',
   'base',
+  'br',
   'col',
   'embed',
+  'hr',
+  'img',
+  'input',
   'link',
   'meta',
   'source',

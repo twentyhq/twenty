@@ -5,11 +5,13 @@ import { useCallback, useState } from 'react';
 import { CalendarEventParticipantsResponseStatus } from '@/activities/calendar/components/CalendarEventParticipantsResponseStatus';
 import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
+import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
 import {
@@ -19,9 +21,9 @@ import {
 } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
-import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
+import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   AvatarOrIcon,
@@ -32,7 +34,6 @@ import {
 } from 'twenty-ui/components';
 import { IconCalendarEvent } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 type CalendarEventDetailsProps = {
@@ -70,7 +71,6 @@ const StyledTitle = styled.h2<{ canceled?: boolean }>`
   font-weight: ${themeCssVariables.font.weight.semiBold};
   margin: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[0]}
     ${themeCssVariables.spacing[2]};
-
   text-decoration: ${({ canceled }) => (canceled ? 'line-through' : 'none')};
 `;
 
@@ -149,12 +149,21 @@ export const CalendarEventDetails = ({
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
   );
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId: calendarEvent.id,
     objectMetadataId: objectMetadataItem.id,
   });
 
   const renderField = (fieldMetadataItem: FieldMetadataItem) => {
+    const fieldDefinition = formatFieldMetadataItemAsFieldDefinition({
+      field: fieldMetadataItem,
+      objectMetadataItem,
+      showLabel: true,
+      labelWidth: 72,
+    });
+
     const isReadOnly = isRecordFieldReadOnly({
       isRecordReadOnly,
       isSystemObject: objectMetadataItem.isSystem,
@@ -164,6 +173,8 @@ export const CalendarEventDetails = ({
         isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
         isCustom: fieldMetadataItem.isCustom ?? false,
       },
+      fieldDefinition,
+      objectPermissionsByObjectMetadataId,
     });
 
     return (
@@ -173,12 +184,7 @@ export const CalendarEventDetails = ({
             value={{
               recordId: calendarEvent.id,
               isLabelIdentifier: false,
-              fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
-                field: fieldMetadataItem,
-                objectMetadataItem,
-                showLabel: true,
-                labelWidth: 72,
-              }),
+              fieldDefinition,
               useUpdateRecord: useUpdateOneCalendarEventRecordMutation,
               maxWidth: 300,
               isRecordFieldReadOnly: isReadOnly,

@@ -12,6 +12,7 @@ describe('removeWidgetFromTab', () => {
     {
       id: 'tab-1',
       applicationId: '',
+      isActive: true,
       title: 'Tab 1',
       position: 0,
       pageLayoutId: 'layout-1',
@@ -19,6 +20,7 @@ describe('removeWidgetFromTab', () => {
         {
           __typename: 'PageLayoutWidget' as const,
           id: 'widget-1',
+          isActive: true,
           pageLayoutTabId: 'tab-1',
           title: 'Widget 1',
           type: WidgetType.GRAPH,
@@ -37,6 +39,7 @@ describe('removeWidgetFromTab', () => {
         {
           __typename: 'PageLayoutWidget' as const,
           id: 'widget-2',
+          isActive: true,
           pageLayoutTabId: 'tab-1',
           title: 'Widget 2',
           type: WidgetType.GRAPH,
@@ -62,6 +65,7 @@ describe('removeWidgetFromTab', () => {
     {
       id: 'tab-2',
       applicationId: '',
+      isActive: true,
       title: 'Tab 2',
       position: 1,
       pageLayoutId: 'layout-1',
@@ -69,6 +73,7 @@ describe('removeWidgetFromTab', () => {
         {
           __typename: 'PageLayoutWidget' as const,
           id: 'widget-3',
+          isActive: true,
           pageLayoutTabId: 'tab-2',
           title: 'Widget 3',
           type: WidgetType.IFRAME,

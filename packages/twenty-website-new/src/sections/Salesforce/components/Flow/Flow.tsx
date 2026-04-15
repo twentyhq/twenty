@@ -17,6 +17,7 @@ import {
 } from '../WrongChoicePopup/WrongChoicePopup';
 
 const CopyColumn = styled.div`
+  color: ${theme.colors.primary.text[100]};
   display: flex;
   flex-direction: column;
   gap: ${theme.spacing(2)};
@@ -49,6 +50,7 @@ const POPUP_MARGIN = 12;
 const POPUP_X_OFFSET = 32;
 const POPUP_Y_OFFSET = 12;
 const POPUP_STACK_OFFSET = 14;
+const ESTIMATED_POPUP_HEIGHT = 116;
 
 const getPopupPosition = (
   anchorRect: DOMRect | null,
@@ -84,6 +86,51 @@ const getPopupPosition = (
         POPUP_Y_OFFSET +
         stackIndex * POPUP_STACK_OFFSET,
       POPUP_MARGIN,
+    ),
+  };
+};
+
+const clamp = (value: number, min: number, max: number) =>
+  Math.min(Math.max(value, min), max);
+
+const getScatteredPopupPosition = (
+  containerRect: DOMRect | null,
+  popupIndex: number,
+) => {
+  if (!containerRect) {
+    return {
+      left: 24 + popupIndex * POPUP_STACK_OFFSET,
+      top: 120 + popupIndex * POPUP_STACK_OFFSET,
+    };
+  }
+
+  const maxLeft = Math.max(
+    POPUP_MARGIN,
+    containerRect.width - WRONG_CHOICE_POPUP_WIDTH - POPUP_MARGIN,
+  );
+  const maxTop = Math.max(
+    POPUP_MARGIN,
+    containerRect.height - ESTIMATED_POPUP_HEIGHT - POPUP_MARGIN,
+  );
+
+  const horizontalRange = Math.max(0, maxLeft - POPUP_MARGIN);
+  const verticalRange = Math.max(0, maxTop - POPUP_MARGIN);
+
+  // Low-discrepancy scatter so bulk popups feel sprayed across the window.
+  const xSeed = (popupIndex * 0.61803398875 + 0.21) % 1;
+  const ySeed = (popupIndex * 0.38196601125 + 0.47) % 1;
+  const offset = popupIndex % 2 === 0 ? POPUP_STACK_OFFSET : -POPUP_STACK_OFFSET;
+
+  return {
+    left: clamp(
+      POPUP_MARGIN + horizontalRange * xSeed + offset,
+      POPUP_MARGIN,
+      maxLeft,
+    ),
+    top: clamp(
+      POPUP_MARGIN + verticalRange * ySeed + offset * 0.5,
+      POPUP_MARGIN,
+      maxTop,
     ),
   };
 };
@@ -169,6 +216,54 @@ export function Flow({ backgroundColor, body, heading, pricing }: FlowProps) {
     setPopups((previous) => previous.filter((popup) => popup.key !== key));
   }, []);
 
+  const handleSelectAll = useCallback(() => {
+    const enabledAddons = pricing.addons.filter((addon) => !addon.disabled);
+    const allChecked = enabledAddons.every((addon) => checkedIds.has(addon.id));
+
+    if (allChecked) {
+      setCheckedIds((previous) => {
+        const next = new Set(previous);
+        for (const addon of enabledAddons) {
+          next.delete(addon.id);
+        }
+        return next;
+      });
+      setPopups([]);
+      return;
+    }
+
+    setCheckedIds((previous) => {
+      const next = new Set(previous);
+      for (const addon of enabledAddons) {
+        next.add(addon.id);
+      }
+      return next;
+    });
+
+    const containerRect = rightColumnRef.current?.getBoundingClientRect() ?? null;
+    const popupSequenceStart = popupSequenceRef.current;
+    popupSequenceRef.current += enabledAddons.length;
+
+    setPopups(
+      enabledAddons.map((addon, popupIndex) => {
+        const popupPosition = getScatteredPopupPosition(
+          containerRect,
+          popupIndex,
+        );
+
+        return {
+          body: addon.popup.body,
+          key: `${addon.id}-${popupSequenceStart + popupIndex}`,
+          layerIndex: popupSequenceStart + popupIndex,
+          left: popupPosition.left,
+          sourceId: addon.id,
+          top: popupPosition.top,
+          titleBar: addon.popup.titleBar,
+        };
+      }),
+    );
+  }, [pricing.addons, checkedIds]);
+
   const handleClosePricingWindow = useCallback(() => {
     setIsPricingWindowVisible(false);
     setPopups([]);
@@ -177,7 +272,7 @@ export function Flow({ backgroundColor, body, heading, pricing }: FlowProps) {
   return (
     <Root backgroundColor={backgroundColor}>
       <CopyColumn>
-        <Heading as="h2" segments={heading} size="xl" weight="light" />
+        <Heading as="h2" segments={heading} size="lg" weight="light" />
         <Body body={body} family="sans" size="md" weight="regular" />
       </CopyColumn>
       <RightColumn ref={rightColumnRef}>
@@ -186,6 +281,7 @@ export function Flow({ backgroundColor, body, heading, pricing }: FlowProps) {
             checkedIds={checkedIds}
             onAddonToggle={handleAddonToggle}
             onClose={handleClosePricingWindow}
+            onSelectAll={handleSelectAll}
             pricing={pricing}
           />
         ) : null}

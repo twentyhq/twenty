@@ -69,13 +69,14 @@ jobs:
 
       - name: Server / Start
         run: |
-          npx nx start twenty-server &
+          npx nx run twenty-server:start:ci &
           echo "Waiting for server to be ready..."
-          timeout 60 bash -c 'until curl -s http://localhost:3000/health; do sleep 2; done'
+          timeout 60 bash -c 'until curl -sf http://localhost:3000/healthz; do sleep 2; done'
 
       - name: Start worker
+        working-directory: packages/twenty-server
         run: |
-          npx nx run twenty-server:worker &
+          NODE_ENV=development node dist/queue-worker/queue-worker.js &
           echo "Worker started"
 
       - name: Zapier / Build

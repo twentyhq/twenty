@@ -34,6 +34,7 @@ export class UpdateSubscriptionQuantityJob {
         await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
           data.workspaceId,
           'workspaceMember',
+          { shouldBypassPermissionChecks: true },
         );
 
       const workspaceMembersCount = await workspaceMemberRepository.count();

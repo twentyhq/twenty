@@ -18,6 +18,11 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-server/src/engine/core-modules/i18n/locales/en.po\n"
 "X-Crowdin-File-ID: 31\n"
 
+#. js-lingui-id: SsRDX3
+#: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
+msgid "\"{payloadKey}\" is not a valid workspace member field."
+msgstr ""
+
 #. js-lingui-id: Q0ISF1
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "{fieldName} and {fieldName}Id cannot be both provided."
@@ -121,6 +126,7 @@ msgstr ""
 
 #. js-lingui-id: W6LTzL
 #: src/engine/core-modules/billing/billing.exception.ts
+#: src/engine/core-modules/billing/utils/billing-graphql-api-exception-handler.util.ts
 msgid "A payment processing error occurred."
 msgstr "Ett fel inträffade vid betalningshantering."
 
@@ -324,6 +330,11 @@ msgstr "Åtgärd Krävs för att Ställa in Lösenord"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-standard-flat-field-metadata.util.ts
 msgid "Active"
 msgstr "Aktiv"
+
+#. js-lingui-id: ffpvxH
+#: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
+msgid "Add at least one field to update."
+msgstr ""
 
 #. js-lingui-id: Du6bPw
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -3929,8 +3940,8 @@ msgstr "Etikettidentifieringsfält hittades inte."
 #. js-lingui-id: ACUSmL
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+#: src/engine/metadata-modules/flat-view-field/validators/utils/validate-view-field-label-identifier-cross-entity.util.ts
+#: src/engine/metadata-modules/flat-view-field/validators/utils/validate-view-field-label-identifier-cross-entity.util.ts
 msgid "Label identifier view field cannot be deleted"
 msgstr "Etikettidentifierarens vyfält kan inte tas bort"
 
@@ -5289,6 +5300,12 @@ msgstr "Sidlayoutwidget att uppdatera hittades inte"
 msgid "Page layout widget with universal identifier {flatPageLayoutWidgetUniversalIdentifier} already exists"
 msgstr "Sidlayoutwidget med universell identifierare {flatPageLayoutWidgetUniversalIdentifier} finns redan"
 
+#. js-lingui-id: RDkmYK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
+msgid "pageLayoutId is required for PAGE_LAYOUT type"
+msgstr ""
+
 #. js-lingui-id: G1fWNt
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-folder-standard-flat-field-metadata.util.ts
@@ -5837,8 +5854,6 @@ msgstr "Rollen måste ha minst ett mål."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
@@ -7446,7 +7461,7 @@ msgid "User not found."
 msgstr "Användare hittades inte."
 
 #. js-lingui-id: g5Z6no
-#: src/engine/core-modules/admin-panel/admin-panel.service.ts
+#: src/engine/core-modules/admin-panel/services/admin-panel-user-lookup.service.ts
 msgid "User not found. Please check the email or ID."
 msgstr "Användaren hittades inte. Vänligen kontrollera e-post eller ID."
 
@@ -8285,6 +8300,11 @@ msgstr "Arbetsyta hittades inte för prenumerationshändelse."
 msgid "Workspace not found."
 msgstr "Arbetsyta hittades inte."
 
+#. js-lingui-id: mMbNCo
+#: src/engine/core-modules/admin-panel/services/admin-panel-user-lookup.service.ts
+msgid "Workspace not found. Please check the ID."
+msgstr ""
+
 #. js-lingui-id: osscRx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/workspace-datasource/exceptions/workspace-datasource.exception.ts
@@ -8481,6 +8501,11 @@ msgstr "Du har inte behörighet att utföra denna arbetsflödesåtgärd."
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
 msgstr "Du har inte behörighet att uppdatera följande fält: {fieldsList}. Vänligen kontakta din arbetsytsadministratör."
+
+#. js-lingui-id: ZCNAGE
+#: src/engine/core-modules/user/user.resolver.ts
+msgid "You do not have permission to update this workspace member."
+msgstr ""
 
 #. js-lingui-id: RZzKii
 #: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts

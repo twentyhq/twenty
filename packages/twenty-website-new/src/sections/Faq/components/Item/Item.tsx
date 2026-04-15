@@ -1,6 +1,5 @@
 'use client';
 
-import { IconButton } from '@/design-system/components';
 import {
   MinusIcon,
   PlusIcon,
@@ -47,14 +46,60 @@ const QuestionIconLayer = styled.span`
 const ToggleContainer = styled.div`
   grid-column: 5;
   margin-top: ${theme.spacing(0.5)};
+`;
 
-  button::after {
-    bottom: 0;
-    content: '';
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
+const ToggleVisual = styled.span`
+  align-items: center;
+  border: 1px solid ${theme.colors.secondary.border[40]};
+  border-radius: ${theme.radius(2)};
+  display: inline-flex;
+  height: 36px;
+  justify-content: center;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  width: 36px;
+`;
+
+const RowTrigger = styled.button`
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  font: inherit;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  text-align: left;
+  width: 100%;
+
+  &:focus-visible {
+    outline: 1px solid ${theme.colors.highlight[100]};
+    outline-offset: 1px;
+  }
+
+  &:hover ${QuestionText} {
+    color: #ffffff;
+  }
+
+  &:hover ${QuestionIconLayer}[data-layer='outline'] {
+    opacity: 0;
+  }
+
+  &:hover ${QuestionIconLayer}[data-layer='fill'] {
+    opacity: 1;
+  }
+
+  &:hover ${ToggleVisual} {
+    border-color: ${theme.colors.secondary.text[100]};
+    transform: scale(1.08);
+  }
+
+  &:active ${ToggleVisual} {
+    transform: scale(0.96);
   }
 `;
 
@@ -93,22 +138,6 @@ const Header = styled.h3`
   margin-right: 0;
   margin-top: 0;
   position: relative;
-
-  &:hover ${QuestionText} {
-    color: #ffffff;
-  }
-
-  &:hover ${QuestionIconLayer}[data-layer='outline'] {
-    opacity: 0;
-  }
-
-  &:hover ${QuestionIconLayer}[data-layer='fill'] {
-    opacity: 1;
-  }
-
-  &:hover ${ToggleContainer} button {
-    border-color: ${theme.colors.secondary.text[100]};
-  }
 `;
 
 const QuestionIconContainer = styled.span`
@@ -157,43 +186,42 @@ export function Item({ question, value }: ItemProps) {
   return (
     <BaseAccordion.Item key={value} value={value} render={<ItemRow />}>
       <BaseAccordion.Header render={<Header />}>
-        <QuestionIconContainer aria-hidden>
-          <QuestionIconLayer data-layer="outline">
-            <RectangleOutlineIcon
-              size={14}
-              strokeColor={theme.colors.secondary.text[100]}
-            />
-          </QuestionIconLayer>
-          <QuestionIconLayer data-layer="fill">
-            <RectangleFillIcon
-              size={14}
-              fillColor={theme.colors.secondary.text[100]}
-            />
-          </QuestionIconLayer>
-        </QuestionIconContainer>
+        <BaseAccordion.Trigger
+          render={(props, state: AccordionTriggerState) => {
+            const isOpen = state.open;
+            const ToggleIcon = isOpen ? MinusIcon : PlusIcon;
+            return (
+              // oxlint-disable-next-line react/jsx-props-no-spreading -- Accordion.Trigger host props
+              <RowTrigger {...props} type="button">
+                <QuestionIconContainer aria-hidden>
+                  <QuestionIconLayer data-layer="outline">
+                    <RectangleOutlineIcon
+                      size={14}
+                      strokeColor={theme.colors.secondary.text[100]}
+                    />
+                  </QuestionIconLayer>
+                  <QuestionIconLayer data-layer="fill">
+                    <RectangleFillIcon
+                      size={14}
+                      fillColor={theme.colors.secondary.text[100]}
+                    />
+                  </QuestionIconLayer>
+                </QuestionIconContainer>
 
-        <QuestionText>{question.question.text}</QuestionText>
+                <QuestionText>{question.question.text}</QuestionText>
 
-        <ToggleContainer>
-          <BaseAccordion.Trigger
-            render={(props, state: AccordionTriggerState) => {
-              const isOpen = state.open;
-              return (
-                <IconButton
-                  icon={isOpen ? MinusIcon : PlusIcon}
-                  ariaLabel={isOpen ? 'Collapse' : 'Expand'}
-                  borderColor={theme.colors.secondary.border[40]}
-                  iconFillColor="none"
-                  iconSize={12}
-                  iconStrokeColor={theme.colors.secondary.border[80]}
-                  size={36}
-                  onClick={props.onClick}
-                  ariaExpanded={isOpen}
-                />
-              );
-            }}
-          />
-        </ToggleContainer>
+                <ToggleContainer>
+                  <ToggleVisual aria-hidden>
+                    <ToggleIcon
+                      size={12}
+                      strokeColor={theme.colors.secondary.border[80]}
+                    />
+                  </ToggleVisual>
+                </ToggleContainer>
+              </RowTrigger>
+            );
+          }}
+        />
       </BaseAccordion.Header>
 
       <BaseAccordion.Panel render={<AnswerWrapper />} keepMounted>

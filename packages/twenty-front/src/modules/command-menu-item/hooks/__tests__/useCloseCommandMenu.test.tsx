@@ -3,7 +3,7 @@ import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMe
 import { type CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
-import { CommandMenuContextApiPageType } from 'twenty-shared/types';
+import { ContextStorePageType } from 'twenty-shared/types';
 
 const TEST_COMMAND_MENU_ID = 'test-cmd-menu-1';
 
@@ -44,7 +44,7 @@ const getWrapper =
         displayType: 'button',
         commandMenuItems: [],
         commandMenuContextApi: {
-          pageType: CommandMenuContextApiPageType.INDEX_PAGE,
+          pageType: ContextStorePageType.Index,
           isInSidePanel,
           isPageInEditMode: false,
           favoriteRecordIds: [],

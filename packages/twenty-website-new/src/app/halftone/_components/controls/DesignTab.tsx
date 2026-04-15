@@ -1,10 +1,16 @@
 'use client';
 
 import { formatAngle, formatDecimal } from '@/app/halftone/_lib/formatters';
-import type {
-  HalftoneBackgroundSettings,
-  HalftoneSourceMode,
-  HalftoneStudioSettings,
+import {
+  DEFAULT_GLASS_ANIMATION_SETTINGS,
+  DEFAULT_GLASS_LIGHTING_SETTINGS,
+  DEFAULT_GLASS_MATERIAL_SETTINGS,
+  DEFAULT_SOLID_ANIMATION_SETTINGS,
+  DEFAULT_SOLID_LIGHTING_SETTINGS,
+  DEFAULT_SOLID_MATERIAL_SETTINGS,
+  type HalftoneBackgroundSettings,
+  type HalftoneSourceMode,
+  type HalftoneStudioSettings,
 } from '@/app/halftone/_lib/state';
 import { styled } from '@linaria/react';
 import {
@@ -15,6 +21,7 @@ import {
   Section,
   SectionTitle,
   SectionToggleHeader,
+  SegmentedControl,
   SelectInput,
   ShapeRow,
   SliderControl,
@@ -59,6 +66,9 @@ const ColorSwapButton = styled.button`
 `;
 
 type DesignTabProps = {
+  onAnimationSettingsChange: (
+    value: Partial<HalftoneStudioSettings['animation']>,
+  ) => void;
   imageFileName: string | null;
   onBackgroundChange: (value: Partial<HalftoneBackgroundSettings>) => void;
   onDashColorChange: (value: string) => void;
@@ -80,7 +90,14 @@ type DesignTabProps = {
   shapeOptions: Array<{ label: string; value: string }>;
 };
 
+function matchesSettings<T extends object>(value: T, target: T) {
+  return (Object.keys(target) as Array<keyof T>).every(
+    (key) => value[key] === target[key],
+  );
+}
+
 export function DesignTab({
+  onAnimationSettingsChange,
   imageFileName,
   onBackgroundChange,
   onDashColorChange,
@@ -103,6 +120,39 @@ export function DesignTab({
     imageFileName === null || imageFileName === DEFAULT_IMAGE_FILE_NAME
       ? DEFAULT_IMAGE_OPTION_LABEL
       : imageFileName;
+
+  const handleSurfaceChange = (surface: 'glass' | 'solid') => {
+    const switchingToGlass = surface === 'glass';
+
+    onMaterialChange(
+      switchingToGlass
+        ? DEFAULT_GLASS_MATERIAL_SETTINGS
+        : DEFAULT_SOLID_MATERIAL_SETTINGS,
+    );
+
+    if (switchingToGlass) {
+      if (matchesSettings(settings.lighting, DEFAULT_SOLID_LIGHTING_SETTINGS)) {
+        onLightingChange(DEFAULT_GLASS_LIGHTING_SETTINGS);
+      }
+
+      if (
+        matchesSettings(settings.animation, DEFAULT_SOLID_ANIMATION_SETTINGS)
+      ) {
+        onAnimationSettingsChange(DEFAULT_GLASS_ANIMATION_SETTINGS);
+      }
+
+      return;
+    }
+
+    if (matchesSettings(settings.lighting, DEFAULT_GLASS_LIGHTING_SETTINGS)) {
+      onLightingChange(DEFAULT_SOLID_LIGHTING_SETTINGS);
+    }
+
+    if (matchesSettings(settings.animation, DEFAULT_GLASS_ANIMATION_SETTINGS)) {
+      onAnimationSettingsChange(DEFAULT_SOLID_ANIMATION_SETTINGS);
+    }
+  };
+
   const handleSwapColors = () => {
     const nextDashColor = settings.background.color;
     const nextBackgroundColor = settings.halftone.dashColor;
@@ -280,6 +330,18 @@ export function DesignTab({
           <Section>
             <SectionTitle>Material</SectionTitle>
             <ControlGrid>
+              <SegmentedControl
+                onChange={(value) =>
+                  handleSurfaceChange(value === 'glass' ? 'glass' : 'solid')
+                }
+                options={[
+                  { label: 'Solid', value: 'solid' },
+                  { label: 'Glass', value: 'glass' },
+                ]}
+                value={settings.material.surface}
+              >
+                Surface
+              </SegmentedControl>
               <SliderControl
                 max={1}
                 min={0}
@@ -304,6 +366,55 @@ export function DesignTab({
               >
                 Metalness
               </SliderControl>
+              {settings.material.surface === 'glass' ? (
+                <>
+                  <SliderControl
+                    max={20}
+                    min={1.1}
+                    onChange={(event) =>
+                      onMaterialChange({
+                        thickness: Number(event.target.value),
+                      })
+                    }
+                    step={0.1}
+                    value={settings.material.thickness}
+                    valueLabel={formatDecimal(settings.material.thickness, 0)}
+                  >
+                    Thickness
+                  </SliderControl>
+                  <SliderControl
+                    max={3}
+                    min={1.1}
+                    onChange={(event) =>
+                      onMaterialChange({
+                        refraction: Number(event.target.value),
+                      })
+                    }
+                    step={0.01}
+                    value={settings.material.refraction}
+                    valueLabel={formatDecimal(settings.material.refraction)}
+                  >
+                    Refraction
+                  </SliderControl>
+                  <SliderControl
+                    max={5}
+                    min={0}
+                    onChange={(event) =>
+                      onMaterialChange({
+                        environmentPower: Number(event.target.value),
+                      })
+                    }
+                    step={0.01}
+                    value={settings.material.environmentPower}
+                    valueLabel={formatDecimal(
+                      settings.material.environmentPower,
+                      2,
+                    )}
+                  >
+                    Power
+                  </SliderControl>
+                </>
+              ) : null}
             </ControlGrid>
           </Section>
         </>

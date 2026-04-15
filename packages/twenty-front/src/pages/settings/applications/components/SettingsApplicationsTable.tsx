@@ -53,8 +53,8 @@ export const SettingsApplicationsTable = ({
   return (
     <Section>
       <H2Title
-        title={t`Installed applications`}
-        description={t`List installed applications. Use filter to search for a specific application`}
+        title={t`Installed apps`}
+        description={t`All the applications currently installed on this workspace`}
       />
       <StyledSearchInputContainer>
         <SearchInput

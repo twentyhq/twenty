@@ -11,12 +11,17 @@ import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
+import { useQuery } from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLocation, useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { OnboardingStatus } from '~/generated-metadata/graphql';
+import {
+  FindOnePageLayoutTypeDocument,
+  OnboardingStatus,
+  PageLayoutType,
+} from '~/generated-metadata/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 const readReturnToPathFromUrlSearchParams = (): string | null => {
@@ -39,10 +44,26 @@ export const usePageChangeEffectNavigateLocation = () => {
   const someMatchingLocationOf = (appPaths: AppPath[]): boolean =>
     appPaths.some((appPath) => isMatchingLocation(location, appPath));
 
-  const objectNamePlural = useParams().objectNamePlural ?? '';
+  const params = useParams();
+
+  const objectNamePlural = params.objectNamePlural ?? '';
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const objectMetadataItem = objectMetadataItems?.find(
     (objectMetadataItem) => objectMetadataItem.namePlural === objectNamePlural,
+  );
+
+  const pageLayoutId = params.pageLayoutId;
+  const isOnPageLayoutPage = isMatchingLocation(
+    location,
+    AppPath.PageLayoutPage,
+  );
+
+  const { data: pageLayoutData, loading: isPageLayoutLoading } = useQuery(
+    FindOnePageLayoutTypeDocument,
+    {
+      variables: { id: pageLayoutId ?? '' },
+      skip: !isOnPageLayoutPage || !isDefined(pageLayoutId),
+    },
   );
   const verifyEmailRedirectPath = useAtomStateValue(
     verifyEmailRedirectPathState,
@@ -153,6 +174,16 @@ export const usePageChangeEffectNavigateLocation = () => {
   if (
     isMatchingLocation(location, AppPath.RecordIndexPage) &&
     !isDefined(objectMetadataItem)
+  ) {
+    return AppPath.NotFound;
+  }
+
+  if (
+    isOnPageLayoutPage &&
+    isDefined(pageLayoutId) &&
+    !isPageLayoutLoading &&
+    (!isDefined(pageLayoutData?.getPageLayout) ||
+      pageLayoutData.getPageLayout.type !== PageLayoutType.STANDALONE_PAGE)
   ) {
     return AppPath.NotFound;
   }

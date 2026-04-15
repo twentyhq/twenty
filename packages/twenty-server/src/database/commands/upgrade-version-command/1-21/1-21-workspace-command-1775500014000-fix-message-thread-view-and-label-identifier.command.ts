@@ -9,10 +9,12 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
+import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
 const MESSAGE_THREAD_OBJECT_UNIVERSAL_IDENTIFIER =
@@ -25,6 +27,7 @@ const ALL_MESSAGE_THREADS_VIEW_UNIVERSAL_IDENTIFIER =
 type WorkspaceFlatEntityMaps = Awaited<
   ReturnType<WorkspaceCacheService['getOrRecompute']>
 >;
+type FlatViewMaps = WorkspaceFlatEntityMaps['flatViewMaps'];
 type FlatViewFieldMaps = WorkspaceFlatEntityMaps['flatViewFieldMaps'];
 type FlatFieldMetadataMaps = WorkspaceFlatEntityMaps['flatFieldMetadataMaps'];
 
@@ -79,10 +82,12 @@ export class FixMessageThreadViewAndLabelIdentifierCommand extends ActiveOrSuspe
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      flatViewMaps: existingFlatViewMaps,
       flatViewFieldMaps: existingFlatViewFieldMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
+      'flatViewMaps',
       'flatViewFieldMaps',
     ]);
 
@@ -100,6 +105,11 @@ export class FixMessageThreadViewAndLabelIdentifierCommand extends ActiveOrSuspe
       return;
     }
 
+    const viewToCreate = this.computeMessageThreadViewToCreate({
+      standardAllFlatEntityMaps,
+      existingFlatViewMaps,
+    });
+
     const viewFieldsToDelete = this.computeMessageThreadViewFieldsToDelete({
       existingFlatViewFieldMaps,
     });
@@ -115,11 +125,12 @@ export class FixMessageThreadViewAndLabelIdentifierCommand extends ActiveOrSuspe
         existingFlatFieldMetadataMaps,
       });
 
+    const hasViewToCreate = isDefined(viewToCreate);
     const hasViewFieldChanges =
       viewFieldsToDelete.length > 0 || viewFieldsToCreate.length > 0;
     const hasObjectMetadataChange = isDefined(flatObjectMetadataToUpdate);
 
-    if (!hasViewFieldChanges && !hasObjectMetadataChange) {
+    if (!hasViewToCreate && !hasViewFieldChanges && !hasObjectMetadataChange) {
       this.logger.log(
         `Nothing to fix for messageThread in workspace ${workspaceId}`,
       );
@@ -128,7 +139,7 @@ export class FixMessageThreadViewAndLabelIdentifierCommand extends ActiveOrSuspe
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Fixing messageThread in workspace ${workspaceId}: deleting ${viewFieldsToDelete.length} view fields, creating ${viewFieldsToCreate.length} view fields${hasObjectMetadataChange ? ', repointing labelIdentifierFieldMetadataId to subject' : ''}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Fixing messageThread in workspace ${workspaceId}: ${hasViewToCreate ? 'creating allMessageThreads view, ' : ''}deleting ${viewFieldsToDelete.length} view fields, creating ${viewFieldsToCreate.length} view fields${hasObjectMetadataChange ? ', repointing labelIdentifierFieldMetadataId to subject' : ''}`,
     );
 
     if (isDryRun) {
@@ -145,6 +156,11 @@ export class FixMessageThreadViewAndLabelIdentifierCommand extends ActiveOrSuspe
               flatEntityToUpdate: hasObjectMetadataChange
                 ? [flatObjectMetadataToUpdate]
                 : [],
+            },
+            view: {
+              flatEntityToCreate: hasViewToCreate ? [viewToCreate] : [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
             },
             viewField: {
               flatEntityToCreate: viewFieldsToCreate,
@@ -172,6 +188,42 @@ export class FixMessageThreadViewAndLabelIdentifierCommand extends ActiveOrSuspe
     this.logger.log(
       `Successfully fixed messageThread for workspace ${workspaceId}`,
     );
+  }
+
+  // If the allMessageThreads view does not exist in the workspace, return the
+  // standard definition so it can be created before its view fields.
+  private computeMessageThreadViewToCreate({
+    standardAllFlatEntityMaps,
+    existingFlatViewMaps,
+  }: {
+    standardAllFlatEntityMaps: ReturnType<
+      typeof computeTwentyStandardApplicationAllFlatEntityMaps
+    >['allFlatEntityMaps'];
+    existingFlatViewMaps: FlatViewMaps;
+  }): UniversalFlatView | undefined {
+    const existingView = findFlatEntityByUniversalIdentifier<FlatView>({
+      flatEntityMaps: existingFlatViewMaps,
+      universalIdentifier: ALL_MESSAGE_THREADS_VIEW_UNIVERSAL_IDENTIFIER,
+    });
+
+    if (isDefined(existingView)) {
+      return undefined;
+    }
+
+    const standardView = findFlatEntityByUniversalIdentifier<UniversalFlatView>(
+      {
+        flatEntityMaps: standardAllFlatEntityMaps.flatViewMaps,
+        universalIdentifier: ALL_MESSAGE_THREADS_VIEW_UNIVERSAL_IDENTIFIER,
+      },
+    );
+
+    if (!isDefined(standardView)) {
+      throw new Error(
+        'allMessageThreads view not found in standard definition',
+      );
+    }
+
+    return standardView;
   }
 
   // Delete every existing view field attached to the standard allMessageThreads view

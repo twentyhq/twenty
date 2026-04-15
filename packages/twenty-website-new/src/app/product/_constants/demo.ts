@@ -18,7 +18,7 @@ export const DEMO_DATA: DemoDataType = {
     },
   ],
   image: {
-    src: '/images/product/demo/kanban.png',
+    src: '/images/product/demo/kanban.webp',
     alt: '',
   },
 };

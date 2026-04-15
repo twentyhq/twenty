@@ -11,13 +11,14 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useContext } from 'react';
 import {
   IconChevronDown,
   IconSquareCheck,
   IconSquareX,
 } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const DROPDOWN_ID = 'command-menu-edit-record-selection-dropdown';
 
@@ -55,6 +56,7 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
   isRecordPage = false,
 }: CommandMenuItemEditRecordSelectionDropdownProps) => {
   const { t } = useLingui();
+  const { theme } = useContext(ThemeContext);
   const { closeDropdown } = useCloseDropdown();
 
   const mainContextStoreHasSelectedRecords = useAtomStateValue(
@@ -92,9 +94,17 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
           disabled={isRecordPage}
           data-click-outside-id={COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
         >
-          <TriggerIcon size={16} />
+          <TriggerIcon
+            size={16}
+            color={theme.font.color.primary}
+            stroke={theme.icon.stroke.sm}
+          />
           <StyledLabel>{triggerLabel}</StyledLabel>
-          <IconChevronDown size={16} />
+          <IconChevronDown
+            size={16}
+            color={theme.font.color.primary}
+            stroke={theme.icon.stroke.sm}
+          />
         </StyledClickableArea>
       }
       dropdownPlacement="bottom-start"

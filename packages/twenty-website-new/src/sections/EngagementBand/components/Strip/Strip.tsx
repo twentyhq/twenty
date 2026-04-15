@@ -3,10 +3,10 @@ import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 const ENGAGEMENT_BAND_OVERLAY_SRC =
-  '/images/pricing/engagement-band/overlay.png';
+  '/images/pricing/engagement-band/overlay.webp';
 
 const OverlayLayer = styled.div`
   bottom: 0;
@@ -46,6 +46,14 @@ const StyledStrip = styled.div`
     row-gap: 0;
   }
 
+  &[data-has-custom-copy-max-width='true'] {
+    @media (min-width: ${theme.breakpoints.md}px) {
+      grid-template-columns:
+        fit-content(var(--engagement-band-copy-max-width))
+        minmax(0, 1fr);
+    }
+  }
+
   &[data-variant='primary'] {
     color: ${theme.colors.primary.text[100]};
   }
@@ -57,13 +65,29 @@ const StyledStrip = styled.div`
 
 type StripProps = {
   children: ReactNode;
+  desktopCopyMaxWidth?: string;
   fillColor: string;
   variant: 'primary' | 'secondary';
 };
 
-export function Strip({ children, fillColor, variant }: StripProps) {
+export function Strip({
+  children,
+  desktopCopyMaxWidth,
+  fillColor,
+  variant,
+}: StripProps) {
+  const style = desktopCopyMaxWidth
+    ? ({
+        '--engagement-band-copy-max-width': desktopCopyMaxWidth,
+      } as CSSProperties)
+    : undefined;
+
   return (
-    <StyledStrip data-variant={variant}>
+    <StyledStrip
+      data-has-custom-copy-max-width={Boolean(desktopCopyMaxWidth)}
+      data-variant={variant}
+      style={style}
+    >
       <EngagementBandShape fillColor={fillColor} />
       <OverlayLayer aria-hidden>
         <NextImage

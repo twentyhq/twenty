@@ -2,6 +2,11 @@ import { Test } from '@nestjs/testing';
 import { getDataSourceToken } from '@nestjs/typeorm';
 
 import { InstanceCommandGenerationService } from 'src/database/commands/instance-command-generation.service';
+import { TWENTY_CURRENT_VERSION } from 'src/engine/core-modules/upgrade/constants/twenty-current-version.constant';
+import { TWENTY_PREVIOUS_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant';
+
+const VERSION_A = TWENTY_CURRENT_VERSION;
+const VERSION_B = TWENTY_PREVIOUS_VERSIONS[0];
 
 const FIXED_TIMESTAMP = 1775000000000;
 
@@ -39,7 +44,7 @@ describe('InstanceCommandGenerationService', () => {
 
     const result = await service.generateInstanceCommand({
       migrationName: 'no-changes',
-      version: '1.21.0',
+      version: VERSION_A,
       timestamp: FIXED_TIMESTAMP,
     });
 
@@ -54,7 +59,7 @@ describe('InstanceCommandGenerationService', () => {
 
     const result = await service.generateInstanceCommand({
       migrationName: 'add-foo-column',
-      version: '1.21.0',
+      version: VERSION_A,
       timestamp: FIXED_TIMESTAMP,
     });
 
@@ -81,7 +86,7 @@ describe('InstanceCommandGenerationService', () => {
 
     const result = await service.generateInstanceCommand({
       migrationName: 'create-task-table',
-      version: '1.21.0',
+      version: VERSION_A,
       timestamp: FIXED_TIMESTAMP,
     });
 
@@ -107,7 +112,7 @@ describe('InstanceCommandGenerationService', () => {
 
     const result = await service.generateInstanceCommand({
       migrationName: 'seed-setting',
-      version: '1.21.0',
+      version: VERSION_A,
       timestamp: FIXED_TIMESTAMP,
     });
 
@@ -122,7 +127,7 @@ describe('InstanceCommandGenerationService', () => {
 
     const result = await service.generateInstanceCommand({
       migrationName: 'update-config',
-      version: '1.21.0',
+      version: VERSION_A,
       timestamp: FIXED_TIMESTAMP,
     });
 
@@ -141,7 +146,7 @@ describe('InstanceCommandGenerationService', () => {
 
     const result = await service.generateInstanceCommand({
       migrationName: 'update-path',
-      version: '1.21.0',
+      version: VERSION_A,
       timestamp: FIXED_TIMESTAMP,
     });
 
@@ -156,7 +161,7 @@ describe('InstanceCommandGenerationService', () => {
 
     const result = await service.generateInstanceCommand({
       migrationName: 'auto-generated',
-      version: '1.21.0',
+      version: VERSION_A,
       timestamp: FIXED_TIMESTAMP,
     });
 
@@ -171,7 +176,7 @@ describe('InstanceCommandGenerationService', () => {
 
     const result = await service.generateInstanceCommand({
       migrationName: 'test',
-      version: '1.20.0',
+      version: VERSION_B,
       timestamp: FIXED_TIMESTAMP,
     });
 
@@ -183,7 +188,7 @@ describe('InstanceCommandGenerationService', () => {
 
     const result = await service.generateInstanceCommand({
       migrationName: 'no-changes',
-      version: '1.21.0',
+      version: VERSION_A,
       timestamp: FIXED_TIMESTAMP,
       type: 'slow',
     });
@@ -207,7 +212,7 @@ describe('InstanceCommandGenerationService', () => {
 
     const result = await service.generateInstanceCommand({
       migrationName: 'make-column-not-nullable',
-      version: '1.21.0',
+      version: VERSION_A,
       timestamp: FIXED_TIMESTAMP,
       type: 'slow',
     });
@@ -223,13 +228,15 @@ describe('InstanceCommandGenerationService', () => {
 
     const result = await service.generateInstanceCommand({
       migrationName: 'backfill-data',
-      version: '1.20.0',
+      version: VERSION_B,
       timestamp: FIXED_TIMESTAMP,
       type: 'slow',
     });
 
+    const versionSlug = VERSION_B.split('.').slice(0, 2).join('-');
+
     expect(result?.fileName).toBe(
-      '1-20-instance-command-slow-1775000000000-backfill-data.ts',
+      `${versionSlug}-instance-command-slow-${FIXED_TIMESTAMP}-backfill-data.ts`,
     );
     expect(result?.className).toBe('BackfillDataSlowInstanceCommand');
   });

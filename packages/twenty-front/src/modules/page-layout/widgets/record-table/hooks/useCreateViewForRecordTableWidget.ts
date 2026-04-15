@@ -33,7 +33,7 @@ export const useCreateViewForRecordTableWidget = (pageLayoutId: string) => {
             name: `${objectMetadataItem.labelPlural} Table`,
             icon: objectMetadataItem.icon ?? 'IconTable',
             objectMetadataId: objectMetadataItem.id,
-            type: ViewType.TABLE,
+            type: ViewType.TABLE_WIDGET,
           },
         },
         objectMetadataItem.id,

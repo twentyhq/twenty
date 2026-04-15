@@ -180,6 +180,14 @@ const SettingsApplicationDetails = lazy(() =>
   ),
 );
 
+const SettingsAdminApplicationRegistrationDetail = lazy(() =>
+  import(
+    '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail'
+  ).then((module) => ({
+    default: module.SettingsAdminApplicationRegistrationDetail,
+  })),
+);
+
 const SettingsAvailableApplicationDetails = lazy(() =>
   import(
     '~/pages/settings/applications/SettingsAvailableApplicationDetails'
@@ -421,6 +429,30 @@ const SettingsAdminNewAiModel = lazy(() =>
   import('~/pages/settings/admin-panel/SettingsAdminNewAiModel').then(
     (module) => ({
       default: module.SettingsAdminNewAiModel,
+    }),
+  ),
+);
+
+const SettingsAdminUserDetail = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminUserDetail').then(
+    (module) => ({
+      default: module.SettingsAdminUserDetail,
+    }),
+  ),
+);
+
+const SettingsAdminWorkspaceDetail = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminWorkspaceDetail').then(
+    (module) => ({
+      default: module.SettingsAdminWorkspaceDetail,
+    }),
+  ),
+);
+
+const SettingsAdminWorkspaceChatThread = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread').then(
+    (module) => ({
+      default: module.SettingsAdminWorkspaceChatThread,
     }),
   ),
 );
@@ -769,6 +801,22 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           <Route
             path={SettingsPath.AdminPanelAiProviderDetail}
             element={<SettingsAdminAiProviderDetail />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelUserDetail}
+            element={<SettingsAdminUserDetail />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelWorkspaceDetail}
+            element={<SettingsAdminWorkspaceDetail />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelApplicationRegistrationDetail}
+            element={<SettingsAdminApplicationRegistrationDetail />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelWorkspaceChatThread}
+            element={<SettingsAdminWorkspaceChatThread />}
           />
         </>
       )}

@@ -308,6 +308,7 @@ describe('useCreatePageLayoutTab', () => {
             id: 'existing-tab',
             applicationId: '',
             title: 'Existing Tab',
+            isActive: true,
             position: 0,
             pageLayoutId: 'test-layout',
             widgets: [],

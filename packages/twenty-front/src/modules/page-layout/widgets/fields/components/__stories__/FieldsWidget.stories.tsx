@@ -141,6 +141,7 @@ const createPageLayoutWithWidget = (
   tabs: [
     {
       __typename: 'PageLayoutTab' as const,
+      isActive: true,
       applicationId: '',
       id: TAB_ID_OVERVIEW,
       title: 'Overview',
@@ -159,6 +160,7 @@ const createPageLayoutWithWidget = (
 
 const createFieldsWidget = (viewId: string | null): PageLayoutWidget => ({
   __typename: 'PageLayoutWidget',
+  isActive: true,
   id: 'widget-fields',
   pageLayoutTabId: TAB_ID_OVERVIEW,
   type: WidgetType.FIELDS,
@@ -213,6 +215,7 @@ const createViewField = (
   fieldMetadataId,
   position,
   isVisible: true,
+  isActive: true,
   size: 200,
   aggregateOperation: null,
   viewId: FIELDS_VIEW_ID,
@@ -230,6 +233,7 @@ const createViewFieldGroup = (
   name,
   position,
   isVisible,
+  isActive: true,
   viewId: FIELDS_VIEW_ID,
   viewFields,
 });
@@ -368,15 +372,9 @@ export const WithViewFieldGroups: Story = {
   },
 };
 
-export const WithInlineViewFields: Story = {
+export const WithDefaultGroups: Story = {
   render: () => {
-    const view = createView({
-      viewFields: [
-        createViewField('vf-name', nameField.id, 0),
-        createViewField('vf-employees', employeesField.id, 1),
-        createViewField('vf-address', addressField.id, 2),
-      ],
-    });
+    const view = createView();
 
     const widget = createFieldsWidget(FIELDS_VIEW_ID);
 
@@ -443,14 +441,12 @@ export const WithInlineViewFields: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const companyName = await canvas.findByText('Acme Corporation');
-    expect(companyName).toBeVisible();
+    const generalHeader = await canvas.findByText('General');
+    expect(generalHeader).toBeVisible();
 
-    const contactInfoHeader = canvas.queryByText('Contact Info');
-    expect(contactInfoHeader).toBeNull();
-
-    const generalHeader = canvas.queryByText('General');
-    expect(generalHeader).toBeNull();
+    const creationDateElements = await canvas.findAllByText('Creation date');
+    expect(creationDateElements.length).toBeGreaterThan(0);
+    expect(creationDateElements[0]).toBeVisible();
   },
 };
 

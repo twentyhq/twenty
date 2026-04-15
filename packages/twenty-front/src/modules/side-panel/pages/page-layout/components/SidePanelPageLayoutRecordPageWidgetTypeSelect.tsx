@@ -4,28 +4,24 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useInsertCreatedWidgetAtContext } from '@/page-layout/hooks/useInsertCreatedWidgetAtContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { widgetCreationTargetTabIdComponentState } from '@/page-layout/states/widgetCreationTargetTabIdComponentState';
 import { widgetInsertionContextComponentState } from '@/page-layout/states/widgetInsertionContextComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultFieldWidget } from '@/page-layout/utils/createDefaultFieldWidget';
 import { createDefaultFieldsWidget } from '@/page-layout/utils/createDefaultFieldsWidget';
-import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
-import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPosition';
 import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
 import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
 import { getFieldWidgetDefaultDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
-import { useCreateViewForFieldsWidget } from '@/page-layout/widgets/fields/hooks/useCreateViewForFieldsWidget';
-import { useDeleteViewForFieldsWidget } from '@/page-layout/widgets/fields/hooks/useDeleteViewForFieldsWidget';
-import { useDeleteViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useDeleteViewForRecordTableWidget';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { getFrontComponentWidgetTypeSelectItemId } from '@/side-panel/pages/page-layout/utils/getFrontComponentWidgetTypeSelectItemId';
+import { resolveWidgetTypeSelectTargetTabId } from '@/side-panel/pages/page-layout/utils/resolveWidgetTypeSelectTargetTabId';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -45,11 +41,8 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
-  const {
-    pageLayoutId,
-    recordId,
-    objectNameSingular: targetObjectNameSingular,
-  } = usePageLayoutIdFromContextStore();
+  const { pageLayoutId, objectNameSingular: targetObjectNameSingular } =
+    usePageLayoutIdFromContextStore();
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -76,28 +69,15 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     pageLayoutId,
   );
 
-  const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
+  const widgetCreationTargetTabId = useAtomComponentStateValue(
+    widgetCreationTargetTabIdComponentState,
     pageLayoutId,
-    layoutType: pageLayoutDraft.type,
-    targetRecordIdentifier: { id: recordId, targetObjectNameSingular: '' },
-  });
-
-  const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
-    tabListInstanceId,
   );
 
   const store = useStore();
 
   const { insertCreatedWidgetAtContext } =
     useInsertCreatedWidgetAtContext(pageLayoutId);
-
-  const { createViewForFieldsWidget } = useCreateViewForFieldsWidget();
-
-  const { deleteViewForFieldsWidget } = useDeleteViewForFieldsWidget();
-
-  const { deleteViewForRecordTableWidget } =
-    useDeleteViewForRecordTableWidget();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetObjectNameSingular,
@@ -107,13 +87,11 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     targetObjectNameSingular,
   );
 
-  const editingWidgetTab = isDefined(pageLayoutEditingWidgetId)
-    ? pageLayoutDraft.tabs.find((tab) =>
-        tab.widgets.some((widget) => widget.id === pageLayoutEditingWidgetId),
-      )
-    : undefined;
-
-  const tabId = editingWidgetTab?.id ?? activeTabId;
+  const tabId = resolveWidgetTypeSelectTargetTabId({
+    pageLayoutEditingWidgetId,
+    tabs: pageLayoutDraft.tabs,
+    widgetCreationTargetTabId,
+  });
 
   const isReplaceMode =
     isDefined(pageLayoutEditingWidgetId) && !isDefined(widgetInsertionContext);
@@ -137,26 +115,8 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
   }, [existingWidget]);
 
   const removeExistingWidgetIfReplacing = useCallback(() => {
-    if (
-      !isReplaceMode ||
-      !isDefined(pageLayoutEditingWidgetId) ||
-      !isDefined(tabId)
-    ) {
+    if (!isReplaceMode || !isDefined(pageLayoutEditingWidgetId)) {
       return;
-    }
-
-    if (isDefined(existingWidget)) {
-      const viewId = getWidgetConfigurationViewId(existingWidget.configuration);
-
-      if (isDefined(viewId)) {
-        if (existingWidget.type === WidgetType.RECORD_TABLE) {
-          deleteViewForRecordTableWidget(viewId);
-        }
-
-        if (existingWidget.type === WidgetType.FIELDS) {
-          deleteViewForFieldsWidget(viewId);
-        }
-      }
     }
 
     store.set(pageLayoutDraftState, (prev) => ({
@@ -164,9 +124,6 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       tabs: removeWidgetFromTab(prev.tabs, tabId, pageLayoutEditingWidgetId),
     }));
   }, [
-    deleteViewForFieldsWidget,
-    deleteViewForRecordTableWidget,
-    existingWidget,
     isReplaceMode,
     pageLayoutDraftState,
     pageLayoutEditingWidgetId,
@@ -187,21 +144,10 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     }),
   );
 
-  const handleCreateFieldsWidget = useCallback(async () => {
-    if (!isDefined(tabId)) {
-      return;
-    }
-
+  const handleCreateFieldsWidget = useCallback(() => {
     const replacePositionIndex = getExistingWidgetPositionIndex();
 
-    const viewId = await createViewForFieldsWidget({
-      objectMetadataId: objectMetadataItem.id,
-      viewName: `${objectMetadataItem.labelSingular} Fields`,
-    });
-
-    if (viewId === null) {
-      return;
-    }
+    const viewId = uuidv4();
 
     removeExistingWidgetIfReplacing();
 
@@ -233,12 +179,10 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       resetNavigationStack: true,
     });
   }, [
-    createViewForFieldsWidget,
     getExistingWidgetPositionIndex,
     insertCreatedWidgetAtContext,
     navigatePageLayoutSidePanel,
     objectMetadataItem.id,
-    objectMetadataItem.labelSingular,
     pageLayoutDraftState,
     removeExistingWidgetIfReplacing,
     setPageLayoutEditingWidgetId,
@@ -247,10 +191,6 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
   ]);
 
   const handleCreateFieldWidget = useCallback(() => {
-    if (!isDefined(tabId)) {
-      return;
-    }
-
     const replacePositionIndex = getExistingWidgetPositionIndex();
     removeExistingWidgetIfReplacing();
 
@@ -324,10 +264,6 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
 
   const handleCreateFrontComponentWidget = useCallback(
     (frontComponent: FrontComponent) => {
-      if (!isDefined(tabId)) {
-        return;
-      }
-
       const replacePositionIndex = getExistingWidgetPositionIndex();
       removeExistingWidgetIfReplacing();
 
@@ -340,6 +276,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       const newWidget: PageLayoutWidget = {
         __typename: 'PageLayoutWidget',
         id: widgetId,
+        isActive: true,
         pageLayoutTabId: tabId,
         title: frontComponent.name,
         type: WidgetType.FRONT_COMPONENT,

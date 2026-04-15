@@ -15,6 +15,7 @@ import {
   type RenewApplicationTokenMutation,
   type RenewApplicationTokenMutationVariables,
 } from '~/generated-metadata/graphql';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 const APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED_SUB_CODE =
   'APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED';
@@ -22,10 +23,11 @@ const APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED_SUB_CODE =
 const hasApplicationRefreshTokenInvalidOrExpiredSubCode = (
   errors: ReadonlyArray<GraphQLFormattedError>,
 ): boolean =>
-  errors.some(
-    (error) =>
-      error.extensions?.subCode ===
+  errors.some((error) =>
+    isGraphqlErrorOfType(
+      error,
       APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED_SUB_CODE,
+    ),
   );
 
 type UseRequestApplicationTokenRefreshArgs = {

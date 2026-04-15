@@ -79,7 +79,9 @@ export const splitViewWithRelated = (
       const { viewFields: _viewFields, ...viewFieldGroupProperties } =
         viewFieldGroup;
 
-      flatViewFieldGroups.push(viewFieldGroupProperties);
+      flatViewFieldGroups.push({
+        ...viewFieldGroupProperties,
+      });
     }
   }
 

@@ -5,7 +5,7 @@ import {
   type ObjectRecordUpdateEvent,
 } from 'twenty-sdk';
 import { SELF_HOSTING_USER_NAME_SINGULAR } from 'src/objects/selfHostingUser.object';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 type SelfHostingUser = {
   id: string;

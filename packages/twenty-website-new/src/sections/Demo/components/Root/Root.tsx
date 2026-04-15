@@ -77,7 +77,7 @@ export function Root({ children }: RootProps) {
             className={patternImageClassName}
             fill
             sizes="(min-width: 921px) 100vw"
-            src="/images/product/demo/background.png"
+            src="/images/product/demo/background.webp"
           />
         </PatternLayer>
       </BackgroundLayer>

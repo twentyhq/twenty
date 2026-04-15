@@ -19,7 +19,6 @@ export { CalendarChannelSyncStage } from './CalendarChannelSyncStage';
 export { CalendarChannelSyncStatus } from './CalendarChannelSyncStatus';
 export { CalendarChannelVisibility } from './CalendarChannelVisibility';
 export type { CommandMenuContextApi } from './CommandMenuContextApi';
-export { CommandMenuContextApiPageType } from './CommandMenuContextApiPageType';
 export { CommandMenuItemViewType } from './CommandMenuItemViewType';
 export type { ActorMetadata } from './composite-types/actor.composite-type';
 export {
@@ -59,6 +58,7 @@ export type { CompositeFieldSubFieldName } from './CompositeFieldSubFieldNameTyp
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export type { ConfirmationModalCaller } from './ConfirmationModalCaller';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
+export { ContextStorePageType } from './ContextStorePageType';
 export { CoreObjectNameSingular } from './CoreObjectNameSingular';
 export { CrudOperationType } from './CrudOperationType';
 export type { EmailAttachment } from './EmailAttachment';
@@ -124,9 +124,11 @@ export { FirstDayOfTheWeek } from './FirstDayOfTheWeek';
 export type { FormatRecordSerializedRelationProperties } from './FormatRecordSerializedRelationProperties.type';
 export type { FromTo } from './FromToType';
 export { HTTPMethod } from './HttpMethod';
+export type { IndexOf } from './IndexOf.type';
 export type { IsEmptyObject } from './IsEmptyObject.type';
 export type { IsEmptyRecord } from './IsEmptyRecord.type';
 export type { IsExactly } from './IsExactly';
+export type { IsGreaterOrEqual } from './IsGreaterOrEqual.type';
 export type { IsNever } from './IsNever.type';
 export type { IsSerializedRelation } from './IsSerializedRelation.type';
 export type { LogicFunctionEvent } from './LogicFunctionEvent';

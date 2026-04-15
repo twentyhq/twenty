@@ -62,6 +62,7 @@ export const PinnedCommandMenuItemButtonsEditMode = () => {
     () =>
       new Set<CommandMenuItemAvailabilityType>([
         CommandMenuItemAvailabilityType.GLOBAL,
+        CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
         mainContextStoreHasSelectedRecords
           ? CommandMenuItemAvailabilityType.RECORD_SELECTION
           : CommandMenuItemAvailabilityType.FALLBACK,

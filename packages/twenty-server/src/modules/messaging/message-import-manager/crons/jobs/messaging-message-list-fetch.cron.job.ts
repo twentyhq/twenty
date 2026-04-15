@@ -1,7 +1,8 @@
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { DataSource, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { MessageChannelSyncStage } from 'twenty-shared/types';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
@@ -16,18 +17,23 @@ import {
   MessagingMessageListFetchJob,
   type MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
+import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { toIsoStringOrNull } from 'src/utils/date/toIsoStringOrNull';
 
 export const MESSAGING_MESSAGE_LIST_FETCH_CRON_PATTERN = '2-59/5 * * * *';
 
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessageListFetchCronJob {
+  private readonly logger = new Logger(MessagingMessageListFetchCronJob.name);
+
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
@@ -45,19 +51,68 @@ export class MessagingMessageListFetchCronJob {
 
     for (const activeWorkspace of activeWorkspaces) {
       try {
-        const now = new Date().toISOString();
-
-        const [messageChannels] = await this.coreDataSource.query(
-          `UPDATE core."messageChannel" SET "syncStage" = '${MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED}', "syncStageStartedAt" = COALESCE("syncStageStartedAt", '${now}')
-           WHERE "workspaceId" = '${activeWorkspace.id}' AND "isSyncEnabled" = true AND "syncStage" = '${MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING}' RETURNING *`,
+        const pendingMessageChannels = await this.messageChannelRepository.find(
+          {
+            where: {
+              workspaceId: activeWorkspace.id,
+              isSyncEnabled: true,
+              syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+            },
+          },
         );
 
-        for (const messageChannel of messageChannels) {
+        const messageChannelsToSchedule = pendingMessageChannels.filter(
+          (messageChannel) =>
+            !isThrottled(
+              toIsoStringOrNull(messageChannel.syncStageStartedAt),
+              messageChannel.throttleFailureCount,
+              toIsoStringOrNull(messageChannel.throttleRetryAfter),
+            ),
+        );
+
+        const throttledCount =
+          pendingMessageChannels.length - messageChannelsToSchedule.length;
+
+        if (throttledCount > 0) {
+          this.logger.log(
+            `Skipped ${throttledCount} throttled message channels for workspace ${activeWorkspace.id}`,
+          );
+        }
+
+        if (messageChannelsToSchedule.length === 0) {
+          continue;
+        }
+
+        const messageChannelIdsToSchedule = messageChannelsToSchedule.map(
+          (messageChannel) => messageChannel.id,
+        );
+
+        const updateResult = await this.messageChannelRepository
+          .createQueryBuilder()
+          .update()
+          .set({
+            syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
+            syncStageStartedAt: new Date(),
+          })
+          .where({
+            id: In(messageChannelIdsToSchedule),
+            workspaceId: activeWorkspace.id,
+            isSyncEnabled: true,
+            syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+          })
+          .returning('id')
+          .execute();
+
+        const updatedIds = updateResult.raw.map(
+          (row: { id: string }) => row.id,
+        );
+
+        for (const messageChannelId of updatedIds) {
           await this.messageQueueService.add<MessagingMessageListFetchJobData>(
             MessagingMessageListFetchJob.name,
             {
               workspaceId: activeWorkspace.id,
-              messageChannelId: messageChannel.id,
+              messageChannelId,
             },
           );
         }

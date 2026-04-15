@@ -1,4 +1,4 @@
-import { LinkButton } from '@/design-system/components';
+import { FooterNavCta } from '@/sections/Footer/components/FooterNavCta/FooterNavCta';
 import { PlusIcon, RectangleFillIcon } from '@/icons';
 import type { FooterNavGroupType } from '@/sections/Footer/types';
 import { theme } from '@/theme';
@@ -179,13 +179,13 @@ export function Nav({ groups }: NavProps) {
             {group.ctas.length > 0 && (
               <Actions>
                 {group.ctas.map((cta) => (
-                  <LinkButton
-                    key={`${cta.label}-${cta.href}`}
-                    color={cta.color}
-                    href={cta.href}
-                    label={cta.label}
-                    type={cta.type}
-                    variant={cta.variant}
+                  <FooterNavCta
+                    key={
+                      cta.kind === 'link'
+                        ? `${cta.label}-${cta.href}`
+                        : `${cta.label}-${cta.kind}`
+                    }
+                    cta={cta}
                   />
                 ))}
               </Actions>

@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, UseInterceptors } from '@nestjs/common';
 import {
   Args,
   Float,
@@ -39,6 +39,7 @@ import {
   AgentException,
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+import { AgentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/ai-agent/interceptors/agent-graphql-api-exception.interceptor';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message.dto';
 import { AgentChatThreadDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread.dto';
@@ -58,6 +59,7 @@ import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models
   FeatureFlagGuard,
   SettingsPermissionGuard(PermissionFlagType.AI),
 )
+@UseInterceptors(AgentGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => AgentChatThreadDTO)
 export class AgentChatResolver {
   constructor(

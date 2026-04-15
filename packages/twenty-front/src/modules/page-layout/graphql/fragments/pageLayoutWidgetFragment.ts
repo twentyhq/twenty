@@ -8,6 +8,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
     objectMetadataId
     createdAt
     updatedAt
+    isActive
     deletedAt
     conditionalDisplay
     conditionalAvailabilityExpression

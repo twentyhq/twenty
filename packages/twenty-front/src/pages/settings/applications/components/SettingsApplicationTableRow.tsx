@@ -47,6 +47,7 @@ export const SettingsApplicationTableRow = ({
       <TableCell
         align="right"
         padding={`0 ${themeCssVariables.spacing[2]} 0 0`}
+        color={themeCssVariables.font.color.tertiary}
       >
         {action}
       </TableCell>

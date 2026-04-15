@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import {
   DEFAULT_API_KEY_NAME,
@@ -50,6 +50,8 @@ export enum LogicFunctionExecutionExceptionCode {
 
 @Injectable()
 export class LogicFunctionExecutorService {
+  private readonly logger = new Logger(LogicFunctionExecutorService.name);
+
   constructor(
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly throttlerService: ThrottlerService,
@@ -87,14 +89,28 @@ export class LogicFunctionExecutorService {
 
     const driver = this.logicFunctionDriverFactory.getCurrentDriver();
 
-    const resultLogicFunction = await driver.execute({
-      flatLogicFunction,
-      flatApplication,
-      applicationUniversalIdentifier: flatApplication.universalIdentifier,
-      payload,
-      env: envVariables,
-      timeoutMs: flatLogicFunction.timeoutSeconds * 1_000,
-    });
+    let resultLogicFunction: LogicFunctionExecuteResult;
+
+    try {
+      resultLogicFunction = await driver.execute({
+        flatLogicFunction,
+        flatApplication,
+        applicationUniversalIdentifier: flatApplication.universalIdentifier,
+        payload,
+        env: envVariables,
+        timeoutMs: flatLogicFunction.timeoutSeconds * 1_000,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Logic function execution failed: ` +
+          `functionId=${logicFunctionId}, ` +
+          `workspaceId=${workspaceId}, ` +
+          `driver=${driver.constructor.name}: ` +
+          `${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      throw error;
+    }
 
     await this.handleExecutionResult({
       result: resultLogicFunction,

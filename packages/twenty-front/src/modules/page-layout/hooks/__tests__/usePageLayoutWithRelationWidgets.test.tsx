@@ -35,6 +35,7 @@ describe('usePageLayoutWithRelationWidgets', () => {
         applicationId: '',
         id: 'tab-1',
         title: 'Fields',
+        isActive: true,
         icon: 'IconList',
         position: 100,
         layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
@@ -48,6 +49,7 @@ describe('usePageLayoutWithRelationWidgets', () => {
             id: 'widget-fields',
             pageLayoutTabId: 'tab-1',
             title: 'Fields',
+            isActive: true,
             type: WidgetType.FIELDS,
             objectMetadataId: null,
             gridPosition: {
@@ -71,6 +73,7 @@ describe('usePageLayoutWithRelationWidgets', () => {
             id: 'widget-notes',
             pageLayoutTabId: 'tab-1',
             title: 'Notes',
+            isActive: true,
             type: WidgetType.NOTES,
             objectMetadataId: null,
             gridPosition: {
@@ -93,6 +96,7 @@ describe('usePageLayoutWithRelationWidgets', () => {
             id: 'widget-other',
             pageLayoutTabId: 'tab-1',
             title: 'Other',
+            isActive: true,
             type: WidgetType.GRAPH,
             objectMetadataId: null,
             gridPosition: {
@@ -217,6 +221,7 @@ describe('usePageLayoutWithRelationWidgets', () => {
               id: 'widget-other',
               pageLayoutTabId: 'tab-1',
               title: 'Other',
+              isActive: true,
               type: WidgetType.GRAPH,
               objectMetadataId: null,
               gridPosition: {

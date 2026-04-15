@@ -12,16 +12,7 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { isSyncStale } from 'src/modules/messaging/message-import-manager/utils/is-sync-stale.util';
-
-const toIsoStringOrNull = (
-  value: string | Date | null | undefined,
-): string | null => {
-  if (value == null) {
-    return null;
-  }
-
-  return value instanceof Date ? value.toISOString() : value;
-};
+import { toIsoStringOrNull } from 'src/utils/date/toIsoStringOrNull';
 
 export type MessagingOngoingStaleJobData = {
   workspaceId: string;

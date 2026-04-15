@@ -1,9 +1,7 @@
 'use client';
 
-import {
-  IconLayoutSidebarRightCollapse,
-  IconShare,
-} from '@tabler/icons-react';
+import type { ReactExportSettings } from '@/app/halftone/_lib/exporters';
+import { IconLayoutSidebarRightCollapse, IconShare } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
 import type {
   HalftoneBackgroundSettings,
@@ -29,12 +27,18 @@ type ControlsPanelProps = {
   onBackgroundChange: (value: Partial<HalftoneBackgroundSettings>) => void;
   onCopyShareLink: () => void;
   onDashColorChange: (value: string) => void;
+  onHoverDashColorChange: (value: string) => void;
   onExportHalftoneImage: (width: number, height: number) => void;
   onExportBackgroundChange: (value: boolean) => void;
   onExportHtml: () => void;
   onExportNameChange: (value: string) => void;
   onExportReact: () => void;
   onImportPreset: () => void;
+  onReactAssetPublicUrlChange: (value: string) => void;
+  onReactExportSettingChange: (
+    key: keyof ReactExportSettings,
+    value: boolean,
+  ) => void;
   onHalftoneChange: (
     value: Partial<HalftoneStudioSettings['halftone']>,
   ) => void;
@@ -51,10 +55,14 @@ type ControlsPanelProps = {
   onToggleVisibility: () => void;
   onUploadSource: () => void;
   previewDistance: number;
+  reactAssetPublicUrl: string;
+  reactExportSettings: ReactExportSettings;
   visible: boolean;
   selectedShape: HalftoneGeometrySpec | undefined;
   settings: HalftoneStudioSettings;
   shapeOptions: Array<{ label: string; value: string }>;
+  defaultReactAssetPublicUrl: string;
+  showReactAssetPublicUrl: boolean;
 };
 
 const TABS: HalftoneTabId[] = ['design', 'animations', 'export'];
@@ -124,12 +132,15 @@ export function ControlsPanel({
   onBackgroundChange,
   onCopyShareLink,
   onDashColorChange,
+  onHoverDashColorChange,
   onExportHalftoneImage,
   onExportBackgroundChange,
   onExportHtml,
   onExportNameChange,
   onExportReact,
   onImportPreset,
+  onReactAssetPublicUrlChange,
+  onReactExportSettingChange,
   onHalftoneChange,
   onLightingChange,
   onMaterialChange,
@@ -140,10 +151,14 @@ export function ControlsPanel({
   onToggleVisibility,
   onUploadSource,
   previewDistance,
+  reactAssetPublicUrl,
+  reactExportSettings,
   visible,
   selectedShape,
   settings,
   shapeOptions,
+  defaultReactAssetPublicUrl,
+  showReactAssetPublicUrl,
 }: ControlsPanelProps) {
   return (
     <PanelShell $collapsed={!visible}>
@@ -191,6 +206,7 @@ export function ControlsPanel({
       {visible && activeTab === 'design' ? (
         <DesignTab
           imageFileName={imageFileName}
+          onAnimationSettingsChange={onAnimationSettingsChange}
           onBackgroundChange={onBackgroundChange}
           onDashColorChange={onDashColorChange}
           onHalftoneChange={onHalftoneChange}
@@ -209,6 +225,7 @@ export function ControlsPanel({
       {visible && activeTab === 'animations' ? (
         <AnimationsTab
           onAnimationSettingsChange={onAnimationSettingsChange}
+          onHoverDashColorChange={onHoverDashColorChange}
           settings={settings}
         />
       ) : null}
@@ -225,8 +242,14 @@ export function ControlsPanel({
           onExportNameChange={onExportNameChange}
           onExportReact={onExportReact}
           onImportPreset={onImportPreset}
+          onReactAssetPublicUrlChange={onReactAssetPublicUrlChange}
+          onReactExportSettingChange={onReactExportSettingChange}
+          reactAssetPublicUrl={reactAssetPublicUrl}
+          reactExportSettings={reactExportSettings}
           selectedShape={selectedShape}
           settings={settings}
+          defaultReactAssetPublicUrl={defaultReactAssetPublicUrl}
+          showReactAssetPublicUrl={showReactAssetPublicUrl}
         />
       ) : null}
     </PanelShell>

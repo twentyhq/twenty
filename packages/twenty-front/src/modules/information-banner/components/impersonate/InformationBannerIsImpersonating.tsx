@@ -1,4 +1,4 @@
-import { useAuth } from '@/auth/hooks/useAuth';
+import { useImpersonationSession } from '@/auth/hooks/useImpersonationSession';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { isImpersonatingState } from '@/auth/states/isImpersonatingState';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
@@ -11,7 +11,7 @@ export const InformationBannerIsImpersonating = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const isImpersonating = useAtomStateValue(isImpersonatingState);
 
-  const { signOut } = useAuth();
+  const { stopImpersonating } = useImpersonationSession();
 
   if (!isDefined(currentWorkspaceMember) || !isImpersonating) {
     return null;
@@ -25,7 +25,7 @@ export const InformationBannerIsImpersonating = () => {
       message={t`Logged in as ${impersonatedUser}`}
       buttonTitle={t`Stop impersonating`}
       buttonIcon={IconLogout}
-      buttonOnClick={signOut}
+      buttonOnClick={stopImpersonating}
     />
   );
 };

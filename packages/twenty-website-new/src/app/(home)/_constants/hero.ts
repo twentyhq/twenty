@@ -5,6 +5,7 @@ import type {
   HeroKanbanPageDefinition,
   HeroTablePageDefinition,
 } from '@/sections/Hero/types';
+import { SHARED_PEOPLE_AVATAR_URLS } from '@/lib/shared-asset-paths';
 
 const PEOPLE_AVATAR_URLS = {
   craigFederighi:
@@ -12,7 +13,7 @@ const PEOPLE_AVATAR_URLS = {
   eddyCue: 'https://twentyhq.github.io/placeholder-images/people/image-18.png',
   jeffWilliams:
     'https://twentyhq.github.io/placeholder-images/people/image-22.png',
-  katherineAdams: '/images/home/hero/avatars/katherine-adams.jpg',
+  katherineAdams: SHARED_PEOPLE_AVATAR_URLS.katherineAdams,
   philSchiller:
     'https://twentyhq.github.io/placeholder-images/people/image-14.png',
   timCook: 'https://twentyhq.github.io/placeholder-images/people/image-27.png',
@@ -39,19 +40,19 @@ const SALES_DASHBOARD_DATA: HeroDashboardDataType = {
   visitsChart: {
     alt: 'Visits bar chart comparing this year and last year',
     height: 1116,
-    src: '/images/home/hero/sales-dashboard/visits.png',
+    src: '/images/home/hero/sales-dashboard/visits.webp',
     width: 2316,
   },
   revenueChart: {
     alt: 'Revenue line chart by month',
     height: 1116,
-    src: '/images/home/hero/sales-dashboard/revenue.png',
+    src: '/images/home/hero/sales-dashboard/revenue.webp',
     width: 2316,
   },
   distributionChart: {
     alt: 'Ultra versus Plus donut chart distribution',
     height: 1116,
-    src: '/images/home/hero/sales-dashboard/distribution.png',
+    src: '/images/home/hero/sales-dashboard/distribution.webp',
     width: 756,
   },
 };
@@ -314,7 +315,7 @@ function createTablePage({
 
 export const HERO_DATA: HeroHomeDataType = {
   heading: [
-    { text: 'Build', fontFamily: 'sans' },
+    { text: 'Build', fontFamily: 'serif' },
     { text: ' your Enterprise CRM ', fontFamily: 'serif' },
     { text: 'at AI Speed', fontFamily: 'sans' },
   ],
@@ -1518,7 +1519,7 @@ export const HERO_DATA: HeroHomeDataType = {
         icon: {
           kind: 'brand',
           brand: 'twenty',
-          imageSrc: '/images/home/hero/twenty-demo-logo.png',
+          imageSrc: '/images/home/hero/twenty-demo-logo.webp',
           overlay: 'link',
         },
       },

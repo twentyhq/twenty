@@ -56013,6 +56013,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rollup-plugin-dts@npm:^6.4.1":
+  version: 6.4.1
+  resolution: "rollup-plugin-dts@npm:6.4.1"
+  dependencies:
+    "@babel/code-frame": "npm:^7.29.0"
+    "@jridgewell/remapping": "npm:^2.3.5"
+    "@jridgewell/sourcemap-codec": "npm:^1.5.5"
+    convert-source-map: "npm:^2.0.0"
+    magic-string: "npm:^0.30.21"
+  peerDependencies:
+    rollup: ^3.29.4 || ^4
+    typescript: ^4.5 || ^5.0 || ^6.0
+  dependenciesMeta:
+    "@babel/code-frame":
+      optional: true
+  checksum: 10c0/23d51f4780c5878cb31a45103da961e2e1f81fb830d4b53114931060b58ee431e44c561c1215d253477ad884ba50223dd2586fee704763db9a454cb1c6b97a1d
+  languageName: node
+  linkType: hard
+
 "rollup-plugin-inject@npm:^3.0.0":
   version: 3.0.2
   resolution: "rollup-plugin-inject@npm:3.0.2"
@@ -56995,7 +57014,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sharp@npm:^0.33.1":
+"sharp@npm:^0.33.1, sharp@npm:^0.33.5":
   version: 0.33.5
   resolution: "sharp@npm:0.33.5"
   dependencies:
@@ -60582,6 +60601,7 @@ __metadata:
     preact: "npm:^10.28.3"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
+    rollup-plugin-dts: "npm:^6.4.1"
     tinyglobby: "npm:^0.2.15"
     ts-morph: "npm:^25.0.0"
     tsx: "npm:^4.7.0"
@@ -60901,6 +60921,7 @@ __metadata:
   dependencies:
     "@base-ui/react": "npm:^1.3.0"
     "@base-ui/utils": "npm:^0.2.6"
+    "@calcom/embed-react": "npm:^1.5.3"
     "@gsap/react": "npm:2.1.2"
     "@linaria/core": "npm:^7.0.0"
     "@linaria/react": "npm:^7.0.1"
@@ -60923,6 +60944,7 @@ __metadata:
     react-dom: "npm:19.2.3"
     react-markdown: "npm:^10.1.0"
     remark-gfm: "npm:^4.0.1"
+    sharp: "npm:^0.33.5"
     three: "npm:^0.183.2"
   languageName: unknown
   linkType: soft

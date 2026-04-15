@@ -12,6 +12,7 @@ describe('convertLayoutsToWidgets', () => {
   const mockWidgets: PageLayoutWidget[] = [
     {
       id: 'widget-1',
+      isActive: true,
       pageLayoutTabId: 'tab-1',
       title: 'Widget 1',
       type: WidgetType.GRAPH,
@@ -34,6 +35,7 @@ describe('convertLayoutsToWidgets', () => {
     },
     {
       id: 'widget-2',
+      isActive: true,
       pageLayoutTabId: 'tab-1',
       title: 'Widget 2',
       type: WidgetType.GRAPH,

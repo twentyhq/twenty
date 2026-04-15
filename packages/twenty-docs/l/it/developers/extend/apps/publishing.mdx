@@ -80,6 +80,57 @@ I tag di pre-release funzionano come previsto: incrementare `1.0.0-rc.1` → `1.
 
 {/* TODO: add screenshot of the Upgrade button */}
 
+## CI/CD automatizzati (workflow preconfigurati)
+
+Le app generate con `create-twenty-app` includono due workflow di GitHub Actions pronti all'uso, nella cartella `.github/workflows/`. Sono pronti all'esecuzione non appena esegui il push del repository su GitHub — non è necessaria alcuna configurazione aggiuntiva per la CI e la CD richiede solo un singolo secret.
+
+### CI — `ci.yml`
+
+Esegue automaticamente i test di integrazione a ogni push su `main` e sulle pull request.
+
+**Cosa fa:**
+
+1. Esegue il checkout del codice sorgente della tua app.
+2. Avvia un'istanza di test isolata di Twenty utilizzando l'azione composita `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` (l'equivalente per la CI di `yarn twenty server start --test`).
+3. Abilita Corepack, configura Node.js dal tuo `.nvmrc` e installa le dipendenze con `yarn install --immutable`.
+4. Esegue `yarn test`, passando `TWENTY_API_URL` e `TWENTY_API_KEY` dall'istanza avviata affinché i tuoi test possano comunicare con un server reale.
+
+**Opzioni di configurazione:**
+
+* `TWENTY_VERSION` (variabile di ambiente, predefinito `latest`) — fissa la versione del server Twenty usata nella CI modificando questo valore in `ci.yml`.
+* La concorrenza è raggruppata per `github.ref` e annulla le esecuzioni in corso in caso di nuovi push.
+
+Non sono necessari Secrets — l'istanza di test è effimera ed esiste solo per la durata del job.
+
+### CD — `cd.yml`
+
+Esegue il deploy della tua app su un server Twenty configurato a ogni push su `main` e, facoltativamente, da una pull request quando viene applicata l'etichetta `deploy`.
+
+**Cosa fa:**
+
+1. Esegue il checkout della testa della PR (per le PR etichettate) oppure del commit inviato.
+2. Esegue `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — l'equivalente per la CI di `yarn twenty deploy`.
+3. Esegue `twentyhq/twenty/.github/actions/install-twenty-app@main` in modo che la versione appena distribuita venga installata nello spazio di lavoro di destinazione.
+
+**Configurazione richiesta:**
+
+| Impostazione            | Dove                                                             | Scopo                                                                                                             |
+| ----------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `TWENTY_DEPLOY_URL`     | `env` in `cd.yml` (predefinito `http://localhost:3000`)          | Il server Twenty su cui effettuare il deploy. Modificalo con l'URL reale del tuo server prima del primo utilizzo. |
+| `TWENTY_DEPLOY_API_KEY` | Repository GitHub **Settings → Secrets and variables → Actions** | Chiave API con autorizzazione di deploy sul server di destinazione.                                               |
+
+<Note>
+Il valore predefinito di `TWENTY_DEPLOY_URL`, `http://localhost:3000`, è un segnaposto — non raggiungerà alcuna risorsa da un runner ospitato su GitHub. Aggiornalo all'URL pubblico del tuo server (oppure usa un runner self-hosted con accesso di rete) prima di abilitare il CD.
+</Note>
+
+**Attivare un deploy di anteprima da una PR:**
+
+Aggiungi l'etichetta `deploy` a una pull request. La condizione `if:` in `cd.yml` eseguirà il job per quella PR utilizzando il commit di testa della PR, permettendoti di convalidare una modifica sul server di destinazione prima del merge.
+
+### Bloccare le azioni riutilizzabili
+
+Entrambi i workflow fanno riferimento ad azioni riutilizzabili a `@main`, quindi gli aggiornamenti delle azioni nel repository `twentyhq/twenty` vengono recepiti automaticamente. Se desideri build deterministiche, sostituisci `@main` con uno SHA di commit o un tag di release in ciascuna riga `uses:`.
+
 ## Pubblicazione su npm
 
 La pubblicazione su npm rende la tua app scopribile nel marketplace di Twenty. Qualsiasi spazio di lavoro Twenty può sfogliare, installare e aggiornare le app del marketplace direttamente dall'interfaccia utente.
@@ -87,7 +138,7 @@ La pubblicazione su npm rende la tua app scopribile nel marketplace di Twenty. Q
 ### Requisiti
 
 * Un account [npm](https://www.npmjs.com)
-* La parola chiave `twenty-app` nell'array `keywords` del tuo `package.json` (già inclusa quando inizializzi con `create-twenty-app`)
+* La parola chiave `twenty-app` nell'array `keywords` del tuo `package.json` (aggiungila manualmente — non è inclusa per impostazione predefinita nel template `create-twenty-app`)
 
 ```json filename="package.json"
 {

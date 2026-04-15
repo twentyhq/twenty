@@ -22,6 +22,7 @@ export type RegularFieldManifest<
   options?: FieldMetadataOptions<T>;
   universalSettings?: FieldMetadataUniversalSettings<T>;
   isNullable?: boolean;
+  isUnique?: boolean;
   objectUniversalIdentifier: string;
 };
 

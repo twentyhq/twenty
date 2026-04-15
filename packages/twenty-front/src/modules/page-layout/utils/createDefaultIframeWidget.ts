@@ -19,6 +19,7 @@ export const createDefaultIframeWidget = (
     id,
     pageLayoutTabId,
     title,
+    isActive: true,
     type: WidgetType.IFRAME,
     configuration: {
       configurationType: WidgetConfigurationType.IFRAME,
