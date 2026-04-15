@@ -33,7 +33,8 @@ const buildServiceWithMockedSequence = async (
       {
         provide: DiscoveryService,
         useValue: {
-          getProviders: () => [new MinimalWorkspaceCommand()].map(buildProviderWrapper),
+          getProviders: () =>
+            [new MinimalWorkspaceCommand()].map(buildProviderWrapper),
         },
       },
     ],
