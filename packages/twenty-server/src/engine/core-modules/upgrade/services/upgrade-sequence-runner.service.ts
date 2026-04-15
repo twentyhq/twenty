@@ -155,7 +155,7 @@ export class UpgradeSequenceRunnerService {
             workspaceCommand: lastAttemptedStep,
           });
 
-        await this.validateWorkspaceCursorsAreInSameSegmentOrAhead({
+        await this.validateWorkspaceCursorsAreInSameSegment({
           sequence,
           allActiveOrSuspendedWorkspaceIds,
           workspaceSliceBounds,
@@ -168,7 +168,7 @@ export class UpgradeSequenceRunnerService {
     }
   }
 
-  private async validateWorkspaceCursorsAreInSameSegmentOrAhead({
+  private async validateWorkspaceCursorsAreInSameSegment({
     allActiveOrSuspendedWorkspaceIds,
     sequence,
     workspaceSliceBounds: { startCursor, endCursor },
@@ -182,6 +182,11 @@ export class UpgradeSequenceRunnerService {
         allActiveOrSuspendedWorkspaceIds,
       );
 
+    const workspacesOutsideOfSegment: Array<{
+      workspaceId: string;
+      cursorName: string;
+    }> = [];
+
     for (const [workspaceId, workspaceCursor] of workspaceCursors) {
       const cursor =
         this.upgradeSequenceReaderService.locateStepInSequenceOrThrow({
@@ -189,18 +194,24 @@ export class UpgradeSequenceRunnerService {
           stepName: workspaceCursor.name,
         });
 
-      if (cursor >= startCursor && cursor <= endCursor) {
-        continue;
+      if (cursor < startCursor || cursor > endCursor) {
+        workspacesOutsideOfSegment.push({
+          workspaceId,
+          cursorName: workspaceCursor.name,
+        });
       }
+    }
 
-      if (cursor > endCursor && workspaceCursor.isInitial) {
-        continue;
-      }
+    if (workspacesOutsideOfSegment.length > 0) {
+      const details = workspacesOutsideOfSegment
+        .map(
+          ({ workspaceId, cursorName }) => `${workspaceId} at "${cursorName}"`,
+        )
+        .join(', ');
 
       throw new Error(
-        `Workspace ${workspaceId} cursor "${workspaceCursor.name}" is outside the ` +
-          `current workspace slice [${startCursor}..${endCursor}] — ` +
-          'workspaces are not aligned',
+        `${workspacesOutsideOfSegment.length} workspace(s) have cursors outside the ` +
+          `current segment [${startCursor}..${endCursor}]: ${details}`,
       );
     }
   }
@@ -264,19 +275,13 @@ export class UpgradeSequenceRunnerService {
     allActiveOrSuspendedWorkspaceIds: string[];
     options: ParsedUpgradeCommandOptions;
   }): Promise<WorkspaceIteratorReport> {
-    const segmentStepNames = new Set(
-      contiguousWorkspaceSteps.map((step) => step.name),
-    );
-
-    const workspaceIdsForSegment = this.filterWorkspaceIdsForSegment({
-      allActiveOrSuspendedWorkspaceIds,
-      workspaceCursors,
-      segmentStepNames,
-      options,
-    });
+    const workspaceIds =
+      isDefined(options.workspaceIds) && options.workspaceIds.length > 0
+        ? options.workspaceIds
+        : allActiveOrSuspendedWorkspaceIds;
 
     return this.workspaceIteratorService.iterate({
-      workspaceIds: workspaceIdsForSegment,
+      workspaceIds,
       startFromWorkspaceId: options.startFromWorkspaceId,
       workspaceCountLimit: options.workspaceCountLimit,
       dryRun: options.dryRun,
@@ -301,39 +306,6 @@ export class UpgradeSequenceRunnerService {
           workspaceCommands: pendingCommands,
         });
       },
-    });
-  }
-
-  private filterWorkspaceIdsForSegment({
-    allActiveOrSuspendedWorkspaceIds,
-    workspaceCursors,
-    segmentStepNames,
-    options,
-  }: {
-    allActiveOrSuspendedWorkspaceIds: string[];
-    workspaceCursors: Map<string, WorkspaceCursor>;
-    segmentStepNames: Set<string>;
-    options: ParsedUpgradeCommandOptions;
-  }): string[] {
-    const candidateIds =
-      isDefined(options.workspaceIds) && options.workspaceIds.length > 0
-        ? options.workspaceIds
-        : allActiveOrSuspendedWorkspaceIds;
-
-    return candidateIds.filter((workspaceId) => {
-      const cursor = workspaceCursors.get(workspaceId);
-
-      if (!cursor) {
-        throw new Error(
-          `No upgrade migration cursor found for workspace ${workspaceId}. This should never occur.`,
-        );
-      }
-
-      if (cursor.isInitial && !segmentStepNames.has(cursor.name)) {
-        return false;
-      }
-
-      return true;
     });
   }
 
@@ -363,13 +335,7 @@ export class UpgradeSequenceRunnerService {
         cursorPosition === barrierCursor &&
         workspaceCursor.status === 'completed';
 
-      const isBeyondBarrierWithInitialCursor =
-        cursorPosition > barrierCursor && workspaceCursor.isInitial;
-
-      const isAtOrBeyondBarrier =
-        isAtBarrierAndCompleted || isBeyondBarrierWithInitialCursor;
-
-      if (!isAtOrBeyondBarrier) {
+      if (!isAtBarrierAndCompleted) {
         throw new Error(
           `Cannot run instance step: workspace ${workspaceId} ` +
             `has not completed "${previousWorkspaceStep.name}" ` +
