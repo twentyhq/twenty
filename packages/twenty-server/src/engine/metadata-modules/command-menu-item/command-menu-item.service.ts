@@ -181,17 +181,16 @@ export class CommandMenuItemService {
       flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatPageLayoutMaps: existingFlatPageLayoutMaps,
-    } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: [
-            'flatCommandMenuItemMaps',
-            'flatObjectMetadataMaps',
-            'flatPageLayoutMaps',
-          ],
-        },
-      );
+    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatCommandMenuItemMaps',
+          'flatObjectMetadataMaps',
+          'flatPageLayoutMaps',
+        ],
+      },
+    );
 
     const flatCommandMenuItemToUpdate =
       fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow({
