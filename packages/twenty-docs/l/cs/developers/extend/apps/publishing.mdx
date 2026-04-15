@@ -80,6 +80,57 @@ Předběžné tagy fungují podle očekávání: zvýšení z `1.0.0-rc.1` → `
 
 {/* TODO: add screenshot of the Upgrade button */}
 
+## Automatizované CI/CD (předpřipravené workflowy)
+
+Aplikace vygenerované pomocí `create-twenty-app` jsou hned připravené se dvěma workflowy GitHub Actions ve složce `.github/workflows/`. Jsou připravené ke spuštění hned, jakmile repozitář pushnete na GitHub — pro CI není potřeba žádné další nastavení a CD vyžaduje pouze jeden secret.
+
+### CI — `ci.yml`
+
+Automaticky spouští integrační testy při každém pushi do `main` a u pull requestů.
+
+**K čemu slouží:**
+
+1. Provede checkout zdrojového kódu vaší aplikace.
+2. Spustí izolovanou testovací instanci Twenty pomocí složené akce `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` (ekvivalent v CI k `yarn twenty server start --test`).
+3. Povolí Corepack, nastaví Node.js podle vašeho `.nvmrc` a nainstaluje závislosti pomocí `yarn install --immutable`.
+4. Spustí `yarn test` a předá `TWENTY_API_URL` a `TWENTY_API_KEY` ze spuštěné instance, aby vaše testy mohly komunikovat se skutečným serverem.
+
+**Konfigurační volby:**
+
+* `TWENTY_VERSION` (env, výchozí hodnota `latest`) — uzamkněte v CI používanou verzi serveru Twenty úpravou této hodnoty v `ci.yml`.
+* Souběžné běhy jsou seskupeny podle `github.ref` a při nových pushích ruší právě probíhající běhy.
+
+Nejsou potřeba žádné secrety — testovací instance je efemérní a existuje pouze po dobu běhu úlohy.
+
+### CD — `cd.yml`
+
+Nasazuje vaši aplikaci na nakonfigurovaný server Twenty při každém pushi do `main` a volitelně také z pull requestu, pokud je přidán štítek `deploy`.
+
+**K čemu slouží:**
+
+1. Provede checkout headu PR (u označených PR) nebo pushnutého commitu.
+2. Spustí `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — ekvivalent v CI k `yarn twenty deploy`.
+3. Spustí `twentyhq/twenty/.github/actions/install-twenty-app@main`, aby se nově nasazená verze nainstalovala do cílového workspace.
+
+**Požadovaná konfigurace:**
+
+| Nastavení               | Kde                                                             | Účel                                                                                                 |
+| ----------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `TWENTY_DEPLOY_URL`     | `env` v `cd.yml` (výchozí `http://localhost:3000`)              | Server Twenty, na který se nasazuje. Před prvním použitím to změňte na skutečnou URL vašeho serveru. |
+| `TWENTY_DEPLOY_API_KEY` | GitHub repozitář **Settings → Secrets and variables → Actions** | API klíč s oprávněním k nasazení na cílovém serveru.                                                 |
+
+<Note>
+Výchozí `TWENTY_DEPLOY_URL` `http://localhost:3000` je pouze zástupná hodnota — z runneru hostovaného GitHubem tato adresa nebude dosažitelná. Před povolením CD ji aktualizujte na veřejnou URL vašeho serveru (nebo použijte self-hosted runner s přístupem do sítě).
+</Note>
+
+**Spuštění náhledového nasazení z PR:**
+
+Přidejte k pull requestu štítek `deploy`. Podmínka `if:` v `cd.yml` spustí úlohu pro dané PR s použitím head commitu PR, což vám umožní ověřit změnu na cílovém serveru před sloučením.
+
+### Připnutí verzí znovupoužitelných akcí
+
+Obě workflowy odkazují na znovupoužitelné akce na `@main`, takže aktualizace akcí v repozitáři `twentyhq/twenty` se přeberou automaticky. Pokud chcete deterministická sestavení, nahraďte `@main` v každém řádku `uses:` za commit SHA nebo tag vydání.
+
 ## Publikování na npm
 
 Publikování na npm zajistí, že bude vaše aplikace dohledatelná v Marketplace Twenty. Jakýkoli pracovní prostor Twenty může procházet, instalovat a aktualizovat aplikace z Marketplace přímo z UI.

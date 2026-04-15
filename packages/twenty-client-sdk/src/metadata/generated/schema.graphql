@@ -1258,6 +1258,7 @@ enum PageLayoutType {
   RECORD_INDEX
   RECORD_PAGE
   DASHBOARD
+  STANDALONE_PAGE
 }
 
 type Analytics {
@@ -1486,6 +1487,7 @@ type NavigationMenuItem {
   icon: String
   color: String
   folderId: UUID
+  pageLayoutId: UUID
   position: Float!
   applicationId: UUID
   createdAt: DateTime!
@@ -1499,6 +1501,7 @@ enum NavigationMenuItemType {
   LINK
   OBJECT
   RECORD
+  PAGE_LAYOUT
 }
 
 type ObjectRecordEventProperties {
@@ -2718,6 +2721,7 @@ enum EngineComponentKey {
 
 enum CommandMenuItemAvailabilityType {
   GLOBAL
+  GLOBAL_OBJECT_CONTEXT
   RECORD_SELECTION
   FALLBACK
 }
@@ -3663,6 +3667,7 @@ type Mutation {
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser(otp: String!): VerifyTwoFactorAuthenticationMethod!
   deleteUser: User!
   deleteUserFromWorkspace(workspaceMemberIdToDelete: String!): UserWorkspace!
+  updateWorkspaceMemberSettings(input: UpdateWorkspaceMemberSettingsInput!): Boolean!
   updateUserEmail(newEmail: String!, verifyEmailRedirectPath: String): Boolean!
   resendEmailVerificationToken(email: String!, origin: String!): ResendEmailVerificationToken!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
@@ -3741,6 +3746,7 @@ input CreateNavigationMenuItemInput {
   icon: String
   color: String
   folderId: UUID
+  pageLayoutId: UUID
   position: Float
 }
 
@@ -3759,6 +3765,7 @@ input UpdateNavigationMenuItemInput {
   link: String
   icon: String
   color: String
+  pageLayoutId: UUID
 }
 
 """The `Upload` scalar type represents a file upload."""
@@ -4593,6 +4600,11 @@ input UpdateApplicationRegistrationVariableInput {
 input UpdateApplicationRegistrationVariablePayload {
   value: String
   description: String
+}
+
+input UpdateWorkspaceMemberSettingsInput {
+  workspaceMemberId: UUID!
+  update: JSON!
 }
 
 input ActivateWorkspaceInput {

@@ -1,5 +1,5 @@
-import { styled } from '@linaria/react';
 import { type DropResult, type ResponderProvided } from '@hello-pangea/dnd';
+import { styled } from '@linaria/react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useMemo, useState } from 'react';
 import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
@@ -11,8 +11,8 @@ import { PageLayoutEditModeProviderContext } from '@/page-layout/contexts/PageLa
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
-import { PageLayoutType } from '~/generated-metadata/graphql';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.strong};
@@ -170,7 +170,11 @@ const PageLayoutTabListPlayground = ({
         componentInstanceId="page-layout-tab-list-story"
         behaveAsLinks={false}
         loading={false}
-        onAddTab={isReorderEnabled ? handleAddTab : undefined}
+        addTabStrategy={
+          isReorderEnabled
+            ? { mode: 'direct', onCreate: handleAddTab }
+            : undefined
+        }
         isReorderEnabled={isReorderEnabled}
         onReorder={isReorderEnabled ? handleReorder : undefined}
         pageLayoutType={PageLayoutType.DASHBOARD}

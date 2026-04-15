@@ -1,11 +1,9 @@
 import { Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Not, type Repository } from 'typeorm';
 import { type ObjectRecordDeleteEvent } from 'twenty-shared/database-events';
+import { Not, type Repository } from 'typeorm';
 
-import { CalendarChannelSyncStage } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -16,6 +14,8 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
+import { CalendarChannelSyncStage } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export type BlocklistReimportCalendarEventsJobData = WorkspaceEventBatch<
   ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>
@@ -46,6 +46,7 @@ export class BlocklistReimportCalendarEventsJob {
         await this.globalWorkspaceOrmManager.getRepository(
           workspaceId,
           'workspaceMember',
+          { shouldBypassPermissionChecks: true },
         );
 
       for (const eventPayload of data.events) {

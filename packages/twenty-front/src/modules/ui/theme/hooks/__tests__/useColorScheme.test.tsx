@@ -7,11 +7,11 @@ import {
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { resetJotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const updateOneRecordMock = jest.fn();
+const mockUpdateWorkspaceMemberSettings = jest.fn();
 
-jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
-  useUpdateOneRecord: () => ({
-    updateOneRecord: updateOneRecordMock,
+jest.mock('@/settings/profile/hooks/useUpdateWorkspaceMemberSettings', () => ({
+  useUpdateWorkspaceMemberSettings: () => ({
+    updateWorkspaceMemberSettings: mockUpdateWorkspaceMemberSettings,
   }),
 }));
 

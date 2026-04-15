@@ -87,6 +87,8 @@ export const useWidgetActions = ({
       isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
       isCustom: fieldMetadataItem.isCustom ?? false,
     },
+    fieldDefinition,
+    objectPermissionsByObjectMetadataId,
   });
 
   if (!isFieldReadOnly) {

@@ -107,6 +107,7 @@ export class BlocklistValidationService {
             await this.globalWorkspaceOrmManager.getRepository(
               workspaceId,
               WorkspaceMemberWorkspaceEntity,
+              { shouldBypassPermissionChecks: true },
             );
 
           return workspaceMemberRepository.findOneByOrFail({
@@ -192,6 +193,7 @@ export class BlocklistValidationService {
             await this.globalWorkspaceOrmManager.getRepository(
               workspaceId,
               WorkspaceMemberWorkspaceEntity,
+              { shouldBypassPermissionChecks: true },
             );
 
           return workspaceMemberRepository.findOneByOrFail({

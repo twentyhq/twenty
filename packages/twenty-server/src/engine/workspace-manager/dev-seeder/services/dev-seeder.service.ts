@@ -1,7 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { DataSource, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -12,38 +11,37 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { seedBillingCustomers } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-customers.util';
+import { seedBillingSubscriptions } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-subscriptions.util';
 import {
   type SeededWorkspacesIds,
   SEEDER_CREATE_WORKSPACE_INPUT,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { seedBillingCustomers } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-customers.util';
-import { seedBillingSubscriptions } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-subscriptions.util';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
 import { seedAgents } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-agents.util';
 import { seedApiKeys } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-api-keys.util';
 import { seedFeatureFlags } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-feature-flags.util';
 import { seedMetadataEntities } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-metadata-entities.util';
+import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
 import { seedServerId } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-server-id.util';
 import { seedUserWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { createWorkspace } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
-import { seedPageLayoutTabs } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layout-tabs.util';
-import { seedPageLayoutWidgets } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layout-widgets.util';
-import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
+import { PrefillFrontComponentService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-front-component.service';
+import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
+import { getSeedFrontComponentDefinitions } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-front-component-definitions.util';
+import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-code-step-logic-functions.util';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class DevSeederService {
-  private readonly logger = new Logger(DevSeederService.name);
-
   constructor(
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -58,6 +56,9 @@ export class DevSeederService {
     private readonly sdkClientGenerationService: SdkClientGenerationService,
     private readonly upgradeMigrationService: UpgradeMigrationService,
     private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly prefillFrontComponentService: PrefillFrontComponentService,
+    private readonly prefillLogicFunctionService: PrefillLogicFunctionService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     @InjectRepository(WorkspaceEntity)
@@ -142,19 +143,6 @@ export class DevSeederService {
       light,
     });
 
-    await seedPageLayouts(
-      this.coreDataSource,
-      'core',
-      workspaceId,
-      twentyStandardFlatApplication.id,
-    );
-    await seedPageLayoutTabs({
-      applicationId: twentyStandardFlatApplication.id,
-      workspaceId,
-      dataSource: this.coreDataSource,
-      schemaName: 'core',
-    });
-
     const objectMetadataRepository =
       this.coreDataSource.getRepository(ObjectMetadataEntity);
     const objectMetadataItems = await objectMetadataRepository.find({
@@ -162,24 +150,26 @@ export class DevSeederService {
       relations: { fields: true },
     });
 
-    await seedPageLayoutWidgets({
-      dataSource: this.coreDataSource,
-      schemaName: 'core',
+    await this.prefillLogicFunctionService.ensureSeeded({
       workspaceId,
-      objectMetadataItems,
-      applicationId: twentyStandardFlatApplication.id,
+      definitions:
+        getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions(
+          workspaceId,
+        ),
     });
 
-    const relatedPageLayoutCacheKeysToInvalidate = [
-      ...getMetadataRelatedMetadataNames(ALL_METADATA_NAME.pageLayout),
-      ...getMetadataRelatedMetadataNames(ALL_METADATA_NAME.pageLayoutTab),
-      ...getMetadataRelatedMetadataNames(ALL_METADATA_NAME.pageLayoutWidget),
-    ].map(getMetadataFlatEntityMapsKey);
-
-    await this.workspaceCacheService.invalidateAndRecompute(
+    await this.prefillFrontComponentService.ensureSeeded({
       workspaceId,
-      relatedPageLayoutCacheKeysToInvalidate,
-    );
+      definitions: getSeedFrontComponentDefinitions(workspaceId),
+    });
+
+    await seedPageLayouts({
+      workspaceId,
+      flatApplication: twentyStandardFlatApplication,
+      objectMetadataItems,
+      workspaceMigrationValidateBuildAndRunService:
+        this.workspaceMigrationValidateBuildAndRunService,
+    });
 
     await this.devSeederDataService.seed({
       schemaName,

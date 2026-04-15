@@ -19,7 +19,6 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
-import { CombinedGraphQLErrors } from '@apollo/client';
 import { useLazyQuery, useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
@@ -36,6 +35,7 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 type SettingsEnterpriseProps = {
   isAdminPanelTab?: boolean;
@@ -202,11 +202,7 @@ export const SettingsEnterprise = ({
         });
       }
     } catch (error) {
-      if (
-        CombinedGraphQLErrors.is(error) &&
-        error.errors?.[0]?.extensions?.subCode ===
-          'CONFIG_VARIABLES_IN_DB_DISABLED'
-      ) {
+      if (isGraphqlErrorOfType(error, 'CONFIG_VARIABLES_IN_DB_DISABLED')) {
         enqueueErrorSnackBar({
           apolloError: error,
           options: { duration: 10000 },

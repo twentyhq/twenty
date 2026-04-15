@@ -3,6 +3,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import {
   ConflictError,
   ForbiddenError,
+  InternalServerError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -27,7 +28,7 @@ export const agentGraphqlApiExceptionHandler = (error: Error) => {
       case AgentExceptionCode.AGENT_EXECUTION_FAILED:
       case AgentExceptionCode.API_KEY_NOT_CONFIGURED:
       case AgentExceptionCode.USER_WORKSPACE_ID_NOT_FOUND:
-        throw error;
+        throw new InternalServerError(error);
       default: {
         return assertUnreachable(error.code);
       }

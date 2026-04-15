@@ -118,6 +118,8 @@ export const WidgetActionFieldEdit = () => {
         isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
         isCustom: fieldMetadataItem.isCustom ?? false,
       },
+      fieldDefinition,
+      objectPermissionsByObjectMetadataId,
     }),
     anchorId: recordFieldInputInstanceId,
   } satisfies GenericFieldContextType;

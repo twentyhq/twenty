@@ -5,6 +5,7 @@ import { type DataSource, type Repository } from 'typeorm';
 
 import { type ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -136,6 +137,12 @@ describe('UserWorkspaceService', () => {
           provide: OnboardingService,
           useValue: {
             setOnboardingCreateProfilePending: jest.fn(),
+          },
+        },
+        {
+          provide: CoreEntityCacheService,
+          useValue: {
+            invalidate: jest.fn().mockResolvedValue(undefined),
           },
         },
         {
