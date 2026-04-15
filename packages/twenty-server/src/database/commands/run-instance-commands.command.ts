@@ -14,7 +14,6 @@ import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-
 type RunInstanceCommandsOptions = {
   force?: boolean;
   includeSlow?: boolean;
-  noHistory?: boolean;
 };
 
 // TODO should be replaced by a specific call to the upgrade
@@ -55,16 +54,6 @@ export class RunInstanceCommandsCommand extends CommandRunner {
     return true;
   }
 
-  @Option({
-    flags: '--no-history',
-    description:
-      'Run commands without writing to the upgrade migration history',
-    required: false,
-  })
-  parseNoHistory(): boolean {
-    return true;
-  }
-
   async run(
     _passedParams: string[],
     options: RunInstanceCommandsOptions,
@@ -75,7 +64,6 @@ export class RunInstanceCommandsCommand extends CommandRunner {
 
       const activeOrSuspendedWorkspaceIds =
         await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
-      const skipHistory = options.noHistory ?? false;
 
       for (const {
         command,
@@ -85,7 +73,6 @@ export class RunInstanceCommandsCommand extends CommandRunner {
           {
             command,
             name,
-            skipHistory,
           },
         );
 
@@ -104,7 +91,6 @@ export class RunInstanceCommandsCommand extends CommandRunner {
               command,
               name,
               skipDataMigration: activeOrSuspendedWorkspaceIds.length === 0,
-              skipHistory,
             });
 
           if (result.status === 'failed') {

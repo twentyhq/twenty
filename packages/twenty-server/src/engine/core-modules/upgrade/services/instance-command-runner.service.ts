@@ -29,11 +29,9 @@ export class InstanceCommandRunnerService {
   async runFastInstanceCommand({
     command,
     name,
-    skipHistory = false,
   }: {
     command: FastInstanceCommand;
     name: string;
-    skipHistory?: boolean;
   }): Promise<RunSingleMigrationResult> {
     const executedByVersion =
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
@@ -58,19 +56,17 @@ export class InstanceCommandRunnerService {
 
       await command.up(queryRunner);
 
-      if (!skipHistory) {
-        const workspaceIds =
-          await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
+      const workspaceIds =
+        await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
 
-        await this.upgradeMigrationService.recordUpgradeMigration({
-          name,
-          workspaceIds,
-          isInstance: true,
-          status: 'completed',
-          executedByVersion,
-          queryRunner,
-        });
-      }
+      await this.upgradeMigrationService.recordUpgradeMigration({
+        name,
+        workspaceIds,
+        isInstance: true,
+        status: 'completed',
+        executedByVersion,
+        queryRunner,
+      });
 
       await queryRunner.commitTransaction();
     } catch (error) {
@@ -78,19 +74,17 @@ export class InstanceCommandRunnerService {
         await queryRunner.rollbackTransaction();
       }
 
-      if (!skipHistory) {
-        const workspaceIds =
-          await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
+      const workspaceIds =
+        await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
 
-        await this.upgradeMigrationService.recordUpgradeMigration({
-          name,
-          workspaceIds,
-          isInstance: true,
-          status: 'failed',
-          executedByVersion,
-          error,
-        });
-      }
+      await this.upgradeMigrationService.recordUpgradeMigration({
+        name,
+        workspaceIds,
+        isInstance: true,
+        status: 'failed',
+        executedByVersion,
+        error,
+      });
 
       this.logger.error(
         `${name} failed`,
@@ -111,12 +105,10 @@ export class InstanceCommandRunnerService {
     command,
     name,
     skipDataMigration,
-    skipHistory = false,
   }: {
     command: SlowInstanceCommand;
     name: string;
     skipDataMigration?: boolean;
-    skipHistory?: boolean;
   }): Promise<RunSingleMigrationResult> {
     const isAlreadyCompleted =
       await this.upgradeMigrationService.isLastAttemptCompleted({
@@ -137,19 +129,17 @@ export class InstanceCommandRunnerService {
       try {
         await command.runDataMigration(this.dataSource);
       } catch (error) {
-        if (!skipHistory) {
-          const workspaceIds =
-            await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
+        const workspaceIds =
+          await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
 
-          await this.upgradeMigrationService.recordUpgradeMigration({
-            name,
-            workspaceIds,
-            isInstance: true,
-            status: 'failed',
-            executedByVersion,
-            error,
-          });
-        }
+        await this.upgradeMigrationService.recordUpgradeMigration({
+          name,
+          workspaceIds,
+          isInstance: true,
+          status: 'failed',
+          executedByVersion,
+          error,
+        });
 
         this.logger.error(
           `${name} data migration failed`,
@@ -163,7 +153,6 @@ export class InstanceCommandRunnerService {
     return this.runFastInstanceCommand({
       command,
       name,
-      skipHistory,
     });
   }
 }
