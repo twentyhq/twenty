@@ -10,7 +10,6 @@ import {
 } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { formatUpgradeErrorForStorage } from 'src/engine/core-modules/upgrade/utils/format-upgrade-error-for-storage.util';
 
-
 export type WorkspaceCursor = {
   name: string;
   status: UpgradeMigrationStatus;
@@ -62,7 +61,8 @@ export class UpgradeMigrationService {
           queryRunner?: QueryRunner;
         },
   ): Promise<void> {
-    const { name, workspaceIds, isInstance, status, executedByVersion } = params;
+    const { name, workspaceIds, isInstance, status, executedByVersion } =
+      params;
 
     const repository = params.queryRunner
       ? params.queryRunner.manager.getRepository(UpgradeMigrationEntity)
