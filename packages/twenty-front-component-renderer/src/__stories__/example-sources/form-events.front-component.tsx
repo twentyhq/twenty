@@ -56,9 +56,7 @@ const FormEventsComponent = () => {
 
   return (
     <div data-testid="form-events-component" style={CARD_STYLE}>
-      <h2 style={HEADING_STYLE}>
-        Form Events
-      </h2>
+      <h2 style={HEADING_STYLE}>Form Events</h2>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         <label style={LABEL_STYLE}>Text Input</label>
@@ -67,9 +65,8 @@ const FormEventsComponent = () => {
           type="text"
           placeholder="Type here..."
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            const detail = (
-              event as unknown as { detail: { value?: string } }
-            ).detail;
+            const detail = (event as unknown as { detail: { value?: string } })
+              .detail;
             setTextValue(detail?.value ?? '');
           }}
           onFocus={() => setFocusState('focused')}

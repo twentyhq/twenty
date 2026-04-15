@@ -18,9 +18,8 @@ const KeyboardEventsComponent = () => {
 
   // remote-dom serializes keyboard events into CustomEvent.detail
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    const data = (
-      event as unknown as { detail: RemoteKeyboardEventDetail }
-    ).detail;
+    const data = (event as unknown as { detail: RemoteKeyboardEventDetail })
+      .detail;
 
     setLastKey(data.key ?? '');
     setLastCode(data.code ?? '');

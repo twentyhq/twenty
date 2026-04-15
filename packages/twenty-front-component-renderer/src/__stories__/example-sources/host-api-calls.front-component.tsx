@@ -63,9 +63,7 @@ const HostApiCallsComponent = () => {
 
   return (
     <div data-testid="host-api-calls-component" style={CARD_STYLE}>
-      <h2 style={HEADING_STYLE}>
-        Host API Calls
-      </h2>
+      <h2 style={HEADING_STYLE}>Host API Calls</h2>
 
       <button
         data-testid="btn-navigate"

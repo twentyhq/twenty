@@ -59,9 +59,7 @@ const createComponentStory = (
   ...(options?.play ? { play: options.play } : {}),
 });
 
-const createHostApiStory = (
-  play: Story['play'],
-): Story => ({
+const createHostApiStory = (play: Story['play']): Story => ({
   ...createComponentStory('host-api-calls'),
   args: {
     ...createComponentStory('host-api-calls').args,
@@ -125,9 +123,7 @@ export const FormFocusAndBlur: Story = createComponentStory('form-events', {
       await canvas.findByText('focused', {}, { timeout: INTERACTION_TIMEOUT }),
     ).toBeVisible();
 
-    await userEvent.click(
-      await canvas.findByTestId('form-events-component'),
-    );
+    await userEvent.click(await canvas.findByTestId('form-events-component'));
 
     expect(
       await canvas.findByText('blurred', {}, { timeout: INTERACTION_TIMEOUT }),
