@@ -25,7 +25,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { IconGitBranch } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { Button } from 'twenty-ui/input';
 import { useQuery } from '@apollo/client/react';
 import {
   AvatarOrIcon,

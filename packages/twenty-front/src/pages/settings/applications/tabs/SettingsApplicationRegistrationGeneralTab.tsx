@@ -153,7 +153,7 @@ export const SettingsApplicationRegistrationGeneralTab = ({
             id={DELETE_REGISTRATION_BUTTON_ID}
             accent="danger"
             variant="secondary"
-            title={t`Delete`}
+            title={t`Delete app`}
             Icon={IconTrash}
             disabled={hasActiveInstalls}
             onClick={() => openModal(DELETE_REGISTRATION_MODAL_ID)}
