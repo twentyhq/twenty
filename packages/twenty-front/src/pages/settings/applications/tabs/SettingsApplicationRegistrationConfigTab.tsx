@@ -22,6 +22,7 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { SettingsApplicationRegistrationConfigVariableStatus } from '~/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableStatus';
 
 const StyledTableBodyContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -105,13 +106,9 @@ export const SettingsApplicationRegistrationConfigTab = ({
                     textOverflow="ellipsis"
                     clickable
                   >
-                    {variable.isFilled ? (
-                      <Status color="green" text={t`Configured`} />
-                    ) : variable.isRequired ? (
-                      <Status color="red" text={t`Required`} />
-                    ) : (
-                      <Status color="gray" text={t`Not set`} />
-                    )}
+                    <SettingsApplicationRegistrationConfigVariableStatus
+                      variable={variable}
+                    />
                   </TableCell>
                   <TableCell align="right" color={theme.font.color.secondary}>
                     <IconChevronRight

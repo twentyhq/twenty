@@ -31,12 +31,8 @@ export const SettingsApplicationRegistrationDetails = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={
-        <>
-          <StyledContainer>{registration.name}</StyledContainer>
-          <Tag text={t`Owner`} color={'gray'} />
-        </>
-      }
+      title={registration.name}
+      tag={<Tag text={t`Owner`} color={'gray'} />}
       links={[
         {
           children: t`Workspace`,

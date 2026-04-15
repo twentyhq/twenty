@@ -17,6 +17,7 @@ type SubMenuTopBarContainerProps = {
   actionButton?: ReactNode;
   className?: string;
   links: BreadcrumbProps['links'];
+  tag?: JSX.Element;
 };
 
 const StyledContainer = styled.div`
@@ -25,7 +26,7 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledTitle = styled.h3<{ reserveTitleSpace?: boolean }>`
+const StyledTitle = styled.span<{ reserveTitleSpace?: boolean }>`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   color: ${themeCssVariables.font.color.primary};
@@ -41,6 +42,7 @@ const StyledTitle = styled.h3<{ reserveTitleSpace?: boolean }>`
 export const SubMenuTopBarContainer = ({
   children,
   title,
+  tag,
   reserveTitleSpace,
   actionButton,
   className,
@@ -56,6 +58,7 @@ export const SubMenuTopBarContainer = ({
         {(isDefined(title) || reserveTitleSpace === true) && (
           <StyledTitle reserveTitleSpace={reserveTitleSpace}>
             {title}
+            {tag}
           </StyledTitle>
         )}
         {children}

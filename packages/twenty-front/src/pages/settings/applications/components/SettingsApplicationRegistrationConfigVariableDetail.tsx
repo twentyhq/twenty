@@ -21,34 +21,22 @@ import { Button } from 'twenty-ui/input';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { SettingsApplicationRegistrationConfigVariableStatus } from '~/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableStatus';
+import { Section } from 'twenty-ui/layout';
 
 const RESET_VARIABLE_MODAL_ID =
   'reset-application-registration-config-variable-modal';
 
-const StyledContainer = styled.div``;
-
-const StyledFormContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-  width: 100%;
-`;
-
-const StyledH3TitleContainer = styled.div`
-  margin-top: ${themeCssVariables.spacing[2]};
-`;
-
 const StyledRow = styled.div`
-  align-items: flex-end;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledButtonContainer = styled.div`
   display: flex;
-  & > :not(:first-of-type) > button {
-    border-left: none;
-  }
+  align-items: center;
+  gap: ${themeCssVariables.spacing[1]};
+  min-width: 200px;
 `;
 
 export const SettingsApplicationRegistrationConfigVariableDetail = () => {
@@ -152,12 +140,8 @@ export const SettingsApplicationRegistrationConfigVariableDetail = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={
-        <>
-          <StyledContainer>{registration.name}</StyledContainer>
-          <Tag text={t`Owner`} color={'gray'} />
-        </>
-      }
+      title={registration.name}
+      tag={<Tag text={t`Owner`} color={'gray'} />}
       links={[
         {
           children: t`Workspace`,
@@ -187,7 +171,7 @@ export const SettingsApplicationRegistrationConfigVariableDetail = () => {
       ]}
     >
       <SettingsPageContainer>
-        <StyledH3TitleContainer>
+        <Section>
           <H3Title
             title={
               <>
@@ -199,9 +183,9 @@ export const SettingsApplicationRegistrationConfigVariableDetail = () => {
             }
             description={variable.description}
           />
-        </StyledH3TitleContainer>
+        </Section>
 
-        <StyledFormContainer>
+        <Section>
           <StyledRow>
             <TextInput
               value={value}
@@ -221,21 +205,22 @@ export const SettingsApplicationRegistrationConfigVariableDetail = () => {
               <Button
                 Icon={IconCheck}
                 variant="secondary"
-                position="left"
                 onClick={() => handleSaveVariableValue({ resetValue: false })}
                 disabled={isSubmitting || !isEditing}
               />
               <Button
                 Icon={IconX}
                 variant="secondary"
-                position="right"
                 onClick={handleXButtonClick}
                 type="button"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !variable.isFilled}
+              />
+              <SettingsApplicationRegistrationConfigVariableStatus
+                variable={variable}
               />
             </StyledButtonContainer>
           </StyledRow>
-        </StyledFormContainer>
+        </Section>
       </SettingsPageContainer>
 
       <ConfirmationModal
