@@ -3,9 +3,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { Fragment, type ReactNode, useContext } from 'react';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { activeNavigationMenuItemState } from '@/navigation-menu-item/common/states/activeNavigationMenuItemState';
-import { isNavigationMenuItemActive } from '@/navigation-menu-item/common/utils/isNavigationMenuItemActive';
+import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/common/utils/recordIdentifierToObjectRecordIdentifier';
+import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
@@ -19,7 +19,7 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   AppPath,
   CoreObjectNameSingular,
@@ -70,16 +70,12 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
 
   const { getIcon } = useIcons();
   const objectNavItemColor = getObjectColorWithFallback(objectMetadataItem);
-  const location = useLocation();
   const navigate = useNavigate();
-  const currentPath = location.pathname;
-  const currentPathWithSearch = `${location.pathname}${location.search}`;
 
-  const activeNavigationMenuItem = useAtomStateValue(
-    activeNavigationMenuItemState,
-  );
-  const setActiveNavigationMenuItem = useSetAtomState(
-    activeNavigationMenuItemState,
+  const { activeNavigationMenuItemIds, objectMetadataIdForOpenedSection } =
+    useIdentifyActiveNavigationMenuItems();
+  const setLastClickedNavigationMenuItemId = useSetAtomState(
+    lastClickedNavigationMenuItemIdState,
   );
 
   const isRecord = navigationMenuItem?.type === NavigationMenuItemType.RECORD;
@@ -99,24 +95,15 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         lastVisitedViewId ? { viewId: lastVisitedViewId } : undefined,
       );
 
-  const isActive = isNavigationMenuItemActive({
-    navigationMenuItem: navigationMenuItem ?? null,
-    computedLink: navigationPath,
-    objectMetadataItem,
-    currentPath,
-    currentPathWithSearch,
-    activeNavigationMenuItem,
-  });
+  const isActive = hasNavigationMenuItem
+    ? activeNavigationMenuItemIds.includes(navigationMenuItem!.id)
+    : objectMetadataIdForOpenedSection === objectMetadataItem.id;
 
   const handleClick = isLayoutCustomizationModeEnabled
     ? onEditModeClick
-    : hasNavigationMenuItem
+    : hasNavigationMenuItem && !isDragging
       ? () => {
-          setActiveNavigationMenuItem({
-            id: navigationMenuItem!.id,
-            path: navigationPath,
-            objectMetadataId: objectMetadataItem.id,
-          });
+          setLastClickedNavigationMenuItemId(navigationMenuItem!.id);
           navigate(navigationPath);
         }
       : undefined;

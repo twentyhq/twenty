@@ -4,7 +4,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { activeNavigationMenuItemState } from '@/navigation-menu-item/common/states/activeNavigationMenuItemState';
+import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { useIsNavigationMenuItemEditHighlighted } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuItemEditHighlighted';
@@ -50,8 +50,8 @@ export const NavigationMenuItemFolderSubItem = ({
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
   const navigate = useNavigate();
-  const setActiveNavigationMenuItem = useSetAtomState(
-    activeNavigationMenuItemState,
+  const setLastClickedNavigationMenuItemId = useSetAtomState(
+    lastClickedNavigationMenuItemIdState,
   );
 
   const label = getNavigationMenuItemLabel(
@@ -95,11 +95,7 @@ export const NavigationMenuItemFolderSubItem = ({
             objectMetadataItem: objectMetadataItem ?? undefined,
           })
       : () => {
-          setActiveNavigationMenuItem({
-            id: navigationMenuItem.id,
-            path: computedLink,
-            objectMetadataId: objectMetadataItem?.id ?? '',
-          });
+          setLastClickedNavigationMenuItemId(navigationMenuItem.id);
           navigate(computedLink);
         });
 
