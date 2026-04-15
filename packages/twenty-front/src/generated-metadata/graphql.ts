@@ -3936,6 +3936,7 @@ export enum NavigationMenuItemType {
   FOLDER = 'FOLDER',
   LINK = 'LINK',
   OBJECT = 'OBJECT',
+  PAGE_LAYOUT = 'PAGE_LAYOUT',
   RECORD = 'RECORD',
   VIEW = 'VIEW'
 }
@@ -5465,6 +5466,7 @@ export type UpdateApplicationRegistrationVariableInput = {
 
 export type UpdateApplicationRegistrationVariablePayload = {
   description?: InputMaybe<Scalars['String']>;
+  resetValue?: InputMaybe<Scalars['Boolean']>;
   value?: InputMaybe<Scalars['String']>;
 };
 
@@ -6229,7 +6231,8 @@ export enum ViewType {
   CALENDAR = 'CALENDAR',
   FIELDS_WIDGET = 'FIELDS_WIDGET',
   KANBAN = 'KANBAN',
-  TABLE = 'TABLE'
+  TABLE = 'TABLE',
+  TABLE_WIDGET = 'TABLE_WIDGET'
 }
 
 export enum ViewVisibility {
