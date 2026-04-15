@@ -57,7 +57,9 @@ export class InstanceCommandRunnerService {
       await command.up(queryRunner);
 
       const workspaceIds =
-        await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
+        await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds({
+          queryRunner,
+        });
 
       await this.upgradeMigrationService.recordUpgradeMigration({
         name,
