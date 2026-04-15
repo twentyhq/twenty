@@ -211,5 +211,23 @@ describe('UpgradeSequenceReaderService', () => {
 
       expect(result.name).toBe('Wc0');
     });
+
+    it('should return previous segment when sequence ends with instance commands batch', async () => {
+      // Sequence: Ic0 → Wc0 → Wc1 → Ic1 → Ic2 (no workspace after Ic1/Ic2)
+      // If Ic2 is completed, next is undefined → look backwards → returns Wc1
+      const sequence = [
+        makeFastInstance('Ic0'),
+        makeWorkspace('Wc0'),
+        makeWorkspace('Wc1'),
+        makeFastInstance('Ic1'),
+        makeFastInstance('Ic2'),
+      ];
+
+      const service = await buildServiceWithMockedSequence(sequence);
+
+      const result = service.getLastWorkspaceCommandInCurrentSegment('Ic2');
+
+      expect(result.name).toBe('Wc1');
+    });
   });
 });
