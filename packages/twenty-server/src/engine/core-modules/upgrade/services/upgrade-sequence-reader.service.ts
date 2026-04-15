@@ -161,9 +161,9 @@ export class UpgradeSequenceReaderService {
       : workspaceCommands.slice(cursorIndex);
   }
 
-  getInitialCursorForNewWorkspace(
-    lastCompletedInstanceCommandName: string,
-  ): { name: string } {
+  getInitialCursorForNewWorkspace(lastCompletedInstanceCommandName: string): {
+    name: string;
+  } {
     const sequence = this.getUpgradeSequence();
 
     const instanceCursor = this.locateStepInSequenceOrThrow({
