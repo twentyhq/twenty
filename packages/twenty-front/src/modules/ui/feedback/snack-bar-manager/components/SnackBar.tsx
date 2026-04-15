@@ -252,10 +252,7 @@ export const SnackBar = ({
                   <LightButton title={buttonLabel} />
                 </UndecoratedLink>
               ) : (
-                <LightButton
-                  title={buttonLabel}
-                  onClick={buttonOnClick}
-                />
+                <LightButton title={buttonLabel} onClick={buttonOnClick} />
               )}
             </StyledBottomAction>
           </StyledBottomActionContainer>
