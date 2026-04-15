@@ -7,6 +7,7 @@ import {
   type RegisteredWorkspaceCommand,
   UpgradeCommandRegistryService,
 } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
+import { isDefined } from 'twenty-shared/utils';
 
 export type FastInstanceUpgradeStep = {
   kind: 'fast-instance';
@@ -78,7 +79,7 @@ export class UpgradeSequenceReaderService {
     return cursor;
   }
 
-  getWorkspaceCommandsSliceBounds({
+  getWorkspaceSegmentBounds({
     sequence,
     workspaceCommand,
   }: {
@@ -174,5 +175,76 @@ export class UpgradeSequenceReaderService {
     throw new Error(
       'No workspace commands found in upgrade sequence — this should have been caught at startup',
     );
+  }
+
+  getLastWorkspaceCommandInCurrentSegment(
+    lastCompletedInstanceCommandName: string,
+  ): RegisteredWorkspaceCommand {
+    const sequence = this.getUpgradeSequence();
+
+    const instanceCursor = this.locateStepInSequenceOrThrow({
+      sequence,
+      stepName: lastCompletedInstanceCommandName,
+    });
+
+    const nextStep = sequence[instanceCursor + 1];
+
+    if (!nextStep || nextStep.kind !== 'workspace') {
+      return this.findLastWorkspaceCommandBefore(sequence, instanceCursor);
+    }
+
+    return this.findLastWorkspaceCommandInSegmentStartingAt(
+      sequence,
+      instanceCursor + 1,
+    );
+  }
+
+  private findLastWorkspaceCommandBefore(
+    sequence: UpgradeStep[],
+    beforeIndex: number,
+  ): RegisteredWorkspaceCommand {
+    for (let index = beforeIndex - 1; index >= 0; index--) {
+      const step = sequence[index];
+
+      if (step.kind === 'workspace') {
+        return step;
+      }
+    }
+
+    throw new Error(
+      'No workspace commands found before the given instance command — ' +
+        'this should have been caught at startup',
+    );
+  }
+
+  private findLastWorkspaceCommandInSegmentStartingAt(
+    sequence: UpgradeStep[],
+    startIndex: number,
+  ): RegisteredWorkspaceCommand {
+    const firstWorkspaceCommand = sequence[startIndex];
+
+    if (!firstWorkspaceCommand || firstWorkspaceCommand.kind !== 'workspace') {
+      throw new Error(
+        'No workspace commands found in current segment — this should have been caught at startup',
+      );
+    }
+
+    const { endCursor } = this.getWorkspaceSegmentBounds({
+      sequence,
+      workspaceCommand: firstWorkspaceCommand,
+    });
+
+    const lastWorkspaceCommand = sequence[endCursor];
+
+    if (
+      !isDefined(lastWorkspaceCommand) ||
+      lastWorkspaceCommand.kind !== 'workspace'
+    ) {
+      throw new Error(
+        'Invalid workspace segment bounds — this should never happen',
+      );
+    }
+
+    return lastWorkspaceCommand;
   }
 }

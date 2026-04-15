@@ -383,8 +383,13 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     workspaceId: string;
     displayName: string;
   }): Promise<void> {
-    const lastWorkspaceCommand =
-      this.upgradeSequenceReaderService.getLastWorkspaceCommand();
+    const lastCompletedInstanceCommandName =
+      await this.upgradeMigrationService.getLastCompletedInstanceCommandNameOrThrow();
+
+    const lastWorkspaceCommandInCurrentSegment =
+      this.upgradeSequenceReaderService.getLastWorkspaceCommandInCurrentSegment(
+        lastCompletedInstanceCommandName,
+      );
 
     const executedByVersion =
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
@@ -401,7 +406,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       });
 
       await this.upgradeMigrationService.markAsInitial({
-        name: lastWorkspaceCommand.name,
+        name: lastWorkspaceCommandInCurrentSegment.name,
         workspaceId,
         executedByVersion,
         queryRunner,

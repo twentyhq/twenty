@@ -261,4 +261,31 @@ export class UpgradeMigrationService {
 
     return completedCount === workspaceIds.length;
   }
+
+  async getLastCompletedInstanceCommandNameOrThrow(): Promise<string> {
+    const migration = await this.upgradeMigrationRepository
+      .createQueryBuilder('migration')
+      .select('migration.name')
+      .where('migration."workspaceId" IS NULL')
+      .andWhere('migration.status = :status', { status: 'completed' })
+      .andWhere('migration."isInitial" = false')
+      .andWhere(
+        `migration.attempt = (
+          SELECT MAX(sub.attempt)
+          FROM core."upgradeMigration" sub
+          WHERE sub.name = migration.name
+          AND sub."workspaceId" IS NULL
+        )`,
+      )
+      .orderBy('migration.createdAt', 'DESC')
+      .getOne();
+
+    if (!migration) {
+      throw new Error(
+        'No completed instance command found — the database may not have been initialized',
+      );
+    }
+
+    return migration.name;
+  }
 }

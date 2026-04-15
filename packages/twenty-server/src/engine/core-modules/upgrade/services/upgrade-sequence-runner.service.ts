@@ -150,7 +150,7 @@ export class UpgradeSequenceRunnerService {
       }
       case 'workspace': {
         const workspaceSliceBounds =
-          this.upgradeSequenceReaderService.getWorkspaceCommandsSliceBounds({
+          this.upgradeSequenceReaderService.getWorkspaceSegmentBounds({
             sequence,
             workspaceCommand: lastAttemptedStep,
           });
