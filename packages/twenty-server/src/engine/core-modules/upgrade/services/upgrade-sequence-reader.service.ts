@@ -7,6 +7,7 @@ import {
   type RegisteredWorkspaceCommand,
   UpgradeCommandRegistryService,
 } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
+import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { isDefined } from 'twenty-shared/utils';
 
 export type FastInstanceUpgradeStep = {
@@ -161,26 +162,35 @@ export class UpgradeSequenceReaderService {
       : workspaceCommands.slice(cursorIndex);
   }
 
-  getInitialCursorForNewWorkspace(lastCompletedInstanceCommandName: string): {
+  getInitialCursorForNewWorkspace(lastAttemptedInstanceCommand: {
     name: string;
+    status: UpgradeMigrationStatus;
+  }): {
+    name: string;
+    status: UpgradeMigrationStatus;
   } {
+    const { name, status } = lastAttemptedInstanceCommand;
     const sequence = this.getUpgradeSequence();
 
     const instanceCursor = this.locateStepInSequenceOrThrow({
       sequence,
-      stepName: lastCompletedInstanceCommandName,
+      stepName: name,
     });
 
-    const nextStep = sequence[instanceCursor + 1];
+    if (status === 'completed') {
+      const nextStep = sequence[instanceCursor + 1];
 
-    if (isDefined(nextStep) && nextStep.kind === 'workspace') {
-      return this.findLastWorkspaceCommandInSegmentStartingAt(
-        sequence,
-        nextStep,
-      );
+      if (isDefined(nextStep) && nextStep.kind === 'workspace') {
+        const lastWc = this.findLastWorkspaceCommandInSegmentStartingAt(
+          sequence,
+          nextStep,
+        );
+
+        return { name: lastWc.name, status: 'completed' };
+      }
     }
 
-    return { name: lastCompletedInstanceCommandName };
+    return { name, status };
   }
 
   private findLastWorkspaceCommandInSegmentStartingAt(

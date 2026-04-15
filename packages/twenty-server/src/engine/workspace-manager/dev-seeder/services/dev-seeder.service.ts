@@ -10,6 +10,7 @@ import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/s
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
+import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
@@ -75,18 +76,18 @@ export class DevSeederService {
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
     const appVersion = this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
-    const lastCompletedInstanceCommandName =
-      await this.upgradeMigrationService.getLastCompletedInstanceCommandNameOrThrow();
+    const lastAttemptedInstanceCommand =
+      await this.upgradeMigrationService.getLastAttemptedInstanceCommandOrThrow();
     const initialCursor =
       this.upgradeSequenceReaderService.getInitialCursorForNewWorkspace(
-        lastCompletedInstanceCommandName,
+        lastAttemptedInstanceCommand,
       );
 
     await this.seedCoreSchema({
       workspaceId,
       seedBilling: isBillingEnabled,
       appVersion,
-      lastUpgradeStepName: initialCursor.name,
+      initialCursor,
     });
 
     await this.applicationRegistrationService.createCliRegistrationIfNotExists();
@@ -191,11 +192,11 @@ export class DevSeederService {
     workspaceId: SeededEmptyWorkspacesIds,
   ): Promise<void> {
     const appVersion = this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
-    const lastCompletedInstanceCommandName =
-      await this.upgradeMigrationService.getLastCompletedInstanceCommandNameOrThrow();
+    const lastAttemptedInstanceCommand =
+      await this.upgradeMigrationService.getLastAttemptedInstanceCommandOrThrow();
     const initialCursor =
       this.upgradeSequenceReaderService.getInitialCursorForNewWorkspace(
-        lastCompletedInstanceCommandName,
+        lastAttemptedInstanceCommand,
       );
 
     const createWorkspaceStaticInput =
@@ -247,10 +248,11 @@ export class DevSeederService {
       },
     );
 
-    await this.upgradeMigrationService.markAsInitial({
+    await this.upgradeMigrationService.markAsWorkspaceInitial({
       name: initialCursor.name,
       workspaceId,
       executedByVersion: appVersion,
+      status: initialCursor.status,
     });
 
     await this.workspaceCacheStorageService.flush(workspaceId, undefined);
@@ -259,12 +261,12 @@ export class DevSeederService {
   private async seedCoreSchema({
     workspaceId,
     appVersion,
-    lastUpgradeStepName,
+    initialCursor,
     seedBilling = true,
   }: {
     workspaceId: SeededWorkspacesIds;
     appVersion: string;
-    lastUpgradeStepName: string;
+    initialCursor: { name: string; status: UpgradeMigrationStatus };
     seedBilling?: boolean;
   }): Promise<void> {
     const schemaName = 'core';
@@ -322,10 +324,11 @@ export class DevSeederService {
 
       await seedMetadataEntities({ queryRunner, schemaName, workspaceId });
 
-      await this.upgradeMigrationService.markAsInitial({
-        name: lastUpgradeStepName,
+      await this.upgradeMigrationService.markAsWorkspaceInitial({
+        name: initialCursor.name,
         workspaceId,
         executedByVersion: appVersion,
+        status: initialCursor.status,
         queryRunner,
       });
 

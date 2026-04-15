@@ -120,15 +120,17 @@ export class UpgradeMigrationService {
     await repository.save(rows);
   }
 
-  async markAsInitial({
+  async markAsWorkspaceInitial({
     name,
     workspaceId,
     executedByVersion,
+    status,
     queryRunner,
   }: {
     name: string;
     workspaceId: string;
     executedByVersion: string;
+    status: UpgradeMigrationStatus;
     queryRunner?: QueryRunner;
   }): Promise<void> {
     const repository = queryRunner
@@ -137,7 +139,7 @@ export class UpgradeMigrationService {
 
     await repository.save({
       name,
-      status: 'completed',
+      status,
       isInitial: true,
       attempt: 1,
       executedByVersion,
@@ -281,12 +283,14 @@ export class UpgradeMigrationService {
     return completedCount === workspaceIds.length;
   }
 
-  async getLastCompletedInstanceCommandNameOrThrow(): Promise<string> {
+  async getLastAttemptedInstanceCommandOrThrow(): Promise<{
+    name: string;
+    status: UpgradeMigrationStatus;
+  }> {
     const migration = await this.upgradeMigrationRepository
       .createQueryBuilder('migration')
-      .select('migration.name')
+      .select(['migration.name', 'migration.status'])
       .where('migration."workspaceId" IS NULL')
-      .andWhere('migration.status = :status', { status: 'completed' })
       .andWhere('migration."isInitial" = false')
       .andWhere(
         `migration.attempt = (
@@ -301,10 +305,10 @@ export class UpgradeMigrationService {
 
     if (!migration) {
       throw new Error(
-        'No completed instance command found — the database may not have been initialized',
+        'No instance command found — the database may not have been initialized',
       );
     }
 
-    return migration.name;
+    return { name: migration.name, status: migration.status };
   }
 }

@@ -75,9 +75,7 @@ const makeWorkspace = (name: string) => makeStep('workspace', name);
 
 describe('UpgradeSequenceReaderService', () => {
   describe('getInitialCursorForNewWorkspace', () => {
-    it('should return last workspace command of segment following instance command', async () => {
-      // Sequence: Ic0 → Wc0 → Wc1 → Wc2
-      // Ic0 completed, next is Wc0 (workspace) → returns Wc2 (last of segment)
+    it('should return last workspace command of segment following completed instance command', async () => {
       const sequence = [
         makeFastInstance('Ic0'),
         makeWorkspace('Wc0'),
@@ -87,14 +85,15 @@ describe('UpgradeSequenceReaderService', () => {
 
       const service = await buildServiceWithMockedSequence(sequence);
 
-      const result = service.getInitialCursorForNewWorkspace('Ic0');
+      const result = service.getInitialCursorForNewWorkspace({
+        name: 'Ic0',
+        status: 'completed',
+      });
 
-      expect(result.name).toBe('Wc2');
+      expect(result).toEqual({ name: 'Wc2', status: 'completed' });
     });
 
     it('should return the instance command itself when next step is another instance command', async () => {
-      // Sequence: Wc-1 → Ic0 → Ic1 → Wc0 → Wc1
-      // Ic0 completed, next is Ic1 (instance) → returns Ic0
       const sequence = [
         makeWorkspace('Wc-1'),
         makeFastInstance('Ic0'),
@@ -105,14 +104,15 @@ describe('UpgradeSequenceReaderService', () => {
 
       const service = await buildServiceWithMockedSequence(sequence);
 
-      const result = service.getInitialCursorForNewWorkspace('Ic0');
+      const result = service.getInitialCursorForNewWorkspace({
+        name: 'Ic0',
+        status: 'completed',
+      });
 
-      expect(result.name).toBe('Ic0');
+      expect(result).toEqual({ name: 'Ic0', status: 'completed' });
     });
 
     it('should return last workspace command when all instance commands in batch are completed', async () => {
-      // Sequence: Wc-1 → Ic0 → Ic1 → Wc0 → Wc1
-      // Ic1 completed, next is Wc0 (workspace) → returns Wc1 (last of segment)
       const sequence = [
         makeWorkspace('Wc-1'),
         makeFastInstance('Ic0'),
@@ -123,14 +123,15 @@ describe('UpgradeSequenceReaderService', () => {
 
       const service = await buildServiceWithMockedSequence(sequence);
 
-      const result = service.getInitialCursorForNewWorkspace('Ic1');
+      const result = service.getInitialCursorForNewWorkspace({
+        name: 'Ic1',
+        status: 'completed',
+      });
 
-      expect(result.name).toBe('Wc1');
+      expect(result).toEqual({ name: 'Wc1', status: 'completed' });
     });
 
     it('should stop at next instance command boundary', async () => {
-      // Sequence: Ic0 → Wc0 → Wc1 → Ic1 → Wc2
-      // Ic0 completed, next is Wc0 (workspace) → returns Wc1 (last before Ic1)
       const sequence = [
         makeFastInstance('Ic0'),
         makeWorkspace('Wc0'),
@@ -141,26 +142,28 @@ describe('UpgradeSequenceReaderService', () => {
 
       const service = await buildServiceWithMockedSequence(sequence);
 
-      const result = service.getInitialCursorForNewWorkspace('Ic0');
+      const result = service.getInitialCursorForNewWorkspace({
+        name: 'Ic0',
+        status: 'completed',
+      });
 
-      expect(result.name).toBe('Wc1');
+      expect(result).toEqual({ name: 'Wc1', status: 'completed' });
     });
 
     it('should return the instance command itself when at end of sequence', async () => {
-      // Sequence: Wc0 → Ic0 (no workspace commands after Ic0)
-      // Ic0 completed, next is undefined → returns Ic0
       const sequence = [makeWorkspace('Wc0'), makeFastInstance('Ic0')];
 
       const service = await buildServiceWithMockedSequence(sequence);
 
-      const result = service.getInitialCursorForNewWorkspace('Ic0');
+      const result = service.getInitialCursorForNewWorkspace({
+        name: 'Ic0',
+        status: 'completed',
+      });
 
-      expect(result.name).toBe('Ic0');
+      expect(result).toEqual({ name: 'Ic0', status: 'completed' });
     });
 
     it('should return the instance command itself when no workspace command exists before it', async () => {
-      // Sequence: Ic0 → Ic1 → Wc0 (no workspace before Ic0)
-      // Ic0 completed, next is Ic1 (instance) → returns Ic0
       const sequence = [
         makeFastInstance('Ic0'),
         makeFastInstance('Ic1'),
@@ -169,14 +172,15 @@ describe('UpgradeSequenceReaderService', () => {
 
       const service = await buildServiceWithMockedSequence(sequence);
 
-      const result = service.getInitialCursorForNewWorkspace('Ic0');
+      const result = service.getInitialCursorForNewWorkspace({
+        name: 'Ic0',
+        status: 'completed',
+      });
 
-      expect(result.name).toBe('Ic0');
+      expect(result).toEqual({ name: 'Ic0', status: 'completed' });
     });
 
     it('should return final segment when last instance command is completed', async () => {
-      // Sequence: Wc0 → Ic0 → Wc1 → Ic1 → Wc2 → Wc3
-      // Ic1 completed, next is Wc2 (workspace) → returns Wc3 (last of final segment)
       const sequence = [
         makeWorkspace('Wc0'),
         makeFastInstance('Ic0'),
@@ -188,14 +192,15 @@ describe('UpgradeSequenceReaderService', () => {
 
       const service = await buildServiceWithMockedSequence(sequence);
 
-      const result = service.getInitialCursorForNewWorkspace('Ic1');
+      const result = service.getInitialCursorForNewWorkspace({
+        name: 'Ic1',
+        status: 'completed',
+      });
 
-      expect(result.name).toBe('Wc3');
+      expect(result).toEqual({ name: 'Wc3', status: 'completed' });
     });
 
     it('should handle single workspace command in segment', async () => {
-      // Sequence: Ic0 → Wc0 → Ic1 → Wc1
-      // Ic0 completed, next is Wc0 (workspace) → returns Wc0 (only one in segment)
       const sequence = [
         makeFastInstance('Ic0'),
         makeWorkspace('Wc0'),
@@ -205,14 +210,15 @@ describe('UpgradeSequenceReaderService', () => {
 
       const service = await buildServiceWithMockedSequence(sequence);
 
-      const result = service.getInitialCursorForNewWorkspace('Ic0');
+      const result = service.getInitialCursorForNewWorkspace({
+        name: 'Ic0',
+        status: 'completed',
+      });
 
-      expect(result.name).toBe('Wc0');
+      expect(result).toEqual({ name: 'Wc0', status: 'completed' });
     });
 
     it('should return the instance command itself when sequence ends with instance commands batch', async () => {
-      // Sequence: Ic0 → Wc0 → Wc1 → Ic1 → Ic2 (no workspace after Ic1/Ic2)
-      // Ic2 completed, next is undefined → returns Ic2
       const sequence = [
         makeFastInstance('Ic0'),
         makeWorkspace('Wc0'),
@@ -223,9 +229,71 @@ describe('UpgradeSequenceReaderService', () => {
 
       const service = await buildServiceWithMockedSequence(sequence);
 
-      const result = service.getInitialCursorForNewWorkspace('Ic2');
+      const result = service.getInitialCursorForNewWorkspace({
+        name: 'Ic2',
+        status: 'completed',
+      });
 
-      expect(result.name).toBe('Ic2');
+      expect(result).toEqual({ name: 'Ic2', status: 'completed' });
+    });
+
+    it('should return the failed instance command when IC failed — not skip forward to WC segment', async () => {
+      // Sequence: Ic0 → Ic1 → Wc0 → Wc1
+      // Ic1 failed → cursor stays at Ic1:failed (does NOT skip to Wc1)
+      const sequence = [
+        makeFastInstance('Ic0'),
+        makeFastInstance('Ic1'),
+        makeWorkspace('Wc0'),
+        makeWorkspace('Wc1'),
+      ];
+
+      const service = await buildServiceWithMockedSequence(sequence);
+
+      const result = service.getInitialCursorForNewWorkspace({
+        name: 'Ic1',
+        status: 'failed',
+      });
+
+      expect(result).toEqual({ name: 'Ic1', status: 'failed' });
+    });
+
+    it('should return the failed instance command even when next step is a workspace command', async () => {
+      // Sequence: Ic0 → Wc0 → Wc1
+      // Ic0 failed → cursor stays at Ic0:failed
+      const sequence = [
+        makeFastInstance('Ic0'),
+        makeWorkspace('Wc0'),
+        makeWorkspace('Wc1'),
+      ];
+
+      const service = await buildServiceWithMockedSequence(sequence);
+
+      const result = service.getInitialCursorForNewWorkspace({
+        name: 'Ic0',
+        status: 'failed',
+      });
+
+      expect(result).toEqual({ name: 'Ic0', status: 'failed' });
+    });
+
+    it('should return the failed mid-segment instance command', async () => {
+      // Sequence: Ic0 → Ic1 → Ic2 → Wc0
+      // Ic1 failed (Ic0 completed but Ic1 is the last attempted) → cursor at Ic1:failed
+      const sequence = [
+        makeFastInstance('Ic0'),
+        makeFastInstance('Ic1'),
+        makeFastInstance('Ic2'),
+        makeWorkspace('Wc0'),
+      ];
+
+      const service = await buildServiceWithMockedSequence(sequence);
+
+      const result = service.getInitialCursorForNewWorkspace({
+        name: 'Ic1',
+        status: 'failed',
+      });
+
+      expect(result).toEqual({ name: 'Ic1', status: 'failed' });
     });
   });
 });
