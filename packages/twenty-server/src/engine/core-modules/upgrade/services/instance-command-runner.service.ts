@@ -47,16 +47,6 @@ export class InstanceCommandRunnerService {
     if (isAlreadyCompleted) {
       this.logger.log(`${name} already executed, skipping`);
 
-      if (!skipHistory) {
-        await this.upgradeMigrationService.markInstanceCommandCompletedForWorkspaces(
-          {
-            name,
-            workspaceIds: activeOrSuspendedWorkspaceIds,
-            executedByVersion,
-          },
-        );
-      }
-
       return { status: 'already-executed' };
     }
 
@@ -74,6 +64,7 @@ export class InstanceCommandRunnerService {
           workspaceId: null,
           executedByVersion,
           queryRunner,
+          activeOrSuspendedWorkspaceIds,
         });
       }
 
@@ -89,6 +80,7 @@ export class InstanceCommandRunnerService {
           workspaceId: null,
           executedByVersion,
           error,
+          activeOrSuspendedWorkspaceIds,
         });
       }
 
@@ -100,16 +92,6 @@ export class InstanceCommandRunnerService {
       return { status: 'failed', error };
     } finally {
       await queryRunner.release();
-    }
-
-    if (!skipHistory) {
-      await this.upgradeMigrationService.markInstanceCommandCompletedForWorkspaces(
-        {
-          name,
-          workspaceIds: activeOrSuspendedWorkspaceIds,
-          executedByVersion,
-        },
-      );
     }
 
     this.logger.log(`${name} executed successfully`);
@@ -139,19 +121,6 @@ export class InstanceCommandRunnerService {
     if (isAlreadyCompleted) {
       this.logger.log(`${name} already executed, skipping`);
 
-      if (!skipHistory) {
-        const executedByVersion =
-          this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
-
-        await this.upgradeMigrationService.markInstanceCommandCompletedForWorkspaces(
-          {
-            name,
-            workspaceIds: activeOrSuspendedWorkspaceIds,
-            executedByVersion,
-          },
-        );
-      }
-
       return { status: 'already-executed' };
     }
 
@@ -168,6 +137,7 @@ export class InstanceCommandRunnerService {
             workspaceId: null,
             executedByVersion,
             error,
+            activeOrSuspendedWorkspaceIds,
           });
         }
 

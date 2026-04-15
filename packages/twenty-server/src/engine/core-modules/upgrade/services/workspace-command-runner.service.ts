@@ -82,6 +82,7 @@ export class WorkspaceCommandRunnerService {
           name,
           workspaceId,
           executedByVersion,
+          activeOrSuspendedWorkspaceIds: [],
         });
       }
     } catch (error) {
@@ -91,6 +92,7 @@ export class WorkspaceCommandRunnerService {
           workspaceId,
           executedByVersion,
           error,
+          activeOrSuspendedWorkspaceIds: [],
         });
       }
 
