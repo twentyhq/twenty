@@ -93,6 +93,14 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
     }
 
     for (const mailbox of mailboxList) {
+      // Skip \Noselect folders (pure container/hierarchy nodes) before any STATUS calls
+      if (!this.isMailboxSelectable(mailbox)) {
+        if (!pathToExternalIdMap.has(mailbox.path)) {
+          pathToExternalIdMap.set(mailbox.path, mailbox.path);
+        }
+        continue;
+      }
+
       if (!this.isValidMailbox(mailbox, folders)) {
         if (!pathToExternalIdMap.has(mailbox.path)) {
           pathToExternalIdMap.set(mailbox.path, mailbox.path);
