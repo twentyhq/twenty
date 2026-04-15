@@ -65,4 +65,9 @@ export class UpdateCommandMenuItemInput {
   @IsOptional()
   @Field(() => [String], { nullable: true })
   hotKeys?: string[];
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  conditionalAvailabilityExpression?: string;
 }
