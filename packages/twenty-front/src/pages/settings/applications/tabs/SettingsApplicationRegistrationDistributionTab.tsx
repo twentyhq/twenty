@@ -1,10 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import {
-  CommandBlock,
-  H2Title,
-  IconCopy,
-  IconInfoCircle,
-} from 'twenty-ui/display';
+import { CommandBlock, H2Title, IconCopy } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { SettingsPath } from 'twenty-shared/types';
@@ -12,14 +7,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { type ApplicationRegistrationData } from '~/pages/settings/applications/tabs/types/ApplicationRegistrationData';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsApplicationRegistrationShareLinkButtons } from '~/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons';
-
-const StyledButtonGroup = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
 
 export const SettingsApplicationRegistrationDistributionTab = ({
   registration,
@@ -52,6 +40,8 @@ export const SettingsApplicationRegistrationDistributionTab = ({
         {isNpmSource && (
           <SettingsApplicationRegistrationShareLinkButtons
             shareLink={shareLink}
+            isNpmSource
+            withCopyButton
           />
         )}
         {isTarballSource && (
@@ -80,6 +70,7 @@ export const SettingsApplicationRegistrationDistributionTab = ({
           />
           <SettingsApplicationRegistrationShareLinkButtons
             shareLink={shareLink}
+            withCopyButton
           />
         </Section>
       )}

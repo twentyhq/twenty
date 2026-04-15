@@ -207,25 +207,6 @@ export const SettingsAdminApplicationRegistrationDetailContent = ({
     return items;
   };
 
-  const getDownloadTarballButton = () => {
-    if (registration.sourceType !== ApplicationRegistrationSourceType.TARBALL) {
-      return null;
-    }
-
-    if (!isNonEmptyString(tarballUrlData?.applicationRegistrationTarballUrl)) {
-      return null;
-    }
-
-    return (
-      <Button
-        Icon={IconDownload}
-        title={t`Download tarball`}
-        variant="secondary"
-        to={tarballUrlData?.applicationRegistrationTarballUrl}
-      />
-    );
-  };
-
   const stats = statsData?.findApplicationRegistrationStats;
 
   const hasStats = (stats?.activeInstalls ?? 0) > 0;
@@ -268,6 +249,11 @@ export const SettingsAdminApplicationRegistrationDetailContent = ({
           />
           <SettingsApplicationRegistrationShareLinkButtons
             shareLink={shareLink}
+            isInstalled={isApplicationInstalled}
+            universalIdentifier={registration.universalIdentifier}
+            isNpmSource={
+              registration.sourceType === ApplicationRegistrationSourceType.NPM
+            }
           />
         </StyledGeneralContainer>
       </Section>
