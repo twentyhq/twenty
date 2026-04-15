@@ -85,7 +85,7 @@ export class UpgradeMigrationService {
           attempt: previousAttempts + 1,
           executedByVersion,
           workspaceId: null,
-          errorMessage: errorMessage ?? null,
+          errorMessage,
         },
         ...workspaceIds.map((workspaceId) => ({
           name,
@@ -93,7 +93,7 @@ export class UpgradeMigrationService {
           attempt: previousAttempts + 1,
           executedByVersion,
           workspaceId,
-          errorMessage: errorMessage ?? null,
+          errorMessage,
         })),
       ]);
 
@@ -113,7 +113,7 @@ export class UpgradeMigrationService {
         attempt: previousAttempts + 1,
         executedByVersion,
         workspaceId,
-        errorMessage: errorMessage ?? null,
+        errorMessage,
       });
     }
 
