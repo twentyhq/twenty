@@ -41,6 +41,7 @@ const makeTab = (
     position: 0,
     pageLayoutId: 'layout-1',
     applicationId: 'app-1',
+    isActive: true,
     layoutMode,
     widgets,
   }) as DraftPageLayout['tabs'][number];

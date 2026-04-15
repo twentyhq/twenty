@@ -174,6 +174,7 @@ export class PageLayoutUpdateService {
       });
 
     const orphanedViewIds = this.collectOrphanedViewIdsFromRemovedWidgets({
+      widgetsToCreate,
       widgetsToUpdate,
       widgetsToDelete,
       tabsToUpdate,
@@ -868,12 +869,14 @@ export class PageLayoutUpdateService {
   }
 
   private collectOrphanedViewIdsFromRemovedWidgets({
+    widgetsToCreate,
     widgetsToUpdate,
     widgetsToDelete,
     tabsToUpdate,
     tabsToDelete,
     flatPageLayoutWidgetMaps,
   }: {
+    widgetsToCreate: FlatPageLayoutWidget[];
     widgetsToUpdate: FlatPageLayoutWidget[];
     widgetsToDelete: FlatPageLayoutWidget[];
     tabsToUpdate: FlatPageLayoutTab[];
@@ -931,6 +934,14 @@ export class PageLayoutUpdateService {
         if (isDefined(viewId)) {
           viewIdsToDelete.delete(viewId);
         }
+      }
+    }
+
+    for (const widget of widgetsToCreate) {
+      const viewId = this.getViewIdFromFieldsWidget(widget);
+
+      if (isDefined(viewId)) {
+        viewIdsToDelete.delete(viewId);
       }
     }
 

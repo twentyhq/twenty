@@ -1,15 +1,15 @@
-import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMenuContextApi';
-import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
-import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
-import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
 import { CommandMenuItemEditRecordSelectionDropdown } from '@/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown';
 import { CommandMenuItemOptionsDropdown } from '@/command-menu-item/edit/components/CommandMenuItemOptionsDropdown';
 import { useReorderCommandMenuItemsInDraft } from '@/command-menu-item/edit/hooks/useReorderCommandMenuItemsInDraft';
 import { useResetCommandMenuItemsDraft } from '@/command-menu-item/edit/hooks/useResetCommandMenuItemsDraft';
 import { useUpdateCommandMenuItemInDraft } from '@/command-menu-item/edit/hooks/useUpdateCommandMenuItemInDraft';
 import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
-import { mainContextStoreHasSelectedRecordsSelector } from '@/context-store/states/selectors/mainContextStoreHasSelectedRecordsSelector';
+import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMenuContextApi';
+import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
+import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
+import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
+import { mainContextStoreHasSelectedRecordsSelector } from '@/context-store/states/selectors/mainContextStoreHasSelectedRecordsSelector';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -100,9 +100,9 @@ export const SidePanelCommandMenuItemEditPage = () => {
     ...(isIndexPage || isRecordPage
       ? [CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT]
       : []),
-    mainContextStoreHasSelectedRecords
-      ? CommandMenuItemAvailabilityType.RECORD_SELECTION
-      : CommandMenuItemAvailabilityType.FALLBACK,
+    ...(mainContextStoreHasSelectedRecords
+      ? [CommandMenuItemAvailabilityType.RECORD_SELECTION]
+      : []),
   ]);
 
   const filteredCommandMenuItems = commandMenuItemsDraft
@@ -273,16 +273,16 @@ export const SidePanelCommandMenuItemEditPage = () => {
                           isIconDisplayedOnHoverOnly={false}
                           iconButtons={[
                             {
+                              Icon: IconDotsVertical,
+                              Wrapper: makeOptionsDropdownWrapper(item),
+                              onClick: () => {},
+                            },
+                            {
                               Icon: IconPinnedOff,
                               onClick: (event) => {
                                 event.stopPropagation();
                                 handleTogglePin(item.id, true);
                               },
-                            },
-                            {
-                              Icon: IconDotsVertical,
-                              Wrapper: makeOptionsDropdownWrapper(item),
-                              onClick: () => {},
                             },
                           ]}
                         />
