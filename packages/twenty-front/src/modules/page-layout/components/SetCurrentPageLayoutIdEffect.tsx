@@ -13,6 +13,10 @@ export const SetCurrentPageLayoutIdEffect = ({
 
   useEffect(() => {
     store.set(currentPageLayoutIdState.atom, pageLayoutId);
+
+    return () => {
+      store.set(currentPageLayoutIdState.atom, null);
+    };
   }, [pageLayoutId, store]);
 
   return null;
