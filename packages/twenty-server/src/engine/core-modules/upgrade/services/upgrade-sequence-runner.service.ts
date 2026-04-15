@@ -157,7 +157,7 @@ export class UpgradeSequenceRunnerService {
             workspaceCommand: lastAttemptedStep,
           });
 
-        await this.validateWorkspaceCursorsAreInSameSegment({
+        await this.validateWorkspaceCursorsAreInWorkspaceSegment({
           sequence,
           allActiveOrSuspendedWorkspaceIds,
           workspaceSliceBounds,
@@ -170,7 +170,7 @@ export class UpgradeSequenceRunnerService {
     }
   }
 
-  private async validateWorkspaceCursorsAreInSameSegment({
+  private async validateWorkspaceCursorsAreInWorkspaceSegment({
     allActiveOrSuspendedWorkspaceIds,
     sequence,
     workspaceSliceBounds: { startCursor, endCursor },
@@ -184,36 +184,51 @@ export class UpgradeSequenceRunnerService {
         allActiveOrSuspendedWorkspaceIds,
       );
 
-    const workspacesOutsideOfSegment: Array<{
+    const precedingStep =
+      startCursor > 0 ? sequence[startCursor - 1] : undefined;
+
+    const invalidWorkspaces: Array<{
       workspaceId: string;
       cursorName: string;
+      cursorStatus: string;
     }> = [];
 
     for (const [workspaceId, workspaceCursor] of workspaceCursors) {
-      const cursor =
+      const cursorPosition =
         this.upgradeSequenceReaderService.locateStepInSequenceOrThrow({
           sequence,
           stepName: workspaceCursor.name,
         });
 
-      if (cursor < startCursor || cursor > endCursor) {
-        workspacesOutsideOfSegment.push({
+      const isWithinSegment =
+        cursorPosition >= startCursor && cursorPosition <= endCursor;
+
+      const isAtPrecedingInstanceCommandCompleted =
+        isDefined(precedingStep) &&
+        precedingStep.kind !== 'workspace' &&
+        cursorPosition === startCursor - 1 &&
+        workspaceCursor.status === 'completed';
+
+      if (!isWithinSegment && !isAtPrecedingInstanceCommandCompleted) {
+        invalidWorkspaces.push({
           workspaceId,
           cursorName: workspaceCursor.name,
+          cursorStatus: workspaceCursor.status,
         });
       }
     }
 
-    if (workspacesOutsideOfSegment.length > 0) {
-      const details = workspacesOutsideOfSegment
+    if (invalidWorkspaces.length > 0) {
+      const details = invalidWorkspaces
         .map(
-          ({ workspaceId, cursorName }) => `${workspaceId} at "${cursorName}"`,
+          ({ workspaceId, cursorName, cursorStatus }) =>
+            `${workspaceId} at "${cursorName}" (${cursorStatus})`,
         )
         .join(', ');
 
       throw new Error(
-        `${workspacesOutsideOfSegment.length} workspace(s) have cursors outside the ` +
-          `current segment [${startCursor}..${endCursor}]: ${details}`,
+        `${invalidWorkspaces.length} workspace(s) have invalid cursors for ` +
+          `workspace segment [${startCursor}..${endCursor}]: ${details}`,
       );
     }
   }
