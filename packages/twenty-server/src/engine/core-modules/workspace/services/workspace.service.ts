@@ -386,8 +386,8 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     const lastCompletedInstanceCommandName =
       await this.upgradeMigrationService.getLastCompletedInstanceCommandNameOrThrow();
 
-    const lastWorkspaceCommandInCurrentSegment =
-      this.upgradeSequenceReaderService.getLastWorkspaceCommandInCurrentSegment(
+    const initialCursor =
+      this.upgradeSequenceReaderService.getInitialCursorForNewWorkspace(
         lastCompletedInstanceCommandName,
       );
 
@@ -406,7 +406,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       });
 
       await this.upgradeMigrationService.markAsInitial({
-        name: lastWorkspaceCommandInCurrentSegment.name,
+        name: initialCursor.name,
         workspaceId,
         executedByVersion,
         queryRunner,

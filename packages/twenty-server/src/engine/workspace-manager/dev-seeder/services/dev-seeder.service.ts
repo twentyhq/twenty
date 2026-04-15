@@ -77,8 +77,8 @@ export class DevSeederService {
 
     const lastCompletedInstanceCommandName =
       await this.upgradeMigrationService.getLastCompletedInstanceCommandNameOrThrow();
-    const lastWorkspaceCommand =
-      this.upgradeSequenceReaderService.getLastWorkspaceCommandInCurrentSegment(
+    const initialCursor =
+      this.upgradeSequenceReaderService.getInitialCursorForNewWorkspace(
         lastCompletedInstanceCommandName,
       );
 
@@ -86,7 +86,7 @@ export class DevSeederService {
       workspaceId,
       seedBilling: isBillingEnabled,
       appVersion,
-      lastUpgradeStepName: lastWorkspaceCommand.name,
+      lastUpgradeStepName: initialCursor.name,
     });
 
     await this.applicationRegistrationService.createCliRegistrationIfNotExists();
@@ -193,8 +193,8 @@ export class DevSeederService {
     const appVersion = this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
     const lastCompletedInstanceCommandName =
       await this.upgradeMigrationService.getLastCompletedInstanceCommandNameOrThrow();
-    const lastWorkspaceCommand =
-      this.upgradeSequenceReaderService.getLastWorkspaceCommandInCurrentSegment(
+    const initialCursor =
+      this.upgradeSequenceReaderService.getInitialCursorForNewWorkspace(
         lastCompletedInstanceCommandName,
       );
 
@@ -248,7 +248,7 @@ export class DevSeederService {
     );
 
     await this.upgradeMigrationService.markAsInitial({
-      name: lastWorkspaceCommand.name,
+      name: initialCursor.name,
       workspaceId,
       executedByVersion: appVersion,
     });

@@ -161,9 +161,9 @@ export class UpgradeSequenceReaderService {
       : workspaceCommands.slice(cursorIndex);
   }
 
-  getLastWorkspaceCommandInCurrentSegment(
+  getInitialCursorForNewWorkspace(
     lastCompletedInstanceCommandName: string,
-  ): RegisteredWorkspaceCommand {
+  ): { name: string } {
     const sequence = this.getUpgradeSequence();
 
     const instanceCursor = this.locateStepInSequenceOrThrow({
@@ -173,29 +173,14 @@ export class UpgradeSequenceReaderService {
 
     const nextStep = sequence[instanceCursor + 1];
 
-    if (!isDefined(nextStep) || nextStep.kind !== 'workspace') {
-      return this.findLastWorkspaceCommandBefore(sequence, instanceCursor);
+    if (isDefined(nextStep) && nextStep.kind === 'workspace') {
+      return this.findLastWorkspaceCommandInSegmentStartingAt(
+        sequence,
+        nextStep,
+      );
     }
 
-    return this.findLastWorkspaceCommandInSegmentStartingAt(sequence, nextStep);
-  }
-
-  private findLastWorkspaceCommandBefore(
-    sequence: UpgradeStep[],
-    beforeIndex: number,
-  ): RegisteredWorkspaceCommand {
-    for (let index = beforeIndex - 1; index >= 0; index--) {
-      const step = sequence[index];
-
-      if (step.kind === 'workspace') {
-        return step;
-      }
-    }
-
-    throw new Error(
-      'No workspace commands found before the given instance command — ' +
-        'this should have been caught at startup',
-    );
+    return { name: lastCompletedInstanceCommandName };
   }
 
   private findLastWorkspaceCommandInSegmentStartingAt(
