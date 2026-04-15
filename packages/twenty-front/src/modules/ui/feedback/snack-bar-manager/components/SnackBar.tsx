@@ -6,6 +6,7 @@ import { isUndefined } from '@sniptt/guards';
 import {
   type ComponentPropsWithoutRef,
   type ReactNode,
+  useCallback,
   useContext,
   useMemo,
 } from 'react';
@@ -70,12 +71,15 @@ const StyledContainer = styled.div`
 
 const StyledProgressBarContainer = styled.div`
   bottom: 0;
-  height: auto;
   left: 0;
   pointer-events: none;
   position: absolute;
   right: 0;
   top: 0;
+
+  & > [role='progressbar'] {
+    height: 100%;
+  }
 `;
 
 const StyledHeader = styled.div`
@@ -146,7 +150,7 @@ const defaultAriaLabelByVariant: Record<
 export const SnackBar = ({
   className,
   progress: overrideProgressValue,
-  duration,
+  duration = 6000,
   icon: iconComponent,
   id,
   message,
@@ -161,26 +165,14 @@ export const SnackBar = ({
 }: SnackBarProps) => {
   const { i18n, t } = useLingui();
   const { theme } = useContext(ThemeContext);
-
-  const resolvedDuration =
-    variant === SnackBarVariant.Error ? duration : duration ?? 6000;
-
-  const shouldAutoDismiss =
-    isUndefined(overrideProgressValue) && isDefined(resolvedDuration);
-
-  const shouldShowProgressBar =
-    isDefined(overrideProgressValue) || isDefined(resolvedDuration);
-
   const { animation: progressAnimation, value: progressValue } =
     useProgressAnimation({
-      autoPlay: shouldAutoDismiss,
+      autoPlay: isUndefined(overrideProgressValue),
       initialValue: isDefined(overrideProgressValue)
         ? overrideProgressValue
         : 100,
       finalValue: 0,
-      options: shouldAutoDismiss
-        ? { duration: resolvedDuration, onComplete: onClose }
-        : undefined,
+      options: { duration, onComplete: onClose },
     });
 
   const icon = useMemo(() => {
@@ -217,24 +209,29 @@ export const SnackBar = ({
   }, [iconComponent, variant, i18n, theme.icon.size.md, theme.snackBar]);
 
   const handleMouseEnter = () => {
-    if (progressAnimation?.state === 'running') {
-      progressAnimation.pause();
-    }
+    progressAnimation?.pause();
   };
 
   const handleMouseLeave = () => {
-    if (progressAnimation?.state === 'paused') {
-      progressAnimation.play();
-    }
+    progressAnimation?.play();
   };
 
   const sanitizedMessage = sanitizeMessageToRenderInSnackbar(message);
   const sanitizedDetailedMessage =
     sanitizeMessageToRenderInSnackbar(detailedMessage);
 
+  const handleClick = useCallback(() => {
+    const textToCopy = [sanitizedMessage, sanitizedDetailedMessage]
+      .filter(isDefined)
+      .join('\n');
+
+    navigator.clipboard.writeText(textToCopy);
+  }, [sanitizedMessage, sanitizedDetailedMessage]);
+
   return (
     <StyledContainer
       aria-live={role === 'alert' ? 'assertive' : 'polite'}
+      onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       title={sanitizedMessage ?? i18n._(defaultAriaLabelByVariant[variant])}
@@ -243,14 +240,12 @@ export const SnackBar = ({
       role={role}
       data-globally-prevent-click-outside
     >
-      {shouldShowProgressBar && (
-        <StyledProgressBarContainer>
-          <ProgressBar
-            barColor={theme.snackBar[variant].backgroundColor}
-            value={progressValue}
-          />
-        </StyledProgressBarContainer>
-      )}
+      <StyledProgressBarContainer>
+        <ProgressBar
+          barColor={theme.snackBar[variant].backgroundColor}
+          value={progressValue}
+        />
+      </StyledProgressBarContainer>
       <StyledHeader>
         <StyledIcon>{icon}</StyledIcon>
         <StyledMessage>{sanitizedMessage ?? ''}</StyledMessage>
