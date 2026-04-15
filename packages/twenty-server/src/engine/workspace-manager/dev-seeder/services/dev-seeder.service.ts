@@ -226,6 +226,14 @@ export class DevSeederService {
         queryRunner,
       );
 
+      await this.applicationService.createTwentyStandardApplication(
+        {
+          workspaceId,
+          skipCacheInvalidation: true,
+        },
+        queryRunner,
+      );
+
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
