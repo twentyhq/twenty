@@ -176,7 +176,9 @@ describe('UpgradeSequenceRunnerService — workspace segment alignment (integrat
           workspaceIds: [WS_1, WS_2],
         },
       }),
-    ).rejects.toThrow(/workspace\(s\) have cursors outside the current segment/);
+    ).rejects.toThrow(
+      /workspace\(s\) have cursors outside the current segment/,
+    );
   });
 
   it('should reject workspaces with cursors behind the current segment', async () => {
@@ -220,7 +222,9 @@ describe('UpgradeSequenceRunnerService — workspace segment alignment (integrat
           workspaceIds: [WS_1, WS_2],
         },
       }),
-    ).rejects.toThrow(/workspace\(s\) have cursors outside the current segment/);
+    ).rejects.toThrow(
+      /workspace\(s\) have cursors outside the current segment/,
+    );
   });
 
   it('should handle workspaces created at correct segment via isInitial', async () => {
