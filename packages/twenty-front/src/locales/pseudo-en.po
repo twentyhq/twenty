@@ -3184,7 +3184,6 @@ msgstr ""
 
 #. js-lingui-id: yz7wBu
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
-#: src/modules/side-panel/components/SidePanelToggleButton.tsx
 msgid "Close"
 msgstr ""
 
@@ -3195,7 +3194,6 @@ msgid "Close banner"
 msgstr ""
 
 #. js-lingui-id: saip/v
-#: src/modules/ui/layout/page-header/components/PageHeaderToggleSidePanelButton.tsx
 #: src/modules/side-panel/components/SidePanelToggleButton.tsx
 msgid "Close side panel"
 msgstr ""
@@ -9276,7 +9274,6 @@ msgstr ""
 #. js-lingui-id: 2FYpfJ
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
-#: src/modules/side-panel/components/SidePanelToggleButton.tsx
 msgid "More"
 msgstr ""
 
@@ -10719,7 +10716,6 @@ msgid "Open Outlook"
 msgstr ""
 
 #. js-lingui-id: bY2Xkv
-#: src/modules/ui/layout/page-header/components/PageHeaderToggleSidePanelButton.tsx
 #: src/modules/side-panel/components/SidePanelToggleButton.tsx
 msgid "Open side panel"
 msgstr ""
