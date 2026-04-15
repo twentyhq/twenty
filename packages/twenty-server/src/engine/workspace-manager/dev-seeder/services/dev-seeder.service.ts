@@ -217,13 +217,6 @@ export class DevSeederService {
         queryRunner,
       );
 
-      await this.upgradeMigrationService.markAsInitial({
-        name: lastWorkspaceCommand.name,
-        workspaceId,
-        executedByVersion: appVersion,
-        queryRunner,
-      });
-
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -231,6 +224,28 @@ export class DevSeederService {
     } finally {
       await queryRunner.release();
     }
+
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
+    await this.devSeederPermissionsService.initMinimalPermissionsAndActivateWorkspace(
+      {
+        workspaceId,
+        workspaceCustomFlatApplication,
+      },
+    );
+
+    await this.upgradeMigrationService.markAsInitial({
+      name: lastWorkspaceCommand.name,
+      workspaceId,
+      executedByVersion: appVersion,
+    });
+
+    await this.workspaceCacheStorageService.flush(workspaceId, undefined);
   }
 
   private async seedCoreSchema({
