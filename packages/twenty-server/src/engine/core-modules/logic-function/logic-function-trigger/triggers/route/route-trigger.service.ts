@@ -16,6 +16,7 @@ import {
 import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { CustomException } from 'src/utils/custom-exception';
 
 @Injectable()
 export class RouteTriggerService {
@@ -168,6 +169,12 @@ export class RouteTriggerService {
       throw new RouteTriggerException(
         `Logic function execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
         RouteTriggerExceptionCode.LOGIC_FUNCTION_EXECUTION_ERROR,
+        {
+          userFriendlyMessage:
+            error instanceof CustomException
+              ? error.userFriendlyMessage
+              : undefined,
+        },
       );
     }
 

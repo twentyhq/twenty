@@ -1015,7 +1015,10 @@ export class LambdaDriver implements LogicFunctionDriver {
       this.logger.error(
         `Failed to get dependency layer for function ${flatLogicFunction.id}: ${error}`,
       );
-      throw error;
+      throw new LogicFunctionException(
+        `Failed to get dependency layer for function '${flatLogicFunction.id}': ${error instanceof Error ? error.message : 'Unknown error'}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED,
+      );
     }
 
     let sdkLayerArn: string;
@@ -1029,7 +1032,10 @@ export class LambdaDriver implements LogicFunctionDriver {
       this.logger.error(
         `Failed to get SDK layer for function ${flatLogicFunction.id}: ${error}`,
       );
-      throw error;
+      throw new LogicFunctionException(
+        `Failed to get SDK layer for function '${flatLogicFunction.id}': ${error instanceof Error ? error.message : 'Unknown error'}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED,
+      );
     }
 
     if (!isDefined(lambdaExecutor)) {
@@ -1188,7 +1194,15 @@ export class LambdaDriver implements LogicFunctionDriver {
           LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
         );
       }
-      throw error;
+
+      if (error instanceof LogicFunctionException) {
+        throw error;
+      }
+
+      throw new LogicFunctionException(
+        `Lambda invocation failed for function '${flatLogicFunction.id}': ${error instanceof Error ? error.message : 'Unknown error'}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_FAILED,
+      );
     }
   }
 }
