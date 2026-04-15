@@ -2,6 +2,7 @@
 
 ## Implemented imperative features
 
+- `#1` Predictive Lead Scoring (rules-based v1)
 - `#11` Data Quality Command Center (v1 rules-based)
 - `#23` Email Sequences simulation
 - `#25` Meeting Scheduler (round-robin)
@@ -9,6 +10,7 @@
 - `#40` Executive Real-Time Scorecard
 - `#49` Multi-Pipeline Support summary
 - `#50` Deal Rotation Warning
+- `#56` Gamification leaderboard + achievements
 - `#59` Customer Health Score
 - `#61` NPS / CSAT Automation plan
 - `#62` Renewal Management plan

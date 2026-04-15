@@ -16,6 +16,8 @@ import { FeatureRegistryService } from 'src/modules/crm-acceleration/services/fe
 import { FieldRbacService } from 'src/modules/crm-acceleration/services/field-rbac.service';
 import { McpExtensionPointsService } from 'src/modules/crm-acceleration/services/mcp-extension-points.service';
 import { PipelineExecutionService } from 'src/modules/crm-acceleration/services/pipeline-execution.service';
+import { GamificationModule } from 'src/modules/gamification/gamification.module';
+import { LeadScoringModule } from 'src/modules/lead-scoring/lead-scoring.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { PipelineExecutionService } from 'src/modules/crm-acceleration/services/
     ObjectMetadataModule,
     FieldMetadataModule,
     DataSourceModule,
+    LeadScoringModule,
+    GamificationModule,
   ],
   controllers: [CrmAccelerationController],
   providers: [

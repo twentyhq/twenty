@@ -1,52 +1,20 @@
-name: twenty
+name: twentyccg
 
 services:
-  db:
-    image: postgres:16-alpine
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: ${PG_DATABASE_NAME:-default}
-      POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD:-twenty}
-      POSTGRES_USER: ${PG_DATABASE_USER:-twenty}
-    healthcheck:
-      test: pg_isready -U ${PG_DATABASE_USER:-twenty} -h localhost -d postgres
-      interval: 5s
-      timeout: 5s
-      retries: 10
-    restart: unless-stopped
-
-  redis:
-    image: redis:7-alpine
-    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
-    volumes:
-      - redis-data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-    restart: unless-stopped
-
   server:
-    build:
-      context: .
-      dockerfile: packages/twenty-docker/twenty/Dockerfile
-      target: twenty
-    volumes:
-      - server-local-data:/app/packages/twenty-server/.local-storage
+    image: twentycrm/twenty:${TAG:-latest}
     ports:
       - "3000:3000"
+    volumes:
+      - server-local-data:/app/packages/twenty-server/.local-storage
     environment:
       NODE_PORT: 3000
-      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-twenty}:${PG_DATABASE_PASSWORD:-twenty}@db:5432/${PG_DATABASE_NAME:-default}
+      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@db:5432/default
       SERVER_URL: ${SERVER_URL:-http://localhost:3000}
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
-      STORAGE_TYPE: ${STORAGE_TYPE:-local}
-      APP_SECRET: ${APP_SECRET:-change_me_with_openssl_rand_base64_32}
+      REDIS_URL: redis://redis:6379
+      STORAGE_TYPE: local
+      APP_SECRET: ${APP_SECRET:-replace_me_with_a_random_string_for_dev}
       SIGN_IN_PREFILLED: ${SIGN_IN_PREFILLED:-true}
-      DISABLE_DB_MIGRATIONS: "false"
-      DISABLE_CRON_JOBS_REGISTRATION: "false"
     depends_on:
       db:
         condition: service_healthy
@@ -56,23 +24,20 @@ services:
       test: curl --fail http://localhost:3000/healthz
       interval: 5s
       timeout: 5s
-      retries: 20
-    restart: unless-stopped
+      retries: 30
+    restart: always
 
   worker:
-    build:
-      context: .
-      dockerfile: packages/twenty-docker/twenty/Dockerfile
-      target: twenty
+    image: twentycrm/twenty:${TAG:-latest}
     volumes:
       - server-local-data:/app/packages/twenty-server/.local-storage
     command: ["yarn", "worker:prod"]
     environment:
-      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-twenty}:${PG_DATABASE_PASSWORD:-twenty}@db:5432/${PG_DATABASE_NAME:-default}
+      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@db:5432/default
       SERVER_URL: ${SERVER_URL:-http://localhost:3000}
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
-      STORAGE_TYPE: ${STORAGE_TYPE:-local}
-      APP_SECRET: ${APP_SECRET:-change_me_with_openssl_rand_base64_32}
+      REDIS_URL: redis://redis:6379
+      STORAGE_TYPE: local
+      APP_SECRET: ${APP_SECRET:-replace_me_with_a_random_string_for_dev}
       DISABLE_DB_MIGRATIONS: "true"
       DISABLE_CRON_JOBS_REGISTRATION: "true"
     depends_on:
@@ -80,9 +45,37 @@ services:
         condition: service_healthy
       server:
         condition: service_healthy
-    restart: unless-stopped
+    restart: always
+
+  db:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: default
+      POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD:-postgres}
+      POSTGRES_USER: ${PG_DATABASE_USER:-postgres}
+    healthcheck:
+      test: pg_isready -U ${PG_DATABASE_USER:-postgres} -h localhost -d postgres
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    command: ["--maxmemory-policy", "noeviction"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always
 
 volumes:
   db-data:
-  redis-data:
   server-local-data:

@@ -22,6 +22,13 @@ import { FeatureRegistryService } from 'src/modules/crm-acceleration/services/fe
 import { FieldRbacService } from 'src/modules/crm-acceleration/services/field-rbac.service';
 import { McpExtensionPointsService } from 'src/modules/crm-acceleration/services/mcp-extension-points.service';
 import { PipelineExecutionService } from 'src/modules/crm-acceleration/services/pipeline-execution.service';
+import {
+  GamificationService,
+} from 'src/modules/gamification/services/gamification.service';
+import {
+  LeadScoringService,
+  type LeadScoreInput,
+} from 'src/modules/lead-scoring/services/lead-scoring.service';
 import { type CrmFeatureId } from 'src/modules/crm-acceleration/types/crm-acceleration.types';
 
 @Controller('rest/crm-acceleration')
@@ -37,6 +44,8 @@ export class CrmAccelerationController {
     private readonly dataQualityCommandCenterService: DataQualityCommandCenterService,
     private readonly fieldRbacService: FieldRbacService,
     private readonly mcpExtensionPointsService: McpExtensionPointsService,
+    private readonly leadScoringService: LeadScoringService,
+    private readonly gamificationService: GamificationService,
   ) {}
 
   private parseFeatureId(featureId: string): CrmFeatureId {
@@ -384,6 +393,83 @@ export class CrmAccelerationController {
       route: 'data-quality/analyze',
       payload: body,
       execute: () => this.dataQualityCommandCenterService.analyze(body),
+    });
+  }
+
+  @Post('lead-scoring/score')
+  calculateLeadScore(@AuthWorkspace() workspace: FlatWorkspace, @Body() body: LeadScoreInput) {
+    return this.executeAndPersist({
+      workspaceId: workspace.id,
+      featureId: 1,
+      route: 'lead-scoring/score',
+      payload: body,
+      execute: () => this.leadScoringService.calculateScore(body),
+    });
+  }
+
+  @Post('lead-scoring/batch')
+  calculateLeadScores(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Body()
+    body: {
+      leads: Array<{
+        leadId: string;
+        data: LeadScoreInput;
+      }>;
+    },
+  ) {
+    return this.executeAndPersist({
+      workspaceId: workspace.id,
+      featureId: 1,
+      route: 'lead-scoring/batch',
+      payload: body,
+      execute: () => this.leadScoringService.batchScore(body.leads),
+    });
+  }
+
+  @Post('gamification/leaderboard')
+  buildGamificationLeaderboard(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Body()
+    body: {
+      users: Array<{
+        id: string;
+        name: string;
+        dealsWon: number;
+        revenue: number;
+        badgeCount: number;
+      }>;
+    },
+  ) {
+    return this.executeAndPersist({
+      workspaceId: workspace.id,
+      featureId: 56,
+      route: 'gamification/leaderboard',
+      payload: body,
+      execute: () => this.gamificationService.calculateLeaderboard(body.users),
+    });
+  }
+
+  @Post('gamification/achievements')
+  evaluateGamificationAchievements(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Body()
+    body: {
+      userStats: {
+        dealsWon: number;
+        revenue: number;
+        dealsCreated: number;
+        ticketsResolved: number;
+      };
+      badges: Array<{ type: string; criteria: string }>;
+    },
+  ) {
+    return this.executeAndPersist({
+      workspaceId: workspace.id,
+      featureId: 56,
+      route: 'gamification/achievements',
+      payload: body,
+      execute: () => this.gamificationService.checkAchievements(body.userStats, body.badges),
     });
   }
 

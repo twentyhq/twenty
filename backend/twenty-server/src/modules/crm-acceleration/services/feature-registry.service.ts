@@ -11,6 +11,14 @@ import {
 
 const IMPLEMENTED_FEATURES: CrmFeatureDefinition[] = [
   {
+    id: 1,
+    name: 'Predictive Lead Scoring',
+    module: 'M1',
+    status: 'implemented',
+    isImperative: true,
+    notes: 'Rules-based v1 exposed through crm-acceleration routes',
+  },
+  {
     id: 11,
     name: 'Data Quality Command Center',
     module: 'M1',
@@ -59,6 +67,14 @@ const IMPLEMENTED_FEATURES: CrmFeatureDefinition[] = [
     module: 'M5',
     status: 'implemented',
     isImperative: true,
+  },
+  {
+    id: 56,
+    name: 'Gamification',
+    module: 'M5',
+    status: 'implemented',
+    isImperative: true,
+    notes: 'Leaderboard and achievement evaluation endpoints exposed',
   },
   {
     id: 59,

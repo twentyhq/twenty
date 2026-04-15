@@ -13,7 +13,7 @@ export const CRM_PENDING_MODULES: PendingModuleStructure[] = [
   {
     module: 'M1',
     title: 'Inteligencia Artificial & Machine Learning',
-    pendingFeatureIds: without(range(1, 16), [11]),
+    pendingFeatureIds: without(range(1, 16), [1, 11]),
     completionPhase: 'phase-2',
   },
   {
@@ -37,7 +37,7 @@ export const CRM_PENDING_MODULES: PendingModuleStructure[] = [
   {
     module: 'M5',
     title: 'Sales Execution & Pipeline Management',
-    pendingFeatureIds: without(range(49, 58), [49, 50]),
+    pendingFeatureIds: without(range(49, 58), [49, 50, 56]),
     completionPhase: 'phase-2',
   },
   {
