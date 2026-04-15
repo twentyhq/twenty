@@ -86,12 +86,6 @@ export const useIdentifyActiveNavigationMenuItems = (): {
           const isLastClickedNavigationMenuItemRelevant =
             pathMatches || objectMatchesOnShowPage;
           if (isLastClickedNavigationMenuItemRelevant) {
-            console.log(
-              'relevant navigation menu item',
-              navigationMenuItems.find(
-                (item) => item.id === lastClickedNavigationMenuItemId,
-              ),
-            );
             return {
               activeNavigationMenuItemIds: [lastClickedItem.id],
               objectMetadataIdForOpenedSection: null,
@@ -134,13 +128,6 @@ export const useIdentifyActiveNavigationMenuItems = (): {
           ...matchingObjectNavigationMenuItemIds,
         ];
 
-        console.log(
-          'isOnRecordShowPage navigation menu item',
-          navigationMenuItems.find((item) =>
-            activeNavigationMenuItemIds.includes(item.id),
-          ),
-        );
-
         return {
           activeNavigationMenuItemIds,
           objectMetadataIdForOpenedSection:
@@ -160,12 +147,6 @@ export const useIdentifyActiveNavigationMenuItems = (): {
         .map((item) => item.id);
 
       if (matchingViewNavigationMenuItemIds.length > 0) {
-        console.log(
-          'matchingViewNavigationMenuItemIds navigation menu item',
-          navigationMenuItems.filter((item) =>
-            matchingViewNavigationMenuItemIds.includes(item.id),
-          ),
-        );
         return {
           activeNavigationMenuItemIds: matchingViewNavigationMenuItemIds,
           objectMetadataIdForOpenedSection: null,
@@ -179,13 +160,6 @@ export const useIdentifyActiveNavigationMenuItems = (): {
             item.targetObjectMetadataId === currentObjectMetadataItem?.id,
         )
         .map((item) => item.id);
-
-      console.log(
-        'matchingObjectNavigationMenuItemIds navigation menu item',
-        navigationMenuItems.filter((item) =>
-          matchingObjectNavigationMenuItemIds.includes(item.id),
-        ),
-      );
 
       return {
         activeNavigationMenuItemIds: matchingObjectNavigationMenuItemIds,
