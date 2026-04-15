@@ -37,7 +37,13 @@ export class AddStandalonePageFastInstanceCommand
       "CREATE TYPE \"core\".\"navigationMenuItem_type_enum\" AS ENUM('VIEW', 'FOLDER', 'LINK', 'OBJECT', 'RECORD', 'PAGE_LAYOUT')",
     );
     await queryRunner.query(
+      'ALTER TABLE "core"."navigationMenuItem" ALTER COLUMN "type" DROP DEFAULT',
+    );
+    await queryRunner.query(
       'ALTER TABLE "core"."navigationMenuItem" ALTER COLUMN "type" TYPE "core"."navigationMenuItem_type_enum" USING "type"::"text"::"core"."navigationMenuItem_type_enum"',
+    );
+    await queryRunner.query(
+      'ALTER TABLE "core"."navigationMenuItem" ALTER COLUMN "type" SET DEFAULT \'VIEW\'',
     );
     await queryRunner.query(
       'DROP TYPE "core"."navigationMenuItem_type_enum_old"',
@@ -70,7 +76,13 @@ export class AddStandalonePageFastInstanceCommand
       "CREATE TYPE \"core\".\"navigationMenuItem_type_enum_old\" AS ENUM('FOLDER', 'LINK', 'OBJECT', 'RECORD', 'VIEW')",
     );
     await queryRunner.query(
+      'ALTER TABLE "core"."navigationMenuItem" ALTER COLUMN "type" DROP DEFAULT',
+    );
+    await queryRunner.query(
       'ALTER TABLE "core"."navigationMenuItem" ALTER COLUMN "type" TYPE "core"."navigationMenuItem_type_enum_old" USING "type"::"text"::"core"."navigationMenuItem_type_enum_old"',
+    );
+    await queryRunner.query(
+      'ALTER TABLE "core"."navigationMenuItem" ALTER COLUMN "type" SET DEFAULT \'VIEW\'',
     );
     await queryRunner.query('DROP TYPE "core"."navigationMenuItem_type_enum"');
     await queryRunner.query(
