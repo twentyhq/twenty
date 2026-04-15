@@ -7,6 +7,7 @@ import {
   type RegisteredWorkspaceCommand,
   UpgradeCommandRegistryService,
 } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
+import { isDefined } from 'twenty-shared/utils';
 
 export type FastInstanceUpgradeStep = {
   kind: 'fast-instance';
@@ -188,7 +189,7 @@ export class UpgradeSequenceReaderService {
 
     const nextStep = sequence[instanceCursor + 1];
 
-    if (!nextStep || nextStep.kind !== 'workspace') {
+    if (!isDefined(nextStep) || nextStep.kind !== 'workspace') {
       return this.findLastWorkspaceCommandBefore(sequence, instanceCursor);
     }
 
