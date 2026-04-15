@@ -6220,8 +6220,7 @@ export enum ViewType {
   CALENDAR = 'CALENDAR',
   FIELDS_WIDGET = 'FIELDS_WIDGET',
   KANBAN = 'KANBAN',
-  TABLE = 'TABLE',
-  TABLE_WIDGET = 'TABLE_WIDGET'
+  TABLE = 'TABLE'
 }
 
 export enum ViewVisibility {
