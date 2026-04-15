@@ -9,9 +9,13 @@ import { Card } from 'twenty-ui/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsEnterpriseFeatureGateCard = ({
+  title,
   description,
+  buttonTitle,
 }: {
+  title: string;
   description: string;
+  buttonTitle: string;
 }) => {
   const currentUser = useAtomStateValue(currentUserState);
   const navigateSettings = useNavigateSettings();
@@ -22,12 +26,12 @@ export const SettingsEnterpriseFeatureGateCard = ({
     <Card rounded>
       <SettingsOptionCardContentButton
         Icon={IconLock}
-        title={t`Enterprise feature`}
+        title={title}
         description={description}
         Button={
           canAccessAdminPanel ? (
             <Button
-              title={t`Activate`}
+              title={buttonTitle}
               variant="primary"
               accent="blue"
               size="small"

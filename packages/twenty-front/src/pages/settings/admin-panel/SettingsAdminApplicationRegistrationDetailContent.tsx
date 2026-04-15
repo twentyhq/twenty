@@ -156,10 +156,7 @@ export const SettingsAdminApplicationRegistrationDetailContent = ({
 
   return (
     <>
-      <H2Title
-        title={t`General`}
-        description={t`Name and description are managed via your app manifest (CLI)`}
-      />
+      <H2Title title={t`General`} description={t`About your app`} />
       <SettingsTableCard
         rounded
         items={generateItems()}

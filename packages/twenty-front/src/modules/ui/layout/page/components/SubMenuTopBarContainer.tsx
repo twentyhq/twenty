@@ -26,6 +26,8 @@ const StyledContainer = styled.div`
 `;
 
 const StyledTitle = styled.h3<{ reserveTitleSpace?: boolean }>`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.lg};
   font-weight: ${themeCssVariables.font.weight.semiBold};

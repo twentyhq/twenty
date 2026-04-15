@@ -41,6 +41,7 @@ import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
+import { t } from '@lingui/core/macro';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -295,7 +296,9 @@ export const SettingsSecurity = () => {
               </Card>
             ) : (
               <SettingsEnterpriseFeatureGateCard
+                title={t`Enterprise feature`}
                 description={t`Upgrade to Enterprise to access audit logs.`}
+                buttonTitle={t`Activate`}
               />
             )}
           </Section>

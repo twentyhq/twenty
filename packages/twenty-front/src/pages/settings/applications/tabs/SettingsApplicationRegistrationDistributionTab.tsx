@@ -1,18 +1,20 @@
+/* @license Enterprise */
+
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import {
+  CommandBlock,
   H2Title,
   IconChartBar,
   IconCopy,
-  IconDownload,
+  IconBrandDocker,
   IconExternalLink,
-  IconTag,
+  IconStatusChange,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { Card, Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/layout';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
@@ -25,10 +27,10 @@ import { type ApplicationRegistrationData } from '~/pages/settings/applications/
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
+import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
-const StyledButtonGroup = styled.div`
+const StyledButtonContainer = styled.div`
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
   padding-top: ${themeCssVariables.spacing[2]};
 `;
 
@@ -66,6 +68,7 @@ export const SettingsApplicationRegistrationDistributionTab = ({
   });
 
   const stats = statsData?.findApplicationRegistrationStats;
+
   const hasStats = (stats?.activeInstalls ?? 0) > 0;
 
   const versionDistributionLabel =
@@ -78,12 +81,12 @@ export const SettingsApplicationRegistrationDistributionTab = ({
 
   const statsItems = [
     {
-      Icon: IconDownload,
+      Icon: IconBrandDocker,
       label: t`Active installs`,
       value: stats?.activeInstalls ?? '—',
     },
     {
-      Icon: IconTag,
+      Icon: IconStatusChange,
       label: t`Most installed version`,
       value: stats?.mostInstalledVersion ?? '—',
     },
@@ -94,69 +97,64 @@ export const SettingsApplicationRegistrationDistributionTab = ({
     },
   ];
 
+  const publishCommands = ['yarn twenty publish'];
+
   return (
     <>
-      {isNpmSource && (
-        <Section>
-          <H2Title
-            title={t`Marketplace Listing`}
-            description={t`This app is listed on the marketplace because it is published to npm.`}
-          />
-          <Card rounded>
-            <SettingsOptionCardContentToggle
-              title={t`Featured`}
-              description={t`Featured apps are curated. Open a PR to request featured status.`}
-              checked={registration.isFeatured}
-              onChange={() => {}}
-              disabled
-            />
-          </Card>
-          <StyledButtonGroup>
-            <Button
-              Icon={IconExternalLink}
-              title={t`View marketplace page`}
-              variant="secondary"
-              to={shareLink}
-            />
-          </StyledButtonGroup>
-        </Section>
-      )}
-
-      {isTarballSource &&
-        (!hasEnterpriseAccess ? (
-          <SettingsEnterpriseFeatureGateCard
-            description={t`Upgrade to Enterprise to share private applications.`}
-          />
-        ) : (
+      {isTarballSource && (
+        <>
           <Section>
             <H2Title
-              title={t`Share`}
-              description={t`Share this link with other workspaces on this server to let them install this application.`}
+              title={t`Public`}
+              description={t`Publish your app to the marketplace so others can install it`}
             />
-            <StyledButtonGroup>
+            <CommandBlock
+              commands={publishCommands}
+              button={
+                <Button
+                  onClick={() => {
+                    copyToClipboard(
+                      publishCommands.join('\n'),
+                      t`Command copied to clipboard`,
+                    );
+                  }}
+                  ariaLabel={t`Copy command`}
+                  Icon={IconCopy}
+                />
+              }
+            />
+          </Section>
+          <Section>
+            <H2Title
+              title={t`Private`}
+              description={t`Share your app to other workspaces without pushing it on the marketplace`}
+              adornment={!hasEnterpriseAccess && <OrganizationAdornment />}
+            />
+            {!hasEnterpriseAccess ? (
+              <SettingsEnterpriseFeatureGateCard
+                title={t`Upgrade to access`}
+                description={t`This feature is part of the Organization Plan`}
+                buttonTitle={t`Upgrade`}
+              />
+            ) : (
               <Button
                 Icon={IconCopy}
-                title={t`Copy share link`}
+                title={t`Copy sharing link`}
                 variant="secondary"
                 disabled={!shareLink}
                 onClick={async () => {
                   if (shareLink) {
                     await copyToClipboard(
                       shareLink,
-                      t`Share link copied to clipboard`,
+                      t`Sharing link copied to clipboard`,
                     );
                   }
                 }}
               />
-              <Button
-                Icon={IconExternalLink}
-                title={t`View private application page`}
-                variant="secondary"
-                to={shareLink}
-              />
-            </StyledButtonGroup>
+            )}
           </Section>
-        ))}
+        </>
+      )}
 
       {hasStats && (
         <Section>
@@ -167,8 +165,18 @@ export const SettingsApplicationRegistrationDistributionTab = ({
           <SettingsTableCard
             rounded
             items={statsItems}
-            gridAutoColumns="3fr 8fr"
+            gridAutoColumns="200px 1fr"
           />
+          {isNpmSource && (
+            <StyledButtonContainer>
+              <Button
+                Icon={IconExternalLink}
+                title={t`See on marketplace`}
+                variant="secondary"
+                to={shareLink}
+              />
+            </StyledButtonContainer>
+          )}
         </Section>
       )}
     </>

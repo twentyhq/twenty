@@ -124,6 +124,7 @@ export {
   IconBracketsContain,
   IconBrain,
   IconBrandDaysCounter,
+  IconBrandDocker,
   IconBrandGithub,
   IconBrandGoogle,
   IconBrandGraphql,

@@ -14,12 +14,10 @@ const REGISTRATION_DETAIL_TAB_LIST_ID =
 
 type SettingsApplicationRegistrationContentProps = {
   registration: ApplicationRegistration;
-  hasActiveInstalls: boolean;
 };
 
 export const SettingsApplicationRegistrationContent = ({
   registration,
-  hasActiveInstalls,
 }: SettingsApplicationRegistrationContentProps) => {
   const { t } = useLingui();
 
