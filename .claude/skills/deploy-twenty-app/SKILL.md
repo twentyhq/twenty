@@ -121,6 +121,47 @@ Key points:
 - Use **inline styles** — no Linaria/CSS-in-JS available in the app sandbox
 - If the component needs to scroll, it must live in a **CANVAS** tab (see layout below)
 
+### Sandbox event system — user input (CRITICAL)
+
+Front components run in a Web Worker via Shopify's remote-dom library. DOM events fired
+on the main thread are serialized to a plain object and dispatched into the worker. **All
+useful event data arrives in `event.detail`** — standard properties like `e.target.value`,
+`e.key`, and `e.data` are `undefined`.
+
+**Reading input values:**
+
+```tsx
+const [value, setValue] = useState('');
+
+<input
+  type="text"
+  onChange={(e) => setValue((e as any).detail?.value ?? '')}
+  onKeyDown={(e) => {
+    const key = (e as any).detail?.key;
+    if (key === 'Enter') handleSave(value);
+    if (key === 'Escape') handleCancel();
+  }}
+/>
+```
+
+`onChange`/`onInput` detail shape: `{ type, value, checked, scrollTop, scrollLeft }`
+`onKeyDown` detail shape: `{ type, key, code, altKey, ctrlKey, metaKey, shiftKey, repeat, value, ... }`
+— note `value` in `onKeyDown.detail` is the field value **before** that keypress.
+
+**What does NOT work:**
+- `e.target.value` — `undefined`; target is a non-functional proxy
+- `e.key`, `e.data`, `e.inputType` — `undefined`; use `e.detail.key` / `e.detail.value`
+- `useRef` for DOM access — ref attaches but `.value` and all DOM methods are inaccessible
+- `element.focus()` — throws `TypeError`
+- `window.*` — `window` is not defined in a Worker; use `self` if needed
+
+**Allowed HTML elements:**
+Only a subset of elements are registered in remote-dom's component registry.
+Known safe: `div`, `span`, `table`, `thead`, `tbody`, `tr`, `th`, `td`, `input`, `button`.
+Semantic inline elements (`<b>`, `<strong>`, `<em>`, `<i>`) are **NOT** registered and
+cause `Error: No component found for remote element: b` at runtime. Use
+`<span style={{ fontWeight: 700 }}>` instead of `<b>` etc.
+
 ### Querying custom objects (not defined in the app manifest)
 
 `CoreApiClient` only knows about objects declared in the app's own manifest
@@ -225,7 +266,12 @@ Add all new UUIDs to `src/constants/universal-identifiers.ts`. Use valid v4 UUID
 
 ### 4. Deploy the tarball
 
+**Always bump the patch version** in `apps/stratum-quote-app/package.json` before deploying
+(e.g. `0.1.6` → `0.1.7`). This makes the version visible in the tarball name in the deploy
+output, so you can confirm at a glance that the new bundle actually went up.
+
 ```bash
+# Edit package.json version first, then:
 bash -c "export PATH='/home/clive/.nvm/versions/node/v24.14.0/bin:\$PATH' && \
   cd /home/clive/_Projects/stratum/twenty/source/apps/stratum-quote-app && \
   yarn twenty deploy --remote uat"
