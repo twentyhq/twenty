@@ -346,13 +346,11 @@ export class WorkflowTriggerWorkspaceService {
   ): Promise<{
     availabilityType: CommandMenuItemAvailabilityType;
     availabilityObjectMetadataId: string | undefined;
-    conditionalAvailabilityExpression: string | undefined;
   }> {
     const availability = trigger.settings.availability;
 
     let availabilityType = CommandMenuItemAvailabilityType.GLOBAL;
     let availabilityObjectMetadataId: string | undefined;
-    let conditionalAvailabilityExpression: string | undefined;
 
     if (availability) {
       switch (availability.type) {
@@ -362,10 +360,6 @@ export class WorkflowTriggerWorkspaceService {
         case 'SINGLE_RECORD':
         case 'BULK_RECORDS': {
           availabilityType = CommandMenuItemAvailabilityType.RECORD_SELECTION;
-
-          // Prevent the command menu item from being shown until this is implemented
-          conditionalAvailabilityExpression =
-            'isSelectAll == false and numberOfSelectedRecords >= 1';
 
           const { objectIdByNameSingular } =
             await this.workflowCommonWorkspaceService.getFlatEntityMaps(
@@ -388,11 +382,7 @@ export class WorkflowTriggerWorkspaceService {
       }
     }
 
-    return {
-      availabilityType,
-      availabilityObjectMetadataId,
-      conditionalAvailabilityExpression,
-    };
+    return { availabilityType, availabilityObjectMetadataId };
   }
 
   private async createOrUpdateCommandMenuItem(
@@ -408,11 +398,8 @@ export class WorkflowTriggerWorkspaceService {
 
     const trigger = workflowVersion.trigger as WorkflowManualTrigger;
 
-    const {
-      availabilityType,
-      availabilityObjectMetadataId,
-      conditionalAvailabilityExpression,
-    } = await this.resolveManualTriggerAvailability(trigger, workspaceId);
+    const { availabilityType, availabilityObjectMetadataId } =
+      await this.resolveManualTriggerAvailability(trigger, workspaceId);
 
     const label = isNonEmptyString(workflow.name)
       ? workflow.name
@@ -434,7 +421,6 @@ export class WorkflowTriggerWorkspaceService {
           isPinned: trigger.settings.isPinned,
           availabilityType,
           availabilityObjectMetadataId,
-          conditionalAvailabilityExpression,
         },
         workspaceId,
       );
@@ -449,7 +435,6 @@ export class WorkflowTriggerWorkspaceService {
           isPinned: trigger.settings.isPinned,
           availabilityType,
           availabilityObjectMetadataId,
-          conditionalAvailabilityExpression,
         },
         workspaceId,
       );
