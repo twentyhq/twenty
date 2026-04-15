@@ -735,6 +735,7 @@ enum ViewType {
   KANBAN
   CALENDAR
   FIELDS_WIDGET
+  TABLE_WIDGET
 }
 
 enum ViewKey {

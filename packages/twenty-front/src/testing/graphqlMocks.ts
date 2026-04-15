@@ -195,6 +195,13 @@ export const graphqlMocks = {
         },
       });
     }),
+    metadataGraphql.query('FindTableWidgetViews', () => {
+      return HttpResponse.json({
+        data: {
+          getViews: mockedViews.filter((view) => view.type === 'TABLE_WIDGET'),
+        },
+      });
+    }),
     metadataGraphql.query('FindAllRecordPageLayouts', () => {
       return HttpResponse.json({
         data: { getPageLayouts: [] },

@@ -74,12 +74,23 @@ export const useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInforma
             return undefined;
           }
 
-          const selectedRecordIds =
+          if (
             headlessEngineCommandContextApi.targetedRecordsRule.mode ===
-            'selection'
-              ? headlessEngineCommandContextApi.targetedRecordsRule
-                  .selectedRecordIds
-              : [];
+            'exclusion'
+          ) {
+            enqueueWarningSnackBar({
+              message: t`Running workflows on all records is not yet supported. Please select records manually.`,
+              options: {
+                dedupeKey: 'workflow-manual-trigger-select-all-not-supported',
+              },
+            });
+
+            return undefined;
+          }
+
+          const selectedRecordIds =
+            headlessEngineCommandContextApi.targetedRecordsRule
+              .selectedRecordIds;
 
           if (selectedRecordIds.length > QUERY_MAX_RECORDS) {
             const selectedCountFormatted =
