@@ -2197,6 +2197,11 @@ msgstr "Failed"
 msgid "Failed Insufficient Permissions"
 msgstr "Failed Insufficient Permissions"
 
+#. js-lingui-id: rl11Jd
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Failed to build function dependencies."
+msgstr "Failed to build function dependencies."
+
 #. js-lingui-id: E7Dsiq
 #: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
 msgid "Failed to create evaluation. Please try again."
@@ -2745,6 +2750,11 @@ msgstr "Function code failed to compile."
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function code is unchanged."
 msgstr "Function code is unchanged."
+
+#. js-lingui-id: rqDhd1
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Function execution failed."
+msgstr "Function execution failed."
 
 #. js-lingui-id: Ho3UAo
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -7220,6 +7230,7 @@ msgid "Too many records to update at once."
 msgstr "Too many records to update at once."
 
 #. js-lingui-id: M68C8m
+#: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/core-modules/email-verification/email-verification.exception.ts
 msgid "Too many requests. Please try again later."
 msgstr "Too many requests. Please try again later."
