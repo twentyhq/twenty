@@ -43,9 +43,6 @@ export class AddStandalonePageFastInstanceCommand
       'ALTER TABLE "core"."navigationMenuItem" ALTER COLUMN "type" TYPE "core"."navigationMenuItem_type_enum" USING "type"::"text"::"core"."navigationMenuItem_type_enum"',
     );
     await queryRunner.query(
-      'ALTER TABLE "core"."navigationMenuItem" ALTER COLUMN "type" SET DEFAULT \'VIEW\'',
-    );
-    await queryRunner.query(
       'DROP TYPE "core"."navigationMenuItem_type_enum_old"',
     );
     await queryRunner.query(
