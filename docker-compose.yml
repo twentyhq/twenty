@@ -3,81 +3,86 @@ name: twenty
 services:
   db:
     image: postgres:16-alpine
-    container_name: twenty-db
-    environment:
-      POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
-      POSTGRES_DB: ${DB_NAME:-default}
     volumes:
-      - postgres-data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${PG_DATABASE_NAME:-default}
+      POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD:-twenty}
+      POSTGRES_USER: ${PG_DATABASE_USER:-twenty}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
+      test: pg_isready -U ${PG_DATABASE_USER:-twenty} -h localhost -d postgres
+      interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
     restart: unless-stopped
 
   redis:
     image: redis:7-alpine
-    container_name: twenty-redis
-    command: ["redis-server", "--appendonly", "yes"]
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
     volumes:
       - redis-data:/data
-    ports:
-      - "6379:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
     restart: unless-stopped
 
-  backend:
+  server:
     build:
       context: .
-      dockerfile: backend/docker/twenty-server-dev/Dockerfile
-    container_name: twenty-backend
-    environment:
-      NODE_ENV: development
-      NX_DAEMON: "false"
-      PG_DATABASE_URL: "postgres://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@db:5432/${DB_NAME:-default}"
-      REDIS_URL: "redis://redis:6379"
-      SERVER_URL: "http://localhost:3000"
+      dockerfile: packages/twenty-docker/twenty/Dockerfile
+      target: twenty
+    volumes:
+      - server-local-data:/app/packages/twenty-server/.local-storage
     ports:
       - "3000:3000"
-    volumes:
-      - .:/app:delegated
-      - /app/node_modules
-      - /app/.cache
+    environment:
+      NODE_PORT: 3000
+      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-twenty}:${PG_DATABASE_PASSWORD:-twenty}@db:5432/${PG_DATABASE_NAME:-default}
+      SERVER_URL: ${SERVER_URL:-http://localhost:3000}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      STORAGE_TYPE: ${STORAGE_TYPE:-local}
+      APP_SECRET: ${APP_SECRET:-change_me_with_openssl_rand_base64_32}
+      SIGN_IN_PREFILLED: ${SIGN_IN_PREFILLED:-true}
+      DISABLE_DB_MIGRATIONS: "false"
+      DISABLE_CRON_JOBS_REGISTRATION: "false"
     depends_on:
       db:
         condition: service_healthy
       redis:
         condition: service_healthy
+    healthcheck:
+      test: curl --fail http://localhost:3000/healthz
+      interval: 5s
+      timeout: 5s
+      retries: 20
     restart: unless-stopped
 
-  frontend:
+  worker:
     build:
       context: .
-      dockerfile: frontend/docker/twenty-front-dev/Dockerfile
-    container_name: twenty-frontend
-    environment:
-      NODE_ENV: development
-      NX_DAEMON: "false"
-      API_URL: "http://localhost:3000"
-    ports:
-      - "3001:3001"
+      dockerfile: packages/twenty-docker/twenty/Dockerfile
+      target: twenty
     volumes:
-      - .:/app:delegated
-      - /app/node_modules
-      - /app/.cache
+      - server-local-data:/app/packages/twenty-server/.local-storage
+    command: ["yarn", "worker:prod"]
+    environment:
+      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-twenty}:${PG_DATABASE_PASSWORD:-twenty}@db:5432/${PG_DATABASE_NAME:-default}
+      SERVER_URL: ${SERVER_URL:-http://localhost:3000}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      STORAGE_TYPE: ${STORAGE_TYPE:-local}
+      APP_SECRET: ${APP_SECRET:-change_me_with_openssl_rand_base64_32}
+      DISABLE_DB_MIGRATIONS: "true"
+      DISABLE_CRON_JOBS_REGISTRATION: "true"
     depends_on:
-      backend:
-        condition: service_started
+      db:
+        condition: service_healthy
+      server:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:
-  postgres-data:
+  db-data:
   redis-data:
+  server-local-data:
