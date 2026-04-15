@@ -78,21 +78,23 @@ export class WorkspaceCommandRunnerService {
       });
 
       if (!options.dryRun) {
-        await this.upgradeMigrationService.markAsCompleted({
+        await this.upgradeMigrationService.recordUpgradeMigration({
           name,
-          workspaceId,
+          workspaceIds: [workspaceId],
+          isInstance: false,
+          status: 'completed',
           executedByVersion,
-          activeOrSuspendedWorkspaceIds: [],
         });
       }
     } catch (error) {
       if (!options.dryRun) {
-        await this.upgradeMigrationService.markAsFailed({
+        await this.upgradeMigrationService.recordUpgradeMigration({
           name,
-          workspaceId,
+          workspaceIds: [workspaceId],
+          isInstance: false,
+          status: 'failed',
           executedByVersion,
           error,
-          activeOrSuspendedWorkspaceIds: [],
         });
       }
 

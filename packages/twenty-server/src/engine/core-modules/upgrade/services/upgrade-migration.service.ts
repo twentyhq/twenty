@@ -10,6 +10,7 @@ import {
 } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { formatUpgradeErrorForStorage } from 'src/engine/core-modules/upgrade/utils/format-upgrade-error-for-storage.util';
 
+
 export type WorkspaceCursor = {
   name: string;
   status: UpgradeMigrationStatus;
@@ -41,77 +42,82 @@ export class UpgradeMigrationService {
     return isDefined(latestAttempt) && latestAttempt.status === 'completed';
   }
 
-  async markAsCompleted({
-    name,
-    workspaceId,
-    executedByVersion,
-    queryRunner,
-    activeOrSuspendedWorkspaceIds,
-  }: {
-    name: string;
-    workspaceId: string | null;
-    executedByVersion: string;
-    queryRunner?: QueryRunner;
-    activeOrSuspendedWorkspaceIds: string[];
-  }): Promise<void> {
-    const repository = queryRunner
-      ? queryRunner.manager.getRepository(UpgradeMigrationEntity)
+  async recordUpgradeMigration(
+    params:
+      | {
+          name: string;
+          workspaceIds: string[];
+          isInstance: boolean;
+          status: 'completed';
+          executedByVersion: string;
+          queryRunner?: QueryRunner;
+        }
+      | {
+          name: string;
+          workspaceIds: string[];
+          isInstance: boolean;
+          status: 'failed';
+          executedByVersion: string;
+          error: unknown;
+          queryRunner?: QueryRunner;
+        },
+  ): Promise<void> {
+    const { name, workspaceIds, isInstance, status, executedByVersion } = params;
+
+    const repository = params.queryRunner
+      ? params.queryRunner.manager.getRepository(UpgradeMigrationEntity)
       : this.upgradeMigrationRepository;
-    const previousAttempts = await repository.count({
-      where: {
-        name,
-        workspaceId: workspaceId === null ? IsNull() : workspaceId,
-      },
-    });
 
-    const allWorkspaceIds = [workspaceId, ...activeOrSuspendedWorkspaceIds];
+    const errorMessage =
+      params.status === 'failed'
+        ? formatUpgradeErrorForStorage(params.error)
+        : null;
 
-    for (const currentWorkspaceId of allWorkspaceIds) {
-      await repository.save({
+    if (isInstance) {
+      const previousAttempts = await repository.count({
+        where: { name, workspaceId: IsNull() },
+      });
+
+      await repository.save([
+        {
+          name,
+          status,
+          attempt: previousAttempts + 1,
+          executedByVersion,
+          workspaceId: null,
+          errorMessage: errorMessage ?? null,
+        },
+        ...workspaceIds.map((workspaceId) => ({
+          name,
+          status,
+          attempt: previousAttempts + 1,
+          executedByVersion,
+          workspaceId,
+          errorMessage: errorMessage ?? null,
+        })),
+      ]);
+
+      return;
+    }
+
+    const rows = [];
+
+    for (const workspaceId of workspaceIds) {
+      const previousAttempts = await repository.count({
+        where: { name, workspaceId },
+      });
+
+      rows.push({
         name,
-        status: 'completed' as UpgradeMigrationStatus,
-        attempt: currentWorkspaceId === workspaceId ? previousAttempts + 1 : 1,
+        status,
+        attempt: previousAttempts + 1,
         executedByVersion,
-        workspaceId: currentWorkspaceId,
+        workspaceId,
+        errorMessage: errorMessage ?? null,
       });
     }
-  }
 
-  async markAsFailed({
-    name,
-    workspaceId,
-    executedByVersion,
-    error,
-    activeOrSuspendedWorkspaceIds,
-  }: {
-    name: string;
-    workspaceId: string | null;
-    executedByVersion: string;
-    error: unknown;
-    activeOrSuspendedWorkspaceIds: string[];
-  }): Promise<void> {
-    const previousAttempts = await this.upgradeMigrationRepository.count({
-      where: {
-        name,
-        workspaceId: workspaceId === null ? IsNull() : workspaceId,
-      },
-    });
-
-    const allWorkspaceIds = [workspaceId, ...activeOrSuspendedWorkspaceIds];
-
-    for (const currentWorkspaceId of allWorkspaceIds) {
-      await this.upgradeMigrationRepository.save({
-        name,
-        status: 'failed' as UpgradeMigrationStatus,
-        attempt: currentWorkspaceId === workspaceId ? previousAttempts + 1 : 1,
-        executedByVersion,
-        workspaceId: currentWorkspaceId,
-        errorMessage:
-          currentWorkspaceId === workspaceId
-            ? formatUpgradeErrorForStorage(error)
-            : undefined,
-      });
-    }
+    await repository.save(rows);
   }
 
   async markAsInitial({

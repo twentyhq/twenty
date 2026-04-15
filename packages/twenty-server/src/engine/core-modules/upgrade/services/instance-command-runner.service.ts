@@ -59,12 +59,13 @@ export class InstanceCommandRunnerService {
       await command.up(queryRunner);
 
       if (!skipHistory) {
-        await this.upgradeMigrationService.markAsCompleted({
+        await this.upgradeMigrationService.recordUpgradeMigration({
           name,
-          workspaceId: null,
+          workspaceIds: activeOrSuspendedWorkspaceIds,
+          isInstance: true,
+          status: 'completed',
           executedByVersion,
           queryRunner,
-          activeOrSuspendedWorkspaceIds,
         });
       }
 
@@ -75,12 +76,13 @@ export class InstanceCommandRunnerService {
       }
 
       if (!skipHistory) {
-        await this.upgradeMigrationService.markAsFailed({
+        await this.upgradeMigrationService.recordUpgradeMigration({
           name,
-          workspaceId: null,
+          workspaceIds: activeOrSuspendedWorkspaceIds,
+          isInstance: true,
+          status: 'failed',
           executedByVersion,
           error,
-          activeOrSuspendedWorkspaceIds,
         });
       }
 
@@ -132,12 +134,13 @@ export class InstanceCommandRunnerService {
         await command.runDataMigration(this.dataSource);
       } catch (error) {
         if (!skipHistory) {
-          await this.upgradeMigrationService.markAsFailed({
+          await this.upgradeMigrationService.recordUpgradeMigration({
             name,
-            workspaceId: null,
+            workspaceIds: activeOrSuspendedWorkspaceIds,
+            isInstance: true,
+            status: 'failed',
             executedByVersion,
             error,
-            activeOrSuspendedWorkspaceIds,
           });
         }
 
