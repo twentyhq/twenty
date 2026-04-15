@@ -31,9 +31,7 @@ export const SettingsApplicationRegistrationDetails = () => {
     },
   );
 
-  const registration = data?.findOneApplicationRegistration as
-    | ApplicationRegistrationData
-    | undefined;
+  const registration = data?.findOneApplicationRegistration;
 
   const stats = statsData?.findApplicationRegistrationStats;
 
