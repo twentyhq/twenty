@@ -790,7 +790,7 @@ msgstr "用户可以在此对象上执行的操作"
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/components/SettingsEnterpriseFeatureGateCard.tsx
-#: src/modules/information-banner/components/enterprise/InformationBannerLegacyEnterpriseKey.tsx
+#: src/modules/information-banner/components/enterprise/InformationBannerInvalidEnterpriseKey.tsx
 msgid "Activate"
 msgstr "激活"
 
@@ -16456,10 +16456,10 @@ msgstr "您的企业功能将被禁用"
 msgid "Your enterprise features will remain active until {cancelAtDate}."
 msgstr "您的企业功能将保持启用至 {cancelAtDate}。"
 
-#. js-lingui-id: 69Siss
-#: src/modules/information-banner/components/enterprise/InformationBannerLegacyEnterpriseKey.tsx
-msgid "Your enterprise key format is deprecated. Please activate a new key to keep enterprise features."
-msgstr "您的企业密钥格式已弃用。请激活新的密钥以保持企业功能可用。"
+#. js-lingui-id: 5TsUUL
+#: src/modules/information-banner/components/enterprise/InformationBannerInvalidEnterpriseKey.tsx
+msgid "Your enterprise key is no longer valid. Activate a new key to continue using enterprise features."
+msgstr ""
 
 #. js-lingui-id: NTpA4U
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

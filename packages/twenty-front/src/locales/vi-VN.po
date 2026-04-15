@@ -790,7 +790,7 @@ msgstr "Các hành động người dùng có thể thực hiện trên đối t
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/components/SettingsEnterpriseFeatureGateCard.tsx
-#: src/modules/information-banner/components/enterprise/InformationBannerLegacyEnterpriseKey.tsx
+#: src/modules/information-banner/components/enterprise/InformationBannerInvalidEnterpriseKey.tsx
 msgid "Activate"
 msgstr "Kích hoạt"
 
@@ -16456,10 +16456,10 @@ msgstr "Các tính năng Enterprise của bạn sẽ bị vô hiệu hóa"
 msgid "Your enterprise features will remain active until {cancelAtDate}."
 msgstr "Các tính năng Enterprise của bạn sẽ vẫn hoạt động đến {cancelAtDate}."
 
-#. js-lingui-id: 69Siss
-#: src/modules/information-banner/components/enterprise/InformationBannerLegacyEnterpriseKey.tsx
-msgid "Your enterprise key format is deprecated. Please activate a new key to keep enterprise features."
-msgstr "Định dạng khóa Enterprise của bạn không còn được hỗ trợ. Vui lòng kích hoạt một khóa mới để giữ các tính năng Enterprise."
+#. js-lingui-id: 5TsUUL
+#: src/modules/information-banner/components/enterprise/InformationBannerInvalidEnterpriseKey.tsx
+msgid "Your enterprise key is no longer valid. Activate a new key to continue using enterprise features."
+msgstr ""
 
 #. js-lingui-id: NTpA4U
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

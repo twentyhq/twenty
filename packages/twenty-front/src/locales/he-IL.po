@@ -790,7 +790,7 @@ msgstr "פעולות משתמשים יכולים לבצע על אובייקט ז
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/components/SettingsEnterpriseFeatureGateCard.tsx
-#: src/modules/information-banner/components/enterprise/InformationBannerLegacyEnterpriseKey.tsx
+#: src/modules/information-banner/components/enterprise/InformationBannerInvalidEnterpriseKey.tsx
 msgid "Activate"
 msgstr "הפעל"
 
@@ -16456,10 +16456,10 @@ msgstr "תכונות ה-Enterprise שלך יושבתו"
 msgid "Your enterprise features will remain active until {cancelAtDate}."
 msgstr "תכונות ה-Enterprise שלך יישארו פעילות עד {cancelAtDate}."
 
-#. js-lingui-id: 69Siss
-#: src/modules/information-banner/components/enterprise/InformationBannerLegacyEnterpriseKey.tsx
-msgid "Your enterprise key format is deprecated. Please activate a new key to keep enterprise features."
-msgstr "תבנית מפתח ה-Enterprise שלך הוצאה משימוש. אנא הפעל מפתח חדש כדי לשמור על תכונות ה-Enterprise."
+#. js-lingui-id: 5TsUUL
+#: src/modules/information-banner/components/enterprise/InformationBannerInvalidEnterpriseKey.tsx
+msgid "Your enterprise key is no longer valid. Activate a new key to continue using enterprise features."
+msgstr ""
 
 #. js-lingui-id: NTpA4U
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
