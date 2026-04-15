@@ -6,13 +6,12 @@ import { isUndefined } from '@sniptt/guards';
 import {
   type ComponentPropsWithoutRef,
   type ReactNode,
-  useCallback,
   useContext,
   useMemo,
 } from 'react';
-import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  HorizontalSeparator,
   IconAlertTriangle,
   IconInfoCircle,
   IconSquareRoundedCheck,
@@ -40,9 +39,8 @@ export type SnackBarProps = Pick<ComponentPropsWithoutRef<'div'>, 'id'> & {
   duration?: number;
   icon?: ReactNode;
   message: string;
-  actionText?: string;
-  actionOnClick?: () => void;
-  actionTo?: string;
+  buttonLabel?: string;
+  buttonOnClick?: () => void;
   detailedMessage?: string;
   onCancel?: () => void;
   onClose?: () => void;
@@ -57,7 +55,6 @@ const StyledContainer = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
   box-shadow: ${themeCssVariables.boxShadow.strong};
   box-sizing: border-box;
-  cursor: pointer;
   margin-top: ${themeCssVariables.spacing[2]};
   padding: ${themeCssVariables.spacing[2]};
   position: relative;
@@ -116,24 +113,10 @@ const StyledDescription = styled.div`
   width: 200px;
 `;
 
-const StyledLinkContainer = styled.div`
-  > a {
-    color: ${themeCssVariables.font.color.tertiary};
-    display: block;
-    font-size: ${themeCssVariables.font.size.sm};
-    max-width: 200px;
-    overflow: hidden;
-    padding-left: ${themeCssVariables.spacing[6]};
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    &:hover {
-      color: ${themeCssVariables.font.color.secondary};
-    }
-  }
-`;
-
-const StyledActionButton = styled.div`
-  padding-left: ${themeCssVariables.spacing[6]};
+const StyledBottomAction = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: center;
 `;
 
 const defaultAriaLabelByVariant: Record<
@@ -155,9 +138,8 @@ export const SnackBar = ({
   id,
   message,
   detailedMessage,
-  actionText,
-  actionOnClick,
-  actionTo,
+  buttonLabel,
+  buttonOnClick,
   onCancel,
   onClose,
   role = 'status',
@@ -220,18 +202,9 @@ export const SnackBar = ({
   const sanitizedDetailedMessage =
     sanitizeMessageToRenderInSnackbar(detailedMessage);
 
-  const handleClick = useCallback(() => {
-    const textToCopy = [sanitizedMessage, sanitizedDetailedMessage]
-      .filter(isDefined)
-      .join('\n');
-
-    navigator.clipboard.writeText(textToCopy);
-  }, [sanitizedMessage, sanitizedDetailedMessage]);
-
   return (
     <StyledContainer
       aria-live={role === 'alert' ? 'assertive' : 'polite'}
-      onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       title={sanitizedMessage ?? i18n._(defaultAriaLabelByVariant[variant])}
@@ -260,15 +233,13 @@ export const SnackBar = ({
       {isDefined(sanitizedDetailedMessage) && (
         <StyledDescription>{sanitizedDetailedMessage}</StyledDescription>
       )}
-      {actionText && actionTo && (
-        <StyledLinkContainer>
-          <Link to={actionTo}>{actionText}</Link>
-        </StyledLinkContainer>
-      )}
-      {actionText && actionOnClick && !actionTo && (
-        <StyledActionButton>
-          <LightButton title={actionText} onClick={actionOnClick} />
-        </StyledActionButton>
+      {isDefined(buttonLabel) && isDefined(buttonOnClick) && (
+        <>
+          <HorizontalSeparator noMargin />
+          <StyledBottomAction>
+            <LightButton title={buttonLabel} onClick={buttonOnClick} />
+          </StyledBottomAction>
+        </>
       )}
     </StyledContainer>
   );

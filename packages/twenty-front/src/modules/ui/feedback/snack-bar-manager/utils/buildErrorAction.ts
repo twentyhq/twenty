@@ -7,7 +7,7 @@ import { type SnackBarOptions } from '@/ui/feedback/snack-bar-manager/states/sna
 
 export const buildErrorAction = (
   apolloError?: ErrorLike,
-): Pick<SnackBarOptions, 'actionText' | 'actionTo'> | null => {
+): Pick<SnackBarOptions, 'buttonLabel' | 'buttonOnClick'> | null => {
   if (!apolloError) {
     return null;
   }
@@ -15,12 +15,16 @@ export const buildErrorAction = (
   const conflictingRecord = getConflictingRecordFromApolloError(apolloError);
 
   if (isDefined(conflictingRecord)) {
+    const recordPath = getAppPath(AppPath.RecordShowPage, {
+      objectNameSingular: conflictingRecord.conflictingObjectNameSingular,
+      objectRecordId: conflictingRecord.conflictingRecordId,
+    });
+
     return {
-      actionText: t`View existing record`,
-      actionTo: getAppPath(AppPath.RecordShowPage, {
-        objectNameSingular: conflictingRecord.conflictingObjectNameSingular,
-        objectRecordId: conflictingRecord.conflictingRecordId,
-      }),
+      buttonLabel: t`View existing record`,
+      buttonOnClick: () => {
+        window.location.href = recordPath;
+      },
     };
   }
 
