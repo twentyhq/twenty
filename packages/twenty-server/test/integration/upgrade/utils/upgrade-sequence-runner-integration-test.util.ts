@@ -212,20 +212,18 @@ export const resetSeedSequenceCounter = () => {
   seedSequenceCounter = 0;
 };
 
-export const seedMigration = async (
+export const seedInstanceMigration = async (
   dataSource: DataSource,
   {
     name,
     status,
-    workspaceId = null,
+    workspaceIds = [],
     attempt = 1,
-    isInitial = false,
   }: {
     name: string;
     status: 'completed' | 'failed';
-    workspaceId?: string | null;
+    workspaceIds?: string[];
     attempt?: number;
-    isInitial?: boolean;
   },
 ) => {
   // Seeds must have past timestamps so the runner's NOW()-based records
@@ -236,18 +234,55 @@ export const seedMigration = async (
 
   seedSequenceCounter++;
 
+  const values: string[] = [];
+  const args: unknown[] = [];
+  let paramIndex = 1;
+
+  values.push(
+    `($${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, NULL, $${paramIndex++}, false)`,
+  );
+  args.push(name, status, attempt, EXECUTED_BY_VERSION, createdAt);
+
+  for (const workspaceId of workspaceIds) {
+    values.push(
+      `($${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, false)`,
+    );
+    args.push(name, status, attempt, EXECUTED_BY_VERSION, workspaceId, createdAt);
+  }
+
+  await dataSource.query(
+    `INSERT INTO core."upgradeMigration" (name, status, attempt, "executedByVersion", "workspaceId", "createdAt", "isInitial")
+     VALUES ${values.join(', ')}`,
+    args,
+  );
+};
+
+export const seedWorkspaceMigration = async (
+  dataSource: DataSource,
+  {
+    name,
+    status,
+    workspaceId,
+    attempt = 1,
+    isInitial = false,
+  }: {
+    name: string;
+    status: 'completed' | 'failed';
+    workspaceId: string;
+    attempt?: number;
+    isInitial?: boolean;
+  },
+) => {
+  const createdAt = new Date(
+    Date.now() - (1000000 - seedSequenceCounter * 1000),
+  ).toISOString();
+
+  seedSequenceCounter++;
+
   await dataSource.query(
     `INSERT INTO core."upgradeMigration" (name, status, attempt, "executedByVersion", "workspaceId", "createdAt", "isInitial")
      VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-    [
-      name,
-      status,
-      attempt,
-      EXECUTED_BY_VERSION,
-      workspaceId,
-      createdAt,
-      isInitial,
-    ],
+    [name, status, attempt, EXECUTED_BY_VERSION, workspaceId, createdAt, isInitial],
   );
 };
 

@@ -11,7 +11,8 @@ import {
   makeStep,
   makeWorkspace,
   resetSeedSequenceCounter,
-  seedMigration,
+  seedInstanceMigration,
+  seedWorkspaceMigration,
   setMockActiveWorkspaceIds,
   testGetLatestMigrationForCommand,
   WS_1,
@@ -94,7 +95,7 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
   it('should throw when cursor command is not found in the sequence', async () => {
     const sequence = [makeFastInstance('Ic1'), makeFastInstance('Ic2')];
 
-    await seedMigration(context.dataSource, {
+    await seedInstanceMigration(context.dataSource, {
       name: 'RemovedCommand',
       status: 'completed',
     });
@@ -118,31 +119,32 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
 
     setMockActiveWorkspaceIds([WS_1, WS_2]);
 
-    await seedMigration(context.dataSource, {
+    await seedWorkspaceMigration(context.dataSource, {
       name: 'Wc1',
       status: 'completed',
       workspaceId: WS_1,
     });
-    await seedMigration(context.dataSource, {
+    await seedWorkspaceMigration(context.dataSource, {
       name: 'Wc2',
       status: 'completed',
       workspaceId: WS_1,
     });
-    await seedMigration(context.dataSource, {
+    await seedWorkspaceMigration(context.dataSource, {
       name: 'Wc1',
       status: 'completed',
       workspaceId: WS_2,
     });
-    await seedMigration(context.dataSource, {
+    await seedInstanceMigration(context.dataSource, {
       name: 'Ic1',
       status: 'completed',
+      workspaceIds: [WS_1, WS_2],
     });
-    await seedMigration(context.dataSource, {
+    await seedWorkspaceMigration(context.dataSource, {
       name: 'Wc3',
       status: 'completed',
       workspaceId: WS_1,
     });
-    await seedMigration(context.dataSource, {
+    await seedWorkspaceMigration(context.dataSource, {
       name: 'Wc4',
       status: 'completed',
       workspaceId: WS_1,
@@ -153,7 +155,7 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
         sequence,
         options: DEFAULT_OPTIONS,
       }),
-    ).rejects.toThrow('workspaces are not aligned');
+    ).rejects.toThrow('workspace(s) have invalid cursors for workspace segment');
   });
 
   it('should throw when an active workspace has no migration history', async () => {
@@ -161,7 +163,7 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
 
     setMockActiveWorkspaceIds([WS_1, WS_2]);
 
-    await seedMigration(context.dataSource, {
+    await seedWorkspaceMigration(context.dataSource, {
       name: 'Wc1',
       status: 'completed',
       workspaceId: WS_1,
@@ -182,7 +184,7 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
       makeFailingFastInstance('Ic2', error),
     ];
 
-    await seedMigration(context.dataSource, {
+    await seedInstanceMigration(context.dataSource, {
       name: 'Ic1',
       status: 'completed',
     });
@@ -221,15 +223,10 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
 
     setMockActiveWorkspaceIds([WS_1]);
 
-    await seedMigration(context.dataSource, {
+    await seedInstanceMigration(context.dataSource, {
       name: 'Ic1',
       status: 'completed',
-    });
-    await seedMigration(context.dataSource, {
-      name: 'Ic1',
-      status: 'completed',
-      workspaceId: WS_1,
-      isInitial: true,
+      workspaceIds: [WS_1],
     });
 
     await expect(
@@ -257,7 +254,7 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
 
     setMockActiveWorkspaceIds([WS_1]);
 
-    await seedMigration(context.dataSource, {
+    await seedWorkspaceMigration(context.dataSource, {
       name: 'Wc1',
       status: 'failed',
       workspaceId: WS_1,
@@ -301,26 +298,27 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
 
     setMockActiveWorkspaceIds([WS_1, WS_2]);
 
-    await seedMigration(context.dataSource, {
+    await seedWorkspaceMigration(context.dataSource, {
       name: 'Wc0',
       status: 'completed',
       workspaceId: WS_1,
     });
-    await seedMigration(context.dataSource, {
+    await seedWorkspaceMigration(context.dataSource, {
       name: 'Wc0',
       status: 'completed',
       workspaceId: WS_2,
     });
-    await seedMigration(context.dataSource, {
+    await seedInstanceMigration(context.dataSource, {
       name: 'Ic1',
       status: 'completed',
+      workspaceIds: [WS_1, WS_2],
     });
-    await seedMigration(context.dataSource, {
+    await seedWorkspaceMigration(context.dataSource, {
       name: 'Wc1',
       status: 'completed',
       workspaceId: WS_1,
     });
-    await seedMigration(context.dataSource, {
+    await seedWorkspaceMigration(context.dataSource, {
       name: 'Wc1',
       status: 'completed',
       workspaceId: WS_2,
