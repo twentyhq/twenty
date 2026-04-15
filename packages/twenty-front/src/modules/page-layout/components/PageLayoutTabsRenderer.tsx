@@ -26,6 +26,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useNavigate } from 'react-router-dom';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -79,6 +80,8 @@ export const PageLayoutTabsRenderer = () => {
   );
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
+  const navigate = useNavigate();
+
   const isMobile = useIsMobile();
 
   const isRecordPageGlobalEditionEnabled = useIsFeatureEnabled(
@@ -104,6 +107,11 @@ export const PageLayoutTabsRenderer = () => {
     )
       ? () => {
           const newTabId = createPageLayoutTab(t`Untitled`);
+
+          if (!isInSidePanel) {
+            navigate(`#${newTabId}`);
+          }
+
           setPageLayoutTabSettingsOpenTabId(newTabId);
           navigatePageLayoutSidePanel({
             sidePanelPage: SidePanelPages.PageLayoutTabSettings,
