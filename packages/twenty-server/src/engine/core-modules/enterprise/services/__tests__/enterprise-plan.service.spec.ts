@@ -286,6 +286,7 @@ describe('EnterprisePlanService', () => {
     });
   });
 
+  // hasValidEnterpriseKey now means "has any ENTERPRISE_KEY configured"
   describe('hasValidEnterpriseKey', () => {
     it('should return true when signed enterprise key is valid', async () => {
       await setupValidState();
@@ -293,13 +294,12 @@ describe('EnterprisePlanService', () => {
       expect(service.hasValidEnterpriseKey()).toBe(true);
     });
 
-    it('should return true with legacy unsigned key as fallback', async () => {
+    it('should return true with unsigned legacy key', async () => {
       setupEnterpriseKey('some-legacy-key');
       mockCryptoVerify.mockReturnValue(false);
       appTokenFindOneMock.mockResolvedValue(null);
       await service.onModuleInit();
 
-      expect(service.hasValidSignedEnterpriseKey()).toBe(false);
       expect(service.hasValidEnterpriseKey()).toBe(true);
     });
 
@@ -318,13 +318,13 @@ describe('EnterprisePlanService', () => {
       expect(service.isValid()).toBe(true);
     });
 
-    it('should return true with legacy key as fallback', async () => {
+    it('should return false with unsigned legacy key', async () => {
       setupEnterpriseKey('some-legacy-key');
       mockCryptoVerify.mockReturnValue(false);
       appTokenFindOneMock.mockResolvedValue(null);
       await service.onModuleInit();
 
-      expect(service.isValid()).toBe(true);
+      expect(service.isValid()).toBe(false);
     });
 
     it('should return false when no key or token exists', async () => {
@@ -399,7 +399,7 @@ describe('EnterprisePlanService', () => {
       });
     });
 
-    it('should return legacy license info when only legacy key exists', async () => {
+    it('should return invalid license info when only unsigned legacy key exists', async () => {
       setupEnterpriseKey('some-legacy-key');
       mockCryptoVerify.mockReturnValue(false);
       appTokenFindOneMock.mockResolvedValue(null);
@@ -407,7 +407,7 @@ describe('EnterprisePlanService', () => {
       const licenseInfo = await service.getLicenseInfo();
 
       expect(licenseInfo).toEqual({
-        isValid: true,
+        isValid: false,
         licensee: null,
         expiresAt: null,
         subscriptionId: null,

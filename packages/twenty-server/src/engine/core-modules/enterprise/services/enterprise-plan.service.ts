@@ -143,38 +143,20 @@ export class EnterprisePlanService implements OnModuleInit {
   }
 
   hasValidEnterpriseKey(): boolean {
-    if (this.hasValidSignedEnterpriseKey()) {
-      return true;
-    }
-
-    return this.checkLegacyKey();
+    return this.hasValidSignedEnterpriseKey() || this.checkLegacyKey();
   }
 
   isValid(): boolean {
-    if (this.hasValidEnterpriseValidityToken()) {
-      return true;
-    }
+    return this.hasValidEnterpriseValidityToken();
+  }
 
-    return this.checkLegacyKey(); // temporary
+  private checkLegacyKey(): boolean {
+    // temporary
+    return isDefined(this.twentyConfigService.get('ENTERPRISE_KEY'));
   }
 
   isValidEnterpriseKeyFormat(key: string): boolean {
     return this.verifyJwt<EnterpriseKeyPayload>(key) !== null;
-  }
-
-  private checkLegacyKey(): boolean {
-    const enterpriseKey = this.twentyConfigService.get('ENTERPRISE_KEY');
-
-    if (!isDefined(enterpriseKey)) {
-      return false;
-    }
-
-    this.logger.warn(
-      'Unsigned enterprise keys are deprecated and will stop working ' +
-        'in a future version. Please obtain a signed key from twenty.com.',
-    );
-
-    return true;
   }
 
   async getLicenseInfo(): Promise<EnterpriseLicenseInfo> {
@@ -189,15 +171,6 @@ export class EnterprisePlanService implements OnModuleInit {
         licensee: this.cachedKeyPayload?.licensee ?? null,
         expiresAt: new Date(this.cachedValidityPayload.exp * 1000),
         subscriptionId: this.cachedValidityPayload.sub,
-      };
-    }
-
-    if (this.checkLegacyKey()) {
-      return {
-        isValid: true,
-        licensee: null,
-        expiresAt: null,
-        subscriptionId: null,
       };
     }
 
@@ -477,11 +450,15 @@ export class EnterprisePlanService implements OnModuleInit {
     }
   }
 
-  // In development, try both keys so production keys work when testing locally
+  // In development and Jest integration tests, try both keys so production keys
+  // work locally
   private getPublicKeysToTry(): string[] {
     const nodeEnv = this.twentyConfigService.get('NODE_ENV');
 
-    if (nodeEnv === NodeEnvironment.DEVELOPMENT) {
+    if (
+      nodeEnv === NodeEnvironment.DEVELOPMENT ||
+      nodeEnv === NodeEnvironment.TEST
+    ) {
       return [ENTERPRISE_JWT_PUBLIC_KEY, ENTERPRISE_JWT_DEV_PUBLIC_KEY];
     }
 
