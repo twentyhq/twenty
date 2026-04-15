@@ -85,6 +85,7 @@ const FormEventsComponent = () => {
         <input
           data-testid="checkbox-input"
           type="checkbox"
+          checked={checkboxValue}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
             const detail = (
               event as unknown as { detail: { checked?: boolean } }
