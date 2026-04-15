@@ -129,7 +129,9 @@ export class RouteTriggerService {
     return authContext;
   }
 
-  private mapErrorToRouteTriggerCode(error: unknown): RouteTriggerExceptionCode {
+  private mapErrorToRouteTriggerCode(
+    error: unknown,
+  ): RouteTriggerExceptionCode {
     if (error instanceof LogicFunctionExecutionException) {
       switch (error.code) {
         case LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
