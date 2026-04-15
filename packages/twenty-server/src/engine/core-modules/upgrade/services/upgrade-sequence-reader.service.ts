@@ -109,7 +109,7 @@ export class UpgradeSequenceReaderService {
     return { startCursor, endCursor };
   }
 
-  collectContiguousWorkspaceSteps({
+  collectWorkspaceCommandsSegment({
     sequence,
     fromWorkspaceCommand,
   }: {

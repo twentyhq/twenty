@@ -86,14 +86,14 @@ export class UpgradeSequenceRunnerService {
         continue;
       }
 
-      const contiguousWorkspaceSteps =
-        this.upgradeSequenceReaderService.collectContiguousWorkspaceSteps({
+      const workspaceCommandsSegment =
+        this.upgradeSequenceReaderService.collectWorkspaceCommandsSegment({
           sequence,
           fromWorkspaceCommand: step,
         });
 
       const report = await this.resumeWorkspaceCommandsFromCursors({
-        contiguousWorkspaceSteps,
+        workspaceCommandsSegment,
         workspaceCursors,
         allActiveOrSuspendedWorkspaceIds,
         options,
@@ -111,7 +111,7 @@ export class UpgradeSequenceRunnerService {
         return { totalSuccesses, totalFailures };
       }
 
-      cursor += contiguousWorkspaceSteps.length;
+      cursor += workspaceCommandsSegment.length;
 
       workspaceCursors = await this.fetchWorkspaceCursors(
         allActiveOrSuspendedWorkspaceIds,
@@ -265,12 +265,12 @@ export class UpgradeSequenceRunnerService {
   }
 
   private async resumeWorkspaceCommandsFromCursors({
-    contiguousWorkspaceSteps,
+    workspaceCommandsSegment,
     workspaceCursors,
     allActiveOrSuspendedWorkspaceIds,
     options,
   }: {
-    contiguousWorkspaceSteps: WorkspaceUpgradeStep[];
+    workspaceCommandsSegment: WorkspaceUpgradeStep[];
     workspaceCursors: Map<string, WorkspaceCursor>;
     allActiveOrSuspendedWorkspaceIds: string[];
     options: ParsedUpgradeCommandOptions;
@@ -296,7 +296,7 @@ export class UpgradeSequenceRunnerService {
 
         const pendingCommands =
           this.upgradeSequenceReaderService.getPendingWorkspaceCommands({
-            workspaceCommands: contiguousWorkspaceSteps,
+            workspaceCommands: workspaceCommandsSegment,
             workspaceCursor,
           });
 
