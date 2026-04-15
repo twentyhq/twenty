@@ -137,7 +137,7 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
     await seedInstanceMigration(context.dataSource, {
       name: 'Ic1',
       status: 'completed',
-      workspaceIds: [WS_1, WS_2],
+      workspaceIds: [WS_1],
     });
     await seedWorkspaceMigration(context.dataSource, {
       name: 'Wc3',
@@ -155,7 +155,9 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
         sequence,
         options: DEFAULT_OPTIONS,
       }),
-    ).rejects.toThrow('workspace(s) have invalid cursors for workspace segment');
+    ).rejects.toThrow(
+      'workspace(s) have invalid cursors for workspace segment',
+    );
   });
 
   it('should throw when an active workspace has no migration history', async () => {
