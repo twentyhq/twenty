@@ -33,11 +33,14 @@ import {
   StyledAppModalTitle,
 } from '~/pages/settings/applications/components/SettingsAppModalLayout';
 import { SettingsAdminApplicationRegistrationDetailContent } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/display';
 
 const DELETE_REGISTRATION_MODAL_ID = 'delete-application-registration-modal';
 
 const TRANSFER_OWNERSHIP_MODAL_ID =
   'transfer-application-registration-ownership-modal';
+
+const DELETE_REGISTRATION_BUTTON_ID = 'delete-registration-button';
 
 const StyledDangerButtonGroup = styled.div`
   display: flex;
@@ -143,14 +146,11 @@ export const SettingsApplicationRegistrationGeneralTab = ({
       <Section>
         <H2Title
           title={t`Danger zone`}
-          description={
-            hasActiveInstalls
-              ? t`Uninstall this app from all workspaces before deleting it`
-              : t`Delete or transfer this app registration`
-          }
+          description={t`Delete or transfer this app registration`}
         />
         <StyledDangerButtonGroup>
           <Button
+            id={DELETE_REGISTRATION_BUTTON_ID}
             accent="danger"
             variant="secondary"
             title={t`Delete`}
@@ -158,6 +158,16 @@ export const SettingsApplicationRegistrationGeneralTab = ({
             disabled={hasActiveInstalls}
             onClick={() => openModal(DELETE_REGISTRATION_MODAL_ID)}
           />
+          {hasActiveInstalls && (
+            <AppTooltip
+              anchorSelect={`#${DELETE_REGISTRATION_BUTTON_ID}`}
+              content={t`Uninstall this app from all workspaces before deleting it`}
+              noArrow
+              place="bottom"
+              positionStrategy="fixed"
+              delay={TooltipDelay.shortDelay}
+            />
+          )}
           <Button
             accent="default"
             variant="secondary"
