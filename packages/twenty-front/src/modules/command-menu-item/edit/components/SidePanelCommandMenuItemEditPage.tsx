@@ -273,16 +273,16 @@ export const SidePanelCommandMenuItemEditPage = () => {
                           isIconDisplayedOnHoverOnly={false}
                           iconButtons={[
                             {
+                              Icon: IconDotsVertical,
+                              Wrapper: makeOptionsDropdownWrapper(item),
+                              onClick: () => {},
+                            },
+                            {
                               Icon: IconPinnedOff,
                               onClick: (event) => {
                                 event.stopPropagation();
                                 handleTogglePin(item.id, true);
                               },
-                            },
-                            {
-                              Icon: IconDotsVertical,
-                              Wrapper: makeOptionsDropdownWrapper(item),
-                              onClick: () => {},
                             },
                           ]}
                         />
