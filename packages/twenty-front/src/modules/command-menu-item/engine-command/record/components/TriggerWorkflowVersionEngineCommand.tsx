@@ -19,9 +19,7 @@ export const TriggerWorkflowVersionEngineCommand = () => {
   const mountedCommandState = useHeadlessCommandContextApi();
   const store = useStore();
 
-  if (
-    !isHeadlessTriggerWorkflowVersionCommandContextApi(mountedCommandState)
-  ) {
+  if (!isHeadlessTriggerWorkflowVersionCommandContextApi(mountedCommandState)) {
     throw new Error(
       'TriggerWorkflowVersionEngineCommand requires a workflow trigger context',
     );
