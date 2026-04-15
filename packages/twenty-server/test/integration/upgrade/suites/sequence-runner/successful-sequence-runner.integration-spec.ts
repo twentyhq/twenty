@@ -13,7 +13,7 @@ import {
   testGetLatestMigrationForCommand,
   WS_1,
   WS_2,
-} from './utils/upgrade-sequence-runner-integration-test.util';
+} from 'test/integration/upgrade/utils/upgrade-sequence-runner-integration-test.util';
 
 describe('UpgradeSequenceRunnerService — execution (integration)', () => {
   let context: IntegrationTestContext;

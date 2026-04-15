@@ -13,7 +13,7 @@ import {
   WS_1,
   WS_2,
   WS_3,
-} from './utils/upgrade-sequence-runner-integration-test.util';
+} from 'test/integration/upgrade/utils/upgrade-sequence-runner-integration-test.util';
 
 describe('UpgradeSequenceRunnerService — workspace segment alignment (integration)', () => {
   let context: IntegrationTestContext;

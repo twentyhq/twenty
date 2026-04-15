@@ -298,7 +298,6 @@ export type ExecutedMigrationRecord = {
   isInitial: boolean;
 };
 
-// Returns all migration records in execution order (by createdAt).
 export const testGetExecutedMigrationsInOrder = async (
   dataSource: DataSource,
 ): Promise<ExecutedMigrationRecord[]> => {
