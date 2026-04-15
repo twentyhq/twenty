@@ -2,7 +2,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ANIMATION } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -20,8 +19,6 @@ type UseNavigationMenuItemFolderOpenStateParams = {
   folderId: string;
   navigationMenuItems: NavigationMenuItem[];
 };
-
-const FOLDER_EXPAND_ANIMATION_DURATION_MS = ANIMATION.duration.normal * 1000;
 
 export const useNavigationMenuItemFolderOpenState = ({
   folderId,
@@ -93,9 +90,7 @@ export const useNavigationMenuItemFolderOpenState = ({
           views,
         );
         if (isNonEmptyString(link)) {
-          setTimeout(() => {
-            navigate(link);
-          }, FOLDER_EXPAND_ANIMATION_DURATION_MS);
+          navigate(link);
         }
       }
     }
