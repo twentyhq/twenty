@@ -57,7 +57,8 @@ export class RunInstanceCommandsCommand extends CommandRunner {
 
   @Option({
     flags: '--no-history',
-    description: 'Run commands without writing to the upgrade migration history',
+    description:
+      'Run commands without writing to the upgrade migration history',
     required: false,
   })
   parseNoHistory(): boolean {

@@ -49,7 +49,11 @@ export class InstanceCommandRunnerService {
 
       if (!skipHistory) {
         await this.upgradeMigrationService.markInstanceCommandCompletedForWorkspaces(
-          { name, workspaceIds: activeOrSuspendedWorkspaceIds, executedByVersion },
+          {
+            name,
+            workspaceIds: activeOrSuspendedWorkspaceIds,
+            executedByVersion,
+          },
         );
       }
 
@@ -100,7 +104,11 @@ export class InstanceCommandRunnerService {
 
     if (!skipHistory) {
       await this.upgradeMigrationService.markInstanceCommandCompletedForWorkspaces(
-        { name, workspaceIds: activeOrSuspendedWorkspaceIds, executedByVersion },
+        {
+          name,
+          workspaceIds: activeOrSuspendedWorkspaceIds,
+          executedByVersion,
+        },
       );
     }
 
@@ -136,7 +144,11 @@ export class InstanceCommandRunnerService {
           this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
         await this.upgradeMigrationService.markInstanceCommandCompletedForWorkspaces(
-          { name, workspaceIds: activeOrSuspendedWorkspaceIds, executedByVersion },
+          {
+            name,
+            workspaceIds: activeOrSuspendedWorkspaceIds,
+            executedByVersion,
+          },
         );
       }
 

@@ -284,7 +284,7 @@ export class UpgradeMigrationService {
     const existingWorkspaceIds = new Set(
       existingRows.map((row) => row.workspaceId),
     );
- 
+
     const missingWorkspaceIds = workspaceIds.filter(
       (workspaceId) => !existingWorkspaceIds.has(workspaceId),
     );
