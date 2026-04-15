@@ -116,12 +116,11 @@ export const useIdentifyActiveNavigationMenuItems = (): {
             if (item.type !== NavigationMenuItemType.OBJECT) {
               return false;
             }
-            const itemObjectMetadataId =
-              getObjectMetadataForNavigationMenuItem(
-                item,
-                objectMetadataItems,
-                views,
-              )?.id;
+            const itemObjectMetadataId = getObjectMetadataForNavigationMenuItem(
+              item,
+              objectMetadataItems,
+              views,
+            )?.id;
             return itemObjectMetadataId === currentObjectMetadataItem?.id;
           })
           .map((item) => item.id);
