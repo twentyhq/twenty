@@ -7,6 +7,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
+import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
 import { useIsNavigationMenuItemEditHighlighted } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuItemEditHighlighted';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
@@ -25,7 +26,6 @@ type NavigationMenuItemFolderSubItemProps = {
   navigationMenuItem: NavigationMenuItem;
   index: number;
   arrayLength: number;
-  activeNavigationMenuItemIndices: Set<number>;
   isDragging: boolean;
   rightOptions?: ReactNode;
   onClick?: () => void;
@@ -39,7 +39,6 @@ export const NavigationMenuItemFolderSubItem = ({
   navigationMenuItem,
   index,
   arrayLength,
-  activeNavigationMenuItemIndices,
   isDragging,
   rightOptions,
   onClick,
@@ -53,6 +52,11 @@ export const NavigationMenuItemFolderSubItem = ({
   const setLastClickedNavigationMenuItemId = useSetAtomState(
     lastClickedNavigationMenuItemIdState,
   );
+
+  const { activeNavigationMenuItemIds } =
+    useIdentifyActiveNavigationMenuItems();
+
+  const isActive = activeNavigationMenuItemIds.includes(navigationMenuItem.id);
 
   const label = getNavigationMenuItemLabel(
     navigationMenuItem,
@@ -119,12 +123,12 @@ export const NavigationMenuItemFolderSubItem = ({
       )}
       to={isDragging || isEditable ? undefined : computedLink}
       onClick={handleClick}
-      active={activeNavigationMenuItemIndices.has(index)}
+      active={isActive}
       isSelectedInEditMode={isEditHighlightedInNavigationMenu}
       subItemState={getNavigationSubItemLeftAdornment({
         index,
         arrayLength,
-        selectedIndex: activeNavigationMenuItemIndices.has(index) ? index : -1,
+        selectedIndex: isActive ? index : -1,
       })}
       rightOptions={rightOptions}
       isDragging={isDragging}

@@ -116,8 +116,11 @@ export const NavigationMenuItemFolderDnd = ({
     ? NavigationSections.FAVORITES
     : NavigationSections.WORKSPACE;
 
-  const { isOpen, handleToggle, activeNavigationMenuItemIndices } =
-    useNavigationMenuItemFolderOpenState({ folderId, navigationMenuItems });
+  const { isOpen, handleToggle, hasActiveChild } =
+    useNavigationMenuItemFolderOpenState({
+      folderId,
+      folderChildrenNavigationMenuItems: navigationMenuItems,
+    });
 
   const { isDragging: isContextDragging } = useContext(
     NavigationMenuItemDragContext,
@@ -228,7 +231,7 @@ export const NavigationMenuItemFolderDnd = ({
       Icon={FolderIcon}
       iconColor={iconColor}
       active={
-        (!isOpen && activeNavigationMenuItemIndices.size > 0) ||
+        (!isOpen && hasActiveChild) ||
         (isWorkspace && isSelectedInEditMode && !isOpen)
       }
       onClick={handleHeaderClick}
@@ -348,9 +351,6 @@ export const NavigationMenuItemFolderDnd = ({
                     navigationMenuItem={navigationMenuItem}
                     index={index}
                     arrayLength={folderContentLength}
-                    activeNavigationMenuItemIndices={
-                      activeNavigationMenuItemIndices
-                    }
                     isDragging={isDragging}
                     rightOptions={
                       isEditInPlace ? (
