@@ -75,6 +75,7 @@ export class ApplyMessagesVisibilityRestrictionsService {
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
             workspaceId,
             'workspaceMember',
+            { shouldBypassPermissionChecks: true },
           );
 
         for (let i = messages.length - 1; i >= 0; i--) {

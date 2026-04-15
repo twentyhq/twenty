@@ -28,6 +28,7 @@ export class FlatNavigationMenuItemValidatorService {
     hasTargetObjectMetadataId,
     hasViewId,
     hasLink,
+    hasPageLayoutId,
     name,
   }: {
     type: NavigationMenuItemType | null | undefined;
@@ -35,6 +36,7 @@ export class FlatNavigationMenuItemValidatorService {
     hasTargetObjectMetadataId: boolean;
     hasViewId: boolean;
     hasLink: boolean;
+    hasPageLayoutId: boolean;
     name: string | null | undefined;
   }): FlatEntityValidationError<NavigationMenuItemExceptionCode>[] {
     const errors: FlatEntityValidationError<NavigationMenuItemExceptionCode>[] =
@@ -93,6 +95,15 @@ export class FlatNavigationMenuItemValidatorService {
             code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
             message: t`link is required for LINK type`,
             userFriendlyMessage: msg`link is required for LINK type`,
+          });
+        }
+        break;
+      case NavigationMenuItemType.PAGE_LAYOUT:
+        if (!hasPageLayoutId) {
+          errors.push({
+            code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+            message: t`pageLayoutId is required for PAGE_LAYOUT type`,
+            userFriendlyMessage: msg`pageLayoutId is required for PAGE_LAYOUT type`,
           });
         }
         break;
@@ -188,6 +199,9 @@ export class FlatNavigationMenuItemValidatorService {
       hasLink:
         isDefined(flatNavigationMenuItem.link) &&
         isNonEmptyString(flatNavigationMenuItem.link),
+      hasPageLayoutId: isDefined(
+        flatNavigationMenuItem.pageLayoutUniversalIdentifier,
+      ),
       name: flatNavigationMenuItem.name,
     });
 
@@ -321,6 +335,9 @@ export class FlatNavigationMenuItemValidatorService {
       ),
       hasViewId: isDefined(toFlatNavigationMenuItem.viewUniversalIdentifier),
       hasLink: isNonEmptyString((toFlatNavigationMenuItem.link ?? '').trim()),
+      hasPageLayoutId: isDefined(
+        toFlatNavigationMenuItem.pageLayoutUniversalIdentifier,
+      ),
       name: isDefined(nameUpdate) ? nameUpdate : toFlatNavigationMenuItem.name,
     });
 

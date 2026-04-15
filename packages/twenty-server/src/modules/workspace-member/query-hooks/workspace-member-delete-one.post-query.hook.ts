@@ -75,6 +75,7 @@ export class WorkspaceMemberDeleteOnePostQueryHook
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
               workspace.id,
               'workspaceMember',
+              { shouldBypassPermissionChecks: true },
             );
 
           return workspaceMemberRepository.findOne({

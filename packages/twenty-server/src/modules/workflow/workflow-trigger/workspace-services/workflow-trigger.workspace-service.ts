@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
+import { Injectable, Logger } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ActorMetadata } from 'twenty-shared/types';
 

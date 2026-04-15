@@ -1,15 +1,15 @@
-import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMenuContextApi';
-import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
-import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
-import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
 import { CommandMenuItemEditRecordSelectionDropdown } from '@/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown';
 import { CommandMenuItemOptionsDropdown } from '@/command-menu-item/edit/components/CommandMenuItemOptionsDropdown';
 import { useReorderCommandMenuItemsInDraft } from '@/command-menu-item/edit/hooks/useReorderCommandMenuItemsInDraft';
 import { useResetCommandMenuItemsDraft } from '@/command-menu-item/edit/hooks/useResetCommandMenuItemsDraft';
 import { useUpdateCommandMenuItemInDraft } from '@/command-menu-item/edit/hooks/useUpdateCommandMenuItemInDraft';
 import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
-import { mainContextStoreHasSelectedRecordsSelector } from '@/context-store/states/selectors/mainContextStoreHasSelectedRecordsSelector';
+import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMenuContextApi';
+import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
+import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
+import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
+import { mainContextStoreHasSelectedRecordsSelector } from '@/context-store/states/selectors/mainContextStoreHasSelectedRecordsSelector';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -21,7 +21,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { type DropResult } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { CommandMenuContextApiPageType } from 'twenty-shared/types';
+import { ContextStorePageType } from 'twenty-shared/types';
 import {
   interpolateCommandMenuItemTemplate,
   isDefined,
@@ -71,9 +71,13 @@ export const SidePanelCommandMenuItemEditPage = () => {
   const currentObjectMetadataItemId =
     commandMenuContextApi.objectMetadataItem.id;
 
+  const hasObjectContext = isDefined(currentObjectMetadataItemId);
+
   const isRecordPage =
-    commandMenuContextApi.pageType ===
-    CommandMenuContextApiPageType.RECORD_PAGE;
+    commandMenuContextApi.pageType === ContextStorePageType.Record;
+
+  const isIndexPage =
+    commandMenuContextApi.pageType === ContextStorePageType.Index;
 
   const mainContextStoreHasSelectedRecords = useAtomStateValue(
     mainContextStoreHasSelectedRecordsSelector,
@@ -93,9 +97,12 @@ export const SidePanelCommandMenuItemEditPage = () => {
 
   const allowedAvailabilityTypes = new Set<CommandMenuItemAvailabilityType>([
     CommandMenuItemAvailabilityType.GLOBAL,
-    mainContextStoreHasSelectedRecords
-      ? CommandMenuItemAvailabilityType.RECORD_SELECTION
-      : CommandMenuItemAvailabilityType.FALLBACK,
+    ...(isIndexPage || isRecordPage
+      ? [CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT]
+      : []),
+    ...(mainContextStoreHasSelectedRecords
+      ? [CommandMenuItemAvailabilityType.RECORD_SELECTION]
+      : []),
   ]);
 
   const filteredCommandMenuItems = commandMenuItemsDraft
@@ -231,11 +238,13 @@ export const SidePanelCommandMenuItemEditPage = () => {
 
   return (
     <StyledContainer data-click-outside-id={COMMAND_MENU_CLICK_OUTSIDE_ID}>
-      <StyledViewbar>
-        <CommandMenuItemEditRecordSelectionDropdown
-          isRecordPage={isRecordPage}
-        />
-      </StyledViewbar>
+      {hasObjectContext && (
+        <StyledViewbar>
+          <CommandMenuItemEditRecordSelectionDropdown
+            isRecordPage={isRecordPage}
+          />
+        </StyledViewbar>
+      )}
       <StyledContent>
         <SidePanelList selectableItemIds={selectableItemIds}>
           <SidePanelGroup heading={t`Pinned`}>
@@ -264,16 +273,16 @@ export const SidePanelCommandMenuItemEditPage = () => {
                           isIconDisplayedOnHoverOnly={false}
                           iconButtons={[
                             {
+                              Icon: IconDotsVertical,
+                              Wrapper: makeOptionsDropdownWrapper(item),
+                              onClick: () => {},
+                            },
+                            {
                               Icon: IconPinnedOff,
                               onClick: (event) => {
                                 event.stopPropagation();
                                 handleTogglePin(item.id, true);
                               },
-                            },
-                            {
-                              Icon: IconDotsVertical,
-                              Wrapper: makeOptionsDropdownWrapper(item),
-                              onClick: () => {},
                             },
                           ]}
                         />

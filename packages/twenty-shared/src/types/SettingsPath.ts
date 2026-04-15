@@ -71,6 +71,7 @@ export enum SettingsPath {
   AdminPanelNewAiModel = 'admin-panel/ai/providers/:providerName/new-model',
   AdminPanelUserDetail = 'admin-panel/users/:userId',
   AdminPanelWorkspaceDetail = 'admin-panel/workspaces/:workspaceId',
+  AdminPanelApplicationRegistrationDetail = 'admin-panel/applications/registrations/:applicationRegistrationId',
   AdminPanelWorkspaceChatThread = 'admin-panel/workspaces/:workspaceId/threads/:threadId',
 
   Roles = 'roles',

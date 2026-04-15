@@ -1,19 +1,20 @@
 import { AIChatApiKeyNotConfiguredMessage } from '@/ai/components/AIChatApiKeyNotConfiguredMessage';
 import { AIChatCreditsExhaustedMessage } from '@/ai/components/AIChatCreditsExhaustedMessage';
 import { AIChatErrorMessage } from '@/ai/components/AIChatErrorMessage';
-import { isApiKeyNotConfiguredError } from '@/ai/utils/isApiKeyNotConfiguredError';
-import { isBillingCreditsExhaustedError } from '@/ai/utils/isBillingCreditsExhaustedError';
+import { type AIChatError } from '@/ai/types/AIChatError';
+import { AIChatErrorCode } from '@/ai/utils/aiChatErrorCode';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 type AIChatErrorRendererProps = {
-  error: Error;
+  error: AIChatError;
 };
 
 export const AIChatErrorRenderer = ({ error }: AIChatErrorRendererProps) => {
-  if (isBillingCreditsExhaustedError(error)) {
+  if (isGraphqlErrorOfType(error, AIChatErrorCode.BILLING_CREDITS_EXHAUSTED)) {
     return <AIChatCreditsExhaustedMessage />;
   }
 
-  if (isApiKeyNotConfiguredError(error)) {
+  if (isGraphqlErrorOfType(error, AIChatErrorCode.API_KEY_NOT_CONFIGURED)) {
     return <AIChatApiKeyNotConfiguredMessage />;
   }
 

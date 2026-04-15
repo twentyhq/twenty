@@ -1,13 +1,14 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
+import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
-import { isLocationMatchingNavigationMenuItem } from '@/navigation-menu-item/common/utils/isLocationMatchingNavigationMenuItem';
+import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -17,17 +18,14 @@ import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 
 type UseNavigationMenuItemFolderOpenStateParams = {
   folderId: string;
-  navigationMenuItems: NavigationMenuItem[];
+  folderChildrenNavigationMenuItems: NavigationMenuItem[];
 };
 
 export const useNavigationMenuItemFolderOpenState = ({
   folderId,
-  navigationMenuItems,
+  folderChildrenNavigationMenuItems,
 }: UseNavigationMenuItemFolderOpenStateParams) => {
-  const location = useLocation();
   const navigate = useNavigate();
-  const currentPath = location.pathname;
-  const currentViewPath = location.pathname + location.search;
   const isMobile = useIsMobile();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
@@ -38,24 +36,16 @@ export const useNavigationMenuItemFolderOpenState = ({
     currentNavigationMenuItemFolderIdState,
   );
 
-  const selectedNavigationMenuItemIndex = navigationMenuItems.findIndex(
-    (item) => {
-      const computedLink = getNavigationMenuItemComputedLink(
-        item,
-        objectMetadataItems,
-        views,
-      );
-      return isLocationMatchingNavigationMenuItem(
-        currentPath,
-        currentViewPath,
-        item.type,
-        computedLink,
-      );
-    },
+  const { activeNavigationMenuItemIds } =
+    useIdentifyActiveNavigationMenuItems();
+  const setLastClickedNavigationMenuItemId = useSetAtomState(
+    lastClickedNavigationMenuItemIdState,
   );
 
   const isExplicitlyOpen = openNavigationMenuItemFolderIds.includes(folderId);
-  const hasActiveChild = selectedNavigationMenuItemIndex >= 0;
+  const hasActiveChild = folderChildrenNavigationMenuItems.some((item) =>
+    activeNavigationMenuItemIds.includes(item.id),
+  );
   const isOpen = isExplicitlyOpen || hasActiveChild;
 
   const handleToggle = () => {
@@ -72,17 +62,19 @@ export const useNavigationMenuItemFolderOpenState = ({
     }
 
     if (!isOpen) {
-      const firstNonLinkItem = navigationMenuItems.find((item) => {
-        if (item.type === NavigationMenuItemType.LINK) {
-          return false;
-        }
-        const computedLink = getNavigationMenuItemComputedLink(
-          item,
-          objectMetadataItems,
-          views,
-        );
-        return isNonEmptyString(computedLink);
-      });
+      const firstNonLinkItem = folderChildrenNavigationMenuItems.find(
+        (item) => {
+          if (item.type === NavigationMenuItemType.LINK) {
+            return false;
+          }
+          const computedLink = getNavigationMenuItemComputedLink(
+            item,
+            objectMetadataItems,
+            views,
+          );
+          return isNonEmptyString(computedLink);
+        },
+      );
       if (isDefined(firstNonLinkItem)) {
         const link = getNavigationMenuItemComputedLink(
           firstNonLinkItem,
@@ -90,6 +82,7 @@ export const useNavigationMenuItemFolderOpenState = ({
           views,
         );
         if (isNonEmptyString(link)) {
+          setLastClickedNavigationMenuItemId(firstNonLinkItem.id);
           navigate(link);
         }
       }
@@ -99,6 +92,6 @@ export const useNavigationMenuItemFolderOpenState = ({
   return {
     isOpen,
     handleToggle,
-    selectedNavigationMenuItemIndex,
+    hasActiveChild,
   };
 };

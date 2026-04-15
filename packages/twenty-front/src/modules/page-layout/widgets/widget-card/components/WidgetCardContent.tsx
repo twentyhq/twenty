@@ -35,7 +35,8 @@ const StyledWidgetCardContent = styled.div<WidgetCardContentStyledProps>`
   overflow: hidden;
 
   padding: ${({ variant, isEditable }) => {
-    if (variant === 'dashboard') return themeCssVariables.spacing[2];
+    if (variant === 'dashboard' || variant === 'standalone')
+      return themeCssVariables.spacing[2];
     if (
       variant === 'record-page' ||
       (variant === 'side-column' && isEditable)

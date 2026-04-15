@@ -1,77 +1,80 @@
-export type AddressComponent = {
-  long_name: string;
-  short_name: string;
-  types: string[];
-};
-export type AddressFields = {
-  state?: string;
-  postcode?: string;
-  city?: string;
-  country?: string;
-  location?: locationFields;
-};
-export type locationFields = {
-  lat?: number;
-  lng?: number;
-};
-export const sanitizePlaceDetailsResults = (
-  AddressComponents: AddressComponent[],
-  location?: locationFields,
-): AddressFields => {
-  if (!AddressComponents || AddressComponents.length === 0) return {};
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
-  const address: AddressFields = {};
+import { type GeoMapAddressComponent } from 'src/engine/core-modules/geo-map/types/geo-map-address-component.type';
+import { type GeoMapAddressFields } from 'src/engine/core-modules/geo-map/types/geo-map-address-fields.type';
+import { type GeoMapLocationFields } from 'src/engine/core-modules/geo-map/types/geo-map-location-fields.type';
 
-  for (const AddressComponent of AddressComponents) {
-    for (const type of AddressComponent.types) {
-      switch (type) {
-        case 'postal_code': {
-          address.postcode =
-            AddressComponent.long_name + (address.postcode ?? '');
-          break;
-        }
+const hasType = (
+  addressComponent: GeoMapAddressComponent,
+  type: string,
+): boolean => addressComponent.types.includes(type);
 
-        case 'postal_code_suffix': {
-          address.postcode =
-            (address.postcode ?? '') + '-' + AddressComponent.long_name;
-          break;
-        }
+export const sanitizePlaceDetailsResults = ({
+  addressComponents,
+  location,
+}: {
+  addressComponents: GeoMapAddressComponent[];
+  location?: GeoMapLocationFields;
+}): GeoMapAddressFields => {
+  if (!isNonEmptyArray(addressComponents)) return {};
 
-        case 'locality':
-          address.city = AddressComponent.long_name;
-          break;
+  const address: GeoMapAddressFields = {};
 
-        case 'postal_town':
-          if (!address.city) {
-            address.city = AddressComponent.long_name;
-          }
-          break;
+  for (const addressComponent of addressComponents) {
+    if (hasType(addressComponent, 'street_number')) {
+      address.street =
+        addressComponent.long_name + ' ' + (address.street ?? '');
+      continue;
+    }
 
-        case 'administrative_area_level_3': {
-          if (!address.city) {
-            address.city = AddressComponent.long_name;
-          }
-          break;
-        }
+    if (hasType(addressComponent, 'route')) {
+      address.street = (address.street ?? '') + addressComponent.long_name;
+      continue;
+    }
 
-        case 'administrative_area_level_1': {
-          address.state = AddressComponent.long_name;
-          break;
-        }
+    if (hasType(addressComponent, 'postal_code')) {
+      address.postcode = addressComponent.long_name + (address.postcode ?? '');
+      continue;
+    }
 
-        case 'administrative_area_level_2': {
-          if (!address.state) {
-            address.state = AddressComponent.long_name;
-          }
-          break;
-        }
+    if (hasType(addressComponent, 'postal_code_suffix')) {
+      address.postcode =
+        (address.postcode ?? '') + '-' + addressComponent.long_name;
+      continue;
+    }
 
-        case 'country':
-          address.country = AddressComponent.short_name;
-          break;
+    if (hasType(addressComponent, 'locality')) {
+      address.city = addressComponent.long_name;
+      continue;
+    }
+
+    if (
+      hasType(addressComponent, 'postal_town') ||
+      hasType(addressComponent, 'administrative_area_level_3')
+    ) {
+      if (!address.city) {
+        address.city = addressComponent.long_name;
       }
+      continue;
+    }
+
+    if (hasType(addressComponent, 'administrative_area_level_1')) {
+      address.state = addressComponent.long_name;
+      continue;
+    }
+
+    if (hasType(addressComponent, 'administrative_area_level_2')) {
+      if (!address.state) {
+        address.state = addressComponent.long_name;
+      }
+      continue;
+    }
+
+    if (hasType(addressComponent, 'country')) {
+      address.country = addressComponent.short_name;
     }
   }
+
   address.location = location;
 
   return address;

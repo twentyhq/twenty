@@ -169,8 +169,14 @@ export class UpgradeCommandRegistryService implements OnModuleInit {
         bundle.workspaceCommands.length;
 
       if (totalCount > 0) {
+        const crossUpgradeLabel = (
+          TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS as readonly string[]
+        ).includes(version)
+          ? 'cross-upgrade supported'
+          : 'pre-release';
+
         this.logger.log(
-          `Registered ${bundle.fastInstanceCommands.length} fast instance, ${bundle.slowInstanceCommands.length} slow instance, and ${bundle.workspaceCommands.length} workspace command(s) for ${version}`,
+          `Registered ${bundle.fastInstanceCommands.length} fast instance, ${bundle.slowInstanceCommands.length} slow instance, and ${bundle.workspaceCommands.length} workspace command(s) for ${version} (${crossUpgradeLabel})`,
         );
       }
     }

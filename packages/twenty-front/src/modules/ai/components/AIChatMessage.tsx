@@ -6,6 +6,7 @@ import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
 import { AIChatErrorRenderer } from '@/ai/components/AIChatErrorRenderer';
 import { agentChatMessageComponentFamilySelector } from '@/ai/states/agentChatMessageComponentFamilySelector';
+import { type AIChatError } from '@/ai/types/AIChatError';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -142,7 +143,7 @@ const StyledFilesContainer = styled.div`
 type AIChatMessageProps = {
   messageId: string;
   isLastMessageStreaming?: boolean;
-  error?: Error | undefined;
+  error?: AIChatError | undefined;
 };
 
 export const AIChatMessage = ({

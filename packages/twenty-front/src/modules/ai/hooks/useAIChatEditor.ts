@@ -5,9 +5,10 @@ import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
 import { Placeholder } from '@tiptap/extensions/placeholder';
 import { useEditor } from '@tiptap/react';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
@@ -21,6 +22,7 @@ import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSugges
 import { MentionSuggestion } from '@/mention/extensions/MentionSuggestion';
 import { MentionTag } from '@/mention/extensions/MentionTag';
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
+import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -133,6 +135,20 @@ export const useAIChatEditor = () => {
     };
     mentionStorage.searchMentionRecords = searchMentionRecords;
   }
+
+  const handleRestoreEditorContent = useCallback(
+    (detail?: { content: string }) => {
+      if (isDefined(detail?.content)) {
+        editor?.commands.setContent(textToTiptapContent(detail.content));
+      }
+    },
+    [editor],
+  );
+
+  useListenToBrowserEvent<{ content: string }>({
+    eventName: AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
+    onBrowserEvent: handleRestoreEditorContent,
+  });
 
   const handleSendAndClear = () => {
     dispatchAgentChatSendMessageEvent();

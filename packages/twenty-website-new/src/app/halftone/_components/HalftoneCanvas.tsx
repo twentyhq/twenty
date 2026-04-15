@@ -364,6 +364,38 @@ function createRenderTarget(width: number, height: number) {
   });
 }
 
+function syncImageElementTexture(
+  resources: SceneResources,
+  imageElement: HTMLImageElement | null,
+) {
+  if (resources.imageTexture) {
+    resources.imageTexture.dispose();
+    resources.imageTexture = null;
+  }
+
+  if (!imageElement) {
+    resources.imageMaterial.uniforms.tImage.value = null;
+    resources.imageMaterial.uniforms.imageSize.value.set(1, 1);
+    return;
+  }
+
+  const texture = new THREE.Texture(imageElement);
+  texture.wrapS = THREE.ClampToEdgeWrapping;
+  texture.wrapT = THREE.ClampToEdgeWrapping;
+  texture.generateMipmaps = false;
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  texture.needsUpdate = true;
+  texture.colorSpace = THREE.SRGBColorSpace;
+
+  resources.imageTexture = texture;
+  resources.imageMaterial.uniforms.tImage.value = texture;
+  resources.imageMaterial.uniforms.imageSize.value.set(
+    imageElement.naturalWidth,
+    imageElement.naturalHeight,
+  );
+}
+
 function createInteractionState(
   initialPose?: Partial<HalftoneExportPose>,
 ): InteractionState {
@@ -584,6 +616,7 @@ export function HalftoneCanvas({
   const poseChangeReference = useRef(onPoseChange);
   const previewDistanceReference = useRef(previewDistance);
   const geometryReference = useRef(geometry);
+  const imageElementReference = useRef(imageElement);
   const snapshotReference = useRef(snapshotRef);
 
   useEffect(() => {
@@ -663,38 +696,15 @@ export function HalftoneCanvas({
   }, [snapshotRef]);
 
   useEffect(() => {
+    imageElementReference.current = imageElement;
+
     const resources = resourcesReference.current;
 
     if (!resources) {
       return;
     }
 
-    if (imageElement) {
-      if (resources.imageTexture) {
-        resources.imageTexture.dispose();
-      }
-
-      const texture = new THREE.Texture(imageElement);
-      texture.wrapS = THREE.ClampToEdgeWrapping;
-      texture.wrapT = THREE.ClampToEdgeWrapping;
-      texture.generateMipmaps = false;
-      texture.minFilter = THREE.LinearFilter;
-      texture.magFilter = THREE.LinearFilter;
-      texture.needsUpdate = true;
-      texture.colorSpace = THREE.SRGBColorSpace;
-      resources.imageTexture = texture;
-      resources.imageMaterial.uniforms.tImage.value = texture;
-      resources.imageMaterial.uniforms.imageSize.value.set(
-        imageElement.naturalWidth,
-        imageElement.naturalHeight,
-      );
-    } else {
-      if (resources.imageTexture) {
-        resources.imageTexture.dispose();
-        resources.imageTexture = null;
-        resources.imageMaterial.uniforms.tImage.value = null;
-      }
-    }
+    syncImageElementTexture(resources, imageElement);
   }, [imageElement]);
 
   useEffect(() => {
@@ -1037,6 +1047,7 @@ export function HalftoneCanvas({
       }
 
       syncResources(resources, settingsReference.current);
+      syncImageElementTexture(resources, imageElementReference.current);
 
       const captureSnapshot: HalftoneSnapshotFn = async (
         snapshotWidth: number,

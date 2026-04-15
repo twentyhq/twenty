@@ -74,6 +74,7 @@ export const buildTriggerWorkflowVersionPayloads = ({
       return payloads;
     }
     case CommandMenuItemAvailabilityTypeEnum.GLOBAL:
+    case CommandMenuItemAvailabilityTypeEnum.GLOBAL_OBJECT_CONTEXT:
     case CommandMenuItemAvailabilityTypeEnum.FALLBACK: {
       return payloads;
     }

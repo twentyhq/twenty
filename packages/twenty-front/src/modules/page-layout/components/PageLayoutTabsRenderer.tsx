@@ -4,29 +4,24 @@ import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPane
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
 import { PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH } from '@/page-layout/constants/PageLayoutLeftPanelContainerWidth';
-import { useCreatePageLayoutTab } from '@/page-layout/hooks/useCreatePageLayoutTab';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { usePageLayoutAddTabStrategy } from '@/page-layout/hooks/usePageLayoutAddTabStrategy';
 import { useReorderRecordPageLayoutTabs } from '@/page-layout/hooks/useReorderRecordPageLayoutTabs';
 import { PageLayoutMainContent } from '@/page-layout/PageLayoutMainContent';
-import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { getScrollWrapperInstanceIdFromPageLayoutId } from '@/page-layout/utils/getScrollWrapperInstanceIdFromPageLayoutId';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
-import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -67,17 +62,14 @@ export const PageLayoutTabsRenderer = () => {
     targetRecordIdentifier,
   });
 
-  const { createPageLayoutTab } = useCreatePageLayoutTab({
+  const addTabStrategy = usePageLayoutAddTabStrategy({
     pageLayoutId: currentPageLayout.id,
     tabListInstanceId,
   });
+
   const { reorderRecordPageTabs } = useReorderRecordPageLayoutTabs(
     currentPageLayout.id,
   );
-  const setPageLayoutTabSettingsOpenTabId = useSetAtomComponentState(
-    pageLayoutTabSettingsOpenTabIdComponentState,
-  );
-  const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
   const isMobile = useIsMobile();
 
@@ -95,22 +87,6 @@ export const PageLayoutTabsRenderer = () => {
       (item) =>
         item.nameSingular === targetRecordIdentifier?.targetObjectNameSingular,
     )?.isSystem ?? false;
-
-  const handleAddTab =
-    isPageLayoutInEditMode &&
-    shouldEnableTabEditingFeatures(
-      currentPageLayout.type,
-      isRecordPageGlobalEditionEnabled,
-    )
-      ? () => {
-          const newTabId = createPageLayoutTab(t`Untitled`);
-          setPageLayoutTabSettingsOpenTabId(newTabId);
-          navigatePageLayoutSidePanel({
-            sidePanelPage: SidePanelPages.PageLayoutTabSettings,
-            focusTitleInput: true,
-          });
-        }
-      : undefined;
 
   const canEnableTabEditing =
     isPageLayoutInEditMode &&
@@ -168,7 +144,7 @@ export const PageLayoutTabsRenderer = () => {
             behaveAsLinks={!isInSidePanel && !isPageLayoutInEditMode}
             isInSidePanel={isInSidePanel}
             componentInstanceId={tabListInstanceId}
-            onAddTab={handleAddTab}
+            addTabStrategy={addTabStrategy}
             isReorderEnabled={canEnableTabEditing}
             onReorder={
               canEnableTabEditing

@@ -126,9 +126,10 @@ export default async function PartnerPage() {
       <Signoff.Root
         backgroundColor={theme.colors.primary.background[100]}
         color={theme.colors.primary.text[100]}
+        page={Pages.Partner}
       >
-        <Signoff.Heading segments={SIGNOFF_DATA.heading} />
-        <Signoff.Body body={SIGNOFF_DATA.body} />
+        <Signoff.Heading page={Pages.Partner} segments={SIGNOFF_DATA.heading} />
+        <Signoff.Body body={SIGNOFF_DATA.body} page={Pages.Partner} />
         <Signoff.Cta>
           <PartnerSignoffCtas />
         </Signoff.Cta>

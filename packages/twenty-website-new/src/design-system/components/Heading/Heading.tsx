@@ -128,17 +128,22 @@ export function Heading({
   return (
     <Tag className={rootClassName} data-weight={weight} data-size={size}>
       {Array.isArray(segments) ? (
-        segments.map((segment, index) => (
-          <Fragment key={index}>
-            {segment.newLine ? <br /> : null}
-            <StyledSpan
-              data-family={segment.fontFamily}
-              data-weight={segment.fontWeight}
-            >
-              {segment.text}
-            </StyledSpan>
-          </Fragment>
-        ))
+        segments.map((segment, index) => {
+          const lineBreakBefore =
+            segment.newLine === true || segment.lineBreakBefore === true;
+
+          return (
+            <Fragment key={index}>
+              {lineBreakBefore ? <br /> : null}
+              <StyledSpan
+                data-family={segment.fontFamily}
+                data-weight={segment.fontWeight}
+              >
+                {segment.text}
+              </StyledSpan>
+            </Fragment>
+          );
+        })
       ) : (
         <StyledSpan
           data-family={segments.fontFamily}

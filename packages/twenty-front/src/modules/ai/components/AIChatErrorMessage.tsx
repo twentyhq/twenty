@@ -1,8 +1,12 @@
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconAlertCircle } from 'twenty-ui/display';
 import { useContext } from 'react';
+
+import { type AIChatError } from '@/ai/types/AIChatError';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 const StyledErrorContainer = styled.div`
   align-items: center;
@@ -40,11 +44,14 @@ const StyledErrorMessage = styled.div`
 `;
 
 type AIChatErrorMessageProps = {
-  error: Error;
+  error: AIChatError;
 };
 
 export const AIChatErrorMessage = ({ error }: AIChatErrorMessageProps) => {
   const { theme } = useContext(ThemeContext);
+  const errorMessage = CombinedGraphQLErrors.is(error)
+    ? getErrorMessageFromApolloError(error)
+    : error.message;
 
   return (
     <StyledErrorContainer>
@@ -54,7 +61,7 @@ export const AIChatErrorMessage = ({ error }: AIChatErrorMessageProps) => {
       <StyledErrorContent>
         <StyledErrorTitle>{t`Failed to get response`}</StyledErrorTitle>
         <StyledErrorMessage>
-          {error.message || t`An error occurred while processing your message`}
+          {errorMessage || t`An error occurred while processing your message`}
         </StyledErrorMessage>
       </StyledErrorContent>
     </StyledErrorContainer>
