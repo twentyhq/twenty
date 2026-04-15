@@ -265,25 +265,35 @@ export const seedWorkspaceMigration = async (
     workspaceId,
     attempt = 1,
     isInitial = false,
+    useCurrentTimestamp = false,
   }: {
     name: string;
     status: 'completed' | 'failed';
     workspaceId: string;
     attempt?: number;
     isInitial?: boolean;
+    useCurrentTimestamp?: boolean;
   },
 ) => {
-  const createdAt = new Date(
-    Date.now() - (1000000 - seedSequenceCounter * 1000),
-  ).toISOString();
+  if (useCurrentTimestamp) {
+    await dataSource.query(
+      `INSERT INTO core."upgradeMigration" (name, status, attempt, "executedByVersion", "workspaceId", "isInitial")
+       VALUES ($1, $2, $3, $4, $5, $6)`,
+      [name, status, attempt, EXECUTED_BY_VERSION, workspaceId, isInitial],
+    );
+  } else {
+    const createdAt = new Date(
+      Date.now() - (1000000 - seedSequenceCounter * 1000),
+    ).toISOString();
 
-  seedSequenceCounter++;
+    seedSequenceCounter++;
 
-  await dataSource.query(
-    `INSERT INTO core."upgradeMigration" (name, status, attempt, "executedByVersion", "workspaceId", "createdAt", "isInitial")
-     VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-    [name, status, attempt, EXECUTED_BY_VERSION, workspaceId, createdAt, isInitial],
-  );
+    await dataSource.query(
+      `INSERT INTO core."upgradeMigration" (name, status, attempt, "executedByVersion", "workspaceId", "createdAt", "isInitial")
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [name, status, attempt, EXECUTED_BY_VERSION, workspaceId, createdAt, isInitial],
+    );
+  }
 };
 
 export const testCountMigrationsForCommand = async (
@@ -339,7 +349,7 @@ export const testGetExecutedMigrationsInOrder = async (
   return dataSource.query(
     `SELECT name, status, attempt, "workspaceId", "isInitial"
      FROM core."upgradeMigration"
-     ORDER BY "createdAt" ASC`,
+     ORDER BY "createdAt" ASC, "workspaceId" ASC NULLS FIRST, attempt ASC`,
   );
 };
 

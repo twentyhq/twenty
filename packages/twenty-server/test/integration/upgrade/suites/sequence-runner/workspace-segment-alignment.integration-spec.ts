@@ -534,6 +534,7 @@ describe('UpgradeSequenceRunnerService — workspace segment alignment (integrat
       status: 'failed',
       workspaceId: WS_3,
       isInitial: true,
+      useCurrentTimestamp: true,
     });
 
     setMockActiveWorkspaceIds([WS_1, WS_2, WS_3]);
@@ -564,7 +565,7 @@ describe('UpgradeSequenceRunnerService — workspace segment alignment (integrat
       `Ic1:${WS_1}:failed:1`,
       `Ic1:${WS_2}:failed:1`,
 
-      // WS_3 created mid-failure with initial cursor at Ic1:failed
+      // WS_3 created after Ic1 failure, initial cursor at Ic1:failed
       `Ic1:${WS_3}:failed:1:initial`,
 
       // Second run — Ic1 retry succeeds
