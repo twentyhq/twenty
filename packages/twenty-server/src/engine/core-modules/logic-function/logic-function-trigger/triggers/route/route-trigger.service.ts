@@ -14,8 +14,16 @@ import {
   RouteTriggerExceptionCode,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception';
 import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import {
+  LogicFunctionExecutionException,
+  LogicFunctionExecutionExceptionCode,
+  LogicFunctionExecutorService,
+} from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { CustomException } from 'src/utils/custom-exception';
 
 @Injectable()
@@ -121,6 +129,26 @@ export class RouteTriggerService {
     return authContext;
   }
 
+  private mapErrorToRouteTriggerCode(error: unknown): RouteTriggerExceptionCode {
+    if (error instanceof LogicFunctionExecutionException) {
+      switch (error.code) {
+        case LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
+          return RouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND;
+        case LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED:
+          return RouteTriggerExceptionCode.RATE_LIMIT_EXCEEDED;
+      }
+    }
+
+    if (
+      error instanceof LogicFunctionException &&
+      error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
+    ) {
+      return RouteTriggerExceptionCode.LOGIC_FUNCTION_NOT_FOUND;
+    }
+
+    return RouteTriggerExceptionCode.LOGIC_FUNCTION_EXECUTION_ERROR;
+  }
+
   async handle({
     request,
     httpMethod,
@@ -163,12 +191,15 @@ export class RouteTriggerService {
       }
 
       this.logger.error(
-        `Unexpected error executing logic function ${logicFunction.id}: ${error}`,
+        `Unexpected error executing logic function ${logicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
       );
 
+      const code = this.mapErrorToRouteTriggerCode(error);
+
       throw new RouteTriggerException(
-        `Logic function execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        RouteTriggerExceptionCode.LOGIC_FUNCTION_EXECUTION_ERROR,
+        `Logic function execution failed for ${logicFunction.id}`,
+        code,
         {
           userFriendlyMessage:
             error instanceof CustomException

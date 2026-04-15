@@ -105,7 +105,9 @@ export class LogicFunctionExecutorService {
         `Logic function execution failed: ` +
           `functionId=${logicFunctionId}, ` +
           `workspaceId=${workspaceId}, ` +
-          `driver=${driver.constructor.name}: ${error}`,
+          `driver=${driver.constructor.name}: ` +
+          `${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
       );
       throw error;
     }

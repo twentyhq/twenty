@@ -1013,7 +1013,8 @@ export class LambdaDriver implements LogicFunctionDriver {
       });
     } catch (error) {
       this.logger.error(
-        `Failed to get dependency layer for function ${flatLogicFunction.id}: ${error}`,
+        `Failed to get dependency layer for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
       );
       throw new LogicFunctionException(
         `Failed to get dependency layer for function '${flatLogicFunction.id}': ${error instanceof Error ? error.message : 'Unknown error'}`,
@@ -1030,7 +1031,8 @@ export class LambdaDriver implements LogicFunctionDriver {
       });
     } catch (error) {
       this.logger.error(
-        `Failed to get SDK layer for function ${flatLogicFunction.id}: ${error}`,
+        `Failed to get SDK layer for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
       );
       throw new LogicFunctionException(
         `Failed to get SDK layer for function '${flatLogicFunction.id}': ${error instanceof Error ? error.message : 'Unknown error'}`,
@@ -1185,7 +1187,8 @@ export class LambdaDriver implements LogicFunctionDriver {
       };
     } catch (error) {
       this.logger.error(
-        `Lambda invocation failed for function ${flatLogicFunction.id}: ${error}`,
+        `Lambda invocation failed for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
       );
 
       if (error instanceof ResourceNotFoundException) {
