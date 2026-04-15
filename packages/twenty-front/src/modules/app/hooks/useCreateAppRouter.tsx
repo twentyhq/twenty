@@ -94,6 +94,12 @@ const BookCall = lazy(() =>
   })),
 );
 
+const StandalonePageLayoutPage = lazy(() =>
+  import('~/pages/page-layout/StandalonePageLayoutPage').then((module) => ({
+    default: module.StandalonePageLayoutPage,
+  })),
+);
+
 const NotFound = lazy(() =>
   import('~/pages/not-found/NotFound').then((module) => ({
     default: module.NotFound,
@@ -217,6 +223,14 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute>
                 <RecordShowPage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.PageLayoutPage}
+            element={
+              <LazyRoute>
+                <StandalonePageLayoutPage />
               </LazyRoute>
             }
           />

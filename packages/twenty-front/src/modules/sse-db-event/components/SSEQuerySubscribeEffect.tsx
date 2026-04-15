@@ -21,6 +21,7 @@ import {
   type AddQuerySubscriptionInput,
   type RemoveQueryFromEventStreamInput,
 } from '~/generated-metadata/graphql';
+import { getGraphqlErrorExtensionsFromError } from '~/utils/get-graphql-error-extensions-from-error.util';
 
 export const SSEQuerySubscribeEffect = () => {
   const store = useStore();
@@ -88,10 +89,14 @@ export const SSEQuerySubscribeEffect = () => {
       }
     } catch (error) {
       if (CombinedGraphQLErrors.is(error)) {
-        const subCode = error.errors[0]?.extensions?.subCode;
-        const code = error.errors[0]?.extensions?.code;
+        const extensions = getGraphqlErrorExtensionsFromError(error);
 
-        if (isGracefullyHandledEventStreamError({ subCode, code })) {
+        if (
+          isGracefullyHandledEventStreamError({
+            subCode: extensions?.subCode,
+            code: extensions?.code,
+          })
+        ) {
           store.set(activeQueryListenersState.atom, []);
           store.set(shouldDestroyEventStreamState.atom, true);
           return;

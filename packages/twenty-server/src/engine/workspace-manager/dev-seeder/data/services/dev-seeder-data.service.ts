@@ -114,11 +114,7 @@ import {
   WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
-import { PrefillFrontComponentService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-front-component.service';
-import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
 import { prefillFrontComponentCommandMenuItems } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-front-component-command-menu-items.util';
-import { getSeedFrontComponentDefinitions } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-front-component-definitions.util';
-import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-code-step-logic-functions.util';
 import { prefillWorkflowCommandMenuItems } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflows.util';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
@@ -293,8 +289,6 @@ export class DevSeederDataService {
     private readonly timelineActivitySeederService: TimelineActivitySeederService,
     private readonly fileStorageService: FileStorageService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly prefillLogicFunctionService: PrefillLogicFunctionService,
-    private readonly prefillFrontComponentService: PrefillFrontComponentService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {}
@@ -323,19 +317,6 @@ export class DevSeederDataService {
 
     const { seeds: attachmentSeeds, fileSeedMetadata: attachmentFileMeta } =
       generateAttachmentSeedsForWorkspace(workspaceId);
-
-    await this.prefillLogicFunctionService.ensureSeeded({
-      workspaceId,
-      definitions:
-        getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions(
-          workspaceId,
-        ),
-    });
-
-    await this.prefillFrontComponentService.ensureSeeded({
-      workspaceId,
-      definitions: getSeedFrontComponentDefinitions(workspaceId),
-    });
 
     await this.coreDataSource.transaction(
       async (entityManager: WorkspaceEntityManager) => {

@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AIChatErrorRenderer } from '@/ai/components/AIChatErrorRenderer';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
@@ -11,9 +12,11 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledErrorContainer = styled.div`
-  align-items: flex-start;
+  box-sizing: border-box;
   display: flex;
+  flex: 1;
   flex-direction: column;
+  padding: ${themeCssVariables.spacing[3]};
   width: 100%;
 `;
 

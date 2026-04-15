@@ -1787,7 +1787,6 @@ msgstr "Об'єкт з цією назвою уже існує"
 
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
-#: src/modules/ai/utils/extractErrorMessage.ts
 msgid "An unexpected error occurred"
 msgstr "Сталася несподівана помилка"
 
@@ -7175,11 +7174,6 @@ msgstr "Отримайте максимум від свого робочого �
 msgid "Get your subscription"
 msgstr "Отримайте свою передплату"
 
-#. js-lingui-id: 2GT3Hf
-#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
-msgid "Global"
-msgstr "Глобальні"
-
 #. js-lingui-id: sr0UJD
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
 msgid "Go Back"
@@ -10356,6 +10350,11 @@ msgstr "Примітка"
 msgid "Notes"
 msgstr "Нотатки"
 
+#. js-lingui-id: DYCPYF
+#: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
+msgid "Nothing to see"
+msgstr ""
+
 #. js-lingui-id: YwzE9K
 #: src/utils/date-utils.ts
 #: src/utils/date-utils.ts
@@ -11705,11 +11704,6 @@ msgstr "Мітка запису"
 msgid "Record Page"
 msgstr "Сторінка запису"
 
-#. js-lingui-id: dSCufP
-#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
-msgid "Record Selection"
-msgstr "Вибір запису"
-
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Record Table Settings"
@@ -12411,11 +12405,6 @@ msgstr "SDK"
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 msgid "Search"
 msgstr "Пошук"
-
-#. js-lingui-id: aOQ/Fi
-#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
-msgid "Search ''{sidePanelSearch}'' with..."
-msgstr "Пошук ''{sidePanelSearch}'' за допомогою..."
 
 #. js-lingui-id: g2dQp/
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
@@ -14364,6 +14353,11 @@ msgstr "Цей ключ слід задавати у тілі запиту"
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "This model will be removed from the provider. You can re-add it later."
 msgstr "Цю модель буде видалено з провайдера. Ви зможете додати її знову пізніше."
+
+#. js-lingui-id: NCA55L
+#: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
+msgid "This page has no content"
+msgstr ""
 
 #. js-lingui-id: R/PuIn
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx

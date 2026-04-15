@@ -20,6 +20,7 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { type EventSubscription } from '~/generated-metadata/graphql';
+import { getGraphqlErrorExtensionsFromError } from '~/utils/get-graphql-error-extensions-from-error.util';
 
 export const useTriggerEventStreamCreation = () => {
   const store = useStore();
@@ -81,10 +82,16 @@ export const useTriggerEventStreamCreation = () => {
           }>,
         ) => {
           if (isDefined(value?.errors) && Array.isArray(value.errors)) {
-            const subCode = value.errors[0]?.extensions?.subCode;
-            const code = value.errors[0]?.extensions?.code;
+            const extensions = getGraphqlErrorExtensionsFromError(
+              value.errors[0],
+            );
 
-            if (!isGracefullyHandledEventStreamError({ subCode, code })) {
+            if (
+              !isGracefullyHandledEventStreamError({
+                subCode: extensions?.subCode,
+                code: extensions?.code,
+              })
+            ) {
               captureException(
                 new Error(
                   `SSE subscription error: ${value.errors[0]?.message}`,
@@ -137,10 +144,16 @@ export const useTriggerEventStreamCreation = () => {
           try {
             if (event === 'next') {
               if (isDefined(result?.errors)) {
-                const subCode = result.errors[0]?.extensions?.subCode;
-                const code = result.errors[0]?.extensions?.code;
+                const extensions = getGraphqlErrorExtensionsFromError(
+                  result.errors[0],
+                );
 
-                if (!isGracefullyHandledEventStreamError({ subCode, code })) {
+                if (
+                  !isGracefullyHandledEventStreamError({
+                    subCode: extensions?.subCode,
+                    code: extensions?.code,
+                  })
+                ) {
                   for (const error of result.errors) {
                     captureException(error);
                   }

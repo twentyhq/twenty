@@ -1,9 +1,9 @@
 import { Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { type ObjectRecordCreateEvent } from 'twenty-shared/database-events';
 import { isDefined } from 'twenty-shared/utils';
 import { And, Any, ILike, In, Not, Or, type Repository } from 'typeorm';
-import { type ObjectRecordCreateEvent } from 'twenty-shared/database-events';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -87,6 +87,7 @@ export class BlocklistItemDeleteCalendarEventsJob {
         await this.globalWorkspaceOrmManager.getRepository(
           workspaceId,
           'workspaceMember',
+          { shouldBypassPermissionChecks: true },
         );
 
       for (const workspaceMemberId of handlesToDeleteByWorkspaceMemberIdMap.keys()) {

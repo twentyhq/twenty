@@ -17,6 +17,30 @@ describe('getWidgetCardVariant', () => {
     ).toBe('dashboard');
   });
 
+  it('should return standalone for STANDALONE_PAGE page layout type', () => {
+    expect(
+      getWidgetCardVariant({
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        isInPinnedTab: false,
+        pageLayoutType: PageLayoutType.STANDALONE_PAGE,
+        isMobile: false,
+        isInSidePanel: false,
+      }),
+    ).toBe('standalone');
+  });
+
+  it('should prioritize standalone over canvas', () => {
+    expect(
+      getWidgetCardVariant({
+        layoutMode: PageLayoutTabLayoutMode.CANVAS,
+        isInPinnedTab: false,
+        pageLayoutType: PageLayoutType.STANDALONE_PAGE,
+        isMobile: false,
+        isInSidePanel: false,
+      }),
+    ).toBe('standalone');
+  });
+
   it('should return canvas for CANVAS layout mode', () => {
     expect(
       getWidgetCardVariant({
