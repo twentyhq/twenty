@@ -23,9 +23,9 @@ runs:
         CACHE_KEY: ${{ inputs.key }}
         REF_NAME: ${{ github.ref_name }}
       run: |
-        echo "CACHE_PRIMARY_KEY_PREFIX=v5-${CACHE_KEY}-${REF_NAME}" >> "${GITHUB_OUTPUT}"
+        echo "CACHE_PRIMARY_KEY_PREFIX=v4-${CACHE_KEY}-${REF_NAME}" >> "${GITHUB_OUTPUT}"
     - name: Restore cache
-      uses: actions/cache/restore@v5
+      uses: actions/cache/restore@v4
       id: restore-cache
       with:
         key: ${{ steps.cache-primary-key-builder.outputs.CACHE_PRIMARY_KEY_PREFIX }}-${{ github.sha }}
