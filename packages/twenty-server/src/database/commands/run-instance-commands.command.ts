@@ -85,7 +85,6 @@ export class RunInstanceCommandsCommand extends CommandRunner {
           {
             command,
             name,
-            activeOrSuspendedWorkspaceIds,
             skipHistory,
           },
         );
@@ -105,7 +104,6 @@ export class RunInstanceCommandsCommand extends CommandRunner {
               command,
               name,
               skipDataMigration: activeOrSuspendedWorkspaceIds.length === 0,
-              activeOrSuspendedWorkspaceIds,
               skipHistory,
             });
 

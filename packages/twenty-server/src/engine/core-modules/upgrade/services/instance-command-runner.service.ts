@@ -7,6 +7,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
+import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 type RunSingleMigrationResult =
   | { status: 'success' }
@@ -22,17 +23,16 @@ export class InstanceCommandRunnerService {
     private readonly dataSource: DataSource,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly upgradeMigrationService: UpgradeMigrationService,
+    private readonly workspaceVersionService: WorkspaceVersionService,
   ) {}
 
   async runFastInstanceCommand({
     command,
     name,
-    activeOrSuspendedWorkspaceIds,
     skipHistory = false,
   }: {
     command: FastInstanceCommand;
     name: string;
-    activeOrSuspendedWorkspaceIds: string[];
     skipHistory?: boolean;
   }): Promise<RunSingleMigrationResult> {
     const executedByVersion =
@@ -59,9 +59,12 @@ export class InstanceCommandRunnerService {
       await command.up(queryRunner);
 
       if (!skipHistory) {
+        const workspaceIds =
+          await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
+
         await this.upgradeMigrationService.recordUpgradeMigration({
           name,
-          workspaceIds: activeOrSuspendedWorkspaceIds,
+          workspaceIds,
           isInstance: true,
           status: 'completed',
           executedByVersion,
@@ -76,9 +79,12 @@ export class InstanceCommandRunnerService {
       }
 
       if (!skipHistory) {
+        const workspaceIds =
+          await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
+
         await this.upgradeMigrationService.recordUpgradeMigration({
           name,
-          workspaceIds: activeOrSuspendedWorkspaceIds,
+          workspaceIds,
           isInstance: true,
           status: 'failed',
           executedByVersion,
@@ -105,13 +111,11 @@ export class InstanceCommandRunnerService {
     command,
     name,
     skipDataMigration,
-    activeOrSuspendedWorkspaceIds,
     skipHistory = false,
   }: {
     command: SlowInstanceCommand;
     name: string;
     skipDataMigration?: boolean;
-    activeOrSuspendedWorkspaceIds: string[];
     skipHistory?: boolean;
   }): Promise<RunSingleMigrationResult> {
     const isAlreadyCompleted =
@@ -134,9 +138,12 @@ export class InstanceCommandRunnerService {
         await command.runDataMigration(this.dataSource);
       } catch (error) {
         if (!skipHistory) {
+          const workspaceIds =
+            await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
+
           await this.upgradeMigrationService.recordUpgradeMigration({
             name,
-            workspaceIds: activeOrSuspendedWorkspaceIds,
+            workspaceIds,
             isInstance: true,
             status: 'failed',
             executedByVersion,
@@ -156,7 +163,6 @@ export class InstanceCommandRunnerService {
     return this.runFastInstanceCommand({
       command,
       name,
-      activeOrSuspendedWorkspaceIds,
       skipHistory,
     });
   }
