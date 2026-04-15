@@ -27,11 +27,11 @@ const StyledContainer = styled.div`
 `;
 
 const StyledTitle = styled.span<{ reserveTitleSpace?: boolean }>`
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
   color: ${themeCssVariables.font.color.primary};
+  display: flex;
   font-size: ${themeCssVariables.font.size.lg};
   font-weight: ${themeCssVariables.font.weight.semiBold};
+  gap: ${themeCssVariables.spacing[2]};
   line-height: 1.2;
   margin: ${themeCssVariables.spacing[8]} ${themeCssVariables.spacing[8]}
     ${themeCssVariables.spacing[2]};

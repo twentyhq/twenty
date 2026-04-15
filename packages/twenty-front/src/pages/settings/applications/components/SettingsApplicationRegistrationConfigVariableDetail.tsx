@@ -33,8 +33,8 @@ const StyledRow = styled.div`
 `;
 
 const StyledButtonContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   gap: ${themeCssVariables.spacing[1]};
   min-width: 200px;
 `;
@@ -213,7 +213,7 @@ export const SettingsApplicationRegistrationConfigVariableDetail = () => {
                 variant="secondary"
                 onClick={handleXButtonClick}
                 type="button"
-                disabled={isSubmitting || !variable.isFilled}
+                disabled={isSubmitting || (!isEditing && !variable.isFilled)}
               />
               <SettingsApplicationRegistrationConfigVariableStatus
                 variable={variable}

@@ -1,5 +1,5 @@
 import { Status } from 'twenty-ui/display';
-import { ApplicationRegistrationVariable } from '~/generated-metadata/graphql';
+import { type ApplicationRegistrationVariable } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
 
 export const SettingsApplicationRegistrationConfigVariableStatus = ({

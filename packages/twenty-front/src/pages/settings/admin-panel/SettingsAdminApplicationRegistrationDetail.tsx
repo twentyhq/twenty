@@ -81,12 +81,12 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
                 title={t`Allow installation`}
                 description={t`Display this app in the NPM packages list`}
                 checked={registration.isListed}
-                onChange={() =>
+                onChange={(checked) =>
                   updateRegistration({
                     variables: {
                       input: {
                         id: registration.id,
-                        update: { isListed: !registration.isListed },
+                        update: { isListed: checked },
                       },
                     },
                   })

@@ -24,8 +24,8 @@ import {
 } from '~/generated-metadata/graphql';
 
 const StyledTableContainer = styled.div`
-  margin-top: ${themeCssVariables.spacing[3]};
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  margin-top: ${themeCssVariables.spacing[3]};
 `;
 
 const TABLE_GRID = '1fr 100px 100px 40px';
@@ -108,7 +108,7 @@ export const SettingsAdminApps = () => {
                 mobileGridAutoColumns={TABLE_GRID_MOBILE}
                 isClickable
               >
-                <TableCell>
+                <TableCell color={themeCssVariables.font.color.primary}>
                   <OverflowingTextWithTooltip text={registration.name} />
                 </TableCell>
                 <TableCell overflow="hidden" align="right">

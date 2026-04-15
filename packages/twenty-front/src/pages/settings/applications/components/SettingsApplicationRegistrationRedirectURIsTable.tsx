@@ -1,5 +1,3 @@
-import { type BlocklistItem } from '@/accounts/types/BlocklistItem';
-import { SettingsAccountsBlocklistTableRow } from '@/settings/accounts/components/SettingsAccountsBlocklistTableRow';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -9,10 +7,9 @@ import { t } from '@lingui/core/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { IconX, OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { IconButton } from 'twenty-ui/input';
 
-type SettingsAccountsBlocklistTableProps = {
+type SettingsApplicationRegistrationRedirectURIsTableProps = {
   redirectUris: string[];
   updateRedirectUris: (redirectUris: string[]) => void;
 };
@@ -28,15 +25,15 @@ const StyledTableBodyContainer = styled.div`
 export const SettingsApplicationRegistrationRedirectURIsTable = ({
   redirectUris,
   updateRedirectUris,
-}: SettingsAccountsBlocklistTableProps) => {
+}: SettingsApplicationRegistrationRedirectURIsTableProps) => {
   return (
     <>
       {redirectUris.length > 0 && (
         <StyledTableContainer>
           <Table>
             <TableRow
-              gridAutoColumns="200px 1fr 20px"
-              mobileGridAutoColumns="120px 1fr 20px"
+              gridAutoColumns="1fr 20px"
+              mobileGridAutoColumns="1fr 20px"
             >
               <TableHeader>{t`URI`}</TableHeader>
               <TableHeader></TableHeader>
@@ -49,7 +46,7 @@ export const SettingsApplicationRegistrationRedirectURIsTable = ({
                     gridAutoColumns="1fr 20px"
                     mobileGridAutoColumns="1fr 20px"
                   >
-                    <TableCell>
+                    <TableCell color={themeCssVariables.font.color.primary}>
                       <OverflowingTextWithTooltip text={redirectUri} />
                     </TableCell>
 

@@ -7,9 +7,6 @@ import { FindOneApplicationRegistrationDocument } from '~/generated-metadata/gra
 import { SettingsApplicationRegistrationContent } from '~/pages/settings/applications/components/SettingsApplicationRegistrationContent';
 import { useLingui } from '@lingui/react/macro';
 import { Tag } from 'twenty-ui/components';
-import { styled } from '@linaria/react';
-
-const StyledContainer = styled.div``;
 
 export const SettingsApplicationRegistrationDetails = () => {
   const { t } = useLingui();

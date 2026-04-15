@@ -68,7 +68,7 @@ export const SettingsApplicationsDeveloperTab = () => {
 
   const { copyToClipboard } = useCopyToClipboard();
 
-  const { data, loading } = useQuery(FindManyApplicationRegistrationsDocument);
+  const { data } = useQuery(FindManyApplicationRegistrationsDocument);
 
   const isMarketplaceSettingTabVisible = useIsFeatureEnabled(
     FeatureFlagKey.IS_MARKETPLACE_SETTING_TAB_VISIBLE,

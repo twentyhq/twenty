@@ -131,20 +131,13 @@ export const useFieldsWidgetGroups = ({
       groups: filterDraftGroupsForDisplay(
         buildDefaultFieldsWidgetGroups({
           fields: objectMetadataItem.fields,
-          objectNameSingular,
           labelIdentifierFieldMetadataItemId:
             labelIdentifierFieldMetadataItem?.id,
         }),
       ),
       displayMode: 'grouped',
     };
-  }, [
-    objectMetadataItem,
-    objectNameSingular,
-    labelIdentifierFieldMetadataItem,
-    view,
-    viewId,
-  ]);
+  }, [objectMetadataItem, labelIdentifierFieldMetadataItem, view, viewId]);
 
   return {
     groups,

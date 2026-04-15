@@ -290,33 +290,41 @@ export class ApplicationRegistrationService {
         isListed: params.isListed,
         isFeatured: params.isFeatured,
       });
+    } else {
+      const registration = this.applicationRegistrationRepository.create({
+        universalIdentifier: params.universalIdentifier,
+        name: params.name,
+        sourceType: params.sourceType,
+        sourcePackage: params.sourcePackage,
+        latestAvailableVersion: params.latestAvailableVersion,
+        isListed: params.isListed,
+        isFeatured: params.isFeatured,
+        manifest: params.manifest,
+        oAuthClientId: v4(),
+        oAuthRedirectUris: [],
+        oAuthScopes: [],
+        ownerWorkspaceId: params.ownerWorkspaceId,
+      });
 
+      await this.applicationRegistrationRepository.save(registration);
+    }
+
+    if (!isDefined(params.manifest?.application?.serverVariables)) {
       return;
     }
 
-    const registration = this.applicationRegistrationRepository.create({
-      universalIdentifier: params.universalIdentifier,
-      name: params.name,
-      sourceType: params.sourceType,
-      sourcePackage: params.sourcePackage,
-      latestAvailableVersion: params.latestAvailableVersion,
-      isListed: params.isListed,
-      isFeatured: params.isFeatured,
-      manifest: params.manifest,
-      oAuthClientId: v4(),
-      oAuthRedirectUris: [],
-      oAuthScopes: [],
-      ownerWorkspaceId: params.ownerWorkspaceId,
-    });
+    const registration = await this.findOneByUniversalIdentifier(
+      params.universalIdentifier,
+    );
 
-    await this.applicationRegistrationRepository.save(registration);
-
-    if (params.manifest?.application?.serverVariables) {
-      await this.applicationRegistrationVariableService.syncVariableSchemas(
-        registration.id,
-        params.manifest.application.serverVariables,
-      );
+    if (!isDefined(registration)) {
+      return;
     }
+
+    await this.applicationRegistrationVariableService.syncVariableSchemas(
+      registration.id,
+      params.manifest.application.serverVariables,
+    );
   }
 
   async createCliRegistrationIfNotExists(): Promise<ApplicationRegistrationEntity | null> {

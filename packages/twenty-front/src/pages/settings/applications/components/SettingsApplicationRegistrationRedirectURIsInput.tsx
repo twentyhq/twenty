@@ -9,7 +9,6 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useLingui } from '@lingui/react/macro';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { isValidHostname } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -21,7 +20,7 @@ const StyledLinkContainer = styled.div`
   margin-right: ${themeCssVariables.spacing[2]};
 `;
 
-type SettingsApplicationRegistrationRedirectURIProps = {
+type SettingsApplicationRegistrationRedirectURIsInputProps = {
   updateRedirectUris: (newRedirectUris: string[]) => void;
   redirectUris: string[];
 };
@@ -33,7 +32,7 @@ type FormInput = {
 export const SettingsApplicationRegistrationRedirectURIsInput = ({
   updateRedirectUris,
   redirectUris,
-}: SettingsApplicationRegistrationRedirectURIProps) => {
+}: SettingsApplicationRegistrationRedirectURIsInputProps) => {
   const { t } = useLingui();
 
   const validationSchema = (redirectUris: string[]) =>
@@ -62,12 +61,6 @@ export const SettingsApplicationRegistrationRedirectURIsInput = ({
     updateRedirectUris([...redirectUris, data.redirectUri]);
   });
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === Key.Enter) {
-      submit();
-    }
-  };
-
   const { isSubmitSuccessful } = formState;
 
   useEffect(() => {
@@ -90,7 +83,6 @@ export const SettingsApplicationRegistrationRedirectURIsInput = ({
                 value={value}
                 onChange={onChange}
                 error={error?.message}
-                onKeyDown={handleKeyDown}
                 fullWidth
               />
             )}

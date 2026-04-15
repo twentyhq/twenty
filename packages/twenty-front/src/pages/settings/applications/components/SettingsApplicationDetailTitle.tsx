@@ -82,7 +82,6 @@ const StyledAppDescription = styled.div`
 
 const StyledUnlistedBanner = styled.div`
   align-items: center;
-  justify-content: center;
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
@@ -91,6 +90,7 @@ const StyledUnlistedBanner = styled.div`
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.regular};
   gap: ${themeCssVariables.spacing[2]};
+  justify-content: center;
   margin-bottom: ${themeCssVariables.spacing[8]};
   padding: ${themeCssVariables.spacing[3]};
 `;

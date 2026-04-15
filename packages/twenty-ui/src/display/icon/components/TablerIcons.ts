@@ -201,6 +201,7 @@ export {
   IconFrame,
   IconFunction,
   IconGauge,
+  IconGitBranch,
   IconGitBranchDeleted,
   IconGitCommit,
   IconGizmo,

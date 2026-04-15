@@ -7,14 +7,15 @@ import {
   IconStatusChange,
   IconTag,
   IconWorld,
+  IconGitBranch,
 } from 'twenty-ui/display';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
   SettingsTableCard,
-  TableItem,
+  type TableItem,
 } from '@/settings/components/SettingsTableCard';
 import {
-  ApplicationRegistration,
+  type ApplicationRegistration,
   ApplicationRegistrationSourceType,
   ApplicationRegistrationTarballUrlDocument,
   FindApplicationRegistrationStatsDocument,
@@ -22,7 +23,6 @@ import {
   GetPublicWorkspaceDataByIdDocument,
 } from '~/generated-metadata/graphql';
 import { isNonEmptyString } from '@sniptt/guards';
-import { IconGitBranch } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useQuery } from '@apollo/client/react';

@@ -9,7 +9,6 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useLingui } from '@lingui/react/macro';
-import { t } from '@lingui/core/macro';
 import { useInstallMarketplaceApp } from '@/marketplace/hooks/useInstallMarketplaceApp';
 import { isDefined } from 'twenty-shared/utils';
 

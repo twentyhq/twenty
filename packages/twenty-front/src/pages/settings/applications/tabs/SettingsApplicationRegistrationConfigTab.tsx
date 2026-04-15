@@ -1,7 +1,7 @@
 import type { ApplicationRegistrationData } from '~/pages/settings/applications/tabs/types/ApplicationRegistrationData';
 import { useQuery } from '@apollo/client/react';
 import {
-  ApplicationRegistrationVariable,
+  type ApplicationRegistrationVariable,
   FindApplicationRegistrationVariablesDocument,
 } from '~/generated-metadata/graphql';
 import { Section } from 'twenty-ui/layout';
@@ -9,7 +9,6 @@ import {
   H2Title,
   IconChevronRight,
   OverflowingTextWithTooltip,
-  Status,
 } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { styled } from '@linaria/react';

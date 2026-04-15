@@ -14,11 +14,13 @@ import {
   H2Title,
   IconShare,
   IconTrash,
+  AppTooltip,
+  TooltipDelay,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import {
-  ApplicationRegistration,
+  type ApplicationRegistration,
   DeleteApplicationRegistrationDocument,
   FindApplicationRegistrationStatsDocument,
   FindManyApplicationRegistrationsDocument,
@@ -33,9 +35,7 @@ import {
   StyledAppModalTitle,
 } from '~/pages/settings/applications/components/SettingsAppModalLayout';
 import { SettingsAdminApplicationRegistrationDetailContent } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/display';
 import { isDefined } from 'twenty-shared/utils';
-import { useInstallMarketplaceApp } from '@/marketplace/hooks/useInstallMarketplaceApp';
 
 const DELETE_REGISTRATION_MODAL_ID = 'delete-application-registration-modal';
 
@@ -75,7 +75,8 @@ export const SettingsApplicationRegistrationGeneralTab = ({
 
   const stats = statsData?.findApplicationRegistrationStats;
 
-  const hasActiveInstalls = (stats?.activeInstalls ?? 0) > 0;
+  const hasActiveInstalls =
+    !isDefined(stats) || (stats.activeInstalls ?? 0) > 0;
 
   const [deleteRegistration] = useMutation(
     DeleteApplicationRegistrationDocument,
