@@ -87,7 +87,7 @@ export class UpgradeSequenceRunnerService {
       }
 
       const workspaceCommandsSegment =
-        this.upgradeSequenceReaderService.collectWorkspaceCommandsSegment({
+        this.upgradeSequenceReaderService.collectWorkspaceCommandsStartingFrom({
           sequence,
           fromWorkspaceCommand: step,
         });

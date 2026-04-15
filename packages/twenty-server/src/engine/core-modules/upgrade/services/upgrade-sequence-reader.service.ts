@@ -7,7 +7,6 @@ import {
   type RegisteredWorkspaceCommand,
   UpgradeCommandRegistryService,
 } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
-import { isDefined } from 'twenty-shared/utils';
 
 export type FastInstanceUpgradeStep = {
   kind: 'fast-instance';
@@ -109,7 +108,7 @@ export class UpgradeSequenceReaderService {
     return { startCursor, endCursor };
   }
 
-  collectWorkspaceCommandsSegment({
+  collectWorkspaceCommandsStartingFrom({
     sequence,
     fromWorkspaceCommand,
   }: {
@@ -193,10 +192,7 @@ export class UpgradeSequenceReaderService {
       return this.findLastWorkspaceCommandBefore(sequence, instanceCursor);
     }
 
-    return this.findLastWorkspaceCommandInSegmentStartingAt(
-      sequence,
-      instanceCursor + 1,
-    );
+    return this.findLastWorkspaceCommandInSegmentStartingAt(sequence, nextStep);
   }
 
   private findLastWorkspaceCommandBefore(
@@ -219,32 +215,13 @@ export class UpgradeSequenceReaderService {
 
   private findLastWorkspaceCommandInSegmentStartingAt(
     sequence: UpgradeStep[],
-    startIndex: number,
+    firstWorkspaceCommand: WorkspaceUpgradeStep,
   ): RegisteredWorkspaceCommand {
-    const firstWorkspaceCommand = sequence[startIndex];
-
-    if (!firstWorkspaceCommand || firstWorkspaceCommand.kind !== 'workspace') {
-      throw new Error(
-        'No workspace commands found in current segment — this should have been caught at startup',
-      );
-    }
-
-    const { endCursor } = this.getWorkspaceSegmentBounds({
+    const segment = this.collectWorkspaceCommandsStartingFrom({
       sequence,
-      workspaceCommand: firstWorkspaceCommand,
+      fromWorkspaceCommand: firstWorkspaceCommand,
     });
 
-    const lastWorkspaceCommand = sequence[endCursor];
-
-    if (
-      !isDefined(lastWorkspaceCommand) ||
-      lastWorkspaceCommand.kind !== 'workspace'
-    ) {
-      throw new Error(
-        'Invalid workspace segment bounds — this should never happen',
-      );
-    }
-
-    return lastWorkspaceCommand;
+    return segment[segment.length - 1];
   }
 }
