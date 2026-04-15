@@ -3,11 +3,11 @@
 import { Body, Eyebrow, Heading, IconButton } from '@/design-system/components';
 import type { EyebrowType } from '@/design-system/components/Eyebrow/types/Eyebrow';
 import { ArrowLeftIcon, ArrowRightIcon } from '@/icons';
+import { PartnerEffect } from '@/illustrations/Testimonials/PartnerEffect';
 import type { TestimonialCardType } from '@/sections/Testimonials/types/TestimonialCard';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import NextImage from 'next/image';
 import { type ReactNode, useState } from 'react';
 import { Separator } from '../Separator/Separator';
 
@@ -18,11 +18,15 @@ const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
 });
 
 const nameTextClassName = css`
-  color: ${theme.colors.secondary.text[100]};
+  &&& {
+    color: ${theme.colors.secondary.text[100]};
+  }
 `;
 
 const handleTextClassName = css`
-  color: ${theme.colors.secondary.text[100]};
+  &&& {
+    color: ${theme.colors.secondary.text[100]};
+  }
 `;
 
 const dateTextClassName = css`
@@ -262,16 +266,10 @@ export function PartnerCarousel({
         <AuthorCard>
           <PortraitFrame>
             {avatar ? (
-              <NextImage
-                alt={avatar.alt ?? ''}
-                fill
-                priority
-                sizes="(min-width: 921px) 328px, 100vw"
+              <PartnerEffect
+                alt={avatar.alt ?? current.author.name.text}
+                fallback={authorInitials}
                 src={avatar.src}
-                style={{
-                  filter: 'grayscale(1) contrast(1.1)',
-                  objectFit: 'cover',
-                }}
               />
             ) : (
               <PortraitPlaceholder aria-hidden>

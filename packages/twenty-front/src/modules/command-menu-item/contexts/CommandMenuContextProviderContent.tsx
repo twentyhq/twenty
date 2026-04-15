@@ -4,6 +4,7 @@ import {
 } from '@/command-menu-item/contexts/CommandMenuContext';
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
+import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageType';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo } from 'react';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
@@ -32,6 +33,7 @@ export const CommandMenuContextProviderContent = ({
       .filter(
         doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
       )
+      .filter(doesCommandMenuItemMatchPageType(commandMenuContextApi.pageType))
       .filter((item) =>
         evaluateConditionalAvailabilityExpression(
           item.conditionalAvailabilityExpression,

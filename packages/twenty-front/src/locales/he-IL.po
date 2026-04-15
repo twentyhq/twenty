@@ -1787,7 +1787,6 @@ msgstr "אובייקט בשם זה כבר קיים"
 
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
-#: src/modules/ai/utils/extractErrorMessage.ts
 msgid "An unexpected error occurred"
 msgstr "אירעה שגיאה בלתי צפויה"
 
@@ -7175,11 +7174,6 @@ msgstr "נצלו את המרחב שלכם על ידי הזמנת הצוות של
 msgid "Get your subscription"
 msgstr "השיגו את המנוי שלכם"
 
-#. js-lingui-id: 2GT3Hf
-#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
-msgid "Global"
-msgstr "גלובלי"
-
 #. js-lingui-id: sr0UJD
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
 msgid "Go Back"
@@ -10356,6 +10350,11 @@ msgstr "הערה"
 msgid "Notes"
 msgstr "הערות"
 
+#. js-lingui-id: DYCPYF
+#: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
+msgid "Nothing to see"
+msgstr ""
+
 #. js-lingui-id: YwzE9K
 #: src/utils/date-utils.ts
 #: src/utils/date-utils.ts
@@ -11705,11 +11704,6 @@ msgstr "תווית של רישום"
 msgid "Record Page"
 msgstr "דף רישום"
 
-#. js-lingui-id: dSCufP
-#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
-msgid "Record Selection"
-msgstr "\\"
-
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Record Table Settings"
@@ -12411,11 +12405,6 @@ msgstr "SDK"
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 msgid "Search"
 msgstr "\\"
-
-#. js-lingui-id: aOQ/Fi
-#: src/modules/side-panel/pages/root/components/SidePanelRootPage.tsx
-msgid "Search ''{sidePanelSearch}'' with..."
-msgstr "חפש \\\"{sidePanelSearch}\\\" עם..."
 
 #. js-lingui-id: g2dQp/
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
@@ -14362,6 +14351,11 @@ msgstr "יש להגדיר מפתח זה דרך קלט הגוף"
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "This model will be removed from the provider. You can re-add it later."
 msgstr "מודל זה יוסר מהספק. ניתן להוסיפו מחדש מאוחר יותר."
+
+#. js-lingui-id: NCA55L
+#: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
+msgid "This page has no content"
+msgstr ""
 
 #. js-lingui-id: R/PuIn
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx

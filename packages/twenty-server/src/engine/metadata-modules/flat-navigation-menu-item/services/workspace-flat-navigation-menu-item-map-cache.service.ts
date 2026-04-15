@@ -12,6 +12,7 @@ import { addFlatNavigationMenuItemToMapsAndUpdateIndex } from 'src/engine/metada
 import { fromNavigationMenuItemEntityToFlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/from-navigation-menu-item-entity-to-flat-navigation-menu-item.util';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
@@ -28,6 +29,8 @@ export class WorkspaceFlatNavigationMenuItemMapCacheService extends WorkspaceCac
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
+    @InjectRepository(PageLayoutEntity)
+    private readonly pageLayoutRepository: Repository<PageLayoutEntity>,
   ) {
     super();
   }
@@ -35,28 +38,38 @@ export class WorkspaceFlatNavigationMenuItemMapCacheService extends WorkspaceCac
   async computeForCache(
     workspaceId: string,
   ): Promise<FlatNavigationMenuItemMaps> {
-    const [navigationMenuItems, applications, objectMetadatas, views] =
-      await Promise.all([
-        this.navigationMenuItemRepository.find({
-          where: { workspaceId },
-          withDeleted: true,
-        }),
-        this.applicationRepository.find({
-          where: { workspaceId },
-          select: ['id', 'universalIdentifier'],
-          withDeleted: true,
-        }),
-        this.objectMetadataRepository.find({
-          where: { workspaceId },
-          select: ['id', 'universalIdentifier'],
-          withDeleted: true,
-        }),
-        this.viewRepository.find({
-          where: { workspaceId },
-          select: ['id', 'universalIdentifier'],
-          withDeleted: true,
-        }),
-      ]);
+    const [
+      navigationMenuItems,
+      applications,
+      objectMetadatas,
+      views,
+      pageLayouts,
+    ] = await Promise.all([
+      this.navigationMenuItemRepository.find({
+        where: { workspaceId },
+        withDeleted: true,
+      }),
+      this.applicationRepository.find({
+        where: { workspaceId },
+        select: ['id', 'universalIdentifier'],
+        withDeleted: true,
+      }),
+      this.objectMetadataRepository.find({
+        where: { workspaceId },
+        select: ['id', 'universalIdentifier'],
+        withDeleted: true,
+      }),
+      this.viewRepository.find({
+        where: { workspaceId },
+        select: ['id', 'universalIdentifier'],
+        withDeleted: true,
+      }),
+      this.pageLayoutRepository.find({
+        where: { workspaceId },
+        select: ['id', 'universalIdentifier'],
+        withDeleted: true,
+      }),
+    ]);
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
@@ -66,6 +79,8 @@ export class WorkspaceFlatNavigationMenuItemMapCacheService extends WorkspaceCac
       createIdToUniversalIdentifierMap(navigationMenuItems);
     const viewIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(views);
+    const pageLayoutIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(pageLayouts);
 
     const flatNavigationMenuItemMaps = {
       ...createEmptyFlatEntityMaps(),
@@ -80,6 +95,7 @@ export class WorkspaceFlatNavigationMenuItemMapCacheService extends WorkspaceCac
           objectMetadataIdToUniversalIdentifierMap,
           navigationMenuItemIdToUniversalIdentifierMap,
           viewIdToUniversalIdentifierMap,
+          pageLayoutIdToUniversalIdentifierMap,
         });
 
       addFlatNavigationMenuItemToMapsAndUpdateIndex({

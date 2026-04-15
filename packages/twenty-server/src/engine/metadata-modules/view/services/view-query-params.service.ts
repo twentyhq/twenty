@@ -177,6 +177,7 @@ export class ViewQueryParamsService {
         await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
           workspaceId,
           'workspaceMember',
+          { shouldBypassPermissionChecks: true },
         );
 
       const workspaceMember = await workspaceMemberRepository.findOne({

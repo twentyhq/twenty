@@ -5,11 +5,21 @@ import { theme } from '@/theme';
 
 const CARD_WIDTH_DESKTOP = 443;
 const CARD_WIDTH_MOBILE = 360;
-const PROGRESS_SCALE = 1.25;
 const FADE_FRACTION = 0.15;
+const PRE_STICKY_REVEAL_VIEWPORT_FRACTION = 0.35;
+const CARD_TRAVEL_RANGE = 0.5;
+const CARD_TRAVEL_START = 0.05;
+const CARD_TRAVEL_STEP = 0.3;
+const POST_STICKY_PARALLAX_DISTANCE = 0.7;
 
 function clamp01(value: number) {
   return Math.min(1, Math.max(0, value));
+}
+
+function easeOutQuad(value: number) {
+  const clampedValue = clamp01(value);
+
+  return 1 - (1 - clampedValue) * (1 - clampedValue);
 }
 
 // Right, left, center for cards 0, 1, 2+
@@ -37,6 +47,32 @@ export type HelpedSceneLayoutRefs = {
   sectionRef: RefObject<HTMLElement | null>;
 };
 
+function getProgressScale(
+  cards: readonly HeadingCardType[],
+  cardRefs: RefObject<(HTMLDivElement | null)[]>,
+  inner: HTMLDivElement,
+  innerHeight: number,
+) {
+  const exitTargetNode = inner.querySelector('[data-helped-exit-target]');
+  const lastCardNode = cardRefs.current[cards.length - 1];
+
+  if (!(exitTargetNode instanceof HTMLElement) || !lastCardNode) {
+    return 1;
+  }
+
+  const exitTargetTop =
+    exitTargetNode.getBoundingClientRect().top -
+    inner.getBoundingClientRect().top;
+  const lastCardHeight = lastCardNode.offsetHeight;
+  const lastCardStart =
+    CARD_TRAVEL_START + (cards.length - 1) * CARD_TRAVEL_STEP;
+  const requiredTravel = clamp01(
+    (innerHeight * 1.1 + lastCardHeight - exitTargetTop) / (innerHeight * 1.4),
+  );
+
+  return lastCardStart + requiredTravel * CARD_TRAVEL_RANGE;
+}
+
 export function applyHelpedSceneLayout(
   refs: HelpedSceneLayoutRefs,
   cards: readonly HeadingCardType[],
@@ -53,11 +89,11 @@ export function applyHelpedSceneLayout(
   const isDesktop = window.matchMedia(
     `(min-width: ${theme.breakpoints.md}px)`,
   ).matches;
+  const sectionRect = section.getBoundingClientRect();
 
   const scrollRange = Math.max(1, section.offsetHeight - window.innerHeight);
-  const progress =
-    clamp01(-section.getBoundingClientRect().top / scrollRange) * PROGRESS_SCALE;
-
+  const preStickyRevealOffset =
+    window.innerHeight * PRE_STICKY_REVEAL_VIEWPORT_FRACTION;
   const innerWidth = inner.offsetWidth;
   const innerHeight = inner.offsetHeight;
   const cardWidth = Math.min(
@@ -74,6 +110,31 @@ export function applyHelpedSceneLayout(
     node.style.width = `${cardWidth}px`;
     node.style.zIndex = String(10 + index);
     node.style.left = `${cardLeft(index, innerWidth, cardWidth, isDesktop)}px`;
+  });
+
+  const progressScale = getProgressScale(
+    cards,
+    refs.cardRefs,
+    inner,
+    innerHeight,
+  );
+  const progress =
+    clamp01(
+      (preStickyRevealOffset - sectionRect.top) /
+        (scrollRange + preStickyRevealOffset),
+    ) * progressScale;
+  const postStickyParallaxOffset =
+    easeOutQuad(
+      (window.innerHeight - sectionRect.bottom) / window.innerHeight,
+    ) *
+    innerHeight *
+    POST_STICKY_PARALLAX_DISTANCE;
+
+  cards.forEach((_, index) => {
+    const node = refs.cardRefs.current[index];
+    if (!node) {
+      return;
+    }
 
     if (reducedMotion) {
       node.style.opacity = '1';
@@ -81,11 +142,10 @@ export function applyHelpedSceneLayout(
       return;
     }
 
-    // Card 1: 0.05–0.55, Card 2: 0.35–0.85, Card 3: 0.65–1.15
-    const cardStart = 0.05 + index * 0.3;
-    const travel = clamp01((progress - cardStart) / 0.5);
+    const cardStart = CARD_TRAVEL_START + index * CARD_TRAVEL_STEP;
+    const travel = clamp01((progress - cardStart) / CARD_TRAVEL_RANGE);
 
-    node.style.top = `${innerHeight * (1.1 - travel * 1.4)}px`;
+    node.style.top = `${innerHeight * (1.1 - travel * 1.4) - postStickyParallaxOffset}px`;
     node.style.opacity = String(
       Math.min(
         clamp01(travel / FADE_FRACTION),

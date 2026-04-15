@@ -94,6 +94,9 @@ export const registerRemoteCommands = (program: Command): void => {
           ConfigService.setActiveRemote(options.as);
           await authenticate(config.apiUrl, options.apiKey);
 
+          await configService.setDefaultRemote(options.as);
+          console.log(chalk.green(`✓ Default remote set to "${options.as}".`));
+
           return;
         }
 
@@ -142,11 +145,8 @@ export const registerRemoteCommands = (program: Command): void => {
         ConfigService.setActiveRemote(name);
         await authenticate(apiUrl, options.apiKey);
 
-        const defaultRemote = await configService.getDefaultRemote();
-
-        if (defaultRemote === 'local') {
-          await configService.setDefaultRemote(name);
-        }
+        await configService.setDefaultRemote(name);
+        console.log(chalk.green(`✓ Default remote set to "${name}".`));
       },
     );
 

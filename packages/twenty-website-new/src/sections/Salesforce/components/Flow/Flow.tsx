@@ -29,10 +29,6 @@ const CopyColumn = styled.div`
   }
 `;
 
-const DescriptionBody = styled(Body)`
-  color: ${theme.colors.primary.text[80]};
-`;
-
 const RightColumn = styled.div`
   max-width: 672px;
   min-width: 0;
@@ -277,12 +273,7 @@ export function Flow({ backgroundColor, body, heading, pricing }: FlowProps) {
     <Root backgroundColor={backgroundColor}>
       <CopyColumn>
         <Heading as="h2" segments={heading} size="lg" weight="light" />
-        <DescriptionBody
-          body={body}
-          family="sans"
-          size="md"
-          weight="regular"
-        />
+        <Body body={body} family="sans" size="md" weight="regular" />
       </CopyColumn>
       <RightColumn ref={rightColumnRef}>
         {isPricingWindowVisible ? (

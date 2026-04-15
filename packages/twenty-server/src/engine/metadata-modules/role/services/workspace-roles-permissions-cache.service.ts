@@ -28,6 +28,8 @@ const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.workflowRun.universalIdentifier,
   STANDARD_OBJECTS.workflowVersion.universalIdentifier,
 ] as const;
+const WORKSPACE_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.workspaceMember.universalIdentifier;
 
 @Injectable()
 @WorkspaceCache('rolesPermissions')
@@ -137,47 +139,66 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
         let canDestroy = role.canDestroyAllObjectRecords;
         const restrictedFields: RestrictedFieldsPermissions = {};
 
-        if (
+        const isWorkspaceMemberObject =
+          universalIdentifier === WORKSPACE_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER;
+        const isWorkflowRelatedObject =
           WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.includes(
             universalIdentifier as (typeof WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS)[number],
-          )
-        ) {
-          const hasWorkflowsPermissions = this.hasWorkflowsPermissions(
-            role,
-            rolePermissionFlags,
           );
+
+        if (isWorkflowRelatedObject) {
+          const hasWorkflowsPermissions =
+            this.hasSettingsGatedObjectPermissions(
+              role,
+              rolePermissionFlags,
+              PermissionFlagType.WORKFLOWS,
+            );
 
           canRead = hasWorkflowsPermissions;
           canUpdate = hasWorkflowsPermissions;
           canSoftDelete = hasWorkflowsPermissions;
           canDestroy = hasWorkflowsPermissions;
         } else {
-          const objectRecordPermissionsOverride = roleObjectPermissions.find(
-            (objectPermission) =>
-              objectPermission.objectMetadataId === objectMetadataId,
-          );
+          if (isWorkspaceMemberObject) {
+            const hasWorkspaceMembersPermissions =
+              this.hasSettingsGatedObjectPermissions(
+                role,
+                rolePermissionFlags,
+                PermissionFlagType.WORKSPACE_MEMBERS,
+              );
 
-          const getPermissionValue = (
-            overrideValue: boolean | undefined,
-            defaultValue: boolean,
-          ) => (isSystem ? true : (overrideValue ?? defaultValue));
+            canRead = true;
+            canUpdate = hasWorkspaceMembersPermissions;
+            canSoftDelete = hasWorkspaceMembersPermissions;
+            canDestroy = hasWorkspaceMembersPermissions;
+          } else {
+            const objectRecordPermissionsOverride = roleObjectPermissions.find(
+              (objectPermission) =>
+                objectPermission.objectMetadataId === objectMetadataId,
+            );
 
-          canRead = getPermissionValue(
-            objectRecordPermissionsOverride?.canReadObjectRecords,
-            canRead,
-          );
-          canUpdate = getPermissionValue(
-            objectRecordPermissionsOverride?.canUpdateObjectRecords,
-            canUpdate,
-          );
-          canSoftDelete = getPermissionValue(
-            objectRecordPermissionsOverride?.canSoftDeleteObjectRecords,
-            canSoftDelete,
-          );
-          canDestroy = getPermissionValue(
-            objectRecordPermissionsOverride?.canDestroyObjectRecords,
-            canDestroy,
-          );
+            const getPermissionValue = (
+              overrideValue: boolean | undefined,
+              defaultValue: boolean,
+            ) => (isSystem ? true : (overrideValue ?? defaultValue));
+
+            canRead = getPermissionValue(
+              objectRecordPermissionsOverride?.canReadObjectRecords,
+              canRead,
+            );
+            canUpdate = getPermissionValue(
+              objectRecordPermissionsOverride?.canUpdateObjectRecords,
+              canUpdate,
+            );
+            canSoftDelete = getPermissionValue(
+              objectRecordPermissionsOverride?.canSoftDeleteObjectRecords,
+              canSoftDelete,
+            );
+            canDestroy = getPermissionValue(
+              objectRecordPermissionsOverride?.canDestroyObjectRecords,
+              canDestroy,
+            );
+          }
 
           const fieldPermissionsForObject = roleFieldPermissions.filter(
             (fieldPermission) =>
@@ -246,21 +267,18 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
     return workspaceObjectMetadata;
   }
 
-  private hasWorkflowsPermissions(
+  private hasSettingsGatedObjectPermissions(
     role: RoleEntity,
     permissionFlags: PermissionFlagEntity[],
+    permissionFlagType: PermissionFlagType,
   ): boolean {
-    const hasWorkflowsPermissionFromRole = role.canUpdateAllSettings;
-    const hasWorkflowsPermissionsFromSettingPermissions = isDefined(
+    const hasPermissionFromRole = role.canUpdateAllSettings;
+    const hasPermissionFromSettingPermissions = isDefined(
       permissionFlags.find(
-        (permissionFlag) =>
-          permissionFlag.flag === PermissionFlagType.WORKFLOWS,
+        (permissionFlag) => permissionFlag.flag === permissionFlagType,
       ),
     );
 
-    return (
-      hasWorkflowsPermissionFromRole ||
-      hasWorkflowsPermissionsFromSettingPermissions
-    );
+    return hasPermissionFromRole || hasPermissionFromSettingPermissions;
   }
 }
