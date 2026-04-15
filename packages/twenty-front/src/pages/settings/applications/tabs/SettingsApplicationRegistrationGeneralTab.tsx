@@ -22,7 +22,6 @@ import {
   DeleteApplicationRegistrationDocument,
   FindApplicationRegistrationStatsDocument,
   FindManyApplicationRegistrationsDocument,
-  FindOneApplicationSummaryDocument,
   TransferApplicationRegistrationOwnershipDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -35,7 +34,6 @@ import {
 } from '~/pages/settings/applications/components/SettingsAppModalLayout';
 import { SettingsAdminApplicationRegistrationDetailContent } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/display';
-import { isDefined } from 'twenty-shared/utils';
 
 const DELETE_REGISTRATION_MODAL_ID = 'delete-application-registration-modal';
 
