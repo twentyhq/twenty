@@ -73,6 +73,9 @@ export class EnforceUsageCapJob {
     do {
       idRows = await this.billingSubscriptionRepository.find({
         select: { id: true },
+        relations: {
+          workspace: true,
+        },
         where: {
           status: In([
             SubscriptionStatus.Active,
