@@ -1,6 +1,6 @@
 import { enUS } from 'date-fns/locale';
 
-import { formatDateISOStringToRelativeDate } from '@/modules/localization/utils/formatDateISOStringToRelativeDate';
+import { formatDateISOStringToRelativeDate } from '@/localization/utils/formatDateISOStringToRelativeDate';
 
 // Pin the process to a timezone west of UTC for the entire test file.
 // This is the exact scenario from issue #19634 — without this, regression
