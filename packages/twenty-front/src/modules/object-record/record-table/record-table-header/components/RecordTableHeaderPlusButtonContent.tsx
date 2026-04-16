@@ -105,6 +105,8 @@ export const RecordTableHeaderPlusButtonContent = () => {
           ))
         ) : (
           <MenuItem
+            disabled
+            accent="placeholder"
             text={
               hasAvailableFields
                 ? t`No results`
