@@ -6,10 +6,10 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   type MigrationCursorStatus,
+  UpgradeHealth,
   UpgradeStatusService,
   type WorkspaceStatus,
 } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
-import { type UpgradeHealth } from 'src/engine/core-modules/upgrade/utils/derive-health.util';
 
 type UpgradeStatusOptions = {
   workspaceId?: Set<string>;

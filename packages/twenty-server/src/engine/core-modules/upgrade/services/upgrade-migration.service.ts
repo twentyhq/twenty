@@ -10,7 +10,7 @@ import {
 } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { formatUpgradeErrorForStorage } from 'src/engine/core-modules/upgrade/utils/format-upgrade-error-for-storage.util';
 
-export type WorkspaceLastAttemptedCommandCursor = {
+export type WorkspaceLastAttemptedCommand = {
   workspaceId: string;
   name: string;
   status: UpgradeMigrationStatus;
@@ -201,7 +201,7 @@ export class UpgradeMigrationService {
 
   async getWorkspaceLastAttemptedCommandName(
     workspaceIds: string[],
-  ): Promise<Map<string, WorkspaceLastAttemptedCommandCursor>> {
+  ): Promise<Map<string, WorkspaceLastAttemptedCommand>> {
     if (workspaceIds.length === 0) {
       return new Map();
     }
@@ -229,9 +229,9 @@ export class UpgradeMigrationService {
       .orderBy('migration.workspaceId')
       .addOrderBy('migration.createdAt', 'DESC')
       .distinctOn(['migration.workspaceId'])
-      .getRawMany<WorkspaceLastAttemptedCommandCursor>();
+      .getRawMany<WorkspaceLastAttemptedCommand>();
 
-    const cursors = new Map<string, WorkspaceLastAttemptedCommandCursor>();
+    const cursors = new Map<string, WorkspaceLastAttemptedCommand>();
 
     for (const row of results) {
       cursors.set(row.workspaceId, row);
@@ -242,7 +242,7 @@ export class UpgradeMigrationService {
 
   async getWorkspaceLastAttemptedCommandNameOrThrow(
     workspaceIds: string[],
-  ): Promise<Map<string, WorkspaceLastAttemptedCommandCursor>> {
+  ): Promise<Map<string, WorkspaceLastAttemptedCommand>> {
     const cursors =
       await this.getWorkspaceLastAttemptedCommandName(workspaceIds);
 

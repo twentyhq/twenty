@@ -7,9 +7,10 @@ import { In, Repository } from 'typeorm';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
-import { type UpgradeHealth } from 'src/engine/core-modules/upgrade/utils/derive-health.util';
 import { extractVersionFromCommandName } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+
+export type UpgradeHealth = 'up-to-date' | 'behind' | 'failed';
 
 export type MigrationCursorStatus = {
   inferredVersion: string | null;
@@ -22,8 +23,6 @@ export type MigrationCursorStatus = {
     createdAt: Date;
   } | null;
 };
-
-export type InstanceStatus = MigrationCursorStatus;
 
 export type WorkspaceStatus = MigrationCursorStatus & {
   workspaceId: string;
@@ -59,7 +58,7 @@ export class UpgradeStatusService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
-  async getInstanceStatus(): Promise<InstanceStatus> {
+  async getInstanceStatus(): Promise<MigrationCursorStatus> {
     const migration =
       await this.upgradeMigrationService.getLatestInstanceMigration();
 
