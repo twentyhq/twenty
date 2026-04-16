@@ -7,8 +7,8 @@ import {
 import { type ParsedUpgradeCommandOptions } from 'src/database/commands/upgrade-version-command/upgrade.command';
 import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
 import {
-  type WorkspaceCursor,
   UpgradeMigrationService,
+  WorkspaceLastAttemptedCommand,
 } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import {
   type InstanceUpgradeStep,
@@ -233,7 +233,7 @@ export class UpgradeSequenceRunnerService {
 
   private async fetchWorkspaceCursors(
     allActiveOrSuspendedWorkspaceIds: string[],
-  ): Promise<Map<string, WorkspaceCursor>> {
+  ): Promise<Map<string, WorkspaceLastAttemptedCommand>> {
     return this.upgradeMigrationService.getWorkspaceLastAttemptedCommandNameOrThrow(
       allActiveOrSuspendedWorkspaceIds,
     );
@@ -286,7 +286,7 @@ export class UpgradeSequenceRunnerService {
     options,
   }: {
     workspaceCommandsSegment: WorkspaceUpgradeStep[];
-    workspaceCursors: Map<string, WorkspaceCursor>;
+    workspaceCursors: Map<string, WorkspaceLastAttemptedCommand>;
     allActiveOrSuspendedWorkspaceIds: string[];
     options: ParsedUpgradeCommandOptions;
   }): Promise<WorkspaceIteratorReport> {
@@ -331,7 +331,7 @@ export class UpgradeSequenceRunnerService {
   }: {
     sequence: UpgradeStep[];
     previousWorkspaceStep: WorkspaceUpgradeStep;
-    workspaceCursors: Map<string, WorkspaceCursor>;
+    workspaceCursors: Map<string, WorkspaceLastAttemptedCommand>;
   }): void {
     const barrierCursor =
       this.upgradeSequenceReaderService.locateStepInSequenceOrThrow({

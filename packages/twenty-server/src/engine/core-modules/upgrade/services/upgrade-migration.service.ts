@@ -10,9 +10,13 @@ import {
 } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { formatUpgradeErrorForStorage } from 'src/engine/core-modules/upgrade/utils/format-upgrade-error-for-storage.util';
 
-export type WorkspaceCursor = {
+export type WorkspaceLastAttemptedCommand = {
+  workspaceId: string;
   name: string;
   status: UpgradeMigrationStatus;
+  executedByVersion: string;
+  errorMessage: string | null;
+  createdAt: Date;
   isInitial: boolean;
 };
 
@@ -195,19 +199,24 @@ export class UpgradeMigrationService {
     return { name: migration.name, status: migration.status };
   }
 
-  async getWorkspaceLastAttemptedCommandNameOrThrow(
+  async getWorkspaceLastAttemptedCommandName(
     workspaceIds: string[],
-  ): Promise<Map<string, WorkspaceCursor>> {
+  ): Promise<Map<string, WorkspaceLastAttemptedCommand>> {
     if (workspaceIds.length === 0) {
       return new Map();
     }
 
-    const results = await this.upgradeMigrationRepository
+    const migrations = await this.upgradeMigrationRepository
       .createQueryBuilder('migration')
-      .select('migration.workspaceId', 'workspaceId')
-      .addSelect('migration.name', 'name')
-      .addSelect('migration.status', 'status')
-      .addSelect('migration.isInitial', 'isInitial')
+      .select([
+        'migration.workspaceId',
+        'migration.name',
+        'migration.status',
+        'migration.executedByVersion',
+        'migration.errorMessage',
+        'migration.createdAt',
+        'migration.isInitial',
+      ])
       .where({
         workspaceId: In(workspaceIds),
       })
@@ -222,22 +231,34 @@ export class UpgradeMigrationService {
       .orderBy('migration.workspaceId')
       .addOrderBy('migration.createdAt', 'DESC')
       .distinctOn(['migration.workspaceId'])
-      .getRawMany<{
-        workspaceId: string;
-        name: string;
-        status: UpgradeMigrationStatus;
-        isInitial: boolean;
-      }>();
+      .getMany();
 
-    const cursors = new Map<string, WorkspaceCursor>();
+    const cursors = new Map<string, WorkspaceLastAttemptedCommand>();
 
-    for (const row of results) {
-      cursors.set(row.workspaceId, {
-        name: row.name,
-        status: row.status,
-        isInitial: row.isInitial,
+    for (const migration of migrations) {
+      if (migration.workspaceId === null) {
+        continue;
+      }
+
+      cursors.set(migration.workspaceId, {
+        workspaceId: migration.workspaceId,
+        name: migration.name,
+        status: migration.status,
+        executedByVersion: migration.executedByVersion,
+        errorMessage: migration.errorMessage,
+        createdAt: migration.createdAt,
+        isInitial: migration.isInitial,
       });
     }
+
+    return cursors;
+  }
+
+  async getWorkspaceLastAttemptedCommandNameOrThrow(
+    workspaceIds: string[],
+  ): Promise<Map<string, WorkspaceLastAttemptedCommand>> {
+    const cursors =
+      await this.getWorkspaceLastAttemptedCommandName(workspaceIds);
 
     const missingWorkspaceIds = workspaceIds.filter(
       (workspaceId) => !cursors.has(workspaceId),
@@ -286,10 +307,19 @@ export class UpgradeMigrationService {
   async getLastAttemptedInstanceCommand(): Promise<{
     name: string;
     status: UpgradeMigrationStatus;
+    executedByVersion: string;
+    errorMessage: string | null;
+    createdAt: Date;
   } | null> {
     const migration = await this.upgradeMigrationRepository
       .createQueryBuilder('migration')
-      .select(['migration.name', 'migration.status'])
+      .select([
+        'migration.name',
+        'migration.status',
+        'migration.executedByVersion',
+        'migration.errorMessage',
+        'migration.createdAt',
+      ])
       .where('migration."workspaceId" IS NULL')
       .andWhere('migration."isInitial" = false')
       .andWhere(
@@ -307,7 +337,13 @@ export class UpgradeMigrationService {
       return null;
     }
 
-    return { name: migration.name, status: migration.status };
+    return {
+      name: migration.name,
+      status: migration.status,
+      executedByVersion: migration.executedByVersion,
+      errorMessage: migration.errorMessage,
+      createdAt: migration.createdAt,
+    };
   }
 
   async getLastAttemptedInstanceCommandOrThrow(): Promise<{
