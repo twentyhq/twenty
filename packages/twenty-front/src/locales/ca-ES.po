@@ -12352,11 +12352,6 @@ msgstr "Executant {formattedName}"
 msgid "Running function"
 msgstr "Funció en execució"
 
-#. js-lingui-id: SoR81K
-#: src/modules/command-menu-item/engine-command/hooks/useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation.ts
-msgid "Running workflows on all records is not yet supported. Please select records manually."
-msgstr ""
-
 #. js-lingui-id: LTC198
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Running..."
@@ -16358,11 +16353,6 @@ msgstr ""
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "You have scheduled a metered tier change. Do you want to cancel it?"
 msgstr "Has programat un canvi de nivell mesurat. Vols cancel·lar-lo?"
-
-#. js-lingui-id: qXzOWu
-#: src/modules/command-menu-item/engine-command/hooks/useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation.ts
-msgid "You selected {selectedCountFormatted} records but manual triggers can run on at most {limitFormatted} records at once. Only the first {limitFormatted} records will be processed."
-msgstr ""
 
 #. js-lingui-id: z8eKS7
 #: src/modules/settings/billing/hooks/useBillingWording.ts

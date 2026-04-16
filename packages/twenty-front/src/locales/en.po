@@ -12347,11 +12347,6 @@ msgstr "Running {formattedName}"
 msgid "Running function"
 msgstr "Running function"
 
-#. js-lingui-id: SoR81K
-#: src/modules/command-menu-item/engine-command/hooks/useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation.ts
-msgid "Running workflows on all records is not yet supported. Please select records manually."
-msgstr "Running workflows on all records is not yet supported. Please select records manually."
-
 #. js-lingui-id: LTC198
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Running..."
@@ -16355,11 +16350,6 @@ msgstr "You don't have access to this object."
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "You have scheduled a metered tier change. Do you want to cancel it?"
 msgstr "You have scheduled a metered tier change. Do you want to cancel it?"
-
-#. js-lingui-id: qXzOWu
-#: src/modules/command-menu-item/engine-command/hooks/useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation.ts
-msgid "You selected {selectedCountFormatted} records but manual triggers can run on at most {limitFormatted} records at once. Only the first {limitFormatted} records will be processed."
-msgstr "You selected {selectedCountFormatted} records but manual triggers can run on at most {limitFormatted} records at once. Only the first {limitFormatted} records will be processed."
 
 #. js-lingui-id: z8eKS7
 #: src/modules/settings/billing/hooks/useBillingWording.ts
