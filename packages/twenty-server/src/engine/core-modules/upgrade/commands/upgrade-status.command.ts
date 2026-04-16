@@ -6,10 +6,10 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   type MigrationCursorStatus,
-  type UpgradeHealth,
   UpgradeStatusService,
   type WorkspaceStatus,
 } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
+import { type UpgradeHealth } from 'src/engine/core-modules/upgrade/utils/derive-health.util';
 
 type UpgradeStatusOptions = {
   workspaceId?: Set<string>;
@@ -96,8 +96,7 @@ export class UpgradeStatusCommand extends CommandRunner {
   }
 
   private formatHeader(): string[] {
-    const appVersion =
-      this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
+    const appVersion = this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
     return ['', chalk.bold(`APP_VERSION: ${appVersion}`), ''];
   }

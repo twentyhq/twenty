@@ -4,12 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
-import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
+import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
+import { type UpgradeHealth } from 'src/engine/core-modules/upgrade/utils/derive-health.util';
+import { extractVersionFromCommandName } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-
-export type UpgradeHealth = 'up-to-date' | 'behind' | 'failed';
 
 export type MigrationCursorStatus = {
   inferredVersion: string | null;
@@ -28,6 +28,24 @@ export type InstanceStatus = MigrationCursorStatus;
 export type WorkspaceStatus = MigrationCursorStatus & {
   workspaceId: string;
   displayName: string | null;
+};
+
+const deriveHealth = (
+  migration: { name: string; status: UpgradeMigrationStatus },
+  lastExpectedCommandName: string | null,
+): UpgradeHealth => {
+  if (migration.status === 'failed') {
+    return 'failed';
+  }
+
+  if (
+    lastExpectedCommandName !== null &&
+    migration.name !== lastExpectedCommandName
+  ) {
+    return 'behind';
+  }
+
+  return 'up-to-date';
 };
 
 @Injectable()
@@ -140,31 +158,3 @@ export class UpgradeStatusService {
     });
   }
 }
-
-export const deriveHealth = (
-  migration: { name: string; status: UpgradeMigrationStatus },
-  lastExpectedCommandName: string | null,
-): UpgradeHealth => {
-  if (migration.status === 'failed') {
-    return 'failed';
-  }
-
-  if (
-    lastExpectedCommandName !== null &&
-    migration.name !== lastExpectedCommandName
-  ) {
-    return 'behind';
-  }
-
-  return 'up-to-date';
-};
-
-export const extractVersionFromCommandName = (name: string): string | null => {
-  const firstUnderscore = name.indexOf('_');
-
-  if (firstUnderscore === -1) {
-    return null;
-  }
-
-  return name.substring(0, firstUnderscore);
-};

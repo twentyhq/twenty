@@ -3,12 +3,8 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
+import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import {
-  UpgradeStatusService,
-  deriveHealth,
-  extractVersionFromCommandName,
-} from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 
 const LAST_INSTANCE_COMMAND = '1.23.0_LastInstanceCommand_1780000002000';
 const LAST_WORKSPACE_COMMAND = '1.23.0_LastWorkspaceCommand_1780000003000';
@@ -19,68 +15,6 @@ const MOCK_SEQUENCE = [
   { kind: 'fast-instance', name: LAST_INSTANCE_COMMAND },
   { kind: 'workspace', name: LAST_WORKSPACE_COMMAND },
 ];
-
-describe('extractVersionFromCommandName', () => {
-  it('should extract version from standard command name', () => {
-    expect(
-      extractVersionFromCommandName(
-        '1.21.0_BackfillDatasourceCommand_1775500003000',
-      ),
-    ).toBe('1.21.0');
-  });
-
-  it('should extract version with different version numbers', () => {
-    expect(
-      extractVersionFromCommandName('1.22.0_SomeCommand_1780000001000'),
-    ).toBe('1.22.0');
-  });
-
-  it('should return null for names without underscores', () => {
-    expect(extractVersionFromCommandName('nounderscores')).toBeNull();
-  });
-
-  it('should handle empty string', () => {
-    expect(extractVersionFromCommandName('')).toBeNull();
-  });
-});
-
-describe('deriveHealth', () => {
-  it('should return failed when migration status is failed', () => {
-    expect(
-      deriveHealth(
-        { name: LAST_WORKSPACE_COMMAND, status: 'failed' },
-        LAST_WORKSPACE_COMMAND,
-      ),
-    ).toBe('failed');
-  });
-
-  it('should return up-to-date when cursor matches last expected command', () => {
-    expect(
-      deriveHealth(
-        { name: LAST_WORKSPACE_COMMAND, status: 'completed' },
-        LAST_WORKSPACE_COMMAND,
-      ),
-    ).toBe('up-to-date');
-  });
-
-  it('should return behind when cursor is before last expected command', () => {
-    expect(
-      deriveHealth(
-        { name: EARLIER_COMMAND, status: 'completed' },
-        LAST_WORKSPACE_COMMAND,
-      ),
-    ).toBe('behind');
-  });
-
-  it('should return up-to-date when last expected command is null', () => {
-    expect(
-      deriveHealth(
-        { name: EARLIER_COMMAND, status: 'completed' },
-        null,
-      ),
-    ).toBe('up-to-date');
-  });
-});
 
 describe('UpgradeStatusService', () => {
   let service: UpgradeStatusService;
@@ -162,9 +96,7 @@ describe('UpgradeStatusService', () => {
       const result = await service.getInstanceStatus();
 
       expect(result.health).toBe('failed');
-      expect(result.latestCommand?.errorMessage).toBe(
-        'column does not exist',
-      );
+      expect(result.latestCommand?.errorMessage).toBe('column does not exist');
     });
 
     it('should return behind when no migrations exist', async () => {
@@ -180,9 +112,7 @@ describe('UpgradeStatusService', () => {
 
   describe('getWorkspaceStatuses', () => {
     it('should return up-to-date for workspace at last command', async () => {
-      workspaceFind.mockResolvedValue([
-        { id: 'ws-1', displayName: 'Apple' },
-      ]);
+      workspaceFind.mockResolvedValue([{ id: 'ws-1', displayName: 'Apple' }]);
 
       getWorkspaceLastAttemptedCommandName.mockResolvedValue(
         new Map([
@@ -247,9 +177,7 @@ describe('UpgradeStatusService', () => {
     });
 
     it('should return behind for workspace with no migration history', async () => {
-      workspaceFind.mockResolvedValue([
-        { id: 'ws-1', displayName: 'Apple' },
-      ]);
+      workspaceFind.mockResolvedValue([{ id: 'ws-1', displayName: 'Apple' }]);
 
       getWorkspaceLastAttemptedCommandName.mockResolvedValue(new Map());
 
