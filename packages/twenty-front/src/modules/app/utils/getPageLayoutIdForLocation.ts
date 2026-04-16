@@ -16,10 +16,7 @@ export const getPageLayoutIdForLocation = ({
   location: Location;
   store: ReturnType<typeof getDefaultStore>;
 }): string | null => {
-  const recordShowMatch = matchPath(
-    AppPath.RecordShowPage,
-    location.pathname,
-  );
+  const recordShowMatch = matchPath(AppPath.RecordShowPage, location.pathname);
 
   if (isDefined(recordShowMatch?.params.objectNameSingular)) {
     const objectNameSingular = recordShowMatch.params.objectNameSingular;
@@ -52,10 +49,7 @@ export const getPageLayoutIdForLocation = ({
         });
   }
 
-  const pageLayoutMatch = matchPath(
-    AppPath.PageLayoutPage,
-    location.pathname,
-  );
+  const pageLayoutMatch = matchPath(AppPath.PageLayoutPage, location.pathname);
 
   if (isDefined(pageLayoutMatch?.params.pageLayoutId)) {
     return pageLayoutMatch.params.pageLayoutId;
