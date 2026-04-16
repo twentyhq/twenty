@@ -59,7 +59,7 @@ describe('formatDateISOStringToRelativeDate — isDayMaximumPrecision (date-only
 // The fix appends "T00:00:00" (no Z) so the constructor uses local midnight,
 // keeping the date on the correct calendar day in every timezone.
 // ---------------------------------------------------------------------------
-describe('regression #19634 — date-only strings in America/Los_Angeles (UTC-7/8)', () => {
+describe('regression — date-only strings in America/Los_Angeles (UTC-7/8)', () => {
   it('tomorrow\'s date-only string resolves to "Tomorrow", not "Today"', () => {
     // This assertion would FAIL with the old `new Date(isoDate)` because
     // UTC midnight of tomorrow is still "today" locally when west of UTC.
