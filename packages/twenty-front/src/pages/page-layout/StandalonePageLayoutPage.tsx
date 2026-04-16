@@ -4,7 +4,6 @@ import { CommandMenuComponentInstanceContext } from '@/command-menu/states/conte
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { MainContainerLayoutWithSidePanel } from '@/object-record/components/MainContainerLayoutWithSidePanel';
-import { SetCurrentPageLayoutIdEffect } from '@/page-layout/components/SetCurrentPageLayoutIdEffect';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
@@ -21,7 +20,6 @@ export const StandalonePageLayoutPage = () => {
 
   return (
     <PageContainer>
-      <SetCurrentPageLayoutIdEffect pageLayoutId={pageLayoutId} />
       <ContextStoreComponentInstanceContext.Provider
         value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
       >

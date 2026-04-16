@@ -4,7 +4,6 @@ import { InformationBannerDeletedRecord } from '@/information-banner/components/
 import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
 import { RecordShowEffect } from '@/object-record/record-show/components/RecordShowEffect';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { SetCurrentPageLayoutIdEffect } from '@/page-layout/components/SetCurrentPageLayoutIdEffect';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { usePageLayoutIdForRecord } from '@/page-layout/hooks/usePageLayoutIdForRecord';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -73,7 +72,6 @@ export const PageLayoutRecordPageRenderer = ({
 
   return (
     <>
-      <SetCurrentPageLayoutIdEffect pageLayoutId={pageLayoutId} />
       <RecordShowEffect
         objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
         recordId={targetRecordIdentifier.id}
