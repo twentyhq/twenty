@@ -88,12 +88,7 @@ export { defineAgent } from './agents/define-agent';
 export { defineSkill } from './skills/define-skill';
 export { defineView } from './views/define-view';
 export type { ViewConfig } from './views/view-config';
-export {
-  ViewKey,
-  ViewType,
-  ViewVisibility,
-  ViewOpenRecordIn,
-} from './views/view-types';
+export { ViewKey } from './views/view-key';
 
 // Command components for front components
 export {
