@@ -259,24 +259,6 @@ export class UpgradeMigrationService {
     return cursors;
   }
 
-  async getLatestInstanceMigration(): Promise<UpgradeMigrationEntity | null> {
-    return this.upgradeMigrationRepository
-      .createQueryBuilder('migration')
-      .andWhere(
-        `migration.attempt = (
-          SELECT MAX(sub.attempt)
-          FROM core."upgradeMigration" sub
-          WHERE sub.name = migration.name
-          AND sub."workspaceId" IS NULL
-          AND migration."workspaceId" IS NULL
-        )`,
-      )
-      .andWhere('migration."workspaceId" IS NULL')
-      .orderBy('migration.createdAt', 'DESC')
-      .limit(1)
-      .getOne();
-  }
-
   async areAllWorkspacesAtCommand({
     commandName,
     workspaceIds,
@@ -311,10 +293,19 @@ export class UpgradeMigrationService {
   async getLastAttemptedInstanceCommand(): Promise<{
     name: string;
     status: UpgradeMigrationStatus;
+    executedByVersion: string;
+    errorMessage: string | null;
+    createdAt: Date;
   } | null> {
     const migration = await this.upgradeMigrationRepository
       .createQueryBuilder('migration')
-      .select(['migration.name', 'migration.status'])
+      .select([
+        'migration.name',
+        'migration.status',
+        'migration.executedByVersion',
+        'migration.errorMessage',
+        'migration.createdAt',
+      ])
       .where('migration."workspaceId" IS NULL')
       .andWhere('migration."isInitial" = false')
       .andWhere(
@@ -332,7 +323,13 @@ export class UpgradeMigrationService {
       return null;
     }
 
-    return { name: migration.name, status: migration.status };
+    return {
+      name: migration.name,
+      status: migration.status,
+      executedByVersion: migration.executedByVersion,
+      errorMessage: migration.errorMessage,
+      createdAt: migration.createdAt,
+    };
   }
 
   async getLastAttemptedInstanceCommandOrThrow(): Promise<{

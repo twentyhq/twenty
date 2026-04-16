@@ -60,7 +60,7 @@ export class UpgradeStatusService {
 
   async getInstanceStatus(): Promise<MigrationCursorStatus> {
     const migration =
-      await this.upgradeMigrationService.getLatestInstanceMigration();
+      await this.upgradeMigrationService.getLastAttemptedInstanceCommand();
 
     const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
     const lastInstanceStep = [...sequence]

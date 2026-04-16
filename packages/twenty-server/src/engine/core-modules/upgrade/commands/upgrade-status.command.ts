@@ -16,6 +16,12 @@ type UpgradeStatusOptions = {
   failedOnly?: boolean;
 };
 
+type GroupedWorkspaceStatuses = {
+  upToDate: WorkspaceStatus[];
+  behind: WorkspaceStatus[];
+  failed: WorkspaceStatus[];
+};
+
 const HEALTH_LABELS: Record<UpgradeHealth, string> = {
   'up-to-date': chalk.green('Up to date'),
   behind: chalk.yellow('Behind'),
@@ -81,11 +87,19 @@ export class UpgradeStatusCommand extends CommandRunner {
           requestedWorkspaceIds,
         );
 
+      const groupedWorkspaceStatuses =
+        this.groupWorkspaceStatusesByHealth(workspaceStatuses);
+
       lines.push(
-        ...this.formatWorkspaceStatuses(workspaceStatuses, options.failedOnly),
+        ...this.formatWorkspaceStatuses(
+          groupedWorkspaceStatuses,
+          options.failedOnly,
+        ),
       );
 
-      lines.push(...this.formatSummary(instanceStatus, workspaceStatuses));
+      lines.push(
+        ...this.formatSummary(instanceStatus, groupedWorkspaceStatuses),
+      );
 
       console.log(lines.join('\n'));
     } catch (error) {
@@ -110,27 +124,16 @@ export class UpgradeStatusCommand extends CommandRunner {
   }
 
   private formatWorkspaceStatuses(
-    workspaceStatuses: WorkspaceStatus[],
+    { upToDate, behind, failed }: GroupedWorkspaceStatuses,
     failedOnly?: boolean,
   ): string[] {
     const lines: string[] = [chalk.bold.underline('Workspace')];
 
-    if (workspaceStatuses.length === 0) {
+    if (upToDate.length === 0 && behind.length === 0 && failed.length === 0) {
       lines.push(chalk.dim('  No active/suspended workspaces found'));
 
       return lines;
     }
-
-    const failed = workspaceStatuses.filter(
-      (status) => status.health === 'failed',
-    );
-
-    const upToDate = workspaceStatuses.filter(
-      (status) => status.health === 'up-to-date',
-    );
-    const behind = workspaceStatuses.filter(
-      (status) => status.health === 'behind',
-    );
 
     if (!failedOnly) {
       for (const workspaceStatus of upToDate) {
@@ -213,46 +216,31 @@ export class UpgradeStatusCommand extends CommandRunner {
 
   private formatSummary(
     instanceStatus: MigrationCursorStatus,
-    workspaceStatuses: WorkspaceStatus[],
+    { upToDate, behind, failed }: GroupedWorkspaceStatuses,
   ): string[] {
     const lines: string[] = [chalk.bold.underline('Summary')];
+    const totalCount = upToDate.length + behind.length + failed.length;
 
     lines.push(`  Instance: ${HEALTH_LABELS[instanceStatus.health]}`);
 
-    if (workspaceStatuses.length === 0) {
+    if (totalCount === 0) {
       lines.push(chalk.dim('  No workspaces'));
 
       return lines;
     }
 
-    const upToDateCount = workspaceStatuses.filter(
-      (status) => status.health === 'up-to-date',
-    ).length;
-    const behindCount = workspaceStatuses.filter(
-      (status) => status.health === 'behind',
-    ).length;
-    const failedStatuses = workspaceStatuses.filter(
-      (status) => status.health === 'failed',
-    );
-
     const parts = [
-      chalk.green(`${upToDateCount} up to date`),
-      chalk.yellow(`${behindCount} behind`),
-      chalk.red(`${failedStatuses.length} failed`),
+      chalk.green(`${upToDate.length} up to date`),
+      chalk.yellow(`${behind.length} behind`),
+      chalk.red(`${failed.length} failed`),
     ];
 
-    lines.push(
-      `  Workspaces: ${parts.join(', ')} (${workspaceStatuses.length} total)`,
-    );
+    lines.push(`  Workspaces: ${parts.join(', ')} (${totalCount} total)`);
 
-    const behindStatuses = workspaceStatuses.filter(
-      (status) => status.health === 'behind',
-    );
-
-    if (behindStatuses.length > 0) {
+    if (behind.length > 0) {
       const behindCounts = new Map<string, number>();
 
-      for (const status of behindStatuses) {
+      for (const status of behind) {
         const commandName = status.latestCommand?.name ?? 'no commands';
 
         behindCounts.set(commandName, (behindCounts.get(commandName) ?? 0) + 1);
@@ -263,10 +251,10 @@ export class UpgradeStatusCommand extends CommandRunner {
       }
     }
 
-    if (failedStatuses.length > 0) {
+    if (failed.length > 0) {
       const failureCounts = new Map<string, number>();
 
-      for (const status of failedStatuses) {
+      for (const status of failed) {
         const commandName = status.latestCommand?.name ?? 'unknown';
 
         failureCounts.set(
@@ -283,5 +271,29 @@ export class UpgradeStatusCommand extends CommandRunner {
     lines.push('');
 
     return lines;
+  }
+
+  private groupWorkspaceStatusesByHealth(
+    workspaceStatuses: WorkspaceStatus[],
+  ): GroupedWorkspaceStatuses {
+    const upToDate: WorkspaceStatus[] = [];
+    const behind: WorkspaceStatus[] = [];
+    const failed: WorkspaceStatus[] = [];
+
+    for (const status of workspaceStatuses) {
+      switch (status.health) {
+        case 'up-to-date':
+          upToDate.push(status);
+          break;
+        case 'behind':
+          behind.push(status);
+          break;
+        case 'failed':
+          failed.push(status);
+          break;
+      }
+    }
+
+    return { upToDate, behind, failed };
   }
 }
