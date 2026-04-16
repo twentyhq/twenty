@@ -1,6 +1,6 @@
 import { Inject } from '@nestjs/common';
 
-import { AllMetadataName } from 'twenty-shared/metadata';
+import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { validate as uuidValidate, version as uuidVersion } from 'uuid';
@@ -25,6 +25,7 @@ import { deleteUniversalFlatEntityFromUniversalFlatEntityMapsThroughMutationOrTh
 import { replaceUniversalFlatEntityInUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/replace-universal-flat-entity-in-universal-flat-entity-maps-through-mutation-or-throw.util';
 import { resetUniversalFlatEntityForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import { flatEntityDeletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/universal-flat-entity-deleted-created-updated-matrix-dispatcher.util';
+import { type AllUniversalIdentifierMap } from 'src/engine/workspace-manager/workspace-migration/utils/build-all-universal-identifier-map.util';
 import { getMetadataEmptyWorkspaceMigrationActionRecord } from 'src/engine/workspace-manager/workspace-migration/utils/get-metadata-empty-workspace-migration-action-record.util';
 import { shouldInferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration/utils/should-infer-deletion-from-missing-entities.util';
 import { topologicallySortUniversalFlatEntitiesForSelfReferentialFks } from 'src/engine/workspace-manager/workspace-migration/utils/topologically-sort-universal-flat-entities-for-self-referential-fks.util';
@@ -40,6 +41,7 @@ import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-mana
 export type ValidateAndBuildArgs<T extends AllMetadataName> = {
   buildOptions: WorkspaceMigrationBuilderOptions;
   dependencyOptimisticFlatEntityMaps: AllUniversalFlatEntityMaps;
+  allUniversalIdentifierMap?: AllUniversalIdentifierMap;
   workspaceId: string;
   additionalCacheDataMaps: WorkspaceMigrationBuilderAdditionalCacheDataMaps;
 } & FromTo<MetadataUniversalFlatEntityMaps<T>>;
@@ -63,6 +65,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
     buildOptions,
     dependencyOptimisticFlatEntityMaps:
       optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+    allUniversalIdentifierMap,
     from: fromFlatEntityMaps,
     to: toFlatEntityMaps,
     additionalCacheDataMaps,
@@ -150,6 +153,10 @@ export abstract class WorkspaceEntityMigrationBuilderService<
         allValidationResult.push(validationResult);
         continue;
       }
+
+      allUniversalIdentifierMap?.delete(
+        universalFlatEntityToDelete.universalIdentifier,
+      );
 
       deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
         {
@@ -285,12 +292,22 @@ export abstract class WorkspaceEntityMigrationBuilderService<
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
         remainingFlatEntityMapsToValidate: remainingFlatEntityMapsToCreate,
         buildOptions,
+        allUniversalIdentifierMap,
       });
 
       if (validationResult.status === 'fail') {
         allValidationResult.push(validationResult);
         continue;
       }
+
+      allUniversalIdentifierMap?.set(
+        universalFlatEntityToCreate.universalIdentifier,
+        {
+          metadataName: this.metadataName,
+          applicationUniversalIdentifier:
+            universalFlatEntityToCreate.applicationUniversalIdentifier,
+        },
+      );
 
       addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
         {
@@ -362,26 +379,62 @@ export abstract class WorkspaceEntityMigrationBuilderService<
     return [];
   }
 
+  private validateUniversalIdentifierAvailability({
+    universalIdentifier,
+    allUniversalIdentifierMap,
+  }: {
+    universalIdentifier: string;
+    allUniversalIdentifierMap: AllUniversalIdentifierMap;
+  }): FlatEntityValidationError[] {
+    const existingOwner = allUniversalIdentifierMap.get(universalIdentifier);
+
+    if (isDefined(existingOwner)) {
+      return [
+        {
+          code: FlatEntityMapsExceptionCode.ENTITY_ALREADY_EXISTS,
+          message: `Cannot create ${this.metadataName}: universalIdentifier "${universalIdentifier}" is already taken by ${existingOwner.metadataName} from application "${existingOwner.applicationUniversalIdentifier}"`,
+        },
+      ];
+    }
+
+    return [];
+  }
+
   private async innerValidateFlatEntityCreation(
-    args: UniversalFlatEntityValidationArgs<T>,
+    args: UniversalFlatEntityValidationArgs<T> & {
+      allUniversalIdentifierMap?: AllUniversalIdentifierMap;
+    },
   ): Promise<UniversalFlatEntityValidationReturnType<T, 'create'>> {
     const uuidValidationResult = this.validateUniversalIdentifier(args);
+    const availabilityValidationResult = isDefined(
+      args.allUniversalIdentifierMap,
+    )
+      ? this.validateUniversalIdentifierAvailability({
+          universalIdentifier: args.flatEntityToValidate.universalIdentifier,
+          allUniversalIdentifierMap: args.allUniversalIdentifierMap,
+        })
+      : [];
+    const centralizedErrors = [
+      ...uuidValidationResult,
+      ...availabilityValidationResult,
+    ];
+
     const result = await this.validateFlatEntityCreation(args);
 
     if (result.status === 'fail') {
       return {
         ...result,
-        errors: [...result.errors, ...uuidValidationResult],
+        errors: [...result.errors, ...centralizedErrors],
       };
     }
 
-    if (result.status === 'success' && uuidValidationResult.length > 0) {
+    if (result.status === 'success' && centralizedErrors.length > 0) {
       return {
         status: 'fail',
         flatEntityMinimalInformation: {
           universalIdentifier: args.flatEntityToValidate.universalIdentifier,
         } as Partial<MetadataFlatEntity<T>>,
-        errors: uuidValidationResult,
+        errors: centralizedErrors,
         metadataName: this.metadataName,
         type: 'create',
       };

@@ -127,6 +127,7 @@ export class ApplicationManifestMigrationService {
           // preInstallOnlyManifest are left untouched on upgrades.
           buildOptions: {
             isSystemBuild: false,
+            validateUniversalIdentifierUniqueness: true,
             applicationUniversalIdentifier:
               ownerFlatApplication.universalIdentifier,
           },
@@ -207,6 +208,7 @@ export class ApplicationManifestMigrationService {
         {
           buildOptions: {
             isSystemBuild: false,
+            validateUniversalIdentifierUniqueness: true,
             inferDeletionFromMissingEntities: true,
             applicationUniversalIdentifier:
               ownerFlatApplication.universalIdentifier,
