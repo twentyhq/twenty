@@ -1,30 +1,36 @@
 import { useParams } from 'react-router-dom';
-import { useMutation, useQuery } from '@apollo/client/react';
-import {
-  FindAllApplicationRegistrationsDocument,
-  FindOneAdminApplicationRegistrationDocument,
-  UpdateApplicationRegistrationDocument,
-} from '~/generated-metadata/graphql';
+import { useQuery } from '@apollo/client/react';
+import { FindOneAdminApplicationRegistrationDocument } from '~/generated-metadata/graphql';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { useLingui } from '@lingui/react/macro';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { APPLICATION_REGISTRATION_ADMIN_PATH } from '@/settings/admin-panel/apps/constants/ApplicationRegistrationAdminPath';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsAdminApplicationRegistrationDetailContent } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { IconArrowBarToDown } from 'twenty-ui/display';
-import { Card, Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { styled } from '@linaria/react';
+import {
+  IconInfoCircle,
+  IconKey,
+  IconSettings,
+  IconWorld,
+} from 'twenty-ui/display';
+import { SettingsApplicationRegistrationConfigTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab';
+import { SettingsApplicationRegistrationOAuthTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
+import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';
+import { SettingsApplicationRegistrationGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 
-const StyledToggleContainer = styled.div`
-  display: flex;
-  margin-top: ${themeCssVariables.spacing[4]};
-`;
+const REGISTRATION_DETAIL_TAB_LIST_ID =
+  'admin-application-registration-detail-tab-list';
 
 export const SettingsAdminApplicationRegistrationDetail = () => {
   const { t } = useLingui();
+
+  const activeTabId = useAtomComponentStateValue(
+    activeTabIdComponentState,
+    REGISTRATION_DETAIL_TAB_LIST_ID,
+  );
 
   const { applicationRegistrationId = '' } = useParams<{
     applicationRegistrationId: string;
@@ -38,21 +44,49 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
     },
   );
 
-  const [updateRegistration] = useMutation(
-    UpdateApplicationRegistrationDocument,
-    {
-      refetchQueries: [
-        FindOneAdminApplicationRegistrationDocument,
-        FindAllApplicationRegistrationsDocument,
-      ],
-    },
-  );
-
   const registration = data?.findOneAdminApplicationRegistration;
 
   if (loading || !isDefined(registration)) {
     return null;
   }
+
+  const tabs = [
+    { id: 'general', title: t`General`, Icon: IconInfoCircle },
+    { id: 'oauth', title: t`OAuth`, Icon: IconKey },
+    { id: 'distribution', title: t`Distribution`, Icon: IconWorld },
+    { id: 'config', title: t`Config`, Icon: IconSettings },
+  ];
+
+  const renderActiveTabContent = () => {
+    switch (activeTabId) {
+      case 'config':
+        return (
+          <SettingsApplicationRegistrationConfigTab
+            registration={registration}
+          />
+        );
+      case 'oauth':
+        return (
+          <SettingsApplicationRegistrationOAuthTab
+            registration={registration}
+          />
+        );
+      case 'distribution':
+        return (
+          <SettingsApplicationRegistrationDistributionTab
+            registration={registration}
+          />
+        );
+      case 'general':
+      default:
+        return (
+          <SettingsApplicationRegistrationGeneralTab
+            registration={registration}
+            displayAdminToggles
+          />
+        );
+    }
+  };
 
   return (
     <SubMenuTopBarContainer
@@ -70,31 +104,11 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
       ]}
     >
       <SettingsPageContainer>
-        <SettingsAdminApplicationRegistrationDetailContent
-          registration={registration}
+        <TabList
+          tabs={tabs}
+          componentInstanceId={REGISTRATION_DETAIL_TAB_LIST_ID}
         />
-        <Section>
-          <StyledToggleContainer>
-            <Card rounded fullWidth>
-              <SettingsOptionCardContentToggle
-                Icon={IconArrowBarToDown}
-                title={t`Allow installation`}
-                description={t`Display this app in the NPM packages list`}
-                checked={registration.isListed}
-                onChange={(checked) =>
-                  updateRegistration({
-                    variables: {
-                      input: {
-                        id: registration.id,
-                        update: { isListed: checked },
-                      },
-                    },
-                  })
-                }
-              />
-            </Card>
-          </StyledToggleContainer>
-        </Section>
+        {renderActiveTabContent()}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

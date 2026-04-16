@@ -1,13 +1,10 @@
 import {
   H2Title,
   IconBox,
-  IconBrandDocker,
-  IconChartBar,
   IconDownload,
-  IconStatusChange,
+  IconGitBranch,
   IconTag,
   IconWorld,
-  IconGitBranch,
 } from 'twenty-ui/display';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
@@ -18,7 +15,6 @@ import {
   type ApplicationRegistration,
   ApplicationRegistrationSourceType,
   ApplicationRegistrationTarballUrlDocument,
-  FindApplicationRegistrationStatsDocument,
   FindOneApplicationSummaryDocument,
   GetPublicWorkspaceDataByIdDocument,
 } from '~/generated-metadata/graphql';
@@ -59,7 +55,7 @@ const StyledGeneralContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-export const SettingsAdminApplicationRegistrationDetailContent = ({
+export const SettingsApplicationRegistrationGeneralInfo = ({
   registration,
 }: {
   registration: ApplicationRegistration;
@@ -93,14 +89,6 @@ export const SettingsAdminApplicationRegistrationDetailContent = ({
     {
       variables: { id: registration.ownerWorkspaceId ?? '' },
       skip: !registration.ownerWorkspaceId,
-    },
-  );
-
-  const { data: statsData } = useQuery(
-    FindApplicationRegistrationStatsDocument,
-    {
-      variables: { id: applicationRegistrationId },
-      skip: !applicationRegistrationId,
     },
   );
 
@@ -206,69 +194,24 @@ export const SettingsAdminApplicationRegistrationDetailContent = ({
     return items;
   };
 
-  const stats = statsData?.findApplicationRegistrationStats;
-
-  const hasStats = (stats?.activeInstalls ?? 0) > 0;
-
-  const versionDistributionLabel =
-    stats?.versionDistribution
-      ?.map(
-        (entry: { version: string; count: number }) =>
-          `${entry.version} (${entry.count})`,
-      )
-      .join(', ') || '—';
-
-  const statsItems = [
-    {
-      Icon: IconBrandDocker,
-      label: t`Active installs`,
-      value: stats?.activeInstalls ?? '—',
-    },
-    {
-      Icon: IconStatusChange,
-      label: t`Most installed version`,
-      value: stats?.mostInstalledVersion ?? '—',
-    },
-    {
-      Icon: IconChartBar,
-      label: t`Distribution`,
-      value: versionDistributionLabel,
-    },
-  ];
-
   return (
-    <>
-      <Section>
-        <H2Title title={t`General`} description={t`About your app`} />
-        <StyledGeneralContainer>
-          <SettingsTableCard
-            rounded
-            items={generateItems()}
-            gridAutoColumns="3fr 8fr"
-          />
-          <SettingsApplicationRegistrationShareLinkButtons
-            shareLink={shareLink}
-            isInstalled={isApplicationInstalled}
-            universalIdentifier={registration.universalIdentifier}
-            isNpmSource={
-              registration.sourceType === ApplicationRegistrationSourceType.NPM
-            }
-          />
-        </StyledGeneralContainer>
-      </Section>
-      {hasStats && (
-        <Section>
-          <H2Title
-            title={t`Install Stats`}
-            description={t`Usage across all workspaces on this server`}
-          />
-          <SettingsTableCard
-            rounded
-            items={statsItems}
-            gridAutoColumns="200px 1fr"
-          />
-        </Section>
-      )}
-    </>
+    <Section>
+      <H2Title title={t`General`} description={t`About your app`} />
+      <StyledGeneralContainer>
+        <SettingsTableCard
+          rounded
+          items={generateItems()}
+          gridAutoColumns="3fr 8fr"
+        />
+        <SettingsApplicationRegistrationShareLinkButtons
+          shareLink={shareLink}
+          isInstalled={isApplicationInstalled}
+          universalIdentifier={registration.universalIdentifier}
+          isNpmSource={
+            registration.sourceType === ApplicationRegistrationSourceType.NPM
+          }
+        />
+      </StyledGeneralContainer>
+    </Section>
   );
 };
