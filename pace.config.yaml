@@ -1,0 +1,6 @@
+# PACE configuration for bikkisairam/twenty
+require_tests: false      # TypeScript monorepo — test runner not available in sandbox
+language: typescript
+max_turns: 40
+max_file_chars: 20000
+max_total_chars: 120000
