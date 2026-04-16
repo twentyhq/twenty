@@ -19,7 +19,14 @@ export const formatDateISOStringToRelativeDate = ({
   localeCatalog: Locale;
 }) => {
   const now = new Date();
-  const targetDate = new Date(isoDate);
+  
+  // Check if the input is a date-only ISO string (YYYY-MM-DD format)
+  // Date-only strings should be interpreted in local timezone, not UTC
+  const isDateOnly = /^\d{4}-\d{2}-\d{2}$/.test(isoDate);
+  
+  const targetDate = isDateOnly
+    ? new Date(isoDate + 'T00:00:00') // Parse as local midnight
+    : new Date(isoDate);
 
   if (isDayMaximumPrecision && isToday(targetDate)) return t`Today`;
   if (isDayMaximumPrecision && isYesterday(targetDate)) return t`Yesterday`;
