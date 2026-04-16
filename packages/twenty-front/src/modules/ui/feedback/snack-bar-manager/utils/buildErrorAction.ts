@@ -7,7 +7,7 @@ import { type SnackBarOptions } from '@/ui/feedback/snack-bar-manager/states/sna
 
 export const buildErrorAction = (
   apolloError?: ErrorLike,
-): Pick<SnackBarOptions, 'actionText' | 'actionTo'> | null => {
+): Pick<SnackBarOptions, 'buttonLabel' | 'buttonTo'> | null => {
   if (!apolloError) {
     return null;
   }
@@ -16,8 +16,8 @@ export const buildErrorAction = (
 
   if (isDefined(conflictingRecord)) {
     return {
-      actionText: t`View existing record`,
-      actionTo: getAppPath(AppPath.RecordShowPage, {
+      buttonLabel: t`View existing record`,
+      buttonTo: getAppPath(AppPath.RecordShowPage, {
         objectNameSingular: conflictingRecord.conflictingObjectNameSingular,
         objectRecordId: conflictingRecord.conflictingRecordId,
       }),
