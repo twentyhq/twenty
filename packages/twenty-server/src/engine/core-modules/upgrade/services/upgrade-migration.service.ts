@@ -283,10 +283,10 @@ export class UpgradeMigrationService {
     return completedCount === workspaceIds.length;
   }
 
-  async getLastAttemptedInstanceCommandOrThrow(): Promise<{
+  async getLastAttemptedInstanceCommand(): Promise<{
     name: string;
     status: UpgradeMigrationStatus;
-  }> {
+  } | null> {
     const migration = await this.upgradeMigrationRepository
       .createQueryBuilder('migration')
       .select(['migration.name', 'migration.status'])
@@ -304,11 +304,24 @@ export class UpgradeMigrationService {
       .getOne();
 
     if (!migration) {
+      return null;
+    }
+
+    return { name: migration.name, status: migration.status };
+  }
+
+  async getLastAttemptedInstanceCommandOrThrow(): Promise<{
+    name: string;
+    status: UpgradeMigrationStatus;
+  }> {
+    const result = await this.getLastAttemptedInstanceCommand();
+
+    if (!result) {
       throw new Error(
         'No instance command found — the database may not have been initialized',
       );
     }
 
-    return { name: migration.name, status: migration.status };
+    return result;
   }
 }
