@@ -33,7 +33,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useStore } from 'jotai';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import {
   matchPath,
   useLocation,
@@ -142,7 +142,9 @@ export const PageChangeEffect = () => {
     closeSidePanelUnlessNotRelevant();
   }, [location.pathname, closeSidePanelUnlessNotRelevant]);
 
-  useEffect(() => {
+  // useLayoutEffect ensures cleanup runs before child useEffect hooks,
+  // preventing race conditions with SetCurrentPageLayoutIdEffect
+  useLayoutEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
       setPreviousLocation(location.pathname);
       executeTasksOnAnyLocationChange();
