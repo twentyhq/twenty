@@ -56,9 +56,10 @@ export const SettingsApplicationRegistrationConfigTab = ({
           description={t`Server variables are applied to all workspace installations.`}
         />
         <Table>
-          <TableRow gridAutoColumns="4fr 3fr 1fr">
+          <TableRow gridAutoColumns="4fr 3fr 3fr 1fr">
             <TableHeader>{t`Name`}</TableHeader>
             <TableHeader>{t`Description`}</TableHeader>
+            <TableHeader align="right">{t`Status`}</TableHeader>
             <TableHeader align="right"></TableHeader>
           </TableRow>
           <StyledTableBodyContainer>
