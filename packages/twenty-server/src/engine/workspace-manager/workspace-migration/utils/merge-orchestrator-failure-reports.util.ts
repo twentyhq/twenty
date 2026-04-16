@@ -21,7 +21,10 @@ export const pushToOrchestratorFailureReport = <
 }: {
   report: OrchestratorFailureReport;
   metadataName: TMetadataName;
-  items: FailedFlatEntityValidation<TMetadataName, WorkspaceMigrationActionType>[];
+  items: FailedFlatEntityValidation<
+    TMetadataName,
+    WorkspaceMigrationActionType
+  >[];
 }): void => {
   (report[metadataName] as AnyFailedValidation[]).push(...items);
 };
