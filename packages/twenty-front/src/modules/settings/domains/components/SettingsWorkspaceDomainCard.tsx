@@ -2,12 +2,20 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCloudflareIntegrationEnabledState } from '@/client-config/states/isCloudflareIntegrationEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SettingsCard } from '@/settings/components/SettingsCard';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconWorld, Status } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+`;
 
 export const SettingsWorkspaceDomainCard = () => {
   const { t } = useLingui();
@@ -24,7 +32,7 @@ export const SettingsWorkspaceDomainCard = () => {
   }
 
   return (
-    <>
+    <StyledContainer>
       <UndecoratedLink to={getSettingsPath(SettingsPath.Subdomain)}>
         <SettingsCard title={t`Subdomain`} Icon={<IconWorld />} />
       </UndecoratedLink>
@@ -44,6 +52,6 @@ export const SettingsWorkspaceDomainCard = () => {
           />
         </UndecoratedLink>
       )}
-    </>
+    </StyledContainer>
   );
 };
