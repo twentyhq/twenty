@@ -1,6 +1,6 @@
 import { enUS } from 'date-fns/locale';
 
-import { formatDateISOStringToRelativeDate } from '../formatDateISOStringToRelativeDate';
+import { formatDateISOStringToRelativeDate } from '@/modules/localization/utils/formatDateISOStringToRelativeDate';
 
 // ---------------------------------------------------------------------------
 // Helper: build a "YYYY-MM-DD" string offset by N days from today in LOCAL time.
