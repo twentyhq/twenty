@@ -18,12 +18,12 @@ const MOCK_SEQUENCE = [
 
 describe('UpgradeStatusService', () => {
   let service: UpgradeStatusService;
-  let getLatestInstanceMigration: jest.Mock;
+  let getLastAttemptedInstanceCommand: jest.Mock;
   let getWorkspaceLastAttemptedCommandName: jest.Mock;
   let workspaceFind: jest.Mock;
 
   beforeEach(async () => {
-    getLatestInstanceMigration = jest.fn();
+    getLastAttemptedInstanceCommand = jest.fn();
     getWorkspaceLastAttemptedCommandName = jest.fn();
     workspaceFind = jest.fn();
 
@@ -33,7 +33,7 @@ describe('UpgradeStatusService', () => {
         {
           provide: UpgradeMigrationService,
           useValue: {
-            getLatestInstanceMigration,
+            getLastAttemptedInstanceCommand,
             getWorkspaceLastAttemptedCommandName,
           },
         },
@@ -55,7 +55,7 @@ describe('UpgradeStatusService', () => {
 
   describe('getInstanceStatus', () => {
     it('should return up-to-date when cursor is at last instance command', async () => {
-      getLatestInstanceMigration.mockResolvedValue({
+      getLastAttemptedInstanceCommand.mockResolvedValue({
         name: LAST_INSTANCE_COMMAND,
         status: 'completed',
         executedByVersion: '1.23.0',
@@ -70,7 +70,7 @@ describe('UpgradeStatusService', () => {
     });
 
     it('should return behind when cursor is before last instance command', async () => {
-      getLatestInstanceMigration.mockResolvedValue({
+      getLastAttemptedInstanceCommand.mockResolvedValue({
         name: EARLIER_COMMAND,
         status: 'completed',
         executedByVersion: '1.22.0',
@@ -85,7 +85,7 @@ describe('UpgradeStatusService', () => {
     });
 
     it('should return failed when latest instance command failed', async () => {
-      getLatestInstanceMigration.mockResolvedValue({
+      getLastAttemptedInstanceCommand.mockResolvedValue({
         name: LAST_INSTANCE_COMMAND,
         status: 'failed',
         executedByVersion: '1.23.0',
@@ -100,7 +100,7 @@ describe('UpgradeStatusService', () => {
     });
 
     it('should return behind when no migrations exist', async () => {
-      getLatestInstanceMigration.mockResolvedValue(null);
+      getLastAttemptedInstanceCommand.mockResolvedValue(null);
 
       const result = await service.getInstanceStatus();
 
