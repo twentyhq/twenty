@@ -53,8 +53,7 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
         <Button
           Icon={IconDownload}
           title={isInstalling ? t`Installing...` : t`Install`}
-          variant={'primary'}
-          accent={'blue'}
+          variant={'secondary'}
           onClick={handleInstall}
           disabled={isInstalling}
         />
