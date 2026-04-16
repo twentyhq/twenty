@@ -17,6 +17,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "resend": "^6.12.0",
     "twenty-client-sdk": "1.22.0",
     "twenty-sdk": "1.22.0"
   },

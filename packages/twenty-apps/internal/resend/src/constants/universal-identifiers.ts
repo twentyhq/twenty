@@ -1,4 +1,5 @@
 export const APP_DISPLAY_NAME = 'Resend';
-export const APP_DESCRIPTION = '';
+export const APP_DESCRIPTION =
+  'Sync emails, contacts, templates, broadcasts, and segments from Resend';
 export const APPLICATION_UNIVERSAL_IDENTIFIER = '9426c4a3-7da4-4f61-bdb7-01e1276478b8';
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER = 'b115921d-7ca3-4a1f-94e3-7119174fef78';

@@ -116,7 +116,7 @@ export default defineObject({
     },
     {
       universalIdentifier: TEMPLATE_HTML_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.RICH_TEXT,
+      type: FieldType.TEXT,
       name: 'htmlBody',
       label: 'HTML body',
       description: 'HTML content of the template',

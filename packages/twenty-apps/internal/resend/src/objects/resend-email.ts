@@ -79,7 +79,7 @@ export default defineObject({
     },
     {
       universalIdentifier: HTML_BODY_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.RICH_TEXT,
+      type: FieldType.TEXT,
       name: 'htmlBody',
       label: 'HTML body',
       description: 'HTML content of the email',
