@@ -76,15 +76,21 @@ export const RecordTableHeaderPlusButtonContent = () => {
     });
   };
 
+  const hasAvailableFields = availableFieldMetadataItemsToShow.length > 0;
+
   return (
     <DropdownContent>
-      <DropdownMenuSearchInput
-        autoFocus
-        value={searchInput}
-        placeholder={t`Search fields`}
-        onChange={(event) => setSearchInput(event.target.value)}
-      />
-      <DropdownMenuSeparator />
+      {hasAvailableFields && (
+        <>
+          <DropdownMenuSearchInput
+            autoFocus
+            value={searchInput}
+            placeholder={t`Search fields`}
+            onChange={(event) => setSearchInput(event.target.value)}
+          />
+          <DropdownMenuSeparator />
+        </>
+      )}
       <DropdownMenuItemsContainer>
         {filteredFieldMetadataItems.length > 0 ? (
           filteredFieldMetadataItems.map((fieldMetadataItem) => (
@@ -98,7 +104,13 @@ export const RecordTableHeaderPlusButtonContent = () => {
             />
           ))
         ) : (
-          <MenuItem text={t`No results`} />
+          <MenuItem
+            text={
+              hasAvailableFields
+                ? t`No results`
+                : t`All fields are already visible`
+            }
+          />
         )}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
