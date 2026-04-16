@@ -152,6 +152,12 @@ msgstr "{0, plural, one {# Obiect} few {# Obiecte} other {# Obiecte}}"
 msgid "{0, plural, one {You do not have permission to access the {fieldsList} field} other {You do not have permission to access the {fieldsList} fields}}"
 msgstr "{0, plural, one {Nu aveți permisiunea de a accesa câmpul {fieldsList}} few {Nu aveți permisiunea de a accesa câmpurile {fieldsList}} other {Nu aveți permisiunea de a accesa câmpurile {fieldsList}}}"
 
+#. js-lingui-id: pZCK0D
+#. placeholder {0}: registration.name
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
+msgid "{0} - Config"
+msgstr ""
+
 #. js-lingui-id: dNIJYp
 #. placeholder {0}: formatNumber(datum.value)
 #: src/modules/settings/usage/components/UsagePieChart.tsx
@@ -677,6 +683,11 @@ msgstr "Despre acest utilizator"
 msgid "About this workspace"
 msgstr "Despre acest spațiu de lucru"
 
+#. js-lingui-id: HfdWGA
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
+msgid "About your app"
+msgstr ""
+
 #. js-lingui-id: LuXP9q
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Access"
@@ -782,14 +793,16 @@ msgid "Actions users can perform on this object"
 msgstr "Acțiuni pe care utilizatorii le pot efectua asupra acestui obiect"
 
 #. js-lingui-id: FQBaXG
+#: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/components/SettingsSkillInactiveMenuDropDown.tsx
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-#: src/modules/settings/components/SettingsEnterpriseFeatureGateCard.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/information-banner/components/enterprise/InformationBannerInvalidEnterpriseKey.tsx
 msgid "Activate"
 msgstr "Activează"
@@ -820,7 +833,7 @@ msgid "Active API keys created by you or your team."
 msgstr "Chei API active create de tine sau echipa ta."
 
 #. js-lingui-id: A7Ks+i
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
 msgid "Active installs"
 msgstr "Instalări active"
 
@@ -830,7 +843,6 @@ msgid "Active Sync"
 msgstr "Sincronizare activă"
 
 #. js-lingui-id: m16xKo
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 msgid "Add"
 msgstr "Adaugă"
@@ -1140,6 +1152,11 @@ msgstr "Adaugă la lista neagră"
 msgid "Add to Favorite"
 msgstr "Adaugă la favorite"
 
+#. js-lingui-id: XnwceV
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationRedirectURIsInput.tsx
+msgid "Add URI"
+msgstr ""
+
 #. js-lingui-id: q9e2Bs
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "Add view"
@@ -1209,24 +1226,40 @@ msgid "Admin"
 msgstr ""
 
 #. js-lingui-id: g1in8j
-#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
-#: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
-#: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
-#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
-#: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
-#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Admin Panel"
 msgstr "Panoul de administrare"
 
+#. js-lingui-id: 05jO4l
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
+#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
+msgid "Admin Panel - AI"
+msgstr ""
+
+#. js-lingui-id: 2GX/U+
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
+msgid "Admin Panel - Apps"
+msgstr ""
+
+#. js-lingui-id: JA5LSq
+#: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
+msgid "Admin Panel - Config"
+msgstr ""
+
 #. js-lingui-id: 6X68yA
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 msgid "Admin Panel - General"
+msgstr ""
+
+#. js-lingui-id: v/zjIb
+#: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+msgid "Admin Panel - Health"
 msgstr ""
 
 #. js-lingui-id: sxkWRg
@@ -1360,9 +1393,6 @@ msgstr ""
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
-#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
-#: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
-#: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -1512,11 +1542,6 @@ msgstr "Toate înregistrările de aplicații"
 msgid "All application registrations across the platform, including orphaned marketplace apps"
 msgstr "Toate înregistrările de aplicații din întreaga platformă, inclusiv aplicațiile orfane din marketplace"
 
-#. js-lingui-id: mSTufP
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "All applications registered on this workspace"
-msgstr "Toate aplicațiile înregistrate în acest spațiu de lucru"
-
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventRow.tsx
 msgid "All day"
@@ -1644,6 +1669,11 @@ msgstr "Permite conectarea bazată pe Google pentru utilizatorii cu permisiuni d
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow importing data from CSV files"
 msgstr "Permite importul de date din fișiere CSV"
+
+#. js-lingui-id: irI8Y5
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
+msgid "Allow installation"
+msgstr ""
 
 #. js-lingui-id: GMx1K0
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -1949,16 +1979,6 @@ msgstr ""
 msgid "App"
 msgstr ""
 
-#. js-lingui-id: zL5xow
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-msgid "App installed on this workspace"
-msgstr "Aplicație instalată în acest spațiu de lucru"
-
-#. js-lingui-id: r5g1bX
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
-msgid "App registrations"
-msgstr ""
-
 #. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Appearance"
@@ -2000,15 +2020,15 @@ msgstr "Aplicația a fost instalată cu succes."
 msgid "Application Logs"
 msgstr ""
 
+#. js-lingui-id: l/T809
+#: src/pages/settings/applications/components/SettingsApplicationDetailTitle.tsx
+msgid "Application not listed on the marketplace. It was shared via a direct link"
+msgstr ""
+
 #. js-lingui-id: +tE2x9
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Application successfully uninstalled."
 msgstr ""
-
-#. js-lingui-id: FoLBHp
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-msgid "Application uninstalled from this workspace"
-msgstr "Aplicație dezinstalată din acest spațiu de lucru"
 
 #. js-lingui-id: V+GSWz
 #: src/modules/marketplace/hooks/useUpgradeApplication.ts
@@ -2020,12 +2040,17 @@ msgstr "Aplicația a fost actualizată cu succes."
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
-#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Applications"
 msgstr "Aplicații"
+
+#. js-lingui-id: 1262aG
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
+msgid "Applications - Developer"
+msgstr ""
 
 #. js-lingui-id: DB8zMK
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
@@ -2056,6 +2081,11 @@ msgstr "Aplicații"
 #. js-lingui-id: dEnE1D
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Apps made by other developers published on npm"
+msgstr ""
+
+#. js-lingui-id: EzsAEI
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "Apps you're the developer of"
 msgstr ""
 
 #. js-lingui-id: 8HV3WN
@@ -2098,6 +2128,11 @@ msgstr ""
 #. placeholder {0}: objectMetadataItem.labelSingular
 #: src/modules/command-menu-item/engine-command/record/components/DestroyRecordsCommand.tsx
 msgid "Are you sure you want to destroy this {0}? It cannot be recovered anymore."
+msgstr ""
+
+#. js-lingui-id: +UIjOX
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
+msgid "Are you sure you want to reset this variable?"
 msgstr ""
 
 #. js-lingui-id: RzJL8J
@@ -2782,7 +2817,6 @@ msgid "Can't scan? Copy the"
 msgstr "Nu poți scana? Copiază"
 
 #. js-lingui-id: dEgA5A
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
@@ -3276,7 +3310,7 @@ msgid "command"
 msgstr ""
 
 #. js-lingui-id: cj9UFG
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Command copied to clipboard"
 msgstr "Comandă copiată în clipboard"
 
@@ -3356,12 +3390,12 @@ msgid "Conditions"
 msgstr "Condiţii"
 
 #. js-lingui-id: 14PdY0
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Config"
 msgstr "Configurare"
 
 #. js-lingui-id: Vj43Y/
-#: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
 msgid "Config Variables"
 msgstr "Variabile de configurare"
@@ -3458,7 +3492,7 @@ msgid "Configure your emails and calendar settings."
 msgstr "Configurați setările de e-mail și calendar."
 
 #. js-lingui-id: M1co/O
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableStatus.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
 msgid "Configured"
 msgstr "Configurat"
@@ -3688,7 +3722,7 @@ msgid "Copy code"
 msgstr "Copiază codul"
 
 #. js-lingui-id: Oos8fo
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Copy command"
 msgstr "Copiază comanda"
 
@@ -3727,9 +3761,9 @@ msgstr "Copiază și lipește codul de mai jos"
 msgid "Copy Setup Key"
 msgstr "Copiază cheia de configurare"
 
-#. js-lingui-id: RGCCrg
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-msgid "Copy share link"
+#. js-lingui-id: Ip9rQi
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
+msgid "Copy sharing link"
 msgstr ""
 
 #. js-lingui-id: Ej5euX
@@ -4647,7 +4681,6 @@ msgstr "șterge"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
@@ -4735,6 +4768,7 @@ msgid "Delete API key"
 msgstr "Șterge cheia API"
 
 #. js-lingui-id: JXU6Ex
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 msgid "Delete app"
 msgstr "Șterge aplicația"
@@ -4902,6 +4936,7 @@ msgstr "Descrie ce dorești ca AI să facă..."
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
@@ -4996,9 +5031,14 @@ msgstr "Nume de afișare pentru model"
 msgid "Display text on multiple lines"
 msgstr "Afișați textul pe mai multe linii"
 
+#. js-lingui-id: ljWYXA
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
+msgid "Display this app in the NPM packages list"
+msgstr ""
+
 #. js-lingui-id: vU/Hht
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationContent.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
 msgid "Distribution"
 msgstr "Distribuție"
 
@@ -5091,7 +5131,7 @@ msgid "Downgrade"
 msgstr "Retrogradare"
 
 #. js-lingui-id: mzI/c+
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
 #: src/modules/activities/files/components/DocumentViewer.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 msgid "Download"
@@ -5812,11 +5852,6 @@ msgstr "Introduceți câte o opțiune pe linie. Fiecare linie va deveni o nouă 
 msgid "Enter phone number"
 msgstr "Introduceți numărul de telefon"
 
-#. js-lingui-id: xV28+W
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-msgid "Enter secret value"
-msgstr "Introduceți valoarea secretului"
-
 #. js-lingui-id: xCiJkz
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestTestVariableInput.tsx
 msgid "Enter test value"
@@ -5860,7 +5895,6 @@ msgid "Enter the workspace subdomain to transfer this app to. You will lose acce
 msgstr "Introduceți subdomeniul spațiului de lucru către care să transferați această aplicație. Veți pierde accesul la administrarea ei."
 
 #. js-lingui-id: pubQie
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterValueInput.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterValueInput.tsx
@@ -5894,7 +5928,9 @@ msgid "Enterprise"
 msgstr "Întreprindere"
 
 #. js-lingui-id: rmZVdg
-#: src/modules/settings/components/SettingsEnterpriseFeatureGateCard.tsx
+#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Enterprise feature"
 msgstr ""
 
@@ -5994,11 +6030,6 @@ msgstr "Eroare la editarea Furnizorului de Identitate SSO"
 msgid "Error illustration"
 msgstr "Ilustrație de eroare"
 
-#. js-lingui-id: zCb/ve
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-msgid "Error installing app"
-msgstr "Eroare la instalarea aplicației"
-
 #. js-lingui-id: UJr0dl
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
 msgid "Error Loading Audit Logs"
@@ -6054,11 +6085,6 @@ msgstr "Eroare la retrimiterea invitației"
 msgid "Error rotating client secret"
 msgstr "Eroare la reînnoirea secretului clientului"
 
-#. js-lingui-id: RDcmKf
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-msgid "Error uninstalling application"
-msgstr "Eroare la dezinstalarea aplicației"
-
 #. js-lingui-id: 5Vy8D1
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Error uninstalling application."
@@ -6075,7 +6101,7 @@ msgid "Error updating role"
 msgstr "Eroare la actualizarea rolului"
 
 #. js-lingui-id: s+iV3f
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
 msgid "Error updating variable"
 msgstr "Eroare la actualizarea variabilei"
 
@@ -6699,17 +6725,6 @@ msgstr "Steag de caracteristici"
 msgid "Feature Flags"
 msgstr ""
 
-#. js-lingui-id: FkMol5
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-msgid "Featured"
-msgstr "Recomandată"
-
-#. js-lingui-id: znbJM3
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-msgid "Featured apps are curated. Open a PR to request featured status."
-msgstr "Aplicațiile recomandate sunt selectate manual. Deschideți un PR pentru a solicita statutul de recomandată."
-
 #. js-lingui-id: F1sJEJ
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "Featured only"
@@ -7127,8 +7142,8 @@ msgstr "Grafic tip ceas"
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationContent.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay.ts
@@ -7363,8 +7378,6 @@ msgid "Health"
 msgstr "Sănătate"
 
 #. js-lingui-id: I1IOmb
-#: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
-#: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "Health Status"
 msgstr "Starea de sănătate"
@@ -7495,7 +7508,7 @@ msgid "https://api.example.com/v1"
 msgstr "https://api.example.com/v1"
 
 #. js-lingui-id: 1Un+Rf
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationRedirectURIsInput.tsx
 msgid "https://example.com/callback"
 msgstr "https://example.com/callback"
 
@@ -7840,6 +7853,7 @@ msgstr "Introduceți o intrare JSON, apoi apăsați \"Execută\" pentru a testa 
 
 #. js-lingui-id: TKQ7K+
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 msgid "Install"
 msgstr "Instalează"
 
@@ -7848,29 +7862,15 @@ msgstr "Instalează"
 msgid "Install and manage applications"
 msgstr "Instalați și gestionați aplicațiile"
 
-#. js-lingui-id: cDDhds
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-msgid "Install on this workspace"
-msgstr "Instalați în acest spațiu de lucru"
-
 #. js-lingui-id: JXiMtM
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
 msgid "Install Stats"
 msgstr "Statistici de instalare"
-
-#. js-lingui-id: FEkwu/
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-msgid "Install this app on the current workspace"
-msgstr "Instalați această aplicație în spațiul de lucru curent"
-
-#. js-lingui-id: Xry+oU
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-msgid "Installation"
-msgstr "Instalare"
 
 #. js-lingui-id: eQkgKV
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
 msgid "Installed"
 msgstr "Instalat"
 
@@ -7881,7 +7881,7 @@ msgstr ""
 
 #. js-lingui-id: wJJ+Wy
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 msgid "Installing..."
 msgstr "Se instalează..."
 
@@ -8439,6 +8439,7 @@ msgstr "Data cea mai recentă"
 
 #. js-lingui-id: zUzYWu
 #: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Latest version"
 msgstr "Ultima versiune"
@@ -8737,11 +8738,6 @@ msgstr "Se încarcă firul"
 msgid "Loading..."
 msgstr "Se încarcă..."
 
-#. js-lingui-id: OmWlgF
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-msgid "Local development"
-msgstr "Dezvoltare locală"
-
 #. js-lingui-id: 8NbHF7
 #: src/pages/settings/ai/SettingsAIPrompts.tsx
 msgid "Locale"
@@ -8932,11 +8928,6 @@ msgstr "Manual"
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Marketplace"
 msgstr "Marketplace"
-
-#. js-lingui-id: H4eHwB
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-msgid "Marketplace Listing"
-msgstr "Listare în marketplace"
 
 #. js-lingui-id: FCc+QF
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn.tsx
@@ -9312,7 +9303,7 @@ msgid "More widgets"
 msgstr "Mai multe widgeturi"
 
 #. js-lingui-id: SOHptZ
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
 msgid "Most installed version"
 msgstr "Versiunea cu cele mai multe instalări"
 
@@ -9387,6 +9378,11 @@ msgstr "trebuie să fie un tablou de obiecte cu url valid și etichetă (format:
 msgid "must be an array of valid emails"
 msgstr "trebuie să fie un tablou de e-mailuri valide"
 
+#. js-lingui-id: OJCJh9
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+msgid "My apps"
+msgstr ""
+
 #. js-lingui-id: XTGSZU
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "My unlisted views"
@@ -9407,7 +9403,8 @@ msgstr "mySkill"
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
@@ -9452,11 +9449,6 @@ msgstr "Nume"
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 msgid "Name and describe your function"
 msgstr "Denumesti și descrieți funcția dumneavoastră"
-
-#. js-lingui-id: /CI5+c
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-msgid "Name and description are managed via your app manifest (CLI)"
-msgstr "Numele și descrierea sunt gestionate prin manifestul aplicației dvs. (CLI)"
 
 #. js-lingui-id: XSwyCU
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -9719,9 +9711,9 @@ msgid "Ninth"
 msgstr "Al nouălea"
 
 #. js-lingui-id: 1UzENP
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
-#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "No"
 msgstr "Nu"
@@ -10340,7 +10332,7 @@ msgid "Not Found"
 msgstr "Nu a fost găsit"
 
 #. js-lingui-id: MTqQMG
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableStatus.tsx
 msgid "Not set"
 msgstr "Neconfigurat"
 
@@ -10441,15 +10433,11 @@ msgid "Numbered list"
 msgstr ""
 
 #. js-lingui-id: b/j06W
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationContent.tsx
 #: src/pages/settings/ai/components/SettingsAIMCP.tsx
 msgid "OAuth"
 msgstr "OAuth"
-
-#. js-lingui-id: /PKKj/
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
-msgid "OAuth Credentials"
-msgstr "Acreditări OAuth"
 
 #. js-lingui-id: pNEViR
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -10787,7 +10775,7 @@ msgid "Ordered List"
 msgstr ""
 
 #. js-lingui-id: ucgZ0o
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+#: src/pages/settings/enterprise/components/OrganizationAdornment.tsx
 #: src/modules/settings/billing/hooks/useBillingWording.ts
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
 msgid "Organization"
@@ -10809,6 +10797,7 @@ msgstr "Organizare"
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
@@ -10888,6 +10877,9 @@ msgid "Overview"
 msgstr "Prezentare generală"
 
 #. js-lingui-id: LtI9AS
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOwnerSection.tsx
 msgid "Owner"
 msgstr "Proprietar"
@@ -10903,7 +10895,7 @@ msgid "p"
 msgstr ""
 
 #. js-lingui-id: mGYa19
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
 msgid "Package"
 msgstr "Pachet"
 
@@ -11225,7 +11217,7 @@ msgid "Please check your email for a verification link."
 msgstr "Vă rugăm să verificați e-mailul pentru un link de verificare."
 
 #. js-lingui-id: jEw0Mr
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationRedirectURIsInput.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardIframeSettings.tsx
 msgid "Please enter a valid URL"
 msgstr "Vă rugăm să introduceți un URL valid"
@@ -11404,6 +11396,11 @@ msgstr "Suport prioritar"
 msgid "Privacy Policy"
 msgstr "Politica de confidențialitate"
 
+#. js-lingui-id: zwBp5t
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "Private"
+msgstr ""
+
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/hooks/useBillingWording.ts
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
@@ -11501,6 +11498,11 @@ msgstr "Provisionați un mediu de găzduire complet și sigur pe aceste domenii.
 msgid "Pseudo-English"
 msgstr "Pseudo-Engleză"
 
+#. js-lingui-id: 7d1a0d
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "Public"
+msgstr ""
+
 #. js-lingui-id: knP82t
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
@@ -11527,6 +11529,11 @@ msgstr "Domeniul public a fost șters cu succes"
 #: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Public Domains"
 msgstr "Domenii Publice"
+
+#. js-lingui-id: zSYgxW
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+msgid "Publish your app to the marketplace so others can install it"
+msgstr ""
 
 #. js-lingui-id: mF9LxA
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -12031,7 +12038,7 @@ msgid "Request Failed"
 msgstr "Cererea a eșuat"
 
 #. js-lingui-id: TMLAx2
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableStatus.tsx
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
 msgid "Required"
 msgstr "Obligatoriu"
@@ -12043,6 +12050,7 @@ msgid "Resend email"
 msgstr "Retrimite email"
 
 #. js-lingui-id: OfhWJH
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
@@ -12094,6 +12102,7 @@ msgid "Reset to static value"
 msgstr "Resetează la o valoare statică"
 
 #. js-lingui-id: 6rzsES
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 msgid "Reset variable"
 msgstr "Resetați variabila"
@@ -12365,7 +12374,6 @@ msgid "Saturday"
 msgstr "Sâmbătă"
 
 #. js-lingui-id: tfDRzk
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 msgid "Save"
@@ -12511,6 +12519,7 @@ msgid "Search an agent..."
 msgstr "Caută un agent..."
 
 #. js-lingui-id: fGTI3o
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
@@ -12752,6 +12761,11 @@ msgstr "Vezi {objectLabelPlural}"
 msgid "See all {relationLabelPlural} linked to this record"
 msgstr "Vezi toate {relationLabelPlural} asociate cu această înregistrare"
 
+#. js-lingui-id: 3o+CgI
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
+msgid "See app page"
+msgstr ""
+
 #. js-lingui-id: sFsCOG
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "See data model settings"
@@ -12765,6 +12779,11 @@ msgstr "Vezi câmpuri"
 #. js-lingui-id: RpeN29
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
 msgid "See function"
+msgstr ""
+
+#. js-lingui-id: V7TecA
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
+msgid "See on marketplace"
 msgstr ""
 
 #. js-lingui-id: vn4aKq
@@ -13026,9 +13045,14 @@ msgid "Serbian (Cyrillic)"
 msgstr "Sârbă (Chirilic)"
 
 #. js-lingui-id: fHVf32
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab.tsx
 msgid "Server Variables"
 msgstr "Variabile ale serverului"
+
+#. js-lingui-id: exgCw+
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab.tsx
+msgid "Server variables are applied to all workspace installations."
+msgstr ""
 
 #. js-lingui-id: LUc0oL
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -13111,6 +13135,11 @@ msgstr "Configurați un câmp de tip Select pe {objectLabel} pentru a crea un Ka
 msgid "Set your application configuration variables"
 msgstr "Setați variabilele de configurare a aplicației dumneavoastră"
 
+#. js-lingui-id: 9qcWSO
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
+msgid "set-config-value"
+msgstr ""
+
 #. js-lingui-id: dQsqpC
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Setting up your database..."
@@ -13171,24 +13200,23 @@ msgid "Seventh"
 msgstr "Al șaptelea"
 
 #. js-lingui-id: Z8lGw6
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 #: src/modules/activities/emails/components/EmailThreadBottomBar.tsx
 msgid "Share"
 msgstr "Distribuie"
-
-#. js-lingui-id: BkgQSO
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-msgid "Share link copied to clipboard"
-msgstr ""
 
 #. js-lingui-id: Vy9kmk
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Share this link to invite users to join your workspace"
 msgstr "Distribuiți acest link pentru a invita utilizatori să se alăture spațiului dumneavoastră de lucru"
 
-#. js-lingui-id: 69MEsn
+#. js-lingui-id: gaJRur
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-msgid "Share this link with other workspaces on this server to let them install this application."
+msgid "Share your app to other workspaces without pushing it on the marketplace"
+msgstr ""
+
+#. js-lingui-id: NyIsOu
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
+msgid "Sharing link copied to clipboard"
 msgstr ""
 
 #. js-lingui-id: RRXpo1
@@ -13492,8 +13520,9 @@ msgid "Sorts"
 msgstr "Sortări"
 
 #. js-lingui-id: wdxz7K
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
@@ -13613,6 +13642,7 @@ msgstr "Stare"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
@@ -13989,12 +14019,6 @@ msgstr "Setări Tab"
 msgid "Table"
 msgstr "Tabel"
 
-#. js-lingui-id: HpIrmy
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-msgid "Tarball upload"
-msgstr "Încărcare tarball"
-
 #. js-lingui-id: sceIIK
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Target relation on Junction Object"
@@ -14312,21 +14336,6 @@ msgstr "Această acțiune va șterge acest folder și toate cele {2} elemente di
 msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 msgstr "Această acțiune va șterge acest folder și elementul din meniul de navigare din interior. Doriți să continuați?"
 
-#. js-lingui-id: 5AOB6g
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-msgid "This app is installed on the current workspace"
-msgstr "Această aplicație este instalată în spațiul de lucru curent"
-
-#. js-lingui-id: AldXy0
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-msgid "This app is listed on the marketplace because it is published to npm."
-msgstr "Această aplicație este listată în marketplace deoarece este publicată pe npm."
-
-#. js-lingui-id: SYslQU
-#: src/pages/settings/applications/components/SettingsApplicationDetailTitle.tsx
-msgid "This application is not listed on the marketplace. It was shared via a direct link."
-msgstr "Această aplicație nu este listată în marketplace. A fost partajată printr-un link direct."
-
 #. js-lingui-id: D8qhoN
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "This application is required for your workspace to function properly and cannot be uninstalled."
@@ -14391,11 +14400,6 @@ msgstr "Acest furnizor nu are încă un SDK nativ — va folosi modul compatibil
 #: src/modules/information-banner/components/deleted-record/InformationBannerDeletedRecord.tsx
 msgid "This record has been deleted"
 msgstr "Această înregistrare a fost ștearsă"
-
-#. js-lingui-id: eV9Tnj
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
-msgid "This redirect URI is already added"
-msgstr "Acest URI de redirecționare este deja adăugat"
 
 #. js-lingui-id: vbLBMd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
@@ -14495,11 +14499,6 @@ msgstr "Aceasta va șterge definitiv obiectul și toate înregistrările sale. T
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
 msgid "This will permanently delete your two factor authentication method.<0/>Since 2FA is mandatory in your workspace, you will be logged out after deletion and will be asked to configure it again upon login. <1/>Please type in your email to confirm."
 msgstr "Aceasta va șterge permanent metoda dvs. de autentificare în doi pași.<0/>Deoarece 2FA este obligatoriu în spațiul dvs. de lucru, veți fi deconectat după ștergere și vi se va cere să o configurați din nou la autentificare. <1/>Vă rugăm să introduceți e-mailul pentru confirmare."
-
-#. js-lingui-id: Uvv3gH
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-msgid "This will remove the application and all its data from this workspace. Please type \"{confirmationValue}\" to confirm."
-msgstr "Acest lucru va elimina aplicația și toate datele sale din acest spațiu de lucru. Introduceți \"{confirmationValue}\" pentru a confirma."
 
 #. js-lingui-id: 4YifBe
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
@@ -15002,15 +15001,12 @@ msgid "Undisplayed data: max {maxItems} slices per chart."
 msgstr ""
 
 #. js-lingui-id: fo0VXg
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Uninstall"
 msgstr ""
 
 #. js-lingui-id: Qtg9Qc
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Uninstall Application?"
 msgstr ""
@@ -15044,7 +15040,7 @@ msgid "unit"
 msgstr "unitate"
 
 #. js-lingui-id: fMyWEp
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
 msgid "Universal ID"
 msgstr "ID universal"
 
@@ -15266,11 +15262,6 @@ msgstr "Treci la un plan superior pentru a avea acces"
 msgid "Upgrade to Enterprise to access audit logs."
 msgstr ""
 
-#. js-lingui-id: D+7y/3
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-msgid "Upgrade to Enterprise to share private applications."
-msgstr ""
-
 #. js-lingui-id: +Gi3x1
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
@@ -15326,6 +15317,16 @@ msgstr "Conținutul încărcat este prea mare."
 msgid "Uploading..."
 msgstr "Se încarcă..."
 
+#. js-lingui-id: 87NUzq
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationRedirectURIsTable.tsx
+msgid "URI"
+msgstr ""
+
+#. js-lingui-id: T6liqF
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationRedirectURIsInput.tsx
+msgid "URI is already in redirect URIs list"
+msgstr ""
+
 #. js-lingui-id: IagCbF
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -15353,7 +15354,7 @@ msgid "Usage"
 msgstr "Utilizare"
 
 #. js-lingui-id: 8Jr4QC
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
 msgid "Usage across all workspaces on this server"
 msgstr "Utilizare în toate spațiile de lucru de pe acest server"
 
@@ -15538,7 +15539,7 @@ msgid "Values"
 msgstr "Valori"
 
 #. js-lingui-id: HBiN8v
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
 msgid "Variable {variableKey} updated"
 msgstr "Variabila {variableKey} a fost actualizată"
 
@@ -15561,11 +15562,6 @@ msgstr "Variabilă negăsită"
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Variable updated successfully."
 msgstr "Variabila a fost actualizată cu succes."
-
-#. js-lingui-id: E6Zuwm
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-msgid "Variables declared by the app manifest. Fill in values here — they apply to all workspace installations."
-msgstr "Variabile declarate de manifestul aplicației. Completați valorile aici — se aplică tuturor instalărilor din spațiile de lucru."
 
 #. js-lingui-id: QDEWii
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
@@ -15690,11 +15686,6 @@ msgstr "grup de filtre de vizualizare"
 msgid "view group"
 msgstr "grup de vizualizare"
 
-#. js-lingui-id: AjN5xU
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-msgid "View installed app"
-msgstr "Vizualizați aplicația instalată"
-
 #. js-lingui-id: B02hom
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "View invoices"
@@ -15710,11 +15701,6 @@ msgstr "Vizualizare locuri de muncă"
 msgid "View Logs"
 msgstr "Vizualizați jurnalele"
 
-#. js-lingui-id: 7PrSCy
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-msgid "View marketplace page"
-msgstr "Vizualizați pagina din marketplace"
-
 #. js-lingui-id: sAPirx
 #: src/modules/object-record/record-index/components/RecordIndexEmptyStateNotShared.tsx
 msgid "View not shared"
@@ -15724,11 +15710,6 @@ msgstr ""
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 msgid "View Previous AI Chats"
 msgstr "Vizualizează Chat-urile AI Anterioare"
-
-#. js-lingui-id: NnJpTN
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
-msgid "View private application page"
-msgstr ""
 
 #. js-lingui-id: hAAsm/
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
@@ -16132,6 +16113,7 @@ msgstr "Fluxuri de lucru"
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -16316,7 +16298,7 @@ msgstr "da"
 
 #. js-lingui-id: l75CjT
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
-#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Yes"
 msgstr "Da"
@@ -16421,11 +16403,6 @@ msgstr "Contul dvs. a fost activat."
 #: src/modules/apollo/services/apollo.factory.ts
 msgid "Your app version is out of date. Please refresh the page."
 msgstr "Versiunea aplicației tale este depășită. Te rog să reîmprospătezi pagina."
-
-#. js-lingui-id: 9pWhO+
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "Your apps"
-msgstr ""
 
 #. js-lingui-id: +5YqGH
 #: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
