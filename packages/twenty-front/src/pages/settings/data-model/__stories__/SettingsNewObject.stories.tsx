@@ -29,7 +29,7 @@ export const WithStandardSelected: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    canvas.getByText('New Object');
+    await canvas.findByText('New Object');
 
     const listingInput = await canvas.findByPlaceholderText('Listing');
     const pluralInput = await canvas.findByPlaceholderText('Listings');

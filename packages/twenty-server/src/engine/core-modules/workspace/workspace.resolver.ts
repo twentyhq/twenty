@@ -70,6 +70,7 @@ import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { getRequest } from 'src/utils/extract-request';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 const OriginHeader = createParamDecorator(
   (_: unknown, ctx: ExecutionContext) => {
     const request = getRequest(ctx);
@@ -424,7 +425,7 @@ export class WorkspaceResolver {
   async getPublicWorkspaceDataById(
     @Args({
       name: 'id',
-      type: () => String,
+      type: () => UUIDScalarType,
       nullable: false,
     })
     id: string,

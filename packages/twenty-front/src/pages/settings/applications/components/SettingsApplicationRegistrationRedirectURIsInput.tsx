@@ -2,7 +2,6 @@ import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Key } from 'ts-key-enum';
 import { z } from 'zod';
 
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -42,6 +41,7 @@ export const SettingsApplicationRegistrationRedirectURIsInput = ({
           .string()
           .trim()
           .min(1, 'URI is required')
+          .url(t`Please enter a valid URL`)
           .refine(
             (value) => !redirectUris.includes(value),
             t`URI is already in redirect URIs list`,

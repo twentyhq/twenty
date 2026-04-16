@@ -6995,8 +6995,8 @@ export default {
                 177,
                 {
                     "id": [
-                        1,
-                        "String!"
+                        3,
+                        "UUID!"
                     ]
                 }
             ],

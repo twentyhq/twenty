@@ -3350,7 +3350,7 @@ type Query {
   currentUser: User!
   currentWorkspace: Workspace!
   getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
-  getPublicWorkspaceDataById(id: String!): PublicWorkspaceDataSummary!
+  getPublicWorkspaceDataById(id: UUID!): PublicWorkspaceDataSummary!
   getSSOIdentityProviders: [FindAvailableSSOIDP!]!
   getConnectedImapSmtpCaldavAccount(id: UUID!): ConnectedImapSmtpCaldavAccount!
   getAutoCompleteAddress(address: String!, token: String!, country: String, isFieldCity: Boolean): [AutocompleteResult!]!
