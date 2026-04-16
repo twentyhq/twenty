@@ -23,12 +23,14 @@ import {
 // The CountryCode brand is applied later, inside validation. Typing the input
 // as `CountryCode` here would be a type-level lie — the UI can send '' or any
 // string, which is exactly how issue #19740 slipped through.
+// additionalPhones accepts both a JSON string and a pre-parsed array; the
+// isArray branch below is exercised by several integration suites.
 export type PhonesFieldGraphQLInput =
   | {
       primaryPhoneNumber?: string | null;
       primaryPhoneCountryCode?: string | null;
       primaryPhoneCallingCode?: string | null;
-      additionalPhones?: string | null;
+      additionalPhones?: string | Partial<AdditionalPhoneMetadata>[] | null;
     }
   | null
   | undefined;
@@ -189,9 +191,16 @@ const validateAndInferPhoneInput = ({
         ? countryCode
         : undefined;
 
+    // An empty callingCode must be treated as "not provided" so the nullish
+    // coalesce below falls through to the inferred `+countryCallingCode`;
+    // otherwise '' would survive all the way to primaryPhoneCallingCode.
+    const providedCallingCode = isNonEmptyString(callingCode)
+      ? callingCode
+      : undefined;
+
     return validateAndInferMetadataFromPrimaryPhoneNumber({
       number,
-      callingCode: callingCode ?? undefined,
+      callingCode: providedCallingCode,
       countryCode: brandedCountryCode,
     });
   }
