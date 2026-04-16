@@ -206,15 +206,17 @@ export class UpgradeMigrationService {
       return new Map();
     }
 
-    const results = await this.upgradeMigrationRepository
+    const migrations = await this.upgradeMigrationRepository
       .createQueryBuilder('migration')
-      .select('migration.workspaceId', 'workspaceId')
-      .addSelect('migration.name', 'name')
-      .addSelect('migration.status', 'status')
-      .addSelect('migration.executedByVersion', 'executedByVersion')
-      .addSelect('migration.errorMessage', 'errorMessage')
-      .addSelect('migration.createdAt', 'createdAt')
-      .addSelect('migration.isInitial', 'isInitial')
+      .select([
+        'migration.workspaceId',
+        'migration.name',
+        'migration.status',
+        'migration.executedByVersion',
+        'migration.errorMessage',
+        'migration.createdAt',
+        'migration.isInitial',
+      ])
       .where({
         workspaceId: In(workspaceIds),
       })
@@ -229,12 +231,24 @@ export class UpgradeMigrationService {
       .orderBy('migration.workspaceId')
       .addOrderBy('migration.createdAt', 'DESC')
       .distinctOn(['migration.workspaceId'])
-      .getRawMany<WorkspaceLastAttemptedCommand>();
+      .getMany();
 
     const cursors = new Map<string, WorkspaceLastAttemptedCommand>();
 
-    for (const row of results) {
-      cursors.set(row.workspaceId, row);
+    for (const migration of migrations) {
+      if (migration.workspaceId === null) {
+        continue;
+      }
+
+      cursors.set(migration.workspaceId, {
+        workspaceId: migration.workspaceId,
+        name: migration.name,
+        status: migration.status,
+        executedByVersion: migration.executedByVersion,
+        errorMessage: migration.errorMessage,
+        createdAt: migration.createdAt,
+        isInitial: migration.isInitial,
+      });
     }
 
     return cursors;
