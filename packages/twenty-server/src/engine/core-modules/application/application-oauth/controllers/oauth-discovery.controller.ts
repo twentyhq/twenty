@@ -4,18 +4,13 @@ import { type Request } from 'express';
 
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { cleanServerUrl } from 'src/utils/clean-server-url';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
 @Controller('.well-known')
 export class OAuthDiscoveryController {
   constructor(
-    private readonly twentyConfigService: TwentyConfigService,
-    private readonly domainServerConfigService: DomainServerConfigService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
   ) {}
 
@@ -23,13 +18,6 @@ export class OAuthDiscoveryController {
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getAuthorizationServerMetadata(@Req() request: Request) {
     const issuer = this.getRequestBaseUrl(request);
-    // /authorize is served by the frontend; SERVER_URL (API-only) has no such
-    // route, so we route the client to the default frontend base URL in that
-    // case. All other hosts (app.twenty.com, workspace subdomains, custom
-    // domains) serve both frontend and API.
-    const authorizeBase = this.isApiHost(request)
-      ? cleanServerUrl(this.domainServerConfigService.getBaseUrl().toString())
-      : issuer;
 
     const cliRegistration =
       await this.applicationRegistrationService.findOneByUniversalIdentifier(
@@ -38,7 +26,7 @@ export class OAuthDiscoveryController {
 
     return {
       issuer,
-      authorization_endpoint: `${authorizeBase}/authorize`,
+      authorization_endpoint: `${issuer}/authorize`,
       token_endpoint: `${issuer}/oauth/token`,
       registration_endpoint: `${issuer}/oauth/register`,
       revocation_endpoint: `${issuer}/oauth/revoke`,
@@ -79,11 +67,5 @@ export class OAuthDiscoveryController {
 
   private getRequestBaseUrl(request: Request): string {
     return `${request.protocol}://${request.get('host')}`;
-  }
-
-  private isApiHost(request: Request): boolean {
-    const serverUrl = this.twentyConfigService.get('SERVER_URL');
-
-    return request.get('host') === new URL(serverUrl).host;
   }
 }
