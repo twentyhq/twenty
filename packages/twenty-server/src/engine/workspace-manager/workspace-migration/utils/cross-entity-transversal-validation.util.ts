@@ -9,18 +9,15 @@ import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/wo
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 import { validateUniversalIdentifierCrossEntityUniquenessThroughReportMutation } from 'src/engine/workspace-manager/workspace-migration/utils/validate-universal-identifier-cross-entity-uniqueness-through-report-mutation.util';
-import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 
 export const crossEntityTransversalValidation = ({
   optimisticUniversalFlatMaps,
   orchestratorActionsReport,
   preDeletionFlatViewFieldMaps,
-  buildOptions,
 }: {
   optimisticUniversalFlatMaps: AllUniversalFlatEntityMaps;
   orchestratorActionsReport: OrchestratorActionsReport;
   preDeletionFlatViewFieldMaps: UniversalFlatEntityMaps<UniversalFlatViewField>;
-  buildOptions: WorkspaceMigrationBuilderOptions;
 }): OrchestratorFailureReport => {
   const crossEntityFailureReport = EMPTY_ORCHESTRATOR_FAILURE_REPORT();
 
@@ -38,13 +35,11 @@ export const crossEntityTransversalValidation = ({
   crossEntityFailureReport.objectMetadata.push(...objectMetadata);
   crossEntityFailureReport.viewField.push(...viewField);
 
-  if (buildOptions.validateUniversalIdentifierUniqueness === true) {
-    validateUniversalIdentifierCrossEntityUniquenessThroughReportMutation({
-      optimisticUniversalFlatMaps,
-      orchestratorActionsReport,
-      orchestratorFailureReport: crossEntityFailureReport,
-    });
-  }
+  validateUniversalIdentifierCrossEntityUniquenessThroughReportMutation({
+    optimisticUniversalFlatMaps,
+    orchestratorActionsReport,
+    orchestratorFailureReport: crossEntityFailureReport,
+  });
 
   return crossEntityFailureReport;
 };

@@ -854,7 +854,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
       optimisticUniversalFlatMaps: optimisticAllFlatEntityMaps,
       orchestratorActionsReport,
       preDeletionFlatViewFieldMaps,
-      buildOptions,
     });
 
     for (const metadataName of Object.values(ALL_METADATA_NAME)) {
