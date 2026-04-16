@@ -2,9 +2,13 @@ import { enUS } from 'date-fns/locale';
 
 import { formatDateISOStringToRelativeDate } from '@/modules/localization/utils/formatDateISOStringToRelativeDate';
 
+// Pin the process to a timezone west of UTC for the entire test file.
+// This is the exact scenario from issue #19634 — without this, regression
+// tests pass in a GMT CI environment even with the bug present.
+process.env.TZ = 'America/Los_Angeles'; // UTC-7 (PDT) / UTC-8 (PST)
+
 // ---------------------------------------------------------------------------
 // Helper: build a "YYYY-MM-DD" string offset by N days from today in LOCAL time.
-// This mirrors exactly what the server stores and what the bug was about.
 // ---------------------------------------------------------------------------
 const localDateOnly = (offsetDays: number): string => {
   const d = new Date();
@@ -23,8 +27,7 @@ const call = (isoDate: string, isDayMaximumPrecision = true) =>
   });
 
 // ---------------------------------------------------------------------------
-// isDayMaximumPrecision = true  →  the Today / Yesterday / Tomorrow code path
-// This is the path affected by issue #19634.
+// Core behaviour — isDayMaximumPrecision = true
 // ---------------------------------------------------------------------------
 describe('formatDateISOStringToRelativeDate — isDayMaximumPrecision (date-only strings)', () => {
   it('returns "Today" for today\'s date-only string', () => {
@@ -40,35 +43,58 @@ describe('formatDateISOStringToRelativeDate — isDayMaximumPrecision (date-only
   });
 
   it('falls through to formatDistance for dates further away', () => {
-    // 5 days from now — should NOT be Today/Tomorrow/Yesterday
     const result = call(localDateOnly(5));
     expect(['Today', 'Tomorrow', 'Yesterday']).not.toContain(result);
-    // date-fns formatDistance for 5 days ahead → "5 days"
     expect(result).toMatch(/5 days/);
-  });
-
-  // ---- Regression tests for the UTC-vs-local bug (issue #19634) -----------
-
-  it('regression: tomorrow\'s date-only string must never resolve to "Today"', () => {
-    // Before the fix, new Date("YYYY-MM-DD") was UTC midnight.
-    // West of UTC that UTC midnight is still "today" in local time.
-    expect(call(localDateOnly(1))).not.toBe('Today');
-  });
-
-  it('regression: today\'s date-only string must never resolve to "Yesterday"', () => {
-    // East of UTC the inverse could apply.
-    expect(call(localDateOnly(0))).not.toBe('Yesterday');
   });
 });
 
 // ---------------------------------------------------------------------------
-// isDayMaximumPrecision = false  →  the formatDistance (datetime) code path
-// Full ISO datetime strings carry their own timezone info; this path must
-// be unaffected by the fix.
+// Regression — issue #19634 (west-of-UTC timezone, pinned to America/Los_Angeles)
+//
+// Before the fix: new Date("YYYY-MM-DD") produced UTC midnight.
+// At UTC midnight the local clock in UTC-7/8 still shows the PREVIOUS day,
+// so isTomorrow("tomorrow's date") returned false and isToday returned true.
+//
+// The fix appends "T00:00:00" (no Z) so the constructor uses local midnight,
+// keeping the date on the correct calendar day in every timezone.
+// ---------------------------------------------------------------------------
+describe('regression #19634 — date-only strings in America/Los_Angeles (UTC-7/8)', () => {
+  it('tomorrow\'s date-only string resolves to "Tomorrow", not "Today"', () => {
+    // This assertion would FAIL with the old `new Date(isoDate)` because
+    // UTC midnight of tomorrow is still "today" locally when west of UTC.
+    const result = call(localDateOnly(1));
+    expect(result).toBe('Tomorrow');
+    expect(result).not.toBe('Today');
+  });
+
+  it('today\'s date-only string resolves to "Today", not "Yesterday"', () => {
+    const result = call(localDateOnly(0));
+    expect(result).toBe('Today');
+    expect(result).not.toBe('Yesterday');
+  });
+
+  it('directly verifies local-midnight parsing for a fixed date string', () => {
+    // Construct the canonical broken scenario:
+    // For a date-only string the fix must produce local midnight (getHours() === 0)
+    // while UTC midnight would land at getHours() === timezoneOffsetHours in local time.
+    const dateString = localDateOnly(1);
+    const localMidnight = new Date(dateString + 'T00:00:00');
+
+    expect(localMidnight.getHours()).toBe(0);   // midnight in local time
+    expect(localMidnight.getMinutes()).toBe(0);
+    // Date stays on the intended calendar day
+    const [, , dd] = dateString.split('-');
+    expect(localMidnight.getDate()).toBe(Number(dd));
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Full datetime strings — existing behaviour must be preserved
 // ---------------------------------------------------------------------------
 describe('formatDateISOStringToRelativeDate — full datetime strings', () => {
   it('handles a full UTC datetime string without throwing', () => {
-    const isoFull = new Date().toISOString(); // e.g. "2026-04-15T10:30:00.000Z"
+    const isoFull = new Date().toISOString();
     expect(() => call(isoFull, false)).not.toThrow();
   });
 
