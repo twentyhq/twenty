@@ -19,7 +19,17 @@ export const formatDateISOStringToRelativeDate = ({
   localeCatalog: Locale;
 }) => {
   const now = new Date();
-  const targetDate = new Date(isoDate);
+
+  // Date-only strings (e.g. "2026-04-14", length === 10) are parsed by the
+  // ECMAScript spec as UTC midnight. For users west of UTC that shifts the
+  // calendar day backwards by one, making isToday/isTomorrow/isYesterday
+  // return wrong results. Appending "T00:00:00" (no Z) forces the Date
+  // constructor to use local midnight instead.
+  // Full datetime strings already carry timezone info and are unaffected.
+  const targetDate =
+    isoDate.length === 10
+      ? new Date(isoDate + 'T00:00:00')
+      : new Date(isoDate);
 
   if (isDayMaximumPrecision && isToday(targetDate)) return t`Today`;
   if (isDayMaximumPrecision && isYesterday(targetDate)) return t`Yesterday`;
