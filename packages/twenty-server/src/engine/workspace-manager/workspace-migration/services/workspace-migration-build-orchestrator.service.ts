@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
-import { buildAllUniversalIdentifierMap } from 'src/engine/workspace-manager/workspace-migration/utils/build-all-universal-identifier-map.util';
 import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-actions-report.constant';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
 import {
@@ -132,11 +132,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
       dependencyAllFlatEntityMaps,
     });
 
-    const allUniversalIdentifierMap =
-      buildOptions.validateUniversalIdentifierUniqueness === true
-        ? buildAllUniversalIdentifierMap(optimisticAllFlatEntityMaps)
-        : undefined;
-
     const preDeletionFlatViewFieldMaps = structuredClone(
       optimisticAllFlatEntityMaps.flatViewFieldMaps,
     );
@@ -181,7 +176,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             additionalCacheDataMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             from: fromFlatObjectMetadataMaps,
             to: toFlatObjectMetadataMaps,
             workspaceId,
@@ -206,7 +201,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatFieldMetadataMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -228,7 +223,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatIndexMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -247,7 +242,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
           {
             additionalCacheDataMaps,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             from: fromFlatViewMaps,
             to: toFlatViewMaps,
             buildOptions,
@@ -274,7 +269,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatViewFieldGroupMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -299,7 +294,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatViewFieldMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -325,7 +320,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatViewFilterGroupMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -351,7 +346,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatViewFilterMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -374,7 +369,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatViewGroupMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -397,7 +392,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatViewSortMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -422,7 +417,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatRowLevelPermissionPredicateGroupMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -450,7 +445,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatRowLevelPermissionPredicateMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -477,7 +472,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatLogicFunctionMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -502,7 +497,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatRoleMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -528,7 +523,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatObjectPermissionMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -557,7 +552,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatFieldPermissionMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -584,7 +579,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatPermissionFlagMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -610,7 +605,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatRoleTargetMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -633,7 +628,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatAgentMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -656,7 +651,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatSkillMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -680,7 +675,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatFrontComponentMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -708,7 +703,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatCommandMenuItemMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -737,7 +732,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatNavigationMenuItemMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -764,7 +759,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatPageLayoutMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -788,7 +783,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatPageLayoutTabMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -816,7 +811,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatPageLayoutWidgetMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -843,7 +838,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
             to: toFlatWebhookMaps,
             buildOptions,
             dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-            allUniversalIdentifierMap,
+
             workspaceId,
           },
         );
@@ -855,14 +850,18 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
-    const { objectMetadata, viewField } = crossEntityTransversalValidation({
+    const crossEntityFailureReport = crossEntityTransversalValidation({
       optimisticUniversalFlatMaps: optimisticAllFlatEntityMaps,
       orchestratorActionsReport,
       preDeletionFlatViewFieldMaps,
+      buildOptions,
     });
 
-    orchestratorFailureReport.objectMetadata.push(...objectMetadata);
-    orchestratorFailureReport.viewField.push(...viewField);
+    for (const metadataName of Object.values(ALL_METADATA_NAME)) {
+      orchestratorFailureReport[metadataName].push(
+        ...crossEntityFailureReport[metadataName],
+      );
+    }
 
     const allErrors = Object.values(orchestratorFailureReport);
 
