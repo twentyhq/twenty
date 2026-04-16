@@ -68,12 +68,8 @@ export class RunInstanceCommandsCommand extends CommandRunner {
         await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
 
       const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
-      const startIndex =
-        await this.findInstanceCommandIndexToStartFrom(sequence);
 
-      for (let index = startIndex; index < sequence.length; index++) {
-        const step = sequence[index];
-
+      for (const step of sequence) {
         if (step.kind === 'fast-instance') {
           const result =
             await this.instanceUpgradeService.runFastInstanceCommand({
@@ -153,33 +149,6 @@ export class RunInstanceCommandsCommand extends CommandRunner {
           'Use --force to bypass this check (not recommended).',
       );
     }
-  }
-
-  private async findInstanceCommandIndexToStartFrom(
-    sequence: ReturnType<UpgradeSequenceReaderService['getUpgradeSequence']>,
-  ): Promise<number> {
-    const lastAttempted =
-      await this.upgradeMigrationService.getLastAttemptedInstanceCommand();
-
-    if (!lastAttempted) {
-      return 0;
-    }
-
-    const cursorIndex = sequence.findIndex(
-      (step) => step.name === lastAttempted.name,
-    );
-
-    if (cursorIndex === -1) {
-      throw new Error(
-        `Last attempted instance command "${lastAttempted.name}" not found in upgrade sequence`,
-      );
-    }
-
-    if (lastAttempted.status === 'failed') {
-      return cursorIndex;
-    }
-
-    return cursorIndex + 1;
   }
 
   private async runLegacyPendingTypeOrmMigrations(): Promise<void> {
