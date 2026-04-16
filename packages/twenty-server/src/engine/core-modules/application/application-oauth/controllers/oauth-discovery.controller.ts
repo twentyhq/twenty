@@ -60,11 +60,13 @@ export class OAuthDiscoveryController {
     };
   }
 
-  // RFC 9728: `resource` is echoed back as the host the client connected to
-  // so that MCP clients can validate the resource indicator they were trying
-  // to reach. Without this, pasting any URL other than SERVER_URL/mcp breaks
-  // discovery.
-  @Get('oauth-protected-resource')
+  // RFC 9728: OAuth 2.0 Protected Resource Metadata.
+  // Served at both the root path and the resource-specific path (/mcp) so
+  // clients following the latest spec, which probes the path-aware URL first,
+  // get JSON metadata instead of falling through to the SPA's index.html.
+  // The `resource` value echoes the host the request reached so MCP clients
+  // can validate the resource indicator they were trying to reach.
+  @Get(['oauth-protected-resource', 'oauth-protected-resource/mcp'])
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   getProtectedResourceMetadata(@Req() request: Request) {
     const base = this.getRequestBaseUrl(request);
