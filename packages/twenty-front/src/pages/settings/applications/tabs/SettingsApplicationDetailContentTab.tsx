@@ -109,7 +109,7 @@ export const SettingsApplicationDetailContentTab = ({
     return null;
   }
 
-  const { logicFunctions, agents } = application;
+  const { logicFunctions } = application;
 
   const shouldDisplayLogicFunctions =
     isDefined(logicFunctions) && logicFunctions?.length > 0;

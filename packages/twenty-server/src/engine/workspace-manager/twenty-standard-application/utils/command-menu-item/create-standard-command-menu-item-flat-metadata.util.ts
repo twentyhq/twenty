@@ -74,6 +74,8 @@ export const createStandardCommandMenuItemFlatMetadata = ({
     availabilityObjectMetadataId: resolvedObjectMetadataId,
     availabilityObjectMetadataUniversalIdentifier:
       resolvedObjectMetadataUniversalIdentifier,
+    pageLayoutId: null,
+    pageLayoutUniversalIdentifier: null,
     createdAt: now,
     updatedAt: now,
   };

@@ -39,6 +39,12 @@ export class RouteTriggerRestApiExceptionFilter implements ExceptionFilter {
           response,
           403,
         );
+      case RouteTriggerExceptionCode.RATE_LIMIT_EXCEEDED:
+        return this.httpExceptionHandlerService.handleError(
+          exception as CustomException,
+          response,
+          429,
+        );
       case RouteTriggerExceptionCode.LOGIC_FUNCTION_EXECUTION_ERROR:
         return this.httpExceptionHandlerService.handleError(
           exception as CustomException,

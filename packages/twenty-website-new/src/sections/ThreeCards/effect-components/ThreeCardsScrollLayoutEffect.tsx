@@ -5,16 +5,19 @@ import { useEffect } from 'react';
 import {
   applyThreeCardsScrollLayout,
   type ThreeCardsScrollLayoutRefs,
+  type ThreeCardsScrollLayoutOptions,
 } from '@/sections/ThreeCards/utils/three-cards-scroll-layout';
 
 type ThreeCardsScrollLayoutEffectProps = ThreeCardsScrollLayoutRefs & {
   cardCount: number;
+  layoutOptions?: ThreeCardsScrollLayoutOptions;
 };
 
 export function ThreeCardsScrollLayoutEffect({
   cardCount,
   cardRefs,
   gridRef,
+  layoutOptions,
 }: ThreeCardsScrollLayoutEffectProps) {
   useEffect(() => {
     const refs: ThreeCardsScrollLayoutRefs = { cardRefs, gridRef };
@@ -23,7 +26,7 @@ export function ThreeCardsScrollLayoutEffect({
 
     const flushLayout = () => {
       rafId = null;
-      applyThreeCardsScrollLayout(refs, cardCount);
+      applyThreeCardsScrollLayout(refs, cardCount, layoutOptions);
     };
 
     const scheduleLayout = () => {
@@ -33,7 +36,7 @@ export function ThreeCardsScrollLayoutEffect({
       rafId = window.requestAnimationFrame(flushLayout);
     };
 
-    applyThreeCardsScrollLayout(refs, cardCount);
+    applyThreeCardsScrollLayout(refs, cardCount, layoutOptions);
     window.addEventListener('scroll', scheduleLayout, { passive: true });
     window.addEventListener('resize', scheduleLayout);
     return () => {
@@ -43,7 +46,7 @@ export function ThreeCardsScrollLayoutEffect({
         window.cancelAnimationFrame(rafId);
       }
     };
-  }, [cardCount, cardRefs, gridRef]);
+  }, [cardCount, cardRefs, gridRef, layoutOptions]);
 
   return null;
 }

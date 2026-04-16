@@ -41,6 +41,33 @@ export const Default: Story = {
   },
 };
 
+export const WithBottomButton: Story = {
+  args: {
+    variant: SnackBarVariant.Error,
+    message: 'An error has occurred',
+    detailedMessage: 'Error during useFindManyRecord...',
+    buttonLabel: 'Open Record',
+    buttonOnClick: fn(),
+  },
+  decorators: [ComponentDecorator],
+  parameters: {
+    chromatic: { disableSnapshot: true },
+  },
+};
+
+export const SuccessWithButton: Story = {
+  args: {
+    variant: SnackBarVariant.Success,
+    message: 'Record created successfully',
+    buttonLabel: 'View Record',
+    buttonOnClick: fn(),
+  },
+  decorators: [ComponentDecorator],
+  parameters: {
+    chromatic: { disableSnapshot: true },
+  },
+};
+
 export const Catalog: CatalogStory<Story, typeof SnackBar> = {
   args: {
     onCancel: fn(),
@@ -54,6 +81,25 @@ export const Catalog: CatalogStory<Story, typeof SnackBar> = {
           values: [0, 75, 100],
           props: (progress) => ({ progress }),
         },
+        {
+          name: 'variants',
+          values: Object.values(SnackBarVariant),
+          props: (variant: SnackBarVariant) => ({ variant }),
+        },
+      ],
+    },
+  },
+};
+
+export const CatalogWithButton: CatalogStory<Story, typeof SnackBar> = {
+  args: {
+    buttonLabel: 'Open Record',
+    buttonOnClick: fn(),
+  },
+  decorators: [CatalogDecorator],
+  parameters: {
+    catalog: {
+      dimensions: [
         {
           name: 'variants',
           values: Object.values(SnackBarVariant),

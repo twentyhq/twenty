@@ -24,6 +24,7 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 const BCRYPT_SALT_ROUNDS = 10;
 
 @Injectable()
@@ -35,6 +36,7 @@ export class ApplicationRegistrationService {
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
   ) {}
 
   async findMany(
@@ -288,26 +290,41 @@ export class ApplicationRegistrationService {
         isListed: params.isListed,
         isFeatured: params.isFeatured,
       });
+    } else {
+      const registration = this.applicationRegistrationRepository.create({
+        universalIdentifier: params.universalIdentifier,
+        name: params.name,
+        sourceType: params.sourceType,
+        sourcePackage: params.sourcePackage,
+        latestAvailableVersion: params.latestAvailableVersion,
+        isListed: params.isListed,
+        isFeatured: params.isFeatured,
+        manifest: params.manifest,
+        oAuthClientId: v4(),
+        oAuthRedirectUris: [],
+        oAuthScopes: [],
+        ownerWorkspaceId: params.ownerWorkspaceId,
+      });
 
+      await this.applicationRegistrationRepository.save(registration);
+    }
+
+    if (!isDefined(params.manifest?.application?.serverVariables)) {
       return;
     }
 
-    const registration = this.applicationRegistrationRepository.create({
-      universalIdentifier: params.universalIdentifier,
-      name: params.name,
-      sourceType: params.sourceType,
-      sourcePackage: params.sourcePackage,
-      latestAvailableVersion: params.latestAvailableVersion,
-      isListed: params.isListed,
-      isFeatured: params.isFeatured,
-      manifest: params.manifest,
-      oAuthClientId: v4(),
-      oAuthRedirectUris: [],
-      oAuthScopes: [],
-      ownerWorkspaceId: params.ownerWorkspaceId,
-    });
+    const registration = await this.findOneByUniversalIdentifier(
+      params.universalIdentifier,
+    );
 
-    await this.applicationRegistrationRepository.save(registration);
+    if (!isDefined(registration)) {
+      return;
+    }
+
+    await this.applicationRegistrationVariableService.syncVariableSchemas(
+      registration.id,
+      params.manifest.application.serverVariables,
+    );
   }
 
   async createCliRegistrationIfNotExists(): Promise<ApplicationRegistrationEntity | null> {
@@ -337,7 +354,10 @@ export class ApplicationRegistrationService {
 
   async findManyListed(): Promise<ApplicationRegistrationEntity[]> {
     return this.applicationRegistrationRepository.find({
-      where: { isListed: true },
+      where: {
+        isListed: true,
+        sourceType: ApplicationRegistrationSourceType.NPM,
+      },
     });
   }
 
