@@ -8,12 +8,13 @@ import {
   makeSlowInstance,
   makeWorkspace,
   resetSeedSequenceCounter,
-  seedMigration,
+  seedInstanceMigration,
+  seedWorkspaceMigration,
   setMockActiveWorkspaceIds,
   testGetLatestMigrationForCommand,
   WS_1,
   WS_2,
-} from './utils/upgrade-sequence-runner-integration-test.util';
+} from 'test/integration/upgrade/utils/upgrade-sequence-runner-integration-test.util';
 
 describe('UpgradeSequenceRunnerService — execution (integration)', () => {
   let context: IntegrationTestContext;
@@ -51,11 +52,11 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
       makeSlowInstance('Ic3'),
     ];
 
-    await seedMigration(context.dataSource, {
+    await seedInstanceMigration(context.dataSource, {
       name: 'Ic1',
       status: 'completed',
     });
-    await seedMigration(context.dataSource, {
+    await seedInstanceMigration(context.dataSource, {
       name: 'Ic2',
       status: 'completed',
     });
@@ -87,11 +88,11 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
   it('should retry a failed instance command', async () => {
     const sequence = [makeFastInstance('Ic1'), makeFastInstance('Ic2')];
 
-    await seedMigration(context.dataSource, {
+    await seedInstanceMigration(context.dataSource, {
       name: 'Ic1',
       status: 'completed',
     });
-    await seedMigration(context.dataSource, {
+    await seedInstanceMigration(context.dataSource, {
       name: 'Ic2',
       status: 'failed',
     });
@@ -119,11 +120,12 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
 
     setMockActiveWorkspaceIds([WS_1]);
 
-    await seedMigration(context.dataSource, {
+    await seedInstanceMigration(context.dataSource, {
       name: 'Ic1',
       status: 'completed',
+      workspaceIds: [WS_1],
     });
-    await seedMigration(context.dataSource, {
+    await seedWorkspaceMigration(context.dataSource, {
       name: 'Wc1',
       status: 'completed',
       workspaceId: WS_1,
@@ -149,7 +151,7 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
 
     setMockActiveWorkspaceIds([WS_1]);
 
-    await seedMigration(context.dataSource, {
+    await seedWorkspaceMigration(context.dataSource, {
       name: 'Wc1',
       status: 'completed',
       workspaceId: WS_1,
@@ -172,7 +174,7 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
   it('should skip data migration for slow instance commands when no workspaces exist', async () => {
     const sequence = [makeFastInstance('Ic1'), makeSlowInstance('Ic2')];
 
-    await seedMigration(context.dataSource, {
+    await seedInstanceMigration(context.dataSource, {
       name: 'Ic1',
       status: 'completed',
     });
@@ -208,9 +210,10 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
 
     setMockActiveWorkspaceIds([WS_1]);
 
-    await seedMigration(context.dataSource, {
+    await seedInstanceMigration(context.dataSource, {
       name: 'Ic0',
       status: 'completed',
+      workspaceIds: [WS_1],
     });
 
     const instanceCommandRunnerService = context.module.get(
@@ -248,16 +251,17 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
 
     setMockActiveWorkspaceIds([WS_1, WS_2]);
 
-    await seedMigration(context.dataSource, {
+    await seedInstanceMigration(context.dataSource, {
       name: 'Ic1',
       status: 'completed',
+      workspaceIds: [WS_1, WS_2],
     });
-    await seedMigration(context.dataSource, {
+    await seedWorkspaceMigration(context.dataSource, {
       name: 'Wc1',
       status: 'completed',
       workspaceId: WS_1,
     });
-    await seedMigration(context.dataSource, {
+    await seedWorkspaceMigration(context.dataSource, {
       name: 'Wc1',
       status: 'completed',
       workspaceId: WS_2,
@@ -300,14 +304,15 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
 
     setMockActiveWorkspaceIds([WS_1]);
 
-    await seedMigration(context.dataSource, {
+    await seedWorkspaceMigration(context.dataSource, {
       name: 'Wc0',
       status: 'completed',
       workspaceId: WS_1,
     });
-    await seedMigration(context.dataSource, {
+    await seedInstanceMigration(context.dataSource, {
       name: 'Ic1',
       status: 'completed',
+      workspaceIds: [WS_1],
     });
 
     await context.runner.run({
@@ -340,11 +345,12 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
 
     setMockActiveWorkspaceIds([WS_1]);
 
-    await seedMigration(context.dataSource, {
+    await seedInstanceMigration(context.dataSource, {
       name: 'Ic1',
       status: 'completed',
+      workspaceIds: [WS_1],
     });
-    await seedMigration(context.dataSource, {
+    await seedWorkspaceMigration(context.dataSource, {
       name: 'Wc1',
       status: 'failed',
       workspaceId: WS_1,
@@ -388,11 +394,12 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
 
     setMockActiveWorkspaceIds([WS_1]);
 
-    await seedMigration(context.dataSource, {
+    await seedInstanceMigration(context.dataSource, {
       name: 'Ic1',
       status: 'completed',
+      workspaceIds: [WS_1],
     });
-    await seedMigration(context.dataSource, {
+    await seedWorkspaceMigration(context.dataSource, {
       name: 'Wc1',
       status: 'completed',
       workspaceId: WS_1,
@@ -430,18 +437,19 @@ describe('UpgradeSequenceRunnerService — execution (integration)', () => {
 
     setMockActiveWorkspaceIds([WS_1]);
 
-    await seedMigration(context.dataSource, {
+    await seedInstanceMigration(context.dataSource, {
       name: 'Ic1',
       status: 'completed',
+      workspaceIds: [WS_1],
     });
-    await seedMigration(context.dataSource, {
+    await seedWorkspaceMigration(context.dataSource, {
       name: 'Wc1',
       status: 'completed',
       workspaceId: WS_1,
     });
     // WS_2 is inactive — its record is more recent (seeded later)
     // but should not influence the global cursor
-    await seedMigration(context.dataSource, {
+    await seedWorkspaceMigration(context.dataSource, {
       name: 'Wc2',
       status: 'completed',
       workspaceId: WS_2,

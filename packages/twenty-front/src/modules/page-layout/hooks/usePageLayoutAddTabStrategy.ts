@@ -7,10 +7,12 @@ import { type PageLayoutAddTabStrategy } from '@/page-layout/types/PageLayoutAdd
 import { isReactivatableTab } from '@/page-layout/utils/isReactivatableTab';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
+import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { SidePanelPages } from 'twenty-shared/types';
 import { FeatureFlagKey, PageLayoutType } from '~/generated-metadata/graphql';
 
@@ -40,8 +42,17 @@ export const usePageLayoutAddTabStrategy = ({
 
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
+  const { isInSidePanel } = useLayoutRenderingContext();
+
+  const navigate = useNavigate();
+
   const onCreate = useCallback(() => {
     const newTabId = createPageLayoutTab(t`Untitled`);
+
+    if (!isInSidePanel) {
+      navigate(`#${newTabId}`);
+    }
+
     setPageLayoutTabSettingsOpenTabId(newTabId);
     navigatePageLayoutSidePanel({
       sidePanelPage: SidePanelPages.PageLayoutTabSettings,
@@ -49,6 +60,8 @@ export const usePageLayoutAddTabStrategy = ({
     });
   }, [
     createPageLayoutTab,
+    isInSidePanel,
+    navigate,
     setPageLayoutTabSettingsOpenTabId,
     navigatePageLayoutSidePanel,
   ]);

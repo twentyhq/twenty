@@ -14,6 +14,7 @@ import { RegularTabSettingsContent } from '@/side-panel/pages/page-layout/compon
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import {
   PageLayoutTabLayoutMode,
@@ -30,6 +31,8 @@ export const SidePanelPageLayoutTabSettingsContent = ({
   recordId,
 }: SidePanelPageLayoutTabSettingsContentProps) => {
   const { closeSidePanelMenu } = useSidePanelMenu();
+
+  const navigate = useNavigate();
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
@@ -129,7 +132,10 @@ export const SidePanelPageLayoutTabSettingsContent = ({
       onMoveLeft={() => moveLeft(tab.id)}
       onMoveRight={() => moveRight(tab.id)}
       onSetAsPinned={() => setAsPinnedTab(tab.id)}
-      onDuplicate={() => duplicateTab(tab.id)}
+      onDuplicate={() => {
+        const newTabId = duplicateTab(tab.id);
+        navigate(`#${newTabId}`);
+      }}
       onResetToDefault={handleResetToDefault}
       onDelete={handleDelete}
     />

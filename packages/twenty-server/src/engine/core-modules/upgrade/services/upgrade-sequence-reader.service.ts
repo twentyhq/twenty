@@ -7,6 +7,8 @@ import {
   type RegisteredWorkspaceCommand,
   UpgradeCommandRegistryService,
 } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
+import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
+import { isDefined } from 'twenty-shared/utils';
 
 export type FastInstanceUpgradeStep = {
   kind: 'fast-instance';
@@ -78,7 +80,7 @@ export class UpgradeSequenceReaderService {
     return cursor;
   }
 
-  getWorkspaceCommandsSliceBounds({
+  getWorkspaceSegmentBounds({
     sequence,
     workspaceCommand,
   }: {
@@ -108,7 +110,7 @@ export class UpgradeSequenceReaderService {
     return { startCursor, endCursor };
   }
 
-  collectContiguousWorkspaceSteps({
+  collectWorkspaceCommandsStartingFrom({
     sequence,
     fromWorkspaceCommand,
   }: {
@@ -160,19 +162,46 @@ export class UpgradeSequenceReaderService {
       : workspaceCommands.slice(cursorIndex);
   }
 
-  getLastWorkspaceCommand(): RegisteredWorkspaceCommand {
+  getInitialCursorForNewWorkspace(lastAttemptedInstanceCommand: {
+    name: string;
+    status: UpgradeMigrationStatus;
+  }): {
+    name: string;
+    status: UpgradeMigrationStatus;
+  } {
+    const { name, status } = lastAttemptedInstanceCommand;
     const sequence = this.getUpgradeSequence();
 
-    for (let index = sequence.length - 1; index >= 0; index--) {
-      const step = sequence[index];
+    const instanceCursor = this.locateStepInSequenceOrThrow({
+      sequence,
+      stepName: name,
+    });
 
-      if (step.kind === 'workspace') {
-        return step;
+    if (status === 'completed') {
+      const nextStep = sequence[instanceCursor + 1];
+
+      if (isDefined(nextStep) && nextStep.kind === 'workspace') {
+        const lastWc = this.findLastWorkspaceCommandInSegmentStartingAt(
+          sequence,
+          nextStep,
+        );
+
+        return { name: lastWc.name, status: 'completed' };
       }
     }
 
-    throw new Error(
-      'No workspace commands found in upgrade sequence — this should have been caught at startup',
-    );
+    return { name, status };
+  }
+
+  private findLastWorkspaceCommandInSegmentStartingAt(
+    sequence: UpgradeStep[],
+    firstWorkspaceCommand: WorkspaceUpgradeStep,
+  ): RegisteredWorkspaceCommand {
+    const segment = this.collectWorkspaceCommandsStartingFrom({
+      sequence,
+      fromWorkspaceCommand: firstWorkspaceCommand,
+    });
+
+    return segment[segment.length - 1];
   }
 }

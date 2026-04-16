@@ -62,6 +62,9 @@ export class RunInstanceCommandsCommand extends CommandRunner {
       await this.checkWorkspaceVersionSafety(options);
       await this.runLegacyPendingTypeOrmMigrations();
 
+      const activeOrSuspendedWorkspaceIds =
+        await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
+
       for (const {
         command,
         name,
@@ -79,9 +82,6 @@ export class RunInstanceCommandsCommand extends CommandRunner {
       }
 
       if (options.includeSlow) {
-        const hasWorkspaces =
-          await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
-
         for (const {
           command,
           name,
@@ -90,7 +90,7 @@ export class RunInstanceCommandsCommand extends CommandRunner {
             await this.instanceUpgradeService.runSlowInstanceCommand({
               command,
               name,
-              skipDataMigration: !hasWorkspaces,
+              skipDataMigration: activeOrSuspendedWorkspaceIds.length === 0,
             });
 
           if (result.status === 'failed') {
@@ -119,10 +119,10 @@ export class RunInstanceCommandsCommand extends CommandRunner {
       return;
     }
 
-    const activeWorkspaceIds =
+    const activeOrSuspendedWorkspaceIds =
       await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
 
-    if (activeWorkspaceIds.length === 0) {
+    if (activeOrSuspendedWorkspaceIds.length === 0) {
       return;
     }
 
@@ -141,7 +141,7 @@ export class RunInstanceCommandsCommand extends CommandRunner {
     const allAtPreviousVersion =
       await this.upgradeMigrationService.areAllWorkspacesAtCommand({
         commandName: lastWorkspaceCommand.name,
-        workspaceIds: activeWorkspaceIds,
+        workspaceIds: activeOrSuspendedWorkspaceIds,
       });
 
     if (!allAtPreviousVersion) {
