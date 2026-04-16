@@ -3,8 +3,9 @@
 import { styled } from '@linaria/react';
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 
-const ROOT_MARGIN = '240px 0px 240px 0px';
-const OUT_OF_VIEW_DISPOSE_MS = 1_500;
+const VERTICAL_MARGIN_PX = 100;
+const ROOT_MARGIN = `${VERTICAL_MARGIN_PX}px 0px ${VERTICAL_MARGIN_PX}px 0px`;
+const OUT_OF_VIEW_DISPOSE_MS = 300;
 
 const ObserverRoot = styled.div<{ detachFromLayout: boolean }>`
   height: 100%;
@@ -32,15 +33,14 @@ const ObserverRoot = styled.div<{ detachFromLayout: boolean }>`
 
 function isLikelyInViewport(element: HTMLElement) {
   const rect = element.getBoundingClientRect();
-  const margin = 240;
   const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 0;
   const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 0;
 
   return (
-    rect.bottom > -margin &&
-    rect.top < viewportHeight + margin &&
-    rect.right > -margin &&
-    rect.left < viewportWidth + margin
+    rect.bottom > -VERTICAL_MARGIN_PX &&
+    rect.top < viewportHeight + VERTICAL_MARGIN_PX &&
+    rect.right > 0 &&
+    rect.left < viewportWidth
   );
 }
 
