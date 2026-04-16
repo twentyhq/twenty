@@ -1,223 +1,193 @@
-# Product Context - Twenty CRM
+# Product Context — Twenty CRM
 
 ## Vision
 
-Twenty is the #1 open-source CRM designed to free users from vendor lock-in and expensive pricing tiers. It provides a modern, extensible customer relationship management platform that teams can self-host or use as a service, with full control over their customer data.
+Twenty is an **open-source CRM** designed to break the vendor lock-in and poor UX of legacy CRM systems. The product enables businesses to manage customer relationships with:
 
-### Core Value Propositions
-1. **Open-source freedom**: No vendor lock-in, full data ownership, community-driven development
-2. **Modern UX**: Clean, fast interface inspired by Notion, Airtable, and Linear
-3. **Extensibility**: Plugin architecture, custom objects/fields, workflow automation
-4. **Affordable**: Self-hosting eliminates SaaS pricing escalation
+1. **Flexible data modeling** — Users can define custom objects, fields, and relations like Airtable/Notion
+2. **Modern UX** — Inspired by Linear, Notion, Airtable: keyboard-first, fast, beautiful
+3. **Workflow automation** — Trigger-action workflows to automate sales/support processes
+4. **Multi-channel engagement** — Email sync, calendar integration, file attachments
+5. **Self-hosting** — Full data ownership via Docker Compose or Kubernetes
 
-### Problem Statement
-Traditional CRMs (Salesforce, HubSpot) trap users with locked-in customer data and escalating costs. Teams need a CRM that:
-- Gives them full control over their data
-- Provides a delightful, modern user experience
-- Allows deep customization without vendor constraints
-- Scales affordably
+**Core Value Propositions:**
+- **No vendor lock-in**: Open-source (AGPL-3.0), exportable data, self-hostable
+- **Customizable**: Dynamic schema allows teams to model their unique sales processes
+- **Developer-friendly**: GraphQL API, REST API, SDKs (Node.js, Zapier), webhooks
+- **Beautiful**: Polished UI rivaling SaaS products like Linear/Notion
+- **Community-driven**: 100s of contributors, plugin ecosystem (planned)
 
 ## Target Personas
 
-### Primary: Growth-Stage Startups (50-500 employees)
-- **Pain Points**:
-  - Outgrowing simple tools (Notion, spreadsheets) but can't afford enterprise CRM pricing
-  - Need custom objects/fields for unique business models
-  - Want to self-host for data sovereignty
-- **Jobs to Be Done**:
-  - Track customer interactions across sales, support, success
-  - Build custom workflows without developer bottlenecks
-  - Integrate with existing tools (Zapier, APIs)
-- **Success Metrics**:
-  - Reduce time-to-value (setup in hours, not weeks)
-  - Lower total cost of ownership vs. Salesforce/HubSpot
-  - Enable non-technical users to customize
+### 1. **Self-Hosting Enthusiast** (DevOps/SysAdmin)
+- **Pain**: Wants CRM but refuses vendor lock-in; needs data sovereignty
+- **Needs**: Easy Docker Compose setup, Kubernetes Helm charts, clear migration docs
+- **Success**: Deploys Twenty in <30 minutes, integrates with company SSO/LDAP
 
-### Secondary: Open-Source Enthusiasts / DevOps Teams
-- **Pain Points**:
-  - Need CRM for internal use but want full control
-  - Want to contribute/extend for specific use cases
-  - Require on-premise deployment for compliance
-- **Jobs to Be Done**:
-  - Deploy via Docker Compose / Kubernetes
-  - Extend with custom plugins/integrations
-  - Audit and trust the codebase
-- **Success Metrics**:
-  - Deploy in under 30 minutes
-  - Comprehensive API documentation
-  - Active community for support/contributions
+### 2. **Startup Founder / Sales Lead**
+- **Pain**: Salesforce/HubSpot too expensive for small team; spreadsheets don't scale
+- **Needs**: Simple CRM for leads/contacts/deals, email integration, free tier
+- **Success**: Onboards team in <1 hour, syncs Gmail/Outlook, closes first deal in Twenty
 
-### Tertiary: Agencies / Consultancies
-- **Pain Points**:
-  - Need multi-tenant CRM for managing client relationships
-  - Require white-label / custom branding
-  - Want to build vertical-specific features
-- **Jobs to Be Done**:
-  - Manage multiple workspaces with role-based permissions
-  - Customize UI/branding per client
-  - Build industry-specific workflows (real estate, recruiting, etc.)
+### 3. **Developer / API User**
+- **Pain**: Existing CRMs have poor APIs, can't extend functionality
+- **Needs**: GraphQL/REST APIs, webhooks, Zapier integration, plugin system
+- **Success**: Builds custom workflow (e.g., auto-enrich leads with Clearbit) in <1 day
+
+### 4. **Growth Hacker / Operations**
+- **Pain**: Needs to customize CRM to match unique funnel stages, can't in Salesforce
+- **Needs**: Custom objects/fields, workflow automation, reports/dashboards
+- **Success**: Creates "Product Qualified Lead" object with custom scoring, automates Slack notifications
+
+### 5. **Open-Source Contributor**
+- **Pain**: Wants to contribute to meaningful project, learn modern stack
+- **Needs**: Good docs, welcoming community, clear issues labeled "good first issue"
+- **Success**: Submits first PR fixing a UI bug, becomes regular contributor
 
 ## MVP Scope
 
-### In Scope (Shipped Features)
-1. **Data Model Customization**
-   - Create custom objects (beyond standard People, Companies)
-   - Add custom fields with rich types (text, number, date, relation, select, multi-select, etc.)
-   - Define field metadata (required, unique, default values)
-   - Manage object relationships (one-to-many, many-to-many)
+### ✅ **In Scope** (Current Release)
 
-2. **Views & Layouts**
-   - Table view with inline editing
-   - Kanban view (group by select/status fields)
-   - Filters (and/or conditions on any field)
-   - Sorting (multi-level)
-   - Grouping (by any field)
-   - Column visibility/reordering
-   - Saved views per object
+#### Core CRM Features
+- **Standard Objects**: Companies, People, Opportunities (Deals), Tasks, Notes
+- **Custom Objects**: Users can define new object types (e.g., "Products", "Support Tickets")
+- **Custom Fields**: Add fields of types: Text, Number, Date, Relation, Select, Multi-Select, Boolean, Link, Email, Phone
+- **Relations**: Many-to-One, One-to-Many (Many-to-Many via junction objects)
 
-3. **Records & Activities**
-   - Create, read, update, delete records
-   - Attach notes, tasks, files to records
-   - Activity timeline (audit log of changes)
-   - Rich text notes (TipTap editor)
-   - File attachments (S3-compatible storage)
+#### Views & Filters
+- **Table View**: Spreadsheet-like grid with inline editing
+- **Kanban View**: Drag-drop cards by status/stage
+- **Filters**: Complex filters (AND/OR), saved views
+- **Sorting & Grouping**: Multi-level sort, group by field
 
-4. **Collaboration**
-   - Multi-user workspaces
-   - Role-based permissions (Admin, Member, Viewer + custom roles)
-   - Object-level and field-level permissions
-   - User mentions in notes
-   - Real-time updates (GraphQL subscriptions)
+#### Integrations
+- **Email Sync**: Gmail, Outlook (IMAP/OAuth)
+- **Calendar Sync**: Google Calendar, Microsoft Calendar (read-only events)
+- **File Attachments**: Upload files (local storage or S3)
+- **Zapier**: Connect to 3000+ apps
 
-5. **Integrations**
-   - Email sync (Gmail, Microsoft via OAuth)
-   - Calendar sync (Google Calendar, Microsoft Calendar)
-   - IMAP/SMTP for custom email providers
-   - CalDAV for custom calendar providers
-   - Zapier integration (3000+ apps)
-   - REST/GraphQL API
+#### Automation
+- **Workflows**: Trigger-action automations (e.g., "When deal stage changes to Closed Won → Send Slack message")
+- **Webhooks**: Outbound webhooks on record create/update/delete
 
-6. **Workflows & Automation**
-   - Visual workflow builder (trigger → actions)
-   - Triggers: Record created/updated/deleted, field changed, time-based
-   - Actions: Update field, send email, create record, HTTP request, AI assistant
-   - Conditional logic (if/else branches)
+#### Permissions
+- **Custom Roles**: Define roles with granular permissions (read/write/admin per object)
+- **Workspace Members**: Invite users, assign roles
 
-7. **AI Features**
-   - Built-in AI assistant (OpenAI, Anthropic, Google, xAI, Mistral)
-   - Custom AI providers (OpenAI-compatible gateways)
-   - AI-powered record enrichment
-   - Code interpreter for data analysis
+#### API & Developer Tools
+- **GraphQL API**: Query/mutate all objects
+- **Metadata API**: Manage schema (create objects, fields) via API
+- **REST API**: RESTful interface auto-generated from GraphQL
+- **SDK**: Node.js SDK (`twenty-sdk`)
+- **CLI Scaffolding**: `create-twenty-app` to bootstrap new integrations
 
-8. **Self-Hosting**
-   - Docker Compose deployment
-   - Kubernetes Helm charts
-   - PostgreSQL + Redis + ClickHouse
-   - S3-compatible file storage
-   - Email configuration (SMTP)
-   - SSO/SAML support
+#### Self-Hosting
+- **Docker Compose**: One-command deploy (`docker compose up`)
+- **Kubernetes**: Helm charts for production
+- **Database Migrations**: Auto-run on startup or manual control
 
-### Out of Scope (Planned / Future)
-- **Mobile apps** (iOS, Android native) — web-only for now
-- **Advanced analytics/BI** — basic charts shipped, not full BI tool
-- **Marketing automation** (drip campaigns, A/B testing) — focused on CRM core
-- **Telephony integration** (VoIP, call recording) — community plugins only
-- **Advanced forecasting** (sales predictions, revenue modeling) — future enterprise feature
-- **Multi-currency** — single currency per workspace for MVP
-- **Time tracking** — not a project management tool
+### ❌ **Out of Scope** (Future Roadmap)
 
-### Explicitly NOT Building
-- **Full ERP** — CRM only, not inventory/manufacturing/accounting
-- **GDPR auto-compliance** — tools provided, customer responsible for compliance
-- **Guaranteed SLA** — community edition best-effort, paid plans have SLAs
+#### Advanced Features
+- **Plugin Marketplace**: Not yet launched (plugins can be built, no public registry)
+- **AI Features**: Basic AI integrations exist (e.g., code interpreter) but not full AI assistant
+- **Mobile Apps**: Web is responsive, but no native iOS/Android apps
+- **Advanced Reporting**: Basic charts via Nivo, but no pivot tables / advanced BI
+- **Revenue Operations**: No native quote/invoice generation (can be custom objects)
+- **Multi-Workspace SaaS**: Self-hosted only; no official managed cloud (yet)
+
+#### Integrations
+- **Slack App**: Can send webhooks, but no interactive Slack app
+- **Salesforce Migration**: No automated import from Salesforce
+- **Twilio/SMS**: No native SMS integration (can use webhooks + Zapier)
 
 ## Success Metrics
 
-### Adoption Metrics
-- **Weekly Active Workspaces**: Workspaces with ≥1 user login in past 7 days
-- **Time to First Value**: Minutes from signup to first record created
-- **Workspace Retention**: % of workspaces active 30/60/90 days post-creation
+### Product Adoption
+- **GitHub Stars**: Measure community interest (current: thousands)
+- **Docker Pulls**: Track self-hosting adoption (twentycrm/twenty image)
+- **Active Workspaces**: Number of self-hosted instances (if telemetry enabled)
 
-### Engagement Metrics
-- **Records Created per Workspace**: Average records/month
-- **Custom Objects Created**: % of workspaces with ≥1 custom object
-- **Workflows Enabled**: % of workspaces with ≥1 active workflow
-- **API Usage**: API calls/day per workspace (indicates integration depth)
+### User Engagement
+- **DAU/WAU**: Daily/Weekly active users in a workspace
+- **Objects Created**: Number of custom objects defined (indicates customization)
+- **Records Created**: Total companies/people/opportunities created
+- **Workflows Executed**: Number of automation runs (indicates power-user adoption)
 
-### Product-Market Fit
-- **Net Promoter Score (NPS)**: Target >40
-- **Feature Request Velocity**: GitHub issues with >10 upvotes per month
-- **Self-Host Adoption**: Docker pulls, Helm chart installs per month
-- **Community Growth**: Discord members, GitHub stars, contributors
+### Developer Ecosystem
+- **API Calls**: GraphQL/REST API usage (indicates integrations)
+- **Zapier Installs**: Number of users connecting Twenty to Zapier
+- **SDK Downloads**: `npm install twenty-sdk` count
+- **Contributors**: Active monthly contributors on GitHub
 
-### Technical Health
-- **P95 Latency**: GraphQL queries <200ms, mutations <500ms
-- **Uptime (SaaS)**: 99.9% monthly
-- **Error Rate**: <0.1% of requests fail
-- **Database Query Performance**: No queries >1s without pagination
+### Performance
+- **Time to First Value**: User creates first company/deal within 10 minutes of signup
+- **GraphQL Query Latency**: P95 < 200ms for core queries
+- **Uptime**: 99.9% uptime for self-hosted instances (health check success rate)
 
-### Business Metrics (SaaS)
-- **Conversion Rate**: Trial → Paid workspace %
-- **Monthly Recurring Revenue (MRR)**: Growth rate month-over-month
-- **Customer Acquisition Cost (CAC)**: Cost per paid workspace
-- **Lifetime Value (LTV)**: Average revenue per workspace over lifetime
+### Community Health
+- **Discord Members**: Size of community (users helping users)
+- **Issue Resolution Time**: Median time to close "good first issue" (encourage contributions)
+- **PR Merge Rate**: % of community PRs merged (welcoming contributors)
 
 ## Strategic Constraints
 
-### Architectural Decisions (Locked)
-1. **Monorepo with Nx**: All packages in single repo, no polyrepo split
-   - **Rationale**: Simplifies dependency management, atomic commits, shared tooling
-   - **Trade-off**: Larger clone size, more complex CI
+### ✅ **Locked Decisions** (Do Not Change)
 
-2. **PostgreSQL as primary database**: No MongoDB, no MySQL
-   - **Rationale**: ACID compliance, JSONB for flexibility, robust ecosystem
-   - **Trade-off**: Horizontal scaling requires partitioning/Citus
+#### 1. **Open Source Commitment (AGPL-3.0)**
+- **Rationale**: Core mission is anti-vendor-lock-in; commercial forks must open-source
+- **Implication**: No "enterprise-only" features in closed-source add-ons (all features in main repo)
 
-3. **GraphQL-first API**: REST as secondary, no gRPC
-   - **Rationale**: Flexible queries, code generation, real-time subscriptions
-   - **Trade-off**: More complex caching, N+1 query risk (mitigated with DataLoader)
+#### 2. **Self-Hosting First**
+- **Rationale**: Users own their data, no forced cloud migration
+- **Implication**: All features must work in Docker Compose / on-prem Kubernetes (no cloud-only dependencies)
 
-4. **Schema-per-workspace multi-tenancy**: Not row-level isolation
-   - **Rationale**: Performance isolation, easier backups/restores, simpler queries
-   - **Trade-off**: Database connection pooling complexity, schema migration overhead
+#### 3. **GraphQL Primary API**
+- **Rationale**: Enables dynamic schema from custom objects, better DX than REST
+- **Implication**: REST API is auto-generated from GraphQL (GraphQL is source of truth)
 
-5. **TypeScript everywhere**: No Python, Go, Rust microservices
-   - **Rationale**: Single language for frontend/backend, faster hiring, code sharing
-   - **Trade-off**: Performance-critical tasks require careful optimization
+#### 4. **PostgreSQL as Primary DB**
+- **Rationale**: Mature, open-source, supports complex queries for CRM
+- **Implication**: No MongoDB/NoSQL; schema changes via TypeORM migrations
 
-6. **React for frontend**: No Vue, Angular, Svelte
-   - **Rationale**: Largest ecosystem, hiring pool, component library availability
-   - **Trade-off**: Bundle size, learning curve for hooks/state management
+#### 5. **Monorepo (Nx + Yarn Workspaces)**
+- **Rationale**: Share code between server/front/SDKs, enforce consistency
+- **Implication**: New features must follow Nx patterns (libraries, apps, project.json targets)
 
-7. **Yarn 4 (berry) with PnP**: No npm, no pnpm
-   - **Rationale**: Faster installs, strict dependency graphs, zero-installs capability
-   - **Trade-off**: Compatibility issues with some packages (patched)
+#### 6. **Multi-Tenancy via PostgreSQL Schemas**
+- **Rationale**: Strong data isolation for workspaces, easier to backup/restore per-workspace
+- **Implication**: Cannot use shared tables for workspace data (metadata is per-schema)
 
-8. **AGPL-3.0 License**: Not MIT, not Apache 2.0
-   - **Rationale**: Prevents cloud providers from offering proprietary versions
-   - **Trade-off**: Some enterprises avoid AGPL, may limit commercial adoption
+#### 7. **Modern Tech Stack**
+- **Rationale**: Attract developers, leverage latest performance improvements
+- **Implication**: Node 24+, TypeScript 5.9+, React 18+ (no legacy support)
 
-### Technical Debt Acceptance
-- **Linaria styling**: Zero-runtime CSS-in-JS, but requires Vite plugin maintenance
-- **TypeORM patches**: Custom patches for schema introspection, may break on updates
-- **Upgrade commands vs TypeORM migrations**: Custom system adds learning curve but enables multi-tenant safety
-- **Nx caching**: Aggressive caching speeds builds but can cause stale build issues
+#### 8. **Storybook for Component Development**
+- **Rationale**: Design system (`twenty-ui`) must be documented and tested
+- **Implication**: All UI components require stories, visual regression tests
 
-### Product Principles (Non-Negotiable)
-1. **Self-hosting is first-class**: SaaS is a deployment option, not the product
-2. **No feature gating behind paid tiers for self-hosted**: Open-source gets full features (except SaaS-specific like billing)
-3. **API-first**: Every UI action must be doable via API
-4. **Extensibility over feature bloat**: Plugin system preferred over built-in features
-5. **Community-driven roadmap**: GitHub discussions/issues guide priorities
+### 🤔 **Open for Discussion**
 
-### Performance Budgets
-- **Frontend bundle size**: <2MB gzipped for initial load
-- **GraphQL query time**: P95 <200ms
-- **Page load (Lighthouse)**: Performance score >85
-- **Database migrations**: <30s for fast commands, <5min for slow (with `--include-slow`)
+#### 1. **Managed Cloud Offering**
+- **Question**: Should Twenty offer a hosted SaaS version?
+- **Tradeoff**: Revenue vs. staying true to self-hosting mission
 
-### Compliance & Security Boundaries
-- **GDPR/CCPA**: Provide tools (data export, deletion) but customer responsible for compliance
-- **SOC 2 (SaaS only)**: Planned, not yet certified
-- **Encryption**: At-rest (database-level), in-transit (TLS), no end-to-end encryption for messages
-- **Data residency**: Self-hosted controls region, SaaS currently US/EU only
+#### 2. **Plugin Approval Process**
+- **Question**: How to ensure plugin quality in a marketplace?
+- **Tradeoff**: Open ecosystem vs. security/quality guarantees
+
+#### 3. **AI Feature Scope**
+- **Question**: How deep should AI integrations go (copilot, auto-enrichment, etc.)?
+- **Tradeoff**: Competitive with AI-first CRMs vs. simplicity
+
+#### 4. **Breaking Changes Cadence**
+- **Question**: How often can we break self-hosted APIs for improvements?
+- **Tradeoff**: Innovation speed vs. stability for existing users
+
+#### 5. **Real-Time Collaboration**
+- **Question**: Should Twenty have Notion-like multiplayer (live cursors, presence)?
+- **Tradeoff**: Complexity (WebSockets, conflict resolution) vs. UX delight
+
+---
+
+**Product Philosophy**: "Build a CRM people actually **enjoy** using, with the transparency and flexibility of open source."
