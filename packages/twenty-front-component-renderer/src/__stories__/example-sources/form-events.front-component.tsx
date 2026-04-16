@@ -1,4 +1,4 @@
-import { defineFrontComponent } from '@/sdk';
+import { defineFrontComponent } from 'twenty-sdk';
 import { type ChangeEvent, useState } from 'react';
 
 const CARD_STYLE = {

@@ -2,7 +2,7 @@ import {
   defineFrontComponent,
   useFrontComponentExecutionContext,
   useUserId,
-} from '@/sdk';
+} from 'twenty-sdk';
 import { useState } from 'react';
 
 const CARD_STYLE = {

@@ -60,7 +60,7 @@ const twentySharedAliases = Object.fromEntries(
 const storyAlias = {
   react: path.join(rootNodeModules, 'react'),
   'react-dom': path.join(rootNodeModules, 'react-dom'),
-  '@/sdk': sdkIndividualIndex,
+  'twenty-sdk': sdkIndividualIndex,
   'twenty-sdk/ui': twentyUiIndividualIndex,
   ...twentySharedAliases,
 };

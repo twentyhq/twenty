@@ -8,7 +8,7 @@ import {
   SidePanelPages,
   unmountFrontComponent,
   updateProgress,
-} from '@/sdk';
+} from 'twenty-sdk';
 import { useState } from 'react';
 
 const CARD_STYLE = {

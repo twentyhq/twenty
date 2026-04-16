@@ -1,4 +1,4 @@
-import { defineFrontComponent } from '@/sdk';
+import { defineFrontComponent } from 'twenty-sdk';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 
