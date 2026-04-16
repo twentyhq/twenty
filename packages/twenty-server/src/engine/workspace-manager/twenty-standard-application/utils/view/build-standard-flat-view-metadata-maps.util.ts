@@ -1,4 +1,3 @@
-import { ViewType } from 'twenty-shared/types';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -78,14 +77,11 @@ const STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME = {
 export type BuildStandardFlatViewMetadataMapsArgs = Omit<
   CreateStandardViewArgs,
   'context' | 'objectName'
-> & {
-  shouldIncludeRecordPageLayouts?: boolean;
-};
+>;
 
-export const buildStandardFlatViewMetadataMaps = ({
-  shouldIncludeRecordPageLayouts,
-  ...args
-}: BuildStandardFlatViewMetadataMapsArgs): FlatEntityMaps<FlatView> => {
+export const buildStandardFlatViewMetadataMaps = (
+  args: BuildStandardFlatViewMetadataMapsArgs,
+): FlatEntityMaps<FlatView> => {
   const allViewMetadatas: FlatView[] = (
     Object.keys(
       STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME,
@@ -99,10 +95,7 @@ export const buildStandardFlatViewMetadataMaps = ({
       objectName,
     });
 
-    return Object.values(result).filter(
-      (view) =>
-        shouldIncludeRecordPageLayouts || view.type !== ViewType.FIELDS_WIDGET,
-    );
+    return Object.values(result);
   });
 
   let flatViewMaps = createEmptyFlatEntityMaps();
