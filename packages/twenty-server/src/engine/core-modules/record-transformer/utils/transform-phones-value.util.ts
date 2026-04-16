@@ -5,10 +5,7 @@ import {
   parsePhoneNumberWithError,
 } from 'libphonenumber-js';
 import isEmpty from 'lodash.isempty';
-import {
-  type AdditionalPhoneMetadata,
-  type PhonesMetadata,
-} from 'twenty-shared/types';
+import { type AdditionalPhoneMetadata } from 'twenty-shared/types';
 import {
   getCountryCodesForCallingCode,
   isDefined,
@@ -22,24 +19,47 @@ import {
   RecordTransformerExceptionCode,
 } from 'src/engine/core-modules/record-transformer/record-transformer.exception';
 
+// GraphQL delivers sub-fields as raw strings (or null) at the input boundary.
+// The CountryCode brand is applied later, inside validation. Typing the input
+// as `CountryCode` here would be a type-level lie — the UI can send '' or any
+// string, which is exactly how issue #19740 slipped through.
 export type PhonesFieldGraphQLInput =
-  | Partial<
-      Omit<PhonesMetadata, 'additionalPhones'> & {
-        additionalPhones: string | null;
-      }
-    >
+  | {
+      primaryPhoneNumber?: string | null;
+      primaryPhoneCountryCode?: string | null;
+      primaryPhoneCallingCode?: string | null;
+      additionalPhones?: string | null;
+    }
   | null
   | undefined;
 
+type RawPhoneInput = {
+  callingCode?: string | null;
+  countryCode?: string | null;
+  number?: string | null;
+};
+
 type AdditionalPhoneMetadataWithNumber = Partial<AdditionalPhoneMetadata> &
   Required<Pick<AdditionalPhoneMetadata, 'number'>>;
+
+// Unique indexes on composite phone sub-columns treat '' as duplicates but
+// NULLs as distinct, so blank inputs must reach the DB as NULL, not ''.
+// `undefined` is preserved so partial updates leave unrelated columns untouched.
+const nullIfEmptyString = <T extends string>(
+  value: T | null | undefined,
+): T | null | undefined => {
+  if (value === undefined) return undefined;
+  if (value === null || value.length === 0) return null;
+
+  return value;
+};
 
 const removePlusFromString = (str: string) => str.replace(/\+/g, '');
 
 const validatePrimaryPhoneCountryCodeAndCallingCode = ({
   callingCode,
   countryCode,
-}: Partial<Omit<AdditionalPhoneMetadata, 'number'>>) => {
+}: Omit<RawPhoneInput, 'number'>) => {
   if (isNonEmptyString(countryCode) && !isValidCountryCode(countryCode)) {
     throw new RecordTransformerException(
       `Invalid country code ${countryCode}`,
@@ -154,24 +174,32 @@ const validateAndInferPhoneInput = ({
   callingCode,
   countryCode,
   number,
-}: Partial<AdditionalPhoneMetadata>) => {
+}: RawPhoneInput) => {
   validatePrimaryPhoneCountryCodeAndCallingCode({
     callingCode,
     countryCode,
   });
 
   if (isDefined(number) && isNonEmptyString(number)) {
+    // validatePrimaryPhoneCountryCodeAndCallingCode already threw on invalid
+    // countryCode; this narrow re-runs the guard purely to carry the brand
+    // into validateAndInferMetadataFromPrimaryPhoneNumber.
+    const brandedCountryCode =
+      isNonEmptyString(countryCode) && isValidCountryCode(countryCode)
+        ? countryCode
+        : undefined;
+
     return validateAndInferMetadataFromPrimaryPhoneNumber({
       number,
-      callingCode,
-      countryCode,
+      callingCode: callingCode ?? undefined,
+      countryCode: brandedCountryCode,
     });
   }
 
   return {
-    callingCode,
-    countryCode,
-    number,
+    callingCode: nullIfEmptyString(callingCode),
+    countryCode: nullIfEmptyString(countryCode),
+    number: nullIfEmptyString(number),
   };
 };
 
