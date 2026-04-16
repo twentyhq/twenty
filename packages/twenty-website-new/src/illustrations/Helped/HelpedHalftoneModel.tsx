@@ -1,5 +1,17 @@
 'use client';
 
+import { HalftoneCanvas } from '@/app/halftone/_components/HalftoneCanvas';
+import {
+  DEFAULT_GLASS_ANIMATION_SETTINGS,
+  DEFAULT_GLASS_BACKGROUND_SETTINGS,
+  DEFAULT_GLASS_MATERIAL_SETTINGS,
+  DEFAULT_SHAPE_HALFTONE_SETTINGS,
+  DEFAULT_SOLID_ANIMATION_SETTINGS,
+  DEFAULT_SOLID_BACKGROUND_SETTINGS,
+  DEFAULT_SOLID_MATERIAL_SETTINGS,
+  type HalftoneMaterialSurface,
+  type HalftoneStudioSettings,
+} from '@/app/halftone/_lib/state';
 import { styled } from '@linaria/react';
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
@@ -17,6 +29,7 @@ const MIN_FOOTPRINT_SCALE = 0.001;
 
 type HalftoneRotateAxis = 'x' | 'y' | 'z' | 'xy' | '-x' | '-y' | '-z' | '-xy';
 type HalftoneRotatePreset = 'axis' | 'lissajous' | 'orbit' | 'tumble';
+type HelpedHalftoneRenderer = 'legacy' | 'studio';
 
 type ViewRect = {
   x: number;
@@ -47,13 +60,20 @@ export type HelpedHalftoneSettings = {
   material: {
     roughness: number;
     metalness: number;
+    surface?: HalftoneMaterialSurface;
+    color?: string;
+    thickness?: number;
+    refraction?: number;
+    environmentPower?: number;
   };
   halftone: {
     enabled: boolean;
     scale: number;
     power: number;
     width: number;
+    imageContrast?: number;
     dashColor: string;
+    hoverDashColor?: string;
   };
   animation: {
     autoRotateEnabled: boolean;
@@ -91,6 +111,10 @@ export type HelpedHalftoneSettings = {
     springDamping: number;
     springReturnEnabled: boolean;
     springStrength: number;
+    hoverHalftoneEnabled?: boolean;
+    hoverHalftonePowerShift?: number;
+    hoverHalftoneRadius?: number;
+    hoverHalftoneWidthShift?: number;
     hoverLightIntensity: number;
     hoverLightRadius: number;
     dragFlowDecay: number;
@@ -533,10 +557,7 @@ function getFootprintScaleFromRects(
     return 1;
   }
 
-  return Math.max(
-    Math.sqrt(currentArea / referenceArea),
-    MIN_FOOTPRINT_SCALE,
-  );
+  return Math.max(Math.sqrt(currentArea / referenceArea), MIN_FOOTPRINT_SCALE);
 }
 
 function projectBox3ToViewport({
@@ -552,11 +573,7 @@ function projectBox3ToViewport({
   viewportHeight: number;
   viewportWidth: number;
 }) {
-  if (
-    localBounds.isEmpty() ||
-    viewportWidth <= 0 ||
-    viewportHeight <= 0
-  ) {
+  if (localBounds.isEmpty() || viewportWidth <= 0 || viewportHeight <= 0) {
     return null;
   }
 
@@ -728,6 +745,57 @@ const StyledVisualMount = styled.div`
   width: 100%;
 `;
 
+const NOOP = () => {};
+
+function getStudioMaterialSurface(
+  settings: HelpedHalftoneSettings,
+): HalftoneMaterialSurface {
+  return settings.material.surface === 'glass' ? 'glass' : 'solid';
+}
+
+function createStudioSettings(
+  settings: HelpedHalftoneSettings,
+): HalftoneStudioSettings {
+  const surface = getStudioMaterialSurface(settings);
+  const defaultMaterial =
+    surface === 'glass'
+      ? DEFAULT_GLASS_MATERIAL_SETTINGS
+      : DEFAULT_SOLID_MATERIAL_SETTINGS;
+  const defaultAnimation =
+    surface === 'glass'
+      ? DEFAULT_GLASS_ANIMATION_SETTINGS
+      : DEFAULT_SOLID_ANIMATION_SETTINGS;
+  const defaultBackground =
+    surface === 'glass'
+      ? DEFAULT_GLASS_BACKGROUND_SETTINGS
+      : DEFAULT_SOLID_BACKGROUND_SETTINGS;
+
+  return {
+    sourceMode: 'shape',
+    shapeKey: 'helped',
+    lighting: { ...settings.lighting },
+    material: {
+      ...defaultMaterial,
+      ...settings.material,
+      surface,
+    },
+    halftone: {
+      ...DEFAULT_SHAPE_HALFTONE_SETTINGS,
+      ...settings.halftone,
+      hoverDashColor:
+        settings.halftone.hoverDashColor ?? settings.halftone.dashColor,
+      imageContrast:
+        settings.halftone.imageContrast ??
+        DEFAULT_SHAPE_HALFTONE_SETTINGS.imageContrast,
+    },
+    background: defaultBackground,
+    animation: {
+      ...defaultAnimation,
+      ...settings.animation,
+    },
+  };
+}
+
 type HelpedHalftoneCanvasProps = {
   geometry: THREE.BufferGeometry;
   initialPose: HelpedHalftonePose;
@@ -770,7 +838,9 @@ function HelpedHalftoneCanvas({
     renderer.setSize(getVirtualWidth(), getVirtualHeight(), false);
 
     const canvas = renderer.domElement;
-    canvas.style.cursor = settings.animation.followDragEnabled ? 'grab' : 'default';
+    canvas.style.cursor = settings.animation.followDragEnabled
+      ? 'grab'
+      : 'default';
     canvas.style.display = 'block';
     canvas.style.height = '100%';
     canvas.style.touchAction = 'none';
@@ -855,7 +925,9 @@ function HelpedHalftoneCanvas({
         dashColor: { value: new THREE.Color(settings.halftone.dashColor) },
         time: { value: 0 },
         waveAmount: {
-          value: settings.animation.waveEnabled ? settings.animation.waveAmount : 0,
+          value: settings.animation.waveEnabled
+            ? settings.animation.waveAmount
+            : 0,
         },
         waveSpeed: { value: settings.animation.waveSpeed },
         footprintScale: { value: 1.0 },
@@ -1073,8 +1145,7 @@ function HelpedHalftoneCanvas({
         const floatPhase = elapsedTime * settings.animation.floatSpeed;
         const driftAmount = (settings.animation.driftAmount * Math.PI) / 180;
 
-        meshOffsetY +=
-          Math.sin(floatPhase) * settings.animation.floatAmplitude;
+        meshOffsetY += Math.sin(floatPhase) * settings.animation.floatAmplitude;
         baseRotationX += Math.sin(floatPhase * 0.72) * driftAmount * 0.45;
         baseRotationZ += Math.cos(floatPhase * 0.93) * driftAmount * 0.3;
       }
@@ -1089,13 +1160,15 @@ function HelpedHalftoneCanvas({
       if (rotateEnabled) {
         interaction.rotateElapsed += delta;
         const rotateProgress = settings.animation.rotatePingPong
-          ? Math.sin(interaction.rotateElapsed * settings.animation.rotateSpeed) *
-            Math.PI
+          ? Math.sin(
+              interaction.rotateElapsed * settings.animation.rotateSpeed,
+            ) * Math.PI
           : interaction.rotateElapsed * settings.animation.rotateSpeed;
 
         if (settings.animation.rotatePreset === 'axis') {
-          const axisDirection =
-            settings.animation.rotateAxis.startsWith('-') ? -1 : 1;
+          const axisDirection = settings.animation.rotateAxis.startsWith('-')
+            ? -1
+            : 1;
           const axisProgress = rotateProgress * axisDirection;
 
           if (
@@ -1256,8 +1329,7 @@ function HelpedHalftoneCanvas({
         const orbitPitch = centeredY * cameraRange * 0.7;
         const horizontalRadius = Math.cos(orbitPitch) * baseCameraDistance;
         const targetCameraX = Math.sin(orbitYaw) * horizontalRadius;
-        const targetCameraY =
-          Math.sin(orbitPitch) * baseCameraDistance * 0.85;
+        const targetCameraY = Math.sin(orbitPitch) * baseCameraDistance * 0.85;
         const targetCameraZ = Math.cos(orbitYaw) * horizontalRadius;
 
         camera.position.x += (targetCameraX - camera.position.x) * cameraEase;
@@ -1266,8 +1338,7 @@ function HelpedHalftoneCanvas({
       } else {
         camera.position.x += (0 - camera.position.x) * 0.12;
         camera.position.y += (0 - camera.position.y) * 0.12;
-        camera.position.z +=
-          (baseCameraDistance - camera.position.z) * 0.12;
+        camera.position.z += (baseCameraDistance - camera.position.z) * 0.12;
       }
 
       lookAtTarget.set(0, meshOffsetY * 0.2, 0);
@@ -1329,11 +1400,37 @@ function HelpedHalftoneCanvas({
   return <StyledVisualMount aria-hidden ref={mountReference} />;
 }
 
+function StudioHelpedHalftoneCanvas({
+  geometry,
+  initialPose,
+  previewDistance,
+  settings,
+}: HelpedHalftoneCanvasProps) {
+  useEffect(() => {
+    return () => {
+      geometry.dispose();
+    };
+  }, [geometry]);
+
+  return (
+    <HalftoneCanvas
+      geometry={geometry}
+      imageElement={null}
+      initialPose={initialPose}
+      onFirstInteraction={NOOP}
+      onPoseChange={NOOP}
+      previewDistance={previewDistance}
+      settings={createStudioSettings(settings)}
+    />
+  );
+}
+
 type HelpedHalftoneModelProps = {
   initialPose: HelpedHalftonePose;
   label: string;
   modelUrl: string;
   previewDistance: number;
+  renderer?: HelpedHalftoneRenderer;
   settings: HelpedHalftoneSettings;
 };
 
@@ -1342,6 +1439,7 @@ export function HelpedHalftoneModel({
   label,
   modelUrl,
   previewDistance,
+  renderer = 'legacy',
   settings,
 }: HelpedHalftoneModelProps) {
   const [geometry, setGeometry] = useState<THREE.BufferGeometry | null>(null);
@@ -1369,6 +1467,17 @@ export function HelpedHalftoneModel({
 
   if (!geometry) {
     return <StyledVisualMount aria-hidden />;
+  }
+
+  if (renderer === 'studio') {
+    return (
+      <StudioHelpedHalftoneCanvas
+        geometry={geometry}
+        initialPose={initialPose}
+        previewDistance={previewDistance}
+        settings={settings}
+      />
+    );
   }
 
   return (
