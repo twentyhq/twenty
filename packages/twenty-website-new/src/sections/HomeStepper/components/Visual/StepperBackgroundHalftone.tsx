@@ -6,6 +6,7 @@ import {
   getImagePreviewZoom,
 } from '@/app/halftone/_lib/footprint';
 import { styled } from '@linaria/react';
+import { STEPPER_VISUAL_POINTER_ROOT_SELECTOR } from '../StepperVisualFrame/StepperVisualFrame';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { createSiteWebGlRenderer } from '@/lib/webgl';
@@ -329,7 +330,13 @@ async function mountHalftoneCanvas({
   canvas.style.width = '100%';
   container.appendChild(canvas);
 
-  const interactionTarget = container.parentElement?.parentElement ?? container;
+  const interactionElement =
+    container.closest(STEPPER_VISUAL_POINTER_ROOT_SELECTOR) ??
+    container.parentElement?.parentElement ??
+    container;
+
+  const interactionTarget: HTMLElement =
+    interactionElement instanceof HTMLElement ? interactionElement : container;
 
   const imageTexture = new THREE.Texture(image);
   imageTexture.colorSpace = THREE.SRGBColorSpace;

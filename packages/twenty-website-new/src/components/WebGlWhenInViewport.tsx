@@ -12,6 +12,10 @@ const ObserverRoot = styled.div<{ detachFromLayout: boolean }>`
   pointer-events: none;
   width: 100%;
 
+  & > * {
+    pointer-events: auto;
+  }
+
   ${({ detachFromLayout }) =>
     detachFromLayout
       ? `
