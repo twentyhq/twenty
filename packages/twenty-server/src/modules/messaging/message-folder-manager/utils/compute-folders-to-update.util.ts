@@ -16,7 +16,10 @@ export const computeFoldersToUpdate = ({
   existingFolders: MessageFolder[];
 }): Map<
   string,
-  Pick<MessageFolderEntity, 'name' | 'isSynced' | 'isSentFolder' | 'parentFolderId'>
+  Pick<
+    MessageFolderEntity,
+    'name' | 'isSynced' | 'isSentFolder' | 'parentFolderId'
+  >
 > => {
   const existingFoldersByExternalId = new Map(
     existingFolders.map((folder) => [folder.externalId, folder]),
@@ -24,7 +27,10 @@ export const computeFoldersToUpdate = ({
 
   const foldersToUpdate = new Map<
     string,
-    Pick<MessageFolderEntity, 'name' | 'isSynced' | 'isSentFolder' | 'parentFolderId'>
+    Pick<
+      MessageFolderEntity,
+      'name' | 'isSynced' | 'isSentFolder' | 'parentFolderId'
+    >
   >();
 
   for (const discoveredFolder of discoveredFolders) {
