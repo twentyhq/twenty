@@ -1,356 +1,244 @@
-# Security Context - Twenty CRM
+# Security Context — Twenty CRM
 
 ## Sensitive Data Inventory
 
 ### Critical Secrets (Must Never Leak)
-- **APP_SECRET**: Encryption key for JWT signing, session tokens, password reset tokens
-- **Database credentials**: `PG_DATABASE_URL` (postgres://user:pass@host:port/db)
-- **Redis credentials**: `REDIS_URL` (redis://[user:pass@]host:port)
-- **OAuth client secrets**: `AUTH_GOOGLE_CLIENT_SECRET`, `AUTH_MICROSOFT_CLIENT_SECRET`
-- **API keys**: `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `SENTRY_DSN`, `STRIPE_API_KEY`
-- **SMTP credentials**: `EMAIL_SMTP_USER`, `EMAIL_SMTP_PASSWORD`
-- **S3 credentials**: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`
-- **SAML private keys**: `SSL_KEY_PATH` contents
-- **Enterprise license key**: `ENTERPRISE_KEY`
-- **Cloudflare webhook secret**: `CLOUDFLARE_WEBHOOK_SECRET`
+1. **`APP_SECRET`** — Session signing key; compromised = session hijacking, CSRF bypass
+2. **`PG_DATABASE_PASSWORD`** / `PG_DATABASE_URL` — Direct database access; compromised = full data breach
+3. **OAuth Client Secrets** — `AUTH_GOOGLE_CLIENT_SECRET`, `AUTH_MICROSOFT_CLIENT_SECRET`; compromised = account takeover via OAuth flow
+4. **Email SMTP Passwords** — `EMAIL_SMTP_PASSWORD`; compromised = spam/phishing via user's domain
+5. **Stripe API Keys** — `BILLING_STRIPE_API_KEY`; compromised = billing manipulation
+6. **S3 Credentials** — `STORAGE_S3_ENDPOINT`, access keys; compromised = file data exfiltration
+7. **Redis Connection String** — `REDIS_URL`; compromised = session/cache poisoning
+8. **ClickHouse Password** — `CLICKHOUSE_PASSWORD`; compromised = analytics data access
+9. **JWT Signing Key** — Derived from `APP_SECRET`; compromised = token forgery
 
-### High-Sensitivity User Data
-- **Passwords**: Hashed with bcrypt (cost factor 10), stored in `core.user` table
-- **Access tokens**: JWT with expiration (default 30m), refresh tokens (90d)
-- **OAuth tokens**: Google/Microsoft access/refresh tokens for email/calendar sync
-- **SAML assertions**: Single sign-on session data
-- **2FA secrets**: OTP secrets (otplib), recovery codes
-- **Session data**: Redis-backed express-session, contains userId, workspaceId
+### User PII (Personally Identifiable Information)
+- **Companies**: Name, domain, industry, employee count
+- **People**: Name, email, phone number, job title, LinkedIn profile
+- **Opportunities**: Deal amount, stage, close date (business-sensitive)
+- **Calendar Events**: Meeting titles, participants, times (in `connectedAccounts` sync)
+- **Emails**: Full message content synced from Gmail/Outlook (in `messages` table)
+- **Files**: Uploaded attachments (resumes, contracts, etc.)
+- **Custom Fields**: Users may store SSNs, credit cards, etc. in custom text fields
 
-### Business-Critical Data
-- **Customer records**: All data in workspace-specific schemas (`workspace_*`)
-- **Custom object data**: User-defined objects with arbitrary fields (JSONB support)
-- **File attachments**: S3 objects referenced in database, presigned URLs for access
-- **Email content**: Synced from Gmail/Microsoft, stored in workspace schema
-- **Calendar events**: Synced from Google/Microsoft Calendar
-- **Workflow definitions**: Automation logic, may contain HTTP endpoint URLs, API keys in config
-- **AI conversation history**: Prompts/responses stored for audit, may contain sensitive context
-
-### Compliance-Relevant Metadata
-- **Audit logs**: Activity timeline (who created/updated/deleted records, when)
-- **User PII**: Email addresses, names, profile photos
-- **Workspace metadata**: Company names, billing info (if enabled)
-- **API usage logs**: Request logs with IP addresses, user agents
-- **Error logs**: Sentry events may contain stack traces with sensitive data fragments
+### System Metadata (Sensitive but Not PII)
+- **Workspace Metadata**: Schema definitions, custom objects/fields (exposes data model)
+- **User Roles/Permissions**: Access control rules (reveals privilege escalation paths)
+- **Webhooks**: URLs and secrets (compromise = webhook injection)
+- **API Keys**: User-generated tokens for REST/GraphQL access
 
 ## Trust Boundaries
 
-### External → Frontend (Browser)
-- **Entry Points**: `https://frontend-domain` (served via Nginx/CDN in production)
-- **Authentication**: None initially, redirects to `/auth/login`
-- **Threats**: XSS, CSRF, clickjacking, malicious file uploads
-- **Mitigations**:
-  - CSP headers (Content Security Policy)
-  - X-Frame-Options: DENY
-  - Strict SameSite cookies
-  - Input sanitization before rendering (DOMPurify for rich text)
+### External → Frontend (User Browser)
+- **Boundary**: Public internet → `twenty-front` (static SPA served by NestJS)
+- **Threats**: XSS, CSRF, malicious links in user data
+- **Controls**: 
+  - Content Security Policy (CSP) headers
+  - React escaping (automatic in JSX)
+  - DOMPurify for rich-text sanitization (used in BlockNote/TipTap)
 
-### Frontend → Backend API (GraphQL/REST)
-- **Entry Points**: `https://api-domain/graphql`, `/rest/*`, `/auth/*`
-- **Authentication**: JWT access token in Authorization header (`Bearer <token>`)
-- **Threats**: Token theft, replay attacks, unauthorized API access, GraphQL injection
-- **Mitigations**:
-  - JWT expiration (30m), refresh token rotation (90d)
-  - CORS restricted to `FRONTEND_URL`
-  - Rate limiting (`API_RATE_LIMITING_TTL`, `API_RATE_LIMITING_LIMIT`)
-  - Query complexity analysis (max depth, max fields)
-  - GraphQL introspection disabled in production (optional)
+### Frontend → Backend (GraphQL/REST API)
+- **Boundary**: Browser → `/graphql`, `/metadata`, `/rest/*`
+- **Threats**: Unauthorized API access, query injection, data exfiltration
+- **Controls**:
+  - **Authentication**: JWT in `Authorization: Bearer <token>` header (Passport.js)
+  - **Authorization**: Workspace-scoped queries (middleware injects `workspaceId`)
+  - **Rate Limiting**: (Not currently enforced — FIXME)
+  - **GraphQL Query Complexity**: (Not currently enforced — FIXME)
 
-### Backend → Database (PostgreSQL)
-- **Entry Points**: `PG_DATABASE_URL` connection from NestJS server
-- **Authentication**: Username/password in connection string, optional SSL (`PG_SSL_ALLOW_SELF_SIGNED`)
-- **Threats**: SQL injection, unauthorized schema access, privilege escalation
-- **Mitigations**:
-  - TypeORM parameterized queries (prevents SQL injection)
-  - Workspace-scoped queries (automatic schema prefix)
-  - Database user with limited permissions (no DROP DATABASE, no superuser)
-  - Connection pooling with max connection limits
+### Backend → Database (PostgreSQL/Redis/ClickHouse)
+- **Boundary**: NestJS process → PostgreSQL/Redis/ClickHouse
+- **Threats**: SQL injection, data leakage across workspaces, credential theft
+- **Controls**:
+  - **Parameterized Queries**: TypeORM uses prepared statements (no raw SQL in user inputs)
+  - **Schema Isolation**: Each workspace has its own PostgreSQL schema (e.g., `workspace_abc123`)
+  - **Connection Pooling**: Limits concurrent connections
+  - **Encrypted Connections**: TLS for PostgreSQL (if `sslmode=require` in connection string)
 
-### Backend → Redis (Cache/Sessions)
-- **Entry Points**: `REDIS_URL` connection from NestJS server, BullMQ workers
-- **Authentication**: Optional password in connection string
-- **Threats**: Session hijacking, cache poisoning, unauthorized job injection
-- **Mitigations**:
-  - Redis AUTH enabled in production
-  - Session cookies with httpOnly, secure, sameSite flags
-  - Job queue isolation per workspace (key prefixes)
-  - TLS for Redis connections in production
+### Backend → External Services (OAuth Providers, Email Servers, S3)
+- **Boundary**: NestJS → Google/Microsoft OAuth, SMTP servers, AWS S3
+- **Threats**: Token leakage, MITM, malicious redirects
+- **Controls**:
+  - **HTTPS**: All external API calls use TLS
+  - **OAuth State Parameter**: Prevents CSRF in OAuth flow (`passport-google-oauth20`)
+  - **Redirect URI Validation**: OAuth callbacks only to allowed `AUTH_GOOGLE_CALLBACK_URL`
+  - **S3 Pre-Signed URLs**: Temporary, scoped file upload/download URLs
 
-### Backend → External APIs (OAuth, AI, Email)
-- **Entry Points**: `googleapis.com`, `graph.microsoft.com`, `api.openai.com`, SMTP servers
-- **Authentication**: OAuth tokens (Google/Microsoft), API keys (AI providers), SMTP credentials
-- **Threats**: Token leakage, man-in-the-middle attacks, API key exhaustion/abuse
-- **Mitigations**:
-  - OAuth tokens encrypted at rest (APP_SECRET as key)
-  - TLS 1.2+ for all external API calls
-  - axios-retry for transient failures (prevents retry storms)
-  - API key rotation via Admin Panel (Config Variables)
-  - Rate limiting on AI calls to prevent abuse
+### Worker Queue (BullMQ) → Backend Services
+- **Boundary**: Queue worker process → Redis (job queue) → Database
+- **Threats**: Job injection, privilege escalation via job payloads
+- **Controls**:
+  - **Redis Authentication**: Password-protected Redis (if `REDIS_URL` includes password)
+  - **Job Payload Validation**: Workers validate job data before processing
+  - **Idempotency**: Jobs designed to be safely retried
 
-### Backend → S3 (File Storage)
-- **Entry Points**: `AWS_S3_ENDPOINT_URL` or AWS default endpoints
-- **Authentication**: AWS IAM credentials or access key/secret
-- **Threats**: Unauthorized file access, bucket enumeration, public write access
-- **Mitigations**:
-  - Presigned URLs with expiration (default 1d via `FILE_TOKEN_EXPIRES_IN`)
-  - Bucket policies enforce private access (no public read)
-  - File type validation (`file-type` library, not just MIME sniffing)
-  - Virus scanning (optional, via ClamAV or cloud service)
-
-### User → User (Workspace Collaboration)
-- **Entry Points**: Shared records, mentions, comments
-- **Authentication**: Workspace membership + role-based permissions
-- **Threats**: Privilege escalation, data exfiltration, malicious workflow injection
-- **Mitigations**:
-  - Role-based access control (Admin, Member, Viewer + custom roles)
-  - Object-level permissions (per-object CRUD grants)
-  - Field-level permissions (hide sensitive fields from non-admins)
-  - Workflow execution sandboxing (HTTP actions in safe mode by default)
+### Admin/Metadata API → Workspace Data
+- **Boundary**: `/metadata` GraphQL endpoint → Schema modifications
+- **Threats**: Malicious schema changes (delete fields, break relations)
+- **Controls**:
+  - **Admin-Only Permissions**: Metadata mutations require workspace admin role
+  - **Schema Validation**: Custom object/field definitions validated before applying
 
 ## Threat Model
 
-### 1. Authentication & Authorization Threats
-
-#### T1.1: Password Brute Force
-- **Attack Vector**: Automated login attempts with common passwords
-- **Likelihood**: High (public internet exposure)
-- **Impact**: Account takeover, data breach
+### T1: Account Takeover
+- **Attack**: Attacker steals JWT token (e.g., XSS, malware)
+- **Impact**: Full access to workspace data
 - **Mitigations**:
-  - Bcrypt with cost factor 10 (slow hashing)
-  - Rate limiting on `/auth/login` (default: configurable via `API_RATE_LIMITING_*`)
-  - CAPTCHA support (`CAPTCHA_DRIVER`, `CAPTCHA_SITE_KEY`)
-  - Account lockout after N failed attempts (future enhancement)
+  - **JWT Expiry**: Tokens expire after 1 hour (refresh flow TBD)
+  - **HttpOnly Cookies**: Session cookies inaccessible to JavaScript (mitigates XSS)
+  - **Secure Flag**: Cookies only sent over HTTPS
+  - **CSP**: Blocks inline scripts, limits XSS impact
 
-#### T1.2: JWT Token Theft
-- **Attack Vector**: XSS steals token from localStorage/memory, MitM intercepts unencrypted request
-- **Likelihood**: Medium (requires XSS or network compromise)
-- **Impact**: Session hijacking, API abuse
+### T2: SQL Injection
+- **Attack**: Malicious input in GraphQL args → raw SQL execution
+- **Impact**: Data breach, database manipulation
 - **Mitigations**:
-  - Short-lived access tokens (30m)
-  - Refresh token rotation (invalidate old on use)
-  - httpOnly cookies for refresh tokens (not accessible to JS)
-  - TLS enforced in production (HTTPS only)
+  - **TypeORM Parameterization**: All queries use placeholders (`WHERE name = ?`)
+  - **GraphQL Input Validation**: Zod schemas validate mutation inputs
+  - **No Dynamic SQL**: Avoid `queryBuilder.where(userInput)` without sanitization
 
-#### T1.3: OAuth Flow Manipulation
-- **Attack Vector**: Redirect URI manipulation, authorization code interception
-- **Likelihood**: Medium (requires phishing or DNS hijacking)
-- **Impact**: Account takeover via Google/Microsoft login
+### T3: Workspace Data Leakage (Multi-Tenancy)
+- **Attack**: User A queries User B's workspace data
+- **Impact**: Cross-workspace data breach
 - **Mitigations**:
-  - Strict redirect URI whitelist (`AUTH_GOOGLE_CALLBACK_URL`)
-  - State parameter validation (CSRF protection)
-  - Use authorization code flow (not implicit flow)
-  - Verify OAuth tokens with provider before trusting
+  - **Workspace Middleware**: `WorkspaceAuthContextMiddleware` injects `workspaceId` into request
+  - **Schema Isolation**: PostgreSQL schemas prevent accidental cross-workspace queries
+  - **Query Filters**: TypeORM queries auto-scoped to `request.workspace.id`
 
-### 2. Data Access Threats
-
-#### T2.1: Multi-Tenant Data Leakage
-- **Attack Vector**: Workspace ID manipulation in GraphQL queries, schema confusion
-- **Likelihood**: High (common multi-tenant vulnerability)
-- **Impact**: Critical — access to other customers' data
+### T4: File Upload Exploits
+- **Attack**: Upload malicious file (e.g., PHP shell, XSS HTML)
+- **Impact**: RCE on server, XSS when file rendered
 - **Mitigations**:
-  - Workspace context injected at middleware level (not user-controllable)
-  - TypeORM automatically scopes queries to workspace schema
-  - GraphQL resolvers enforce workspace membership check
-  - Integration tests validate tenant isolation
+  - **File Type Validation**: Check MIME type and magic bytes (`file-type` npm package)
+  - **Virus Scanning**: (Not implemented — FIXME for production)
+  - **S3 Storage**: Files served from S3 with separate domain (no cookie access)
+  - **Content-Disposition**: Force download instead of inline rendering
 
-#### T2.2: GraphQL Injection
-- **Attack Vector**: Malicious field names, deep query nesting, circular references
-- **Likelihood**: Medium (requires understanding GraphQL schema)
-- **Impact**: DoS via query complexity, data exfiltration via introspection
+### T5: Denial of Service (DoS)
+- **Attack**: Expensive GraphQL query (e.g., deep nesting, huge pagination)
+- **Impact**: Server CPU/memory exhaustion
 - **Mitigations**:
-  - Query depth limiting (max 10 levels)
-  - Query complexity analysis (cost-based)
-  - Introspection disabled in production (optional via config)
-  - Field-level permissions prevent unauthorized field access
+  - **Query Complexity Limit**: (Not enforced — FIXME)
+  - **Pagination Limits**: Default page size = 50, max = 1000
+  - **Timeout**: HTTP requests timeout after 30s (configurable in NestJS)
 
-#### T2.3: Insecure Direct Object Reference (IDOR)
-- **Attack Vector**: Guess record IDs, manipulate object metadata IDs
-- **Likelihood**: High (UUIDs reduce guessability but don't eliminate risk)
-- **Impact**: Access to records in same workspace but restricted by permissions
+### T6: Dependency Vulnerabilities
+- **Attack**: Exploit known CVE in npm package (e.g., prototype pollution)
+- **Impact**: RCE, data breach
 - **Mitigations**:
-  - UUIDs for all record IDs (not sequential integers)
-  - Permission checks on every query/mutation (object-level + field-level)
-  - GraphQL DataLoader caches permission results (prevents N+1 auth checks)
+  - **Dependabot**: Automated PR for dependency updates (`.github/dependabot.yml`)
+  - **Yarn Audit**: (Should run in CI — FIXME)
+  - **Pin Exact Versions**: `yarn.lock` ensures reproducible builds
 
-### 3. Injection Threats
-
-#### T3.1: SQL Injection
-- **Attack Vector**: User input in dynamic queries, ORM bypass
-- **Likelihood**: Low (TypeORM uses parameterized queries)
-- **Impact**: Critical — database compromise, data exfiltration
+### T7: Secrets Leakage in Logs/Errors
+- **Attack**: Secrets logged in error messages, sent to Sentry
+- **Impact**: API keys exposed to monitoring tools
 - **Mitigations**:
-  - TypeORM query builder (never string concatenation for SQL)
-  - Raw queries use parameterized bindings (`query($1, $2)`)
-  - Input validation at GraphQL schema level (types, regex)
+  - **Sentry Scrubbing**: Configure `beforeSend` to redact secrets
+  - **Environment Variable Logging**: Avoid logging `process.env` directly
+  - **Error Messages**: Never echo user-controlled input in error responses
 
-#### T3.2: Cross-Site Scripting (XSS)
-- **Attack Vector**: Unescaped user input in rich text, record names, custom fields
-- **Likelihood**: High (rich text editor, file uploads)
-- **Impact**: Session hijacking, phishing, malware distribution
+### T8: OAuth Redirect Hijacking
+- **Attack**: Manipulate `redirect_uri` to steal authorization code
+- **Impact**: Account takeover via OAuth flow
 - **Mitigations**:
-  - React escapes by default (no `dangerouslySetInnerHTML` without sanitization)
-  - DOMPurify sanitizes rich text before rendering
-  - CSP headers block inline scripts (`script-src 'self'`)
-  - File upload content-type validation (no HTML files as attachments)
+  - **Strict Redirect URI Validation**: `AUTH_GOOGLE_CALLBACK_URL` hardcoded in Passport strategy
+  - **State Parameter**: Random nonce prevents CSRF
 
-#### T3.3: Command Injection (Workflow Actions)
-- **Attack Vector**: HTTP action URLs with unsanitized user input, code interpreter abuse
-- **Likelihood**: Medium (workflows allow HTTP requests, code execution)
-- **Impact**: SSRF, RCE on server, data exfiltration
+### T9: Webhook Replay Attacks
+- **Attack**: Replay legitimate webhook payload to trigger duplicate actions
+- **Impact**: Duplicate emails, Slack messages, data corruption
 - **Mitigations**:
-  - HTTP_TOOL_SAFE_MODE_ENABLED (default true) blocks private IPs
-  - Allowlist for external request domains (optional)
-  - Code interpreter sandboxed via E2B (@e2b/code-interpreter)
-  - Workflow execution logs audited (who triggered, what data sent)
+  - **Webhook Signatures**: (Not enforced — FIXME)
+  - **Idempotency Keys**: (Not enforced — FIXME)
+  - **Timestamp Validation**: Reject old payloads (e.g., >5 min old)
 
-### 4. Availability Threats
-
-#### T4.1: Denial of Service (DoS)
-- **Attack Vector**: High-volume API requests, expensive GraphQL queries, large file uploads
-- **Likelihood**: High (public API exposure)
-- **Impact**: Service unavailable, increased costs
+### T10: Privilege Escalation
+- **Attack**: Regular user modifies schema to grant themselves admin permissions
+- **Impact**: Unauthorized access to sensitive data
 - **Mitigations**:
-  - Rate limiting per IP/user (`API_RATE_LIMITING_TTL`, `API_RATE_LIMITING_LIMIT`)
-  - Query complexity limits (reject queries over threshold)
-  - File upload size limits (configurable, default 10MB)
-  - BullMQ job queue prevents worker overload (concurrency limits)
-
-#### T4.2: Resource Exhaustion (Database)
-- **Attack Vector**: Create millions of records, complex joins, unindexed queries
-- **Likelihood**: Medium (requires authenticated user)
-- **Impact**: Database slowdown, cascading failures
-- **Mitigations**:
-  - `MUTATION_MAXIMUM_AFFECTED_RECORDS=100` (bulk update limit)
-  - Pagination enforced on list queries (max 100 per page)
-  - Database query timeout (30s default)
-  - Connection pooling prevents connection exhaustion
-
-### 5. Supply Chain Threats
-
-#### T5.1: Dependency Vulnerabilities
-- **Attack Vector**: npm packages with CVEs, malicious package updates
-- **Likelihood**: Medium (600+ dependencies)
-- **Impact**: RCE, data exfiltration, backdoor
-- **Mitigations**:
-  - Dependabot enabled (automatic PRs for security updates)
-  - Yarn 4 integrity checks (lockfile checksums)
-  - Regular `yarn audit` in CI
-  - Patch risky dependencies (e.g., `typeorm+0.3.20.patch`)
-
-#### T5.2: Malicious Contributions
-- **Attack Vector**: PR with backdoor, typosquatting in package.json
-- **Likelihood**: Low (code review required)
-- **Impact**: Critical — full system compromise
-- **Mitigations**:
-  - Required PR reviews (CODEOWNERS file)
-  - CI runs all tests, linting, type checking before merge
-  - Danger bot checks for todos, large diffs
-  - Community audits (open-source transparency)
+  - **Role-Based Access Control (RBAC)**: Permissions checked in resolvers
+  - **Immutable System Roles**: Cannot delete or modify built-in "admin" role
+  - **Audit Logs**: (Not implemented — FIXME for compliance)
 
 ## Security Requirements
 
-### Hard Constraints (FORGE Must Satisfy)
+### HARD CONSTRAINTS (FORGE Must Satisfy)
 
-1. **Authentication**
-   - All API endpoints except `/healthz`, `/auth/login`, `/auth/signup` require valid JWT
-   - Passwords hashed with bcrypt (min cost 10)
-   - OAuth tokens encrypted at rest with APP_SECRET
-   - 2FA codes validated with time window (30s)
+#### 1. **Authentication & Authorization**
+- **Req-1.1**: All `/graphql`, `/metadata`, `/rest/*` endpoints MUST require valid JWT (except public signup/login)
+- **Req-1.2**: Mutations MUST check user permissions via `@WorkspaceAuth()` decorator before executing
+- **Req-1.3**: Admin-only operations (metadata changes, user management) MUST verify `isAdmin` role
+- **Req-1.4**: JWT tokens MUST expire within 24 hours (configurable via `ACCESS_TOKEN_EXPIRES_IN`)
 
-2. **Authorization**
-   - Every GraphQL resolver checks workspace membership
-   - Every mutation validates user has required permission (object-level + field-level)
-   - Workspace schema isolation enforced at TypeORM level (no cross-workspace queries)
-   - Admin-only actions (workspace deletion, user management) require `isAdmin: true`
+#### 2. **Input Validation**
+- **Req-2.1**: All GraphQL mutation inputs MUST be validated with Zod schemas
+- **Req-2.2**: Custom field values MUST match declared type (e.g., email field validates email format)
+- **Req-2.3**: File uploads MUST validate: file size (≤100MB), MIME type (whitelist), extension
+- **Req-2.4**: GraphQL query depth MUST NOT exceed 10 levels (prevent DoS)
 
-3. **Input Validation**
-   - All user input validated against GraphQL schema types
-   - Email addresses validated with regex + DNS check (optional)
-   - File uploads validated by magic bytes, not MIME type
-   - Rich text sanitized with DOMPurify before storage and rendering
-   - URLs in workflow actions validated (no `file://`, `javascript:` schemes)
+#### 3. **Data Isolation**
+- **Req-3.1**: Database queries MUST be scoped to `request.workspace.id` (no cross-workspace leaks)
+- **Req-3.2**: File uploads MUST be stored in workspace-specific S3 prefix or directory
+- **Req-3.3**: Cache keys (Redis) MUST include workspace ID to prevent cache poisoning
 
-4. **Data Protection**
-   - Database credentials never logged or sent to frontend
-   - API keys never returned in GraphQL queries (write-only fields)
-   - Presigned S3 URLs expire within `FILE_TOKEN_EXPIRES_IN` (default 1d)
-   - Session cookies use `httpOnly: true`, `secure: true` (HTTPS), `sameSite: strict`
+#### 4. **Secrets Management**
+- **Req-4.1**: `APP_SECRET`, `PG_DATABASE_URL`, OAuth secrets MUST be loaded from environment variables (never hardcoded)
+- **Req-4.2**: Secrets MUST NOT be logged (error messages, Sentry, console output)
+- **Req-4.3**: User-facing API responses MUST NOT include internal error details (use generic "Internal Server Error")
 
-5. **Error Handling**
-   - Database errors sanitized (no raw SQL in responses)
-   - Stack traces hidden in production (Sentry only)
-   - Generic error messages to users ("An error occurred"), detailed logs to server
-   - No user enumeration (same error for "user not found" and "wrong password")
+#### 5. **Transport Security**
+- **Req-5.1**: Production deployments MUST enforce HTTPS (no HTTP)
+- **Req-5.2**: Session cookies MUST have `Secure` and `HttpOnly` flags
+- **Req-5.3**: Database connections SHOULD use TLS (`sslmode=require` in PostgreSQL URL)
 
-6. **Cryptography**
-   - TLS 1.2+ for all external API calls
-   - AES-256 for encrypting OAuth tokens at rest (future: field-level encryption)
-   - Random token generation via crypto.randomBytes (not Math.random)
-   - JWT signed with HS256 (future: RS256 for multi-region)
+#### 6. **Dependencies**
+- **Req-6.1**: No dependencies with known critical CVEs (CVSS ≥9.0) unless patched or mitigated
+- **Req-6.2**: Dependency updates MUST be tested before merging (CI runs full test suite)
+
+#### 7. **Audit & Monitoring**
+- **Req-7.1**: Failed login attempts MUST be logged (for brute-force detection)
+- **Req-7.2**: Metadata changes (create object, delete field) MUST be logged (for compliance audits)
+- **Req-7.3**: Unhandled exceptions MUST be sent to Sentry with sanitized context (no secrets)
 
 ## Security Checklist
 
-SENTINEL must verify these on every PR:
+**SENTINEL runs these checks on every PR:**
 
-### Authentication & Session Management
-- [ ] No hardcoded credentials in code (APP_SECRET, API keys, passwords)
-- [ ] No passwords logged (search for `console.log`, `logger.log` near password variables)
-- [ ] JWT expiration set (`ACCESS_TOKEN_EXPIRES_IN`, `REFRESH_TOKEN_EXPIRES_IN`)
-- [ ] Session cookies have `httpOnly`, `secure`, `sameSite` flags
+### Code Review Checks (Automated)
+- [ ] **No Hardcoded Secrets**: Grep for `password`, `secret`, `api_key` in committed files (exclude `.env.example`)
+- [ ] **No SQL Injection**: Confirm all database queries use TypeORM query builders or parameterized queries
+- [ ] **Input Validation**: All mutation DTOs have `class-validator` decorators or Zod schemas
+- [ ] **Auth Decorators**: All non-public GraphQL resolvers have `@WorkspaceAuth()` or `@PublicApi()`
+- [ ] **File Upload Checks**: File upload handlers call `validateFileType()` and check size limits
+- [ ] **Error Sanitization**: GraphQL errors do not leak stack traces or internal paths (use `UnhandledExceptionFilter`)
 
-### Authorization & Access Control
-- [ ] New GraphQL resolvers check `workspaceId` matches authenticated user's workspace
-- [ ] New mutations validate permissions (`@AuthWorkspace()`, `@Authorize()` decorators)
-- [ ] New custom roles include permission definitions
-- [ ] No database queries bypass workspace schema isolation
+### Dependency Checks (Automated)
+- [ ] **No Critical CVEs**: `yarn audit` reports zero critical vulnerabilities
+- [ ] **License Compliance**: All dependencies have OSI-approved licenses (no proprietary/restrictive)
+- [ ] **Dependency Pinning**: `yarn.lock` present and matches `package.json`
 
-### Input Validation & Sanitization
-- [ ] User input validated against schema (GraphQL types, class-validator)
-- [ ] Rich text sanitized with DOMPurify before rendering (`dangerouslySetInnerHTML`)
-- [ ] File uploads validate content type via `file-type` library (not just extension)
-- [ ] URLs in workflow actions validated (no `javascript:`, `data:`, `file:` schemes)
+### Configuration Checks (Automated)
+- [ ] **Environment Variables**: All required secrets in `.env.example` are documented
+- [ ] **CSP Headers**: Content-Security-Policy set in production (check Nginx/Helmet config)
+- [ ] **Cookie Security**: Session cookies have `Secure`, `HttpOnly`, `SameSite=Strict` flags
+- [ ] **CORS**: CORS allowed origins whitelist excludes `*` in production
 
-### SQL Injection Prevention
-- [ ] No raw SQL queries with string concatenation
-- [ ] TypeORM query builder or parameterized queries (`query($1, $2)`)
-- [ ] Dynamic table/column names validated against allowlist
+### Manual Review (SENTINEL Alerts for Human Review)
+- [ ] **Privilege Escalation**: Any changes to `roles`, `permissions`, `isAdmin` logic reviewed by security lead
+- [ ] **Schema Migrations**: Database migrations do not expose PII in column names or logs
+- [ ] **OAuth Flows**: Changes to Passport strategies reviewed for redirect URI validation
+- [ ] **Webhook Handling**: Outbound webhook handlers validate HTTPS URLs, prevent SSRF
 
-### XSS Prevention
-- [ ] No `dangerouslySetInnerHTML` without DOMPurify
-- [ ] React props escaped by default (no `{...props}` on DOM elements without validation)
-- [ ] CSP headers defined for new routes (if adding new HTML pages)
+### Pre-Deployment Checks (Production Only)
+- [ ] **TLS Certificate Valid**: HTTPS cert not expired, trusted CA
+- [ ] **Secrets Rotation**: `APP_SECRET` changed from default example value
+- [ ] **Database Backups**: Automated backups enabled (hourly snapshots)
+- [ ] **Rate Limiting**: Reverse proxy (Nginx/CloudFlare) enforces rate limits (100 req/min per IP)
+- [ ] **Firewall Rules**: PostgreSQL/Redis/ClickHouse ports not exposed to public internet
 
-### CSRF Prevention
-- [ ] State-changing endpoints require POST/PUT/DELETE (not GET)
-- [ ] GraphQL mutations not executable via GET
-- [ ] CORS restricted to `FRONTEND_URL`
+---
 
-### Secrets Management
-- [ ] No secrets in frontend code (check `twenty-front/src/`)
-- [ ] Environment variables loaded from `.env`, not hardcoded
-- [ ] New secrets documented in `.env.example`
-
-### Data Exposure
-- [ ] API responses do not leak internal IDs, stack traces, SQL queries
-- [ ] Error messages generic to users, detailed to logs only
-- [ ] No PII in public logs (Sentry events scrubbed)
-
-### Dependency Security
-- [ ] New dependencies have recent updates (not abandoned)
-- [ ] No known CVEs in new dependencies (run `yarn audit`)
-- [ ] Patches applied if CVE found in existing dependency
-
-### Rate Limiting & DoS
-- [ ] New API endpoints respect rate limiting middleware
-- [ ] Bulk mutations respect `MUTATION_MAXIMUM_AFFECTED_RECORDS`
-- [ ] File uploads respect size limits
-
-### Logging & Monitoring
-- [ ] Security events logged (login, permission denied, data export)
-- [ ] No sensitive data in logs (passwords, tokens, PII)
-- [ ] Sentry configured with `beforeSend` to scrub secrets
+**Security Contact**: Report vulnerabilities to `security@twenty.com` (confidential). Do not open public GitHub issues for security bugs.
