@@ -8,6 +8,7 @@ import {
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { createSiteWebGlRenderer } from '@/lib/webgl';
 
 const PREVIEW_DISTANCE = 4;
 const HOVER_FADE_IN = 18;
@@ -310,7 +311,7 @@ async function mountHalftoneCanvas({
     return;
   }
 
-  const renderer = new THREE.WebGLRenderer({
+  const renderer = createSiteWebGlRenderer({
     alpha: true,
     antialias: false,
     powerPreference: 'high-performance',
@@ -527,23 +528,23 @@ async function mountHalftoneCanvas({
     pointerState.pointerVelocityY *= 0.82;
 
     halftoneMaterial.uniforms.footprintScale.value = getHalftoneScale();
-    halftoneMaterial.uniforms.hoverHalftoneActive.value =
-      HALFTONE_SETTINGS.animation.hoverHalftoneEnabled
-        ? pointerState.hoverStrength
-        : 0;
-    halftoneMaterial.uniforms.hoverHalftonePowerShift.value =
-      HALFTONE_SETTINGS.animation.hoverHalftoneEnabled
-        ? HALFTONE_SETTINGS.animation.hoverHalftonePowerShift
-        : 0;
-    halftoneMaterial.uniforms.hoverHalftoneWidthShift.value =
-      HALFTONE_SETTINGS.animation.hoverHalftoneEnabled
-        ? HALFTONE_SETTINGS.animation.hoverHalftoneWidthShift
-        : 0;
-    halftoneMaterial.uniforms.hoverLightStrength.value =
-      HALFTONE_SETTINGS.animation.hoverLightEnabled
-        ? HALFTONE_SETTINGS.animation.hoverLightIntensity *
-          pointerState.hoverStrength
-        : 0;
+    halftoneMaterial.uniforms.hoverHalftoneActive.value = HALFTONE_SETTINGS
+      .animation.hoverHalftoneEnabled
+      ? pointerState.hoverStrength
+      : 0;
+    halftoneMaterial.uniforms.hoverHalftonePowerShift.value = HALFTONE_SETTINGS
+      .animation.hoverHalftoneEnabled
+      ? HALFTONE_SETTINGS.animation.hoverHalftonePowerShift
+      : 0;
+    halftoneMaterial.uniforms.hoverHalftoneWidthShift.value = HALFTONE_SETTINGS
+      .animation.hoverHalftoneEnabled
+      ? HALFTONE_SETTINGS.animation.hoverHalftoneWidthShift
+      : 0;
+    halftoneMaterial.uniforms.hoverLightStrength.value = HALFTONE_SETTINGS
+      .animation.hoverLightEnabled
+      ? HALFTONE_SETTINGS.animation.hoverLightIntensity *
+        pointerState.hoverStrength
+      : 0;
     halftoneMaterial.uniforms.interactionUv.value.set(
       pointerState.smoothedMouseX,
       1 - pointerState.smoothedMouseY,

@@ -1,7 +1,6 @@
-import { VisibleWhenTabActive } from '@/components/VisibleWhenTabActive';
+import { IllustrationMount } from '@/illustrations';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import Monolith from './monolith';
 
 const DESKTOP_PATH =
   'M672 395.498V701a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4h664a4 4 0 0 1 4 4v65.155c0 2.363-.837 4.65-2.361 6.454l-23.603 27.936a10 10 0 0 0-2.362 6.453v242.614c0 2.245.756 4.424 2.145 6.188l24.036 30.51a10 10 0 0 1 2.145 6.188';
@@ -54,9 +53,7 @@ export function Visual() {
     <StyledVisual>
       <StyledMasked>
         <StyledHalftoneLayer>
-          <VisibleWhenTabActive>
-            <Monolith />
-          </VisibleWhenTabActive>
+          <IllustrationMount illustration="problemMonolith" />
         </StyledHalftoneLayer>
       </StyledMasked>
     </StyledVisual>

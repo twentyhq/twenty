@@ -1,9 +1,7 @@
 'use client';
 
-import { VisibleWhenTabActive } from '@/components/VisibleWhenTabActive';
-
+import { IllustrationMount } from '@/illustrations';
 import { StepperVisualFrame } from '../StepperVisualFrame/StepperVisualFrame';
-import { StepperBackgroundHalftone } from './StepperBackgroundHalftone';
 import { StepperLottie } from './StepperLottie';
 
 const HOME_STEPPER_BACKGROUND = '/images/home/stepper/gears.jpg';
@@ -19,9 +17,7 @@ export function Visual({ scrollProgress }: VisualProps) {
       backgroundColor="#F5F5F5"
       backgroundSrc={HOME_STEPPER_BACKGROUND}
       backgroundOverlay={
-        <VisibleWhenTabActive>
-          <StepperBackgroundHalftone imageUrl={HOME_STEPPER_BACKGROUND} />
-        </VisibleWhenTabActive>
+        <IllustrationMount illustration="homeStepperBackgroundHalftone" />
       }
       borderColor="#DBDBDB"
       showBackgroundImage={false}

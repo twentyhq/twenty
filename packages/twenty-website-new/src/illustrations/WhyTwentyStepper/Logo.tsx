@@ -6,6 +6,7 @@ import { useLayoutEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { createSiteWebGlRenderer } from '@/lib/webgl';
 
 const GLB_URL = '/illustrations/why-twenty/stepper/logo.glb';
 
@@ -229,7 +230,7 @@ export function Logo() {
 
     updateOrthoFrustum();
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    const renderer = createSiteWebGlRenderer({ alpha: true, antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(width, height);
     renderer.setClearColor(0x000000, 0);

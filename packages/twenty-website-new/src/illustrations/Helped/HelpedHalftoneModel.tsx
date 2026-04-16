@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { createSiteWebGlRenderer } from '@/lib/webgl';
 
 const DRACO_DECODER_PATH =
   'https://www.gstatic.com/draco/versioned/decoders/1.5.6/';
@@ -533,10 +534,7 @@ function getFootprintScaleFromRects(
     return 1;
   }
 
-  return Math.max(
-    Math.sqrt(currentArea / referenceArea),
-    MIN_FOOTPRINT_SCALE,
-  );
+  return Math.max(Math.sqrt(currentArea / referenceArea), MIN_FOOTPRINT_SCALE);
 }
 
 function projectBox3ToViewport({
@@ -552,11 +550,7 @@ function projectBox3ToViewport({
   viewportHeight: number;
   viewportWidth: number;
 }) {
-  if (
-    localBounds.isEmpty() ||
-    viewportWidth <= 0 ||
-    viewportHeight <= 0
-  ) {
+  if (localBounds.isEmpty() || viewportWidth <= 0 || viewportHeight <= 0) {
     return null;
   }
 
@@ -763,14 +757,16 @@ function HelpedHalftoneCanvas({
         1,
       );
 
-    const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
+    const renderer = createSiteWebGlRenderer({ antialias: false, alpha: true });
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.setPixelRatio(1);
     renderer.setClearColor(0x000000, 0);
     renderer.setSize(getVirtualWidth(), getVirtualHeight(), false);
 
     const canvas = renderer.domElement;
-    canvas.style.cursor = settings.animation.followDragEnabled ? 'grab' : 'default';
+    canvas.style.cursor = settings.animation.followDragEnabled
+      ? 'grab'
+      : 'default';
     canvas.style.display = 'block';
     canvas.style.height = '100%';
     canvas.style.touchAction = 'none';
@@ -855,7 +851,9 @@ function HelpedHalftoneCanvas({
         dashColor: { value: new THREE.Color(settings.halftone.dashColor) },
         time: { value: 0 },
         waveAmount: {
-          value: settings.animation.waveEnabled ? settings.animation.waveAmount : 0,
+          value: settings.animation.waveEnabled
+            ? settings.animation.waveAmount
+            : 0,
         },
         waveSpeed: { value: settings.animation.waveSpeed },
         footprintScale: { value: 1.0 },
@@ -1073,8 +1071,7 @@ function HelpedHalftoneCanvas({
         const floatPhase = elapsedTime * settings.animation.floatSpeed;
         const driftAmount = (settings.animation.driftAmount * Math.PI) / 180;
 
-        meshOffsetY +=
-          Math.sin(floatPhase) * settings.animation.floatAmplitude;
+        meshOffsetY += Math.sin(floatPhase) * settings.animation.floatAmplitude;
         baseRotationX += Math.sin(floatPhase * 0.72) * driftAmount * 0.45;
         baseRotationZ += Math.cos(floatPhase * 0.93) * driftAmount * 0.3;
       }
@@ -1089,13 +1086,15 @@ function HelpedHalftoneCanvas({
       if (rotateEnabled) {
         interaction.rotateElapsed += delta;
         const rotateProgress = settings.animation.rotatePingPong
-          ? Math.sin(interaction.rotateElapsed * settings.animation.rotateSpeed) *
-            Math.PI
+          ? Math.sin(
+              interaction.rotateElapsed * settings.animation.rotateSpeed,
+            ) * Math.PI
           : interaction.rotateElapsed * settings.animation.rotateSpeed;
 
         if (settings.animation.rotatePreset === 'axis') {
-          const axisDirection =
-            settings.animation.rotateAxis.startsWith('-') ? -1 : 1;
+          const axisDirection = settings.animation.rotateAxis.startsWith('-')
+            ? -1
+            : 1;
           const axisProgress = rotateProgress * axisDirection;
 
           if (
@@ -1256,8 +1255,7 @@ function HelpedHalftoneCanvas({
         const orbitPitch = centeredY * cameraRange * 0.7;
         const horizontalRadius = Math.cos(orbitPitch) * baseCameraDistance;
         const targetCameraX = Math.sin(orbitYaw) * horizontalRadius;
-        const targetCameraY =
-          Math.sin(orbitPitch) * baseCameraDistance * 0.85;
+        const targetCameraY = Math.sin(orbitPitch) * baseCameraDistance * 0.85;
         const targetCameraZ = Math.cos(orbitYaw) * horizontalRadius;
 
         camera.position.x += (targetCameraX - camera.position.x) * cameraEase;
@@ -1266,8 +1264,7 @@ function HelpedHalftoneCanvas({
       } else {
         camera.position.x += (0 - camera.position.x) * 0.12;
         camera.position.y += (0 - camera.position.y) * 0.12;
-        camera.position.z +=
-          (baseCameraDistance - camera.position.z) * 0.12;
+        camera.position.z += (baseCameraDistance - camera.position.z) * 0.12;
       }
 
       lookAtTarget.set(0, meshOffsetY * 0.2, 0);

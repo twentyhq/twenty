@@ -4,6 +4,7 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { createSiteWebGlRenderer } from '@/lib/webgl';
 
 interface HourglassLightingSettings {
   intensity: number;
@@ -348,7 +349,7 @@ export function HourglassCanvas({
         1,
       );
 
-    const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
+    const renderer = createSiteWebGlRenderer({ antialias: false, alpha: true });
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.setPixelRatio(1);
     renderer.setClearColor(0x000000, 0);
@@ -594,8 +595,7 @@ export function HourglassCanvas({
       animationFrameId = window.requestAnimationFrame(renderFrame);
 
       const delta = clock.getDelta();
-      const elapsedTime =
-        (initialPose?.timeElapsed ?? 0) + clock.elapsedTime;
+      const elapsedTime = (initialPose?.timeElapsed ?? 0) + clock.elapsedTime;
       halftoneMaterial.uniforms.time.value = elapsedTime;
 
       let baseRotationX = 0;
