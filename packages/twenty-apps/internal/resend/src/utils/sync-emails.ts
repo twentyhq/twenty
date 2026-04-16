@@ -64,6 +64,7 @@ export const syncEmails = async (
       createdAt: toIsoString(detail.created_at),
       scheduledAt: toIsoStringOrNull(detail.scheduled_at),
       tags: detail.tags,
+      lastSyncedFromResend: new Date().toISOString(),
     }),
     mapUpdateData: (_detail, email): UpdateEmailDto => ({
       subject: email.subject,
@@ -74,6 +75,7 @@ export const syncEmails = async (
       replyToAddresses: toEmailsField(email.reply_to),
       lastEvent: mapLastEvent(email.last_event),
       scheduledAt: toIsoStringOrNull(email.scheduled_at),
+      lastSyncedFromResend: new Date().toISOString(),
     }),
     existingMap,
     client,

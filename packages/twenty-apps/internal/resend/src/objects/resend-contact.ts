@@ -18,6 +18,9 @@ export const CONTACT_RESEND_ID_FIELD_UNIVERSAL_IDENTIFIER =
 export const CONTACT_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER =
   '040bf210-36cf-49cb-8d83-0da9b864c900';
 
+export const CONTACT_LAST_SYNCED_FROM_RESEND_FIELD_UNIVERSAL_IDENTIFIER =
+  'd1874e6a-db94-4308-afc6-aeb4dc3a9eb2';
+
 export default defineObject({
   universalIdentifier: RESEND_CONTACT_OBJECT_UNIVERSAL_IDENTIFIER,
   nameSingular: 'resendContact',
@@ -68,6 +71,15 @@ export default defineObject({
       label: 'Created at',
       description: 'When the contact was created',
       icon: 'IconCalendar',
+    },
+    {
+      universalIdentifier:
+        CONTACT_LAST_SYNCED_FROM_RESEND_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.DATE_TIME,
+      name: 'lastSyncedFromResend',
+      label: 'Last synced from Resend',
+      description: 'Timestamp of last inbound sync (used to prevent echo loops)',
+      icon: 'IconClock',
     },
   ],
 });

@@ -6,6 +6,7 @@ import {
   APPLICATION_UNIVERSAL_IDENTIFIER,
   DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   RESEND_API_KEY_UNIVERSAL_IDENTIFIER,
+  RESEND_WEBHOOK_SECRET_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
 export default defineApplication({
@@ -17,6 +18,11 @@ export default defineApplication({
     RESEND_API_KEY: {
       universalIdentifier: RESEND_API_KEY_UNIVERSAL_IDENTIFIER,
       description: 'API key for the Resend service',
+      isSecret: true,
+    },
+    RESEND_WEBHOOK_SECRET: {
+      universalIdentifier: RESEND_WEBHOOK_SECRET_UNIVERSAL_IDENTIFIER,
+      description: 'Signing secret for verifying Resend webhook payloads',
       isSecret: true,
     },
   },

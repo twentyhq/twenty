@@ -27,6 +27,7 @@ export const syncContacts = async (
     },
     unsubscribed: contact.unsubscribed,
     createdAt: toIsoString(contact.created_at),
+    lastSyncedFromResend: new Date().toISOString(),
   });
 
   return upsertRecords({

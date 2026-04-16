@@ -21,6 +21,7 @@ export const syncSegments = async (
   const mapData = (segment: (typeof segments)[number]): SegmentDto => ({
     name: segment.name,
     createdAt: toIsoString(segment.created_at),
+    lastSyncedFromResend: new Date().toISOString(),
   });
 
   const result = await upsertRecords({

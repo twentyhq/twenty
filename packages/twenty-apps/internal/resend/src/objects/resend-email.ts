@@ -42,6 +42,9 @@ export const SCHEDULED_AT_FIELD_UNIVERSAL_IDENTIFIER =
 export const TAGS_FIELD_UNIVERSAL_IDENTIFIER =
   'd6406a2c-a8b6-416e-b351-e1e5ddb3d5fe';
 
+export const EMAIL_LAST_SYNCED_FROM_RESEND_FIELD_UNIVERSAL_IDENTIFIER =
+  '1b841d96-4318-48f5-aa0d-184d19e9af55';
+
 export default defineObject({
   universalIdentifier: RESEND_EMAIL_OBJECT_UNIVERSAL_IDENTIFIER,
   nameSingular: 'resendEmail',
@@ -207,6 +210,15 @@ export default defineObject({
       label: 'Tags',
       description: 'Custom tags attached to the email',
       icon: 'IconTag',
+    },
+    {
+      universalIdentifier:
+        EMAIL_LAST_SYNCED_FROM_RESEND_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.DATE_TIME,
+      name: 'lastSyncedFromResend',
+      label: 'Last synced from Resend',
+      description: 'Timestamp of last inbound sync (used to prevent echo loops)',
+      icon: 'IconClock',
     },
   ],
 });

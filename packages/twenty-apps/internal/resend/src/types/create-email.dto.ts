@@ -13,4 +13,5 @@ export type CreateEmailDto = {
   createdAt: string;
   scheduledAt: string | null;
   tags: Array<{ name: string; value: string }> | undefined;
+  lastSyncedFromResend: string;
 };

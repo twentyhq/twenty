@@ -9,4 +9,5 @@ export type UpdateEmailDto = {
   replyToAddresses: EmailsField;
   lastEvent: string;
   scheduledAt: string | null;
+  lastSyncedFromResend: string;
 };

@@ -5,4 +5,5 @@ export type ContactDto = {
   name: { firstName: string; lastName: string };
   unsubscribed: boolean;
   createdAt: string;
+  lastSyncedFromResend: string;
 };
