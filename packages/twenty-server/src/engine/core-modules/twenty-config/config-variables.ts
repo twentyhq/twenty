@@ -235,8 +235,7 @@ export class ConfigVariables {
    */
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
-      'Deprecated - record page layouts are now always seeded (GA)',
+    description: 'Deprecated - record page layouts are now always seeded (GA)',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
