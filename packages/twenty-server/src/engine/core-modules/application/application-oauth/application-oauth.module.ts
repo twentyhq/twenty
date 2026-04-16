@@ -19,7 +19,6 @@ import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
-import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
 
 @Module({
   imports: [
@@ -33,13 +32,11 @@ import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-
     ApplicationCoreModule,
     ApplicationInstallModule,
     TokenModule,
-    DomainServerConfigModule,
     FeatureFlagModule,
     PermissionsModule,
     ThrottlerModule,
     TwentyConfigModule,
     WorkspaceCacheStorageModule,
-    DomainServerConfigModule,
   ],
   controllers: [
     OAuthTokenController,
