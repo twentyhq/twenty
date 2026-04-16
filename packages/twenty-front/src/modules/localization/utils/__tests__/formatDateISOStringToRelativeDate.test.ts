@@ -5,7 +5,15 @@ import { formatDateISOStringToRelativeDate } from '@/modules/localization/utils/
 // Pin the process to a timezone west of UTC for the entire test file.
 // This is the exact scenario from issue #19634 — without this, regression
 // tests pass in a GMT CI environment even with the bug present.
+const previousTZ = process.env.TZ;
 process.env.TZ = 'America/Los_Angeles'; // UTC-7 (PDT) / UTC-8 (PST)
+afterAll(() => {
+  if (previousTZ === undefined) {
+    delete process.env.TZ;
+  } else {
+    process.env.TZ = previousTZ;
+  }
+});
 
 // ---------------------------------------------------------------------------
 // Helper: build a "YYYY-MM-DD" string offset by N days from today in LOCAL time.
