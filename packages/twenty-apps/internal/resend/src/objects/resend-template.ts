@@ -92,7 +92,7 @@ export default defineObject({
     },
     {
       universalIdentifier: TEMPLATE_FROM_ADDRESS_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT,
+      type: FieldType.EMAILS,
       name: 'fromAddress',
       label: 'From',
       description: 'Sender email address',
@@ -108,7 +108,7 @@ export default defineObject({
     },
     {
       universalIdentifier: TEMPLATE_REPLY_TO_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT,
+      type: FieldType.EMAILS,
       name: 'replyTo',
       label: 'Reply to',
       description: 'Reply-to email address',

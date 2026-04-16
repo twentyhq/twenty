@@ -1,6 +1,7 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk';
 
+import { SYNC_RESEND_DATA_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { getResendClient } from 'src/utils/get-resend-client';
 import type { SyncResult } from 'src/types/sync-result';
 import { syncBroadcasts } from 'src/utils/sync-broadcasts';
@@ -19,85 +20,84 @@ const logStepResult = (name: string, result: SyncResult): void => {
   }
 };
 
+const runStep = async (
+  name: string,
+  fn: () => Promise<SyncResult>,
+  allErrors: string[],
+): Promise<boolean> => {
+  try {
+    const result = await fn();
+
+    logStepResult(name, result);
+    allErrors.push(...result.errors);
+
+    return true;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+
+    allErrors.push(`${name}: ${message}`);
+    console.error(`[sync] ${name} failed: ${message}`);
+
+    return false;
+  }
+};
+
 const handler = async () => {
   const resend = getResendClient();
   const client = new CoreApiClient();
 
   const allErrors: string[] = [];
 
-  const [segmentsOutput, contactsResult, templatesResult] =
-    await Promise.allSettled([
-      syncSegments(resend, client),
-      syncContacts(resend, client),
-      syncTemplates(resend, client),
-    ]);
-
   let segmentMap = new Map<string, string>();
+  let templateHtmlMap = new Map<string, string>();
 
-  if (segmentsOutput.status === 'fulfilled') {
-    logStepResult('segments', segmentsOutput.value.result);
-    allErrors.push(...segmentsOutput.value.result.errors);
-    segmentMap = segmentsOutput.value.existingMap;
-  } else {
-    const message =
-      segmentsOutput.reason instanceof Error
-        ? segmentsOutput.reason.message
-        : String(segmentsOutput.reason);
+  const segmentsOk = await runStep(
+    'segments',
+    async () => {
+      const output = await syncSegments(resend, client);
 
-    allErrors.push(`segments: ${message}`);
-    console.error(`[sync] segments failed: ${message}`);
-  }
+      segmentMap = output.existingMap;
 
-  if (contactsResult.status === 'fulfilled') {
-    logStepResult('contacts', contactsResult.value);
-    allErrors.push(...contactsResult.value.errors);
-  } else {
-    const message =
-      contactsResult.reason instanceof Error
-        ? contactsResult.reason.message
-        : String(contactsResult.reason);
-
-    allErrors.push(`contacts: ${message}`);
-    console.error(`[sync] contacts failed: ${message}`);
-  }
-
-  if (templatesResult.status === 'fulfilled') {
-    logStepResult('templates', templatesResult.value);
-    allErrors.push(...templatesResult.value.errors);
-  } else {
-    const message =
-      templatesResult.reason instanceof Error
-        ? templatesResult.reason.message
-        : String(templatesResult.reason);
-
-    allErrors.push(`templates: ${message}`);
-    console.error(`[sync] templates failed: ${message}`);
-  }
-
-  const dependentSteps: Array<{
-    name: string;
-    fn: () => Promise<SyncResult>;
-  }> = [
-    {
-      name: 'broadcasts',
-      fn: () => syncBroadcasts(resend, client, segmentMap),
+      return output.result;
     },
-    { name: 'emails', fn: () => syncEmails(resend, client) },
-  ];
+    allErrors,
+  );
 
-  for (const step of dependentSteps) {
-    try {
-      const result = await step.fn();
+  await runStep('contacts', () => syncContacts(resend, client), allErrors);
 
-      logStepResult(step.name, result);
-      allErrors.push(...result.errors);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+  const templatesOk = await runStep(
+    'templates',
+    async () => {
+      const output = await syncTemplates(resend, client);
 
-      allErrors.push(`${step.name}: ${message}`);
-      console.error(`[sync] ${step.name} failed: ${message}`);
-    }
+      templateHtmlMap = output.templateHtmlMap;
+
+      return output.result;
+    },
+    allErrors,
+  );
+
+  if (segmentsOk && templatesOk) {
+    await runStep(
+      'broadcasts',
+      () => syncBroadcasts(resend, client, segmentMap, templateHtmlMap),
+      allErrors,
+    );
+  } else {
+    const skippedDeps = [
+      !segmentsOk && 'segments',
+      !templatesOk && 'templates',
+    ].filter(Boolean);
+
+    allErrors.push(
+      `broadcasts: skipped because ${skippedDeps.join(' and ')} failed`,
+    );
+    console.warn(
+      `[sync] broadcasts skipped: prerequisite steps (${skippedDeps.join(', ')}) failed`,
+    );
   }
+
+  await runStep('emails', () => syncEmails(resend, client), allErrors);
 
   if (allErrors.length > 0) {
     throw new Error(
@@ -107,7 +107,7 @@ const handler = async () => {
 };
 
 export default defineLogicFunction({
-  universalIdentifier: '7a3c841f-509e-46f0-b2f1-fb942b716ee3',
+  universalIdentifier: SYNC_RESEND_DATA_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'sync-resend-data',
   description:
     'Syncs emails, contacts, templates, broadcasts, and segments from Resend every 5 minutes',

@@ -7,18 +7,22 @@ import type { SyncResult } from 'src/types/sync-result';
 import type { CreateTemplateDto } from 'src/types/create-template.dto';
 import type { UpdateTemplateDto } from 'src/types/update-template.dto';
 import { getExistingRecordsMap } from 'src/utils/get-existing-records-map';
+import { toEmailsField } from 'src/utils/to-emails-field';
+import { toIsoString, toIsoStringOrNull } from 'src/utils/to-iso-string';
 import { upsertRecords } from 'src/utils/upsert-records';
 
 export const syncTemplates = async (
   resend: Resend,
   client: CoreApiClient,
-): Promise<SyncResult> => {
+): Promise<{ result: SyncResult; templateHtmlMap: Map<string, string> }> => {
   const templates = await fetchAllPaginated((params) =>
     resend.templates.list(params),
   );
   const existingMap = await getExistingRecordsMap(client, 'resendTemplates');
 
-  return upsertRecords({
+  const htmlToResendIdMap = new Map<string, string>();
+
+  const result = await upsertRecords({
     items: templates,
     getId: (template) => template.id,
     fetchDetail: async (id) => {
@@ -30,30 +34,51 @@ export const syncTemplates = async (
         );
       }
 
+      if (isDefined(detail.html)) {
+        htmlToResendIdMap.set(detail.html, id);
+      }
+
       return detail;
     },
     mapCreateData: (detail): CreateTemplateDto => ({
       name: detail.name,
       alias: detail.alias ?? '',
-      status: detail.status.toUpperCase(),
-      fromAddress: detail.from ?? '',
+      status: (detail.status ?? 'UNKNOWN').toUpperCase(),
+      fromAddress: toEmailsField(detail.from),
       subject: detail.subject ?? '',
-      replyTo: detail.reply_to ?? '',
+      replyTo: toEmailsField(detail.reply_to),
       htmlBody: detail.html ?? '',
       textBody: detail.text ?? '',
-      createdAt: detail.created_at,
-      resendUpdatedAt: detail.updated_at,
-      publishedAt: detail.published_at,
+      createdAt: toIsoString(detail.created_at),
+      resendUpdatedAt: toIsoString(detail.updated_at),
+      publishedAt: toIsoStringOrNull(detail.published_at),
     }),
-    mapUpdateData: (template): UpdateTemplateDto => ({
+    mapUpdateData: (detail, template): UpdateTemplateDto => ({
       name: template.name,
       alias: template.alias ?? '',
-      status: template.status.toUpperCase(),
-      resendUpdatedAt: template.updated_at,
-      publishedAt: template.published_at,
+      status: (template.status ?? 'UNKNOWN').toUpperCase(),
+      fromAddress: toEmailsField(detail.from),
+      subject: detail.subject ?? '',
+      replyTo: toEmailsField(detail.reply_to),
+      htmlBody: detail.html ?? '',
+      textBody: detail.text ?? '',
+      resendUpdatedAt: toIsoString(template.updated_at),
+      publishedAt: toIsoStringOrNull(template.published_at),
     }),
     existingMap,
     client,
     objectNameSingular: 'resendTemplate',
   });
+
+  const templateHtmlMap = new Map<string, string>();
+
+  for (const [html, resendId] of htmlToResendIdMap) {
+    const twentyId = existingMap.get(resendId);
+
+    if (isDefined(twentyId)) {
+      templateHtmlMap.set(html, twentyId);
+    }
+  }
+
+  return { result, templateHtmlMap };
 };

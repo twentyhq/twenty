@@ -5,6 +5,8 @@ import type { ContactDto } from 'src/types/contact.dto';
 import type { SyncResult } from 'src/types/sync-result';
 import { fetchAllPaginated } from 'src/utils/fetch-all-paginated';
 import { getExistingRecordsMap } from 'src/utils/get-existing-records-map';
+import { toEmailsField } from 'src/utils/to-emails-field';
+import { toIsoString } from 'src/utils/to-iso-string';
 import { upsertRecords } from 'src/utils/upsert-records';
 
 export const syncContacts = async (
@@ -18,18 +20,20 @@ export const syncContacts = async (
   const existingMap = await getExistingRecordsMap(client, 'resendContacts');
 
   const mapData = (contact: (typeof contacts)[number]): ContactDto => ({
-    email: contact.email,
-    firstName: contact.first_name ?? '',
-    lastName: contact.last_name ?? '',
+    email: toEmailsField(contact.email),
+    name: {
+      firstName: contact.first_name ?? '',
+      lastName: contact.last_name ?? '',
+    },
     unsubscribed: contact.unsubscribed,
-    createdAt: contact.created_at,
+    createdAt: toIsoString(contact.created_at),
   });
 
   return upsertRecords({
     items: contacts,
     getId: (contact) => contact.id,
     mapCreateData: (_detail, item) => mapData(item),
-    mapUpdateData: mapData,
+    mapUpdateData: (_detail, item) => mapData(item),
     existingMap,
     client,
     objectNameSingular: 'resendContact',

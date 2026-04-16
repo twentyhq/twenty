@@ -7,6 +7,8 @@ import type { UpdateEmailDto } from 'src/types/update-email.dto';
 import type { SyncResult } from 'src/types/sync-result';
 import { fetchAllPaginated } from 'src/utils/fetch-all-paginated';
 import { getExistingRecordsMap } from 'src/utils/get-existing-records-map';
+import { toEmailsField } from 'src/utils/to-emails-field';
+import { toIsoString, toIsoStringOrNull } from 'src/utils/to-iso-string';
 import { upsertRecords } from 'src/utils/upsert-records';
 
 const VALID_LAST_EVENTS = new Set([
@@ -51,27 +53,27 @@ export const syncEmails = async (
     },
     mapCreateData: (detail): CreateEmailDto => ({
       subject: detail.subject,
-      fromAddress: detail.from,
-      toAddresses: detail.to,
+      fromAddress: toEmailsField(detail.from),
+      toAddresses: toEmailsField(detail.to),
       htmlBody: detail.html ?? '',
       textBody: detail.text ?? '',
-      ccAddresses: detail.cc ?? [],
-      bccAddresses: detail.bcc ?? [],
-      replyToAddresses: detail.reply_to ?? [],
+      ccAddresses: toEmailsField(detail.cc),
+      bccAddresses: toEmailsField(detail.bcc),
+      replyToAddresses: toEmailsField(detail.reply_to),
       lastEvent: mapLastEvent(detail.last_event),
-      createdAt: detail.created_at,
-      scheduledAt: detail.scheduled_at,
+      createdAt: toIsoString(detail.created_at),
+      scheduledAt: toIsoStringOrNull(detail.scheduled_at),
       tags: detail.tags,
     }),
-    mapUpdateData: (email): UpdateEmailDto => ({
+    mapUpdateData: (_detail, email): UpdateEmailDto => ({
       subject: email.subject,
-      fromAddress: email.from,
-      toAddresses: email.to,
-      ccAddresses: email.cc ?? [],
-      bccAddresses: email.bcc ?? [],
-      replyToAddresses: email.reply_to ?? [],
+      fromAddress: toEmailsField(email.from),
+      toAddresses: toEmailsField(email.to),
+      ccAddresses: toEmailsField(email.cc),
+      bccAddresses: toEmailsField(email.bcc),
+      replyToAddresses: toEmailsField(email.reply_to),
       lastEvent: mapLastEvent(email.last_event),
-      scheduledAt: email.scheduled_at,
+      scheduledAt: toIsoStringOrNull(email.scheduled_at),
     }),
     existingMap,
     client,

@@ -1,6 +1,7 @@
 import type { UpsertRecordsOptions } from 'src/types/upsert-records-options';
 import type { SyncResult } from 'src/types/sync-result';
 import { upsertRecord } from 'src/utils/upsert-record';
+import { withRateLimitRetry } from 'src/utils/with-rate-limit-retry';
 
 export const upsertRecords = async <TListItem, TDetail = TListItem>(
   options: UpsertRecordsOptions<TListItem, TDetail>,
@@ -29,27 +30,20 @@ export const upsertRecords = async <TListItem, TDetail = TListItem>(
     try {
       const isNew = !existingMap.has(resendId);
 
+      const detail = fetchDetail
+        ? await withRateLimitRetry(() => fetchDetail(resendId))
+        : (item as unknown as TDetail);
+
       if (isNew) {
-        const detail = fetchDetail
-          ? await fetchDetail(resendId)
-          : (item as unknown as TDetail);
         const data = mapCreateData(detail, item);
-        await upsertRecord(
-          client,
-          objectNameSingular,
-          existingMap,
-          resendId,
-          data,
+        await withRateLimitRetry(() =>
+          upsertRecord(client, objectNameSingular, existingMap, resendId, data),
         );
         result.created++;
       } else {
-        const data = mapUpdateData(item);
-        await upsertRecord(
-          client,
-          objectNameSingular,
-          existingMap,
-          resendId,
-          data,
+        const data = mapUpdateData(detail, item);
+        await withRateLimitRetry(() =>
+          upsertRecord(client, objectNameSingular, existingMap, resendId, data),
         );
         result.updated++;
       }

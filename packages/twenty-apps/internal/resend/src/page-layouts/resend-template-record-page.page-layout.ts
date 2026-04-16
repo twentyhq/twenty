@@ -1,4 +1,4 @@
-import { TEMPLATE_HTML_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/template-html-viewer-front-component-universal-identifier';
+import { TEMPLATE_HTML_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { RESEND_TEMPLATE_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/resend-template';
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk';
 
@@ -9,9 +9,26 @@ export default definePageLayout({
   objectUniversalIdentifier: RESEND_TEMPLATE_OBJECT_UNIVERSAL_IDENTIFIER,
   tabs: [
     {
+      universalIdentifier: 'f8106373-a1a2-4bb8-86b5-0faf8ed52953',
+      title: 'Home',
+      position: 50,
+      icon: 'IconHome',
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      widgets: [
+        {
+          universalIdentifier: 'fa3ad75b-b700-4450-8961-c4395a10ba9f',
+          title: 'Fields',
+          type: 'FIELDS',
+          configuration: {
+            configurationType: 'FIELDS',
+          },
+        },
+      ],
+    },
+    {
       universalIdentifier: '56206825-2f86-40be-b311-f5ebc91e016b',
       title: 'Preview',
-      position: 50,
+      position: 75,
       icon: 'IconEye',
       layoutMode: PageLayoutTabLayoutMode.CANVAS,
       widgets: [

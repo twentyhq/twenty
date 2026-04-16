@@ -1,12 +1,14 @@
+import type { EmailsField } from 'src/utils/to-emails-field';
+
 export type CreateEmailDto = {
   subject: string;
-  fromAddress: string;
-  toAddresses: string[];
+  fromAddress: EmailsField;
+  toAddresses: EmailsField;
   htmlBody: string;
   textBody: string;
-  ccAddresses: string[];
-  bccAddresses: string[];
-  replyToAddresses: string[];
+  ccAddresses: EmailsField;
+  bccAddresses: EmailsField;
+  replyToAddresses: EmailsField;
   lastEvent: string;
   createdAt: string;
   scheduledAt: string | null;

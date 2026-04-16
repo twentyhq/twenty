@@ -63,7 +63,7 @@ export default defineObject({
     },
     {
       universalIdentifier: FROM_ADDRESS_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT,
+      type: FieldType.EMAILS,
       name: 'fromAddress',
       label: 'From',
       description: 'Sender email address',
@@ -71,7 +71,7 @@ export default defineObject({
     },
     {
       universalIdentifier: TO_ADDRESSES_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.ARRAY,
+      type: FieldType.EMAILS,
       name: 'toAddresses',
       label: 'To',
       description: 'Recipient email addresses',
@@ -95,7 +95,7 @@ export default defineObject({
     },
     {
       universalIdentifier: CC_ADDRESSES_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.ARRAY,
+      type: FieldType.EMAILS,
       name: 'ccAddresses',
       label: 'CC',
       description: 'Carbon copy email addresses',
@@ -103,7 +103,7 @@ export default defineObject({
     },
     {
       universalIdentifier: BCC_ADDRESSES_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.ARRAY,
+      type: FieldType.EMAILS,
       name: 'bccAddresses',
       label: 'BCC',
       description: 'Blind carbon copy email addresses',
@@ -111,7 +111,7 @@ export default defineObject({
     },
     {
       universalIdentifier: REPLY_TO_ADDRESSES_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.ARRAY,
+      type: FieldType.EMAILS,
       name: 'replyToAddresses',
       label: 'Reply to',
       description: 'Reply-to email addresses',

@@ -1,10 +1,12 @@
+import type { EmailsField } from 'src/utils/to-emails-field';
+
 export type CreateTemplateDto = {
   name: string;
   alias: string;
   status: string;
-  fromAddress: string | string[];
+  fromAddress: EmailsField;
   subject: string;
-  replyTo: string | string[];
+  replyTo: EmailsField;
   htmlBody: string;
   textBody: string;
   createdAt: string;

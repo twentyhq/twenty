@@ -7,12 +7,15 @@ import type { UpdateBroadcastDto } from 'src/types/update-broadcast.dto';
 import type { SyncResult } from 'src/types/sync-result';
 import { fetchAllPaginated } from 'src/utils/fetch-all-paginated';
 import { getExistingRecordsMap } from 'src/utils/get-existing-records-map';
+import { toEmailsField } from 'src/utils/to-emails-field';
+import { toIsoString, toIsoStringOrNull } from 'src/utils/to-iso-string';
 import { upsertRecords } from 'src/utils/upsert-records';
 
 export const syncBroadcasts = async (
   resend: Resend,
   client: CoreApiClient,
   segmentMap: Map<string, string>,
+  templateHtmlMap: Map<string, string>,
 ): Promise<SyncResult> => {
   const broadcasts = await fetchAllPaginated((params) =>
     resend.broadcasts.list(params),
@@ -39,37 +42,53 @@ export const syncBroadcasts = async (
         ? segmentMap.get(broadcast.segment_id)
         : undefined;
 
+      const templateId = isDefined(detail.html)
+        ? templateHtmlMap.get(detail.html)
+        : undefined;
+
       const data: CreateBroadcastDto = {
         name: detail.name,
         subject: detail.subject,
-        fromAddress: detail.from,
-        replyTo: detail.reply_to ?? '',
+        fromAddress: toEmailsField(detail.from),
+        replyTo: toEmailsField(detail.reply_to),
         previewText: detail.preview_text ?? '',
-        status: detail.status.toUpperCase(),
-        createdAt: detail.created_at,
-        scheduledAt: detail.scheduled_at,
-        sentAt: detail.sent_at,
+        status: (detail.status ?? 'UNKNOWN').toUpperCase(),
+        createdAt: toIsoString(detail.created_at),
+        scheduledAt: toIsoStringOrNull(detail.scheduled_at),
+        sentAt: toIsoStringOrNull(detail.sent_at),
       };
 
       if (isDefined(segmentId)) {
         data.segmentId = segmentId;
       }
 
+      if (isDefined(templateId)) {
+        data.templateId = templateId;
+      }
+
       return data;
     },
-    mapUpdateData: (broadcast): UpdateBroadcastDto => {
+    mapUpdateData: (detail, broadcast): UpdateBroadcastDto => {
       const segmentId = isDefined(broadcast.segment_id)
         ? segmentMap.get(broadcast.segment_id)
         : undefined;
 
+      const templateId = isDefined(detail.html)
+        ? templateHtmlMap.get(detail.html)
+        : undefined;
+
       const data: UpdateBroadcastDto = {
-        status: broadcast.status.toUpperCase(),
-        scheduledAt: broadcast.scheduled_at,
-        sentAt: broadcast.sent_at,
+        status: (broadcast.status ?? 'UNKNOWN').toUpperCase(),
+        scheduledAt: toIsoStringOrNull(broadcast.scheduled_at),
+        sentAt: toIsoStringOrNull(broadcast.sent_at),
       };
 
       if (isDefined(segmentId)) {
         data.segmentId = segmentId;
+      }
+
+      if (isDefined(templateId)) {
+        data.templateId = templateId;
       }
 
       return data;

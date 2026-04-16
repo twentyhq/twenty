@@ -5,6 +5,7 @@ import { fetchAllPaginated } from 'src/utils/fetch-all-paginated';
 import type { SegmentDto } from 'src/types/segment.dto';
 import type { SyncResult } from 'src/types/sync-result';
 import { getExistingRecordsMap } from 'src/utils/get-existing-records-map';
+import { toIsoString } from 'src/utils/to-iso-string';
 import { upsertRecords } from 'src/utils/upsert-records';
 
 export const syncSegments = async (
@@ -19,14 +20,14 @@ export const syncSegments = async (
 
   const mapData = (segment: (typeof segments)[number]): SegmentDto => ({
     name: segment.name,
-    createdAt: segment.created_at,
+    createdAt: toIsoString(segment.created_at),
   });
 
   const result = await upsertRecords({
     items: segments,
     getId: (segment) => segment.id,
     mapCreateData: (_detail, item) => mapData(item),
-    mapUpdateData: mapData,
+    mapUpdateData: (_detail, item) => mapData(item),
     existingMap,
     client,
     objectNameSingular: 'resendSegment',

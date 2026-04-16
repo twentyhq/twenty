@@ -1,4 +1,4 @@
-import { EMAIL_HTML_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/email-html-viewer-front-component-universal-identifier';
+import { EMAIL_HTML_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { RESEND_EMAIL_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/resend-email';
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk';
 
@@ -9,9 +9,26 @@ export default definePageLayout({
   objectUniversalIdentifier: RESEND_EMAIL_OBJECT_UNIVERSAL_IDENTIFIER,
   tabs: [
     {
+      universalIdentifier: '7273a427-5920-42c9-8f50-82bebf01f2bd',
+      title: 'Home',
+      position: 50,
+      icon: 'IconHome',
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      widgets: [
+        {
+          universalIdentifier: '4eebad57-eb42-4b69-85a6-2e7c1d365b94',
+          title: 'Fields',
+          type: 'FIELDS',
+          configuration: {
+            configurationType: 'FIELDS',
+          },
+        },
+      ],
+    },
+    {
       universalIdentifier: '50299e13-3652-4059-ae1e-db512869d20b',
       title: 'Preview',
-      position: 50,
+      position: 75,
       icon: 'IconEye',
       layoutMode: PageLayoutTabLayoutMode.CANVAS,
       widgets: [

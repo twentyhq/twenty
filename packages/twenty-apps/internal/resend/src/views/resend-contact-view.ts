@@ -4,8 +4,7 @@ import { SEGMENT_ON_RESEND_CONTACT_ID } from 'src/fields/segment-on-resend-conta
 import {
   CONTACT_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER,
   CONTACT_EMAIL_FIELD_UNIVERSAL_IDENTIFIER,
-  FIRST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
-  LAST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+  NAME_FIELD_UNIVERSAL_IDENTIFIER,
   RESEND_CONTACT_OBJECT_UNIVERSAL_IDENTIFIER,
   UNSUBSCRIBED_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/objects/resend-contact';
@@ -22,28 +21,19 @@ export default defineView({
   position: 0,
   fields: [
     {
-      universalIdentifier: '3af5988f-de6b-46de-996b-439bd5acd51c',
-      fieldMetadataUniversalIdentifier:
-        CONTACT_EMAIL_FIELD_UNIVERSAL_IDENTIFIER,
+      universalIdentifier: 'f589ef0c-0f8b-4895-8d84-bd3b743f925f',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
       isVisible: true,
       size: 12,
       position: 0,
     },
     {
-      universalIdentifier: 'f589ef0c-0f8b-4895-8d84-bd3b743f925f',
+      universalIdentifier: '3af5988f-de6b-46de-996b-439bd5acd51c',
       fieldMetadataUniversalIdentifier:
-        FIRST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+        CONTACT_EMAIL_FIELD_UNIVERSAL_IDENTIFIER,
       isVisible: true,
       size: 12,
       position: 1,
-    },
-    {
-      universalIdentifier: '12c1e0cd-b216-4c10-9c83-5c1aef7314d2',
-      fieldMetadataUniversalIdentifier:
-        LAST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
-      isVisible: true,
-      size: 12,
-      position: 2,
     },
     {
       universalIdentifier: 'efa38cf1-afcf-461a-9780-6d916e02256b',
@@ -51,7 +41,7 @@ export default defineView({
         UNSUBSCRIBED_FIELD_UNIVERSAL_IDENTIFIER,
       isVisible: true,
       size: 12,
-      position: 3,
+      position: 2,
     },
     {
       universalIdentifier: 'a48545bb-8cf1-4836-82fa-d0c7bc314a1b',
@@ -59,28 +49,28 @@ export default defineView({
         CONTACT_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER,
       isVisible: true,
       size: 12,
-      position: 4,
+      position: 3,
     },
     {
       universalIdentifier: '9fc1ab4b-fc2d-4c33-9de5-3cff7b0ea5ec',
       fieldMetadataUniversalIdentifier: PERSON_ON_RESEND_CONTACT_ID,
       isVisible: true,
       size: 12,
-      position: 5,
+      position: 4,
     },
     {
       universalIdentifier: '54949f7e-0454-45a5-9e30-8f16f75adeaa',
       fieldMetadataUniversalIdentifier: SEGMENT_ON_RESEND_CONTACT_ID,
       isVisible: true,
       size: 12,
-      position: 6,
+      position: 5,
     },
     {
       universalIdentifier: 'fbbe207d-dbda-4bda-935c-a6fa9ae30645',
       fieldMetadataUniversalIdentifier: RESEND_EMAILS_ON_CONTACT_ID,
       isVisible: true,
       size: 12,
-      position: 7,
+      position: 6,
     },
   ],
 });

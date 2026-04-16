@@ -6,11 +6,8 @@ export const RESEND_CONTACT_OBJECT_UNIVERSAL_IDENTIFIER =
 export const CONTACT_EMAIL_FIELD_UNIVERSAL_IDENTIFIER =
   '62ce21e5-a015-4f26-8c7a-3c141b6d7064';
 
-export const FIRST_NAME_FIELD_UNIVERSAL_IDENTIFIER =
-  'e4d1e481-0abe-40ab-82b0-edf7eb2559ca';
-
-export const LAST_NAME_FIELD_UNIVERSAL_IDENTIFIER =
-  '48eff566-d053-45f0-8284-a6261678cda5';
+export const NAME_FIELD_UNIVERSAL_IDENTIFIER =
+  'e0fb9280-4588-4c2b-8996-bbd4c1d33f54';
 
 export const UNSUBSCRIBED_FIELD_UNIVERSAL_IDENTIFIER =
   '41403b6f-b91e-4eb6-8875-8b5c21b0a6d3';
@@ -30,30 +27,22 @@ export default defineObject({
   description: 'A contact from Resend',
   icon: 'IconAddressBook',
   labelIdentifierFieldMetadataUniversalIdentifier:
-    CONTACT_EMAIL_FIELD_UNIVERSAL_IDENTIFIER,
+    NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
     {
       universalIdentifier: CONTACT_EMAIL_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT,
+      type: FieldType.EMAILS,
       name: 'email',
       label: 'Email',
       description: 'Contact email address',
       icon: 'IconMail',
     },
     {
-      universalIdentifier: FIRST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT,
-      name: 'firstName',
-      label: 'First name',
-      description: 'First name of the contact',
-      icon: 'IconUser',
-    },
-    {
-      universalIdentifier: LAST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT,
-      name: 'lastName',
-      label: 'Last name',
-      description: 'Last name of the contact',
+      universalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.FULL_NAME,
+      name: 'name',
+      label: 'Name',
+      description: 'Name of the contact',
       icon: 'IconUser',
     },
     {

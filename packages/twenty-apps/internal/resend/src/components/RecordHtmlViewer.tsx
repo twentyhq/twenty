@@ -1,12 +1,18 @@
-import { defineFrontComponent } from 'twenty-sdk';
 import { isDefined } from 'twenty-shared/utils';
 
 import { HtmlPreview } from 'src/components/HtmlPreview';
-import { EMAIL_HTML_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/email-html-viewer-front-component-universal-identifier';
 import { useRecordHtml } from 'src/hooks/useRecordHtml';
 
-const EmailHtmlViewer = () => {
-  const { html, loading, error } = useRecordHtml('resendEmail');
+type RecordHtmlViewerProps = {
+  objectName: string;
+  loadingText: string;
+};
+
+export const RecordHtmlViewer = ({
+  objectName,
+  loadingText,
+}: RecordHtmlViewerProps) => {
+  const { html, loading, error } = useRecordHtml(objectName);
 
   if (loading) {
     return (
@@ -21,7 +27,7 @@ const EmailHtmlViewer = () => {
           fontSize: '14px',
         }}
       >
-        Loading email...
+        {loadingText}
       </div>
     );
   }
@@ -47,10 +53,3 @@ const EmailHtmlViewer = () => {
     </div>
   );
 };
-
-export default defineFrontComponent({
-  universalIdentifier: EMAIL_HTML_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
-  name: 'Email HTML Viewer',
-  description: 'Renders the HTML body of a Resend email',
-  component: EmailHtmlViewer,
-});
