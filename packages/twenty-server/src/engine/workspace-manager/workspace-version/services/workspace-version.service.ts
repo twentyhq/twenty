@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, MoreThanOrEqual, Repository } from 'typeorm';
+import { In, MoreThanOrEqual, QueryRunner, Repository } from 'typeorm';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -27,11 +27,17 @@ export class WorkspaceVersionService {
   async getActiveOrSuspendedWorkspaceIds({
     startFromWorkspaceId,
     workspaceCountLimit,
+    queryRunner,
   }: {
     startFromWorkspaceId?: string;
     workspaceCountLimit?: number;
+    queryRunner?: QueryRunner;
   } = {}): Promise<string[]> {
-    const workspaces = await this.workspaceRepository.find({
+    const repository = queryRunner
+      ? queryRunner.manager.getRepository(WorkspaceEntity)
+      : this.workspaceRepository;
+
+    const workspaces = await repository.find({
       select: ['id'],
       where: {
         activationStatus: In([

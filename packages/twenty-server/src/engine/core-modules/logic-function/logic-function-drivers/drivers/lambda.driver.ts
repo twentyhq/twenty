@@ -25,6 +25,7 @@ import {
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -64,7 +65,7 @@ const YARN_INSTALL_LAMBDA_MEMORY_MB = 1024;
 const COMMON_LAYER_NAME_PREFIX = 'twenty-common-layer';
 const BUILDER_LAMBDA_TIMEOUT_SECONDS = 60;
 const BUILDER_LAMBDA_MEMORY_MB = 512;
-const LAMBDA_EPHEMERAL_STORAGE_MB = 2048;
+const LAMBDA_EPHEMERAL_STORAGE_MB = 4096;
 const YARN_INSTALL_HANDLER_PATH = resolve(
   __dirname,
   join(
@@ -122,6 +123,7 @@ export interface LambdaDriverOptions extends LambdaClientConfig {
 }
 
 export class LambdaDriver implements LogicFunctionDriver {
+  private readonly logger = new Logger(LambdaDriver.name);
   private lambdaClient: Lambda | undefined;
   private assumeRoleCredentials:
     | { accessKeyId: string; secretAccessKey: string; sessionToken: string }
@@ -1002,15 +1004,41 @@ export class LambdaDriver implements LogicFunctionDriver {
     applicationUniversalIdentifier: string;
     lambdaExecutor: GetFunctionCommandOutput | undefined;
   }) {
-    const depsLayerArn = await this.getLayerArn({
-      flatApplication,
-      applicationUniversalIdentifier,
-    });
+    let depsLayerArn: string;
 
-    const sdkLayerArn = await this.ensureSdkLayer({
-      flatApplication,
-      applicationUniversalIdentifier,
-    });
+    try {
+      depsLayerArn = await this.getLayerArn({
+        flatApplication,
+        applicationUniversalIdentifier,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to get dependency layer for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      throw new LogicFunctionException(
+        `Failed to get dependency layer for function '${flatLogicFunction.id}': ${error instanceof Error ? error.message : 'Unknown error'}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED,
+      );
+    }
+
+    let sdkLayerArn: string;
+
+    try {
+      sdkLayerArn = await this.ensureSdkLayer({
+        flatApplication,
+        applicationUniversalIdentifier,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to get SDK layer for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      throw new LogicFunctionException(
+        `Failed to get SDK layer for function '${flatLogicFunction.id}': ${error instanceof Error ? error.message : 'Unknown error'}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED,
+      );
+    }
 
     if (!isDefined(lambdaExecutor)) {
       await this.createLambdaExecutor({
@@ -1158,13 +1186,26 @@ export class LambdaDriver implements LogicFunctionDriver {
         status: LogicFunctionExecutionStatus.SUCCESS,
       };
     } catch (error) {
+      this.logger.error(
+        `Lambda invocation failed for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+
       if (error instanceof ResourceNotFoundException) {
         throw new LogicFunctionException(
           `Function '${flatLogicFunction.id}' does not exist`,
           LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
         );
       }
-      throw error;
+
+      if (error instanceof LogicFunctionException) {
+        throw error;
+      }
+
+      throw new LogicFunctionException(
+        `Lambda invocation failed for function '${flatLogicFunction.id}': ${error instanceof Error ? error.message : 'Unknown error'}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_FAILED,
+      );
     }
   }
 }

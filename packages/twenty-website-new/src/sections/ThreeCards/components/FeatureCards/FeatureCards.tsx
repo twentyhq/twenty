@@ -2,6 +2,7 @@
 
 import { ThreeCardsScrollLayoutEffect } from '@/sections/ThreeCards/effect-components/ThreeCardsScrollLayoutEffect';
 import { ThreeCardsFeatureCardType } from '@/sections/ThreeCards/types';
+import { type ThreeCardsScrollLayoutOptions } from '@/sections/ThreeCards/utils/three-cards-scroll-layout';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { useRef } from 'react';
@@ -23,6 +24,14 @@ const CardSlot = styled.div`
   will-change: transform, opacity;
 `;
 
+const FEATURE_CARDS_SCROLL_LAYOUT_OPTIONS: ThreeCardsScrollLayoutOptions = {
+  stagger: 0.12,
+  endEdgeRatio: 0.3,
+  initialTranslateY: 120,
+  initialScale: 0.94,
+  opacityRamp: 0.25,
+};
+
 type FeatureCardsProps = { featureCards: ThreeCardsFeatureCardType[] };
 
 export function FeatureCards({ featureCards }: FeatureCardsProps) {
@@ -35,6 +44,7 @@ export function FeatureCards({ featureCards }: FeatureCardsProps) {
         cardCount={featureCards.length}
         cardRefs={cardRefs}
         gridRef={gridRef}
+        layoutOptions={FEATURE_CARDS_SCROLL_LAYOUT_OPTIONS}
       />
       {featureCards.map((featureCard, index) => (
         <CardSlot

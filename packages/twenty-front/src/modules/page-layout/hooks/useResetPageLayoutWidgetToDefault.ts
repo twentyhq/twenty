@@ -7,7 +7,6 @@ import { ResetPageLayoutWidgetToDefaultDocument } from '~/generated-metadata/gra
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useRefreshPageLayoutAfterReset } from '@/page-layout/hooks/useRefreshPageLayoutAfterReset';
-import { collectViewIdsFromWidgets } from '@/page-layout/utils/collectViewIdsFromWidgets';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 export const useResetPageLayoutWidgetToDefault = (
@@ -24,13 +23,7 @@ export const useResetPageLayoutWidgetToDefault = (
     async (widgetId: string) => {
       try {
         await resetMutation({ variables: { id: widgetId } });
-        await refreshPageLayoutAfterReset((layout) =>
-          collectViewIdsFromWidgets(
-            layout.tabs
-              .flatMap((tab) => tab.widgets)
-              .filter((widget) => widget.id === widgetId),
-          ),
-        );
+        await refreshPageLayoutAfterReset();
       } catch (error) {
         if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {

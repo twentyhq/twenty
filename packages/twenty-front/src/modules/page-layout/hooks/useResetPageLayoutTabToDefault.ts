@@ -7,7 +7,6 @@ import { CrudOperationType } from 'twenty-shared/types';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { RESET_PAGE_LAYOUT_TAB_TO_DEFAULT } from '@/page-layout/graphql/mutations/resetPageLayoutTabToDefault';
 import { useRefreshPageLayoutAfterReset } from '@/page-layout/hooks/useRefreshPageLayoutAfterReset';
-import { collectViewIdsFromWidgets } from '@/page-layout/utils/collectViewIdsFromWidgets';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 export const useResetPageLayoutTabToDefault = (
@@ -24,11 +23,7 @@ export const useResetPageLayoutTabToDefault = (
     async (tabId: string) => {
       try {
         await resetMutation({ variables: { id: tabId } });
-        await refreshPageLayoutAfterReset((layout) =>
-          collectViewIdsFromWidgets(
-            layout.tabs.find((tab) => tab.id === tabId)?.widgets ?? [],
-          ),
-        );
+        await refreshPageLayoutAfterReset();
       } catch (error) {
         if (CombinedGraphQLErrors.is(error)) {
           handleMetadataError(error, {

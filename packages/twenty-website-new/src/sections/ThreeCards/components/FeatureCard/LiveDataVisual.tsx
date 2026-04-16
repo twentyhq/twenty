@@ -3,13 +3,15 @@
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
-  IconCheckbox,
   IconChevronDown,
+  IconHeartHandshake,
   IconList,
   IconPlus,
+  IconUser,
   IconX,
 } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
+import { type RefObject, useEffect, useRef, useState } from 'react';
+import { LiveDataGradientBackdrop } from './LiveDataGradientBackdrop';
 import { LiveDataHeroTable } from './LiveDataHeroTable';
 
 const APP_FONT = `'Inter', ${theme.font.family.sans}`;
@@ -18,18 +20,28 @@ const SCENE_WIDTH = 411;
 const SCENE_SCALE = 1;
 const SCENE_SCALE_MD = 0.86;
 const SCENE_SCALE_SM = 0.74;
+const TABLE_PANEL_HOVER_SCALE = 1.012;
 const TABLER_STROKE = 1.65;
 const FILTER_ICON_STROKE = 1.33;
+const FILTER_ROW_GAP = 4;
+const BOB_READY_CURSOR_ROTATION = 135;
+const MARKER_CURSOR_HEIGHT = 32;
+const MARKER_CURSOR_WIDTH = 29;
+const BOB_MARKER_LEFT = 196;
+const BOB_MARKER_TOP = 372;
+const BOB_ARROW_LEFT_OFFSET = 20;
+const DEFAULT_ADD_FILTER_LEFTS = {
+  docked: 152,
+  parked: 276,
+};
 
 const COLORS = {
   backdrop: '#1b1b1b',
-  backdropDot: 'rgba(255, 255, 255, 0.14)',
-  backdropStripe: 'rgba(255, 255, 255, 0.20)',
   black: '#1f1f1f',
+  bobCursor: '#EDB7FF',
   blue: '#1961ed',
   blueBorder: '#edf2fe',
   blueSurface: '#f5f9fd',
-  cardSurface: '#f5f5f3',
   green: '#18794e',
   greenSurface: '#ddf3e4',
   muted: '#999999',
@@ -42,10 +54,19 @@ const COLORS = {
   yellow: '#fff6a5',
 } as const;
 
+type AliceReturnPhase = 'return-to-start';
+type BobLiveDataPhase =
+  | 'bob-ready'
+  | 'move-to-filter'
+  | 'remove-filter'
+  | 'return-bob';
+
 type LiveDataPhase =
   | 'idle'
   | 'move-to-tag'
   | 'rename-tag'
+  | AliceReturnPhase
+  | BobLiveDataPhase
   | 'settle';
 
 const LIVE_DATA_SEQUENCE: Array<{
@@ -54,25 +75,48 @@ const LIVE_DATA_SEQUENCE: Array<{
 }> = [
   { delay: 0, phase: 'move-to-tag' },
   { delay: 760, phase: 'rename-tag' },
-  { delay: 1860, phase: 'settle' },
+  { delay: 1700, phase: 'return-to-start' },
+  { delay: 2380, phase: 'bob-ready' },
+  { delay: 2620, phase: 'move-to-filter' },
+  { delay: 3260, phase: 'remove-filter' },
+  { delay: 3900, phase: 'return-bob' },
+  { delay: 4680, phase: 'settle' },
 ];
 
-const LIVE_DATA_LOOP_DURATION = 3200;
 const EDITED_TAG_LABEL = 'Priority';
 const TYPING_STEP_MS = 90;
+const ALICE_IDLE_MARKER = { left: 238, rotation: 0, top: 90 };
+const BOB_READY_MARKER = {
+  bottom: SCENE_HEIGHT - (BOB_MARKER_TOP + MARKER_CURSOR_HEIGHT / 2),
+  right:
+    SCENE_WIDTH -
+    (BOB_MARKER_LEFT + BOB_ARROW_LEFT_OFFSET + MARKER_CURSOR_WIDTH / 2),
+  rotation: BOB_READY_CURSOR_ROTATION,
+};
+const BOB_FILTER_CURSOR_ROTATION = 132;
+const BOB_FILTER_MARKER = {
+  bottom: 301,
+  right: 50,
+  rotation: BOB_FILTER_CURSOR_ROTATION,
+};
 
-const LIVE_DATA_CURSOR_POSITIONS: Record<
+const ALICE_MARKER_POSITIONS: Record<
   LiveDataPhase,
   { left: number; rotation: number; top: number }
 > = {
-  idle: { left: 238, rotation: 0, top: 90 },
-  'move-to-tag': { left: 286, rotation: -38, top: 272 },
-  'rename-tag': { left: 279, rotation: -18, top: 273 },
-  settle: { left: 293, rotation: -18, top: 277 },
+  idle: ALICE_IDLE_MARKER,
+  'move-to-tag': { left: 286, rotation: -38, top: 246 },
+  'rename-tag': { left: 279, rotation: -18, top: 247 },
+  'return-to-start': ALICE_IDLE_MARKER,
+  'bob-ready': ALICE_IDLE_MARKER,
+  'move-to-filter': ALICE_IDLE_MARKER,
+  'remove-filter': ALICE_IDLE_MARKER,
+  'return-bob': ALICE_IDLE_MARKER,
+  settle: ALICE_IDLE_MARKER,
 };
 
 const VisualRoot = styled.div`
-  background: ${COLORS.cardSurface};
+  background: ${COLORS.backdrop};
   height: 100%;
   overflow: hidden;
   position: relative;
@@ -80,13 +124,13 @@ const VisualRoot = styled.div`
 `;
 
 const SceneViewport = styled.div`
-  height: ${SCENE_HEIGHT}px;
+  bottom: 0;
   left: 50%;
   position: absolute;
-  top: 16px;
+  top: 0;
   transform: translateX(-50%) scale(${SCENE_SCALE});
   transform-origin: top center;
-  width: ${SCENE_WIDTH}px;
+  width: 101%;
 
   @media (max-width: ${theme.breakpoints.md - 1}px) {
     transform: translateX(-50%) scale(${SCENE_SCALE_MD});
@@ -98,60 +142,53 @@ const SceneViewport = styled.div`
 `;
 
 const SceneFrame = styled.div`
-  background: ${COLORS.backdrop};
   border-radius: 2px;
   height: 100%;
   overflow: hidden;
   position: relative;
   width: 100%;
-
-  &::before {
-    background: radial-gradient(
-        circle at 1px 1px,
-        ${COLORS.backdropDot} 1px,
-        transparent 1.2px
-      ),
-      repeating-linear-gradient(
-        90deg,
-        transparent 0 18px,
-        ${COLORS.backdropStripe} 18px 25px,
-        transparent 25px 52px
-      );
-    background-size:
-      12px 12px,
-      100% 32px;
-    content: '';
-    inset: 0;
-    opacity: 0.8;
-    position: absolute;
-  }
 `;
 
-const AccentRail = styled.div`
-  background: repeating-linear-gradient(
-    180deg,
-    ${COLORS.backdropStripe} 0 4px,
-    transparent 4px 11px
-  );
-  bottom: 0;
-  left: 0;
-  opacity: 0.9;
+const SceneBackdrop = styled.div<{
+  $backgroundImageRotationDeg?: number;
+}>`
+  background-color: ${COLORS.backdrop};
+  inset: 0;
+  pointer-events: none;
   position: absolute;
-  top: 67%;
-  width: 58px;
 `;
 
-const TablePanel = styled.div`
+const SceneContent = styled.div`
+  inset: 16px 0 0;
+  position: absolute;
+  width: 100%;
+`;
+
+const TablePanel = styled.div<{ $active?: boolean }>`
+  backface-visibility: hidden;
   background: ${COLORS.white};
-  border-top-left-radius: ${theme.radius(1)};
-  box-shadow: 0 0 0 1px rgba(241, 241, 241, 0.9);
+  border-top-left-radius: 8px;
+  box-shadow: ${({ $active }) =>
+    $active
+      ? '0 0 0 1px rgba(241, 241, 241, 0.9), 0 14px 28px rgba(15, 23, 42, 0.08)'
+      : '0 0 0 1px rgba(241, 241, 241, 0.9)'};
+  contain: paint;
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr);
-  height: 341px;
-  left: 58px;
+  height: 376px;
+  bottom: -4px;
   overflow: hidden;
   position: absolute;
-  top: 151px;
+  right: 0px;
+  transform: ${({ $active }) =>
+    `translate3d(0, 0, 0) scale(${
+      $active ? TABLE_PANEL_HOVER_SCALE : 1
+    })`};
+  transform-origin: bottom right;
+  transition:
+    box-shadow 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, box-shadow;
   width: 355px;
 `;
 
@@ -232,12 +269,34 @@ const FilterRow = styled.div`
   align-items: center;
   border-bottom: 1px solid #f1f1f1;
   display: flex;
-  gap: 4px;
+  gap: ${FILTER_ROW_GAP}px;
   height: 48px;
   padding: 0 12px;
+  position: relative;
 `;
 
-const FilterChip = styled.div<{ $pressed?: boolean }>`
+const FilterChipMotion = styled.div<{ $removing?: boolean; $visible: boolean }>`
+  display: inline-flex;
+  max-width: ${({ $visible }) => ($visible ? '172px' : '0')};
+  opacity: ${({ $removing, $visible }) => ($visible || $removing ? 1 : 0)};
+  overflow: ${({ $removing }) => ($removing ? 'visible' : 'hidden')};
+  pointer-events: ${({ $removing, $visible }) =>
+    $visible && !$removing ? 'auto' : 'none'};
+  transform: ${({ $removing, $visible }) =>
+    $visible || $removing
+      ? 'translateX(0) scale(1)'
+      : 'translateX(-8px) scale(0.92)'};
+  transform-origin: right center;
+  transition:
+    max-width 280ms cubic-bezier(0.22, 1, 0.36, 1)
+      ${({ $removing }) => ($removing ? '180ms' : '0ms')},
+    opacity 180ms ease ${({ $removing }) => ($removing ? '180ms' : '0ms')},
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1)
+      ${({ $removing }) => ($removing ? '180ms' : '0ms')};
+  white-space: nowrap;
+`;
+
+const FilterChip = styled.div<{ $pressed?: boolean; $removing?: boolean }>`
   align-items: center;
   background: ${COLORS.blueSurface};
   border: 1px solid ${COLORS.blueBorder};
@@ -252,11 +311,36 @@ const FilterChip = styled.div<{ $pressed?: boolean }>`
   height: 24px;
   line-height: 1.4;
   padding: 2px 2px 2px 4px;
+  opacity: 1;
   transform: ${({ $pressed }) => ($pressed ? 'scale(0.985)' : 'scale(1)')};
   transition:
     box-shadow 180ms ease,
     transform 180ms ease;
   white-space: nowrap;
+
+  animation: ${({ $removing }) =>
+    $removing
+      ? 'employees-filter-pop-away 320ms cubic-bezier(0.18, 1, 0.32, 1) forwards'
+      : 'none'};
+  transform-origin: right center;
+  will-change: opacity, transform;
+
+  @keyframes employees-filter-pop-away {
+    0% {
+      opacity: 1;
+      transform: scale(0.985) translate3d(0, 0, 0);
+    }
+
+    36% {
+      opacity: 1;
+      transform: scale(1.08) translate3d(2px, -1px, 0);
+    }
+
+    100% {
+      opacity: 0;
+      transform: scale(0.64) translate3d(18px, -6px, 0);
+    }
+  }
 `;
 
 const FilterChipLabel = styled.span`
@@ -286,9 +370,10 @@ const FilterValue = styled.span`
   font-weight: ${theme.font.weight.regular};
 `;
 
-const FilterCloseButton = styled.button`
+const FilterCloseButton = styled.button<{ $pressed?: boolean }>`
   align-items: center;
-  background: transparent;
+  background: ${({ $pressed }) =>
+    $pressed ? 'rgba(25, 97, 237, 0.08)' : 'transparent'};
   border: 0;
   border-radius: 2px;
   color: ${COLORS.blue};
@@ -298,7 +383,18 @@ const FilterCloseButton = styled.button`
   height: 20px;
   justify-content: center;
   padding: 0;
+  transition: background-color 140ms ease;
   width: 20px;
+
+  &:hover {
+    background: ${({ $pressed }) =>
+      $pressed ? 'rgba(25, 97, 237, 0.08)' : 'rgba(25, 97, 237, 0.06)'};
+  }
+
+  &:focus-visible {
+    background: rgba(25, 97, 237, 0.06);
+    outline: none;
+  }
 `;
 
 const AddFilter = styled.button`
@@ -323,6 +419,19 @@ const AddFilter = styled.button`
   &:hover {
     background: rgba(0, 0, 0, 0.04);
   }
+`;
+
+const FloatingAddFilter = styled(AddFilter)<{
+  $animated: boolean;
+  $left: number;
+}>`
+  left: ${({ $left }) => `${$left}px`};
+  margin-left: 0;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: ${({ $animated }) =>
+    $animated ? 'left 340ms cubic-bezier(0.22, 1, 0.36, 1)' : 'none'};
 `;
 
 const TableBodyArea = styled.div`
@@ -354,25 +463,50 @@ const CursorGlyph = styled.svg<{
   width: ${({ $width }) => `${$width}px`};
 `;
 
-const AnimatedCursorLayer = styled.div<{
+const AnimatedMarkerGroup = styled.div<{
   $left: number;
-  $pressed?: boolean;
   $top: number;
 }>`
-  animation: ${({ $pressed }) =>
-    $pressed ? 'cursor-pop 240ms cubic-bezier(0.22, 1, 0.36, 1)' : 'none'};
   left: ${({ $left }) => `${$left}px`};
-  opacity: 1;
   pointer-events: none;
   position: absolute;
   top: ${({ $top }) => `${$top}px`};
-  transform: translate(-50%, -50%) scale(1);
   transition:
     left 620ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 180ms ease,
-    top 620ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 140ms ease;
+    top 620ms cubic-bezier(0.22, 1, 0.36, 1);
   z-index: 9;
+`;
+
+const AnchoredMarkerGroup = styled.div<{
+  $bottom: number;
+  $right: number;
+}>`
+  bottom: ${({ $bottom }) => `${$bottom}px`};
+  pointer-events: none;
+  position: absolute;
+  right: ${({ $right }) => `${$right}px`};
+  transition:
+    bottom 620ms cubic-bezier(0.22, 1, 0.36, 1),
+    right 620ms cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 9;
+`;
+
+const MarkerCursorSlot = styled.div<{
+  $pressed?: boolean;
+  $visible?: boolean;
+}>`
+  animation: ${({ $pressed, $visible }) =>
+    $pressed && $visible
+      ? 'cursor-pop 240ms cubic-bezier(0.22, 1, 0.36, 1)'
+      : 'none'};
+  left: 0;
+  opacity: ${({ $visible = true }) => ($visible ? 1 : 0)};
+  position: absolute;
+  top: 0;
+  transform: translate(-50%, -50%) scale(1);
+  transition:
+    opacity 180ms ease,
+    transform 140ms ease;
 
   @keyframes cursor-pop {
     0% {
@@ -391,20 +525,25 @@ const AnimatedCursorLayer = styled.div<{
       transform: translate(-50%, -50%) scale(1);
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
 `;
 
-const AnimatedNameTagLayer = styled.div<{
-  $left: number;
-  $top: number;
-}>`
-  left: ${({ $left }) => `${$left}px`};
-  pointer-events: none;
+const MarkerLabelTop = styled.div`
+  left: 0;
   position: absolute;
-  top: ${({ $top }) => `${$top}px`};
-  transform: translate(-50%, calc(-100% - 18px));
-  transition:
-    left 620ms cubic-bezier(0.22, 1, 0.36, 1),
-    top 620ms cubic-bezier(0.22, 1, 0.36, 1);
+  top: 0;
+  transform: translate(-50%, calc(-100% - 24px));
+  z-index: 10;
+`;
+
+const MarkerLabelBottom = styled.div`
+  left: 0;
+  position: absolute;
+  top: 0;
+  transform: translate(-50%, 26px);
   z-index: 10;
 `;
 
@@ -423,7 +562,7 @@ const TomMarker = styled.div`
   left: 31px;
   pointer-events: auto;
   position: absolute;
-  top: 306px;
+  top: 271px;
   height: 112px;
   width: 92px;
   z-index: 8;
@@ -474,11 +613,13 @@ const TomCursorGlyph = styled.svg`
   width: 41px;
 `;
 
-const BobMarker = styled.div`
-  pointer-events: auto;
-  left: 214px;
+const BobMarker = styled.div<{ $hidden?: boolean }>`
+  left: ${BOB_MARKER_LEFT}px;
+  opacity: ${({ $hidden }) => ($hidden ? 0 : 1)};
+  pointer-events: ${({ $hidden }) => ($hidden ? 'none' : 'auto')};
   position: absolute;
-  top: 386px;
+  top: ${BOB_MARKER_TOP}px;
+  transition: opacity 180ms ease;
   height: 112px;
   width: 96px;
   z-index: 8;
@@ -492,19 +633,21 @@ const BobMarkerMotion = styled.div<{ $hovered: boolean }>`
 `;
 
 const BobArrow = styled.div`
-  margin-left: 20px;
+  height: ${MARKER_CURSOR_HEIGHT}px;
+  margin-left: ${BOB_ARROW_LEFT_OFFSET}px;
   position: relative;
+  width: ${MARKER_CURSOR_WIDTH}px;
   z-index: 2;
 `;
 
-const BobLabel = styled.div`
+const BobLabel = styled.div<{ $withTopMargin?: boolean }>`
   align-items: center;
-  background: ${COLORS.purple};
+  background: ${COLORS.bobCursor};
   border-radius: 4px;
   display: inline-flex;
   height: 38px;
   justify-content: center;
-  margin-top: 10px;
+  margin-top: ${({ $withTopMargin }) => ($withTopMargin ? '10px' : '0')};
   min-width: 60px;
   padding: 0 12px;
   position: relative;
@@ -556,13 +699,27 @@ function TomCursor() {
 
 type LiveDataVisualProps = {
   active?: boolean;
+  backgroundImageRotationDeg?: number;
+  backgroundImageSrc?: string;
+  pointerTargetRef?: RefObject<HTMLElement | null>;
 };
 
-export function LiveDataVisual({ active = false }: LiveDataVisualProps) {
+export function LiveDataVisual({
+  active = false,
+  backgroundImageSrc,
+  pointerTargetRef,
+}: LiveDataVisualProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const typeFilterRef = useRef<HTMLDivElement>(null);
+  const employeesFilterRef = useRef<HTMLDivElement>(null);
   const [isBobHovered, setIsBobHovered] = useState(false);
   const [isTomHovered, setIsTomHovered] = useState(false);
   const [phase, setPhase] = useState<LiveDataPhase>('idle');
   const [typedTagLabel, setTypedTagLabel] = useState('');
+  const [addFilterLefts, setAddFilterLefts] = useState<{
+    docked: number;
+    parked: number;
+  } | null>(null);
 
   useEffect(() => {
     if (!active) {
@@ -570,36 +727,18 @@ export function LiveDataVisual({ active = false }: LiveDataVisualProps) {
       return;
     }
 
-    let cancelled = false;
     const timeoutIds: number[] = [];
+    setPhase('move-to-tag');
 
-    const runSequence = () => {
-      setPhase('move-to-tag');
+    for (const step of LIVE_DATA_SEQUENCE.slice(1)) {
+      const timeoutId = window.setTimeout(() => {
+        setPhase(step.phase);
+      }, step.delay);
 
-      for (const step of LIVE_DATA_SEQUENCE.slice(1)) {
-        const timeoutId = window.setTimeout(() => {
-          if (!cancelled) {
-            setPhase(step.phase);
-          }
-        }, step.delay);
-
-        timeoutIds.push(timeoutId);
-      }
-
-      const loopTimeoutId = window.setTimeout(() => {
-        if (!cancelled) {
-          runSequence();
-        }
-      }, LIVE_DATA_LOOP_DURATION);
-
-      timeoutIds.push(loopTimeoutId);
-    };
-
-    runSequence();
+      timeoutIds.push(timeoutId);
+    }
 
     return () => {
-      cancelled = true;
-
       for (const timeoutId of timeoutIds) {
         window.clearTimeout(timeoutId);
       }
@@ -627,7 +766,14 @@ export function LiveDataVisual({ active = false }: LiveDataVisualProps) {
       };
     }
 
-    if (phase === 'settle') {
+    if (
+      phase === 'return-to-start' ||
+      phase === 'bob-ready' ||
+      phase === 'move-to-filter' ||
+      phase === 'remove-filter' ||
+      phase === 'return-bob' ||
+      phase === 'settle'
+    ) {
       setTypedTagLabel(EDITED_TAG_LABEL);
       return;
     }
@@ -635,160 +781,279 @@ export function LiveDataVisual({ active = false }: LiveDataVisualProps) {
     setTypedTagLabel('');
   }, [phase]);
 
-  const animatedCursor = LIVE_DATA_CURSOR_POSITIONS[phase];
-  const isFirstTagRenamed = phase === 'rename-tag' || phase === 'settle';
-  const isFirstTagEdited = phase === 'rename-tag' || phase === 'settle';
-  const isFirstTagHoveredByAlice = phase !== 'idle';
+  useEffect(() => {
+    const measureAddFilterLefts = () => {
+      const typeFilter = typeFilterRef.current;
+      const employeesFilter = employeesFilterRef.current;
+
+      if (
+        !typeFilter ||
+        !employeesFilter ||
+        employeesFilter.offsetWidth === 0
+      ) {
+        return;
+      }
+
+      const nextLefts = {
+        docked: typeFilter.offsetLeft + typeFilter.offsetWidth + FILTER_ROW_GAP,
+        parked:
+          employeesFilter.offsetLeft +
+          employeesFilter.offsetWidth +
+          FILTER_ROW_GAP,
+      };
+
+      setAddFilterLefts((current) =>
+        current?.docked === nextLefts.docked &&
+        current?.parked === nextLefts.parked
+          ? current
+          : nextLefts,
+      );
+    };
+
+    const frameId = window.requestAnimationFrame(measureAddFilterLefts);
+    window.addEventListener('resize', measureAddFilterLefts);
+    void document.fonts?.ready.then(measureAddFilterLefts);
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      window.removeEventListener('resize', measureAddFilterLefts);
+    };
+  }, []);
+
+  const aliceMarker = ALICE_MARKER_POSITIONS[phase];
+  const bobCursor = active
+    ? phase === 'move-to-filter' || phase === 'remove-filter'
+      ? BOB_FILTER_MARKER
+      : BOB_READY_MARKER
+    : null;
+  const isAliceCursorVisible =
+    phase === 'idle' ||
+    phase === 'move-to-tag' ||
+    phase === 'rename-tag' ||
+    phase === 'return-to-start' ||
+    phase === 'bob-ready' ||
+    phase === 'move-to-filter' ||
+    phase === 'remove-filter' ||
+    phase === 'return-bob' ||
+    phase === 'settle';
+  const isBobCursorVisible = active;
+  const isEmployeesFilterRemoving = phase === 'remove-filter';
+  const isEmployeesFilterVisible =
+    phase !== 'remove-filter' && phase !== 'return-bob' && phase !== 'settle';
+  const hasEmployeesFilterBeenRemoved =
+    phase === 'remove-filter' || phase === 'return-bob' || phase === 'settle';
+  const isFirstTagRenamed =
+    phase === 'rename-tag' ||
+    phase === 'return-to-start' ||
+    phase === 'bob-ready' ||
+    phase === 'move-to-filter' ||
+    phase === 'remove-filter' ||
+    phase === 'return-bob' ||
+    phase === 'settle';
+  const isFirstTagEdited = isFirstTagRenamed;
+  const isFirstTagHoveredByAlice =
+    phase === 'move-to-tag' || phase === 'rename-tag';
+  const isAddFilterDocked = phase === 'return-bob' || phase === 'settle';
+  const addFilterLeft = isAddFilterDocked
+    ? (addFilterLefts?.docked ?? DEFAULT_ADD_FILTER_LEFTS.docked)
+    : (addFilterLefts?.parked ?? DEFAULT_ADD_FILTER_LEFTS.parked);
+  const viewCount = hasEmployeesFilterBeenRemoved ? 11 : 9;
 
   return (
-    <VisualRoot aria-hidden>
+    <VisualRoot aria-hidden ref={rootRef}>
       <SceneViewport>
         <SceneFrame>
-          <AccentRail />
-
-          <AnimatedNameTagLayer
-            $left={animatedCursor.left}
-            $top={animatedCursor.top}
-          >
-            <AliceLabel>
-              <MarkerText>Alice</MarkerText>
-            </AliceLabel>
-          </AnimatedNameTagLayer>
-
-          <AnimatedCursorLayer
-            $left={animatedCursor.left}
-            $pressed={phase === 'rename-tag'}
-            $top={animatedCursor.top}
-          >
-            <MarkerCursor
-              color={COLORS.yellow}
-              rotation={animatedCursor.rotation}
+          <SceneBackdrop>
+            <LiveDataGradientBackdrop
+              active={active}
+              imageUrl={backgroundImageSrc}
+              pointerTargetRef={pointerTargetRef ?? rootRef}
             />
-          </AnimatedCursorLayer>
+          </SceneBackdrop>
+          <SceneContent>
+            <AnimatedMarkerGroup
+              $left={aliceMarker.left}
+              $top={aliceMarker.top}
+            >
+              <MarkerLabelTop>
+                <AliceLabel>
+                  <MarkerText>Alice</MarkerText>
+                </AliceLabel>
+              </MarkerLabelTop>
+              <MarkerCursorSlot
+                $pressed={phase === 'rename-tag'}
+                $visible={isAliceCursorVisible}
+              >
+                <MarkerCursor
+                  color={COLORS.yellow}
+                  rotation={aliceMarker.rotation}
+                />
+              </MarkerCursorSlot>
+            </AnimatedMarkerGroup>
+            {bobCursor ? (
+              <AnchoredMarkerGroup
+                $bottom={bobCursor.bottom}
+                $right={bobCursor.right}
+              >
+                <MarkerCursorSlot
+                  $pressed={phase === 'remove-filter'}
+                  $visible
+                >
+                  <MarkerCursor
+                    color={COLORS.bobCursor}
+                    rotation={bobCursor.rotation}
+                  />
+                </MarkerCursorSlot>
+                <MarkerLabelBottom>
+                  <BobLabel>
+                    <MarkerText>Bob</MarkerText>
+                  </BobLabel>
+                </MarkerLabelBottom>
+              </AnchoredMarkerGroup>
+            ) : null}
 
-          <TablePanel>
-            <ViewRow>
-              <ViewSwitcher>
-                <ViewSwitcherLeft>
-                  <ViewSwitcherIcon>
-                    <IconList
+            <TablePanel $active={active}>
+              <ViewRow>
+                <ViewSwitcher>
+                  <ViewSwitcherLeft>
+                    <ViewSwitcherIcon>
+                      <IconList
+                        aria-hidden
+                        color={COLORS.textSecondary}
+                        size={16}
+                        stroke={TABLER_STROKE}
+                      />
+                    </ViewSwitcherIcon>
+                    <ViewLabel>All</ViewLabel>
+                    <ViewDot />
+                    <ViewCount>{viewCount}</ViewCount>
+                  </ViewSwitcherLeft>
+                  <ViewSwitcherChevron>
+                    <IconChevronDown
                       aria-hidden
-                      color={COLORS.textSecondary}
-                      size={16}
+                      color={COLORS.textLight}
+                      size={14}
                       stroke={TABLER_STROKE}
                     />
-                  </ViewSwitcherIcon>
-                  <ViewLabel>All</ViewLabel>
-                  <ViewDot />
-                  <ViewCount>9</ViewCount>
-                </ViewSwitcherLeft>
-                <ViewSwitcherChevron>
-                  <IconChevronDown
-                    aria-hidden
-                    color={COLORS.textLight}
-                    size={14}
-                    stroke={TABLER_STROKE}
-                  />
-                </ViewSwitcherChevron>
-              </ViewSwitcher>
-            </ViewRow>
+                  </ViewSwitcherChevron>
+                </ViewSwitcher>
+              </ViewRow>
 
-            <FilterRow>
-              <FilterChip>
-                <FilterChipLabel>
-                  <FilterChipIcon>
-                    <IconCheckbox
+              <FilterRow>
+                <FilterChip ref={typeFilterRef}>
+                  <FilterChipLabel>
+                    <FilterChipIcon>
+                      <IconHeartHandshake
+                        aria-hidden
+                        color={COLORS.blue}
+                        size={14}
+                        stroke={FILTER_ICON_STROKE}
+                      />
+                    </FilterChipIcon>
+                    <FilterName>Type</FilterName>
+                  </FilterChipLabel>
+                  <FilterValue>is Customer</FilterValue>
+                  <FilterCloseButton type="button">
+                    <IconX
                       aria-hidden
                       color={COLORS.blue}
                       size={14}
                       stroke={FILTER_ICON_STROKE}
                     />
-                  </FilterChipIcon>
-                  <FilterName>Type</FilterName>
-                </FilterChipLabel>
-                <FilterValue>is Customer</FilterValue>
-                <FilterCloseButton type="button">
-                  <IconX
-                    aria-hidden
-                    color={COLORS.blue}
-                    size={14}
-                    stroke={FILTER_ICON_STROKE}
-                  />
-                </FilterCloseButton>
-              </FilterChip>
+                  </FilterCloseButton>
+                </FilterChip>
 
-              <FilterChip>
-                <FilterChipLabel>
+                <FilterChipMotion
+                  ref={employeesFilterRef}
+                  $removing={isEmployeesFilterRemoving}
+                  $visible={isEmployeesFilterVisible}
+                >
+                  <FilterChip
+                    $pressed={phase === 'remove-filter'}
+                    $removing={isEmployeesFilterRemoving}
+                  >
+                    <FilterChipLabel>
+                      <FilterChipIcon>
+                        <IconUser
+                          aria-hidden
+                          color={COLORS.blue}
+                          size={14}
+                          stroke={FILTER_ICON_STROKE}
+                        />
+                      </FilterChipIcon>
+                      <FilterName>Employees</FilterName>
+                    </FilterChipLabel>
+                    <FilterValue>{'>500'}</FilterValue>
+                    <FilterCloseButton
+                      $pressed={phase === 'remove-filter'}
+                      type="button"
+                    >
+                      <IconX
+                        aria-hidden
+                        color={COLORS.blue}
+                        size={14}
+                        stroke={FILTER_ICON_STROKE}
+                      />
+                    </FilterCloseButton>
+                  </FilterChip>
+                </FilterChipMotion>
+
+                <FloatingAddFilter
+                  $animated={addFilterLefts !== null}
+                  $left={addFilterLeft}
+                  type="button"
+                >
                   <FilterChipIcon>
-                    <IconCheckbox
+                    <IconPlus
                       aria-hidden
-                      color={COLORS.blue}
+                      color={COLORS.muted}
                       size={14}
                       stroke={FILTER_ICON_STROKE}
                     />
                   </FilterChipIcon>
-                  <FilterName>Employees</FilterName>
-                </FilterChipLabel>
-                <FilterValue>{'>500'}</FilterValue>
-                <FilterCloseButton type="button">
-                  <IconX
-                    aria-hidden
-                    color={COLORS.blue}
-                    size={14}
-                    stroke={FILTER_ICON_STROKE}
-                  />
-                </FilterCloseButton>
-              </FilterChip>
+                  Add filter
+                </FloatingAddFilter>
+              </FilterRow>
 
-              <AddFilter type="button">
-                <FilterChipIcon>
-                  <IconPlus
-                    aria-hidden
-                    color={COLORS.muted}
-                    size={14}
-                    stroke={FILTER_ICON_STROKE}
-                  />
-                </FilterChipIcon>
-                Add filter
-              </AddFilter>
-            </FilterRow>
+              <TableBodyArea>
+                <LiveDataHeroTable
+                  editedStatusLabel={isFirstTagRenamed ? typedTagLabel : ''}
+                  isFirstTagEdited={isFirstTagEdited}
+                  isFirstTagHoveredByAlice={isFirstTagHoveredByAlice}
+                  showExtendedRows={hasEmployeesFilterBeenRemoved}
+                />
+              </TableBodyArea>
+            </TablePanel>
 
-            <TableBodyArea>
-              <LiveDataHeroTable
-                editedStatusLabel={isFirstTagRenamed ? typedTagLabel : ''}
-                isFirstTagEdited={isFirstTagEdited}
-                isFirstTagHoveredByAlice={isFirstTagHoveredByAlice}
-              />
-            </TableBodyArea>
-          </TablePanel>
+            <TomMarker
+              onPointerEnter={() => setIsTomHovered(true)}
+              onPointerLeave={() => setIsTomHovered(false)}
+            >
+              <TomMarkerMotion $hovered={isTomHovered}>
+                <TomArrow>
+                  <TomCursor />
+                </TomArrow>
+                <TomLabel>
+                  <MarkerText>Tom</MarkerText>
+                </TomLabel>
+              </TomMarkerMotion>
+            </TomMarker>
 
-          <TomMarker
-            onPointerEnter={() => setIsTomHovered(true)}
-            onPointerLeave={() => setIsTomHovered(false)}
-          >
-            <TomMarkerMotion $hovered={isTomHovered}>
-              <TomArrow>
-                <TomCursor />
-              </TomArrow>
-              <TomLabel>
-                <MarkerText>Tom</MarkerText>
-              </TomLabel>
-            </TomMarkerMotion>
-          </TomMarker>
-
-          <BobMarker
-            onPointerEnter={() => setIsBobHovered(true)}
-            onPointerLeave={() => setIsBobHovered(false)}
-          >
-            <BobMarkerMotion $hovered={isBobHovered}>
-              <BobArrow>
-                <MarkerCursor color={COLORS.purple} rotation={135} />
-              </BobArrow>
-              <BobLabel>
-                <MarkerText>Bob</MarkerText>
-              </BobLabel>
-            </BobMarkerMotion>
-          </BobMarker>
+            <BobMarker
+              $hidden={isBobCursorVisible}
+              onPointerEnter={() => setIsBobHovered(true)}
+              onPointerLeave={() => setIsBobHovered(false)}
+            >
+              <BobMarkerMotion $hovered={isBobHovered}>
+                <BobArrow>
+                  <MarkerCursor color={COLORS.bobCursor} rotation={135} />
+                </BobArrow>
+                <BobLabel $withTopMargin>
+                  <MarkerText>Bob</MarkerText>
+                </BobLabel>
+              </BobMarkerMotion>
+            </BobMarker>
+          </SceneContent>
         </SceneFrame>
       </SceneViewport>
     </VisualRoot>

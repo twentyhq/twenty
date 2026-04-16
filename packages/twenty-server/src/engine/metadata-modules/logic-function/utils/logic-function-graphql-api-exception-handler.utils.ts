@@ -29,6 +29,8 @@ export const logicFunctionGraphQLApiExceptionHandler = (error: any) => {
       case LogicFunctionExceptionCode.LOGIC_FUNCTION_CODE_UNCHANGED:
       case LogicFunctionExceptionCode.LOGIC_FUNCTION_CREATE_FAILED:
       case LogicFunctionExceptionCode.LOGIC_FUNCTION_INVALID_SEED_PROJECT:
+      case LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_FAILED:
+      case LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED:
         throw error;
       case LogicFunctionExceptionCode.LOGIC_FUNCTION_COMPILATION_FAILED:
         throw new UserInputError(error);
