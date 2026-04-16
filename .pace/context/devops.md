@@ -1,564 +1,544 @@
-# DevOps Context - Twenty CRM
+# DevOps Context — Twenty CRM
 
 ## CI/CD Pipeline Topology
 
-### Workflow Organization (GitHub Actions)
+### GitHub Actions Workflows (`.github/workflows/`)
 
-#### Pull Request Workflows (on `pull_request`, `merge_group`)
-- **ci-front.yaml** — Frontend checks (20-30 min)
-  - Jobs: `changed-files-check`, `front-sb-build`, `front-sb-test`, `front-task`, `front-build`
-  - Sharded Storybook tests (4 shards × 3 scopes = 12 parallel jobs)
-  - Tasks: lint, typecheck, test (matrix)
-  - Artifact: Storybook build cached, frontend build uploaded
-  
-- **ci-server.yaml** — Backend checks (20-30 min)
-  - Jobs: `server-build`, `server-lint-typecheck`, `server-validation`, `server-test`, `server-integration-test`
-  - Services: postgres:18, redis, clickhouse:25.8.8
-  - Integration tests sharded (10 shards)
-  - Validates no pending migrations or schema generation
+#### **Pull Request & Merge Queue Triggers**
+All CI workflows run on `pull_request` and `merge_group` events, with concurrency control to cancel stale runs.
 
-- **ci-merge-queue.yaml** — E2E tests (30 min, runs on merge_group or PR with `run-merge-queue` label)
-  - Jobs: `e2e-test`
-  - Services: postgres:18, redis
-  - Full stack: builds frontend/server, runs Playwright tests
-  - Artifact: Playwright results (screenshots, videos, traces)
+#### **Frontend CI** (`ci-front.yaml`)
+- **Changed Files Check**: Only runs if `packages/twenty-front/`, `twenty-ui/`, `twenty-shared/`, or root config changed
+- **Jobs**:
+  1. **`front-sb-build`** (ubuntu-latest-8-cores): Build Storybook static site
+     - Uploads Storybook artifact for test jobs
+     - Saves build cache for reuse
+  2. **`front-sb-test`** (matrix: 3 scopes × 4 shards = 12 jobs): Run Storybook visual regression tests
+     - Uses Playwright in Vitest
+     - Downloads Storybook artifact from build job
+     - Sharded for parallelization (e.g., `1/4`, `2/4`, ...)
+  3. **`front-task`** (matrix: lint, typecheck, test): Run code quality checks
+     - Uses `nx-affected` to only check changed projects
+     - Caches task outputs for subsequent runs
+  4. **`front-build`** (ubuntu-latest-8-cores): Production build of frontend
+     - `NODE_OPTIONS=--max-old-space-size=10240` (10GB heap)
+     - `ANALYZE=true` (generates bundle size report)
+- **Status Check**: `ci-front-status-check` fails if any job failed
 
-- **ci-shared.yaml**, **ci-ui.yaml**, **ci-emails.yaml**, etc. — Per-package checks (5-10 min each)
-  - Run only when package files change (detected via `changed-files.yaml`)
-  - Standard tasks: lint, typecheck, test, build
+#### **Backend CI** (`ci-server.yaml`)
+- **Changed Files Check**: Only runs if `packages/twenty-server/`, `twenty-emails/`, `twenty-shared/`, or GraphQL generated files changed
+- **Jobs**:
+  1. **`server-build`**: Build server with TypeScript, Lingui i18n extraction
+     - Caches build output (`dist/`) for downstream jobs
+  2. **`server-lint-typecheck`**: Run oxlint + tsgo typecheck
+     - Uses `nx-affected` for changed projects only
+  3. **`server-validation`**: Smoke tests against real services
+     - **Services**: PostgreSQL 18, Redis, ClickHouse 25.8.8
+     - Creates test DB, runs migrations, starts server, validates health
+     - **Migration Check**: Generates new migration, fails if schema drift detected
+     - **Codegen Check**: Regenerates GraphQL types, fails if uncommitted changes
+  4. **`server-test`**: Unit tests with Jest
+  5. **`server-integration-test`** (matrix: 10 shards): Integration tests with real DB
+     - **Services**: PostgreSQL 18, Redis, ClickHouse
+     - Sharded across 10 parallel jobs for speed
+     - Uses `.env.test` with test credentials
+- **Status Check**: `ci-server-status-check` fails if any job failed
 
-#### Continuous Deployment Workflows
-- **cd-deploy-main.yaml** — Auto-deploy on push to `main`
-  - Triggers external repo dispatch to `twentyhq/twenty-infra` (auto-deploy-main event)
-  - Infrastructure repo handles actual deployment (not in this repo)
+#### **Docker CI** (`ci-test-docker-compose.yaml`)
+- **Jobs**:
+  1. **`test-compose`**: Validates `docker-compose.yml` boots successfully
+     - Patches compose file to build from source (not pull image)
+     - Waits for DB health check (300s timeout)
+     - Waits for server health check (300s timeout)
+     - Logs output on failure
+  2. **`test-app-dev`**: Validates all-in-one dev image (`twenty-app-dev`)
+     - Builds `twenty-app-dev` target from Dockerfile
+     - Waits for health check on port 2020
+     - Ensures embedded Postgres + Redis start correctly
 
-- **cd-deploy-tag.yaml** — Release deployment on version tags
-  - Triggers on tags matching `v*.*.*`
-  - Dispatches to `twentyhq/twenty-infra` (auto-deploy-tag event)
+#### **Package-Specific CIs** (per package)
+- **`ci-ui.yaml`**, **`ci-shared.yaml`**, **`ci-sdk.yaml`**, **`ci-zapier.yaml`**, **`ci-emails.yaml`**, **`ci-docs.yaml`**, **`ci-website.yaml`**, **`ci-create-app.yaml`**, **`ci-front-component-renderer.yaml`**
+- **Pattern**: Lint → Typecheck → Test → Build (only if files changed)
 
-#### Release Workflows
-- **ci-release-create.yaml** — Generate release notes, create GitHub release
-- **ci-release-merge.yaml** — Merge release branch back to main
+#### **Deployment Workflows**
+- **`cd-deploy-main.yaml`**: On push to `main`, dispatches event to `twentyhq/twenty-infra` repo
+  - Uses `TWENTY_INFRA_TOKEN` secret to trigger deployment workflow
+  - Payload includes full GitHub context
+- **`cd-deploy-tag.yaml`**: On Git tag (e.g., `v0.2.1`), triggers release deployment
+- **`preview-env-dispatch.yaml`**: Creates preview environments for PRs (labeled manually)
 
-#### Specialized Workflows
-- **ci-breaking-changes.yaml** — Detect breaking API changes
-- **visual-regression-dispatch.yaml** — Chromatic visual regression tests
-- **preview-env-dispatch.yaml** — Deploy ephemeral preview environments
-- **ci-test-docker-compose.yaml** — Validate docker-compose setup
-- **i18n-pull.yaml**, **i18n-push.yaml** — Crowdin translation sync
-- **docs-i18n-pull.yaml**, **docs-i18n-push.yaml** — Docs translation sync
-- **post-ci-comments.yaml** — Post CI results as PR comments
+#### **Utility Workflows**
+- **`changed-files.yaml`**: Reusable workflow to detect changed files (used by all CI jobs)
+- **`post-ci-comments.yaml`**: Posts CI results as PR comments
+- **`docs-i18n-pull.yaml` / `docs-i18n-push.yaml`**: Crowdin integration for translations
+- **`visual-regression-dispatch.yaml`**: Chromatic visual regression testing
 
-### CI Execution Strategy
+### CI Configuration Files
+- **`nx.json`**: Nx task dependencies (`build` depends on `^build`), caching rules
+- **`.github/actions/`**: Custom reusable actions
+  - `yarn-install`: Installs dependencies with Yarn cache
+  - `nx-affected`: Runs Nx tasks only on affected projects
+  - `save-cache` / `restore-cache`: Cache build outputs
 
-#### Caching Layers
-1. **Yarn dependencies**: `.github/actions/yarn-install` with cache key based on lockfile hash
-2. **Nx build cache**: `.nx/cache` persisted across runs (key: `v4-e2e-build-<branch>-<sha>`)
-3. **Task-specific caches**: `front-task-lint`, `server-build`, `storybook-build-ubuntu-latest-8-cores-runner`
-4. **Test caches**: Jest cache, Playwright browsers
-
-#### Concurrency Control
-```yaml
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
-```
-- Cancels in-progress runs for same PR when new commits pushed
-- Prevents wasted CI time on outdated commits
-
-#### Affected Detection
-- Custom action `.github/actions/nx-affected` runs `nx affected -t <task> --tag <scope>`
-- Changed files detection via `.github/workflows/changed-files.yaml`
-- Skips jobs if no relevant files changed (e.g., skip `ci-front.yaml` if only server files changed)
-
-#### Service Containers (PostgreSQL, Redis, ClickHouse)
-```yaml
-services:
-  postgres:
-    image: postgres:18
-    env:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports: [5432:5432]
-    options: --health-cmd pg_isready --health-interval 10s
-  
-  redis:
-    image: redis
-    ports: [6379:6379]
-  
-  clickhouse:
-    image: clickhouse/clickhouse-server:25.8.8
-    env:
-      CLICKHOUSE_PASSWORD: clickhousePassword
-      CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
-    ports: [8123:8123, 9000:9000]
-```
-
-#### Runners
-- Standard: `ubuntu-latest` (2 cores, 7GB RAM)
-- High-performance: `ubuntu-latest-8-cores` (8 cores, 32GB RAM) for Storybook builds, E2E tests
+### Concurrency & Optimization
+- **Concurrency Groups**: Cancel old runs when new commits pushed to same branch
+- **Caching**:
+  - Yarn dependencies: Cached in `~/.cache/yarn`
+  - Build outputs: Cached by job name (e.g., `front-task-lint`)
+  - Storybook builds: Cached and restored between jobs
+- **Sharding**: Large test suites split across multiple runners (10 shards for backend integration tests)
 
 ## Required Environment Variables & Secrets
 
-### CI Secrets (GitHub Actions)
-- **TWENTY_INFRA_TOKEN**: Personal access token for triggering deployment in `twentyhq/twenty-infra` repo
-- **CHROMATIC_PROJECT_TOKEN**: Chromatic project token for visual regression tests (optional)
-- **SENTRY_AUTH_TOKEN**: Sentry auth token for source map uploads (optional)
+### **Server Environment Variables** (Production)
 
-### Runtime Secrets (Self-Hosting)
+#### Database & Storage
+- **`PG_DATABASE_URL`** (required): PostgreSQL connection string  
+  Format: `postgres://user:password@host:port/database`
+- **`REDIS_URL`** (required): Redis connection string  
+  Format: `redis://host:port` or `redis://:password@host:port`
+- **`CLICKHOUSE_URL`** (optional): ClickHouse connection for analytics  
+  Format: `http://user:password@host:port/database`
+- **`STORAGE_TYPE`** (required): `local` or `s3`
+- **`STORAGE_S3_REGION`** (if S3): AWS region (e.g., `us-east-1`)
+- **`STORAGE_S3_NAME`** (if S3): S3 bucket name
+- **`STORAGE_S3_ENDPOINT`** (if S3): S3 endpoint URL (e.g., for DigitalOcean Spaces)
 
-#### Required (Production)
-```bash
-# Core
-NODE_ENV=production
-APP_SECRET=<random-64-char-string>  # Generate: openssl rand -hex 32
-PG_DATABASE_URL=postgres://user:pass@host:5432/dbname
-REDIS_URL=redis://host:6379
-FRONTEND_URL=https://your-domain.com
+#### Security
+- **`APP_SECRET`** (required): Random string for JWT signing, session encryption  
+  Generate: `openssl rand -base64 32`
+- **`SERVER_URL`** (required): Public URL of server (e.g., `https://crm.example.com`)
 
-# Server URL (for OAuth callbacks)
-SERVER_URL=https://api.your-domain.com
-```
+#### Authentication (OAuth)
+- **`AUTH_GOOGLE_CLIENT_ID`** (optional): Google OAuth app client ID
+- **`AUTH_GOOGLE_CLIENT_SECRET`** (optional): Google OAuth app secret
+- **`AUTH_GOOGLE_CALLBACK_URL`** (optional): OAuth redirect (e.g., `https://crm.example.com/auth/google/callback`)
+- **`AUTH_MICROSOFT_CLIENT_ID`** (optional): Microsoft OAuth app client ID
+- **`AUTH_MICROSOFT_CLIENT_SECRET`** (optional): Microsoft OAuth app secret
+- **`AUTH_MICROSOFT_CALLBACK_URL`** (optional): OAuth redirect
 
-#### Authentication (Optional)
-```bash
-# Google OAuth
-AUTH_GOOGLE_ENABLED=true
-AUTH_GOOGLE_CLIENT_ID=<google-client-id>
-AUTH_GOOGLE_CLIENT_SECRET=<google-client-secret>
-AUTH_GOOGLE_CALLBACK_URL=https://api.your-domain.com/auth/google/redirect
-AUTH_GOOGLE_APIS_CALLBACK_URL=https://api.your-domain.com/auth/google-apis/get-access-token
+#### Email & Messaging
+- **`EMAIL_DRIVER`** (optional): `smtp` or `logger` (default: `logger`)
+- **`EMAIL_SMTP_HOST`** (if SMTP): SMTP server hostname
+- **`EMAIL_SMTP_PORT`** (if SMTP): SMTP port (e.g., `465`)
+- **`EMAIL_SMTP_USER`** (if SMTP): SMTP username
+- **`EMAIL_SMTP_PASSWORD`** (if SMTP): SMTP password
+- **`EMAIL_FROM_ADDRESS`** (optional): From email address
+- **`EMAIL_FROM_NAME`** (optional): From name
 
-# Microsoft OAuth
-AUTH_MICROSOFT_ENABLED=true
-AUTH_MICROSOFT_CLIENT_ID=<azure-client-id>
-AUTH_MICROSOFT_CLIENT_SECRET=<azure-client-secret>
-AUTH_MICROSOFT_CALLBACK_URL=https://api.your-domain.com/auth/microsoft/redirect
-AUTH_MICROSOFT_APIS_CALLBACK_URL=https://api.your-domain.com/auth/microsoft-apis/get-access-token
+#### Feature Flags
+- **`MESSAGING_PROVIDER_GMAIL_ENABLED`** (optional): `true` to enable Gmail sync
+- **`CALENDAR_PROVIDER_GOOGLE_ENABLED`** (optional): `true` to enable Google Calendar sync
+- **`MESSAGING_PROVIDER_MICROSOFT_ENABLED`** (optional): `true` to enable Outlook sync
+- **`CALENDAR_PROVIDER_MICROSOFT_ENABLED`** (optional): `true` to enable Microsoft Calendar sync
+- **`IS_BILLING_ENABLED`** (optional): `true` to enable Stripe billing
+- **`ANALYTICS_ENABLED`** (optional): `true` to enable ClickHouse analytics
 
-# Password login
-AUTH_PASSWORD_ENABLED=true
+#### Monitoring
+- **`SENTRY_DSN`** (optional): Sentry error tracking DSN
+- **`SENTRY_ENVIRONMENT`** (optional): Environment name (e.g., `production`)
 
-# SAML SSO
-# SSL_KEY_PATH=./certs/saml.key
-# SSL_CERT_PATH=./certs/saml.crt
-```
+#### Deployment Control
+- **`DISABLE_DB_MIGRATIONS`** (optional): `true` to skip auto-migrations on startup (for worker containers)
+- **`DISABLE_CRON_JOBS_REGISTRATION`** (optional): `true` to skip cron job registration (for worker containers)
+- **`NODE_PORT`** (optional): HTTP port (default: `3000`)
+- **`NODE_ENV`** (optional): `production`, `development`, or `test`
 
-#### Email (Optional)
-```bash
-EMAIL_DRIVER=smtp  # or logger (dev), mailgun, sendgrid
-EMAIL_FROM_ADDRESS=noreply@your-domain.com
-EMAIL_FROM_NAME=Your Company
-EMAIL_SMTP_HOST=smtp.gmail.com
-EMAIL_SMTP_PORT=587
-EMAIL_SMTP_USER=<smtp-user>
-EMAIL_SMTP_PASSWORD=<smtp-password>
-IS_EMAIL_VERIFICATION_REQUIRED=false
-```
+### **Frontend Environment Variables**
+- **`REACT_APP_SERVER_BASE_URL`** (build-time): Backend server URL (e.g., `http://localhost:3000`)  
+  Injected at runtime via `window._env_` by server
 
-#### Storage (Optional)
-```bash
-STORAGE_TYPE=s3  # or local
-# S3 configuration
-AWS_ACCESS_KEY_ID=<aws-access-key>
-AWS_SECRET_ACCESS_KEY=<aws-secret-key>
-AWS_S3_BUCKET_NAME=twenty-storage
-AWS_S3_REGION=us-east-1
-# Local storage (default)
-STORAGE_LOCAL_PATH=.local-storage
-```
+### **GitHub Actions Secrets**
+- **`DOCKERHUB_USERNAME`** (vars): Docker Hub username for image pulls/pushes
+- **`DOCKERHUB_PASSWORD`** (secret): Docker Hub password
+- **`TWENTY_INFRA_TOKEN`** (secret): GitHub PAT for dispatching to `twenty-infra` repo
+- **`CHROMATIC_PROJECT_TOKEN`** (secret): Chromatic API token for visual regression
 
-#### AI Providers (Optional)
-```bash
-OPENAI_API_KEY=<openai-key>
-ANTHROPIC_API_KEY=<anthropic-key>
-GOOGLE_API_KEY=<google-ai-key>
-XAI_API_KEY=<xai-key>
-MISTRAL_API_KEY=<mistral-key>
-# Custom providers (JSON)
-AI_PROVIDERS='{"my-gateway":{"type":"openai-compatible","baseUrl":"https://api.example.com","apiKey":"..."}}'
-AI_MODEL_PREFERENCES='{"recommendedModels":["openai/gpt-4"]}'
-```
-
-#### Observability (Optional)
-```bash
-SENTRY_DSN=https://xxx@xxx.ingest.sentry.io/xxx
-SENTRY_ENVIRONMENT=production
-ANALYTICS_ENABLED=true
-CLICKHOUSE_URL=http://default:password@clickhouse:8123/twenty
-METER_DRIVER=opentelemetry,console
-```
-
-#### Billing (SaaS Only)
-```bash
-IS_BILLING_ENABLED=true
-BILLING_STRIPE_API_KEY=<stripe-secret-key>
-BILLING_STRIPE_BASE_PLAN_PRODUCT_ID=<product-id>
-BILLING_STRIPE_WEBHOOK_SECRET=<webhook-secret>
-BILLING_PLAN_REQUIRED_LINK=https://your-domain.com/billing
-```
+### **.env.example** Files
+- **`packages/twenty-server/.env.example`**: Template for server config
+- **`packages/twenty-docker/.env.example`**: Template for Docker Compose
+- **`packages/twenty-front/.env.example`**: Template for frontend dev
 
 ## Local Development Setup
 
 ### Prerequisites
-- **Node.js**: 24.5.0 (enforced by `.nvmrc`, engines in package.json)
-- **Yarn**: 4.13.0+ (managed by Corepack, see `packageManager` in package.json)
-- **PostgreSQL**: 18+ (or Docker)
-- **Redis**: 6+ (or Docker)
+- **Node.js**: `24.5.0` (exact version enforced in `package.json`)
+- **Yarn**: `4.13.0+` (Berry)
+- **PostgreSQL**: `16+` (local or Docker)
+- **Redis**: Latest (local or Docker)
+- **ClickHouse**: `25.8.8` (optional, for analytics features)
 
-### Automated Setup (Recommended)
+### 1. Clone Repository
 ```bash
-# Clone repository
 git clone https://github.com/twentyhq/twenty.git
 cd twenty
-
-# Run automated setup script (handles everything)
-bash packages/twenty-utils/setup-dev-env.sh
-
-# This script:
-# - Detects local Postgres/Redis or starts Docker containers
-# - Creates databases (default, test)
-# - Copies .env.example → .env for all packages
-# - Installs dependencies via Yarn
-# - Runs database migrations
-
-# Options:
-# --docker    Force Docker mode (use docker-compose.dev.yml)
-# --down      Stop services
-# --reset     Wipe data and restart fresh
 ```
 
-### Manual Setup
+### 2. Install Dependencies
 ```bash
-# 1. Install dependencies
+# Uses Yarn 4 (corepack)
 yarn install
-
-# 2. Start PostgreSQL and Redis
-# Option A: Local services
-brew install postgresql@18 redis  # macOS
-brew services start postgresql@18 redis
-
-# Option B: Docker
-cd packages/twenty-docker
-docker compose -f docker-compose.dev.yml up -d postgres redis
-
-# 3. Create databases
-createdb default
-createdb test
-
-# 4. Copy environment files
-cp packages/twenty-server/.env.example packages/twenty-server/.env
-cp packages/twenty-front/.env.example packages/twenty-front/.env
-
-# 5. Build dependencies
-npx nx build twenty-shared
-
-# 6. Initialize database
-npx nx database:reset twenty-server
-
-# 7. Start development servers
-yarn start
-# OR start individually:
-npx nx start twenty-front      # http://localhost:3001
-npx nx start twenty-server     # http://localhost:3000
-npx nx run twenty-server:worker # Background jobs
 ```
 
-### Verify Setup
+### 3. Start Infrastructure (Docker Compose)
 ```bash
-# Check frontend
-curl http://localhost:3001
+cd packages/twenty-docker
+cp .env.example .env
 
-# Check backend health
-curl http://localhost:3000/healthz
+# Generate secrets (Linux/macOS)
+echo "APP_SECRET=$(openssl rand -base64 32)" >> .env
+echo "PGPASSWORD_SUPERUSER=$(openssl rand -hex 16)" >> .env
 
-# Check GraphQL playground
-open http://localhost:3000/graphql
+# Start Postgres + Redis
+docker compose up -d db redis
+
+cd ../..
+```
+
+### 4. Configure Server
+```bash
+cd packages/twenty-server
+cp .env.example .env
+
+# Edit .env with local database URL
+# PG_DATABASE_URL=postgres://postgres:postgres@localhost:5432/default
+# REDIS_URL=redis://localhost:6379
+```
+
+### 5. Run Database Migrations
+```bash
+# From repo root
+npx nx run twenty-server:database:init:prod
+```
+
+### 6. Start Development Servers
+```bash
+# Start backend + frontend + worker (concurrently)
+yarn start
+
+# Or individually:
+npx nx start twenty-server   # Backend on :3000
+npx nx start twenty-front     # Frontend on :3001 (Vite dev server)
+npx nx run twenty-server:worker  # Worker process
+```
+
+### 7. Access Application
+- **Frontend**: http://localhost:3001
+- **GraphQL Playground**: http://localhost:3000/graphql
+- **Metadata API**: http://localhost:3000/metadata
+
+### Alternative: Use All-in-One Docker Image
+```bash
+docker run -p 2020:2020 \
+  -v twenty-data:/data/postgres \
+  -v twenty-storage:/app/packages/twenty-server/.local-storage \
+  twentycrm/twenty:latest
+```
+Access at http://localhost:2020 (includes embedded Postgres + Redis)
+
+### Running Tests
+
+#### Frontend Tests
+```bash
+npx nx test twenty-front                # Unit tests
+npx nx storybook:test twenty-front      # Storybook tests (requires built Storybook)
+npx nx storybook:build twenty-front     # Build Storybook first
+```
+
+#### Backend Tests
+```bash
+npx nx test twenty-server                          # Unit tests
+npx nx test:integration twenty-server              # Integration tests (requires DB)
+```
+
+#### Lint & Typecheck
+```bash
+npx nx lint twenty-front
+npx nx typecheck twenty-server
+```
+
+### Common Commands
+```bash
+# Generate GraphQL types after schema change
+npx nx run twenty-front:graphql:generate
+npx nx run twenty-front:graphql:generate --configuration=metadata
+
+# Extract/compile translations
+npx nx run twenty-server:lingui:extract
+npx nx run twenty-server:lingui:compile
+
+# Database commands
+npx nx database:migrate:generate twenty-server -- --name add-new-field
+npx nx database:migrate twenty-server
+
+# ClickHouse commands
+npx nx clickhouse:migrate twenty-server
+npx nx clickhouse:seed twenty-server
+
+# Build production artifacts
+npx nx build twenty-front
+npx nx build twenty-server
 ```
 
 ## Deployment Process
 
-### Docker Compose (Self-Hosting)
-```bash
-# 1. Clone repository
-git clone https://github.com/twentyhq/twenty.git
-cd twenty/packages/twenty-docker
+### Docker Compose (Self-Hosted)
+1. **Clone repo**:
+   ```bash
+   git clone https://github.com/twentyhq/twenty.git
+   cd twenty/packages/twenty-docker
+   ```
 
-# 2. Configure environment
-cp .env.example .env
-nano .env  # Edit APP_SECRET, PG_DATABASE_URL, etc.
+2. **Configure environment**:
+   ```bash
+   cp .env.example .env
+   # Edit .env:
+   # - Set SERVER_URL to your domain (e.g., https://crm.example.com)
+   # - Set APP_SECRET to random string
+   # - Configure OAuth credentials (optional)
+   # - Set STORAGE_TYPE=s3 and S3 credentials (optional)
+   ```
 
-# 3. Start services
-docker compose up -d
+3. **Start services**:
+   ```bash
+   docker compose up -d
+   ```
 
-# Services started:
-# - twenty-server (port 3000)
-# - twenty-postgres (port 5432)
-# - twenty-redis (port 6379)
-# - twenty-worker (background jobs)
+4. **Verify deployment**:
+   ```bash
+   curl http://localhost:3000/healthz
+   # Should return { "status": "ok" }
+   ```
 
-# 4. Initialize database (first time only)
-docker compose exec twenty-server yarn database:init:prod
+5. **Access UI**: Navigate to http://localhost:3000 (or your SERVER_URL)
 
-# 5. Verify
-curl http://localhost:3000/healthz
-```
+### Kubernetes (Helm Chart)
+1. **Add Helm repo** (if published):
+   ```bash
+   helm repo add twenty https://charts.twenty.com
+   helm repo update
+   ```
 
-### Kubernetes (Helm)
-```bash
-# 1. Add Helm repository
-helm repo add twenty https://twentyhq.github.io/twenty/helm
-helm repo update
+2. **Install chart**:
+   ```bash
+   helm install twenty twenty/twenty \
+     --set server.url=https://crm.example.com \
+     --set secret.appSecret=$(openssl rand -base64 32) \
+     --set postgresql.auth.password=$(openssl rand -hex 16) \
+     --set redis.auth.password=$(openssl rand -hex 16)
+   ```
 
-# 2. Create values file
-cat > values.yaml <<EOF
-server:
-  image:
-    tag: latest
-  env:
-    APP_SECRET: <random-secret>
-    PG_DATABASE_URL: postgres://user:pass@postgres:5432/twenty
-    REDIS_URL: redis://redis:6379
-    FRONTEND_URL: https://twenty.your-domain.com
+3. **Custom values**: Create `values.yaml` to override defaults (OAuth, S3, etc.)
 
-postgresql:
-  enabled: true
-  auth:
-    username: twenty
-    password: <random-password>
-    database: twenty
-
-redis:
-  enabled: true
-EOF
-
-# 3. Install
-helm install twenty twenty/twenty -f values.yaml
-
-# 4. Expose service
-kubectl port-forward svc/twenty-server 3000:3000
-
-# OR use Ingress for production
-kubectl apply -f ingress.yaml
-```
-
-### Production Deployment (twentyhq/twenty-infra)
-- **Trigger**: Push to `main` or version tag
-- **Process**:
-  1. GitHub Actions dispatch event to `twenty-infra` repo
-  2. Infra repo builds Docker images, pushes to registry
-  3. Kubernetes deployment updated with new image tag
-  4. Rolling update with zero downtime
-  5. Database migrations run automatically (instance commands)
-  6. Health checks validate deployment
-- **Monitoring**: Sentry, Datadog, CloudWatch (configured in infra repo)
+### Production Checklist
+- [ ] Set strong `APP_SECRET` (32+ characters, random)
+- [ ] Enable HTTPS (reverse proxy with Nginx/Traefik + Let's Encrypt)
+- [ ] Configure OAuth (Google/Microsoft) for SSO
+- [ ] Set up S3 storage for attachments (not local disk)
+- [ ] Enable database backups (PostgreSQL pg_dump cron job)
+- [ ] Configure Sentry for error monitoring
+- [ ] Set up Redis persistence (AOF or RDB)
+- [ ] Limit PostgreSQL max_connections (recommended: 100)
+- [ ] Enable firewall rules (only expose :443/:80, block DB ports)
+- [ ] Set `NODE_ENV=production`
+- [ ] Run migrations manually before deployment: `docker exec twenty-server yarn database:migrate:prod`
 
 ## Runbook
 
-### Common Build Failures
+### Health Checks
 
-#### "Cannot find module 'twenty-shared'"
-**Symptom**: Frontend or server fails to build with module not found error
-**Root Cause**: `twenty-shared` not built or stale cache
-**Fix**:
+#### Server Health
 ```bash
-# Rebuild twenty-shared
-npx nx build twenty-shared
-
-# Clear Nx cache if issue persists
-npx nx reset
-```
-
-#### "Port 3000 already in use"
-**Symptom**: Server fails to start, port conflict
-**Fix**:
-```bash
-# Find and kill process
-lsof -ti:3000 | xargs kill -9
-
-# OR change port in .env
-echo "PORT=3001" >> packages/twenty-server/.env
-```
-
-#### Storybook build OOM (out of memory)
-**Symptom**: Storybook build crashes with heap allocation failure
-**Fix**:
-```bash
-# Increase Node memory limit
-NODE_OPTIONS='--max-old-space-size=10240' npx nx storybook:build twenty-front
-```
-
-### Database Issues
-
-#### "Database 'default' does not exist"
-**Symptom**: Server crashes on startup
-**Fix**:
-```bash
-# Create database
-createdb default  # Or docker exec
-npx nx database:reset twenty-server
-```
-
-#### Pending migrations detected in CI
-**Symptom**: CI fails with "Unexpected migration files were generated"
-**Root Cause**: Entity changed but no instance command generated
-**Fix**:
-```bash
-# Generate instance command
-npx nx run twenty-server:database:migrate:generate --name <descriptive-name> --type fast
-
-# Commit generated files
-git add packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands/*
-git commit -m "Add instance command for <change>"
-```
-
-#### Database schema out of sync
-**Symptom**: TypeORM errors about missing columns/tables
-**Fix**:
-```bash
-# Reset database (DESTRUCTIVE - dev only)
-npx nx database:reset twenty-server
-
-# OR run migrations manually
-npx nx run twenty-server:database:migrate:prod --force --include-slow
-```
-
-### GraphQL Schema Issues
-
-#### Frontend build fails: "Cannot query field X on type Y"
-**Symptom**: Frontend compilation error after backend schema change
-**Root Cause**: Frontend GraphQL types not regenerated
-**Fix**:
-```bash
-# Start server (required for introspection)
-npx nx start twenty-server &
-
-# Regenerate types
-npx nx run twenty-front:graphql:generate
-npx nx run twenty-front:graphql:generate --configuration=metadata
-
-# Commit generated files
-git add packages/twenty-front/src/generated/*
-```
-
-### Redis Connection Failures
-
-#### "ECONNREFUSED 127.0.0.1:6379"
-**Symptom**: Server crashes, cannot connect to Redis
-**Fix**:
-```bash
-# Start Redis
-brew services start redis  # macOS
-sudo systemctl start redis # Linux
-docker start twenty-redis  # Docker
-
-# Verify
-redis-cli ping  # Should return PONG
-```
-
-#### Session data not persisting
-**Symptom**: Users logged out on page refresh
-**Root Cause**: Redis data wiped or wrong REDIS_URL
-**Fix**:
-```bash
-# Check Redis connection
-redis-cli -u $REDIS_URL ping
-
-# Verify session keys exist
-redis-cli keys "sess:*"
-
-# Check .env has correct REDIS_URL
-grep REDIS_URL packages/twenty-server/.env
-```
-
-### Worker Process Issues
-
-#### Background jobs not processing
-**Symptom**: Emails not sending, calendar not syncing
-**Root Cause**: Worker process not running
-**Fix**:
-```bash
-# Start worker
-npx nx run twenty-server:worker
-
-# Check queue status (via Redis)
-redis-cli llen bull:email-queue:wait
-redis-cli llen bull:calendar-queue:wait
-
-# Restart worker if jobs stuck
-pkill -f queue-worker
-npx nx run twenty-server:worker &
-```
-
-### Performance Debugging
-
-#### Slow GraphQL queries
-**Tools**:
-```bash
-# Enable query logging in .env
-LOG_LEVELS=error,warn,log,debug
-
-# Check slow query log (PostgreSQL)
-SELECT query, mean_exec_time FROM pg_stat_statements ORDER BY mean_exec_time DESC LIMIT 10;
-```
-
-#### High memory usage
-**Tools**:
-```bash
-# Heap snapshot (Node.js)
-kill -SIGUSR2 <pid>  # Generates heap snapshot
-
-# Inspect with Chrome DevTools or clinic.js
-npx clinic doctor -- node dist/main.js
-```
-
-### CI/CD Debugging
-
-#### "Storybook tests failed"
-**Symptom**: `front-sb-test` job fails
-**Download Artifacts**:
-1. Go to GitHub Actions run
-2. Download `playwright-results` artifact
-3. Inspect screenshots/videos in `test-results/`
-
-#### "Integration tests timeout"
-**Symptom**: `server-integration-test` job times out
-**Possible Causes**:
-- Database connection pool exhausted (check test parallelism)
-- Deadlock in transaction (check test isolation)
-- Service container not ready (increase health check retries)
-
-**Fix**: Check CI logs for last test executed before timeout, reproduce locally:
-```bash
-# Run single integration test
-npx jest packages/twenty-server/src/path/to/test.integration-spec.ts --runInBand
-```
-
-### Monitoring & Alerting
-
-#### Check service health
-```bash
-# Health endpoint
 curl http://localhost:3000/healthz
-# Returns: {"status":"ok","info":{"database":{"status":"up"},"redis":{"status":"up"}}}
-
-# Metrics (if OpenTelemetry enabled)
-curl http://localhost:3000/metrics  # Prometheus format
+# Success: HTTP 200, { "status": "ok" }
+# Failure: HTTP 503 or timeout
 ```
 
-#### Sentry error tracking
-- **Frontend errors**: `SENTRY_FRONT_DSN` in `.env.example`
-- **Backend errors**: `SENTRY_DSN` in `.env.example`
-- Errors auto-reported in production (`NODE_ENV=production`)
-
-#### Log aggregation
+#### Database Connectivity
 ```bash
-# Local development
-npx nx start twenty-server | tee server.log
-
-# Docker
-docker compose logs -f twenty-server
-
-# Production (example with CloudWatch)
-aws logs tail /aws/ecs/twenty-server --follow
+docker exec twenty-server npx typeorm query "SELECT 1"
+# Success: Returns 1
+# Failure: Connection error
 ```
+
+#### Redis Connectivity
+```bash
+docker exec twenty-redis redis-cli ping
+# Success: PONG
+# Failure: Connection refused
+```
+
+### Common Failures
+
+#### **Failure: Server Crashes on Startup**
+**Symptoms**: `docker logs twenty-server` shows TypeORM connection error
+
+**Diagnosis**:
+```bash
+docker logs twenty-server 2>&1 | grep -i error
+# Look for: "Connection refused", "password authentication failed"
+```
+
+**Fix**:
+1. Verify PostgreSQL is running: `docker ps | grep postgres`
+2. Check `PG_DATABASE_URL` in `.env` matches PostgreSQL credentials
+3. Ensure database `default` exists:
+   ```bash
+   docker exec twenty-db psql -U postgres -c "CREATE DATABASE default;"
+   ```
+4. Restart server: `docker restart twenty-server`
+
+---
+
+#### **Failure: Frontend Shows "API Error"**
+**Symptoms**: Browser console shows `NetworkError: Failed to fetch`
+
+**Diagnosis**:
+```bash
+curl http://localhost:3000/graphql
+# If fails: Backend unreachable
+# If succeeds: CORS or frontend config issue
+```
+
+**Fix**:
+1. Check `REACT_APP_SERVER_BASE_URL` matches actual server URL
+2. Verify CORS enabled in NestJS (default: `cors: true` in `main.ts`)
+3. Check browser DevTools → Network tab for actual error (401 = auth issue, 500 = server error)
+
+---
+
+#### **Failure: Migrations Fail**
+**Symptoms**: Server logs show `Migration <name> failed to run`
+
+**Diagnosis**:
+```bash
+docker exec twenty-server npx typeorm migration:show
+# Shows pending migrations
+```
+
+**Fix**:
+1. Run migrations manually:
+   ```bash
+   docker exec twenty-server yarn database:migrate:prod
+   ```
+2. If migration still fails, check PostgreSQL logs:
+   ```bash
+   docker logs twenty-db 2>&1 | tail -50
+   ```
+3. For ClickHouse migrations:
+   ```bash
+   docker exec twenty-server yarn clickhouse:migrate:prod
+   ```
+
+---
+
+#### **Failure: Worker Not Processing Jobs**
+**Symptoms**: Emails not syncing, webhooks not firing
+
+**Diagnosis**:
+```bash
+docker logs twenty-worker
+# Check for errors like "Redis connection failed"
+
+docker exec twenty-redis redis-cli LLEN bull:default:wait
+# Shows number of queued jobs
+```
+
+**Fix**:
+1. Ensure worker container is running: `docker ps | grep worker`
+2. Check Redis connectivity from worker:
+   ```bash
+   docker exec twenty-worker node -e "const Redis = require('ioredis'); const r = new Redis(process.env.REDIS_URL); r.ping().then(console.log).catch(console.error);"
+   ```
+3. Restart worker: `docker restart twenty-worker`
+
+---
+
+#### **Failure: Out of Disk Space**
+**Symptoms**: PostgreSQL or file uploads fail with "No space left on device"
+
+**Diagnosis**:
+```bash
+docker exec twenty-server df -h
+# Check /app/packages/twenty-server/.local-storage usage
+```
+
+**Fix**:
+1. Clean up old files (if using local storage):
+   ```bash
+   docker exec twenty-server find .local-storage -type f -mtime +30 -delete
+   ```
+2. Migrate to S3:
+   - Set `STORAGE_TYPE=s3` in `.env`
+   - Configure `STORAGE_S3_*` variables
+   - Restart server
+
+---
+
+#### **Failure: High Memory Usage**
+**Symptoms**: Server OOM killed, Docker shows `exit code 137`
+
+**Diagnosis**:
+```bash
+docker stats twenty-server
+# Check MEM USAGE
+```
+
+**Fix**:
+1. Increase Node.js heap size:
+   ```bash
+   docker run -e NODE_OPTIONS="--max-old-space-size=4096" twentycrm/twenty
+   ```
+2. Scale horizontally (multiple server containers behind load balancer)
+3. Check for memory leaks in application code (profile with Chrome DevTools)
+
+---
+
+#### **Failure: Slow GraphQL Queries**
+**Symptoms**: Frontend slow, server CPU high
+
+**Diagnosis**:
+```bash
+# Enable query logging in PostgreSQL
+docker exec twenty-db psql -U postgres -c "ALTER SYSTEM SET log_min_duration_statement = 1000;"
+docker restart twenty-db
+
+# Check slow query log
+docker logs twenty-db 2>&1 | grep "duration:"
+```
+
+**Fix**:
+1. Add database indexes (create migration for missing indexes)
+2. Optimize N+1 queries (use DataLoader in GraphQL resolvers)
+3. Enable query caching in Apollo Client
+
+---
+
+### Log Locations
+- **Server Logs**: `docker logs twenty-server`
+- **Worker Logs**: `docker logs twenty-worker`
+- **PostgreSQL Logs**: `docker logs twenty-db`
+- **Redis Logs**: `docker logs twenty-redis`
+- **Sentry**: https://sentry.io (if configured)
+
+### Emergency Commands
+```bash
+# Restart all services
+docker compose restart
+
+# Flush Redis cache (resets sessions)
+docker exec twenty-redis redis-cli FLUSHDB
+
+# Rollback last migration
+docker exec twenty-server npx typeorm migration:revert
+
+# Backup database
+docker exec twenty-db pg_dump -U postgres default > backup_$(date +%Y%m%d).sql
+
+# Restore database
+cat backup.sql | docker exec -i twenty-db psql -U postgres default
+```
+
+---
+
+**For production support**: Contact via GitHub Discussions or Discord (https://discord.gg/cx5n4Jzs57)
