@@ -61,11 +61,10 @@ export class OAuthDiscoveryController {
   }
 
   // RFC 9728: OAuth 2.0 Protected Resource Metadata.
-  // Served at both the root path and the resource-specific path (/mcp) so
-  // clients following the latest spec, which probes the path-aware URL first,
-  // get JSON metadata instead of falling through to the SPA's index.html.
-  // The `resource` value echoes the host the request reached so MCP clients
-  // can validate the resource indicator they were trying to reach.
+  // Exposed at both the root and the resource-specific path (/mcp) because
+  // RFC 9728 defines the path-aware form and clients may probe either.
+  // The `resource` value echoes the host the request reached so the metadata
+  // matches the resource indicator the client used.
   @Get(['oauth-protected-resource', 'oauth-protected-resource/mcp'])
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   getProtectedResourceMetadata(@Req() request: Request) {

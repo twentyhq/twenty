@@ -58,10 +58,9 @@ describe('OAuthDiscoveryController', () => {
       });
     });
 
-    // RFC 9728 clients (e.g. Claude.ai's MCP integration) probe the
-    // path-aware well-known URL first. Without this route, the request
-    // falls through to ServeStaticModule and returns the SPA's index.html
-    // with HTTP 200 — which strict clients try to parse as JSON and fail.
+    // RFC 9728 defines both a root and a resource-specific well-known
+    // URL; both must resolve to this handler so any conformant client
+    // can discover the metadata.
     it('is registered at both the root and the /mcp path-aware URL', () => {
       const paths = Reflect.getMetadata(
         PATH_METADATA,
