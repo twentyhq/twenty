@@ -89,7 +89,7 @@ describe('regression — date-only strings in America/Los_Angeles (UTC-7/8)', ()
     const dateString = localDateOnly(1);
     const localMidnight = new Date(dateString + 'T00:00:00');
 
-    expect(localMidnight.getHours()).toBe(0);   // midnight in local time
+    expect(localMidnight.getHours()).toBe(0); // midnight in local time
     expect(localMidnight.getMinutes()).toBe(0);
     // Date stays on the intended calendar day
     const [, , dd] = dateString.split('-');

@@ -27,9 +27,7 @@ export const formatDateISOStringToRelativeDate = ({
   // constructor to use local midnight instead.
   // Full datetime strings already carry timezone info and are unaffected.
   const targetDate =
-    isoDate.length === 10
-      ? new Date(isoDate + 'T00:00:00')
-      : new Date(isoDate);
+    isoDate.length === 10 ? new Date(isoDate + 'T00:00:00') : new Date(isoDate);
 
   if (isDayMaximumPrecision && isToday(targetDate)) return t`Today`;
   if (isDayMaximumPrecision && isYesterday(targetDate)) return t`Yesterday`;
