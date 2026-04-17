@@ -212,6 +212,36 @@ export class OnboardingService {
     );
   }
 
+  async completeOnboardingProfileStepIfNameProvided({
+    userId,
+    workspaceId,
+    firstName,
+    lastName,
+  }: {
+    userId?: string;
+    workspaceId: string;
+    firstName?: string;
+    lastName?: string;
+  }) {
+    if (!isDefined(userId)) {
+      return;
+    }
+
+    if (firstName === '' && lastName === '') {
+      return;
+    }
+
+    if (!isDefined(firstName) && !isDefined(lastName)) {
+      return;
+    }
+
+    await this.setOnboardingCreateProfilePending({
+      userId,
+      workspaceId,
+      value: false,
+    });
+  }
+
   async setOnboardingBookOnboardingPending({
     workspaceId,
     value,

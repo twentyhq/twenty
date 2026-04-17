@@ -14,6 +14,7 @@ import { In, Repository } from 'typeorm';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
   AuthException,
@@ -96,6 +97,7 @@ export class UserResolver {
     private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   private async getUserWorkspacePermissions({
@@ -522,13 +524,20 @@ export class UserResolver {
       workspaceMemberRepository.save(workspaceMemberUpdatePayload),
     );
 
-    if (isDefined(input.update.locale)) {
-      const targetUserWorkspace =
-        await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
-          userId: workspaceMember.userId,
-          workspaceId: workspace.id,
-        });
+    await this.onboardingService.completeOnboardingProfileStepIfNameProvided({
+      userId: workspaceMember.userId,
+      workspaceId: workspace.id,
+      firstName: workspaceMemberUpdatePayload.name?.firstName,
+      lastName: workspaceMemberUpdatePayload.name?.lastName,
+    });
 
+    const targetUserWorkspace =
+      await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
+        userId: workspaceMember.userId,
+        workspaceId: workspace.id,
+      });
+
+    if (isDefined(input.update.locale)) {
       await this.userWorkspaceService.updateUserWorkspaceLocaleForUserWorkspace(
         {
           locale: input.update.locale as UserWorkspaceEntity['locale'],
@@ -536,6 +545,11 @@ export class UserResolver {
         },
       );
     }
+
+    await this.coreEntityCacheService.invalidate(
+      'userWorkspaceEntity',
+      targetUserWorkspace.id,
+    );
 
     return true;
   }
