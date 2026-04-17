@@ -4,13 +4,16 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
-import { type LogicFunction } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
 import React from 'react';
-import { useParams } from 'react-router-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+export type LogicFunctionTableRow = {
+  key: string;
+  name: string;
+  trigger: string;
+  link?: string;
+};
 
 export const StyledTableRow = (
   props: React.ComponentProps<typeof TableRow>,
@@ -29,10 +32,8 @@ const StyledTableBodyContainer = styled.div`
 export const SettingsLogicFunctionsTable = ({
   logicFunctions,
 }: {
-  logicFunctions: LogicFunction[];
+  logicFunctions: LogicFunctionTableRow[];
 }) => {
-  const { applicationId = '' } = useParams();
-
   const { t } = useLingui();
 
   if (logicFunctions.length === 0) {
@@ -48,14 +49,10 @@ export const SettingsLogicFunctionsTable = ({
       </StyledTableRow>
       <StyledTableBodyContainer>
         <TableBody>
-          {logicFunctions.map((logicFunction: LogicFunction) => (
+          {logicFunctions.map((logicFunction) => (
             <SettingsLogicFunctionsFieldItemTableRow
-              key={logicFunction.id}
+              key={logicFunction.key}
               logicFunction={logicFunction}
-              to={getSettingsPath(SettingsPath.ApplicationLogicFunctionDetail, {
-                applicationId,
-                logicFunctionId: logicFunction.id,
-              })}
             />
           ))}
         </TableBody>

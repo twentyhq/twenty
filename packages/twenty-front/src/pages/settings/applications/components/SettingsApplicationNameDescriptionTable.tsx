@@ -8,7 +8,8 @@ import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-type SettingsApplicationNameDescriptionTableItem = {
+export type ApplicationNameDescriptionTableRow = {
+  key: string;
   name: string;
   description?: string | null;
 };
@@ -22,7 +23,7 @@ export const SettingsApplicationNameDescriptionTable = ({
   title: string;
   description: string;
   sectionTitle: string;
-  items: SettingsApplicationNameDescriptionTableItem[];
+  items: ApplicationNameDescriptionTableRow[];
 }) => {
   if (items.length === 0) {
     return null;
@@ -38,7 +39,7 @@ export const SettingsApplicationNameDescriptionTable = ({
         </TableRow>
         <TableSection title={sectionTitle}>
           {items.map((item) => (
-            <TableRow key={item.name} gridAutoColumns="180px 1fr">
+            <TableRow key={item.key} gridAutoColumns="180px 1fr">
               <TableCell
                 color={themeCssVariables.font.color.primary}
                 gap={themeCssVariables.spacing[2]}

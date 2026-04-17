@@ -14,16 +14,17 @@ import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
+  IconBook,
   IconBox,
-  IconCheck,
   IconCommand,
-  IconDownload,
+  IconGraph,
   IconInfoCircle,
+  IconLego,
   IconListDetails,
   IconLock,
-  IconUpload,
+  IconSettings,
+  IconShield,
 } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
 import {
   ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,
@@ -33,6 +34,7 @@ import {
 import { SettingsApplicationDetailTitle } from '~/pages/settings/applications/components/SettingsApplicationDetailTitle';
 import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
 import { SettingsApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailContentTab';
+import { SettingsApplicationDetailSettingsTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab';
 import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 
@@ -115,49 +117,6 @@ export const SettingsAvailableApplicationDetails = () => {
     });
   };
 
-  const getActionButton = () => {
-    if (!canInstallMarketplaceApps) {
-      return null;
-    }
-    if (!isAlreadyInstalled) {
-      return (
-        <Button
-          Icon={IconDownload}
-          title={isInstalling ? t`Installing...` : t`Install`}
-          variant={'primary'}
-          accent={'blue'}
-          onClick={handleInstall}
-          disabled={isInstalling}
-        />
-      );
-    }
-    if (hasUpdate && isDefined(registrationId)) {
-      return (
-        <Button
-          Icon={IconUpload}
-          title={
-            isUpgrading
-              ? t`Upgrading...`
-              : t`Upgrade to ${latestAvailableVersion}`
-          }
-          variant={'secondary'}
-          accent={'blue'}
-          onClick={handleUpgrade}
-          disabled={isUpgrading}
-        />
-      );
-    }
-    return (
-      <Button
-        Icon={IconCheck}
-        title={t`Installed`}
-        variant={'secondary'}
-        accent={'default'}
-        disabled={isAlreadyInstalled}
-      />
-    );
-  };
-
   const contentEntries = useMemo(
     () => [
       {
@@ -179,10 +138,46 @@ export const SettingsAvailableApplicationDetails = () => {
         many: t`logic functions`,
       },
       {
+        icon: IconGraph,
+        count: (manifest?.frontComponents ?? []).filter(
+          (fc) =>
+            !isDefined(fc.command) &&
+            fc.universalIdentifier !==
+              manifest?.application
+                .settingsCustomTabFrontComponentUniversalIdentifier,
+        ).length,
+        one: t`widget`,
+        many: t`widgets`,
+      },
+      {
         icon: IconCommand,
-        count: (manifest?.frontComponents ?? []).length,
-        one: t`front component`,
-        many: t`front components`,
+        count: (manifest?.frontComponents ?? []).filter(
+          (fc) => isDefined(fc.command) && !fc.isHeadless,
+        ).length,
+        one: t`command`,
+        many: t`commands`,
+      },
+      {
+        icon: IconShield,
+        count: (manifest?.roles ?? []).filter(
+          (role) =>
+            role.universalIdentifier !==
+            manifest?.application.defaultRoleUniversalIdentifier,
+        ).length,
+        one: t`role`,
+        many: t`roles`,
+      },
+      {
+        icon: IconBook,
+        count: (manifest?.skills ?? []).length,
+        one: t`skill`,
+        many: t`skills`,
+      },
+      {
+        icon: IconLego,
+        count: (manifest?.agents ?? []).length,
+        one: t`agent`,
+        many: t`agents`,
       },
     ],
     [manifest],
@@ -197,6 +192,7 @@ export const SettingsAvailableApplicationDetails = () => {
     { id: 'about', title: t`About`, Icon: IconInfoCircle },
     { id: 'content', title: t`Content`, Icon: IconBox },
     { id: 'permissions', title: t`Permissions`, Icon: IconLock },
+    { id: 'settings', title: t`Settings`, Icon: IconSettings },
   ];
 
   const renderActiveTabContent = () => {
@@ -226,8 +222,13 @@ export const SettingsAvailableApplicationDetails = () => {
               issueReportUrl: app?.issueReportUrl,
               sourcePackageUrl,
             }}
-            actionButton={getActionButton()}
-            isInstalled={false}
+            isInstalled={isAlreadyInstalled}
+            canInstallMarketplaceApps={canInstallMarketplaceApps}
+            onInstall={handleInstall}
+            isInstalling={isInstalling}
+            hasUpdate={hasUpdate}
+            onUpgrade={handleUpgrade}
+            isUpgrading={isUpgrading}
           />
         );
       case 'content':
@@ -243,6 +244,10 @@ export const SettingsAvailableApplicationDetails = () => {
             marketplaceAppDefaultRole={defaultRole}
             marketplaceAppObjects={manifest?.objects}
           />
+        );
+      case 'settings':
+        return (
+          <SettingsApplicationDetailSettingsTab application={application} />
         );
       default:
         return null;

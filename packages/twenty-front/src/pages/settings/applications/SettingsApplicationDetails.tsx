@@ -1,12 +1,17 @@
+import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import type { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useQuery } from '@apollo/client/react';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
@@ -15,15 +20,21 @@ import {
   IconApps,
   IconBox,
   IconCommand,
+  IconGraph,
   IconInfoCircle,
+  IconLego,
   IconListDetails,
   IconLock,
   IconSettings,
 } from 'twenty-ui/display';
 import {
+  ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,
   FindOneApplicationDocument,
+  PermissionFlagType,
+  UninstallApplicationDocument,
 } from '~/generated-metadata/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsApplicationDetailSkeletonLoader } from '~/pages/settings/applications/components/SettingsApplicationDetailSkeletonLoader';
 import { SettingsApplicationDetailTitle } from '~/pages/settings/applications/components/SettingsApplicationDetailTitle';
 import { SettingsApplicationCustomTab } from '~/pages/settings/applications/tabs/SettingsApplicationCustomTab';
@@ -31,6 +42,7 @@ import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications
 import { SettingsApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailContentTab';
 import { SettingsApplicationDetailSettingsTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab';
 import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
+import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 
 const APPLICATION_DETAIL_ID = 'application-detail-id';
 
@@ -67,34 +79,116 @@ export const SettingsApplicationDetails = () => {
   const settingsCustomTabFrontComponentId =
     application?.settingsCustomTabFrontComponentId;
 
+  const { upgrade, isUpgrading } = useUpgradeApplication();
+
+  const canInstallMarketplaceApps = useHasPermissionFlag(
+    PermissionFlagType.MARKETPLACE_APPS,
+  );
+
+  const sourceType = application?.applicationRegistration?.sourceType;
+  const isNpmApp = sourceType === ApplicationRegistrationSourceType.NPM;
+  const registrationId = detail?.id;
+  const currentVersion = application?.version;
+  const latestAvailableVersion =
+    detail?.latestAvailableVersion ??
+    application?.applicationRegistration?.latestAvailableVersion;
+
+  const hasUpdate =
+    isNpmApp &&
+    isDefined(latestAvailableVersion) &&
+    isDefined(currentVersion) &&
+    isNewerSemver(latestAvailableVersion, currentVersion);
+
+  const handleUpgrade = async () => {
+    if (!isDefined(registrationId) || !isDefined(latestAvailableVersion)) {
+      return;
+    }
+
+    await upgrade({
+      appRegistrationId: registrationId,
+      targetVersion: latestAvailableVersion,
+    });
+  };
+
+  const [uninstallApplication] = useMutation(UninstallApplicationDocument);
+  const [isUninstalling, setIsUninstalling] = useState(false);
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const navigate = useNavigateSettings();
+
+  const handleUninstall = async () => {
+    if (!isDefined(application)) return;
+
+    setIsUninstalling(true);
+    try {
+      await uninstallApplication({
+        variables: { universalIdentifier: application.universalIdentifier },
+      });
+      enqueueSuccessSnackBar({
+        message: t`Application successfully uninstalled.`,
+      });
+      navigate(SettingsPath.Applications);
+    } catch {
+      enqueueErrorSnackBar({ message: t`Error uninstalling application.` });
+    } finally {
+      setIsUninstalling(false);
+    }
+  };
+
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+
+  const applicationObjectIds = useMemo(
+    () => new Set((application?.objects ?? []).map((obj) => obj.id)),
+    [application?.objects],
+  );
+
+  const appFieldExtensionsCount = useMemo(() => {
+    if (!isDefined(application)) return 0;
+
+    return objectMetadataItems
+      .filter((item) => !applicationObjectIds.has(item.id))
+      .reduce(
+        (total, item) =>
+          total +
+          item.fields.filter((field) => field.applicationId === application.id)
+            .length,
+        0,
+      );
+  }, [objectMetadataItems, applicationObjectIds, application]);
+
   const contentEntries = useMemo(
     () => [
       {
         icon: IconBox,
-        count: (manifest?.objects ?? []).length,
+        count: (application?.objects ?? []).length,
         one: t`object`,
         many: t`objects`,
       },
       {
         icon: IconListDetails,
-        count: (manifest?.fields ?? []).length,
+        count: appFieldExtensionsCount,
         one: t`field`,
         many: t`fields`,
       },
       {
         icon: IconCommand,
-        count: (manifest?.logicFunctions ?? []).length,
+        count: (application?.logicFunctions ?? []).length,
         one: t`logic function`,
         many: t`logic functions`,
       },
       {
-        icon: IconCommand,
-        count: (manifest?.frontComponents ?? []).length,
+        icon: IconGraph,
+        count: (application?.frontComponents ?? []).length,
         one: t`front component`,
         many: t`front components`,
       },
+      {
+        icon: IconLego,
+        count: (application?.agents ?? []).length,
+        one: t`agent`,
+        many: t`agents`,
+      },
     ],
-    [manifest],
+    [application, appFieldExtensionsCount],
   );
 
   const tabs: SingleTabProps[] = [
@@ -139,13 +233,9 @@ export const SettingsApplicationDetails = () => {
             screenshots={app?.screenshots}
             author={app?.author}
             category={app?.category}
-            contentEntries={isDefined(manifest) ? contentEntries : undefined}
-            currentVersion={application.version ?? undefined}
-            latestAvailableVersion={
-              detail?.latestAvailableVersion ??
-              application.applicationRegistration?.latestAvailableVersion ??
-              undefined
-            }
+            contentEntries={contentEntries}
+            currentVersion={currentVersion ?? undefined}
+            latestAvailableVersion={latestAvailableVersion ?? undefined}
             developerLinks={
               isDefined(app)
                 ? {
@@ -157,7 +247,13 @@ export const SettingsApplicationDetails = () => {
                 : undefined
             }
             isInstalled={true}
-            application={application}
+            canInstallMarketplaceApps={canInstallMarketplaceApps}
+            hasUpdate={hasUpdate}
+            onUpgrade={handleUpgrade}
+            isUpgrading={isUpgrading}
+            canBeUninstalled={application.canBeUninstalled}
+            onUninstall={handleUninstall}
+            isUninstalling={isUninstalling}
           />
         );
       case 'content':
