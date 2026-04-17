@@ -2,16 +2,19 @@ import type { Resend } from 'resend';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import type { SegmentDto } from 'src/modules/resend/types/segment.dto';
-import type { SyncResult } from 'src/modules/resend/types/sync-result';
+import type { SyncStepResult } from 'src/modules/resend/types/sync-step-result';
 import { fetchAllPaginated } from 'src/modules/resend/utils/fetch-all-paginated';
 import { getExistingRecordsMap } from 'src/modules/resend/utils/get-existing-records-map';
 import { toIsoString } from 'src/modules/resend/utils/to-iso-string';
 import { upsertRecords } from 'src/modules/resend/utils/upsert-records';
 
+export type SegmentIdMap = Map<string, string>;
+
 export const syncSegments = async (
   resend: Resend,
   client: CoreApiClient,
-): Promise<{ result: SyncResult; existingMap: Map<string, string> }> => {
+  syncedAt: string,
+): Promise<SyncStepResult<SegmentIdMap>> => {
   const segments = await fetchAllPaginated((params) =>
     resend.segments.list(params),
   );
@@ -21,7 +24,7 @@ export const syncSegments = async (
   const mapData = (segment: (typeof segments)[number]): SegmentDto => ({
     name: segment.name,
     createdAt: toIsoString(segment.created_at),
-    lastSyncedFromResend: new Date().toISOString(),
+    lastSyncedFromResend: syncedAt,
   });
 
   const result = await upsertRecords({
@@ -34,5 +37,5 @@ export const syncSegments = async (
     objectNameSingular: 'resendSegment',
   });
 
-  return { result, existingMap };
+  return { result, value: existingMap };
 };

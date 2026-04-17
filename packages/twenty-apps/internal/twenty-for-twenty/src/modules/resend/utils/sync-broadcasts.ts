@@ -3,27 +3,30 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-shared/utils';
 
 import type { CreateBroadcastDto } from 'src/modules/resend/types/create-broadcast.dto';
-import type { SyncResult } from 'src/modules/resend/types/sync-result';
+import type { SyncStepResult } from 'src/modules/resend/types/sync-step-result';
 import type { UpdateBroadcastDto } from 'src/modules/resend/types/update-broadcast.dto';
 import { fetchAllPaginated } from 'src/modules/resend/utils/fetch-all-paginated';
 import { getExistingRecordsMap } from 'src/modules/resend/utils/get-existing-records-map';
+import type { SegmentIdMap } from 'src/modules/resend/utils/sync-segments';
 import { toEmailsField } from 'src/modules/resend/utils/to-emails-field';
-import { toIsoString, toIsoStringOrNull } from 'src/modules/resend/utils/to-iso-string';
+import {
+  toIsoString,
+  toIsoStringOrNull,
+} from 'src/modules/resend/utils/to-iso-string';
 import { upsertRecords } from 'src/modules/resend/utils/upsert-records';
 
 export const syncBroadcasts = async (
   resend: Resend,
   client: CoreApiClient,
-  segmentMap: Map<string, string>,
-  templateHtmlMap: Map<string, string>,
-): Promise<SyncResult> => {
+  segmentMap: SegmentIdMap,
+): Promise<SyncStepResult> => {
   const broadcasts = await fetchAllPaginated((params) =>
     resend.broadcasts.list(params),
   );
 
   const existingMap = await getExistingRecordsMap(client, 'resendBroadcasts');
 
-  return upsertRecords({
+  const result = await upsertRecords({
     items: broadcasts,
     getId: (broadcast) => broadcast.id,
     fetchDetail: async (id) => {
@@ -42,10 +45,6 @@ export const syncBroadcasts = async (
         ? segmentMap.get(broadcast.segment_id)
         : undefined;
 
-      const templateId = isDefined(detail.html)
-        ? templateHtmlMap.get(detail.html)
-        : undefined;
-
       const data: CreateBroadcastDto = {
         name: detail.name,
         subject: detail.subject,
@@ -62,13 +61,9 @@ export const syncBroadcasts = async (
         data.segmentId = segmentId;
       }
 
-      if (isDefined(templateId)) {
-        data.templateId = templateId;
-      }
-
       return data;
     },
-    mapUpdateData: (detail, broadcast): UpdateBroadcastDto => {
+    mapUpdateData: (_detail, broadcast): UpdateBroadcastDto => {
       const data: UpdateBroadcastDto = {
         status: broadcast.status.toUpperCase(),
         scheduledAt: toIsoStringOrNull(broadcast.scheduled_at),
@@ -89,24 +84,12 @@ export const syncBroadcasts = async (
         }
       }
 
-      if (!isDefined(detail.html)) {
-        data.templateId = null;
-      } else {
-        const templateId = templateHtmlMap.get(detail.html);
-
-        if (isDefined(templateId)) {
-          data.templateId = templateId;
-        } else {
-          console.warn(
-            `[sync] broadcast ${broadcast.id}: template html not found in lookup map; leaving templateId untouched`,
-          );
-        }
-      }
-
       return data;
     },
     existingMap,
     client,
     objectNameSingular: 'resendBroadcast',
   });
+
+  return { result, value: undefined };
 };

@@ -3,7 +3,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-shared/utils';
 
 import type { ContactDto } from 'src/modules/resend/types/contact.dto';
-import type { SyncResult } from 'src/modules/resend/types/sync-result';
+import type { SyncStepResult } from 'src/modules/resend/types/sync-step-result';
 import { fetchAllPaginated } from 'src/modules/resend/utils/fetch-all-paginated';
 import { findOrCreatePerson } from 'src/modules/resend/utils/find-or-create-person';
 import { getErrorMessage } from 'src/modules/resend/utils/get-error-message';
@@ -15,7 +15,8 @@ import { upsertRecords } from 'src/modules/resend/utils/upsert-records';
 export const syncContacts = async (
   resend: Resend,
   client: CoreApiClient,
-): Promise<SyncResult> => {
+  syncedAt: string,
+): Promise<SyncStepResult> => {
   const contacts = await fetchAllPaginated((params) =>
     resend.contacts.list(params),
   );
@@ -30,7 +31,7 @@ export const syncContacts = async (
     },
     unsubscribed: contact.unsubscribed,
     createdAt: toIsoString(contact.created_at),
-    lastSyncedFromResend: new Date().toISOString(),
+    lastSyncedFromResend: syncedAt,
   });
 
   const result = await upsertRecords({
@@ -73,5 +74,5 @@ export const syncContacts = async (
     }
   }
 
-  return result;
+  return { result, value: undefined };
 };

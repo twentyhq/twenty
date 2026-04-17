@@ -2,109 +2,34 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk';
 
 import { SYNC_RESEND_DATA_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/constants/universal-identifiers';
-import type { SyncResult } from 'src/modules/resend/types/sync-result';
-import { getErrorMessage } from 'src/modules/resend/utils/get-error-message';
 import { getResendClient } from 'src/modules/resend/utils/get-resend-client';
+import { logStepOutcome } from 'src/modules/resend/utils/log-step-outcome';
+import { orchestrateSyncResend } from 'src/modules/resend/utils/orchestrate-sync-resend';
+import { reportAndThrowIfErrors } from 'src/modules/resend/utils/report-and-throw-if-errors';
 import { syncBroadcasts } from 'src/modules/resend/utils/sync-broadcasts';
 import { syncContacts } from 'src/modules/resend/utils/sync-contacts';
 import { syncEmails } from 'src/modules/resend/utils/sync-emails';
 import { syncSegments } from 'src/modules/resend/utils/sync-segments';
 import { syncTemplates } from 'src/modules/resend/utils/sync-templates';
 
-const logStepResult = (name: string, result: SyncResult): void => {
-  console.log(
-    `[sync] ${name}: ${result.fetched} fetched, ${result.created} created, ${result.updated} updated, ${result.errors.length} errors`,
-  );
-
-  for (const error of result.errors) {
-    console.error(`[sync] ${name} error: ${error}`);
-  }
-};
-
-const runStep = async (
-  name: string,
-  fn: () => Promise<SyncResult>,
-  allErrors: string[],
-): Promise<boolean> => {
-  try {
-    const result = await fn();
-
-    logStepResult(name, result);
-    allErrors.push(...result.errors);
-
-    return true;
-  } catch (error) {
-    const message = getErrorMessage(error);
-
-    allErrors.push(`${name}: ${message}`);
-    console.error(`[sync] ${name} failed: ${message}`);
-
-    return false;
-  }
-};
-
-const handler = async () => {
+const handler = async (): Promise<void> => {
   const resend = getResendClient();
   const client = new CoreApiClient();
+  const syncedAt = new Date().toISOString();
 
-  const allErrors: string[] = [];
+  const outcomes = await orchestrateSyncResend({
+    syncSegments: () => syncSegments(resend, client, syncedAt),
+    syncTemplates: () => syncTemplates(resend, client),
+    syncContacts: () => syncContacts(resend, client, syncedAt),
+    syncEmails: () => syncEmails(resend, client, syncedAt),
+    syncBroadcasts: (segmentMap) => syncBroadcasts(resend, client, segmentMap),
+  });
 
-  let segmentMap = new Map<string, string>();
-  let templateHtmlMap = new Map<string, string>();
-
-  const segmentsOk = await runStep(
-    'segments',
-    async () => {
-      const output = await syncSegments(resend, client);
-
-      segmentMap = output.existingMap;
-
-      return output.result;
-    },
-    allErrors,
-  );
-
-  await runStep('contacts', () => syncContacts(resend, client), allErrors);
-
-  const templatesOk = await runStep(
-    'templates',
-    async () => {
-      const output = await syncTemplates(resend, client);
-
-      templateHtmlMap = output.templateHtmlMap;
-
-      return output.result;
-    },
-    allErrors,
-  );
-
-  if (segmentsOk && templatesOk) {
-    await runStep(
-      'broadcasts',
-      () => syncBroadcasts(resend, client, segmentMap, templateHtmlMap),
-      allErrors,
-    );
-  } else {
-    const skippedDeps = [
-      !segmentsOk && 'segments',
-      !templatesOk && 'templates',
-    ].filter(Boolean);
-
-    allErrors.push(
-      `broadcasts: skipped because ${skippedDeps.join(' and ')} failed`,
-    );
-    console.warn(
-      `[sync] broadcasts skipped: prerequisite steps (${skippedDeps.join(', ')}) failed`,
-    );
+  for (const outcome of outcomes) {
+    logStepOutcome(outcome);
   }
 
-  await runStep('emails', () => syncEmails(resend, client), allErrors);
-
-  if (allErrors.length > 0) {
-    throw new Error(
-      `Sync completed with ${allErrors.length} error(s):\n${allErrors.join('\n')}`,
-    );
-  }
+  reportAndThrowIfErrors(outcomes);
 };
 
 export default defineLogicFunction({

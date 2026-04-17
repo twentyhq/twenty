@@ -3,7 +3,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-shared/utils';
 
 import type { CreateTemplateDto } from 'src/modules/resend/types/create-template.dto';
-import type { SyncResult } from 'src/modules/resend/types/sync-result';
+import type { SyncStepResult } from 'src/modules/resend/types/sync-step-result';
 import type { UpdateTemplateDto } from 'src/modules/resend/types/update-template.dto';
 import { fetchAllPaginated } from 'src/modules/resend/utils/fetch-all-paginated';
 import { getExistingRecordsMap } from 'src/modules/resend/utils/get-existing-records-map';
@@ -18,7 +18,7 @@ import { withRateLimitRetry } from 'src/modules/resend/utils/with-rate-limit-ret
 export const syncTemplates = async (
   resend: Resend,
   client: CoreApiClient,
-): Promise<{ result: SyncResult; templateHtmlMap: Map<string, string> }> => {
+): Promise<SyncStepResult> => {
   const templates = await fetchAllPaginated((params) =>
     resend.templates.list(params),
   );
@@ -85,19 +85,5 @@ export const syncTemplates = async (
     objectNameSingular: 'resendTemplate',
   });
 
-  const templateHtmlMap = new Map<string, string>();
-
-  for (const [resendId, detail] of detailsMap) {
-    if (!isDefined(detail.html)) {
-      continue;
-    }
-
-    const twentyId = existingMap.get(resendId);
-
-    if (isDefined(twentyId)) {
-      templateHtmlMap.set(detail.html, twentyId);
-    }
-  }
-
-  return { result, templateHtmlMap };
+  return { result, value: undefined };
 };

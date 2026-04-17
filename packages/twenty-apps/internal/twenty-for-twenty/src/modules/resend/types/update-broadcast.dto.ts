@@ -3,5 +3,4 @@ export type UpdateBroadcastDto = {
   scheduledAt: string | null;
   sentAt: string | null;
   segmentId?: string | null;
-  templateId?: string | null;
 };
