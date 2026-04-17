@@ -72,6 +72,13 @@ export class CalendarSaveEventsService {
             ]),
           );
 
+          const existingAssociationIdByExternalId = new Map(
+            existingAssociations.map((association) => [
+              association.eventExternalId,
+              association.id,
+            ]),
+          );
+
           const fetchedCalendarEventsWithDBEvents: FetchedCalendarEventWithDBEvent[] =
             fetchedCalendarEvents.map(
               (event): FetchedCalendarEventWithDBEvent => {
@@ -224,6 +231,29 @@ export class CalendarSaveEventsService {
           if (calendarChannelEventAssociationsToSave.length > 0) {
             await calendarChannelEventAssociationRepository.insert(
               calendarChannelEventAssociationsToSave,
+              transactionManager,
+            );
+          }
+
+          const existingAssociationsToUpdate =
+            fetchedCalendarEventsWithDBEventsEnrichedWithSavedEvents
+              .filter(
+                ({ existingCalendarEvent }) => existingCalendarEvent !== null,
+              )
+              .map(({ fetchedCalendarEvent }) => ({
+                criteria:
+                  existingAssociationIdByExternalId.get(
+                    fetchedCalendarEvent.id,
+                  )!,
+                partialEntity: {
+                  recurringEventExternalId:
+                    fetchedCalendarEvent.recurringEventExternalId ?? '',
+                },
+              }));
+
+          if (existingAssociationsToUpdate.length > 0) {
+            await calendarChannelEventAssociationRepository.updateMany(
+              existingAssociationsToUpdate,
               transactionManager,
             );
           }

@@ -37,6 +37,14 @@ describe('linkifyText', () => {
     ]);
   });
 
+  it('strips trailing punctuation from matched URLs', () => {
+    expect(linkifyText('see https://example.com, or this.')).toEqual([
+      { type: 'text', content: 'see ' },
+      { type: 'link', content: 'https://example.com' },
+      { type: 'text', content: ', or this.' },
+    ]);
+  });
+
   it('returns empty array for empty string', () => {
     expect(linkifyText('')).toEqual([]);
   });

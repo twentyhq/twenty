@@ -14,6 +14,7 @@ const mockCalendarEventRepository = {
 const mockAssociationRepository = {
   find: jest.fn(),
   insert: jest.fn(),
+  updateMany: jest.fn(),
 };
 
 const mockCalendarEventParticipantService = {
@@ -125,10 +126,12 @@ describe('CalendarSaveEventsService', () => {
   });
 
   it('should update existing events and only insert new ones on incremental sync', async () => {
-    mockAssociationRepository.find.mockResolvedValue([
+    mockAssociationRepository.find.mockResolvedValueOnce([
       {
+        id: 'assoc-403',
         eventExternalId: `${RECURRING_MASTER_ID}_20260403`,
         calendarEventId: 'existing-db-id-403',
+        calendarChannelId: calendarChannel.id,
       },
     ]);
 
@@ -136,6 +139,7 @@ describe('CalendarSaveEventsService', () => {
       createFetchedEvent({
         id: `${RECURRING_MASTER_ID}_20260403`,
         iCalUid: RECURRING_ICAL_UID,
+        recurringEventExternalId: RECURRING_MASTER_ID,
         title: 'Weekly Sync (Renamed)',
         startsAt: '2026-04-03T16:30:00+03:00',
       }),
@@ -168,14 +172,18 @@ describe('CalendarSaveEventsService', () => {
   });
 
   it('should only update without inserting when all events already exist', async () => {
-    mockAssociationRepository.find.mockResolvedValue([
+    mockAssociationRepository.find.mockResolvedValueOnce([
       {
+        id: 'assoc-1',
         eventExternalId: 'event-1',
         calendarEventId: 'db-id-1',
+        calendarChannelId: calendarChannel.id,
       },
       {
+        id: 'assoc-2',
         eventExternalId: 'event-2',
         calendarEventId: 'db-id-2',
+        calendarChannelId: calendarChannel.id,
       },
     ]);
 
@@ -187,5 +195,6 @@ describe('CalendarSaveEventsService', () => {
     expect(mockCalendarEventRepository.insert).not.toHaveBeenCalled();
     expect(mockCalendarEventRepository.updateMany).toHaveBeenCalledTimes(1);
     expect(mockAssociationRepository.insert).not.toHaveBeenCalled();
+    expect(mockAssociationRepository.updateMany).toHaveBeenCalledTimes(1);
   });
 });
