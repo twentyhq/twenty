@@ -10,6 +10,7 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
 import { validateRoleIsEditable } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-editable.util';
 import { validateRoleLabelUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util';
 import { validateRoleReadWritePermissionsConsistency } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-read-write-permissions-consistency.util';
@@ -22,6 +23,7 @@ export class FlatRoleValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRoleMaps: optimisticFlatRoleMaps,
     },
+    buildOptions,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.role
   >): FailedFlatEntityValidation<'role', 'create'> {
@@ -37,6 +39,21 @@ export class FlatRoleValidatorService {
     const existingRoles = Object.values(
       optimisticFlatRoleMaps.byUniversalIdentifier,
     ).filter(isDefined);
+
+    const existingRoleWithSameUniversalIdentifier =
+      findFlatEntityByUniversalIdentifier({
+        universalIdentifier: flatEntityToValidate.universalIdentifier,
+        flatEntityMaps: optimisticFlatRoleMaps,
+      });
+
+    if (isDefined(existingRoleWithSameUniversalIdentifier)) {
+      validationResult.errors.push(
+        ...validateRoleBelongsToCallerApplication({
+          referencedRole: existingRoleWithSameUniversalIdentifier,
+          buildOptions,
+        }),
+      );
+    }
 
     validationResult.errors.push(
       ...validateRoleRequiredPropertiesAreDefined({
@@ -135,6 +152,13 @@ export class FlatRoleValidatorService {
 
       return validationResult;
     }
+
+    validationResult.errors.push(
+      ...validateRoleBelongsToCallerApplication({
+        referencedRole: fromFlatRole,
+        buildOptions,
+      }),
+    );
 
     validationResult.errors.push(
       ...validateRoleIsEditable({
