@@ -14,6 +14,7 @@ import { setPgDateTypeParser } from 'src/database/pg/set-pg-date-type-parser';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { getSessionStorageOptions } from 'src/engine/core-modules/session-storage/session-storage.module-factory';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { configTransformers } from 'src/engine/core-modules/twenty-config/utils/config-transformers.util';
 import { UnhandledExceptionFilter } from 'src/filters/unhandled-exception.filter';
 
 import { AppModule } from './app.module';
@@ -44,16 +45,15 @@ const bootstrap = async () => {
   const twentyConfigService = app.get(TwentyConfigService);
 
   const trustProxyRaw = twentyConfigService.get('TRUST_PROXY');
-  const trustProxy =
-    trustProxyRaw === 'true'
-      ? true
-      : trustProxyRaw === 'false'
-        ? false
-        : /^\d+$/.test(trustProxyRaw)
-          ? Number(trustProxyRaw)
-          : trustProxyRaw;
 
-  app.set('trust proxy', trustProxy);
+  // Express's `trust proxy` accepts boolean | number | string (IP/CIDR list).
+  // Env vars are always strings, so coerce the boolean/numeric shapes — anything
+  // else (IP/CIDR list, named ranges) is passed through as-is.
+  app.set(
+    'trust proxy',
+    configTransformers.boolean(trustProxyRaw) ??
+      (/^\d+$/.test(trustProxyRaw) ? Number(trustProxyRaw) : trustProxyRaw),
+  );
 
   app.use(session(getSessionStorageOptions(twentyConfigService)));
 
