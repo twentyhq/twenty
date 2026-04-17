@@ -1,6 +1,8 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { readManifestFromFile } from '@/cli/utilities/build/manifest/manifest-reader';
 import { ConfigService } from '@/cli/utilities/config/config-service';
+import { formatSyncErrorEvents } from '@/cli/utilities/dev/orchestrator/steps/format-sync-error-events';
+import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
 
@@ -34,29 +36,17 @@ const innerAppInstall = async (
   });
 
   if (!result.success) {
-    const rawError = result.error;
-    const errorMessage =
-      rawError instanceof Error
-        ? rawError.message
-        : typeof rawError === 'object' &&
-            rawError !== null &&
-            'message' in rawError
-          ? String((rawError as { message: string }).message)
-          : String(rawError ?? 'Unknown error');
+    const errorEvents = formatSyncErrorEvents(result.error);
 
-    const extensions =
-      typeof rawError === 'object' &&
-      rawError !== null &&
-      'extensions' in rawError
-        ? (rawError as { extensions: Record<string, unknown> }).extensions
-        : undefined;
+    const message = errorEvents
+      ? errorEvents.map((event) => event.message).join('\n')
+      : `Install failed with error: ${serializeError(result.error)}`;
 
     return {
       success: false,
       error: {
         code: APP_ERROR_CODES.INSTALL_FAILED,
-        message: errorMessage,
-        ...(extensions ? { details: extensions } : {}),
+        message,
       },
     };
   }
