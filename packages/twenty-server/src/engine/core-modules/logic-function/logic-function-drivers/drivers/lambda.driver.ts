@@ -65,9 +65,6 @@ const YARN_INSTALL_LAMBDA_MEMORY_MB = 1024;
 const COMMON_LAYER_NAME_PREFIX = 'twenty-common-layer';
 const BUILDER_LAMBDA_TIMEOUT_SECONDS = 60;
 const BUILDER_LAMBDA_MEMORY_MB = 512;
-// AWS Lambda defaults to 128 MB when MemorySize is omitted, which is too
-// tight for non-trivial logic functions (large GraphQL responses, JSON
-// parsing, batched upserts) and frequently triggers OOM SIGKILLs.
 const EXECUTOR_LAMBDA_MEMORY_MB = 512;
 const LAMBDA_EPHEMERAL_STORAGE_MB = 4096;
 const YARN_INSTALL_HANDLER_PATH = resolve(
