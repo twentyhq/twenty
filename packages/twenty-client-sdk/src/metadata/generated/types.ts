@@ -39,11 +39,11 @@ export default {
         95,
         101,
         115,
-        120,
-        121,
-        122,
         124,
-        132,
+        125,
+        126,
+        128,
+        136,
         147,
         150,
         152,
@@ -105,13 +105,13 @@ export default {
                 1
             ],
             "metadata": [
-                119
+                123
             ],
             "on_BillingLicensedProduct": [
-                128
+                132
             ],
             "on_BillingMeteredProduct": [
-                129
+                133
             ],
             "__typename": [
                 1
@@ -1700,10 +1700,10 @@ export default {
                 157
             ],
             "billingSubscriptions": [
-                131
+                135
             ],
             "currentBillingSubscription": [
-                131
+                135
             ],
             "billingEntitlements": [
                 253
@@ -2621,272 +2621,38 @@ export default {
                 1
             ]
         },
-        "BillingSubscriptionSchedulePhaseItem": {
-            "price": [
-                1
-            ],
-            "quantity": [
-                11
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingSubscriptionSchedulePhase": {
-            "start_date": [
-                11
-            ],
-            "end_date": [
-                11
-            ],
-            "items": [
-                117
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingProductMetadata": {
-            "planKey": [
-                120
-            ],
-            "priceUsageBased": [
-                121
-            ],
-            "productKey": [
-                122
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingPlanKey": {},
-        "BillingUsageType": {},
-        "BillingProductKey": {},
-        "BillingPriceLicensed": {
-            "recurringInterval": [
-                124
-            ],
-            "unitAmount": [
-                11
-            ],
-            "stripePriceId": [
-                1
-            ],
-            "priceUsageType": [
-                121
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "SubscriptionInterval": {},
-        "BillingPriceTier": {
-            "upTo": [
-                11
-            ],
-            "flatAmount": [
-                11
-            ],
-            "unitAmount": [
-                11
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingPriceMetered": {
-            "tiers": [
-                125
-            ],
-            "recurringInterval": [
-                124
-            ],
-            "stripePriceId": [
-                1
-            ],
-            "priceUsageType": [
-                121
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingProduct": {
-            "name": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "images": [
-                1
-            ],
-            "metadata": [
-                119
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingLicensedProduct": {
-            "name": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "images": [
-                1
-            ],
-            "metadata": [
-                119
-            ],
-            "prices": [
-                123
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingMeteredProduct": {
-            "name": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "images": [
-                1
-            ],
-            "metadata": [
-                119
-            ],
-            "prices": [
-                126
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingSubscriptionItem": {
+        "ApprovedAccessDomain": {
             "id": [
                 3
             ],
-            "hasReachedCurrentPeriodCap": [
-                6
-            ],
-            "quantity": [
-                11
-            ],
-            "stripePriceId": [
+            "domain": [
                 1
             ],
-            "billingProduct": [
-                0
+            "isValidated": [
+                6
+            ],
+            "createdAt": [
+                4
             ],
             "__typename": [
                 1
             ]
         },
-        "BillingSubscription": {
+        "FileWithSignedUrl": {
             "id": [
                 3
             ],
-            "status": [
-                132
+            "path": [
+                1
             ],
-            "interval": [
-                124
+            "size": [
+                11
             ],
-            "billingSubscriptionItems": [
-                130
-            ],
-            "currentPeriodEnd": [
+            "createdAt": [
                 4
             ],
-            "metadata": [
-                15
-            ],
-            "phases": [
-                118
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "SubscriptionStatus": {},
-        "BillingEndTrialPeriod": {
-            "status": [
-                132
-            ],
-            "hasPaymentMethod": [
-                6
-            ],
-            "billingPortalUrl": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingMeteredProductUsage": {
-            "productKey": [
-                122
-            ],
-            "periodStart": [
-                4
-            ],
-            "periodEnd": [
-                4
-            ],
-            "usedCredits": [
-                11
-            ],
-            "grantedCredits": [
-                11
-            ],
-            "rolloverCredits": [
-                11
-            ],
-            "totalGrantedCredits": [
-                11
-            ],
-            "unitPriceCents": [
-                11
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingPlan": {
-            "planKey": [
-                120
-            ],
-            "licensedProducts": [
-                128
-            ],
-            "meteredProducts": [
-                129
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingSession": {
             "url": [
                 1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BillingUpdate": {
-            "currentBillingSubscription": [
-                131
-            ],
-            "billingSubscriptions": [
-                131
             ],
             "__typename": [
                 1
@@ -2932,46 +2698,280 @@ export default {
                 1
             ]
         },
+        "BillingSubscriptionSchedulePhaseItem": {
+            "price": [
+                1
+            ],
+            "quantity": [
+                11
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingSubscriptionSchedulePhase": {
+            "start_date": [
+                11
+            ],
+            "end_date": [
+                11
+            ],
+            "items": [
+                121
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingProductMetadata": {
+            "planKey": [
+                124
+            ],
+            "priceUsageBased": [
+                125
+            ],
+            "productKey": [
+                126
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingPlanKey": {},
+        "BillingUsageType": {},
+        "BillingProductKey": {},
+        "BillingPriceLicensed": {
+            "recurringInterval": [
+                128
+            ],
+            "unitAmount": [
+                11
+            ],
+            "stripePriceId": [
+                1
+            ],
+            "priceUsageType": [
+                125
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "SubscriptionInterval": {},
+        "BillingPriceTier": {
+            "upTo": [
+                11
+            ],
+            "flatAmount": [
+                11
+            ],
+            "unitAmount": [
+                11
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingPriceMetered": {
+            "tiers": [
+                129
+            ],
+            "recurringInterval": [
+                128
+            ],
+            "stripePriceId": [
+                1
+            ],
+            "priceUsageType": [
+                125
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingProduct": {
+            "name": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "images": [
+                1
+            ],
+            "metadata": [
+                123
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingLicensedProduct": {
+            "name": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "images": [
+                1
+            ],
+            "metadata": [
+                123
+            ],
+            "prices": [
+                127
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingMeteredProduct": {
+            "name": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "images": [
+                1
+            ],
+            "metadata": [
+                123
+            ],
+            "prices": [
+                130
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingSubscriptionItem": {
+            "id": [
+                3
+            ],
+            "hasReachedCurrentPeriodCap": [
+                6
+            ],
+            "quantity": [
+                11
+            ],
+            "stripePriceId": [
+                1
+            ],
+            "billingProduct": [
+                0
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingSubscription": {
+            "id": [
+                3
+            ],
+            "status": [
+                136
+            ],
+            "interval": [
+                128
+            ],
+            "billingSubscriptionItems": [
+                134
+            ],
+            "currentPeriodEnd": [
+                4
+            ],
+            "metadata": [
+                15
+            ],
+            "phases": [
+                122
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "SubscriptionStatus": {},
+        "BillingEndTrialPeriod": {
+            "status": [
+                136
+            ],
+            "hasPaymentMethod": [
+                6
+            ],
+            "billingPortalUrl": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingMeteredProductUsage": {
+            "productKey": [
+                126
+            ],
+            "periodStart": [
+                4
+            ],
+            "periodEnd": [
+                4
+            ],
+            "usedCredits": [
+                11
+            ],
+            "grantedCredits": [
+                11
+            ],
+            "rolloverCredits": [
+                11
+            ],
+            "totalGrantedCredits": [
+                11
+            ],
+            "unitPriceCents": [
+                11
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingPlan": {
+            "planKey": [
+                124
+            ],
+            "licensedProducts": [
+                132
+            ],
+            "meteredProducts": [
+                133
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingSession": {
+            "url": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BillingUpdate": {
+            "currentBillingSubscription": [
+                135
+            ],
+            "billingSubscriptions": [
+                135
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "OnboardingStepSuccess": {
             "success": [
                 6
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ApprovedAccessDomain": {
-            "id": [
-                3
-            ],
-            "domain": [
-                1
-            ],
-            "isValidated": [
-                6
-            ],
-            "createdAt": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "FileWithSignedUrl": {
-            "id": [
-                3
-            ],
-            "path": [
-                1
-            ],
-            "size": [
-                11
-            ],
-            "createdAt": [
-                4
-            ],
-            "url": [
-                1
             ],
             "__typename": [
                 1
@@ -6481,10 +6481,10 @@ export default {
                 }
             ],
             "enterpriseSubscriptionStatus": [
-                139
+                120
             ],
             "billingPortalSession": [
-                136,
+                140,
                 {
                     "returnUrlPath": [
                         1
@@ -6492,16 +6492,16 @@ export default {
                 }
             ],
             "listPlans": [
-                135
+                139
             ],
             "getMeteredProductsUsage": [
-                134
+                138
             ],
             "findWorkspaceInvitations": [
                 143
             ],
             "getApprovedAccessDomains": [
-                141
+                117
             ],
             "getPageLayoutTabs": [
                 113,
@@ -7533,7 +7533,7 @@ export default {
                 }
             ],
             "uploadEmailAttachmentFile": [
-                142,
+                118,
                 {
                     "file": [
                         388,
@@ -7542,7 +7542,7 @@ export default {
                 }
             ],
             "uploadAIChatFile": [
-                142,
+                118,
                 {
                     "file": [
                         388,
@@ -7551,7 +7551,7 @@ export default {
                 }
             ],
             "uploadWorkflowFile": [
-                142,
+                118,
                 {
                     "file": [
                         388,
@@ -7560,7 +7560,7 @@ export default {
                 }
             ],
             "uploadWorkspaceLogo": [
-                142,
+                118,
                 {
                     "file": [
                         388,
@@ -7569,7 +7569,7 @@ export default {
                 }
             ],
             "uploadWorkspaceMemberProfilePicture": [
-                142,
+                118,
                 {
                     "file": [
                         388,
@@ -7578,7 +7578,7 @@ export default {
                 }
             ],
             "uploadFilesFieldFile": [
-                142,
+                118,
                 {
                     "file": [
                         388,
@@ -7591,7 +7591,7 @@ export default {
                 }
             ],
             "uploadFilesFieldFileByUniversalIdentifier": [
-                142,
+                118,
                 {
                     "file": [
                         388,
@@ -7936,7 +7936,7 @@ export default {
                 6
             ],
             "setEnterpriseKey": [
-                138,
+                119,
                 {
                     "enterpriseKey": [
                         1,
@@ -7945,20 +7945,20 @@ export default {
                 }
             ],
             "skipSyncEmailOnboardingStep": [
-                140
+                142
             ],
             "skipBookOnboardingStep": [
-                140
+                142
             ],
             "checkoutSession": [
-                136,
+                140,
                 {
                     "recurringInterval": [
-                        124,
+                        128,
                         "SubscriptionInterval!"
                     ],
                     "plan": [
-                        120,
+                        124,
                         "BillingPlanKey!"
                     ],
                     "requirePaymentMethod": [
@@ -7971,19 +7971,19 @@ export default {
                 }
             ],
             "switchSubscriptionInterval": [
-                137
+                141
             ],
             "switchBillingPlan": [
-                137
+                141
             ],
             "cancelSwitchBillingPlan": [
-                137
+                141
             ],
             "cancelSwitchBillingInterval": [
-                137
+                141
             ],
             "setMeteredSubscriptionPrice": [
-                137,
+                141,
                 {
                     "priceId": [
                         1,
@@ -7992,10 +7992,10 @@ export default {
                 }
             ],
             "endSubscriptionTrialPeriod": [
-                133
+                137
             ],
             "cancelSwitchMeteredPrice": [
-                137
+                141
             ],
             "deleteWorkspaceInvitation": [
                 1,
@@ -8028,7 +8028,7 @@ export default {
                 }
             ],
             "createApprovedAccessDomain": [
-                141,
+                117,
                 {
                     "input": [
                         420,
@@ -8046,7 +8046,7 @@ export default {
                 }
             ],
             "validateApprovedAccessDomain": [
-                141,
+                117,
                 {
                     "input": [
                         422,

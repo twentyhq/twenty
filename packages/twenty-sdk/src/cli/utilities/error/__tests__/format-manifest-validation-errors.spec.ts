@@ -1,26 +1,26 @@
-import { formatSyncErrorEvents } from '@/cli/utilities/dev/orchestrator/steps/format-sync-error-events';
+import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
 
-describe('formatSyncErrorEvents', () => {
+describe('formatManifestValidationErrors', () => {
   it('should return null for null input', () => {
-    expect(formatSyncErrorEvents(null)).toBeNull();
+    expect(formatManifestValidationErrors(null)).toBeNull();
   });
 
   it('should return null for undefined input', () => {
-    expect(formatSyncErrorEvents(undefined)).toBeNull();
+    expect(formatManifestValidationErrors(undefined)).toBeNull();
   });
 
   it('should return null for non-object input', () => {
-    expect(formatSyncErrorEvents('string error')).toBeNull();
-    expect(formatSyncErrorEvents(42)).toBeNull();
+    expect(formatManifestValidationErrors('string error')).toBeNull();
+    expect(formatManifestValidationErrors(42)).toBeNull();
   });
 
   it('should return null when extensions is missing', () => {
-    expect(formatSyncErrorEvents({ message: 'error' })).toBeNull();
+    expect(formatManifestValidationErrors({ message: 'error' })).toBeNull();
   });
 
   it('should return null when extensions.errors is missing', () => {
     expect(
-      formatSyncErrorEvents({
+      formatManifestValidationErrors({
         extensions: { summary: { totalErrors: 1 } },
       }),
     ).toBeNull();
@@ -28,14 +28,14 @@ describe('formatSyncErrorEvents', () => {
 
   it('should return null when extensions.summary is missing', () => {
     expect(
-      formatSyncErrorEvents({
+      formatManifestValidationErrors({
         extensions: { errors: {} },
       }),
     ).toBeNull();
   });
 
   it('should format a single error', () => {
-    const events = formatSyncErrorEvents({
+    const events = formatManifestValidationErrors({
       extensions: {
         errors: {
           fieldMetadata: [
@@ -72,7 +72,7 @@ describe('formatSyncErrorEvents', () => {
   });
 
   it('should format multiple errors across metadata types', () => {
-    const events = formatSyncErrorEvents({
+    const events = formatManifestValidationErrors({
       extensions: {
         errors: {
           fieldMetadata: [
@@ -103,7 +103,7 @@ describe('formatSyncErrorEvents', () => {
   });
 
   it('should format errors with details for both objectMetadata and fieldMetadata', () => {
-    const events = formatSyncErrorEvents({
+    const events = formatManifestValidationErrors({
       extensions: {
         errors: {
           objectMetadata: [
@@ -170,7 +170,7 @@ describe('formatSyncErrorEvents', () => {
   });
 
   it('should include value in details when present', () => {
-    const events = formatSyncErrorEvents({
+    const events = formatManifestValidationErrors({
       extensions: {
         errors: {
           fieldMetadata: [
@@ -194,7 +194,7 @@ describe('formatSyncErrorEvents', () => {
   });
 
   it('should omit details suffix when no value or universalIdentifier', () => {
-    const events = formatSyncErrorEvents({
+    const events = formatManifestValidationErrors({
       extensions: {
         errors: {
           fieldMetadata: [
@@ -212,7 +212,7 @@ describe('formatSyncErrorEvents', () => {
   });
 
   it('should fall back to entries.length when summary count is missing for a metadata type', () => {
-    const events = formatSyncErrorEvents({
+    const events = formatManifestValidationErrors({
       extensions: {
         errors: {
           fieldMetadata: [
@@ -233,7 +233,7 @@ describe('formatSyncErrorEvents', () => {
   });
 
   it('should pluralize correctly for singular and plural counts', () => {
-    const singleError = formatSyncErrorEvents({
+    const singleError = formatManifestValidationErrors({
       extensions: {
         errors: {
           objectMetadata: [
@@ -249,7 +249,7 @@ describe('formatSyncErrorEvents', () => {
     expect(singleError?.[0].message).toBe('Sync failed with 1 error');
     expect(singleError?.[1].message).toBe('objectMetadata: 1 error');
 
-    const multipleErrors = formatSyncErrorEvents({
+    const multipleErrors = formatManifestValidationErrors({
       extensions: {
         errors: {
           objectMetadata: [

@@ -76,7 +76,6 @@ export class DeduplicateEngineCommandsCommand extends ActiveOrSuspendedWorkspace
 
     const { allFlatEntityMaps: standardAllFlatEntityMaps } =
       computeTwentyStandardApplicationAllFlatEntityMaps({
-        shouldIncludeRecordPageLayouts: true,
         now: new Date().toISOString(),
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,

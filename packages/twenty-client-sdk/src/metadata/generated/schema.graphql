@@ -1266,6 +1266,37 @@ type Analytics {
   success: Boolean!
 }
 
+type ApprovedAccessDomain {
+  id: UUID!
+  domain: String!
+  isValidated: Boolean!
+  createdAt: DateTime!
+}
+
+type FileWithSignedUrl {
+  id: UUID!
+  path: String!
+  size: Float!
+  createdAt: DateTime!
+  url: String!
+}
+
+type EnterpriseLicenseInfoDTO {
+  isValid: Boolean!
+  licensee: String
+  expiresAt: DateTime
+  subscriptionId: String
+}
+
+type EnterpriseSubscriptionStatusDTO {
+  status: String!
+  licensee: String
+  expiresAt: DateTime
+  cancelAt: DateTime
+  currentPeriodEnd: DateTime
+  isCancellationScheduled: Boolean!
+}
+
 type BillingSubscriptionSchedulePhaseItem {
   price: String!
   quantity: Float
@@ -1419,40 +1450,9 @@ type BillingUpdate {
   billingSubscriptions: [BillingSubscription!]!
 }
 
-type EnterpriseLicenseInfoDTO {
-  isValid: Boolean!
-  licensee: String
-  expiresAt: DateTime
-  subscriptionId: String
-}
-
-type EnterpriseSubscriptionStatusDTO {
-  status: String!
-  licensee: String
-  expiresAt: DateTime
-  cancelAt: DateTime
-  currentPeriodEnd: DateTime
-  isCancellationScheduled: Boolean!
-}
-
 type OnboardingStepSuccess {
   """Boolean that confirms query was dispatched"""
   success: Boolean!
-}
-
-type ApprovedAccessDomain {
-  id: UUID!
-  domain: String!
-  isValidated: Boolean!
-  createdAt: DateTime!
-}
-
-type FileWithSignedUrl {
-  id: UUID!
-  path: String!
-  size: Float!
-  createdAt: DateTime!
-  url: String!
 }
 
 type WorkspaceInvitation {
