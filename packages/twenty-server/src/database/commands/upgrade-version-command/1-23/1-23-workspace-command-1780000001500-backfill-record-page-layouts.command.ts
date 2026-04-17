@@ -246,9 +246,10 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
 
-    const { flatObjectMetadataMaps } =
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
       ]);
 
     const existingObjectMetadataUniversalIdentifiers = new Set(
@@ -308,11 +309,6 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
         return true;
       });
 
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
-
     const widgets = Object.values(
       standardMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier,
     )
@@ -324,9 +320,6 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
           return false;
         }
 
-        // Standard record page layouts only contain FIELD widgets today.
-        // Skip any FIELD widget whose referenced field metadata is missing
-        // from the workspace to avoid aborting the whole migration.
         if (
           widget.universalConfiguration.configurationType ===
           WidgetConfigurationType.FIELD
