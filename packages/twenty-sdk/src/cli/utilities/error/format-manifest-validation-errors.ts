@@ -15,7 +15,7 @@ type StructuredSyncError = {
   };
 };
 
-export const formatSyncErrorEvents = (
+export const formatManifestValidationErrors = (
   error: unknown,
 ): OrchestratorStateStepEvent[] | null => {
   if (!error || typeof error !== 'object') {

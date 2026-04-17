@@ -1,7 +1,7 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { readManifestFromFile } from '@/cli/utilities/build/manifest/manifest-reader';
 import { ConfigService } from '@/cli/utilities/config/config-service';
-import { formatSyncErrorEvents } from '@/cli/utilities/dev/orchestrator/steps/format-sync-error-events';
+import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
@@ -36,7 +36,7 @@ const innerAppInstall = async (
   });
 
   if (!result.success) {
-    const errorEvents = formatSyncErrorEvents(result.error);
+    const errorEvents = formatManifestValidationErrors(result.error);
 
     const message = errorEvents
       ? errorEvents.map((event) => event.message).join('\n')
