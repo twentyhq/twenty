@@ -38,32 +38,40 @@ export const syncEmails = async (
 
       return detail;
     },
-    mapCreateData: (detail): CreateEmailDto => ({
-      subject: detail.subject,
-      fromAddress: toEmailsField(detail.from),
-      toAddresses: toEmailsField(detail.to),
-      htmlBody: detail.html ?? '',
-      textBody: detail.text ?? '',
-      ccAddresses: toEmailsField(detail.cc),
-      bccAddresses: toEmailsField(detail.bcc),
-      replyToAddresses: toEmailsField(detail.reply_to),
-      lastEvent: mapLastEvent(detail.last_event),
-      createdAt: toIsoString(detail.created_at),
-      scheduledAt: toIsoStringOrNull(detail.scheduled_at),
-      tags: detail.tags,
-      lastSyncedFromResend: new Date().toISOString(),
-    }),
-    mapUpdateData: (_detail, email): UpdateEmailDto => ({
-      subject: email.subject,
-      fromAddress: toEmailsField(email.from),
-      toAddresses: toEmailsField(email.to),
-      ccAddresses: toEmailsField(email.cc),
-      bccAddresses: toEmailsField(email.bcc),
-      replyToAddresses: toEmailsField(email.reply_to),
-      lastEvent: mapLastEvent(email.last_event),
-      scheduledAt: toIsoStringOrNull(email.scheduled_at),
-      lastSyncedFromResend: new Date().toISOString(),
-    }),
+    mapCreateData: (detail): CreateEmailDto => {
+      const mappedLastEvent = mapLastEvent(detail.last_event);
+
+      return {
+        subject: detail.subject,
+        fromAddress: toEmailsField(detail.from),
+        toAddresses: toEmailsField(detail.to),
+        htmlBody: detail.html ?? '',
+        textBody: detail.text ?? '',
+        ccAddresses: toEmailsField(detail.cc),
+        bccAddresses: toEmailsField(detail.bcc),
+        replyToAddresses: toEmailsField(detail.reply_to),
+        ...(isDefined(mappedLastEvent) && { lastEvent: mappedLastEvent }),
+        createdAt: toIsoString(detail.created_at),
+        scheduledAt: toIsoStringOrNull(detail.scheduled_at),
+        tags: detail.tags,
+        lastSyncedFromResend: new Date().toISOString(),
+      };
+    },
+    mapUpdateData: (_detail, email): UpdateEmailDto => {
+      const mappedLastEvent = mapLastEvent(email.last_event);
+
+      return {
+        subject: email.subject,
+        fromAddress: toEmailsField(email.from),
+        toAddresses: toEmailsField(email.to),
+        ccAddresses: toEmailsField(email.cc),
+        bccAddresses: toEmailsField(email.bcc),
+        replyToAddresses: toEmailsField(email.reply_to),
+        ...(isDefined(mappedLastEvent) && { lastEvent: mappedLastEvent }),
+        scheduledAt: toIsoStringOrNull(email.scheduled_at),
+        lastSyncedFromResend: new Date().toISOString(),
+      };
+    },
     existingMap,
     client,
     objectNameSingular: 'resendEmail',

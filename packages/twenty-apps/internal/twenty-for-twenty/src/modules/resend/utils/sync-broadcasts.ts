@@ -52,7 +52,7 @@ export const syncBroadcasts = async (
         fromAddress: toEmailsField(detail.from),
         replyTo: toEmailsField(detail.reply_to),
         previewText: detail.preview_text ?? '',
-        status: (detail.status ?? 'UNKNOWN').toUpperCase(),
+        status: detail.status.toUpperCase(),
         createdAt: toIsoString(detail.created_at),
         scheduledAt: toIsoStringOrNull(detail.scheduled_at),
         sentAt: toIsoStringOrNull(detail.sent_at),
@@ -78,18 +78,12 @@ export const syncBroadcasts = async (
         : undefined;
 
       const data: UpdateBroadcastDto = {
-        status: (broadcast.status ?? 'UNKNOWN').toUpperCase(),
+        status: broadcast.status.toUpperCase(),
         scheduledAt: toIsoStringOrNull(broadcast.scheduled_at),
         sentAt: toIsoStringOrNull(broadcast.sent_at),
+        segmentId: segmentId ?? null,
+        templateId: templateId ?? null,
       };
-
-      if (isDefined(segmentId)) {
-        data.segmentId = segmentId;
-      }
-
-      if (isDefined(templateId)) {
-        data.templateId = templateId;
-      }
 
       return data;
     },

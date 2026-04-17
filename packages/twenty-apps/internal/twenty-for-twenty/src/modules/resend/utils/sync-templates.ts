@@ -58,7 +58,7 @@ export const syncTemplates = async (
     mapCreateData: (detail): CreateTemplateDto => ({
       name: detail.name,
       alias: detail.alias ?? '',
-      status: (detail.status ?? 'UNKNOWN').toUpperCase(),
+      status: detail.status.toUpperCase(),
       fromAddress: toEmailsField(detail.from),
       subject: detail.subject ?? '',
       replyTo: toEmailsField(detail.reply_to),
@@ -71,7 +71,7 @@ export const syncTemplates = async (
     mapUpdateData: (detail, template): UpdateTemplateDto => ({
       name: template.name,
       alias: template.alias ?? '',
-      status: (template.status ?? 'UNKNOWN').toUpperCase(),
+      status: template.status.toUpperCase(),
       fromAddress: toEmailsField(detail.from),
       subject: detail.subject ?? '',
       replyTo: toEmailsField(detail.reply_to),

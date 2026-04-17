@@ -19,13 +19,13 @@ export const useRecordHtml = (objectName: string): RecordHtmlState => {
   const requestIdRef = useRef(0);
 
   useEffect(() => {
+    const currentRequestId = ++requestIdRef.current;
+
     if (!isDefined(recordId)) {
       setState({ html: null, loading: false, error: 'No record ID' });
 
       return;
     }
-
-    const currentRequestId = ++requestIdRef.current;
 
     setState((prev) => ({ ...prev, loading: true, error: null }));
 

@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 export type LastEvent =
   | 'SENT'
   | 'DELIVERED'
@@ -5,22 +7,39 @@ export type LastEvent =
   | 'COMPLAINED'
   | 'BOUNCED'
   | 'OPENED'
-  | 'CLICKED';
+  | 'CLICKED'
+  | 'SCHEDULED'
+  | 'QUEUED'
+  | 'FAILED'
+  | 'CANCELED'
+  | 'RECEIVED'
+  | 'SUPPRESSED';
 
-const VALID_LAST_EVENTS = new Set<LastEvent>([
-  'SENT',
-  'DELIVERED',
-  'DELIVERY_DELAYED',
-  'COMPLAINED',
-  'BOUNCED',
-  'OPENED',
-  'CLICKED',
-]);
+const EVENT_TO_LAST_EVENT: Record<string, LastEvent> = {
+  sent: 'SENT',
+  delivered: 'DELIVERED',
+  delivery_delayed: 'DELIVERY_DELAYED',
+  complained: 'COMPLAINED',
+  bounced: 'BOUNCED',
+  opened: 'OPENED',
+  clicked: 'CLICKED',
+  scheduled: 'SCHEDULED',
+  queued: 'QUEUED',
+  failed: 'FAILED',
+  canceled: 'CANCELED',
+  received: 'RECEIVED',
+  suppressed: 'SUPPRESSED',
+};
 
-export const mapLastEvent = (lastEvent: string): LastEvent => {
-  const mapped = lastEvent.replace('email.', '').toUpperCase();
+export const mapLastEvent = (lastEvent: string): LastEvent | null => {
+  const key = lastEvent.replace(/^email\./, '').toLowerCase();
+  const mapped = EVENT_TO_LAST_EVENT[key];
 
-  return VALID_LAST_EVENTS.has(mapped as LastEvent)
-    ? (mapped as LastEvent)
-    : 'SENT';
+  if (!isDefined(mapped)) {
+    console.warn(`[resend] Unknown email event: ${lastEvent}`);
+
+    return null;
+  }
+
+  return mapped;
 };

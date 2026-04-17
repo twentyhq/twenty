@@ -140,6 +140,13 @@ const handleEmailEvent = async (
 
   const lastEvent = mapLastEvent(eventType);
 
+  if (!isDefined(lastEvent)) {
+    return {
+      skipped: true,
+      reason: `unknown email event type: ${eventType}`,
+    };
+  }
+
   await client.mutation({
     updateResendEmail: {
       __args: {

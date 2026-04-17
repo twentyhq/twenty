@@ -5,10 +5,10 @@ import {
   type DatabaseEventPayload,
   type ObjectRecordCreateEvent,
 } from 'twenty-sdk';
-import { isDefined } from 'twenty-shared/utils';
 
 import { ON_RESEND_SEGMENT_CREATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/constants/universal-identifiers';
 import type { ResendSegmentRecord } from 'src/modules/resend/types/resend-segment-record';
+import { findOrCreateResendSegment } from 'src/modules/resend/utils/find-or-create-resend-segment';
 import { getResendClient } from 'src/modules/resend/utils/get-resend-client';
 
 type SegmentCreateEvent = DatabaseEventPayload<
@@ -31,23 +31,16 @@ const handler = async (
   }
 
   const resend = getResendClient();
-
-  const { data, error } = await resend.segments.create({ name });
-
-  if (isDefined(error) || !isDefined(data)) {
-    throw new Error(
-      `Failed to create Resend segment: ${JSON.stringify(error)}`,
-    );
-  }
-
   const client = new CoreApiClient();
+
+  const resendId = await findOrCreateResendSegment(resend, client, name);
 
   await client.mutation({
     updateResendSegment: {
       __args: {
         id: event.recordId,
         data: {
-          resendId: data.id,
+          resendId,
           lastSyncedFromResend: new Date().toISOString(),
         },
       },
@@ -55,7 +48,7 @@ const handler = async (
     },
   });
 
-  return { synced: true, resendId: data.id, twentyId: event.recordId };
+  return { synced: true, resendId, twentyId: event.recordId };
 };
 
 export default defineLogicFunction({
