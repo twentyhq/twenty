@@ -240,7 +240,6 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
   }): Promise<void> {
     const { allFlatEntityMaps: standardMaps } =
       computeTwentyStandardApplicationAllFlatEntityMaps({
-        shouldIncludeRecordPageLayouts: true,
         now: new Date().toISOString(),
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,

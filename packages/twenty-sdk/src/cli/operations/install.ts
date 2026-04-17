@@ -1,6 +1,8 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { readManifestFromFile } from '@/cli/utilities/build/manifest/manifest-reader';
 import { ConfigService } from '@/cli/utilities/config/config-service';
+import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
+import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
 
@@ -34,16 +36,17 @@ const innerAppInstall = async (
   });
 
   if (!result.success) {
-    const errorMessage =
-      result.error instanceof Error
-        ? result.error.message
-        : String(result.error ?? 'Unknown error');
+    const errorEvents = formatManifestValidationErrors(result.error);
+
+    const message = errorEvents
+      ? errorEvents.map((event) => event.message).join('\n')
+      : `Install failed with error: ${serializeError(result.error)}`;
 
     return {
       success: false,
       error: {
         code: APP_ERROR_CODES.INSTALL_FAILED,
-        message: errorMessage,
+        message,
       },
     };
   }

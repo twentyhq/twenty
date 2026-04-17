@@ -989,6 +989,41 @@ export interface Analytics {
     __typename: 'Analytics'
 }
 
+export interface ApprovedAccessDomain {
+    id: Scalars['UUID']
+    domain: Scalars['String']
+    isValidated: Scalars['Boolean']
+    createdAt: Scalars['DateTime']
+    __typename: 'ApprovedAccessDomain'
+}
+
+export interface FileWithSignedUrl {
+    id: Scalars['UUID']
+    path: Scalars['String']
+    size: Scalars['Float']
+    createdAt: Scalars['DateTime']
+    url: Scalars['String']
+    __typename: 'FileWithSignedUrl'
+}
+
+export interface EnterpriseLicenseInfoDTO {
+    isValid: Scalars['Boolean']
+    licensee?: Scalars['String']
+    expiresAt?: Scalars['DateTime']
+    subscriptionId?: Scalars['String']
+    __typename: 'EnterpriseLicenseInfoDTO'
+}
+
+export interface EnterpriseSubscriptionStatusDTO {
+    status: Scalars['String']
+    licensee?: Scalars['String']
+    expiresAt?: Scalars['DateTime']
+    cancelAt?: Scalars['DateTime']
+    currentPeriodEnd?: Scalars['DateTime']
+    isCancellationScheduled: Scalars['Boolean']
+    __typename: 'EnterpriseSubscriptionStatusDTO'
+}
+
 export interface BillingSubscriptionSchedulePhaseItem {
     price: Scalars['String']
     quantity?: Scalars['Float']
@@ -1134,45 +1169,10 @@ export interface BillingUpdate {
     __typename: 'BillingUpdate'
 }
 
-export interface EnterpriseLicenseInfoDTO {
-    isValid: Scalars['Boolean']
-    licensee?: Scalars['String']
-    expiresAt?: Scalars['DateTime']
-    subscriptionId?: Scalars['String']
-    __typename: 'EnterpriseLicenseInfoDTO'
-}
-
-export interface EnterpriseSubscriptionStatusDTO {
-    status: Scalars['String']
-    licensee?: Scalars['String']
-    expiresAt?: Scalars['DateTime']
-    cancelAt?: Scalars['DateTime']
-    currentPeriodEnd?: Scalars['DateTime']
-    isCancellationScheduled: Scalars['Boolean']
-    __typename: 'EnterpriseSubscriptionStatusDTO'
-}
-
 export interface OnboardingStepSuccess {
     /** Boolean that confirms query was dispatched */
     success: Scalars['Boolean']
     __typename: 'OnboardingStepSuccess'
-}
-
-export interface ApprovedAccessDomain {
-    id: Scalars['UUID']
-    domain: Scalars['String']
-    isValidated: Scalars['Boolean']
-    createdAt: Scalars['DateTime']
-    __typename: 'ApprovedAccessDomain'
-}
-
-export interface FileWithSignedUrl {
-    id: Scalars['UUID']
-    path: Scalars['String']
-    size: Scalars['Float']
-    createdAt: Scalars['DateTime']
-    url: Scalars['String']
-    __typename: 'FileWithSignedUrl'
 }
 
 export interface WorkspaceInvitation {
@@ -4239,6 +4239,45 @@ export interface AnalyticsGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApprovedAccessDomainGenqlSelection{
+    id?: boolean | number
+    domain?: boolean | number
+    isValidated?: boolean | number
+    createdAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface FileWithSignedUrlGenqlSelection{
+    id?: boolean | number
+    path?: boolean | number
+    size?: boolean | number
+    createdAt?: boolean | number
+    url?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface EnterpriseLicenseInfoDTOGenqlSelection{
+    isValid?: boolean | number
+    licensee?: boolean | number
+    expiresAt?: boolean | number
+    subscriptionId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface EnterpriseSubscriptionStatusDTOGenqlSelection{
+    status?: boolean | number
+    licensee?: boolean | number
+    expiresAt?: boolean | number
+    cancelAt?: boolean | number
+    currentPeriodEnd?: boolean | number
+    isCancellationScheduled?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface BillingSubscriptionSchedulePhaseItemGenqlSelection{
     price?: boolean | number
     quantity?: boolean | number
@@ -4386,48 +4425,9 @@ export interface BillingUpdateGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface EnterpriseLicenseInfoDTOGenqlSelection{
-    isValid?: boolean | number
-    licensee?: boolean | number
-    expiresAt?: boolean | number
-    subscriptionId?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface EnterpriseSubscriptionStatusDTOGenqlSelection{
-    status?: boolean | number
-    licensee?: boolean | number
-    expiresAt?: boolean | number
-    cancelAt?: boolean | number
-    currentPeriodEnd?: boolean | number
-    isCancellationScheduled?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface OnboardingStepSuccessGenqlSelection{
     /** Boolean that confirms query was dispatched */
     success?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ApprovedAccessDomainGenqlSelection{
-    id?: boolean | number
-    domain?: boolean | number
-    isValidated?: boolean | number
-    createdAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface FileWithSignedUrlGenqlSelection{
-    id?: boolean | number
-    path?: boolean | number
-    size?: boolean | number
-    createdAt?: boolean | number
-    url?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7493,6 +7493,38 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const ApprovedAccessDomain_possibleTypes: string[] = ['ApprovedAccessDomain']
+    export const isApprovedAccessDomain = (obj?: { __typename?: any } | null): obj is ApprovedAccessDomain => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApprovedAccessDomain"')
+      return ApprovedAccessDomain_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const FileWithSignedUrl_possibleTypes: string[] = ['FileWithSignedUrl']
+    export const isFileWithSignedUrl = (obj?: { __typename?: any } | null): obj is FileWithSignedUrl => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isFileWithSignedUrl"')
+      return FileWithSignedUrl_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const EnterpriseLicenseInfoDTO_possibleTypes: string[] = ['EnterpriseLicenseInfoDTO']
+    export const isEnterpriseLicenseInfoDTO = (obj?: { __typename?: any } | null): obj is EnterpriseLicenseInfoDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseLicenseInfoDTO"')
+      return EnterpriseLicenseInfoDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const EnterpriseSubscriptionStatusDTO_possibleTypes: string[] = ['EnterpriseSubscriptionStatusDTO']
+    export const isEnterpriseSubscriptionStatusDTO = (obj?: { __typename?: any } | null): obj is EnterpriseSubscriptionStatusDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseSubscriptionStatusDTO"')
+      return EnterpriseSubscriptionStatusDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const BillingSubscriptionSchedulePhaseItem_possibleTypes: string[] = ['BillingSubscriptionSchedulePhaseItem']
     export const isBillingSubscriptionSchedulePhaseItem = (obj?: { __typename?: any } | null): obj is BillingSubscriptionSchedulePhaseItem => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSubscriptionSchedulePhaseItem"')
@@ -7621,42 +7653,10 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const EnterpriseLicenseInfoDTO_possibleTypes: string[] = ['EnterpriseLicenseInfoDTO']
-    export const isEnterpriseLicenseInfoDTO = (obj?: { __typename?: any } | null): obj is EnterpriseLicenseInfoDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseLicenseInfoDTO"')
-      return EnterpriseLicenseInfoDTO_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const EnterpriseSubscriptionStatusDTO_possibleTypes: string[] = ['EnterpriseSubscriptionStatusDTO']
-    export const isEnterpriseSubscriptionStatusDTO = (obj?: { __typename?: any } | null): obj is EnterpriseSubscriptionStatusDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseSubscriptionStatusDTO"')
-      return EnterpriseSubscriptionStatusDTO_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const OnboardingStepSuccess_possibleTypes: string[] = ['OnboardingStepSuccess']
     export const isOnboardingStepSuccess = (obj?: { __typename?: any } | null): obj is OnboardingStepSuccess => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isOnboardingStepSuccess"')
       return OnboardingStepSuccess_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ApprovedAccessDomain_possibleTypes: string[] = ['ApprovedAccessDomain']
-    export const isApprovedAccessDomain = (obj?: { __typename?: any } | null): obj is ApprovedAccessDomain => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApprovedAccessDomain"')
-      return ApprovedAccessDomain_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const FileWithSignedUrl_possibleTypes: string[] = ['FileWithSignedUrl']
-    export const isFileWithSignedUrl = (obj?: { __typename?: any } | null): obj is FileWithSignedUrl => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isFileWithSignedUrl"')
-      return FileWithSignedUrl_possibleTypes.includes(obj.__typename)
     }
     
 

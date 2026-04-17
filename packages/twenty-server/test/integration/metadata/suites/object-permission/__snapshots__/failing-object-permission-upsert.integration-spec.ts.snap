@@ -45,6 +45,11 @@ exports[`Object permission upsert should fail when role is not editable (system 
         {
           "errors": [
             {
+              "code": "ROLE_BELONGS_TO_ANOTHER_APPLICATION",
+              "message": "Cannot modify permissions on a role owned by another application",
+              "userFriendlyMessage": "Cannot modify permissions on a role owned by another application.",
+            },
+            {
               "code": "ROLE_NOT_EDITABLE",
               "message": "Role is not editable",
               "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
