@@ -12,6 +12,7 @@ import {
   getGeometryForSpec,
 } from '@/app/halftone/_lib/geometry-registry';
 import { REFERENCE_PREVIEW_DISTANCE } from '@/app/halftone/_lib/footprint';
+import { generateImageHalftoneSvg } from '@/app/halftone/_lib/imageSvgExport';
 import {
   DEFAULT_REACT_EXPORT_SETTINGS,
   deriveExportComponentName,
@@ -1165,6 +1166,124 @@ export function HalftoneStudio() {
     ],
   );
 
+  const buildHalftoneSvg = useCallback(
+    (width: number, height: number) => {
+      if (state.settings.sourceMode !== 'image' || !imageElement) {
+        return null;
+      }
+
+      return generateImageHalftoneSvg({
+        backgroundColor: state.settings.background.color,
+        image: imageElement,
+        includeBackground: exportBackground,
+        previewDistance,
+        settings: state.settings,
+        width,
+        height,
+      });
+    },
+    [
+      exportBackground,
+      imageElement,
+      previewDistance,
+      state.settings,
+    ],
+  );
+
+  const handleExportHalftoneSvg = useCallback(
+    (width: number, height: number) => {
+      const svg = buildHalftoneSvg(width, height);
+
+      if (!svg) {
+        dispatch({
+          type: 'setStatus',
+          message: 'Could not export the halftone SVG.',
+          isError: true,
+        });
+        return;
+      }
+
+      downloadBlob(
+        `${exportArtifactNames.fileBaseName}-${width}x${height}.svg`,
+        new Blob([svg], { type: 'image/svg+xml;charset=utf-8' }),
+      );
+      dispatch({
+        type: 'setStatus',
+        message: 'Halftone SVG downloaded.',
+      });
+      window.setTimeout(() => dispatch({ type: 'clearStatus' }), 2000);
+    },
+    [
+      buildHalftoneSvg,
+      exportArtifactNames.fileBaseName,
+    ],
+  );
+
+  const handleCopyHalftoneSvg = useCallback(
+    async (width: number, height: number) => {
+      const svg = buildHalftoneSvg(width, height);
+
+      if (!svg) {
+        dispatch({
+          type: 'setStatus',
+          message: 'Could not copy the halftone SVG.',
+          isError: true,
+        });
+        return;
+      }
+
+      const svgBlob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+
+      if (
+        typeof ClipboardItem !== 'undefined' &&
+        typeof navigator.clipboard?.write === 'function'
+      ) {
+        try {
+          await navigator.clipboard.write([
+            new ClipboardItem({
+              'image/svg+xml': svgBlob,
+              'text/plain': new Blob([svg], { type: 'text/plain' }),
+            }),
+          ]);
+          dispatch({
+            type: 'setStatus',
+            message: 'SVG copied to clipboard.',
+          });
+          window.setTimeout(() => dispatch({ type: 'clearStatus' }), 2000);
+          return;
+        } catch {
+          // Fall through to plain-text clipboard copy below.
+        }
+      }
+
+      if (typeof navigator.clipboard?.writeText === 'function') {
+        try {
+          await navigator.clipboard.writeText(svg);
+          dispatch({
+            type: 'setStatus',
+            message: 'SVG markup copied to clipboard as text.',
+          });
+          window.setTimeout(() => dispatch({ type: 'clearStatus' }), 2000);
+          return;
+        } catch {
+          dispatch({
+            type: 'setStatus',
+            message: 'Could not copy the halftone SVG.',
+            isError: true,
+          });
+          return;
+        }
+      }
+
+      dispatch({
+        type: 'setStatus',
+        message: 'SVG clipboard copy is not supported in this browser.',
+        isError: true,
+      });
+    },
+    [buildHalftoneSvg],
+  );
+
   const handleExportHtml = useCallback(async () => {
     const componentName = exportArtifactNames.componentName;
     const kebabName = exportArtifactNames.fileBaseName;
@@ -1382,6 +1501,12 @@ export function HalftoneStudio() {
             }}
             onExportHalftoneImage={(width, height) => {
               void handleExportHalftoneImage(width, height);
+            }}
+            onExportHalftoneSvg={(width, height) => {
+              void handleExportHalftoneSvg(width, height);
+            }}
+            onCopyHalftoneSvg={(width, height) => {
+              void handleCopyHalftoneSvg(width, height);
             }}
             onExportBackgroundChange={setExportBackground}
             onExportHtml={() => {

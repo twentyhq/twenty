@@ -82,7 +82,9 @@ type ExportTabProps = {
   exportName: string;
   imageFileName: string | null;
   onCopyHalftoneImage: (width: number, height: number) => void;
+  onCopyHalftoneSvg: (width: number, height: number) => void;
   onExportHalftoneImage: (width: number, height: number) => void;
+  onExportHalftoneSvg: (width: number, height: number) => void;
   onExportBackgroundChange: (value: boolean) => void;
   onExportHtml: () => void;
   onExportNameChange: (value: string) => void;
@@ -107,7 +109,9 @@ export function ExportTab({
   exportName,
   imageFileName,
   onCopyHalftoneImage,
+  onCopyHalftoneSvg,
   onExportHalftoneImage,
+  onExportHalftoneSvg,
   onExportBackgroundChange,
   onExportHtml,
   onExportNameChange,
@@ -157,6 +161,16 @@ export function ExportTab({
     onCopyHalftoneImage(width, height);
   };
 
+  const handleDownloadHalftoneSvg = () => {
+    const { width, height } = getSelectedResolution();
+    onExportHalftoneSvg(width, height);
+  };
+
+  const handleCopyHalftoneSvg = () => {
+    const { width, height } = getSelectedResolution();
+    onCopyHalftoneSvg(width, height);
+  };
+
   return (
     <TabContent>
       <Section $first>
@@ -190,7 +204,9 @@ export function ExportTab({
         <SectionTitle>
           {sectionLabel(
             'Image Export',
-            'Downloads a PNG snapshot of the current halftone effect or copies it to the clipboard at the selected resolution.',
+            isImageMode
+              ? 'Downloads either a PNG snapshot or an SVG vector export of the current halftone effect, and can copy either format to the clipboard at the selected resolution.'
+              : 'Downloads a PNG snapshot of the current halftone effect or copies it to the clipboard at the selected resolution.',
           )}
         </SectionTitle>
 
@@ -202,16 +218,49 @@ export function ExportTab({
           Resolution
         </SelectControl>
 
-        <ExportButton
-          onClick={handleDownloadHalftoneImage}
-          style={{ marginTop: 12 }}
-          type="button"
-        >
-          Download Halftone Image
-        </ExportButton>
-        <ExportButton onClick={handleCopyHalftoneImage} type="button">
-          Copy Halftone Image
-        </ExportButton>
+        <div style={{ marginTop: 12 }}>
+          <SectionTitle $preserveCase>Download</SectionTitle>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <ExportButton
+              onClick={handleDownloadHalftoneImage}
+              style={{ flex: 1, marginTop: 0 }}
+              type="button"
+            >
+              PNG
+            </ExportButton>
+            {isImageMode ? (
+              <ExportButton
+                onClick={handleDownloadHalftoneSvg}
+                style={{ flex: 1, marginTop: 0 }}
+                type="button"
+              >
+                SVG
+              </ExportButton>
+            ) : null}
+          </div>
+        </div>
+
+        <div style={{ marginTop: 14 }}>
+          <SectionTitle $preserveCase>Copy</SectionTitle>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <ExportButton
+              onClick={handleCopyHalftoneImage}
+              style={{ flex: 1, marginTop: 0 }}
+              type="button"
+            >
+              PNG
+            </ExportButton>
+            {isImageMode ? (
+              <ExportButton
+                onClick={handleCopyHalftoneSvg}
+                style={{ flex: 1, marginTop: 0 }}
+                type="button"
+              >
+                SVG
+              </ExportButton>
+            ) : null}
+          </div>
+        </div>
       </Section>
 
       <Section>

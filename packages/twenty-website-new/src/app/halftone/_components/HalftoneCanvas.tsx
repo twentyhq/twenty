@@ -470,7 +470,7 @@ function getCanvasCursor(
   isDragging: boolean,
 ) {
   if (settings.sourceMode === 'image') {
-    return 'crosshair';
+    return 'default';
   }
 
   if (settings.animation.followDragEnabled) {
