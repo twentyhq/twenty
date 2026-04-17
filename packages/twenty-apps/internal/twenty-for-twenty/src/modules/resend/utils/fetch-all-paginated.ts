@@ -2,55 +2,52 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { withRateLimitRetry } from 'src/modules/resend/utils/with-rate-limit-retry';
 
-const DEFAULT_PAGE_SIZE = 100;
+const PAGE_SIZE = 100;
 
-export const fetchAllPaginated = async <TData extends { id: string }>(
-  listFn: (params: { limit: number; after?: string }) => Promise<{
-    data: { data: TData[]; has_more: boolean } | null;
-    error: unknown;
-  }>,
-  pageSize: number = DEFAULT_PAGE_SIZE,
-): Promise<TData[]> => {
-  const allItems: TData[] = [];
+export type ResendListFn<T> = (params: {
+  limit: number;
+  after?: string;
+}) => Promise<{
+  data: { data: T[]; has_more: boolean } | null;
+  error: unknown;
+}>;
 
+export const fetchAllPaginated = async <T extends { id: string }>(
+  listFn: ResendListFn<T>,
+  label = 'items',
+): Promise<T[]> => {
+  const items: T[] = [];
   let cursor: string | undefined;
 
-  let hasMore = true;
+  while (true) {
+    const params = {
+      limit: PAGE_SIZE,
+      ...(isDefined(cursor) && { after: cursor }),
+    };
+    const response = await withRateLimitRetry(() => listFn(params));
 
-  while (hasMore) {
-    const params: { limit: number; after?: string } = { limit: pageSize };
-
-    if (isDefined(cursor)) {
-      params.after = cursor;
+    if (isDefined(response.error)) {
+      throw new Error(
+        `Resend list[${label}] failed at cursor=${cursor ?? 'start'}: ${JSON.stringify(response.error)}`,
+      );
     }
 
-    const { data } = await withRateLimitRetry(async () => {
-      const response = await listFn(params);
+    const page = response.data;
 
-      if (isDefined(response.error)) {
-        throw new Error(
-          `Resend API error: ${JSON.stringify(response.error)}`,
-        );
-      }
+    if (!isDefined(page) || page.data.length === 0) break;
 
-      return response;
-    });
+    items.push(...page.data);
 
-    if (!isDefined(data)) {
-      break;
+    if (!page.has_more) break;
+
+    const nextCursor = page.data[page.data.length - 1].id;
+
+    if (nextCursor === cursor) {
+      throw new Error(`Resend list[${label}] cursor stuck at ${nextCursor}`);
     }
 
-    allItems.push(...data.data);
-    hasMore = data.has_more;
-
-    if (hasMore && data.data.length === 0) {
-      break;
-    }
-
-    if (hasMore && data.data.length > 0) {
-      cursor = data.data[data.data.length - 1].id;
-    }
+    cursor = nextCursor;
   }
 
-  return allItems;
+  return items;
 };

@@ -19,8 +19,9 @@ export const syncTemplates = async (
   resend: Resend,
   client: CoreApiClient,
 ): Promise<SyncStepResult> => {
-  const templates = await fetchAllPaginated((params) =>
-    resend.templates.list(params),
+  const templates = await fetchAllPaginated(
+    (params) => resend.templates.list(params),
+    'templates',
   );
   const existingMap = await getExistingRecordsMap(client, 'resendTemplates');
 

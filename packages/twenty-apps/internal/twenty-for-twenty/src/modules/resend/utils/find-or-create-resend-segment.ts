@@ -10,15 +10,14 @@ export const findOrCreateResendSegment = async (
   client: CoreApiClient,
   name: string,
 ): Promise<string> => {
-  const existingSegments = await fetchAllPaginated((params) =>
-    resend.segments.list(params),
+  const existingSegments = await fetchAllPaginated(
+    (params) => resend.segments.list(params),
+    'segments',
   );
 
-  const candidates = existingSegments.filter(
+  for (const candidate of existingSegments.filter(
     (segment) => segment.name === name,
-  );
-
-  for (const candidate of candidates) {
+  )) {
     const linkedRecordId = await findRecordByResendId(
       client,
       'resendSegments',

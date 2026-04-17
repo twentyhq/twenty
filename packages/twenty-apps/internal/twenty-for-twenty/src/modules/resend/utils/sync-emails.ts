@@ -22,8 +22,9 @@ export const syncEmails = async (
   client: CoreApiClient,
   syncedAt: string,
 ): Promise<SyncStepResult> => {
-  const emails = await fetchAllPaginated((params) =>
-    resend.emails.list(params),
+  const emails = await fetchAllPaginated(
+    (params) => resend.emails.list(params),
+    'emails',
   );
 
   const existingMap = await getExistingRecordsMap(client, 'resendEmails');

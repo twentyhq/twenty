@@ -2,27 +2,19 @@ const sleep = (ms: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 const isRateLimitError = (error: unknown): boolean => {
-  if (error instanceof Error) {
-    const message = error.message.toLowerCase();
+  const text =
+    error instanceof Error
+      ? error.message
+      : typeof error === 'object' && error !== null
+        ? JSON.stringify(error)
+        : '';
+  const lower = text.toLowerCase();
 
-    return (
-      message.includes('rate_limit') ||
-      message.includes('rate limit') ||
-      message.includes('too many requests')
-    );
-  }
-
-  if (typeof error === 'object' && error !== null) {
-    const serialized = JSON.stringify(error).toLowerCase();
-
-    return (
-      serialized.includes('rate_limit') ||
-      serialized.includes('rate limit') ||
-      serialized.includes('too many requests')
-    );
-  }
-
-  return false;
+  return (
+    lower.includes('rate limit') ||
+    lower.includes('rate_limit') ||
+    lower.includes('too many requests')
+  );
 };
 
 const MAX_RETRIES = 5;
@@ -35,23 +27,18 @@ export const withRateLimitRetry = async <T>(
   fn: () => Promise<T>,
 ): Promise<T> => {
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-    const now = Date.now();
-    const elapsed = now - lastCallTimestamp;
+    const elapsed = Date.now() - lastCallTimestamp;
 
-    if (elapsed < MIN_INTERVAL_MS) {
-      await sleep(MIN_INTERVAL_MS - elapsed);
-    }
+    if (elapsed < MIN_INTERVAL_MS) await sleep(MIN_INTERVAL_MS - elapsed);
 
     lastCallTimestamp = Date.now();
 
     try {
       return await fn();
     } catch (error) {
-      if (!isRateLimitError(error) || attempt === MAX_RETRIES) {
-        throw error;
-      }
+      if (!isRateLimitError(error) || attempt === MAX_RETRIES) throw error;
 
-      const delayMs = BASE_DELAY_MS * Math.pow(2, attempt);
+      const delayMs = BASE_DELAY_MS * 2 ** attempt;
 
       console.warn(
         `[resend] Rate limited, retrying in ${delayMs}ms (attempt ${attempt + 1}/${MAX_RETRIES})`,

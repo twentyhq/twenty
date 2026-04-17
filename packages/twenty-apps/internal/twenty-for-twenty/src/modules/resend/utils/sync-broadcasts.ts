@@ -20,8 +20,9 @@ export const syncBroadcasts = async (
   client: CoreApiClient,
   segmentMap: SegmentIdMap,
 ): Promise<SyncStepResult> => {
-  const broadcasts = await fetchAllPaginated((params) =>
-    resend.broadcasts.list(params),
+  const broadcasts = await fetchAllPaginated(
+    (params) => resend.broadcasts.list(params),
+    'broadcasts',
   );
 
   const existingMap = await getExistingRecordsMap(client, 'resendBroadcasts');

@@ -17,8 +17,9 @@ export const syncContacts = async (
   client: CoreApiClient,
   syncedAt: string,
 ): Promise<SyncStepResult> => {
-  const contacts = await fetchAllPaginated((params) =>
-    resend.contacts.list(params),
+  const contacts = await fetchAllPaginated(
+    (params) => resend.contacts.list(params),
+    'contacts',
   );
 
   const existingMap = await getExistingRecordsMap(client, 'resendContacts');

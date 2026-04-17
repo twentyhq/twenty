@@ -15,8 +15,9 @@ export const syncSegments = async (
   client: CoreApiClient,
   syncedAt: string,
 ): Promise<SyncStepResult<SegmentIdMap>> => {
-  const segments = await fetchAllPaginated((params) =>
-    resend.segments.list(params),
+  const segments = await fetchAllPaginated(
+    (params) => resend.segments.list(params),
+    'segments',
   );
 
   const existingMap = await getExistingRecordsMap(client, 'resendSegments');
