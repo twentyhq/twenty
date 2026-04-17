@@ -20,6 +20,7 @@ export const fromFlatCommandMenuItemToCommandMenuItemDto = (
     flatCommandMenuItem.conditionalAvailabilityExpression ?? undefined,
   availabilityObjectMetadataId:
     flatCommandMenuItem.availabilityObjectMetadataId ?? undefined,
+  pageLayoutId: flatCommandMenuItem.pageLayoutId ?? undefined,
   workspaceId: flatCommandMenuItem.workspaceId,
   applicationId: flatCommandMenuItem.applicationId ?? undefined,
   createdAt: new Date(flatCommandMenuItem.createdAt),

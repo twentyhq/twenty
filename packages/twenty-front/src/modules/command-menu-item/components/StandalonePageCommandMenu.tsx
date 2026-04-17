@@ -5,7 +5,9 @@ import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/compon
 import { CommandMenuItemEditButton } from '@/command-menu-item/edit/components/CommandMenuItemEditButton';
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
+import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useStore } from 'jotai';
 import { useMemo } from 'react';
@@ -22,6 +24,7 @@ export const StandalonePageCommandMenu = () => {
   const isMobile = useIsMobile();
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const commandMenuContextApi = useMemo<CommandMenuContextApi>(() => {
@@ -83,6 +86,7 @@ export const StandalonePageCommandMenu = () => {
           item.availabilityType !==
             CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
       )
+      .filter(doesCommandMenuItemMatchPageLayoutId(currentPageLayoutId))
       .filter((item) =>
         evaluateConditionalAvailabilityExpression(
           item.conditionalAvailabilityExpression,
@@ -92,7 +96,7 @@ export const StandalonePageCommandMenu = () => {
       .sort(
         (firstItem, secondItem) => firstItem.position - secondItem.position,
       );
-  }, [commandMenuItems, commandMenuContextApi]);
+  }, [commandMenuItems, commandMenuContextApi, currentPageLayoutId]);
 
   return (
     <CommandMenuContext.Provider

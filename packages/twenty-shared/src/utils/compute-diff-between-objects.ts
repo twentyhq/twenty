@@ -1,5 +1,6 @@
 import { isDefined } from '@/utils/validation';
-import deepEqual from 'deep-equal';
+
+import { fastDeepEqual } from './json/fast-deep-equal';
 
 type Diff<T extends { id: string }> = {
   toCreate: T[];
@@ -67,7 +68,9 @@ export const computeDiffBetweenObjects = <
           propertiesToCompare,
         );
 
-        if (!deepEqual(comparableExistingEntity, comparableReceivedEntity)) {
+        if (
+          !fastDeepEqual(comparableExistingEntity, comparableReceivedEntity)
+        ) {
           toUpdate.push(receivedObject);
         }
       }

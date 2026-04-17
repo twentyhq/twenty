@@ -6,11 +6,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const buildDefaultFieldsWidgetGroups = ({
   fields,
-  objectNameSingular,
   labelIdentifierFieldMetadataItemId,
 }: {
   fields: FieldMetadataItem[];
-  objectNameSingular: string;
   labelIdentifierFieldMetadataItemId: string | undefined;
 }): FieldsWidgetGroup[] => {
   const eligibleFields = fields.filter((field) =>

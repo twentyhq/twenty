@@ -13,7 +13,7 @@ import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
-import { formatSyncErrorEvents } from '@/cli/utilities/dev/orchestrator/steps/format-sync-error-events';
+import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
 import { runSafe } from '@/cli/utilities/run-safe';
@@ -197,7 +197,7 @@ const innerAppDevOnce = async (
   if (!syncResult.success) {
     const errorEvents = verbose
       ? null
-      : formatSyncErrorEvents(syncResult.error);
+      : formatManifestValidationErrors(syncResult.error);
 
     const message = errorEvents
       ? errorEvents.map((event) => event.message).join('\n')

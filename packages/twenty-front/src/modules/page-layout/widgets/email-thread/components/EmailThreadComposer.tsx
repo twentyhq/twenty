@@ -90,12 +90,7 @@ export const EmailThreadComposer = ({
         disabled: !composerState.canSend,
       },
     ];
-  }, [
-    isComposerOpen,
-    composerState.handleSend,
-    composerState.canSend,
-    setIsComposerOpen,
-  ]);
+  }, [isComposerOpen, composerState, setIsComposerOpen]);
 
   useEffect(() => {
     if (!isInSidePanel) {
@@ -111,7 +106,7 @@ export const EmailThreadComposer = ({
     if (isComposerOpen && composerState.canSend) {
       composerState.handleSend();
     }
-  }, [isComposerOpen, composerState.canSend, composerState.handleSend]);
+  }, [isComposerOpen, composerState]);
 
   useHotkeysOnFocusedElement({
     keys: ['ctrl+Enter,meta+Enter'],

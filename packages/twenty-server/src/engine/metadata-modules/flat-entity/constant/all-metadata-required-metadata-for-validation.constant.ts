@@ -69,6 +69,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   commandMenuItem: {
     objectMetadata: true,
     frontComponent: true,
+    pageLayout: true,
   },
   navigationMenuItem: {
     objectMetadata: true,

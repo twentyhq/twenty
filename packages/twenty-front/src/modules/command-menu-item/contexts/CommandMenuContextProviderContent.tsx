@@ -4,7 +4,9 @@ import {
 } from '@/command-menu-item/contexts/CommandMenuContext';
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
+import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
 import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageType';
+import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo } from 'react';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
@@ -24,6 +26,7 @@ export const CommandMenuContextProviderContent = ({
   commandMenuContextApi,
 }: CommandMenuContextProviderContentProps) => {
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
+  const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
 
   const filteredCommandMenuItems = useMemo(() => {
     const currentObjectMetadataItemId =
@@ -34,6 +37,7 @@ export const CommandMenuContextProviderContent = ({
         doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
       )
       .filter(doesCommandMenuItemMatchPageType(commandMenuContextApi.pageType))
+      .filter(doesCommandMenuItemMatchPageLayoutId(currentPageLayoutId))
       .filter((item) =>
         evaluateConditionalAvailabilityExpression(
           item.conditionalAvailabilityExpression,
@@ -43,7 +47,7 @@ export const CommandMenuContextProviderContent = ({
       .sort(
         (firstItem, secondItem) => firstItem.position - secondItem.position,
       );
-  }, [commandMenuItems, commandMenuContextApi]);
+  }, [commandMenuItems, commandMenuContextApi, currentPageLayoutId]);
 
   return (
     <CommandMenuContext.Provider

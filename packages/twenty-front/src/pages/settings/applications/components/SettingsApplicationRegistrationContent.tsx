@@ -3,23 +3,27 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { IconInfoCircle, IconKey, IconWorld } from 'twenty-ui/display';
-import { type ApplicationRegistrationData } from '~/pages/settings/applications/tabs/types/ApplicationRegistrationData';
+import {
+  IconInfoCircle,
+  IconKey,
+  IconSettings,
+  IconWorld,
+} from 'twenty-ui/display';
 import { SettingsApplicationRegistrationGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab';
 import { SettingsApplicationRegistrationOAuthTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
 import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';
+import { type ApplicationRegistration } from '~/generated-metadata/graphql';
+import { SettingsApplicationRegistrationConfigTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab';
 
 const REGISTRATION_DETAIL_TAB_LIST_ID =
   'application-registration-detail-tab-list';
 
 type SettingsApplicationRegistrationContentProps = {
-  registration: ApplicationRegistrationData;
-  hasActiveInstalls: boolean;
+  registration: ApplicationRegistration;
 };
 
 export const SettingsApplicationRegistrationContent = ({
   registration,
-  hasActiveInstalls,
 }: SettingsApplicationRegistrationContentProps) => {
   const { t } = useLingui();
 
@@ -32,10 +36,17 @@ export const SettingsApplicationRegistrationContent = ({
     { id: 'general', title: t`General`, Icon: IconInfoCircle },
     { id: 'oauth', title: t`OAuth`, Icon: IconKey },
     { id: 'distribution', title: t`Distribution`, Icon: IconWorld },
+    { id: 'config', title: t`Config`, Icon: IconSettings },
   ];
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {
+      case 'config':
+        return (
+          <SettingsApplicationRegistrationConfigTab
+            registration={registration}
+          />
+        );
       case 'oauth':
         return (
           <SettingsApplicationRegistrationOAuthTab
@@ -53,7 +64,6 @@ export const SettingsApplicationRegistrationContent = ({
         return (
           <SettingsApplicationRegistrationGeneralTab
             registration={registration}
-            hasActiveInstalls={hasActiveInstalls}
           />
         );
     }

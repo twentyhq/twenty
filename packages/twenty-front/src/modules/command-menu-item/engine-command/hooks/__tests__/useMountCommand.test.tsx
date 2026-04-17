@@ -84,7 +84,8 @@ describe('useMountCommand', () => {
       ...baseContextApi,
       workflowId: 'workflow-1',
       workflowVersionId: 'wf-version-1',
-      payloads: [{ recordId: 'rec-1' }],
+      trigger: { type: 'MANUAL' },
+      availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     };
     mockEnrichFn.mockResolvedValue(enrichedState);
 
