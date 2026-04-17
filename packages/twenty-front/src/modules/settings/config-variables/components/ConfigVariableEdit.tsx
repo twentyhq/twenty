@@ -6,7 +6,6 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useLingui } from '@lingui/react/macro';
 import { Section } from 'twenty-ui/layout';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { ConfigVariableHelpText } from '@/settings/admin-panel/config-variables/components/ConfigVariableHelpText';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
