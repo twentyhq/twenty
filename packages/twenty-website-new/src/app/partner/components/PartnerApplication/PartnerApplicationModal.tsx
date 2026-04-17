@@ -335,10 +335,24 @@ const Footnote = styled.p`
   margin: 0;
 `;
 
+const SubmitError = styled.p`
+  color: #ff9a9a;
+  font-family: ${theme.font.family.sans};
+  font-size: ${theme.font.size(3)};
+  font-weight: ${theme.font.weight.regular};
+  line-height: ${theme.lineHeight(3.5)};
+  margin: 0;
+`;
+
 const SubmitButton = styled.button`
   ${buttonBaseStyles}
   position: relative;
   width: 100%;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+  }
 `;
 
 const SubmitLabel = styled.span`
@@ -374,9 +388,12 @@ export function PartnerApplicationModal({
 }: PartnerApplicationModalProps) {
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [programId, setProgramId] = useState<PartnerProgramId>('technology');
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleOverlayPointerDown = useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
@@ -386,6 +403,20 @@ export function PartnerApplicationModal({
     },
     [onClose],
   );
+
+  useEffect(() => {
+    if (open) {
+      setSubmitError(null);
+      setIsSubmitting(false);
+      return;
+    }
+
+    formRef.current?.reset();
+    setProgramId('technology');
+    setDropdownOpen(false);
+    setSubmitError(null);
+    setIsSubmitting(false);
+  }, [open]);
 
   useEffect(() => {
     if (!open) {
@@ -427,10 +458,48 @@ export function PartnerApplicationModal({
   );
 
   const handleSubmit = useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
+    async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
+      const formData = new FormData(event.currentTarget);
+
+      const nameValue = formData.get('name');
+      const emailValue = formData.get('email');
+
+      setSubmitError(null);
+      setIsSubmitting(true);
+
+      try {
+        const response = await fetch('/api/partner-application', {
+          body: JSON.stringify({
+            email: typeof emailValue === 'string' ? emailValue : '',
+            name: typeof nameValue === 'string' ? nameValue : '',
+          }),
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+        });
+
+        const payload: unknown = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          const errorMessage =
+            payload &&
+            typeof payload === 'object' &&
+            'error' in payload &&
+            typeof (payload as { error: unknown }).error === 'string'
+              ? (payload as { error: string }).error
+              : 'Something went wrong. Please try again.';
+          setSubmitError(errorMessage);
+          return;
+        }
+
+        onClose();
+      } catch {
+        setSubmitError('Something went wrong. Please try again.');
+      } finally {
+        setIsSubmitting(false);
+      }
     },
-    [],
+    [onClose],
   );
 
   if (!open) {
@@ -458,7 +527,7 @@ export function PartnerApplicationModal({
           </Subtitle>
         </TitleBlock>
 
-        <form onSubmit={handleSubmit}>
+        <form ref={formRef} onSubmit={handleSubmit}>
           <FormFields>
             <Segments role="radiogroup" aria-label={copy.selectLabel}>
               {PARTNER_PROGRAM_OPTIONS.map((option) => (
@@ -569,12 +638,17 @@ export function PartnerApplicationModal({
 
             <FooterBlock>
               <Footnote>{copy.footnote}</Footnote>
-              <SubmitButton type="submit">
+              {submitError ? (
+                <SubmitError role="alert">{submitError}</SubmitError>
+              ) : null}
+              <SubmitButton disabled={isSubmitting} type="submit">
                 <ButtonShape
                   fillColor={theme.colors.primary.background[100]}
                   strokeColor="none"
                 />
-                <SubmitLabel>{copy.submit}</SubmitLabel>
+                <SubmitLabel>
+                  {isSubmitting ? 'Submitting…' : copy.submit}
+                </SubmitLabel>
               </SubmitButton>
             </FooterBlock>
           </FormFields>
