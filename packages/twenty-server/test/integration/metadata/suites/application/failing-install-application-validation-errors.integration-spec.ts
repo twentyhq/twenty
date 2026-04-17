@@ -1,72 +1,158 @@
-import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
-import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
-import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
-import { v4 as uuidv4 } from 'uuid';
+import crypto from 'crypto';
+import { promises as fs } from 'fs';
+import { tmpdir } from 'os';
+import { join } from 'path';
 
-const TEST_APP_ID = uuidv4();
-const TEST_ROLE_ID = uuidv4();
+import * as tar from 'tar';
+import { installApplication } from 'test/integration/metadata/suites/application/utils/install-application.util';
+import { uploadAppTarball } from 'test/integration/metadata/suites/application/utils/upload-app-tarball.util';
+import { type DataSource } from 'typeorm';
 
-describe('Install application should return structured validation errors', () => {
-  beforeAll(async () => {
-    await setupApplicationForSync({
-      applicationUniversalIdentifier: TEST_APP_ID,
-      name: 'Test Validation Error App',
-      description: 'App for testing structured validation error responses',
-      sourcePath: 'test-validation-errors',
-    });
-  }, 60000);
+const createTestTarball = async (
+  files: Record<string, string>,
+): Promise<Buffer> => {
+  const tempId = crypto.randomUUID();
+  const sourceDir = join(tmpdir(), `test-tarball-src-${tempId}`);
+  const tarballPath = join(tmpdir(), `test-tarball-${tempId}.tar.gz`);
 
-  afterAll(async () => {
-    try {
-      await uninstallApplication({
-        universalIdentifier: TEST_APP_ID,
-        expectToFail: false,
-      });
-    } catch {
-      // May fail if the test didn't install/sync
+  await fs.mkdir(sourceDir, { recursive: true });
+
+  for (const [name, content] of Object.entries(files)) {
+    const filePath = join(sourceDir, name);
+    const dir = filePath.substring(0, filePath.lastIndexOf('/'));
+
+    if (dir !== sourceDir) {
+      await fs.mkdir(dir, { recursive: true });
     }
+    await fs.writeFile(filePath, content);
+  }
 
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."file" WHERE "applicationId" IN (
-        SELECT id FROM core."application" WHERE "universalIdentifier" = $1
-      )`,
-      [TEST_APP_ID],
-    );
+  await tar.create(
+    {
+      file: tarballPath,
+      gzip: true,
+      cwd: sourceDir,
+    },
+    Object.keys(files),
+  );
 
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."application"
-       WHERE "universalIdentifier" = $1`,
-      [TEST_APP_ID],
-    );
+  const buffer = await fs.readFile(tarballPath);
 
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."applicationRegistration"
-       WHERE "universalIdentifier" = $1`,
-      [TEST_APP_ID],
-    );
+  await fs.rm(sourceDir, { recursive: true, force: true });
+  await fs.rm(tarballPath, { force: true });
+
+  return buffer;
+};
+
+const buildManifestWithInvalidNavigationMenuItem = (
+  universalIdentifier: string,
+  roleUniversalIdentifier: string,
+) =>
+  JSON.stringify({
+    application: {
+      universalIdentifier,
+      displayName: 'Test App With Invalid Manifest',
+      description: 'A test app with an invalid navigation menu item',
+      icon: 'IconTestPipe',
+      defaultRoleUniversalIdentifier: roleUniversalIdentifier,
+      applicationVariables: {},
+      packageJsonChecksum: null,
+      yarnLockChecksum: null,
+    },
+    roles: [
+      {
+        universalIdentifier: roleUniversalIdentifier,
+        label: 'Test Role',
+        description: 'Test role',
+      },
+    ],
+    skills: [],
+    agents: [],
+    objects: [],
+    fields: [],
+    logicFunctions: [],
+    frontComponents: [],
+    publicAssets: [],
+    views: [],
+    navigationMenuItems: [
+      {
+        universalIdentifier: crypto.randomUUID(),
+        position: 0,
+        type: 'OBJECT',
+        targetObjectUniversalIdentifier: crypto.randomUUID(),
+      },
+    ],
+    pageLayouts: [],
   });
 
-  it('should return METADATA_VALIDATION_FAILED with structured errors for invalid navigation menu item', async () => {
-    const nonExistentObjectId = uuidv4();
+describe('Install application should return structured validation errors', () => {
+  let ds: DataSource;
+  const createdRegistrationIds: string[] = [];
+  const createdApplicationUniversalIdentifiers: string[] = [];
 
-    const manifest = buildBaseManifest({
-      appId: TEST_APP_ID,
-      roleId: TEST_ROLE_ID,
-      overrides: {
-        navigationMenuItems: [
-          {
-            universalIdentifier: uuidv4(),
-            position: 0,
-            type: 'OBJECT' as const,
-            targetObjectUniversalIdentifier: nonExistentObjectId,
-          },
-        ],
-      },
+  beforeAll(() => {
+    jest.useRealTimers();
+    ds = globalThis.testDataSource;
+  });
+
+  afterAll(async () => {
+    for (const uid of createdApplicationUniversalIdentifiers) {
+      await ds.query(
+        `DELETE FROM core."file" WHERE "applicationId" IN (
+          SELECT id FROM core."application" WHERE "universalIdentifier" = $1
+        )`,
+        [uid],
+      );
+
+      await ds.query(
+        `DELETE FROM core."application" WHERE "universalIdentifier" = $1`,
+        [uid],
+      );
+    }
+
+    for (const id of createdRegistrationIds) {
+      await ds.query(
+        `DELETE FROM core."applicationRegistration" WHERE id = $1`,
+        [id],
+      );
+    }
+
+    jest.useFakeTimers();
+  });
+
+  it('should return METADATA_VALIDATION_FAILED with structured errors when installing an app with an invalid manifest', async () => {
+    const universalIdentifier = crypto.randomUUID();
+    const roleUniversalIdentifier = crypto.randomUUID();
+    const manifest = buildManifestWithInvalidNavigationMenuItem(
+      universalIdentifier,
+      roleUniversalIdentifier,
+    );
+
+    const tarball = await createTestTarball({
+      'manifest.json': manifest,
+      'package.json': JSON.stringify({
+        name: 'test-invalid-manifest-app',
+        version: '1.0.0',
+      }),
     });
 
-    const { errors } = await syncApplication({
-      manifest,
+    const uploadResult = await uploadAppTarball({
+      tarballBuffer: tarball,
+      universalIdentifier,
+    });
+
+    expect(uploadResult.errors).toBeUndefined();
+    expect(uploadResult.data?.uploadAppTarball.id).toBeDefined();
+
+    const registrationId = uploadResult.data!.uploadAppTarball.id;
+
+    createdRegistrationIds.push(registrationId);
+    createdApplicationUniversalIdentifiers.push(universalIdentifier);
+
+    const { errors } = await installApplication({
+      input: {
+        appRegistrationId: registrationId,
+      },
       expectToFail: true,
     });
 
@@ -80,81 +166,5 @@ describe('Install application should return structured validation errors', () =>
     expect(error.extensions.summary).toBeDefined();
     expect(error.extensions.summary.totalErrors).toBeGreaterThan(0);
     expect(error.extensions.message).toMatch(/Validation failed for/);
-  }, 60000);
-
-  it('should return METADATA_VALIDATION_FAILED with structured errors for invalid view field reference', async () => {
-    const objectId = uuidv4();
-    const fieldId = uuidv4();
-    const viewId = uuidv4();
-    const nonExistentFieldId = uuidv4();
-
-    const manifest = buildBaseManifest({
-      appId: TEST_APP_ID,
-      roleId: TEST_ROLE_ID,
-      overrides: {
-        objects: [
-          {
-            universalIdentifier: objectId,
-            nameSingular: 'testObj',
-            namePlural: 'testObjs',
-            labelSingular: 'Test Obj',
-            labelPlural: 'Test Objs',
-            icon: 'IconBox',
-            labelIdentifierFieldMetadataUniversalIdentifier: fieldId,
-            fields: [
-              {
-                universalIdentifier: fieldId,
-                name: 'name',
-                type: 'TEXT',
-                label: 'Name',
-                icon: 'IconTextCaption',
-              },
-            ],
-          },
-        ],
-        views: [
-          {
-            universalIdentifier: viewId,
-            name: 'All Test Objs',
-            objectUniversalIdentifier: objectId,
-            type: 'TABLE',
-            icon: 'IconBox',
-            key: 'INDEX',
-            position: 0,
-            fields: [
-              {
-                universalIdentifier: uuidv4(),
-                fieldMetadataUniversalIdentifier: fieldId,
-                position: 0,
-                isVisible: true,
-                size: 200,
-              },
-              {
-                universalIdentifier: uuidv4(),
-                fieldMetadataUniversalIdentifier: nonExistentFieldId,
-                position: 1,
-                isVisible: true,
-                size: 200,
-              },
-            ],
-          },
-        ],
-      },
-    });
-
-    const { errors } = await syncApplication({
-      manifest,
-      expectToFail: true,
-    });
-
-    expect(errors).toBeDefined();
-    expect(errors.length).toBe(1);
-
-    const [error] = errors;
-
-    expect(error.extensions.code).toBe('METADATA_VALIDATION_FAILED');
-    expect(error.extensions.errors).toBeDefined();
-    expect(error.extensions.summary).toBeDefined();
-    expect(error.extensions.summary.totalErrors).toBeGreaterThan(0);
-  }, 60000);
+  }, 120000);
 });

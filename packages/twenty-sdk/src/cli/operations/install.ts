@@ -38,7 +38,9 @@ const innerAppInstall = async (
     const errorMessage =
       rawError instanceof Error
         ? rawError.message
-        : typeof rawError === 'object' && rawError !== null && 'message' in rawError
+        : typeof rawError === 'object' &&
+            rawError !== null &&
+            'message' in rawError
           ? String((rawError as { message: string }).message)
           : String(rawError ?? 'Unknown error');
 

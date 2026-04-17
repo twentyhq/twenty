@@ -1,4 +1,9 @@
-import { UseFilters, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
+import {
+  UseFilters,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
+} from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
