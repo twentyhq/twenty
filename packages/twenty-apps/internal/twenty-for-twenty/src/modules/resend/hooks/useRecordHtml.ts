@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecordId } from 'twenty-sdk';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,50 +16,34 @@ export const useRecordHtml = (objectName: string): RecordHtmlState => {
     loading: true,
     error: null,
   });
-  const requestIdRef = useRef(0);
 
   useEffect(() => {
-    const currentRequestId = ++requestIdRef.current;
-
     if (!isDefined(recordId)) {
       setState({ html: null, loading: false, error: 'No record ID' });
-
       return;
     }
 
-    setState((prev) => ({ ...prev, loading: true, error: null }));
+    setState({ html: null, loading: true, error: null });
 
-    const client = new CoreApiClient();
-
-    client
+    new CoreApiClient()
       .query({
         [objectName]: {
-          __args: {
-            filter: { id: { eq: recordId } },
-          },
+          __args: { filter: { id: { eq: recordId } } },
           htmlBody: true,
         },
       })
       .then((result) => {
-        if (requestIdRef.current !== currentRequestId) return;
-
-        const record = (result as Record<string, unknown>)?.[objectName] as
+        const record = (result as Record<string, unknown>)[objectName] as
           | { htmlBody?: string | null }
           | undefined;
 
-        if (!isDefined(record)) {
-          setState({ html: null, loading: false, error: 'Record not found' });
-        } else {
-          setState({
-            html: record.htmlBody ?? null,
-            loading: false,
-            error: null,
-          });
-        }
+        setState(
+          isDefined(record)
+            ? { html: record.htmlBody ?? null, loading: false, error: null }
+            : { html: null, loading: false, error: 'Record not found' },
+        );
       })
-      .catch((fetchError) => {
-        if (requestIdRef.current !== currentRequestId) return;
-
+      .catch((fetchError: unknown) => {
         setState({
           html: null,
           loading: false,
