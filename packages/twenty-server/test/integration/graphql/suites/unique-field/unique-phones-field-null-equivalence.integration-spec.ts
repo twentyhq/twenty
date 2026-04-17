@@ -11,7 +11,7 @@ const OBJECT_SINGULAR = 'uniquePhonesTestObject';
 const OBJECT_PLURAL = 'uniquePhonesTestObjects';
 const FIELD_NAME = 'phone';
 
-describe('unique PHONES field with empty values - regression for #19740', () => {
+describe('unique PHONES field with empty values', () => {
   let createdObjectMetadataId: string;
   let createdRecordIdsForCleaning: string[] = [];
 
