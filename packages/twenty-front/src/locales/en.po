@@ -159,6 +159,12 @@ msgstr "{0} - Config"
 msgid "{0} credits"
 msgstr "{0} credits"
 
+#. js-lingui-id: Zo6POu
+#. placeholder {0}: recordPageLayoutObject.labelPlural
+#: src/modules/layout-customization/components/LayoutCustomizationBar.tsx
+msgid "{0} layout edition"
+msgstr "{0} layout edition"
+
 #. js-lingui-id: peiknr
 #. placeholder {0}: activeVisibleFieldLabels.length
 #. placeholder {0}: activeFilterLabels.length
@@ -8467,6 +8473,11 @@ msgstr "Layout"
 msgid "Layout customization"
 msgstr "Layout customization"
 
+#. js-lingui-id: euTsq6
+#: src/modules/layout-customization/components/LayoutCustomizationBarMenuDropdown.tsx
+msgid "Layout customization menu"
+msgstr "Layout customization menu"
+
 #. js-lingui-id: yU0QVO
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Layouts"
@@ -12065,6 +12076,7 @@ msgstr "Resend email"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
+#: src/modules/layout-customization/components/LayoutCustomizationBarResetConfirmationModal.tsx
 msgid "Reset"
 msgstr "Reset"
 
@@ -12084,6 +12096,11 @@ msgstr "Reset all overrides on this layout to return it to the app default"
 msgid "Reset label to default"
 msgstr "Reset label to default"
 
+#. js-lingui-id: AASIAQ
+#: src/modules/layout-customization/components/LayoutCustomizationBarMenuDropdown.tsx
+msgid "Reset record page layout"
+msgstr "Reset record page layout"
+
 #. js-lingui-id: L+rMC9
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
@@ -12094,6 +12111,7 @@ msgstr "Reset label to default"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
+#: src/modules/layout-customization/components/LayoutCustomizationBarResetConfirmationModal.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 msgid "Reset to default"
 msgstr "Reset to default"
@@ -14289,6 +14307,7 @@ msgstr "This action can return up to {maxRecordsFormatted} records."
 
 #. js-lingui-id: 2xOCJW
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
+#: src/modules/layout-customization/components/LayoutCustomizationBarResetConfirmationModal.tsx
 msgid "This action cannot be undone."
 msgstr "This action cannot be undone."
 
