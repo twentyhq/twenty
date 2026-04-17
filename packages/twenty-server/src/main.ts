@@ -44,11 +44,6 @@ const bootstrap = async () => {
   const logger = app.get(LoggerService);
   const twentyConfigService = app.get(TwentyConfigService);
 
-  // Express's `trust proxy` accepts boolean | number | string (IP/CIDR list).
-  // Env vars are always strings; coerce numeric strings FIRST so "1" stays
-  // a hop count (trust 1 proxy) rather than being swallowed by boolean
-  // coercion as `true` (trust all). Only then try boolean, and fall back to
-  // the raw string (CIDR list, named ranges).
   const trustProxyRaw = twentyConfigService.get('TRUST_PROXY');
   const trustProxy = /^\d+$/.test(trustProxyRaw)
     ? Number(trustProxyRaw)
