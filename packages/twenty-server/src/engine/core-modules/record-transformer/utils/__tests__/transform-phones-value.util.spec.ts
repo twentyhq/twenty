@@ -16,9 +16,6 @@ describe('transformPhonesValue', () => {
   });
 
   describe('null-equivalent normalization for unique-constraint safety', () => {
-    // Regression for issue #19740:
-    // Storing '' in a UNIQUE indexed column causes PostgreSQL to treat two
-    // blank rows as duplicates (NULL would be treated as distinct).
     it('should normalize empty primaryPhoneNumber to null', () => {
       const result = transformPhonesValue({
         input: { primaryPhoneNumber: '' },
@@ -77,9 +74,6 @@ describe('transformPhonesValue', () => {
         },
       });
 
-      // Only the number was supplied (as empty). callingCode/countryCode were
-      // not provided, so they should be absent from the serialized entry rather
-      // than forced to null (preserves partial-update semantics).
       expect(result?.additionalPhones).toBe(JSON.stringify([{ number: null }]));
     });
   });
@@ -116,9 +110,6 @@ describe('transformPhonesValue', () => {
     });
 
     it('should infer callingCode from the number when callingCode is an empty string', () => {
-      // Review follow-up: with a valid number, an empty callingCode used to
-      // short-circuit the `callingCode ?? inferred` fallback because '' is not
-      // nullish, persisting primaryPhoneCallingCode as ''.
       const result = transformPhonesValue({
         input: {
           primaryPhoneNumber: '+14155552671',
@@ -136,9 +127,6 @@ describe('transformPhonesValue', () => {
   });
 
   describe('additionalPhones input shapes', () => {
-    // Review follow-up: transformPhonesValue explicitly supports arrays via
-    // the isArray branch and integration tests pass arrays. The type must
-    // reflect that.
     it('should accept additionalPhones as an array of phone objects', () => {
       const result = transformPhonesValue({
         input: {

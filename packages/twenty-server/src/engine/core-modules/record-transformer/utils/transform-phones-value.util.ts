@@ -19,12 +19,6 @@ import {
   RecordTransformerExceptionCode,
 } from 'src/engine/core-modules/record-transformer/record-transformer.exception';
 
-// GraphQL delivers sub-fields as raw strings (or null) at the input boundary.
-// The CountryCode brand is applied later, inside validation. Typing the input
-// as `CountryCode` here would be a type-level lie — the UI can send '' or any
-// string, which is exactly how issue #19740 slipped through.
-// additionalPhones accepts both a JSON string and a pre-parsed array; the
-// isArray branch below is exercised by several integration suites.
 export type PhonesFieldGraphQLInput =
   | {
       primaryPhoneNumber?: string | null;
@@ -35,33 +29,21 @@ export type PhonesFieldGraphQLInput =
   | null
   | undefined;
 
-type RawPhoneInput = {
-  callingCode?: string | null;
-  countryCode?: string | null;
-  number?: string | null;
-};
-
 type AdditionalPhoneMetadataWithNumber = Partial<AdditionalPhoneMetadata> &
   Required<Pick<AdditionalPhoneMetadata, 'number'>>;
 
-// Unique indexes on composite phone sub-columns treat '' as duplicates but
-// NULLs as distinct, so blank inputs must reach the DB as NULL, not ''.
-// `undefined` is preserved so partial updates leave unrelated columns untouched.
-const nullIfEmptyString = <T extends string>(
-  value: T | null | undefined,
-): T | null | undefined => {
-  if (value === undefined) return undefined;
-  if (value === null || value.length === 0) return null;
-
-  return value;
-};
-
 const removePlusFromString = (str: string) => str.replace(/\+/g, '');
+
+const nullIfEmptyString = (value: string | null | undefined) =>
+  value === undefined ? undefined : isNonEmptyString(value) ? value : null;
 
 const validatePrimaryPhoneCountryCodeAndCallingCode = ({
   callingCode,
   countryCode,
-}: Omit<RawPhoneInput, 'number'>) => {
+}: {
+  callingCode?: string | null;
+  countryCode?: string | null;
+}) => {
   if (isNonEmptyString(countryCode) && !isValidCountryCode(countryCode)) {
     throw new RecordTransformerException(
       `Invalid country code ${countryCode}`,
@@ -176,32 +158,21 @@ const validateAndInferPhoneInput = ({
   callingCode,
   countryCode,
   number,
-}: RawPhoneInput) => {
-  validatePrimaryPhoneCountryCodeAndCallingCode({
-    callingCode,
-    countryCode,
-  });
+}: {
+  callingCode?: string | null;
+  countryCode?: string | null;
+  number?: string | null;
+}) => {
+  validatePrimaryPhoneCountryCodeAndCallingCode({ callingCode, countryCode });
 
-  if (isDefined(number) && isNonEmptyString(number)) {
-    // validatePrimaryPhoneCountryCodeAndCallingCode already threw on invalid
-    // countryCode; this narrow re-runs the guard purely to carry the brand
-    // into validateAndInferMetadataFromPrimaryPhoneNumber.
-    const brandedCountryCode =
-      isNonEmptyString(countryCode) && isValidCountryCode(countryCode)
-        ? countryCode
-        : undefined;
-
-    // An empty callingCode must be treated as "not provided" so the nullish
-    // coalesce below falls through to the inferred `+countryCallingCode`;
-    // otherwise '' would survive all the way to primaryPhoneCallingCode.
-    const providedCallingCode = isNonEmptyString(callingCode)
-      ? callingCode
-      : undefined;
-
+  if (isNonEmptyString(number)) {
     return validateAndInferMetadataFromPrimaryPhoneNumber({
       number,
-      callingCode: providedCallingCode,
-      countryCode: brandedCountryCode,
+      callingCode: isNonEmptyString(callingCode) ? callingCode : undefined,
+      countryCode:
+        isNonEmptyString(countryCode) && isValidCountryCode(countryCode)
+          ? countryCode
+          : undefined,
     });
   }
 
