@@ -224,9 +224,22 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             type: WorkflowActionType.LOGIC_FUNCTION,
             settings: {
               ...BASE_STEP_DEFINITION,
+              outputSchema: {
+                link: {
+                  isLeaf: true,
+                  icon: 'IconVariable',
+                  tab: 'test',
+                  label: 'Generate Function Output',
+                },
+                _outputSchemaType: 'LINK',
+              },
               input: {
                 logicFunctionId,
-                logicFunctionInput: {},
+                logicFunctionInput: isDefined(flatLogicFunction.toolInputSchema)
+                  ? (getFunctionInputFromInputSchema([
+                      flatLogicFunction.toolInputSchema,
+                    ])[0] ?? {})
+                  : {},
               },
             },
           },

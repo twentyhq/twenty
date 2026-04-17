@@ -65,7 +65,6 @@ export class AddComposeEmailCommandMenuItemCommand extends ActiveOrSuspendedWork
 
     const { allFlatEntityMaps: standardAllFlatEntityMaps } =
       computeTwentyStandardApplicationAllFlatEntityMaps({
-        shouldIncludeRecordPageLayouts: true,
         now: new Date().toISOString(),
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,

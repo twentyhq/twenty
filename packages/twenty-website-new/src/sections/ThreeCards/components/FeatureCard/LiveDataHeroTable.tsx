@@ -1,33 +1,38 @@
 'use client';
 
-import { SHARED_COMPANY_LOGO_URLS } from '@/lib/shared-asset-paths';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
-  IconBuildingSkyscraper,
+  IconAt,
   IconCheckbox,
   IconChevronDown,
-  IconLink,
   IconPlus,
+  IconUser,
 } from '@tabler/icons-react';
 import {
   useEffect,
   useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
-  type ReactNode,
 } from 'react';
-import { Chip, ChipVariant } from '@/sections/Hero/components/HomeVisual/homeVisualChip';
+import {
+  Chip,
+  ChipVariant,
+} from '@/sections/Hero/components/HomeVisual/homeVisualChip';
 import { VISUAL_TOKENS } from '@/sections/Hero/components/HomeVisual/homeVisualTokens';
 
 const APP_FONT = VISUAL_TOKENS.font.family;
 const TABLE_CELL_HORIZONTAL_PADDING = 8;
 const TABLER_STROKE = 1.6;
 const DEFAULT_TABLE_WIDTH = 520;
+const ROW_ENTER_DURATION_MS = 760;
+const ROW_ENTER_STAGGER_MS = 160;
 
 const COLORS = {
   accentBorder: VISUAL_TOKENS.border.color.blue,
   accentSurfaceSoft: VISUAL_TOKENS.background.transparent.blue,
+  avatarBackground: '#1f1f1f',
+  avatarText: '#ffffff',
   background: VISUAL_TOKENS.background.primary,
   backgroundSecondary: VISUAL_TOKENS.background.secondary,
   borderLight: VISUAL_TOKENS.border.color.light,
@@ -46,31 +51,69 @@ const COLORS = {
 } as const;
 
 const TABLE_COLUMNS = [
-  { id: 'company', isFirstColumn: true, label: 'Companies', width: 180 },
-  { id: 'type', isFirstColumn: false, label: 'Type', width: 160 },
-  { id: 'url', isFirstColumn: false, label: 'Domain', width: 150 },
+  { id: 'contact', isFirstColumn: true, label: 'Contacts', width: 180 },
+  { id: 'segment', isFirstColumn: false, label: 'Segment', width: 132 },
+  { id: 'email', isFirstColumn: false, label: 'Email', width: 190 },
 ] as const;
 
-const TABLE_ROWS = [
+type TableRow = {
+  contact: string;
+  email: string;
+  initials: string;
+  isNew?: boolean;
+  segment: string;
+};
+
+const BASE_TABLE_ROWS: ReadonlyArray<TableRow> = [
   {
-    company: 'Slack',
-    domain: 'slack.com',
-    logoSrc: SHARED_COMPANY_LOGO_URLS.slack,
-    status: 'Customer',
+    contact: 'Ava Martinez',
+    email: 'ava@resend.com',
+    initials: 'AM',
+    segment: 'VIP',
   },
   {
-    company: 'Notion',
-    domain: 'notion.so',
-    logoSrc: SHARED_COMPANY_LOGO_URLS.notion,
-    status: 'Customer',
+    contact: 'Noah Kim',
+    email: 'noah@resend.com',
+    initials: 'NK',
+    segment: 'Champion',
   },
   {
-    company: 'Sequoia',
-    domain: 'sequoiacap.com',
-    logoSrc: SHARED_COMPANY_LOGO_URLS.sequoia,
-    status: 'Customer',
+    contact: 'Lena Patel',
+    email: 'lena@resend.com',
+    initials: 'LP',
+    segment: 'Champion',
   },
-] as const;
+  {
+    contact: 'Miles Chen',
+    email: 'miles@resend.com',
+    initials: 'MC',
+    segment: 'Warm',
+  },
+  {
+    contact: 'Zoe Rivera',
+    email: 'zoe@resend.com',
+    initials: 'ZR',
+    segment: 'Warm',
+  },
+];
+
+const EXPANDED_TABLE_ROWS: ReadonlyArray<TableRow> = [
+  ...BASE_TABLE_ROWS,
+  {
+    contact: 'Eli Brooks',
+    email: 'eli@resend.com',
+    initials: 'EB',
+    isNew: true,
+    segment: 'Prospect',
+  },
+  {
+    contact: 'Ivy Foster',
+    email: 'ivy@resend.com',
+    initials: 'IF',
+    isNew: true,
+    segment: 'New',
+  },
+];
 
 const TableShell = styled.div`
   display: flex;
@@ -79,19 +122,6 @@ const TableShell = styled.div`
   min-width: 0;
   overflow: hidden;
   width: 100%;
-`;
-
-const GripRail = styled.div`
-  background: ${COLORS.background};
-  display: grid;
-  flex: 0 0 12px;
-  grid-auto-rows: 32px;
-  width: 12px;
-`;
-
-const GripCell = styled.div`
-  background: ${COLORS.background};
-  border-bottom: 1px solid ${COLORS.borderLight};
 `;
 
 const TableViewport = styled.div<{ $dragging: boolean }>`
@@ -124,6 +154,38 @@ const HeaderRow = styled.div`
 
 const DataRow = styled.div`
   display: flex;
+`;
+
+const RowMotion = styled.div<{ $delayMs?: number; $entering?: boolean }>`
+  align-items: center;
+  animation: ${({ $entering }) =>
+    $entering
+      ? `live-data-row-enter ${ROW_ENTER_DURATION_MS}ms cubic-bezier(0.16, 1, 0.3, 1)`
+      : 'none'};
+  animation-delay: ${({ $delayMs = 0 }) => `${$delayMs}ms`};
+  animation-fill-mode: both;
+  display: flex;
+  height: 100%;
+  min-width: 0;
+  width: 100%;
+  will-change: opacity, transform;
+
+  @keyframes live-data-row-enter {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 28px, 0);
+    }
+
+    58% {
+      opacity: 1;
+      transform: translate3d(0, 6px, 0);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
 `;
 
 const FooterRow = styled.div`
@@ -271,17 +333,27 @@ const LogoBase = styled.div`
   align-items: center;
   display: inline-flex;
   flex: 0 0 auto;
-  height: 14px;
+  height: 16px;
   justify-content: center;
   overflow: hidden;
-  width: 14px;
+  width: 16px;
 `;
 
-const CompanyLogoImage = styled.img`
-  display: block;
-  height: 100%;
-  object-fit: contain;
-  width: 14px;
+const ContactAvatar = styled.div`
+  align-items: center;
+  background: ${COLORS.avatarBackground};
+  border-radius: 999px;
+  color: ${COLORS.avatarText};
+  display: inline-flex;
+  font-family: ${APP_FONT};
+  font-size: 8px;
+  font-weight: ${theme.font.weight.medium};
+  height: 16px;
+  justify-content: center;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  text-transform: uppercase;
+  width: 16px;
 `;
 
 const StatusChip = styled.div<{ $edited?: boolean; $hoveredByAlice?: boolean }>`
@@ -312,10 +384,14 @@ const StatusChip = styled.div<{ $edited?: boolean; $hoveredByAlice?: boolean }>`
   white-space: nowrap;
 `;
 
-function HeaderIcon({ columnId }: { columnId: (typeof TABLE_COLUMNS)[number]['id'] }) {
-  if (columnId === 'url') {
+function HeaderIcon({
+  columnId,
+}: {
+  columnId: (typeof TABLE_COLUMNS)[number]['id'];
+}) {
+  if (columnId === 'email') {
     return (
-      <IconLink
+      <IconAt
         aria-hidden
         color={COLORS.textTertiary}
         size={16}
@@ -324,7 +400,7 @@ function HeaderIcon({ columnId }: { columnId: (typeof TABLE_COLUMNS)[number]['id
     );
   }
 
-  if (columnId === 'type') {
+  if (columnId === 'segment') {
     return (
       <IconCheckbox
         aria-hidden
@@ -336,7 +412,7 @@ function HeaderIcon({ columnId }: { columnId: (typeof TABLE_COLUMNS)[number]['id
   }
 
   return (
-    <IconBuildingSkyscraper
+    <IconUser
       aria-hidden
       color={COLORS.textTertiary}
       size={16}
@@ -367,13 +443,7 @@ function PlusMini({ size = 12 }: { size?: number }) {
   );
 }
 
-function CompanyCell({
-  label,
-  logoSrc,
-}: {
-  label: string;
-  logoSrc: string;
-}) {
+function ContactCell({ initials, label }: { initials: string; label: string }) {
   return (
     <CellHoverAnchor>
       <CheckboxContainer>
@@ -384,7 +454,7 @@ function CompanyCell({
         label={label}
         leftComponent={
           <LogoBase>
-            <CompanyLogoImage alt="" decoding="async" loading="lazy" src={logoSrc} />
+            <ContactAvatar aria-hidden>{initials}</ContactAvatar>
           </LogoBase>
         }
         variant={ChipVariant.Highlighted}
@@ -405,12 +475,14 @@ type LiveDataHeroTableProps = {
   editedStatusLabel: string;
   isFirstTagEdited: boolean;
   isFirstTagHoveredByAlice: boolean;
+  showExtendedRows: boolean;
 };
 
 export function LiveDataHeroTable({
   editedStatusLabel,
   isFirstTagEdited,
   isFirstTagHoveredByAlice,
+  showExtendedRows,
 }: LiveDataHeroTableProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef({
@@ -421,6 +493,7 @@ export function LiveDataHeroTable({
   });
   const [dragging, setDragging] = useState(false);
   const [hoveredRowIndex, setHoveredRowIndex] = useState<number | null>(null);
+  const visibleRows = showExtendedRows ? EXPANDED_TABLE_ROWS : BASE_TABLE_ROWS;
 
   const columnWidth = TABLE_COLUMNS.reduce(
     (sum, column) => sum + column.width,
@@ -514,18 +587,10 @@ export function LiveDataHeroTable({
 
   return (
     <TableShell>
-      <GripRail aria-hidden="true">
-        <GripCell />
-        {TABLE_ROWS.map((row) => (
-          <GripCell key={`grip-${row.company}`} />
-        ))}
-        <GripCell />
-      </GripRail>
-
       <TableViewport
         ref={viewportRef}
         $dragging={dragging}
-        aria-label="Interactive preview of the companies table"
+        aria-label="Interactive preview of the Resend contacts table"
         onPointerCancel={endDragging}
         onPointerDown={handlePointerDown}
         onPointerLeave={endDragging}
@@ -571,12 +636,15 @@ export function LiveDataHeroTable({
             </EmptyFillCell>
           </HeaderRow>
 
-          {TABLE_ROWS.map((row, index) => {
+          {visibleRows.map((row, index) => {
             const hovered = hoveredRowIndex === index;
+            const enterDelayMs = row.isNew
+              ? ROW_ENTER_STAGGER_MS * (index - BASE_TABLE_ROWS.length + 1)
+              : 0;
 
             return (
               <DataRow
-                key={row.company}
+                key={row.contact}
                 onMouseEnter={() => setHoveredRowIndex(index)}
                 onMouseLeave={() =>
                   setHoveredRowIndex((current) =>
@@ -589,22 +657,30 @@ export function LiveDataHeroTable({
                   $sticky
                   $width={TABLE_COLUMNS[0].width}
                 >
-                  <CompanyCell label={row.company} logoSrc={row.logoSrc} />
+                  <RowMotion $delayMs={enterDelayMs} $entering={row.isNew}>
+                    <ContactCell initials={row.initials} label={row.contact} />
+                  </RowMotion>
                 </TableCell>
                 <TableCell $hovered={hovered} $width={TABLE_COLUMNS[1].width}>
-                  <StatusChip
-                    $edited={index === 0 && isFirstTagEdited}
-                    $hoveredByAlice={index === 0 && isFirstTagHoveredByAlice}
-                  >
-                    {index === 0 && isFirstTagEdited
-                      ? editedStatusLabel
-                      : row.status}
-                  </StatusChip>
+                  <RowMotion $delayMs={enterDelayMs} $entering={row.isNew}>
+                    <StatusChip
+                      $edited={index === 0 && isFirstTagEdited}
+                      $hoveredByAlice={index === 0 && isFirstTagHoveredByAlice}
+                    >
+                      {index === 0 && isFirstTagEdited
+                        ? editedStatusLabel
+                        : row.segment}
+                    </StatusChip>
+                  </RowMotion>
                 </TableCell>
                 <TableCell $hovered={hovered} $width={TABLE_COLUMNS[2].width}>
-                  <LinkCell label={row.domain} />
+                  <RowMotion $delayMs={enterDelayMs} $entering={row.isNew}>
+                    <LinkCell label={row.email} />
+                  </RowMotion>
                 </TableCell>
-                <EmptyFillCell $hovered={hovered} $width={fillerWidth} />
+                <EmptyFillCell $hovered={hovered} $width={fillerWidth}>
+                  <RowMotion $delayMs={enterDelayMs} $entering={row.isNew} />
+                </EmptyFillCell>
               </DataRow>
             );
           })}

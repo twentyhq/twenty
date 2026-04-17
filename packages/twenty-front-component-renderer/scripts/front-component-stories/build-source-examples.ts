@@ -60,7 +60,7 @@ const twentySharedAliases = Object.fromEntries(
 const storyAlias = {
   react: path.join(rootNodeModules, 'react'),
   'react-dom': path.join(rootNodeModules, 'react-dom'),
-  '@/sdk': sdkIndividualIndex,
+  'twenty-sdk': sdkIndividualIndex,
   'twenty-sdk/ui': twentyUiIndividualIndex,
   ...twentySharedAliases,
 };
@@ -77,6 +77,9 @@ const STORY_COMPONENTS = [
   'mui-example.front-component',
   'twenty-ui-example.front-component',
   'sdk-context-example.front-component',
+  'form-events.front-component',
+  'keyboard-events.front-component',
+  'host-api-calls.front-component',
 ];
 
 const resolveEntryPoints = (): Record<string, string> => {

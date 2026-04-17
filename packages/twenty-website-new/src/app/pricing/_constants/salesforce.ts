@@ -225,12 +225,12 @@ export const SALESFORCE_DATA: SalesforceDataType = {
     productIconAlt: 'Retro help document icon',
     productIconSrc: '/images/pricing/salesforce/help-icon.webp',
     priceSuffix: ' / seat / month - billed yearly',
-    productTitle: 'Salesforce Pro',
+    productTitle: 'Salesfarce Pro',
     secondaryCtaNote: 'More options available!',
     secondaryCtaHref:
       'https://www.salesforce.com/en-us/wp-content/uploads/sites/4/documents/pricing/all-add-ons.pdf',
     secondaryCtaLabel: 'Check more add-ons',
     totalPriceLabel: 'total per month with fixed cost',
-    windowTitle: 'Salesforce Pro pricing',
+    windowTitle: 'Salesfarce Add-on Center',
   },
 };

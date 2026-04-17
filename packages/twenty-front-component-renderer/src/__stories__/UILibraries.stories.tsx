@@ -16,7 +16,11 @@ const meta: Meta<typeof FrontComponentRenderer> = {
   args: {
     onError: errorHandler,
     applicationAccessToken: 'fake-token',
-    executionContext: { frontComponentId: 'storybook-test', userId: null },
+    executionContext: {
+      frontComponentId: 'storybook-test',
+      userId: null,
+      recordId: null,
+    },
   },
   beforeEach: () => {
     errorHandler.mockClear();

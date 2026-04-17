@@ -4,9 +4,11 @@ import {
   type OrchestratorActionsReport,
   type OrchestratorFailureReport,
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
+import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
+import { validateUniversalIdentifierCrossEntityUniquenessThroughReportMutation } from 'src/engine/workspace-manager/workspace-migration/utils/validate-universal-identifier-cross-entity-uniqueness-through-report-mutation.util';
 
 export const crossEntityTransversalValidation = ({
   optimisticUniversalFlatMaps,
@@ -16,7 +18,9 @@ export const crossEntityTransversalValidation = ({
   optimisticUniversalFlatMaps: AllUniversalFlatEntityMaps;
   orchestratorActionsReport: OrchestratorActionsReport;
   preDeletionFlatViewFieldMaps: UniversalFlatEntityMaps<UniversalFlatViewField>;
-}): Pick<OrchestratorFailureReport, 'objectMetadata' | 'viewField'> => {
+}): OrchestratorFailureReport => {
+  const crossEntityFailureReport = EMPTY_ORCHESTRATOR_FAILURE_REPORT();
+
   const { objectMetadata } = validateObjectMetadataCrossEntity({
     optimisticUniversalFlatMaps,
     orchestratorActionsReport,
@@ -28,5 +32,14 @@ export const crossEntityTransversalValidation = ({
     preDeletionFlatViewFieldMaps,
   });
 
-  return { objectMetadata, viewField };
+  crossEntityFailureReport.objectMetadata.push(...objectMetadata);
+  crossEntityFailureReport.viewField.push(...viewField);
+
+  validateUniversalIdentifierCrossEntityUniquenessThroughReportMutation({
+    optimisticUniversalFlatMaps,
+    orchestratorActionsReport,
+    orchestratorFailureReport: crossEntityFailureReport,
+  });
+
+  return crossEntityFailureReport;
 };

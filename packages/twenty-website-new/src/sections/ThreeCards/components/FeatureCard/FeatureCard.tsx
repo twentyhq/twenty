@@ -7,7 +7,7 @@ import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { IconUsersGroup } from '@tabler/icons-react';
 import Image from 'next/image';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useRef, useState } from 'react';
 import { FastPathVisual } from './FastPathVisual';
 import { FamiliarInterfaceVisual } from './FamiliarInterfaceVisual';
 import { LiveDataVisual } from './LiveDataVisual';
@@ -16,7 +16,7 @@ const FeatureCardContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto auto;
-  background-color: ${theme.colors.primary.background[100]};
+  background-color: ${theme.colors.secondary.background[5]};
   border: 1px solid ${theme.colors.primary.border[20]};
   border-radius: ${theme.radius(2)};
   overflow: hidden;
@@ -26,18 +26,26 @@ const FeatureCardContainer = styled.div`
 
 const CardImage = styled.div`
   width: 100%;
-  height: 508px;
+  height: 524px;
+  box-sizing: border-box;
+  padding: 8px 8px 0;
+`;
+
+const CardImageFrame = styled.div`
   background-color: ${theme.colors.primary.border[10]};
-  position: relative;
+  border-radius: 2px;
+  height: 100%;
+  isolation: isolate;
   overflow: hidden;
+  position: relative;
+  width: 100%;
 `;
 
 const CardContent = styled.div`
-  background-color: ${theme.colors.secondary.background[5]};
   display: grid;
   grid-template-columns: 1fr;
-  row-gap: ${theme.spacing(3)};
-  padding: ${theme.spacing(3.5)} ${theme.spacing(4)} ${theme.spacing(4)};
+  row-gap: 8px;
+  padding: ${theme.spacing(3)} ${theme.spacing(4)} ${theme.spacing(4)};
 `;
 
 const CardTitleRow = styled.div`
@@ -111,18 +119,40 @@ function renderFeatureCardIcon(icon: ThreeCardsFeatureCardType['icon']) {
 
 export function FeatureCard({ featureCard }: FeatureCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const imageFrameRef = useRef<HTMLDivElement>(null);
   let visual: ReactNode;
 
   if ('illustration' in featureCard) {
     switch (featureCard.illustration) {
       case 'familiar-interface':
-        visual = <FamiliarInterfaceVisual active={isHovered} />;
+        visual = (
+          <FamiliarInterfaceVisual
+            active={isHovered}
+            backgroundImageRotationDeg={featureCard.backgroundImageRotationDeg}
+            backgroundImageSrc={featureCard.backgroundImageSrc}
+            pointerTargetRef={imageFrameRef}
+          />
+        );
         break;
       case 'fast-path':
-        visual = <FastPathVisual />;
+        visual = (
+          <FastPathVisual
+            active={isHovered}
+            backgroundImageRotationDeg={featureCard.backgroundImageRotationDeg}
+            backgroundImageSrc={featureCard.backgroundImageSrc}
+            pointerTargetRef={imageFrameRef}
+          />
+        );
         break;
       case 'live-data':
-        visual = <LiveDataVisual active={isHovered} />;
+        visual = (
+          <LiveDataVisual
+            active={isHovered}
+            backgroundImageRotationDeg={featureCard.backgroundImageRotationDeg}
+            backgroundImageSrc={featureCard.backgroundImageSrc}
+            pointerTargetRef={imageFrameRef}
+          />
+        );
         break;
     }
   } else {
@@ -145,7 +175,9 @@ export function FeatureCard({ featureCard }: FeatureCardProps) {
         setIsHovered(false);
       }}
     >
-      <CardImage>{visual}</CardImage>
+      <CardImage>
+        <CardImageFrame ref={imageFrameRef}>{visual}</CardImageFrame>
+      </CardImage>
       <CardContent>
         <CardTitleRow>
           <CardIcon>{renderFeatureCardIcon(featureCard.icon)}</CardIcon>

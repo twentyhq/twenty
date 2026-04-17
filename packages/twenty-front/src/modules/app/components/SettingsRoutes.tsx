@@ -204,6 +204,14 @@ const SettingsApplicationRegistrationDetails = lazy(() =>
   })),
 );
 
+const SettingsApplicationRegistrationConfigVariableDetail = lazy(() =>
+  import(
+    '~/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail'
+  ).then((module) => ({
+    default: module.SettingsApplicationRegistrationConfigVariableDetail,
+  })),
+);
+
 const SettingsAgentForm = lazy(() =>
   import('~/pages/settings/ai/SettingsAgentForm').then((module) => ({
     default: module.SettingsAgentForm,
@@ -743,6 +751,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.ApplicationLogicFunctionDetail}
           element={<SettingsLogicFunctionDetail />}
+        />
+        <Route
+          path={SettingsPath.ApplicationRegistrationConfigVariableDetails}
+          element={<SettingsApplicationRegistrationConfigVariableDetail />}
         />
       </Route>
 

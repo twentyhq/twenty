@@ -1,7 +1,10 @@
 import { msg } from '@lingui/core/macro';
-import deepEqual from 'deep-equal';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { getUniqueConstraintsFields, isDefined } from 'twenty-shared/utils';
+import {
+  fastDeepEqual,
+  getUniqueConstraintsFields,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -326,7 +329,7 @@ const checkUniqueConstraintsAreSameOrThrow = (
   uniqueConstraintFields: FlatFieldMetadata<FieldMetadataType>[],
 ) => {
   if (
-    !deepEqual(
+    !fastDeepEqual(
       relationConnectQueryConfig.uniqueConstraintFields,
       uniqueConstraintFields,
     )

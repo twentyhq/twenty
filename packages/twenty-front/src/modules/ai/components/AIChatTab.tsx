@@ -42,6 +42,7 @@ export const AIChatTab = () => {
     <StyledContainer
       isDraggingFile={isDraggingFile}
       onDragEnter={() => setIsDraggingFile(true)}
+      onDragLeave={() => setIsDraggingFile(false)}
     >
       {isDraggingFile && (
         <DropZone

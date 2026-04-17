@@ -4,10 +4,10 @@ exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with
 [
   "rowLevelPermissionPredicate",
   "navigationMenuItem",
+  "commandMenuItem",
   "fieldPermission",
   "viewField",
   "viewFilter",
-  "commandMenuItem",
   "objectPermission",
   "pageLayoutWidget",
   "viewSort",

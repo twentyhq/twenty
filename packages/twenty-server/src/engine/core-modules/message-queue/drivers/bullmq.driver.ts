@@ -111,16 +111,20 @@ export class BullMQDriver
       async (job) => {
         // TODO: Correctly support for job.id
         const timeStart = performance.now();
+        const workspaceId = job.data?.workspaceId;
+        const workspaceSuffix = workspaceId
+          ? ` [workspace=${workspaceId}]`
+          : '';
 
         this.logger.log(
-          `Processing job ${job.id} with name ${job.name} on queue ${queueName}`,
+          `Processing job ${job.id} with name ${job.name} on queue ${queueName}${workspaceSuffix}`,
         );
         await handler({ data: job.data, id: job.id ?? '', name: job.name });
         const timeEnd = performance.now();
         const executionTime = timeEnd - timeStart;
 
         this.logger.log(
-          `Job ${job.id} with name ${job.name} processed on queue ${queueName} in ${executionTime.toFixed(2)}ms`,
+          `Job ${job.id} with name ${job.name} processed on queue ${queueName} in ${executionTime.toFixed(2)}ms${workspaceSuffix}`,
         );
       },
       workerOptions,

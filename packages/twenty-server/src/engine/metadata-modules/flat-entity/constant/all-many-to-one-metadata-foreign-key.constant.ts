@@ -50,6 +50,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     frontComponent: {
       foreignKey: 'frontComponentId',
     },
+    pageLayout: {
+      foreignKey: 'pageLayoutId',
+    },
   },
   navigationMenuItem: {
     workspace: null,
