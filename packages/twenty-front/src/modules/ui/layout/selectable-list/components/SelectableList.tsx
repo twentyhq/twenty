@@ -49,16 +49,13 @@ export const SelectableList = ({
     if (isDefined(selectableItemIdArray)) {
       setSelectableItemIds(arrayToChunks(selectableItemIdArray, 1));
     }
+  }, [selectableItemIdArray, selectableItemIdMatrix, setSelectableItemIds]);
 
+  useEffect(() => {
     return () => {
       store.set(isSelectableListGridFocusedState.atom, false);
     };
-  }, [
-    selectableItemIdArray,
-    selectableItemIdMatrix,
-    setSelectableItemIds,
-    store,
-  ]);
+  }, [store]);
 
   return (
     <SelectableListComponentInstanceContext.Provider
