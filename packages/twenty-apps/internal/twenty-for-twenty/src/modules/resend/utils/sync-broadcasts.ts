@@ -69,21 +69,39 @@ export const syncBroadcasts = async (
       return data;
     },
     mapUpdateData: (detail, broadcast): UpdateBroadcastDto => {
-      const segmentId = isDefined(broadcast.segment_id)
-        ? segmentMap.get(broadcast.segment_id)
-        : undefined;
-
-      const templateId = isDefined(detail.html)
-        ? templateHtmlMap.get(detail.html)
-        : undefined;
-
       const data: UpdateBroadcastDto = {
         status: broadcast.status.toUpperCase(),
         scheduledAt: toIsoStringOrNull(broadcast.scheduled_at),
         sentAt: toIsoStringOrNull(broadcast.sent_at),
-        segmentId: segmentId ?? null,
-        templateId: templateId ?? null,
       };
+
+      if (!isDefined(broadcast.segment_id)) {
+        data.segmentId = null;
+      } else {
+        const segmentId = segmentMap.get(broadcast.segment_id);
+
+        if (isDefined(segmentId)) {
+          data.segmentId = segmentId;
+        } else {
+          console.warn(
+            `[sync] broadcast ${broadcast.id}: segment ${broadcast.segment_id} not found in lookup map; leaving segmentId untouched`,
+          );
+        }
+      }
+
+      if (!isDefined(detail.html)) {
+        data.templateId = null;
+      } else {
+        const templateId = templateHtmlMap.get(detail.html);
+
+        if (isDefined(templateId)) {
+          data.templateId = templateId;
+        } else {
+          console.warn(
+            `[sync] broadcast ${broadcast.id}: template html not found in lookup map; leaving templateId untouched`,
+          );
+        }
+      }
 
       return data;
     },
