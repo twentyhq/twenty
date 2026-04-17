@@ -126,11 +126,11 @@ ENTRYPOINT ["/app/entrypoint.sh"]
 
 
 # ===========================================================================
-# Target: twenty-managed (managed infra with AWS CLI)
-#   docker build --target twenty-managed -f packages/twenty-docker/twenty/Dockerfile .
+# Target: twenty-aws
+# docker build --target twenty-aws -f packages/twenty-docker/twenty/Dockerfile .
 # ===========================================================================
 
-FROM twenty AS twenty-managed
+FROM twenty AS twenty-aws
 
 USER root
 RUN apk add --no-cache aws-cli
