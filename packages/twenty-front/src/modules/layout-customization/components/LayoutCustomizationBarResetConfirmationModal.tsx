@@ -1,18 +1,17 @@
 import { useLingui } from '@lingui/react/macro';
 
 import { RESET_RECORD_PAGE_LAYOUT_MODAL_ID } from '@/layout-customization/constants/ResetRecordPageLayoutModalId';
-import { useCurrentRecordPageLayoutInCustomization } from '@/layout-customization/hooks/useCurrentRecordPageLayoutInCustomization';
 import { useRefreshPageLayoutAfterReset } from '@/page-layout/hooks/useRefreshPageLayoutAfterReset';
 import { useResetPageLayoutToDefault } from '@/page-layout/hooks/useResetPageLayoutToDefault';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 
-type LayoutCustomizationBarResetConfirmationModalContentProps = {
+type LayoutCustomizationBarResetConfirmationModalProps = {
   pageLayoutId: string;
 };
 
-const LayoutCustomizationBarResetConfirmationModalContent = ({
+export const LayoutCustomizationBarResetConfirmationModal = ({
   pageLayoutId,
-}: LayoutCustomizationBarResetConfirmationModalContentProps) => {
+}: LayoutCustomizationBarResetConfirmationModalProps) => {
   const { t } = useLingui();
 
   const { resetPageLayoutToDefault } = useResetPageLayoutToDefault();
@@ -32,20 +31,6 @@ const LayoutCustomizationBarResetConfirmationModalContent = ({
       onConfirmClick={handleConfirmReset}
       confirmButtonText={t`Reset`}
       confirmButtonAccent="danger"
-    />
-  );
-};
-
-export const LayoutCustomizationBarResetConfirmationModal = () => {
-  const currentRecordPageLayout = useCurrentRecordPageLayoutInCustomization();
-
-  if (currentRecordPageLayout === null) {
-    return null;
-  }
-
-  return (
-    <LayoutCustomizationBarResetConfirmationModalContent
-      pageLayoutId={currentRecordPageLayout.pageLayoutId}
     />
   );
 };

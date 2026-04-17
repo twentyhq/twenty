@@ -1,18 +1,24 @@
-import { LayoutCustomizationBarMenuDropdown } from '@/layout-customization/components/LayoutCustomizationBarMenuDropdown';
-import { LayoutCustomizationBarResetConfirmationModal } from '@/layout-customization/components/LayoutCustomizationBarResetConfirmationModal';
-import { useCancelLayoutCustomization } from '@/layout-customization/hooks/useCancelLayoutCustomization';
-import { useCurrentRecordPageLayoutInCustomization } from '@/layout-customization/hooks/useCurrentRecordPageLayoutInCustomization';
-import { useIsLayoutCustomizationDirty } from '@/layout-customization/hooks/useIsLayoutCustomizationDirty';
-import { useSaveLayoutCustomization } from '@/layout-customization/hooks/useSaveLayoutCustomization';
-import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useAtomValue } from 'jotai';
 import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconPaint } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+
+import { LayoutCustomizationBarMenuDropdown } from '@/layout-customization/components/LayoutCustomizationBarMenuDropdown';
+import { LayoutCustomizationBarResetConfirmationModal } from '@/layout-customization/components/LayoutCustomizationBarResetConfirmationModal';
+import { useCancelLayoutCustomization } from '@/layout-customization/hooks/useCancelLayoutCustomization';
+import { useIsLayoutCustomizationDirty } from '@/layout-customization/hooks/useIsLayoutCustomizationDirty';
+import { useSaveLayoutCustomization } from '@/layout-customization/hooks/useSaveLayoutCustomization';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
+import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -56,12 +62,25 @@ const LayoutCustomizationBarContent = () => {
   const { cancel } = useCancelLayoutCustomization();
   const { isDirty } = useIsLayoutCustomizationDirty();
 
-  const currentRecordPageLayout = useCurrentRecordPageLayoutInCustomization();
+  const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
+  const persistedPageLayout = useAtomValue(
+    pageLayoutPersistedComponentState.atomFamily({
+      instanceId: currentPageLayoutId ?? '',
+    }),
+  );
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
-  const title =
-    currentRecordPageLayout !== null
-      ? t`${currentRecordPageLayout.objectLabelPlural} layout edition`
-      : t`Layout customization`;
+  const recordPageLayoutObject =
+    isDefined(currentPageLayoutId) &&
+    persistedPageLayout?.type === PageLayoutType.RECORD_PAGE
+      ? objectMetadataItems.find(
+          (item) => item.id === persistedPageLayout.objectMetadataId,
+        )
+      : undefined;
+
+  const title = isDefined(recordPageLayoutObject)
+    ? t`${recordPageLayoutObject.labelPlural} layout edition`
+    : t`Layout customization`;
 
   return (
     <motion.div
@@ -75,7 +94,9 @@ const LayoutCustomizationBarContent = () => {
     >
       <StyledContainer data-globally-prevent-click-outside="true">
         <StyledLeftSection>
-          <LayoutCustomizationBarMenuDropdown />
+          {isDefined(recordPageLayoutObject) && (
+            <LayoutCustomizationBarMenuDropdown />
+          )}
         </StyledLeftSection>
         <StyledTitle>
           <IconPaint size={theme.icon.size.md} />
@@ -93,7 +114,11 @@ const LayoutCustomizationBarContent = () => {
           />
         </StyledRightSection>
       </StyledContainer>
-      <LayoutCustomizationBarResetConfirmationModal />
+      {isDefined(recordPageLayoutObject) && isDefined(currentPageLayoutId) && (
+        <LayoutCustomizationBarResetConfirmationModal
+          pageLayoutId={currentPageLayoutId}
+        />
+      )}
     </motion.div>
   );
 };

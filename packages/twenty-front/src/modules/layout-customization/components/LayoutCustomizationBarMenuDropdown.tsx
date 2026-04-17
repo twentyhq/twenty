@@ -7,7 +7,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { LAYOUT_CUSTOMIZATION_BAR_DROPDOWN_ID } from '@/layout-customization/constants/LayoutCustomizationBarDropdownId';
 import { RESET_RECORD_PAGE_LAYOUT_MODAL_ID } from '@/layout-customization/constants/ResetRecordPageLayoutModalId';
-import { useCurrentRecordPageLayoutInCustomization } from '@/layout-customization/hooks/useCurrentRecordPageLayoutInCustomization';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -32,12 +31,6 @@ export const LayoutCustomizationBarMenuDropdown = () => {
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
   const { openModal } = useModal();
-
-  const currentRecordPageLayout = useCurrentRecordPageLayoutInCustomization();
-
-  if (currentRecordPageLayout === null) {
-    return null;
-  }
 
   const handleResetClick = () => {
     closeDropdown(LAYOUT_CUSTOMIZATION_BAR_DROPDOWN_ID);
