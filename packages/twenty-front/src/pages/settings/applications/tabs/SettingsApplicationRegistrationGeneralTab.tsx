@@ -8,15 +8,15 @@ import { SettingsAdminApplicationRegistrationGeneralToggles } from '~/pages/sett
 
 export const SettingsApplicationRegistrationGeneralTab = ({
   registration,
-  displayAdminToggles,
+  fromAdmin,
 }: {
   registration: ApplicationRegistration;
-  displayAdminToggles?: boolean;
+  fromAdmin?: boolean;
 }) => {
   return (
     <>
       <SettingsApplicationRegistrationGeneralInfo registration={registration} />
-      {displayAdminToggles && (
+      {fromAdmin && (
         <SettingsAdminApplicationRegistrationGeneralToggles
           registration={registration}
         />
@@ -26,6 +26,7 @@ export const SettingsApplicationRegistrationGeneralTab = ({
       />
       <SettingsAdminApplicationRegistrationDangerZone
         registration={registration}
+        fromAdmin={fromAdmin}
       />
     </>
   );
