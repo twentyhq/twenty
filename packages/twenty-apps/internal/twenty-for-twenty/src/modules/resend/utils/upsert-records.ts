@@ -42,14 +42,22 @@ export const upsertRecords = async <
 
       if (isNew) {
         const data = mapCreateData(detail, item);
-        await withRateLimitRetry(() =>
-          upsertRecord(client, objectNameSingular, existingMap, resendId, data),
+        await upsertRecord(
+          client,
+          objectNameSingular,
+          existingMap,
+          resendId,
+          data,
         );
         result.created++;
       } else {
         const data = mapUpdateData(detail, item);
-        await withRateLimitRetry(() =>
-          upsertRecord(client, objectNameSingular, existingMap, resendId, data),
+        await upsertRecord(
+          client,
+          objectNameSingular,
+          existingMap,
+          resendId,
+          data,
         );
         result.updated++;
       }
