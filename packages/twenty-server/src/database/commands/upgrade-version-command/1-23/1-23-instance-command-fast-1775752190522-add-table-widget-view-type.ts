@@ -3,7 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('1.22.0', 1775752190522)
+@RegisteredInstanceCommand('1.23.0', 1775752190522)
 export class AddTableWidgetViewTypeFastInstanceCommand
   implements FastInstanceCommand
 {
