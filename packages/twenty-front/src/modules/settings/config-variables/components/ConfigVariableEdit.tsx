@@ -9,7 +9,6 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { isDefined } from 'twenty-shared/utils';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 
 const RESET_VARIABLE_MODAL_ID =
