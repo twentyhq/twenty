@@ -43,6 +43,13 @@ const bootstrap = async () => {
   const logger = app.get(LoggerService);
   const twentyConfigService = app.get(TwentyConfigService);
 
+  // Honor X-Forwarded-* headers when TLS is terminated upstream (reverse
+  // proxy, ingress, Cloudflare). Without this, request.protocol returns
+  // the socket protocol ("http") and URLs built from it leak through —
+  // e.g. OAuth discovery advertises http://host/mcp on an https deployment,
+  // and strict MCP clients reject the mismatch.
+  app.set('trust proxy', twentyConfigService.get('TRUST_PROXY'));
+
   app.use(session(getSessionStorageOptions(twentyConfigService)));
 
   // Apply class-validator container so that we can use injection in validators
