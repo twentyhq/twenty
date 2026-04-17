@@ -3,30 +3,16 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-shared/utils';
 
 import type { CreateEmailDto } from 'src/modules/resend/types/create-email.dto';
-import type { UpdateEmailDto } from 'src/modules/resend/types/update-email.dto';
 import type { SyncResult } from 'src/modules/resend/types/sync-result';
+import type { UpdateEmailDto } from 'src/modules/resend/types/update-email.dto';
 import { fetchAllPaginated } from 'src/modules/resend/utils/fetch-all-paginated';
 import { findOrCreatePerson } from 'src/modules/resend/utils/find-or-create-person';
+import { getErrorMessage } from 'src/modules/resend/utils/get-error-message';
 import { getExistingRecordsMap } from 'src/modules/resend/utils/get-existing-records-map';
+import { mapLastEvent } from 'src/modules/resend/utils/map-last-event';
 import { toEmailsField } from 'src/modules/resend/utils/to-emails-field';
 import { toIsoString, toIsoStringOrNull } from 'src/modules/resend/utils/to-iso-string';
 import { upsertRecords } from 'src/modules/resend/utils/upsert-records';
-
-const VALID_LAST_EVENTS = new Set([
-  'SENT',
-  'DELIVERED',
-  'DELIVERY_DELAYED',
-  'COMPLAINED',
-  'BOUNCED',
-  'OPENED',
-  'CLICKED',
-]);
-
-const mapLastEvent = (lastEvent: string): string => {
-  const mapped = lastEvent.replace('email.', '').toUpperCase();
-
-  return VALID_LAST_EVENTS.has(mapped) ? mapped : 'SENT';
-};
 
 export const syncEmails = async (
   resend: Resend,
@@ -104,7 +90,7 @@ export const syncEmails = async (
         });
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+      const message = getErrorMessage(error);
 
       result.errors.push(`resendEmail ${email.id} person link: ${message}`);
     }

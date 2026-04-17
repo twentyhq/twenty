@@ -1,18 +1,15 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import {
   defineLogicFunction,
   type DatabaseEventPayload,
   type ObjectRecordCreateEvent,
 } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ON_RESEND_SEGMENT_CREATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/constants/universal-identifiers';
+import type { ResendSegmentRecord } from 'src/modules/resend/types/resend-segment-record';
 import { getResendClient } from 'src/modules/resend/utils/get-resend-client';
-
-type ResendSegmentRecord = {
-  id: string;
-  resendId?: string;
-  name?: string;
-};
 
 type SegmentCreateEvent = DatabaseEventPayload<
   ObjectRecordCreateEvent<ResendSegmentRecord>
@@ -23,13 +20,13 @@ const handler = async (
 ): Promise<object | undefined> => {
   const { after } = event.properties;
 
-  if (isDefined(after.resendId) && after.resendId !== '') {
+  if (isNonEmptyString(after.resendId)) {
     return { skipped: true, reason: 'record already has resendId (inbound sync)' };
   }
 
   const name = after.name;
 
-  if (!isDefined(name) || name === '') {
+  if (!isNonEmptyString(name)) {
     return { skipped: true, reason: 'no name on record' };
   }
 
@@ -62,7 +59,7 @@ const handler = async (
 };
 
 export default defineLogicFunction({
-  universalIdentifier: 'ac5b424a-f51d-46c8-a95a-42589fb81676',
+  universalIdentifier: ON_RESEND_SEGMENT_CREATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'on-resend-segment-created',
   description:
     'Creates a segment in Resend when a new resendSegment record is created in Twenty',

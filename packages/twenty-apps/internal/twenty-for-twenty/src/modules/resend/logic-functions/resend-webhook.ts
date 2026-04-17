@@ -1,27 +1,15 @@
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
+import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
 import { isDefined } from 'twenty-shared/utils';
 
+import { RESEND_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/constants/universal-identifiers';
+import type { WebhookHandlerResult } from 'src/modules/resend/types/webhook-handler-result';
 import { findOrCreatePerson } from 'src/modules/resend/utils/find-or-create-person';
 import { findRecordByResendId } from 'src/modules/resend/utils/find-record-by-resend-id';
 import { getResendClient } from 'src/modules/resend/utils/get-resend-client';
+import { mapLastEvent } from 'src/modules/resend/utils/map-last-event';
 import { toEmailsField } from 'src/modules/resend/utils/to-emails-field';
-
-const VALID_LAST_EVENTS = new Set([
-  'SENT',
-  'DELIVERED',
-  'DELIVERY_DELAYED',
-  'COMPLAINED',
-  'BOUNCED',
-  'OPENED',
-  'CLICKED',
-]);
-
-const mapLastEvent = (eventType: string): string => {
-  const mapped = eventType.replace('email.', '').toUpperCase();
-
-  return VALID_LAST_EVENTS.has(mapped) ? mapped : 'SENT';
-};
 
 type ContactEventData = {
   id: string;
@@ -53,7 +41,7 @@ type WebhookPayload = {
 const handleContactCreatedOrUpdated = async (
   client: CoreApiClient,
   data: ContactEventData,
-): Promise<object> => {
+): Promise<WebhookHandlerResult> => {
   const existingId = await findRecordByResendId(
     client,
     'resendContacts',
@@ -87,7 +75,7 @@ const handleContactCreatedOrUpdated = async (
     return { action: 'updated', twentyId: existingId, resendId: data.id, personId };
   }
 
-  const result = await client.mutation({
+  const createResult = await client.mutation({
     createResendContact: {
       __args: {
         data: {
@@ -102,7 +90,7 @@ const handleContactCreatedOrUpdated = async (
 
   return {
     action: 'created',
-    twentyId: result.createResendContact?.id,
+    twentyId: createResult.createResendContact?.id,
     resendId: data.id,
     personId,
   };
@@ -111,7 +99,7 @@ const handleContactCreatedOrUpdated = async (
 const handleContactDeleted = async (
   client: CoreApiClient,
   data: ContactEventData,
-): Promise<object> => {
+): Promise<WebhookHandlerResult> => {
   const existingId = await findRecordByResendId(
     client,
     'resendContacts',
@@ -136,7 +124,7 @@ const handleEmailEvent = async (
   client: CoreApiClient,
   eventType: string,
   data: BaseEmailEventData,
-): Promise<object> => {
+): Promise<WebhookHandlerResult> => {
   const existingId = await findRecordByResendId(
     client,
     'resendEmails',
@@ -152,16 +140,14 @@ const handleEmailEvent = async (
 
   const lastEvent = mapLastEvent(eventType);
 
-  const updateData: Record<string, unknown> = {
-    lastEvent,
-    lastSyncedFromResend: new Date().toISOString(),
-  };
-
   await client.mutation({
     updateResendEmail: {
       __args: {
         id: existingId,
-        data: updateData,
+        data: {
+          lastEvent,
+          lastSyncedFromResend: new Date().toISOString(),
+        },
       },
       id: true,
     },
@@ -177,10 +163,10 @@ const handleEmailEvent = async (
 
 const handler = async (
   params: RoutePayload<WebhookPayload>,
-): Promise<object> => {
+): Promise<WebhookHandlerResult> => {
   const webhookSecret = process.env.RESEND_WEBHOOK_SECRET;
 
-  if (!isDefined(webhookSecret) || webhookSecret === '') {
+  if (!isNonEmptyString(webhookSecret)) {
     throw new Error('RESEND_WEBHOOK_SECRET environment variable is not set');
   }
 
@@ -254,7 +240,7 @@ const handler = async (
 };
 
 export default defineLogicFunction({
-  universalIdentifier: '049b7227-3e8b-444b-84aa-939a7e4ca440',
+  universalIdentifier: RESEND_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'resend-webhook',
   description:
     'Receives Resend webhook events for real-time inbound sync of contacts and email delivery status',

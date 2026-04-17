@@ -3,8 +3,8 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-shared/utils';
 
 import type { CreateBroadcastDto } from 'src/modules/resend/types/create-broadcast.dto';
-import type { UpdateBroadcastDto } from 'src/modules/resend/types/update-broadcast.dto';
 import type { SyncResult } from 'src/modules/resend/types/sync-result';
+import type { UpdateBroadcastDto } from 'src/modules/resend/types/update-broadcast.dto';
 import { fetchAllPaginated } from 'src/modules/resend/utils/fetch-all-paginated';
 import { getExistingRecordsMap } from 'src/modules/resend/utils/get-existing-records-map';
 import { toEmailsField } from 'src/modules/resend/utils/to-emails-field';

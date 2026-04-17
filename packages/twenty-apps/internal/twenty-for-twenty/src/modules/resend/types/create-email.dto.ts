@@ -1,17 +1,8 @@
-import type { EmailsField } from 'src/modules/resend/utils/to-emails-field';
+import type { UpdateEmailDto } from 'src/modules/resend/types/update-email.dto';
 
-export type CreateEmailDto = {
-  subject: string;
-  fromAddress: EmailsField;
-  toAddresses: EmailsField;
+export type CreateEmailDto = UpdateEmailDto & {
   htmlBody: string;
   textBody: string;
-  ccAddresses: EmailsField;
-  bccAddresses: EmailsField;
-  replyToAddresses: EmailsField;
-  lastEvent: string;
   createdAt: string;
-  scheduledAt: string | null;
   tags: Array<{ name: string; value: string }> | undefined;
-  lastSyncedFromResend: string;
 };

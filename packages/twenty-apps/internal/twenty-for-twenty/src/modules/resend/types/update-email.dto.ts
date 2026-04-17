@@ -1,4 +1,4 @@
-import type { EmailsField } from 'src/modules/resend/utils/to-emails-field';
+import type { EmailsField } from 'src/modules/resend/types/emails-field';
 
 export type UpdateEmailDto = {
   subject: string;

@@ -1,10 +1,16 @@
-import type { UpsertRecordsOptions } from 'src/modules/resend/types/upsert-records-options';
 import type { SyncResult } from 'src/modules/resend/types/sync-result';
+import type { UpsertRecordsOptions } from 'src/modules/resend/types/upsert-records-options';
+import { getErrorMessage } from 'src/modules/resend/utils/get-error-message';
 import { upsertRecord } from 'src/modules/resend/utils/upsert-record';
 import { withRateLimitRetry } from 'src/modules/resend/utils/with-rate-limit-retry';
 
-export const upsertRecords = async <TListItem, TDetail = TListItem>(
-  options: UpsertRecordsOptions<TListItem, TDetail>,
+export const upsertRecords = async <
+  TListItem,
+  TDetail = TListItem,
+  TCreateDto extends Record<string, unknown> = Record<string, unknown>,
+  TUpdateDto extends Record<string, unknown> = Record<string, unknown>,
+>(
+  options: UpsertRecordsOptions<TListItem, TDetail, TCreateDto, TUpdateDto>,
 ): Promise<SyncResult> => {
   const {
     items,
@@ -48,7 +54,7 @@ export const upsertRecords = async <TListItem, TDetail = TListItem>(
         result.updated++;
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+      const message = getErrorMessage(error);
 
       result.errors.push(`${objectNameSingular} ${resendId}: ${message}`);
     }

@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   defineLogicFunction,
   type DatabaseEventPayload,
@@ -5,12 +6,9 @@ import {
 } from 'twenty-sdk';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ON_RESEND_SEGMENT_DELETED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/constants/universal-identifiers';
+import type { ResendSegmentRecord } from 'src/modules/resend/types/resend-segment-record';
 import { getResendClient } from 'src/modules/resend/utils/get-resend-client';
-
-type ResendSegmentRecord = {
-  id: string;
-  resendId?: string;
-};
 
 type SegmentDeleteEvent = DatabaseEventPayload<
   ObjectRecordDeleteEvent<ResendSegmentRecord>
@@ -21,7 +19,7 @@ const handler = async (
 ): Promise<object | undefined> => {
   const resendId = event.properties.before?.resendId;
 
-  if (!isDefined(resendId) || resendId === '') {
+  if (!isNonEmptyString(resendId)) {
     return { skipped: true, reason: 'no resendId on record' };
   }
 
@@ -45,7 +43,7 @@ const handler = async (
 };
 
 export default defineLogicFunction({
-  universalIdentifier: 'd5e5b6e1-e0d9-45f0-b3d9-6b96417e4ed0',
+  universalIdentifier: ON_RESEND_SEGMENT_DELETED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'on-resend-segment-deleted',
   description:
     'Removes a segment from Resend when a resendSegment record is deleted in Twenty',

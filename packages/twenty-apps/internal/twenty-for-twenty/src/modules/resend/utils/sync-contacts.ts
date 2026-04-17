@@ -6,6 +6,7 @@ import type { ContactDto } from 'src/modules/resend/types/contact.dto';
 import type { SyncResult } from 'src/modules/resend/types/sync-result';
 import { fetchAllPaginated } from 'src/modules/resend/utils/fetch-all-paginated';
 import { findOrCreatePerson } from 'src/modules/resend/utils/find-or-create-person';
+import { getErrorMessage } from 'src/modules/resend/utils/get-error-message';
 import { getExistingRecordsMap } from 'src/modules/resend/utils/get-existing-records-map';
 import { toEmailsField } from 'src/modules/resend/utils/to-emails-field';
 import { toIsoString } from 'src/modules/resend/utils/to-iso-string';
@@ -64,7 +65,7 @@ export const syncContacts = async (
         });
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+      const message = getErrorMessage(error);
 
       result.errors.push(
         `resendContact ${contact.id} person link: ${message}`,

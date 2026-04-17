@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   defineLogicFunction,
   type DatabaseEventPayload,
@@ -5,12 +6,9 @@ import {
 } from 'twenty-sdk';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ON_RESEND_CONTACT_DELETED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/constants/universal-identifiers';
+import type { ResendContactRecord } from 'src/modules/resend/types/resend-contact-record';
 import { getResendClient } from 'src/modules/resend/utils/get-resend-client';
-
-type ResendContactRecord = {
-  id: string;
-  resendId?: string;
-};
 
 type ContactDeleteEvent = DatabaseEventPayload<
   ObjectRecordDeleteEvent<ResendContactRecord>
@@ -21,7 +19,7 @@ const handler = async (
 ): Promise<object | undefined> => {
   const resendId = event.properties.before?.resendId;
 
-  if (!isDefined(resendId) || resendId === '') {
+  if (!isNonEmptyString(resendId)) {
     return { skipped: true, reason: 'no resendId on record' };
   }
 
@@ -45,7 +43,7 @@ const handler = async (
 };
 
 export default defineLogicFunction({
-  universalIdentifier: '7a2341e7-d96a-4ba1-b41d-699c73d61081',
+  universalIdentifier: ON_RESEND_CONTACT_DELETED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'on-resend-contact-deleted',
   description:
     'Removes a contact from Resend when a resendContact record is deleted in Twenty',

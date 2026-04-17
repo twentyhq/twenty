@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -15,7 +16,7 @@ export const findOrCreatePerson = async (
   email: string | undefined | null,
   name?: PersonName,
 ): Promise<string | undefined> => {
-  if (!isDefined(email) || email === '') {
+  if (!isNonEmptyString(email)) {
     return undefined;
   }
 

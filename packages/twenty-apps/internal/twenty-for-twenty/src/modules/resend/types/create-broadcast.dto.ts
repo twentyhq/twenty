@@ -1,15 +1,11 @@
-import type { EmailsField } from 'src/modules/resend/utils/to-emails-field';
+import type { EmailsField } from 'src/modules/resend/types/emails-field';
+import type { UpdateBroadcastDto } from 'src/modules/resend/types/update-broadcast.dto';
 
-export type CreateBroadcastDto = {
+export type CreateBroadcastDto = UpdateBroadcastDto & {
   name: string;
   subject: string | null;
   fromAddress: EmailsField;
   replyTo: EmailsField;
   previewText: string;
-  status: string;
   createdAt: string;
-  scheduledAt: string | null;
-  sentAt: string | null;
-  segmentId?: string;
-  templateId?: string;
 };

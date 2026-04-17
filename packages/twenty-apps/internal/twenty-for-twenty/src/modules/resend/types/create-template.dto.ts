@@ -1,15 +1,5 @@
-import type { EmailsField } from 'src/modules/resend/utils/to-emails-field';
+import type { UpdateTemplateDto } from 'src/modules/resend/types/update-template.dto';
 
-export type CreateTemplateDto = {
-  name: string;
-  alias: string;
-  status: string;
-  fromAddress: EmailsField;
-  subject: string;
-  replyTo: EmailsField;
-  htmlBody: string;
-  textBody: string;
+export type CreateTemplateDto = UpdateTemplateDto & {
   createdAt: string;
-  resendUpdatedAt: string;
-  publishedAt: string | null;
 };

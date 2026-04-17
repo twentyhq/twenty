@@ -1,7 +1,4 @@
-export type EmailsField = {
-  primaryEmail: string;
-  additionalEmails: string[] | null;
-};
+import type { EmailsField } from 'src/modules/resend/types/emails-field';
 
 export const toEmailsField = (
   value: string | string[] | undefined | null,

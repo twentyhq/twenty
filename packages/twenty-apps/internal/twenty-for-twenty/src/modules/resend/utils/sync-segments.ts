@@ -1,9 +1,9 @@
 import type { Resend } from 'resend';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-import { fetchAllPaginated } from 'src/modules/resend/utils/fetch-all-paginated';
 import type { SegmentDto } from 'src/modules/resend/types/segment.dto';
 import type { SyncResult } from 'src/modules/resend/types/sync-result';
+import { fetchAllPaginated } from 'src/modules/resend/utils/fetch-all-paginated';
 import { getExistingRecordsMap } from 'src/modules/resend/utils/get-existing-records-map';
 import { toIsoString } from 'src/modules/resend/utils/to-iso-string';
 import { upsertRecords } from 'src/modules/resend/utils/upsert-records';

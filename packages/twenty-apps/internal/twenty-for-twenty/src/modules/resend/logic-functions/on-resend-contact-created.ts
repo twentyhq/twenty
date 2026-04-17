@@ -1,23 +1,16 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import {
   defineLogicFunction,
   type DatabaseEventPayload,
   type ObjectRecordCreateEvent,
-  type EmailsField,
-  type FullNameField,
 } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ON_RESEND_CONTACT_CREATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/constants/universal-identifiers';
+import type { ResendContactRecord } from 'src/modules/resend/types/resend-contact-record';
 import { findOrCreatePerson } from 'src/modules/resend/utils/find-or-create-person';
 import { getResendClient } from 'src/modules/resend/utils/get-resend-client';
-
-type ResendContactRecord = {
-  id: string;
-  resendId?: string;
-  email?: EmailsField;
-  name?: FullNameField;
-  unsubscribed?: boolean;
-};
 
 type ContactCreateEvent = DatabaseEventPayload<
   ObjectRecordCreateEvent<ResendContactRecord>
@@ -28,13 +21,13 @@ const handler = async (
 ): Promise<object | undefined> => {
   const { after } = event.properties;
 
-  if (isDefined(after.resendId) && after.resendId !== '') {
+  if (isNonEmptyString(after.resendId)) {
     return { skipped: true, reason: 'record already has resendId (inbound sync)' };
   }
 
   const email = after.email?.primaryEmail;
 
-  if (!isDefined(email) || email === '') {
+  if (!isNonEmptyString(email)) {
     return { skipped: true, reason: 'no email on record' };
   }
 
@@ -78,7 +71,7 @@ const handler = async (
 };
 
 export default defineLogicFunction({
-  universalIdentifier: '656b85b4-71d0-477b-9741-4967d8d88ac9',
+  universalIdentifier: ON_RESEND_CONTACT_CREATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'on-resend-contact-created',
   description:
     'Creates a contact in Resend when a new resendContact record is created in Twenty',

@@ -1,24 +1,16 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import {
   defineLogicFunction,
   type DatabaseEventPayload,
   type ObjectRecordUpdateEvent,
-  type EmailsField,
-  type FullNameField,
 } from 'twenty-sdk';
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ON_RESEND_CONTACT_UPDATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/constants/universal-identifiers';
+import type { ResendContactRecord } from 'src/modules/resend/types/resend-contact-record';
 import { findOrCreatePerson } from 'src/modules/resend/utils/find-or-create-person';
 import { getResendClient } from 'src/modules/resend/utils/get-resend-client';
-
-type ResendContactRecord = {
-  id: string;
-  resendId?: string;
-  email?: EmailsField;
-  name?: FullNameField;
-  unsubscribed?: boolean;
-  lastSyncedFromResend?: string;
-};
 
 type ContactUpdateEvent = DatabaseEventPayload<
   ObjectRecordUpdateEvent<ResendContactRecord>
@@ -34,7 +26,7 @@ const handler = async (
   const { after } = event.properties;
   const resendId = after?.resendId;
 
-  if (!isDefined(resendId) || resendId === '') {
+  if (!isNonEmptyString(resendId)) {
     return { skipped: true, reason: 'no resendId on record' };
   }
 
@@ -99,7 +91,7 @@ const handler = async (
 };
 
 export default defineLogicFunction({
-  universalIdentifier: '7b770cc2-6d31-4f1b-a7db-48d44cf6109b',
+  universalIdentifier: ON_RESEND_CONTACT_UPDATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'on-resend-contact-updated',
   description:
     'Pushes contact field changes to Resend when a resendContact record is updated in Twenty',

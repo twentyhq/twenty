@@ -2,8 +2,9 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk';
 
 import { SYNC_RESEND_DATA_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/constants/universal-identifiers';
-import { getResendClient } from 'src/modules/resend/utils/get-resend-client';
 import type { SyncResult } from 'src/modules/resend/types/sync-result';
+import { getErrorMessage } from 'src/modules/resend/utils/get-error-message';
+import { getResendClient } from 'src/modules/resend/utils/get-resend-client';
 import { syncBroadcasts } from 'src/modules/resend/utils/sync-broadcasts';
 import { syncContacts } from 'src/modules/resend/utils/sync-contacts';
 import { syncEmails } from 'src/modules/resend/utils/sync-emails';
@@ -33,7 +34,7 @@ const runStep = async (
 
     return true;
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
+    const message = getErrorMessage(error);
 
     allErrors.push(`${name}: ${message}`);
     console.error(`[sync] ${name} failed: ${message}`);

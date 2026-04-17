@@ -1,5 +1,5 @@
-import { isDefined } from 'twenty-shared/utils';
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-shared/utils';
 
 import { capitalize } from 'src/modules/resend/utils/capitalize';
 
