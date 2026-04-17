@@ -6,6 +6,7 @@ import { join } from 'path';
 import * as tar from 'tar';
 import { installApplication } from 'test/integration/metadata/suites/application/utils/install-application.util';
 import { uploadAppTarball } from 'test/integration/metadata/suites/application/utils/upload-app-tarball.util';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type DataSource } from 'typeorm';
 
 const createTestTarball = async (
@@ -44,32 +45,44 @@ const createTestTarball = async (
   return buffer;
 };
 
-const buildManifestWithDuplicateRoleIdentifiers = (
+const buildManifestWithCrossEntityIdentifierConflict = (
   universalIdentifier: string,
-  sharedRoleIdentifier: string,
+  roleUniversalIdentifier: string,
+  duplicatedUniversalIdentifier: string,
 ) =>
   JSON.stringify({
     application: {
       universalIdentifier,
-      displayName: 'Test App With Duplicate Role Identifiers',
+      displayName: 'Test App With Cross Entity Identifier Conflict',
       description:
-        'A test app whose manifest has duplicate universalIdentifiers',
+        'A test app whose manifest reuses a universalIdentifier across entity types',
       icon: 'IconTestPipe',
-      defaultRoleUniversalIdentifier: sharedRoleIdentifier,
+      defaultRoleUniversalIdentifier: roleUniversalIdentifier,
       applicationVariables: {},
       packageJsonChecksum: null,
       yarnLockChecksum: null,
     },
     roles: [
       {
-        universalIdentifier: sharedRoleIdentifier,
+        universalIdentifier: roleUniversalIdentifier,
         label: 'First Role',
         description: 'First role',
       },
       {
-        universalIdentifier: sharedRoleIdentifier,
+        universalIdentifier: duplicatedUniversalIdentifier,
         label: 'Second Role',
-        description: 'Second role with duplicate identifier',
+        description: 'Second role',
+        objectPermissions: [
+          {
+            universalIdentifier: duplicatedUniversalIdentifier,
+            objectUniversalIdentifier:
+              STANDARD_OBJECTS.company.universalIdentifier,
+            canReadObjectRecords: true,
+            canUpdateObjectRecords: false,
+            canSoftDeleteObjectRecords: false,
+            canDestroyObjectRecords: false,
+          },
+        ],
       },
     ],
     skills: [],
@@ -121,16 +134,18 @@ describe('Install application should return structured validation errors', () =>
 
   it('should return METADATA_VALIDATION_FAILED with structured errors when installing an app whose manifest has validation errors', async () => {
     const universalIdentifier = crypto.randomUUID();
-    const sharedRoleIdentifier = crypto.randomUUID();
-    const manifest = buildManifestWithDuplicateRoleIdentifiers(
+    const roleUniversalIdentifier = crypto.randomUUID();
+    const duplicatedUniversalIdentifier = crypto.randomUUID();
+    const manifest = buildManifestWithCrossEntityIdentifierConflict(
       universalIdentifier,
-      sharedRoleIdentifier,
+      roleUniversalIdentifier,
+      duplicatedUniversalIdentifier,
     );
 
     const tarball = await createTestTarball({
       'manifest.json': manifest,
       'package.json': JSON.stringify({
-        name: 'test-duplicate-role-identifiers-app',
+        name: 'test-cross-entity-identifier-conflict-app',
         version: '1.0.0',
       }),
     });
