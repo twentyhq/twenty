@@ -28,6 +28,7 @@ type ControlsPanelProps = {
   onCopyShareLink: () => void;
   onDashColorChange: (value: string) => void;
   onHoverDashColorChange: (value: string) => void;
+  onCopyHalftoneImage: (width: number, height: number) => void;
   onExportHalftoneImage: (width: number, height: number) => void;
   onExportBackgroundChange: (value: boolean) => void;
   onExportHtml: () => void;
@@ -133,6 +134,7 @@ export function ControlsPanel({
   onCopyShareLink,
   onDashColorChange,
   onHoverDashColorChange,
+  onCopyHalftoneImage,
   onExportHalftoneImage,
   onExportBackgroundChange,
   onExportHtml,
@@ -236,6 +238,7 @@ export function ControlsPanel({
           exportBackground={exportBackground}
           exportName={exportName}
           imageFileName={imageFileName}
+          onCopyHalftoneImage={onCopyHalftoneImage}
           onExportHalftoneImage={onExportHalftoneImage}
           onExportBackgroundChange={onExportBackgroundChange}
           onExportHtml={onExportHtml}

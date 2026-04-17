@@ -81,6 +81,7 @@ type ExportTabProps = {
   exportBackground: boolean;
   exportName: string;
   imageFileName: string | null;
+  onCopyHalftoneImage: (width: number, height: number) => void;
   onExportHalftoneImage: (width: number, height: number) => void;
   onExportBackgroundChange: (value: boolean) => void;
   onExportHtml: () => void;
@@ -105,6 +106,7 @@ export function ExportTab({
   exportBackground,
   exportName,
   imageFileName,
+  onCopyHalftoneImage,
   onExportHalftoneImage,
   onExportBackgroundChange,
   onExportHtml,
@@ -137,11 +139,22 @@ export function ExportTab({
     defaultExportName,
   );
 
-  const handleDownloadHalftoneImage = () => {
+  const getSelectedResolution = () => {
     const [widthStr, heightStr] = resolution.split('x');
-    const width = parseInt(widthStr, 10);
-    const height = parseInt(heightStr, 10);
+    const width = parseInt(widthStr ?? '', 10);
+    const height = parseInt(heightStr ?? '', 10);
+
+    return { width, height };
+  };
+
+  const handleDownloadHalftoneImage = () => {
+    const { width, height } = getSelectedResolution();
     onExportHalftoneImage(width, height);
+  };
+
+  const handleCopyHalftoneImage = () => {
+    const { width, height } = getSelectedResolution();
+    onCopyHalftoneImage(width, height);
   };
 
   return (
@@ -176,8 +189,8 @@ export function ExportTab({
       <Section>
         <SectionTitle>
           {sectionLabel(
-            'Download Image',
-            'Downloads a PNG snapshot of the current halftone effect at the selected resolution.',
+            'Image Export',
+            'Downloads a PNG snapshot of the current halftone effect or copies it to the clipboard at the selected resolution.',
           )}
         </SectionTitle>
 
@@ -195,6 +208,9 @@ export function ExportTab({
           type="button"
         >
           Download Halftone Image
+        </ExportButton>
+        <ExportButton onClick={handleCopyHalftoneImage} type="button">
+          Copy Halftone Image
         </ExportButton>
       </Section>
 

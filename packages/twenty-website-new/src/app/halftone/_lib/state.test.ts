@@ -76,5 +76,27 @@ describe('halftone studio state defaults', () => {
     expect(normalized.halftone.hoverDashColor).toBe(
       DEFAULT_HALFTONE_SETTINGS.halftone.hoverDashColor,
     );
+    expect(normalized.halftone.toneTarget).toBe(
+      DEFAULT_HALFTONE_SETTINGS.halftone.toneTarget,
+    );
+  });
+
+  it('preserves a dark-area halftone target from newer presets', () => {
+    const normalized = normalizeHalftoneStudioSettings(
+      JSON.parse(`{
+        "halftone": {
+          "enabled": true,
+          "scale": 24.72,
+          "power": -0.07,
+          "toneTarget": "dark",
+          "width": 0.46,
+          "imageContrast": 1,
+          "dashColor": "#112233",
+          "hoverDashColor": "#445566"
+        }
+      }`) as Partial<HalftoneStudioSettings>,
+    );
+
+    expect(normalized.halftone.toneTarget).toBe('dark');
   });
 });

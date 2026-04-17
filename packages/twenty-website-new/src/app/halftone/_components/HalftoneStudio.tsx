@@ -172,6 +172,14 @@ const HiddenFileInput = styled.input`
 const DEFAULT_PREVIEW_DISTANCE = 6;
 const DEFAULT_IMAGE_ASSET_PATH = '/images/shared/halftone/twenty-logo.svg';
 const DEFAULT_IMAGE_FILENAME = 'twenty-logo.svg';
+const CLIPBOARD_IMAGE_EXTENSION_BY_MIME: Record<string, string> = {
+  'image/bmp': '.bmp',
+  'image/gif': '.gif',
+  'image/jpeg': '.jpg',
+  'image/png': '.png',
+  'image/svg+xml': '.svg',
+  'image/webp': '.webp',
+};
 type PendingFilePicker = {
   resolve: (file: File | null) => void;
 };
@@ -222,6 +230,42 @@ function getAssetFilenameFromUrl(assetUrl: string, fallbackFilename: string) {
   return assetFilename && assetFilename.length > 0
     ? assetFilename
     : fallbackFilename;
+}
+
+function isEditablePasteTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+
+  return (
+    target.isContentEditable ||
+    target instanceof HTMLInputElement ||
+    target instanceof HTMLTextAreaElement ||
+    target.closest('[contenteditable=""], [contenteditable="true"]') !== null
+  );
+}
+
+function createPastedImageFile(file: File) {
+  const hasExtension = /\.[^.]+$/i.test(file.name);
+
+  if (hasExtension) {
+    return file;
+  }
+
+  const extension =
+    CLIPBOARD_IMAGE_EXTENSION_BY_MIME[file.type] ??
+    CLIPBOARD_IMAGE_EXTENSION_BY_MIME['image/png'];
+
+  return new File([file], `pasted-image-${Date.now()}${extension}`, {
+    type: file.type || 'image/png',
+    lastModified: Date.now(),
+  });
+}
+
+function hasTextSelection() {
+  const selection = window.getSelection();
+
+  return selection !== null && selection.toString().trim().length > 0;
 }
 
 function createInitialExportPose(): HalftoneExportPose {
@@ -324,6 +368,7 @@ export function HalftoneStudio() {
   const defaultImageFileReference = useRef<File | null>(null);
   const defaultImageFilePromiseReference = useRef<Promise<File> | null>(null);
   const snapshotReference = useRef<HalftoneSnapshotFn | null>(null);
+  const canvasLayerReference = useRef<HTMLDivElement>(null);
   const fileInputReference = useRef<HTMLInputElement>(null);
   const presetFileInputReference = useRef<HTMLInputElement>(null);
   const pendingFilePickerReference = useRef<PendingFilePicker | null>(null);
@@ -491,6 +536,93 @@ export function HalftoneStudio() {
         });
       });
   }, [exportName, previewDistance, state.settings]);
+
+  const handleCopyHalftoneImage = useCallback(
+    async (width: number, height: number) => {
+      const snapshotFn = snapshotReference.current;
+
+      if (!snapshotFn) {
+        return;
+      }
+
+      if (
+        typeof ClipboardItem === 'undefined' ||
+        typeof navigator.clipboard?.write !== 'function'
+      ) {
+        dispatch({
+          type: 'setStatus',
+          message: 'Image clipboard copy is not supported in this browser.',
+          isError: true,
+        });
+        return;
+      }
+
+      const blob = await snapshotFn(width, height, {
+        backgroundColor: state.settings.background.color,
+        includeBackground: exportBackground,
+      });
+
+      if (!blob) {
+        dispatch({
+          type: 'setStatus',
+          message: 'Could not copy the halftone image.',
+          isError: true,
+        });
+        return;
+      }
+
+      try {
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            [blob.type || 'image/png']: blob,
+          }),
+        ]);
+        dispatch({
+          type: 'setStatus',
+          message: 'Image copied to clipboard.',
+        });
+        window.setTimeout(() => dispatch({ type: 'clearStatus' }), 2000);
+      } catch {
+        dispatch({
+          type: 'setStatus',
+          message: 'Could not copy the halftone image.',
+          isError: true,
+        });
+      }
+    },
+    [exportBackground, state.settings.background.color],
+  );
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const isCopyShortcut =
+        (event.metaKey || event.ctrlKey) &&
+        !event.shiftKey &&
+        !event.altKey &&
+        event.key.toLowerCase() === 'c';
+
+      if (!isCopyShortcut) {
+        return;
+      }
+
+      if (isEditablePasteTarget(event.target) || hasTextSelection()) {
+        return;
+      }
+
+      const canvasLayer = canvasLayerReference.current;
+      const width = Math.max(canvasLayer?.clientWidth ?? 0, 1);
+      const height = Math.max(canvasLayer?.clientHeight ?? 0, 1);
+
+      event.preventDefault();
+      void handleCopyHalftoneImage(width, height);
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleCopyHalftoneImage]);
 
   const openFilePicker = useCallback((accept: string) => {
     return new Promise<File | null>((resolve) => {
@@ -681,6 +813,47 @@ export function HalftoneStudio() {
     },
     [state.settings.halftone, state.settings.sourceMode],
   );
+
+  useEffect(() => {
+    const handlePaste = (event: ClipboardEvent) => {
+      if (isEditablePasteTarget(event.target)) {
+        return;
+      }
+
+      const imageItem = Array.from(event.clipboardData?.items ?? []).find(
+        (item) => item.type.startsWith('image/'),
+      );
+
+      if (!imageItem) {
+        return;
+      }
+
+      const pastedFile = imageItem.getAsFile();
+
+      if (!pastedFile) {
+        dispatch({
+          type: 'setStatus',
+          message: 'Could not read the pasted image.',
+          isError: true,
+        });
+        return;
+      }
+
+      event.preventDefault();
+      activateUploadedImage(createPastedImageFile(pastedFile));
+      dispatch({
+        type: 'setStatus',
+        message: 'Image pasted from clipboard.',
+      });
+      window.setTimeout(() => dispatch({ type: 'clearStatus' }), 2000);
+    };
+
+    window.addEventListener('paste', handlePaste);
+
+    return () => {
+      window.removeEventListener('paste', handlePaste);
+    };
+  }, [activateUploadedImage]);
 
   const handleUploadSource = useCallback(async () => {
     const file = await openFilePicker(
@@ -1166,7 +1339,7 @@ export function HalftoneStudio() {
           {state.statusMessage}
         </Status>
 
-        <CanvasLayer>
+        <CanvasLayer ref={canvasLayerReference}>
           <HalftoneCanvas
             geometry={activeGeometry}
             initialPose={canvasInitialPose}
@@ -1204,6 +1377,9 @@ export function HalftoneStudio() {
                 value: { hoverDashColor: value },
               })
             }
+            onCopyHalftoneImage={(width, height) => {
+              void handleCopyHalftoneImage(width, height);
+            }}
             onExportHalftoneImage={(width, height) => {
               void handleExportHalftoneImage(width, height);
             }}
