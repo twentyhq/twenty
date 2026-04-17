@@ -2,12 +2,10 @@ import { t } from '@lingui/core/macro';
 import {
   differenceInDays,
   formatDistance,
-  isToday,
-  isTomorrow,
-  isYesterday,
   type Locale,
   startOfDay,
 } from 'date-fns';
+import { Temporal } from 'temporal-polyfill';
 
 export const formatDateISOStringToRelativeDate = ({
   isoDate,
@@ -20,19 +18,23 @@ export const formatDateISOStringToRelativeDate = ({
 }) => {
   const now = new Date();
 
-  // Date-only strings (e.g. "2026-04-14", length === 10) are parsed by the
-  // ECMAScript spec as UTC midnight. For users west of UTC that shifts the
-  // calendar day backwards by one, making isToday/isTomorrow/isYesterday
-  // return wrong results. Appending "T00:00:00" (no Z) forces the Date
-  // constructor to use local midnight instead.
-  // Full datetime strings already carry timezone info and are unaffected.
-  const targetDate =
-    isoDate.length === 10 ? new Date(isoDate + 'T00:00:00') : new Date(isoDate);
+  if (isDayMaximumPrecision && isoDate.length === 10) {
+    const targetPlainDate = Temporal.PlainDate.from(isoDate);
+    const todayPlainDate = Temporal.Now.plainDateISO();
+    const diffDays = todayPlainDate.until(targetPlainDate).days;
 
-  if (isDayMaximumPrecision && isToday(targetDate)) return t`Today`;
-  if (isDayMaximumPrecision && isYesterday(targetDate)) return t`Yesterday`;
-  if (isDayMaximumPrecision && isTomorrow(targetDate)) return t`Tomorrow`;
+    if (diffDays === 0) return t`Today`;
+    if (diffDays === -1) return t`Yesterday`;
+    if (diffDays === 1) return t`Tomorrow`;
 
+    return formatDistance(
+      startOfDay(new Date(isoDate + 'T00:00:00')),
+      startOfDay(now),
+      { addSuffix: true, locale: localeCatalog },
+    );
+  }
+
+  const targetDate = new Date(isoDate);
   const isWithin24h = Math.abs(differenceInDays(targetDate, now)) < 1;
 
   if (isDayMaximumPrecision || !isWithin24h)
