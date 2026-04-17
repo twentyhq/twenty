@@ -35,7 +35,7 @@ type AdditionalPhoneMetadataWithNumber = Partial<AdditionalPhoneMetadata> &
 const removePlusFromString = (str: string) => str.replace(/\+/g, '');
 
 const nullIfEmptyString = (value: string | null | undefined) =>
-  value === undefined ? undefined : isNonEmptyString(value) ? value : null;
+  !isDefined(value) ? value : isNonEmptyString(value) ? value : null;
 
 const validatePrimaryPhoneCountryCodeAndCallingCode = ({
   callingCode,
