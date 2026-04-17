@@ -11,7 +11,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useContext } from 'react';
-import { IconCheck } from 'twenty-ui/display';
+import { IconCheck, IconPaint } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -36,6 +36,7 @@ const StyledTitle = styled.span`
   align-items: center;
   display: flex;
   flex: 1;
+  gap: ${themeCssVariables.spacing[2]};
   justify-content: center;
   text-align: center;
 `;
@@ -76,7 +77,10 @@ const LayoutCustomizationBarContent = () => {
         <StyledLeftSection>
           <LayoutCustomizationBarMenuDropdown />
         </StyledLeftSection>
-        <StyledTitle>{title}</StyledTitle>
+        <StyledTitle>
+          <IconPaint size={theme.icon.size.md} />
+          {title}
+        </StyledTitle>
         <StyledRightSection>
           <SaveAndCancelButtons
             onSave={save}
