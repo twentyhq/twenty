@@ -44,26 +44,32 @@ const createTestTarball = async (
   return buffer;
 };
 
-const buildManifestWithInvalidNavigationMenuItem = (
+const buildManifestWithDuplicateRoleIdentifiers = (
   universalIdentifier: string,
-  roleUniversalIdentifier: string,
+  sharedRoleIdentifier: string,
 ) =>
   JSON.stringify({
     application: {
       universalIdentifier,
-      displayName: 'Test App With Invalid Manifest',
-      description: 'A test app with an invalid navigation menu item',
+      displayName: 'Test App With Duplicate Role Identifiers',
+      description:
+        'A test app whose manifest has duplicate universalIdentifiers',
       icon: 'IconTestPipe',
-      defaultRoleUniversalIdentifier: roleUniversalIdentifier,
+      defaultRoleUniversalIdentifier: sharedRoleIdentifier,
       applicationVariables: {},
       packageJsonChecksum: null,
       yarnLockChecksum: null,
     },
     roles: [
       {
-        universalIdentifier: roleUniversalIdentifier,
-        label: 'Test Role',
-        description: 'Test role',
+        universalIdentifier: sharedRoleIdentifier,
+        label: 'First Role',
+        description: 'First role',
+      },
+      {
+        universalIdentifier: sharedRoleIdentifier,
+        label: 'Second Role',
+        description: 'Second role with duplicate identifier',
       },
     ],
     skills: [],
@@ -74,14 +80,7 @@ const buildManifestWithInvalidNavigationMenuItem = (
     frontComponents: [],
     publicAssets: [],
     views: [],
-    navigationMenuItems: [
-      {
-        universalIdentifier: crypto.randomUUID(),
-        position: 0,
-        type: 'OBJECT',
-        targetObjectUniversalIdentifier: crypto.randomUUID(),
-      },
-    ],
+    navigationMenuItems: [],
     pageLayouts: [],
   });
 
@@ -120,18 +119,18 @@ describe('Install application should return structured validation errors', () =>
     jest.useFakeTimers();
   });
 
-  it('should return METADATA_VALIDATION_FAILED with structured errors when installing an app with an invalid manifest', async () => {
+  it('should return METADATA_VALIDATION_FAILED with structured errors when installing an app whose manifest has validation errors', async () => {
     const universalIdentifier = crypto.randomUUID();
-    const roleUniversalIdentifier = crypto.randomUUID();
-    const manifest = buildManifestWithInvalidNavigationMenuItem(
+    const sharedRoleIdentifier = crypto.randomUUID();
+    const manifest = buildManifestWithDuplicateRoleIdentifiers(
       universalIdentifier,
-      roleUniversalIdentifier,
+      sharedRoleIdentifier,
     );
 
     const tarball = await createTestTarball({
       'manifest.json': manifest,
       'package.json': JSON.stringify({
-        name: 'test-invalid-manifest-app',
+        name: 'test-duplicate-role-identifiers-app',
         version: '1.0.0',
       }),
     });
