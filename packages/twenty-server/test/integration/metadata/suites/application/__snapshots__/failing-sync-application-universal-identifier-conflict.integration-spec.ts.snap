@@ -9,6 +9,11 @@ exports[`Sync application should fail on universalIdentifier conflicts should fa
         {
           "errors": [
             {
+              "code": "ROLE_BELONGS_TO_ANOTHER_APPLICATION",
+              "message": "Cannot modify permissions on a role owned by another application",
+              "userFriendlyMessage": "Cannot modify permissions on a role owned by another application.",
+            },
+            {
               "code": "ENTITY_ALREADY_EXISTS",
               "message": "Cannot create role: universalIdentifier "20202020-02c2-43f2-b94d-cab1f2b532eb" already exists in role maps from application "20202020-64aa-4b6f-b003-9c74b97cee20"",
             },
