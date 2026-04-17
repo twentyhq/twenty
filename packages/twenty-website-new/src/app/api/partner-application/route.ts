@@ -1,51 +1,56 @@
 import { splitFullName } from '@/lib/partner-application/split-full-name';
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 
-type PartnerApplicationRequestBody = {
-  name?: string;
-  email?: string;
-};
+const partnerApplicationRequestSchema = z.strictObject({
+  email: z
+    .string()
+    .trim()
+    .min(1, { error: 'Email is required.' })
+    .pipe(z.email({ error: 'Invalid email address.' })),
+  name: z.string().trim().min(1, { error: 'Name is required.' }),
+});
 
-function isNonEmptyString(value: unknown): value is string {
-  return typeof value === 'string' && value.trim().length > 0;
-}
+const webhookUrlSchema = z
+  .string()
+  .trim()
+  .pipe(z.httpUrl({ error: 'Invalid webhook URL.' }));
 
 export async function POST(request: Request) {
-  const webhookUrl = process.env.PARTNER_APPLICATION_WEBHOOK_URL;
+  const webhookUrlResult = webhookUrlSchema.safeParse(
+    process.env.PARTNER_APPLICATION_WEBHOOK_URL,
+  );
 
-  if (!isNonEmptyString(webhookUrl)) {
+  if (!webhookUrlResult.success) {
     return NextResponse.json(
       { error: 'Partner application webhook is not configured.' },
       { status: 503 },
     );
   }
 
-  let body: PartnerApplicationRequestBody;
+  const webhookUrl = webhookUrlResult.data;
+
+  let raw: unknown;
 
   try {
-    body = (await request.json()) as PartnerApplicationRequestBody;
+    raw = await request.json();
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body.' }, { status: 400 });
   }
 
-  const { name, email } = body;
+  const bodyResult = partnerApplicationRequestSchema.safeParse(raw);
 
-  if (!isNonEmptyString(name)) {
-    return NextResponse.json({ error: 'Name is required.' }, { status: 400 });
+  if (!bodyResult.success) {
+    const message =
+      bodyResult.error.issues[0]?.message ?? 'Invalid request body.';
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 
-  if (!isNonEmptyString(email)) {
-    return NextResponse.json({ error: 'Email is required.' }, { status: 400 });
-  }
-
-  const { firstName, lastName } = splitFullName(name.trim());
-
-  if (!firstName) {
-    return NextResponse.json({ error: 'Name is required.' }, { status: 400 });
-  }
+  const { name, email } = bodyResult.data;
+  const { firstName, lastName } = splitFullName(name);
 
   const webhookPayload = {
-    Email: email.trim(),
+    Email: email,
     FirstName: firstName,
     LastName: lastName,
   };
