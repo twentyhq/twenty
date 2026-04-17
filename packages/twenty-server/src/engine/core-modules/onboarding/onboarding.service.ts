@@ -227,11 +227,10 @@ export class OnboardingService {
       return;
     }
 
-    if (firstName === '' && lastName === '') {
-      return;
-    }
-
-    if (!isDefined(firstName) && !isDefined(lastName)) {
+    const hasProvidedNamePart =
+      (isDefined(firstName) && firstName !== '') ||
+      (isDefined(lastName) && lastName !== '');
+    if (!hasProvidedNamePart) {
       return;
     }
 
