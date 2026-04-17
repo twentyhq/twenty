@@ -3,6 +3,7 @@ import { EditorContent } from '@tiptap/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AIChatEmptyState } from '@/ai/components/AIChatEmptyState';
+import { AIChatNoMoreBillingCreditsBanner } from '@/ai/components/AIChatNoMoreBillingCreditsBanner';
 import { AIChatStandaloneError } from '@/ai/components/AIChatStandaloneError';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
@@ -10,13 +11,15 @@ import { AIChatContextUsageButton } from '@/ai/components/internal/AIChatContext
 import { AIChatEditorFocusEffect } from '@/ai/components/internal/AIChatEditorFocusEffect';
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
+import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAIChatEditor } from '@/ai/hooks/useAIChatEditor';
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
-import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
 import { Select } from '@/ui/input/components/Select';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { hasReachedCurrentBillingPeriodCapSelector } from '@/workspace/states/hasReachedCurrentBillingPeriodCapSelector';
 import { type SelectOption } from 'twenty-ui/input';
 
 const StyledInputArea = styled.div<{ isMobile: boolean }>`
@@ -106,6 +109,9 @@ const StyledRightButtonsContainer = styled.div`
 
 export const AIChatEditorSection = () => {
   const isMobile = useIsMobile();
+  const hasReachedCurrentBillingPeriodCap = useAtomStateValue(
+    hasReachedCurrentBillingPeriodCapSelector,
+  );
   const { options, pinnedOption } = useAiModelOptions({
     variant: 'pinned-default',
   });
@@ -134,6 +140,9 @@ export const AIChatEditorSection = () => {
 
       <StyledInputArea isMobile={isMobile}>
         <AgentChatContextPreview />
+        {!hasReachedCurrentBillingPeriodCap && (
+          <AIChatNoMoreBillingCreditsBanner />
+        )}
         <StyledInputBox>
           <StyledEditorWrapper>
             <EditorContent editor={editor} />

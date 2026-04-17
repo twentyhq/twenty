@@ -51,6 +51,7 @@ const StyledMessage = styled.p<{ variant: AIChatBannerVariant }>`
   line-height: 1.4;
   margin: 0;
   min-width: 0;
+  white-space: pre-line;
 `;
 
 export type AIChatBannerProps = {
