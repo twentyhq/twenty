@@ -7,7 +7,6 @@ import { useSetAsPinnedTab } from '@/page-layout/hooks/useSetAsPinnedTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
-import { isCustomOrUnsavedPageLayoutEntity } from '@/page-layout/utils/isCustomOrUnsavedPageLayoutEntity';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { CanvasTabSettingsContent } from '@/side-panel/pages/page-layout/components/CanvasTabSettingsContent';
@@ -15,6 +14,7 @@ import { RegularTabSettingsContent } from '@/side-panel/pages/page-layout/compon
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -86,11 +86,9 @@ export const SidePanelPageLayoutTabSettingsContent = ({
   const canSetAsPinned =
     isRecordPage && !isAlreadyPinned && tabsSorted.length > 1;
 
-  const isResetToDefaultDisabled = isCustomOrUnsavedPageLayoutEntity({
-    applicationId: tab.applicationId,
-    workspaceCustomApplicationId:
-      currentWorkspace?.workspaceCustomApplication?.id,
-  });
+  const isResetToDefaultDisabled =
+    !isNonEmptyString(tab.applicationId) ||
+    tab.applicationId === currentWorkspace?.workspaceCustomApplication?.id;
 
   const handleDelete = () => {
     deleteTab(tab.id);

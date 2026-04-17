@@ -4,7 +4,6 @@ import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuIt
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useResetPageLayoutWidgetToDefault } from '@/page-layout/hooks/useResetPageLayoutWidgetToDefault';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
-import { isCustomOrUnsavedPageLayoutEntity } from '@/page-layout/utils/isCustomOrUnsavedPageLayoutEntity';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { WidgetVisibilityDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityDropdownContent';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
@@ -18,6 +17,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -67,11 +67,10 @@ export const WidgetSettingsManageSection = ({
     return null;
   }
 
-  const isResetToDefaultDisabled = isCustomOrUnsavedPageLayoutEntity({
-    applicationId: widgetInEditMode?.applicationId,
-    workspaceCustomApplicationId:
-      currentWorkspace?.workspaceCustomApplication?.id,
-  });
+  const isResetToDefaultDisabled =
+    !isNonEmptyString(widgetInEditMode?.applicationId) ||
+    widgetInEditMode.applicationId ===
+      currentWorkspace?.workspaceCustomApplication?.id;
 
   const handleResetToDefault = () => {
     if (isResetToDefaultDisabled) {
