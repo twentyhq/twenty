@@ -22,7 +22,6 @@ import {
   IconLego,
   IconListDetails,
   IconLock,
-  IconSettings,
   IconShield,
 } from 'twenty-ui/display';
 import {
@@ -34,7 +33,6 @@ import {
 import { SettingsApplicationDetailTitle } from '~/pages/settings/applications/components/SettingsApplicationDetailTitle';
 import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
 import { SettingsApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailContentTab';
-import { SettingsApplicationDetailSettingsTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab';
 import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 
@@ -192,7 +190,6 @@ export const SettingsAvailableApplicationDetails = () => {
     { id: 'about', title: t`About`, Icon: IconInfoCircle },
     { id: 'content', title: t`Content`, Icon: IconBox },
     { id: 'permissions', title: t`Permissions`, Icon: IconLock },
-    { id: 'settings', title: t`Settings`, Icon: IconSettings },
   ];
 
   const renderActiveTabContent = () => {
@@ -245,10 +242,7 @@ export const SettingsAvailableApplicationDetails = () => {
             marketplaceAppObjects={manifest?.objects}
           />
         );
-      case 'settings':
-        return (
-          <SettingsApplicationDetailSettingsTab application={application} />
-        );
+
       default:
         return null;
     }
