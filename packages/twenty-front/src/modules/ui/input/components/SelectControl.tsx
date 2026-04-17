@@ -2,7 +2,11 @@ import { type SelectSizeVariant } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import {
+  IconChevronDown,
+  OverflowingTextWithTooltip,
+  TintedIconTile,
+} from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -88,11 +92,22 @@ export const SelectControl = ({
       title={selectedOption.fullLabel}
     >
       {isDefined(selectedOption?.Icon) ? (
-        <selectedOption.Icon
-          color={isDisabled ? theme.font.color.light : theme.font.color.primary}
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
-        />
+        isDefined(selectedOption.iconThemeColor) ? (
+          <TintedIconTile
+            Icon={selectedOption.Icon}
+            color={selectedOption.iconThemeColor}
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+          />
+        ) : (
+          <selectedOption.Icon
+            color={
+              isDisabled ? theme.font.color.light : theme.font.color.primary
+            }
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+          />
+        )
       ) : null}
       <OverflowingTextWithTooltip
         text={

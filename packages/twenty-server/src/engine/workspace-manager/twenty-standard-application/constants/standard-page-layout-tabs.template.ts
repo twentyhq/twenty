@@ -17,6 +17,12 @@ export const CONDITIONAL_DISPLAY_DEVICE_DESKTOP = {
   and: [{ '===': [{ var: 'device' }, 'DESKTOP'] }],
 } as const satisfies PageLayoutWidgetConditionalDisplay;
 
+export const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE =
+  'device == "MOBILE"';
+
+export const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP =
+  'device == "DESKTOP"';
+
 export const GRID_POSITIONS = {
   FULL_WIDTH: {
     row: 0,
@@ -134,7 +140,7 @@ export const TAB_PROPS = {
     title: 'Note',
     position: 15,
     icon: 'IconNotes',
-    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   },
   flow: {
     title: 'Flow',
@@ -197,13 +203,13 @@ export const WIDGET_PROPS = {
     title: 'Note',
     type: WidgetType.FIELD_RICH_TEXT,
     gridPosition: GRID_POSITIONS.RICH_TEXT,
-    position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
+    position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   taskRichText: {
     title: 'Task',
     type: WidgetType.FIELD_RICH_TEXT,
     gridPosition: GRID_POSITIONS.RICH_TEXT,
-    position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
+    position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   workflow: {
     title: 'Flow',

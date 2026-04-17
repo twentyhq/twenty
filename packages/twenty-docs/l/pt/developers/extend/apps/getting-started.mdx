@@ -98,6 +98,21 @@ O modo de desenvolvimento só está disponível em instâncias do Twenty em modo
   <img src="/images/docs/developers/extends/apps/dev.jpg" alt="Saída do terminal no modo de desenvolvimento" />
 </div>
 
+#### Sincronização única com `yarn twenty dev --once`
+
+Se você não quiser um monitor em execução em segundo plano (por exemplo, em um pipeline de CI, um hook do git ou um fluxo de trabalho com script), passe a flag `--once`. Ele executa o mesmo pipeline que `yarn twenty dev` — gerar o manifesto, empacotar arquivos, fazer upload, sincronizar, regenerar o cliente de API tipado — mas **encerra assim que a sincronização for concluída**:
+
+```bash filename="Terminal"
+yarn twenty dev --once
+```
+
+| Comando                  | Comportamento                                                                                                                    | Quando usar                                                                                                       |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `yarn twenty dev`        | Monitora seus arquivos-fonte e ressincroniza a cada alteração. Continua em execução até você interrompê-lo.                      | Desenvolvimento local interativo — você quer o painel de status em tempo real e um ciclo de feedback instantâneo. |
+| `yarn twenty dev --once` | Executa uma única compilação + sincronização e, em seguida, encerra com o código `0` em caso de sucesso ou `1` em caso de falha. | Scripts, CI, hooks de pre-commit, agentes de IA e qualquer fluxo de trabalho não interativo.                      |
+
+Ambos os modos exigem um servidor Twenty em execução no modo de desenvolvimento e um remoto autenticado — aplicam-se os mesmos pré-requisitos.
+
 ### Veja seu aplicativo no Twenty
 
 Abra [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer) no seu navegador. Navegue até **Settings > Apps** e selecione a aba **Developer**. Você deverá ver seu aplicativo listado em **Your Apps**:
@@ -205,6 +220,7 @@ A ferramenta de scaffolding já iniciou um servidor local do Twenty para você. 
 | -------------------------------------- | ------------------------------------------------------ |
 | `yarn twenty server start`             | Inicia o servidor local (baixa a imagem se necessário) |
 | `yarn twenty server start --port 3030` | Iniciar em uma porta personalizada                     |
+| `yarn twenty server start --test`      | Inicie uma instância de teste separada na porta 2021   |
 | `yarn twenty server stop`              | Interrompe o servidor (preserva os dados)              |
 | `yarn twenty server status`            | Mostra o status do servidor, a URL e as credenciais    |
 | `yarn twenty server logs`              | Transmite os logs do servidor                          |
@@ -212,6 +228,20 @@ A ferramenta de scaffolding já iniciou um servidor local do Twenty para você. 
 | `yarn twenty server reset`             | Exclui todos os dados e inicia do zero                 |
 
 Os dados são persistidos entre reinicializações em dois volumes do Docker (`twenty-app-dev-data` para PostgreSQL, `twenty-app-dev-storage` para arquivos). Use `reset` para apagar tudo e começar do zero.
+
+### Executando uma instância de teste
+
+Passe `--test` para qualquer comando de `server` para gerenciar uma segunda instância totalmente isolada — útil para executar testes de integração ou experimentar sem tocar nos seus dados principais de desenvolvimento.
+
+| Comando                            | Descrição                                                     |
+| ---------------------------------- | ------------------------------------------------------------- |
+| `yarn twenty server start --test`  | Inicia a instância de teste (padrão: porta 2021)              |
+| `yarn twenty server stop --test`   | Interrompe a instância de teste                               |
+| `yarn twenty server status --test` | Mostra o status da instância de teste, a URL e as credenciais |
+| `yarn twenty server logs --test`   | Transmite os logs da instância de teste                       |
+| `yarn twenty server reset --test`  | Exclui os dados de teste e inicia do zero                     |
+
+A instância de teste é executada em seu próprio contêiner Docker (`twenty-app-dev-test`) com volumes dedicados (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) e configuração própria, para que possa ser executada em paralelo com sua instância principal sem conflitos. Combine `--test` com `--port` para substituir a porta padrão 2021.
 
 <Note>
   O servidor requer que o **Docker** esteja em execução. Se você vir um erro "Docker not running", certifique-se de que o Docker Desktop (ou o daemon do Docker) esteja iniciado.

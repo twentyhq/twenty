@@ -45,6 +45,7 @@ export enum SettingsPath {
   ApplicationLogicFunctionDetail = 'applications/:applicationId/logicFunctions/:logicFunctionId',
   AvailableApplicationDetail = 'applications/available/:availableApplicationId',
   ApplicationRegistrationDetail = 'applications/registrations/:applicationRegistrationId',
+  ApplicationRegistrationConfigVariableDetails = 'applications/registrations/:applicationRegistrationId/config-variables/:variableKey',
   LogicFunctions = 'functions',
   NewLogicFunction = 'functions/new',
   LogicFunctionDetail = 'functions/:logicFunctionId',
@@ -69,6 +70,10 @@ export enum SettingsPath {
   AdminPanelNewAiProvider = 'admin-panel/ai/new-provider',
   AdminPanelAiProviderDetail = 'admin-panel/ai/providers/:providerName',
   AdminPanelNewAiModel = 'admin-panel/ai/providers/:providerName/new-model',
+  AdminPanelUserDetail = 'admin-panel/users/:userId',
+  AdminPanelWorkspaceDetail = 'admin-panel/workspaces/:workspaceId',
+  AdminPanelApplicationRegistrationDetail = 'admin-panel/applications/registrations/:applicationRegistrationId',
+  AdminPanelWorkspaceChatThread = 'admin-panel/workspaces/:workspaceId/threads/:threadId',
 
   Roles = 'roles',
   RoleCreate = 'roles/create',

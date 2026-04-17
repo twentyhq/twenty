@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import {
   DEFAULT_API_KEY_NAME,
@@ -6,6 +6,7 @@ import {
   DEFAULT_APP_ACCESS_TOKEN_NAME,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import {
   type LogicFunctionExecuteResult,
@@ -15,6 +16,8 @@ import {
 
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import type { FlatApplicationVariable } from 'src/engine/core-modules/application/application-variable/types/flat-application-variable.type';
+import { ApplicationLogsService } from 'src/engine/core-modules/application-logs/application-logs.service';
+import { parseApplicationLogLines } from 'src/engine/core-modules/application-logs/utils/parse-application-log-lines';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/logic-function/logic-function-executed';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
@@ -47,6 +50,8 @@ export enum LogicFunctionExecutionExceptionCode {
 
 @Injectable()
 export class LogicFunctionExecutorService {
+  private readonly logger = new Logger(LogicFunctionExecutorService.name);
+
   constructor(
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly throttlerService: ThrottlerService,
@@ -56,6 +61,7 @@ export class LogicFunctionExecutorService {
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly subscriptionService: SubscriptionService,
     private readonly auditService: AuditService,
+    private readonly applicationLogsService: ApplicationLogsService,
   ) {}
 
   async execute({
@@ -79,19 +85,32 @@ export class LogicFunctionExecutorService {
       workspaceId,
       flatApplication,
       flatApplicationVariables,
-      _flatLogicFunction: flatLogicFunction,
     });
 
     const driver = this.logicFunctionDriverFactory.getCurrentDriver();
 
-    const resultLogicFunction = await driver.execute({
-      flatLogicFunction,
-      flatApplication,
-      applicationUniversalIdentifier: flatApplication.universalIdentifier,
-      payload,
-      env: envVariables,
-      timeoutMs: flatLogicFunction.timeoutSeconds * 1_000,
-    });
+    let resultLogicFunction: LogicFunctionExecuteResult;
+
+    try {
+      resultLogicFunction = await driver.execute({
+        flatLogicFunction,
+        flatApplication,
+        applicationUniversalIdentifier: flatApplication.universalIdentifier,
+        payload,
+        env: envVariables,
+        timeoutMs: flatLogicFunction.timeoutSeconds * 1_000,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Logic function execution failed: ` +
+          `functionId=${logicFunctionId}, ` +
+          `workspaceId=${workspaceId}, ` +
+          `driver=${driver.constructor.name}: ` +
+          `${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      throw error;
+    }
 
     await this.handleExecutionResult({
       result: resultLogicFunction,
@@ -179,12 +198,10 @@ export class LogicFunctionExecutorService {
   private async getExecutionEnvVariables({
     workspaceId,
     flatApplication,
-    _flatLogicFunction,
     flatApplicationVariables,
   }: {
     workspaceId: string;
     flatApplication: FlatApplication;
-    _flatLogicFunction: FlatLogicFunction;
     flatApplicationVariables: FlatApplicationVariable[];
   }) {
     const applicationAccessToken =
@@ -215,10 +232,19 @@ export class LogicFunctionExecutorService {
     flatLogicFunction: FlatLogicFunction;
     flatApplication: FlatApplication;
   }) {
-    if (this.twentyConfigService.get('LOGIC_FUNCTION_LOGS_ENABLED')) {
-      /* oxlint-disable no-console */
-      console.log(result.logs);
-    }
+    const executionId = v4();
+
+    const parsedLines = parseApplicationLogLines(result.logs);
+    const logEntries = parsedLines.map((line) => ({
+      ...line,
+      workspaceId,
+      applicationId: flatApplication.id,
+      logicFunctionId: flatLogicFunction.id,
+      logicFunctionName: flatLogicFunction.name,
+      executionId,
+    }));
+
+    this.applicationLogsService.writeLogs(logEntries);
 
     await this.subscriptionService.publish({
       channel: SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,

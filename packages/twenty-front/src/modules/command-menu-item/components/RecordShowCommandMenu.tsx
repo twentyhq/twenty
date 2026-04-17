@@ -1,6 +1,6 @@
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
-import { PinnedCommandMenuItemButtons } from '@/command-menu-item/server-items/display/components/PinnedCommandMenuItemButtons';
-import { CommandMenuItemEditButton } from '@/command-menu-item/server-items/edit/components/CommandMenuItemEditButton';
+import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
+import { CommandMenuItemEditButton } from '@/command-menu-item/edit/components/CommandMenuItemEditButton';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';

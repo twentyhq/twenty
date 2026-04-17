@@ -12,6 +12,7 @@ describe('convertLayoutsToWidgets', () => {
   const mockWidgets: PageLayoutWidget[] = [
     {
       id: 'widget-1',
+      isActive: true,
       pageLayoutTabId: 'tab-1',
       title: 'Widget 1',
       type: WidgetType.GRAPH,
@@ -28,13 +29,13 @@ describe('convertLayoutsToWidgets', () => {
         aggregateFieldMetadataId: 'id',
         displayDataLabel: false,
       },
-      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
     },
     {
       id: 'widget-2',
+      isActive: true,
       pageLayoutTabId: 'tab-1',
       title: 'Widget 2',
       type: WidgetType.GRAPH,
@@ -53,7 +54,6 @@ describe('convertLayoutsToWidgets', () => {
         orderBy: GraphOrderBy.VALUE_DESC,
         displayDataLabel: false,
       },
-      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,

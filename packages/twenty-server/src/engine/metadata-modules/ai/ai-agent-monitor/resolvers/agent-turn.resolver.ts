@@ -68,6 +68,7 @@ export class AgentTurnResolver {
   ): Promise<AgentTurnEntity> {
     const thread = this.threadRepository.create({
       userWorkspaceId,
+      workspaceId: workspace.id,
       title: `Eval: ${input.substring(0, 50)}...`,
     });
     const savedThread = await this.threadRepository.save(thread);
@@ -75,6 +76,7 @@ export class AgentTurnResolver {
     const turn = this.turnRepository.create({
       threadId: savedThread.id,
       agentId,
+      workspaceId: workspace.id,
     });
     const savedTurn = await this.turnRepository.save(turn);
 

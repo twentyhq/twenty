@@ -30,6 +30,7 @@ export const CURRENCY_CODE_LABELS: Record<CurrencyCode, { label: string }> = {
   CDF: { label: 'Congolese franc' },
   CHF: { label: 'Swiss franc' },
   CLP: { label: 'Chilean peso' },
+  CLF: { label: 'Unidad de Fomento' },
   CNY: { label: 'Chinese yuan' },
   COP: { label: 'Colombian peso' },
   CRC: { label: 'Costa Rican colon' },

@@ -1,15 +1,12 @@
-import type { HeroIllustrationDataType } from '@/sections/Hero/types';
+import type { HeroBaseDataType } from '@/sections/Hero/types';
 
-export const HERO_DATA: HeroIllustrationDataType = {
+export const HERO_DATA = {
   heading: [
-    { text: 'The CRM that moves ', fontFamily: 'serif' },
-    { text: 'as fast as you do', fontFamily: 'sans' },
+    { text: 'A CRM for teams', fontFamily: 'serif' },
+    { text: 'that ', fontFamily: 'serif', newLine: true },
+    { text: 'moves fast', fontFamily: 'sans' },
   ],
   body: {
-    text: 'Modern interface. AI assistance. All the features you need, ready from day one.',
+    text: 'Track relationships, manage pipelines, and take action quickly with a CRM that feels intuitive from day one.',
   },
-  illustration: {
-    src: '/illustrations/product/hero/hero.glb',
-    title: 'Product hero illustration',
-  },
-};
+} satisfies HeroBaseDataType;

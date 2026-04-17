@@ -9,28 +9,12 @@ import {
 } from '~/generated-metadata/graphql';
 
 const mockFindOneWorkflowVersion = jest.fn();
-const mockEnqueueWarningSnackBar = jest.fn();
-const mockBuildTriggerWorkflowVersionPayloads = jest.fn();
 
 jest.mock('@/object-record/hooks/useLazyFindOneRecord', () => ({
   useLazyFindOneRecord: () => ({
     findOneRecord: mockFindOneWorkflowVersion,
   }),
 }));
-
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: () => ({
-    enqueueWarningSnackBar: mockEnqueueWarningSnackBar,
-  }),
-}));
-
-jest.mock(
-  '@/command-menu-item/engine-command/utils/buildTriggerWorkflowVersionPayloads',
-  () => ({
-    buildTriggerWorkflowVersionPayloads: (...args: unknown[]) =>
-      mockBuildTriggerWorkflowVersionPayloads(...args),
-  }),
-);
 
 const getWrapper =
   (store = createStore()) =>
@@ -49,6 +33,7 @@ const buildBaseContextApi = (
   targetedRecordsRule: { mode: 'selection', selectedRecordIds: [] },
   selectedRecords: [],
   graphqlFilter: null,
+  payload: null,
   ...overrides,
 });
 
@@ -57,7 +42,7 @@ describe('useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformatio
     jest.clearAllMocks();
   });
 
-  it('should return enriched context API with workflow info and payloads', async () => {
+  it('should return enriched context with workflow metadata', async () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
@@ -73,9 +58,6 @@ describe('useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformatio
         onCompleted(workflowVersionRecord);
       },
     );
-
-    const expectedPayloads = [{ recordId: 'rec-1' }];
-    mockBuildTriggerWorkflowVersionPayloads.mockReturnValue(expectedPayloads);
 
     const { result } = renderHook(
       () =>
@@ -93,7 +75,8 @@ describe('useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformatio
           {
             headlessEngineCommandContextApi,
             workflowVersionId: 'wf-version-1',
-            availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+            availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+            availabilityObjectMetadataId: 'obj-1',
           },
         );
     });
@@ -102,7 +85,9 @@ describe('useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformatio
       ...headlessEngineCommandContextApi,
       workflowId: 'workflow-1',
       workflowVersionId: 'wf-version-1',
-      payloads: expectedPayloads,
+      trigger: { type: 'MANUAL' },
+      availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+      availabilityObjectMetadataId: 'obj-1',
     });
   });
 
@@ -132,100 +117,5 @@ describe('useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformatio
     });
 
     expect(enrichedResult).toBeUndefined();
-  });
-
-  it('should return undefined for RECORD_SELECTION type when payloads are empty', async () => {
-    const store = createStore();
-    const wrapper = getWrapper(store);
-
-    const workflowVersionRecord = {
-      id: 'wf-version-1',
-      workflowId: 'workflow-1',
-      trigger: { type: 'MANUAL' },
-      __typename: 'WorkflowVersion' as const,
-    };
-
-    mockFindOneWorkflowVersion.mockImplementation(
-      async ({ onCompleted }: { onCompleted: (data: unknown) => void }) => {
-        onCompleted(workflowVersionRecord);
-      },
-    );
-
-    mockBuildTriggerWorkflowVersionPayloads.mockReturnValue([]);
-
-    const { result } = renderHook(
-      () =>
-        useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation(),
-      { wrapper },
-    );
-
-    let enrichedResult: unknown;
-
-    await act(async () => {
-      enrichedResult =
-        await result.current.enrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation(
-          {
-            headlessEngineCommandContextApi: buildBaseContextApi(),
-            workflowVersionId: 'wf-version-1',
-            availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-          },
-        );
-    });
-
-    expect(enrichedResult).toBeUndefined();
-  });
-
-  it('should show warning snackbar when selected records exceed QUERY_MAX_RECORDS', async () => {
-    const store = createStore();
-    const wrapper = getWrapper(store);
-
-    const workflowVersionRecord = {
-      id: 'wf-version-1',
-      workflowId: 'workflow-1',
-      trigger: { type: 'MANUAL' },
-      __typename: 'WorkflowVersion' as const,
-    };
-
-    mockFindOneWorkflowVersion.mockImplementation(
-      async ({ onCompleted }: { onCompleted: (data: unknown) => void }) => {
-        onCompleted(workflowVersionRecord);
-      },
-    );
-
-    mockBuildTriggerWorkflowVersionPayloads.mockReturnValue([
-      { recordId: 'rec-1' },
-    ]);
-
-    const selectedRecordIds = Array.from({ length: 201 }, (_, index) =>
-      String(index),
-    );
-
-    const headlessEngineCommandContextApi = buildBaseContextApi({
-      targetedRecordsRule: { mode: 'selection', selectedRecordIds },
-    });
-
-    const { result } = renderHook(
-      () =>
-        useEnrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation(),
-      { wrapper },
-    );
-
-    await act(async () => {
-      await result.current.enrichHeadlessCommandContextApiWithWorkflowVersionTriggerInformation(
-        {
-          headlessEngineCommandContextApi,
-          workflowVersionId: 'wf-version-1',
-          availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-        },
-      );
-    });
-
-    expect(mockEnqueueWarningSnackBar).toHaveBeenCalledWith(
-      expect.objectContaining({
-        options: {
-          dedupeKey: 'workflow-manual-trigger-selection-limit',
-        },
-      }),
-    );
   });
 });

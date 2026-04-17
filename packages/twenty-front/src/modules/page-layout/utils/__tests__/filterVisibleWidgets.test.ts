@@ -12,6 +12,7 @@ describe('filterVisibleWidgets', () => {
   ): PageLayoutTab['widgets'][0] => ({
     __typename: 'PageLayoutWidget',
     id,
+    isActive: true,
     pageLayoutTabId: 'tab-1',
     title: `Widget ${id}`,
     type: WidgetType.FIELDS,
@@ -28,7 +29,6 @@ describe('filterVisibleWidgets', () => {
       configurationType: WidgetConfigurationType.FIELDS,
       viewId: null,
     },
-    isOverridden: false,
     createdAt: '2024-01-01T00:00:00.000Z',
     updatedAt: '2024-01-01T00:00:00.000Z',
     deletedAt: null,

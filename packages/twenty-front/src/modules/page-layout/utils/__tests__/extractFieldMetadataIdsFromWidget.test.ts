@@ -23,12 +23,12 @@ const createMockWidget = (
   },
 ): PageLayoutWidget => ({
   id: 'widget-1',
+  isActive: true,
   type: WidgetType.GRAPH,
   title: 'Test',
   objectMetadataId: null,
   gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
   pageLayoutTabId: 'tab-1',
-  isOverridden: false,
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',
   ...overrides,

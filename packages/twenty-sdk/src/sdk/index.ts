@@ -1,10 +1,23 @@
 export {
   AggregateOperations,
+  DateDisplayFormat,
+  FieldMetadataSettingsOnClickAction,
+  HTTPMethod,
   NavigationMenuItemType,
+  NumberDataType,
   ObjectRecordGroupByDateGranularity,
   PageLayoutTabLayoutMode,
+  ViewFilterGroupLogicalOperator,
+  ViewFilterOperand,
+  ViewOpenRecordIn,
+  ViewType,
+  ViewVisibility,
 } from 'twenty-shared/types';
-export type { PageLayoutWidgetUniversalConfiguration } from 'twenty-shared/types';
+export type {
+  GridPosition,
+  PageLayoutWidgetConditionalDisplay,
+  PageLayoutWidgetUniversalConfiguration,
+} from 'twenty-shared/types';
 export type { ApplicationConfig } from './application/application-config';
 export { defineApplication } from './application/define-application';
 export type {
@@ -40,13 +53,14 @@ export { defineLogicFunction } from './logic-functions/define-logic-function';
 export { definePostInstallLogicFunction } from './logic-functions/define-post-install-logic-function';
 export { definePreInstallLogicFunction } from './logic-functions/define-pre-install-logic-function';
 export type {
-  InstallLogicFunctionHandler,
-  InstallLogicFunctionPayload,
-} from './logic-functions/install-logic-function-payload-type';
+  InstallHandler,
+  InstallPayload,
+} from '@/sdk/logic-functions/install-payload-type';
 export type {
   LogicFunctionConfig,
   LogicFunctionHandler,
 } from './logic-functions/logic-function-config';
+export type { InputJsonSchema } from 'twenty-shared/logic-function';
 export type { CronPayload } from './logic-functions/triggers/cron-payload-type';
 export type {
   DatabaseEventPayload,

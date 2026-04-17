@@ -1,10 +1,9 @@
 import { Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, Not, Repository } from 'typeorm';
 import { type ObjectRecordDeleteEvent } from 'twenty-shared/database-events';
+import { In, Not, Repository } from 'typeorm';
 
-import { MessageChannelSyncStage } from 'twenty-shared/types';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -17,6 +16,7 @@ import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/typ
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { MessageChannelSyncStage } from 'twenty-shared/types';
 
 export type BlocklistReimportMessagesJobData = WorkspaceEventBatch<
   ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>
@@ -49,6 +49,7 @@ export class BlocklistReimportMessagesJob {
         await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
           workspaceId,
           'workspaceMember',
+          { shouldBypassPermissionChecks: true },
         );
 
       for (const eventPayload of data.events) {

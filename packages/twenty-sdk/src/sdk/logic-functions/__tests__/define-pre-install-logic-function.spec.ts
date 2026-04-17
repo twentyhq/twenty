@@ -1,7 +1,7 @@
 import { definePreInstallLogicFunction } from '@/sdk/logic-functions/define-pre-install-logic-function';
-import { type InstallLogicFunctionPayload } from '@/sdk/logic-functions/install-logic-function-payload-type';
+import { type InstallPayload } from '@/sdk/logic-functions/install-payload-type';
 
-const mockHandler = async (payload: InstallLogicFunctionPayload) => ({
+const mockHandler = async (payload: InstallPayload) => ({
   success: true,
   previousVersion: payload.previousVersion,
 });
@@ -9,11 +9,11 @@ const mockHandler = async (payload: InstallLogicFunctionPayload) => ({
 describe('definePreInstallLogicFunction', () => {
   const validRouteConfig = {
     universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
-    name: 'Send Postcard',
+    name: 'Prepare Install',
     handler: mockHandler,
   };
 
-  it('should return the config when valid with route trigger', () => {
+  it('should return the config when valid', () => {
     const result = definePreInstallLogicFunction(validRouteConfig);
 
     expect(result.config).toEqual(validRouteConfig);
@@ -22,19 +22,21 @@ describe('definePreInstallLogicFunction', () => {
   it('should pass through optional fields', () => {
     const config = {
       ...validRouteConfig,
-      description: 'Send a postcard to a contact',
+      description: 'Prepare state before install',
       timeoutSeconds: 30,
+      shouldRunOnVersionUpgrade: true,
     };
 
     const result = definePreInstallLogicFunction(config as any);
 
-    expect(result.config.description).toBe('Send a postcard to a contact');
+    expect(result.config.description).toBe('Prepare state before install');
     expect(result.config.timeoutSeconds).toBe(30);
+    expect(result.config.shouldRunOnVersionUpgrade).toBe(true);
   });
 
   it('should return error when universalIdentifier is missing', () => {
     const config = {
-      name: 'Send Postcard',
+      name: 'Prepare Install',
       handler: mockHandler,
     };
     const result = definePreInstallLogicFunction(config as any);
@@ -48,7 +50,7 @@ describe('definePreInstallLogicFunction', () => {
   it('should return error when handler is missing', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
-      name: 'Send Postcard',
+      name: 'Prepare Install',
     };
 
     const result = definePreInstallLogicFunction(config as any);
@@ -62,7 +64,7 @@ describe('definePreInstallLogicFunction', () => {
   it('should return error when handler is not a function', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
-      name: 'Send Postcard',
+      name: 'Prepare Install',
       handler: 'not-a-function',
     };
 

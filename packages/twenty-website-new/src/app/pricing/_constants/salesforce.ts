@@ -4,11 +4,11 @@ const SALESFORCE_POPUP_TITLE = 'Good choice!';
 
 export const SALESFORCE_DATA: SalesforceDataType = {
   body: {
-    text: 'Aenean lacinia bibendum nulla sed consectetur. Integer posuere erat a ante venenatis dapibus.',
+    text: "Some call this enterprise pricing. We prefer a CRM where API access, webhooks, and workflows don't show up as surprise add-ons.",
   },
   heading: [
     { text: 'Trust the n°1 CRM,', fontFamily: 'serif' },
-    { text: ' or not!', fontFamily: 'sans' },
+    { text: ' or not !', fontFamily: 'sans' },
   ],
   pricing: {
     addons: [
@@ -43,6 +43,10 @@ export const SALESFORCE_DATA: SalesforceDataType = {
           titleBar: SALESFORCE_POPUP_TITLE,
         },
         rightLabel: 'Unavailable',
+        tooltip: {
+          title: 'Unavailable',
+          body: 'Real-time is a state of mind, not a feature.',
+        },
       },
       {
         cost: 0,
@@ -55,13 +59,17 @@ export const SALESFORCE_DATA: SalesforceDataType = {
           titleBar: SALESFORCE_POPUP_TITLE,
         },
         rightLabel: 'Retro 2015',
+        tooltip: {
+          title: 'Included!',
+          body: 'Better than Liquid Glass!',
+        },
       },
       {
         cost: 5,
         id: 'sso',
         label: 'SSO',
         popup: {
-          body: 'Secure logins cost extra. Naturally.',
+          body: 'Only $5 for SSO. Practically a charity program.',
           titleBar: SALESFORCE_POPUP_TITLE,
         },
         rightLabel: '+$5/user per month',
@@ -71,7 +79,7 @@ export const SALESFORCE_DATA: SalesforceDataType = {
         id: 'permissions',
         label: '11 permissions\ngroups',
         popup: {
-          body: 'Granular permissions live behind yet another paywall.',
+          body: 'Experience enterprise-grade granularity, starting with an 11th permission.',
           titleBar: SALESFORCE_POPUP_TITLE,
         },
         rightLabel: '+$75/user per month\nSwitch to enterprise!',
@@ -82,7 +90,7 @@ export const SALESFORCE_DATA: SalesforceDataType = {
         id: 'maps',
         label: 'Maps view',
         popup: {
-          body: 'Apparently even seeing your deals on a map is a luxury.',
+          body: 'Visualize your customers on a map!',
           titleBar: SALESFORCE_POPUP_TITLE,
         },
         rightLabel: '+$105/user per month',
@@ -92,7 +100,7 @@ export const SALESFORCE_DATA: SalesforceDataType = {
         id: 'workflows',
         label: '6 workflows',
         popup: {
-          body: 'Workflow automation stops being basic the second it becomes useful.',
+          body: 'Start automating at huge scale!',
           titleBar: SALESFORCE_POPUP_TITLE,
         },
         rightLabel: '+$75/user per month\nSwitch to enterprise!',
@@ -103,7 +111,7 @@ export const SALESFORCE_DATA: SalesforceDataType = {
         id: 'lock-in',
         label: 'Lock-in',
         popup: {
-          body: 'The discount gets better the harder it is to leave.',
+          body: 'They call it customer loyalty. We call it a very affectionate cage.',
           titleBar: SALESFORCE_POPUP_TITLE,
         },
         rightLabel: '3 2 years contract\n-33% off',
@@ -123,6 +131,10 @@ export const SALESFORCE_DATA: SalesforceDataType = {
           titleBar: SALESFORCE_POPUP_TITLE,
         },
         rightLabel: 'Free for you!',
+        tooltip: {
+          title: 'Included!',
+          body: 'Available on YouTube!',
+        },
       },
       {
         cost: 0,
@@ -134,6 +146,10 @@ export const SALESFORCE_DATA: SalesforceDataType = {
           titleBar: SALESFORCE_POPUP_TITLE,
         },
         rightLabel: 'Out of stock',
+        tooltip: {
+          title: 'Out of stock',
+          body: 'Self-hosting, now for rent!',
+        },
       },
       {
         cost: 0,
@@ -146,13 +162,17 @@ export const SALESFORCE_DATA: SalesforceDataType = {
           titleBar: SALESFORCE_POPUP_TITLE,
         },
         rightLabel: 'Extended run!',
+        tooltip: {
+          title: 'Included!',
+          body: 'Outlived every redesign since 2004.',
+        },
       },
       {
         cost: 75,
         id: 'flow-orchestration',
         label: 'Flow\norchestration',
         popup: {
-          body: 'Orchestration brings its own fee schedule, naturally.',
+          body: 'Because true orchestration means putting a dollar sign on every dramatic entrance.',
           titleBar: SALESFORCE_POPUP_TITLE,
         },
         rightLabel:
@@ -169,16 +189,21 @@ export const SALESFORCE_DATA: SalesforceDataType = {
           titleBar: SALESFORCE_POPUP_TITLE,
         },
         rightLabel: 'Coming soon!',
+        tooltip: {
+          title: 'Coming soon!',
+          body: 'Pagination builds character.',
+        },
       },
       {
         cost: 75,
         id: 'ai-einstein',
         label: 'AI (Einstein)',
         popup: {
-          body: 'AI is available right after an enterprise-sized upgrade.',
+          body: 'become a genius!',
           titleBar: SALESFORCE_POPUP_TITLE,
         },
-        rightLabel: '+$75/user per month',
+        rightLabel: '+$75/user per month\nSwitch to enterprise!',
+        sharedCostKey: 'enterprise-plan',
       },
       {
         cost: 75,
@@ -186,7 +211,7 @@ export const SALESFORCE_DATA: SalesforceDataType = {
         label: 'Encrypt your data',
         netSpendRate: 0.2,
         popup: {
-          body: 'Data protection is packaged like an optional luxury.',
+          body: 'Because apparently privacy feels more premium with a surcharge.',
           titleBar: SALESFORCE_POPUP_TITLE,
         },
         rightLabel:
@@ -195,16 +220,17 @@ export const SALESFORCE_DATA: SalesforceDataType = {
       },
     ],
     basePriceAmount: 100,
-    featureSectionHeading: 'Best for Salesforce',
+    promoTag: '1‑800‑YES‑SOFTWARE',
+    featureSectionHeading: 'Add-ons',
     productIconAlt: 'Retro help document icon',
-    productIconSrc: '/images/pricing/salesforce/help-icon.png',
+    productIconSrc: '/images/pricing/salesforce/help-icon.webp',
     priceSuffix: ' / seat / month - billed yearly',
-    productTitle: 'Salesforce Pro',
+    productTitle: 'Salesfarce Pro',
     secondaryCtaNote: 'More options available!',
     secondaryCtaHref:
       'https://www.salesforce.com/en-us/wp-content/uploads/sites/4/documents/pricing/all-add-ons.pdf',
     secondaryCtaLabel: 'Check more add-ons',
     totalPriceLabel: 'total per month with fixed cost',
-    windowTitle: 'Salesforce Pro pricing',
+    windowTitle: 'Salesfarce Add-on Center',
   },
 };

@@ -1,11 +1,11 @@
-import { isDefined } from 'twenty-shared/utils';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { Handle, Position } from '@xyflow/react';
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { useIcons } from 'twenty-ui/display';
 import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { RelationType } from '~/generated-metadata/graphql';
 
@@ -29,7 +29,6 @@ const StyledFieldName = styled.div`
 export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
   const { theme } = useContext(ThemeContext);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-  const { getIcon } = useIcons();
 
   const relatedObjectId = field.relation?.targetObjectMetadata.id;
 
@@ -37,11 +36,14 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
     (x) => x.id === relatedObjectId,
   );
 
-  const Icon = getIcon(relatedObject?.icon);
-
   return (
     <StyledRow>
-      {isDefined(Icon) && <Icon size={theme.icon.size.md} />}
+      {isDefined(relatedObject) && (
+        <ObjectMetadataIcon
+          objectMetadataItem={relatedObject}
+          size={theme.icon.size.md}
+        />
+      )}
       <StyledFieldName>{relatedObject?.labelPlural ?? ''}</StyledFieldName>
       <Handle
         type={

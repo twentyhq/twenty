@@ -6,7 +6,12 @@ import { Logger } from '@nestjs/common';
 import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { InstanceCommandGenerationService } from 'src/database/commands/instance-command-generation.service';
-import { UPGRADE_COMMAND_SUPPORTED_VERSIONS } from 'src/engine/constants/upgrade-command-supported-versions.constant';
+import {
+  TWENTY_ALL_VERSIONS,
+  type TwentyAllVersion,
+} from 'src/engine/core-modules/upgrade/constants/twenty-all-versions.constant';
+import { TWENTY_CURRENT_VERSION } from 'src/engine/core-modules/upgrade/constants/twenty-current-version.constant';
+import { type InstanceCommandType } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 
 const UPGRADE_VERSION_COMMAND_DIR = path.resolve(
   process.cwd(),
@@ -15,12 +20,14 @@ const UPGRADE_VERSION_COMMAND_DIR = path.resolve(
 
 type GenerateInstanceCommandOptions = {
   name: string;
+  type: InstanceCommandType;
+  version?: TwentyAllVersion;
 };
 
 @Command({
   name: 'generate:instance-command',
   description:
-    'Generate an instance command with @RegisteredInstanceMigration decorator for the latest supported version',
+    'Generate an instance command with @RegisteredInstanceCommand decorator for the latest supported version',
 })
 export class GenerateInstanceCommandCommand extends CommandRunner {
   private readonly logger = new Logger(GenerateInstanceCommandCommand.name);
@@ -40,28 +47,61 @@ export class GenerateInstanceCommandCommand extends CommandRunner {
     return value;
   }
 
+  @Option({
+    flags: '-t, --type <type>',
+    description:
+      'Command type: fast (schema diff) or slow (data migration + DDL)',
+    defaultValue: 'fast',
+  })
+  parseType(value: string): InstanceCommandType {
+    if (value !== 'fast' && value !== 'slow') {
+      throw new Error(`Invalid type "${value}". Must be "fast" or "slow".`);
+    }
+
+    return value;
+  }
+
+  @Option({
+    flags: '--version <version>',
+    description: 'Target version (e.g. 1.23.0). Defaults to CURRENT_VERSION.',
+  })
+  parseVersion(value: string): TwentyAllVersion {
+    if (
+      !TWENTY_ALL_VERSIONS.includes(
+        value as (typeof TWENTY_ALL_VERSIONS)[number],
+      )
+    ) {
+      throw new Error(
+        `Invalid version "${value}". Must be one of: ${TWENTY_ALL_VERSIONS.join(', ')}`,
+      );
+    }
+
+    return value as TwentyAllVersion;
+  }
+
   async run(
     _passedParams: string[],
     options: GenerateInstanceCommandOptions,
   ): Promise<void> {
     const migrationName = options.name;
+    const version = options.version ?? TWENTY_CURRENT_VERSION;
 
-    const version = UPGRADE_COMMAND_SUPPORTED_VERSIONS.slice(-1)[0];
+    const commandType = options.type;
 
-    if (!version) {
-      throw new Error('No supported versions found');
-    }
-
-    this.logger.log(`Generating versioned migration for version ${version}...`);
+    this.logger.log(
+      `Generating ${commandType} instance command for version ${version}...`,
+    );
 
     const versionDir = this.getVersionDir(version);
     const timestamp = Date.now();
 
-    const result = await this.instanceMigrationGenerationService.generate({
-      migrationName,
-      version,
-      timestamp,
-    });
+    const result =
+      await this.instanceMigrationGenerationService.generateInstanceCommand({
+        migrationName,
+        version,
+        timestamp,
+        type: commandType,
+      });
 
     if (!result) {
       this.logger.warn(
@@ -71,11 +111,13 @@ export class GenerateInstanceCommandCommand extends CommandRunner {
       return;
     }
 
-    const migrationFilePath = path.join(versionDir, result.fileName);
+    const filePath = path.join(versionDir, result.fileName);
 
-    fs.writeFileSync(migrationFilePath, result.fileTemplate);
+    fs.writeFileSync(filePath, result.fileTemplate);
 
-    this.logger.log(`Migration generated successfully: ${migrationFilePath}`);
+    this.logger.log(
+      `${commandType} instance command generated successfully: ${filePath}`,
+    );
     this.logger.log(`  Class: ${result.className}`);
     this.logger.log(`  Version: ${version}`);
 

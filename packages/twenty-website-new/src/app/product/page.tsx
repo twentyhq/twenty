@@ -1,4 +1,5 @@
 import { FAQ_DATA, MENU_DATA, TRUSTED_BY_DATA } from '@/app/_constants';
+import { TalkToUsButton } from '@/app/components/ContactCalModal';
 import {
   DEMO_DATA,
   FEATURE_DATA,
@@ -26,7 +27,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Product — Twenty',
   description:
-    'Modern interface. AI assistance. All the features you need, ready from day one.',
+    'Track relationships, manage pipelines, and take action quickly with a CRM that feels intuitive from day one.',
 };
 
 export default async function ProductPage() {
@@ -140,11 +141,9 @@ export default async function ProductPage() {
               type="anchor"
               variant="contained"
             />
-            <LinkButton
+            <TalkToUsButton
               color="primary"
-              href="https://twenty.com/contact"
               label="Talk to us"
-              type="anchor"
               variant="outlined"
             />
           </Faq.Cta>

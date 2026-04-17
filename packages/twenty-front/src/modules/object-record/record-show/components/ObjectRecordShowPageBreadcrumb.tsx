@@ -1,18 +1,15 @@
-import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
-import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
-import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { styled } from '@linaria/react';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEditableTitleContainer = styled.div`
@@ -30,6 +27,12 @@ const StyledEditableTitlePrefix = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledBreadcrumbPrefixObjectIcon = styled.div`
+  display: flex;
+  flex-shrink: 0;
+  opacity: 0.64;
 `;
 
 const StyledTitle = styled.div`
@@ -78,13 +81,6 @@ export const ObjectRecordShowPageBreadcrumb = ({
   const { navigateToIndexView, rankInView, totalCount } =
     useRecordShowPagePagination(objectNameSingular, objectRecordId);
 
-  const { headerIcon: HeaderIcon } = useRecordShowPage(
-    objectNameSingular,
-    objectRecordId,
-  );
-
-  const iconColor = getObjectColorWithFallback(objectMetadataItem);
-
   if (loading) {
     return null;
   }
@@ -96,9 +92,9 @@ export const ObjectRecordShowPageBreadcrumb = ({
           navigateToIndexView();
         }}
       >
-        {isDefined(HeaderIcon) && (
-          <NavigationMenuItemStyleIcon Icon={HeaderIcon} color={iconColor} />
-        )}
+        <StyledBreadcrumbPrefixObjectIcon>
+          <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+        </StyledBreadcrumbPrefixObjectIcon>
         {objectLabel}
         <span>{' / '}</span>
       </StyledEditableTitlePrefix>

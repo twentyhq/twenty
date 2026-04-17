@@ -98,6 +98,21 @@ Vývojový režim je k dispozici pouze na instancích Twenty běžících v rež
   <img src="/images/docs/developers/extends/apps/dev.jpg" alt="Výstup terminálu ve vývojovém režimu" />
 </div>
 
+#### Jednorázová synchronizace pomocí `yarn twenty dev --once`
+
+Pokud nechcete, aby na pozadí běžel watcher (například v CI pipeline, git hooku nebo skriptovaném workflow), použijte příznak `--once`. Spouští stejnou pipeline jako `yarn twenty dev` — sestaví manifest, zabalí soubory, nahraje, synchronizuje, znovu vygeneruje typovaného klienta API — ale **ukončí se, jakmile se synchronizace dokončí**:
+
+```bash filename="Terminal"
+yarn twenty dev --once
+```
+
+| Příkaz                   | Chování                                                                                                              | Kdy použít                                                                              |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `yarn twenty dev`        | Sleduje vaše zdrojové soubory a při každé změně znovu spustí synchronizaci. Zůstává spuštěný, dokud jej nezastavíte. | Interaktivní lokální vývoj — chcete živý panel stavu a okamžitou zpětnovazebnou smyčku. |
+| `yarn twenty dev --once` | Provede jedno sestavení + synchronizaci, poté ukončí běh s kódem `0` při úspěchu nebo `1` při neúspěchu.             | Skripty, CI, pre-commit hooky, AI agenti a jakýkoli neinteraktivní pracovní postup.     |
+
+Oba režimy vyžadují server Twenty běžící v režimu vývoje a autentizovaný remote — platí stejné požadavky.
+
 ### Zobrazte svou aplikaci v Twenty
 
 Otevřete ve svém prohlížeči [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer). Přejděte do **Settings > Apps** a vyberte kartu **Developer**. Vaše aplikace by měla být uvedena v části **Your Apps**:
@@ -205,6 +220,7 @@ Nástroj pro vytvoření kostry vám již spustil lokální server Twenty. Pro j
 | -------------------------------------- | ------------------------------------------------------ |
 | `yarn twenty server start`             | Spustí lokální server (v případě potřeby stáhne image) |
 | `yarn twenty server start --port 3030` | Spustí na vlastním portu                               |
+| `yarn twenty server start --test`      | Spusťte samostatnou testovací instanci na portu 2021   |
 | `yarn twenty server stop`              | Zastaví server (zachová data)                          |
 | `yarn twenty server status`            | Zobrazí stav serveru, URL a přihlašovací údaje         |
 | `yarn twenty server logs`              | Streamuje protokoly serveru                            |
@@ -212,6 +228,20 @@ Nástroj pro vytvoření kostry vám již spustil lokální server Twenty. Pro j
 | `yarn twenty server reset`             | Smaže všechna data a začne znovu                       |
 
 Data přetrvávají při restartech ve dvou svazcích Dockeru (`twenty-app-dev-data` pro PostgreSQL, `twenty-app-dev-storage` pro soubory). Pomocí `reset` vymažte vše a začněte znovu.
+
+### Spuštění testovací instance
+
+Předejte volbu `--test` libovolnému příkazu `server` pro správu druhé, plně izolované instance — užitečné pro spouštění integračních testů nebo experimentování, aniž byste se dotkli svých hlavních vývojových dat.
+
+| Příkaz                             | Popis                                                     |
+| ---------------------------------- | --------------------------------------------------------- |
+| `yarn twenty server start --test`  | Spustí testovací instanci (výchozí port je 2021)          |
+| `yarn twenty server stop --test`   | Zastaví testovací instanci                                |
+| `yarn twenty server status --test` | Zobrazí stav testovací instance, URL a přihlašovací údaje |
+| `yarn twenty server logs --test`   | Streamuje protokoly testovací instance                    |
+| `yarn twenty server reset --test`  | Vymaže testovací data a začne znovu                       |
+
+Testovací instance běží ve vlastním kontejneru Docker (`twenty-app-dev-test`) s vyhrazenými svazky (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) a konfigurací, takže může běžet paralelně s vaší hlavní instancí bez konfliktů. Zkombinujte `--test` s `--port` pro změnu výchozího portu 2021.
 
 <Note>
   Server vyžaduje, aby **Docker** běžel. Pokud vidíte chybu "Docker not running", ujistěte se, že je spuštěný Docker Desktop (nebo démon Dockeru).

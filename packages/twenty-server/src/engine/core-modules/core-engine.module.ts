@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
-import { HttpAdapterHost } from '@nestjs/core';
+import { APP_FILTER, HttpAdapterHost } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
+import { ApplicationLogsModule } from 'src/engine/core-modules/application-logs/application-logs.module';
+import { applicationLogsModuleFactory } from 'src/engine/core-modules/application-logs/application-logs.module-factory';
 import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
@@ -18,6 +20,7 @@ import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-acc
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingWebhookModule } from 'src/engine/core-modules/billing-webhook/billing-webhook.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { BillingGraphqlApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-graphql-api-exception.filter';
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
 import { CaptchaModule } from 'src/engine/core-modules/captcha/captcha.module';
@@ -139,6 +142,10 @@ import { FileModule } from './file/file.module';
       useFactory: exceptionHandlerModuleFactory,
       inject: [TwentyConfigService, HttpAdapterHost],
     }),
+    ApplicationLogsModule.forRootAsync({
+      useFactory: applicationLogsModuleFactory,
+      inject: [TwentyConfigService],
+    }),
     EmailModule.forRoot(),
     CaptchaModule.forRoot(),
     EventEmitterModule.forRoot({
@@ -157,6 +164,12 @@ import { FileModule } from './file/file.module';
     TrashCleanupModule,
     DashboardModule,
     EventLogsModule,
+  ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: BillingGraphqlApiExceptionFilter,
+    },
   ],
   exports: [
     AuditModule,

@@ -1,6 +1,10 @@
-type CheckIconProps = { size: number; color: string };
+type CheckIconProps = { size: number; color: string; strokeWidth?: number };
 
-export function CheckIcon({ size, color }: CheckIconProps) {
+export function CheckIcon({
+  size,
+  color,
+  strokeWidth = 2,
+}: CheckIconProps) {
   return (
     <svg
       width={size}
@@ -13,12 +17,12 @@ export function CheckIcon({ size, color }: CheckIconProps) {
       <path
         d="m11 6-3.75 4L5 8"
         stroke={color}
-        strokeWidth={2}
+        strokeWidth={strokeWidth}
       />
       <path
         d="M8 14a6 6 0 1 0-4.243-1.757"
         stroke={color}
-        strokeWidth={2}
+        strokeWidth={strokeWidth}
       />
     </svg>
   );

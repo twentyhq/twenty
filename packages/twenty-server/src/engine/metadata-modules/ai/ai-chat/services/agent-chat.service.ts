@@ -2,10 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ExtendedUIMessage } from 'twenty-shared/ai';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
+import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
 
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
 import {
   AgentMessageEntity,
@@ -47,6 +49,8 @@ export class AgentChatService {
     private readonly messageRepository: Repository<AgentMessageEntity>,
     @InjectRepository(AgentMessagePartEntity)
     private readonly messagePartRepository: Repository<AgentMessagePartEntity>,
+    @InjectRepository(FileEntity)
+    private readonly fileRepository: Repository<FileEntity>,
     private readonly titleGenerationService: AgentTitleGenerationService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
   ) {}
@@ -60,6 +64,7 @@ export class AgentChatService {
   }) {
     const thread = this.threadRepository.create({
       userWorkspaceId,
+      workspaceId,
     });
 
     const savedThread = await this.threadRepository.save(thread);
@@ -105,6 +110,7 @@ export class AgentChatService {
     agentId,
     turnId,
     id,
+    workspaceId,
   }: {
     threadId: string;
     uiMessage: Omit<ExtendedUIMessage, 'id'>;
@@ -112,41 +118,55 @@ export class AgentChatService {
     agentId?: string;
     turnId?: string;
     id?: string;
+    workspaceId: string;
   }) {
     let actualTurnId = turnId;
 
     if (!actualTurnId) {
-      const turn = this.turnRepository.create({
+      const turnInsertResult = await this.turnRepository.insert({
         threadId,
         agentId: agentId ?? null,
+        workspaceId,
       });
 
-      const savedTurn = await this.turnRepository.save(turn);
-
-      actualTurnId = savedTurn.id;
+      actualTurnId = turnInsertResult.identifiers[0].id as string;
     }
 
-    const message = this.messageRepository.create({
+    const messageValues = {
       ...(id ? { id } : {}),
       threadId,
       turnId: actualTurnId,
       role: uiMessage.role as AgentMessageRole,
       agentId: agentId ?? null,
       processedAt: new Date(),
-    });
+      workspaceId,
+    };
 
-    const savedMessage = await this.messageRepository.save(message);
+    const insertResult = await this.messageRepository.insert(messageValues);
+
+    const savedMessageId = (id ?? insertResult.identifiers[0].id) as string;
 
     if (uiMessage.parts && uiMessage.parts.length > 0) {
       const dbParts = mapUIMessagePartsToDBParts(
         uiMessage.parts,
-        savedMessage.id,
+        savedMessageId,
+        workspaceId,
       );
 
-      await this.messagePartRepository.save(dbParts);
+      await this.messagePartRepository.insert(
+        dbParts as QueryDeepPartialEntity<AgentMessagePartEntity>[],
+      );
     }
 
-    return savedMessage;
+    return {
+      id: savedMessageId,
+      threadId,
+      turnId: actualTurnId,
+      role: uiMessage.role as AgentMessageRole,
+      agentId: agentId ?? null,
+      processedAt: new Date(),
+      workspaceId,
+    } as AgentMessageEntity;
   }
 
   async getMessagesForThread(threadId: string, userWorkspaceId: string) {
@@ -175,32 +195,60 @@ export class AgentChatService {
     threadId,
     text,
     id,
+    fileIds,
+    workspaceId,
   }: {
     threadId: string;
     text: string;
     id?: string;
+    fileIds?: string[];
+    workspaceId: string;
   }): Promise<AgentMessageEntity> {
-    const message = this.messageRepository.create({
+    const messageValues = {
       ...(id ? { id } : {}),
       threadId,
       turnId: null,
       role: AgentMessageRole.USER,
       agentId: null,
       status: AgentMessageStatus.QUEUED,
-    });
+      workspaceId,
+    };
 
-    const savedMessage = await this.messageRepository.save(message);
+    const insertResult = await this.messageRepository.insert(messageValues);
 
-    const part = this.messagePartRepository.create({
-      messageId: savedMessage.id,
-      orderIndex: 0,
-      type: 'text',
-      textContent: text,
-    });
+    const savedMessageId = (id ?? insertResult.identifiers[0].id) as string;
 
-    await this.messagePartRepository.save(part);
+    const files =
+      fileIds && fileIds.length > 0
+        ? await this.fileRepository.find({
+            where: { id: In(fileIds), workspaceId },
+          })
+        : [];
 
-    return savedMessage;
+    const parts = [
+      {
+        messageId: savedMessageId,
+        orderIndex: 0,
+        type: 'text',
+        textContent: text,
+        workspaceId,
+      },
+      ...files.map((file, index) => ({
+        messageId: savedMessageId,
+        orderIndex: index + 1,
+        type: 'file',
+        fileId: file.id,
+        fileFilename: file.path.split('/').pop() ?? null,
+        workspaceId,
+      })),
+    ];
+
+    await this.messagePartRepository.insert(parts);
+
+    return {
+      id: savedMessageId,
+      ...messageValues,
+    } as AgentMessageEntity;
   }
 
   async getQueuedMessages(threadId: string): Promise<AgentMessageEntity[]> {
@@ -210,7 +258,7 @@ export class AgentChatService {
         status: AgentMessageStatus.QUEUED,
       },
       order: { createdAt: 'ASC' },
-      relations: ['parts'],
+      relations: ['parts', 'parts.file'],
     });
   }
 
@@ -234,30 +282,32 @@ export class AgentChatService {
   async promoteQueuedMessage(
     messageId: string,
     threadId: string,
+    workspaceId: string,
   ): Promise<string | null> {
-    const turn = this.turnRepository.create({
+    const turnInsertResult = await this.turnRepository.insert({
       threadId,
       agentId: null,
+      workspaceId,
     });
 
-    const savedTurn = await this.turnRepository.save(turn);
+    const savedTurnId = turnInsertResult.identifiers[0].id as string;
 
     const result = await this.messageRepository.update(
       { id: messageId, threadId, status: AgentMessageStatus.QUEUED },
       {
         status: AgentMessageStatus.SENT,
         processedAt: new Date(),
-        turnId: savedTurn.id,
+        turnId: savedTurnId,
       },
     );
 
     if ((result.affected ?? 0) === 0) {
-      await this.turnRepository.delete(savedTurn.id);
+      await this.turnRepository.delete(savedTurnId);
 
       return null;
     }
 
-    return savedTurn.id;
+    return savedTurnId;
   }
 
   async generateTitleIfNeeded({

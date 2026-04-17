@@ -2,6 +2,11 @@ import { Test } from '@nestjs/testing';
 import { getDataSourceToken } from '@nestjs/typeorm';
 
 import { InstanceCommandGenerationService } from 'src/database/commands/instance-command-generation.service';
+import { TWENTY_CURRENT_VERSION } from 'src/engine/core-modules/upgrade/constants/twenty-current-version.constant';
+import { TWENTY_PREVIOUS_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant';
+
+const VERSION_A = TWENTY_CURRENT_VERSION;
+const VERSION_B = TWENTY_PREVIOUS_VERSIONS[0];
 
 const FIXED_TIMESTAMP = 1775000000000;
 
@@ -37,9 +42,9 @@ describe('InstanceCommandGenerationService', () => {
   it('should return null when no schema changes are detected', async () => {
     const service = await buildService();
 
-    const result = await service.generate({
+    const result = await service.generateInstanceCommand({
       migrationName: 'no-changes',
-      version: '1.21.0',
+      version: VERSION_A,
       timestamp: FIXED_TIMESTAMP,
     });
 
@@ -52,9 +57,9 @@ describe('InstanceCommandGenerationService', () => {
       [{ query: 'ALTER TABLE "core"."user" DROP COLUMN "foo"' }],
     );
 
-    const result = await service.generate({
+    const result = await service.generateInstanceCommand({
       migrationName: 'add-foo-column',
-      version: '1.21.0',
+      version: VERSION_A,
       timestamp: FIXED_TIMESTAMP,
     });
 
@@ -79,9 +84,9 @@ describe('InstanceCommandGenerationService', () => {
       ],
     );
 
-    const result = await service.generate({
+    const result = await service.generateInstanceCommand({
       migrationName: 'create-task-table',
-      version: '1.21.0',
+      version: VERSION_A,
       timestamp: FIXED_TIMESTAMP,
     });
 
@@ -105,9 +110,9 @@ describe('InstanceCommandGenerationService', () => {
       ],
     );
 
-    const result = await service.generate({
+    const result = await service.generateInstanceCommand({
       migrationName: 'seed-setting',
-      version: '1.21.0',
+      version: VERSION_A,
       timestamp: FIXED_TIMESTAMP,
     });
 
@@ -120,9 +125,9 @@ describe('InstanceCommandGenerationService', () => {
       [{ query: 'UPDATE "core"."config" SET "value" = \'original\'' }],
     );
 
-    const result = await service.generate({
+    const result = await service.generateInstanceCommand({
       migrationName: 'update-config',
-      version: '1.21.0',
+      version: VERSION_A,
       timestamp: FIXED_TIMESTAMP,
     });
 
@@ -139,9 +144,9 @@ describe('InstanceCommandGenerationService', () => {
       [{ query: 'UPDATE "core"."config" SET "value" = NULL' }],
     );
 
-    const result = await service.generate({
+    const result = await service.generateInstanceCommand({
       migrationName: 'update-path',
-      version: '1.21.0',
+      version: VERSION_A,
       timestamp: FIXED_TIMESTAMP,
     });
 
@@ -154,9 +159,9 @@ describe('InstanceCommandGenerationService', () => {
       [{ query: 'ALTER TABLE "core"."user" DROP COLUMN "bar"' }],
     );
 
-    const result = await service.generate({
+    const result = await service.generateInstanceCommand({
       migrationName: 'auto-generated',
-      version: '1.21.0',
+      version: VERSION_A,
       timestamp: FIXED_TIMESTAMP,
     });
 
@@ -169,12 +174,70 @@ describe('InstanceCommandGenerationService', () => {
       [{ query: 'SELECT 1' }],
     );
 
-    const result = await service.generate({
+    const result = await service.generateInstanceCommand({
       migrationName: 'test',
-      version: '1.19.0',
+      version: VERSION_B,
       timestamp: FIXED_TIMESTAMP,
     });
 
     expect(result).toMatchSnapshot();
+  });
+
+  it('should return null for slow type when no schema changes are detected', async () => {
+    const service = await buildService();
+
+    const result = await service.generateInstanceCommand({
+      migrationName: 'no-changes',
+      version: VERSION_A,
+      timestamp: FIXED_TIMESTAMP,
+      type: 'slow',
+    });
+
+    expect(result).toBeNull();
+  });
+
+  it('should generate a slow instance command with populated up/down', async () => {
+    const service = await buildService(
+      [
+        {
+          query: 'ALTER TABLE "core"."user" ALTER COLUMN "email" SET NOT NULL',
+        },
+      ],
+      [
+        {
+          query: 'ALTER TABLE "core"."user" ALTER COLUMN "email" DROP NOT NULL',
+        },
+      ],
+    );
+
+    const result = await service.generateInstanceCommand({
+      migrationName: 'make-column-not-nullable',
+      version: VERSION_A,
+      timestamp: FIXED_TIMESTAMP,
+      type: 'slow',
+    });
+
+    expect(result).toMatchSnapshot();
+  });
+
+  it('should use correct file naming for slow instance commands', async () => {
+    const service = await buildService(
+      [{ query: 'SELECT 1' }],
+      [{ query: 'SELECT 1' }],
+    );
+
+    const result = await service.generateInstanceCommand({
+      migrationName: 'backfill-data',
+      version: VERSION_B,
+      timestamp: FIXED_TIMESTAMP,
+      type: 'slow',
+    });
+
+    const versionSlug = VERSION_B.split('.').slice(0, 2).join('-');
+
+    expect(result?.fileName).toBe(
+      `${versionSlug}-instance-command-slow-${FIXED_TIMESTAMP}-backfill-data.ts`,
+    );
+    expect(result?.className).toBe('BackfillDataSlowInstanceCommand');
   });
 });

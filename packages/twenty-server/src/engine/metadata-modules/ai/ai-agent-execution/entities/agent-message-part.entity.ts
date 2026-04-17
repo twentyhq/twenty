@@ -12,11 +12,20 @@ import {
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
-@Entity('agentMessagePart')
+@Entity({ name: 'agentMessagePart', schema: 'core' })
 export class AgentMessagePartEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ nullable: false, type: 'uuid' })
+  @Index()
+  workspaceId: string;
+
+  @ManyToOne('WorkspaceEntity', { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'workspaceId' })
+  workspace: Relation<WorkspaceEntity>;
 
   @Column('uuid')
   @Index()

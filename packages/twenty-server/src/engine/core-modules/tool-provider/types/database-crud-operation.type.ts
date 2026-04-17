@@ -5,4 +5,5 @@ export type DatabaseCrudOperation =
   | 'create_many'
   | 'update'
   | 'update_many'
-  | 'delete';
+  | 'delete'
+  | 'group_by';

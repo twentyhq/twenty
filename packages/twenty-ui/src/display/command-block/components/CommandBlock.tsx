@@ -7,6 +7,7 @@ const StyledContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.medium};
   background: ${themeCssVariables.background.secondary};
   display: flex;
+  align-items: center;
   justify-content: space-between;
   padding: ${themeCssVariables.spacing[3]};
   gap: ${themeCssVariables.spacing[3]};

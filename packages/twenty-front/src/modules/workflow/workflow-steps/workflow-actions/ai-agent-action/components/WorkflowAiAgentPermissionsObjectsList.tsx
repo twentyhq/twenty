@@ -1,13 +1,15 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { t } from '@lingui/core/macro';
 import { WorkflowAiAgentPermissionsObjectRow } from './WorkflowAiAgentPermissionsObjectRow';
 
 type WorkflowAiAgentPermissionsObjectsListProps = {
-  objects: Array<{
-    id: string;
-    icon?: string | null;
-    labelPlural: string;
-  }>;
+  objects: Array<
+    Pick<
+      EnrichedObjectMetadataItem,
+      'id' | 'icon' | 'labelPlural' | 'nameSingular' | 'color' | 'isSystem'
+    >
+  >;
   onObjectClick: (objectId: string) => void;
   readonly: boolean;
 };

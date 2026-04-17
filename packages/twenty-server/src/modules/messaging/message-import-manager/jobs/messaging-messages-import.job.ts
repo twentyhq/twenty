@@ -9,21 +9,9 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
-import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-
-const toIsoStringOrNull = (
-  value: string | Date | null | undefined,
-): string | null => {
-  if (value == null) {
-    return null;
-  }
-
-  return value instanceof Date ? value.toISOString() : value;
-};
 
 export type MessagingMessagesImportJobData = {
   messageChannelId: string;
@@ -38,7 +26,6 @@ export class MessagingMessagesImportJob {
   constructor(
     private readonly messagingMessagesImportService: MessagingMessagesImportService,
     private readonly messagingMonitoringService: MessagingMonitoringService,
-    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
@@ -83,22 +70,6 @@ export class MessagingMessagesImportJob {
         messageChannel.syncStage !==
         MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED
       ) {
-        return;
-      }
-
-      if (
-        isThrottled(
-          toIsoStringOrNull(messageChannel.syncStageStartedAt),
-          messageChannel.throttleFailureCount,
-          toIsoStringOrNull(messageChannel.throttleRetryAfter),
-        )
-      ) {
-        await this.messageChannelSyncStatusService.markAsMessagesImportPending(
-          [messageChannel.id],
-          workspaceId,
-          true,
-        );
-
         return;
       }
 

@@ -18,6 +18,7 @@ export const createDefaultFrontComponentWidget = (
     id,
     pageLayoutTabId,
     title,
+    isActive: true,
     type: WidgetType.FRONT_COMPONENT,
     configuration: {
       __typename: 'FrontComponentConfiguration',
@@ -34,7 +35,6 @@ export const createDefaultFrontComponentWidget = (
       columnSpan: gridPosition.columnSpan,
     },
     objectMetadataId: null,
-    isOverridden: false,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     deletedAt: null,

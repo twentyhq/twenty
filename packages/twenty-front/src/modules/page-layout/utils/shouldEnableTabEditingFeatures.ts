@@ -4,7 +4,10 @@ export const shouldEnableTabEditingFeatures = (
   pageLayoutType: PageLayoutType,
   isRecordPageGlobalEditionEnabled?: boolean,
 ): boolean => {
-  if (pageLayoutType === PageLayoutType.DASHBOARD) {
+  if (
+    pageLayoutType === PageLayoutType.DASHBOARD ||
+    pageLayoutType === PageLayoutType.STANDALONE_PAGE
+  ) {
     return true;
   }
 

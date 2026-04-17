@@ -2,12 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, MoreThanOrEqual, Repository } from 'typeorm';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -51,7 +50,6 @@ export class WorkspaceIteratorService {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly dataSourceService: DataSourceService,
   ) {}
 
   async iterate(args: WorkspaceIteratorArgs): Promise<WorkspaceIteratorReport> {
@@ -81,12 +79,12 @@ export class WorkspaceIteratorService {
 
         await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
           async () => {
-            const workspaceHasDataSource =
-              await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
-                workspaceId,
-              );
+            const workspace = await this.workspaceRepository.findOne({
+              select: ['databaseSchema'],
+              where: { id: workspaceId },
+            });
 
-            const dataSource = isDefined(workspaceHasDataSource)
+            const dataSource = isNonEmptyString(workspace?.databaseSchema)
               ? await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource()
               : undefined;
 
@@ -117,7 +115,10 @@ export class WorkspaceIteratorService {
   }
 
   private async fetchWorkspaceIds(
-    options: Omit<WorkspaceIteratorArgs, 'callback'>,
+    options: Pick<
+      WorkspaceIteratorArgs,
+      'activationStatuses' | 'startFromWorkspaceId' | 'workspaceCountLimit'
+    >,
   ): Promise<string[]> {
     const activationStatuses =
       options.activationStatuses ?? DEFAULT_ACTIVATION_STATUSES;

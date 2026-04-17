@@ -18,6 +18,7 @@ const getRelationFieldWidgetToInsert = (
   id: `${DYNAMIC_RELATION_WIDGET_ID_PREFIX}${field.id}-${field.label}`,
   pageLayoutTabId: tabId,
   title: field.label,
+  isActive: true,
   type: WidgetType.FIELD,
   objectMetadataId: null,
   gridPosition: {
@@ -41,7 +42,6 @@ const getRelationFieldWidgetToInsert = (
     fieldMetadataId: field.id,
     fieldDisplayMode: FieldDisplayMode.CARD,
   },
-  isOverridden: false,
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
   deletedAt: null,

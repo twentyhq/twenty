@@ -1,6 +1,6 @@
 import { useAtomValue, useStore } from 'jotai';
 import { useEffect } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
@@ -10,27 +10,43 @@ import { AGENT_CHAT_UNKNOWN_THREAD_ID } from '@/ai/constants/AgentChatUnknownThr
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
 import { agentChatThreadsSelector } from '@/ai/states/agentChatThreadsSelector';
-import { agentChatUsageState } from '@/ai/states/agentChatUsageState';
+import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
-import { currentAIChatThreadTitleState } from '@/ai/states/currentAIChatThreadTitleState';
+import { currentAIChatThreadTitleComponentFamilyState } from '@/ai/states/currentAIChatThreadTitleComponentFamilyState';
 import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useApolloClient } from '@apollo/client/react';
+import {
+  GetChatThreadsDocument,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 export const AgentChatThreadInitializationEffect = () => {
+  const client = useApolloClient();
+  const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
+  const hasAiSettingsPermission = useHasPermissionFlag(
+    PermissionFlagType.AI_SETTINGS,
+  );
+
   const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
   const setCurrentAIChatThread = useSetAtomState(currentAIChatThreadState);
   const setAgentChatInput = useSetAtomState(agentChatInputState);
-  const setAgentChatUsage = useSetAtomState(agentChatUsageState);
-  const setCurrentAIChatThreadTitle = useSetAtomState(
-    currentAIChatThreadTitleState,
-  );
   const setAgentChatThreadsLoading = useSetAtomState(
     agentChatThreadsLoadingState,
+  );
+  const threadTitleFamilyCallback = useAtomComponentFamilyStateCallbackState(
+    currentAIChatThreadTitleComponentFamilyState,
+  );
+  const agentChatUsageFamilyCallback = useAtomComponentFamilyStateCallbackState(
+    agentChatUsageComponentFamilyState,
   );
   const store = useStore();
   const agentChatThreads = useAtomStateValue(agentChatThreadsSelector);
@@ -41,15 +57,49 @@ export const AgentChatThreadInitializationEffect = () => {
     useAtomState(hasInitializedAgentChatThreadsState);
 
   useEffect(() => {
-    setAgentChatThreadsLoading(storeEntry.status === 'empty');
-  }, [storeEntry.status, setAgentChatThreadsLoading]);
-
-  useEffect(() => {
-    if (hasInitializedAgentChatThreads || isDefined(currentAIChatThread)) {
+    if (storeEntry.status !== 'empty' || !hasAiSettingsPermission) {
       return;
     }
 
-    if (storeEntry.status === 'empty') {
+    client
+      .query({
+        query: GetChatThreadsDocument,
+        variables: { paging: { first: 500 } },
+        fetchPolicy: 'network-only',
+      })
+      .then((result) => {
+        if (!isDefined(result.data?.chatThreads?.edges)) {
+          return;
+        }
+
+        const threads = result.data.chatThreads.edges.map((edge) => edge.node);
+
+        replaceDraft('agentChatThreads', threads);
+        applyChanges();
+      });
+  }, [
+    storeEntry.status,
+    hasAiSettingsPermission,
+    client,
+    replaceDraft,
+    applyChanges,
+  ]);
+
+  useEffect(() => {
+    setAgentChatThreadsLoading(
+      storeEntry.status === 'empty' && hasAiSettingsPermission,
+    );
+  }, [storeEntry.status, hasAiSettingsPermission, setAgentChatThreadsLoading]);
+
+  useEffect(() => {
+    if (
+      hasInitializedAgentChatThreads ||
+      (currentAIChatThread !== null && isValidUuid(currentAIChatThread))
+    ) {
+      return;
+    }
+
+    if (storeEntry.status === 'empty' && hasAiSettingsPermission) {
       return;
     }
 
@@ -67,13 +117,20 @@ export const AgentChatThreadInitializationEffect = () => {
 
       setCurrentAIChatThread(firstThread.id);
       setAgentChatInput(draftForThread);
-      setCurrentAIChatThreadTitle(firstThread.title ?? null);
+
+      const firstThreadFamilyKey = { threadId: firstThread.id };
+
+      store.set(
+        threadTitleFamilyCallback(firstThreadFamilyKey),
+        firstThread.title ?? null,
+      );
 
       const hasUsageData =
         (firstThread.conversationSize ?? 0) > 0 &&
         isDefined(firstThread.contextWindowTokens);
 
-      setAgentChatUsage(
+      store.set(
+        agentChatUsageFamilyCallback(firstThreadFamilyKey),
         hasUsageData
           ? {
               lastMessage: null,
@@ -94,20 +151,19 @@ export const AgentChatThreadInitializationEffect = () => {
           AGENT_CHAT_NEW_THREAD_DRAFT_KEY
         ] ?? '',
       );
-      setCurrentAIChatThreadTitle(null);
-      setAgentChatUsage(null);
     }
   }, [
     agentChatThreads,
     currentAIChatThread,
+    hasAiSettingsPermission,
     hasInitializedAgentChatThreads,
     setHasInitializedAgentChatThreads,
     storeEntry.status,
     setCurrentAIChatThread,
     setAgentChatInput,
-    setCurrentAIChatThreadTitle,
-    setAgentChatUsage,
     store,
+    threadTitleFamilyCallback,
+    agentChatUsageFamilyCallback,
   ]);
 
   return null;

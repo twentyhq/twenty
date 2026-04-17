@@ -4,10 +4,13 @@ import { type LogicFunctionConfig } from '@/sdk/logic-functions/logic-function-c
 import { type ObjectConfig } from '@/sdk/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/page-layouts/page-layout-config';
 import { type ViewConfig } from '@/sdk/views/view-config';
+import { type PostInstallLogicFunctionConfig } from '@/sdk/logic-functions/post-install-logic-function-config';
+import { type PreInstallLogicFunctionConfig } from '@/sdk/logic-functions/pre-install-logic-function-config';
+import { type RoleConfig } from '@/sdk/roles/role-config';
 import {
+  type AgentManifest,
   type FieldManifest,
   type NavigationMenuItemManifest,
-  type RoleManifest,
   type SkillManifest,
 } from 'twenty-shared/application';
 
@@ -23,7 +26,10 @@ export type DefinableEntity =
   | FieldManifest
   | FrontComponentConfig
   | LogicFunctionConfig
-  | RoleManifest
+  | PostInstallLogicFunctionConfig
+  | PreInstallLogicFunctionConfig
+  | AgentManifest
+  | RoleConfig
   | SkillManifest
   | ViewConfig
   | NavigationMenuItemManifest

@@ -109,12 +109,14 @@ export const SettingsApplicationDetailContentTab = ({
     return null;
   }
 
-  const { logicFunctions, agents } = application;
+  const { logicFunctions } = application;
 
   const shouldDisplayLogicFunctions =
     isDefined(logicFunctions) && logicFunctions?.length > 0;
 
-  const shouldDisplayAgents = isDefined(agents) && agents.length > 0;
+  // TODO: uncomment when adding back agents in application settings
+  // const shouldDisplayAgents = isDefined(agents) && agents.length > 0;
+  const shouldDisplayAgents = false;
 
   return (
     <>
@@ -125,7 +127,7 @@ export const SettingsApplicationDetailContentTab = ({
       {shouldDisplayLogicFunctions && (
         <Section>
           <H2Title
-            title={t`Functions`}
+            title={t`Logic`}
             description={t`Logic functions powering this app`}
           />
           <SettingsLogicFunctionsTable logicFunctions={logicFunctions} />

@@ -1,0 +1,97 @@
+  table_name   |             column_name              |        data_type         
+---------------+--------------------------------------+--------------------------
+ _lineItem     | name                                 | text
+ _lineItem     | id                                   | uuid
+ _lineItem     | createdAt                            | timestamp with time zone
+ _lineItem     | createdBySource                      | USER-DEFINED
+ _lineItem     | createdByWorkspaceMemberId           | uuid
+ _lineItem     | createdByName                        | text
+ _lineItem     | createdByContext                     | jsonb
+ _lineItem     | deletedAt                            | timestamp with time zone
+ _lineItem     | position                             | double precision
+ _lineItem     | searchVector                         | tsvector
+ _lineItem     | updatedAt                            | timestamp with time zone
+ _lineItem     | updatedBySource                      | USER-DEFINED
+ _lineItem     | updatedByWorkspaceMemberId           | uuid
+ _lineItem     | updatedByName                        | text
+ _lineItem     | updatedByContext                     | jsonb
+ _lineItem     | feeType                              | USER-DEFINED
+ _lineItem     | fixedFeeAmountAmountMicros           | numeric
+ _lineItem     | fixedFeeAmountCurrencyCode           | text
+ _lineItem     | hourlyRateAmountMicros               | numeric
+ _lineItem     | hourlyRateCurrencyCode               | text
+ _lineItem     | estimatedHours                       | double precision
+ _lineItem     | hasTimeCap                           | boolean
+ _lineItem     | timeCapHours                         | double precision
+ _lineItem     | estimatedLineAmountAmountMicros      | numeric
+ _lineItem     | estimatedLineAmountCurrencyCode      | text
+ _lineItem     | lineItemPosition                     | double precision
+ _lineItem     | quoteSectionId                       | uuid
+ _quote        | name                                 | text
+ _quote        | id                                   | uuid
+ _quote        | createdAt                            | timestamp with time zone
+ _quote        | createdBySource                      | USER-DEFINED
+ _quote        | createdByWorkspaceMemberId           | uuid
+ _quote        | createdByName                        | text
+ _quote        | createdByContext                     | jsonb
+ _quote        | deletedAt                            | timestamp with time zone
+ _quote        | position                             | double precision
+ _quote        | searchVector                         | tsvector
+ _quote        | updatedAt                            | timestamp with time zone
+ _quote        | updatedBySource                      | USER-DEFINED
+ _quote        | updatedByWorkspaceMemberId           | uuid
+ _quote        | updatedByName                        | text
+ _quote        | updatedByContext                     | jsonb
+ _quote        | quoteNumber                          | text
+ _quote        | version                              | double precision
+ _quote        | status                               | USER-DEFINED
+ _quote        | validFrom                            | timestamp with time zone
+ _quote        | validUntil                           | timestamp with time zone
+ _quote        | currencyCustom                       | USER-DEFINED
+ _quote        | notes                                | text
+ _quote        | totalAmountAmountMicros              | numeric
+ _quote        | totalAmountCurrencyCode              | text
+ _quote        | associatedOpportunityId              | uuid
+ _quote        | accountId                            | uuid
+ _quoteSection | name                                 | text
+ _quoteSection | id                                   | uuid
+ _quoteSection | createdAt                            | timestamp with time zone
+ _quoteSection | createdBySource                      | USER-DEFINED
+ _quoteSection | createdByWorkspaceMemberId           | uuid
+ _quoteSection | createdByName                        | text
+ _quoteSection | createdByContext                     | jsonb
+ _quoteSection | deletedAt                            | timestamp with time zone
+ _quoteSection | position                             | double precision
+ _quoteSection | searchVector                         | tsvector
+ _quoteSection | updatedAt                            | timestamp with time zone
+ _quoteSection | updatedBySource                      | USER-DEFINED
+ _quoteSection | updatedByWorkspaceMemberId           | uuid
+ _quoteSection | updatedByName                        | text
+ _quoteSection | updatedByContext                     | jsonb
+ _quoteSection | serviceCategory                      | USER-DEFINED
+ _quoteSection | sectionPosition                      | double precision
+ _quoteSection | subtotalAmountMicros                 | numeric
+ _quoteSection | subtotalCurrencyCode                 | text
+ _quoteSection | quoteId                              | uuid
+ _quoteTerm    | name                                 | text
+ _quoteTerm    | id                                   | uuid
+ _quoteTerm    | createdAt                            | timestamp with time zone
+ _quoteTerm    | createdBySource                      | USER-DEFINED
+ _quoteTerm    | createdByWorkspaceMemberId           | uuid
+ _quoteTerm    | createdByName                        | text
+ _quoteTerm    | createdByContext                     | jsonb
+ _quoteTerm    | deletedAt                            | timestamp with time zone
+ _quoteTerm    | position                             | double precision
+ _quoteTerm    | searchVector                         | tsvector
+ _quoteTerm    | updatedAt                            | timestamp with time zone
+ _quoteTerm    | updatedBySource                      | USER-DEFINED
+ _quoteTerm    | updatedByWorkspaceMemberId           | uuid
+ _quoteTerm    | updatedByName                        | text
+ _quoteTerm    | updatedByContext                     | jsonb
+ _quoteTerm    | termType                             | USER-DEFINED
+ _quoteTerm    | affectsFees                          | boolean
+ _quoteTerm    | feePercentage                        | double precision
+ _quoteTerm    | owningSectionQuotationQuoteId        | uuid
+ _quoteTerm    | owningSectionQuotationQuoteSectionId | uuid
+(93 rows)
+

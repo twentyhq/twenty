@@ -115,23 +115,26 @@ export class ApiClient {
   async refreshToken(): Promise<string | null> {
     const config = await this.configService.getConfig();
 
-    if (!config.refreshToken || !config.oauthClientId) {
+    if (
+      !config.twentyCLIRefreshToken ||
+      !config.twentyCLIRegistrationClientId
+    ) {
       return null;
     }
 
     try {
       const tokenResponse = await axios.post(`${config.apiUrl}/oauth/token`, {
         grant_type: 'refresh_token',
-        refresh_token: config.refreshToken,
-        client_id: config.oauthClientId,
+        refresh_token: config.twentyCLIRefreshToken,
+        client_id: config.twentyCLIRegistrationClientId,
       });
 
       const { access_token: newAccessToken, refresh_token: newRefreshToken } =
         tokenResponse.data;
 
       await this.configService.setConfig({
-        accessToken: newAccessToken,
-        ...(newRefreshToken ? { refreshToken: newRefreshToken } : {}),
+        twentyCLIAccessToken: newAccessToken,
+        ...(newRefreshToken ? { twentyCLIRefreshToken: newRefreshToken } : {}),
       });
 
       return newAccessToken;
@@ -145,16 +148,10 @@ export class ApiClient {
       return this.tokenOverride;
     }
 
-    const envToken = process.env.TWENTY_TOKEN;
-
-    if (envToken) {
-      return envToken;
-    }
-
     const config = await this.configService.getConfig();
-    const accessToken = config.accessToken;
+    const cliToken = config.twentyCLIAccessToken;
 
-    if (accessToken && this.isTokenExpired(accessToken)) {
+    if (cliToken && this.isTokenExpired(cliToken)) {
       const refreshed = await this.refreshToken();
 
       if (refreshed) {
@@ -162,7 +159,7 @@ export class ApiClient {
       }
     }
 
-    return accessToken ?? config.apiKey;
+    return cliToken ?? config.apiKey;
   }
 
   private isTokenExpired(token: string): boolean {

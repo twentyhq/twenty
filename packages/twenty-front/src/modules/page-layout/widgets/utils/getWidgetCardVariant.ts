@@ -23,6 +23,10 @@ export const getWidgetCardVariant = ({
     return 'dashboard';
   }
 
+  if (pageLayoutType === PageLayoutType.STANDALONE_PAGE) {
+    return 'standalone';
+  }
+
   if (layoutMode === PageLayoutTabLayoutMode.CANVAS) {
     return 'canvas';
   }

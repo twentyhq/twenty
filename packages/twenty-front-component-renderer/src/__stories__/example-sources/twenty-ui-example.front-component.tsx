@@ -1,5 +1,5 @@
+import { defineFrontComponent } from 'twenty-sdk';
 import { useState } from 'react';
-import { defineFrontComponent } from '@/sdk';
 import {
   Button,
   Chip,

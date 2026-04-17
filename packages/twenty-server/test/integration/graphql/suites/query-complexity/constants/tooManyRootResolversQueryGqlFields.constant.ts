@@ -16,13 +16,6 @@ export const TOO_MANY_ROOT_RESOLVERS_QUERY_GQL_FIELDS = gql`
         }
       }
     }
-    favorites {
-      edges {
-        node {
-          id
-        }
-      }
-    }
     tasks {
       edges {
         node {
@@ -143,6 +136,20 @@ export const TOO_MANY_ROOT_RESOLVERS_QUERY_GQL_FIELDS = gql`
       }
     }
     workflowAutomatedTriggers {
+      edges {
+        node {
+          id
+        }
+      }
+    }
+    workflows {
+      edges {
+        node {
+          id
+        }
+      }
+    }
+    dashboards {
       edges {
         node {
           id

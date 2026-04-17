@@ -10,6 +10,7 @@ export const fromApplicationVariableEntityToFlatApplicationVariable = (
   description: entity.description,
   isSecret: entity.isSecret,
   applicationId: entity.applicationId,
+  workspaceId: entity.workspaceId,
   createdAt: entity.createdAt.toISOString(),
   updatedAt: entity.updatedAt.toISOString(),
 });

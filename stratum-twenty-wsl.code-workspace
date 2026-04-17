@@ -1,0 +1,12 @@
+{
+  "folders": [
+    {
+      "name": "twenty (WSL)",
+      "path": "\\\\wsl$\\Ubuntu\\home\\clive\\_Projects\\stratum\\twenty\\source"
+    }
+  ],
+  "settings": {
+    "terminal.integrated.defaultProfile.windows": "PowerShell"
+  }
+}
+

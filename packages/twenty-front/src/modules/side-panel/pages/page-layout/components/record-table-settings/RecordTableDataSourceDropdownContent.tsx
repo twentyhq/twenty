@@ -1,4 +1,6 @@
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { useCreateViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useCreateViewForRecordTableWidget';
@@ -16,11 +18,9 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -56,7 +56,6 @@ export const RecordTableDataSourceDropdownContent = () => {
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
 
   const { closeDropdown } = useCloseDropdown();
-  const { getIcon } = useIcons();
 
   const readableActiveObjectMetadataItems =
     filterReadableActiveObjectMetadataItems(
@@ -105,14 +104,15 @@ export const RecordTableDataSourceDropdownContent = () => {
       (item) => item.id === newObjectMetadataItemId,
     );
 
-    if (isDefined(selectedObjectMetadataItem)) {
-      await createViewForRecordTableWidget(selectedObjectMetadataItem);
+    if (isDefined(selectedObjectMetadataItem) && isDefined(widgetInEditMode)) {
+      await createViewForRecordTableWidget(
+        widgetInEditMode.id,
+        selectedObjectMetadataItem,
+      );
 
-      if (isDefined(widgetInEditMode)) {
-        updatePageLayoutWidget(widgetInEditMode.id, {
-          title: selectedObjectMetadataItem.labelPlural,
-        });
-      }
+      updatePageLayoutWidget(widgetInEditMode.id, {
+        title: selectedObjectMetadataItem.labelPlural,
+      });
     }
 
     closeDropdown();
@@ -148,7 +148,9 @@ export const RecordTableDataSourceDropdownContent = () => {
                 text={objectMetadataItem.labelPlural}
                 selected={currentObjectMetadataItemId === objectMetadataItem.id}
                 focused={selectedItemId === objectMetadataItem.id}
-                LeftIcon={getIcon(objectMetadataItem.icon)}
+                LeftIcon={() => (
+                  <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+                )}
                 onClick={() => {
                   handleSelectSource(objectMetadataItem.id);
                 }}

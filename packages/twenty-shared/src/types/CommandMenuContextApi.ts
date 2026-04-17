@@ -1,9 +1,9 @@
-import { type CommandMenuContextApiPageType } from './CommandMenuContextApiPageType';
+import { type ContextStorePageType } from './ContextStorePageType';
 import { type ObjectPermissions } from './ObjectPermissions';
 import { type ObjectRecord } from './ObjectRecord';
 
 export type CommandMenuContextApi = {
-  pageType: CommandMenuContextApiPageType;
+  pageType: ContextStorePageType;
   isInSidePanel: boolean;
   isPageInEditMode: boolean;
   favoriteRecordIds: string[];

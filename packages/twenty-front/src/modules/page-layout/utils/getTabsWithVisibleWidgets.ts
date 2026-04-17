@@ -24,8 +24,10 @@ export const getTabsWithVisibleWidgets = ({
   isEditMode,
   recordFieldValues,
 }: GetTabsWithVisibleWidgetsParams): PageLayoutTab[] => {
+  const activeTabs = tabs.filter((tab) => tab.isActive);
+
   if (isEditMode) {
-    return tabs;
+    return activeTabs;
   }
 
   const context = buildWidgetVisibilityContext({
@@ -34,7 +36,7 @@ export const getTabsWithVisibleWidgets = ({
     recordFieldValues,
   });
 
-  const tabsWithFilteredWidgets = tabs.map((tab) => ({
+  const tabsWithFilteredWidgets = activeTabs.map((tab) => ({
     ...tab,
     widgets: filterVisibleWidgets({ widgets: tab.widgets, context }),
   }));
@@ -43,7 +45,7 @@ export const getTabsWithVisibleWidgets = ({
     (tab) => tab.widgets.length > 0,
   );
 
-  if (tabsWithVisibleWidgets.length === 0 && tabs.length > 0) {
+  if (tabsWithVisibleWidgets.length === 0 && activeTabs.length > 0) {
     return tabsWithFilteredWidgets.slice(0, 1);
   }
 

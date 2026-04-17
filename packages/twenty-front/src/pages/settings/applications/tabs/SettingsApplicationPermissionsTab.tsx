@@ -18,10 +18,7 @@ import {
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  FieldMetadataType,
-  type PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { findObjectNameByUniversalIdentifier } from '~/pages/settings/applications/utils/findObjectNameByUniversalIdentifier';
 
@@ -153,12 +150,14 @@ const buildSyntheticRole = (
     canReadFieldValue: permission.canReadFieldValue,
     canUpdateFieldValue: permission.canUpdateFieldValue,
   })),
-  permissionFlags: (defaultRole.permissionFlags ?? []).map((flag) => ({
-    __typename: 'PermissionFlag' as const,
-    id: uuidv4(),
-    roleId: defaultRole.universalIdentifier,
-    flag: flag as PermissionFlagType,
-  })),
+  permissionFlags: (defaultRole.permissionFlags ?? []).map(
+    (permissionFlag) => ({
+      __typename: 'PermissionFlag' as const,
+      id: uuidv4(),
+      roleId: defaultRole.universalIdentifier,
+      flag: permissionFlag.flag,
+    }),
+  ),
 });
 
 const buildFieldMetadataItemFromMarketplaceField = (

@@ -55,7 +55,8 @@ If feature descriptions are not provided or need enhancement, research the codeb
 - Services: Look for `*.service.ts` files
 
 **For Database/ORM Changes:**
-- Migrations: `packages/twenty-server/src/database/typeorm/`
+- Instance commands (fast/slow): `packages/twenty-server/src/database/commands/upgrade-version-command/`
+- Legacy TypeORM migrations: `packages/twenty-server/src/database/typeorm/`
 - Entities: `packages/twenty-server/src/entities/`
 
 ### Research Commands

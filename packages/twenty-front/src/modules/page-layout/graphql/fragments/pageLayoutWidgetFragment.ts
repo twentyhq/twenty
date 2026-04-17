@@ -6,11 +6,12 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
     title
     type
     objectMetadataId
-    isOverridden
     createdAt
     updatedAt
+    isActive
     deletedAt
     conditionalDisplay
+    conditionalAvailabilityExpression
     gridPosition {
       column
       columnSpan

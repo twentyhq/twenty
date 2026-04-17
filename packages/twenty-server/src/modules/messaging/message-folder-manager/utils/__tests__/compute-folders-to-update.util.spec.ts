@@ -93,6 +93,72 @@ describe('computeFoldersToUpdate', () => {
     expect(result.size).toBe(0);
   });
 
+  it('should detect isSynced change from false to true', () => {
+    const discoveredFolders = [
+      {
+        name: 'Inbox',
+        externalId: 'INBOX',
+        isSynced: true,
+        isSentFolder: false,
+        parentFolderId: null,
+      },
+    ];
+
+    const existingFolders = [
+      {
+        id: 'folder-id',
+        name: 'Inbox',
+        externalId: 'INBOX',
+        isSynced: false,
+        isSentFolder: false,
+        parentFolderId: null,
+        syncCursor: 'cursor',
+        pendingSyncAction: MessageFolderPendingSyncAction.NONE,
+      },
+    ];
+
+    const result = computeFoldersToUpdate({
+      discoveredFolders,
+      existingFolders,
+    });
+
+    expect(result.size).toBe(1);
+    expect(result.get('folder-id')?.isSynced).toBe(true);
+  });
+
+  it('should detect isSynced change from true to false', () => {
+    const discoveredFolders = [
+      {
+        name: 'Promotions',
+        externalId: 'promo-1',
+        isSynced: false,
+        isSentFolder: false,
+        parentFolderId: null,
+      },
+    ];
+
+    const existingFolders = [
+      {
+        id: 'folder-id',
+        name: 'Promotions',
+        externalId: 'promo-1',
+        isSynced: true,
+        isSentFolder: false,
+        parentFolderId: null,
+        syncCursor: 'cursor',
+        pendingSyncAction: MessageFolderPendingSyncAction.NONE,
+      },
+    ];
+
+    const result = computeFoldersToUpdate({
+      discoveredFolders,
+      existingFolders,
+    });
+
+    expect(result.size).toBe(1);
+    expect(result.get('folder-id')?.isSynced).toBe(false);
+  });
+
   it('should treat empty string parentFolderId same as null', () => {
     const discoveredFolders = [
       {
