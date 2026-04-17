@@ -245,6 +245,17 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
 
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+
+    const existingObjectMetadataUniversalIdentifiers = new Set(
+      Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .map((objectMetadata) => objectMetadata.universalIdentifier),
+    );
+
     const recordPageLayoutUniversalIdentifiers = new Set<string>();
 
     const pageLayouts = Object.values(
@@ -253,6 +264,19 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
       .filter(isDefined)
       .filter((pageLayout) => {
         if (pageLayout.type !== PageLayoutType.RECORD_PAGE) {
+          return false;
+        }
+
+        if (
+          isDefined(pageLayout.objectMetadataUniversalIdentifier) &&
+          !existingObjectMetadataUniversalIdentifiers.has(
+            pageLayout.objectMetadataUniversalIdentifier,
+          )
+        ) {
+          this.logger.log(
+            `Skipping standard record page layout ${pageLayout.universalIdentifier} for workspace ${workspaceId}: associated object ${pageLayout.objectMetadataUniversalIdentifier} does not exist`,
+          );
+
           return false;
         }
 
@@ -297,6 +321,15 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
       .filter(isDefined)
       .filter((view) => {
         if (view.type !== ViewType.FIELDS_WIDGET) {
+          return false;
+        }
+
+        if (
+          isDefined(view.objectMetadataUniversalIdentifier) &&
+          !existingObjectMetadataUniversalIdentifiers.has(
+            view.objectMetadataUniversalIdentifier,
+          )
+        ) {
           return false;
         }
 
