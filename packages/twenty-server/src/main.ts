@@ -43,17 +43,6 @@ const bootstrap = async () => {
   const logger = app.get(LoggerService);
   const twentyConfigService = app.get(TwentyConfigService);
 
-  // Honor X-Forwarded-* headers when TLS is terminated upstream (reverse
-  // proxy, ingress, Cloudflare). Without this, request.protocol returns
-  // the socket protocol ("http") and URLs built from it leak through —
-  // e.g. OAuth discovery advertises http://host/mcp on an https deployment,
-  // and strict MCP clients reject the mismatch.
-  //
-  // Express accepts booleans, hop counts, IPs/CIDRs, and named ranges
-  // (loopback, linklocal, uniquelocal). Env vars are always strings, but
-  // 'true'/'false'/numeric strings crash proxy-addr as "invalid IP address",
-  // so we coerce those three cases here. Anything else (CIDR list, named
-  // ranges) is passed through untouched.
   const trustProxyRaw = twentyConfigService.get('TRUST_PROXY');
   const trustProxy =
     trustProxyRaw === 'true'
