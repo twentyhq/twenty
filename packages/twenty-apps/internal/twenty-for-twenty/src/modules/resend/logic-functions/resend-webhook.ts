@@ -191,15 +191,22 @@ const handler = async (
 
   const resend = getResendClient();
 
-  const event = resend.webhooks.verify({
-    payload: JSON.stringify(params.body),
-    headers: {
-      id: svixId,
-      timestamp: svixTimestamp,
-      signature: svixSignature,
-    },
-    webhookSecret,
-  });
+  let event;
+  try {
+    event = resend.webhooks.verify({
+      payload: JSON.stringify(params.body),
+      headers: {
+        id: svixId,
+        timestamp: svixTimestamp,
+        signature: svixSignature,
+      },
+      webhookSecret,
+    });
+  } catch (error) {
+    console.error('[webhook] Resend signature verification failed', error);
+
+    return { error: 'Invalid webhook signature' };
+  }
 
   const client = new CoreApiClient();
   const eventType = event.type;
