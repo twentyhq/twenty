@@ -2,7 +2,7 @@ import { Card, Section } from 'twenty-ui/layout';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { IconArrowBarToDown } from 'twenty-ui/display';
 import {
-  ApplicationRegistration,
+  type ApplicationRegistration,
   UpdateApplicationRegistrationDocument,
 } from '~/generated-metadata/graphql';
 import { styled } from '@linaria/react';
