@@ -112,8 +112,8 @@ export default async function PartnerPage() {
 
       <Testimonials.Root
         backgroundColor={theme.colors.secondary.background[5]}
-        backgroundShapeSrc="/images/partner/testimonials/background-shape.webp"
         color={theme.colors.secondary.text[100]}
+        shapeFillColor={theme.colors.secondary.background[100]}
       >
         <Testimonials.PartnerCarousel
           eyebrow={TESTIMONIALS_DATA.eyebrow}

@@ -1,7 +1,7 @@
 import { Container } from '@/design-system/components';
+import { TestimonialsShape } from '@/sections/Testimonials/TestimonialsShape';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import NextImage from 'next/image';
 import type { ReactNode } from 'react';
 
 const StyledSection = styled.section`
@@ -12,6 +12,7 @@ const StyledSection = styled.section`
 `;
 
 const BackgroundShape = styled.div`
+  bottom: 0;
   left: 0;
   pointer-events: none;
   position: absolute;
@@ -38,31 +39,22 @@ const StyledContainer = styled(Container)`
 
 type RootProps = {
   backgroundColor: string;
-  backgroundShapeSrc?: string;
   children: ReactNode;
   color: string;
+  shapeFillColor?: string;
 };
 
 export function Root({
   backgroundColor,
-  backgroundShapeSrc,
   children,
   color,
+  shapeFillColor = theme.colors.primary.background[100],
 }: RootProps) {
   return (
     <StyledSection style={{ backgroundColor, color }}>
-      {backgroundShapeSrc ? (
-        <BackgroundShape>
-          <NextImage
-            alt=""
-            sizes="100vw"
-            src={backgroundShapeSrc}
-            style={{ height: 'auto', width: '100%' }}
-            width={1440}
-            height={842}
-          />
-        </BackgroundShape>
-      ) : null}
+      <BackgroundShape>
+        <TestimonialsShape fillColor={shapeFillColor} />
+      </BackgroundShape>
       <StyledContainer>{children}</StyledContainer>
     </StyledSection>
   );
