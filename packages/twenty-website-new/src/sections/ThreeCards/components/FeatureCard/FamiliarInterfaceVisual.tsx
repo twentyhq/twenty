@@ -9,10 +9,13 @@ import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
   type PointerEvent as ReactPointerEvent,
+  type RefObject,
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
 } from 'react';
+import { FamiliarInterfaceGradientBackdrop } from './FamiliarInterfaceGradientBackdrop';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -40,6 +43,8 @@ const FIGMA_FIELD_STACK_GAP = 1.839;
 const FIGMA_CARD_RADIUS = 3.677;
 const FIGMA_CARD_SHADOW =
   '0px 0px 3.677px rgba(0, 0, 0, 0.08), 0px 1.839px 3.677px rgba(0, 0, 0, 0.04)';
+const FIGMA_COLUMN_GAP = 8;
+const FIGMA_COLUMN_SIDE_PADDING = 5.516;
 const FIGMA_HEADER_PADDING_X = 5.516;
 const FIGMA_HEADER_PADDING_TOP = 7.354;
 const FIGMA_HEADER_PADDING_BOTTOM = 3.677;
@@ -66,15 +71,20 @@ type CardPlacement =
   | { laneIndex: LaneIndex; type: 'lane' };
 type DropTarget = { cardIndex: number; laneIndex: LaneIndex };
 type LaneCards = [CardId[], CardId[]];
-type FamiliarInterfaceVisualProps = { active?: boolean };
+type FamiliarInterfaceVisualProps = {
+  active?: boolean;
+  backgroundImageRotationDeg?: number;
+  backgroundImageSrc?: string;
+  pointerTargetRef?: RefObject<HTMLElement | null>;
+};
 
 const COLORS = {
   backdrop: '#1b1b1b',
-  backdropStripe: 'rgba(255, 255, 255, 0.28)',
   border: '#ebebeb',
   borderLight: '#f1f1f1',
   borderStrong: '#d6d6d6',
   boardSurface: '#ffffff',
+  cardSurface: '#fcfcfc',
   activeCardBorder: '#b5ccff',
   activeCardSurface: '#e8f1ff',
   imageAreaSurface: '#f5f5f3',
@@ -288,7 +298,7 @@ const SceneViewport = styled.div`
   height: ${SCENE_HEIGHT}px;
   left: 50%;
   position: absolute;
-  top: 9px;
+  top: 0;
   transform: translateX(-50%) scale(${SCENE_SCALE});
   transform-origin: top center;
   width: ${SCENE_WIDTH}px;
@@ -309,35 +319,20 @@ const SceneFrame = styled.div`
   overflow: hidden;
   position: relative;
   width: 411px;
+`;
 
-  &::before {
-    background:
-      radial-gradient(
-          circle at 1px 1px,
-          rgba(255, 255, 255, 0.09) 1px,
-          transparent 0
-        )
-        right top / 12px 12px repeat,
-      linear-gradient(rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.02));
-    content: '';
-    inset: 0;
-    opacity: 0.42;
-    pointer-events: none;
-    position: absolute;
-  }
-
-  &::after {
-    background: repeating-linear-gradient(
-      180deg,
-      transparent 0 11px,
-      ${COLORS.backdropStripe} 11px 15px,
-      transparent 15px 27px
-    );
-    content: '';
-    inset: 0;
-    pointer-events: none;
-    position: absolute;
-  }
+const SceneBackdrop = styled.div<{
+  $backgroundImageRotationDeg?: number;
+}>`
+  background-color: ${COLORS.backdrop};
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  transform: rotate(
+    ${({ $backgroundImageRotationDeg = 0 }) => $backgroundImageRotationDeg}deg
+  );
+  transform-origin: center center;
 `;
 
 const BoardGroup = styled.div<{ $active: boolean }>`
@@ -434,10 +429,13 @@ const BoardTitleCount = styled.span`
 `;
 
 const ColumnsHeaderGrid = styled.div`
+  background: ${COLORS.boardSurface};
   display: grid;
   grid-template-columns: repeat(2, 186.355px);
+  justify-content: center;
   min-height: 29.354px;
-  padding-left: 7.354px;
+  position: relative;
+  z-index: 1;
 `;
 
 const LaneHeader = styled.div`
@@ -446,7 +444,7 @@ const LaneHeader = styled.div`
   display: flex;
   gap: 4px;
   min-height: 29.354px;
-  padding: 7.354px 7.354px 0;
+  padding: 7.354px ${FIGMA_COLUMN_SIDE_PADDING}px 0;
 
   &:last-child {
     border-right: none;
@@ -480,18 +478,18 @@ const LaneCount = styled.span`
 const ColumnsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 186.355px);
+  justify-content: center;
   flex: 1 1 auto;
   min-height: 0;
-  padding-left: 7.354px;
 `;
 
 const LaneBody = styled.div`
   border-right: 1px solid ${COLORS.borderLight};
   display: flex;
   flex-direction: column;
-  gap: 7.354px;
+  gap: ${FIGMA_COLUMN_GAP}px;
   min-height: 0;
-  padding: 7.354px 7.354px 8px;
+  padding: 7.354px ${FIGMA_COLUMN_SIDE_PADDING}px 8px;
 
   &:last-child {
     border-right: none;
@@ -511,7 +509,7 @@ const AddCardRow = styled.div`
 
 const OpportunityCard = styled.div<{ $variant?: 'active' | 'board' }>`
   background: ${({ $variant }) =>
-    $variant === 'active' ? COLORS.activeCardSurface : COLORS.boardSurface};
+    $variant === 'active' ? COLORS.activeCardSurface : COLORS.cardSurface};
   border: ${({ $variant }) => ($variant === 'active' ? '0.919px' : '1px')} solid
     ${({ $variant }) =>
       $variant === 'active' ? COLORS.activeCardBorder : COLORS.border};
@@ -519,7 +517,26 @@ const OpportunityCard = styled.div<{ $variant?: 'active' | 'board' }>`
   box-shadow: ${FIGMA_CARD_SHADOW};
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  transition: background-color 120ms ease;
   width: ${FIGMA_CARD_WIDTH}px;
+
+  &::after {
+    background: rgba(0, 0, 0, 0.04);
+    content: '';
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    transition: opacity 120ms ease;
+  }
+
+  @media (hover: hover) {
+    &:hover::after {
+      opacity: ${({ $variant }) => ($variant === 'board' ? 1 : 0)};
+    }
+  }
 `;
 
 const CardHeader = styled.div`
@@ -1163,7 +1180,11 @@ function OpportunityPreviewCard({
 
 export function FamiliarInterfaceVisual({
   active = false,
+  backgroundImageRotationDeg,
+  backgroundImageSrc,
+  pointerTargetRef,
 }: FamiliarInterfaceVisualProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
   const sceneFrameRef = useRef<HTMLDivElement>(null);
   const interactionLayerRef = useRef<HTMLDivElement>(null);
   const laneBodyRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -1187,8 +1208,11 @@ export function FamiliarInterfaceVisual({
   const [draggedCardId, setDraggedCardId] = useState<CardId | null>(null);
   const [hasDraggedCard, setHasDraggedCard] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const activePointerIdRef = useRef<number | null>(null);
   const dragStateRef = useRef<{
     cardId: CardId;
+    lastClientX: number;
+    lastClientY: number;
     maxX: number;
     maxY: number;
     minX: number;
@@ -1272,6 +1296,51 @@ export function FamiliarInterfaceVisual({
     pendingCardAnimationRectsRef.current = nextCardRects;
   };
 
+  const releaseActivePointerCapture = () => {
+    const activePointerId = activePointerIdRef.current;
+    const interactionLayer = interactionLayerRef.current;
+
+    if (
+      activePointerId !== null &&
+      interactionLayer?.hasPointerCapture(activePointerId)
+    ) {
+      interactionLayer.releasePointerCapture(activePointerId);
+    }
+
+    activePointerIdRef.current = null;
+  };
+
+  const clearDragState = () => {
+    dragStateRef.current = null;
+    setActiveCardId(null);
+    setDraggedCardId(null);
+    setIsDragging(false);
+  };
+
+  const updateDragOffsetFromPointer = (clientX: number, clientY: number) => {
+    const currentDragState = dragStateRef.current;
+
+    if (currentDragState === null) {
+      return;
+    }
+
+    currentDragState.lastClientX = clientX;
+    currentDragState.lastClientY = clientY;
+
+    const nextX = clamp(
+      currentDragState.originX + clientX - currentDragState.pointerX,
+      currentDragState.minX,
+      currentDragState.maxX,
+    );
+    const nextY = clamp(
+      currentDragState.originY + clientY - currentDragState.pointerY,
+      currentDragState.minY,
+      currentDragState.maxY,
+    );
+
+    setDragOffset({ x: nextX, y: nextY });
+  };
+
   const getDropTarget = (
     clientX: number,
     clientY: number,
@@ -1332,6 +1401,10 @@ export function FamiliarInterfaceVisual({
       return;
     }
 
+    if (dragStateRef.current !== null) {
+      return;
+    }
+
     setHasDraggedCard(true);
     setActiveCardId(cardId);
     setDraggedCardId(cardId);
@@ -1347,6 +1420,8 @@ export function FamiliarInterfaceVisual({
 
     dragStateRef.current = {
       cardId,
+      lastClientX: event.clientX,
+      lastClientY: event.clientY,
       maxX: interactionLayerRect.width - cardRect.width,
       maxY: interactionLayerRect.height - cardRect.height,
       minX: 0,
@@ -1359,37 +1434,11 @@ export function FamiliarInterfaceVisual({
     };
     setDragOffset({ x: originX, y: originY });
     setIsDragging(true);
-    event.currentTarget.setPointerCapture(event.pointerId);
+    activePointerIdRef.current = event.pointerId;
+    interactionLayerRef.current?.setPointerCapture(event.pointerId);
   };
 
-  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (dragStateRef.current === null) {
-      return;
-    }
-
-    event.preventDefault();
-
-    const nextX = clamp(
-      dragStateRef.current.originX +
-        event.clientX -
-        dragStateRef.current.pointerX,
-      dragStateRef.current.minX,
-      dragStateRef.current.maxX,
-    );
-    const nextY = clamp(
-      dragStateRef.current.originY +
-        event.clientY -
-        dragStateRef.current.pointerY,
-      dragStateRef.current.minY,
-      dragStateRef.current.maxY,
-    );
-
-    setDragOffset({ x: nextX, y: nextY });
-  };
-
-  const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
-    event.preventDefault();
-
+  const finishDragAtPosition = (clientX: number, clientY: number) => {
     const currentDragState = dragStateRef.current;
 
     if (currentDragState === null) {
@@ -1398,22 +1447,18 @@ export function FamiliarInterfaceVisual({
 
     const releasedOffset = {
       x: clamp(
-        currentDragState.originX + event.clientX - currentDragState.pointerX,
+        currentDragState.originX + clientX - currentDragState.pointerX,
         currentDragState.minX,
         currentDragState.maxX,
       ),
       y: clamp(
-        currentDragState.originY + event.clientY - currentDragState.pointerY,
+        currentDragState.originY + clientY - currentDragState.pointerY,
         currentDragState.minY,
         currentDragState.maxY,
       ),
     };
 
-    const dropTarget = getDropTarget(
-      event.clientX,
-      event.clientY,
-      currentDragState.cardId,
-    );
+    const dropTarget = getDropTarget(clientX, clientY, currentDragState.cardId);
 
     if (dropTarget !== null) {
       captureCardAnimationRects(currentDragState.cardId);
@@ -1442,13 +1487,71 @@ export function FamiliarInterfaceVisual({
       setFloatingPosition(releasedOffset);
     }
 
-    dragStateRef.current = null;
-    setDraggedCardId(null);
-    setIsDragging(false);
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
+    clearDragState();
   };
+
+  const handleCapturedPointerMove = (
+    event: ReactPointerEvent<HTMLDivElement>,
+  ) => {
+    if (event.pointerId !== activePointerIdRef.current) {
+      return;
+    }
+
+    event.preventDefault();
+    updateDragOffsetFromPointer(event.clientX, event.clientY);
+  };
+
+  const handleCapturedPointerUp = (
+    event: ReactPointerEvent<HTMLDivElement>,
+  ) => {
+    if (event.pointerId !== activePointerIdRef.current) {
+      return;
+    }
+
+    event.preventDefault();
+    finishDragAtPosition(event.clientX, event.clientY);
+    releaseActivePointerCapture();
+  };
+
+  const handleCapturedPointerCancel = (
+    event: ReactPointerEvent<HTMLDivElement>,
+  ) => {
+    if (event.pointerId !== activePointerIdRef.current) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const currentDragState = dragStateRef.current;
+
+    if (currentDragState !== null) {
+      finishDragAtPosition(
+        currentDragState.lastClientX,
+        currentDragState.lastClientY,
+      );
+    }
+
+    releaseActivePointerCapture();
+  };
+
+  const handleLostPointerCapture = () => {
+    const currentDragState = dragStateRef.current;
+
+    if (currentDragState !== null) {
+      finishDragAtPosition(
+        currentDragState.lastClientX,
+        currentDragState.lastClientY,
+      );
+    }
+
+    activePointerIdRef.current = null;
+  };
+
+  useEffect(() => {
+    return () => {
+      releaseActivePointerCapture();
+    };
+  }, []);
 
   const showHandCursor =
     !hasDraggedCard && !isDragging && activeCardId === null;
@@ -1468,9 +1571,6 @@ export function FamiliarInterfaceVisual({
         onPointerDown={(event) => {
           handlePointerDown(event, cardId, { laneIndex, type: 'lane' });
         }}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
         style={isDraggedCard ? { visibility: 'hidden' } : undefined}
       >
         <OpportunityPreviewCard
@@ -1482,9 +1582,18 @@ export function FamiliarInterfaceVisual({
   };
 
   return (
-    <VisualRoot aria-hidden="true">
+    <VisualRoot aria-hidden="true" ref={rootRef}>
       <SceneViewport>
         <SceneFrame ref={sceneFrameRef}>
+          <SceneBackdrop
+            $backgroundImageRotationDeg={backgroundImageRotationDeg}
+          >
+            <FamiliarInterfaceGradientBackdrop
+              active={active}
+              imageUrl={backgroundImageSrc}
+              pointerTargetRef={pointerTargetRef ?? rootRef}
+            />
+          </SceneBackdrop>
           <BoardGroup $active={active}>
             <BoardSurface>
               <BoardTitleRow>
@@ -1559,7 +1668,13 @@ export function FamiliarInterfaceVisual({
               </ColumnsGrid>
             </BoardSurface>
 
-            <InteractionLayer ref={interactionLayerRef}>
+            <InteractionLayer
+              ref={interactionLayerRef}
+              onLostPointerCapture={handleLostPointerCapture}
+              onPointerCancel={handleCapturedPointerCancel}
+              onPointerMove={handleCapturedPointerMove}
+              onPointerUp={handleCapturedPointerUp}
+            >
               {showHandCursor ? (
                 <DragCursor $active={active}>
                   <DragCursorInner $active={active}>
@@ -1578,9 +1693,6 @@ export function FamiliarInterfaceVisual({
                       type: 'floating',
                     });
                   }}
-                  onPointerMove={handlePointerMove}
-                  onPointerUp={handlePointerUp}
-                  onPointerCancel={handlePointerUp}
                   style={{
                     transform: `translate3d(${floatingPosition.x}px, ${floatingPosition.y}px, 0)`,
                     visibility:

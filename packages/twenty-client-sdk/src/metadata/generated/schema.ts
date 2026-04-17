@@ -989,6 +989,41 @@ export interface Analytics {
     __typename: 'Analytics'
 }
 
+export interface ApprovedAccessDomain {
+    id: Scalars['UUID']
+    domain: Scalars['String']
+    isValidated: Scalars['Boolean']
+    createdAt: Scalars['DateTime']
+    __typename: 'ApprovedAccessDomain'
+}
+
+export interface FileWithSignedUrl {
+    id: Scalars['UUID']
+    path: Scalars['String']
+    size: Scalars['Float']
+    createdAt: Scalars['DateTime']
+    url: Scalars['String']
+    __typename: 'FileWithSignedUrl'
+}
+
+export interface EnterpriseLicenseInfoDTO {
+    isValid: Scalars['Boolean']
+    licensee?: Scalars['String']
+    expiresAt?: Scalars['DateTime']
+    subscriptionId?: Scalars['String']
+    __typename: 'EnterpriseLicenseInfoDTO'
+}
+
+export interface EnterpriseSubscriptionStatusDTO {
+    status: Scalars['String']
+    licensee?: Scalars['String']
+    expiresAt?: Scalars['DateTime']
+    cancelAt?: Scalars['DateTime']
+    currentPeriodEnd?: Scalars['DateTime']
+    isCancellationScheduled: Scalars['Boolean']
+    __typename: 'EnterpriseSubscriptionStatusDTO'
+}
+
 export interface BillingSubscriptionSchedulePhaseItem {
     price: Scalars['String']
     quantity?: Scalars['Float']
@@ -1134,45 +1169,10 @@ export interface BillingUpdate {
     __typename: 'BillingUpdate'
 }
 
-export interface EnterpriseLicenseInfoDTO {
-    isValid: Scalars['Boolean']
-    licensee?: Scalars['String']
-    expiresAt?: Scalars['DateTime']
-    subscriptionId?: Scalars['String']
-    __typename: 'EnterpriseLicenseInfoDTO'
-}
-
-export interface EnterpriseSubscriptionStatusDTO {
-    status: Scalars['String']
-    licensee?: Scalars['String']
-    expiresAt?: Scalars['DateTime']
-    cancelAt?: Scalars['DateTime']
-    currentPeriodEnd?: Scalars['DateTime']
-    isCancellationScheduled: Scalars['Boolean']
-    __typename: 'EnterpriseSubscriptionStatusDTO'
-}
-
 export interface OnboardingStepSuccess {
     /** Boolean that confirms query was dispatched */
     success: Scalars['Boolean']
     __typename: 'OnboardingStepSuccess'
-}
-
-export interface ApprovedAccessDomain {
-    id: Scalars['UUID']
-    domain: Scalars['String']
-    isValidated: Scalars['Boolean']
-    createdAt: Scalars['DateTime']
-    __typename: 'ApprovedAccessDomain'
-}
-
-export interface FileWithSignedUrl {
-    id: Scalars['UUID']
-    path: Scalars['String']
-    size: Scalars['Float']
-    createdAt: Scalars['DateTime']
-    url: Scalars['String']
-    __typename: 'FileWithSignedUrl'
 }
 
 export interface WorkspaceInvitation {
@@ -1428,6 +1428,13 @@ export interface PublicWorkspaceData {
     displayName?: Scalars['String']
     workspaceUrls: WorkspaceUrls
     __typename: 'PublicWorkspaceData'
+}
+
+export interface PublicWorkspaceDataSummary {
+    id: Scalars['UUID']
+    logo?: Scalars['String']
+    displayName?: Scalars['String']
+    __typename: 'PublicWorkspaceDataSummary'
 }
 
 export interface NativeModelCapabilities {
@@ -2361,6 +2368,7 @@ export interface CommandMenuItem {
     hotKeys?: Scalars['String'][]
     conditionalAvailabilityExpression?: Scalars['String']
     availabilityObjectMetadataId?: Scalars['UUID']
+    pageLayoutId?: Scalars['UUID']
     applicationId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
@@ -2905,6 +2913,7 @@ export interface Query {
     currentUser: User
     currentWorkspace: Workspace
     getPublicWorkspaceDataByDomain: PublicWorkspaceData
+    getPublicWorkspaceDataById: PublicWorkspaceDataSummary
     getSSOIdentityProviders: FindAvailableSSOIDP[]
     getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount
     getAutoCompleteAddress: AutocompleteResult[]
@@ -4230,6 +4239,45 @@ export interface AnalyticsGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApprovedAccessDomainGenqlSelection{
+    id?: boolean | number
+    domain?: boolean | number
+    isValidated?: boolean | number
+    createdAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface FileWithSignedUrlGenqlSelection{
+    id?: boolean | number
+    path?: boolean | number
+    size?: boolean | number
+    createdAt?: boolean | number
+    url?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface EnterpriseLicenseInfoDTOGenqlSelection{
+    isValid?: boolean | number
+    licensee?: boolean | number
+    expiresAt?: boolean | number
+    subscriptionId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface EnterpriseSubscriptionStatusDTOGenqlSelection{
+    status?: boolean | number
+    licensee?: boolean | number
+    expiresAt?: boolean | number
+    cancelAt?: boolean | number
+    currentPeriodEnd?: boolean | number
+    isCancellationScheduled?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface BillingSubscriptionSchedulePhaseItemGenqlSelection{
     price?: boolean | number
     quantity?: boolean | number
@@ -4377,48 +4425,9 @@ export interface BillingUpdateGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface EnterpriseLicenseInfoDTOGenqlSelection{
-    isValid?: boolean | number
-    licensee?: boolean | number
-    expiresAt?: boolean | number
-    subscriptionId?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface EnterpriseSubscriptionStatusDTOGenqlSelection{
-    status?: boolean | number
-    licensee?: boolean | number
-    expiresAt?: boolean | number
-    cancelAt?: boolean | number
-    currentPeriodEnd?: boolean | number
-    isCancellationScheduled?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface OnboardingStepSuccessGenqlSelection{
     /** Boolean that confirms query was dispatched */
     success?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ApprovedAccessDomainGenqlSelection{
-    id?: boolean | number
-    domain?: boolean | number
-    isValidated?: boolean | number
-    createdAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface FileWithSignedUrlGenqlSelection{
-    id?: boolean | number
-    path?: boolean | number
-    size?: boolean | number
-    createdAt?: boolean | number
-    url?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4676,6 +4685,14 @@ export interface PublicWorkspaceDataGenqlSelection{
     logo?: boolean | number
     displayName?: boolean | number
     workspaceUrls?: WorkspaceUrlsGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface PublicWorkspaceDataSummaryGenqlSelection{
+    id?: boolean | number
+    logo?: boolean | number
+    displayName?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5690,6 +5707,7 @@ export interface CommandMenuItemGenqlSelection{
     hotKeys?: boolean | number
     conditionalAvailabilityExpression?: boolean | number
     availabilityObjectMetadataId?: boolean | number
+    pageLayoutId?: boolean | number
     applicationId?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
@@ -6274,6 +6292,7 @@ export interface QueryGenqlSelection{
     currentUser?: UserGenqlSelection
     currentWorkspace?: WorkspaceGenqlSelection
     getPublicWorkspaceDataByDomain?: (PublicWorkspaceDataGenqlSelection & { __args?: {origin?: (Scalars['String'] | null)} })
+    getPublicWorkspaceDataById?: (PublicWorkspaceDataSummaryGenqlSelection & { __args: {id: Scalars['UUID']} })
     getSSOIdentityProviders?: FindAvailableSSOIDPGenqlSelection
     getConnectedImapSmtpCaldavAccount?: (ConnectedImapSmtpCaldavAccountGenqlSelection & { __args: {id: Scalars['UUID']} })
     getAutoCompleteAddress?: (AutocompleteResultGenqlSelection & { __args: {address: Scalars['String'], token: Scalars['String'], country?: (Scalars['String'] | null), isFieldCity?: (Scalars['Boolean'] | null)} })
@@ -6725,9 +6744,9 @@ update: UpdateLogicFunctionFromSourceInputUpdates}
 
 export interface UpdateLogicFunctionFromSourceInputUpdates {name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),timeoutSeconds?: (Scalars['Float'] | null),sourceHandlerCode?: (Scalars['String'] | null),toolInputSchema?: (Scalars['JSON'] | null),handlerName?: (Scalars['String'] | null),sourceHandlerPath?: (Scalars['String'] | null),isTool?: (Scalars['Boolean'] | null),cronTriggerSettings?: (Scalars['JSON'] | null),databaseEventTriggerSettings?: (Scalars['JSON'] | null),httpRouteTriggerSettings?: (Scalars['JSON'] | null)}
 
-export interface CreateCommandMenuItemInput {workflowVersionId?: (Scalars['UUID'] | null),frontComponentId?: (Scalars['UUID'] | null),engineComponentKey: EngineComponentKey,label: Scalars['String'],icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),hotKeys?: (Scalars['String'][] | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null),payload?: (Scalars['JSON'] | null)}
+export interface CreateCommandMenuItemInput {workflowVersionId?: (Scalars['UUID'] | null),frontComponentId?: (Scalars['UUID'] | null),engineComponentKey: EngineComponentKey,label: Scalars['String'],icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),hotKeys?: (Scalars['String'][] | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null),payload?: (Scalars['JSON'] | null),pageLayoutId?: (Scalars['UUID'] | null)}
 
-export interface UpdateCommandMenuItemInput {id: Scalars['UUID'],label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null),engineComponentKey?: (EngineComponentKey | null),hotKeys?: (Scalars['String'][] | null)}
+export interface UpdateCommandMenuItemInput {id: Scalars['UUID'],label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null),engineComponentKey?: (EngineComponentKey | null),hotKeys?: (Scalars['String'][] | null),pageLayoutId?: (Scalars['UUID'] | null)}
 
 export interface CreateFrontComponentInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],description?: (Scalars['String'] | null),sourceComponentPath: Scalars['String'],builtComponentPath: Scalars['String'],componentName: Scalars['String'],builtComponentChecksum: Scalars['String']}
 
@@ -6859,7 +6878,7 @@ export interface CreateApplicationRegistrationVariableInput {applicationRegistra
 
 export interface UpdateApplicationRegistrationVariableInput {id: Scalars['String'],update: UpdateApplicationRegistrationVariablePayload}
 
-export interface UpdateApplicationRegistrationVariablePayload {value?: (Scalars['String'] | null),description?: (Scalars['String'] | null)}
+export interface UpdateApplicationRegistrationVariablePayload {value?: (Scalars['String'] | null),resetValue?: (Scalars['Boolean'] | null),description?: (Scalars['String'] | null)}
 
 export interface UpdateWorkspaceMemberSettingsInput {workspaceMemberId: Scalars['UUID'],update: Scalars['JSON']}
 
@@ -7474,6 +7493,38 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const ApprovedAccessDomain_possibleTypes: string[] = ['ApprovedAccessDomain']
+    export const isApprovedAccessDomain = (obj?: { __typename?: any } | null): obj is ApprovedAccessDomain => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApprovedAccessDomain"')
+      return ApprovedAccessDomain_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const FileWithSignedUrl_possibleTypes: string[] = ['FileWithSignedUrl']
+    export const isFileWithSignedUrl = (obj?: { __typename?: any } | null): obj is FileWithSignedUrl => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isFileWithSignedUrl"')
+      return FileWithSignedUrl_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const EnterpriseLicenseInfoDTO_possibleTypes: string[] = ['EnterpriseLicenseInfoDTO']
+    export const isEnterpriseLicenseInfoDTO = (obj?: { __typename?: any } | null): obj is EnterpriseLicenseInfoDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseLicenseInfoDTO"')
+      return EnterpriseLicenseInfoDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const EnterpriseSubscriptionStatusDTO_possibleTypes: string[] = ['EnterpriseSubscriptionStatusDTO']
+    export const isEnterpriseSubscriptionStatusDTO = (obj?: { __typename?: any } | null): obj is EnterpriseSubscriptionStatusDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseSubscriptionStatusDTO"')
+      return EnterpriseSubscriptionStatusDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const BillingSubscriptionSchedulePhaseItem_possibleTypes: string[] = ['BillingSubscriptionSchedulePhaseItem']
     export const isBillingSubscriptionSchedulePhaseItem = (obj?: { __typename?: any } | null): obj is BillingSubscriptionSchedulePhaseItem => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSubscriptionSchedulePhaseItem"')
@@ -7602,42 +7653,10 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const EnterpriseLicenseInfoDTO_possibleTypes: string[] = ['EnterpriseLicenseInfoDTO']
-    export const isEnterpriseLicenseInfoDTO = (obj?: { __typename?: any } | null): obj is EnterpriseLicenseInfoDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseLicenseInfoDTO"')
-      return EnterpriseLicenseInfoDTO_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const EnterpriseSubscriptionStatusDTO_possibleTypes: string[] = ['EnterpriseSubscriptionStatusDTO']
-    export const isEnterpriseSubscriptionStatusDTO = (obj?: { __typename?: any } | null): obj is EnterpriseSubscriptionStatusDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseSubscriptionStatusDTO"')
-      return EnterpriseSubscriptionStatusDTO_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const OnboardingStepSuccess_possibleTypes: string[] = ['OnboardingStepSuccess']
     export const isOnboardingStepSuccess = (obj?: { __typename?: any } | null): obj is OnboardingStepSuccess => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isOnboardingStepSuccess"')
       return OnboardingStepSuccess_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ApprovedAccessDomain_possibleTypes: string[] = ['ApprovedAccessDomain']
-    export const isApprovedAccessDomain = (obj?: { __typename?: any } | null): obj is ApprovedAccessDomain => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApprovedAccessDomain"')
-      return ApprovedAccessDomain_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const FileWithSignedUrl_possibleTypes: string[] = ['FileWithSignedUrl']
-    export const isFileWithSignedUrl = (obj?: { __typename?: any } | null): obj is FileWithSignedUrl => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isFileWithSignedUrl"')
-      return FileWithSignedUrl_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -7846,6 +7865,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isPublicWorkspaceData = (obj?: { __typename?: any } | null): obj is PublicWorkspaceData => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicWorkspaceData"')
       return PublicWorkspaceData_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PublicWorkspaceDataSummary_possibleTypes: string[] = ['PublicWorkspaceDataSummary']
+    export const isPublicWorkspaceDataSummary = (obj?: { __typename?: any } | null): obj is PublicWorkspaceDataSummary => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPublicWorkspaceDataSummary"')
+      return PublicWorkspaceDataSummary_possibleTypes.includes(obj.__typename)
     }
     
 

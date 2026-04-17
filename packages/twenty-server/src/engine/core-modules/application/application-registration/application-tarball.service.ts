@@ -22,6 +22,8 @@ import { readJsonFile } from 'src/engine/core-modules/application/application-pa
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import type { ApplicationManifest } from 'twenty-shared/application';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 
 export const MAX_TARBALL_UPLOAD_SIZE_BYTES = 50 * 1024 * 1024;
 
@@ -34,6 +36,7 @@ export class ApplicationTarballService {
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly fileStorageService: FileStorageService,
     private readonly applicationService: ApplicationService,
+    private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
   ) {}
 
   async uploadTarball(params: {
@@ -58,10 +61,7 @@ export class ApplicationTarballService {
       const contentDir = await resolvePackageContentDir(extractDir);
 
       const manifest = await readJsonFile<{
-        application?: {
-          universalIdentifier?: string;
-          displayName?: string;
-        };
+        application?: ApplicationManifest;
       }>(contentDir, 'manifest.json');
 
       const packageJson = await readJsonFile<{
@@ -180,6 +180,13 @@ export class ApplicationTarballService {
         isFeatured: false,
         ownerWorkspaceId: params.ownerWorkspaceId,
       });
+
+      if (manifest.application?.serverVariables) {
+        await this.applicationRegistrationVariableService.syncVariableSchemas(
+          appRegistration.id,
+          manifest.application.serverVariables,
+        );
+      }
 
       this.logger.log(
         `Tarball uploaded for app ${universalIdentifier} (registration ${appRegistration.id})`,

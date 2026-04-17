@@ -16,6 +16,7 @@ import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/com
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'commandMenuItem', schema: 'core' })
@@ -29,6 +30,10 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 ])
 @Index('IDX_COMMAND_MENU_ITEM_AVAILABILITY_OBJECT_METADATA_ID', [
   'availabilityObjectMetadataId',
+])
+@Index('IDX_COMMAND_MENU_ITEM_PAGE_LAYOUT_ID_WORKSPACE_ID', [
+  'pageLayoutId',
+  'workspaceId',
 ])
 @Check(
   'CHK_CMD_MENU_ITEM_ENGINE_KEY_COHERENCE',
@@ -98,6 +103,16 @@ export class CommandMenuItemEntity
   })
   @JoinColumn({ name: 'availabilityObjectMetadataId' })
   availabilityObjectMetadata: Relation<ObjectMetadataEntity> | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  pageLayoutId: string | null;
+
+  @ManyToOne(() => PageLayoutEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'pageLayoutId' })
+  pageLayout: Relation<PageLayoutEntity> | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

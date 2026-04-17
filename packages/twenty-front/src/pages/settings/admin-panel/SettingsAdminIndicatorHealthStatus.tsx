@@ -51,11 +51,7 @@ export const SettingsAdminIndicatorHealthStatus = () => {
           href: getSettingsPath(SettingsPath.AdminPanel),
         },
         {
-          children: t`Admin Panel`,
-          href: getSettingsPath(SettingsPath.AdminPanel),
-        },
-        {
-          children: t`Health Status`,
+          children: t`Admin Panel - Health`,
           href: getSettingsPath(SettingsPath.AdminPanelHealthStatus),
         },
         { children: `${data?.getIndicatorHealthStatus?.label}` },

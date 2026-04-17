@@ -1,5 +1,6 @@
 'use client';
 
+import { getSharedCompanyLogoUrlFromDomainName } from '@/lib/shared-asset-paths';
 import { RatingStarIcon } from '@/icons';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -321,6 +322,12 @@ function sanitizeURL(link: string | null | undefined) {
 }
 
 function getLogoUrlFromDomainName(domainName?: string): string | undefined {
+  const sharedLogoUrl = getSharedCompanyLogoUrlFromDomainName(domainName);
+
+  if (sharedLogoUrl) {
+    return sharedLogoUrl;
+  }
+
   const sanitizedDomain = sanitizeURL(domainName);
 
   return sanitizedDomain

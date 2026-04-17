@@ -1,15 +1,17 @@
-import { Hourglass } from '@/illustrations/Testimonials/Hourglass';
-import { Partner as PartnerVisual } from '@/illustrations/Testimonials/Partner';
 import { Carousel } from './Carousel/Carousel';
+import {
+  MountedTestimonialsHomeVisual,
+  MountedTestimonialsPartnerVisual,
+} from './MountedTestimonialsVisuals';
 import { PartnerCarousel } from './PartnerCarousel/PartnerCarousel';
 import { Root } from './Root/Root';
 import { Separator } from './Separator/Separator';
 
 export const Testimonials = {
   Carousel,
-  HomeVisual: Hourglass,
+  HomeVisual: MountedTestimonialsHomeVisual,
   PartnerCarousel,
-  PartnerVisual,
+  PartnerVisual: MountedTestimonialsPartnerVisual,
   Root,
   Separator,
 };

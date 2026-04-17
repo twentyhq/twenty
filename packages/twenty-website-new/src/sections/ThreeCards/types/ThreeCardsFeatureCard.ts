@@ -5,6 +5,8 @@ import type { ImageType } from '@/design-system/components/Image/types/Image';
 type ThreeCardsFeatureCardBaseType = {
   heading: HeadingType;
   body: BodyType;
+  backgroundImageSrc?: string;
+  backgroundImageRotationDeg?: number;
   icon: 'fast-path' | 'live-data' | 'users-group';
 };
 

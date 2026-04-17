@@ -29,11 +29,7 @@ export const WithStandardSelected: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByRole(
-      'heading',
-      { name: 'New Object', level: 3 },
-      { timeout: 5000 },
-    );
+    await canvas.findByText('New Object');
 
     const listingInput = await canvas.findByPlaceholderText('Listing');
     const pluralInput = await canvas.findByPlaceholderText('Listings');

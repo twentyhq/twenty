@@ -129,7 +129,9 @@ export class InstanceCommandRunnerService {
         this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
       try {
+        this.logger.log(`${name} starting data migration...`);
         await command.runDataMigration(this.dataSource);
+        this.logger.log(`${name} data migration completed`);
       } catch (error) {
         const workspaceIds =
           await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();

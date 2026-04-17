@@ -9,6 +9,9 @@ const FRAME_MASK_PATH =
 
 const frameMask = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 672 705' preserveAspectRatio='none'%3E%3Cpath d='${encodeURIComponent(FRAME_MASK_PATH)}' fill='black'/%3E%3C/svg%3E")`;
 
+export const STEPPER_VISUAL_POINTER_ROOT_SELECTOR =
+  '[data-stepper-visual-pointer-root]';
+
 const FrameRoot = styled.div`
   position: relative;
   width: 100%;
@@ -101,7 +104,7 @@ export function StepperVisualFrame({
   shapeSrc,
 }: StepperVisualFrameProps) {
   return (
-    <FrameRoot>
+    <FrameRoot data-stepper-visual-pointer-root="">
       <MaskedBackdrop
         style={{
           ...getMaskStyle(),

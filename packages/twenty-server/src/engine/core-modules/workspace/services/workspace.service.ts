@@ -820,4 +820,10 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       this.exceptionHandlerService.captureExceptions([error as Error]);
     }
   }
+
+  async findOneWorkspaceById(id: string) {
+    return await this.workspaceRepository.findOneBy({
+      id,
+    });
+  }
 }

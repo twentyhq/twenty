@@ -83,4 +83,9 @@ export class CreateCommandMenuItemInput {
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   payload?: CommandMenuItemPayload;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  pageLayoutId?: string;
 }

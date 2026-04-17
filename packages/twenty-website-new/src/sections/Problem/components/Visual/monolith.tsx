@@ -1,11 +1,8 @@
 'use client';
 
-import {
-  useEffect,
-  useRef,
-  type CSSProperties,
-} from 'react';
+import { useEffect, useRef, type CSSProperties } from 'react';
 import * as THREE from 'three';
+import { createSiteWebGlRenderer } from '@/lib/webgl';
 
 const IMAGE_SRC = '/images/home/problem/monolith-problem.webp';
 const PREVIEW_DISTANCE = 4;
@@ -495,7 +492,7 @@ async function mountHalftoneCanvas(options: MountHalftoneCanvasOptions) {
     return undefined;
   }
 
-  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
+  const renderer = createSiteWebGlRenderer({ alpha: true, antialias: false });
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.setClearColor(0x000000, 0);
   renderer.setPixelRatio(1);

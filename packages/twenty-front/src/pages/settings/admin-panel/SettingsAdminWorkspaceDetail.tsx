@@ -169,11 +169,7 @@ export const SettingsAdminWorkspaceDetail = () => {
           href: getSettingsPath(SettingsPath.AdminPanel),
         },
         {
-          children: t`Admin Panel`,
-          href: getSettingsPath(SettingsPath.AdminPanel),
-        },
-        {
-          children: t`AI`,
+          children: t`Admin Panel - AI`,
           href: AI_ADMIN_PATH,
         },
         {

@@ -56,11 +56,11 @@ export const SettingsAdminQueueDetail = () => {
       title={t`Queue: ${queueName}`}
       links={[
         {
-          children: t`Admin Panel`,
+          children: t`Other`,
           href: getSettingsPath(SettingsPath.AdminPanel),
         },
         {
-          children: t`Health Status`,
+          children: t`Admin Panel - Health`,
           href: getSettingsPath(SettingsPath.AdminPanelHealthStatus),
         },
         {

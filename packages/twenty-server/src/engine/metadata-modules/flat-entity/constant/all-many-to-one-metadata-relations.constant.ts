@@ -86,6 +86,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'frontComponentUniversalIdentifier',
     },
+    pageLayout: {
+      metadataName: 'pageLayout',
+      foreignKey: 'pageLayoutId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'pageLayoutUniversalIdentifier',
+    },
   },
   navigationMenuItem: {
     workspace: null,

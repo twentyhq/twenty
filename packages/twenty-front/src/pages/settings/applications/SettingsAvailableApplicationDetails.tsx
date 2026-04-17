@@ -222,7 +222,6 @@ export const SettingsAvailableApplicationDetails = () => {
   const sourceType = detail?.sourceType;
   const isNpmApp = sourceType === ApplicationRegistrationSourceType.NPM;
   const registrationId = detail?.id;
-  const sourcePackage = detail?.sourcePackage;
   const sourcePackageUrl =
     isNpmApp && detail?.sourcePackage
       ? `https://www.npmjs.com/package/${detail.sourcePackage}`
