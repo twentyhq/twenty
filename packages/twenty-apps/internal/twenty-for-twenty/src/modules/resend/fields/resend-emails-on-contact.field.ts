@@ -1,20 +1,21 @@
-import { CONTACT_ON_RESEND_EMAIL_ID } from 'src/modules/resend/fields/contact-on-resend-email.field';
-import { RESEND_CONTACT_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/objects/resend-contact';
-import { RESEND_EMAIL_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/objects/resend-email';
+import {
+  CONTACT_ON_RESEND_EMAIL_FIELD_UNIVERSAL_IDENTIFIER,
+  RESEND_CONTACT_OBJECT_UNIVERSAL_IDENTIFIER,
+  RESEND_EMAILS_ON_CONTACT_FIELD_UNIVERSAL_IDENTIFIER,
+  RESEND_EMAIL_OBJECT_UNIVERSAL_IDENTIFIER,
+} from 'src/modules/resend/constants/universal-identifiers';
 import { defineField, FieldType, RelationType } from 'twenty-sdk';
 
-export const RESEND_EMAILS_ON_CONTACT_ID =
-  'd8b69019-ca10-4599-b099-ecfc891d6438';
-
 export default defineField({
-  universalIdentifier: RESEND_EMAILS_ON_CONTACT_ID,
+  universalIdentifier: RESEND_EMAILS_ON_CONTACT_FIELD_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: RESEND_CONTACT_OBJECT_UNIVERSAL_IDENTIFIER,
   type: FieldType.RELATION,
   name: 'resendEmails',
   label: 'Emails',
   relationTargetObjectMetadataUniversalIdentifier:
     RESEND_EMAIL_OBJECT_UNIVERSAL_IDENTIFIER,
-  relationTargetFieldMetadataUniversalIdentifier: CONTACT_ON_RESEND_EMAIL_ID,
+  relationTargetFieldMetadataUniversalIdentifier:
+    CONTACT_ON_RESEND_EMAIL_FIELD_UNIVERSAL_IDENTIFIER,
   universalSettings: {
     relationType: RelationType.ONE_TO_MANY,
   },

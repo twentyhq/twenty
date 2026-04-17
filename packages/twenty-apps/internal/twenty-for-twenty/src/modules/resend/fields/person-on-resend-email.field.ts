@@ -1,5 +1,8 @@
-import { RESEND_EMAILS_ON_PERSON_ID } from 'src/modules/resend/fields/resend-emails-on-person.field';
-import { RESEND_EMAIL_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/objects/resend-email';
+import {
+  PERSON_ON_RESEND_EMAIL_FIELD_UNIVERSAL_IDENTIFIER,
+  RESEND_EMAILS_ON_PERSON_FIELD_UNIVERSAL_IDENTIFIER,
+  RESEND_EMAIL_OBJECT_UNIVERSAL_IDENTIFIER,
+} from 'src/modules/resend/constants/universal-identifiers';
 import {
   defineField,
   FieldType,
@@ -7,18 +10,16 @@ import {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk';
 
-export const PERSON_ON_RESEND_EMAIL_ID =
-  'cb08e862-8114-480e-986b-8f50fe49de41';
-
 export default defineField({
-  universalIdentifier: PERSON_ON_RESEND_EMAIL_ID,
+  universalIdentifier: PERSON_ON_RESEND_EMAIL_FIELD_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: RESEND_EMAIL_OBJECT_UNIVERSAL_IDENTIFIER,
   type: FieldType.RELATION,
   name: 'person',
   label: 'Person',
   relationTargetObjectMetadataUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
-  relationTargetFieldMetadataUniversalIdentifier: RESEND_EMAILS_ON_PERSON_ID,
+  relationTargetFieldMetadataUniversalIdentifier:
+    RESEND_EMAILS_ON_PERSON_FIELD_UNIVERSAL_IDENTIFIER,
   universalSettings: {
     relationType: RelationType.MANY_TO_ONE,
     joinColumnName: 'personId',

@@ -1,13 +1,13 @@
-import { BROADCAST_ON_RESEND_EMAIL_ID } from 'src/modules/resend/fields/broadcast-on-resend-email.field';
-import { RESEND_BROADCAST_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/objects/resend-broadcast';
-import { RESEND_EMAIL_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/objects/resend-email';
+import {
+  BROADCAST_ON_RESEND_EMAIL_FIELD_UNIVERSAL_IDENTIFIER,
+  RESEND_BROADCAST_OBJECT_UNIVERSAL_IDENTIFIER,
+  RESEND_EMAILS_ON_BROADCAST_FIELD_UNIVERSAL_IDENTIFIER,
+  RESEND_EMAIL_OBJECT_UNIVERSAL_IDENTIFIER,
+} from 'src/modules/resend/constants/universal-identifiers';
 import { defineField, FieldType, RelationType } from 'twenty-sdk';
 
-export const RESEND_EMAILS_ON_BROADCAST_ID =
-  '0b346627-4797-4cff-8a7c-1dc8f4580d6f';
-
 export default defineField({
-  universalIdentifier: RESEND_EMAILS_ON_BROADCAST_ID,
+  universalIdentifier: RESEND_EMAILS_ON_BROADCAST_FIELD_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: RESEND_BROADCAST_OBJECT_UNIVERSAL_IDENTIFIER,
   type: FieldType.RELATION,
   name: 'resendEmails',
@@ -15,7 +15,7 @@ export default defineField({
   relationTargetObjectMetadataUniversalIdentifier:
     RESEND_EMAIL_OBJECT_UNIVERSAL_IDENTIFIER,
   relationTargetFieldMetadataUniversalIdentifier:
-    BROADCAST_ON_RESEND_EMAIL_ID,
+    BROADCAST_ON_RESEND_EMAIL_FIELD_UNIVERSAL_IDENTIFIER,
   universalSettings: {
     relationType: RelationType.ONE_TO_MANY,
   },

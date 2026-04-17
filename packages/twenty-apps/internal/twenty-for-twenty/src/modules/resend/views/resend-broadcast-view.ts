@@ -1,6 +1,3 @@
-import { RESEND_EMAILS_ON_BROADCAST_ID } from 'src/modules/resend/fields/resend-emails-on-broadcast.field';
-import { SEGMENT_ON_RESEND_BROADCAST_ID } from 'src/modules/resend/fields/segment-on-resend-broadcast.field';
-import { TEMPLATE_ON_RESEND_BROADCAST_ID } from 'src/modules/resend/fields/template-on-resend-broadcast.field';
 import {
   BROADCAST_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER,
   BROADCAST_FROM_ADDRESS_FIELD_UNIVERSAL_IDENTIFIER,
@@ -9,11 +6,21 @@ import {
   BROADCAST_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
   BROADCAST_SUBJECT_FIELD_UNIVERSAL_IDENTIFIER,
   RESEND_BROADCAST_OBJECT_UNIVERSAL_IDENTIFIER,
-} from 'src/modules/resend/objects/resend-broadcast';
+  RESEND_BROADCAST_VIEW_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER,
+  RESEND_BROADCAST_VIEW_EMAILS_FIELD_UNIVERSAL_IDENTIFIER,
+  RESEND_BROADCAST_VIEW_FROM_ADDRESS_FIELD_UNIVERSAL_IDENTIFIER,
+  RESEND_BROADCAST_VIEW_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+  RESEND_BROADCAST_VIEW_SEGMENT_FIELD_UNIVERSAL_IDENTIFIER,
+  RESEND_BROADCAST_VIEW_SENT_AT_FIELD_UNIVERSAL_IDENTIFIER,
+  RESEND_BROADCAST_VIEW_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+  RESEND_BROADCAST_VIEW_SUBJECT_FIELD_UNIVERSAL_IDENTIFIER,
+  RESEND_BROADCAST_VIEW_TEMPLATE_FIELD_UNIVERSAL_IDENTIFIER,
+  RESEND_BROADCAST_VIEW_UNIVERSAL_IDENTIFIER,
+  RESEND_EMAILS_ON_BROADCAST_FIELD_UNIVERSAL_IDENTIFIER,
+  SEGMENT_ON_RESEND_BROADCAST_FIELD_UNIVERSAL_IDENTIFIER,
+  TEMPLATE_ON_RESEND_BROADCAST_FIELD_UNIVERSAL_IDENTIFIER,
+} from 'src/modules/resend/constants/universal-identifiers';
 import { defineView } from 'twenty-sdk';
-
-export const RESEND_BROADCAST_VIEW_UNIVERSAL_IDENTIFIER =
-  '9875e352-4dd7-4296-9291-5de5864594b8';
 
 export default defineView({
   universalIdentifier: RESEND_BROADCAST_VIEW_UNIVERSAL_IDENTIFIER,
@@ -23,7 +30,7 @@ export default defineView({
   position: 0,
   fields: [
     {
-      universalIdentifier: '7d2bd63b-d609-441e-97b7-8d72e1f64fcb',
+      universalIdentifier: RESEND_BROADCAST_VIEW_NAME_FIELD_UNIVERSAL_IDENTIFIER,
       fieldMetadataUniversalIdentifier:
         BROADCAST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
       isVisible: true,
@@ -31,7 +38,8 @@ export default defineView({
       position: 0,
     },
     {
-      universalIdentifier: '0cb2b32f-a7ca-4c6e-91af-705be37416dd',
+      universalIdentifier:
+        RESEND_BROADCAST_VIEW_SUBJECT_FIELD_UNIVERSAL_IDENTIFIER,
       fieldMetadataUniversalIdentifier:
         BROADCAST_SUBJECT_FIELD_UNIVERSAL_IDENTIFIER,
       isVisible: true,
@@ -39,7 +47,8 @@ export default defineView({
       position: 1,
     },
     {
-      universalIdentifier: '24261a77-9ddd-4fee-bcef-10308b6e438e',
+      universalIdentifier:
+        RESEND_BROADCAST_VIEW_FROM_ADDRESS_FIELD_UNIVERSAL_IDENTIFIER,
       fieldMetadataUniversalIdentifier:
         BROADCAST_FROM_ADDRESS_FIELD_UNIVERSAL_IDENTIFIER,
       isVisible: true,
@@ -47,7 +56,8 @@ export default defineView({
       position: 2,
     },
     {
-      universalIdentifier: 'ba957060-3879-4812-98ac-0199732c79d9',
+      universalIdentifier:
+        RESEND_BROADCAST_VIEW_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
       fieldMetadataUniversalIdentifier:
         BROADCAST_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
       isVisible: true,
@@ -55,7 +65,8 @@ export default defineView({
       position: 3,
     },
     {
-      universalIdentifier: '7e78132b-7b33-468e-962d-d7bb1b3025d4',
+      universalIdentifier:
+        RESEND_BROADCAST_VIEW_SENT_AT_FIELD_UNIVERSAL_IDENTIFIER,
       fieldMetadataUniversalIdentifier:
         BROADCAST_SENT_AT_FIELD_UNIVERSAL_IDENTIFIER,
       isVisible: true,
@@ -63,7 +74,8 @@ export default defineView({
       position: 4,
     },
     {
-      universalIdentifier: 'fdcf945c-5d0f-42f2-94e6-765d5216bd2f',
+      universalIdentifier:
+        RESEND_BROADCAST_VIEW_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER,
       fieldMetadataUniversalIdentifier:
         BROADCAST_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER,
       isVisible: true,
@@ -71,22 +83,28 @@ export default defineView({
       position: 5,
     },
     {
-      universalIdentifier: '4d7eb630-9f44-4090-a887-7fb08e0c49ed',
-      fieldMetadataUniversalIdentifier: SEGMENT_ON_RESEND_BROADCAST_ID,
+      universalIdentifier:
+        RESEND_BROADCAST_VIEW_SEGMENT_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        SEGMENT_ON_RESEND_BROADCAST_FIELD_UNIVERSAL_IDENTIFIER,
       isVisible: true,
       size: 12,
       position: 6,
     },
     {
-      universalIdentifier: '82646a38-16f8-45a9-8b97-a3e910865bbf',
-      fieldMetadataUniversalIdentifier: TEMPLATE_ON_RESEND_BROADCAST_ID,
+      universalIdentifier:
+        RESEND_BROADCAST_VIEW_TEMPLATE_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        TEMPLATE_ON_RESEND_BROADCAST_FIELD_UNIVERSAL_IDENTIFIER,
       isVisible: true,
       size: 12,
       position: 7,
     },
     {
-      universalIdentifier: 'e1726752-fed7-4e9b-b395-e47b60f3d56d',
-      fieldMetadataUniversalIdentifier: RESEND_EMAILS_ON_BROADCAST_ID,
+      universalIdentifier:
+        RESEND_BROADCAST_VIEW_EMAILS_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier:
+        RESEND_EMAILS_ON_BROADCAST_FIELD_UNIVERSAL_IDENTIFIER,
       isVisible: true,
       size: 12,
       position: 8,

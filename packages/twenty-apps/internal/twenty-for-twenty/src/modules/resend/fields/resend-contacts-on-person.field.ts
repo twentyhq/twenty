@@ -1,5 +1,8 @@
-import { PERSON_ON_RESEND_CONTACT_ID } from 'src/modules/resend/fields/person-on-resend-contact.field';
-import { RESEND_CONTACT_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/objects/resend-contact';
+import {
+  PERSON_ON_RESEND_CONTACT_FIELD_UNIVERSAL_IDENTIFIER,
+  RESEND_CONTACTS_ON_PERSON_FIELD_UNIVERSAL_IDENTIFIER,
+  RESEND_CONTACT_OBJECT_UNIVERSAL_IDENTIFIER,
+} from 'src/modules/resend/constants/universal-identifiers';
 import {
   defineField,
   FieldType,
@@ -7,11 +10,8 @@ import {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk';
 
-export const RESEND_CONTACTS_ON_PERSON_ID =
-  '134222c5-7760-4fd1-b89d-8a956f3068c5';
-
 export default defineField({
-  universalIdentifier: RESEND_CONTACTS_ON_PERSON_ID,
+  universalIdentifier: RESEND_CONTACTS_ON_PERSON_FIELD_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
   type: FieldType.RELATION,
@@ -19,7 +19,8 @@ export default defineField({
   label: 'Resend Contacts',
   relationTargetObjectMetadataUniversalIdentifier:
     RESEND_CONTACT_OBJECT_UNIVERSAL_IDENTIFIER,
-  relationTargetFieldMetadataUniversalIdentifier: PERSON_ON_RESEND_CONTACT_ID,
+  relationTargetFieldMetadataUniversalIdentifier:
+    PERSON_ON_RESEND_CONTACT_FIELD_UNIVERSAL_IDENTIFIER,
   universalSettings: {
     relationType: RelationType.ONE_TO_MANY,
   },
