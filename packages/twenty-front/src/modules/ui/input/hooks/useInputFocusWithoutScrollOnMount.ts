@@ -1,15 +1,17 @@
+import { useStore } from 'jotai';
 import { useEffect, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { SELECTABLE_LIST_BLURRED_ATTRIBUTE } from '@/ui/layout/selectable-list/constants/SelectableListBlurredAttribute';
+import { isSelectableListGridFocusedState } from '@/ui/layout/selectable-list/states/isSelectableListGridFocusedState';
 
 export const useInputFocusWithoutScrollOnMount = () => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const store = useStore();
 
   useEffect(() => {
     if (
       isDefined(inputRef.current) &&
-      inputRef.current.dataset[SELECTABLE_LIST_BLURRED_ATTRIBUTE] !== 'true'
+      !store.get(isSelectableListGridFocusedState.atom)
     ) {
       inputRef.current.focus({ preventScroll: true });
     }

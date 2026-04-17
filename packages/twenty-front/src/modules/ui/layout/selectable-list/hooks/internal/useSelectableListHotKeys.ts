@@ -3,7 +3,7 @@ import { useStore } from 'jotai';
 import { useCallback, useRef } from 'react';
 import { Key } from 'ts-key-enum';
 
-import { SELECTABLE_LIST_BLURRED_ATTRIBUTE } from '@/ui/layout/selectable-list/constants/SelectableListBlurredAttribute';
+import { isSelectableListGridFocusedState } from '@/ui/layout/selectable-list/states/isSelectableListGridFocusedState';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { selectableItemIdsComponentState } from '@/ui/layout/selectable-list/states/selectableItemIdsComponentState';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -24,8 +24,7 @@ export const useSelectableListHotKeys = (
   const blurActiveInputIfNeeded = () => {
     if (document.activeElement instanceof HTMLInputElement) {
       lastBlurredInputRef.current = document.activeElement;
-      document.activeElement.dataset[SELECTABLE_LIST_BLURRED_ATTRIBUTE] =
-        'true';
+      store.set(isSelectableListGridFocusedState.atom, true);
       document.activeElement.blur();
     }
   };
@@ -34,9 +33,7 @@ export const useSelectableListHotKeys = (
     if (!lastBlurredInputRef.current) {
       return;
     }
-    delete lastBlurredInputRef.current.dataset[
-      SELECTABLE_LIST_BLURRED_ATTRIBUTE
-    ];
+    store.set(isSelectableListGridFocusedState.atom, false);
     lastBlurredInputRef.current.focus();
     lastBlurredInputRef.current = null;
   };
