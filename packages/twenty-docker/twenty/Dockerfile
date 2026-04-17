@@ -126,6 +126,18 @@ ENTRYPOINT ["/app/entrypoint.sh"]
 
 
 # ===========================================================================
+# Target: twenty-managed (managed infra with AWS CLI)
+#   docker build --target twenty-managed -f packages/twenty-docker/twenty/Dockerfile .
+# ===========================================================================
+
+FROM twenty AS twenty-managed
+
+USER root
+RUN apk add --no-cache aws-cli
+USER 1000
+
+
+# ===========================================================================
 # Target: twenty-app-dev (all-in-one with Postgres + Redis)
 #   docker build --target twenty-app-dev -f packages/twenty-docker/twenty/Dockerfile .
 # ===========================================================================
