@@ -2,27 +2,26 @@ import { useLingui } from '@lingui/react/macro';
 
 import { RESET_RECORD_PAGE_LAYOUT_MODAL_ID } from '@/layout-customization/constants/ResetRecordPageLayoutModalId';
 import { useCurrentRecordPageLayoutInCustomization } from '@/layout-customization/hooks/useCurrentRecordPageLayoutInCustomization';
-import { useExitLayoutCustomizationMode } from '@/layout-customization/hooks/useExitLayoutCustomizationMode';
+import { useRefreshPageLayoutAfterReset } from '@/page-layout/hooks/useRefreshPageLayoutAfterReset';
 import { useResetPageLayoutToDefault } from '@/page-layout/hooks/useResetPageLayoutToDefault';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 
-export const LayoutCustomizationBarResetConfirmationModal = () => {
+type LayoutCustomizationBarResetConfirmationModalContentProps = {
+  pageLayoutId: string;
+};
+
+const LayoutCustomizationBarResetConfirmationModalContent = ({
+  pageLayoutId,
+}: LayoutCustomizationBarResetConfirmationModalContentProps) => {
   const { t } = useLingui();
 
-  const currentRecordPageLayout = useCurrentRecordPageLayoutInCustomization();
   const { resetPageLayoutToDefault } = useResetPageLayoutToDefault();
-  const { exitLayoutCustomizationMode } = useExitLayoutCustomizationMode();
+  const { refreshPageLayoutAfterReset } =
+    useRefreshPageLayoutAfterReset(pageLayoutId);
 
   const handleConfirmReset = async () => {
-    if (currentRecordPageLayout === null) {
-      return;
-    }
-
-    await resetPageLayoutToDefault({
-      pageLayoutId: currentRecordPageLayout.pageLayoutId,
-    });
-
-    exitLayoutCustomizationMode();
+    await resetPageLayoutToDefault({ pageLayoutId });
+    await refreshPageLayoutAfterReset();
   };
 
   return (
@@ -33,6 +32,20 @@ export const LayoutCustomizationBarResetConfirmationModal = () => {
       onConfirmClick={handleConfirmReset}
       confirmButtonText={t`Reset`}
       confirmButtonAccent="danger"
+    />
+  );
+};
+
+export const LayoutCustomizationBarResetConfirmationModal = () => {
+  const currentRecordPageLayout = useCurrentRecordPageLayoutInCustomization();
+
+  if (currentRecordPageLayout === null) {
+    return null;
+  }
+
+  return (
+    <LayoutCustomizationBarResetConfirmationModalContent
+      pageLayoutId={currentRecordPageLayout.pageLayoutId}
     />
   );
 };

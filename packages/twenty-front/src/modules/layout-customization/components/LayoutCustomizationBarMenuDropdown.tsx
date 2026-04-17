@@ -11,6 +11,7 @@ import { useCurrentRecordPageLayoutInCustomization } from '@/layout-customizatio
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 
@@ -57,7 +58,7 @@ export const LayoutCustomizationBarMenuDropdown = () => {
         </StyledInvertedIconButtonWrapper>
       }
       dropdownComponents={
-        <DropdownContent>
+        <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
           <DropdownMenuItemsContainer>
             <MenuItem
               LeftIcon={IconReload}
