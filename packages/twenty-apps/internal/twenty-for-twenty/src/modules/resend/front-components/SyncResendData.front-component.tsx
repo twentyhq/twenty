@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import {
+  Command,
   defineFrontComponent,
   enqueueSnackbar,
-  unmountFrontComponent,
   updateProgress,
 } from 'twenty-sdk';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,139 +13,76 @@ import {
   SYNC_RESEND_DATA_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 } from 'src/modules/resend/constants/universal-identifiers';
 
-const SyncResendDataEffect = () => {
-  const [hasTriggered, setHasTriggered] = useState(false);
+const execute = async () => {
+  await updateProgress(0.1);
 
-  useEffect(() => {
-    if (hasTriggered) {
-      return;
-    }
+  const metadataClient = new MetadataApiClient();
 
-    setHasTriggered(true);
+  const { findManyLogicFunctions } = await metadataClient.query({
+    findManyLogicFunctions: {
+      id: true,
+      universalIdentifier: true,
+    },
+  });
 
-    const run = async () => {
-      try {
-        await updateProgress(0.1);
+  const syncFunction = findManyLogicFunctions.find(
+    (fn) =>
+      fn.universalIdentifier ===
+      SYNC_RESEND_DATA_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  );
 
-        const metadataClient = new MetadataApiClient();
+  if (!isDefined(syncFunction)) {
+    throw new Error('Sync logic function not found');
+  }
 
-        const logicFunctions = await metadataClient.query({
-          findManyLogicFunctions: {
-            id: true,
-            universalIdentifier: true,
-          },
-        });
+  await updateProgress(0.3);
 
-        const syncFunction = logicFunctions.findManyLogicFunctions.find(
-          (fn) =>
-            fn.universalIdentifier ===
-            SYNC_RESEND_DATA_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-        );
+  const { executeOneLogicFunction } = await metadataClient.mutation({
+    executeOneLogicFunction: {
+      __args: {
+        input: {
+          id: syncFunction.id,
+          payload: {} as Record<string, never>,
+        },
+      },
+      status: true,
+      error: true,
+    },
+  });
 
-        if (!isDefined(syncFunction)) {
-          await enqueueSnackbar({
-            message: 'Sync logic function not found',
-            variant: 'error',
-          });
-          await unmountFrontComponent();
+  if (executeOneLogicFunction.status !== 'SUCCESS') {
+    const rawMessage =
+      typeof executeOneLogicFunction.error?.errorMessage === 'string'
+        ? executeOneLogicFunction.error.errorMessage
+        : 'Sync logic function execution failed';
 
-          return;
-        }
+    const isRateLimit =
+      rawMessage.toLowerCase().includes('rate_limit') ||
+      rawMessage.toLowerCase().includes('rate limit');
 
-        await updateProgress(0.3);
+    throw new Error(
+      isRateLimit
+        ? 'Sync failed: Resend API rate limit exceeded. Please try again later.'
+        : `Sync failed: ${rawMessage}`,
+    );
+  }
 
-        let result;
+  await updateProgress(1);
 
-        try {
-          result = await metadataClient.mutation({
-            executeOneLogicFunction: {
-              __args: {
-                input: {
-                  id: syncFunction.id,
-                  payload: {} as Record<string, never>,
-                },
-              },
-              status: true,
-              error: true,
-            },
-          });
-        } catch (error) {
-          console.error('Failed to execute sync logic function', error);
-
-          const message =
-            error instanceof Error
-              ? error.message
-              : 'Failed to execute sync logic function';
-
-          await enqueueSnackbar({ message, variant: 'error' });
-          await unmountFrontComponent();
-
-          return;
-        }
-
-        if (result.executeOneLogicFunction.status !== 'SUCCESS') {
-          const executionError = result.executeOneLogicFunction.error;
-
-          console.error(
-            'Sync logic function execution failed',
-            executionError,
-          );
-
-          const rawMessage =
-            typeof executionError?.errorMessage === 'string'
-              ? executionError.errorMessage
-              : 'Sync logic function execution failed';
-
-          const isRateLimit =
-            rawMessage.toLowerCase().includes('rate_limit') ||
-            rawMessage.toLowerCase().includes('rate limit');
-
-          const errorMessage = isRateLimit
-            ? 'Sync failed: Resend API rate limit exceeded. Please try again later.'
-            : `Sync failed: ${rawMessage}`;
-
-          await enqueueSnackbar({
-            message: errorMessage,
-            variant: 'error',
-          });
-          await unmountFrontComponent();
-
-          return;
-        }
-
-        await updateProgress(1);
-
-        await enqueueSnackbar({
-          message: 'Resend data sync completed',
-          variant: 'success',
-        });
-
-        await unmountFrontComponent();
-      } catch (error) {
-        console.error('Failed to sync Resend data', error);
-
-        const message =
-          error instanceof Error
-            ? error.message
-            : 'Failed to sync Resend data';
-
-        await enqueueSnackbar({ message, variant: 'error' });
-        await unmountFrontComponent();
-      }
-    };
-
-    run();
-  }, [hasTriggered]);
-
-  return null;
+  await enqueueSnackbar({
+    message: 'Resend data sync completed',
+    variant: 'success',
+  });
 };
+
+const SyncResendData = () => <Command execute={execute} />;
 
 export default defineFrontComponent({
   universalIdentifier: SYNC_RESEND_DATA_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   name: 'Sync Resend Data',
   description: 'Triggers a manual sync of all Resend data',
   isHeadless: true,
-  component: SyncResendDataEffect,
+  component: SyncResendData,
   command: {
     universalIdentifier: SYNC_RESEND_DATA_COMMAND_UNIVERSAL_IDENTIFIER,
     label: 'Sync Resend data',
