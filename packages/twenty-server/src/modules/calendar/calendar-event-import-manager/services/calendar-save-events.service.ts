@@ -241,10 +241,9 @@ export class CalendarSaveEventsService {
                 ({ existingCalendarEvent }) => existingCalendarEvent !== null,
               )
               .map(({ fetchedCalendarEvent }) => ({
-                criteria:
-                  existingAssociationIdByExternalId.get(
-                    fetchedCalendarEvent.id,
-                  )!,
+                criteria: existingAssociationIdByExternalId.get(
+                  fetchedCalendarEvent.id,
+                )!,
                 partialEntity: {
                   recurringEventExternalId:
                     fetchedCalendarEvent.recurringEventExternalId ?? '',

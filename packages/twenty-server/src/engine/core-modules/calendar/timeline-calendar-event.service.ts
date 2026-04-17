@@ -86,7 +86,7 @@ export class TimelineCalendarEventService {
 
         if (ids.length <= 0) {
           return {
-            totalNumberOfCalendarEvents: 0,
+            totalNumberOfCalendarEvents,
             timelineCalendarEvents: [],
           };
         }
