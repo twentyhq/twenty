@@ -333,6 +333,7 @@ export const TextFieldWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
       isActive: true,
       id: 'widget-text-field',
       pageLayoutTabId: TAB_ID_OVERVIEW,
@@ -427,6 +428,7 @@ export const AddressFieldWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
       isActive: true,
       id: 'widget-address-field',
       pageLayoutTabId: TAB_ID_OVERVIEW,
@@ -524,6 +526,7 @@ export const NumberFieldWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
       isActive: true,
       id: 'widget-number-field',
       pageLayoutTabId: TAB_ID_OVERVIEW,
@@ -618,6 +621,7 @@ export const LinkFieldWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
       isActive: true,
       id: 'widget-link-field',
       pageLayoutTabId: TAB_ID_OVERVIEW,
@@ -712,6 +716,7 @@ export const ManyToOneRelationFieldWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
       isActive: true,
       id: 'widget-relation-field',
       pageLayoutTabId: TAB_ID_OVERVIEW,
@@ -816,6 +821,7 @@ export const OneToManyRelationFieldWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
       isActive: true,
       id: 'widget-one-to-many-relation-field',
       pageLayoutTabId: TAB_ID_OVERVIEW,
@@ -912,6 +918,7 @@ export const BooleanFieldWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
       isActive: true,
       id: 'widget-boolean-field',
       pageLayoutTabId: TAB_ID_OVERVIEW,
@@ -1005,6 +1012,7 @@ export const CurrencyFieldWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
       isActive: true,
       id: 'widget-currency-field',
       pageLayoutTabId: TAB_ID_OVERVIEW,
@@ -1098,6 +1106,7 @@ export const EmailsFieldWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
       isActive: true,
       id: 'widget-emails-field',
       pageLayoutTabId: TAB_ID_OVERVIEW,
@@ -1192,6 +1201,7 @@ export const PhonesFieldWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
       isActive: true,
       id: 'widget-phones-field',
       pageLayoutTabId: TAB_ID_OVERVIEW,
@@ -1286,6 +1296,7 @@ export const SelectFieldWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
       isActive: true,
       id: 'widget-select-field',
       pageLayoutTabId: TAB_ID_OVERVIEW,
@@ -1381,6 +1392,7 @@ export const MultiSelectFieldWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
       isActive: true,
       id: 'widget-multi-select-field',
       pageLayoutTabId: TAB_ID_OVERVIEW,
@@ -1479,6 +1491,7 @@ export const TimelineActivityRelationFieldWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
       isActive: true,
       id: 'widget-timeline-activity-relation-field',
       pageLayoutTabId: TAB_ID_OVERVIEW,
@@ -1578,6 +1591,7 @@ export const ManyToOneRelationCardWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
       isActive: true,
       id: 'widget-relation-card',
       pageLayoutTabId: TAB_ID_OVERVIEW,
@@ -1690,6 +1704,7 @@ export const OneToManyRelationCardWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
       isActive: true,
       id: 'widget-one-to-many-relation-card',
       pageLayoutTabId: TAB_ID_OVERVIEW,
@@ -1785,6 +1800,7 @@ export const TimelineActivityRelationCardWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
       isActive: true,
       id: 'widget-timeline-activity-relation-card',
       pageLayoutTabId: TAB_ID_OVERVIEW,
@@ -1946,6 +1962,7 @@ export const OneToManyRelationCardWidgetWithProgressiveLoading: Story = {
 
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
       isActive: true,
       id: 'widget-one-to-many-relation-card-progressive',
       pageLayoutTabId: TAB_ID_OVERVIEW,

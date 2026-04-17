@@ -10,6 +10,7 @@ import {
 describe('prepareGridLayoutItemsWithPlaceholders', () => {
   const createMockWidget = (id: string): PageLayoutWidget => ({
     id,
+    applicationId: '',
     isActive: true,
     pageLayoutTabId: 'tab-1',
     title: `Test Widget ${id}`,

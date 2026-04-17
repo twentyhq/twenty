@@ -17,6 +17,7 @@ export const createDefaultIframeWidget = (
   return {
     __typename: 'PageLayoutWidget',
     id,
+    applicationId: '',
     pageLayoutTabId,
     title,
     isActive: true,

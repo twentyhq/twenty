@@ -28,6 +28,7 @@ describe('convertPageLayoutToTabLayouts', () => {
             {
               __typename: 'PageLayoutWidget',
               id: 'widget-1',
+              applicationId: '',
               isActive: true,
               pageLayoutTabId: 'tab-1',
               title: 'Widget 1',
@@ -47,6 +48,7 @@ describe('convertPageLayoutToTabLayouts', () => {
             {
               __typename: 'PageLayoutWidget',
               id: 'widget-2',
+              applicationId: '',
               isActive: true,
               pageLayoutTabId: 'tab-1',
               title: 'Widget 2',
@@ -110,6 +112,7 @@ describe('convertPageLayoutToTabLayouts', () => {
             {
               __typename: 'PageLayoutWidget',
               id: 'rich-text-widget',
+              applicationId: '',
               isActive: true,
               pageLayoutTabId: 'tab-1',
               title: 'Rich Text',

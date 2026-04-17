@@ -11,6 +11,7 @@ describe('addWidgetToTab', () => {
   const mockWidget: PageLayoutWidget = {
     __typename: 'PageLayoutWidget',
     id: 'widget-1',
+    applicationId: '',
     isActive: true,
     pageLayoutTabId: 'tab-1',
     title: 'Test Widget',
