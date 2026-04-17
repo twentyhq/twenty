@@ -144,7 +144,7 @@ export const SidePanelPageLayoutInfoContent = ({
   };
 
   const iconElement =
-    isIconEditable && isDefined(tab) && isDefined(renderedIcon) ? (
+    isIconEditable && isDefined(tab) ? (
       <IconPicker
         dropdownId={`page-layout-tab-icon-picker-${tab.id}`}
         selectedIconKey={selectedIconKey ?? undefined}
