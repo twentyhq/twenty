@@ -34,16 +34,27 @@ const innerAppInstall = async (
   });
 
   if (!result.success) {
+    const rawError = result.error;
     const errorMessage =
-      result.error instanceof Error
-        ? result.error.message
-        : String(result.error ?? 'Unknown error');
+      rawError instanceof Error
+        ? rawError.message
+        : typeof rawError === 'object' && rawError !== null && 'message' in rawError
+          ? String((rawError as { message: string }).message)
+          : String(rawError ?? 'Unknown error');
+
+    const extensions =
+      typeof rawError === 'object' &&
+      rawError !== null &&
+      'extensions' in rawError
+        ? (rawError as { extensions: Record<string, unknown> }).extensions
+        : undefined;
 
     return {
       success: false,
       error: {
         code: APP_ERROR_CODES.INSTALL_FAILED,
         message: errorMessage,
+        ...(extensions ? { details: extensions } : {}),
       },
     };
   }
