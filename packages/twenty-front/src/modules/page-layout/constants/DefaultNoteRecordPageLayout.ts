@@ -33,6 +33,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'note-widget-fields',
           isActive: true,
           pageLayoutTabId: 'note-tab-fields',
@@ -60,6 +61,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
         },
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'note-widget-note',
           isActive: true,
           pageLayoutTabId: 'note-tab-fields',
@@ -107,6 +109,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'note-widget-note',
           isActive: true,
           pageLayoutTabId: 'note-tab-note',
@@ -154,6 +157,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'note-widget-timeline',
           isActive: true,
           pageLayoutTabId: 'note-tab-timeline',
@@ -194,6 +198,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'note-widget-files',
           isActive: true,
           pageLayoutTabId: 'note-tab-files',

@@ -160,6 +160,7 @@ const createPageLayoutWithWidget = (
 
 const createFieldsWidget = (viewId: string | null): PageLayoutWidget => ({
   __typename: 'PageLayoutWidget',
+  applicationId: '',
   isActive: true,
   id: 'widget-fields',
   pageLayoutTabId: TAB_ID_OVERVIEW,

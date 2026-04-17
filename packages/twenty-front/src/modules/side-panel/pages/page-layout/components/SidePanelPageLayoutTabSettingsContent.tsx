@@ -7,6 +7,7 @@ import { useSetAsPinnedTab } from '@/page-layout/hooks/useSetAsPinnedTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
+import { isCustomOrUnsavedPageLayoutEntity } from '@/page-layout/utils/isCustomOrUnsavedPageLayoutEntity';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { CanvasTabSettingsContent } from '@/side-panel/pages/page-layout/components/CanvasTabSettingsContent';
@@ -85,11 +86,11 @@ export const SidePanelPageLayoutTabSettingsContent = ({
   const canSetAsPinned =
     isRecordPage && !isAlreadyPinned && tabsSorted.length > 1;
 
-  const isCustomTab =
-    isDefined(currentWorkspace?.workspaceCustomApplication) &&
-    tab.applicationId === currentWorkspace.workspaceCustomApplication.id;
-
-  const canShowResetToDefault = !isCustomTab;
+  const isResetToDefaultDisabled = isCustomOrUnsavedPageLayoutEntity({
+    applicationId: tab.applicationId,
+    workspaceCustomApplicationId:
+      currentWorkspace?.workspaceCustomApplication?.id,
+  });
 
   const handleDelete = () => {
     deleteTab(tab.id);
@@ -111,7 +112,7 @@ export const SidePanelPageLayoutTabSettingsContent = ({
         canSetAsPinned={canSetAsPinned}
         canMoveLeft={canMoveLeft}
         canMoveRight={canMoveRight}
-        canShowResetToDefault={canShowResetToDefault}
+        isResetToDefaultDisabled={isResetToDefaultDisabled}
         canDelete={canDelete}
         onMoveLeft={() => moveLeft(tab.id)}
         onMoveRight={() => moveRight(tab.id)}
@@ -127,7 +128,7 @@ export const SidePanelPageLayoutTabSettingsContent = ({
       canSetAsPinned={canSetAsPinned}
       canMoveLeft={canMoveLeft}
       canMoveRight={canMoveRight}
-      canShowResetToDefault={canShowResetToDefault}
+      isResetToDefaultDisabled={isResetToDefaultDisabled}
       canDelete={canDelete}
       onMoveLeft={() => moveLeft(tab.id)}
       onMoveRight={() => moveRight(tab.id)}

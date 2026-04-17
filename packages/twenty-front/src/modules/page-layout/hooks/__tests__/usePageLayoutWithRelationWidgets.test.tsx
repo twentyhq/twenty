@@ -47,6 +47,7 @@ describe('usePageLayoutWithRelationWidgets', () => {
           {
             __typename: 'PageLayoutWidget',
             id: 'widget-fields',
+            applicationId: '',
             pageLayoutTabId: 'tab-1',
             title: 'Fields',
             isActive: true,
@@ -71,6 +72,7 @@ describe('usePageLayoutWithRelationWidgets', () => {
           {
             __typename: 'PageLayoutWidget',
             id: 'widget-notes',
+            applicationId: '',
             pageLayoutTabId: 'tab-1',
             title: 'Notes',
             isActive: true,
@@ -94,6 +96,7 @@ describe('usePageLayoutWithRelationWidgets', () => {
           {
             __typename: 'PageLayoutWidget',
             id: 'widget-other',
+            applicationId: '',
             pageLayoutTabId: 'tab-1',
             title: 'Other',
             isActive: true,
@@ -219,6 +222,7 @@ describe('usePageLayoutWithRelationWidgets', () => {
             {
               __typename: 'PageLayoutWidget',
               id: 'widget-other',
+              applicationId: '',
               pageLayoutTabId: 'tab-1',
               title: 'Other',
               isActive: true,

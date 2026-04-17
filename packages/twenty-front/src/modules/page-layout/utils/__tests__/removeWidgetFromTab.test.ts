@@ -20,6 +20,7 @@ describe('removeWidgetFromTab', () => {
         {
           __typename: 'PageLayoutWidget' as const,
           id: 'widget-1',
+          applicationId: '',
           isActive: true,
           pageLayoutTabId: 'tab-1',
           title: 'Widget 1',
@@ -39,6 +40,7 @@ describe('removeWidgetFromTab', () => {
         {
           __typename: 'PageLayoutWidget' as const,
           id: 'widget-2',
+          applicationId: '',
           isActive: true,
           pageLayoutTabId: 'tab-1',
           title: 'Widget 2',
@@ -73,6 +75,7 @@ describe('removeWidgetFromTab', () => {
         {
           __typename: 'PageLayoutWidget' as const,
           id: 'widget-3',
+          applicationId: '',
           isActive: true,
           pageLayoutTabId: 'tab-2',
           title: 'Widget 3',
