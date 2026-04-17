@@ -25,7 +25,7 @@ const handler = async (
 
   const resend = getResendClient();
 
-  const { error } = await resend.contacts.remove(resendId);
+  const { error } = await resend.contacts.remove({ id: resendId });
 
   if (isDefined(error)) {
     const errorString = JSON.stringify(error);
