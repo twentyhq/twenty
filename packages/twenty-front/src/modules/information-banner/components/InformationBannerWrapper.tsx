@@ -15,6 +15,7 @@ import { useIsSomeMeteredProductCapReached } from '@/workspace/hooks/useIsSomeMe
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 
+import { InformationBannerNoMoreCredits } from '@/information-banner/components/billing/InformationBannerNoMoreCredits';
 import {
   PermissionFlagType,
   SubscriptionStatus,
@@ -52,6 +53,10 @@ export const InformationBannerWrapper = () => {
     isSomeMeteredProductCapReached &&
     subscriptionStatus === SubscriptionStatus.Trialing;
 
+  const displayNoMoreCreditsBanner =
+    isSomeMeteredProductCapReached &&
+    subscriptionStatus !== SubscriptionStatus.Trialing;
+
   return (
     <StyledInformationBannerWrapper>
       <InformationBannerMaintenance />
@@ -70,6 +75,7 @@ export const InformationBannerWrapper = () => {
       )}
       {displayFailPaymentInfoBanner && <InformationBannerFailPaymentInfo />}
       {displayEndTrialPeriodBanner && <InformationBannerEndTrialPeriod />}
+      {displayNoMoreCreditsBanner && <InformationBannerNoMoreCredits />}
     </StyledInformationBannerWrapper>
   );
 };

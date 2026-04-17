@@ -309,7 +309,7 @@
                     "group": "Capabilities",
                     "pages": [
                       "user-guide/billing/capabilities/pricing-plans",
-                      "user-guide/billing/capabilities/workflow-credits"
+                      "user-guide/billing/capabilities/credits"
                     ]
                   },
                   {
@@ -756,7 +756,7 @@
                     "group": "Capacités",
                     "pages": [
                       "l/fr/user-guide/billing/capabilities/pricing-plans",
-                      "l/fr/user-guide/billing/capabilities/workflow-credits"
+                      "l/fr/user-guide/billing/capabilities/credits"
                     ]
                   },
                   {
@@ -1203,7 +1203,7 @@
                     "group": "القدرات",
                     "pages": [
                       "l/ar/user-guide/billing/capabilities/pricing-plans",
-                      "l/ar/user-guide/billing/capabilities/workflow-credits"
+                      "l/ar/user-guide/billing/capabilities/credits"
                     ]
                   },
                   {
@@ -1650,7 +1650,7 @@
                     "group": "Možnosti",
                     "pages": [
                       "l/cs/user-guide/billing/capabilities/pricing-plans",
-                      "l/cs/user-guide/billing/capabilities/workflow-credits"
+                      "l/cs/user-guide/billing/capabilities/credits"
                     ]
                   },
                   {
@@ -2097,7 +2097,7 @@
                     "group": "Funktionen",
                     "pages": [
                       "l/de/user-guide/billing/capabilities/pricing-plans",
-                      "l/de/user-guide/billing/capabilities/workflow-credits"
+                      "l/de/user-guide/billing/capabilities/credits"
                     ]
                   },
                   {
@@ -2544,7 +2544,7 @@
                     "group": "Capacidades",
                     "pages": [
                       "l/es/user-guide/billing/capabilities/pricing-plans",
-                      "l/es/user-guide/billing/capabilities/workflow-credits"
+                      "l/es/user-guide/billing/capabilities/credits"
                     ]
                   },
                   {
@@ -2991,7 +2991,7 @@
                     "group": "Funzionalità",
                     "pages": [
                       "l/it/user-guide/billing/capabilities/pricing-plans",
-                      "l/it/user-guide/billing/capabilities/workflow-credits"
+                      "l/it/user-guide/billing/capabilities/credits"
                     ]
                   },
                   {
@@ -3438,7 +3438,7 @@
                     "group": "機能",
                     "pages": [
                       "l/ja/user-guide/billing/capabilities/pricing-plans",
-                      "l/ja/user-guide/billing/capabilities/workflow-credits"
+                      "l/ja/user-guide/billing/capabilities/credits"
                     ]
                   },
                   {
@@ -3885,7 +3885,7 @@
                     "group": "기능",
                     "pages": [
                       "l/ko/user-guide/billing/capabilities/pricing-plans",
-                      "l/ko/user-guide/billing/capabilities/workflow-credits"
+                      "l/ko/user-guide/billing/capabilities/credits"
                     ]
                   },
                   {
@@ -4332,7 +4332,7 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/pt/user-guide/billing/capabilities/pricing-plans",
-                      "l/pt/user-guide/billing/capabilities/workflow-credits"
+                      "l/pt/user-guide/billing/capabilities/credits"
                     ]
                   },
                   {
@@ -4779,7 +4779,7 @@
                     "group": "Capabilities",
                     "pages": [
                       "l/ro/user-guide/billing/capabilities/pricing-plans",
-                      "l/ro/user-guide/billing/capabilities/workflow-credits"
+                      "l/ro/user-guide/billing/capabilities/credits"
                     ]
                   },
                   {
@@ -5226,7 +5226,7 @@
                     "group": "Возможности",
                     "pages": [
                       "l/ru/user-guide/billing/capabilities/pricing-plans",
-                      "l/ru/user-guide/billing/capabilities/workflow-credits"
+                      "l/ru/user-guide/billing/capabilities/credits"
                     ]
                   },
                   {
@@ -5673,7 +5673,7 @@
                     "group": "Yetkinlikler",
                     "pages": [
                       "l/tr/user-guide/billing/capabilities/pricing-plans",
-                      "l/tr/user-guide/billing/capabilities/workflow-credits"
+                      "l/tr/user-guide/billing/capabilities/credits"
                     ]
                   },
                   {
@@ -6120,7 +6120,7 @@
                     "group": "功能",
                     "pages": [
                       "l/zh/user-guide/billing/capabilities/pricing-plans",
-                      "l/zh/user-guide/billing/capabilities/workflow-credits"
+                      "l/zh/user-guide/billing/capabilities/credits"
                     ]
                   },
                   {
@@ -6734,7 +6734,11 @@
     },
     {
       "source": "/user-guide/billing/workflow-credits",
-      "destination": "/user-guide/billing/capabilities/workflow-credits"
+      "destination": "/user-guide/billing/capabilities/credits"
+    },
+    {
+      "source": "/user-guide/billing/capabilities/workflow-credits",
+      "destination": "/user-guide/billing/capabilities/credits"
     },
     {
       "source": "/user-guide/billing/billing-faq",

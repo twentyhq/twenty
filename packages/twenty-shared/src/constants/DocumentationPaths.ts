@@ -94,10 +94,10 @@ export const DOCUMENTATION_PATHS = {
     '/user-guide/ai/capabilities/permissions-access-control',
   USER_GUIDE_AI_HOW_TOS_AI_FAQ: '/user-guide/ai/how-tos/ai-faq',
   USER_GUIDE_AI_OVERVIEW: '/user-guide/ai/overview',
+  USER_GUIDE_BILLING_CAPABILITIES_CREDITS:
+    '/user-guide/billing/capabilities/credits',
   USER_GUIDE_BILLING_CAPABILITIES_PRICING_PLANS:
     '/user-guide/billing/capabilities/pricing-plans',
-  USER_GUIDE_BILLING_CAPABILITIES_WORKFLOW_CREDITS:
-    '/user-guide/billing/capabilities/workflow-credits',
   USER_GUIDE_BILLING_HOW_TOS_BILLING_FAQ:
     '/user-guide/billing/how-tos/billing-faq',
   USER_GUIDE_BILLING_OVERVIEW: '/user-guide/billing/overview',

@@ -14,8 +14,9 @@ import {
   type AgentChatLastMessageUsage,
 } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
-import { SettingsBillingLabelValueItem } from '@/settings/billing/components/internal/SettingsBillingLabelValueItem';
 import { billingState } from '@/client-config/states/billingState';
+import { SettingsBillingLabelValueItem } from '@/settings/billing/components/internal/SettingsBillingLabelValueItem';
+import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -103,12 +104,12 @@ export const AIChatContextUsageButton = () => {
   );
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
+  const { formatUsageValue } = useUsageValueFormatter();
 
-  // Values from the streaming API arrive as display credits (micro-credits / 1000).
-  // 1000 display credits = $1. Convert accordingly.
+  // Values from the streaming API arrive as display credits (micro-credits).
   const formatChatCost = (displayCredits: number): string => {
     if (isBillingEnabled) {
-      return `${formatNumber(displayCredits, { decimals: 1 })} credits`;
+      return `${formatUsageValue(displayCredits)}`;
     }
     const dollars = displayCredits / 1000;
 

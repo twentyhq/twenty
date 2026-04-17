@@ -26,11 +26,17 @@ import { buildEnvVar } from 'src/engine/core-modules/logic-function/logic-functi
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
 
 export class LogicFunctionExecutionException extends Error {
@@ -62,6 +68,7 @@ export class LogicFunctionExecutorService {
     private readonly subscriptionService: SubscriptionService,
     private readonly auditService: AuditService,
     private readonly applicationLogsService: ApplicationLogsService,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   async execute({
@@ -274,5 +281,20 @@ export class LogicFunctionExecutorService {
         functionId: flatLogicFunction.id,
         functionName: flatLogicFunction.name,
       });
+
+    this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
+      USAGE_RECORDED,
+      [
+        {
+          resourceType: UsageResourceType.LOGIC_FUNCTION,
+          operationType: UsageOperationType.CODE_EXECUTION,
+          creditsUsedMicro: 1,
+          quantity: 1,
+          unit: UsageUnit.INVOCATION,
+          resourceId: flatLogicFunction.id,
+        },
+      ],
+      workspaceId,
+    );
   }
 }
