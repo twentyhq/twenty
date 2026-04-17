@@ -65,48 +65,48 @@ export const SettingsAvailableApplicationDetailContentTab = ({
       }
     }
 
-    return Array.from(groupMap.values()).map((group) => {
-      const appObject = objects.find(
-        (obj) => obj.universalIdentifier === group.objectUniversalIdentifier,
-      );
-
-      if (isDefined(appObject)) {
-        return {
-          key: appObject.nameSingular,
-          labelPlural: appObject.labelPlural,
-          icon: appObject.icon ?? undefined,
-          fieldsCount: group.count,
-          tagItem: { applicationId },
-        };
-      }
-
-      const standardObjectName = findObjectNameByUniversalIdentifier(
-        group.objectUniversalIdentifier,
-      );
-
-      const objectMetadataItem = isDefined(standardObjectName)
-        ? objectMetadataItems.find(
-            (item) => item.nameSingular === standardObjectName,
-          )
-        : undefined;
-
-      if (!isDefined(objectMetadataItem)) {
-        throw new Error(
-          `Could not resolve object for universalIdentifier: ${group.objectUniversalIdentifier}`,
+    return Array.from(groupMap.values())
+      .map((group) => {
+        const appObject = objects.find(
+          (obj) => obj.universalIdentifier === group.objectUniversalIdentifier,
         );
-      }
 
-      return {
-        key: objectMetadataItem.nameSingular,
-        labelPlural: objectMetadataItem.labelPlural,
-        icon: objectMetadataItem.icon ?? undefined,
-        fieldsCount: group.count,
-        link: getSettingsPath(SettingsPath.ObjectDetail, {
-          objectNamePlural: objectMetadataItem.namePlural,
-        }),
-        tagItem: {},
-      };
-    });
+        if (isDefined(appObject)) {
+          return {
+            key: appObject.nameSingular,
+            labelPlural: appObject.labelPlural,
+            icon: appObject.icon ?? undefined,
+            fieldsCount: group.count,
+            tagItem: { applicationId },
+          };
+        }
+
+        const standardObjectName = findObjectNameByUniversalIdentifier(
+          group.objectUniversalIdentifier,
+        );
+
+        const objectMetadataItem = isDefined(standardObjectName)
+          ? objectMetadataItems.find(
+              (item) => item.nameSingular === standardObjectName,
+            )
+          : undefined;
+
+        if (!isDefined(objectMetadataItem)) {
+          return;
+        }
+
+        return {
+          key: objectMetadataItem.nameSingular,
+          labelPlural: objectMetadataItem.labelPlural,
+          icon: objectMetadataItem.icon ?? undefined,
+          fieldsCount: group.count,
+          link: getSettingsPath(SettingsPath.ObjectDetail, {
+            objectNamePlural: objectMetadataItem.namePlural,
+          }),
+          tagItem: {},
+        };
+      })
+      .filter(isDefined);
   }, [fields, objectMetadataItems, objects, applicationId]);
 
   const roles = content?.roles ?? [];
