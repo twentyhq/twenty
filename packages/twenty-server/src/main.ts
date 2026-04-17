@@ -48,7 +48,23 @@ const bootstrap = async () => {
   // the socket protocol ("http") and URLs built from it leak through —
   // e.g. OAuth discovery advertises http://host/mcp on an https deployment,
   // and strict MCP clients reject the mismatch.
-  app.set('trust proxy', twentyConfigService.get('TRUST_PROXY'));
+  //
+  // Express accepts booleans, hop counts, IPs/CIDRs, and named ranges
+  // (loopback, linklocal, uniquelocal). Env vars are always strings, but
+  // 'true'/'false'/numeric strings crash proxy-addr as "invalid IP address",
+  // so we coerce those three cases here. Anything else (CIDR list, named
+  // ranges) is passed through untouched.
+  const trustProxyRaw = twentyConfigService.get('TRUST_PROXY');
+  const trustProxy =
+    trustProxyRaw === 'true'
+      ? true
+      : trustProxyRaw === 'false'
+        ? false
+        : /^\d+$/.test(trustProxyRaw)
+          ? Number(trustProxyRaw)
+          : trustProxyRaw;
+
+  app.set('trust proxy', trustProxy);
 
   app.use(session(getSessionStorageOptions(twentyConfigService)));
 
