@@ -44,11 +44,13 @@ export class SendEmailTool implements Tool {
 
       const sendResult = await this.sendEmailService.sendComposedEmail(data);
 
-      await this.sendEmailService.persistSentMessage(
-        sendResult,
-        data,
-        context.workspaceId,
-      );
+      if (data.shouldPersistMessage) {
+        await this.sendEmailService.persistSentMessage(
+          sendResult,
+          data,
+          context.workspaceId,
+        );
+      }
 
       this.logger.log(
         `Email sent successfully to ${data.toRecipientsDisplay}${data.attachments.length > 0 ? ` with ${data.attachments.length} attachments` : ''}`,
