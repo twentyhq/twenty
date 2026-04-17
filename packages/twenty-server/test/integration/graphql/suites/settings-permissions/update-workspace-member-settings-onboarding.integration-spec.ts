@@ -14,6 +14,54 @@ const APPLE_WORKSPACE_INVITE_HASH = 'apple.dev-invite-hash';
 
 describe('updateWorkspaceMemberSettings and profile onboarding', () => {
   let newUserAccessToken: string | undefined;
+  let originalIsPublicInviteLinkEnabled: boolean;
+
+  beforeAll(async () => {
+    const currentWorkspaceQuery = gql`
+      query CurrentWorkspacePublicInvite {
+        currentWorkspace {
+          isPublicInviteLinkEnabled
+        }
+      }
+    `;
+
+    const response = await makeMetadataAPIRequest(
+      {
+        query: currentWorkspaceQuery,
+        variables: {},
+      },
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.currentWorkspace).toBeDefined();
+
+    originalIsPublicInviteLinkEnabled =
+      response.body.data.currentWorkspace.isPublicInviteLinkEnabled;
+  });
+
+  afterAll(async () => {
+    const restoreMutation = gql`
+      mutation RestoreWorkspacePublicInvite($data: UpdateWorkspaceInput!) {
+        updateWorkspace(data: $data) {
+          id
+          isPublicInviteLinkEnabled
+        }
+      }
+    `;
+
+    await makeMetadataAPIRequest(
+      {
+        query: restoreMutation,
+        variables: {
+          data: {
+            isPublicInviteLinkEnabled: originalIsPublicInviteLinkEnabled,
+          },
+        },
+      },
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    );
+  });
 
   afterEach(async () => {
     if (!newUserAccessToken) {
