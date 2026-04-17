@@ -2,8 +2,9 @@ import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getResendClient } from 'src/modules/resend/utils/get-resend-client';
+import { findOrCreatePerson } from 'src/modules/resend/utils/find-or-create-person';
 import { findRecordByResendId } from 'src/modules/resend/utils/find-record-by-resend-id';
+import { getResendClient } from 'src/modules/resend/utils/get-resend-client';
 import { toEmailsField } from 'src/modules/resend/utils/to-emails-field';
 
 const VALID_LAST_EVENTS = new Set([
@@ -59,6 +60,11 @@ const handleContactCreatedOrUpdated = async (
     data.id,
   );
 
+  const personId = await findOrCreatePerson(client, data.email, {
+    firstName: data.first_name ?? '',
+    lastName: data.last_name ?? '',
+  });
+
   const contactData: Record<string, unknown> = {
     email: toEmailsField(data.email),
     name: {
@@ -67,6 +73,7 @@ const handleContactCreatedOrUpdated = async (
     },
     unsubscribed: data.unsubscribed,
     lastSyncedFromResend: new Date().toISOString(),
+    ...(isDefined(personId) && { personId }),
   };
 
   if (isDefined(existingId)) {
@@ -77,7 +84,7 @@ const handleContactCreatedOrUpdated = async (
       },
     });
 
-    return { action: 'updated', twentyId: existingId, resendId: data.id };
+    return { action: 'updated', twentyId: existingId, resendId: data.id, personId };
   }
 
   const result = await client.mutation({
@@ -97,6 +104,7 @@ const handleContactCreatedOrUpdated = async (
     action: 'created',
     twentyId: result.createResendContact?.id,
     resendId: data.id,
+    personId,
   };
 };
 

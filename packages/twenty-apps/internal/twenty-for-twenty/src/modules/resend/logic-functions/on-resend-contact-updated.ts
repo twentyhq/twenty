@@ -5,8 +5,10 @@ import {
   type EmailsField,
   type FullNameField,
 } from 'twenty-sdk';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-shared/utils';
 
+import { findOrCreatePerson } from 'src/modules/resend/utils/find-or-create-person';
 import { getResendClient } from 'src/modules/resend/utils/get-resend-client';
 
 type ResendContactRecord = {
@@ -67,10 +69,32 @@ const handler = async (
     );
   }
 
+  let personId: string | undefined;
+
+  if (event.properties.updatedFields?.includes('email')) {
+    const email = after.email?.primaryEmail;
+    const client = new CoreApiClient();
+
+    personId = await findOrCreatePerson(client, email, {
+      firstName: after.name?.firstName ?? undefined,
+      lastName: after.name?.lastName ?? undefined,
+    });
+
+    if (isDefined(personId)) {
+      await client.mutation({
+        updateResendContact: {
+          __args: { id: event.recordId, data: { personId } },
+          id: true,
+        },
+      });
+    }
+  }
+
   return {
     synced: true,
     resendId,
     updatedFields: Object.keys(updatePayload).filter((k) => k !== 'id'),
+    personId,
   };
 };
 

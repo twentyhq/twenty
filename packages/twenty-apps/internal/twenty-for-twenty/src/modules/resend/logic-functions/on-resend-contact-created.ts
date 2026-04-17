@@ -8,6 +8,7 @@ import {
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-shared/utils';
 
+import { findOrCreatePerson } from 'src/modules/resend/utils/find-or-create-person';
 import { getResendClient } from 'src/modules/resend/utils/get-resend-client';
 
 type ResendContactRecord = {
@@ -54,6 +55,11 @@ const handler = async (
 
   const client = new CoreApiClient();
 
+  const personId = await findOrCreatePerson(client, email, {
+    firstName: after.name?.firstName ?? undefined,
+    lastName: after.name?.lastName ?? undefined,
+  });
+
   await client.mutation({
     updateResendContact: {
       __args: {
@@ -61,13 +67,14 @@ const handler = async (
         data: {
           resendId: data.id,
           lastSyncedFromResend: new Date().toISOString(),
+          ...(isDefined(personId) && { personId }),
         },
       },
       id: true,
     },
   });
 
-  return { synced: true, resendId: data.id, twentyId: event.recordId };
+  return { synced: true, resendId: data.id, twentyId: event.recordId, personId };
 };
 
 export default defineLogicFunction({

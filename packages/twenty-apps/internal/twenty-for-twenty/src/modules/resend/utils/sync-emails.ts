@@ -6,6 +6,7 @@ import type { CreateEmailDto } from 'src/modules/resend/types/create-email.dto';
 import type { UpdateEmailDto } from 'src/modules/resend/types/update-email.dto';
 import type { SyncResult } from 'src/modules/resend/types/sync-result';
 import { fetchAllPaginated } from 'src/modules/resend/utils/fetch-all-paginated';
+import { findOrCreatePerson } from 'src/modules/resend/utils/find-or-create-person';
 import { getExistingRecordsMap } from 'src/modules/resend/utils/get-existing-records-map';
 import { toEmailsField } from 'src/modules/resend/utils/to-emails-field';
 import { toIsoString, toIsoStringOrNull } from 'src/modules/resend/utils/to-iso-string';
@@ -37,7 +38,7 @@ export const syncEmails = async (
 
   const existingMap = await getExistingRecordsMap(client, 'resendEmails');
 
-  return upsertRecords({
+  const result = await upsertRecords({
     items: emails,
     getId: (email) => email.id,
     fetchDetail: async (id) => {
@@ -81,4 +82,33 @@ export const syncEmails = async (
     client,
     objectNameSingular: 'resendEmail',
   });
+
+  for (const email of emails) {
+    const twentyId = existingMap.get(email.id);
+
+    if (!isDefined(twentyId)) {
+      continue;
+    }
+
+    const primaryTo = Array.isArray(email.to) ? email.to[0] : email.to;
+
+    try {
+      const personId = await findOrCreatePerson(client, primaryTo);
+
+      if (isDefined(personId)) {
+        await client.mutation({
+          updateResendEmail: {
+            __args: { id: twentyId, data: { personId } },
+            id: true,
+          },
+        });
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+
+      result.errors.push(`resendEmail ${email.id} person link: ${message}`);
+    }
+  }
+
+  return result;
 };
