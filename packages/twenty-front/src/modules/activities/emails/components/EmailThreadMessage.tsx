@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 
-import { LinkifiedTextBody } from '@/ui/display/components/LinkifiedTextBody';
+import { EmailThreadMessageBody } from '@/activities/emails/components/EmailThreadMessageBody';
 import { EmailThreadMessageBodyPreview } from '@/activities/emails/components/EmailThreadMessageBodyPreview';
 import { EmailThreadMessageReceivers } from '@/activities/emails/components/EmailThreadMessageReceivers';
 import { EmailThreadMessageSender } from '@/activities/emails/components/EmailThreadMessageSender';
@@ -82,7 +82,7 @@ export const EmailThreadMessage = ({
             visibility={MessageChannelVisibility.METADATA}
           />
         ) : isOpen ? (
-          <LinkifiedTextBody body={body} isDisplayed />
+          <EmailThreadMessageBody body={body} isDisplayed />
         ) : (
           <EmailThreadMessageBodyPreview body={body} />
         )}
