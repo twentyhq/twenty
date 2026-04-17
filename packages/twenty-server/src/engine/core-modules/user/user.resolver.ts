@@ -14,7 +14,6 @@ import { In, Repository } from 'typeorm';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
   AuthException,
@@ -97,7 +96,6 @@ export class UserResolver {
     private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   private async getUserWorkspacePermissions({
@@ -545,11 +543,6 @@ export class UserResolver {
         },
       );
     }
-
-    await this.coreEntityCacheService.invalidate(
-      'userWorkspaceEntity',
-      targetUserWorkspace.id,
-    );
 
     return true;
   }

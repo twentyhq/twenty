@@ -87,6 +87,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
 
     userWorkspace.locale = locale;
     await this.userWorkspaceRepository.save(userWorkspace);
+
+    await this.coreEntityCacheService.invalidate(
+      'userWorkspaceEntity',
+      userWorkspaceId,
+    );
   }
 
   async create(
