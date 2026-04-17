@@ -1,4 +1,7 @@
+import { LayoutCustomizationBarMenuDropdown } from '@/layout-customization/components/LayoutCustomizationBarMenuDropdown';
+import { LayoutCustomizationBarResetConfirmationModal } from '@/layout-customization/components/LayoutCustomizationBarResetConfirmationModal';
 import { useCancelLayoutCustomization } from '@/layout-customization/hooks/useCancelLayoutCustomization';
+import { useCurrentRecordPageLayoutInCustomization } from '@/layout-customization/hooks/useCurrentRecordPageLayoutInCustomization';
 import { useIsLayoutCustomizationDirty } from '@/layout-customization/hooks/useIsLayoutCustomizationDirty';
 import { useSaveLayoutCustomization } from '@/layout-customization/hooks/useSaveLayoutCustomization';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -8,7 +11,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useContext } from 'react';
-import { IconCheck, IconPaint } from 'twenty-ui/display';
+import { IconCheck } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -22,10 +25,26 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
+const StyledLeftSection = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
 const StyledTitle = styled.span`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
+  flex: 1;
+  justify-content: center;
+  text-align: center;
+`;
+
+const StyledRightSection = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
 `;
 
 const LayoutCustomizationBarContent = () => {
@@ -35,6 +54,13 @@ const LayoutCustomizationBarContent = () => {
   const { save, isSaving } = useSaveLayoutCustomization();
   const { cancel } = useCancelLayoutCustomization();
   const { isDirty } = useIsLayoutCustomizationDirty();
+
+  const currentRecordPageLayout = useCurrentRecordPageLayoutInCustomization();
+
+  const title =
+    currentRecordPageLayout !== null
+      ? t`${currentRecordPageLayout.objectLabelPlural} layout edition`
+      : t`Layout customization`;
 
   return (
     <motion.div
@@ -47,20 +73,23 @@ const LayoutCustomizationBarContent = () => {
       }}
     >
       <StyledContainer data-globally-prevent-click-outside="true">
-        <StyledTitle>
-          <IconPaint size={theme.icon.size.md} />
-          {t`Layout customization`}
-        </StyledTitle>
-        <SaveAndCancelButtons
-          onSave={save}
-          onCancel={cancel}
-          isSaveDisabled={!isDirty || isSaving}
-          isCancelDisabled={isSaving}
-          isLoading={isSaving}
-          inverted
-          saveIcon={IconCheck}
-        />
+        <StyledLeftSection>
+          <LayoutCustomizationBarMenuDropdown />
+        </StyledLeftSection>
+        <StyledTitle>{title}</StyledTitle>
+        <StyledRightSection>
+          <SaveAndCancelButtons
+            onSave={save}
+            onCancel={cancel}
+            isSaveDisabled={!isDirty || isSaving}
+            isCancelDisabled={isSaving}
+            isLoading={isSaving}
+            inverted
+            saveIcon={IconCheck}
+          />
+        </StyledRightSection>
       </StyledContainer>
+      <LayoutCustomizationBarResetConfirmationModal />
     </motion.div>
   );
 };
