@@ -17,9 +17,6 @@ const mockCloseSidePanelMenu = jest.fn();
 const mockSetCommandMenuItemProgress = jest.fn();
 
 let mockCurrentUser: { id: string } | null = { id: 'user-123' };
-let mockTargetRecordIdentifier: { id: string } | undefined = {
-  id: 'record-456',
-};
 
 jest.mock('~/hooks/useNavigateApp', () => ({
   useNavigateApp: () => mockNavigateApp,
@@ -86,12 +83,6 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState', () => ({
   useSetAtomFamilyState: () => mockSetCommandMenuItemProgress,
 }));
 
-jest.mock('@/ui/layout/contexts/LayoutRenderingContext', () => ({
-  useLayoutRenderingContext: () => ({
-    targetRecordIdentifier: mockTargetRecordIdentifier,
-  }),
-}));
-
 const FRONT_COMPONENT_ID = 'fc-test-id';
 const COMMAND_MENU_ITEM_ID = 'cmd-item-1';
 
@@ -99,7 +90,6 @@ describe('useFrontComponentExecutionContext', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockCurrentUser = { id: 'user-123' };
-    mockTargetRecordIdentifier = { id: 'record-456' };
   });
 
   describe('executionContext', () => {
@@ -107,6 +97,7 @@ describe('useFrontComponentExecutionContext', () => {
       const { result } = renderHook(() =>
         useFrontComponentExecutionContext({
           frontComponentId: FRONT_COMPONENT_ID,
+          recordId: 'record-456',
         }),
       );
 
@@ -129,9 +120,7 @@ describe('useFrontComponentExecutionContext', () => {
       expect(result.current.executionContext.userId).toBeNull();
     });
 
-    it('should return null recordId when no target record', () => {
-      mockTargetRecordIdentifier = undefined;
-
+    it('should return null recordId when no recordId provided', () => {
       const { result } = renderHook(() =>
         useFrontComponentExecutionContext({
           frontComponentId: FRONT_COMPONENT_ID,

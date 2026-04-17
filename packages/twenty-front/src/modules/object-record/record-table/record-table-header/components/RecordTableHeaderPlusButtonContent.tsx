@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
@@ -9,6 +9,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
@@ -21,6 +22,8 @@ import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
 
 export const RecordTableHeaderPlusButtonContent = () => {
   const { t } = useLingui();
+  const [searchInput, setSearchInput] = useState('');
+
   const { objectMetadataItem, recordTableId, visibleRecordFields } =
     useRecordTableContextOrThrow();
 
@@ -57,6 +60,14 @@ export const RecordTableHeaderPlusButtonContent = () => {
         .includes(fieldMetadataItemToFilter.id),
   );
 
+  const filteredFieldMetadataItems = availableFieldMetadataItemsToShow.filter(
+    (fieldMetadataItem) => {
+      return fieldMetadataItem.label
+        .toLowerCase()
+        .includes(searchInput.toLowerCase());
+    },
+  );
+
   const handleFieldMetadataItemMenuItemClick = async (
     fieldMetadataItem: FieldMetadataItem,
   ) => {
@@ -65,19 +76,44 @@ export const RecordTableHeaderPlusButtonContent = () => {
     });
   };
 
+  const hasAvailableFields = availableFieldMetadataItemsToShow.length > 0;
+
   return (
     <DropdownContent>
-      <DropdownMenuItemsContainer>
-        {availableFieldMetadataItemsToShow.map((fieldMetadataItem) => (
-          <MenuItem
-            key={fieldMetadataItem.id}
-            onClick={() =>
-              handleFieldMetadataItemMenuItemClick(fieldMetadataItem)
-            }
-            LeftIcon={getIcon(fieldMetadataItem.icon)}
-            text={fieldMetadataItem.label}
+      {hasAvailableFields && (
+        <>
+          <DropdownMenuSearchInput
+            autoFocus
+            value={searchInput}
+            placeholder={t`Search fields`}
+            onChange={(event) => setSearchInput(event.target.value)}
           />
-        ))}
+          <DropdownMenuSeparator />
+        </>
+      )}
+      <DropdownMenuItemsContainer>
+        {filteredFieldMetadataItems.length > 0 ? (
+          filteredFieldMetadataItems.map((fieldMetadataItem) => (
+            <MenuItem
+              key={fieldMetadataItem.id}
+              onClick={() =>
+                handleFieldMetadataItemMenuItemClick(fieldMetadataItem)
+              }
+              LeftIcon={getIcon(fieldMetadataItem.icon)}
+              text={fieldMetadataItem.label}
+            />
+          ))
+        ) : (
+          <MenuItem
+            disabled
+            accent="placeholder"
+            text={
+              hasAvailableFields
+                ? t`No results`
+                : t`All fields are already visible`
+            }
+          />
+        )}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer scrollable={false}>

@@ -14,13 +14,14 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   flatApplication,
   flatObjectMetadataMaps,
   flatFrontComponentMaps,
+  flatPageLayoutMaps,
 }: {
   createCommandMenuItemInput: CreateCommandMenuItemInput;
   workspaceId: string;
   flatApplication: FlatApplication;
 } & Pick<
   AllFlatEntityMaps,
-  'flatObjectMetadataMaps' | 'flatFrontComponentMaps'
+  'flatObjectMetadataMaps' | 'flatFrontComponentMaps' | 'flatPageLayoutMaps'
 >): FlatCommandMenuItem => {
   const id = uuidv4();
   const now = new Date().toISOString();
@@ -28,14 +29,20 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   const {
     availabilityObjectMetadataUniversalIdentifier,
     frontComponentUniversalIdentifier,
+    pageLayoutUniversalIdentifier,
   } = resolveEntityRelationUniversalIdentifiers({
     metadataName: 'commandMenuItem',
     foreignKeyValues: {
       availabilityObjectMetadataId:
         createCommandMenuItemInput.availabilityObjectMetadataId,
       frontComponentId: createCommandMenuItemInput.frontComponentId,
+      pageLayoutId: createCommandMenuItemInput.pageLayoutId,
     },
-    flatEntityMaps: { flatObjectMetadataMaps, flatFrontComponentMaps },
+    flatEntityMaps: {
+      flatObjectMetadataMaps,
+      flatFrontComponentMaps,
+      flatPageLayoutMaps,
+    },
   });
 
   return {
@@ -64,6 +71,8 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
     conditionalAvailabilityExpression:
       createCommandMenuItemInput.conditionalAvailabilityExpression ?? null,
     availabilityObjectMetadataUniversalIdentifier,
+    pageLayoutId: createCommandMenuItemInput.pageLayoutId ?? null,
+    pageLayoutUniversalIdentifier,
     workspaceId,
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,

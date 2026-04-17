@@ -6,8 +6,10 @@ import {
   getImagePreviewZoom,
 } from '@/app/halftone/_lib/footprint';
 import { styled } from '@linaria/react';
+import { STEPPER_VISUAL_POINTER_ROOT_SELECTOR } from '../StepperVisualFrame/StepperVisualFrame';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { createSiteWebGlRenderer } from '@/lib/webgl';
 
 const PREVIEW_DISTANCE = 4;
 const HOVER_FADE_IN = 18;
@@ -15,25 +17,24 @@ const HOVER_FADE_OUT = 7;
 
 const HALFTONE_SETTINGS = {
   animation: {
-    hoverHalftoneEnabled: true,
-    hoverHalftonePowerShift: 0.62,
-    hoverHalftoneRadius: 0.6,
+    hoverHalftoneEnabled: false,
+    hoverHalftonePowerShift: 0.42,
+    hoverHalftoneRadius: 0.45,
     hoverHalftoneWidthShift: -0.18,
-    hoverLightEnabled: false,
-    hoverLightIntensity: 0.12,
-    hoverLightRadius: 0.8,
+    hoverLightEnabled: true,
+    hoverLightIntensity: 0.35,
+    hoverLightRadius: 0.42,
     waveAmount: 2,
     waveEnabled: false,
     waveSpeed: 1,
   },
   halftone: {
-    dashColor: '#dddddd',
-    hoverDashColor: '#FFF',
-    imageContrast: 1.12,
-    minimumTone: 0.26,
-    power: 0.18,
-    scale: 12,
-    width: 0.72,
+    dashColor: '#868686',
+    hoverDashColor: '#F5F5F5',
+    imageContrast: 1,
+    power: 0.5,
+    scale: 8,
+    width: 0.3,
   },
 };
 
@@ -63,7 +64,6 @@ const imagePassthroughFragmentShader = /* glsl */ `
 
     vec2 uv = vUv;
 
-    // Cover: match the underlying NextImage background crop.
     if (imageAspect > viewAspect) {
       float scale = viewAspect / imageAspect;
       uv.x = (uv.x - 0.5) * scale + 0.5;
@@ -95,7 +95,6 @@ const halftoneFragmentShader = /* glsl */ `
   uniform float s_4;
   uniform vec3 dashColor;
   uniform vec3 hoverDashColor;
-  uniform float minimumTone;
   uniform float time;
   uniform float waveAmount;
   uniform float waveSpeed;
@@ -209,17 +208,15 @@ const halftoneFragmentShader = /* glsl */ `
     );
     float lightLift =
       hoverLightStrength * hoverLightMask * mix(0.78, 1.18, motionBias) * 0.22;
-    float tonalAverage = (
+    float bandRadius = clamp(
       (
         sceneSample.r +
         sceneSample.g +
         sceneSample.b +
         localPower * length(vec2(0.5))
       ) *
-      (1.0 / 3.0)
-    ) + lightLift;
-    float bandRadius = clamp(
-      max(tonalAverage, minimumTone),
+      (1.0 / 3.0) +
+      lightLift,
       0.0,
       1.0
     ) * 1.86 * 0.5;
@@ -310,7 +307,7 @@ async function mountHalftoneCanvas({
     return;
   }
 
-  const renderer = new THREE.WebGLRenderer({
+  const renderer = createSiteWebGlRenderer({
     alpha: true,
     antialias: false,
     powerPreference: 'high-performance',
@@ -328,7 +325,13 @@ async function mountHalftoneCanvas({
   canvas.style.width = '100%';
   container.appendChild(canvas);
 
-  const interactionTarget = container.parentElement?.parentElement ?? container;
+  const interactionElement =
+    container.closest(STEPPER_VISUAL_POINTER_ROOT_SELECTOR) ??
+    container.parentElement?.parentElement ??
+    container;
+
+  const interactionTarget: HTMLElement =
+    interactionElement instanceof HTMLElement ? interactionElement : container;
 
   const imageTexture = new THREE.Texture(image);
   imageTexture.colorSpace = THREE.SRGBColorSpace;
@@ -391,7 +394,6 @@ async function mountHalftoneCanvas({
       logicalResolution: {
         value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
       },
-      minimumTone: { value: HALFTONE_SETTINGS.halftone.minimumTone },
       s_3: { value: HALFTONE_SETTINGS.halftone.power },
       s_4: { value: HALFTONE_SETTINGS.halftone.width },
       tScene: { value: sceneTarget.texture },
@@ -527,23 +529,23 @@ async function mountHalftoneCanvas({
     pointerState.pointerVelocityY *= 0.82;
 
     halftoneMaterial.uniforms.footprintScale.value = getHalftoneScale();
-    halftoneMaterial.uniforms.hoverHalftoneActive.value =
-      HALFTONE_SETTINGS.animation.hoverHalftoneEnabled
-        ? pointerState.hoverStrength
-        : 0;
-    halftoneMaterial.uniforms.hoverHalftonePowerShift.value =
-      HALFTONE_SETTINGS.animation.hoverHalftoneEnabled
-        ? HALFTONE_SETTINGS.animation.hoverHalftonePowerShift
-        : 0;
-    halftoneMaterial.uniforms.hoverHalftoneWidthShift.value =
-      HALFTONE_SETTINGS.animation.hoverHalftoneEnabled
-        ? HALFTONE_SETTINGS.animation.hoverHalftoneWidthShift
-        : 0;
-    halftoneMaterial.uniforms.hoverLightStrength.value =
-      HALFTONE_SETTINGS.animation.hoverLightEnabled
-        ? HALFTONE_SETTINGS.animation.hoverLightIntensity *
-          pointerState.hoverStrength
-        : 0;
+    halftoneMaterial.uniforms.hoverHalftoneActive.value = HALFTONE_SETTINGS
+      .animation.hoverHalftoneEnabled
+      ? pointerState.hoverStrength
+      : 0;
+    halftoneMaterial.uniforms.hoverHalftonePowerShift.value = HALFTONE_SETTINGS
+      .animation.hoverHalftoneEnabled
+      ? HALFTONE_SETTINGS.animation.hoverHalftonePowerShift
+      : 0;
+    halftoneMaterial.uniforms.hoverHalftoneWidthShift.value = HALFTONE_SETTINGS
+      .animation.hoverHalftoneEnabled
+      ? HALFTONE_SETTINGS.animation.hoverHalftoneWidthShift
+      : 0;
+    halftoneMaterial.uniforms.hoverLightStrength.value = HALFTONE_SETTINGS
+      .animation.hoverLightEnabled
+      ? HALFTONE_SETTINGS.animation.hoverLightIntensity *
+        pointerState.hoverStrength
+      : 0;
     halftoneMaterial.uniforms.interactionUv.value.set(
       pointerState.smoothedMouseX,
       1 - pointerState.smoothedMouseY,

@@ -9,6 +9,7 @@ import { TWENTY_PREVIOUS_VERSIONS } from 'src/engine/core-modules/upgrade/consta
 import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
 import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
+import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 type RunInstanceCommandsOptions = {
@@ -30,6 +31,7 @@ export class RunInstanceCommandsCommand extends CommandRunner {
     private readonly dataSource: DataSource,
     private readonly workspaceVersionService: WorkspaceVersionService,
     private readonly upgradeCommandRegistryService: UpgradeCommandRegistryService,
+    private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
     private readonly instanceUpgradeService: InstanceCommandRunnerService,
     private readonly upgradeMigrationService: UpgradeMigrationService,
   ) {
@@ -65,31 +67,26 @@ export class RunInstanceCommandsCommand extends CommandRunner {
       const activeOrSuspendedWorkspaceIds =
         await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
 
-      for (const {
-        command,
-        name,
-      } of this.upgradeCommandRegistryService.getCrossUpgradeSupportedFastInstanceCommands()) {
-        const result = await this.instanceUpgradeService.runFastInstanceCommand(
-          {
-            command,
-            name,
-          },
-        );
+      const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
 
-        if (result.status === 'failed') {
-          throw result.error;
+      for (const step of sequence) {
+        if (step.kind === 'fast-instance') {
+          const result =
+            await this.instanceUpgradeService.runFastInstanceCommand({
+              command: step.command,
+              name: step.name,
+            });
+
+          if (result.status === 'failed') {
+            throw result.error;
+          }
         }
-      }
 
-      if (options.includeSlow) {
-        for (const {
-          command,
-          name,
-        } of this.upgradeCommandRegistryService.getCrossUpgradeSupportedSlowInstanceCommands()) {
+        if (step.kind === 'slow-instance' && options.includeSlow) {
           const result =
             await this.instanceUpgradeService.runSlowInstanceCommand({
-              command,
-              name,
+              command: step.command,
+              name: step.name,
               skipDataMigration: activeOrSuspendedWorkspaceIds.length === 0,
             });
 

@@ -3,13 +3,10 @@ import { useQuery } from '@apollo/client/react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  FindApplicationRegistrationStatsDocument,
-  FindOneApplicationRegistrationDocument,
-} from '~/generated-metadata/graphql';
-import { type ApplicationRegistrationData } from '~/pages/settings/applications/tabs/types/ApplicationRegistrationData';
+import { FindOneApplicationRegistrationDocument } from '~/generated-metadata/graphql';
 import { SettingsApplicationRegistrationContent } from '~/pages/settings/applications/components/SettingsApplicationRegistrationContent';
 import { useLingui } from '@lingui/react/macro';
+import { Tag } from 'twenty-ui/components';
 
 export const SettingsApplicationRegistrationDetails = () => {
   const { t } = useLingui();
@@ -23,21 +20,7 @@ export const SettingsApplicationRegistrationDetails = () => {
     skip: !applicationRegistrationId,
   });
 
-  const { data: statsData } = useQuery(
-    FindApplicationRegistrationStatsDocument,
-    {
-      variables: { id: applicationRegistrationId },
-      skip: !applicationRegistrationId,
-    },
-  );
-
-  const registration = data?.findOneApplicationRegistration as
-    | ApplicationRegistrationData
-    | undefined;
-
-  const stats = statsData?.findApplicationRegistrationStats;
-
-  const hasActiveInstalls = (stats?.activeInstalls ?? 0) > 0;
+  const registration = data?.findOneApplicationRegistration;
 
   if (loading || !isDefined(registration)) {
     return null;
@@ -46,22 +29,25 @@ export const SettingsApplicationRegistrationDetails = () => {
   return (
     <SubMenuTopBarContainer
       title={registration.name}
+      tag={<Tag text={t`Owner`} color={'gray'} />}
       links={[
         {
           children: t`Workspace`,
           href: getSettingsPath(SettingsPath.Workspace),
         },
         {
-          children: t`Applications`,
-          href: getSettingsPath(SettingsPath.Applications),
+          children: t`Applications - Developer`,
+          href: getSettingsPath(
+            SettingsPath.Applications,
+            undefined,
+            undefined,
+            'developer',
+          ),
         },
         { children: registration.name },
       ]}
     >
-      <SettingsApplicationRegistrationContent
-        registration={registration}
-        hasActiveInstalls={hasActiveInstalls}
-      />
+      <SettingsApplicationRegistrationContent registration={registration} />
     </SubMenuTopBarContainer>
   );
 };

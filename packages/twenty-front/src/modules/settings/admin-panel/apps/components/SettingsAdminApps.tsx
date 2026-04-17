@@ -6,32 +6,34 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { useContext, useState } from 'react';
+import { assertUnreachable, getSettingsPath } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
-import { H2Title, Status } from 'twenty-ui/display';
+import {
+  H2Title,
+  IconChevronRight,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type ApplicationRegistrationFragmentFragment,
+  ApplicationRegistrationSourceType,
   FindAllApplicationRegistrationsDocument,
 } from '~/generated-metadata/graphql';
 
 const StyledTableContainer = styled.div`
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   margin-top: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledTableHeaderRowContainer = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[2]};
-`;
-
-const TABLE_GRID = '1fr 1fr 100px 80px';
-const TABLE_GRID_MOBILE = '3fr 3fr 1fr 70px';
+const TABLE_GRID = '1fr 100px 100px 40px';
+const TABLE_GRID_MOBILE = '3fr 3fr 1fr 40px';
 
 export const SettingsAdminApps = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const { theme } = useContext(ThemeContext);
 
   const { data } = useQuery(FindAllApplicationRegistrationsDocument);
 
@@ -51,6 +53,27 @@ export const SettingsAdminApps = () => {
           );
         });
 
+  const getFormattedSource = (
+    registration: ApplicationRegistrationFragmentFragment,
+  ) => {
+    switch (registration.sourceType) {
+      case ApplicationRegistrationSourceType.TARBALL: {
+        return 'Tarball';
+      }
+      case ApplicationRegistrationSourceType.NPM: {
+        return 'NPM';
+      }
+      case ApplicationRegistrationSourceType.OAUTH_ONLY: {
+        return 'OAuth';
+      }
+      case ApplicationRegistrationSourceType.LOCAL: {
+        return 'Local';
+      }
+      default:
+        return assertUnreachable(registration.sourceType);
+    }
+  };
+
   return (
     <Section>
       <H2Title
@@ -64,50 +87,43 @@ export const SettingsAdminApps = () => {
       />
       <StyledTableContainer>
         <Table>
-          <StyledTableHeaderRowContainer>
-            <TableRow
-              gridAutoColumns={TABLE_GRID}
-              mobileGridAutoColumns={TABLE_GRID_MOBILE}
-            >
-              <TableHeader>{t`Name`}</TableHeader>
-              <TableHeader>{t`Source`}</TableHeader>
-              <TableHeader>{t`Listed`}</TableHeader>
-              <TableHeader>{t`Featured`}</TableHeader>
-            </TableRow>
-          </StyledTableHeaderRowContainer>
+          <TableRow
+            gridAutoColumns={TABLE_GRID}
+            mobileGridAutoColumns={TABLE_GRID_MOBILE}
+          >
+            <TableHeader>{t`Name`}</TableHeader>
+            <TableHeader align="right">{t`Source`}</TableHeader>
+            <TableHeader align="right">{t`Listed`}</TableHeader>
+            <TableHeader></TableHeader>
+          </TableRow>
           <TableBody>
             {filtered.map((registration) => (
-              <UndecoratedLink
+              <TableRow
                 key={registration.id}
                 to={getSettingsPath(
                   SettingsPath.AdminPanelApplicationRegistrationDetail,
                   { applicationRegistrationId: registration.id },
                 )}
-                fullWidth
+                gridAutoColumns={TABLE_GRID}
+                mobileGridAutoColumns={TABLE_GRID_MOBILE}
+                isClickable
               >
-                <TableRow
-                  gridAutoColumns={TABLE_GRID}
-                  mobileGridAutoColumns={TABLE_GRID_MOBILE}
-                  isClickable
-                >
-                  <TableCell>{registration.name}</TableCell>
-                  <TableCell overflow="hidden">
-                    {registration.sourcePackage ?? registration.sourceType}
-                  </TableCell>
-                  <TableCell>
-                    <Status
-                      color={registration.isListed ? 'green' : 'gray'}
-                      text={registration.isListed ? t`Yes` : t`No`}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Status
-                      color={registration.isFeatured ? 'yellow' : 'gray'}
-                      text={registration.isFeatured ? t`Yes` : t`No`}
-                    />
-                  </TableCell>
-                </TableRow>
-              </UndecoratedLink>
+                <TableCell color={themeCssVariables.font.color.primary}>
+                  <OverflowingTextWithTooltip text={registration.name} />
+                </TableCell>
+                <TableCell overflow="hidden" align="right">
+                  {getFormattedSource(registration)}
+                </TableCell>
+                <TableCell align="right">
+                  {registration.isListed ? t`Yes` : t`No`}
+                </TableCell>
+                <TableCell align="right">
+                  <IconChevronRight
+                    size={theme.icon.size.md}
+                    color={theme.font.color.tertiary}
+                  />
+                </TableCell>
+              </TableRow>
             ))}
           </TableBody>
         </Table>

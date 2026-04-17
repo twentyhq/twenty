@@ -86,7 +86,7 @@ export function Root(props: RootProps) {
         <SignoffShape fillColor={shapeFillColor} />
       ) : null}
       {page === Pages.Partner ? (
-        <GuideCrosshair crossX="calc(50% - 334px)" crossY="198px" />
+        <GuideCrosshair crossX="calc(50% + 334px)" crossY="198px" />
       ) : null}
       <StyledContainer>{children}</StyledContainer>
     </StyledSection>

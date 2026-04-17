@@ -168,23 +168,6 @@ export class LocalDriver implements LogicFunctionDriver {
 
   async delete() {}
 
-  async build({
-    flatApplication,
-    applicationUniversalIdentifier,
-  }: {
-    flatApplication: FlatApplication;
-    applicationUniversalIdentifier: string;
-  }) {
-    await this.createLayerIfNotExist({
-      flatApplication,
-      applicationUniversalIdentifier,
-    });
-    await this.ensureSdkLayer({
-      flatApplication,
-      applicationUniversalIdentifier,
-    });
-  }
-
   // Symlinks everything from the deps layer except twenty-client-sdk,
   // which comes from the SDK layer (workspace-specific generated client).
   private async assembleNodeModules({

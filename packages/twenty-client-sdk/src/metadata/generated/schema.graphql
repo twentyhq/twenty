@@ -1732,6 +1732,12 @@ type PublicWorkspaceData {
   workspaceUrls: WorkspaceUrls!
 }
 
+type PublicWorkspaceDataSummary {
+  id: UUID!
+  logo: String
+  displayName: String
+}
+
 type NativeModelCapabilities {
   webSearch: Boolean
   twitterSearch: Boolean
@@ -2645,6 +2651,7 @@ type CommandMenuItem {
   hotKeys: [String!]
   conditionalAvailabilityExpression: String
   availabilityObjectMetadataId: UUID
+  pageLayoutId: UUID
   applicationId: UUID
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -3344,6 +3351,7 @@ type Query {
   currentUser: User!
   currentWorkspace: Workspace!
   getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
+  getPublicWorkspaceDataById(id: UUID!): PublicWorkspaceDataSummary!
   getSSOIdentityProviders: [FindAvailableSSOIDP!]!
   getConnectedImapSmtpCaldavAccount(id: UUID!): ConnectedImapSmtpCaldavAccount!
   getAutoCompleteAddress(address: String!, token: String!, country: String, isFieldCity: Boolean): [AutocompleteResult!]!
@@ -4176,6 +4184,7 @@ input CreateCommandMenuItemInput {
   conditionalAvailabilityExpression: String
   availabilityObjectMetadataId: UUID
   payload: JSON
+  pageLayoutId: UUID
 }
 
 input UpdateCommandMenuItemInput {
@@ -4189,6 +4198,7 @@ input UpdateCommandMenuItemInput {
   availabilityObjectMetadataId: UUID
   engineComponentKey: EngineComponentKey
   hotKeys: [String!]
+  pageLayoutId: UUID
 }
 
 input CreateFrontComponentInput {
@@ -4599,6 +4609,7 @@ input UpdateApplicationRegistrationVariableInput {
 
 input UpdateApplicationRegistrationVariablePayload {
   value: String
+  resetValue: Boolean
   description: String
 }
 

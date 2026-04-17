@@ -128,11 +128,7 @@ export const SettingsAdminConfigVariableDetails = () => {
             href: getSettingsPath(SettingsPath.AdminPanel),
           },
           {
-            children: t`Admin Panel`,
-            href: getSettingsPath(SettingsPath.AdminPanel),
-          },
-          {
-            children: t`Config Variables`,
+            children: t`Admin Panel - Config`,
             href: getSettingsPath(
               SettingsPath.AdminPanel,
               undefined,

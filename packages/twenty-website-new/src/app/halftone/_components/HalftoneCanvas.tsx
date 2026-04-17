@@ -22,6 +22,7 @@ import type {
 import { styled } from '@linaria/react';
 import { type MutableRefObject, useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { createSiteWebGlRenderer } from '@/lib/webgl';
 
 const passThroughVertexShader = `
   varying vec2 vUv;
@@ -265,8 +266,9 @@ const IMAGE_HOVER_FADE_IN = 18;
 const IMAGE_HOVER_FADE_OUT = 7;
 const MAX_PREVIEW_PIXEL_RATIO = 2;
 
-const CanvasMount = styled.div<{ $background: string }>`
-  background: ${(props) => props.$background};
+const CanvasMount = styled.div<{ $background: string; $transparent: boolean }>`
+  background: ${(props) =>
+    props.$transparent ? 'transparent' : props.$background};
   display: block;
   height: 100%;
   min-width: 0;
@@ -737,7 +739,7 @@ export function HalftoneCanvas({
     const getRenderWidth = () =>
       Math.max(Math.round(getVirtualWidth() * getRenderScale()), 1);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
+    const renderer = createSiteWebGlRenderer({ antialias: false, alpha: true });
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.setPixelRatio(1);
     renderer.setClearColor(0x000000, 0);
@@ -1618,10 +1620,10 @@ export function HalftoneCanvas({
             -interaction.pointerVelocityY * logicalHeight,
           );
           halftoneMaterial.uniforms.dragOffset.value.set(0, 0);
-          halftoneMaterial.uniforms.hoverHalftoneActive.value =
-            activeSettings.animation.hoverHalftoneEnabled
-              ? interaction.hoverStrength
-              : 0;
+          halftoneMaterial.uniforms.hoverHalftoneActive.value = activeSettings
+            .animation.hoverHalftoneEnabled
+            ? interaction.hoverStrength
+            : 0;
           halftoneMaterial.uniforms.hoverHalftonePowerShift.value =
             activeSettings.animation.hoverHalftoneEnabled
               ? activeSettings.animation.hoverHalftonePowerShift
@@ -1632,11 +1634,11 @@ export function HalftoneCanvas({
             activeSettings.animation.hoverHalftoneEnabled
               ? activeSettings.animation.hoverHalftoneWidthShift
               : 0;
-          halftoneMaterial.uniforms.hoverLightStrength.value =
-            activeSettings.animation.hoverLightEnabled
-              ? activeSettings.animation.hoverLightIntensity *
-                interaction.hoverStrength
-              : 0;
+          halftoneMaterial.uniforms.hoverLightStrength.value = activeSettings
+            .animation.hoverLightEnabled
+            ? activeSettings.animation.hoverLightIntensity *
+              interaction.hoverStrength
+            : 0;
           halftoneMaterial.uniforms.hoverLightRadius.value =
             activeSettings.animation.hoverLightRadius;
           halftoneMaterial.uniforms.hoverFlowStrength.value = 0;
@@ -2031,6 +2033,7 @@ export function HalftoneCanvas({
   return (
     <CanvasMount
       $background={settings.background.color}
+      $transparent={settings.background.transparent}
       aria-hidden
       ref={mountReference}
     />

@@ -9,13 +9,10 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconApps, IconCode, IconDownload } from 'twenty-ui/display';
-import { useQuery } from '@apollo/client/react';
 import {
   FeatureFlagKey,
   PermissionFlagType,
-  FindManyApplicationsDocument,
 } from '~/generated-metadata/graphql';
-import { SettingsApplicationsTable } from '~/pages/settings/applications/components/SettingsApplicationsTable';
 import { SettingsApplicationsAvailableTab } from '~/pages/settings/applications/tabs/SettingsApplicationsAvailableTab';
 import { SettingsApplicationsDeveloperTab } from '~/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab';
 import { SettingsApplicationsInstalledTab } from '~/pages/settings/applications/tabs/SettingsApplicationsInstalledTab';

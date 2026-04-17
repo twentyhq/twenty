@@ -31,7 +31,7 @@ export const SettingsApplicationTableRow = ({
       to={link}
     >
       <TableCell
-        color={themeCssVariables.font.color.secondary}
+        color={themeCssVariables.font.color.primary}
         gap={themeCssVariables.spacing[2]}
         minWidth="0"
         overflow="hidden"

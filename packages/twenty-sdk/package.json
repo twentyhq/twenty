@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "1.22.0-canary.6",
+  "version": "1.22.0",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/sdk/index.d.ts",

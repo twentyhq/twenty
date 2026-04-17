@@ -95,7 +95,9 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
 
       store.set(contextStoreIsFullTabWidgetInEditModeState, value);
 
-      store.set(currentPageLayoutIdState.atom, value ? pageLayoutId : null);
+      if (value) {
+        store.set(currentPageLayoutIdState.atom, pageLayoutId);
+      }
     },
     [
       isDashboardInEditModeState,

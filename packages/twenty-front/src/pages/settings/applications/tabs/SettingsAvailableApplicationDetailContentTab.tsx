@@ -21,8 +21,8 @@ export const SettingsAvailableApplicationDetailContentTab = ({
 }) => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
-  const objects = content?.objects ?? [];
-  const fields = content?.fields ?? [];
+  const objects = useMemo(() => content?.objects ?? [], [content?.objects]);
+  const fields = useMemo(() => content?.fields ?? [], [content?.fields]);
   const logicFunctions = content?.logicFunctions ?? [];
   const frontComponents = content?.frontComponents ?? [];
 

@@ -1,4 +1,4 @@
-import { defineFrontComponent } from '@/sdk';
+import { defineFrontComponent } from 'twenty-sdk';
 import { useState } from 'react';
 
 const TAILWIND_CSS = `

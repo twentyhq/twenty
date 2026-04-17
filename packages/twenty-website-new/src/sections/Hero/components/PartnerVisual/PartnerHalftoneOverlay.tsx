@@ -3,6 +3,7 @@
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { createSiteWebGlRenderer } from '@/lib/webgl';
 
 const PREVIEW_DISTANCE = 3.2;
 const SOURCE_PREVIEW_DISTANCE = 6.1;
@@ -442,7 +443,7 @@ async function mountHalftoneOverlay({
       1,
     );
 
-  const renderer = new THREE.WebGLRenderer({
+  const renderer = createSiteWebGlRenderer({
     alpha: true,
     antialias: false,
     powerPreference: 'high-performance',

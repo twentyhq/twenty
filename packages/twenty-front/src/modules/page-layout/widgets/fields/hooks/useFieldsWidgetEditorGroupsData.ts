@@ -203,19 +203,13 @@ export const useFieldsWidgetEditorGroupsData = ({
     return {
       groups: buildDefaultFieldsWidgetGroups({
         fields: objectMetadataItem.fields,
-        objectNameSingular,
         labelIdentifierFieldMetadataItemId:
           labelIdentifierFieldMetadataItem?.id,
       }),
       ungroupedFields: [],
       editorMode: 'grouped' as const,
     };
-  }, [
-    objectMetadataItem,
-    objectNameSingular,
-    view,
-    labelIdentifierFieldMetadataItem,
-  ]);
+  }, [objectMetadataItem, view, labelIdentifierFieldMetadataItem]);
 
   return {
     ...result,

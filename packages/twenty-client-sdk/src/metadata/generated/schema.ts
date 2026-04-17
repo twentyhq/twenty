@@ -1430,6 +1430,13 @@ export interface PublicWorkspaceData {
     __typename: 'PublicWorkspaceData'
 }
 
+export interface PublicWorkspaceDataSummary {
+    id: Scalars['UUID']
+    logo?: Scalars['String']
+    displayName?: Scalars['String']
+    __typename: 'PublicWorkspaceDataSummary'
+}
+
 export interface NativeModelCapabilities {
     webSearch?: Scalars['Boolean']
     twitterSearch?: Scalars['Boolean']
@@ -2361,6 +2368,7 @@ export interface CommandMenuItem {
     hotKeys?: Scalars['String'][]
     conditionalAvailabilityExpression?: Scalars['String']
     availabilityObjectMetadataId?: Scalars['UUID']
+    pageLayoutId?: Scalars['UUID']
     applicationId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
@@ -2905,6 +2913,7 @@ export interface Query {
     currentUser: User
     currentWorkspace: Workspace
     getPublicWorkspaceDataByDomain: PublicWorkspaceData
+    getPublicWorkspaceDataById: PublicWorkspaceDataSummary
     getSSOIdentityProviders: FindAvailableSSOIDP[]
     getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount
     getAutoCompleteAddress: AutocompleteResult[]
@@ -4680,6 +4689,14 @@ export interface PublicWorkspaceDataGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface PublicWorkspaceDataSummaryGenqlSelection{
+    id?: boolean | number
+    logo?: boolean | number
+    displayName?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface NativeModelCapabilitiesGenqlSelection{
     webSearch?: boolean | number
     twitterSearch?: boolean | number
@@ -5690,6 +5707,7 @@ export interface CommandMenuItemGenqlSelection{
     hotKeys?: boolean | number
     conditionalAvailabilityExpression?: boolean | number
     availabilityObjectMetadataId?: boolean | number
+    pageLayoutId?: boolean | number
     applicationId?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
@@ -6274,6 +6292,7 @@ export interface QueryGenqlSelection{
     currentUser?: UserGenqlSelection
     currentWorkspace?: WorkspaceGenqlSelection
     getPublicWorkspaceDataByDomain?: (PublicWorkspaceDataGenqlSelection & { __args?: {origin?: (Scalars['String'] | null)} })
+    getPublicWorkspaceDataById?: (PublicWorkspaceDataSummaryGenqlSelection & { __args: {id: Scalars['UUID']} })
     getSSOIdentityProviders?: FindAvailableSSOIDPGenqlSelection
     getConnectedImapSmtpCaldavAccount?: (ConnectedImapSmtpCaldavAccountGenqlSelection & { __args: {id: Scalars['UUID']} })
     getAutoCompleteAddress?: (AutocompleteResultGenqlSelection & { __args: {address: Scalars['String'], token: Scalars['String'], country?: (Scalars['String'] | null), isFieldCity?: (Scalars['Boolean'] | null)} })
@@ -6725,9 +6744,9 @@ update: UpdateLogicFunctionFromSourceInputUpdates}
 
 export interface UpdateLogicFunctionFromSourceInputUpdates {name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),timeoutSeconds?: (Scalars['Float'] | null),sourceHandlerCode?: (Scalars['String'] | null),toolInputSchema?: (Scalars['JSON'] | null),handlerName?: (Scalars['String'] | null),sourceHandlerPath?: (Scalars['String'] | null),isTool?: (Scalars['Boolean'] | null),cronTriggerSettings?: (Scalars['JSON'] | null),databaseEventTriggerSettings?: (Scalars['JSON'] | null),httpRouteTriggerSettings?: (Scalars['JSON'] | null)}
 
-export interface CreateCommandMenuItemInput {workflowVersionId?: (Scalars['UUID'] | null),frontComponentId?: (Scalars['UUID'] | null),engineComponentKey: EngineComponentKey,label: Scalars['String'],icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),hotKeys?: (Scalars['String'][] | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null),payload?: (Scalars['JSON'] | null)}
+export interface CreateCommandMenuItemInput {workflowVersionId?: (Scalars['UUID'] | null),frontComponentId?: (Scalars['UUID'] | null),engineComponentKey: EngineComponentKey,label: Scalars['String'],icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),hotKeys?: (Scalars['String'][] | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null),payload?: (Scalars['JSON'] | null),pageLayoutId?: (Scalars['UUID'] | null)}
 
-export interface UpdateCommandMenuItemInput {id: Scalars['UUID'],label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null),engineComponentKey?: (EngineComponentKey | null),hotKeys?: (Scalars['String'][] | null)}
+export interface UpdateCommandMenuItemInput {id: Scalars['UUID'],label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null),engineComponentKey?: (EngineComponentKey | null),hotKeys?: (Scalars['String'][] | null),pageLayoutId?: (Scalars['UUID'] | null)}
 
 export interface CreateFrontComponentInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],description?: (Scalars['String'] | null),sourceComponentPath: Scalars['String'],builtComponentPath: Scalars['String'],componentName: Scalars['String'],builtComponentChecksum: Scalars['String']}
 
@@ -6859,7 +6878,7 @@ export interface CreateApplicationRegistrationVariableInput {applicationRegistra
 
 export interface UpdateApplicationRegistrationVariableInput {id: Scalars['String'],update: UpdateApplicationRegistrationVariablePayload}
 
-export interface UpdateApplicationRegistrationVariablePayload {value?: (Scalars['String'] | null),description?: (Scalars['String'] | null)}
+export interface UpdateApplicationRegistrationVariablePayload {value?: (Scalars['String'] | null),resetValue?: (Scalars['Boolean'] | null),description?: (Scalars['String'] | null)}
 
 export interface UpdateWorkspaceMemberSettingsInput {workspaceMemberId: Scalars['UUID'],update: Scalars['JSON']}
 
@@ -7846,6 +7865,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isPublicWorkspaceData = (obj?: { __typename?: any } | null): obj is PublicWorkspaceData => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicWorkspaceData"')
       return PublicWorkspaceData_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PublicWorkspaceDataSummary_possibleTypes: string[] = ['PublicWorkspaceDataSummary']
+    export const isPublicWorkspaceDataSummary = (obj?: { __typename?: any } | null): obj is PublicWorkspaceDataSummary => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPublicWorkspaceDataSummary"')
+      return PublicWorkspaceDataSummary_possibleTypes.includes(obj.__typename)
     }
     
 

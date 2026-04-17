@@ -7,6 +7,7 @@ import { WorkspaceFlatCommandMenuItemMapCacheService } from 'src/engine/metadata
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
       ApplicationEntity,
       ObjectMetadataEntity,
       FrontComponentEntity,
+      PageLayoutEntity,
     ]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],

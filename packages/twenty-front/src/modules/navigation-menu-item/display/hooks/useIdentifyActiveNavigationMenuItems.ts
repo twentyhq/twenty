@@ -174,7 +174,10 @@ export const useIdentifyActiveNavigationMenuItems = (): {
       lastClickedNavigationMenuItemId,
       objectMetadataItems,
       views,
-      location,
+      currentPathWithSearch,
+      currentPath,
+      currentObjectMetadataItem,
+      isOnRecordShowPage,
       contextStoreCurrentViewId,
     ]);
 
