@@ -19,12 +19,13 @@ export default definePageLayout({
       title: 'Sections',
       position: 50,
       icon: 'IconLayoutList',
-      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       widgets: [
         {
           universalIdentifier: QUOTE_SECTIONS_WIDGET_UNIVERSAL_IDENTIFIER,
           title: 'Quote Sections',
           type: 'FRONT_COMPONENT',
+          position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 0 },
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier: QUOTE_SECTIONS_PANEL_UNIVERSAL_IDENTIFIER,

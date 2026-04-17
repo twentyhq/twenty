@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { defineFrontComponent, useRecordId } from 'twenty-sdk';
-import { isDefined } from 'twenty-shared/utils';
 
 import { QUOTE_SECTIONS_PANEL_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
+
+const isDefined = <T,>(value: T | null | undefined): value is T =>
+  value !== null && value !== undefined;
 
 type CurrencyAmount = {
   amountMicros: number | null;
@@ -101,6 +103,20 @@ async function gql(
   return json.data;
 }
 
+// ── Calculation helpers ───────────────────────────────────────────────────────
+
+// Mirrors the per-section adjustment logic in SectionCard.
+const computeAdjustedMicros = (section: QuoteSection): number => {
+  const baseMicros = section.subtotal?.amountMicros ?? 0;
+  const terms = section.quoteTerms?.edges?.map((e) => e.node) ?? [];
+  const totalPct = terms
+    .filter((t) => t.affectsFees !== false && isDefined(t.feePercentage))
+    .reduce((sum, t) => sum + (t.feePercentage ?? 0), 0);
+  return totalPct === 0
+    ? baseMicros
+    : Math.round(baseMicros * (1 + totalPct / 100));
+};
+
 // ── Formatting helpers ────────────────────────────────────────────────────────
 
 const formatCurrency = (amount: CurrencyAmount | null): string => {
@@ -111,7 +127,7 @@ const formatCurrency = (amount: CurrencyAmount | null): string => {
     return new Intl.NumberFormat('en-GB', {
       style: 'currency',
       currency: code,
-      minimumFractionDigits: 0,
+      minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(value);
   } catch {
@@ -369,6 +385,16 @@ const S = {
     background: 'transparent',
     lineHeight: 1,
   },
+  dangerIconBtn: {
+    fontSize: '11px',
+    padding: '2px 5px',
+    borderRadius: '3px',
+    border: '1px solid #f2d7d7',
+    cursor: 'pointer',
+    color: '#c62828',
+    background: 'transparent',
+    lineHeight: 1,
+  },
   dash: { color: '#bbb' as const },
 };
 
@@ -377,9 +403,11 @@ const S = {
 const LineItemRow = ({
   item,
   onUpdate,
+  onDelete,
 }: {
   item: LineItem;
   onUpdate: (id: string, patch: LineItemPatch) => Promise<void>;
+  onDelete: (id: string) => Promise<void>;
 }) => {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState('');
@@ -394,14 +422,12 @@ const LineItemRow = ({
     setFeeType(item.feeType ?? 'TIME_AND_MATERIALS');
     setHours(item.estimatedHours != null ? String(item.estimatedHours) : '');
     setRate(
-      item.hourlyRate?.amountMicros != null && item.hourlyRate.amountMicros > 0
-        ? String(item.hourlyRate.amountMicros / 1_000_000)
-        : '',
+      item.hourlyRate?.amountMicros
+        ? String(item.hourlyRate.amountMicros / 1_000_000) : '',
     );
     setAmount(
-      item.fixedFeeAmount?.amountMicros != null && item.fixedFeeAmount.amountMicros > 0
-        ? String(item.fixedFeeAmount.amountMicros / 1_000_000)
-        : '',
+      item.fixedFeeAmount?.amountMicros
+        ? String(item.fixedFeeAmount.amountMicros / 1_000_000) : '',
     );
     setEditing(true);
   };
@@ -412,7 +438,6 @@ const LineItemRow = ({
     await onUpdate(item.id, {
       name: name.trim() !== '' ? name.trim() : (item.name ?? 'New line item'),
       feeType,
-      // Server requires estimatedHours not null for T&M — default to 0 if left blank
       estimatedHours: isTM ? (hours !== '' ? parseFloat(hours) : 0) : null,
       hourlyRate: {
         amountMicros: isTM && rate !== '' ? Math.round(parseFloat(rate) * 1_000_000) : 0,
@@ -441,7 +466,7 @@ const LineItemRow = ({
         <td style={S.td}>
           <input
             type="text"
-            defaultValue={name}
+            value={name}
             onChange={(e) => setName(detailValue(e))}
             onKeyDown={onKeyDown}
             disabled={saving}
@@ -460,7 +485,7 @@ const LineItemRow = ({
           {isTM ? (
             <input
               type="number"
-              defaultValue={hours}
+              value={hours}
               onChange={(e) => setHours(detailValue(e))}
               onKeyDown={onKeyDown}
               disabled={saving}
@@ -474,7 +499,7 @@ const LineItemRow = ({
           {isTM ? (
             <input
               type="number"
-              defaultValue={rate}
+              value={rate}
               onChange={(e) => setRate(detailValue(e))}
               onKeyDown={onKeyDown}
               disabled={saving}
@@ -488,7 +513,7 @@ const LineItemRow = ({
           {!isTM ? (
             <input
               type="number"
-              defaultValue={amount}
+              value={amount}
               onChange={(e) => setAmount(detailValue(e))}
               onKeyDown={onKeyDown}
               disabled={saving}
@@ -527,6 +552,13 @@ const LineItemRow = ({
       </td>
       <td style={S.tdNarrow}>
         <button onClick={startEdit} style={S.editIconBtn}>✎</button>
+        <button
+          onClick={() => void onDelete(item.id)}
+          style={{ ...S.dangerIconBtn, marginLeft: '4px' }}
+          title="Delete line item"
+        >
+          🗑
+        </button>
       </td>
     </tr>
   );
@@ -539,11 +571,13 @@ const LineItemsTable = ({
   sectionId,
   onAdd,
   onUpdate,
+  onDelete,
 }: {
   items: LineItem[];
   sectionId: string;
   onAdd: (sectionId: string) => Promise<void>;
   onUpdate: (id: string, patch: LineItemPatch) => Promise<void>;
+  onDelete: (id: string) => Promise<void>;
 }) => {
   const [adding, setAdding] = useState(false);
   const sorted = [...items].sort(
@@ -580,7 +614,12 @@ const LineItemsTable = ({
           </thead>
           <tbody>
             {sorted.map((item) => (
-              <LineItemRow key={item.id} item={item} onUpdate={onUpdate} />
+              <LineItemRow
+                key={item.id}
+                item={item}
+                onUpdate={onUpdate}
+                onDelete={onDelete}
+              />
             ))}
           </tbody>
         </table>
@@ -594,9 +633,11 @@ const LineItemsTable = ({
 const QuoteTermRow = ({
   term,
   onUpdate,
+  onDelete,
 }: {
   term: QuoteTerm;
   onUpdate: (id: string, patch: QuoteTermPatch) => Promise<void>;
+  onDelete: (id: string) => Promise<void>;
 }) => {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState('');
@@ -637,7 +678,7 @@ const QuoteTermRow = ({
         <td style={S.td}>
           <input
             type="text"
-            defaultValue={name}
+            value={name}
             onChange={(e) => setName(detailValue(e))}
             onKeyDown={onKeyDown}
             disabled={saving}
@@ -660,7 +701,7 @@ const QuoteTermRow = ({
         <td style={S.tdRight}>
           <input
             type="number"
-            defaultValue={feePct}
+            value={feePct}
             onChange={(e) => setFeePct(detailValue(e))}
             onKeyDown={onKeyDown}
             disabled={saving}
@@ -693,6 +734,13 @@ const QuoteTermRow = ({
       </td>
       <td style={S.tdNarrow}>
         <button onClick={startEdit} style={S.editIconBtn}>✎</button>
+        <button
+          onClick={() => void onDelete(term.id)}
+          style={{ ...S.dangerIconBtn, marginLeft: '4px' }}
+          title="Delete quote term"
+        >
+          🗑
+        </button>
       </td>
     </tr>
   );
@@ -705,11 +753,13 @@ const QuoteTermsTable = ({
   sectionId,
   onAdd,
   onUpdate,
+  onDelete,
 }: {
   terms: QuoteTerm[];
   sectionId: string;
   onAdd: (sectionId: string) => Promise<void>;
   onUpdate: (id: string, patch: QuoteTermPatch) => Promise<void>;
+  onDelete: (id: string) => Promise<void>;
 }) => {
   const [adding, setAdding] = useState(false);
 
@@ -742,7 +792,12 @@ const QuoteTermsTable = ({
           </thead>
           <tbody>
             {terms.map((term) => (
-              <QuoteTermRow key={term.id} term={term} onUpdate={onUpdate} />
+              <QuoteTermRow
+                key={term.id}
+                term={term}
+                onUpdate={onUpdate}
+                onDelete={onDelete}
+              />
             ))}
           </tbody>
         </table>
@@ -757,28 +812,37 @@ const SectionCard = ({
   section,
   index,
   onRename,
+  onDeleteSection,
   onAddLineItem,
   onUpdateLineItem,
+  onDeleteLineItem,
   onAddQuoteTerm,
   onUpdateQuoteTerm,
+  onDeleteQuoteTerm,
 }: {
   section: QuoteSection;
   index: number;
   onRename: (id: string, name: string) => Promise<void>;
+  onDeleteSection: (id: string) => Promise<void>;
   onAddLineItem: (sectionId: string) => Promise<void>;
   onUpdateLineItem: (id: string, patch: LineItemPatch) => Promise<void>;
+  onDeleteLineItem: (id: string) => Promise<void>;
   onAddQuoteTerm: (sectionId: string) => Promise<void>;
   onUpdateQuoteTerm: (id: string, patch: QuoteTermPatch) => Promise<void>;
+  onDeleteQuoteTerm: (id: string) => Promise<void>;
 }) => {
   const lineItems = section.lineItems?.edges?.map((e) => e.node) ?? [];
   const quoteTerms = section.quoteTerms?.edges?.map((e) => e.node) ?? [];
   const sectionNum = section.sectionPosition ?? index + 1;
 
-  // Adjusted subtotal: base × (1 + sum of affectsFees term percentages / 100)
+  // Adjusted subtotal: base × (1 + sum(term fee %) / 100)
+  //
+  // Treat affectsFees === false as an explicit opt-out; otherwise include any
+  // term that has a numeric feePercentage.
   const baseMicros = section.subtotal?.amountMicros ?? 0;
   const currencyCode = section.subtotal?.currencyCode ?? 'GBP';
   const totalPct = quoteTerms
-    .filter((t) => t.affectsFees === true)
+    .filter((t) => t.affectsFees !== false && isDefined(t.feePercentage))
     .reduce((sum, t) => sum + (t.feePercentage ?? 0), 0);
   const adjustedMicros =
     totalPct === 0 ? baseMicros : Math.round(baseMicros * (1 + totalPct / 100));
@@ -790,6 +854,7 @@ const SectionCard = ({
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState('');
   const [saving, setSaving] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const startEdit = () => {
     setDraft(section.name ?? '');
@@ -848,12 +913,36 @@ const SectionCard = ({
             <div style={S.sectionMeta}>{section.serviceCategory}</div>
           )}
         </div>
-        <div style={{ textAlign: 'right' as const }}>
-          <div style={S.sectionSubtotal}>{formatCurrency(adjustedSubtotal)}</div>
-          {totalPct !== 0 && (
-            <div style={{ fontSize: '11px', color: '#999', marginTop: '2px' }}>
-              Base {formatCurrency(section.subtotal)} · Terms {totalPct > 0 ? '+' : ''}{totalPct}%
-            </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <div style={{ textAlign: 'right' as const }}>
+            <div style={S.sectionSubtotal}>{formatCurrency(adjustedSubtotal)}</div>
+            {totalPct !== 0 && (
+              <div style={{ fontSize: '11px', color: '#999', marginTop: '2px' }}>
+                Base {formatCurrency(section.subtotal)} · Terms {totalPct > 0 ? '+' : ''}{totalPct}%
+              </div>
+            )}
+          </div>
+          {confirmDelete ? (
+            <>
+              <span style={{ fontSize: '11px', color: '#c62828' }}>Delete section?</span>
+              <button
+                onClick={() => { setConfirmDelete(false); void onDeleteSection(section.id); }}
+                style={{ ...S.dangerIconBtn, fontWeight: 700, padding: '2px 8px' }}
+              >
+                Yes
+              </button>
+              <button onClick={() => setConfirmDelete(false)} style={S.cancelBtn}>
+                No
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setConfirmDelete(true)}
+              style={S.dangerIconBtn}
+              title="Delete section"
+            >
+              🗑
+            </button>
           )}
         </div>
       </div>
@@ -863,12 +952,14 @@ const SectionCard = ({
         sectionId={section.id}
         onAdd={onAddLineItem}
         onUpdate={onUpdateLineItem}
+        onDelete={onDeleteLineItem}
       />
       <QuoteTermsTable
         terms={quoteTerms}
         sectionId={section.id}
         onAdd={onAddQuoteTerm}
         onUpdate={onUpdateQuoteTerm}
+        onDelete={onDeleteQuoteTerm}
       />
       <div style={{ height: '8px' }} />
     </div>
@@ -884,11 +975,11 @@ const QuoteSectionsPanel = () => {
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
 
-  const fetchSections = useCallback(async () => {
+  const fetchSections = useCallback(async (): Promise<QuoteSection[]> => {
     if (!isDefined(recordId)) {
       setLoading(false);
       setError('No record ID available');
-      return;
+      return [];
     }
     try {
       setError(null);
@@ -923,12 +1014,43 @@ const QuoteSectionsPanel = () => {
         }`,
         { quoteId: recordId },
       )) as { quoteSections?: { edges?: { node: QuoteSection }[] } };
-      setSections(data?.quoteSections?.edges?.map((e) => e.node) ?? []);
+      const fetched = data?.quoteSections?.edges?.map((e) => e.node) ?? [];
+      setSections(fetched);
+      setLoading(false);
+      return fetched;
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
+      setLoading(false);
+      return [];
     }
-    setLoading(false);
   }, [recordId]);
+
+  // Write the computed grand total back to the Quote record so the native
+  // field stays in sync. Fire-and-forget — silent on error to avoid masking
+  // the primary mutation's result.
+  const syncQuoteTotal = useCallback(
+    (latestSections: QuoteSection[]) => {
+      if (!isDefined(recordId)) return;
+      const totalMicros = latestSections.reduce(
+        (sum, s) => sum + computeAdjustedMicros(s),
+        0,
+      );
+      const currencyCode =
+        latestSections.find((s) => isDefined(s.subtotal?.currencyCode))
+          ?.subtotal?.currencyCode ?? 'GBP';
+      gql(
+        `mutation SyncQuoteTotal($id: UUID!, $amountMicros: Float!, $currencyCode: String!) {
+          updateQuote(id: $id, data: {
+            totalAmount: { amountMicros: $amountMicros, currencyCode: $currencyCode }
+          }) { id }
+        }`,
+        { id: recordId, amountMicros: totalMicros, currencyCode },
+      ).catch(() => {
+        // best-effort — ignore failures
+      });
+    },
+    [recordId],
+  );
 
   useEffect(() => {
     void fetchSections();
@@ -943,12 +1065,12 @@ const QuoteSectionsPanel = () => {
           }`,
           { id, name },
         );
-        await fetchSections();
+        syncQuoteTotal(await fetchSections());
       } catch (err) {
         setError(err instanceof Error ? err.message : String(err));
       }
     },
-    [fetchSections],
+    [fetchSections, syncQuoteTotal],
   );
 
   const handleCreateSection = useCallback(async () => {
@@ -965,12 +1087,12 @@ const QuoteSectionsPanel = () => {
         }`,
         { name: `Section ${nextPosition}`, quoteId: recordId, pos: nextPosition },
       );
-      await fetchSections();
+      syncQuoteTotal(await fetchSections());
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     }
     setCreating(false);
-  }, [recordId, sections, creating, fetchSections]);
+  }, [recordId, sections, creating, fetchSections, syncQuoteTotal]);
 
   const handleAddLineItem = useCallback(
     async (sectionId: string) => {
@@ -995,12 +1117,12 @@ const QuoteSectionsPanel = () => {
           }`,
           { sectionId, pos: nextPos },
         );
-        await fetchSections();
+        syncQuoteTotal(await fetchSections());
       } catch (err) {
         setError(err instanceof Error ? err.message : String(err));
       }
     },
-    [sections, fetchSections],
+    [sections, fetchSections, syncQuoteTotal],
   );
 
   const handleUpdateLineItem = useCallback(
@@ -1028,12 +1150,29 @@ const QuoteSectionsPanel = () => {
             fixedFeeAmount: patch.fixedFeeAmount,
           },
         );
-        await fetchSections();
+        syncQuoteTotal(await fetchSections());
       } catch (err) {
         setError(err instanceof Error ? err.message : String(err));
       }
     },
-    [fetchSections],
+    [fetchSections, syncQuoteTotal],
+  );
+
+  const handleDeleteLineItem = useCallback(
+    async (id: string) => {
+      try {
+        await gql(
+          `mutation DeleteLineItem($id: UUID!) {
+            deleteLineItem(id: $id) { id }
+          }`,
+          { id },
+        );
+        syncQuoteTotal(await fetchSections());
+      } catch (err) {
+        setError(err instanceof Error ? err.message : String(err));
+      }
+    },
+    [fetchSections, syncQuoteTotal],
   );
 
   const handleAddQuoteTerm = useCallback(
@@ -1051,12 +1190,12 @@ const QuoteSectionsPanel = () => {
           }`,
           { sectionId },
         );
-        await fetchSections();
+        syncQuoteTotal(await fetchSections());
       } catch (err) {
         setError(err instanceof Error ? err.message : String(err));
       }
     },
-    [fetchSections],
+    [fetchSections, syncQuoteTotal],
   );
 
   const handleUpdateQuoteTerm = useCallback(
@@ -1082,12 +1221,46 @@ const QuoteSectionsPanel = () => {
             affectsFees: patch.affectsFees,
           },
         );
-        await fetchSections();
+        syncQuoteTotal(await fetchSections());
       } catch (err) {
         setError(err instanceof Error ? err.message : String(err));
       }
     },
-    [fetchSections],
+    [fetchSections, syncQuoteTotal],
+  );
+
+  const handleDeleteQuoteTerm = useCallback(
+    async (id: string) => {
+      try {
+        await gql(
+          `mutation DeleteQuoteTerm($id: UUID!) {
+            deleteQuoteTerm(id: $id) { id }
+          }`,
+          { id },
+        );
+        syncQuoteTotal(await fetchSections());
+      } catch (err) {
+        setError(err instanceof Error ? err.message : String(err));
+      }
+    },
+    [fetchSections, syncQuoteTotal],
+  );
+
+  const handleDeleteSection = useCallback(
+    async (id: string) => {
+      try {
+        await gql(
+          `mutation DeleteQuoteSection($id: UUID!) {
+            deleteQuoteSection(id: $id) { id }
+          }`,
+          { id },
+        );
+        syncQuoteTotal(await fetchSections());
+      } catch (err) {
+        setError(err instanceof Error ? err.message : String(err));
+      }
+    },
+    [fetchSections, syncQuoteTotal],
   );
 
   if (loading) {
@@ -1123,18 +1296,49 @@ const QuoteSectionsPanel = () => {
           No quote sections yet
         </div>
       ) : (
-        sections.map((section, idx) => (
-          <SectionCard
-            key={section.id}
-            section={section}
-            index={idx}
-            onRename={handleRenameSection}
-            onAddLineItem={handleAddLineItem}
-            onUpdateLineItem={handleUpdateLineItem}
-            onAddQuoteTerm={handleAddQuoteTerm}
-            onUpdateQuoteTerm={handleUpdateQuoteTerm}
-          />
-        ))
+        <>
+          {sections.map((section, idx) => (
+            <SectionCard
+              key={section.id}
+              section={section}
+              index={idx}
+              onRename={handleRenameSection}
+              onDeleteSection={handleDeleteSection}
+              onAddLineItem={handleAddLineItem}
+              onUpdateLineItem={handleUpdateLineItem}
+              onDeleteLineItem={handleDeleteLineItem}
+              onAddQuoteTerm={handleAddQuoteTerm}
+              onUpdateQuoteTerm={handleUpdateQuoteTerm}
+              onDeleteQuoteTerm={handleDeleteQuoteTerm}
+            />
+          ))}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '10px 16px',
+              borderTop: '2px solid #e5e5e5',
+              marginTop: '4px',
+            }}
+          >
+            <span style={{ fontSize: '13px', fontWeight: 600, color: '#555' }}>
+              Quote Total
+            </span>
+            <span style={{ fontSize: '15px', fontWeight: 700, color: '#111' }}>
+              {formatCurrency({
+                amountMicros: sections.reduce(
+                  (sum, s) => sum + computeAdjustedMicros(s),
+                  0,
+                ),
+                currencyCode:
+                  sections.find((s) => isDefined(s.subtotal?.currencyCode))
+                    ?.subtotal?.currencyCode ?? 'GBP',
+              })}
+            </span>
+          </div>
+        </>
       )}
     </div>
   );

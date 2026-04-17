@@ -1,5 +1,6 @@
 **/**/.env
 .DS_Store
+awscliv2.zip
 /.idea
 .claude/settings.json
 **/**/node_modules/
