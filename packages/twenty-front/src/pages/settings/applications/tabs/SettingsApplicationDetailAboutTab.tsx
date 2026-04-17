@@ -1,122 +1,124 @@
+import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title, IconTrash, AppTooltip } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { SettingsApplicationVersionContainer } from '~/pages/settings/applications/components/SettingsApplicationVersionContainer';
-import { Button } from 'twenty-ui/input';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { Trans } from '@lingui/react/macro';
-import { SettingsPath } from 'twenty-shared/types';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useState } from 'react';
-import { useMutation } from '@apollo/client/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type Application } from '~/generated-metadata/graphql';
 import {
-  type Application,
-  UninstallApplicationDocument,
-} from '~/generated-metadata/graphql';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+  SettingsApplicationAboutSidebar,
+  type ContentEntry,
+  type DeveloperLinks,
+} from '~/pages/settings/applications/components/SettingsApplicationAboutSidebar';
+import { SettingsApplicationScreenshotGallery } from '~/pages/settings/applications/components/SettingsApplicationScreenshotGallery';
+import { SettingsApplicationUninstallSection } from '~/pages/settings/applications/components/SettingsApplicationUninstallSection';
+import { SettingsApplicationVersionContainer } from '~/pages/settings/applications/components/SettingsApplicationVersionContainer';
 
-const UNINSTALL_APPLICATION_MODAL_ID = 'uninstall-application-modal';
-
-export const SettingsApplicationDetailAboutTab = ({
-  application,
-}: {
-  application?: Omit<Application, 'objects'> & {
+type SettingsApplicationDetailAboutTabProps = {
+  displayName: string;
+  description?: string;
+  aboutDescription?: string;
+  screenshots?: string[];
+  author?: string;
+  category?: string;
+  contentEntries?: ContentEntry[];
+  currentVersion?: string;
+  latestAvailableVersion?: string;
+  developerLinks?: DeveloperLinks;
+  actionButton?: ReactNode;
+  isInstalled: boolean;
+  application?: Omit<Application, 'objects' | 'frontComponents'> & {
     objects: { id: string }[];
   };
-}) => {
-  const { openModal } = useModal();
+};
 
-  const [isLoading, setIsLoading] = useState(false);
+const StyledContentContainer = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[4]};
+`;
 
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+const StyledMainContent = styled.div`
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+`;
 
-  const [uninstallApplication] = useMutation(UninstallApplicationDocument);
+const StyledSectionTitle = styled.h2`
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.xl};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  margin: 0 0 ${themeCssVariables.spacing[3]} 0;
+`;
 
-  const navigate = useNavigateSettings();
+export const SettingsApplicationDetailAboutTab = ({
+  displayName,
+  description,
+  aboutDescription,
+  screenshots,
+  author,
+  category,
+  contentEntries,
+  currentVersion,
+  latestAvailableVersion,
+  developerLinks,
+  actionButton,
+  isInstalled,
+  application,
+}: SettingsApplicationDetailAboutTabProps) => {
+  const hasScreenshots = isDefined(screenshots) && screenshots.length > 0;
 
-  const registrationId = application?.applicationRegistrationId;
-
-  const latestAvailableVersion =
-    application?.applicationRegistration?.latestAvailableVersion ?? null;
-
-  if (!isDefined(application)) {
-    return null;
-  }
-
-  const handleUninstallApplication = async () => {
-    setIsLoading(true);
-    try {
-      await uninstallApplication({
-        variables: { universalIdentifier: application.universalIdentifier },
-      });
-
-      enqueueSuccessSnackBar({
-        message: t`Application successfully uninstalled.`,
-      });
-      navigate(SettingsPath.Applications);
-    } catch {
-      enqueueErrorSnackBar({ message: t`Error uninstalling application.` });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const confirmationValue = t`yes`;
+  const markdownText =
+    aboutDescription ??
+    description ??
+    t`No description available for this application`;
 
   return (
     <>
-      <Section>
-        <SettingsApplicationVersionContainer
-          application={application}
+      {hasScreenshots && (
+        <SettingsApplicationScreenshotGallery
+          screenshots={screenshots}
+          displayName={displayName}
+        />
+      )}
+
+      <StyledContentContainer>
+        <StyledMainContent>
+          <Section>
+            <StyledSectionTitle>{t`About`}</StyledSectionTitle>
+            <LazyMarkdownRenderer text={markdownText} />
+          </Section>
+        </StyledMainContent>
+
+        <SettingsApplicationAboutSidebar
+          actionButton={actionButton}
+          author={author}
+          category={category}
+          contentEntries={contentEntries}
+          currentVersion={currentVersion}
           latestAvailableVersion={latestAvailableVersion}
-          appRegistrationId={registrationId}
+          developerLinks={developerLinks}
         />
-      </Section>
-      <>
-        <Section>
-          <H2Title
-            title={t`Manage your app`}
-            description={t`Uninstall this application`}
-          />
-          <Button
-            accent="danger"
-            id={'uninstall-button-anchor'}
-            variant="secondary"
-            title={t`Uninstall`}
-            Icon={IconTrash}
-            disabled={!application.canBeUninstalled}
-            onClick={() =>
-              application.canBeUninstalled
-                ? openModal(UNINSTALL_APPLICATION_MODAL_ID)
-                : null
-            }
-          />
-          {!application.canBeUninstalled && (
-            <AppTooltip
-              anchorSelect={`#uninstall-button-anchor`}
-              content={t`This application is required for your workspace to function properly and cannot be uninstalled.`}
-              place="bottom-start"
+      </StyledContentContainer>
+
+      {isInstalled && isDefined(application) && (
+        <>
+          <Section>
+            <SettingsApplicationVersionContainer
+              application={application}
+              latestAvailableVersion={
+                application.applicationRegistration?.latestAvailableVersion ??
+                null
+              }
+              appRegistrationId={application.applicationRegistrationId}
             />
-          )}
-        </Section>
-        <ConfirmationModal
-          confirmationPlaceholder={confirmationValue}
-          confirmationValue={confirmationValue}
-          modalInstanceId={UNINSTALL_APPLICATION_MODAL_ID}
-          title={t`Uninstall Application?`}
-          subtitle={
-            <Trans>
-              Please type {`"${confirmationValue}"`} to confirm you want to
-              uninstall this application.
-            </Trans>
-          }
-          onConfirmClick={handleUninstallApplication}
-          confirmButtonText={t`Uninstall`}
-          loading={isLoading}
-        />
-      </>
+          </Section>
+          <SettingsApplicationUninstallSection
+            universalIdentifier={application.universalIdentifier}
+            canBeUninstalled={application.canBeUninstalled}
+          />
+        </>
+      )}
     </>
   );
 };

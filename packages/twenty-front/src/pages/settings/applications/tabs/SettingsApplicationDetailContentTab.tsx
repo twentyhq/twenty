@@ -4,119 +4,234 @@ import { SettingsLogicFunctionsTable } from '@/settings/logic-functions/componen
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { type Application } from '~/generated-metadata/graphql';
-import { SettingsAIAgentsTable } from '~/pages/settings/ai/components/SettingsAIAgentsTable';
 import {
   SettingsApplicationDataTable,
   type ApplicationDataTableRow,
 } from '~/pages/settings/applications/components/SettingsApplicationDataTable';
+import { SettingsApplicationNameDescriptionTable } from '~/pages/settings/applications/components/SettingsApplicationNameDescriptionTable';
+import { findObjectNameByUniversalIdentifier } from '~/pages/settings/applications/utils/findObjectNameByUniversalIdentifier';
+
+type InstalledApplicationForContentTab = Omit<
+  Application,
+  'objects' | 'universalIdentifier' | 'frontComponents'
+> & {
+  objects: { id: string }[];
+  frontComponents?: { name: string; description?: string | null }[];
+};
+
+type SettingsApplicationDetailContentTabProps = {
+  applicationId: string;
+  installedApplication?: InstalledApplicationForContentTab;
+  manifestContent?: Manifest;
+};
 
 export const SettingsApplicationDetailContentTab = ({
-  application,
-}: {
-  application?: Omit<Application, 'objects' | 'universalIdentifier'> & {
-    objects: { id: string }[];
-  };
-}) => {
+  applicationId,
+  installedApplication,
+  manifestContent,
+}: SettingsApplicationDetailContentTabProps) => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
-  const applicationObjectIds = useMemo(
-    () => application?.objects.map((object) => object.id) ?? [],
-    [application?.objects],
+  // Installed app: object rows from workspace metadata
+  const installedObjectIds = useMemo(
+    () => installedApplication?.objects.map((object) => object.id) ?? [],
+    [installedApplication?.objects],
   );
 
-  const objectRows = useMemo((): ApplicationDataTableRow[] => {
-    if (!isDefined(application) || application.objects.length === 0) {
+  const installedObjectRows = useMemo((): ApplicationDataTableRow[] => {
+    if (
+      !isDefined(installedApplication) ||
+      installedApplication.objects.length === 0
+    ) {
       return [];
     }
 
     return objectMetadataItems
-      .filter((objectMetadataItem) =>
-        applicationObjectIds.includes(objectMetadataItem.id),
-      )
-      .map((objectMetadataItem) => {
-        const nonSystemFields = objectMetadataItem.fields.filter(
-          (field) => !isHiddenSystemField(field),
-        );
+      .filter((item) => installedObjectIds.includes(item.id))
+      .map((item) => ({
+        key: item.nameSingular,
+        labelPlural: item.labelPlural,
+        icon: item.icon ?? undefined,
+        fieldsCount: item.fields.filter((f) => !isHiddenSystemField(f)).length,
+        link: getSettingsPath(SettingsPath.ObjectDetail, {
+          objectNamePlural: item.namePlural,
+        }),
+        tagItem: {
+          isCustom: item.isCustom,
+          isRemote: item.isRemote,
+          applicationId: item.applicationId,
+        },
+      }));
+  }, [installedApplication, objectMetadataItems, installedObjectIds]);
 
-        return {
-          key: objectMetadataItem.nameSingular,
-          labelPlural: objectMetadataItem.labelPlural,
-          icon: objectMetadataItem.icon ?? undefined,
-          fieldsCount: nonSystemFields.length,
-          link: getSettingsPath(SettingsPath.ObjectDetail, {
-            objectNamePlural: objectMetadataItem.namePlural,
-          }),
-          tagItem: {
-            isCustom: objectMetadataItem.isCustom,
-            isRemote: objectMetadataItem.isRemote,
-            applicationId: objectMetadataItem.applicationId,
-          },
-        };
-      });
-  }, [application, objectMetadataItems, applicationObjectIds]);
-
-  const fieldGroupRows = useMemo((): ApplicationDataTableRow[] => {
-    if (!isDefined(application)) {
+  const installedFieldGroupRows = useMemo((): ApplicationDataTableRow[] => {
+    if (!isDefined(installedApplication)) {
       return [];
     }
 
     const FIELD_GROUP_DENY_LIST = ['timelineActivity', 'favorite'];
 
     return objectMetadataItems
-      .filter((objectMetadataItem) => {
-        if (applicationObjectIds.includes(objectMetadataItem.id)) {
-          return false;
-        }
+      .filter((item) => {
+        if (installedObjectIds.includes(item.id)) return false;
+        if (FIELD_GROUP_DENY_LIST.includes(item.nameSingular)) return false;
 
-        if (FIELD_GROUP_DENY_LIST.includes(objectMetadataItem.nameSingular)) {
-          return false;
-        }
+        return item.fields.some(
+          (field) => field.applicationId === installedApplication.id,
+        );
+      })
+      .map((item) => ({
+        key: item.nameSingular,
+        labelPlural: item.labelPlural,
+        icon: item.icon ?? undefined,
+        fieldsCount: item.fields.filter(
+          (field) => field.applicationId === installedApplication.id,
+        ).length,
+        link: getSettingsPath(SettingsPath.ObjectDetail, {
+          objectNamePlural: item.namePlural,
+        }),
+        tagItem: {
+          isCustom: item.isCustom,
+          isRemote: item.isRemote,
+          applicationId: item.applicationId,
+        },
+      }));
+  }, [objectMetadataItems, installedObjectIds, installedApplication]);
 
-        const appFields = objectMetadataItem.fields.filter(
-          (field) => field.applicationId === application.id,
+  // Manifest: object rows from manifest data
+  const manifestObjects = useMemo(
+    () => manifestContent?.objects ?? [],
+    [manifestContent?.objects],
+  );
+  const manifestFields = useMemo(
+    () => manifestContent?.fields ?? [],
+    [manifestContent?.fields],
+  );
+
+  const manifestObjectRows = useMemo(
+    (): ApplicationDataTableRow[] =>
+      manifestObjects.map((appObject) => ({
+        key: appObject.nameSingular,
+        labelPlural: appObject.labelPlural,
+        icon: appObject.icon ?? undefined,
+        fieldsCount: appObject.fields.length,
+        tagItem: { applicationId },
+      })),
+    [manifestObjects, applicationId],
+  );
+
+  const manifestFieldGroupRows = useMemo((): ApplicationDataTableRow[] => {
+    if (manifestFields.length === 0) {
+      return [];
+    }
+
+    const groupMap = new Map<
+      string,
+      { objectUniversalIdentifier: string; count: number }
+    >();
+
+    for (const field of manifestFields) {
+      const objectUid = field.objectUniversalIdentifier;
+      const existing = groupMap.get(objectUid);
+
+      if (isDefined(existing)) {
+        existing.count++;
+      } else {
+        groupMap.set(objectUid, {
+          objectUniversalIdentifier: objectUid,
+          count: 1,
+        });
+      }
+    }
+
+    return Array.from(groupMap.values())
+      .map((group) => {
+        const appObject = manifestObjects.find(
+          (obj) => obj.universalIdentifier === group.objectUniversalIdentifier,
         );
 
-        return appFields.length > 0;
-      })
-      .map((objectMetadataItem) => {
-        const appFieldsCount = objectMetadataItem.fields.filter(
-          (field) => field.applicationId === application.id,
-        ).length;
+        if (isDefined(appObject)) {
+          return {
+            key: appObject.nameSingular,
+            labelPlural: appObject.labelPlural,
+            icon: appObject.icon ?? undefined,
+            fieldsCount: group.count,
+            tagItem: { applicationId },
+          };
+        }
+
+        const standardObjectName = findObjectNameByUniversalIdentifier(
+          group.objectUniversalIdentifier,
+        );
+
+        const objectMetadataItem = isDefined(standardObjectName)
+          ? objectMetadataItems.find(
+              (item) => item.nameSingular === standardObjectName,
+            )
+          : undefined;
+
+        if (!isDefined(objectMetadataItem)) {
+          return;
+        }
 
         return {
           key: objectMetadataItem.nameSingular,
           labelPlural: objectMetadataItem.labelPlural,
           icon: objectMetadataItem.icon ?? undefined,
-          fieldsCount: appFieldsCount,
+          fieldsCount: group.count,
           link: getSettingsPath(SettingsPath.ObjectDetail, {
             objectNamePlural: objectMetadataItem.namePlural,
           }),
-          tagItem: {
-            isCustom: objectMetadataItem.isCustom,
-            isRemote: objectMetadataItem.isRemote,
-            applicationId: objectMetadataItem.applicationId,
-          },
+          tagItem: {},
         };
-      });
-  }, [objectMetadataItems, applicationObjectIds, application]);
+      })
+      .filter(isDefined);
+  }, [manifestFields, objectMetadataItems, manifestObjects, applicationId]);
 
-  if (!isDefined(application)) {
-    return null;
-  }
+  // Choose data source: installed app data takes precedence
+  const objectRows = isDefined(installedApplication)
+    ? installedObjectRows
+    : manifestObjectRows;
+  const fieldGroupRows = isDefined(installedApplication)
+    ? installedFieldGroupRows
+    : manifestFieldGroupRows;
 
-  const { logicFunctions } = application;
+  // Front components
+  const frontComponentItems = useMemo(() => {
+    if (isDefined(installedApplication)) {
+      return (installedApplication.frontComponents ?? []).map((fc) => ({
+        name: fc.name,
+        description: fc.description,
+      }));
+    }
 
-  const shouldDisplayLogicFunctions =
-    isDefined(logicFunctions) && logicFunctions?.length > 0;
+    return (manifestContent?.frontComponents ?? []).map((fc) => ({
+      name: fc.name ?? fc.universalIdentifier,
+      description: fc.description,
+    }));
+  }, [installedApplication, manifestContent?.frontComponents]);
 
-  // TODO: uncomment when adding back agents in application settings
-  // const shouldDisplayAgents = isDefined(agents) && agents.length > 0;
-  const shouldDisplayAgents = false;
+  // Logic functions
+  const installedLogicFunctions = installedApplication?.logicFunctions;
+  const hasInstalledLogicFunctions =
+    isDefined(installedLogicFunctions) && installedLogicFunctions.length > 0;
+
+  const manifestLogicFunctionItems = useMemo(() => {
+    if (isDefined(installedApplication)) {
+      return [];
+    }
+
+    return (manifestContent?.logicFunctions ?? []).map((lf) => ({
+      name: lf.name ?? lf.universalIdentifier,
+      description: lf.description,
+    }));
+  }, [installedApplication, manifestContent?.logicFunctions]);
 
   return (
     <>
@@ -124,24 +239,31 @@ export const SettingsApplicationDetailContentTab = ({
         objectRows={objectRows}
         fieldGroupRows={fieldGroupRows}
       />
-      {shouldDisplayLogicFunctions && (
+      {hasInstalledLogicFunctions && (
         <Section>
           <H2Title
             title={t`Logic`}
             description={t`Logic functions powering this app`}
           />
-          <SettingsLogicFunctionsTable logicFunctions={logicFunctions} />
-        </Section>
-      )}
-      {shouldDisplayAgents && (
-        <Section>
-          <H2Title
-            title={t`Agents`}
-            description={t`Agents powering this app`}
+          <SettingsLogicFunctionsTable
+            logicFunctions={installedLogicFunctions}
           />
-          <SettingsAIAgentsTable />
         </Section>
       )}
+      {!isDefined(installedApplication) && (
+        <SettingsApplicationNameDescriptionTable
+          title={t`Logic functions`}
+          description={t`Logic functions provided by this app`}
+          sectionTitle={t`Logic functions`}
+          items={manifestLogicFunctionItems}
+        />
+      )}
+      <SettingsApplicationNameDescriptionTable
+        title={t`Front components`}
+        description={t`UI components provided by this app`}
+        sectionTitle={t`Front components`}
+        items={frontComponentItems}
+      />
     </>
   );
 };

@@ -247,6 +247,36 @@ export interface ApplicationVariable {
     __typename: 'ApplicationVariable'
 }
 
+export interface AuthToken {
+    token: Scalars['String']
+    expiresAt: Scalars['DateTime']
+    __typename: 'AuthToken'
+}
+
+export interface ApplicationTokenPair {
+    applicationAccessToken: AuthToken
+    applicationRefreshToken: AuthToken
+    __typename: 'ApplicationTokenPair'
+}
+
+export interface FrontComponent {
+    id: Scalars['UUID']
+    name: Scalars['String']
+    description?: Scalars['String']
+    sourceComponentPath: Scalars['String']
+    builtComponentPath: Scalars['String']
+    componentName: Scalars['String']
+    builtComponentChecksum: Scalars['String']
+    universalIdentifier?: Scalars['UUID']
+    applicationId: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    isHeadless: Scalars['Boolean']
+    usesSdkClient: Scalars['Boolean']
+    applicationTokenPair?: ApplicationTokenPair
+    __typename: 'FrontComponent'
+}
+
 export interface LogicFunction {
     id: Scalars['UUID']
     name: Scalars['String']
@@ -396,6 +426,7 @@ export interface Application {
     settingsCustomTabFrontComponentId?: Scalars['UUID']
     defaultLogicFunctionRole?: Role
     agents: Agent[]
+    frontComponents: FrontComponent[]
     logicFunctions: LogicFunction[]
     objects: Object[]
     applicationVariables: ApplicationVariable[]
@@ -2040,36 +2071,6 @@ export interface UpsertRowLevelPermissionPredicatesResult {
     __typename: 'UpsertRowLevelPermissionPredicatesResult'
 }
 
-export interface AuthToken {
-    token: Scalars['String']
-    expiresAt: Scalars['DateTime']
-    __typename: 'AuthToken'
-}
-
-export interface ApplicationTokenPair {
-    applicationAccessToken: AuthToken
-    applicationRefreshToken: AuthToken
-    __typename: 'ApplicationTokenPair'
-}
-
-export interface FrontComponent {
-    id: Scalars['UUID']
-    name: Scalars['String']
-    description?: Scalars['String']
-    sourceComponentPath: Scalars['String']
-    builtComponentPath: Scalars['String']
-    componentName: Scalars['String']
-    builtComponentChecksum: Scalars['String']
-    universalIdentifier?: Scalars['UUID']
-    applicationId: Scalars['UUID']
-    createdAt: Scalars['DateTime']
-    updatedAt: Scalars['DateTime']
-    isHeadless: Scalars['Boolean']
-    usesSdkClient: Scalars['Boolean']
-    applicationTokenPair?: ApplicationTokenPair
-    __typename: 'FrontComponent'
-}
-
 export interface LogicFunctionLogs {
     /** Execution Logs */
     logs: Scalars['String']
@@ -3443,6 +3444,39 @@ export interface ApplicationVariableGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface AuthTokenGenqlSelection{
+    token?: boolean | number
+    expiresAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationTokenPairGenqlSelection{
+    applicationAccessToken?: AuthTokenGenqlSelection
+    applicationRefreshToken?: AuthTokenGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface FrontComponentGenqlSelection{
+    id?: boolean | number
+    name?: boolean | number
+    description?: boolean | number
+    sourceComponentPath?: boolean | number
+    builtComponentPath?: boolean | number
+    componentName?: boolean | number
+    builtComponentChecksum?: boolean | number
+    universalIdentifier?: boolean | number
+    applicationId?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    isHeadless?: boolean | number
+    usesSdkClient?: boolean | number
+    applicationTokenPair?: ApplicationTokenPairGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface LogicFunctionGenqlSelection{
     id?: boolean | number
     name?: boolean | number
@@ -3629,6 +3663,7 @@ export interface ApplicationGenqlSelection{
     settingsCustomTabFrontComponentId?: boolean | number
     defaultLogicFunctionRole?: RoleGenqlSelection
     agents?: AgentGenqlSelection
+    frontComponents?: FrontComponentGenqlSelection
     logicFunctions?: LogicFunctionGenqlSelection
     objects?: ObjectGenqlSelection
     applicationVariables?: ApplicationVariableGenqlSelection
@@ -5341,39 +5376,6 @@ export interface UpsertRowLevelPermissionPredicatesResultGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface AuthTokenGenqlSelection{
-    token?: boolean | number
-    expiresAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ApplicationTokenPairGenqlSelection{
-    applicationAccessToken?: AuthTokenGenqlSelection
-    applicationRefreshToken?: AuthTokenGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface FrontComponentGenqlSelection{
-    id?: boolean | number
-    name?: boolean | number
-    description?: boolean | number
-    sourceComponentPath?: boolean | number
-    builtComponentPath?: boolean | number
-    componentName?: boolean | number
-    builtComponentChecksum?: boolean | number
-    universalIdentifier?: boolean | number
-    applicationId?: boolean | number
-    createdAt?: boolean | number
-    updatedAt?: boolean | number
-    isHeadless?: boolean | number
-    usesSdkClient?: boolean | number
-    applicationTokenPair?: ApplicationTokenPairGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface LogicFunctionLogsGenqlSelection{
     /** Execution Logs */
     logs?: boolean | number
@@ -7071,6 +7073,30 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const AuthToken_possibleTypes: string[] = ['AuthToken']
+    export const isAuthToken = (obj?: { __typename?: any } | null): obj is AuthToken => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAuthToken"')
+      return AuthToken_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationTokenPair_possibleTypes: string[] = ['ApplicationTokenPair']
+    export const isApplicationTokenPair = (obj?: { __typename?: any } | null): obj is ApplicationTokenPair => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationTokenPair"')
+      return ApplicationTokenPair_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const FrontComponent_possibleTypes: string[] = ['FrontComponent']
+    export const isFrontComponent = (obj?: { __typename?: any } | null): obj is FrontComponent => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isFrontComponent"')
+      return FrontComponent_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const LogicFunction_possibleTypes: string[] = ['LogicFunction']
     export const isLogicFunction = (obj?: { __typename?: any } | null): obj is LogicFunction => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isLogicFunction"')
@@ -8419,30 +8445,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isUpsertRowLevelPermissionPredicatesResult = (obj?: { __typename?: any } | null): obj is UpsertRowLevelPermissionPredicatesResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUpsertRowLevelPermissionPredicatesResult"')
       return UpsertRowLevelPermissionPredicatesResult_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const AuthToken_possibleTypes: string[] = ['AuthToken']
-    export const isAuthToken = (obj?: { __typename?: any } | null): obj is AuthToken => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAuthToken"')
-      return AuthToken_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ApplicationTokenPair_possibleTypes: string[] = ['ApplicationTokenPair']
-    export const isApplicationTokenPair = (obj?: { __typename?: any } | null): obj is ApplicationTokenPair => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationTokenPair"')
-      return ApplicationTokenPair_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const FrontComponent_possibleTypes: string[] = ['FrontComponent']
-    export const isFrontComponent = (obj?: { __typename?: any } | null): obj is FrontComponent => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isFrontComponent"')
-      return FrontComponent_possibleTypes.includes(obj.__typename)
     }
     
 

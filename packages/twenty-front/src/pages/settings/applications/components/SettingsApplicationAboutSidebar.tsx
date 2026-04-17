@@ -1,0 +1,219 @@
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { type ComponentType, type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  IconAlertTriangle,
+  IconBrandNpm,
+  IconLink,
+  IconMail,
+  IconWorld,
+} from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+export type ContentEntry = {
+  icon: ComponentType<{ size?: number }>;
+  count: number;
+  one: string;
+  many: string;
+};
+
+export type DeveloperLinks = {
+  websiteUrl?: string;
+  termsUrl?: string;
+  emailSupport?: string;
+  issueReportUrl?: string;
+  sourcePackageUrl?: string;
+};
+
+type SettingsApplicationAboutSidebarProps = {
+  actionButton?: ReactNode;
+  author?: string;
+  category?: string;
+  contentEntries?: ContentEntry[];
+  currentVersion?: string;
+  latestAvailableVersion?: string;
+  developerLinks?: DeveloperLinks;
+};
+
+const StyledSidebar = styled.div`
+  flex-shrink: 0;
+  width: 140px;
+`;
+
+const StyledSidebarSection = styled.div`
+  padding: ${themeCssVariables.spacing[3]} 0;
+
+  &:first-of-type {
+    padding-top: 0;
+  }
+`;
+
+const StyledSidebarLabel = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  margin-bottom: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledSidebarValue = styled.div`
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
+`;
+
+const StyledContentItem = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.primary};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[2]};
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+`;
+
+const StyledLink = styled.a`
+  align-items: center;
+  color: ${themeCssVariables.font.color.primary};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[2]};
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+`;
+
+export const SettingsApplicationAboutSidebar = ({
+  actionButton,
+  author,
+  category,
+  contentEntries,
+  currentVersion,
+  latestAvailableVersion,
+  developerLinks,
+}: SettingsApplicationAboutSidebarProps) => {
+  const filteredContentEntries = (contentEntries ?? []).filter(
+    (entry) => entry.count > 0,
+  );
+
+  const hasDeveloperLinks =
+    isDefined(developerLinks) &&
+    (isDefined(developerLinks.websiteUrl) ||
+      isDefined(developerLinks.termsUrl) ||
+      isDefined(developerLinks.emailSupport) ||
+      isDefined(developerLinks.issueReportUrl) ||
+      isDefined(developerLinks.sourcePackageUrl));
+
+  return (
+    <StyledSidebar>
+      {isDefined(actionButton) && (
+        <StyledSidebarSection>{actionButton}</StyledSidebarSection>
+      )}
+
+      {isDefined(author) && (
+        <StyledSidebarSection>
+          <StyledSidebarLabel>{t`Created by`}</StyledSidebarLabel>
+          <StyledSidebarValue>{author}</StyledSidebarValue>
+        </StyledSidebarSection>
+      )}
+
+      {isDefined(category) && (
+        <StyledSidebarSection>
+          <StyledSidebarLabel>{t`Category`}</StyledSidebarLabel>
+          <StyledSidebarValue>{category}</StyledSidebarValue>
+        </StyledSidebarSection>
+      )}
+
+      {filteredContentEntries.length > 0 && (
+        <StyledSidebarSection>
+          <StyledSidebarLabel>{t`Content`}</StyledSidebarLabel>
+          {filteredContentEntries.map((entry) => (
+            <StyledContentItem key={entry.one}>
+              <entry.icon size={16} />
+              {entry.count} {entry.count === 1 ? entry.one : entry.many}
+            </StyledContentItem>
+          ))}
+        </StyledSidebarSection>
+      )}
+
+      {isDefined(currentVersion) && (
+        <StyledSidebarSection>
+          <StyledSidebarLabel>{t`Current`}</StyledSidebarLabel>
+          <StyledSidebarValue>{currentVersion}</StyledSidebarValue>
+        </StyledSidebarSection>
+      )}
+
+      {isDefined(latestAvailableVersion) && (
+        <StyledSidebarSection>
+          <StyledSidebarLabel>{t`Latest`}</StyledSidebarLabel>
+          <StyledSidebarValue>{latestAvailableVersion}</StyledSidebarValue>
+        </StyledSidebarSection>
+      )}
+
+      {hasDeveloperLinks && (
+        <StyledSidebarSection>
+          <StyledSidebarLabel>{t`Developers links`}</StyledSidebarLabel>
+          {developerLinks.websiteUrl && (
+            <StyledLink
+              href={developerLinks.websiteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <IconWorld size={16} />
+              {t`Website`}
+            </StyledLink>
+          )}
+          {developerLinks.termsUrl && (
+            <StyledLink
+              href={developerLinks.termsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <IconLink size={16} />
+              {t`Terms / Privacy`}
+            </StyledLink>
+          )}
+          {developerLinks.emailSupport && (
+            <StyledLink
+              href={`mailto:${developerLinks.emailSupport}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <IconMail size={16} />
+              {t`Email support`}
+            </StyledLink>
+          )}
+          {developerLinks.issueReportUrl && (
+            <StyledLink
+              href={developerLinks.issueReportUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <IconAlertTriangle size={16} />
+              {t`Report an issue`}
+            </StyledLink>
+          )}
+          {developerLinks.sourcePackageUrl && (
+            <StyledLink
+              href={developerLinks.sourcePackageUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <IconBrandNpm size={16} />
+              {t`Npm package`}
+            </StyledLink>
+          )}
+        </StyledSidebarSection>
+      )}
+    </StyledSidebar>
+  );
+};

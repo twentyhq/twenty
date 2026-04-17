@@ -122,6 +122,7 @@ export class ApplicationService {
       relations: [
         'logicFunctions',
         'agents',
+        'frontComponents',
         'objects',
         'applicationVariables',
         'packageJsonFile',
@@ -157,6 +158,7 @@ export class ApplicationService {
       relations: [
         'logicFunctions',
         'agents',
+        'frontComponents',
         'objects',
         'applicationVariables',
         'packageJsonFile',

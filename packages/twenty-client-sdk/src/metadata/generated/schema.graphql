@@ -296,6 +296,33 @@ type ApplicationVariable {
   isSecret: Boolean!
 }
 
+type AuthToken {
+  token: String!
+  expiresAt: DateTime!
+}
+
+type ApplicationTokenPair {
+  applicationAccessToken: AuthToken!
+  applicationRefreshToken: AuthToken!
+}
+
+type FrontComponent {
+  id: UUID!
+  name: String!
+  description: String
+  sourceComponentPath: String!
+  builtComponentPath: String!
+  componentName: String!
+  builtComponentChecksum: String!
+  universalIdentifier: UUID
+  applicationId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  isHeadless: Boolean!
+  usesSdkClient: Boolean!
+  applicationTokenPair: ApplicationTokenPair
+}
+
 type LogicFunction {
   id: UUID!
   name: String!
@@ -565,6 +592,7 @@ type Application {
   settingsCustomTabFrontComponentId: UUID
   defaultLogicFunctionRole: Role
   agents: [Agent!]!
+  frontComponents: [FrontComponent!]!
   logicFunctions: [LogicFunction!]!
   objects: [Object!]!
   applicationVariables: [ApplicationVariable!]!
@@ -2357,33 +2385,6 @@ type DomainValidRecords {
 type UpsertRowLevelPermissionPredicatesResult {
   predicates: [RowLevelPermissionPredicate!]!
   predicateGroups: [RowLevelPermissionPredicateGroup!]!
-}
-
-type AuthToken {
-  token: String!
-  expiresAt: DateTime!
-}
-
-type ApplicationTokenPair {
-  applicationAccessToken: AuthToken!
-  applicationRefreshToken: AuthToken!
-}
-
-type FrontComponent {
-  id: UUID!
-  name: String!
-  description: String
-  sourceComponentPath: String!
-  builtComponentPath: String!
-  componentName: String!
-  builtComponentChecksum: String!
-  universalIdentifier: UUID
-  applicationId: UUID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  isHeadless: Boolean!
-  usesSdkClient: Boolean!
-  applicationTokenPair: ApplicationTokenPair
 }
 
 type LogicFunctionLogs {
