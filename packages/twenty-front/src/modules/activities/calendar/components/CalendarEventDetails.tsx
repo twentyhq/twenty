@@ -121,9 +121,7 @@ export const CalendarEventDetails = ({
     .filter(isDefined);
 
   const customFields = inlineFieldMetadataItems.filter(
-    (field) =>
-      field.isCustom &&
-      !standardFieldOrder.includes(field.name),
+    (field) => field.isCustom && !standardFieldOrder.includes(field.name),
   );
 
   const { calendarEventParticipants } = calendarEvent;
