@@ -1,4 +1,5 @@
-import { defineFrontComponent, featureFlags, objectPermissions } from '@/sdk';
+import { defineFrontComponent } from '@/sdk/define';
+import { featureFlags, objectPermissions } from '@/sdk/front-component';
 
 const MyComponent = () => null;
 

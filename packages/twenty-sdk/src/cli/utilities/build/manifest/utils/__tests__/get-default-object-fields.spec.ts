@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getDefaultObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-object-fields';
 import { generateDefaultFieldUniversalIdentifier } from '@/cli/utilities/build/manifest/utils/generate-default-field-universal-identifier';
-import type { ObjectConfig } from '@/sdk/objects/object-config';
+import type { ObjectConfig } from '@/sdk/define/objects/object-config';
 
 const mockObjectConfig: ObjectConfig = {
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',

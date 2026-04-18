@@ -36,10 +36,10 @@ import {
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
-import { AgentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/ai-agent/interceptors/agent-graphql-api-exception.interceptor';
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
+import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message.dto';
 import { AgentChatThreadDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread.dto';
@@ -59,7 +59,7 @@ import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models
   FeatureFlagGuard,
   SettingsPermissionGuard(PermissionFlagType.AI),
 )
-@UseInterceptors(AgentGraphqlApiExceptionInterceptor)
+@UseInterceptors(AiGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => AgentChatThreadDTO)
 export class AgentChatResolver {
   constructor(
@@ -135,9 +135,9 @@ export class AgentChatResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
-      throw new AgentException(
+      throw new AiException(
         'No AI models are available. Configure at least one AI provider.',
-        AgentExceptionCode.API_KEY_NOT_CONFIGURED,
+        AiExceptionCode.API_KEY_NOT_CONFIGURED,
       );
     }
 
@@ -167,9 +167,9 @@ export class AgentChatResolver {
     });
 
     if (!isDefined(thread)) {
-      throw new AgentException(
+      throw new AiException(
         'Thread not found',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AiExceptionCode.THREAD_NOT_FOUND,
       );
     }
 
@@ -245,9 +245,9 @@ export class AgentChatResolver {
     const message = await this.agentChatService.findQueuedMessage(messageId);
 
     if (!isDefined(message)) {
-      throw new AgentException(
+      throw new AiException(
         'Queued message not found',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AiExceptionCode.MESSAGE_NOT_FOUND,
       );
     }
 
@@ -256,9 +256,9 @@ export class AgentChatResolver {
     });
 
     if (!isDefined(thread)) {
-      throw new AgentException(
+      throw new AiException(
         'Thread not found',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AiExceptionCode.THREAD_NOT_FOUND,
       );
     }
 

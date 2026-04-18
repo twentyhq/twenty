@@ -1,6 +1,6 @@
 {
   "name": "create-twenty-app",
-  "version": "1.22.0",
+  "version": "1.23.0-canary.1",
   "description": "Command-line interface to create Twenty application",
   "main": "dist/cli.cjs",
   "bin": "dist/cli.cjs",

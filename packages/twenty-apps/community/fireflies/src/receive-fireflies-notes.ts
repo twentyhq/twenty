@@ -1,4 +1,4 @@
-import { type FunctionConfig } from 'twenty-sdk';
+import { type FunctionConfig } from 'twenty-sdk/define';
 import type { ProcessResult } from './types';
 import { WebhookHandler } from './webhook-handler';
 

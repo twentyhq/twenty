@@ -1,4 +1,4 @@
-import { type FrontComponentExecutionContext } from 'twenty-sdk';
+import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 
 import {
   FRONT_COMPONENT_CONTEXT_KEY,

@@ -8,7 +8,7 @@ import { TranscriptViewer } from 'src/components/TranscriptViewer';
 import { CALL_RECORDING_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-viewer-front-component-universal-identifier';
 import { useCallRecording } from 'src/hooks/useCallRecording';
 import { useTranscript } from 'src/hooks/useTranscript';
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`

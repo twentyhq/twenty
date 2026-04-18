@@ -1,4 +1,4 @@
-import { defineRole } from 'twenty-sdk';
+import { defineRole } from 'twenty-sdk/define';
 import { UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers.constant';
 
 export default defineRole({

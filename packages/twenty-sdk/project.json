@@ -14,9 +14,9 @@
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
-          "npx rimraf dist && npx vite build -c vite.config.node.ts && npx vite build -c vite.config.browser.ts && npx vite build -c vite.config.sdk.ts",
+          "npx rimraf dist && npx vite build -c vite.config.node.ts && npx vite build -c vite.config.define.ts && npx vite build -c vite.config.front-component.ts && npx vite build -c vite.config.browser.ts",
           "tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist",
-          "npx rimraf 'dist/sdk/**/*.d.ts' 'dist/sdk/**/*.d.ts.map' && npx rollup -c rollup.config.sdk-dts.mjs"
+          "npx rimraf 'dist/sdk' 'dist/define/**/*.d.ts' 'dist/define/**/*.d.ts.map' 'dist/front-component/**/*.d.ts' 'dist/front-component/**/*.d.ts.map' && npx rollup -c rollup.config.sdk-dts.mjs"
         ],
         "parallel": false
       }
@@ -26,7 +26,7 @@
       "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-sdk",
-        "command": "npx rimraf dist && npx vite build -c vite.config.node.ts && npx vite build -c vite.config.browser.ts && npx vite build -c vite.config.sdk.ts && tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist && npx rimraf 'dist/sdk/**/*.d.ts' 'dist/sdk/**/*.d.ts.map' && npx rollup -c rollup.config.sdk-dts.mjs && npx vite build -c vite.config.node.ts --watch & npx vite build -c vite.config.browser.ts --watch & npx vite build -c vite.config.sdk.ts --watch"
+        "command": "npx rimraf dist && npx vite build -c vite.config.node.ts && npx vite build -c vite.config.define.ts && npx vite build -c vite.config.front-component.ts && npx vite build -c vite.config.browser.ts && tsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --noEmit false --outDir dist --rootDir src && npx tsc-alias -p tsconfig.lib.json --outDir dist && npx rimraf 'dist/sdk' 'dist/define/**/*.d.ts' 'dist/define/**/*.d.ts.map' 'dist/front-component/**/*.d.ts' 'dist/front-component/**/*.d.ts.map' && npx rollup -c rollup.config.sdk-dts.mjs && npx vite build -c vite.config.node.ts --watch & npx vite build -c vite.config.define.ts --watch & npx vite build -c vite.config.front-component.ts --watch & npx vite build -c vite.config.browser.ts --watch"
       }
     },
     "start": {
@@ -91,10 +91,13 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["{projectRoot}/src/sdk/**/*"],
-      "outputs": ["{projectRoot}/dist/sdk"],
+      "outputs": [
+        "{projectRoot}/dist/define",
+        "{projectRoot}/dist/front-component"
+      ],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "npx vite build -c vite.config.sdk.ts && npx rollup -c rollup.config.sdk-dts.mjs"
+        "command": "npx vite build -c vite.config.define.ts && npx vite build -c vite.config.front-component.ts && npx rollup -c rollup.config.sdk-dts.mjs"
       }
     }
   }

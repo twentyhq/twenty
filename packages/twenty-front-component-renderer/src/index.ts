@@ -127,7 +127,7 @@ export type {
 export { createRemoteWorker } from './remote/worker/utils/createRemoteWorker';
 export { installStyleBridge } from './polyfills/installStyleBridge';
 export { exposeGlobals } from './remote/utils/exposeGlobals';
-export type { FrontComponentExecutionContext } from 'twenty-sdk';
+export type { FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 export type { FrontComponentHostCommunicationApi } from './types/FrontComponentHostCommunicationApi';
 export type {
   HostToWorkerRenderContext,

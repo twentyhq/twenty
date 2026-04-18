@@ -51,7 +51,7 @@ export const getViewBaseFile = ({
   ],`
       : defaultFields;
 
-  return `import { defineView } from 'twenty-sdk';
+  return `import { defineView } from 'twenty-sdk/define';
 
 export default defineView({
   universalIdentifier: '${universalIdentifier}',

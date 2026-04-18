@@ -8,7 +8,7 @@ describe('getViewBaseFile', () => {
       objectUniversalIdentifier: 'obj-abc-123',
     });
 
-    expect(result).toContain("import { defineView } from 'twenty-sdk'");
+    expect(result).toContain("import { defineView } from 'twenty-sdk/define';");
     expect(result).toContain('export default defineView({');
     expect(result).toContain(
       "universalIdentifier: '71e45a58-41da-4ae4-8b73-a543c0a9d3d4'",

@@ -2,7 +2,7 @@ import { SummaryViewer } from 'src/components/SummaryViewer';
 import { SummaryViewerSkeleton } from 'src/components/SummaryViewerSkeleton';
 import { CALL_RECORDING_SUMMARY_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-summary-viewer-front-component-universal-identifier';
 import { useCallRecording } from 'src/hooks/useCallRecording';
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { isDefined } from 'twenty-shared/utils';
 
 const CallRecordingSummaryViewer = () => {
