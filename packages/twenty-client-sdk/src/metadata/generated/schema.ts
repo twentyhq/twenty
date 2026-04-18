@@ -4706,7 +4706,7 @@ export interface NativeModelCapabilitiesGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface ClientAIModelConfigGenqlSelection{
+export interface ClientAiModelConfigGenqlSelection{
     modelId?: boolean | number
     label?: boolean | number
     modelFamily?: boolean | number
@@ -4726,7 +4726,7 @@ export interface ClientAIModelConfigGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface AdminAIModelConfigGenqlSelection{
+export interface AdminAiModelConfigGenqlSelection{
     modelId?: boolean | number
     label?: boolean | number
     modelFamily?: boolean | number
@@ -4748,8 +4748,8 @@ export interface AdminAIModelConfigGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface AdminAIModelsGenqlSelection{
-    models?: AdminAIModelConfigGenqlSelection
+export interface AdminAiModelsGenqlSelection{
+    models?: AdminAiModelConfigGenqlSelection
     defaultSmartModelId?: boolean | number
     defaultFastModelId?: boolean | number
     __typename?: boolean | number
@@ -4819,7 +4819,7 @@ export interface ClientConfigGenqlSelection{
     appVersion?: boolean | number
     authProviders?: AuthProvidersGenqlSelection
     billing?: BillingGenqlSelection
-    aiModels?: ClientAIModelConfigGenqlSelection
+    aiModels?: ClientAiModelConfigGenqlSelection
     signInPrefilled?: boolean | number
     isMultiWorkspaceEnabled?: boolean | number
     isEmailVerificationRequired?: boolean | number
@@ -5993,7 +5993,7 @@ export interface AgentMessageGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface AISystemPromptSectionGenqlSelection{
+export interface AiSystemPromptSectionGenqlSelection{
     title?: boolean | number
     content?: boolean | number
     estimatedTokenCount?: boolean | number
@@ -6001,8 +6001,8 @@ export interface AISystemPromptSectionGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface AISystemPromptPreviewGenqlSelection{
-    sections?: AISystemPromptSectionGenqlSelection
+export interface AiSystemPromptPreviewGenqlSelection{
+    sections?: AiSystemPromptSectionGenqlSelection
     estimatedTokenCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -6265,7 +6265,7 @@ export interface QueryGenqlSelection{
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args: {threadId: Scalars['UUID']} })
-    getAiSystemPromptPreview?: AISystemPromptPreviewGenqlSelection
+    getAiSystemPromptPreview?: AiSystemPromptPreviewGenqlSelection
     skills?: SkillGenqlSelection
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     chatThreads?: (AgentChatThreadConnectionGenqlSelection & { __args: {
@@ -6307,7 +6307,7 @@ export interface QueryGenqlSelection{
     getIndicatorHealthStatus?: (AdminPanelHealthServiceDataGenqlSelection & { __args: {indicatorId: HealthIndicatorId} })
     getQueueMetrics?: (QueueMetricsDataGenqlSelection & { __args: {queueName: Scalars['String'], timeRange?: (QueueMetricsTimeRange | null)} })
     versionInfo?: VersionInfoGenqlSelection
-    getAdminAiModels?: AdminAIModelsGenqlSelection
+    getAdminAiModels?: AdminAiModelsGenqlSelection
     getDatabaseConfigVariable?: (ConfigVariableGenqlSelection & { __args: {key: Scalars['String']} })
     getQueueJobs?: (QueueJobsResponseGenqlSelection & { __args: {queueName: Scalars['String'], state: JobState, limit?: (Scalars['Int'] | null), offset?: (Scalars['Int'] | null)} })
     findAllApplicationRegistrations?: ApplicationRegistrationGenqlSelection
@@ -7887,26 +7887,26 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const ClientAIModelConfig_possibleTypes: string[] = ['ClientAiModelConfig']
+    const ClientAiModelConfig_possibleTypes: string[] = ['ClientAiModelConfig']
     export const isClientAiModelConfig = (obj?: { __typename?: any } | null): obj is ClientAiModelConfig => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isClientAiModelConfig"')
-      return ClientAIModelConfig_possibleTypes.includes(obj.__typename)
+      return ClientAiModelConfig_possibleTypes.includes(obj.__typename)
     }
     
 
 
-    const AdminAIModelConfig_possibleTypes: string[] = ['AdminAiModelConfig']
+    const AdminAiModelConfig_possibleTypes: string[] = ['AdminAiModelConfig']
     export const isAdminAiModelConfig = (obj?: { __typename?: any } | null): obj is AdminAiModelConfig => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAdminAiModelConfig"')
-      return AdminAIModelConfig_possibleTypes.includes(obj.__typename)
+      return AdminAiModelConfig_possibleTypes.includes(obj.__typename)
     }
     
 
 
-    const AdminAIModels_possibleTypes: string[] = ['AdminAiModels']
+    const AdminAiModels_possibleTypes: string[] = ['AdminAiModels']
     export const isAdminAiModels = (obj?: { __typename?: any } | null): obj is AdminAiModels => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAdminAiModels"')
-      return AdminAIModels_possibleTypes.includes(obj.__typename)
+      return AdminAiModels_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -8975,18 +8975,18 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const AISystemPromptSection_possibleTypes: string[] = ['AiSystemPromptSection']
+    const AiSystemPromptSection_possibleTypes: string[] = ['AiSystemPromptSection']
     export const isAiSystemPromptSection = (obj?: { __typename?: any } | null): obj is AiSystemPromptSection => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAiSystemPromptSection"')
-      return AISystemPromptSection_possibleTypes.includes(obj.__typename)
+      return AiSystemPromptSection_possibleTypes.includes(obj.__typename)
     }
     
 
 
-    const AISystemPromptPreview_possibleTypes: string[] = ['AiSystemPromptPreview']
+    const AiSystemPromptPreview_possibleTypes: string[] = ['AiSystemPromptPreview']
     export const isAiSystemPromptPreview = (obj?: { __typename?: any } | null): obj is AiSystemPromptPreview => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAiSystemPromptPreview"')
-      return AISystemPromptPreview_possibleTypes.includes(obj.__typename)
+      return AiSystemPromptPreview_possibleTypes.includes(obj.__typename)
     }
     
 
