@@ -1185,10 +1185,8 @@ export class LambdaDriver implements LogicFunctionDriver {
 
       const duration = Date.now() - startTime;
 
-      // Structured timing log so we can monitor warm/cold-start behaviour
-      // of logic-function lambdas in production (CloudWatch / log aggregator).
       this.logger.log(
-        `[lambda-timing] fnId=${flatLogicFunction.id} totalMs=${duration} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeSendMs=${invokeSendMs} reportDurationMs=${reportMatch?.[1] ?? 'n/a'} billedMs=${billedMatch?.[1] ?? 'n/a'} initDurationMs=${initMatch?.[1] ?? 'n/a'} coldStart=${initMatch !== null}`,
+        `[lambda-timing] fnId=${flatLogicFunction.id} totalMs=${Date.now() - buildStart} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeSendMs=${invokeSendMs} reportDurationMs=${reportMatch?.[1] ?? 'n/a'} billedMs=${billedMatch?.[1] ?? 'n/a'} initDurationMs=${initMatch?.[1] ?? 'n/a'} coldStart=${initMatch !== null}`,
       );
 
       if (result.FunctionError) {
