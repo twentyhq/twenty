@@ -18,13 +18,16 @@ jest.mock('uuid', () => ({
   v4: jest.fn(() => 'mocked-uuid'),
 }));
 
-jest.mock('src/engine/twenty-orm/storage/orm-workspace-context.storage', () => ({
-  getWorkspaceContext: jest.fn(() => ({
-    authContext: { type: 'user', workspace: { id: 'workspace-id' } },
-    userWorkspaceRoleMap: {},
-    apiKeyRoleMap: {},
-  })),
-}));
+jest.mock(
+  'src/engine/twenty-orm/storage/orm-workspace-context.storage',
+  () => ({
+    getWorkspaceContext: jest.fn(() => ({
+      authContext: { type: 'user', workspace: { id: 'workspace-id' } },
+      userWorkspaceRoleMap: {},
+      apiKeyRoleMap: {},
+    })),
+  }),
+);
 
 jest.mock(
   'src/engine/twenty-orm/utils/resolve-role-permission-config.util',
