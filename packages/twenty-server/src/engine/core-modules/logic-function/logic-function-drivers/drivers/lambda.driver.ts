@@ -1104,8 +1104,33 @@ export class LambdaDriver implements LogicFunctionDriver {
     }
   }
 
-  private extractLogs(decodedLogs: string): string {
-    return decodedLogs
+  private parseLambdaLogResult(logResult: string | undefined): {
+    logs: string;
+    initDurationMs: string | null;
+    billedDurationMs: string | null;
+    reportDurationMs: string | null;
+    coldStart: boolean;
+  } {
+    if (!logResult) {
+      return {
+        logs: '',
+        initDurationMs: null,
+        billedDurationMs: null,
+        reportDurationMs: null,
+        coldStart: false,
+      };
+    }
+
+    const decoded = Buffer.from(logResult, 'base64').toString('utf8');
+
+    const initDurationMs =
+      decoded.match(/Init Duration:\s*([\d.]+)\s*ms/i)?.[1] ?? null;
+    const billedDurationMs =
+      decoded.match(/Billed Duration:\s*([\d.]+)\s*ms/i)?.[1] ?? null;
+    const reportDurationMs =
+      decoded.match(/\bDuration:\s*([\d.]+)\s*ms/i)?.[1] ?? null;
+
+    const logs = decoded
       .split('\t')
       .join(' ')
       .replace(/^(START|END|REPORT).*\n?/gm, '')
@@ -1114,6 +1139,14 @@ export class LambdaDriver implements LogicFunctionDriver {
         '$1 INFO ',
       )
       .trim();
+
+    return {
+      logs,
+      initDurationMs,
+      billedDurationMs,
+      reportDurationMs,
+      coldStart: initDurationMs !== null,
+    };
   }
 
   async execute({
@@ -1172,21 +1205,13 @@ export class LambdaDriver implements LogicFunctionDriver {
         ? JSON.parse(result.Payload.transformToString())
         : {};
 
-      const decodedLogs = result.LogResult
-        ? Buffer.from(result.LogResult, 'base64').toString('utf8')
-        : '';
-      const initMatch = decodedLogs.match(/Init Duration:\s*([\d.]+)\s*ms/i);
-      const billedMatch = decodedLogs.match(
-        /Billed Duration:\s*([\d.]+)\s*ms/i,
-      );
-      const reportMatch = decodedLogs.match(/\bDuration:\s*([\d.]+)\s*ms/i);
-
-      const logs = decodedLogs ? this.extractLogs(decodedLogs) : '';
+      const { logs, initDurationMs, billedDurationMs, reportDurationMs, coldStart } =
+        this.parseLambdaLogResult(result.LogResult);
 
       const duration = Date.now() - startTime;
 
       this.logger.log(
-        `[lambda-timing] fnId=${flatLogicFunction.id} totalMs=${Date.now() - buildStart} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeSendMs=${invokeSendMs} reportDurationMs=${reportMatch?.[1] ?? 'n/a'} billedMs=${billedMatch?.[1] ?? 'n/a'} initDurationMs=${initMatch?.[1] ?? 'n/a'} coldStart=${initMatch !== null}`,
+        `[lambda-timing] fnId=${flatLogicFunction.id} totalMs=${Date.now() - buildStart} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeSendMs=${invokeSendMs} reportDurationMs=${reportDurationMs ?? 'n/a'} billedMs=${billedDurationMs ?? 'n/a'} initDurationMs=${initDurationMs ?? 'n/a'} coldStart=${coldStart}`,
       );
 
       if (result.FunctionError) {
