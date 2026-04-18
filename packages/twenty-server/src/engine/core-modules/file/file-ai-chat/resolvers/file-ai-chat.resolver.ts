@@ -26,7 +26,7 @@ export class FileAiChatResolver {
 
   @Mutation(() => FileWithSignedUrlDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
-  async uploadAIChatFile(
+  async uploadAiChatFile(
     @AuthWorkspace()
     { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })

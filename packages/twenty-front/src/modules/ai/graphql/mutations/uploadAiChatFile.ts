@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const UPLOAD_AI_CHAT_FILE = gql`
-  mutation uploadAIChatFile($file: Upload!) {
-    uploadAIChatFile(file: $file) {
+  mutation uploadAiChatFile($file: Upload!) {
+    uploadAiChatFile(file: $file) {
       id
       path
       size

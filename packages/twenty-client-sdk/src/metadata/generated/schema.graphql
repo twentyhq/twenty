@@ -1744,7 +1744,7 @@ type NativeModelCapabilities {
   twitterSearch: Boolean
 }
 
-type ClientAIModelConfig {
+type ClientAiModelConfig {
   modelId: String!
   label: String!
   modelFamily: ModelFamily
@@ -1770,7 +1770,7 @@ enum ModelFamily {
   GROK
 }
 
-type AdminAIModelConfig {
+type AdminAiModelConfig {
   modelId: String!
   label: String!
   modelFamily: ModelFamily
@@ -1790,8 +1790,8 @@ type AdminAIModelConfig {
   dataResidency: String
 }
 
-type AdminAIModels {
-  models: [AdminAIModelConfig!]!
+type AdminAiModels {
+  models: [AdminAiModelConfig!]!
   defaultSmartModelId: String
   defaultFastModelId: String
 }
@@ -1853,7 +1853,7 @@ type ClientConfig {
   appVersion: String
   authProviders: AuthProviders!
   billing: Billing!
-  aiModels: [ClientAIModelConfig!]!
+  aiModels: [ClientAiModelConfig!]!
   signInPrefilled: Boolean!
   isMultiWorkspaceEnabled: Boolean!
   isEmailVerificationRequired: Boolean!
@@ -2958,14 +2958,14 @@ type AgentMessage {
   createdAt: DateTime!
 }
 
-type AISystemPromptSection {
+type AiSystemPromptSection {
   title: String!
   content: String!
   estimatedTokenCount: Int!
 }
 
-type AISystemPromptPreview {
-  sections: [AISystemPromptSection!]!
+type AiSystemPromptPreview {
+  sections: [AiSystemPromptSection!]!
   estimatedTokenCount: Int!
 }
 
@@ -3320,7 +3320,7 @@ type Query {
   chatThread(id: UUID!): AgentChatThread!
   chatMessages(threadId: UUID!): [AgentMessage!]!
   chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
-  getAISystemPromptPreview: AISystemPromptPreview!
+  getAiSystemPromptPreview: AiSystemPromptPreview!
   skills: [Skill!]!
   skill(id: UUID!): Skill
   chatThreads(
@@ -3365,7 +3365,7 @@ type Query {
   getIndicatorHealthStatus(indicatorId: HealthIndicatorId!): AdminPanelHealthServiceData!
   getQueueMetrics(queueName: String!, timeRange: QueueMetricsTimeRange = OneHour): QueueMetricsData!
   versionInfo: VersionInfo!
-  getAdminAiModels: AdminAIModels!
+  getAdminAiModels: AdminAiModels!
   getDatabaseConfigVariable(key: String!): ConfigVariable!
   getQueueJobs(queueName: String!, state: JobState!, limit: Int = 50, offset: Int = 0): QueueJobsResponse!
   findAllApplicationRegistrations: [ApplicationRegistration!]!
@@ -3520,7 +3520,7 @@ type Mutation {
   deleteManyNavigationMenuItems(ids: [UUID!]!): [NavigationMenuItem!]!
   deleteNavigationMenuItem(id: UUID!): NavigationMenuItem!
   uploadEmailAttachmentFile(file: Upload!): FileWithSignedUrl!
-  uploadAIChatFile(file: Upload!): FileWithSignedUrl!
+  uploadAiChatFile(file: Upload!): FileWithSignedUrl!
   uploadWorkflowFile(file: Upload!): FileWithSignedUrl!
   uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl!
   uploadWorkspaceMemberProfilePicture(file: Upload!): FileWithSignedUrl!

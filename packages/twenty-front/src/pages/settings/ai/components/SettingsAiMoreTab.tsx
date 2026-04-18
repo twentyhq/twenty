@@ -87,7 +87,7 @@ export const SettingsAiMoreTab = () => {
   };
 
   const systemPromptTokenCount =
-    previewData?.getAISystemPromptPreview.estimatedTokenCount;
+    previewData?.getAiSystemPromptPreview.estimatedTokenCount;
   const systemPromptDescription = isDefined(systemPromptTokenCount)
     ? t`Read the system prompts to understand how the AI works (~${formatNumber(
         systemPromptTokenCount,

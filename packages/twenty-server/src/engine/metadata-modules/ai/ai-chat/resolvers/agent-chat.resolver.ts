@@ -277,7 +277,7 @@ export class AgentChatResolver {
 
   @Query(() => AiSystemPromptPreviewDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
-  async getAISystemPromptPreview(
+  async getAiSystemPromptPreview(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {

@@ -1444,7 +1444,7 @@ export interface NativeModelCapabilities {
     __typename: 'NativeModelCapabilities'
 }
 
-export interface ClientAIModelConfig {
+export interface ClientAiModelConfig {
     modelId: Scalars['String']
     label: Scalars['String']
     modelFamily?: ModelFamily
@@ -1460,12 +1460,12 @@ export interface ClientAIModelConfig {
     contextWindowTokens?: Scalars['Float']
     maxOutputTokens?: Scalars['Float']
     dataResidency?: Scalars['String']
-    __typename: 'ClientAIModelConfig'
+    __typename: 'ClientAiModelConfig'
 }
 
 export type ModelFamily = 'GPT' | 'CLAUDE' | 'GEMINI' | 'MISTRAL' | 'GROK'
 
-export interface AdminAIModelConfig {
+export interface AdminAiModelConfig {
     modelId: Scalars['String']
     label: Scalars['String']
     modelFamily?: ModelFamily
@@ -1483,14 +1483,14 @@ export interface AdminAIModelConfig {
     providerLabel?: Scalars['String']
     name?: Scalars['String']
     dataResidency?: Scalars['String']
-    __typename: 'AdminAIModelConfig'
+    __typename: 'AdminAiModelConfig'
 }
 
-export interface AdminAIModels {
-    models: AdminAIModelConfig[]
+export interface AdminAiModels {
+    models: AdminAiModelConfig[]
     defaultSmartModelId?: Scalars['String']
     defaultFastModelId?: Scalars['String']
-    __typename: 'AdminAIModels'
+    __typename: 'AdminAiModels'
 }
 
 export interface Billing {
@@ -1552,7 +1552,7 @@ export interface ClientConfig {
     appVersion?: Scalars['String']
     authProviders: AuthProviders
     billing: Billing
-    aiModels: ClientAIModelConfig[]
+    aiModels: ClientAiModelConfig[]
     signInPrefilled: Scalars['Boolean']
     isMultiWorkspaceEnabled: Scalars['Boolean']
     isEmailVerificationRequired: Scalars['Boolean']
@@ -2628,17 +2628,17 @@ export interface AgentMessage {
     __typename: 'AgentMessage'
 }
 
-export interface AISystemPromptSection {
+export interface AiSystemPromptSection {
     title: Scalars['String']
     content: Scalars['String']
     estimatedTokenCount: Scalars['Int']
-    __typename: 'AISystemPromptSection'
+    __typename: 'AiSystemPromptSection'
 }
 
-export interface AISystemPromptPreview {
-    sections: AISystemPromptSection[]
+export interface AiSystemPromptPreview {
+    sections: AiSystemPromptSection[]
     estimatedTokenCount: Scalars['Int']
-    __typename: 'AISystemPromptPreview'
+    __typename: 'AiSystemPromptPreview'
 }
 
 export interface ChatStreamCatchupChunks {
@@ -2891,7 +2891,7 @@ export interface Query {
     chatThread: AgentChatThread
     chatMessages: AgentMessage[]
     chatStreamCatchupChunks: ChatStreamCatchupChunks
-    getAISystemPromptPreview: AISystemPromptPreview
+    getAiSystemPromptPreview: AiSystemPromptPreview
     skills: Skill[]
     skill?: Skill
     chatThreads: AgentChatThreadConnection
@@ -2927,7 +2927,7 @@ export interface Query {
     getIndicatorHealthStatus: AdminPanelHealthServiceData
     getQueueMetrics: QueueMetricsData
     versionInfo: VersionInfo
-    getAdminAiModels: AdminAIModels
+    getAdminAiModels: AdminAiModels
     getDatabaseConfigVariable: ConfigVariable
     getQueueJobs: QueueJobsResponse
     findAllApplicationRegistrations: ApplicationRegistration[]
@@ -2975,7 +2975,7 @@ export interface Mutation {
     deleteManyNavigationMenuItems: NavigationMenuItem[]
     deleteNavigationMenuItem: NavigationMenuItem
     uploadEmailAttachmentFile: FileWithSignedUrl
-    uploadAIChatFile: FileWithSignedUrl
+    uploadAiChatFile: FileWithSignedUrl
     uploadWorkflowFile: FileWithSignedUrl
     uploadWorkspaceLogo: FileWithSignedUrl
     uploadWorkspaceMemberProfilePicture: FileWithSignedUrl
@@ -6265,7 +6265,7 @@ export interface QueryGenqlSelection{
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args: {threadId: Scalars['UUID']} })
-    getAISystemPromptPreview?: AISystemPromptPreviewGenqlSelection
+    getAiSystemPromptPreview?: AISystemPromptPreviewGenqlSelection
     skills?: SkillGenqlSelection
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     chatThreads?: (AgentChatThreadConnectionGenqlSelection & { __args: {
@@ -6374,7 +6374,7 @@ export interface MutationGenqlSelection{
     deleteManyNavigationMenuItems?: (NavigationMenuItemGenqlSelection & { __args: {ids: Scalars['UUID'][]} })
     deleteNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
     uploadEmailAttachmentFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
-    uploadAIChatFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
+    uploadAiChatFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
     uploadWorkflowFile?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
     uploadWorkspaceLogo?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
     uploadWorkspaceMemberProfilePicture?: (FileWithSignedUrlGenqlSelection & { __args: {file: Scalars['Upload']} })
@@ -7887,25 +7887,25 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const ClientAIModelConfig_possibleTypes: string[] = ['ClientAIModelConfig']
-    export const isClientAIModelConfig = (obj?: { __typename?: any } | null): obj is ClientAIModelConfig => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isClientAIModelConfig"')
+    const ClientAIModelConfig_possibleTypes: string[] = ['ClientAiModelConfig']
+    export const isClientAiModelConfig = (obj?: { __typename?: any } | null): obj is ClientAiModelConfig => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isClientAiModelConfig"')
       return ClientAIModelConfig_possibleTypes.includes(obj.__typename)
     }
     
 
 
-    const AdminAIModelConfig_possibleTypes: string[] = ['AdminAIModelConfig']
-    export const isAdminAIModelConfig = (obj?: { __typename?: any } | null): obj is AdminAIModelConfig => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAdminAIModelConfig"')
+    const AdminAIModelConfig_possibleTypes: string[] = ['AdminAiModelConfig']
+    export const isAdminAiModelConfig = (obj?: { __typename?: any } | null): obj is AdminAiModelConfig => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAdminAiModelConfig"')
       return AdminAIModelConfig_possibleTypes.includes(obj.__typename)
     }
     
 
 
-    const AdminAIModels_possibleTypes: string[] = ['AdminAIModels']
-    export const isAdminAIModels = (obj?: { __typename?: any } | null): obj is AdminAIModels => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAdminAIModels"')
+    const AdminAIModels_possibleTypes: string[] = ['AdminAiModels']
+    export const isAdminAiModels = (obj?: { __typename?: any } | null): obj is AdminAiModels => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAdminAiModels"')
       return AdminAIModels_possibleTypes.includes(obj.__typename)
     }
     
@@ -8975,17 +8975,17 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const AISystemPromptSection_possibleTypes: string[] = ['AISystemPromptSection']
-    export const isAISystemPromptSection = (obj?: { __typename?: any } | null): obj is AISystemPromptSection => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAISystemPromptSection"')
+    const AISystemPromptSection_possibleTypes: string[] = ['AiSystemPromptSection']
+    export const isAiSystemPromptSection = (obj?: { __typename?: any } | null): obj is AiSystemPromptSection => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAiSystemPromptSection"')
       return AISystemPromptSection_possibleTypes.includes(obj.__typename)
     }
     
 
 
-    const AISystemPromptPreview_possibleTypes: string[] = ['AISystemPromptPreview']
-    export const isAISystemPromptPreview = (obj?: { __typename?: any } | null): obj is AISystemPromptPreview => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAISystemPromptPreview"')
+    const AISystemPromptPreview_possibleTypes: string[] = ['AiSystemPromptPreview']
+    export const isAiSystemPromptPreview = (obj?: { __typename?: any } | null): obj is AiSystemPromptPreview => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAiSystemPromptPreview"')
       return AISystemPromptPreview_possibleTypes.includes(obj.__typename)
     }
     

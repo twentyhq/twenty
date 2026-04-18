@@ -35,7 +35,7 @@ export const SettingsAiPrompts = () => {
     GetAiSystemPromptPreviewDocument,
   );
 
-  const preview = previewData?.getAISystemPromptPreview;
+  const preview = previewData?.getAiSystemPromptPreview;
   const sections = preview?.sections ?? [];
 
   const buildUserContextPreview = (): string => {

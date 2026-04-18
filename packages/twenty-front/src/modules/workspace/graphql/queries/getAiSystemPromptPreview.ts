@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const GET_AI_SYSTEM_PROMPT_PREVIEW = gql`
-  query GetAISystemPromptPreview {
-    getAISystemPromptPreview {
+  query GetAiSystemPromptPreview {
+    getAiSystemPromptPreview {
       sections {
         title
         content

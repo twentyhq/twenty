@@ -31,7 +31,7 @@ export const useAiChatFileUpload = () => {
         },
       });
 
-      const response = result?.data?.uploadAIChatFile;
+      const response = result?.data?.uploadAiChatFile;
 
       if (!isDefined(response)) {
         throw new Error(t`Couldn't upload the file.`);
