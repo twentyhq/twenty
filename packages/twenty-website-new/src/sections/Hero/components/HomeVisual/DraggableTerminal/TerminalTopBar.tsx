@@ -12,6 +12,7 @@ import { TerminalTrafficLights } from './TerminalTrafficLights';
 type TerminalTopBarProps = {
   onDragStart: (event: ReactPointerEvent<HTMLDivElement>) => void;
   isDragging: boolean;
+  onZoomTripleClick?: () => void;
   view?: TerminalToggleValue;
   onViewChange?: (value: TerminalToggleValue) => void;
   diffVisible?: boolean;
@@ -33,7 +34,7 @@ const TopBarRoot = styled.div<{ $isDragging: boolean; $dark?: boolean }>`
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   height: 48px;
-  padding: 12px;
+  padding: 0 12px;
   transition:
     background-color 0.2s ease,
     border-color 0.2s ease;
@@ -53,6 +54,7 @@ const TopRight = styled.div<{ $visible: boolean }>`
 export const TerminalTopBar = ({
   onDragStart,
   isDragging,
+  onZoomTripleClick,
   view,
   onViewChange,
   diffVisible = false,
@@ -66,7 +68,7 @@ export const TerminalTopBar = ({
       $isDragging={isDragging}
       onPointerDown={onDragStart}
     >
-      <TerminalTrafficLights />
+      <TerminalTrafficLights onZoomTripleClick={onZoomTripleClick} />
       <TerminalToggle
         onChange={onViewChange}
         theme={isDark ? 'dark' : 'light'}

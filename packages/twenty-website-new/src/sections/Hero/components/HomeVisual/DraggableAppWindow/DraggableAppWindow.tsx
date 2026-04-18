@@ -10,6 +10,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from 'react';
+import { theme } from '@/theme';
 import { VISUAL_TOKENS } from '../homeVisualTokens';
 import { useWindowOrder } from '../WindowOrder/WindowOrderProvider';
 import { WINDOW_SHADOWS } from '../windowShadows';
@@ -23,6 +24,9 @@ const MIN_EDGE_GAP = 0;
 // keep the window looking like the Twenty app when it's shrunk to fit.
 const INITIAL_MAX_WIDTH = 1040;
 const INITIAL_ASPECT_RATIO = 1280 / 832;
+// Below this parent width, stack App Window + Terminal with a small diagonal
+// offset so both remain clickable on mobile.
+const MOBILE_PARENT_BREAKPOINT = 640;
 
 type Position = { left: number; top: number };
 type Size = { width: number; height: number };
@@ -64,7 +68,7 @@ const Shell = styled.div<{
   border: 1px solid ${VISUAL_TOKENS.border.color.medium};
   border-radius: 20px;
   box-shadow: ${({ $isActive }) =>
-    $isActive ? WINDOW_SHADOWS.elevated : WINDOW_SHADOWS.resting};
+    $isActive ? WINDOW_SHADOWS.mobileElevated : WINDOW_SHADOWS.mobileResting};
   display: flex;
   flex-direction: column;
   left: 0;
@@ -75,8 +79,13 @@ const Shell = styled.div<{
   touch-action: none;
   transition:
     box-shadow 0.22s ease,
-    opacity 0.22s ease;
+    opacity 0.1s ease;
   will-change: transform, width, height;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    box-shadow: ${({ $isActive }) =>
+      $isActive ? WINDOW_SHADOWS.elevated : WINDOW_SHADOWS.resting};
+  }
 `;
 
 const Content = styled.div`
@@ -172,6 +181,19 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
       return;
     }
     const parentRect = parent.getBoundingClientRect();
+
+    if (parentRect.width < MOBILE_PARENT_BREAKPOINT) {
+      // Mobile: pin the App Window to the top of the scene. The Terminal sits
+      // tightly on top of it with only a small diagonal offset peeking out.
+      const mobileWidth = Math.min(parentRect.width, 320);
+      const mobileHeight = Math.min(
+        parentRect.height,
+        mobileWidth / INITIAL_ASPECT_RATIO + 100,
+      );
+      setSize({ width: mobileWidth, height: mobileHeight });
+      setPosition({ left: 0, top: 0 });
+      return;
+    }
 
     // Cap the initial width so the window reads as a macOS app resting inside
     // the hero rather than filling it edge-to-edge. Height follows the hero's

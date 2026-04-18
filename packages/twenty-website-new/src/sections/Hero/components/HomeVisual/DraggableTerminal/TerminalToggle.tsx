@@ -26,12 +26,11 @@ const ToggleRoot = styled.div<{ $dark?: boolean }>`
       $dark
         ? EDITOR_TOKENS.surface.toggleBorder
         : TERMINAL_TOKENS.surface.toggleBorder};
-  border-radius: 6px;
+  border-radius: 9px;
   box-sizing: border-box;
   display: flex;
   gap: 2px;
-  height: 24px;
-  padding: 0;
+  padding: 3px;
   transition:
     background-color 0.2s ease,
     border-color 0.2s ease;
@@ -80,7 +79,7 @@ const SegmentButton = styled.button<{ $active?: boolean; $dark?: boolean }>`
   font-size: 13px;
   font-weight: 500;
   gap: 6px;
-  height: 22px;
+  height: 24px;
   justify-content: center;
   line-height: 1;
   padding: 0 8px;
@@ -159,7 +158,7 @@ export const TerminalToggle = ({
         <SegmentIconWrap>
           <ClaudeLogo size={14} />
         </SegmentIconWrap>
-        Chat
+        AI Chat
       </SegmentButton>
     </ToggleRoot>
   );

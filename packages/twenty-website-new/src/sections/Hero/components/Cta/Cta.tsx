@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 const CTAsContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: ${theme.spacing(2)};
+  gap: ${theme.spacing(3)};
   justify-content: center;
 `;
 

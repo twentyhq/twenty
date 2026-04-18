@@ -14,14 +14,14 @@ const StyledContainer = styled(Container)`
   padding-bottom: ${theme.spacing(12)};
   padding-left: ${theme.spacing(4)};
   padding-right: ${theme.spacing(4)};
-  padding-top: ${theme.spacing(12)};
+  padding-top: ${theme.spacing(6)};
 
   @media (min-width: ${theme.breakpoints.md}px) {
     column-gap: ${theme.spacing(4)};
     grid-template-columns: 1fr 1fr;
     padding-left: ${theme.spacing(10)};
     padding-right: ${theme.spacing(10)};
-    padding-top: ${theme.spacing(10)};
+    padding-top: ${theme.spacing(6)};
     padding-bottom: ${theme.spacing(10)};
     row-gap: ${theme.spacing(20)};
   }

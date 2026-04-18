@@ -1,6 +1,5 @@
 'use client';
 
-import { IconLayoutSidebarRight } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
 import { TERMINAL_TOKENS } from '../terminalTokens';
 
@@ -11,36 +10,45 @@ type DiffPillProps = {
   onClick?: () => void;
 };
 
+// Single button styled like a segmented-control segment. Reads as plain
+// monospace text by default; on hover (or when diff panel is open) it shows
+// a subtle background so it feels like the TerminalToggle's active segment.
+// Height (30px) matches the TerminalToggle outer shell so both controls
+// align along the top bar baseline.
 const PillButton = styled.button<{ $active?: boolean }>`
   align-items: center;
   background: ${({ $active }) =>
-    $active ? 'rgba(0, 0, 0, 0.06)' : 'rgba(0, 0, 0, 0.02)'};
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 8px;
-  color: rgba(0, 0, 0, 0.55);
+    $active ? TERMINAL_TOKENS.surface.activeSegmentBackground : 'transparent'};
+  border: 1px solid
+    ${({ $active }) =>
+      $active ? TERMINAL_TOKENS.surface.activeSegmentBorder : 'transparent'};
+  border-radius: 6px;
+  box-shadow: ${({ $active }) =>
+    $active ? TERMINAL_TOKENS.shadow.activeSegment : 'none'};
+  box-sizing: border-box;
   cursor: pointer;
-  display: inline-flex;
-  gap: 8px;
-  height: 24px;
-  padding: 4px 8px;
-  transition:
-    background-color 0.14s ease,
-    border-color 0.14s ease;
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.05);
-    border-color: rgba(0, 0, 0, 0.12);
-  }
-`;
-
-const DiffNumbers = styled.span`
-  align-items: center;
   display: inline-flex;
   font-family: ${TERMINAL_TOKENS.font.mono};
   font-size: 13px;
   font-weight: 500;
   gap: 4px;
+  height: 30px;
   line-height: 1;
+  padding: 0 8px;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: ${({ $active }) =>
+      $active
+        ? TERMINAL_TOKENS.surface.activeSegmentBackground
+        : TERMINAL_TOKENS.surface.inactiveSegmentHoverBackground};
+    border-color: ${({ $active }) =>
+      $active ? TERMINAL_TOKENS.surface.activeSegmentBorder : 'transparent'};
+  }
 `;
 
 const Added = styled.span`
@@ -49,15 +57,6 @@ const Added = styled.span`
 
 const Removed = styled.span`
   color: #a94a4f;
-`;
-
-const IconWrap = styled.span`
-  align-items: center;
-  color: rgba(0, 0, 0, 0.45);
-  display: inline-flex;
-  flex: 0 0 16px;
-  height: 16px;
-  width: 16px;
 `;
 
 export const DiffPill = ({
@@ -74,13 +73,8 @@ export const DiffPill = ({
       onClick={onClick}
       type="button"
     >
-      <DiffNumbers>
-        <Added>+{added}</Added>
-        <Removed>-{removed}</Removed>
-      </DiffNumbers>
-      <IconWrap>
-        <IconLayoutSidebarRight size={16} stroke={1.8} />
-      </IconWrap>
+      <Added>+{added}</Added>
+      <Removed>-{removed}</Removed>
     </PillButton>
   );
 };

@@ -7,16 +7,20 @@ import { styled } from '@linaria/react';
 import {
   IconBarcode,
   IconBook,
+  IconBox,
   IconBrandLinkedin,
   IconBuildingFactory2,
   IconBuildingSkyscraper,
+  IconCalendarClock,
   IconCalendarEvent,
+  IconCalendarPlus,
   IconCheck,
   IconCheckbox,
   IconChevronDown,
   IconCopy,
   IconCreativeCommonsSa,
   IconDotsVertical,
+  IconFlag,
   IconFolder,
   IconHome2,
   IconLayoutDashboard,
@@ -59,6 +63,7 @@ import {
   useEffect,
   useMemo,
   useState,
+  type CSSProperties,
   type ReactNode,
 } from 'react';
 import type {
@@ -88,6 +93,7 @@ import { PagePreviewLoader } from './PagePreviewLoader';
 import { TablePage } from './TablePage';
 import { DraggableAppWindow } from './DraggableAppWindow/DraggableAppWindow';
 import { DraggableTerminal } from './DraggableTerminal/DraggableTerminal';
+import { OBJECT_PINNED_ACTIONS } from './objectPinnedActions';
 import {
   COMPANIES_ITEM_ID,
   COMPANIES_ITEM_LABEL,
@@ -100,6 +106,13 @@ const DEFAULT_TABLE_WIDTH = 1700;
 const APPLE_WORKSPACE_LOGO_SRC = '/images/home/hero/apple-rainbow-logo.svg';
 const TABLE_CELL_HORIZONTAL_PADDING = 8;
 const HOVER_ACTION_EDGE_INSET = 4;
+const COMPLETED_CREATED_OBJECT_IDS = CRM_OBJECT_SEQUENCE.map(({ id }) => id);
+const COMPLETED_REVEALED_OBJECT_IDS = [
+  ...COMPLETED_CREATED_OBJECT_IDS,
+  COMPANIES_ITEM_ID,
+];
+const COMPLETED_ACTIVE_OBJECT_LABEL =
+  CRM_OBJECT_SEQUENCE.at(-1)?.label ?? COMPANIES_ITEM_LABEL;
 
 const COLORS = {
   accent: VISUAL_TOKENS.accent.accent9,
@@ -177,13 +190,19 @@ const ROW_HOVER_ACTION_DISABLED_COLUMNS = new Set([
 ]);
 
 const NAVBAR_ACTION_ICON_MAP: Record<string, typeof IconPlus> = {
+  box: IconBox,
+  calendarClock: IconCalendarClock,
+  calendarEvent: IconCalendarEvent,
+  calendarPlus: IconCalendarPlus,
   chevronDown: IconChevronDown,
   chevronUp: IconChevronUp,
   dotsVertical: IconDotsVertical,
+  flag: IconFlag,
   heart: IconHeart,
   playerPause: IconPlayerPause,
   plus: IconPlus,
   repeat: IconRepeat,
+  rocket: IconRocket,
 };
 
 const SalesDashboardPage = dynamic(
@@ -242,11 +261,15 @@ const StyledHomeVisual = styled.div`
 `;
 
 const ShellScene = styled.div`
-  aspect-ratio: 1280 / 832;
+  aspect-ratio: 1 / 1;
   margin: 0 auto;
   max-height: 740px;
   position: relative;
   width: 100%;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    aspect-ratio: 1280 / 832;
+  }
 `;
 
 const AppLayout = styled.div`
@@ -264,15 +287,17 @@ const AppLayout = styled.div`
 const SidebarPanel = styled.aside`
   background: transparent;
   display: grid;
-  flex: 0 0 72px;
-  gap: 12px;
+  flex: 0 0 48px;
+  gap: 8px;
   grid-template-rows: auto auto minmax(0, 1fr);
   min-height: 0;
-  padding: 12px 8px;
-  width: 72px;
+  padding: 8px 4px;
+  width: 48px;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     flex-basis: 220px;
+    gap: 12px;
+    padding: 12px 8px;
     width: 220px;
   }
 `;
@@ -280,18 +305,39 @@ const SidebarPanel = styled.aside`
 const SidebarTopBar = styled.div`
   align-items: center;
   display: grid;
-  gap: 8px;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   min-height: 32px;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    gap: 8px;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
 `;
 
 const WorkspaceMenu = styled.div`
   align-items: center;
   display: grid;
-  gap: 8px;
-  grid-template-columns: auto 1fr auto;
+  gap: 4px;
+  grid-auto-flow: column;
+  grid-template-columns: auto;
+  justify-content: center;
   min-width: 0;
   padding: 6px 4px;
+
+  > svg:last-child {
+    display: none;
+  }
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    gap: 8px;
+    grid-auto-flow: row;
+    grid-template-columns: auto 1fr auto;
+    justify-content: stretch;
+
+    > svg:last-child {
+      display: block;
+    }
+  }
 `;
 
 const WorkspaceIcon = styled.div`
@@ -300,12 +346,14 @@ const WorkspaceIcon = styled.div`
   flex: 0 0 auto;
   height: 16px;
   justify-content: center;
-  width: 14px;
+  width: 16px;
 `;
 
 const WorkspaceIconImage = styled.img`
   display: block;
   height: 100%;
+  object-fit: contain;
+  object-position: center;
   width: 100%;
 `;
 
@@ -350,12 +398,15 @@ const SidebarControls = styled.div`
   align-items: center;
   display: grid;
   gap: 8px;
-  grid-template-columns: auto 1fr;
+  grid-auto-flow: column;
+  grid-template-columns: auto;
+  justify-content: center;
   min-width: 0;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     display: flex;
     gap: 12px;
+    grid-auto-flow: row;
     justify-content: space-between;
   }
 `;
@@ -364,10 +415,14 @@ const SegmentedRail = styled.div`
   background: #fcfcfccc;
   border: 1px solid ${COLORS.border};
   border-radius: 40px;
-  display: grid;
+  display: none;
   gap: 2px;
   grid-auto-flow: column;
   padding: 3px;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    display: grid;
+  }
 `;
 
 const Segment = styled.div<{ $selected?: boolean }>`
@@ -467,18 +522,25 @@ const SidebarItemRow = styled.div<{
   border-radius: 4px;
   display: grid;
   gap: 0;
-  grid-template-columns: ${({ $withBranch }) =>
-    $withBranch ? '9px minmax(0, 1fr) auto' : 'minmax(0, 1fr) auto'};
+  grid-template-columns: auto;
+  justify-content: center;
   height: 28px;
-  padding: 0 2px 0 ${({ $depth = 0 }) => `${$depth === 0 ? 4 : 11}px`};
+  padding: 0;
   position: relative;
   text-decoration: none;
   transition: background-color 0.14s ease;
   animation: ${({ $highlighted }) =>
     $highlighted
-      ? 'heroObjectAppearRow 1400ms cubic-bezier(0.34, 1.36, 0.64, 1) both'
+      ? 'heroObjectAppearRow 1800ms cubic-bezier(0.34, 1.56, 0.64, 1) both'
       : 'none'};
   transform-origin: left center;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    grid-template-columns: ${({ $withBranch }) =>
+      $withBranch ? '9px minmax(0, 1fr) auto' : 'minmax(0, 1fr) auto'};
+    justify-content: stretch;
+    padding: 0 2px 0 ${({ $depth = 0 }) => `${$depth === 0 ? 4 : 11}px`};
+  }
 
   &:hover {
     background: ${({ $active, $interactive }) =>
@@ -494,27 +556,34 @@ const SidebarItemRow = styled.div<{
         0 0 0 0 rgba(var(--hero-highlight-rgb, 237, 95, 0), 0),
         0 0 0 0 rgba(var(--hero-highlight-rgb, 237, 95, 0), 0);
       opacity: 0;
-      transform: translateX(-14px) scale(0.84);
+      transform: translateX(-32px) translateY(-6px) scale(0.6);
     }
-    14% {
-      background: rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.3);
+    16% {
+      background: rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.55);
       box-shadow:
-        0 0 0 4px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.22),
-        0 8px 20px -6px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.3);
+        0 0 0 6px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.4),
+        0 12px 28px -6px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.55);
       opacity: 1;
-      transform: translateX(0) scale(1.08);
+      transform: translateX(0) translateY(0) scale(1.18);
     }
-    34% {
-      background: rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.22);
+    32% {
+      background: rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.42);
       box-shadow:
-        0 0 0 10px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.12),
-        0 6px 16px -6px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.2);
-      transform: translateX(0) scale(0.99);
+        0 0 0 12px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.24),
+        0 10px 22px -6px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.38);
+      transform: translateX(0) scale(0.97);
     }
-    58% {
-      background: rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.12);
+    50% {
+      background: rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.28);
       box-shadow:
-        0 0 0 14px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0),
+        0 0 0 18px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.12),
+        0 6px 16px -6px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.22);
+      transform: translateX(0) scale(1.02);
+    }
+    72% {
+      background: rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.16);
+      box-shadow:
+        0 0 0 22px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0),
         0 0 0 0 rgba(var(--hero-highlight-rgb, 237, 95, 0), 0);
       transform: translateX(0) scale(1);
     }
@@ -540,13 +609,20 @@ const SidebarItemRowLink = styled.a<{
   border-radius: 4px;
   display: grid;
   gap: 0;
-  grid-template-columns: ${({ $withBranch }) =>
-    $withBranch ? '9px minmax(0, 1fr) auto' : 'minmax(0, 1fr) auto'};
+  grid-template-columns: auto;
+  justify-content: center;
   height: 28px;
-  padding: 0 2px 0 ${({ $depth = 0 }) => `${$depth === 0 ? 4 : 11}px`};
+  padding: 0;
   position: relative;
   text-decoration: none;
   transition: background-color 0.14s ease;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    grid-template-columns: ${({ $withBranch }) =>
+      $withBranch ? '9px minmax(0, 1fr) auto' : 'minmax(0, 1fr) auto'};
+    justify-content: stretch;
+    padding: 0 2px 0 ${({ $depth = 0 }) => `${$depth === 0 ? 4 : 11}px`};
+  }
 
   &:hover {
     background: ${({ $active, $interactive }) =>
@@ -565,7 +641,7 @@ const SidebarIconSurface = styled.div<{
   align-items: center;
   animation: ${({ $pulse }) =>
     $pulse
-      ? 'heroObjectAppearIcon 1100ms cubic-bezier(0.34, 1.56, 0.64, 1) both'
+      ? 'heroObjectAppearIcon 1400ms cubic-bezier(0.34, 1.7, 0.64, 1) both'
       : 'none'};
   background: ${({ $background }) => $background};
   border: 1px solid ${({ $border }) => $border};
@@ -580,13 +656,16 @@ const SidebarIconSurface = styled.div<{
 
   @keyframes heroObjectAppearIcon {
     0% {
-      transform: scale(0.6) rotate(-8deg);
+      transform: scale(0.35) rotate(-18deg);
     }
-    35% {
-      transform: scale(1.25) rotate(4deg);
+    30% {
+      transform: scale(1.45) rotate(8deg);
     }
-    60% {
-      transform: scale(0.96) rotate(-2deg);
+    55% {
+      transform: scale(0.9) rotate(-4deg);
+    }
+    80% {
+      transform: scale(1.06) rotate(2deg);
     }
     100% {
       transform: scale(1) rotate(0deg);
@@ -595,10 +674,14 @@ const SidebarIconSurface = styled.div<{
 `;
 
 const SidebarItemText = styled.div`
-  align-items: center;
-  display: flex;
-  gap: 2px;
+  display: none;
   min-width: 0;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    align-items: center;
+    display: flex;
+    gap: 2px;
+  }
 `;
 
 const SidebarItemLabel = styled.span<{ $active?: boolean }>`
@@ -849,6 +932,38 @@ const NavbarActionSeparator = styled.div`
   width: 1px;
 `;
 
+// Pinned action buttons register to the left of the New Record button once
+// the chat reveals an object. Tighter padding/gap than the default navbar
+// buttons so multiple commands can sit side-by-side. Entrance animation
+// cascades left-to-right via --pinned-action-index so buttons feel like
+// they're landing one after the other.
+const PinnedActionButton = styled(NavbarActionButton)`
+  animation: pinnedActionIn 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--pinned-action-index, 0) * 90ms);
+  display: none;
+  gap: 4px;
+  padding: 0 6px;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    display: inline-flex;
+  }
+
+  @keyframes pinnedActionIn {
+    from {
+      opacity: 0;
+      transform: translateY(-6px) scale(0.94);
+    }
+    60% {
+      opacity: 1;
+      transform: translateY(1px) scale(1.02);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+`;
+
 const IndexSurface = styled.div`
   background: ${COLORS.background};
   border: 1px solid ${COLORS.border};
@@ -910,12 +1025,16 @@ const TinyDot = styled.div`
 
 const ViewActions = styled.div`
   align-items: center;
-  display: flex;
+  display: none;
   flex: 0 0 auto;
   gap: 2px;
   margin-left: auto;
   position: relative;
   z-index: 1;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    display: flex;
+  }
 `;
 
 const ViewAction = styled.span`
@@ -2187,6 +2306,11 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
 
   const [activeLabel, setActiveLabel] = useState(defaultActiveLabel);
   const [createdObjectIds, setCreatedObjectIds] = useState<string[]>([]);
+  // Objects whose pinned navbar commands have been scaffolded by the chat.
+  // Includes Companies (reused from the standard sidebar) and all newly
+  // created CRM objects. The navbar looks up its pinned actions here so
+  // commands only appear after the assistant announces them.
+  const [revealedObjectIds, setRevealedObjectIds] = useState<string[]>([]);
   const [highlightedItemId, setHighlightedItemId] = useState<string | null>(
     null,
   );
@@ -2241,6 +2365,9 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
   }, [createdObjectIds, visual.workspaceNav]);
 
   const handleObjectCreated = useCallback((id: string) => {
+    setRevealedObjectIds((current) =>
+      current.includes(id) ? current : [...current, id],
+    );
     // Companies is reused from the standard sidebar — no prepend, just flash
     // the existing item and show its index page.
     if (id === COMPANIES_ITEM_ID) {
@@ -2261,15 +2388,23 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
 
   const handleChatReset = useCallback(() => {
     setCreatedObjectIds([]);
+    setRevealedObjectIds([]);
     setHighlightedItemId(null);
     setActiveLabel(defaultActiveLabel);
   }, [defaultActiveLabel]);
+
+  const handleJumpToConversationEnd = useCallback(() => {
+    setCreatedObjectIds(COMPLETED_CREATED_OBJECT_IDS);
+    setRevealedObjectIds(COMPLETED_REVEALED_OBJECT_IDS);
+    setHighlightedItemId(null);
+    setActiveLabel(COMPLETED_ACTIVE_OBJECT_LABEL);
+  }, []);
 
   useEffect(() => {
     if (highlightedItemId === null) {
       return undefined;
     }
-    const id = window.setTimeout(() => setHighlightedItemId(null), 1600);
+    const id = window.setTimeout(() => setHighlightedItemId(null), 2000);
     return () => window.clearTimeout(id);
   }, [highlightedItemId]);
 
@@ -2287,6 +2422,13 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
   const activeHeader = activePage?.header;
   const activeActions = activeHeader?.actions ?? [];
   const navbarActions = activeHeader?.navbarActions;
+  // Pinned commands registered by the active object. Surfaced only after the
+  // chat has revealed that object, mirroring how a real workspace would only
+  // gain header actions after the schema / command-menu-items lands.
+  const pinnedActions =
+    activeItem && revealedObjectIds.includes(activeItem.id)
+      ? OBJECT_PINNED_ACTIONS[activeItem.id]
+      : undefined;
   const showPageCount = activeHeader?.count !== undefined;
   const showListIcon = activeHeader?.showListIcon ?? false;
   const showViewBar =
@@ -2434,6 +2576,34 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
                       navbarActions.map(renderNavbarAction)
                     ) : (
                       <>
+                        {pinnedActions?.map((action, index) => (
+                          <PinnedActionButton
+                            key={`pinned-${activeItem?.id}-${action.label}-${index}`}
+                            style={
+                              {
+                                '--pinned-action-index': index,
+                              } as CSSProperties
+                            }
+                          >
+                            <NavbarActionIconWrap>
+                              {(() => {
+                                const Icon =
+                                  NAVBAR_ACTION_ICON_MAP[action.icon] ??
+                                  IconPlus;
+                                return (
+                                  <Icon
+                                    aria-hidden
+                                    size={VISUAL_TOKENS.icon.size.sm}
+                                    stroke={NAVBAR_ACTION_TABLER_STROKE}
+                                  />
+                                );
+                              })()}
+                            </NavbarActionIconWrap>
+                            <NavbarActionLabel>
+                              {action.label}
+                            </NavbarActionLabel>
+                          </PinnedActionButton>
+                        ))}
                         <DesktopOnlyNavbarAction>
                           <NavbarActionButton>
                             <NavbarActionIconWrap>
@@ -2443,7 +2613,7 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
                                 stroke={NAVBAR_ACTION_TABLER_STROKE}
                               />
                             </NavbarActionIconWrap>
-                            <NavbarActionLabel>New Record</NavbarActionLabel>
+                            <NavbarActionLabel>New</NavbarActionLabel>
                           </NavbarActionButton>
                         </DesktopOnlyNavbarAction>
                         <NavbarActionButton>
@@ -2520,6 +2690,7 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
           <DraggableTerminal
             onObjectCreated={handleObjectCreated}
             onChatReset={handleChatReset}
+            onJumpToConversationEnd={handleJumpToConversationEnd}
           />
         </WindowOrderProvider>
       </ShellScene>

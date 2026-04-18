@@ -9,4 +9,8 @@ export const WINDOW_SHADOWS = {
   // plus a tight close shadow for depth.
   elevated:
     '0 14px 80px 0 rgba(0, 0, 0, 0.26), 0 4px 12px 0 rgba(0, 0, 0, 0.08)',
+  // Mobile resting shadow — lighter so the stacked window underneath isn't
+  // washed out to a grey by the overlapping shadow.
+  mobileResting: '0 4px 16px 0 rgba(0, 0, 0, 0.08)',
+  mobileElevated: '0 6px 20px 0 rgba(0, 0, 0, 0.12)',
 } as const;

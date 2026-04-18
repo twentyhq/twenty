@@ -7,21 +7,20 @@ import type { ReactNode } from 'react';
 const StyledSection = styled.section`
   background-image: url('/images/shared/light-noise.webp');
   min-width: 0;
-  overflow-x: clip;
-  overflow-y: visible;
+  overflow: clip;
+  padding-bottom: ${theme.spacing(6)};
   position: relative;
   width: 100%;
-  z-index: 1;
 `;
 
 const StyledBackground = styled.div`
   bottom: 0;
-  left: -10%;
-  overflow: hidden;
+  left: -20%;
+  overflow: clip;
   pointer-events: none;
   position: absolute;
-  right: -10%;
-  top: 30%;
+  right: -20%;
+  top: 0;
   z-index: 0;
 `;
 

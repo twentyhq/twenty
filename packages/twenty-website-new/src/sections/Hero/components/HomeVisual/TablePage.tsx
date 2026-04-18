@@ -923,43 +923,6 @@ export function TablePage({
     endDragging();
   };
 
-  useEffect(() => {
-    const node = viewportRef.current;
-
-    if (!node) {
-      return;
-    }
-
-    const onWheel: EventListener = (event) => {
-      if (!(event instanceof WheelEvent)) {
-        return;
-      }
-
-      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) {
-        return;
-      }
-
-      const maxScrollLeft = Math.max(node.scrollWidth - node.clientWidth, 0);
-      const nextScrollLeft = Math.min(
-        Math.max(node.scrollLeft + event.deltaY, 0),
-        maxScrollLeft,
-      );
-
-      if (Math.abs(nextScrollLeft - node.scrollLeft) < 0.5) {
-        return;
-      }
-
-      node.scrollLeft = nextScrollLeft;
-      event.preventDefault();
-    };
-
-    node.addEventListener('wheel', onWheel, { passive: false });
-
-    return () => {
-      node.removeEventListener('wheel', onWheel);
-    };
-  }, []);
-
   return (
     <TableShell>
       <GripRail aria-hidden="true">

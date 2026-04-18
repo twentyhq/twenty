@@ -10,7 +10,67 @@ export type FileChange = {
 
 export const ROCKET_CHANGESET: ReadonlyArray<FileChange> = [
   { path: 'src/__tests__/schema.integration-test.ts', added: 412, removed: 40 },
-  { path: 'src/constants/schema-identifiers.ts', added: 84, removed: 0 },
+  {
+    path: 'src/command-menu-items/add-payload.command-menu-item.ts',
+    added: 20,
+    removed: 0,
+  },
+  {
+    path: 'src/command-menu-items/book-slot.command-menu-item.ts',
+    added: 22,
+    removed: 0,
+  },
+  {
+    path: 'src/command-menu-items/book-window.command-menu-item.ts',
+    added: 22,
+    removed: 0,
+  },
+  {
+    path: 'src/command-menu-items/fly-again.command-menu-item.ts',
+    added: 22,
+    removed: 0,
+  },
+  {
+    path: 'src/command-menu-items/launches-from-site.command-menu-item.ts',
+    added: 19,
+    removed: 0,
+  },
+  {
+    path: 'src/command-menu-items/reschedule-launch.command-menu-item.ts',
+    added: 18,
+    removed: 0,
+  },
+  {
+    path: 'src/command-menu-items/retire-rocket.command-menu-item.ts',
+    added: 20,
+    removed: 0,
+  },
+  {
+    path: 'src/command-menu-items/schedule-launch.command-menu-item.ts',
+    added: 20,
+    removed: 0,
+  },
+  {
+    path: 'src/command-menu-items/set-customer-status.command-menu-item.ts',
+    added: 19,
+    removed: 0,
+  },
+  {
+    path: 'src/command-menu-items/set-payload-status.command-menu-item.ts',
+    added: 18,
+    removed: 0,
+  },
+  {
+    path: 'src/command-menu-items/set-site-status.command-menu-item.ts',
+    added: 19,
+    removed: 0,
+  },
+  {
+    path: 'src/command-menu-items/upcoming-launches.command-menu-item.ts',
+    added: 18,
+    removed: 0,
+  },
+  { path: 'src/constants/schema-identifiers.ts', added: 112, removed: 0 },
   {
     path: 'src/navigation-menu-items/launch-sites.navigation-menu-item.ts',
     added: 16,

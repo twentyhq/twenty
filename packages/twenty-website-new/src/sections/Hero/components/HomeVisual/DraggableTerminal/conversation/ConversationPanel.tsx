@@ -10,6 +10,7 @@ export type ConversationMessage =
   | { id: string; role: 'assistant' };
 
 type ConversationPanelProps = {
+  instantComplete?: boolean;
   messages: ConversationMessage[];
   onUndo?: () => void;
   onObjectCreated?: (id: string) => void;
@@ -24,7 +25,7 @@ const PanelRoot = styled.div`
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 16px 18px 4px;
+  padding: 12px 12px 4px;
   scroll-behavior: smooth;
   scrollbar-gutter: stable both-edges;
   width: 100%;
@@ -39,6 +40,7 @@ const PanelRoot = styled.div`
 `;
 
 export const ConversationPanel = ({
+  instantComplete = false,
   messages,
   onUndo,
   onObjectCreated,
@@ -88,9 +90,14 @@ export const ConversationPanel = ({
     <PanelRoot ref={scrollRef}>
       {messages.map((message) =>
         message.role === 'user' ? (
-          <UserMessage key={message.id} text={message.text} />
+          <UserMessage
+            instant={instantComplete}
+            key={message.id}
+            text={message.text}
+          />
         ) : (
           <AssistantResponse
+            instantComplete={instantComplete}
             key={message.id}
             onUndo={onUndo}
             onObjectCreated={onObjectCreated}

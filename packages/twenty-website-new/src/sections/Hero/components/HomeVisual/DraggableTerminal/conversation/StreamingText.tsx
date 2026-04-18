@@ -15,6 +15,7 @@ type StreamingSegment =
 type StreamingTextProps = {
   segments: ReadonlyArray<StreamingSegment>;
   charDurationMs?: number;
+  instant?: boolean;
   onComplete?: () => void;
 };
 
@@ -50,14 +51,13 @@ const Caret = styled.span`
 export const StreamingText = ({
   segments,
   charDurationMs = 14,
+  instant = false,
   onComplete,
 }: StreamingTextProps) => {
   const totalLength = segments.reduce(
     (acc, segment) =>
       acc +
-      (segment.kind === 'text'
-        ? segment.value.length
-        : (segment.length ?? 1)),
+      (segment.kind === 'text' ? segment.value.length : (segment.length ?? 1)),
     0,
   );
 
@@ -75,6 +75,16 @@ export const StreamingText = ({
   }, [segments]);
 
   useEffect(() => {
+    if (!instant) {
+      return;
+    }
+    setRevealed(totalLength);
+  }, [instant, totalLength]);
+
+  useEffect(() => {
+    if (instant) {
+      return undefined;
+    }
     if (revealed >= totalLength) {
       if (!completedRef.current) {
         completedRef.current = true;
@@ -86,7 +96,7 @@ export const StreamingText = ({
       setRevealed((previous) => Math.min(previous + 1, totalLength));
     }, charDurationMs);
     return () => window.clearTimeout(id);
-  }, [charDurationMs, revealed, totalLength]);
+  }, [charDurationMs, instant, revealed, totalLength]);
 
   // Fire per-segment `onReveal` callbacks exactly once as each segment becomes
   // fully revealed by the streamer. Walking segments in order on every
@@ -97,7 +107,7 @@ export const StreamingText = ({
     for (let index = 0; index < segments.length; index += 1) {
       const segment = segments[index];
       const cost =
-        segment.kind === 'text' ? segment.value.length : segment.length ?? 1;
+        segment.kind === 'text' ? segment.value.length : (segment.length ?? 1);
       offset += cost;
       if (revealed < offset) {
         break;

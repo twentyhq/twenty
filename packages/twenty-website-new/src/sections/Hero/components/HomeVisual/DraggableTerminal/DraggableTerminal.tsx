@@ -9,6 +9,7 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
+import { theme } from '@/theme';
 import { useWindowOrder } from '../WindowOrder/WindowOrderProvider';
 import { WINDOW_SHADOWS } from '../windowShadows';
 import {
@@ -25,16 +26,27 @@ import { TERMINAL_TOKENS } from './terminalTokens';
 
 const WINDOW_ID = 'terminal-window';
 const INITIAL_PROMPT_TEXT =
-  'Scaffold a launch-ops CRM in my workspace with rockets, launches, payloads, customers, and launch sites.';
+  'Scaffold a launch-ops CRM in my workspace with rockets, launches, payloads, customers, and launch sites, with relevant actions for each.';
 const CLEARED_PROMPT_TEXT = 'Ask anything…';
 
 // Initial / minimum dimensions for the Terminal window (Figma mock).
-const TERMINAL_INITIAL_WIDTH = 512;
-const TERMINAL_INITIAL_HEIGHT = 280;
-const TERMINAL_EDITOR_HEIGHT = 340;
-const TERMINAL_MIN_WIDTH = 380;
-const TERMINAL_MIN_HEIGHT = 260;
+// Initial height is tuned to hug the prompt box + top bar so there's no
+// large empty area above the prompt before the chat runs — it expands to
+// TERMINAL_CHAT_EXPANDED_HEIGHT once the conversation starts.
+const TERMINAL_INITIAL_WIDTH = 380;
+const TERMINAL_INITIAL_HEIGHT = 220;
+const TERMINAL_CHAT_EXPANDED_HEIGHT = 480;
+const TERMINAL_EDITOR_WIDTH = 720;
+const TERMINAL_EDITOR_HEIGHT = 480;
+const TERMINAL_MIN_WIDTH = 300;
+const TERMINAL_MIN_HEIGHT = 200;
+const TERMINAL_INITIAL_BOTTOM_OFFSET = 96;
 const MIN_EDGE_GAP = 0;
+// Below this parent width, stack Terminal below App Window with a diagonal
+// offset so both windows stay visible and clickable on mobile.
+const MOBILE_PARENT_BREAKPOINT = 640;
+const MOBILE_OFFSET_X = 16;
+const MOBILE_OFFSET_Y = 48;
 
 type ResizeCorner = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
@@ -85,8 +97,8 @@ const Shell = styled.div<{
   border-radius: 20px;
   box-shadow: ${({ $isDragging, $isResizing }) =>
     $isDragging || $isResizing
-      ? WINDOW_SHADOWS.elevated
-      : WINDOW_SHADOWS.resting};
+      ? WINDOW_SHADOWS.mobileElevated
+      : WINDOW_SHADOWS.mobileResting};
   display: flex;
   flex-direction: column;
   left: 0;
@@ -95,15 +107,26 @@ const Shell = styled.div<{
   position: absolute;
   top: 0;
   touch-action: none;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    box-shadow: ${({ $isDragging, $isResizing }) =>
+      $isDragging || $isResizing
+        ? WINDOW_SHADOWS.elevated
+        : WINDOW_SHADOWS.resting};
+  }
   transition: ${({ $isDragging, $isResizing, $animationsEnabled }) => {
     if ($isDragging || $isResizing) {
-      return 'background-color 0.22s ease, box-shadow 0.14s ease, opacity 0.2s ease';
+      return 'background-color 0.22s ease, box-shadow 0.14s ease, opacity 0.1s ease';
     }
     const base =
-      'background-color 0.22s ease, box-shadow 0.22s ease, opacity 0.2s ease';
-    return $animationsEnabled
-      ? `${base}, height 0.28s cubic-bezier(0.22, 1, 0.36, 1), transform 0.28s cubic-bezier(0.22, 1, 0.36, 1)`
-      : base;
+      'background-color 0.22s ease, box-shadow 0.22s ease, opacity 0.1s ease';
+    if (!$animationsEnabled) {
+      return base;
+    }
+    // Spring-like curve (overshoots slightly then settles) for a lively grow.
+    const springCurve = 'cubic-bezier(0.34, 1.45, 0.55, 1)';
+    const growDuration = '0.42s';
+    return `${base}, height ${growDuration} ${springCurve}, width ${growDuration} ${springCurve}, transform ${growDuration} ${springCurve}`;
   }};
   will-change: transform, width, height;
 `;
@@ -262,16 +285,19 @@ type DraggableTerminalProps = {
   onObjectCreated?: (id: string) => void;
   onChatFinished?: () => void;
   onChatReset?: () => void;
+  onJumpToConversationEnd?: () => void;
 };
 
 export const DraggableTerminal = ({
   onObjectCreated,
   onChatFinished,
   onChatReset,
+  onJumpToConversationEnd,
 }: DraggableTerminalProps) => {
   const shellRef = useRef<HTMLDivElement>(null);
   const dragStateRef = useRef<DragState | null>(null);
   const resizeStateRef = useRef<ResizeState | null>(null);
+  const hasAnnouncedChatFinishedRef = useRef(false);
 
   const [position, setPosition] = useState<TerminalPosition | null>(null);
   const [size, setSize] = useState<TerminalSize>({
@@ -285,44 +311,120 @@ export const DraggableTerminal = ({
   const [isChatFinished, setIsChatFinished] = useState(false);
   const [isDiffOpen, setIsDiffOpen] = useState(false);
   const [animationsEnabled, setAnimationsEnabled] = useState(false);
+  const [instantComplete, setInstantComplete] = useState(false);
 
   useEffect(() => {
-    setAnimationsEnabled(true);
+    // Defer enabling grow animations until after the initial fade-in so the
+    // first paint positions the window without animating from translate(0,0).
+    const timeoutId = window.setTimeout(() => {
+      setAnimationsEnabled(true);
+    }, 150);
+    return () => window.clearTimeout(timeoutId);
   }, []);
 
   const { activate, zIndex } = useWindowOrder(WINDOW_ID);
 
   const hasStartedConversation = messages.length > 0;
 
+  const resizeAnchored = useCallback(
+    (targetWidth: number, targetHeight: number) => {
+      if (size.height === targetHeight && size.width === targetWidth) {
+        return;
+      }
+      const deltaX = size.width - targetWidth;
+      const deltaY = size.height - targetHeight;
+      const parentRect =
+        shellRef.current?.parentElement?.getBoundingClientRect() ?? null;
+      setSize({ width: targetWidth, height: targetHeight });
+      // Keep whichever corner is closest to the parent edges anchored so the
+      // window grows outward from the corner nearest the page boundary.
+      setPosition((pos) => {
+        if (!pos) {
+          return pos;
+        }
+        const parentWidth = parentRect?.width ?? size.width;
+        const parentHeight = parentRect?.height ?? size.height;
+        const centerX = pos.left + size.width / 2;
+        const centerY = pos.top + size.height / 2;
+        const anchorRight = centerX > parentWidth / 2;
+        const anchorBottom = centerY > parentHeight / 2;
+        return {
+          left: anchorRight ? pos.left + deltaX : pos.left,
+          top: anchorBottom ? pos.top + deltaY : pos.top,
+        };
+      });
+    },
+    [size],
+  );
+
+  const getTargetDimensions = useCallback(
+    (nextView: TerminalToggleValue, chatStarted: boolean) => {
+      const parentRect =
+        shellRef.current?.parentElement?.getBoundingClientRect() ?? null;
+      const isMobileParent =
+        parentRect !== null && parentRect.width < MOBILE_PARENT_BREAKPOINT;
+      const maxWidth = parentRect
+        ? parentRect.width - (isMobileParent ? MOBILE_OFFSET_X : 0)
+        : Infinity;
+      const maxHeight = parentRect
+        ? parentRect.height - (isMobileParent ? MOBILE_OFFSET_Y : 0)
+        : Infinity;
+      if (nextView === 'editor') {
+        return {
+          width: Math.min(TERMINAL_EDITOR_WIDTH, maxWidth),
+          height: Math.min(TERMINAL_EDITOR_HEIGHT, maxHeight),
+        };
+      }
+      return {
+        width: Math.min(TERMINAL_INITIAL_WIDTH, maxWidth),
+        height: Math.min(
+          chatStarted ? TERMINAL_CHAT_EXPANDED_HEIGHT : TERMINAL_INITIAL_HEIGHT,
+          maxHeight,
+        ),
+      };
+    },
+    [],
+  );
+
   const handleSendPrompt = useCallback(() => {
     if (hasStartedConversation) {
       return;
     }
+    setInstantComplete(false);
     const sendAt = Date.now();
     setMessages([
       { id: `u-${sendAt}`, role: 'user', text: INITIAL_PROMPT_TEXT },
       { id: `a-${sendAt}`, role: 'assistant' },
     ]);
-  }, [hasStartedConversation]);
+    if (view === 'ai-chat') {
+      const { width, height } = getTargetDimensions('ai-chat', true);
+      resizeAnchored(width, height);
+    }
+  }, [getTargetDimensions, hasStartedConversation, resizeAnchored, view]);
 
-  const handleViewChange = useCallback((next: TerminalToggleValue) => {
-    setView(next);
-    const targetHeight =
-      next === 'editor' ? TERMINAL_EDITOR_HEIGHT : TERMINAL_INITIAL_HEIGHT;
-    setSize((current) =>
-      current.height === targetHeight
-        ? current
-        : { ...current, height: targetHeight },
-    );
-  }, []);
+  const handleViewChange = useCallback(
+    (next: TerminalToggleValue) => {
+      setView(next);
+      const { width, height } = getTargetDimensions(
+        next,
+        hasStartedConversation,
+      );
+      resizeAnchored(width, height);
+    },
+    [getTargetDimensions, hasStartedConversation, resizeAnchored],
+  );
 
   const handleResetConversation = useCallback(() => {
+    hasAnnouncedChatFinishedRef.current = false;
     setMessages([]);
     setIsChatFinished(false);
     setIsDiffOpen(false);
-    handleViewChange('ai-chat');
+    setInstantComplete(false);
+    setView('ai-chat');
+    const { width, height } = getTargetDimensions('ai-chat', false);
+    resizeAnchored(width, height);
     onChatReset?.();
-  }, [handleViewChange, onChatReset]);
+  }, [getTargetDimensions, onChatReset, resizeAnchored]);
 
   const handleToggleDiff = useCallback(() => {
     setIsDiffOpen((current) => !current);
@@ -330,8 +432,35 @@ export const DraggableTerminal = ({
 
   const handleChatFinishedInternal = useCallback(() => {
     setIsChatFinished(true);
+    if (hasAnnouncedChatFinishedRef.current) {
+      return;
+    }
+    hasAnnouncedChatFinishedRef.current = true;
     onChatFinished?.();
   }, [onChatFinished]);
+
+  const handleJumpToConversationEnd = useCallback(() => {
+    if (!hasStartedConversation) {
+      const sendAt = Date.now();
+      setMessages([
+        { id: `u-${sendAt}`, role: 'user', text: INITIAL_PROMPT_TEXT },
+        { id: `a-${sendAt}`, role: 'assistant' },
+      ]);
+    }
+    setInstantComplete(true);
+    setIsDiffOpen(false);
+    setView('ai-chat');
+    const { width, height } = getTargetDimensions('ai-chat', true);
+    resizeAnchored(width, height);
+    onJumpToConversationEnd?.();
+    handleChatFinishedInternal();
+  }, [
+    getTargetDimensions,
+    handleChatFinishedInternal,
+    hasStartedConversation,
+    onJumpToConversationEnd,
+    resizeAnchored,
+  ]);
 
   // On mount, measure the hero scene and anchor the window to the
   // bottom-right corner. Done in a layout effect so we paint into position
@@ -344,13 +473,36 @@ export const DraggableTerminal = ({
     }
 
     const parentRect = parent.getBoundingClientRect();
+
+    if (parentRect.width < MOBILE_PARENT_BREAKPOINT) {
+      // Mobile: stack Terminal on top of App Window with a small diagonal
+      // offset so the App Window corner stays peeking out and tappable.
+      const mobileWidth = Math.min(
+        TERMINAL_INITIAL_WIDTH,
+        parentRect.width - MOBILE_OFFSET_X,
+      );
+      const mobileHeight = Math.min(
+        TERMINAL_INITIAL_HEIGHT,
+        parentRect.height - MOBILE_OFFSET_Y,
+      );
+      setSize({ width: mobileWidth, height: mobileHeight });
+      setPosition({
+        left: MOBILE_OFFSET_X,
+        top: MOBILE_OFFSET_Y,
+      });
+      return;
+    }
+
     const initialWidth = Math.min(TERMINAL_INITIAL_WIDTH, parentRect.width);
     const initialHeight = Math.min(TERMINAL_INITIAL_HEIGHT, parentRect.height);
 
     setSize({ width: initialWidth, height: initialHeight });
     setPosition({
       left: Math.max(0, parentRect.width - initialWidth),
-      top: Math.max(0, parentRect.height - initialHeight),
+      top: Math.max(
+        0,
+        parentRect.height - initialHeight - TERMINAL_INITIAL_BOTTOM_OFFSET,
+      ),
     });
   }, []);
 
@@ -632,6 +784,7 @@ export const DraggableTerminal = ({
         onDragStart={handleDragStart}
         onToggleDiff={handleToggleDiff}
         onViewChange={handleViewChange}
+        onZoomTripleClick={handleJumpToConversationEnd}
         view={view}
       />
       <Body>
@@ -639,6 +792,7 @@ export const DraggableTerminal = ({
           <ChatColumn>
             {hasStartedConversation ? (
               <ConversationPanel
+                instantComplete={instantComplete}
                 messages={messages}
                 onUndo={handleResetConversation}
                 onObjectCreated={onObjectCreated}

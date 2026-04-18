@@ -2,15 +2,74 @@
 
 import { createSiteWebGlRenderer } from '@/lib/webgl';
 import { styled } from '@linaria/react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 const HOME_BACKGROUND_IMAGE_URL =
-  '/illustrations/generated/home-background-gears.png';
+  '/illustrations/generated/home-background-bridge.png';
 
-const IMAGE_VERTICAL_OFFSET_PX = 120;
-const PREVIEW_DISTANCE = 4;
 const REFERENCE_PREVIEW_DISTANCE = 4;
+
+type HomeBackgroundBreakpoint = 'mobile' | 'tablet' | 'desktop';
+
+type HomeBackgroundTuneValues = {
+  horizontalOffsetPx: number;
+  previewDistance: number;
+  verticalAnchor: number;
+  verticalOffsetPx: number;
+};
+
+const HOME_BACKGROUND_BREAKPOINT_MAX_WIDTHS: Record<
+  Exclude<HomeBackgroundBreakpoint, 'desktop'>,
+  number
+> = {
+  mobile: 767,
+  tablet: 1199,
+};
+
+const HOME_BACKGROUND_TUNE_VALUES: Record<
+  HomeBackgroundBreakpoint,
+  HomeBackgroundTuneValues
+> = {
+  desktop: {
+    horizontalOffsetPx: -151,
+    previewDistance: 3.2,
+    verticalAnchor: 0.5,
+    verticalOffsetPx: 224,
+  },
+  mobile: {
+    horizontalOffsetPx: -60,
+    previewDistance: 3.2,
+    verticalAnchor: 0,
+    verticalOffsetPx: 0,
+  },
+  tablet: {
+    horizontalOffsetPx: -120,
+    previewDistance: 3.2,
+    verticalAnchor: 0.5,
+    verticalOffsetPx: 0,
+  },
+};
+
+function getHomeBackgroundBreakpoint(
+  viewportWidth: number,
+): HomeBackgroundBreakpoint {
+  if (viewportWidth <= HOME_BACKGROUND_BREAKPOINT_MAX_WIDTHS.mobile) {
+    return 'mobile';
+  }
+  if (viewportWidth <= HOME_BACKGROUND_BREAKPOINT_MAX_WIDTHS.tablet) {
+    return 'tablet';
+  }
+  return 'desktop';
+}
+
+function getActiveTuneValues(): HomeBackgroundTuneValues {
+  const key =
+    typeof window !== 'undefined'
+      ? getHomeBackgroundBreakpoint(window.innerWidth)
+      : 'desktop';
+  return HOME_BACKGROUND_TUNE_VALUES[key];
+}
 const VIRTUAL_RENDER_HEIGHT = 768;
 const MIN_FOOTPRINT_SCALE = 0.001;
 
@@ -49,6 +108,8 @@ const imagePassthroughFragmentShader = `
   uniform float zoom;
   uniform float contrast;
   uniform float verticalPixelOffset;
+  uniform float horizontalPixelOffset;
+  uniform float verticalAnchor;
 
   varying vec2 vUv;
 
@@ -58,21 +119,17 @@ const imagePassthroughFragmentShader = `
 
     vec2 uv = vUv;
 
-    // COVER fit: scale image to fill the container on both axes and crop the
-    // overflowing axis. Produces full-width halftone regardless of the
-    // container's aspect ratio.
-    if (imageAspect > viewAspect) {
-      float scale = viewAspect / imageAspect;
-      uv.x = (uv.x - 0.5) * scale + 0.5;
-    } else {
-      float scale = imageAspect / viewAspect;
-      uv.y = (uv.y - 0.5) * scale + 0.5;
-    }
+    // Always fit by width: the full horizontal span of the image is visible at
+    // any container aspect ratio. Wider containers crop top/bottom of the
+    // image; taller containers letterbox. verticalAnchor controls which edge
+    // the letterboxed image sits against (0 = bottom, 0.5 = center, 1 = top).
+    uv.y = (uv.y - verticalAnchor) * (imageAspect / viewAspect) + verticalAnchor;
 
     uv = (uv - 0.5) / zoom + 0.5;
 
-    // Shift sampled image content downward on the canvas by verticalPixelOffset.
+    // Shift sampled image content on the canvas by the pixel offsets.
     uv.y += verticalPixelOffset / max(viewportSize.y, 1.0);
+    uv.x -= horizontalPixelOffset / max(viewportSize.x, 1.0);
 
     float inBounds = step(0.0, uv.x) * step(uv.x, 1.0)
                    * step(0.0, uv.y) * step(uv.y, 1.0);
@@ -200,10 +257,12 @@ const halftoneFragmentShader = `
   }
 `;
 
-const StyledMount = styled.div`
+const StyledMount = styled.div<{ $isReady: boolean }>`
   height: calc(100% + 80px);
   inset: -40px;
+  opacity: ${({ $isReady }) => ($isReady ? 1 : 0)};
   position: absolute;
+  transition: opacity 600ms ease;
   width: calc(100% + 80px);
 `;
 
@@ -309,11 +368,13 @@ function getFootprintScaleFromRects(
 function getImageFootprintScale({
   imageHeight,
   imageWidth,
+  previewDistance,
   viewportHeight,
   viewportWidth,
 }: {
   imageHeight: number;
   imageWidth: number;
+  previewDistance: number;
   viewportHeight: number;
   viewportWidth: number;
 }) {
@@ -322,7 +383,7 @@ function getImageFootprintScale({
     imageWidth,
     viewportHeight,
     viewportWidth,
-    zoom: getImagePreviewZoom(PREVIEW_DISTANCE),
+    zoom: getImagePreviewZoom(previewDistance),
   });
   const referenceRect = getContainedImageRect({
     imageHeight,
@@ -410,17 +471,22 @@ async function mountHomeBackgroundCanvas({
   const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
   const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
+  const initialTune = getActiveTuneValues();
   const imageMaterial = new THREE.ShaderMaterial({
     fragmentShader: imagePassthroughFragmentShader,
     uniforms: {
       contrast: { value: HALFTONE_CONTRAST },
+      horizontalPixelOffset: { value: initialTune.horizontalOffsetPx },
       imageSize: { value: new THREE.Vector2(image.width, image.height) },
       tImage: { value: imageTexture },
-      verticalPixelOffset: { value: IMAGE_VERTICAL_OFFSET_PX },
+      verticalAnchor: { value: initialTune.verticalAnchor },
+      verticalPixelOffset: { value: initialTune.verticalOffsetPx },
       viewportSize: {
         value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
       },
-      zoom: { value: getImagePreviewZoom(PREVIEW_DISTANCE) },
+      zoom: {
+        value: getImagePreviewZoom(initialTune.previewDistance),
+      },
     },
     vertexShader: passThroughVertexShader,
   });
@@ -519,6 +585,11 @@ async function mountHomeBackgroundCanvas({
   };
 
   const handlePointerMove = (event: PointerEvent) => {
+    const target = event.target as HTMLElement | null;
+    if (target?.closest('[data-halftone-exclude]')) {
+      pointer.pointerInside = false;
+      return;
+    }
     updatePointerPosition(event);
   };
 
@@ -537,6 +608,7 @@ async function mountHomeBackgroundCanvas({
     getImageFootprintScale({
       imageHeight: image.height,
       imageWidth: image.width,
+      previewDistance: getActiveTuneValues().previewDistance,
       viewportHeight: getVirtualHeight(),
       viewportWidth: getVirtualWidth(),
     });
@@ -567,7 +639,14 @@ async function mountHomeBackgroundCanvas({
     );
     halftoneMaterial.uniforms.hoverLightStrength.value =
       HALFTONE_HOVER_LIGHT_INTENSITY * pointer.hoverStrength;
-    imageMaterial.uniforms.zoom.value = getImagePreviewZoom(PREVIEW_DISTANCE);
+    const active = getActiveTuneValues();
+    imageMaterial.uniforms.zoom.value = getImagePreviewZoom(
+      active.previewDistance,
+    );
+    imageMaterial.uniforms.verticalPixelOffset.value = active.verticalOffsetPx;
+    imageMaterial.uniforms.horizontalPixelOffset.value =
+      active.horizontalOffsetPx;
+    imageMaterial.uniforms.verticalAnchor.value = active.verticalAnchor;
     halftoneMaterial.uniforms.footprintScale.value =
       getHalftoneFootprintScale();
 
@@ -606,6 +685,7 @@ async function mountHomeBackgroundCanvas({
 
 export function HomeBackgroundHalftone() {
   const mountReference = useRef<HTMLDivElement>(null);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     const container = mountReference.current;
@@ -616,6 +696,7 @@ export function HomeBackgroundHalftone() {
 
     let disposed = false;
     let unmount: (() => void) | null = null;
+    let readyFrameId = 0;
 
     mountHomeBackgroundCanvas({
       container,
@@ -627,6 +708,11 @@ export function HomeBackgroundHalftone() {
           return;
         }
         unmount = dispose;
+        // Wait a frame so the first canvas paint lands before we fade in —
+        // otherwise the transition starts from a blank canvas.
+        readyFrameId = window.requestAnimationFrame(() => {
+          setIsReady(true);
+        });
       })
       .catch((error) => {
         console.error(error);
@@ -634,9 +720,10 @@ export function HomeBackgroundHalftone() {
 
     return () => {
       disposed = true;
+      window.cancelAnimationFrame(readyFrameId);
       unmount?.();
     };
   }, []);
 
-  return <StyledMount aria-hidden ref={mountReference} />;
+  return <StyledMount aria-hidden ref={mountReference} $isReady={isReady} />;
 }

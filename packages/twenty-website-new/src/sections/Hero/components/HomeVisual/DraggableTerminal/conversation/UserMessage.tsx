@@ -5,12 +5,15 @@ import { TERMINAL_TOKENS } from '../terminalTokens';
 import { CHAT_TIMINGS } from './animationTiming';
 
 type UserMessageProps = {
+  instant?: boolean;
   text: string;
 };
 
-const BubbleRow = styled.div`
-  animation: chatBubbleRise ${CHAT_TIMINGS.bubbleEnterMs}ms
-    cubic-bezier(0.22, 1, 0.36, 1) both;
+const BubbleRow = styled.div<{ $instant: boolean }>`
+  animation: ${({ $instant }) =>
+    $instant
+      ? 'none'
+      : `chatBubbleRise ${CHAT_TIMINGS.bubbleEnterMs}ms cubic-bezier(0.22, 1, 0.36, 1) both`};
   display: flex;
   justify-content: flex-end;
   width: 100%;
@@ -38,9 +41,9 @@ const Bubble = styled.div`
   padding: 8px 12px;
 `;
 
-export const UserMessage = ({ text }: UserMessageProps) => {
+export const UserMessage = ({ instant = false, text }: UserMessageProps) => {
   return (
-    <BubbleRow>
+    <BubbleRow $instant={instant}>
       <Bubble>{text}</Bubble>
     </BubbleRow>
   );

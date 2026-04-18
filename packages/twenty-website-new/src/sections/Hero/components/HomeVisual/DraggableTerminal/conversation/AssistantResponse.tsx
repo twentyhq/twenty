@@ -12,10 +12,7 @@ import {
 import { TERMINAL_TOKENS } from '../terminalTokens';
 import { CHAT_TIMINGS } from './animationTiming';
 import { ChangesSummaryCard } from './ChangesSummaryCard';
-import {
-  StreamingText,
-  type StreamingSegment,
-} from './StreamingText';
+import { StreamingText, type StreamingSegment } from './StreamingText';
 import { ThinkingIndicator } from './ThinkingIndicator';
 
 // Delay between one paragraph finishing its stream and the next starting —
@@ -74,8 +71,11 @@ const ReferenceLink = styled.a`
   }
 `;
 
-const CardWrap = styled.div`
-  animation: chatCardRise 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+const CardWrap = styled.div<{ $instant: boolean }>`
+  animation: ${({ $instant }) =>
+    $instant
+      ? 'none'
+      : 'chatCardRise 420ms cubic-bezier(0.22, 1, 0.36, 1) both'};
 
   @keyframes chatCardRise {
     from {
@@ -91,10 +91,11 @@ const CardWrap = styled.div`
 
 // -- Paragraph segment builders --
 
-const text = (
-  value: string,
-  onReveal?: () => void,
-): StreamingSegment => ({ kind: 'text', value, onReveal });
+const text = (value: string, onReveal?: () => void): StreamingSegment => ({
+  kind: 'text',
+  value,
+  onReveal,
+});
 const node = (
   key: string,
   value: ReactNode,
@@ -177,7 +178,9 @@ const buildCustomerParagraph = (
     <InlineCode>Companies</InlineCode>,
     onObjectCreated ? () => onObjectCreated(COMPANIES_ID) : undefined,
   ),
-  text(' object that ships with Twenty, so accounts, domain favicons, and the People relation work for free. '),
+  text(
+    ' object that ships with Twenty, so accounts, domain favicons, and the People relation work for free. ',
+  ),
   node('customer-file', <FileLink>payload.object.ts</FileLink>),
   text(' points its '),
   node('customer-field', <InlineCode>customer</InlineCode>),
@@ -197,6 +200,36 @@ const buildLaunchSiteParagraph = (
     ' — pads and ranges with a site code, country, region, pad name, and operational status. Lives in ',
   ),
   node('launch-site-file', <FileLink>launch-site.object.ts</FileLink>),
+  text('.'),
+];
+
+const PINNED_ACTIONS_PARAGRAPH: StreamingSegment[] = [
+  text(
+    'Each object also gets 2-3 relevant quick commands pinned to its header, to the left of ',
+  ),
+  node('pa-new', <InlineCode>New</InlineCode>),
+  text(' — '),
+  node('pa-rocket', <InlineCode>Rocket</InlineCode>),
+  text(' has reuse / retire shortcuts, '),
+  node('pa-launch', <InlineCode>Launch</InlineCode>),
+  text(' has '),
+  node('pa-l-resched', <InlineCode>Reschedule</InlineCode>),
+  text(' and '),
+  node('pa-l-payload', <InlineCode>Add payload</InlineCode>),
+  text(', '),
+  node('pa-payload', <InlineCode>Payload</InlineCode>),
+  text(' has '),
+  node('pa-p-book', <InlineCode>Book slot</InlineCode>),
+  text(', '),
+  node('pa-companies', <InlineCode>Companies</InlineCode>),
+  text(' has a quick '),
+  node('pa-c-status', <InlineCode>Set status</InlineCode>),
+  text(', and '),
+  node('pa-site', <InlineCode>Launch site</InlineCode>),
+  text(' has '),
+  node('pa-s-window', <InlineCode>Book window</InlineCode>),
+  text('. Defined under '),
+  node('pa-folder', <FileLink>src/command-menu-items/</FileLink>),
   text('.'),
 ];
 
@@ -220,7 +253,10 @@ const WRAPUP_PARAGRAPH: StreamingSegment[] = [
   text(', '),
   node('w-tsc', <InlineCode>tsc --noEmit</InlineCode>),
   text(', '),
-  node('w-vitest', <InlineCode>vitest run schema.integration-test.ts</InlineCode>),
+  node(
+    'w-vitest',
+    <InlineCode>vitest run schema.integration-test.ts</InlineCode>,
+  ),
   text(', and '),
   node('w-dev', <InlineCode>yarn twenty dev --once</InlineCode>),
   text('. Reference: '),
@@ -243,6 +279,7 @@ type Stage =
   | 'payload'
   | 'customer'
   | 'launchSite'
+  | 'actions'
   | 'wrapup'
   | 'card'
   | 'done';
@@ -254,6 +291,7 @@ const STAGE_ORDER: Stage[] = [
   'payload',
   'customer',
   'launchSite',
+  'actions',
   'wrapup',
   'card',
   'done',
@@ -265,60 +303,81 @@ const STAGE_ORDER: Stage[] = [
 // top of the file. Each object sentence is its own stage so the sidebar pop-in
 // has room to breathe before the next object is mentioned.
 type AssistantResponseProps = {
+  instantComplete?: boolean;
   onUndo?: () => void;
   onObjectCreated?: (id: string) => void;
   onChatFinished?: () => void;
 };
 
 export const AssistantResponse = ({
+  instantComplete = false,
   onUndo,
   onObjectCreated,
   onChatFinished,
 }: AssistantResponseProps) => {
-  const [stage, setStage] = useState<Stage>('thinking');
+  const [stage, setStage] = useState<Stage>(
+    instantComplete ? 'done' : 'thinking',
+  );
   const hasNotifiedChatFinishedRef = useRef(false);
+  const objectCreationHandler = instantComplete ? undefined : onObjectCreated;
 
   // Segments are rebuilt whenever the caller's onObjectCreated identity
   // changes so each object chip's onReveal is wired to the latest handler.
   // HomeVisual memoizes the handler with useCallback, so segments stay stable
   // during streaming and StreamingText doesn't reset mid-reveal.
   const rocketParagraph = useMemo(
-    () => buildIntroAndRocketParagraph(onObjectCreated),
-    [onObjectCreated],
+    () => buildIntroAndRocketParagraph(objectCreationHandler),
+    [objectCreationHandler],
   );
   const launchParagraph = useMemo(
-    () => buildLaunchParagraph(onObjectCreated),
-    [onObjectCreated],
+    () => buildLaunchParagraph(objectCreationHandler),
+    [objectCreationHandler],
   );
   const payloadParagraph = useMemo(
-    () => buildPayloadParagraph(onObjectCreated),
-    [onObjectCreated],
+    () => buildPayloadParagraph(objectCreationHandler),
+    [objectCreationHandler],
   );
   const customerParagraph = useMemo(
-    () => buildCustomerParagraph(onObjectCreated),
-    [onObjectCreated],
+    () => buildCustomerParagraph(objectCreationHandler),
+    [objectCreationHandler],
   );
   const launchSiteParagraph = useMemo(
-    () => buildLaunchSiteParagraph(onObjectCreated),
-    [onObjectCreated],
+    () => buildLaunchSiteParagraph(objectCreationHandler),
+    [objectCreationHandler],
   );
 
   useEffect(() => {
+    if (instantComplete) {
+      return undefined;
+    }
     const id = window.setTimeout(
       () => setStage('rocket'),
       CHAT_TIMINGS.thinkingMs,
     );
     return () => window.clearTimeout(id);
-  }, []);
+  }, [instantComplete]);
 
   useEffect(() => {
-    if (stage !== 'card' || hasNotifiedChatFinishedRef.current) {
+    if (!instantComplete) {
+      return;
+    }
+    setStage('done');
+  }, [instantComplete]);
+
+  useEffect(() => {
+    if (
+      (stage !== 'card' && stage !== 'done') ||
+      hasNotifiedChatFinishedRef.current
+    ) {
       return undefined;
     }
     hasNotifiedChatFinishedRef.current = true;
-    const id = window.setTimeout(() => {
-      onChatFinished?.();
-    }, AFTER_CARD_REVEAL_MS);
+    const id = window.setTimeout(
+      () => {
+        onChatFinished?.();
+      },
+      stage === 'done' ? 0 : AFTER_CARD_REVEAL_MS,
+    );
     return () => window.clearTimeout(id);
   }, [stage, onChatFinished]);
 
@@ -340,6 +399,7 @@ export const AssistantResponse = ({
         <Paragraph>
           <StreamingText
             charDurationMs={CHAT_TIMINGS.textStreamCharMs}
+            instant={instantComplete}
             onComplete={
               stage === 'rocket'
                 ? advanceTo('launch', AFTER_OBJECT_BEAT_MS)
@@ -354,6 +414,7 @@ export const AssistantResponse = ({
         <Paragraph>
           <StreamingText
             charDurationMs={CHAT_TIMINGS.textStreamCharMs}
+            instant={instantComplete}
             onComplete={
               stage === 'launch'
                 ? advanceTo('payload', AFTER_OBJECT_BEAT_MS)
@@ -368,6 +429,7 @@ export const AssistantResponse = ({
         <Paragraph>
           <StreamingText
             charDurationMs={CHAT_TIMINGS.textStreamCharMs}
+            instant={instantComplete}
             onComplete={
               stage === 'payload'
                 ? advanceTo('customer', AFTER_OBJECT_BEAT_MS)
@@ -382,6 +444,7 @@ export const AssistantResponse = ({
         <Paragraph>
           <StreamingText
             charDurationMs={CHAT_TIMINGS.textStreamCharMs}
+            instant={instantComplete}
             onComplete={
               stage === 'customer'
                 ? advanceTo('launchSite', AFTER_OBJECT_BEAT_MS)
@@ -396,12 +459,28 @@ export const AssistantResponse = ({
         <Paragraph>
           <StreamingText
             charDurationMs={CHAT_TIMINGS.textStreamCharMs}
+            instant={instantComplete}
             onComplete={
               stage === 'launchSite'
-                ? advanceTo('wrapup', BETWEEN_PARAGRAPHS_MS)
+                ? advanceTo('actions', BETWEEN_PARAGRAPHS_MS)
                 : undefined
             }
             segments={launchSiteParagraph}
+          />
+        </Paragraph>
+      )}
+
+      {has('actions') && (
+        <Paragraph>
+          <StreamingText
+            charDurationMs={CHAT_TIMINGS.textStreamCharMs}
+            instant={instantComplete}
+            onComplete={
+              stage === 'actions'
+                ? advanceTo('wrapup', BETWEEN_PARAGRAPHS_MS)
+                : undefined
+            }
+            segments={PINNED_ACTIONS_PARAGRAPH}
           />
         </Paragraph>
       )}
@@ -410,10 +489,9 @@ export const AssistantResponse = ({
         <Paragraph>
           <StreamingText
             charDurationMs={CHAT_TIMINGS.textStreamCharMs}
+            instant={instantComplete}
             onComplete={
-              stage === 'wrapup'
-                ? advanceTo('card', BEFORE_CARD_MS)
-                : undefined
+              stage === 'wrapup' ? advanceTo('card', BEFORE_CARD_MS) : undefined
             }
             segments={WRAPUP_PARAGRAPH}
           />
@@ -421,7 +499,7 @@ export const AssistantResponse = ({
       )}
 
       {has('card') && (
-        <CardWrap>
+        <CardWrap $instant={instantComplete}>
           <ChangesSummaryCard onUndo={onUndo} />
         </CardWrap>
       )}

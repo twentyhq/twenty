@@ -60,6 +60,11 @@ const schemaIdentifiersSource = `export const SCHEMA_IDS = {
     views: {
       index: '4587a1a3-0c5f-4f60-9996-d77a7233ce26',
     },
+    commandMenuItems: {
+      flyAgain: '2a3c2b88-20ad-4ff6-9c4f-52f2e2f1d801',
+      scheduleLaunch: 'cfcb4a13-9a9c-4b20-9c58-1a87e7a63c62',
+      retireRocket: '36c54890-6a9d-4c79-95c1-3b9b3d33ea33',
+    },
   },
   launch: {
     object: 'e7f1e750-5883-4e71-8b22-1c5258d8faa7',
@@ -80,6 +85,11 @@ const schemaIdentifiersSource = `export const SCHEMA_IDS = {
       upcoming: 'd62590d5-aa52-4d77-bca7-225453ed659f',
       past: 'f3ede3df-04eb-45a8-991e-a8b324bbbb16',
     },
+    commandMenuItems: {
+      rescheduleLaunch: '16a67c2f-0ed1-4d4b-b40e-0c5d0c0d40a1',
+      addPayload: 'cb0f2af2-5c9d-4f9b-8a12-3cafecdde7a1',
+      upcomingLaunches: 'c4c3a0dd-2d7c-4fc6-a2f7-eb6a89fc8d01',
+    },
   },
   payload: {
     object: '16ffcc45-b097-4031-a768-ec62a23dd8d3',
@@ -91,6 +101,15 @@ const schemaIdentifiersSource = `export const SCHEMA_IDS = {
       customer: 'd84468aa-5b75-4ae4-836e-7fff0ce58c91',
       launch: 'eb65b7f1-0780-4a9b-9fcc-528675ef0967',
     },
+    commandMenuItems: {
+      bookSlot: '01c44f8c-15db-40e7-8b57-7d7d0f9f2fa0',
+      setPayloadStatus: '8f7cd03b-3fd6-4c65-b0c4-2ec0a4a42a5e',
+    },
+  },
+  company: {
+    commandMenuItems: {
+      setCustomerStatus: '2a4fa56d-5d8a-4e55-8c1e-27e8fc6f1d63',
+    },
   },
   launchSite: {
     object: '2f18d525-0068-4d13-a26d-96eb31ed7646',
@@ -99,6 +118,11 @@ const schemaIdentifiersSource = `export const SCHEMA_IDS = {
       siteCode: '97bebd5b-2bd2-4ff3-a7df-c753f68db1aa',
       siteStatus: '1031ca3c-c12a-463c-b522-4547d06c0cc0',
       launches: 'b94b7f00-a5ef-4179-982b-1ea68f94ecff',
+    },
+    commandMenuItems: {
+      setSiteStatus: '77e56e08-fb0a-4d4a-b9b2-9a3e5b8af1b6',
+      bookWindow: 'b11a9c20-0bcb-4f73-9ef9-6e80d39b8c7e',
+      launchesFromSite: 'a5ce6cd9-1a45-4a7f-9a61-0a0a6ef1cf4a',
     },
   },
 } as const;
@@ -705,6 +729,307 @@ export default defineView({
 });
 `;
 
+const flyAgainCommandMenuItemSource = `import {
+  CommandMenuItemAvailabilityType,
+  CommandMenuItemActionType,
+  defineCommandMenuItem,
+} from 'twenty-sdk';
+
+import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
+
+export default defineCommandMenuItem({
+  universalIdentifier: SCHEMA_IDS.rocket.commandMenuItems.flyAgain,
+  label: 'Fly again',
+  icon: 'IconRepeat',
+  isPinned: true,
+  position: 0,
+  availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+  objectMetadataUniversalIdentifier: SCHEMA_IDS.rocket.object,
+  action: {
+    // Re-fly a reusable rocket: create a new launch record pre-linked to
+    // this rocket so the operator only has to pick mission details.
+    type: CommandMenuItemActionType.CREATE_RELATED_RECORD,
+    relationFieldMetadataUniversalIdentifier:
+      SCHEMA_IDS.rocket.fields.launches,
+    targetObjectMetadataUniversalIdentifier: SCHEMA_IDS.launch.object,
+  },
+});
+`;
+
+const scheduleLaunchFromRocketCommandMenuItemSource = `import {
+  CommandMenuItemAvailabilityType,
+  CommandMenuItemActionType,
+  defineCommandMenuItem,
+} from 'twenty-sdk';
+
+import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
+
+export default defineCommandMenuItem({
+  universalIdentifier: SCHEMA_IDS.rocket.commandMenuItems.scheduleLaunch,
+  label: 'Schedule launch',
+  icon: 'IconCalendarPlus',
+  isPinned: true,
+  position: 1,
+  availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+  objectMetadataUniversalIdentifier: SCHEMA_IDS.rocket.object,
+  action: {
+    type: CommandMenuItemActionType.CREATE_RELATED_RECORD,
+    relationFieldMetadataUniversalIdentifier:
+      SCHEMA_IDS.rocket.fields.launches,
+    targetObjectMetadataUniversalIdentifier: SCHEMA_IDS.launch.object,
+  },
+});
+`;
+
+const retireRocketCommandMenuItemSource = `import {
+  CommandMenuItemAvailabilityType,
+  CommandMenuItemActionType,
+  defineCommandMenuItem,
+} from 'twenty-sdk';
+
+import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
+
+export default defineCommandMenuItem({
+  universalIdentifier: SCHEMA_IDS.rocket.commandMenuItems.retireRocket,
+  label: 'Retire',
+  icon: 'IconPlayerPause',
+  isPinned: true,
+  position: 2,
+  availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+  objectMetadataUniversalIdentifier: SCHEMA_IDS.rocket.object,
+  action: {
+    // One-click status flip to "Retired" — no picker needed.
+    type: CommandMenuItemActionType.SET_FIELD_VALUE,
+    fieldMetadataUniversalIdentifier: SCHEMA_IDS.rocket.fields.status,
+    value: 'RETIRED',
+  },
+});
+`;
+
+const rescheduleLaunchCommandMenuItemSource = `import {
+  CommandMenuItemAvailabilityType,
+  CommandMenuItemActionType,
+  defineCommandMenuItem,
+} from 'twenty-sdk';
+
+import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
+
+export default defineCommandMenuItem({
+  universalIdentifier: SCHEMA_IDS.launch.commandMenuItems.rescheduleLaunch,
+  label: 'Reschedule',
+  icon: 'IconCalendarClock',
+  isPinned: true,
+  position: 1,
+  availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+  objectMetadataUniversalIdentifier: SCHEMA_IDS.launch.object,
+  action: {
+    type: CommandMenuItemActionType.EDIT_FIELD,
+    fieldMetadataUniversalIdentifier: SCHEMA_IDS.launch.fields.plannedLaunchAt,
+  },
+});
+`;
+
+const addPayloadCommandMenuItemSource = `import {
+  CommandMenuItemAvailabilityType,
+  CommandMenuItemActionType,
+  defineCommandMenuItem,
+} from 'twenty-sdk';
+
+import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
+
+export default defineCommandMenuItem({
+  universalIdentifier: SCHEMA_IDS.launch.commandMenuItems.addPayload,
+  label: 'Add payload',
+  icon: 'IconBox',
+  isPinned: true,
+  position: 1,
+  availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+  objectMetadataUniversalIdentifier: SCHEMA_IDS.launch.object,
+  action: {
+    type: CommandMenuItemActionType.CREATE_RELATED_RECORD,
+    relationFieldMetadataUniversalIdentifier:
+      SCHEMA_IDS.launch.fields.payloads,
+    targetObjectMetadataUniversalIdentifier: SCHEMA_IDS.payload.object,
+  },
+});
+`;
+
+const upcomingLaunchesCommandMenuItemSource = `import {
+  CommandMenuItemAvailabilityType,
+  CommandMenuItemActionType,
+  defineCommandMenuItem,
+} from 'twenty-sdk';
+
+import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
+
+export default defineCommandMenuItem({
+  universalIdentifier: SCHEMA_IDS.launch.commandMenuItems.upcomingLaunches,
+  label: 'Upcoming',
+  icon: 'IconCalendarEvent',
+  isPinned: true,
+  position: 2,
+  availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
+  objectMetadataUniversalIdentifier: SCHEMA_IDS.launch.object,
+  action: {
+    type: CommandMenuItemActionType.NAVIGATE_TO_VIEW,
+    viewUniversalIdentifier: SCHEMA_IDS.launch.views.upcoming,
+  },
+});
+`;
+
+const bookSlotCommandMenuItemSource = `import {
+  CommandMenuItemAvailabilityType,
+  CommandMenuItemActionType,
+  defineCommandMenuItem,
+  STANDARD_OBJECT,
+} from 'twenty-sdk';
+
+import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
+
+export default defineCommandMenuItem({
+  universalIdentifier: SCHEMA_IDS.payload.commandMenuItems.bookSlot,
+  label: 'Book slot',
+  icon: 'IconCalendarPlus',
+  isPinned: true,
+  position: 0,
+  availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
+  objectMetadataUniversalIdentifier: SCHEMA_IDS.payload.object,
+  action: {
+    // Book a payload slot for a customer: create a payload pre-linked to
+    // a Company so sales can capture a booking in one step.
+    type: CommandMenuItemActionType.CREATE_RELATED_RECORD,
+    relationFieldMetadataUniversalIdentifier:
+      SCHEMA_IDS.payload.fields.customer,
+    targetObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECT.company.universalIdentifier,
+  },
+});
+`;
+
+const setPayloadStatusCommandMenuItemSource = `import {
+  CommandMenuItemAvailabilityType,
+  CommandMenuItemActionType,
+  defineCommandMenuItem,
+} from 'twenty-sdk';
+
+import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
+
+export default defineCommandMenuItem({
+  universalIdentifier: SCHEMA_IDS.payload.commandMenuItems.setPayloadStatus,
+  label: 'Set status',
+  icon: 'IconFlag',
+  isPinned: true,
+  position: 1,
+  availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+  objectMetadataUniversalIdentifier: SCHEMA_IDS.payload.object,
+  action: {
+    type: CommandMenuItemActionType.EDIT_FIELD,
+    fieldMetadataUniversalIdentifier: SCHEMA_IDS.payload.fields.status,
+  },
+});
+`;
+
+const setCustomerStatusCommandMenuItemSource = `import {
+  CommandMenuItemAvailabilityType,
+  CommandMenuItemActionType,
+  defineCommandMenuItem,
+  STANDARD_OBJECT,
+} from 'twenty-sdk';
+
+import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
+
+export default defineCommandMenuItem({
+  universalIdentifier: SCHEMA_IDS.company.commandMenuItems.setCustomerStatus,
+  label: 'Set status',
+  icon: 'IconFlag',
+  isPinned: true,
+  position: 0,
+  availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+  objectMetadataUniversalIdentifier:
+    STANDARD_OBJECT.company.universalIdentifier,
+  action: {
+    type: CommandMenuItemActionType.EDIT_FIELD,
+    fieldMetadataUniversalIdentifier:
+      STANDARD_OBJECT.company.fields.accountStatus,
+  },
+});
+`;
+
+const setSiteStatusCommandMenuItemSource = `import {
+  CommandMenuItemAvailabilityType,
+  CommandMenuItemActionType,
+  defineCommandMenuItem,
+} from 'twenty-sdk';
+
+import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
+
+export default defineCommandMenuItem({
+  universalIdentifier: SCHEMA_IDS.launchSite.commandMenuItems.setSiteStatus,
+  label: 'Set status',
+  icon: 'IconFlag',
+  isPinned: true,
+  position: 0,
+  availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+  objectMetadataUniversalIdentifier: SCHEMA_IDS.launchSite.object,
+  action: {
+    type: CommandMenuItemActionType.EDIT_FIELD,
+    fieldMetadataUniversalIdentifier:
+      SCHEMA_IDS.launchSite.fields.siteStatus,
+  },
+});
+`;
+
+const bookWindowCommandMenuItemSource = `import {
+  CommandMenuItemAvailabilityType,
+  CommandMenuItemActionType,
+  defineCommandMenuItem,
+} from 'twenty-sdk';
+
+import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
+
+export default defineCommandMenuItem({
+  universalIdentifier: SCHEMA_IDS.launchSite.commandMenuItems.bookWindow,
+  label: 'Book window',
+  icon: 'IconCalendarPlus',
+  isPinned: true,
+  position: 1,
+  availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+  objectMetadataUniversalIdentifier: SCHEMA_IDS.launchSite.object,
+  action: {
+    // Reserve a launch window on this pad: creates a linked Launch with
+    // only the plannedLaunchAt to fill in.
+    type: CommandMenuItemActionType.CREATE_RELATED_RECORD,
+    relationFieldMetadataUniversalIdentifier:
+      SCHEMA_IDS.launchSite.fields.launches,
+    targetObjectMetadataUniversalIdentifier: SCHEMA_IDS.launch.object,
+  },
+});
+`;
+
+const launchesFromSiteCommandMenuItemSource = `import {
+  CommandMenuItemAvailabilityType,
+  CommandMenuItemActionType,
+  defineCommandMenuItem,
+} from 'twenty-sdk';
+
+import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
+
+export default defineCommandMenuItem({
+  universalIdentifier: SCHEMA_IDS.launchSite.commandMenuItems.launchesFromSite,
+  label: 'Launches',
+  icon: 'IconRocket',
+  isPinned: true,
+  position: 2,
+  availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+  objectMetadataUniversalIdentifier: SCHEMA_IDS.launchSite.object,
+  action: {
+    type: CommandMenuItemActionType.NAVIGATE_TO_RELATED_VIEW,
+    relationFieldMetadataUniversalIdentifier:
+      SCHEMA_IDS.launchSite.fields.launches,
+  },
+});
+`;
+
 const applicationConfigSource = `import { defineApplication } from 'twenty-sdk';
 
 import {
@@ -826,6 +1151,78 @@ export const EDITOR_FILES: ReadonlyArray<EditorFile> = [
     source: pastLaunchesViewSource,
   },
   {
+    id: 'cmd-fly-again',
+    name: 'fly-again.command-menu-item.ts',
+    path: 'src/command-menu-items/fly-again.command-menu-item.ts',
+    source: flyAgainCommandMenuItemSource,
+  },
+  {
+    id: 'cmd-schedule-launch',
+    name: 'schedule-launch.command-menu-item.ts',
+    path: 'src/command-menu-items/schedule-launch.command-menu-item.ts',
+    source: scheduleLaunchFromRocketCommandMenuItemSource,
+  },
+  {
+    id: 'cmd-retire-rocket',
+    name: 'retire-rocket.command-menu-item.ts',
+    path: 'src/command-menu-items/retire-rocket.command-menu-item.ts',
+    source: retireRocketCommandMenuItemSource,
+  },
+  {
+    id: 'cmd-reschedule-launch',
+    name: 'reschedule-launch.command-menu-item.ts',
+    path: 'src/command-menu-items/reschedule-launch.command-menu-item.ts',
+    source: rescheduleLaunchCommandMenuItemSource,
+  },
+  {
+    id: 'cmd-add-payload',
+    name: 'add-payload.command-menu-item.ts',
+    path: 'src/command-menu-items/add-payload.command-menu-item.ts',
+    source: addPayloadCommandMenuItemSource,
+  },
+  {
+    id: 'cmd-upcoming-launches',
+    name: 'upcoming-launches.command-menu-item.ts',
+    path: 'src/command-menu-items/upcoming-launches.command-menu-item.ts',
+    source: upcomingLaunchesCommandMenuItemSource,
+  },
+  {
+    id: 'cmd-book-slot',
+    name: 'book-slot.command-menu-item.ts',
+    path: 'src/command-menu-items/book-slot.command-menu-item.ts',
+    source: bookSlotCommandMenuItemSource,
+  },
+  {
+    id: 'cmd-set-payload-status',
+    name: 'set-payload-status.command-menu-item.ts',
+    path: 'src/command-menu-items/set-payload-status.command-menu-item.ts',
+    source: setPayloadStatusCommandMenuItemSource,
+  },
+  {
+    id: 'cmd-set-customer-status',
+    name: 'set-customer-status.command-menu-item.ts',
+    path: 'src/command-menu-items/set-customer-status.command-menu-item.ts',
+    source: setCustomerStatusCommandMenuItemSource,
+  },
+  {
+    id: 'cmd-set-site-status',
+    name: 'set-site-status.command-menu-item.ts',
+    path: 'src/command-menu-items/set-site-status.command-menu-item.ts',
+    source: setSiteStatusCommandMenuItemSource,
+  },
+  {
+    id: 'cmd-book-window',
+    name: 'book-window.command-menu-item.ts',
+    path: 'src/command-menu-items/book-window.command-menu-item.ts',
+    source: bookWindowCommandMenuItemSource,
+  },
+  {
+    id: 'cmd-launches-from-site',
+    name: 'launches-from-site.command-menu-item.ts',
+    path: 'src/command-menu-items/launches-from-site.command-menu-item.ts',
+    source: launchesFromSiteCommandMenuItemSource,
+  },
+  {
     id: 'application-config',
     name: 'application-config.ts',
     path: 'src/application-config.ts',
@@ -858,6 +1255,18 @@ export const GENERATED_FILE_IDS: ReadonlySet<string> = new Set([
   'nav-past-launches',
   'nav-payloads',
   'nav-launch-sites',
+  'cmd-fly-again',
+  'cmd-schedule-launch',
+  'cmd-retire-rocket',
+  'cmd-reschedule-launch',
+  'cmd-add-payload',
+  'cmd-upcoming-launches',
+  'cmd-book-slot',
+  'cmd-set-payload-status',
+  'cmd-set-customer-status',
+  'cmd-set-site-status',
+  'cmd-book-window',
+  'cmd-launches-from-site',
 ]);
 
 export const EXPLORER_NODES: ExplorerNode[] = [
@@ -872,6 +1281,133 @@ export const EXPLORER_NODES: ExplorerNode[] = [
   { id: 'src', name: 'src', depth: 1, kind: 'folder', expanded: true },
   { id: 'tests', name: '__tests__', depth: 2, kind: 'folder', expanded: false },
   { id: 'agents', name: 'agents', depth: 2, kind: 'folder', expanded: false },
+  {
+    id: 'command-menu-items',
+    name: 'command-menu-items',
+    depth: 2,
+    kind: 'folder',
+    expanded: true,
+  },
+  {
+    id: 'file-cmd-add-payload',
+    name: 'add-payload.command-menu-item.ts',
+    depth: 3,
+    kind: 'file',
+    icon: 'ts',
+    iconLabel: 'TS',
+    fileId: 'cmd-add-payload',
+    generated: true,
+  },
+  {
+    id: 'file-cmd-book-slot',
+    name: 'book-slot.command-menu-item.ts',
+    depth: 3,
+    kind: 'file',
+    icon: 'ts',
+    iconLabel: 'TS',
+    fileId: 'cmd-book-slot',
+    generated: true,
+  },
+  {
+    id: 'file-cmd-book-window',
+    name: 'book-window.command-menu-item.ts',
+    depth: 3,
+    kind: 'file',
+    icon: 'ts',
+    iconLabel: 'TS',
+    fileId: 'cmd-book-window',
+    generated: true,
+  },
+  {
+    id: 'file-cmd-fly-again',
+    name: 'fly-again.command-menu-item.ts',
+    depth: 3,
+    kind: 'file',
+    icon: 'ts',
+    iconLabel: 'TS',
+    fileId: 'cmd-fly-again',
+    generated: true,
+  },
+  {
+    id: 'file-cmd-launches-from-site',
+    name: 'launches-from-site.command-menu-item.ts',
+    depth: 3,
+    kind: 'file',
+    icon: 'ts',
+    iconLabel: 'TS',
+    fileId: 'cmd-launches-from-site',
+    generated: true,
+  },
+  {
+    id: 'file-cmd-reschedule-launch',
+    name: 'reschedule-launch.command-menu-item.ts',
+    depth: 3,
+    kind: 'file',
+    icon: 'ts',
+    iconLabel: 'TS',
+    fileId: 'cmd-reschedule-launch',
+    generated: true,
+  },
+  {
+    id: 'file-cmd-retire-rocket',
+    name: 'retire-rocket.command-menu-item.ts',
+    depth: 3,
+    kind: 'file',
+    icon: 'ts',
+    iconLabel: 'TS',
+    fileId: 'cmd-retire-rocket',
+    generated: true,
+  },
+  {
+    id: 'file-cmd-schedule-launch',
+    name: 'schedule-launch.command-menu-item.ts',
+    depth: 3,
+    kind: 'file',
+    icon: 'ts',
+    iconLabel: 'TS',
+    fileId: 'cmd-schedule-launch',
+    generated: true,
+  },
+  {
+    id: 'file-cmd-set-customer-status',
+    name: 'set-customer-status.command-menu-item.ts',
+    depth: 3,
+    kind: 'file',
+    icon: 'ts',
+    iconLabel: 'TS',
+    fileId: 'cmd-set-customer-status',
+    generated: true,
+  },
+  {
+    id: 'file-cmd-set-payload-status',
+    name: 'set-payload-status.command-menu-item.ts',
+    depth: 3,
+    kind: 'file',
+    icon: 'ts',
+    iconLabel: 'TS',
+    fileId: 'cmd-set-payload-status',
+    generated: true,
+  },
+  {
+    id: 'file-cmd-set-site-status',
+    name: 'set-site-status.command-menu-item.ts',
+    depth: 3,
+    kind: 'file',
+    icon: 'ts',
+    iconLabel: 'TS',
+    fileId: 'cmd-set-site-status',
+    generated: true,
+  },
+  {
+    id: 'file-cmd-upcoming-launches',
+    name: 'upcoming-launches.command-menu-item.ts',
+    depth: 3,
+    kind: 'file',
+    icon: 'ts',
+    iconLabel: 'TS',
+    fileId: 'cmd-upcoming-launches',
+    generated: true,
+  },
   {
     id: 'constants',
     name: 'constants',
