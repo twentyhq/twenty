@@ -1205,8 +1205,13 @@ export class LambdaDriver implements LogicFunctionDriver {
         ? JSON.parse(result.Payload.transformToString())
         : {};
 
-      const { logs, initDurationMs, billedDurationMs, reportDurationMs, coldStart } =
-        this.parseLambdaLogResult(result.LogResult);
+      const {
+        logs,
+        initDurationMs,
+        billedDurationMs,
+        reportDurationMs,
+        coldStart,
+      } = this.parseLambdaLogResult(result.LogResult);
 
       const duration = Date.now() - startTime;
 
