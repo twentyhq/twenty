@@ -1104,13 +1104,10 @@ export class LambdaDriver implements LogicFunctionDriver {
     }
   }
 
-  private extractLogs(logString: string): string {
-    const formattedLogString = Buffer.from(logString, 'base64')
-      .toString('utf8')
+  private extractLogs(decodedLogs: string): string {
+    return decodedLogs
       .split('\t')
-      .join(' ');
-
-    return formattedLogString
+      .join(' ')
       .replace(/^(START|END|REPORT).*\n?/gm, '')
       .replace(
         /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z) [a-f0-9-]+ INFO /gm,
@@ -1175,14 +1172,16 @@ export class LambdaDriver implements LogicFunctionDriver {
         ? JSON.parse(result.Payload.transformToString())
         : {};
 
-      const rawLogs = result.LogResult
+      const decodedLogs = result.LogResult
         ? Buffer.from(result.LogResult, 'base64').toString('utf8')
         : '';
-      const initMatch = rawLogs.match(/Init Duration:\s*([\d.]+)\s*ms/i);
-      const billedMatch = rawLogs.match(/Billed Duration:\s*([\d.]+)\s*ms/i);
-      const reportMatch = rawLogs.match(/\bDuration:\s*([\d.]+)\s*ms/i);
+      const initMatch = decodedLogs.match(/Init Duration:\s*([\d.]+)\s*ms/i);
+      const billedMatch = decodedLogs.match(
+        /Billed Duration:\s*([\d.]+)\s*ms/i,
+      );
+      const reportMatch = decodedLogs.match(/\bDuration:\s*([\d.]+)\s*ms/i);
 
-      const logs = result.LogResult ? this.extractLogs(result.LogResult) : '';
+      const logs = decodedLogs ? this.extractLogs(decodedLogs) : '';
 
       const duration = Date.now() - startTime;
 
