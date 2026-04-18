@@ -73,7 +73,7 @@ export default async function HomePage() {
   return (
     <>
       <Menu.Root
-        backgroundColor={theme.colors.primary.background[100]}
+        backgroundColor={theme.colors.secondary.background[5]}
         scheme="primary"
         navItems={MENU_DATA.navItems}
         socialLinks={menuSocialLinks}
@@ -84,7 +84,10 @@ export default async function HomePage() {
         <Menu.Cta scheme="primary" />
       </Menu.Root>
 
-      <Hero.Root backgroundColor={theme.colors.primary.background[100]}>
+      <Hero.Root
+        backgroundColor={theme.colors.secondary.background[5]}
+        showHomeBackground
+      >
         <Hero.Heading page={Pages.Home} segments={HERO_DATA.heading} />
         <Hero.Body page={Pages.Home} body={HERO_DATA.body} size="sm" />
         <Hero.Cta>

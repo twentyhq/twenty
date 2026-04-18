@@ -6,6 +6,7 @@ import { FooterBackground } from './Footer/Background';
 import { Money } from './Helped/Money';
 import { Spaceship } from './Helped/Spaceship';
 import { Target } from './Helped/Target';
+import { HomeBackgroundHalftone } from './Hero/HomeBackgroundHalftone';
 import { Product } from './Hero/Product';
 import { WhyTwenty } from './Hero/WhyTwenty';
 import { Quotes } from './Quote/Quotes';
@@ -62,6 +63,7 @@ export const ILLUSTRATIONS = {
   ...THREE_CARDS_ILLUSTRATIONS,
   faqBackground: FaqBackground,
   footerBackground: FooterBackground,
+  heroHomeBackground: HomeBackgroundHalftone,
   heroPartnerHalftone: PartnerHeroHalftoneIllustration,
   homeStepperBackgroundHalftone: HomeStepperBackgroundIllustration,
   problemMonolith: ProblemMonolithIllustration,

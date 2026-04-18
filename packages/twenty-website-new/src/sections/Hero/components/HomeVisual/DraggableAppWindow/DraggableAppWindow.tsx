@@ -21,7 +21,7 @@ const MIN_HEIGHT = 420;
 const MIN_EDGE_GAP = 0;
 // Initial size cap — the hero scene is 1280×832, so we reuse that ratio to
 // keep the window looking like the Twenty app when it's shrunk to fit.
-const INITIAL_MAX_WIDTH = 900;
+const INITIAL_MAX_WIDTH = 1040;
 const INITIAL_ASPECT_RATIO = 1280 / 832;
 
 type Position = { left: number; top: number };
@@ -185,7 +185,7 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
     setSize({ width: initialWidth, height: initialHeight });
     setPosition({
       left: Math.max(0, (parentRect.width - initialWidth) / 2),
-      top: Math.max(0, (parentRect.height - initialHeight) / 2),
+      top: MIN_EDGE_GAP,
     });
   }, []);
 

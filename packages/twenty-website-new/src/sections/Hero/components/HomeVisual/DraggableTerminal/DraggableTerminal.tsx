@@ -29,8 +29,9 @@ const INITIAL_PROMPT_TEXT =
 const CLEARED_PROMPT_TEXT = 'Ask anything…';
 
 // Initial / minimum dimensions for the Terminal window (Figma mock).
-const TERMINAL_INITIAL_WIDTH = 680;
-const TERMINAL_INITIAL_HEIGHT = 480;
+const TERMINAL_INITIAL_WIDTH = 512;
+const TERMINAL_INITIAL_HEIGHT = 280;
+const TERMINAL_EDITOR_HEIGHT = 340;
 const TERMINAL_MIN_WIDTH = 380;
 const TERMINAL_MIN_HEIGHT = 260;
 const MIN_EDGE_GAP = 0;
@@ -75,6 +76,7 @@ const Shell = styled.div<{
   $isDragging: boolean;
   $isResizing: boolean;
   $isReady: boolean;
+  $animationsEnabled: boolean;
   $dark: boolean;
 }>`
   background: ${({ $dark }) =>
@@ -93,10 +95,16 @@ const Shell = styled.div<{
   position: absolute;
   top: 0;
   touch-action: none;
-  transition: ${({ $isDragging, $isResizing }) =>
-    $isDragging || $isResizing
-      ? 'background-color 0.22s ease, box-shadow 0.14s ease, opacity 0.2s ease'
-      : 'background-color 0.22s ease, box-shadow 0.22s ease, opacity 0.2s ease'};
+  transition: ${({ $isDragging, $isResizing, $animationsEnabled }) => {
+    if ($isDragging || $isResizing) {
+      return 'background-color 0.22s ease, box-shadow 0.14s ease, opacity 0.2s ease';
+    }
+    const base =
+      'background-color 0.22s ease, box-shadow 0.22s ease, opacity 0.2s ease';
+    return $animationsEnabled
+      ? `${base}, height 0.28s cubic-bezier(0.22, 1, 0.36, 1), transform 0.28s cubic-bezier(0.22, 1, 0.36, 1)`
+      : base;
+  }};
   will-change: transform, width, height;
 `;
 
@@ -276,6 +284,11 @@ export const DraggableTerminal = ({
   const [view, setView] = useState<TerminalToggleValue>('ai-chat');
   const [isChatFinished, setIsChatFinished] = useState(false);
   const [isDiffOpen, setIsDiffOpen] = useState(false);
+  const [animationsEnabled, setAnimationsEnabled] = useState(false);
+
+  useEffect(() => {
+    setAnimationsEnabled(true);
+  }, []);
 
   const { activate, zIndex } = useWindowOrder(WINDOW_ID);
 
@@ -292,13 +305,24 @@ export const DraggableTerminal = ({
     ]);
   }, [hasStartedConversation]);
 
+  const handleViewChange = useCallback((next: TerminalToggleValue) => {
+    setView(next);
+    const targetHeight =
+      next === 'editor' ? TERMINAL_EDITOR_HEIGHT : TERMINAL_INITIAL_HEIGHT;
+    setSize((current) =>
+      current.height === targetHeight
+        ? current
+        : { ...current, height: targetHeight },
+    );
+  }, []);
+
   const handleResetConversation = useCallback(() => {
     setMessages([]);
     setIsChatFinished(false);
     setIsDiffOpen(false);
-    setView('ai-chat');
+    handleViewChange('ai-chat');
     onChatReset?.();
-  }, [onChatReset]);
+  }, [handleViewChange, onChatReset]);
 
   const handleToggleDiff = useCallback(() => {
     setIsDiffOpen((current) => !current);
@@ -565,6 +589,7 @@ export const DraggableTerminal = ({
 
   return (
     <Shell
+      $animationsEnabled={animationsEnabled}
       $dark={view === 'editor'}
       $isDragging={isDragging}
       $isResizing={isResizing}
@@ -606,7 +631,7 @@ export const DraggableTerminal = ({
         isDragging={isDragging}
         onDragStart={handleDragStart}
         onToggleDiff={handleToggleDiff}
-        onViewChange={setView}
+        onViewChange={handleViewChange}
         view={view}
       />
       <Body>

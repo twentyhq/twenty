@@ -12,7 +12,6 @@ import { TerminalTrafficLights } from './TerminalTrafficLights';
 type TerminalTopBarProps = {
   onDragStart: (event: ReactPointerEvent<HTMLDivElement>) => void;
   isDragging: boolean;
-  editorDisabled?: boolean;
   view?: TerminalToggleValue;
   onViewChange?: (value: TerminalToggleValue) => void;
   diffVisible?: boolean;
@@ -54,7 +53,6 @@ const TopRight = styled.div<{ $visible: boolean }>`
 export const TerminalTopBar = ({
   onDragStart,
   isDragging,
-  editorDisabled,
   view,
   onViewChange,
   diffVisible = false,
@@ -70,7 +68,6 @@ export const TerminalTopBar = ({
     >
       <TerminalTrafficLights />
       <TerminalToggle
-        editorDisabled={editorDisabled}
         onChange={onViewChange}
         theme={isDark ? 'dark' : 'light'}
         value={view}

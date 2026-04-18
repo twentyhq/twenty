@@ -328,9 +328,13 @@ const WorkspaceLabel = styled.span`
 
 const SidebarTopActions = styled.div`
   align-items: center;
-  display: grid;
+  display: none;
   gap: 2px;
   grid-auto-flow: column;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    display: grid;
+  }
 `;
 
 const SidebarIconButton = styled.div`
@@ -423,7 +427,6 @@ const SidebarScroll = styled.div`
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  overscroll-behavior-y: contain;
   scrollbar-width: none;
 
   &::-webkit-scrollbar {
@@ -826,6 +829,17 @@ const NavbarActionLabel = styled.span<{ $color?: string }>`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const DesktopOnlyNavbarTrailing = styled.div`
+  align-items: center;
+  display: none;
+  gap: ${VISUAL_TOKENS.spacing[1]};
+  height: 100%;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    display: inline-flex;
+  }
 `;
 
 const NavbarActionSeparator = styled.div`
@@ -1490,12 +1504,12 @@ function renderNavbarAction(
         </NavbarActionLabel>
       ) : null}
       {action.trailingLabel ? (
-        <>
+        <DesktopOnlyNavbarTrailing>
           <NavbarActionSeparator />
           <NavbarActionLabel $color={VISUAL_TOKENS.font.color.light}>
             {action.trailingLabel}
           </NavbarActionLabel>
-        </>
+        </DesktopOnlyNavbarTrailing>
       ) : null}
     </NavbarActionButton>
   );
@@ -2440,12 +2454,14 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
                               stroke={NAVBAR_ACTION_TABLER_STROKE}
                             />
                           </NavbarActionIconWrap>
-                          <NavbarActionSeparator />
-                          <NavbarActionLabel
-                            $color={VISUAL_TOKENS.font.color.light}
-                          >
-                            ⌘K
-                          </NavbarActionLabel>
+                          <DesktopOnlyNavbarTrailing>
+                            <NavbarActionSeparator />
+                            <NavbarActionLabel
+                              $color={VISUAL_TOKENS.font.color.light}
+                            >
+                              ⌘K
+                            </NavbarActionLabel>
+                          </DesktopOnlyNavbarTrailing>
                         </NavbarActionButton>
                       </>
                     )}

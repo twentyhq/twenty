@@ -12,7 +12,6 @@ export type TerminalToggleValue = 'editor' | 'ai-chat';
 type TerminalToggleProps = {
   value?: TerminalToggleValue;
   onChange?: (value: TerminalToggleValue) => void;
-  editorDisabled?: boolean;
   theme?: 'light' | 'dark';
 };
 
@@ -88,8 +87,7 @@ const SegmentButton = styled.button<{ $active?: boolean; $dark?: boolean }>`
   transition:
     background-color 0.2s ease,
     color 0.2s ease,
-    border-color 0.2s ease,
-    opacity 0.14s ease;
+    border-color 0.2s ease;
   white-space: nowrap;
 
   &:hover {
@@ -106,20 +104,6 @@ const SegmentButton = styled.button<{ $active?: boolean; $dark?: boolean }>`
     color: ${({ $dark }) =>
       $dark ? EDITOR_TOKENS.text.primary : TERMINAL_TOKENS.text.primary};
   }
-
-  &:disabled {
-    background: transparent;
-    color: ${({ $dark }) =>
-      $dark ? EDITOR_TOKENS.text.dim : TERMINAL_TOKENS.text.secondary};
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
-
-  &:disabled:hover {
-    background: transparent;
-    color: ${({ $dark }) =>
-      $dark ? EDITOR_TOKENS.text.dim : TERMINAL_TOKENS.text.secondary};
-  }
 `;
 
 const SegmentIconWrap = styled.span`
@@ -135,7 +119,6 @@ const SegmentIconWrap = styled.span`
 export const TerminalToggle = ({
   value: controlledValue,
   onChange,
-  editorDisabled,
   theme = 'light',
 }: TerminalToggleProps) => {
   const [internalValue, setInternalValue] =
@@ -156,8 +139,6 @@ export const TerminalToggle = ({
         $active={value === 'editor'}
         $dark={isDark}
         aria-selected={value === 'editor'}
-        aria-disabled={editorDisabled}
-        disabled={editorDisabled}
         onClick={selectSegment('editor')}
         role="tab"
         type="button"

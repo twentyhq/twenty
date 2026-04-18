@@ -18,6 +18,7 @@ const SCROLL_IDLE_TIMEOUT_MS = 150;
 
 const StyledSection = styled.section<{ $isScrolling: boolean }>`
   backdrop-filter: blur(10px);
+  background-image: url('/images/shared/light-noise.webp');
   box-shadow: ${({ $isScrolling }) =>
     $isScrolling
       ? '0 1px 3px 0 rgba(0, 0, 0, 0.06)'
