@@ -1,8 +1,4 @@
-import {
-  defineField,
-  FieldType,
-  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-} from 'twenty-sdk';
+import { defineField, FieldType, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
 export default defineField({
   universalIdentifier: 'be15e062-b065-48b4-979c-65b9a50e0cb1',

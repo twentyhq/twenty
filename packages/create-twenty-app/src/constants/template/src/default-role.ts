@@ -1,4 +1,4 @@
-import { defineRole } from 'twenty-sdk';
+import { defineRole } from 'twenty-sdk/define';
 
 import {
   APP_DISPLAY_NAME,

@@ -1,7 +1,4 @@
-import {
-  type CommandConfirmationModalResult,
-  type OpenCommandConfirmationModalFunction,
-} from 'twenty-sdk';
+import { type CommandConfirmationModalResult, type OpenCommandConfirmationModalFunction } from 'twenty-sdk/front-component';
 import { type FrontComponentHostCommunicationApi } from '../../../types/FrontComponentHostCommunicationApi';
 
 type CommandConfirmationModalPromiseCallbacks = {

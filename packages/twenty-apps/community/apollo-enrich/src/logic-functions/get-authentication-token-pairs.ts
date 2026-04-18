@@ -1,4 +1,4 @@
-import { defineLogicFunction, RoutePayload } from "twenty-sdk";
+import { defineLogicFunction, RoutePayload } from "twenty-sdk/define";
 import { MetadataApiClient } from 'twenty-sdk/clients';
 
 export const OAUTH_TOKEN_PAIRS_PATH = '/oauth/token-pairs';

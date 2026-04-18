@@ -1,4 +1,4 @@
-import { defineView } from 'twenty-sdk';
+import { defineView } from 'twenty-sdk/define';
 import {
   CONTENT_FIELD_UNIVERSAL_IDENTIFIER,
   POST_CARD_UNIVERSAL_IDENTIFIER,

@@ -1,5 +1,5 @@
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
-import { defineApplication } from 'twenty-sdk';
+import { defineApplication } from 'twenty-sdk/define';
 
 export default defineApplication({
   universalIdentifier: 'ac1d2ed1-8835-4bd4-9043-28b46fdda465',

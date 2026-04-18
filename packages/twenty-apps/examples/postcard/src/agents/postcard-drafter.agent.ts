@@ -1,4 +1,4 @@
-import { defineAgent } from 'twenty-sdk';
+import { defineAgent } from 'twenty-sdk/define';
 
 export default defineAgent({
   universalIdentifier: 'b8d4f2a3-9c5e-4f7b-a012-3e4d5c6b7a8f',

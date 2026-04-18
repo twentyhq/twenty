@@ -1,4 +1,4 @@
-import { FieldType } from '@/sdk';
+import { FieldType } from '@/sdk/define';
 import type { Manifest } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import {

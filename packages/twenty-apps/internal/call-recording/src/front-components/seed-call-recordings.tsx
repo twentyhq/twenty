@@ -4,7 +4,7 @@ import {
   SEED_CALL_RECORDINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/seed-call-recordings-universal-identifiers';
 import { MOCK_CALL_RECORDINGS } from 'src/data/mock-call-recordings';
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-sdk/clients';
 
 type SeedStatus = 'seeding' | 'done' | 'error';

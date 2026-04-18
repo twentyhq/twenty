@@ -1,0 +1,18 @@
+{
+  "name": "bundle-investigation",
+  "version": "0.0.1",
+  "private": true,
+  "license": "AGPL-3.0",
+  "engines": {
+    "node": "^24.5.0",
+    "yarn": ">=4.0.2"
+  },
+  "packageManager": "yarn@4.9.2",
+  "scripts": {
+    "twenty": "twenty",
+    "build:variants": "node ./scripts/build-variants.mjs",
+    "analyze": "node ./scripts/analyze-metafile.mjs"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

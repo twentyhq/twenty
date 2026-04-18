@@ -1,4 +1,4 @@
-import { defineApplication } from 'twenty-sdk';
+import { defineApplication } from 'twenty-sdk/define';
 
 import {
   APP_DESCRIPTION,

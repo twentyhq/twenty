@@ -1,10 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import {
-  defineLogicFunction,
-  type DatabaseEventPayload,
-  type ObjectRecordCreateEvent,
-} from 'twenty-sdk';
+import { defineLogicFunction, type DatabaseEventPayload, type ObjectRecordCreateEvent } from 'twenty-sdk/define';
 
 import { ON_RESEND_SEGMENT_CREATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/constants/universal-identifiers';
 import type { ResendSegmentRecord } from 'src/modules/resend/shared/types/resend-segment-record';

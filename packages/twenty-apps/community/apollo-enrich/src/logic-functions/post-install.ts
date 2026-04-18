@@ -1,4 +1,4 @@
-import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+import { definePostInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk/define';
 
 const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
   console.log('Post install logic function executed successfully!', payload.previousVersion);
