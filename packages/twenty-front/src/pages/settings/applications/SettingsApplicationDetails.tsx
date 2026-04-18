@@ -87,7 +87,7 @@ export const SettingsApplicationDetails = () => {
 
   const sourceType = application?.applicationRegistration?.sourceType;
   const isNpmApp = sourceType === ApplicationRegistrationSourceType.NPM;
-  const registrationId = detail?.id;
+  const registrationId = detail?.id ?? application?.applicationRegistration?.id;
   const currentVersion = application?.version;
   const latestAvailableVersion =
     detail?.latestAvailableVersion ??
@@ -155,41 +155,38 @@ export const SettingsApplicationDetails = () => {
       );
   }, [objectMetadataItems, applicationObjectIds, application]);
 
-  const contentEntries = useMemo(
-    () => [
-      {
-        icon: IconBox,
-        count: (application?.objects ?? []).length,
-        one: t`object`,
-        many: t`objects`,
-      },
-      {
-        icon: IconListDetails,
-        count: appFieldExtensionsCount,
-        one: t`field`,
-        many: t`fields`,
-      },
-      {
-        icon: IconCommand,
-        count: (application?.logicFunctions ?? []).length,
-        one: t`logic function`,
-        many: t`logic functions`,
-      },
-      {
-        icon: IconGraph,
-        count: (application?.frontComponents ?? []).length,
-        one: t`front component`,
-        many: t`front components`,
-      },
-      {
-        icon: IconLego,
-        count: (application?.agents ?? []).length,
-        one: t`agent`,
-        many: t`agents`,
-      },
-    ],
-    [application, appFieldExtensionsCount],
-  );
+  const contentEntries = [
+    {
+      icon: IconBox,
+      count: (application?.objects ?? []).length,
+      one: t`object`,
+      many: t`objects`,
+    },
+    {
+      icon: IconListDetails,
+      count: appFieldExtensionsCount,
+      one: t`field`,
+      many: t`fields`,
+    },
+    {
+      icon: IconCommand,
+      count: (application?.logicFunctions ?? []).length,
+      one: t`logic function`,
+      many: t`logic functions`,
+    },
+    {
+      icon: IconGraph,
+      count: (application?.frontComponents ?? []).length,
+      one: t`front component`,
+      many: t`front components`,
+    },
+    {
+      icon: IconLego,
+      count: (application?.agents ?? []).length,
+      one: t`agent`,
+      many: t`agents`,
+    },
+  ];
 
   const tabs: SingleTabProps[] = [
     { id: 'about', title: t`About`, Icon: IconInfoCircle },

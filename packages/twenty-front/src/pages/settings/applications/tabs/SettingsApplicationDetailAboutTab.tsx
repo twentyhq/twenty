@@ -18,8 +18,8 @@ import {
   type ContentEntry,
   type DeveloperLinks,
   SettingsApplicationAboutSidebar,
-} from '~/pages/settings/applications/components/SettingsApplicationAboutSidebar';
-import { SettingsApplicationScreenshotGallery } from '~/pages/settings/applications/components/SettingsApplicationScreenshotGallery';
+} from '@/settings/applications/components/SettingsApplicationAboutSidebar';
+import { SettingsApplicationScreenshotGallery } from '@/settings/applications/components/SettingsApplicationScreenshotGallery';
 
 const UNINSTALL_APPLICATION_MODAL_ID = 'uninstall-application-modal';
 
@@ -55,13 +55,6 @@ const StyledMainContent = styled.div`
   flex: 1;
   min-width: 0;
   overflow: hidden;
-`;
-
-const StyledSectionTitle = styled.h2`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.xl};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  margin: 0 0 ${themeCssVariables.spacing[3]} 0;
 `;
 
 export const SettingsApplicationDetailAboutTab = ({
@@ -168,7 +161,6 @@ export const SettingsApplicationDetailAboutTab = ({
       <StyledContentContainer>
         <StyledMainContent>
           <Section>
-            <StyledSectionTitle>{t`About`}</StyledSectionTitle>
             <LazyMarkdownRenderer text={markdownText} />
           </Section>
         </StyledMainContent>

@@ -8,7 +8,6 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
@@ -115,71 +114,68 @@ export const SettingsAvailableApplicationDetails = () => {
     });
   };
 
-  const contentEntries = useMemo(
-    () => [
-      {
-        icon: IconBox,
-        count: (manifest?.objects ?? []).length,
-        one: t`object`,
-        many: t`objects`,
-      },
-      {
-        icon: IconListDetails,
-        count: (manifest?.fields ?? []).length,
-        one: t`field`,
-        many: t`fields`,
-      },
-      {
-        icon: IconCommand,
-        count: (manifest?.logicFunctions ?? []).length,
-        one: t`logic function`,
-        many: t`logic functions`,
-      },
-      {
-        icon: IconGraph,
-        count: (manifest?.frontComponents ?? []).filter(
-          (fc) =>
-            !isDefined(fc.command) &&
-            fc.universalIdentifier !==
-              manifest?.application
-                .settingsCustomTabFrontComponentUniversalIdentifier,
-        ).length,
-        one: t`widget`,
-        many: t`widgets`,
-      },
-      {
-        icon: IconCommand,
-        count: (manifest?.frontComponents ?? []).filter(
-          (fc) => isDefined(fc.command) && !fc.isHeadless,
-        ).length,
-        one: t`command`,
-        many: t`commands`,
-      },
-      {
-        icon: IconShield,
-        count: (manifest?.roles ?? []).filter(
-          (role) =>
-            role.universalIdentifier !==
-            manifest?.application.defaultRoleUniversalIdentifier,
-        ).length,
-        one: t`role`,
-        many: t`roles`,
-      },
-      {
-        icon: IconBook,
-        count: (manifest?.skills ?? []).length,
-        one: t`skill`,
-        many: t`skills`,
-      },
-      {
-        icon: IconLego,
-        count: (manifest?.agents ?? []).length,
-        one: t`agent`,
-        many: t`agents`,
-      },
-    ],
-    [manifest],
-  );
+  const contentEntries = [
+    {
+      icon: IconBox,
+      count: (manifest?.objects ?? []).length,
+      one: t`object`,
+      many: t`objects`,
+    },
+    {
+      icon: IconListDetails,
+      count: (manifest?.fields ?? []).length,
+      one: t`field`,
+      many: t`fields`,
+    },
+    {
+      icon: IconCommand,
+      count: (manifest?.logicFunctions ?? []).length,
+      one: t`logic function`,
+      many: t`logic functions`,
+    },
+    {
+      icon: IconGraph,
+      count: (manifest?.frontComponents ?? []).filter(
+        (fc) =>
+          !isDefined(fc.command) &&
+          fc.universalIdentifier !==
+            manifest?.application
+              .settingsCustomTabFrontComponentUniversalIdentifier,
+      ).length,
+      one: t`widget`,
+      many: t`widgets`,
+    },
+    {
+      icon: IconCommand,
+      count: (manifest?.frontComponents ?? []).filter(
+        (fc) => isDefined(fc.command) && !fc.isHeadless,
+      ).length,
+      one: t`command`,
+      many: t`commands`,
+    },
+    {
+      icon: IconShield,
+      count: (manifest?.roles ?? []).filter(
+        (role) =>
+          role.universalIdentifier !==
+          manifest?.application.defaultRoleUniversalIdentifier,
+      ).length,
+      one: t`role`,
+      many: t`roles`,
+    },
+    {
+      icon: IconBook,
+      count: (manifest?.skills ?? []).length,
+      one: t`skill`,
+      many: t`skills`,
+    },
+    {
+      icon: IconLego,
+      count: (manifest?.agents ?? []).length,
+      one: t`agent`,
+      many: t`agents`,
+    },
+  ];
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,

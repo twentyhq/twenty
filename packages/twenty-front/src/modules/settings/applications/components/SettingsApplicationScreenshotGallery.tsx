@@ -68,12 +68,14 @@ export const SettingsApplicationScreenshotGallery = ({
     return null;
   }
 
+  const safeIndex = Math.min(selectedScreenshotIndex, screenshots.length - 1);
+
   return (
     <>
       <StyledScreenshotsContainer>
         <StyledScreenshotImage
-          src={screenshots[selectedScreenshotIndex]}
-          alt={`${displayName} screenshot ${selectedScreenshotIndex + 1}`}
+          src={screenshots[safeIndex]}
+          alt={`${displayName} screenshot ${safeIndex + 1}`}
         />
       </StyledScreenshotsContainer>
       <StyledScreenshotThumbnails>

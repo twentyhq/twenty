@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ComponentType, type ReactNode } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconAlertTriangle,
@@ -101,17 +102,29 @@ export const SettingsApplicationAboutSidebar = ({
   latestAvailableVersion,
   developerLinks,
 }: SettingsApplicationAboutSidebarProps) => {
+  const isSafeUrl = (url: string | undefined): url is string => {
+    if (!isNonEmptyString(url)) return false;
+
+    try {
+      const parsed = new URL(url);
+
+      return ['http:', 'https:', 'mailto:'].includes(parsed.protocol);
+    } catch {
+      return false;
+    }
+  };
+
   const filteredContentEntries = (contentEntries ?? []).filter(
     (entry) => entry.count > 0,
   );
 
   const hasDeveloperLinks =
     isDefined(developerLinks) &&
-    (isDefined(developerLinks.websiteUrl) ||
-      isDefined(developerLinks.termsUrl) ||
-      isDefined(developerLinks.emailSupport) ||
-      isDefined(developerLinks.issueReportUrl) ||
-      isDefined(developerLinks.sourcePackageUrl));
+    (isNonEmptyString(developerLinks.websiteUrl) ||
+      isNonEmptyString(developerLinks.termsUrl) ||
+      isNonEmptyString(developerLinks.emailSupport) ||
+      isNonEmptyString(developerLinks.issueReportUrl) ||
+      isNonEmptyString(developerLinks.sourcePackageUrl));
 
   return (
     <StyledSidebar>
@@ -162,7 +175,7 @@ export const SettingsApplicationAboutSidebar = ({
       {hasDeveloperLinks && (
         <StyledSidebarSection>
           <StyledSidebarLabel>{t`Developers links`}</StyledSidebarLabel>
-          {developerLinks.websiteUrl && (
+          {isSafeUrl(developerLinks.websiteUrl) && (
             <StyledLink
               href={developerLinks.websiteUrl}
               target="_blank"
@@ -172,7 +185,7 @@ export const SettingsApplicationAboutSidebar = ({
               {t`Website`}
             </StyledLink>
           )}
-          {developerLinks.termsUrl && (
+          {isSafeUrl(developerLinks.termsUrl) && (
             <StyledLink
               href={developerLinks.termsUrl}
               target="_blank"
@@ -182,7 +195,7 @@ export const SettingsApplicationAboutSidebar = ({
               {t`Terms / Privacy`}
             </StyledLink>
           )}
-          {developerLinks.emailSupport && (
+          {isNonEmptyString(developerLinks.emailSupport) && (
             <StyledLink
               href={`mailto:${developerLinks.emailSupport}`}
               target="_blank"
@@ -192,7 +205,7 @@ export const SettingsApplicationAboutSidebar = ({
               {t`Email support`}
             </StyledLink>
           )}
-          {developerLinks.issueReportUrl && (
+          {isSafeUrl(developerLinks.issueReportUrl) && (
             <StyledLink
               href={developerLinks.issueReportUrl}
               target="_blank"
@@ -202,7 +215,7 @@ export const SettingsApplicationAboutSidebar = ({
               {t`Report an issue`}
             </StyledLink>
           )}
-          {developerLinks.sourcePackageUrl && (
+          {isSafeUrl(developerLinks.sourcePackageUrl) && (
             <StyledLink
               href={developerLinks.sourcePackageUrl}
               target="_blank"
