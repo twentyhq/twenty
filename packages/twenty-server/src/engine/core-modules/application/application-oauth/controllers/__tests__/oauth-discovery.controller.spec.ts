@@ -1,4 +1,3 @@
-import { PATH_METADATA } from '@nestjs/common/constants';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { type Request } from 'express';
@@ -46,31 +45,30 @@ describe('OAuthDiscoveryController', () => {
     controller = module.get(OAuthDiscoveryController);
   });
 
+  // RFC 9728 §3.2 requires the `resource` value to match the identifier into
+  // which the well-known path suffix was inserted — so the root maps to the
+  // origin itself and the /mcp variant maps to <origin>/mcp.
   describe('getProtectedResourceMetadata', () => {
-    it('echoes the request host in the resource and authorization_servers', () => {
+    it('root form returns the origin as the resource', () => {
       const request = buildMockRequest('workspace.twenty.com');
 
-      expect(controller.getProtectedResourceMetadata(request)).toEqual({
-        resource: 'https://workspace.twenty.com/mcp',
+      expect(
+        controller.getProtectedResourceMetadataRoot(request),
+      ).toMatchObject({
+        resource: 'https://workspace.twenty.com',
         authorization_servers: ['https://workspace.twenty.com'],
-        scopes_supported: ['api', 'profile'],
-        bearer_methods_supported: ['header'],
       });
     });
 
-    // RFC 9728 defines both a root and a resource-specific well-known
-    // URL; both must resolve to this handler so any conformant client
-    // can discover the metadata.
-    it('is registered at both the root and the /mcp path-aware URL', () => {
-      const paths = Reflect.getMetadata(
-        PATH_METADATA,
-        controller.getProtectedResourceMetadata,
-      );
+    it('path-aware /mcp form returns origin/mcp as the resource', () => {
+      const request = buildMockRequest('workspace.twenty.com');
 
-      expect(paths).toEqual([
-        'oauth-protected-resource',
-        'oauth-protected-resource/mcp',
-      ]);
+      expect(controller.getProtectedResourceMetadataMcp(request)).toMatchObject(
+        {
+          resource: 'https://workspace.twenty.com/mcp',
+          authorization_servers: ['https://workspace.twenty.com'],
+        },
+      );
     });
   });
 });

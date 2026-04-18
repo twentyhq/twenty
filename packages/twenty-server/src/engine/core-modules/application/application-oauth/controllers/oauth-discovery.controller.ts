@@ -54,24 +54,40 @@ export class OAuthDiscoveryController {
       token_endpoint_auth_methods_supported: ['client_secret_post', 'none'],
       revocation_endpoint_auth_methods_supported: ['client_secret_post'],
       introspection_endpoint_auth_methods_supported: ['client_secret_post'],
+      // RFC 9207: advertise `iss` in authorization responses to defend against
+      // OAuth mix-up attacks. Required by OAuth 2.1 security BCP.
+      authorization_response_iss_parameter_supported: true,
       ...(cliRegistration
         ? { cli_client_id: cliRegistration.oAuthClientId }
         : {}),
     };
   }
 
-  // RFC 9728: OAuth 2.0 Protected Resource Metadata.
-  // Exposed at both the root and the resource-specific path (/mcp) because
-  // RFC 9728 defines the path-aware form and clients may probe either.
-  // The `resource` value echoes the host the request reached so the metadata
-  // matches the resource indicator the client used.
-  @Get(['oauth-protected-resource', 'oauth-protected-resource/mcp'])
+  // RFC 9728 §3.2: the `resource` value MUST equal the resource identifier
+  // into which the well-known path suffix was inserted. So the root form maps
+  // to the origin as-a-resource, and the /mcp-suffixed form maps to
+  // <origin>/mcp. Strict clients probing the path-aware variant will reject
+  // mismatching metadata.
+
+  @Get('oauth-protected-resource')
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
-  getProtectedResourceMetadata(@Req() request: Request) {
+  getProtectedResourceMetadataRoot(@Req() request: Request) {
     const base = this.getRequestBaseUrl(request);
 
+    return this.buildProtectedResourceMetadata(base, base);
+  }
+
+  @Get('oauth-protected-resource/mcp')
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  getProtectedResourceMetadataMcp(@Req() request: Request) {
+    const base = this.getRequestBaseUrl(request);
+
+    return this.buildProtectedResourceMetadata(base, `${base}/mcp`);
+  }
+
+  private buildProtectedResourceMetadata(base: string, resource: string) {
     return {
-      resource: `${base}/mcp`,
+      resource,
       authorization_servers: [base],
       scopes_supported: ALL_OAUTH_SCOPES,
       bearer_methods_supported: ['header'],
