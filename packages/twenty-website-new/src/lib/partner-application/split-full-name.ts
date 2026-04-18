@@ -2,18 +2,12 @@ export function splitFullName(fullName: string): {
   firstName: string;
   lastName: string;
 } {
-  const trimmed = fullName.trim();
-  if (!trimmed) {
+  const tokens = fullName.trim().split(/\s+/).filter(Boolean);
+
+  if (tokens.length === 0) {
     return { firstName: '', lastName: '' };
   }
 
-  const spaceIndex = trimmed.indexOf(' ');
-  if (spaceIndex === -1) {
-    return { firstName: trimmed, lastName: trimmed };
-  }
-
-  return {
-    firstName: trimmed.slice(0, spaceIndex).trim(),
-    lastName: trimmed.slice(spaceIndex + 1).trim(),
-  };
+  const [firstName, ...rest] = tokens;
+  return { firstName, lastName: rest.join(' ') };
 }
