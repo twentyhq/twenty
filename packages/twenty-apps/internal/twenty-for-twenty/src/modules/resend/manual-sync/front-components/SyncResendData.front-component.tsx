@@ -1,10 +1,6 @@
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-import {
-  Command,
-  defineFrontComponent,
-  enqueueSnackbar,
-  updateProgress,
-} from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command, enqueueSnackbar, updateProgress } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-shared/utils';
 
 import {

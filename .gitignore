@@ -2,6 +2,7 @@
 .DS_Store
 /.idea
 .claude/settings.json
+.cursor/debug-*.log
 **/**/node_modules/
 .cache
 

@@ -45,9 +45,7 @@ describe('useObjectAndFieldRows', () => {
       );
 
       expect(result.current.objectRows).toHaveLength(1);
-      expect(result.current.objectRows[0].key).toBe(
-        personObject.nameSingular,
-      );
+      expect(result.current.objectRows[0].key).toBe(personObject.nameSingular);
       expect(result.current.objectRows[0].labelPlural).toBe(
         personObject.labelPlural,
       );
@@ -134,8 +132,7 @@ describe('useObjectAndFieldRows', () => {
       );
 
       const hasDeniedObject = result.current.fieldGroupRows.some(
-        (row) =>
-          row.key === 'timelineActivity' || row.key === 'favorite',
+        (row) => row.key === 'timelineActivity' || row.key === 'favorite',
       );
       expect(hasDeniedObject).toBe(false);
     });
@@ -152,10 +149,7 @@ describe('useObjectAndFieldRows', () => {
             labelSingular: 'Custom Object',
             labelPlural: 'Custom Objects',
             icon: 'IconBox',
-            fields: [
-              { name: 'field1' },
-              { name: 'field2' },
-            ],
+            fields: [{ name: 'field1' }, { name: 'field2' }],
           },
         ],
         fields: [],
@@ -294,9 +288,7 @@ describe('useObjectAndFieldRows', () => {
       );
 
       // Should use installed data, not manifest
-      expect(result.current.objectRows[0].key).toBe(
-        personObject.nameSingular,
-      );
+      expect(result.current.objectRows[0].key).toBe(personObject.nameSingular);
       expect(
         result.current.objectRows.some((r) => r.key === 'manifestObj'),
       ).toBe(false);

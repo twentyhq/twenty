@@ -1,4 +1,4 @@
-import { type RoleConfig } from '@/sdk/roles/role-config';
+import { type RoleConfig } from '@/sdk/define/roles/role-config';
 import { type RoleManifest } from 'twenty-shared/application';
 import { v5 as uuidv5 } from 'uuid';
 

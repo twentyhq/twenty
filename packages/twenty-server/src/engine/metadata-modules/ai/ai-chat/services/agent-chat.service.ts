@@ -76,6 +76,7 @@ export class AgentChatService {
           type: 'created',
           entityName: 'agentChatThread',
           recordId: savedThread.id,
+          recipientUserWorkspaceIds: [userWorkspaceId],
           properties: {
             after: serializeThreadForBroadcast(savedThread),
           },
@@ -339,6 +340,7 @@ export class AgentChatService {
           type: 'updated',
           entityName: 'agentChatThread',
           recordId: threadId,
+          recipientUserWorkspaceIds: [thread.userWorkspaceId],
           properties: {
             updatedFields: ['title'],
             after: serializeThreadForBroadcast({ ...thread, title }),

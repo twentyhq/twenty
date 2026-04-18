@@ -1,11 +1,6 @@
 import { useEffect } from 'react';
-import {
-  defineFrontComponent,
-  useRecordId,
-  updateProgress,
-  enqueueSnackbar,
-  unmountFrontComponent,
-} from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId, updateProgress, enqueueSnackbar, unmountFrontComponent } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-shared/utils';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';

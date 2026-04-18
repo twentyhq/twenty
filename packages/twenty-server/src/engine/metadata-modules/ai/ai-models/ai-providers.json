@@ -298,17 +298,6 @@
         "supportsReasoning": true
       },
       {
-        "name": "codex-mini-latest",
-        "label": "Codex Mini",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 1.5,
-        "outputCostPerMillionTokens": 6,
-        "cachedInputCostPerMillionTokens": 0.375,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 100000,
-        "supportsReasoning": true
-      },
-      {
         "name": "gpt-4",
         "label": "GPT-4",
         "modelFamily": "GPT",

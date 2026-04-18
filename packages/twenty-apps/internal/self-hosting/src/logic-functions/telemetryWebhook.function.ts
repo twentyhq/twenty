@@ -1,4 +1,4 @@
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { type TelemetryEvent } from 'src/logic-functions/types/telemetry-event.type';
 

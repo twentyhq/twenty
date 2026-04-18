@@ -5,7 +5,7 @@ import {
   SEGMENT_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   SEGMENT_RESEND_ID_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/modules/resend/constants/universal-identifiers';
-import { defineObject, FieldType } from 'twenty-sdk';
+import { defineObject, FieldType } from 'twenty-sdk/define';
 
 export default defineObject({
   universalIdentifier: RESEND_SEGMENT_OBJECT_UNIVERSAL_IDENTIFIER,
