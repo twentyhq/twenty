@@ -49,9 +49,7 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
         state.transientToken,
       );
 
-      new GoogleAPIsOauthExchangeCodeForTokenStrategy(
-        this.twentyConfigService,
-      );
+      new GoogleAPIsOauthExchangeCodeForTokenStrategy(this.twentyConfigService);
 
       setRequestExtraParams(request, {
         transientToken: state.transientToken,
