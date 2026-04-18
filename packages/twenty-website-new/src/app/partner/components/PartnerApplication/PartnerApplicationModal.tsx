@@ -472,13 +472,13 @@ export function PartnerApplicationModal({
 
         if (!response.ok) {
           setSubmitError(validationCopy.submitFailed);
-          setIsSubmitting(false);
           return;
         }
 
         onClose();
       } catch {
         setSubmitError(validationCopy.submitFailed);
+      } finally {
         setIsSubmitting(false);
       }
     },
