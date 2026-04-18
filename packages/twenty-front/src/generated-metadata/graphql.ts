@@ -19,19 +19,6 @@ export type Scalars = {
   Upload: any;
 };
 
-export type AiSystemPromptPreview = {
-  __typename?: 'AiSystemPromptPreview';
-  estimatedTokenCount: Scalars['Int'];
-  sections: Array<AiSystemPromptSection>;
-};
-
-export type AiSystemPromptSection = {
-  __typename?: 'AiSystemPromptSection';
-  content: Scalars['String'];
-  estimatedTokenCount: Scalars['Int'];
-  title: Scalars['String'];
-};
-
 export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']>;
 };
@@ -327,6 +314,19 @@ export enum AiModelRole {
   FAST = 'FAST',
   SMART = 'SMART'
 }
+
+export type AiSystemPromptPreview = {
+  __typename?: 'AiSystemPromptPreview';
+  estimatedTokenCount: Scalars['Int'];
+  sections: Array<AiSystemPromptSection>;
+};
+
+export type AiSystemPromptSection = {
+  __typename?: 'AiSystemPromptSection';
+  content: Scalars['String'];
+  estimatedTokenCount: Scalars['Int'];
+  title: Scalars['String'];
+};
 
 export enum AllMetadataName {
   agent = 'agent',
@@ -4441,13 +4441,13 @@ export type Query = {
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   frontComponent?: Maybe<FrontComponent>;
   frontComponents: Array<FrontComponent>;
-  getAiSystemPromptPreview: AiSystemPromptPreview;
   getAddressDetails: PlaceDetailsResult;
   getAdminAiModels: AdminAiModels;
   getAdminAiUsageByWorkspace: Array<UsageBreakdownItem>;
   getAdminChatThreadMessages: AdminChatThreadMessages;
   getAdminWorkspaceChatThreads: Array<AdminWorkspaceChatThread>;
   getAiProviders: Scalars['JSON'];
+  getAiSystemPromptPreview: AiSystemPromptPreview;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAutoCompleteAddress: Array<AutocompleteResult>;
   getAvailablePackages: Scalars['JSON'];
