@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "twenty-website-new",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["nx", "dev", "twenty-website-new"],
+      "port": 3000,
+      "autoPort": true
+    }
+  ]
+}

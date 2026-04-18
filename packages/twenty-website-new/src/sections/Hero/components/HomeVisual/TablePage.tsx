@@ -148,11 +148,36 @@ const TableCanvas = styled.div<{ $width: number }>`
 `;
 
 const HeaderRow = styled.div`
+  animation: heroTableHeaderAppear 260ms ease-out both;
   display: flex;
+
+  @keyframes heroTableHeaderAppear {
+    from {
+      opacity: 0;
+      transform: translateY(-2px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 `;
 
-const DataRow = styled.div`
+const DataRow = styled.div<{ $rowIndex: number }>`
+  animation: heroTableRowAppear 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: ${({ $rowIndex }) => `${120 + $rowIndex * 70}ms`};
   display: flex;
+
+  @keyframes heroTableRowAppear {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 `;
 
 const FooterRow = styled.div`
@@ -995,12 +1020,13 @@ export function TablePage({
             </EmptyFillCell>
           </HeaderRow>
 
-          {page.rows.map((row) => {
+          {page.rows.map((row, rowIndex) => {
             const hovered = hoveredRowId === row.id;
 
             return (
               <DataRow
                 key={row.id}
+                $rowIndex={rowIndex}
                 onMouseEnter={() => setHoveredRowId(row.id)}
                 onMouseLeave={() =>
                   setHoveredRowId((current) =>
