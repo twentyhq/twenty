@@ -352,7 +352,7 @@ msgid "Admin role not found."
 msgstr "Администраторска улога није пронађена."
 
 #. js-lingui-id: kmAKx+
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Agent execution failed."
 msgstr "Извршавање агента није успело."
 
@@ -365,7 +365,7 @@ msgid "Agent not found"
 msgstr "Агент није пронађен"
 
 #. js-lingui-id: UxwIFr
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Agent not found."
 msgstr "Агент није пронађен."
 
@@ -420,7 +420,7 @@ msgid "An agent with this name already exists"
 msgstr "Агент са овим именом већ постоји"
 
 #. js-lingui-id: Wnol69
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "An agent with this name already exists."
 msgstr "Агент са овим именом већ постоји."
 
@@ -514,7 +514,7 @@ msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the c
 msgstr "Годишњи рекурентни приход: Стварни или процењени годишњи приход компаније"
 
 #. js-lingui-id: fRWsMD
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "API key is not configured."
 msgstr "API кључ није конфигурисан."
 
@@ -1280,6 +1280,16 @@ msgstr "Идентификациони број канала"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 msgid "Channel Type"
 msgstr "Тип канала"
+
+#. js-lingui-id: erTWgO
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Chat message not found."
+msgstr ""
+
+#. js-lingui-id: /VxChJ
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Chat thread not found."
+msgstr ""
 
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -3045,7 +3055,7 @@ msgid "Invalid action type."
 msgstr "Неважећа врста радње."
 
 #. js-lingui-id: D/IcuN
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Invalid agent input."
 msgstr "Неважећи унос агента."
 
@@ -5893,7 +5903,7 @@ msgstr ""
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Role not found."
 msgstr "Улога није пронађена."
 
@@ -6204,7 +6214,7 @@ msgid "Stage"
 msgstr ""
 
 #. js-lingui-id: 7XNKWU
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Standard agents cannot be modified."
 msgstr "Стандардни агенти се не могу мењати."
 
@@ -7031,7 +7041,7 @@ msgid "This record does not exist or has been deleted."
 msgstr "Овај запис не постоји или је избрисан."
 
 #. js-lingui-id: rExecr
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This role cannot be assigned to agents."
 msgstr "Ову улогу није могуће доделити агентима."
 
@@ -7494,7 +7504,7 @@ msgstr "Корисник није креиран путем е-поште/лоз
 
 #. js-lingui-id: lUEEso
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts

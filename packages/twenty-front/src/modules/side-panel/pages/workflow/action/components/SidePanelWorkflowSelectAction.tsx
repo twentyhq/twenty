@@ -27,19 +27,12 @@ export const SidePanelWorkflowSelectAction = ({
   onActionSelected: (selection: WorkflowActionSelection) => void;
 }) => {
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
-  const isDraftEmailEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_DRAFT_EMAIL_ENABLED,
-  );
 
   const { t } = useLingui();
 
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
 
   const toolFunctions = logicFunctions.filter((fn) => fn.isTool === true);
-
-  const coreActions = isDraftEmailEnabled
-    ? CORE_ACTIONS
-    : CORE_ACTIONS.filter((action) => action.type !== 'DRAFT_EMAIL');
 
   const handleActionClick = (actionType: WorkflowActionType) => {
     onActionSelected({ type: actionType });
@@ -88,7 +81,7 @@ export const SidePanelWorkflowSelectAction = ({
         {t`Core`}
       </SidePanelWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
-        actions={coreActions}
+        actions={CORE_ACTIONS}
         onClick={handleActionClick}
       />
 
