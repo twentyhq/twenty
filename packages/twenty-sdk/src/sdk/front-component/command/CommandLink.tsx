@@ -3,11 +3,7 @@ import { useEffect, useState } from 'react';
 import { type NavigateOptions } from 'react-router-dom';
 import { type AppPath } from 'twenty-shared/types';
 import { type getAppPath } from 'twenty-shared/utils';
-import {
-  navigate,
-  unmountFrontComponent,
-  useFrontComponentId,
-} from '..';
+import { navigate, unmountFrontComponent, useFrontComponentId } from '..';
 
 export type CommandLinkProps<T extends AppPath> = {
   to: T;

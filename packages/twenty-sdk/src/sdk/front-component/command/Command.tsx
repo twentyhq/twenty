@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import {
-  unmountFrontComponent,
-  useFrontComponentId,
-} from '..';
+import { unmountFrontComponent, useFrontComponentId } from '..';
 
 export type CommandProps = {
   execute: () => void | Promise<void>;

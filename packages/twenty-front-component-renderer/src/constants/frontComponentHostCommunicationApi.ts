@@ -1,4 +1,13 @@
-import { type CloseSidePanelFunction, type EnqueueSnackbarFunction, type NavigateFunction, type OpenCommandConfirmationModalFunction, type OpenSidePanelPageFunction, type RequestAccessTokenRefreshFunction, type UnmountFrontComponentFunction, type UpdateProgressFunction } from 'twenty-sdk/front-component';
+import {
+  type CloseSidePanelFunction,
+  type EnqueueSnackbarFunction,
+  type NavigateFunction,
+  type OpenCommandConfirmationModalFunction,
+  type OpenSidePanelPageFunction,
+  type RequestAccessTokenRefreshFunction,
+  type UnmountFrontComponentFunction,
+  type UpdateProgressFunction,
+} from 'twenty-sdk/front-component';
 
 import { FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY } from 'twenty-sdk/front-component-renderer';
 

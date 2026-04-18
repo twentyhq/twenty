@@ -1,5 +1,14 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { AppPath, closeSidePanel, enqueueSnackbar, navigate, openSidePanelPage, SidePanelPages, unmountFrontComponent, updateProgress } from 'twenty-sdk/front-component';
+import {
+  AppPath,
+  closeSidePanel,
+  enqueueSnackbar,
+  navigate,
+  openSidePanelPage,
+  SidePanelPages,
+  unmountFrontComponent,
+  updateProgress,
+} from 'twenty-sdk/front-component';
 import { useState } from 'react';
 
 const CARD_STYLE = {
