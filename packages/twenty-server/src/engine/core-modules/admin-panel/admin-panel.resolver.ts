@@ -23,7 +23,7 @@ import { AdminWorkspaceChatThreadDTO } from 'src/engine/core-modules/admin-panel
 import { AdminChatThreadMessagesDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-chat-thread-messages.dto';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { AdminAIModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
+import { AdminAiModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
 import { UsageBreakdownItemDTO } from 'src/engine/core-modules/usage/dtos/usage-breakdown-item.dto';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
@@ -211,8 +211,8 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(AdminPanelGuard)
-  @Query(() => AdminAIModelsDTO)
-  async getAdminAiModels(): Promise<AdminAIModelsDTO> {
+  @Query(() => AdminAiModelsDTO)
+  async getAdminAiModels(): Promise<AdminAiModelsDTO> {
     const resolvedProviders =
       this.aiModelRegistryService.getResolvedProvidersForAdmin();
 

@@ -20,7 +20,7 @@ import {
   CreateOneRoleDocument,
   GetRolesDocument,
 } from '~/generated-metadata/graphql';
-import { type SettingsAIAgentFormValues } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
+import { type SettingsAiAgentFormValues } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
 
 const StyledWarningText = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
@@ -29,10 +29,10 @@ const StyledWarningText = styled.div`
 `;
 
 type SettingsAgentRoleTabProps = {
-  formValues: SettingsAIAgentFormValues;
+  formValues: SettingsAiAgentFormValues;
   onFieldChange: (
-    field: keyof SettingsAIAgentFormValues,
-    value: SettingsAIAgentFormValues[keyof SettingsAIAgentFormValues],
+    field: keyof SettingsAiAgentFormValues,
+    value: SettingsAiAgentFormValues[keyof SettingsAiAgentFormValues],
   ) => void;
   disabled: boolean;
   agentId?: string;

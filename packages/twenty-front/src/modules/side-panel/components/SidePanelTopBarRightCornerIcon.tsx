@@ -1,4 +1,4 @@
-import { useSwitchToNewAIChat } from '@/ai/hooks/useSwitchToNewAIChat';
+import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { SidePanelObjectFilterDropdown } from '@/side-panel/components/SidePanelObjectFilterDropdown';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
@@ -22,7 +22,7 @@ export const SidePanelTopBarRightCornerIcon = () => {
   const isMobile = useIsMobile();
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
-  const { switchToNewChat } = useSwitchToNewAIChat();
+  const { switchToNewChat } = useSwitchToNewAiChat();
   const [sidePanelSearchObjectFilter, setSidePanelSearchObjectFilter] =
     useAtomState(sidePanelSearchObjectFilterState);
 
@@ -37,12 +37,12 @@ export const SidePanelTopBarRightCornerIcon = () => {
     );
   }
 
-  const isOnAskAIPage = [
+  const isOnAskAiPage = [
     SidePanelPages.AskAI,
-    SidePanelPages.ViewPreviousAIChats,
+    SidePanelPages.ViewPreviousAiChats,
   ].includes(sidePanelPage);
 
-  if (isMobile || !isAiEnabled || !isOnAskAIPage) {
+  if (isMobile || !isAiEnabled || !isOnAskAiPage) {
     return null;
   }
 

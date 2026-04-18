@@ -45,7 +45,7 @@ export const SettingsRoleAddObjectLevel = () => {
           },
           {
             children: agent.label,
-            href: getSettingsPath(SettingsPath.AIAgentDetail, {
+            href: getSettingsPath(SettingsPath.AiAgentDetail, {
               agentId: agent.id,
             }),
           },

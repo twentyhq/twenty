@@ -25,7 +25,7 @@ import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-cha
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
-import type { AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+import type { AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 
 import { STREAM_AGENT_CHAT_JOB_NAME } from './stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from './stream-agent-chat-job.types';
@@ -351,7 +351,7 @@ export class StreamAgentChatJob {
       };
       providerMetadata?: Record<string, Record<string, unknown> | undefined>;
     };
-    modelConfig: AIModelConfig;
+    modelConfig: AiModelConfig;
     lastStepConversationSize: number;
     totalCacheCreationTokens: number;
     onUpdateUsage: (usage: {
@@ -435,7 +435,7 @@ export class StreamAgentChatJob {
       outputCredits: number;
     };
     lastStepConversationSize: number;
-    modelConfig: AIModelConfig;
+    modelConfig: AiModelConfig;
     userMessagePromise: Promise<{ turnId: string | null }>;
   }): Promise<void> {
     if (responseMessage.parts.length === 0) {

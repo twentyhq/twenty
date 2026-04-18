@@ -144,7 +144,7 @@ export class AdminAIModelConfig {
 }
 
 @ObjectType('AdminAIModels')
-export class AdminAIModelsDTO {
+export class AdminAiModelsDTO {
   @Field(() => [AdminAIModelConfig])
   models: AdminAIModelConfig[];
 

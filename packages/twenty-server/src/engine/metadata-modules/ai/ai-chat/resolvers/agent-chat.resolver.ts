@@ -43,7 +43,7 @@ import { AgentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message.dto';
 import { AgentChatThreadDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread.dto';
-import { AISystemPromptPreviewDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-system-prompt-preview.dto';
+import { AiSystemPromptPreviewDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-system-prompt-preview.dto';
 import { ChatStreamCatchupChunksDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/chat-stream-catchup-chunks.dto';
 import { SendChatMessageResultDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/send-chat-message-result.dto';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
@@ -275,7 +275,7 @@ export class AgentChatResolver {
     return deleted;
   }
 
-  @Query(() => AISystemPromptPreviewDTO)
+  @Query(() => AiSystemPromptPreviewDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async getAISystemPromptPreview(
     @AuthWorkspace() workspace: WorkspaceEntity,
