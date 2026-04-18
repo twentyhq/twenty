@@ -26,6 +26,8 @@ export default defineConfig(() => {
       lib: {
         entry: 'src/sdk/define/index.ts',
         name: 'twenty-sdk-define',
+        formats: ['es', 'cjs'],
+        fileName: (format) => `index.${format === 'es' ? 'mjs' : 'cjs'}`,
       },
       rollupOptions: {
         external: (id: string) => {
@@ -56,23 +58,6 @@ export default defineConfig(() => {
 
           return deps.some((dep) => id === dep || id.startsWith(dep + '/'));
         },
-        output: [
-          {
-            format: 'es' as const,
-            preserveModules: true,
-            preserveModulesRoot: 'src/sdk/define',
-            entryFileNames: '[name].mjs',
-          },
-          {
-            format: 'cjs' as const,
-            preserveModules: true,
-            preserveModulesRoot: 'src/sdk/define',
-            interop: 'auto' as const,
-            esModule: true,
-            exports: 'named' as const,
-            entryFileNames: '[name].cjs',
-          },
-        ],
       },
     },
     logLevel: 'warn' as const,
