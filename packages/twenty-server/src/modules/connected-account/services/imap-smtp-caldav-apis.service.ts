@@ -14,7 +14,6 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -71,13 +70,11 @@ export class ImapSmtpCalDavAPIService {
     const { handle, workspaceId, workspaceMemberId, connectedAccountId } =
       input;
 
-    const authContext = getWorkspaceAuthContext();
-
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const workspaceContext = getWorkspaceContext();
         const rolePermissionConfig = resolveRolePermissionConfig({
-          authContext,
+          authContext: workspaceContext.authContext,
           userWorkspaceRoleMap: workspaceContext.userWorkspaceRoleMap,
           apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
         });
@@ -200,7 +197,6 @@ export class ImapSmtpCalDavAPIService {
 
         return newOrExistingAccountId;
       },
-      authContext,
     );
   }
 }
