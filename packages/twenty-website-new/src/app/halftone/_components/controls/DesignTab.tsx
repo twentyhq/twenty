@@ -431,6 +431,20 @@ export function DesignTab({
         </SectionToggleHeader>
         {settings.halftone.enabled ? (
           <ControlGrid>
+            <SegmentedControl
+              onChange={(value) =>
+                onHalftoneChange({
+                  toneTarget: value === 'dark' ? 'dark' : 'light',
+                })
+              }
+              options={[
+                { label: 'Light', value: 'light' },
+                { label: 'Dark', value: 'dark' },
+              ]}
+              value={settings.halftone.toneTarget}
+            >
+              Areas
+            </SegmentedControl>
             <SliderControl
               max={72}
               min={8}

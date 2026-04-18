@@ -10,6 +10,7 @@ import {
   DEFAULT_SOLID_BACKGROUND_SETTINGS,
   DEFAULT_SOLID_MATERIAL_SETTINGS,
   type HalftoneMaterialSurface,
+  type HalftoneToneTarget,
   type HalftoneStudioSettings,
 } from '@/app/halftone/_lib/state';
 import { styled } from '@linaria/react';
@@ -71,6 +72,7 @@ export type HelpedHalftoneSettings = {
     enabled: boolean;
     scale: number;
     power: number;
+    toneTarget?: HalftoneToneTarget;
     width: number;
     imageContrast?: number;
     dashColor: string;
@@ -168,6 +170,7 @@ const halftoneFragmentShader = /* glsl */ `
   uniform float tile;
   uniform float s_3;
   uniform float s_4;
+  uniform float applyToDarkAreas;
   uniform vec3 dashColor;
   uniform float time;
   uniform float waveAmount;
@@ -260,16 +263,13 @@ const halftoneFragmentShader = /* glsl */ `
     float mask = smoothstep(0.02, 0.08, sceneSample.a);
     float lightLift =
       hoverLightStrength * hoverLightMask * mix(0.78, 1.18, motionBias) * 0.22;
+    float toneValue =
+      (sceneSample.r + sceneSample.g + sceneSample.b) * (1.0 / 3.0);
+    if (applyToDarkAreas > 0.5) {
+      toneValue = 1.0 - toneValue;
+    }
     float bandRadius = clamp(
-      (
-        (
-          sceneSample.r +
-          sceneSample.g +
-          sceneSample.b +
-          s_3 * length(vec2(0.5))
-        ) *
-        (1.0 / 3.0)
-      ) + lightLift,
+      toneValue + s_3 * length(vec2(0.5)) + lightLift,
       0.0,
       1.0
     ) * 1.86 * 0.5;
@@ -783,6 +783,9 @@ function createStudioSettings(
     halftone: {
       ...DEFAULT_SHAPE_HALFTONE_SETTINGS,
       ...settings.halftone,
+      toneTarget:
+        settings.halftone.toneTarget ??
+        DEFAULT_SHAPE_HALFTONE_SETTINGS.toneTarget,
       hoverDashColor:
         settings.halftone.hoverDashColor ?? settings.halftone.dashColor,
       imageContrast:
@@ -923,6 +926,9 @@ function HelpedHalftoneCanvas({
         tile: { value: settings.halftone.scale },
         s_3: { value: settings.halftone.power },
         s_4: { value: settings.halftone.width },
+        applyToDarkAreas: {
+          value: settings.halftone.toneTarget === 'dark' ? 1 : 0,
+        },
         dashColor: { value: new THREE.Color(settings.halftone.dashColor) },
         time: { value: 0 },
         waveAmount: {

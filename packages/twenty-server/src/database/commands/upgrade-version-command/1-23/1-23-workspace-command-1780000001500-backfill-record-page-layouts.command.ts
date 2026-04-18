@@ -15,6 +15,7 @@ import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layou
 import { computeFlatDefaultRecordPageLayoutToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-default-record-page-layout-to-create.util';
 import { computeFlatRecordPageFieldsViewToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-record-page-fields-view-to-create.util';
 import { computeFlatViewFieldsToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-view-fields-to-create.util';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
@@ -245,9 +246,10 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
 
-    const { flatObjectMetadataMaps } =
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
       ]);
 
     const existingObjectMetadataUniversalIdentifiers = new Set(
@@ -311,9 +313,37 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
       standardMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((widget) =>
-        tabUniversalIdentifiers.has(widget.pageLayoutTabUniversalIdentifier),
-      );
+      .filter((widget) => {
+        if (
+          !tabUniversalIdentifiers.has(widget.pageLayoutTabUniversalIdentifier)
+        ) {
+          return false;
+        }
+
+        if (
+          widget.universalConfiguration.configurationType ===
+          WidgetConfigurationType.FIELD
+        ) {
+          const fieldMetadataUniversalIdentifier =
+            widget.universalConfiguration.fieldMetadataId;
+
+          if (
+            !isDefined(
+              flatFieldMetadataMaps.byUniversalIdentifier[
+                fieldMetadataUniversalIdentifier
+              ],
+            )
+          ) {
+            this.logger.log(
+              `Skipping standard widget ${widget.universalIdentifier} for workspace ${workspaceId}: field metadata ${fieldMetadataUniversalIdentifier} not found`,
+            );
+
+            return false;
+          }
+        }
+
+        return true;
+      });
 
     const fieldsWidgetViewUniversalIdentifiers = new Set<string>();
 
@@ -337,11 +367,6 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
 
         return true;
       });
-
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
 
     const viewFields = Object.values(
       standardMaps.flatViewFieldMaps.byUniversalIdentifier,

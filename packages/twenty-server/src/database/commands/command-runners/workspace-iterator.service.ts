@@ -4,12 +4,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import chalk from 'chalk';
 import { isNonEmptyString } from '@sniptt/guards';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThanOrEqual, Repository } from 'typeorm';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 
 export type WorkspaceIteratorArgs = {
   workspaceIds?: string[];
@@ -104,12 +106,29 @@ export class WorkspaceIteratorService {
       }
     }
 
-    report.fail.forEach(({ error, workspaceId }) =>
+    report.fail.forEach(({ error, workspaceId }) => {
       this.logger.error(
         `Error in workspace ${workspaceId}: ${error.message}`,
         error.stack,
-      ),
-    );
+      );
+
+      if (error instanceof WorkspaceMigrationRunnerException && error.errors) {
+        for (const [label, innerError] of Object.entries(error.errors)) {
+          if (!isDefined(innerError)) continue;
+
+          if (innerError instanceof Error) {
+            this.logger.error(
+              `Caused by ${label} in workspace ${workspaceId}: ${innerError.message}`,
+              innerError.stack,
+            );
+          } else {
+            this.logger.error(
+              `Caused by ${label} in workspace ${workspaceId}: ${String(innerError)}`,
+            );
+          }
+        }
+      }
+    });
 
     return report;
   }

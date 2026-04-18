@@ -22,6 +22,7 @@ export const createDefaultRecordTableWidget = ({
   return {
     __typename: 'PageLayoutWidget',
     id,
+    applicationId: '',
     pageLayoutTabId,
     title,
     isActive: true,

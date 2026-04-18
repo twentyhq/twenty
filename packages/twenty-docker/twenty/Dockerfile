@@ -126,6 +126,18 @@ ENTRYPOINT ["/app/entrypoint.sh"]
 
 
 # ===========================================================================
+# Target: twenty-aws
+# docker build --target twenty-aws -f packages/twenty-docker/twenty/Dockerfile .
+# ===========================================================================
+
+FROM twenty AS twenty-aws
+
+USER root
+RUN apk add --no-cache aws-cli
+USER 1000
+
+
+# ===========================================================================
 # Target: twenty-app-dev (all-in-one with Postgres + Redis)
 #   docker build --target twenty-app-dev -f packages/twenty-docker/twenty/Dockerfile .
 # ===========================================================================

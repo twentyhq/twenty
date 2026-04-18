@@ -39,6 +39,7 @@ const PARTNER_QUOTE_SETTINGS: HalftoneStudioSettings = {
     enabled: true,
     scale: 24.72,
     power: -0.07,
+    toneTarget: 'light',
     width: 0.46,
     imageContrast: 1,
     dashColor: '#4A38F5',

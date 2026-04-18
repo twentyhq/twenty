@@ -11,6 +11,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 export const useCreatePageLayoutTab = ({
   pageLayoutId: pageLayoutIdFromProps,
@@ -58,6 +59,10 @@ export const useCreatePageLayoutTab = ({
         title: title || `Tab ${tabsLength + 1}`,
         position: maxPosition + 1,
         pageLayoutId: pageLayoutId,
+        icon:
+          pageLayoutDraft.type === PageLayoutType.RECORD_PAGE
+            ? 'IconAppWindow'
+            : null,
         layoutMode: getDefaultTabLayoutMode(pageLayoutDraft.type),
         widgets: [],
         createdAt: new Date().toISOString(),

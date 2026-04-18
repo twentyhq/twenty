@@ -82,7 +82,7 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
         return (
           <SettingsApplicationRegistrationGeneralTab
             registration={registration}
-            displayAdminToggles
+            fromAdmin
           />
         );
     }

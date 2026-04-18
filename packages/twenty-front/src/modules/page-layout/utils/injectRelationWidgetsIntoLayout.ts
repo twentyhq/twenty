@@ -16,6 +16,7 @@ const getRelationFieldWidgetToInsert = (
 ): PageLayoutWidget => ({
   __typename: 'PageLayoutWidget' as const,
   id: `${DYNAMIC_RELATION_WIDGET_ID_PREFIX}${field.id}-${field.label}`,
+  applicationId: '',
   pageLayoutTabId: tabId,
   title: field.label,
   isActive: true,

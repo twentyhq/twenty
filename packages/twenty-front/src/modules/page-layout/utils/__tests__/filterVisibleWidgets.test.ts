@@ -12,6 +12,7 @@ describe('filterVisibleWidgets', () => {
   ): PageLayoutTab['widgets'][0] => ({
     __typename: 'PageLayoutWidget',
     id,
+    applicationId: '',
     isActive: true,
     pageLayoutTabId: 'tab-1',
     title: `Widget ${id}`,

@@ -164,6 +164,12 @@ msgstr ""
 msgid "{0} credits"
 msgstr "{0} أرصدة"
 
+#. js-lingui-id: Zo6POu
+#. placeholder {0}: recordPageLayoutObject.labelPlural
+#: src/modules/layout-customization/components/LayoutCustomizationBar.tsx
+msgid "{0} layout edition"
+msgstr ""
+
 #. js-lingui-id: peiknr
 #. placeholder {0}: activeVisibleFieldLabels.length
 #. placeholder {0}: activeFilterLabels.length
@@ -1983,6 +1989,11 @@ msgstr ""
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 msgid "App"
 msgstr "التطبيق"
+
+#. js-lingui-id: qKnSyT
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
+msgid "App deleted successfully"
+msgstr ""
 
 #. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -8472,6 +8483,11 @@ msgstr "التخطيط"
 msgid "Layout customization"
 msgstr "تخصيص التخطيط"
 
+#. js-lingui-id: euTsq6
+#: src/modules/layout-customization/components/LayoutCustomizationBarMenuDropdown.tsx
+msgid "Layout customization menu"
+msgstr ""
+
 #. js-lingui-id: yU0QVO
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Layouts"
@@ -9913,6 +9929,17 @@ msgstr "لم يتم العثور على بيانات"
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "No Date field"
 msgstr "لا حقل تاريخ"
+
+#. js-lingui-id: lAfu/q
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
+msgid "No default configuration available for this tab"
+msgstr ""
+
+#. js-lingui-id: B8I32S
+#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
+msgid "No default configuration available for this widget"
+msgstr ""
 
 #. js-lingui-id: P4KXUa
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
@@ -12059,6 +12086,7 @@ msgstr "إعادة إرسال البريد الإلكتروني"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
+#: src/modules/layout-customization/components/LayoutCustomizationBarResetConfirmationModal.tsx
 msgid "Reset"
 msgstr "إعادة تعيين"
 
@@ -12078,6 +12106,11 @@ msgstr ""
 msgid "Reset label to default"
 msgstr ""
 
+#. js-lingui-id: AASIAQ
+#: src/modules/layout-customization/components/LayoutCustomizationBarMenuDropdown.tsx
+msgid "Reset record page layout"
+msgstr ""
+
 #. js-lingui-id: L+rMC9
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
@@ -12088,6 +12121,7 @@ msgstr ""
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
+#: src/modules/layout-customization/components/LayoutCustomizationBarResetConfirmationModal.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 msgid "Reset to default"
 msgstr "إعادة التعيين إلى الافتراضي"
@@ -14283,6 +14317,7 @@ msgstr ""
 
 #. js-lingui-id: 2xOCJW
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
+#: src/modules/layout-customization/components/LayoutCustomizationBarResetConfirmationModal.tsx
 msgid "This action cannot be undone."
 msgstr ""
 
