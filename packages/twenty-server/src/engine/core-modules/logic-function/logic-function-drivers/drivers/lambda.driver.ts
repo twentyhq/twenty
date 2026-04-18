@@ -1127,11 +1127,14 @@ export class LambdaDriver implements LogicFunctionDriver {
     env,
     timeoutMs = 900_000,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
+    const buildStart = Date.now();
+
     await this.buildLambdaExecutor({
       flatLogicFunction,
       flatApplication,
       applicationUniversalIdentifier,
     });
+    const buildExecutorMs = Date.now() - buildStart;
 
     const startTime = Date.now();
 
@@ -1140,6 +1143,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       applicationUniversalIdentifier,
       builtHandlerPath: flatLogicFunction.builtHandlerPath,
     });
+    const getBuiltCodeMs = Date.now() - startTime;
 
     const executorPayload: LambdaDriverExecutorPayload = {
       params: payload,
@@ -1148,9 +1152,10 @@ export class LambdaDriver implements LogicFunctionDriver {
       handlerName: flatLogicFunction.handlerName,
     };
 
+    const payloadString = JSON.stringify(executorPayload);
     const params: InvokeCommandInput = {
       FunctionName: flatLogicFunction.id,
-      Payload: JSON.stringify(executorPayload),
+      Payload: payloadString,
       LogType: LogType.Tail,
     };
 
@@ -1159,18 +1164,33 @@ export class LambdaDriver implements LogicFunctionDriver {
     try {
       const lambdaClient = await this.getLambdaClient();
 
+      const invokeStart = Date.now();
       const result = await callWithTimeout({
         callback: () => lambdaClient.send(command),
         timeoutMs,
       });
+      const invokeSendMs = Date.now() - invokeStart;
 
       const parsedResult = result.Payload
         ? JSON.parse(result.Payload.transformToString())
         : {};
 
+      const rawLogs = result.LogResult
+        ? Buffer.from(result.LogResult, 'base64').toString('utf8')
+        : '';
+      const initMatch = rawLogs.match(/Init Duration:\s*([\d.]+)\s*ms/i);
+      const billedMatch = rawLogs.match(/Billed Duration:\s*([\d.]+)\s*ms/i);
+      const reportMatch = rawLogs.match(/\bDuration:\s*([\d.]+)\s*ms/i);
+
       const logs = result.LogResult ? this.extractLogs(result.LogResult) : '';
 
       const duration = Date.now() - startTime;
+
+      // Structured timing log so we can monitor warm/cold-start behaviour
+      // of logic-function lambdas in production (CloudWatch / log aggregator).
+      this.logger.log(
+        `[lambda-timing] fnId=${flatLogicFunction.id} totalMs=${duration} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeSendMs=${invokeSendMs} reportDurationMs=${reportMatch?.[1] ?? 'n/a'} billedMs=${billedMatch?.[1] ?? 'n/a'} initDurationMs=${initMatch?.[1] ?? 'n/a'} coldStart=${initMatch !== null}`,
+      );
 
       if (result.FunctionError) {
         return {
