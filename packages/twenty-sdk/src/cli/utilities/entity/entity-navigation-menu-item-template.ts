@@ -34,7 +34,7 @@ export const getNavigationMenuItemBaseFile = ({
   // viewUniversalIdentifier: '...',`;
   }
 
-  return `import { defineNavigationMenuItem } from 'twenty-sdk';
+  return `import { defineNavigationMenuItem } from 'twenty-sdk/define';
 
 export default defineNavigationMenuItem({
   universalIdentifier: '${universalIdentifier}',

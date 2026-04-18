@@ -1,4 +1,4 @@
-import type { ObjectConfig } from '@/sdk/objects/object-config';
+import type { ObjectConfig } from '@/sdk/define/objects/object-config';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { generateDefaultFieldUniversalIdentifier } from '@/cli/utilities/build/manifest/utils/generate-default-field-universal-identifier';
 import { type ObjectFieldManifest } from 'twenty-shared/application';

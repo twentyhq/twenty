@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { type FunctionConfig } from 'twenty-sdk';
+import { type FunctionConfig } from 'twenty-sdk/define';
 import {
   type stripeCustomer,
   type stripeEvent,

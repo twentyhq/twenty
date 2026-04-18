@@ -16,7 +16,7 @@ import {
   RESEND_EMAIL_VIEW_UNIVERSAL_IDENTIFIER,
   SUBJECT_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/modules/resend/constants/universal-identifiers';
-import { defineView } from 'twenty-sdk';
+import { defineView } from 'twenty-sdk/define';
 
 export default defineView({
   universalIdentifier: RESEND_EMAIL_VIEW_UNIVERSAL_IDENTIFIER,

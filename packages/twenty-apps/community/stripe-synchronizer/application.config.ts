@@ -1,4 +1,4 @@
-import { type ApplicationConfig } from 'twenty-sdk';
+import { type ApplicationConfig } from 'twenty-sdk/define';
 
 const config: ApplicationConfig = {
   universalIdentifier: '0ed2bcb8-64ab-4ca1-b875-eeabf41b5f95',

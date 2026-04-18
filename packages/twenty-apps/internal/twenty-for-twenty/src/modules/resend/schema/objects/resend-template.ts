@@ -13,7 +13,7 @@ import {
   TEMPLATE_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
   TEMPLATE_UPDATED_AT_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/modules/resend/constants/universal-identifiers';
-import { defineObject, FieldType } from 'twenty-sdk';
+import { defineObject, FieldType } from 'twenty-sdk/define';
 
 export default defineObject({
   universalIdentifier: RESEND_TEMPLATE_OBJECT_UNIVERSAL_IDENTIFIER,

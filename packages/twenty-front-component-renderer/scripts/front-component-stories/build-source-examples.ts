@@ -26,9 +26,14 @@ const twentyUiIndividualIndex = path.resolve(
   '../../../twenty-ui/dist/individual/individual-entry.js',
 );
 
-const sdkIndividualIndex = path.resolve(
+const sdkDefineIndex = path.resolve(
   dirname,
-  '../../../twenty-sdk/dist/sdk/index.js',
+  '../../../twenty-sdk/dist/define/index.mjs',
+);
+
+const sdkFrontComponentIndex = path.resolve(
+  dirname,
+  '../../../twenty-sdk/dist/front-component/index.mjs',
 );
 
 const twentySharedIndividualDir = path.resolve(
@@ -60,7 +65,8 @@ const twentySharedAliases = Object.fromEntries(
 const storyAlias = {
   react: path.join(rootNodeModules, 'react'),
   'react-dom': path.join(rootNodeModules, 'react-dom'),
-  'twenty-sdk': sdkIndividualIndex,
+  'twenty-sdk/define': sdkDefineIndex,
+  'twenty-sdk/front-component': sdkFrontComponentIndex,
   'twenty-sdk/ui': twentyUiIndividualIndex,
   ...twentySharedAliases,
 };

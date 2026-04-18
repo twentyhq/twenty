@@ -7,7 +7,9 @@ describe('getSkillBaseFile', () => {
       universalIdentifier: '71e45a58-41da-4ae4-8b73-a543c0a9d3d4',
     });
 
-    expect(result).toContain("import { defineSkill } from 'twenty-sdk'");
+    expect(result).toContain(
+      "import { defineSkill } from 'twenty-sdk/define';",
+    );
     expect(result).toContain('export default defineSkill({');
     expect(result).toContain(
       'universalIdentifier: MY_SKILL_SKILL_UNIVERSAL_IDENTIFIER',
