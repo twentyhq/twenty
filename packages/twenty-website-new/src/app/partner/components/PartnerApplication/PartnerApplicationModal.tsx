@@ -358,6 +358,7 @@ export function PartnerApplicationModal({
   const [programId, setProgramId] = useState<PartnerProgramId>('technology');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleOverlayPointerDown = useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
@@ -378,6 +379,7 @@ export function PartnerApplicationModal({
     setProgramId('technology');
     setDropdownOpen(false);
     setSubmitError(null);
+    setIsSubmitting(false);
   }, [open]);
 
   useEffect(() => {
@@ -420,8 +422,13 @@ export function PartnerApplicationModal({
   );
 
   const handleSubmit = useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
+    async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
+
+      if (isSubmitting) {
+        return;
+      }
+
       const formData = new FormData(event.currentTarget);
 
       const nameValue = formData.get('name');
@@ -430,10 +437,8 @@ export function PartnerApplicationModal({
       const websiteValue = formData.get('website');
       const messageValue = formData.get('message');
 
-      const name =
-        typeof nameValue === 'string' ? nameValue.trim() : '';
-      const email =
-        typeof emailValue === 'string' ? emailValue.trim() : '';
+      const name = typeof nameValue === 'string' ? nameValue.trim() : '';
+      const email = typeof emailValue === 'string' ? emailValue.trim() : '';
       const company =
         typeof companyValue === 'string' ? companyValue.trim() : '';
       const website =
@@ -456,9 +461,28 @@ export function PartnerApplicationModal({
         return;
       }
 
-      onClose();
+      setIsSubmitting(true);
+
+      try {
+        const response = await fetch('/api/partner-application', {
+          body: JSON.stringify({ email, name }),
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+        });
+
+        if (!response.ok) {
+          setSubmitError(validationCopy.submitFailed);
+          setIsSubmitting(false);
+          return;
+        }
+
+        onClose();
+      } catch {
+        setSubmitError(validationCopy.submitFailed);
+        setIsSubmitting(false);
+      }
     },
-    [onClose],
+    [isSubmitting, onClose],
   );
 
   if (!open) {
@@ -620,12 +644,18 @@ export function PartnerApplicationModal({
               {submitError ? (
                 <SubmitError role="alert">{submitError}</SubmitError>
               ) : null}
-              <SubmitButton type="submit">
+              <SubmitButton
+                type="submit"
+                disabled={isSubmitting}
+                aria-busy={isSubmitting}
+              >
                 <ButtonShape
                   fillColor={theme.colors.primary.background[100]}
                   strokeColor="none"
                 />
-                <SubmitLabel>{copy.submit}</SubmitLabel>
+                <SubmitLabel>
+                  {isSubmitting ? copy.submitInFlight : copy.submit}
+                </SubmitLabel>
               </SubmitButton>
             </FooterBlock>
           </FormFields>

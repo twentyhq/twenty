@@ -27,8 +27,11 @@ export const PARTNER_APPLICATION_MODAL_COPY = {
       'Tell us about the custom solutions or integrations you plan to build.',
   },
   submit: 'Submit application',
+  submitInFlight: 'Submitting…',
   validation: {
     incompleteForm: 'Please complete all required fields before submitting.',
     invalidEmail: 'Enter a valid email address.',
+    submitFailed:
+      'We could not submit your application. Please try again in a moment.',
   },
 } as const;
