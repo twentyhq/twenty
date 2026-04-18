@@ -7,9 +7,9 @@ import {
 import { v4 } from 'uuid';
 
 import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { type UpdateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/update-agent.input';
 import { FLAT_AGENT_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-agent/constants/flat-agent-editable-properties.constant';
 import { type FlatAgentMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-agent-maps.type';
@@ -115,13 +115,9 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
   });
 
   if (!isDefined(existingFlatAgent)) {
-    throw new AgentException(
-      'Agent not found',
-      AgentExceptionCode.AGENT_NOT_FOUND,
-      {
-        userFriendlyMessage: msg`The agent you are looking for could not be found. It may have been deleted or you may not have access to it.`,
-      },
-    );
+    throw new AiException('Agent not found', AiExceptionCode.AGENT_NOT_FOUND, {
+      userFriendlyMessage: msg`The agent you are looking for could not be found. It may have been deleted or you may not have access to it.`,
+    });
   }
 
   const updatedEditableAgentProperties = extractAndSanitizeObjectStringFields(

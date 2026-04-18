@@ -23,9 +23,9 @@ import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
 import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { WORKFLOW_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-system-prompts.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -239,9 +239,9 @@ export class AgentAsyncExecutorService {
       });
 
       if (structuredResult.output == null) {
-        throw new AgentException(
+        throw new AiException(
           'Failed to generate structured output from execution results',
-          AgentExceptionCode.AGENT_EXECUTION_FAILED,
+          AiExceptionCode.AGENT_EXECUTION_FAILED,
         );
       }
 
@@ -255,12 +255,12 @@ export class AgentAsyncExecutorService {
         nativeWebSearchCallCount,
       };
     } catch (error) {
-      if (error instanceof AgentException) {
+      if (error instanceof AiException) {
         throw error;
       }
-      throw new AgentException(
+      throw new AiException(
         error instanceof Error ? error.message : 'Agent execution failed',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
   }
