@@ -11,7 +11,7 @@ import { UploadAiChatFileDocument } from '~/generated-metadata/graphql';
 
 export const useAiChatFileUpload = () => {
   const apolloClient = useApolloClient();
-  const [uploadAIChatFile] = useMutation(UploadAiChatFileDocument, {
+  const [uploadAiChatFile] = useMutation(UploadAiChatFileDocument, {
     client: apolloClient,
   });
   const { t } = useLingui();
@@ -25,7 +25,7 @@ export const useAiChatFileUpload = () => {
 
   const sendFile = async (file: File): Promise<AgentChatFileUIPart | null> => {
     try {
-      const result = await uploadAIChatFile({
+      const result = await uploadAiChatFile({
         variables: {
           file,
         },
