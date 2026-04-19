@@ -118,13 +118,8 @@ export class OAuthRegistrationController {
       }
     }
 
-    // Token endpoint auth method — dynamic registrations are always public
-    // clients (we never issue a client_secret via DCR, only via the admin
-    // workspace UI). Some clients (notably Claude.ai's custom-connector
-    // backend) send "client_secret_post" in the first DCR attempt expecting
-    // the server to downgrade it. Rejecting with 400 breaks their flow
-    // (anthropics/claude-code#5826 comment 58). Accept any advertised value
-    // and quietly register as "none".
+    // Dynamic registrations are always public — we don't issue a client
+    // secret via DCR. Silently downgrade any auth method to "none".
     const requestedTokenEndpointAuthMethod =
       body.token_endpoint_auth_method ?? 'none';
     const tokenEndpointAuthMethod = 'none';
@@ -178,21 +173,12 @@ export class OAuthRegistrationController {
       token_endpoint_auth_method: tokenEndpointAuthMethod,
       scope: requestedScopes.join(' '),
       client_id_issued_at: Math.floor(Date.now() / 1000),
-      // RFC 7591 §3.2.1 / RFC 7592: pointer at the registration's management
-      // endpoint. Some OAuth clients (notably Claude.ai's custom-connector
-      // backend) reject DCR responses that omit this field even though the
-      // RFC marks it OPTIONAL. Matching behavior of Linear / Sentry / other
-      // public MCP servers that Claude.ai connects to successfully.
       registration_client_uri: `${issuer}/oauth/register/${clientId}`,
     };
   }
 
-  // RFC 7592 §2.1: minimal read-back of a dynamically registered client.
-  // We issue no `registration_access_token`, so this endpoint exposes only
-  // public metadata (same fields returned from the original POST). Returns
-  // 404 for unknown or non-dynamic clients. No workspace/user authentication
-  // is required because the client_id is an unguessable UUID and the
-  // returned data is already public (client_name, redirect_uris, scopes).
+  // RFC 7592 read-back. No registration_access_token is issued; the client_id
+  // is an unguessable UUID and the fields returned are already public.
   @Get('register/:clientId')
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async readRegistration(
