@@ -1,0 +1,11 @@
+{
+  "customerContentCount": 22,
+  "noteLinkCount": 29,
+  "uniqueNoteCount": 28,
+  "missingNoteIds": [],
+  "files": {
+    "normalizedPath": "/Users/thomascolasdesfrancs/code/twenty/tmp_exports/customer-content-notes-normalized.csv",
+    "aggregatedPath": "/Users/thomascolasdesfrancs/code/twenty/tmp_exports/customer-content-notes-aggregated.csv",
+    "summaryPath": "/Users/thomascolasdesfrancs/code/twenty/tmp_exports/customer-content-notes-summary.json"
+  }
+}

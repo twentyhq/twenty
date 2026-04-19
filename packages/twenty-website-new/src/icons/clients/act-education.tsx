@@ -21,7 +21,8 @@ export function ActEducationIcon({ size, fillColor }: ClientIconProps) {
         fontSize="15"
         fontWeight="600"
         letterSpacing="-0.04em"
-        x="0"
+        textAnchor="middle"
+        x={VIEWBOX_WIDTH / 2}
         y="11"
       >
         {'AC&T'}

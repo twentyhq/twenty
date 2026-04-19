@@ -28,9 +28,11 @@ import { styled } from '@linaria/react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Twenty — Open Source CRM',
+  title: 'Twenty | Open Source CRM',
   description: 'Modular, scalable open source CRM for modern teams.',
 };
+
+const HOME_TOP_BACKGROUND_COLOR = '#F4F4F4';
 
 const HeroHeadingGroup = styled.div`
   align-items: center;
@@ -93,7 +95,7 @@ export default async function HomePage() {
   return (
     <>
       <Menu.Root
-        backgroundColor={theme.colors.secondary.background[5]}
+        backgroundColor={HOME_TOP_BACKGROUND_COLOR}
         scheme="primary"
         navItems={MENU_DATA.navItems}
         socialLinks={menuSocialLinks}
@@ -104,10 +106,7 @@ export default async function HomePage() {
         <Menu.Cta scheme="primary" />
       </Menu.Root>
 
-      <Hero.Root
-        backgroundColor={theme.colors.secondary.background[5]}
-        showHomeBackground
-      >
+      <Hero.Root backgroundColor={HOME_TOP_BACKGROUND_COLOR} showHomeBackground>
         <HeroIntroGroup data-halftone-exclude>
           <HeroHeadingGroup>
             <Hero.Heading page={Pages.Home} segments={HERO_DATA.heading} />
@@ -134,9 +133,7 @@ export default async function HomePage() {
       <TrustedBy.Root>
         <TrustedBy.Separator separator={TRUSTED_BY_DATA.separator} />
         <TrustedBy.Logos logos={TRUSTED_BY_DATA.logos} />
-        <TrustedBy.ClientCount
-          label={TRUSTED_BY_DATA.clientCountLabel.text}
-        />
+        <TrustedBy.ClientCount label={TRUSTED_BY_DATA.clientCountLabel.text} />
       </TrustedBy.Root>
 
       <Problem.Root>
@@ -190,13 +187,6 @@ export default async function HomePage() {
             segments={THREE_CARDS_FEATURE_DATA.heading}
             size="lg"
             weight="light"
-          />
-          <LinkButton
-            color="secondary"
-            href="/product"
-            label="Visit product page"
-            type="link"
-            variant="contained"
           />
         </ThreeCards.Intro>
         <ThreeCards.FeatureCards

@@ -15,6 +15,7 @@ import { Faq } from '@/sections/Faq/components';
 import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
 import { Plans } from '@/sections/Plans/components';
+import { PricingStateProvider } from '@/sections/Plans/context/PricingStateContext';
 import { PlanTable } from '@/sections/PlanTable/components';
 import { Salesforce } from '@/sections/Salesforce/components';
 import { theme } from '@/theme';
@@ -34,9 +35,9 @@ const PricingBannerContainer = styled.div`
 `;
 
 export const metadata: Metadata = {
-  title: 'Pricing — Twenty',
+  title: 'Pricing | Twenty',
   description:
-    'Plans that scale with your team. Compare tiers and see how Twenty stacks up for your open source CRM.',
+    'Plans that scale with your team. Compare tiers of the #1 open-source CRM.',
 };
 
 export default async function PricingPage() {
@@ -59,44 +60,54 @@ export default async function PricingPage() {
 
       <Hero.Root backgroundColor={theme.colors.secondary.background[5]}>
         <Hero.Heading page={Pages.Pricing} segments={HERO_DATA.heading} />
-        <Hero.Body page={Pages.Pricing} body={HERO_DATA.body} />
+        <Hero.Body
+          body={HERO_DATA.body}
+          page={Pages.Pricing}
+          preserveLineBreaks
+        />
       </Hero.Root>
 
-      <Plans.Root backgroundColor={theme.colors.secondary.background[5]}>
-        <PricingPlansContainer>
-          <Plans.Content />
-        </PricingPlansContainer>
-      </Plans.Root>
+      <PricingStateProvider>
+        <Plans.Root backgroundColor={theme.colors.secondary.background[5]}>
+          <PricingPlansContainer>
+            <Plans.Content />
+          </PricingPlansContainer>
+        </Plans.Root>
 
-      <EngagementBand.Root
-        backgroundColor={theme.colors.secondary.background[5]}
-      >
-        <PricingBannerContainer>
-          <EngagementBand.Strip
-            desktopCopyMaxWidth="60%"
-            fillColor={theme.colors.primary.background[100]}
-            variant="primary"
-          >
-            <EngagementBand.Copy>
-              <EngagementBand.Heading segments={ENGAGEMENT_BAND_DATA.heading} />
-              <EngagementBand.Body body={ENGAGEMENT_BAND_DATA.body} />
-            </EngagementBand.Copy>
-            <EngagementBand.Actions>
-              <LinkButton
-                color="secondary"
-                href="https://app.twenty.com/welcome"
-                label="Find a partner"
-                type="anchor"
-                variant="outlined"
-              />
-            </EngagementBand.Actions>
-          </EngagementBand.Strip>
-        </PricingBannerContainer>
-      </EngagementBand.Root>
+        <EngagementBand.Root
+          backgroundColor={theme.colors.secondary.background[5]}
+        >
+          <PricingBannerContainer>
+            <EngagementBand.Strip
+              desktopCopyMaxWidth="60%"
+              fillColor={theme.colors.primary.background[100]}
+              variant="primary"
+            >
+              <EngagementBand.Copy>
+                <EngagementBand.Heading
+                  segments={ENGAGEMENT_BAND_DATA.heading}
+                />
+                <EngagementBand.Body body={ENGAGEMENT_BAND_DATA.body} />
+              </EngagementBand.Copy>
+              <EngagementBand.Actions>
+                <LinkButton
+                  color="secondary"
+                  href="https://app.twenty.com/welcome"
+                  label="Find a partner"
+                  type="anchor"
+                  variant="outlined"
+                />
+              </EngagementBand.Actions>
+            </EngagementBand.Strip>
+          </PricingBannerContainer>
+        </EngagementBand.Root>
 
-      <PlanTable.Root backgroundColor={theme.colors.secondary.background[100]}>
-        <PlanTable.Content data={PLAN_TABLE_DATA} />
-      </PlanTable.Root>
+        <PlanTable.Root
+          backgroundColor={theme.colors.secondary.background[100]}
+        >
+          <PlanTable.Content data={PLAN_TABLE_DATA} />
+        </PlanTable.Root>
+      </PricingStateProvider>
 
       <Salesforce.Flow
         backgroundColor={theme.colors.secondary.background[5]}

@@ -5,7 +5,9 @@ import {
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
 import { CheckIcon } from '@/icons';
+import { usePricingState } from '@/sections/Plans/context/PricingStateContext';
 import type {
+  PlanTableBodyRowDataType,
   PlanTableCellType,
   PlanTableDataType,
   PlanTableFeatureRowDataType,
@@ -13,7 +15,7 @@ import type {
 } from '@/sections/PlanTable/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { CalculatorEmbed } from '../CalculatorEmbed/CalculatorEmbed';
 
 const TableScope = styled.div`
@@ -135,7 +137,7 @@ type CellValueProps = {
 
 function CellValue({ cell }: CellValueProps) {
   if (cell.kind === 'dash') {
-    return <TierText>—</TierText>;
+    return <TierText>No</TierText>;
   }
 
   if (cell.kind === 'text') {
@@ -150,6 +152,39 @@ function CellValue({ cell }: CellValueProps) {
       <TierText>{label}</TierText>
     </YesRow>
   );
+}
+
+function resolveVisibleRows(
+  rows: PlanTableBodyRowDataType[],
+  hosting: 'cloud' | 'selfHost',
+): PlanTableBodyRowDataType[] {
+  const scoped = rows.flatMap((row) => {
+    if (
+      row.type !== 'calculator' &&
+      row.appliesTo &&
+      row.appliesTo !== hosting
+    ) {
+      return [];
+    }
+
+    if (row.type === 'row' && hosting === 'selfHost' && row.selfHostTiers) {
+      return [{ ...row, tiers: row.selfHostTiers }];
+    }
+
+    return [row];
+  });
+
+  return scoped.filter((row, index) => {
+    if (row.type !== 'category') {
+      return true;
+    }
+
+    const next = scoped.slice(index + 1).find((candidate) => {
+      return candidate.type === 'category' || candidate.type === 'row';
+    });
+
+    return next !== undefined && next.type !== 'category';
+  });
 }
 
 type FeatureRowProps = {
@@ -192,9 +227,15 @@ type ContentProps = {
 
 export function Content({ data }: ContentProps) {
   const [expanded, setExpanded] = useState(false);
+  const { hosting } = usePricingState();
 
-  const initialRows = data.rows.slice(0, data.initialVisibleRowCount);
-  const extraRows = data.rows.slice(data.initialVisibleRowCount);
+  const visibleRows = useMemo(
+    () => resolveVisibleRows(data.rows, hosting),
+    [data.rows, hosting],
+  );
+
+  const initialRows = visibleRows.slice(0, data.initialVisibleRowCount);
+  const extraRows = visibleRows.slice(data.initialVisibleRowCount);
   const hasMoreRows = extraRows.length > 0;
 
   const toggleLabel = expanded

@@ -119,7 +119,7 @@ const buildIntroAndRocketParagraph = (
   onObjectCreated?: (id: string) => void,
 ): StreamingSegment[] => [
   text(
-    "I'll scaffold a launch-ops CRM in your workspace — four new objects plus the standard ",
+    "I'll scaffold a launch-ops CRM in your workspace: four new objects plus the standard ",
   ),
   node('rocket-companies', <InlineCode>Companies</InlineCode>),
   text(' object for customers, with shared UUIDs in '),
@@ -131,7 +131,7 @@ const buildIntroAndRocketParagraph = (
     onObjectCreated ? () => onObjectCreated(ROCKET_ID) : undefined,
   ),
   text(
-    ' — each vehicle gets a serial number, manufacturer, lifecycle status, reusability, launch date, dimensions, and target orbit in ',
+    '. Each vehicle gets a serial number, manufacturer, lifecycle status, reusability, launch date, dimensions, and target orbit in ',
   ),
   node('rocket-file', <FileLink>rocket.object.ts</FileLink>),
   text('.'),
@@ -147,7 +147,7 @@ const buildLaunchParagraph = (
     onObjectCreated ? () => onObjectCreated(LAUNCH_ID) : undefined,
   ),
   text(
-    ' — every mission gets a unique mission code, status, mission type, planned and actual launch times, and a summary. Defined in ',
+    '. Every mission gets a unique mission code, status, mission type, planned and actual launch times, and a summary. Defined in ',
   ),
   node('launch-file', <FileLink>launch.object.ts</FileLink>),
   text('.'),
@@ -163,7 +163,7 @@ const buildPayloadParagraph = (
     onObjectCreated ? () => onObjectCreated(PAYLOAD_ID) : undefined,
   ),
   text(
-    ' — what actually flies: satellites, crew capsules, cargo, probes, landers — with type, status, target orbit, mass, and a customer reference. Scoped in ',
+    '. This covers what actually flies: satellites, crew capsules, cargo, probes, and landers, with type, status, target orbit, mass, and a customer reference. Scoped in ',
   ),
   node('payload-file', <FileLink>payload.object.ts</FileLink>),
   text('.'),
@@ -172,7 +172,7 @@ const buildPayloadParagraph = (
 const buildCustomerParagraph = (
   onObjectCreated?: (id: string) => void,
 ): StreamingSegment[] => [
-  text('For customers, no new object — I reuse the standard '),
+  text('For customers, there is no new object. I reuse the standard '),
   node(
     'customer-chip',
     <InlineCode>Companies</InlineCode>,
@@ -197,7 +197,7 @@ const buildLaunchSiteParagraph = (
     onObjectCreated ? () => onObjectCreated(LAUNCH_SITE_ID) : undefined,
   ),
   text(
-    ' — pads and ranges with a site code, country, region, pad name, and operational status. Lives in ',
+    '. This covers pads and ranges with a site code, country, region, pad name, and operational status. Lives in ',
   ),
   node('launch-site-file', <FileLink>launch-site.object.ts</FileLink>),
   text('.'),
@@ -205,10 +205,10 @@ const buildLaunchSiteParagraph = (
 
 const PINNED_ACTIONS_PARAGRAPH: StreamingSegment[] = [
   text(
-    'Each object also gets 2-3 relevant quick commands pinned to its header, to the left of ',
+    'Each object also gets 2-3 relevant quick commands pinned to its header. Next to ',
   ),
   node('pa-new', <InlineCode>New</InlineCode>),
-  text(' — '),
+  text(', '),
   node('pa-rocket', <InlineCode>Rocket</InlineCode>),
   text(' has reuse / retire shortcuts, '),
   node('pa-launch', <InlineCode>Launch</InlineCode>),

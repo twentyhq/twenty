@@ -5,17 +5,13 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
   rows: [
     {
       featureLabel: 'Price',
+      selfHostTiers: {
+        organization: { kind: 'text', text: '$19' },
+        pro: { kind: 'text', text: '$0' },
+      },
       tiers: {
         organization: { kind: 'text', text: '$19' },
         pro: { kind: 'text', text: '$9' },
-      },
-      type: 'row',
-    },
-    {
-      featureLabel: 'Self-hosting discount',
-      tiers: {
-        organization: { kind: 'text', text: 'Free for up to 20 seats' },
-        pro: { kind: 'text', text: 'Free for up to 20 seats' },
       },
       type: 'row',
     },
@@ -56,6 +52,14 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       type: 'row',
     },
     {
+      featureLabel: 'View types',
+      tiers: {
+        organization: { kind: 'text', text: 'Table, Kanban, Calendar' },
+        pro: { kind: 'text', text: 'Table, Kanban, Calendar' },
+      },
+      type: 'row',
+    },
+    {
       featureLabel: 'Custom layout',
       tiers: {
         organization: { kind: 'text', text: 'Unlimited' },
@@ -68,6 +72,22 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       tiers: {
         organization: { kind: 'text', text: 'Unlimited' },
         pro: { kind: 'text', text: 'Unlimited' },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: 'CSV import & export',
+      tiers: {
+        organization: { kind: 'yes', label: 'Yes' },
+        pro: { kind: 'yes', label: 'Yes' },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: 'Languages',
+      tiers: {
+        organization: { kind: 'text', text: '30+' },
+        pro: { kind: 'text', text: '30+' },
       },
       type: 'row',
     },
@@ -132,22 +152,22 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       type: 'row',
     },
     {
-      featureLabel: 'Automations credits',
-      tiers: {
-        organization: { kind: 'text', text: '2k' },
-        pro: { kind: 'text', text: '1k' },
-      },
-      type: 'row',
-    },
-    {
       title: 'Security',
       type: 'category',
+    },
+    {
+      featureLabel: 'Two-factor authentication',
+      tiers: {
+        organization: { kind: 'yes', label: 'Yes' },
+        pro: { kind: 'yes', label: 'Yes' },
+      },
+      type: 'row',
     },
     {
       featureLabel: 'User roles',
       tiers: {
         organization: { kind: 'text', text: 'Unlimited' },
-        pro: { kind: 'text', text: 'Admin, Members' },
+        pro: { kind: 'text', text: 'Unlimited' },
       },
       type: 'row',
     },
@@ -155,7 +175,7 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       featureLabel: 'Read/Edit/Delete permissions',
       tiers: {
         organization: { kind: 'text', text: 'Unlimited' },
-        pro: { kind: 'dash' },
+        pro: { kind: 'text', text: 'Unlimited' },
       },
       type: 'row',
     },
@@ -163,7 +183,7 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       featureLabel: 'Field-level permissions',
       tiers: {
         organization: { kind: 'text', text: 'Unlimited' },
-        pro: { kind: 'dash' },
+        pro: { kind: 'text', text: 'Unlimited' },
       },
       type: 'row',
     },
@@ -177,6 +197,14 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     },
     {
       featureLabel: 'SSO',
+      tiers: {
+        organization: { kind: 'yes', label: 'Yes' },
+        pro: { kind: 'dash' },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: 'Audit logs',
       tiers: {
         organization: { kind: 'yes', label: 'Yes' },
         pro: { kind: 'dash' },
@@ -221,6 +249,10 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     },
     {
       featureLabel: 'Email and Chat',
+      selfHostTiers: {
+        organization: { kind: 'yes', label: 'Yes' },
+        pro: { kind: 'dash' },
+      },
       tiers: {
         organization: { kind: 'yes', label: 'Yes' },
         pro: { kind: 'yes', label: 'Yes' },
@@ -236,10 +268,22 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       type: 'row',
     },
     {
-      featureLabel: 'Professional services',
+      featureLabel: 'Onboarding Packs',
+      selfHostTiers: {
+        organization: { kind: 'yes', label: 'Yes' },
+        pro: { kind: 'dash' },
+      },
       tiers: {
         organization: { kind: 'yes', label: 'Yes' },
         pro: { kind: 'yes', label: 'Yes' },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: 'Implementation partners',
+      tiers: {
+        organization: { kind: 'yes', label: 'Yes' },
+        pro: { kind: 'dash' },
       },
       type: 'row',
     },
@@ -256,7 +300,17 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       type: 'row',
     },
     {
-      featureLabel: 'Custom domain',
+      appliesTo: 'cloud',
+      featureLabel: 'Subdomain (yourco.twenty.com)',
+      tiers: {
+        organization: { kind: 'yes', label: 'Yes' },
+        pro: { kind: 'yes', label: 'Yes' },
+      },
+      type: 'row',
+    },
+    {
+      appliesTo: 'cloud',
+      featureLabel: 'Custom domain (crm.yourco.com)',
       tiers: {
         organization: { kind: 'yes', label: 'Yes' },
         pro: { kind: 'yes', label: 'Yes' },
@@ -268,10 +322,66 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       type: 'category',
     },
     {
+      featureLabel: 'REST & GraphQL API',
+      tiers: {
+        organization: { kind: 'yes', label: 'Yes' },
+        pro: { kind: 'yes', label: 'Yes' },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: 'Webhooks',
+      tiers: {
+        organization: { kind: 'yes', label: 'Yes' },
+        pro: { kind: 'yes', label: 'Yes' },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: 'MCP server',
+      tiers: {
+        organization: { kind: 'yes', label: 'Yes' },
+        pro: { kind: 'yes', label: 'Yes' },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: 'Install shared tarball app',
+      tiers: {
+        organization: { kind: 'yes', label: 'Yes' },
+        pro: { kind: 'dash' },
+      },
+      type: 'row',
+    },
+    {
+      appliesTo: 'cloud',
       featureLabel: 'API calls',
       tiers: {
         organization: { kind: 'text', text: '200 per minute' },
         pro: { kind: 'text', text: '100 per minute' },
+      },
+      type: 'row',
+    },
+    {
+      appliesTo: 'selfHost',
+      title: 'Self-hosting',
+      type: 'category',
+    },
+    {
+      appliesTo: 'selfHost',
+      featureLabel: 'Source code access',
+      tiers: {
+        organization: { kind: 'yes', label: 'Yes' },
+        pro: { kind: 'yes', label: 'Yes' },
+      },
+      type: 'row',
+    },
+    {
+      appliesTo: 'selfHost',
+      featureLabel: 'Commercial license (no AGPL obligations)',
+      tiers: {
+        organization: { kind: 'yes', label: 'Yes' },
+        pro: { kind: 'dash' },
       },
       type: 'row',
     },

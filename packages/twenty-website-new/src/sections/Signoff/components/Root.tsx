@@ -10,6 +10,10 @@ const StyledSection = styled.section`
   min-width: 0;
   width: 100%;
 
+  &[data-page='partners'] {
+    position: relative;
+  }
+
   &[data-shaped] {
     isolation: isolate;
     overflow: hidden;
@@ -17,13 +21,13 @@ const StyledSection = styled.section`
   }
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    &[data-page='partner'] {
+    &[data-page='partners'][data-center='true'] {
       min-height: 759px;
       overflow: hidden;
       position: relative;
     }
 
-    &[data-page='partner'] > div {
+    &[data-page='partners'][data-center='true'] > div {
       justify-content: center;
       min-height: 759px;
       padding-bottom: 0;
@@ -54,6 +58,7 @@ const StyledContainer = styled(Container)`
 
 type RootPropsSimple = {
   backgroundColor: string;
+  centerContent?: boolean;
   children: ReactNode;
   color: string;
   page?: Pages;
@@ -62,6 +67,7 @@ type RootPropsSimple = {
 
 type RootPropsShaped = {
   backgroundColor: string;
+  centerContent?: boolean;
   children: ReactNode;
   color: string;
   page?: Pages;
@@ -72,12 +78,14 @@ type RootPropsShaped = {
 type RootProps = RootPropsSimple | RootPropsShaped;
 
 export function Root(props: RootProps) {
-  const { backgroundColor, children, color, page } = props;
+  const { backgroundColor, centerContent, children, color, page } = props;
   const isShaped = props.variant === 'shaped';
   const shapeFillColor = isShaped ? props.shapeFillColor : undefined;
+  const shouldCenterContent = centerContent ?? page === Pages.Partners;
 
   return (
     <StyledSection
+      data-center={shouldCenterContent ? 'true' : undefined}
       data-page={page}
       data-shaped={isShaped ? '' : undefined}
       style={{ backgroundColor, color }}
@@ -85,7 +93,7 @@ export function Root(props: RootProps) {
       {isShaped && shapeFillColor ? (
         <SignoffShape fillColor={shapeFillColor} />
       ) : null}
-      {page === Pages.Partner ? (
+      {page === Pages.Partners ? (
         <GuideCrosshair crossX="calc(50% + 334px)" crossY="198px" />
       ) : null}
       <StyledContainer>{children}</StyledContainer>

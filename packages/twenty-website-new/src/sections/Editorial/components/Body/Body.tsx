@@ -4,6 +4,7 @@ import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
 const BodyParagraph = styled.div`
+  --body-paragraph-color: var(--editorial-body-color);
   color: var(--editorial-body-color);
   min-width: 0;
 `;
@@ -43,12 +44,26 @@ export function Body({ body, layout }: EditorialBodyProps) {
   const paragraphs = Array.isArray(body) ? (
     body.map((item, index) => (
       <BodyParagraph key={index}>
-        <BaseBody as="p" body={item} family="sans" size="md" weight="regular" />
+        <BaseBody
+          as="p"
+          body={item}
+          family="sans"
+          size="md"
+          variant="body-paragraph"
+          weight="regular"
+        />
       </BodyParagraph>
     ))
   ) : (
     <BodyParagraph>
-      <BaseBody as="p" body={body} family="sans" size="md" weight="regular" />
+      <BaseBody
+        as="p"
+        body={body}
+        family="sans"
+        size="md"
+        variant="body-paragraph"
+        weight="regular"
+      />
     </BodyParagraph>
   );
 

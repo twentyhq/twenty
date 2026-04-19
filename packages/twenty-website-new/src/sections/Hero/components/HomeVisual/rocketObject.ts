@@ -222,7 +222,7 @@ const LAUNCH_PAGE: HeroTablePageDefinition = {
           type: 'relation',
           items: [{ name: 'LC-39B', shortLabel: 'K', tone: 'red' }],
         },
-        actualLaunchAt: { type: 'text', value: '—' },
+        actualLaunchAt: { type: 'text', value: 'TBD' },
       },
     },
     {

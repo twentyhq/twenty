@@ -6,15 +6,24 @@ import { Children, type ReactNode } from 'react';
 
 const CORNER_OFFSET = '-6px';
 
-const StyledSection = styled.section`
-  padding-bottom: ${theme.spacing(12)};
-  padding-top: ${theme.spacing(12)};
+const StyledSection = styled.section<{
+  compactTop: boolean;
+  compactBottom: boolean;
+  backgroundColor?: string;
+}>`
+  background-color: ${({ backgroundColor }) => backgroundColor ?? 'transparent'};
+  padding-bottom: ${({ compactBottom }) =>
+    compactBottom ? '0' : theme.spacing(12)};
+  padding-top: ${({ compactTop }) =>
+    compactTop ? theme.spacing(4) : theme.spacing(12)};
   position: relative;
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    padding-bottom: ${theme.spacing(16)};
-    padding-top: ${theme.spacing(16)};
+    padding-bottom: ${({ compactBottom }) =>
+      compactBottom ? '0' : theme.spacing(16)};
+    padding-top: ${({ compactTop }) =>
+      compactTop ? theme.spacing(6) : theme.spacing(16)};
   }
 `;
 
@@ -28,9 +37,12 @@ const StyledContainer = styled(Container)`
   }
 `;
 
-const StyledCard = styled.div`
+const StyledCard = styled.div<{
+  backgroundColor?: string;
+}>`
   align-items: center;
-  background-color: ${theme.colors.primary.background[100]};
+  background-color: ${({ backgroundColor }) =>
+    backgroundColor ?? theme.colors.primary.background[100]};
   border: 1px solid ${theme.colors.primary.border[10]};
   border-radius: ${theme.radius(2)};
   display: flex;
@@ -114,14 +126,29 @@ const CornerBottomRight = styled(CornerMarker)`
 
 interface RootProps {
   children: ReactNode;
+  compactTop?: boolean;
+  compactBottom?: boolean;
+  backgroundColor?: string;
+  cardBackgroundColor?: string;
 }
 
-export function Root({ children }: RootProps) {
+export function Root({
+  children,
+  compactTop = false,
+  compactBottom = false,
+  backgroundColor,
+  cardBackgroundColor,
+}: RootProps) {
   const [label, logos, count] = Children.toArray(children);
   return (
-    <StyledSection aria-label="Trusted by leading organizations">
+    <StyledSection
+      aria-label="Trusted by leading organizations"
+      backgroundColor={backgroundColor}
+      compactTop={compactTop}
+      compactBottom={compactBottom}
+    >
       <StyledContainer>
-        <StyledCard>
+        <StyledCard backgroundColor={cardBackgroundColor}>
           <CornerTopLeft aria-hidden>
             <PlusIcon size={12} strokeColor={theme.colors.highlight[100]} />
           </CornerTopLeft>

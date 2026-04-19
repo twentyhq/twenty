@@ -25,7 +25,7 @@ export const FAQ_DATA: FaqDataType = {
         fontFamily: 'sans',
       },
       answer: {
-        text: "Yes — Twenty is the #1 open-source CRM on GitHub. Most teams run it on our managed cloud for zero-ops setup; self-hosting is always available if you'd rather own the infrastructure.",
+        text: "Yes. Twenty is the #1 open-source CRM on GitHub. Most teams run it on our managed cloud for zero-ops setup; self-hosting is always available if you'd rather own the infrastructure.",
       },
     },
     {
@@ -43,7 +43,7 @@ export const FAQ_DATA: FaqDataType = {
         fontFamily: 'sans',
       },
       answer: {
-        text: 'Yes. Import your data via CSV — or use our API for 50,000+ records. Our partners can handle the full migration for you.',
+        text: 'Yes. Import your data via CSV, or use our API for 50,000+ records. Our partners can handle the full migration for you.',
       },
     },
     {
@@ -52,7 +52,7 @@ export const FAQ_DATA: FaqDataType = {
         fontFamily: 'sans',
       },
       answer: {
-        text: 'No. Build custom objects, fields, views, and no-code workflows straight from Settings — unlimited, no extra charge.',
+        text: 'No. Build custom objects, fields, views, and no-code workflows straight from Settings. Unlimited, no extra charge.',
       },
     },
     {
@@ -61,7 +61,7 @@ export const FAQ_DATA: FaqDataType = {
         fontFamily: 'sans',
       },
       answer: {
-        text: 'Yes — with our Apps framework. Scaffold an extension with `npx create-twenty-app` and ship custom objects, server-side logic functions, React components that render inside Twenty\u2019s UI, AI skills and agents, views, and navigation — all in TypeScript, deployable to any workspace.',
+        text: 'Yes, with our Apps framework. Scaffold an extension with `npx create-twenty-app` and ship custom objects, server-side logic functions, React components that render inside Twenty\u2019s UI, AI skills and agents, views, and navigation, all in TypeScript, deployable to any workspace.',
       },
     },
     {
@@ -70,7 +70,7 @@ export const FAQ_DATA: FaqDataType = {
         fontFamily: 'sans',
       },
       answer: {
-        text: 'Yes. Every Cloud workspace ships with a native MCP server — connect your AI assistant via OAuth and it can read and write your CRM data in natural language.',
+        text: 'Yes. Every Cloud workspace ships with a native MCP server. Connect your AI assistant via OAuth and it can read and write your CRM data in natural language.',
       },
     },
     {

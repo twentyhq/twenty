@@ -1,6 +1,6 @@
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 const ContainerRoot = styled.div`
   margin: 0 auto;
@@ -8,8 +8,16 @@ const ContainerRoot = styled.div`
   width: 100%;
 `;
 
-export type ContainerProps = { children: ReactNode; className?: string };
+export type ContainerProps = {
+  children: ReactNode;
+  className?: string;
+  style?: CSSProperties;
+};
 
-export function Container({ children, className }: ContainerProps) {
-  return <ContainerRoot className={className}>{children}</ContainerRoot>;
+export function Container({ children, className, style }: ContainerProps) {
+  return (
+    <ContainerRoot className={className} style={style}>
+      {children}
+    </ContainerRoot>
+  );
 }

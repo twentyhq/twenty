@@ -7,15 +7,16 @@ const IntroRoot = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${theme.spacing(6)};
-  max-width: 556px;
+  max-width: var(--editorial-intro-max-width, 556px);
   min-width: 0;
   width: 100%;
 `;
 
 type IntroProps = {
   children: ReactNode;
+  className?: string;
 };
 
-export function Intro({ children }: IntroProps) {
-  return <IntroRoot>{children}</IntroRoot>;
+export function Intro({ children, className }: IntroProps) {
+  return <IntroRoot className={className}>{children}</IntroRoot>;
 }

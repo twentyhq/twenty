@@ -16,11 +16,14 @@ import { MenuDrawer } from '../Drawer/Drawer';
 
 const SCROLL_IDLE_TIMEOUT_MS = 150;
 
-const StyledSection = styled.section<{ $isScrolling: boolean }>`
-  backdrop-filter: blur(10px);
-  background-image: url('/images/shared/light-noise.webp');
-  box-shadow: ${({ $isScrolling }) =>
-    $isScrolling
+const StyledSection = styled.section<{
+  $enableBackdropBlur: boolean;
+  $isElevated: boolean;
+}>`
+  backdrop-filter: ${({ $enableBackdropBlur }) =>
+    $enableBackdropBlur ? 'blur(10px)' : 'none'};
+  box-shadow: ${({ $isElevated }) =>
+    $isElevated
       ? '0 1px 3px 0 rgba(0, 0, 0, 0.06)'
       : '0 1px 3px 0 rgba(0, 0, 0, 0)'};
   min-width: 0;
@@ -38,8 +41,10 @@ const StyledContainer = styled(Container)`
   z-index: 100;
 `;
 
-const StyledNav = styled.nav`
+const StyledNav = styled.nav<{ $backgroundColor?: string }>`
   align-items: center;
+  background-color: ${({ $backgroundColor }) =>
+    $backgroundColor ?? 'transparent'};
   border-radius: ${theme.radius(2)};
   display: grid;
   grid-auto-flow: column;
@@ -70,24 +75,34 @@ const MobileRightContainer = styled.div`
 type RootProps = {
   backgroundColor: string;
   children: ReactNode;
+  enableBackdropBlur?: boolean;
   navItems: MenuNavItemType[];
+  scrolledBackgroundColor?: string;
+  scrolledSurfaceColor?: string;
   scheme: MenuScheme;
+  surfaceColor?: string;
   socialLinks: MenuSocialLinkType[];
 };
 
 export function Root({
   backgroundColor,
   children,
+  enableBackdropBlur = true,
   navItems,
+  scrolledBackgroundColor,
+  scrolledSurfaceColor,
   scheme,
+  surfaceColor,
   socialLinks,
 }: RootProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
   const scrollTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
+      setHasScrolled(window.scrollY > 8);
       setIsScrolling(true);
 
       if (scrollTimeoutRef.current !== null) {
@@ -100,6 +115,7 @@ export function Root({
       }, SCROLL_IDLE_TIMEOUT_MS);
     };
 
+    setHasScrolled(window.scrollY > 8);
     window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
@@ -128,6 +144,13 @@ export function Root({
           linkButton: 'primary',
         };
 
+  const resolvedBackgroundColor =
+    hasScrolled && scrolledBackgroundColor
+      ? scrolledBackgroundColor
+      : backgroundColor;
+  const resolvedSurfaceColor =
+    hasScrolled && scrolledSurfaceColor ? scrolledSurfaceColor : surfaceColor;
+
   return (
     <Drawer.Root
       open={isDrawerOpen}
@@ -137,9 +160,17 @@ export function Root({
       <CloseDrawerWhenNavigationExpandsEffect
         onClose={() => setIsDrawerOpen(false)}
       />
-      <StyledSection $isScrolling={isScrolling} style={{ backgroundColor }}>
+      <StyledSection
+        $enableBackdropBlur={enableBackdropBlur}
+        $isElevated={isScrolling || hasScrolled}
+        style={{ backgroundColor: resolvedBackgroundColor }}
+      >
         <StyledContainer>
-          <StyledNav aria-label="Primary navigation" data-scheme={scheme}>
+          <StyledNav
+            $backgroundColor={resolvedSurfaceColor}
+            aria-label="Primary navigation"
+            data-scheme={scheme}
+          >
             {children}
             <MobileRightContainer>
               <LinkButton

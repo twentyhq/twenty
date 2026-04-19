@@ -14,7 +14,7 @@ const Subline = styled.div`
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    &[data-page='partner'] {
+    &[data-page='partners'] {
       white-space: pre-line;
     }
   }

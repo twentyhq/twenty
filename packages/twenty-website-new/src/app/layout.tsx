@@ -1,8 +1,6 @@
 import { FooterVisibilityGate } from '@/app/_components/FooterVisibilityGate';
 import { FOOTER_DATA } from '@/app/_constants/footer';
 import { ContactCalModalRoot } from '@/app/components/ContactCalModal';
-import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
-import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Footer } from '@/sections/Footer/components';
 import { theme } from '@/theme';
 import { cssVariables } from '@/theme/css-variables';
@@ -68,19 +66,13 @@ const StyledMain = styled.main`
 `;
 
 export const metadata: Metadata = {
-  title: 'Twenty — Open Source CRM',
+  title: 'Twenty | Open Source CRM',
   description: 'Modular, scalable open source CRM for modern teams.',
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const stats = await fetchCommunityStats();
-  const footerSocialLinks = mergeSocialLinkLabels(
-    FOOTER_DATA.socialLinks,
-    stats,
-  );
-
   return (
     <html lang="en">
       <body
@@ -95,7 +87,7 @@ export default async function RootLayout({
               <Footer.Nav groups={FOOTER_DATA.navGroups} />
               <Footer.Bottom
                 copyright={FOOTER_DATA.bottom.copyright}
-                links={footerSocialLinks}
+                links={FOOTER_DATA.socialLinks}
               />
             </Footer.Root>
           </FooterVisibilityGate>

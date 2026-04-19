@@ -14,7 +14,7 @@ import { scrollProgressToHomeStepperLottieFrame } from '@/sections/HomeStepper/u
 import { theme } from '@/theme';
 
 export const HOME_STEPPER_LOTTIE_SRC =
-  '/lottie/stepper/stepper.lottie?v=data-model-icon-white-3';
+  '/lottie/stepper/stepper.lottie?v=data-model-icon-white-4-logic-outline';
 
 const LottieSlot = styled.div`
   box-sizing: border-box;

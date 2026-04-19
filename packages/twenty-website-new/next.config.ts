@@ -1,3 +1,4 @@
+import path from 'path';
 import withLinaria, { type LinariaConfig } from 'next-with-linaria';
 
 const nextConfig: LinariaConfig = {
@@ -14,6 +15,9 @@ const nextConfig: LinariaConfig = {
         protocol: 'https',
       },
     ],
+  },
+  linaria: {
+    configFile: path.resolve(__dirname, 'wyw-in-js.config.cjs'),
   },
   reactCompiler: true,
 };

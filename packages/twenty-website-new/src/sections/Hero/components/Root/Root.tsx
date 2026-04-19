@@ -5,7 +5,16 @@ import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
 const StyledSection = styled.section`
-  background-image: url('/images/shared/light-noise.webp');
+  &[data-color-scheme='primary'] {
+    --hero-body-color: ${theme.colors.primary.text[60]};
+    color: ${theme.colors.primary.text[100]};
+  }
+
+  &[data-color-scheme='secondary'] {
+    --hero-body-color: ${theme.colors.secondary.text[80]};
+    color: ${theme.colors.secondary.text[100]};
+  }
+
   min-width: 0;
   overflow: clip;
   padding-bottom: ${theme.spacing(6)};
@@ -47,16 +56,18 @@ const StyledContainer = styled(Container)`
 type RootProps = {
   backgroundColor: string;
   children: ReactNode;
+  colorScheme?: 'primary' | 'secondary';
   showHomeBackground?: boolean;
 };
 
 export function Root({
   backgroundColor,
   children,
+  colorScheme = 'primary',
   showHomeBackground = false,
 }: RootProps) {
   return (
-    <StyledSection style={{ backgroundColor }}>
+    <StyledSection data-color-scheme={colorScheme} style={{ backgroundColor }}>
       {showHomeBackground ? (
         <StyledBackground>
           <IllustrationMount illustration="heroHomeBackground" />

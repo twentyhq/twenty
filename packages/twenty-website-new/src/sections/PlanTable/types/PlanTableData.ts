@@ -1,6 +1,6 @@
 import type { BodyType } from '@/design-system/components/Body/types/Body';
 import type { HeadingType } from '@/design-system/components/Heading/types/Heading';
-import type { PlansTierId } from '@/sections/Plans/types';
+import type { PlansHostingMode, PlansTierId } from '@/sections/Plans/types';
 
 export type PlanTableTierColumnType = {
   id: PlansTierId;
@@ -13,12 +13,15 @@ export type PlanTableCellType =
   | { kind: 'yes'; label?: string };
 
 export type PlanTableCategoryRowDataType = {
+  appliesTo?: PlansHostingMode;
   title: string;
   type: 'category';
 };
 
 export type PlanTableFeatureRowDataType = {
+  appliesTo?: PlansHostingMode;
   featureLabel: string;
+  selfHostTiers?: Record<PlansTierId, PlanTableCellType>;
   tiers: Record<PlansTierId, PlanTableCellType>;
   type: 'row';
 };

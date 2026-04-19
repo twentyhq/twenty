@@ -24,12 +24,19 @@ export function LinkButton({
   color,
   href,
   label,
+  leadingIcon,
   size = 'regular',
   type,
   variant,
 }: LinkButtonProps) {
   const inner = (
-    <BaseButton color={color} label={label} size={size} variant={variant} />
+    <BaseButton
+      color={color}
+      label={label}
+      leadingIcon={leadingIcon}
+      size={size}
+      variant={variant}
+    />
   );
 
   if (type === 'anchor') {

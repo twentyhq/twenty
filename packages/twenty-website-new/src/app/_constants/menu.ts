@@ -1,11 +1,76 @@
+import { getLatestReleasePreview } from '@/lib/releases/get-latest-release-preview';
 import type { MenuDataType } from '@/sections/Menu/types';
+
+const releasesPreview = getLatestReleasePreview() ?? {
+  image: '/images/releases/1.23/1.23.0-easier-layouts.webp',
+  imageAlt: 'Twenty latest release',
+  imageScale: 1.04,
+  title: 'See the latest release',
+  description:
+    'Track every release with changelogs, highlights and demos of the newest features.',
+};
 
 export const MENU_DATA: MenuDataType = {
   navItems: [
-    { label: 'Product', href: '/product' },
+    { label: 'Why', href: '/why-twenty' },
+    {
+      label: 'Resources',
+      children: [
+        {
+          label: 'User Guide',
+          description: 'Learn how to use Twenty',
+          href: 'https://docs.twenty.com/user-guide/introduction',
+          external: true,
+          icon: 'book',
+          preview: {
+            image: '/images/product/feature/contacts.webp',
+            imageAlt: 'Twenty companies list',
+            title: 'Master every corner of Twenty',
+            description:
+              'Step-by-step guides and playbooks to help your team get the most out of their workspace.',
+          },
+        },
+        {
+          label: 'Developers',
+          description: 'Create apps on Twenty',
+          href: 'https://docs.twenty.com/developers/introduction',
+          external: true,
+          icon: 'code',
+          preview: {
+            image: '/images/shared/menu/developers-preview.png',
+            imageAlt: 'Blue developer illustration with branching arrows',
+            imagePosition: 'center',
+            imageScale: 1.4,
+            title: 'Build on an open platform',
+            description:
+              'APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data.',
+          },
+        },
+        {
+          label: 'Partners',
+          description: 'Find a Twenty partner',
+          href: '/partners',
+          icon: 'users',
+          preview: {
+            image: '/images/partner/hero/hero.webp',
+            imageAlt: 'Twenty partner ecosystem',
+            imagePosition: 'center',
+            title: 'Team up with a Twenty expert',
+            description:
+              'Meet the certified agencies and consultants implementing Twenty for teams worldwide.',
+          },
+        },
+        {
+          label: 'Releases',
+          description: "Discover what's new",
+          href: '/releases',
+          icon: 'tag',
+          preview: releasesPreview,
+        },
+      ],
+    },
+    { label: 'Customers', href: '/customers' },
     { label: 'Pricing', href: '/pricing' },
-    { label: 'Partners', href: '/partner' },
-    { label: 'Why Twenty', href: '/why-twenty' },
   ],
   socialLinks: [
     {

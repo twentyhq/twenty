@@ -4,7 +4,9 @@ export const PROBLEM_DATA: ProblemDataType = {
   eyebrow: { heading: { text: 'The Problem.', fontFamily: 'sans' } },
   heading: [
     { text: 'A custom CRM gives your org an edge, ', fontFamily: 'serif' },
-    { text: 'but building one comes with tradeoffs', fontFamily: 'sans' },
+    { text: 'but building one ', fontFamily: 'sans' },
+    { text: 'comes with ', fontFamily: 'serif' },
+    { text: 'tradeoffs', fontFamily: 'sans' },
   ],
   points: [
     {

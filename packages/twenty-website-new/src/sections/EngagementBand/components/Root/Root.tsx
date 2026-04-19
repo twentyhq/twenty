@@ -3,13 +3,14 @@ import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
-const StyledSection = styled.section`
+const StyledSection = styled.section<{ compactBottom: boolean }>`
+  padding-bottom: ${({ compactBottom }) =>
+    compactBottom ? theme.spacing(6) : theme.spacing(20)};
   width: 100%;
 `;
 
 const StyledContainer = styled(Container)`
   min-width: 0;
-  padding-bottom: ${theme.spacing(20)};
   padding-left: ${theme.spacing(4)};
   padding-right: ${theme.spacing(4)};
   padding-top: ${theme.spacing(6)};
@@ -24,11 +25,19 @@ const StyledContainer = styled(Container)`
 type RootProps = {
   backgroundColor: string;
   children: ReactNode;
+  compactBottom?: boolean;
 };
 
-export function Root({ backgroundColor, children }: RootProps) {
+export function Root({
+  backgroundColor,
+  children,
+  compactBottom = false,
+}: RootProps) {
   return (
-    <StyledSection style={{ backgroundColor }}>
+    <StyledSection
+      compactBottom={compactBottom}
+      style={{ backgroundColor }}
+    >
       <StyledContainer>{children}</StyledContainer>
     </StyledSection>
   );

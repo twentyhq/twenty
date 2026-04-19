@@ -12,6 +12,12 @@ function ProductVisual() {
   return createElement(IllustrationMount, { illustration: 'heroProduct' });
 }
 
+function ReleaseNotesVisual() {
+  return createElement(IllustrationMount, {
+    illustration: 'heroReleaseNotes',
+  });
+}
+
 export const Hero = {
   Root,
   Heading,
@@ -19,6 +25,7 @@ export const Hero = {
   Cta,
   HomeVisual,
   ProductVisual,
+  ReleaseNotesVisual,
   PartnerVisual,
   WhyTwentyVisual,
 };

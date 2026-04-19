@@ -1,0 +1,552 @@
+customer_content_id,customer_content_name,customer_content_status,customer_content_type,customer_name,partner_name,approval_date,interview_url,note_count,note_titles,all_note_bodies_markdown
+091c06d1-9a6c-47a3-a415-ca58da0ce094,Hoss case study,Under customer/partner review,Customer quote | Case study,Hoss,Bertrams Lukstins,,https://app.fireflies.ai/view/Bertrams-Lukstins-Stephanie-Joly::01KJYXY9S7FS1YR5QCPFFXASH7,1,Case study - “production-grade foundations” angle,"# Case study - “production-grade foundations” angle
+
+# How Hoss Built a Lead Marketplace on Top of Twenty
+
+Hoss runs a lead generation business with a specific model: they source businesses looking to sell, and sell those leads to acquisition agents and buyers. To make that work, they needed two things to talk to each other seamlessly: an internal system to manage and qualify leads, and a customer-facing portal where buyers could browse, purchase, and unlock them.
+
+The challenge wasn't finding a CRM. It was finding something flexible enough to act as the backbone of an entire product.
+
+>
+
+*""I needed something I could actually build on top of, not just use. Twenty gave us the foundation to ship a real product without starting from scratch.""* Matt, Founder, Hoss
+
+## Building a Product, Not Just Configuring a Tool
+
+When Matt came to Bertrams at Wintactix, the brief was clear: build an MVP of a lead marketplace, fast. Leads would live in Twenty as custom objects. When a lead was marked ready for sale, it would instantly appear on the portal, blinded, with key details hidden. Buyers could sign up, purchase credits, and unlock the full lead details. Every signup, every credit purchase, every lead transaction would be recorded back in Twenty in real time.
+
+The data model was shaped entirely around Hoss's business logic. Because Twenty's custom objects and API are fully open, Bertrams could wire up exactly what the business needed. No compromise, no patch. Just a clean solution built on solid foundations.
+
+## Everything Connected, Nothing Hidden
+
+The sync between the portal and Twenty runs on webhooks and is instant. When a lead sells out, it disappears from the portal immediately. When someone makes a purchase, it's logged. Notes written in Twenty flow directly into the portal as free-form text. The entire flow, from lead intake to buyer introduction, is handled through Twenty's workflow engine and custom API integrations.
+
+The whole project came in under 100 hours. That includes the portal, the integrations, the data model, and the automation layer.
+
+>
+
+*""The flexibility is just amazing. Literally, there's nothing you cannot do. You can create objects, access everything through the API, pull notes and send them to the portal. Try doing that in HubSpot. No way. It's the true ability to build exactly what's actually needed.""* Bertrams, Founder, Wintactix
+
+## What's Next
+
+The portal launched in March 2026. After years of navigating scattered spreadsheets, the next few weeks will tell how much of a difference a fully streamlined operation actually makes. For Hoss, Twenty isn't a CRM they adapted to. It's infrastructure they built on.
+"
+0e68bb84-52ec-4c58-9259-cce0c0bd8369,W3 Villa partner quote,Approved,Customer quote | Partner quote,w3villa.com,Ishank Gupta,2026-03-09,https://docs.google.com/document/d/1buCqlLL06PWHS6vB_Hls__LiQyE05k-0OGqwTY069F4/edit?tab=t.0#heading=h.50cwfancnegg,2,Partner page | Partner Quote,"# Partner page
+
+W3 villa logo + description in the google doc attached
+
+
+---
+
+# Partner Quote
+
+*""Twenty gave us the flexibility to model the entire interview lifecycle as custom objects and workflows. We could build something genuinely complex without fighting the platform to do it.""* Piyush Khandelwal (<https://www.linkedin.com/in/piyush-khandelwal-5a9b9718/>) Director at W3villa Technologies, Partner
+"
+10e74834-fade-4f28-98ef-5a7e2bcfbc67,NetZero case study,Approved,Case study,NetZero,,2026-03-23,https://app.fireflies.ai/view/Olivier-St-phanie-Twenty-case-study::01KKGJQ4DT1SWSSZB40E179SH3,2,NetZero case study V1 | NetZero case study Approved by Customer,"# NetZero case study V1
+
+# A CRM That Grows With You
+
+Netzero works with the agro-industry in Brazil, serving clients that range from multinationals to smallholder farmers with half a hectare. They sell carbon credits, agricultural products, and industrial franchises, three completely different product lines, across multiple countries and company sizes. When Olivier Reinaud, the CEO, started looking at CRMs in late 2024, he was not looking for the most feature-rich platform. He was looking for the right foundation.
+
+>
+
+*""Twenty delivers on what CRMs should have always been: fairly priced software with a fully modular and customizable model, a clean and modern UI, granular permissions, automations, enterprise features. A compelling solution with high potential to rightfully disrupt the CRM market.""* Olivier Reinaud, CEO, Netzero
+
+## Flexibility for a Business That Does Not Fit a Template
+
+What convinced Olivier was the potential of the platform and where it was heading. He could start simple, with just the basics his business needed at the time, without being forced to deal with features he had no use for yet. And he could see that when his needs grew, Twenty could grow with him: deeper automations, more complex configurations, custom data models, all available when needed, none of it in the way when not.
+
+With Twenty, when a new need appears, he can address it himself, no dev required, without opening a support ticket.
+
+>
+
+*""The flexibility is really what made the difference. Our needs evolve very fast. I discover a new need and in two clicks I can address it. That is a real advantage when you are moving quickly.""* Olivier Reinaud, CEO, Netzero
+
+## A Basic Setup Today, With Room to Grow
+
+Olivier is honest that Netzero's current usage of Twenty is still relatively simple. They have customized their data model and run some basic operations, but they have not yet gone deep on workflows or integrations, partly because early limitations led him to pause on that front.
+
+What he has planned is significant though. Netzero has a data lake, website forms, and multiple internal systems that could all connect to Twenty. The pipes are there. The next step is building the automations that tie them together.
+
+That is exactly what he is waiting for: AI-assisted workflow creation, where instead of building complex logic from scratch, he can describe what he needs and iterate from there. For a founder who manages the CRM himself, that changes what is realistically possible.
+
+## The Bet Is Paying Off
+
+Netzero still runs a second CRM in parallel for their WhatsApp-heavy operations with farmers in Brazil, a gap they expect to close as the ecosystem around Twenty grows. But for their structured, multinational pipeline, Twenty is the system they chose and the one they are building on.
+
+The early bet on the architecture is holding.
+
+
+---
+
+# NetZero case study Approved by Customer
+
+# A CRM That Grows With You
+
+NetZero works with the agro-industry, serving clients that range from multinationals to smallholder farmers. They sell carbon credits, agricultural products, and franchised industrial systems: three completely different product lines, across multiple countries and company sizes. When Olivier Reinaud, co-founder of NetZero, started looking at CRMs in late 2024, he was not looking for the most feature-rich platform. He was looking for the right foundation.
+
+> *""Twenty delivers on what CRMs should have always been: fairly priced software with a fully modular and customizable model, a clean and modern UI, granular permissions, automations, enterprise features. A compelling solution with high potential to rightfully disrupt the CRM market.""* Olivier Reinaud, co-founder of NetZero
+
+***
+
+## Flexibility for a Business That Does Not Fit a Template
+
+What convinced Olivier was the flexibility of the platform and where it was heading. While his initial needs were basic record-keeping, he still needed from the start a custom data model with granular permissions to properly manage the wide range of activities of NetZero. He also needed a system that could adapt quickly given his company's fast-iteration approach.
+
+With Twenty, when a new need appears, he can address it himself, no dev required, without opening a support ticket.
+
+> *""The flexibility is really what made the difference. Our needs evolve very fast. I discover a new need and in two clicks I can address it. That is a real advantage when you are moving quickly.""* Olivier Reinaud, co-founder of NetZero
+
+***
+
+## Gradually moving from a simple to advanced setup
+
+Olivier recognizes that NetZero's current usage of Twenty is still relatively simple. They have not yet gone deep on workflows or integrations as he first wanted to get the foundations right.
+
+What he has planned is significant though. NetZero has a data lake, online forms, and multiple internal systems that he wants to connect to Twenty. The pipes are there. The next step is building the automations that tie them together.
+
+What's coming in April 2026 is exactly what he was waiting for: AI-assisted workflow creation, where instead of building complex logic from scratch, he can describe what he needs and iterate from there. For a founder who manages the CRM himself, that changes what is realistically possible.
+
+***
+
+## The Bet Is Paying Off
+
+While NetZero still runs a second CRM in parallel for their WhatsApp-heavy operations with farmers in Brazil, they expect to migrate all of it to Twenty as the features and ecosystem grow. But, already now, their structured, multinational pipeline is powered by Twenty.
+
+The early bet on the architecture is holding, and the upcoming AI features are expected to make it even more relevant.
+"
+11d9ec73-ba6f-4fa0-8cfa-c5056e243e9d,9Dots - App partner quote,Approved,Partner quote,,9 Dots,2026-03-23,,1,App partner quote,"# App partner quote
+
+*""Twenty Apps opens the door to building products, not just implementations. For example, we're developing a WhatsApp Business integration that any Twenty’s client could get. That's a recurring revenue stream we wouldn't have if we were just configuring someone else's platform.""* Mike Babiy, Founder, Nine Dots Ventures.""
+"
+12cd9eb5-fdba-407b-ab36-59998350c43b,9Dots case study,Approved,Case study,,9 Dots,2026-03-23,https://twenty.com/case-studies/9-dots-story,1,Case Study,"# Case Study
+
+## Live version
+
+<https://twenty.com/case-studies/9-dots-story>
+
+## Approved new version
+
+# A Real Estate Agency Running on WhatsApp Built a CRM Around It, Not Against It
+
+Homeseller is a high-volume real estate agency in Singapore, founded by one of the country's top-performing property agents. Their entire operation runs on WhatsApp. No email, no calendars. Just group chats, thousands of them, with clients, agents, and leads all mixed together.
+
+That works, until you try to understand the business underneath it. Which deals are stuck? Where are leads coming from? What is the close rate? With spreadsheets and a legacy custom CRM that couldn't keep up, those questions were nearly impossible to answer.
+
+Mike and Azmat from Nine Dots stepped in to fix that, not by changing how Homeseller works, but by building a system that finally fit around it.
+
+>
+
+*""Twenty lets us build a CRM around the business and not the business around the CRM.""* Mike Babiy, Founder, Nine Dots Ventures
+
+## The CRM as a Control Hub
+
+Nine Dots rebuilt Homeseller's operations on Twenty, with a custom data model shaped entirely around their sales flow. Because Twenty is open and everything is accessible via API, they could connect it to whatever the business actually needed: n8n for automated workflows (in-app workflows were not available at that time), Grafana for live dashboards fed directly from Twenty, and a custom AI layer to parse an&#x64;**&#x20;extract structured insights from 2,000+ WhatsApp messages a day**.
+
+Homeseller kept their habits. WhatsApp stayed WhatsApp. **What changed is that everything flowing through those conversations now lands in a structured system, tracked, classified, and visible in real time.**
+
+>
+
+*""Twenty is the heart of the system. Everything branches from it.""* Azmat Parveen, Nine Dots Ventures
+
+## **The Result**
+
+150 hours per month saved in manual operations. Real-time metrics for the business owner. Growth readiness without adding operational headcount. And a team that can finally answer the questions that used to take days to piece together.
+
+The full rollout happened in July 2025, setting a foundation that kept delivering. Since then, Nine Dots built a Smart Assistant on top of the system, nudging agents with tasks, reminders, and on-demand market analysis. Some agents never open Twenty directly, yet they're fully powered by it, outperforming peers who rely on manual processes alone. Every efficiency gain feeds the same goal: by Q1 2026, Homeseller had recorded its best sales quarter ever.
+"
+2ff2f91d-24c6-4348-a0c8-95c7a893f127,9Dots Implementation Partner QuoteS,Approved,Partner quote,,9 Dots,2026-03-22,,1,Partner Quotes,"# Partner Quotes
+
+*Twenty lets us build a CRM around the business and not the business around the CRM.""* Mike Babiy, Founder, Nine Dots Ventures
+
+Also from Mike
+
+""A perfect CRM doesn't exi…"" - these were our thoughts when we discovered Twenty over a year ago, and it's still the exact sentiment working with it daily.
+
+Most CRMs are opinionated - they force you to do things *their* way. Twenty is different. It's a versatile toolbox that lets you build anything, and it's fiercely opinionated about *that* principle. For example, to integrate emails and messengers, the team invests time in building an abstraction layer rather than a baked-in messaging integration.
+
+The team is deliberate about building a tool that outlasts your next reorg, not just shipping features.
+"
+2ffa4e30-8e66-472a-a45e-ce1d4edc459a,W3 Villa case study - production grade foundations,Approved,Case study,w3villa.com,Ishank Gupta,2026-03-09,https://docs.google.com/document/d/1buCqlLL06PWHS6vB_Hls__LiQyE05k-0OGqwTY069F4/edit?tab=t.0#heading=h.50cwfancnegg,2,case study “production-grade foundations” angle | Partner page,"# case study “production-grade foundations” angle
+
+# When Your CRM Is the Product: How W3villa Shipped an AI Interview Platform on Twenty
+
+Running mock interview programs for hundreds of students sounds straightforward. In practice, it is anything but. Universities and training institutes trying to prepare students for placements at top companies face the same wall: registrations entered by hand, interview links sent one by one, faculty reviewing every session without any scoring or classification system to help. At any real scale, it breaks.
+
+W3villa Technologies decided to solve this properly. Not with a workaround, but with an actual product.
+
+>
+
+*""We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind.""* Amrendra Pratap Singh, VP of Engineering at W3villa Technologies, (<https://www.linkedin.com/in/iamamrendra/>)
+
+## Focus on the Use Case, Not the Plumbing
+
+W3villa built W3Grads ([w3grads.com](http://w3grads.com)), an AI-powered mock interview platform for universities and training institutes, using Twenty as its operational backbone.
+
+The key decision was not to build everything from scratch. By using Twenty, W3villa could focus entirely on the logic specific to their use case, while relying on an existing, production-grade framework for the parts that would have taken months to rebuild: the data model, permissions, authentication, and workflow engine. That's the foundation they built on top of.
+
+The product logic they added was entirely their own. When a student registers via QR code at a campus event, the system takes over. A plan is assigned automatically. An interview session is generated and a link sent instantly. The AI conducts the interview, scores the candidate, and classifies the result. Faculty get a clear picture of where each student stands without reviewing a single session manually.
+
+Building and iterating on these workflows was also significantly faster using AI, allowing the team to move from idea to working automation without the usual back and forth.
+
+## A Platform Ready to Grow
+
+Because the foundation is solid, W3Grads is already architected for what comes next. A payment layer for future paid interview plans is built in. The platform is designed to scale across institutions nationwide without any structural changes.
+
+>
+
+*""Twenty gave us the flexibility to model the entire interview lifecycle as custom objects and workflows. We could build something genuinely complex without fighting the platform to do it.""* Piyush Khandelwal (<https://www.linkedin.com/in/piyush-khandelwal-5a9b9718/>) Director at W3villa Technologies, Partner
+
+## The Result
+
+Programs that previously required heavy manual coordination now run end-to-end without operational overhead. Institutions get a scalable, intelligent system. Students get better, faster preparation for the interviews that matter. And W3villa delivered a product that institutions can build a revenue model around.
+
+Zero manual work. Full automation. Built entirely on Twenty.
+
+
+---
+
+# Partner page
+
+W3 villa logo + description in the google doc attached
+"
+379153ba-c318-4ab1-91a0-bc01e123405c,Flycoder partner quote,Approved,Partner quote,,Joseph Chiang,2025-09-01,,1,partner quote,"# partner quote
+
+*""My client didn't want to learn someone else's system. With Twenty, I could build exactly around how they already worked and just make it smoother. That's a very different conversation to have with a customer.""* Joseph Chiang, CRM Engineer
+
+### [Flycoder](https://linkedin.com/in/josephj6802/)
+
+Full-stack development services from concept to deployment, including cloud infrastructure and automated workflows
+
+Expert in web development, Android mobile app development, system integrations, and CRM solutions
+"
+3870690a-fd83-4fa0-92e3-ffd5b487da35,Otiima case study,Under customer/partner review,Customer quote | Case study,OTIIMA,,,https://app.fireflies.ai/view/Hugo-Santos-Stephanie-Joly::01KKBPJ0FF5DFMSGXFF2SB5VPQ?channelSource=all,1,Case Study - production grade quality angle,"# Case Study - production grade quality angle
+
+**production-grade quality**: the story is about a company that needed a flexible, customizable data model as a foundation, and Twenty delivered that where their ERP and the alternatives couldn't.
+
+# When Salesforce Feels Like a Room You Won't Use
+
+OTIIMA is a Portuguese manufacturer of award-winning minimalist window systems, sold and installed across the globe. Their CRM was embedded in their Sage X3 ERP, and it wasn't giving them the data model they needed. Custom fields were limited, the system couldn't reflect how their business actually tracked leads, clients, partners, and projects, and the API endpoints they needed to extract data and plug it into Power BI weren't available. They evaluated Salesforce as the obvious alternative, but the price tag and feature bloat went well beyond what they needed, without solving the core problem.
+
+>
+
+*""With Salesforce, we would have ended up with visual junk in front of our team. We decided to go with Twenty because we have the liberty to build exactly what we actually need.""* Hugo Santos, Head of Systems, OTIIMA
+
+## A Data Model Built Around Construction Projects, Not Generic Sales
+
+The key decision was shaping Twenty to match how OTIIMA actually works, rather than bending their process to fit a standard CRM pipeline.
+
+Leads at OTIIMA are not people. They are projects, often identified before there is even a contact name attached. A lead becomes an opportunity only when there is a real chance of closing and a budget to work with. The data model in Twenty was built to reflect exactly that distinction.
+
+The team also needed to model the full network of entities around each project: the client, the commercial partner, the architect, the constructor, the consultant. Each can play different roles across different opportunities, sometimes more than one role on the same project. Twenty's flexible object model gave OTIIMA the structure to capture that complexity without compromise.
+
+When the team was onboarded, adoption was smooth. The data was already there, Outlook was connected, and the interface was clean enough that the commercial team actually enjoyed using it.
+
+## Simplicity for the Users, Flexibility for the Builder
+
+**What the sales team values most in Twenty is its simple interface**. Early on, leadership pushed for more fields and more data capture. The team pushed back. Fields got removed. The lesson was the same one Twenty is built around: a CRM that sellers actually use beats one that captures everything and gets ignored.
+
+**What Hugo values as the person building and maintaining the system is the opposite end of that: the ability to go as deep as needed.** Custom objects, API access, webhook-driven automations, business intelligence fed from Twenty's data. None of it required workarounds.
+
+## What Is Next
+
+OTIIMA is now focused on stabilizing their setup before the next phase of development. The goal for 2026 is to build out the automation layer to give more time to the commercial team to sell rather than fill in fields. The architecture is in place. The next step is making it run on its own.
+"
+493a051e-50f1-42fc-ace2-707c1dff0b95,Marketing Automate Case Study for multi-venue event company,,,,marketingautomate.pro,,https://marketingautomate.pro/projects/spreadsheets-to-a-twenty-crm-a-multi-venue-case-study,1,Context,"# Context
+
+It is published on their own website, we would need to ask them if we want to use it one day
+
+Note: this ""sells"" Twenty as the back end of their solution, hence why I did not push for this among our first case studies
+"
+4a343ab9-be84-4de2-997a-7e01709d7409,Flycoder case study - control without drag,Approved,Case study,,Joseph Chiang,2025-09-01,,1,Case study - Control without drag,"# Case study - Control without drag
+
+Current version online
+
+<https://twenty.com/case-studies/act-immi-story>
+
+New version to update
+
+# Burned by Vendor Lock-in, AC&T Built a CRM They Actually Own
+
+AC&T Education Migration (<https://www.actimmi.com/?lang=en>) is an education agency based in Australia. They help international students with their applications to education providers and to get their visas. They had been using their previous CRM until the vendor decided to shut down their system. They were left with nothing but a CSV export.
+
+It was a wake-up call. Whatever came next had to be something they could own.
+
+>
+
+*""They didn't want to learn someone else's system. They wanted to keep working the way they already did and make it smoother.""* Joseph Chiang, CRM Engineer, AC&T Education Migration
+
+## No More Renting Someone Else's Structure
+
+They started looking for replacements: Salesforce, Zoho, Pipedrive and SuiteCRM. Each one came with the same tradeoffs: too expensive, too rigid, or too generic. More importantly, none of them solved the underlying problem. They were still renting a structure they didn't control.
+
+Flycoder, a full-stack development partner specializing in web, mobile, and CRM solutions, stepped in to help. Together they set up Twenty as a self-hosted instance, shaped entirely around how AC&T actually operates.
+
+The data model was built around students, not around a generic contact-and-deal pipeline. Statuses update automatically: a workflow runs every night to keep enrollment records current without anyone having to touch them. Automated email reminders handle important dates. Adding a new record takes under a minute.
+
+The result was a system that fit the way AC&T already worked, rather than one they had to adapt to.
+
+## Control Without the Overhead
+
+The self-hosted setup means AC&T carries no vendor risk. There is no pricing model that can change, no platform that can disappear, no forced migration. The system is theirs.
+
+And because everything is built on Twenty's open foundation, Flycoder could wire up exactly the logic AC&T needed without working around the platform to do it.
+
+## The Result
+
+CRM costs dropped by more than 90%. The manual overhead that came with their old system is gone. And for the first time, AC&T has a CRM they will never lose again.
+
+They didn't just replace a tool. They took back ownership of how their business runs.
+"
+64acfb97-7af3-43ea-8f6c-ca028eea6319,Wintactix partner quote,Approved,Customer quote | Partner quote,,Bertrams Lukstins,2026-03-13,https://app.fireflies.ai/view/Bertrams-Lukstins-Stephanie-Joly::01KJYXY9S7FS1YR5QCPFFXASH7,1,Partner quote,"# Partner quote
+
+*""The flexibility is just amazing. Literally, there's nothing you cannot do. You can create objects, access everything through the API, pull notes and send them to the portal. Try doing that in HubSpot. No way. It's the true ability to build exactly what's actually needed.""* Bertrams, Founder, Wintactix
+"
+7295833a-12ec-426e-96a5-11e4e732edd1,Elevate Consulting quotes,Approved,Customer quote,Elevate Consulting Inc.,,2026-03-26,https://app.fireflies.ai/view/Justin-Beadle-from-Elevate-Consulting-Stephanie-Joly::01KKEK8VGD9P5SJNJG1VWVVRXB,3,1st quote | 2nd quote | 3rd quote,"# 1st quote
+
+""Twenty is awesome. The product, the support, everything. Thank you so much.""
+
+
+---
+
+# 2nd quote
+
+ *""It is just such a nicer experience than dealing with a Salesforce or a HubSpot. My mission has been to get every tool API-accessible, so everything talks to each other. Twenty made that possible in a way older CRM platforms simply do not.""* Justin Beadle, Director of Digital and Information, Elevate Consulting
+
+
+---
+
+# 3rd quote
+
+*""Because Twenty's API is fully open, I could connect it to every other tool in our stack. When a proposal is won, what used to take four people manually setting things up across four different tools now happens in a single click. That is the kind of time saving that only becomes possible when everything is connected.""* Justin Beadle, Director of Digital and Information, Elevate Consulting
+"
+76fe7d16-7bd3-44ee-9c5c-b1104994bb53,NetZero Customer quote - iterate at AI speed,Approved,Customer quote,Olivier Reinaud,,2026-03-22,,1,iterate at AI speed,"# iterate at AI speed
+
+> *""The flexibility is really what made the difference. Our needs evolve very fast. I discover a new need and in two clicks I can address it. That is a real advantage when you are moving quickly.""* Olivier Reinaud, co-founder of NetZero
+"
+7b1442fa-98cc-456d-a1d7-5b04fae94717,Alternative Partners - Partner Quote,Approved,Partner quote,Alternative Partners,Benjamin Reynolds,2026-03-16,,1,Partner Quote,"# Partner Quote
+
+# Partner Quote (for partner page)
+
+>
+
+*""Twenty gives you the kind of flexibility that actually changes what you can offer your clients. The dev experience is clean, the APIs are open, and when something needs to be customized, you can just do it. There's no fighting the platform.""* Benjamin Reynolds, Principal and Founder, Alternative Partners
+"
+94a13d7e-7901-48fb-a127-6ad2eca35add,W3 Villa customer quote - solid foundations,Approved,Customer quote,w3villa.com,Ishank Gupta,2026-03-09,https://docs.google.com/document/d/1buCqlLL06PWHS6vB_Hls__LiQyE05k-0OGqwTY069F4/edit?tab=t.0#heading=h.50cwfancnegg,1,Customer quote,"# Customer quote
+
+*""We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind.""* Amrendra Pratap Singh, VP of Engineering at W3villa Technologies, (<https://www.linkedin.com/in/iamamrendra/>)
+"
+9e40e8fe-811f-4d8c-bfc5-03c04fa29238,Elevate Consulting case study,Approved,Case study,Elevate Consulting Inc.,,2026-03-26,https://app.fireflies.ai/view/Justin-Beadle-from-Elevate-Consulting-Stephanie-Joly::01KKEK8VGD9P5SJNJG1VWVVRXB,2,Case study - control without drag angle - VALIDATED  | Case study - control without drag angle V1,"# Case study - control without drag angle - VALIDATED
+
+**Twenty as the API Backbone of a Go-to-Market Stack**
+
+Elevate Consulting is a management consultancy based in Canada. When Justin Beadle, Director of Digital and Information joined, the company ran entirely on Word documents, Excel spreadsheets, sticky notes, emails, and reliance on people. No CRM, no API-accessible tools, a patchwork to create a single source of truth. 
+
+The CEO had resisted bringing in a CRM for years. The business development team had no experience using one, and the licensing costs of available and well-known CRMs like Salesforce or HubSpot were hard to justify without any guarantee of adoption: CRMs are only as good as the maintenance of the data contained within them.
+
+In June 2025, Justin got informed of Twenty V1 being released. Within two or three days, the CEO asked him to look into setting up a CRM. Why the sudden shift? It was the potential of what could be built on top of fully open APIs. The timing was perfect. 
+
+ *""It is just such a nicer experience than dealing with a Salesforce or a HubSpot. My mission has been to get every tool API-accessible, so everything talks to each other. Twenty made that possible in a way older CRM platforms simply do not.""* Justin Beadle, Director of Digital and Information, Elevate Consulting 
+
+**One API to Rule Them All**
+
+Justin's broader mission at Elevate has been to move the company off static documents and onto tools with API access. By the end of 2025, that was done: time billing, resource planning, Microsoft Teams, and project management all accessible via API, with Twenty at the center holding client and opportunity data. This was a significant shift to team members using the available information strategically. 
+
+This opened the door to something more powerful. Justin built a custom front end that pulls live data from all those systems into a single view, tailored to each role in the company. When a proposal is won, what used to require four separate people manually setting up instances across four different tools now happens in a single click, drawing on data collected in Twenty across the whole opportunity lifecycle. Again, another shift to higher value add work for their clients. 
+
+Twenty is not just where the CRM data lives. It is the API backbone that makes the rest of the stack possible.
+
+*""Because Twenty's API is fully open, I could connect it to every other tool in our stack. When a proposal is won, what used to take four people manually setting things up across four different tools now happens in a single click. That is the kind of time saving that only becomes possible when everything is connected.""* Justin Beadle, Director of Digital and Information, Elevate Consulting
+
+ 
+
+**Workflows That Actually Get Used**
+
+The business development team finally had the CRM they had been asking for. Adoption came naturally: their data was already there when they logged in.
+
+Justin built workflows to handle notifications across the team, alerting the right people in Teams when a prospect becomes a lead or when project milestones are reached. Forms in Twenty let the business development team log activity without leaving the tool. The impact is real for this organization – the tool has been adaptable to all levels of the organization right from managing at an opportunity at a client level to managing executive level decisions. 
+
+The flexibility to wire all of this together, without outside help and without fighting the platform, is what made it possible for a single person to stand up and maintain a connected stack across an entire consultancy.
+
+ 
+
+**What Is Next**
+
+Elevate's CEO was so impressed with Twenty he started recommending it to clients before the internal setup was even complete. The team is now exploring bringing Twenty to client projects as part of their consulting practice, including as the backend for custom-built products tailored to specific operational needs.
+
+For a firm that once ran on sticky notes, this is more than an upgrade, it is a complete transformation.
+
+
+---
+
+# Case study - control without drag angle V1
+
+# Twenty as the API Backbone of a Go-to-Market Stack
+
+Elevate Consulting is a management consultancy based in Canada. When Justin Beadle joined as Director of Digital and Information, the company ran entirely on Word docs, Excel spreadsheets, sticky notes, and emails. No CRM, no API-accessible tools, no single source of truth.
+
+The CEO had resisted bringing in a CRM for years. The business development team had no experience using one, and the licensing costs of Salesforce or HubSpot were hard to justify without any guarantee of adoption.
+
+In June 2025, Justin got informed of Twenty V1 being released. Within two or three days, the CEO asked him to look into setting up a CRM. The timing was perfect. What sealed it was the potential of what could be built on top of fully open APIs.
+
+>
+
+*""It is just such a nicer experience than dealing with a Salesforce or a HubSpot. My mission has been to get every tool API-accessible so everything talks to each other. Twenty made that possible in a way older CRM platforms simply do not.""* Justin Beadle, Director of Digital and Information, Elevate Consulting
+
+## One API to Rule Them All
+
+Justin's broader mission at Elevate has been to move the company off static documents and onto tools with API access. By the end of 2025, that was done: time billing, resource planning, Microsoft Teams, and project management all accessible via API, with Twenty at the center holding client and opportunity data.
+
+That opened the door to something more powerful. Justin built a custom front end that pulls live data from all of those systems into a single view, tailored to each role in the company. When a proposal is won, what used to require four separate people manually setting up instances across four different tools now happens in a single click, drawing on data collected in Twenty across the whole opportunity lifecycle.
+
+Twenty is not just where the CRM data lives. It is the API backbone that makes the rest of the stack possible.
+
+>
+
+*""Because Twenty's API is fully open, I could connect it to every other tool in our stack. When a proposal is won, what used to take four people manually setting things up across four different tools now happens in a single click. That is the kind of time saving that only becomes possible when everything is connected.""* Justin Beadle, Director of Digital and Information, Elevate Consulting
+
+## Workflows That Actually Get Used
+
+The business development team finally had the CRM they had been asking for. Adoption came naturally: their data was already there when they logged in.
+
+Justin built workflows to handle notifications across the team, alerting the right people in Teams when a prospect becomes a lead or when project milestones are reached. Forms in Twenty let the business development team log activity without leaving the tool.
+
+The flexibility to wire all of this together, without outside help and without fighting the platform, is what made it possible for a single person to stand up and maintain a connected stack across an entire consultancy.
+
+## What Is Next
+
+Elevate's boss was so impressed with Twenty that he started recommending it to clients before the internal setup was even complete. The team is now exploring bringing Twenty to client projects as part of their consulting practice, including as the backend for custom-built products tailored to specific operational needs.
+
+For a firm that started with sticky notes, that is a significant shift.
+"
+a2e20d4d-d5af-4266-a040-538d9134aa5b,NetZero customer quote - general,Approved,Customer quote,Olivier Reinaud,,2026-03-11,,1,NetZero - Customer Quote,"# NetZero - Customer Quote
+
+""Twenty delivers on what CRMs should have always been: fairly priced software with a fully modular and customizable model, a clean and modern UI, granular permissions, automations, enterprise features… A compelling solution with high potential to rightfully disrupt the CRM market!"" Olivier Reinaud Co-founder & Managing Director at NetZero
+"
+a6c37b8e-3ba0-4a2e-afe9-d2dcaabbb4f9,ANCT,Under customer/partner review,Case study | Logo,L'immersion facilitée,,,https://app.fireflies.ai/view/Emmanuel-St-phanie::01KKVGWRQCGE8F8FPNGS2CA8H2,2,ANCT case study - FR version | ANCT case study - English version,"# ANCT case study - FR version
+
+# Une agence gouvernementale française a choisi Twenty pour conserver sa souveraineté numérique
+
+L'ANCT est une agence gouvernementale française. En son sein, l'Incubateur des Territoires conçoit et déploie des outils numériques pour les petites communes de France, des communes de moins de 3 500 habitants qui manquent souvent de budget et de ressources pour gérer leur propre infrastructure numérique. L'incubateur opère une dizaine de produits numériques distincts, chacun répondant à un besoin différent, déployés auprès de milliers de collectivités locales.
+
+Lorsque l'équipe a commencé à chercher un CRM pour structurer ses opérations commerciales, le choix ne portait pas uniquement sur les fonctionnalités ou le prix. Il s'agissait d'une question de principes.
+
+> *""Nous prônons l'open source et la souveraineté des données auprès des communes que nous accompagnons. Utiliser nous-mêmes un CRM qui ne respecte pas ces standards n'était tout simplement pas envisageable.""*\
+> Emmanuel Chaffraix, Incubateur des Territoires, ANCT
+
+***
+
+## Remplacer des outils qui ne suffisaient plus
+
+L'équipe utilisait une combinaison de Pipedrive, Brevo et Grist, un outil souverain de type tableur avancé. Au fur et à mesure que plusieurs équipes produit ont commencé à travailler en parallèle vers les mêmes interlocuteurs municipaux, la fragmentation est devenue un problème. Ces outils n'étaient ni souverains, ni open source, ni suffisamment flexibles pour soutenir les particularités de leur organisation.
+
+Twenty est alors apparue comme la solution adaptée : open source, auto-hébergeable, et suffisamment flexible pour être configurée selon leurs besoins spécifiques.
+
+***
+
+## Un seul CRM, dix produits, 36 000 communes
+
+Ce qui rend le déploiement de l'ANCT véritablement unique, c'est son échelle et sa complexité. L'incubateur pilote le développement commercial de dix produits numériques distincts, chacun avec sa propre équipe, mais tous en relation avec les mêmes interlocuteurs : maires et adjoints de petites communes françaises.
+
+Twenty leur a permis de centraliser tout cela. Plutôt que chaque équipe produit gère ses contacts de manière isolée, elles opèrent désormais depuis un modèle de données partagé, avec une source de vérité unique pour chaque commune de France.
+
+Les 36 000 communes françaises sont synchronisées dans Twenty, mises à jour quasi quotidiennement depuis le référentiel national. Une équipe cherchant toutes les communes d'un département donné peut les trouver instantanément. Ce n'était tout simplement pas possible auparavant.
+
+Au fur et à mesure que la mutualisation progresse, l'objectif est que les dix équipes produit partagent la même instance CRM, chacune avec le niveau d'accès approprié aux données dont elle a besoin, sans interférer avec les autres.
+
+***
+
+## Auto-hébergé, souverain, et maître de ses données
+
+L'ANCT opère Twenty sur sa propre infrastructure. Les données restent en France, sous leur contrôle, pleinement alignées avec les standards open source et de souveraineté qu'ils appliquent à chaque produit qu'ils recommandent aux communes.
+
+La flexibilité pour faire évoluer le modèle de données au fil des besoins a été déterminante. Après une première tentative de reproduction à l'identique de leur ancienne configuration, trop complexe, ils sont repartis d'une base minimale, en ajoutant de la structure progressivement. C'est cette approche qui a permis l'adoption.
+
+Pour une agence qui construit des outils numériques souverains pour les autres, utiliser un CRM qui fonctionne de la même manière était le seul choix cohérent.
+
+
+---
+
+# ANCT case study - English version
+
+# When Data Sovereignty Is Not Optional: How a French Government Agency Chose Twenty
+
+ANCT is a French government agency. Within it, the Incubateur des Territoires builds and deploys digital tools for small municipalities across France, communes of fewer than 3,500 inhabitants that often lack the budget and resources to manage their own digital infrastructure. The incubateur runs around ten distinct digital products, each serving a different need, deployed across thousands of local governments.
+
+When the team started looking for a CRM to support their business development operations, the choice was not just about features or price. It was about principles.
+
+> *""We promote open source and data sovereignty to the municipalities we serve. Using a CRM that does not meet those standards ourselves was simply not an option.""*\
+> Emmanuel Chaffraix, Incubateur des Territoires, ANCT
+
+***
+
+## Replacing Tools That No Longer Fit
+
+The team had been using a combination of Pipedrive, Brevo, and Grist, a sovereign spreadsheet-like tool, to manage their operations. As their go-to-market grew and their teams started working across multiple products toward the same municipal contacts, the fragmentation became a problem. The tools were not sovereign, not open source, and not flexible enough to handle the complexity of what they were building.
+
+Twenty came out of a structured evaluation as the right fit: open source, self-hostable, and flexible enough to be shaped around their specific needs.
+
+***
+
+## One CRM, Ten Products, 36,000 Communes
+
+What makes the ANCT setup genuinely distinctive is its scale and complexity. The incubateur manages business development across ten separate digital products, each with its own team, but all ultimately talking to the same interlocutors: mayors and deputy mayors of small French communes.
+
+Twenty gave them the ability to bring all of that under one roof. Rather than each product team managing its own contacts in isolation, they can now operate from a shared data model, with a single source of truth for every municipality in France.
+
+All 36,000 French communes are synchronized in Twenty, updated on a near-daily basis from the national referential. A team looking for all communes in a given department with fewer than 3,000 inhabitants can find them instantly. That was simply not possible before.
+
+As their consolidation effort matures, the goal is for all ten product teams to share the same CRM instance, each with the right level of access to the data they need, without stepping on each other.
+
+***
+
+## Self-Hosted, Sovereign, and In Control
+
+ANCT runs Twenty on their own infrastructure. The data stays in France, under their control, fully aligned with the open source and sovereignty standards they apply to every product they recommend to municipalities.
+
+The flexibility to customize the data model as their needs evolve has been key. They started with a minimal field set after an early attempt at replicating their old setup field-for-field proved too complex. Iterating from a clean base, adding structure progressively, is what made adoption work.
+
+For an agency that builds lean, sovereign digital tools for others, using a CRM that works the same way is not a nice-to-have. It is the only coherent choice.
+"
+c10e8f11-eefd-438d-9579-d20d0acb820e,James - App Partner quote,Approved,Partner quote,,James Bryant,2026-03-09,,1,Partner quote,"# Partner quote
+
+""Twenty Apps let me package everything a nonprofit needs into a ready-to-deploy solution: the data model, the workflows, the permissions, the page layouts. I'm not starting from scratch for every client. I'm building a vertical product, and Twenty is the infrastructure underneath it.""
+"
+ccc08a2d-2fb0-4d65-b747-864c9d0135e8,Alternative Partners quote - iterate at AI speed,Approved,Case study | Logo,Alternative Partners,Benjamin Reynolds,2026-03-16,,1,Case study - iterate at AI Speed,"# Case study - iterate at AI Speed
+
+# Case Study: From Salesforce to Self-Hosted Twenty, Powered by AI
+
+Alternative Partners is a consulting firm that made the move from Salesforce to a self-hosted Twenty instance. The migration was led by Benjamin Reynolds, who originally became a Twenty expert by implementing Twenty for one of our first cloud customers.
+
+His approach was unconventional by most standards. Rather than mapping fields manually, scripting transforms, and validating data step by step, he handed the job to agentic AI tools with a simple brief: here is where the data currently lives, here is the GitHub repo for the target platform, here is the Railway deployment. Start, and only come back if something breaks beyond a 70% confidence fix.
+
+It worked.
+
+This is what AI-assisted iteration looks like in practice. Not AI as a feature, but as an active part of the implementation workflow, compressing what would typically be weeks of migration work into something a single person can oversee without being bottlenecked by it.
+
+The self-hosted setup also means Alternative Partners owns the full stack. No vendor access to their data, no dependency on a SaaS pricing model, full control over how the system evolves. That is the other side of the story: the migration was fast because of AI, and the result is durable because of open source.
+"
+fc67fb0b-7d8a-4a9c-88e2-668d4184d46f,Kunai case study,Under customer/partner review,Logo | Customer quote | Case study,Ruan Pethiyagoda,,,,1,"Case study ""control without drag” angle","# Case study ""control without drag” angle
+
+# Kunai Left Salesforce and Built the CRM Their Business Actually Needed
+
+Kunai is a US-based tech consulting agency working with major financial institutions. Internally though, their own systems had gotten out of hand.
+
+At some point, like many companies in their space, they ended up on Salesforce. It did the job, but over time, the cost and friction started to outweigh the benefits. Customizing anything took too long [PLACEHOLDER: confirm timing with POC]. Integrations were clunky. Every renewal was a reminder they were paying for a lot they didn't use.
+
+They didn't need more features. They needed something they could shape to fit how they actually worked, without the overhead of a platform that wasn't built for them.
+
+>
+
+*""We weren't looking for more features. We wanted something leaner that we could actually understand, shape and quickly iterate on. And put an end to those crazy prices.""* Ruan, Chief Strategy Officer, Kunai
+
+So they switched to Twenty in 2024. The main reason was simple: they wanted to control their stack, not just rent it.
+
+They moved early, before some features were even live, and wired Twenty into the rest of their tooling themselves. Windmill for workflows. Airtable for dashboards. Snowflake for custom data syncs. Everything talking to everything else over API, on their terms.
+
+That's the thing about open source: there's no black box to work around. When something needed to change, they changed it. When they needed to connect a new tool, they connected it. The stack did exactly what they needed, and nothing more.
+
+The result: Iteration became simple. CRM costs dropped by more than 90%. And Kunai's system finally fits the way Kunai actually works.
+
+When Kunai was acquired by PwC in 2025, the question of tooling came back on the table. They chose to stay on Twenty. They didn't go back to Salesforce.
+"
