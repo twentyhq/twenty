@@ -1,7 +1,7 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isDefined } from 'twenty-shared/utils';
-import { type FeatureFlagKey } from '~/generated-metadata/graphql';
+import { type FeatureFlagKey } from '~/generated-admin/graphql';
 
 export const useFeatureFlagState = () => {
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(

@@ -12,6 +12,7 @@ import { Section } from 'twenty-ui/layout';
 
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { DATA_RESIDENCY_OPTIONS } from '@/settings/admin-panel/ai/constants/DataResidencyOptions';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { ADD_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/addAiProvider';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
@@ -40,6 +41,7 @@ type FormValues = {
 };
 
 export const SettingsAdminNewAiProvider = () => {
+  const apolloAdminClient = useApolloAdminClient();
   const navigate = useNavigate();
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
@@ -49,11 +51,13 @@ export const SettingsAdminNewAiProvider = () => {
   );
   const [isCustomMode, setIsCustomMode] = useState(false);
 
-  const [addAiProvider] = useMutation(ADD_AI_PROVIDER);
+  const [addAiProvider] = useMutation(ADD_AI_PROVIDER, {
+    client: apolloAdminClient,
+  });
 
   const { data: modelsDevData } = useQuery<{
     getModelsDevProviders: ModelsDevProvider[];
-  }>(GET_MODELS_DEV_PROVIDERS);
+  }>(GET_MODELS_DEV_PROVIDERS, { client: apolloAdminClient });
 
   const modelsDevProviders = useMemo(
     () => modelsDevData?.getModelsDevProviders ?? [],

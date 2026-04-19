@@ -1,3 +1,4 @@
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -21,7 +22,7 @@ import {
   type ApplicationRegistrationFragmentFragment,
   ApplicationRegistrationSourceType,
   FindAllApplicationRegistrationsDocument,
-} from '~/generated-metadata/graphql';
+} from '~/generated-admin/graphql';
 
 const StyledTableContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -32,10 +33,13 @@ const TABLE_GRID = '1fr 100px 100px 40px';
 const TABLE_GRID_MOBILE = '3fr 3fr 1fr 40px';
 
 export const SettingsAdminApps = () => {
+  const apolloAdminClient = useApolloAdminClient();
   const [searchQuery, setSearchQuery] = useState('');
   const { theme } = useContext(ThemeContext);
 
-  const { data } = useQuery(FindAllApplicationRegistrationsDocument);
+  const { data } = useQuery(FindAllApplicationRegistrationsDocument, {
+    client: apolloAdminClient,
+  });
 
   const registrations: ApplicationRegistrationFragmentFragment[] =
     data?.findAllApplicationRegistrations ?? [];

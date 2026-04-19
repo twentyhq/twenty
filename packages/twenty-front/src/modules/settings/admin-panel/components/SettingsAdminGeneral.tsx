@@ -1,4 +1,5 @@
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
 import { ADMIN_PANEL_RECENT_USERS } from '@/settings/admin-panel/graphql/queries/adminPanelRecentUsers';
 import { ADMIN_PANEL_TOP_WORKSPACES } from '@/settings/admin-panel/graphql/queries/adminPanelTopWorkspaces';
@@ -29,6 +30,7 @@ const StyledEmptyState = styled.div`
 `;
 
 export const SettingsAdminGeneral = () => {
+  const apolloAdminClient = useApolloAdminClient();
   const [userSearchTerm, setUserSearchTerm] = useState('');
   const [debouncedUserSearchTerm] = useDebounce(userSearchTerm, 300);
 
@@ -51,6 +53,7 @@ export const SettingsAdminGeneral = () => {
       workspaceId?: string | null;
     }[];
   }>(ADMIN_PANEL_RECENT_USERS, {
+    client: apolloAdminClient,
     variables: { searchTerm: debouncedUserSearchTerm },
     skip: !canImpersonate,
   });
@@ -63,6 +66,7 @@ export const SettingsAdminGeneral = () => {
       subdomain: string;
     }[];
   }>(ADMIN_PANEL_TOP_WORKSPACES, {
+    client: apolloAdminClient,
     variables: { searchTerm: debouncedWorkspaceSearchTerm },
     skip: !canImpersonate,
   });
