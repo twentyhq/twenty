@@ -31,14 +31,21 @@ export class ImapSmtpCaldavService {
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
+    const auth: any = {
+      user: params.username ?? handle,
+    };
+
+    if (params.authMethod === 'oauth2') {
+      auth.accessToken = params.accessToken;
+    } else {
+      auth.pass = params.password;
+    }
+
     const client = new ImapFlow({
       host: params.host,
       port: params.port,
       secure: params.secure ?? true,
-      auth: {
-        user: params.username ?? handle,
-        pass: params.password,
-      },
+      auth,
       logger: false,
       tls: {
         rejectUnauthorized: false,
@@ -93,13 +100,21 @@ export class ImapSmtpCaldavService {
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
+    const auth: any = {
+      user: params.username ?? handle,
+    };
+
+    if (params.authMethod === 'oauth2') {
+      auth.type = 'OAuth2';
+      auth.accessToken = params.accessToken;
+    } else {
+      auth.pass = params.password;
+    }
+
     const transport = createTransport({
       host: params.host,
       port: params.port,
-      auth: {
-        user: params.username ?? handle,
-        pass: params.password,
-      },
+      auth,
       tls: {
         rejectUnauthorized: false,
       },
