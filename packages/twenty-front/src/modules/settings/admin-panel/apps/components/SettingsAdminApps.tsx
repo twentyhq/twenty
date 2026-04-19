@@ -28,7 +28,7 @@ const StyledTableContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
 `;
 
-const TABLE_GRID = '1fr 80px 80px 40px';
+const TABLE_GRID = '1fr 100px 100px 40px';
 const TABLE_GRID_MOBILE = '3fr 3fr 1fr 40px';
 
 export const SettingsAdminApps = () => {
