@@ -274,6 +274,21 @@ export default defineObject({
       },
     },
     {
+      universalIdentifier: SCHEMA_IDS.launch.fields.launchSite,
+      type: FieldType.RELATION,
+      name: 'launchSite',
+      label: 'Launch site',
+      relationTargetFieldMetadataUniversalIdentifier:
+        SCHEMA_IDS.launchSite.fields.launches,
+      relationTargetObjectMetadataUniversalIdentifier:
+        SCHEMA_IDS.launchSite.object,
+      universalSettings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: OnDeleteAction.SET_NULL,
+        joinColumnName: 'launchSiteId',
+      },
+    },
+    {
       universalIdentifier: SCHEMA_IDS.launch.fields.payloads,
       type: FieldType.RELATION,
       name: 'payloads',
@@ -305,6 +320,13 @@ enum PayloadType {
   Probe = 'PROBE',
 }
 
+enum PayloadStatus {
+  Manifested = 'MANIFESTED',
+  Integrated = 'INTEGRATED',
+  Launched = 'LAUNCHED',
+  Lost = 'LOST',
+}
+
 export default defineObject({
   universalIdentifier: SCHEMA_IDS.payload.object,
   nameSingular: 'payload',
@@ -324,6 +346,18 @@ export default defineObject({
         { label: 'Crew Capsule', value: PayloadType.CrewCapsule, color: 'purple' },
         { label: 'Cargo', value: PayloadType.Cargo, color: 'orange' },
         { label: 'Probe', value: PayloadType.Probe, color: 'turquoise' },
+      ],
+    },
+    {
+      universalIdentifier: SCHEMA_IDS.payload.fields.status,
+      type: FieldType.SELECT,
+      name: 'status',
+      label: 'Status',
+      options: [
+        { label: 'Manifested', value: PayloadStatus.Manifested, color: 'sky' },
+        { label: 'Integrated', value: PayloadStatus.Integrated, color: 'blue' },
+        { label: 'Launched', value: PayloadStatus.Launched, color: 'green' },
+        { label: 'Lost', value: PayloadStatus.Lost, color: 'red' },
       ],
     },
     {

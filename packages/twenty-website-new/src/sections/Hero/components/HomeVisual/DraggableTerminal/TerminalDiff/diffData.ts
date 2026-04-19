@@ -2,6 +2,8 @@
 // expansion (Rocket, Launch, Payload, Customer, Launch site) that the chat
 // scaffolds — matches the file list in ChangesSummaryCard.
 
+import { CHANGESET_TOTALS } from '../conversation/rocketChangeset';
+
 export type DiffTokenKind =
   | 'text'
   | 'keyword'
@@ -58,25 +60,57 @@ export const DIFF_FILES: DiffFile[] = [
         kind: 'line',
         lineNumber: 2,
         change: 'added',
-        tokens: [tx('  rocket: { object: '), st("'733956fd-…'"), tx(', fields: { '), id('launches'), tx(': '), st("'5b877c2a-…'"), tx(' } },')],
+        tokens: [
+          tx('  rocket: { object: '),
+          st("'733956fd-…'"),
+          tx(', fields: { '),
+          id('launches'),
+          tx(': '),
+          st("'5b877c2a-…'"),
+          tx(' } },'),
+        ],
       },
       {
         kind: 'line',
         lineNumber: 3,
         change: 'added',
-        tokens: [tx('  launch: { object: '), st("'e7f1e750-…'"), tx(', fields: { '), id('rocket'), tx(': '), st("'42c9106f-…'"), tx(' } },')],
+        tokens: [
+          tx('  launch: { object: '),
+          st("'e7f1e750-…'"),
+          tx(', fields: { '),
+          id('rocket'),
+          tx(': '),
+          st("'42c9106f-…'"),
+          tx(' } },'),
+        ],
       },
       {
         kind: 'line',
         lineNumber: 4,
         change: 'added',
-        tokens: [tx('  payload: { object: '), st("'16ffcc45-…'"), tx(', fields: { '), id('customer'), tx(': '), st("'d84468aa-…'"), tx(' } },')],
+        tokens: [
+          tx('  payload: { object: '),
+          st("'16ffcc45-…'"),
+          tx(', fields: { '),
+          id('customer'),
+          tx(': '),
+          st("'d84468aa-…'"),
+          tx(' } },'),
+        ],
       },
       {
         kind: 'line',
         lineNumber: 5,
         change: 'added',
-        tokens: [tx('  launchSite: { object: '), st("'2f18d525-…'"), tx(', fields: { '), id('launches'), tx(': '), st("'b94b7f00-…'"), tx(' } },')],
+        tokens: [
+          tx('  launchSite: { object: '),
+          st("'2f18d525-…'"),
+          tx(', fields: { '),
+          id('launches'),
+          tx(': '),
+          st("'b94b7f00-…'"),
+          tx(' } },'),
+        ],
       },
       { kind: 'unmodified', count: 79 },
     ],
@@ -129,7 +163,13 @@ export const DIFF_FILES: DiffFile[] = [
         kind: 'line',
         lineNumber: 5,
         change: 'added',
-        tokens: [tx('  labelSingular: '), st("'Launch'"), tx(', labelPlural: '), st("'Launches'"), tx(',')],
+        tokens: [
+          tx('  labelSingular: '),
+          st("'Launch'"),
+          tx(', labelPlural: '),
+          st("'Launches'"),
+          tx(','),
+        ],
       },
       {
         kind: 'line',
@@ -147,25 +187,63 @@ export const DIFF_FILES: DiffFile[] = [
         kind: 'line',
         lineNumber: 8,
         change: 'added',
-        tokens: [tx('    { name: '), st("'missionCode'"), tx(', type: '), id('FieldType'), tx('.'), ty('TEXT'), tx(', isUnique: '), kw('true'), tx(' },')],
+        tokens: [
+          tx('    { name: '),
+          st("'missionCode'"),
+          tx(', type: '),
+          id('FieldType'),
+          tx('.'),
+          ty('TEXT'),
+          tx(', isUnique: '),
+          kw('true'),
+          tx(' },'),
+        ],
       },
       {
         kind: 'line',
         lineNumber: 9,
         change: 'added',
-        tokens: [tx('    { name: '), st("'status'"), tx(', type: '), id('FieldType'), tx('.'), ty('SELECT'), tx(', options: [ … ] },')],
+        tokens: [
+          tx('    { name: '),
+          st("'status'"),
+          tx(', type: '),
+          id('FieldType'),
+          tx('.'),
+          ty('SELECT'),
+          tx(', options: [ … ] },'),
+        ],
       },
       {
         kind: 'line',
         lineNumber: 10,
         change: 'added',
-        tokens: [tx('    { name: '), st("'plannedLaunchAt'"), tx(', type: '), id('FieldType'), tx('.'), ty('DATE_TIME'), tx(' },')],
+        tokens: [
+          tx('    { name: '),
+          st("'plannedLaunchAt'"),
+          tx(', type: '),
+          id('FieldType'),
+          tx('.'),
+          ty('DATE_TIME'),
+          tx(' },'),
+        ],
       },
       {
         kind: 'line',
         lineNumber: 11,
         change: 'added',
-        tokens: [tx('    { name: '), st("'rocket'"), tx(', type: '), id('FieldType'), tx('.'), ty('RELATION'), tx(', relationType: '), id('RelationType'), tx('.'), ty('MANY_TO_ONE'), tx(' },')],
+        tokens: [
+          tx('    { name: '),
+          st("'rocket'"),
+          tx(', type: '),
+          id('FieldType'),
+          tx('.'),
+          ty('RELATION'),
+          tx(', relationType: '),
+          id('RelationType'),
+          tx('.'),
+          ty('MANY_TO_ONE'),
+          tx(' },'),
+        ],
       },
       { kind: 'unmodified', count: 226 },
     ],
@@ -195,7 +273,15 @@ export const DIFF_FILES: DiffFile[] = [
         kind: 'line',
         lineNumber: 4,
         change: 'added',
-        tokens: [tx('    { name: '), st("'payloadType'"), tx(', type: '), id('FieldType'), tx('.'), ty('SELECT'), tx(' },')],
+        tokens: [
+          tx('    { name: '),
+          st("'payloadType'"),
+          tx(', type: '),
+          id('FieldType'),
+          tx('.'),
+          ty('SELECT'),
+          tx(' },'),
+        ],
       },
       {
         kind: 'line',
@@ -273,19 +359,35 @@ export const DIFF_FILES: DiffFile[] = [
         kind: 'line',
         lineNumber: 143,
         change: 'added',
-        tokens: [tx('      type: '), id('FieldType'), tx('.'), ty('RELATION'), tx(',')],
+        tokens: [
+          tx('      type: '),
+          id('FieldType'),
+          tx('.'),
+          ty('RELATION'),
+          tx(','),
+        ],
       },
       {
         kind: 'line',
         lineNumber: 144,
         change: 'added',
-        tokens: [tx('      relationType: '), id('RelationType'), tx('.'), ty('ONE_TO_MANY'), tx(',')],
+        tokens: [
+          tx('      relationType: '),
+          id('RelationType'),
+          tx('.'),
+          ty('ONE_TO_MANY'),
+          tx(','),
+        ],
       },
       {
         kind: 'line',
         lineNumber: 145,
         change: 'added',
-        tokens: [tx('      relationTargetObjectMetadataUniversalIdentifier: '), id('SCHEMA_IDS'), tx('.launch.object,')],
+        tokens: [
+          tx('      relationTargetObjectMetadataUniversalIdentifier: '),
+          id('SCHEMA_IDS'),
+          tx('.launch.object,'),
+        ],
       },
       {
         kind: 'line',
@@ -355,13 +457,23 @@ export const DIFF_FILES: DiffFile[] = [
         kind: 'line',
         lineNumber: 7,
         change: 'added',
-        tokens: [tx('    { fieldMetadataUniversalIdentifier: '), id('SCHEMA_IDS'), tx('.launch.fields.plannedLaunchAt,')],
+        tokens: [
+          tx('    { fieldMetadataUniversalIdentifier: '),
+          id('SCHEMA_IDS'),
+          tx('.launch.fields.plannedLaunchAt,'),
+        ],
       },
       {
         kind: 'line',
         lineNumber: 8,
         change: 'added',
-        tokens: [tx('      operand: '), id('ViewFilterOperand'), tx('.'), ty('IS_IN_FUTURE'), tx(' },')],
+        tokens: [
+          tx('      operand: '),
+          id('ViewFilterOperand'),
+          tx('.'),
+          ty('IS_IN_FUTURE'),
+          tx(' },'),
+        ],
       },
       {
         kind: 'line',
@@ -411,19 +523,49 @@ export const DIFF_FILES: DiffFile[] = [
         kind: 'line',
         lineNumber: 152,
         change: 'added',
-        tokens: [tx('  '), id('expectObject'), tx('(application.objects, '), id('SCHEMA_IDS'), tx('.launch.object, '), st("'launch'"), tx(', '), st("'Launch'"), tx(');')],
+        tokens: [
+          tx('  '),
+          id('expectObject'),
+          tx('(application.objects, '),
+          id('SCHEMA_IDS'),
+          tx('.launch.object, '),
+          st("'launch'"),
+          tx(', '),
+          st("'Launch'"),
+          tx(');'),
+        ],
       },
       {
         kind: 'line',
         lineNumber: 153,
         change: 'added',
-        tokens: [tx('  '), id('expectObject'), tx('(application.objects, '), id('SCHEMA_IDS'), tx('.payload.object, '), st("'payload'"), tx(', '), st("'Payload'"), tx(');')],
+        tokens: [
+          tx('  '),
+          id('expectObject'),
+          tx('(application.objects, '),
+          id('SCHEMA_IDS'),
+          tx('.payload.object, '),
+          st("'payload'"),
+          tx(', '),
+          st("'Payload'"),
+          tx(');'),
+        ],
       },
       {
         kind: 'line',
         lineNumber: 154,
         change: 'added',
-        tokens: [tx('  '), id('expectObject'), tx('(application.objects, '), id('SCHEMA_IDS'), tx('.launchSite.object, '), st("'launchSite'"), tx(', '), st("'Launch site'"), tx(');')],
+        tokens: [
+          tx('  '),
+          id('expectObject'),
+          tx('(application.objects, '),
+          id('SCHEMA_IDS'),
+          tx('.launchSite.object, '),
+          st("'launchSite'"),
+          tx(', '),
+          st("'Launch site'"),
+          tx(');'),
+        ],
       },
       {
         kind: 'line',
@@ -442,10 +584,7 @@ export const DIFF_FILES: DiffFile[] = [
   },
 ];
 
-export const DIFF_TOTALS = DIFF_FILES.reduce(
-  (acc, file) => ({
-    added: acc.added + file.added,
-    removed: acc.removed + file.removed,
-  }),
-  { added: 0, removed: 0 },
-);
+// The diff panel only ships a sampler of files; the top-bar pill summarizes
+// the full changeset, so derive totals from the canonical changeset to keep
+// the pill consistent with the ChangesSummaryCard header.
+export const DIFF_TOTALS = CHANGESET_TOTALS;

@@ -319,7 +319,16 @@ export const AssistantResponse = ({
     instantComplete ? 'done' : 'thinking',
   );
   const hasNotifiedChatFinishedRef = useRef(false);
+  const advanceTimeoutsRef = useRef<Set<number>>(new Set());
   const objectCreationHandler = instantComplete ? undefined : onObjectCreated;
+
+  useEffect(() => {
+    const timeouts = advanceTimeoutsRef.current;
+    return () => {
+      timeouts.forEach((id) => window.clearTimeout(id));
+      timeouts.clear();
+    };
+  }, []);
 
   // Segments are rebuilt whenever the caller's onObjectCreated identity
   // changes so each object chip's onReveal is wired to the latest handler.
@@ -383,7 +392,11 @@ export const AssistantResponse = ({
 
   const advanceTo = useCallback(
     (next: Stage, delayMs: number) => () => {
-      window.setTimeout(() => setStage(next), delayMs);
+      const id = window.setTimeout(() => {
+        advanceTimeoutsRef.current.delete(id);
+        setStage(next);
+      }, delayMs);
+      advanceTimeoutsRef.current.add(id);
     },
     [],
   );

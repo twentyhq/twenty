@@ -202,7 +202,7 @@ export const TerminalPromptBox = ({
 }: TerminalPromptBoxProps) => {
   const [easterEggIndex, setEasterEggIndex] = useState<number | null>(null);
   const [isWiggling, setIsWiggling] = useState(false);
-  const [clickCount, setClickCount] = useState(0);
+  const [, setClickCount] = useState(0);
 
   // Reset the easter egg whenever the conversation is reset so the next demo
   // viewer starts from the normal placeholder again.

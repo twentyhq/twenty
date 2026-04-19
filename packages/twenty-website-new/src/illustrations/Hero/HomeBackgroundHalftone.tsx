@@ -325,16 +325,12 @@ function getContainedImageRect({
   }
 
   const imageAspect = imageWidth / imageHeight;
-  const viewAspect = viewportWidth / viewportHeight;
 
-  let fittedWidth = viewportWidth;
-  let fittedHeight = viewportHeight;
-
-  if (imageAspect > viewAspect) {
-    fittedHeight = viewportWidth / imageAspect;
-  } else {
-    fittedWidth = viewportHeight * imageAspect;
-  }
+  // Width-fit: the shader always stretches the full horizontal span of the
+  // image to the viewport, then letterboxes / crops vertically. Mirror that
+  // here so footprint scaling stays consistent across aspect ratios.
+  const fittedWidth = viewportWidth;
+  const fittedHeight = viewportWidth / imageAspect;
 
   const scaledWidth = fittedWidth * zoom;
   const scaledHeight = fittedHeight * zoom;

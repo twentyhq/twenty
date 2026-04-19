@@ -333,8 +333,7 @@ export const TerminalTrafficLights = ({
     let rafId = 0;
 
     const tick = () => {
-      const floor =
-        window.innerHeight - TRAFFIC_LIGHT_DOT_SIZE - FLOOR_PADDING;
+      const floor = window.innerHeight - TRAFFIC_LIGHT_DOT_SIZE - FLOOR_PADDING;
       const rightWall = window.innerWidth - TRAFFIC_LIGHT_DOT_SIZE;
       physicsRef.current.forEach((p, i) => {
         const el = flyingRefs.current[i];
@@ -373,25 +372,42 @@ export const TerminalTrafficLights = ({
           p.vx = -p.vx * BOUNCE_DAMPING;
         } else if (p.x > rightWall) {
           p.x = rightWall;
-          p.vx = -p.vx * cfg.bounceDamping;
+          p.vx = -p.vx * BOUNCE_DAMPING;
         }
 
         el.style.transform = `translate(${p.x}px, ${p.y}px) rotate(${p.rotation}deg)`;
       });
+      const allSettled = physicsRef.current.every(
+        (p, i) => p.isResting || !flyingRefs.current[i],
+      );
+      if (allSettled) {
+        // Every dot has either come to rest or been caught/returned — suspend
+        // the rAF loop. A scroll impulse or a fresh escape re-flings dots and
+        // the tick is restarted from that effect.
+        rafId = 0;
+        return;
+      }
       rafId = requestAnimationFrame(tick);
     };
     rafId = requestAnimationFrame(tick);
 
     const handleScroll = () => {
-      physicsRef.current.forEach((p) => {
+      let anyDisturbed = false;
+      physicsRef.current.forEach((p, i) => {
+        if (!flyingRefs.current[i]) return;
         p.isResting = false;
+        flyingRefs.current[i]?.removeAttribute('data-resting');
         p.vy = -(
           SCROLL_IMPULSE_MIN +
           Math.random() * (SCROLL_IMPULSE_MAX - SCROLL_IMPULSE_MIN)
         );
         p.vx += (Math.random() - 0.5) * 2 * SCROLL_HORIZONTAL_RANGE;
         p.angularVelocity += (Math.random() - 0.5) * 8;
+        anyDisturbed = true;
       });
+      if (anyDisturbed && rafId === 0) {
+        rafId = requestAnimationFrame(tick);
+      }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
 
@@ -401,10 +417,9 @@ export const TerminalTrafficLights = ({
     };
   }, [isEscaping]);
 
-  const setOriginalRef =
-    (index: number) => (el: HTMLButtonElement | null) => {
-      originalRefs.current[index] = el;
-    };
+  const setOriginalRef = (index: number) => (el: HTMLButtonElement | null) => {
+    originalRefs.current[index] = el;
+  };
 
   const setFlyingRef = (index: number) => (el: HTMLButtonElement | null) => {
     flyingRefs.current[index] = el;
@@ -471,9 +486,7 @@ export const TerminalTrafficLights = ({
                       <FlyingDotBall
                         $background={background}
                         $backgroundActive={backgroundActive}
-                        data-returning={
-                          returningDots[index] ? 'true' : 'false'
-                        }
+                        data-returning={returningDots[index] ? 'true' : 'false'}
                         onAnimationEnd={() => handlePopAnimationEnd(index)}
                       >
                         <Glyph />

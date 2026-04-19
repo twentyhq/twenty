@@ -82,14 +82,14 @@ export const StreamingText = ({
   }, [instant, totalLength]);
 
   useEffect(() => {
-    if (instant) {
-      return undefined;
-    }
     if (revealed >= totalLength) {
       if (!completedRef.current) {
         completedRef.current = true;
         onCompleteRef.current?.();
       }
+      return undefined;
+    }
+    if (instant) {
       return undefined;
     }
     const id = window.setTimeout(() => {

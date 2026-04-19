@@ -52,6 +52,8 @@ type ResizeCorner = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
 type ResizeEdge = 'top' | 'right' | 'bottom' | 'left';
 
+type ResizeHandle = ResizeCorner | ResizeEdge;
+
 type DragState = {
   pointerId: number;
   originX: number;
@@ -68,21 +70,38 @@ type ResizeState = {
   startHeight: number;
   startLeft: number;
   startTop: number;
-  corner: ResizeCorner;
+  handle: ResizeHandle;
 };
 
 type TerminalPosition = { left: number; top: number };
 type TerminalSize = { width: number; height: number };
 
-// Maps a clicked edge to the corner whose resize math produces the same result
-// along that axis. Declared module-scope so the handler isn't rebuilt on every
-// render.
-const CORNER_BY_EDGE: Record<ResizeEdge, ResizeCorner> = {
-  top: 'top-left',
-  left: 'top-left',
-  right: 'bottom-right',
-  bottom: 'bottom-right',
-};
+const HORIZONTAL_HANDLES: ReadonlySet<ResizeHandle> = new Set([
+  'top-left',
+  'top-right',
+  'bottom-left',
+  'bottom-right',
+  'left',
+  'right',
+]);
+const VERTICAL_HANDLES: ReadonlySet<ResizeHandle> = new Set([
+  'top-left',
+  'top-right',
+  'bottom-left',
+  'bottom-right',
+  'top',
+  'bottom',
+]);
+const LEFT_HANDLES: ReadonlySet<ResizeHandle> = new Set([
+  'top-left',
+  'bottom-left',
+  'left',
+]);
+const TOP_HANDLES: ReadonlySet<ResizeHandle> = new Set([
+  'top-left',
+  'top-right',
+  'top',
+]);
 
 const Shell = styled.div<{
   $isDragging: boolean;
@@ -606,7 +625,7 @@ export const DraggableTerminal = ({
 
   // Resize handling.
   const startResize = useCallback(
-    (corner: ResizeCorner) => (event: ReactPointerEvent<HTMLDivElement>) => {
+    (handle: ResizeHandle) => (event: ReactPointerEvent<HTMLDivElement>) => {
       if (event.pointerType === 'mouse' && event.button !== 0) {
         return;
       }
@@ -632,18 +651,11 @@ export const DraggableTerminal = ({
         startHeight: size.height,
         startLeft: position.left,
         startTop: position.top,
-        corner,
+        handle,
       };
       setIsResizing(true);
     },
     [activate, position, size],
-  );
-
-  const startEdgeResize = useCallback(
-    (edge: ResizeEdge) => (event: ReactPointerEvent<HTMLDivElement>) => {
-      startResize(CORNER_BY_EDGE[edge])(event);
-    },
-    [startResize],
   );
 
   useEffect(() => {
@@ -665,53 +677,56 @@ export const DraggableTerminal = ({
       const deltaX = event.clientX - state.originX;
       const deltaY = event.clientY - state.originY;
 
-      const growsFromLeft =
-        state.corner === 'top-left' || state.corner === 'bottom-left';
-      const growsFromTop =
-        state.corner === 'top-left' || state.corner === 'top-right';
+      const affectsWidth = HORIZONTAL_HANDLES.has(state.handle);
+      const affectsHeight = VERTICAL_HANDLES.has(state.handle);
+      const growsFromLeft = LEFT_HANDLES.has(state.handle);
+      const growsFromTop = TOP_HANDLES.has(state.handle);
 
-      let nextWidth = growsFromLeft
-        ? state.startWidth - deltaX
-        : state.startWidth + deltaX;
-      let nextHeight = growsFromTop
-        ? state.startHeight - deltaY
-        : state.startHeight + deltaY;
-      let nextLeft = growsFromLeft ? state.startLeft + deltaX : state.startLeft;
-      let nextTop = growsFromTop ? state.startTop + deltaY : state.startTop;
+      const effectiveMinWidth = Math.min(
+        TERMINAL_MIN_WIDTH,
+        Math.max(parentRect.width - MIN_EDGE_GAP * 2, 0),
+      );
+      const effectiveMinHeight = Math.min(
+        TERMINAL_MIN_HEIGHT,
+        Math.max(parentRect.height - MIN_EDGE_GAP * 2, 0),
+      );
 
-      // Clamp the width/height against the viewport edges so the window can't
-      // escape the hero scene from any corner.
-      if (growsFromLeft) {
-        const minLeft = MIN_EDGE_GAP;
-        if (nextLeft < minLeft) {
-          nextWidth -= minLeft - nextLeft;
-          nextLeft = minLeft;
+      let nextWidth = state.startWidth;
+      let nextLeft = state.startLeft;
+      if (affectsWidth) {
+        if (growsFromLeft) {
+          const maxWidth = state.startWidth + state.startLeft - MIN_EDGE_GAP;
+          nextWidth = Math.min(
+            Math.max(state.startWidth - deltaX, effectiveMinWidth),
+            Math.max(maxWidth, effectiveMinWidth),
+          );
+          nextLeft = state.startLeft + state.startWidth - nextWidth;
+        } else {
+          const maxWidth = parentRect.width - state.startLeft - MIN_EDGE_GAP;
+          nextWidth = Math.min(
+            Math.max(state.startWidth + deltaX, effectiveMinWidth),
+            Math.max(maxWidth, effectiveMinWidth),
+          );
         }
-        if (nextWidth < TERMINAL_MIN_WIDTH) {
-          nextLeft -= TERMINAL_MIN_WIDTH - nextWidth;
-          nextWidth = TERMINAL_MIN_WIDTH;
-        }
-      } else {
-        const maxWidth = parentRect.width - state.startLeft - MIN_EDGE_GAP;
-        nextWidth = Math.min(Math.max(nextWidth, TERMINAL_MIN_WIDTH), maxWidth);
       }
 
-      if (growsFromTop) {
-        const minTop = MIN_EDGE_GAP;
-        if (nextTop < minTop) {
-          nextHeight -= minTop - nextTop;
-          nextTop = minTop;
+      let nextHeight = state.startHeight;
+      let nextTop = state.startTop;
+      if (affectsHeight) {
+        if (growsFromTop) {
+          const maxHeight = state.startHeight + state.startTop - MIN_EDGE_GAP;
+          nextHeight = Math.min(
+            Math.max(state.startHeight - deltaY, effectiveMinHeight),
+            Math.max(maxHeight, effectiveMinHeight),
+          );
+          nextTop = state.startTop + state.startHeight - nextHeight;
+        } else {
+          const maxHeight = parentRect.height - state.startTop - MIN_EDGE_GAP;
+          nextHeight = Math.min(
+            Math.max(state.startHeight + deltaY, effectiveMinHeight),
+            Math.max(maxHeight, effectiveMinHeight),
+          );
         }
-        if (nextHeight < TERMINAL_MIN_HEIGHT) {
-          nextTop -= TERMINAL_MIN_HEIGHT - nextHeight;
-          nextHeight = TERMINAL_MIN_HEIGHT;
-        }
-      } else {
-        const maxHeight = parentRect.height - state.startTop - MIN_EDGE_GAP;
-        nextHeight = Math.min(
-          Math.max(nextHeight, TERMINAL_MIN_HEIGHT),
-          maxHeight,
-        );
       }
 
       setSize({ width: nextWidth, height: nextHeight });
@@ -757,10 +772,10 @@ export const DraggableTerminal = ({
         zIndex,
       }}
     >
-      <ResizeEdgeTop onPointerDown={startEdgeResize('top')} />
-      <ResizeEdgeRight onPointerDown={startEdgeResize('right')} />
-      <ResizeEdgeBottom onPointerDown={startEdgeResize('bottom')} />
-      <ResizeEdgeLeft onPointerDown={startEdgeResize('left')} />
+      <ResizeEdgeTop onPointerDown={startResize('top')} />
+      <ResizeEdgeRight onPointerDown={startResize('right')} />
+      <ResizeEdgeBottom onPointerDown={startResize('bottom')} />
+      <ResizeEdgeLeft onPointerDown={startResize('left')} />
       <ResizeCornerTopLeft
         aria-hidden
         onPointerDown={startResize('top-left')}

@@ -39,13 +39,11 @@ type DragState = {
   startTop: number;
 };
 
-type ResizeCorner =
-  | 'top-left'
-  | 'top-right'
-  | 'bottom-left'
-  | 'bottom-right';
+type ResizeCorner = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
 type ResizeEdge = 'top' | 'right' | 'bottom' | 'left';
+
+type ResizeHandle = ResizeCorner | ResizeEdge;
 
 type ResizeState = {
   pointerId: number;
@@ -55,8 +53,35 @@ type ResizeState = {
   startHeight: number;
   startLeft: number;
   startTop: number;
-  corner: ResizeCorner;
+  handle: ResizeHandle;
 };
+
+const HORIZONTAL_HANDLES: ReadonlySet<ResizeHandle> = new Set([
+  'top-left',
+  'top-right',
+  'bottom-left',
+  'bottom-right',
+  'left',
+  'right',
+]);
+const VERTICAL_HANDLES: ReadonlySet<ResizeHandle> = new Set([
+  'top-left',
+  'top-right',
+  'bottom-left',
+  'bottom-right',
+  'top',
+  'bottom',
+]);
+const LEFT_HANDLES: ReadonlySet<ResizeHandle> = new Set([
+  'top-left',
+  'bottom-left',
+  'left',
+]);
+const TOP_HANDLES: ReadonlySet<ResizeHandle> = new Set([
+  'top-left',
+  'top-right',
+  'top',
+]);
 
 const Shell = styled.div<{
   $isResizing: boolean;
@@ -302,48 +327,33 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
   }, [clampPosition, isDragging, size]);
 
   const startResize = useCallback(
-    (corner: ResizeCorner) =>
-      (event: ReactPointerEvent<HTMLDivElement>) => {
-        if (event.pointerType === 'mouse' && event.button !== 0) {
-          return;
-        }
-        if (!position || !size) {
-          return;
-        }
+    (handle: ResizeHandle) => (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (event.pointerType === 'mouse' && event.button !== 0) {
+        return;
+      }
+      if (!position || !size) {
+        return;
+      }
 
-        event.preventDefault();
-        event.stopPropagation();
-        activate();
+      event.preventDefault();
+      event.stopPropagation();
+      activate();
 
-        const shell = shellRef.current;
-        shell?.setPointerCapture?.(event.pointerId);
-        resizeStateRef.current = {
-          pointerId: event.pointerId,
-          originX: event.clientX,
-          originY: event.clientY,
-          startWidth: size.width,
-          startHeight: size.height,
-          startLeft: position.left,
-          startTop: position.top,
-          corner,
-        };
-        setIsResizing(true);
-      },
+      const shell = shellRef.current;
+      shell?.setPointerCapture?.(event.pointerId);
+      resizeStateRef.current = {
+        pointerId: event.pointerId,
+        originX: event.clientX,
+        originY: event.clientY,
+        startWidth: size.width,
+        startHeight: size.height,
+        startLeft: position.left,
+        startTop: position.top,
+        handle,
+      };
+      setIsResizing(true);
+    },
     [activate, position, size],
-  );
-
-  const startEdgeResize = useCallback(
-    (edge: ResizeEdge) =>
-      (event: ReactPointerEvent<HTMLDivElement>) => {
-        const cornerByEdge: Record<ResizeEdge, ResizeCorner> = {
-          top: 'top-left',
-          left: 'top-left',
-          right: 'bottom-right',
-          bottom: 'bottom-right',
-        };
-        startResize(cornerByEdge[edge])(event);
-      },
-    [startResize],
   );
 
   useEffect(() => {
@@ -364,48 +374,60 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
       const deltaX = event.clientX - state.originX;
       const deltaY = event.clientY - state.originY;
 
-      const growsFromLeft =
-        state.corner === 'top-left' || state.corner === 'bottom-left';
-      const growsFromTop =
-        state.corner === 'top-left' || state.corner === 'top-right';
+      const affectsWidth = HORIZONTAL_HANDLES.has(state.handle);
+      const affectsHeight = VERTICAL_HANDLES.has(state.handle);
+      const growsFromLeft = LEFT_HANDLES.has(state.handle);
+      const growsFromTop = TOP_HANDLES.has(state.handle);
 
-      let nextWidth = growsFromLeft
-        ? state.startWidth - deltaX
-        : state.startWidth + deltaX;
-      let nextHeight = growsFromTop
-        ? state.startHeight - deltaY
-        : state.startHeight + deltaY;
-      let nextLeft = growsFromLeft ? state.startLeft + deltaX : state.startLeft;
-      let nextTop = growsFromTop ? state.startTop + deltaY : state.startTop;
+      // Mobile parents can be narrower than MIN_WIDTH; clamp the min against
+      // the parent so resize can't demand more room than exists.
+      const effectiveMinWidth = Math.min(
+        MIN_WIDTH,
+        Math.max(parentRect.width - MIN_EDGE_GAP * 2, 0),
+      );
+      const effectiveMinHeight = Math.min(
+        MIN_HEIGHT,
+        Math.max(parentRect.height - MIN_EDGE_GAP * 2, 0),
+      );
 
-      if (growsFromLeft) {
-        const minLeft = MIN_EDGE_GAP;
-        if (nextLeft < minLeft) {
-          nextWidth -= minLeft - nextLeft;
-          nextLeft = minLeft;
+      let nextWidth = state.startWidth;
+      let nextLeft = state.startLeft;
+      if (affectsWidth) {
+        if (growsFromLeft) {
+          // Left edge can't cross past MIN_EDGE_GAP, which caps width at
+          // startLeft + startWidth - MIN_EDGE_GAP.
+          const maxWidth = state.startWidth + state.startLeft - MIN_EDGE_GAP;
+          nextWidth = Math.min(
+            Math.max(state.startWidth - deltaX, effectiveMinWidth),
+            Math.max(maxWidth, effectiveMinWidth),
+          );
+          nextLeft = state.startLeft + state.startWidth - nextWidth;
+        } else {
+          const maxWidth = parentRect.width - state.startLeft - MIN_EDGE_GAP;
+          nextWidth = Math.min(
+            Math.max(state.startWidth + deltaX, effectiveMinWidth),
+            Math.max(maxWidth, effectiveMinWidth),
+          );
         }
-        if (nextWidth < MIN_WIDTH) {
-          nextLeft -= MIN_WIDTH - nextWidth;
-          nextWidth = MIN_WIDTH;
-        }
-      } else {
-        const maxWidth = parentRect.width - state.startLeft - MIN_EDGE_GAP;
-        nextWidth = Math.min(Math.max(nextWidth, MIN_WIDTH), maxWidth);
       }
 
-      if (growsFromTop) {
-        const minTop = MIN_EDGE_GAP;
-        if (nextTop < minTop) {
-          nextHeight -= minTop - nextTop;
-          nextTop = minTop;
+      let nextHeight = state.startHeight;
+      let nextTop = state.startTop;
+      if (affectsHeight) {
+        if (growsFromTop) {
+          const maxHeight = state.startHeight + state.startTop - MIN_EDGE_GAP;
+          nextHeight = Math.min(
+            Math.max(state.startHeight - deltaY, effectiveMinHeight),
+            Math.max(maxHeight, effectiveMinHeight),
+          );
+          nextTop = state.startTop + state.startHeight - nextHeight;
+        } else {
+          const maxHeight = parentRect.height - state.startTop - MIN_EDGE_GAP;
+          nextHeight = Math.min(
+            Math.max(state.startHeight + deltaY, effectiveMinHeight),
+            Math.max(maxHeight, effectiveMinHeight),
+          );
         }
-        if (nextHeight < MIN_HEIGHT) {
-          nextTop -= MIN_HEIGHT - nextHeight;
-          nextHeight = MIN_HEIGHT;
-        }
-      } else {
-        const maxHeight = parentRect.height - state.startTop - MIN_EDGE_GAP;
-        nextHeight = Math.min(Math.max(nextHeight, MIN_HEIGHT), maxHeight);
       }
 
       setSize({ width: nextWidth, height: nextHeight });
@@ -457,10 +479,10 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
         zIndex,
       }}
     >
-      <ResizeEdgeTop onPointerDown={startEdgeResize('top')} />
-      <ResizeEdgeRight onPointerDown={startEdgeResize('right')} />
-      <ResizeEdgeBottom onPointerDown={startEdgeResize('bottom')} />
-      <ResizeEdgeLeft onPointerDown={startEdgeResize('left')} />
+      <ResizeEdgeTop onPointerDown={startResize('top')} />
+      <ResizeEdgeRight onPointerDown={startResize('right')} />
+      <ResizeEdgeBottom onPointerDown={startResize('bottom')} />
+      <ResizeEdgeLeft onPointerDown={startResize('left')} />
       <ResizeCornerTopLeft
         aria-hidden
         onPointerDown={startResize('top-left')}
