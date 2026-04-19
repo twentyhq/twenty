@@ -2,8 +2,11 @@ export type ConnectionParameters = {
   host: string;
   port: number;
   username?: string;
-  password: string;
+  password?: string;
   secure?: boolean;
+  authMethod?: 'password' | 'oauth2';
+  accessToken?: string;
+  refreshToken?: string;
 };
 
 export type AccountType = 'IMAP' | 'SMTP' | 'CALDAV';
