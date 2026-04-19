@@ -38,11 +38,6 @@ const REGISTRATION_RATE_LIMIT_MAX =
   process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT ? 100 : 10;
 const REGISTRATION_RATE_LIMIT_WINDOW_MS = 3_600_000;
 
-// RFC 7592 read-back — reads are cheap but still worth bounding per-IP
-const REGISTRATION_READ_RATE_LIMIT_MAX =
-  process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT ? 1000 : 120;
-const REGISTRATION_READ_RATE_LIMIT_WINDOW_MS = 60_000;
-
 const ALLOWED_GRANT_TYPES = ['authorization_code', 'refresh_token'];
 const ALLOWED_RESPONSE_TYPES = ['code'];
 
@@ -188,17 +183,8 @@ export class OAuthRegistrationController {
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async readRegistration(
     @Param('clientId') clientId: string,
-    @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const rateLimitResult = await this.applyReadRateLimit(req);
-
-    if (rateLimitResult) {
-      res.status(429);
-
-      return rateLimitResult;
-    }
-
     const registration = await this.applicationRegistrationRepository.findOne({
       where: {
         oAuthClientId: clientId,
@@ -249,32 +235,6 @@ export class OAuthRegistrationController {
           error: 'rate_limit_exceeded',
           error_description:
             'Too many registration requests, please try again later',
-        };
-      }
-
-      throw error;
-    }
-  }
-
-  private async applyReadRateLimit(
-    req: Request,
-  ): Promise<{ error: string; error_description: string } | null> {
-    const rateLimitKey = `oauth-register-read:${req.ip}`;
-
-    try {
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        rateLimitKey,
-        1,
-        REGISTRATION_READ_RATE_LIMIT_MAX,
-        REGISTRATION_READ_RATE_LIMIT_WINDOW_MS,
-      );
-
-      return null;
-    } catch (error) {
-      if (error instanceof ThrottlerException) {
-        return {
-          error: 'rate_limit_exceeded',
-          error_description: 'Too many requests, please try again later',
         };
       }
 
