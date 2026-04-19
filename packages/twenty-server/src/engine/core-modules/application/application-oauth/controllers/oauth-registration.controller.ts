@@ -118,16 +118,27 @@ export class OAuthRegistrationController {
       }
     }
 
-    // Validate token_endpoint_auth_method — only 'none' for public clients
-    const tokenEndpointAuthMethod = body.token_endpoint_auth_method ?? 'none';
+    // Token endpoint auth method — dynamic registrations are always public
+    // clients (we never issue a client_secret via DCR, only via the admin
+    // workspace UI). Some clients (notably Claude.ai's custom-connector
+    // backend) send "client_secret_post" in the first DCR attempt expecting
+    // the server to downgrade it. Rejecting with 400 breaks their flow
+    // (anthropics/claude-code#5826 comment 58). Accept any advertised value
+    // and quietly register as "none".
+    const requestedTokenEndpointAuthMethod =
+      body.token_endpoint_auth_method ?? 'none';
+    const tokenEndpointAuthMethod = 'none';
 
-    if (tokenEndpointAuthMethod !== 'none') {
+    if (
+      requestedTokenEndpointAuthMethod !== 'none' &&
+      requestedTokenEndpointAuthMethod !== 'client_secret_post' &&
+      requestedTokenEndpointAuthMethod !== 'client_secret_basic'
+    ) {
       res.status(400);
 
       return {
         error: 'invalid_client_metadata',
-        error_description:
-          'Only token_endpoint_auth_method "none" is supported for dynamic registrations (public clients with PKCE)',
+        error_description: `Unsupported token_endpoint_auth_method: ${requestedTokenEndpointAuthMethod}`,
       };
     }
 
