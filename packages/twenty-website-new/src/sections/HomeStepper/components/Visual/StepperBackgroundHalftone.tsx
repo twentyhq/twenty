@@ -17,24 +17,25 @@ const HOVER_FADE_OUT = 7;
 
 const HALFTONE_SETTINGS = {
   animation: {
-    hoverHalftoneEnabled: false,
-    hoverHalftonePowerShift: 0.42,
-    hoverHalftoneRadius: 0.45,
+    hoverHalftoneEnabled: true,
+    hoverHalftonePowerShift: 0.62,
+    hoverHalftoneRadius: 0.6,
     hoverHalftoneWidthShift: -0.18,
-    hoverLightEnabled: true,
-    hoverLightIntensity: 0.35,
-    hoverLightRadius: 0.42,
+    hoverLightEnabled: false,
+    hoverLightIntensity: 0.12,
+    hoverLightRadius: 0.8,
     waveAmount: 2,
     waveEnabled: false,
     waveSpeed: 1,
   },
   halftone: {
-    dashColor: '#868686',
-    hoverDashColor: '#F5F5F5',
-    imageContrast: 1,
-    power: 0.5,
-    scale: 8,
-    width: 0.3,
+    dashColor: '#dddddd',
+    hoverDashColor: '#FFF',
+    imageContrast: 1.12,
+    minimumTone: 0.26,
+    power: 0.18,
+    scale: 12,
+    width: 0.72,
   },
 };
 
@@ -95,6 +96,7 @@ const halftoneFragmentShader = /* glsl */ `
   uniform float s_4;
   uniform vec3 dashColor;
   uniform vec3 hoverDashColor;
+  uniform float minimumTone;
   uniform float time;
   uniform float waveAmount;
   uniform float waveSpeed;
@@ -208,15 +210,17 @@ const halftoneFragmentShader = /* glsl */ `
     );
     float lightLift =
       hoverLightStrength * hoverLightMask * mix(0.78, 1.18, motionBias) * 0.22;
-    float bandRadius = clamp(
+    float tonalAverage = (
       (
         sceneSample.r +
         sceneSample.g +
         sceneSample.b +
         localPower * length(vec2(0.5))
       ) *
-      (1.0 / 3.0) +
-      lightLift,
+      (1.0 / 3.0)
+    ) + lightLift;
+    float bandRadius = clamp(
+      max(tonalAverage, minimumTone),
       0.0,
       1.0
     ) * 1.86 * 0.5;
@@ -394,6 +398,7 @@ async function mountHalftoneCanvas({
       logicalResolution: {
         value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
       },
+      minimumTone: { value: HALFTONE_SETTINGS.halftone.minimumTone },
       s_3: { value: HALFTONE_SETTINGS.halftone.power },
       s_4: { value: HALFTONE_SETTINGS.halftone.width },
       tScene: { value: sceneTarget.texture },

@@ -7,6 +7,7 @@ import {
 } from '@/app/partner/_constants/partner-application-modal';
 import { buttonBaseStyles } from '@/design-system/components/Button/BaseButton';
 import { ButtonShape } from '@/design-system/components/Button/ButtonShape';
+import { Body, Heading } from '@/design-system/components';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { IconChevronDown } from '@tabler/icons-react';
@@ -23,10 +24,7 @@ const Overlay = styled.div`
   display: flex;
   inset: 0;
   justify-content: center;
-  padding-bottom: ${theme.spacing(4)};
-  padding-left: ${theme.spacing(4)};
-  padding-right: ${theme.spacing(4)};
-  padding-top: ${theme.spacing(4)};
+  padding: ${theme.spacing(3)};
   position: fixed;
   z-index: 300;
 `;
@@ -41,18 +39,14 @@ const Panel = styled.div`
   max-height: 100%;
   max-width: 100%;
   overflow-y: auto;
-  padding-bottom: clamp(16px, 4vh, 40px);
-  padding-left: ${theme.spacing(4)};
-  padding-right: ${theme.spacing(4)};
-  padding-top: clamp(12px, 2vh, 16px);
+  padding-block: clamp(12px, 2vh, 24px);
+  padding-inline: ${theme.spacing(3)};
   position: relative;
   width: min(360px, 100%);
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    padding-bottom: clamp(16px, 4vh, 40px);
-    padding-left: ${theme.spacing(6)};
-    padding-right: ${theme.spacing(6)};
-    padding-top: clamp(16px, 4vh, 40px);
+    padding-block: clamp(12px, 2.5vh, 28px);
+    padding-inline: ${theme.spacing(4)};
     width: min(902px, 100%);
   }
 `;
@@ -63,37 +57,15 @@ const TitleBlock = styled.div`
   gap: clamp(8px, 2vh, 24px);
 `;
 
-const Title = styled.h2`
+const TitleHeadingWrapper = styled.div`
   color: ${theme.colors.secondary.text[100]};
-  font-family: ${theme.font.family.serif};
-  font-size: clamp(${theme.font.size(12)}, 8vw, ${theme.font.size(15)});
-  font-weight: ${theme.font.weight.light};
-  line-height: 1.12;
-  margin: 0;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    font-size: clamp(${theme.font.size(15)}, 4vw, ${theme.font.size(20)});
-    line-height: 1.05;
-  }
 `;
 
-const TitleAccent = styled.span`
-  display: block;
-  font-family: ${theme.font.family.sans};
-  font-weight: ${theme.font.weight.light};
-  letter-spacing: -0.04em;
-`;
-
-const Subtitle = styled.div`
+const SubtitleStack = styled.div`
   color: ${theme.colors.secondary.text[60]};
-  font-family: ${theme.font.family.sans};
-  font-size: ${theme.font.size(4)};
-  font-weight: ${theme.font.weight.regular};
-  line-height: ${theme.lineHeight(5.5)};
-
-  & p {
-    margin: 0;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 `;
 
 const Segments = styled.div`
@@ -107,22 +79,24 @@ const Segments = styled.div`
 `;
 
 const SegmentButton = styled.button`
+  align-items: center;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid ${theme.colors.secondary.border[10]};
   border-radius: ${theme.radius(2)};
   box-sizing: border-box;
   color: ${theme.colors.secondary.text[100]};
   cursor: pointer;
+  display: flex;
   flex: 1 1 0;
   font-family: ${theme.font.family.sans};
   font-size: ${theme.font.size(3.5)};
   font-weight: ${theme.font.weight.regular};
+  height: clamp(40px, 5.5vh, 56px);
+  justify-content: center;
   line-height: ${theme.lineHeight(3.5)};
   min-width: 0;
-  padding-bottom: ${theme.spacing(1.5)};
   padding-left: ${theme.spacing(2)};
   padding-right: ${theme.spacing(2)};
-  padding-top: ${theme.spacing(1.5)};
 
   &[data-active='true'] {
     background: ${theme.colors.primary.background[100]};
@@ -326,8 +300,8 @@ const TextArea = styled.textarea`
   }
 `;
 
-const Footnote = styled.p`
-  color: ${theme.colors.secondary.text[40]};
+const SubmitError = styled.p`
+  color: #ff9a9a;
   font-family: ${theme.font.family.sans};
   font-size: ${theme.font.size(3)};
   font-weight: ${theme.font.weight.regular};
@@ -339,6 +313,11 @@ const SubmitButton = styled.button`
   ${buttonBaseStyles}
   position: relative;
   width: 100%;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+  }
 `;
 
 const SubmitLabel = styled.span`
@@ -374,9 +353,12 @@ export function PartnerApplicationModal({
 }: PartnerApplicationModalProps) {
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [programId, setProgramId] = useState<PartnerProgramId>('technology');
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleOverlayPointerDown = useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
@@ -386,6 +368,19 @@ export function PartnerApplicationModal({
     },
     [onClose],
   );
+
+  useEffect(() => {
+    if (open) {
+      setSubmitError(null);
+      return;
+    }
+
+    formRef.current?.reset();
+    setProgramId('technology');
+    setDropdownOpen(false);
+    setSubmitError(null);
+    setIsSubmitting(false);
+  }, [open]);
 
   useEffect(() => {
     if (!open) {
@@ -427,10 +422,67 @@ export function PartnerApplicationModal({
   );
 
   const handleSubmit = useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
+    async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
+
+      if (isSubmitting) {
+        return;
+      }
+
+      const formData = new FormData(event.currentTarget);
+
+      const nameValue = formData.get('name');
+      const emailValue = formData.get('email');
+      const companyValue = formData.get('company');
+      const websiteValue = formData.get('website');
+      const messageValue = formData.get('message');
+
+      const name = typeof nameValue === 'string' ? nameValue.trim() : '';
+      const email = typeof emailValue === 'string' ? emailValue.trim() : '';
+      const company =
+        typeof companyValue === 'string' ? companyValue.trim() : '';
+      const website =
+        typeof websiteValue === 'string' ? websiteValue.trim() : '';
+      const message =
+        typeof messageValue === 'string' ? messageValue.trim() : '';
+
+      const validationCopy = PARTNER_APPLICATION_MODAL_COPY.validation;
+      const emailLooksValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+      setSubmitError(null);
+
+      if (!name || !email || !company || !website || !message) {
+        setSubmitError(validationCopy.incompleteForm);
+        return;
+      }
+
+      if (!emailLooksValid) {
+        setSubmitError(validationCopy.invalidEmail);
+        return;
+      }
+
+      setIsSubmitting(true);
+
+      try {
+        const response = await fetch('/api/partner-application', {
+          body: JSON.stringify({ email, name }),
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+        });
+
+        if (!response.ok) {
+          setSubmitError(validationCopy.submitFailed);
+          return;
+        }
+
+        onClose();
+      } catch {
+        setSubmitError(validationCopy.submitFailed);
+      } finally {
+        setIsSubmitting(false);
+      }
     },
-    [],
+    [isSubmitting, onClose],
   );
 
   if (!open) {
@@ -448,17 +500,34 @@ export function PartnerApplicationModal({
         role="dialog"
       >
         <TitleBlock>
-          <Title id={titleId}>
-            {copy.titleSerif}
-            <TitleAccent>{copy.titleSans}</TitleAccent>
-          </Title>
-          <Subtitle>
-            <p>{copy.subtitleLine1}</p>
-            <p>{copy.subtitleLine2}</p>
-          </Subtitle>
+          <TitleHeadingWrapper id={titleId}>
+            <Heading
+              as="h2"
+              segments={[
+                { fontFamily: 'serif', text: copy.titleSerif, fontWeight: 'light' },
+                {
+                  fontFamily: 'sans',
+                  text: copy.titleSans,
+                  fontWeight: 'light',
+                  newLine: true,
+                },
+              ]}
+              size="lg"
+              weight="light"
+            />
+          </TitleHeadingWrapper>
+          <SubtitleStack>
+            <Body body={{ text: copy.subtitleLine1 }} size="md" />
+            <Body body={{ text: copy.subtitleLine2 }} size="md" />
+          </SubtitleStack>
         </TitleBlock>
 
-        <form onSubmit={handleSubmit}>
+        <form
+          ref={formRef}
+          autoComplete="off"
+          noValidate
+          onSubmit={handleSubmit}
+        >
           <FormFields>
             <Segments role="radiogroup" aria-label={copy.selectLabel}>
               {PARTNER_PROGRAM_OPTIONS.map((option) => (
@@ -524,57 +593,69 @@ export function PartnerApplicationModal({
             </MobileProgramField>
 
             <TextInput
-              autoComplete="name"
+              aria-required="true"
+              autoComplete="off"
               name="name"
               placeholder={copy.fields.name}
-              required
               type="text"
             />
 
             <FieldRow>
               <TextInput
-                autoComplete="email"
+                aria-required="true"
+                autoComplete="off"
+                inputMode="email"
                 name="email"
                 placeholder={copy.fields.email}
-                required
-                type="email"
+                type="text"
               />
               <TextInput
-                autoComplete="organization"
+                aria-required="true"
+                autoComplete="off"
                 name="company"
                 placeholder={copy.fields.company}
-                required
                 type="text"
               />
             </FieldRow>
 
             <TextInput
+              aria-required="true"
+              autoComplete="off"
               name="website"
               placeholder={copy.fields.website}
-              required
               type="text"
             />
 
             <TextInput
+              autoComplete="off"
               name="opportunities"
               placeholder={copy.fields.opportunities}
               type="text"
             />
 
             <TextArea
+              aria-required="true"
+              autoComplete="off"
               name="message"
               placeholder={`${copy.fields.messageLabel}\n\n${copy.fields.messageHint}`}
-              required
             />
 
             <FooterBlock>
-              <Footnote>{copy.footnote}</Footnote>
-              <SubmitButton type="submit">
+              {submitError ? (
+                <SubmitError role="alert">{submitError}</SubmitError>
+              ) : null}
+              <SubmitButton
+                type="submit"
+                disabled={isSubmitting}
+                aria-busy={isSubmitting}
+              >
                 <ButtonShape
                   fillColor={theme.colors.primary.background[100]}
                   strokeColor="none"
                 />
-                <SubmitLabel>{copy.submit}</SubmitLabel>
+                <SubmitLabel>
+                  {isSubmitting ? copy.submitInFlight : copy.submit}
+                </SubmitLabel>
               </SubmitButton>
             </FooterBlock>
           </FormFields>

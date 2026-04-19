@@ -106,7 +106,7 @@ export class SdkProviderFactoryService {
       case AI_SDK_BEDROCK:
         return this.buildBedrockProvider(config);
       case AI_SDK_OPENAI_COMPATIBLE:
-        return this.buildOpenAICompatibleProvider(config);
+        return this.buildOpenAiCompatibleProvider(config);
       default:
         throw new Error(`Unsupported SDK package: ${config.npm}`);
     }
@@ -167,7 +167,7 @@ export class SdkProviderFactoryService {
     };
   }
 
-  private buildOpenAICompatibleProvider(
+  private buildOpenAiCompatibleProvider(
     config: AiProviderConfig,
   ): AiSdkProviderInstance {
     if (!config.baseUrl) {

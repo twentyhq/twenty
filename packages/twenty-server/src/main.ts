@@ -28,7 +28,9 @@ const bootstrap = async () => {
   setPgDateTypeParser();
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    cors: true,
+    // Expose WWW-Authenticate so browser-based MCP clients can read the
+    // resource_metadata pointer on 401. Required by MCP authorization spec.
+    cors: { exposedHeaders: ['WWW-Authenticate'] },
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
     rawBody: true,
     snapshot: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,

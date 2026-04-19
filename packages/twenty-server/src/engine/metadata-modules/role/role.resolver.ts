@@ -28,9 +28,9 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
 import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
 import { FieldPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/field-permission.dto';
@@ -333,9 +333,9 @@ export class RoleResolver {
         flatApplicationMaps.byId[agentEntity.applicationId];
 
       if (!isDefined(flatApplication)) {
-        throw new AgentException(
+        throw new AiException(
           `Application not found for agent ${agentEntity.id}`,
-          AgentExceptionCode.AGENT_NOT_FOUND,
+          AiExceptionCode.AGENT_NOT_FOUND,
         );
       }
 

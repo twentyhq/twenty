@@ -524,6 +524,19 @@ export class AuthService {
       );
     }
 
+    // OAuth 2.1 / MCP auth spec: PKCE is mandatory for public clients
+    // (clients registered with token_endpoint_auth_method=none, i.e. no
+    // client secret hash). Confidential clients are authenticated at the
+    // token endpoint instead.
+    const isPublicClient = !applicationRegistration.oAuthClientSecretHash;
+
+    if (isPublicClient && !codeChallenge) {
+      throw new AuthException(
+        `code_challenge is required for public clients (PKCE S256, per OAuth 2.1)`,
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
     // RFC 8252 §7.3: Native apps using loopback redirect URIs may use any port.
     // When a registration has no explicit redirect URIs (e.g. the seeded CLI registration),
     // allow any loopback redirect URI.

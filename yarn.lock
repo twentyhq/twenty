@@ -60946,6 +60946,7 @@ __metadata:
     remark-gfm: "npm:^4.0.1"
     sharp: "npm:^0.33.5"
     three: "npm:^0.183.2"
+    zod: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
 

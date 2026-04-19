@@ -29,7 +29,8 @@
     "react-dom": "19.2.3",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
-    "three": "^0.183.2"
+    "three": "^0.183.2",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@types/node": "^20",

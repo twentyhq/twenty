@@ -3578,7 +3578,7 @@ export default {
                 1
             ]
         },
-        "ClientAIModelConfig": {
+        "ClientAiModelConfig": {
             "modelId": [
                 1
             ],
@@ -3629,7 +3629,7 @@ export default {
             ]
         },
         "ModelFamily": {},
-        "AdminAIModelConfig": {
+        "AdminAiModelConfig": {
             "modelId": [
                 1
             ],
@@ -3685,7 +3685,7 @@ export default {
                 1
             ]
         },
-        "AdminAIModels": {
+        "AdminAiModels": {
             "models": [
                 184
             ],
@@ -5939,7 +5939,7 @@ export default {
                 1
             ]
         },
-        "AISystemPromptSection": {
+        "AiSystemPromptSection": {
             "title": [
                 1
             ],
@@ -5953,7 +5953,7 @@ export default {
                 1
             ]
         },
-        "AISystemPromptPreview": {
+        "AiSystemPromptPreview": {
             "sections": [
                 331
             ],
@@ -6813,7 +6813,7 @@ export default {
                     ]
                 }
             ],
-            "getAISystemPromptPreview": [
+            "getAiSystemPromptPreview": [
                 332
             ],
             "skills": [
@@ -7547,7 +7547,7 @@ export default {
                     ]
                 }
             ],
-            "uploadAIChatFile": [
+            "uploadAiChatFile": [
                 121,
                 {
                     "file": [

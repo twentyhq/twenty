@@ -1,13 +1,14 @@
 'use client';
 
+import { SHARED_COMPANY_LOGO_URLS } from '@/lib/shared-asset-paths';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
-  IconAt,
+  IconBuildingSkyscraper,
   IconCheckbox,
   IconChevronDown,
+  IconLink,
   IconPlus,
-  IconUser,
 } from '@tabler/icons-react';
 import {
   useEffect,
@@ -31,8 +32,6 @@ const ROW_ENTER_STAGGER_MS = 160;
 const COLORS = {
   accentBorder: VISUAL_TOKENS.border.color.blue,
   accentSurfaceSoft: VISUAL_TOKENS.background.transparent.blue,
-  avatarBackground: '#1f1f1f',
-  avatarText: '#ffffff',
   background: VISUAL_TOKENS.background.primary,
   backgroundSecondary: VISUAL_TOKENS.background.secondary,
   borderLight: VISUAL_TOKENS.border.color.light,
@@ -51,67 +50,67 @@ const COLORS = {
 } as const;
 
 const TABLE_COLUMNS = [
-  { id: 'contact', isFirstColumn: true, label: 'Contacts', width: 180 },
-  { id: 'segment', isFirstColumn: false, label: 'Segment', width: 132 },
-  { id: 'email', isFirstColumn: false, label: 'Email', width: 190 },
+  { id: 'company', isFirstColumn: true, label: 'Companies', width: 180 },
+  { id: 'type', isFirstColumn: false, label: 'Type', width: 132 },
+  { id: 'url', isFirstColumn: false, label: 'Domain', width: 150 },
 ] as const;
 
 type TableRow = {
-  contact: string;
-  email: string;
-  initials: string;
+  company: string;
+  domain: string;
   isNew?: boolean;
-  segment: string;
+  logoSrc: string;
+  status: string;
 };
 
 const BASE_TABLE_ROWS: ReadonlyArray<TableRow> = [
   {
-    contact: 'Ava Martinez',
-    email: 'ava@resend.com',
-    initials: 'AM',
-    segment: 'VIP',
+    company: 'Anthropic',
+    domain: 'anthropic.com',
+    logoSrc: SHARED_COMPANY_LOGO_URLS.anthropic,
+    status: 'Customer',
   },
   {
-    contact: 'Noah Kim',
-    email: 'noah@resend.com',
-    initials: 'NK',
-    segment: 'Champion',
+    company: 'Slack',
+    domain: 'slack.com',
+    logoSrc: SHARED_COMPANY_LOGO_URLS.slack,
+    status: 'Customer',
   },
   {
-    contact: 'Lena Patel',
-    email: 'lena@resend.com',
-    initials: 'LP',
-    segment: 'Champion',
+    company: 'Notion',
+    domain: 'notion.so',
+    logoSrc: SHARED_COMPANY_LOGO_URLS.notion,
+    status: 'Customer',
   },
   {
-    contact: 'Miles Chen',
-    email: 'miles@resend.com',
-    initials: 'MC',
-    segment: 'Warm',
+    company: 'Sequoia',
+    domain: 'sequoiacap.com',
+    logoSrc: SHARED_COMPANY_LOGO_URLS.sequoia,
+    status: 'Customer',
   },
   {
-    contact: 'Zoe Rivera',
-    email: 'zoe@resend.com',
-    initials: 'ZR',
-    segment: 'Warm',
+    company: 'Cursor',
+    domain: 'cursor.com',
+    logoSrc: SHARED_COMPANY_LOGO_URLS.cursor,
+    status: 'Customer',
   },
 ];
 
 const EXPANDED_TABLE_ROWS: ReadonlyArray<TableRow> = [
   ...BASE_TABLE_ROWS,
   {
-    contact: 'Eli Brooks',
-    email: 'eli@resend.com',
-    initials: 'EB',
+    company: 'Twenty',
+    domain: 'twenty.com',
     isNew: true,
-    segment: 'Prospect',
+    logoSrc: SHARED_COMPANY_LOGO_URLS.twenty,
+    status: 'Customer',
   },
   {
-    contact: 'Ivy Foster',
-    email: 'ivy@resend.com',
-    initials: 'IF',
+    company: 'Linear',
+    domain: 'linear.app',
     isNew: true,
-    segment: 'New',
+    logoSrc: SHARED_COMPANY_LOGO_URLS.linear,
+    status: 'Customer',
   },
 ];
 
@@ -333,27 +332,17 @@ const LogoBase = styled.div`
   align-items: center;
   display: inline-flex;
   flex: 0 0 auto;
-  height: 16px;
+  height: 14px;
   justify-content: center;
   overflow: hidden;
-  width: 16px;
+  width: 14px;
 `;
 
-const ContactAvatar = styled.div`
-  align-items: center;
-  background: ${COLORS.avatarBackground};
-  border-radius: 999px;
-  color: ${COLORS.avatarText};
-  display: inline-flex;
-  font-family: ${APP_FONT};
-  font-size: 8px;
-  font-weight: ${theme.font.weight.medium};
-  height: 16px;
-  justify-content: center;
-  letter-spacing: 0.02em;
-  line-height: 1;
-  text-transform: uppercase;
-  width: 16px;
+const CompanyLogoImage = styled.img`
+  display: block;
+  height: 100%;
+  object-fit: contain;
+  width: 14px;
 `;
 
 const StatusChip = styled.div<{ $edited?: boolean; $hoveredByAlice?: boolean }>`
@@ -389,9 +378,9 @@ function HeaderIcon({
 }: {
   columnId: (typeof TABLE_COLUMNS)[number]['id'];
 }) {
-  if (columnId === 'email') {
+  if (columnId === 'url') {
     return (
-      <IconAt
+      <IconLink
         aria-hidden
         color={COLORS.textTertiary}
         size={16}
@@ -400,7 +389,7 @@ function HeaderIcon({
     );
   }
 
-  if (columnId === 'segment') {
+  if (columnId === 'type') {
     return (
       <IconCheckbox
         aria-hidden
@@ -412,7 +401,7 @@ function HeaderIcon({
   }
 
   return (
-    <IconUser
+    <IconBuildingSkyscraper
       aria-hidden
       color={COLORS.textTertiary}
       size={16}
@@ -443,7 +432,7 @@ function PlusMini({ size = 12 }: { size?: number }) {
   );
 }
 
-function ContactCell({ initials, label }: { initials: string; label: string }) {
+function CompanyCell({ label, logoSrc }: { label: string; logoSrc: string }) {
   return (
     <CellHoverAnchor>
       <CheckboxContainer>
@@ -454,7 +443,12 @@ function ContactCell({ initials, label }: { initials: string; label: string }) {
         label={label}
         leftComponent={
           <LogoBase>
-            <ContactAvatar aria-hidden>{initials}</ContactAvatar>
+            <CompanyLogoImage
+              alt=""
+              decoding="async"
+              loading="lazy"
+              src={logoSrc}
+            />
           </LogoBase>
         }
         variant={ChipVariant.Highlighted}
@@ -590,7 +584,7 @@ export function LiveDataHeroTable({
       <TableViewport
         ref={viewportRef}
         $dragging={dragging}
-        aria-label="Interactive preview of the Resend contacts table"
+        aria-label="Interactive preview of the companies table"
         onPointerCancel={endDragging}
         onPointerDown={handlePointerDown}
         onPointerLeave={endDragging}
@@ -644,7 +638,7 @@ export function LiveDataHeroTable({
 
             return (
               <DataRow
-                key={row.contact}
+                key={row.company}
                 onMouseEnter={() => setHoveredRowIndex(index)}
                 onMouseLeave={() =>
                   setHoveredRowIndex((current) =>
@@ -658,7 +652,7 @@ export function LiveDataHeroTable({
                   $width={TABLE_COLUMNS[0].width}
                 >
                   <RowMotion $delayMs={enterDelayMs} $entering={row.isNew}>
-                    <ContactCell initials={row.initials} label={row.contact} />
+                    <CompanyCell label={row.company} logoSrc={row.logoSrc} />
                   </RowMotion>
                 </TableCell>
                 <TableCell $hovered={hovered} $width={TABLE_COLUMNS[1].width}>
@@ -669,13 +663,13 @@ export function LiveDataHeroTable({
                     >
                       {index === 0 && isFirstTagEdited
                         ? editedStatusLabel
-                        : row.segment}
+                        : row.status}
                     </StatusChip>
                   </RowMotion>
                 </TableCell>
                 <TableCell $hovered={hovered} $width={TABLE_COLUMNS[2].width}>
                   <RowMotion $delayMs={enterDelayMs} $entering={row.isNew}>
-                    <LinkCell label={row.email} />
+                    <LinkCell label={row.domain} />
                   </RowMotion>
                 </TableCell>
                 <EmptyFillCell $hovered={hovered} $width={fillerWidth}>

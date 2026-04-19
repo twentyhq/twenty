@@ -1,6 +1,6 @@
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
-import { useOpenAskAIPageInSidePanel } from '@/side-panel/hooks/useOpenAskAIPageInSidePanel';
+import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -20,7 +20,7 @@ export const useCommandMenuHotKeys = () => {
 
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
 
-  const { openAskAIPage } = useOpenAskAIPageInSidePanel();
+  const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
   const { goBackFromSidePanel, goBackOneSubPageOrMainPage } =
     useSidePanelHistory();
@@ -59,11 +59,11 @@ export const useCommandMenuHotKeys = () => {
     keys: ['@'],
     callback: () => {
       if (isAiEnabled) {
-        openAskAIPage({ resetNavigationStack: true });
+        openAskAiPage({ resetNavigationStack: true });
       }
     },
     containsModifier: false,
-    dependencies: [openAskAIPage, isAiEnabled],
+    dependencies: [openAskAiPage, isAiEnabled],
     options: {
       ignoreModifiers: true,
     },

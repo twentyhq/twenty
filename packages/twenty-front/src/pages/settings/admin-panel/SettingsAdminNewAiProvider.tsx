@@ -93,10 +93,10 @@ export const SettingsAdminNewAiProvider = () => {
   const hasSelected = selectedModelsDevId !== null || isCustomMode;
   const npmPackage = form.watch('npm');
   const isBedrock = npmPackage === '@ai-sdk/amazon-bedrock';
-  const isOpenAICompatible = npmPackage === '@ai-sdk/openai-compatible';
+  const isOpenAiCompatible = npmPackage === '@ai-sdk/openai-compatible';
   const needsApiKey = !isBedrock;
   const isModelsDevWithoutNativeSdk =
-    selectedModelsDevId !== null && isOpenAICompatible;
+    selectedModelsDevId !== null && isOpenAiCompatible;
 
   const handleProviderSelected = (providerId: string) => {
     setSelectedModelsDevId(providerId);
@@ -150,7 +150,7 @@ export const SettingsAdminNewAiProvider = () => {
         values.apiKey.trim() && {
           apiKey: values.apiKey.trim(),
         }),
-      ...(isOpenAICompatible &&
+      ...(isOpenAiCompatible &&
         values.baseUrl.trim() && {
           baseUrl: values.baseUrl.trim(),
         }),
@@ -178,7 +178,7 @@ export const SettingsAdminNewAiProvider = () => {
       }
     }
 
-    if (!isBedrock && !isOpenAICompatible && !values.apiKey.trim()) {
+    if (!isBedrock && !isOpenAiCompatible && !values.apiKey.trim()) {
       form.setError('apiKey', {
         type: 'manual',
         message: t`API key is required`,
@@ -187,7 +187,7 @@ export const SettingsAdminNewAiProvider = () => {
       return;
     }
 
-    if (isOpenAICompatible && !values.baseUrl.trim()) {
+    if (isOpenAiCompatible && !values.baseUrl.trim()) {
       form.setError('baseUrl', {
         type: 'manual',
         message: t`Base URL is required`,
@@ -325,7 +325,7 @@ export const SettingsAdminNewAiProvider = () => {
                 </Section>
               )}
 
-              {isOpenAICompatible && (
+              {isOpenAiCompatible && (
                 <Section>
                   <H2Title
                     title={t`Base URL`}

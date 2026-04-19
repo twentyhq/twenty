@@ -203,8 +203,10 @@ export function generateImageHalftoneSvg({
         toneValue = 1 - toneValue;
       }
 
+      // Preserve the pre-toneTarget light-mode response by keeping the power
+      // bias inside the averaged tone calculation.
       const bandRadius =
-        clamp(toneValue + localPower * Math.SQRT1_2, 0, 1) * 0.93;
+        clamp(toneValue + (localPower * Math.SQRT1_2) / 3, 0, 1) * 0.93;
 
       if (bandRadius <= 0.0001) {
         continue;

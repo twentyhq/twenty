@@ -32,6 +32,26 @@ export const metadata: Metadata = {
   description: 'Modular, scalable open source CRM for modern teams.',
 };
 
+const HeroHeadingGroup = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing(3)};
+  width: 100%;
+
+  > *:nth-child(2) {
+    margin-top: 0;
+  }
+`;
+
+const HeroIntroGroup = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing(8)};
+  width: 100%;
+`;
+
 const ThreeCardsIllustrationIntroContent = styled.div`
   display: grid;
   grid-template-columns: 1fr;
@@ -73,7 +93,7 @@ export default async function HomePage() {
   return (
     <>
       <Menu.Root
-        backgroundColor={theme.colors.primary.background[100]}
+        backgroundColor={theme.colors.secondary.background[5]}
         scheme="primary"
         navItems={MENU_DATA.navItems}
         socialLinks={menuSocialLinks}
@@ -84,31 +104,38 @@ export default async function HomePage() {
         <Menu.Cta scheme="primary" />
       </Menu.Root>
 
-      <Hero.Root backgroundColor={theme.colors.primary.background[100]}>
-        <Hero.Heading page={Pages.Home} segments={HERO_DATA.heading} />
-        <Hero.Body page={Pages.Home} body={HERO_DATA.body} size="sm" />
-        <Hero.Cta>
-          <LinkButton
-            color="secondary"
-            href="https://app.twenty.com/welcome"
-            label="Get started"
-            type="anchor"
-            variant="contained"
-          />
-          <TalkToUsButton
-            color="secondary"
-            label="Talk to us"
-            variant="outlined"
-          />
-        </Hero.Cta>
+      <Hero.Root
+        backgroundColor={theme.colors.secondary.background[5]}
+        showHomeBackground
+      >
+        <HeroIntroGroup data-halftone-exclude>
+          <HeroHeadingGroup>
+            <Hero.Heading page={Pages.Home} segments={HERO_DATA.heading} />
+            <Hero.Body page={Pages.Home} body={HERO_DATA.body} size="sm" />
+          </HeroHeadingGroup>
+          <Hero.Cta>
+            <LinkButton
+              color="secondary"
+              href="https://app.twenty.com/welcome"
+              label="Get started"
+              type="anchor"
+              variant="contained"
+            />
+            <TalkToUsButton
+              color="secondary"
+              label="Talk to us"
+              variant="outlined"
+            />
+          </Hero.Cta>
+        </HeroIntroGroup>
         <Hero.HomeVisual visual={HERO_DATA.visual} />
       </Hero.Root>
 
       <TrustedBy.Root>
         <TrustedBy.Separator separator={TRUSTED_BY_DATA.separator} />
-        <TrustedBy.Logos
-          clientCountLabel={TRUSTED_BY_DATA.clientCountLabel}
-          logos={TRUSTED_BY_DATA.logos}
+        <TrustedBy.Logos logos={TRUSTED_BY_DATA.logos} />
+        <TrustedBy.ClientCount
+          label={TRUSTED_BY_DATA.clientCountLabel.text}
         />
       </TrustedBy.Root>
 
@@ -183,7 +210,6 @@ export default async function HomePage() {
 
       <Testimonials.Root
         backgroundColor={theme.colors.secondary.background[5]}
-        backgroundShapeSrc="/images/home/testimonials/background-shape.webp"
         color={theme.colors.primary.text[100]}
       >
         <Testimonials.Carousel

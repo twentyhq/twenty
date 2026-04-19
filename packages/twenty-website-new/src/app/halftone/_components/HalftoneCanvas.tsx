@@ -236,8 +236,11 @@ const halftoneFragmentShader = `
     if (applyToDarkAreas > 0.5) {
       toneValue = 1.0 - toneValue;
     }
+    // Preserve the pre-toneTarget light-mode response by keeping the power
+    // bias inside the averaged tone calculation.
+    float powerBias = localPower * length(vec2(0.5)) * (1.0 / 3.0);
     float bandRadius = clamp(
-      toneValue + localPower * length(vec2(0.5)) + lightLift,
+      toneValue + powerBias + lightLift,
       0.0,
       1.0
     ) * 1.86 * 0.5;
@@ -721,6 +724,10 @@ export function HalftoneCanvas({
 
     let animationFrameId = 0;
     let cancelled = false;
+    let isVisible =
+      typeof document === 'undefined' ? true : !document.hidden;
+    let isIntersecting = true;
+    const shouldRender = () => isVisible && isIntersecting;
 
     const getWidth = () => Math.max(container.clientWidth, 1);
     const getHeight = () => Math.max(container.clientHeight, 1);
@@ -1562,7 +1569,9 @@ export function HalftoneCanvas({
           return;
         }
 
-        animationFrameId = window.requestAnimationFrame(renderFrame);
+        animationFrameId = shouldRender()
+          ? window.requestAnimationFrame(renderFrame)
+          : 0;
         clock.update(timestamp);
 
         const interaction = interactionReference.current;
@@ -1984,10 +1993,43 @@ export function HalftoneCanvas({
         renderer.render(postScene, orthographicCamera);
       };
 
+      const resumeIfNeeded = () => {
+        if (!cancelled && shouldRender() && animationFrameId === 0) {
+          animationFrameId = window.requestAnimationFrame(renderFrame);
+        }
+      };
+
+      const handleVisibilityChange = () => {
+        isVisible = !document.hidden;
+        if (!shouldRender() && animationFrameId !== 0) {
+          window.cancelAnimationFrame(animationFrameId);
+          animationFrameId = 0;
+        } else {
+          resumeIfNeeded();
+        }
+      };
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+
+      const intersectionObserver = new IntersectionObserver(
+        (entries) => {
+          isIntersecting = entries.some((entry) => entry.isIntersecting);
+          if (!shouldRender() && animationFrameId !== 0) {
+            window.cancelAnimationFrame(animationFrameId);
+            animationFrameId = 0;
+          } else {
+            resumeIfNeeded();
+          }
+        },
+        { rootMargin: '100px' },
+      );
+      intersectionObserver.observe(container);
+
       renderFrame();
 
       cleanup = () => {
         resizeObserver.disconnect();
+        intersectionObserver.disconnect();
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
         canvas.removeEventListener('pointermove', handlePointerMove);
         canvas.removeEventListener('pointerleave', handlePointerLeave);
         canvas.removeEventListener('pointerup', handlePointerUp);

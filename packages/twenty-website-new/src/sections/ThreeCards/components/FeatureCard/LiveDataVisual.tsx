@@ -3,11 +3,11 @@
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
-  IconBuildingSkyscraper,
   IconChevronDown,
+  IconHeartHandshake,
   IconList,
-  IconMail,
   IconPlus,
+  IconUser,
   IconX,
 } from '@tabler/icons-react';
 import { type RefObject, useEffect, useRef, useState } from 'react';
@@ -181,7 +181,9 @@ const TablePanel = styled.div<{ $active?: boolean }>`
   position: absolute;
   right: 0px;
   transform: ${({ $active }) =>
-    `translate3d(0, 0, 0) scale(${$active ? TABLE_PANEL_HOVER_SCALE : 1})`};
+    `translate3d(0, 0, 0) scale(${
+      $active ? TABLE_PANEL_HOVER_SCALE : 1
+    })`};
   transform-origin: bottom right;
   transition:
     box-shadow 260ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -708,8 +710,8 @@ export function LiveDataVisual({
   pointerTargetRef,
 }: LiveDataVisualProps) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const companyFilterRef = useRef<HTMLDivElement>(null);
-  const opensFilterRef = useRef<HTMLDivElement>(null);
+  const typeFilterRef = useRef<HTMLDivElement>(null);
+  const employeesFilterRef = useRef<HTMLDivElement>(null);
   const [isBobHovered, setIsBobHovered] = useState(false);
   const [isTomHovered, setIsTomHovered] = useState(false);
   const [phase, setPhase] = useState<LiveDataPhase>('idle');
@@ -781,18 +783,23 @@ export function LiveDataVisual({
 
   useEffect(() => {
     const measureAddFilterLefts = () => {
-      const companyFilter = companyFilterRef.current;
-      const opensFilter = opensFilterRef.current;
+      const typeFilter = typeFilterRef.current;
+      const employeesFilter = employeesFilterRef.current;
 
-      if (!companyFilter || !opensFilter || opensFilter.offsetWidth === 0) {
+      if (
+        !typeFilter ||
+        !employeesFilter ||
+        employeesFilter.offsetWidth === 0
+      ) {
         return;
       }
 
       const nextLefts = {
-        docked:
-          companyFilter.offsetLeft + companyFilter.offsetWidth + FILTER_ROW_GAP,
+        docked: typeFilter.offsetLeft + typeFilter.offsetWidth + FILTER_ROW_GAP,
         parked:
-          opensFilter.offsetLeft + opensFilter.offsetWidth + FILTER_ROW_GAP,
+          employeesFilter.offsetLeft +
+          employeesFilter.offsetWidth +
+          FILTER_ROW_GAP,
       };
 
       setAddFilterLefts((current) =>
@@ -830,10 +837,10 @@ export function LiveDataVisual({
     phase === 'return-bob' ||
     phase === 'settle';
   const isBobCursorVisible = active;
-  const isOpensFilterRemoving = phase === 'remove-filter';
-  const isOpensFilterVisible =
+  const isEmployeesFilterRemoving = phase === 'remove-filter';
+  const isEmployeesFilterVisible =
     phase !== 'remove-filter' && phase !== 'return-bob' && phase !== 'settle';
-  const hasOpensFilterBeenRemoved =
+  const hasEmployeesFilterBeenRemoved =
     phase === 'remove-filter' || phase === 'return-bob' || phase === 'settle';
   const isFirstTagRenamed =
     phase === 'rename-tag' ||
@@ -850,7 +857,7 @@ export function LiveDataVisual({
   const addFilterLeft = isAddFilterDocked
     ? (addFilterLefts?.docked ?? DEFAULT_ADD_FILTER_LEFTS.docked)
     : (addFilterLefts?.parked ?? DEFAULT_ADD_FILTER_LEFTS.parked);
-  const viewCount = hasOpensFilterBeenRemoved ? 11 : 9;
+  const viewCount = hasEmployeesFilterBeenRemoved ? 11 : 9;
 
   return (
     <VisualRoot aria-hidden ref={rootRef}>
@@ -888,7 +895,10 @@ export function LiveDataVisual({
                 $bottom={bobCursor.bottom}
                 $right={bobCursor.right}
               >
-                <MarkerCursorSlot $pressed={phase === 'remove-filter'} $visible>
+                <MarkerCursorSlot
+                  $pressed={phase === 'remove-filter'}
+                  $visible
+                >
                   <MarkerCursor
                     color={COLORS.bobCursor}
                     rotation={bobCursor.rotation}
@@ -914,7 +924,7 @@ export function LiveDataVisual({
                         stroke={TABLER_STROKE}
                       />
                     </ViewSwitcherIcon>
-                    <ViewLabel>All contacts</ViewLabel>
+                    <ViewLabel>All</ViewLabel>
                     <ViewDot />
                     <ViewCount>{viewCount}</ViewCount>
                   </ViewSwitcherLeft>
@@ -930,19 +940,19 @@ export function LiveDataVisual({
               </ViewRow>
 
               <FilterRow>
-                <FilterChip ref={companyFilterRef}>
+                <FilterChip ref={typeFilterRef}>
                   <FilterChipLabel>
                     <FilterChipIcon>
-                      <IconBuildingSkyscraper
+                      <IconHeartHandshake
                         aria-hidden
                         color={COLORS.blue}
                         size={14}
                         stroke={FILTER_ICON_STROKE}
                       />
                     </FilterChipIcon>
-                    <FilterName>Company</FilterName>
+                    <FilterName>Type</FilterName>
                   </FilterChipLabel>
-                  <FilterValue>is Resend</FilterValue>
+                  <FilterValue>is Customer</FilterValue>
                   <FilterCloseButton type="button">
                     <IconX
                       aria-hidden
@@ -954,26 +964,26 @@ export function LiveDataVisual({
                 </FilterChip>
 
                 <FilterChipMotion
-                  ref={opensFilterRef}
-                  $removing={isOpensFilterRemoving}
-                  $visible={isOpensFilterVisible}
+                  ref={employeesFilterRef}
+                  $removing={isEmployeesFilterRemoving}
+                  $visible={isEmployeesFilterVisible}
                 >
                   <FilterChip
                     $pressed={phase === 'remove-filter'}
-                    $removing={isOpensFilterRemoving}
+                    $removing={isEmployeesFilterRemoving}
                   >
                     <FilterChipLabel>
                       <FilterChipIcon>
-                        <IconMail
+                        <IconUser
                           aria-hidden
                           color={COLORS.blue}
                           size={14}
                           stroke={FILTER_ICON_STROKE}
                         />
                       </FilterChipIcon>
-                      <FilterName>Opens</FilterName>
+                      <FilterName>Employees</FilterName>
                     </FilterChipLabel>
-                    <FilterValue>{'>5'}</FilterValue>
+                    <FilterValue>{'>500'}</FilterValue>
                     <FilterCloseButton
                       $pressed={phase === 'remove-filter'}
                       type="button"
@@ -1010,7 +1020,7 @@ export function LiveDataVisual({
                   editedStatusLabel={isFirstTagRenamed ? typedTagLabel : ''}
                   isFirstTagEdited={isFirstTagEdited}
                   isFirstTagHoveredByAlice={isFirstTagHoveredByAlice}
-                  showExtendedRows={hasOpensFilterBeenRemoved}
+                  showExtendedRows={hasEmployeesFilterBeenRemoved}
                 />
               </TableBodyArea>
             </TablePanel>
