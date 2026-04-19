@@ -352,7 +352,7 @@ msgid "Admin role not found."
 msgstr "관리자 역할을 찾을 수 없음."
 
 #. js-lingui-id: kmAKx+
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Agent execution failed."
 msgstr "에이전트 실행 실패."
 
@@ -365,7 +365,7 @@ msgid "Agent not found"
 msgstr "에이전트를 찾을 수 없습니다"
 
 #. js-lingui-id: UxwIFr
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Agent not found."
 msgstr "에이전트를 찾을 수 없습니다."
 
@@ -420,7 +420,7 @@ msgid "An agent with this name already exists"
 msgstr "이 이름을 가진 에이전트가 이미 존재합니다"
 
 #. js-lingui-id: Wnol69
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "An agent with this name already exists."
 msgstr "이 이름을 가진 에이전트가 이미 존재합니다."
 
@@ -514,7 +514,7 @@ msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the c
 msgstr "연간 반복 수익: 회사의 실제 또는 예상 연간 수익"
 
 #. js-lingui-id: fRWsMD
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "API key is not configured."
 msgstr "API 키가 설정되지 않았습니다."
 
@@ -1280,6 +1280,16 @@ msgstr "채널 ID"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 msgid "Channel Type"
 msgstr "채널 유형"
+
+#. js-lingui-id: erTWgO
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Chat message not found."
+msgstr ""
+
+#. js-lingui-id: /VxChJ
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Chat thread not found."
+msgstr ""
 
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -3045,7 +3055,7 @@ msgid "Invalid action type."
 msgstr "잘못된 작업 유형입니다."
 
 #. js-lingui-id: D/IcuN
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Invalid agent input."
 msgstr "잘못된 에이전트 입력입니다."
 
@@ -5893,7 +5903,7 @@ msgstr ""
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Role not found."
 msgstr "역할을 찾을 수 없음."
 
@@ -6204,7 +6214,7 @@ msgid "Stage"
 msgstr ""
 
 #. js-lingui-id: 7XNKWU
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Standard agents cannot be modified."
 msgstr "표준 에이전트는 수정할 수 없습니다."
 
@@ -7031,7 +7041,7 @@ msgid "This record does not exist or has been deleted."
 msgstr "이 레코드는 존재하지 않거나 삭제되었습니다."
 
 #. js-lingui-id: rExecr
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This role cannot be assigned to agents."
 msgstr "이 역할은 에이전트에 할당할 수 없습니다."
 
@@ -7494,7 +7504,7 @@ msgstr "사용자는 이메일/비밀번호로 생성되지 않았습니다"
 
 #. js-lingui-id: lUEEso
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts

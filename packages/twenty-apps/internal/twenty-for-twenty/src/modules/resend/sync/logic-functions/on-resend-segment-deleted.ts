@@ -1,9 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  defineLogicFunction,
-  type DatabaseEventPayload,
-  type ObjectRecordDeleteEvent,
-} from 'twenty-sdk';
+import { defineLogicFunction, type DatabaseEventPayload, type ObjectRecordDeleteEvent } from 'twenty-sdk/define';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ON_RESEND_SEGMENT_DELETED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/constants/universal-identifiers';

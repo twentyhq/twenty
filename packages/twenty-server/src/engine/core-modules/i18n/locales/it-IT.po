@@ -352,7 +352,7 @@ msgid "Admin role not found."
 msgstr "Ruolo amministratore non trovato."
 
 #. js-lingui-id: kmAKx+
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Agent execution failed."
 msgstr "Esecuzione dell'agente fallita."
 
@@ -365,7 +365,7 @@ msgid "Agent not found"
 msgstr "Agente non trovato"
 
 #. js-lingui-id: UxwIFr
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Agent not found."
 msgstr "Agente non trovato."
 
@@ -420,7 +420,7 @@ msgid "An agent with this name already exists"
 msgstr "Esiste già un agente con questo nome"
 
 #. js-lingui-id: Wnol69
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "An agent with this name already exists."
 msgstr "Esiste già un agente con questo nome."
 
@@ -514,7 +514,7 @@ msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the c
 msgstr "Ricavi annuali ricorrenti: Il fatturato annuale effettivo o stimato dell'azienda"
 
 #. js-lingui-id: fRWsMD
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "API key is not configured."
 msgstr "La chiave API non è configurata."
 
@@ -1280,6 +1280,16 @@ msgstr "ID del canale"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 msgid "Channel Type"
 msgstr "Tipo di canale"
+
+#. js-lingui-id: erTWgO
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Chat message not found."
+msgstr ""
+
+#. js-lingui-id: /VxChJ
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Chat thread not found."
+msgstr ""
 
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -3045,7 +3055,7 @@ msgid "Invalid action type."
 msgstr "Tipo di azione non valido."
 
 #. js-lingui-id: D/IcuN
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Invalid agent input."
 msgstr "Input dell'agente non valido."
 
@@ -5893,7 +5903,7 @@ msgstr ""
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Role not found."
 msgstr "Ruolo non trovato."
 
@@ -6204,7 +6214,7 @@ msgid "Stage"
 msgstr ""
 
 #. js-lingui-id: 7XNKWU
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Standard agents cannot be modified."
 msgstr "Gli agenti standard non possono essere modificati."
 
@@ -7031,7 +7041,7 @@ msgid "This record does not exist or has been deleted."
 msgstr "Questo record non esiste o è stato eliminato."
 
 #. js-lingui-id: rExecr
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This role cannot be assigned to agents."
 msgstr "Questo ruolo non può essere assegnato agli agenti."
 
@@ -7494,7 +7504,7 @@ msgstr "L'utente non è stato creato con email/password"
 
 #. js-lingui-id: lUEEso
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts

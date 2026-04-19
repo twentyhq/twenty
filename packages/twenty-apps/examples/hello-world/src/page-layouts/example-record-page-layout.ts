@@ -1,6 +1,6 @@
 import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/example-object';
 import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/front-components/hello-world';
-import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk';
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 
 export default definePageLayout({
   universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',

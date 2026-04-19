@@ -1,4 +1,4 @@
-import { defineLogicFunction } from 'twenty-sdk';
+import { defineLogicFunction } from 'twenty-sdk/define';
 import { testFunction2 } from '../utils/test-function-2.util';
 
 export default defineLogicFunction({

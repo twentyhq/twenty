@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RESEND_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/constants/universal-identifiers';

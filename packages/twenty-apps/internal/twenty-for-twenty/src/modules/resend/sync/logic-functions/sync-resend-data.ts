@@ -1,5 +1,5 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { defineLogicFunction } from 'twenty-sdk';
+import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { SYNC_RESEND_DATA_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/constants/universal-identifiers';
 import { getResendClient } from 'src/modules/resend/shared/utils/get-resend-client';

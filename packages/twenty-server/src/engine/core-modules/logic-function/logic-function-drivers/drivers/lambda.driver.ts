@@ -1104,19 +1104,49 @@ export class LambdaDriver implements LogicFunctionDriver {
     }
   }
 
-  private extractLogs(logString: string): string {
-    const formattedLogString = Buffer.from(logString, 'base64')
-      .toString('utf8')
-      .split('\t')
-      .join(' ');
+  private parseLambdaLogResult(logResult: string | undefined): {
+    logs: string;
+    initDurationMs: string | null;
+    billedDurationMs: string | null;
+    reportDurationMs: string | null;
+    coldStart: boolean;
+  } {
+    if (!logResult) {
+      return {
+        logs: '',
+        initDurationMs: null,
+        billedDurationMs: null,
+        reportDurationMs: null,
+        coldStart: false,
+      };
+    }
 
-    return formattedLogString
+    const decoded = Buffer.from(logResult, 'base64').toString('utf8');
+
+    const initDurationMs =
+      decoded.match(/Init Duration:\s*([\d.]+)\s*ms/i)?.[1] ?? null;
+    const billedDurationMs =
+      decoded.match(/Billed Duration:\s*([\d.]+)\s*ms/i)?.[1] ?? null;
+    const reportDurationMs =
+      decoded.match(/\bDuration:\s*([\d.]+)\s*ms/i)?.[1] ?? null;
+
+    const logs = decoded
+      .split('\t')
+      .join(' ')
       .replace(/^(START|END|REPORT).*\n?/gm, '')
       .replace(
         /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z) [a-f0-9-]+ INFO /gm,
         '$1 INFO ',
       )
       .trim();
+
+    return {
+      logs,
+      initDurationMs,
+      billedDurationMs,
+      reportDurationMs,
+      coldStart: initDurationMs !== null,
+    };
   }
 
   async execute({
@@ -1127,11 +1157,14 @@ export class LambdaDriver implements LogicFunctionDriver {
     env,
     timeoutMs = 900_000,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
+    const buildStart = Date.now();
+
     await this.buildLambdaExecutor({
       flatLogicFunction,
       flatApplication,
       applicationUniversalIdentifier,
     });
+    const buildExecutorMs = Date.now() - buildStart;
 
     const startTime = Date.now();
 
@@ -1140,6 +1173,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       applicationUniversalIdentifier,
       builtHandlerPath: flatLogicFunction.builtHandlerPath,
     });
+    const getBuiltCodeMs = Date.now() - startTime;
 
     const executorPayload: LambdaDriverExecutorPayload = {
       params: payload,
@@ -1148,9 +1182,10 @@ export class LambdaDriver implements LogicFunctionDriver {
       handlerName: flatLogicFunction.handlerName,
     };
 
+    const payloadString = JSON.stringify(executorPayload);
     const params: InvokeCommandInput = {
       FunctionName: flatLogicFunction.id,
-      Payload: JSON.stringify(executorPayload),
+      Payload: payloadString,
       LogType: LogType.Tail,
     };
 
@@ -1159,18 +1194,30 @@ export class LambdaDriver implements LogicFunctionDriver {
     try {
       const lambdaClient = await this.getLambdaClient();
 
+      const invokeStart = Date.now();
       const result = await callWithTimeout({
         callback: () => lambdaClient.send(command),
         timeoutMs,
       });
+      const invokeSendMs = Date.now() - invokeStart;
 
       const parsedResult = result.Payload
         ? JSON.parse(result.Payload.transformToString())
         : {};
 
-      const logs = result.LogResult ? this.extractLogs(result.LogResult) : '';
+      const {
+        logs,
+        initDurationMs,
+        billedDurationMs,
+        reportDurationMs,
+        coldStart,
+      } = this.parseLambdaLogResult(result.LogResult);
 
       const duration = Date.now() - startTime;
+
+      this.logger.log(
+        `[lambda-timing] fnId=${flatLogicFunction.id} totalMs=${Date.now() - buildStart} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeSendMs=${invokeSendMs} reportDurationMs=${reportDurationMs ?? 'n/a'} billedMs=${billedDurationMs ?? 'n/a'} initDurationMs=${initDurationMs ?? 'n/a'} coldStart=${coldStart}`,
+      );
 
       if (result.FunctionError) {
         return {

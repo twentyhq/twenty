@@ -1,4 +1,4 @@
-import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk';
+import { definePreInstallLogicFunction, type InstallLogicFunctionPayload } from 'twenty-sdk/define';
 
 const handler = async (payload: InstallLogicFunctionPayload): Promise<void> => {
   console.log('Pre install logic function executed successfully!', payload.previousVersion);

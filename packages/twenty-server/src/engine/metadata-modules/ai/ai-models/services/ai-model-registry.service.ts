@@ -8,9 +8,9 @@ import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/se
 import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
 
 import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { AiModelPreferencesService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-preferences.service';
 import { ProviderConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-config.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
@@ -219,9 +219,9 @@ export class AiModelRegistryService {
     }
 
     if (!model) {
-      throw new AgentException(
+      throw new AiException(
         'No AI models are available. Configure at least one AI provider.',
-        AgentExceptionCode.API_KEY_NOT_CONFIGURED,
+        AiExceptionCode.API_KEY_NOT_CONFIGURED,
       );
     }
 
@@ -255,9 +255,9 @@ export class AiModelRegistryService {
       return this.createDefaultConfigForCustomModel(registeredModel);
     }
 
-    throw new AgentException(
+    throw new AiException(
       `Model with ID ${modelId} not found`,
-      AgentExceptionCode.AGENT_EXECUTION_FAILED,
+      AiExceptionCode.AGENT_EXECUTION_FAILED,
     );
   }
 
@@ -296,9 +296,9 @@ export class AiModelRegistryService {
     workspace: WorkspaceModelAvailabilitySettings,
   ): void {
     if (!this.isModelAdminAllowed(modelId)) {
-      throw new AgentException(
+      throw new AiException(
         'The selected model has been disabled by the administrator.',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
 
@@ -309,9 +309,9 @@ export class AiModelRegistryService {
         this.getRecommendedModelIds(),
       )
     ) {
-      throw new AgentException(
+      throw new AiException(
         'The selected model is not available in this workspace.',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
   }
@@ -386,9 +386,9 @@ export class AiModelRegistryService {
     this.ensureFresh();
 
     if (!this.providerModelDefCache.has(modelId)) {
-      throw new AgentException(
+      throw new AiException(
         `Cannot update model "${modelId}": not found in registry`,
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
   }
@@ -409,9 +409,9 @@ export class AiModelRegistryService {
     const registeredModel = this.getModel(aiModel.modelId);
 
     if (!registeredModel) {
-      throw new AgentException(
+      throw new AiException(
         `Model ${aiModel.modelId} not found in registry. Check that the corresponding AI provider is configured.`,
-        AgentExceptionCode.API_KEY_NOT_CONFIGURED,
+        AiExceptionCode.API_KEY_NOT_CONFIGURED,
       );
     }
 
