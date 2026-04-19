@@ -69,11 +69,12 @@ export default async function PartnerPage() {
       </TrustedBy.Root>
 
       <EngagementBand.Root
-        backgroundColor={theme.colors.primary.background[100]}
+        backgroundColor={theme.colors.secondary.background[5]}
       >
         <EngagementBand.Strip
-          fillColor={theme.colors.secondary.background[100]}
-          variant="secondary"
+          desktopCopyMaxWidth="60%"
+          fillColor={theme.colors.primary.background[100]}
+          variant="primary"
         >
           <EngagementBand.Copy>
             <EngagementBand.Heading segments={ENGAGEMENT_BAND_DATA.heading} />
@@ -81,11 +82,11 @@ export default async function PartnerPage() {
           </EngagementBand.Copy>
           <EngagementBand.Actions>
             <LinkButton
-              color="primary"
+              color="secondary"
               href="/case-studies"
               label="Read our case studies"
               type="link"
-              variant="contained"
+              variant="outlined"
             />
           </EngagementBand.Actions>
         </EngagementBand.Strip>

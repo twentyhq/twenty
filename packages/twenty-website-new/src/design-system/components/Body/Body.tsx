@@ -38,7 +38,7 @@ const bodyClassName = css`
   }
 
   &[data-size='sm'] {
-    color: ${theme.colors.primary.text[60]};
+    color: var(--body-sm-color, ${theme.colors.primary.text[60]});
     font-size: ${theme.font.size(4)};
     line-height: ${theme.lineHeight(5.5)};
   }

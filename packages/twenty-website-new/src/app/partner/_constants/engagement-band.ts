@@ -6,6 +6,6 @@ export const ENGAGEMENT_BAND_DATA: EngagementBandDataType = {
     fontFamily: 'serif',
   },
   body: {
-    text: 'Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.',
+    text: 'Explore how our partners help teams implement, customize, and scale Twenty in real-world deployments.',
   },
 };

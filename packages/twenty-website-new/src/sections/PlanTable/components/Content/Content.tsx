@@ -250,7 +250,12 @@ export function Content({ data }: ContentProps) {
 
       {hasMoreRows && (
         <CtaRow>
-          <ToggleButton onClick={() => setExpanded((prev) => !prev)}>
+          <ToggleButton
+            data-color="primary"
+            data-variant="outlined"
+            onClick={() => setExpanded((prev) => !prev)}
+            type="button"
+          >
             <BaseButton
               color="primary"
               label={toggleLabel}

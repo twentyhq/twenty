@@ -61,6 +61,7 @@ const CardTitleWrap = styled.div`
 
 const CardBodyWrap = styled.div`
   color: ${theme.colors.secondary.text[80]};
+  --body-sm-color: currentColor;
 `;
 
 const CtaRow = styled.div`

@@ -6,6 +6,7 @@ import type { Pages } from '@/enums/pages';
 import { theme } from '@/theme';
 
 const Subline = styled.div`
+  --body-sm-color: currentColor;
   color: color-mix(in srgb, currentColor 80%, transparent);
   margin-bottom: ${theme.spacing(6)};
   max-width: 452px;
